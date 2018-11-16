@@ -1,0 +1,34 @@
+{
+    "compilerOptions": {
+        "target": "es2015",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": true,
+        "declarationDir": "types",
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "outDir": "build",
+        "sourceMap": true,
+        "baseUrl": "src",
+        "paths": {
+            "@framer": ["../src/index"],
+            "@framer/*": ["../src/*"]
+        },
+        "strictNullChecks": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noImplicitUseStrict": false,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "removeComments": true
+    },
+    "compileOnSave": false,
+    "buildOnSave": false,
+    "exclude": ["node_modules", "build", "**/__tests__/*", "types", "dev/examples.framer", "test", "skins", "dist"],
+    "filesGlob": ["./src/**/*.ts"]
+}
