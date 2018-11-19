@@ -1,7 +1,26 @@
 import { MotionValue } from '../motion-value';
+import { RefObject, CSSProperties, ComponentType } from 'react';
+
+export type MotionConfigFactory = (props: MotionProps) => MotionConfig;
+
+export type ComponentFactory = (
+  config?: MotionConfigFactory | MotionConfig
+) => ComponentType;
+
+export type Motion = {
+  (component: ComponentType): ComponentFactory;
+  [key: string]: ComponentFactory;
+};
+
+export type MotionConfig = {
+  [key: string]: Pose | PoseResolver;
+};
 
 export type MotionProps = {
+  [key: string]: any;
+  ref: RefObject<Element>;
   pose: string | string[] | MotionValue;
+  style: CSSProperties;
 };
 
 export type Tween = {};
@@ -31,9 +50,3 @@ export type Pose = PoseSettings & {
 };
 
 export type PoseResolver = (props: { [key: string]: any }) => Pose;
-
-export type MotionConfig = {
-  [key: string]: Pose | PoseResolver;
-};
-
-export type MotionConfigResolver = (props: MotionProps) => MotionConfig;

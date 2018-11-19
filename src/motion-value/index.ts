@@ -1,7 +1,7 @@
 import sync from 'framesync';
 import { Action, ColdSubscription } from 'popmotion';
 
-export type ValuePrimitive = number | string;
+export type ValuePrimitive = any;
 
 export type Transformer = (v: ValuePrimitive) => ValuePrimitive;
 

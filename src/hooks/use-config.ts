@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import {
   MotionConfig,
-  MotionConfigResolver,
+  MotionConfigFactory,
   MotionProps
 } from '../motion/types';
 
 const isResolver = (
-  config: MotionConfig | MotionConfigResolver
-): config is MotionConfigResolver => typeof config === 'function';
+  config: MotionConfig | MotionConfigFactory
+): config is MotionConfigFactory => typeof config === 'function';
 
 const useConfig = (
-  baseConfig: MotionConfig | MotionConfigResolver,
+  baseConfig: MotionConfig | MotionConfigFactory,
   props: MotionProps
 ) =>
   useMemo(() => (isResolver(baseConfig) ? baseConfig(props) : baseConfig), []);

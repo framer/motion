@@ -4,11 +4,11 @@ import { MotionConfig, MotionProps } from '../motion/types';
 import { useRef, useEffect, RefObject } from 'react';
 import styler from 'stylefire';
 
-export default <P extends object>(
+export default (
   config: MotionConfig,
-  props: P & MotionProps,
+  props: MotionProps,
   ref: RefObject<Element>
-): [Map<string, MotionValue>, P & MotionProps] => {
+): [Map<string, MotionValue>, Partial<MotionProps>] => {
   const values = useRef(new Map()).current;
   const returnedProps = {};
 
@@ -51,7 +51,7 @@ export default <P extends object>(
     const domStyler = styler(ref.current);
 
     values.forEach((value, key) => {
-      value.setOnRender(v => domStyler.set(key, v));
+      value.setOnRender((v: any) => domStyler.set(key, v));
     });
 
     return () => values.forEach(value => value.destroy());
