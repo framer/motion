@@ -24,9 +24,10 @@
     "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
     "fork-ts-checker-webpack-plugin": "^0.4.15",
     "husky": "^1.1.4",
+    "lint-staged": "^8.0.4",
     "prettier": "^1.15.2",
     "progress-bar-webpack-plugin": "^1.11.0",
-    "react": "^16.7.0-alpha.2",
+    "react-dev-utils": "^6.1.1",
     "ts-loader": "^5.3.0",
     "tslint": "^5.11.0",
     "tslint-microsoft-contrib": "^5.2.1",
@@ -36,9 +37,9 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "lint-staged": "^8.0.4",
-    "react-dev-utils": "^6.1.1",
-    "react-dom": "^16.7.0-alpha.2"
+    "hey-listen": "^1.0.5",
+    "popmotion": "^8.5.2",
+    "stylefire": "^2.3.1"
   },
   "prettier": {
     "parser": "typescript",

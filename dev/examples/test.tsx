@@ -1,9 +1,7 @@
-import * as React from "react";
-
-import { Test } from "@framer";
+import * as React from 'react';
 
 export class App extends React.Component {
   render() {
-    return <Test />;
+    return null;
   }
 }

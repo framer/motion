@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es2015",
-        "module": "commonjs",
+        "module": "esnext",
         "moduleResolution": "node",
         "isolatedModules": false,
         "jsx": "react",
@@ -19,7 +19,7 @@
             "@framer": ["../src/index"],
             "@framer/*": ["../src/*"]
         },
-        "strictNullChecks": true,
+        "strictNullChecks": false,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "noImplicitUseStrict": false,
