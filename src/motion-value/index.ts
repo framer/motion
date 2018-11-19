@@ -119,7 +119,7 @@ export class MotionValue {
   control(
     controller: ActionFactory,
     config: ActionConfig,
-    transformer: Transformer
+    transformer?: Transformer
   ) {
     this.stop();
 
