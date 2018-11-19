@@ -37,6 +37,7 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
+    "@popmotion/popcorn": "^0.2.0",
     "hey-listen": "^1.0.5",
     "popmotion": "^8.5.2",
     "stylefire": "^2.3.1"
