@@ -10,6 +10,6 @@ describe('poseToArray', () => {
   });
 
   it('Should remove falsey poses', () => {
-    expect(poseToArray(undefined)).toEqual([]);
+    expect(poseToArray()).toEqual([]);
   });
 });
