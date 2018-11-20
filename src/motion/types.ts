@@ -25,6 +25,8 @@ export type MotionProps = {
 
 export type EasingFunction = (v: number) => number;
 
+export type CubicBezier = [number, number, number, number];
+
 export type Easing =
   | CubicBezier
   | 'linear'
@@ -40,10 +42,14 @@ export type Easing =
   | 'anticipate'
   | EasingFunction;
 
-export type Tween = {
-  type?: 'tween';
+export type BaseTransition = {
   from?: number | string;
   to?: number | string;
+  velocity?: number;
+};
+
+export type Tween = BaseTransition & {
+  type?: 'tween';
   duration?: number;
   ease?: Easing;
   elapsed?: number;
@@ -52,31 +58,24 @@ export type Tween = {
   yoyo?: number;
 };
 
-export type Spring = {
+export type Spring = BaseTransition & {
   type: 'spring';
-  from?: number | string;
-  to?: number | string;
   stiffness?: number;
   damping?: number;
   mass?: number;
-  velocity?: number;
   restSpeed?: number;
   restDelta?: number;
 };
 
-export type Decay = {
+export type Decay = BaseTransition & {
   type: 'decay';
-  velocity?: number;
-  from?: number | string;
   modifyTarget?: (v: number) => number;
   power?: number;
   timeConstant?: number;
   restDelta?: number;
 };
 
-export type CubicBezier = [number, number, number, number];
-
-export type Keyframes = {
+export type Keyframes = BaseTransition & {
   type: 'keyframes';
   values: number[] | string[];
   easings?: Easing[];
@@ -88,14 +87,11 @@ export type Keyframes = {
   yoyo?: number;
 };
 
-export type Physics = {
+export type Physics = BaseTransition & {
   type: 'physics';
-  from?: number | string;
   acceleration?: number;
   friction?: number;
-  velocity?: number;
   restSpeed?: number | false;
-  to?: number | string;
 };
 
 export type Transition = Tween | Spring | Decay | Keyframes | Physics;
@@ -175,6 +171,9 @@ export type Pose = {
   fill?: string;
   stroke?: string;
 
+  // Misc
+  backgroundImage?: string;
+
   // SVG
   d?: string;
   pathLength?: number;
@@ -186,4 +185,8 @@ export type Pose = {
   staggerChildren?: number;
 };
 
-export type PoseResolver = (props: { [key: string]: any }) => Pose;
+export type PoseResolver = (
+  props: { [key: string]: any },
+  current: { [key: string]: number | string },
+  velocity: { [key: string]: number | false }
+) => Pose;

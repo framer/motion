@@ -2,6 +2,7 @@ import { useRef, useEffect, MutableRefObject } from 'react';
 import { invariant } from 'hey-listen';
 import getTransition from '../utils/transitions';
 import { poseToArray } from '../utils/pose-resolvers';
+import { resolveCurrent, resolveVelocity } from '../utils/resolve-values';
 import { MotionValue } from '../motion-value';
 import { PoseConfig, MotionProps, PoseResolver, Pose } from '../motion/types';
 
@@ -20,7 +21,11 @@ const createPoseResolver = (
 
     const pose: Pose =
       typeof config[poseKey] === 'function'
-        ? (config[poseKey] as PoseResolver)(props)
+        ? (config[poseKey] as PoseResolver)(
+            props,
+            resolveCurrent(values),
+            resolveVelocity(values)
+          )
         : (config[poseKey] as Pose);
 
     const { transition, ...thisPose } = pose;

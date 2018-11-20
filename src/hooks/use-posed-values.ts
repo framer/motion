@@ -37,7 +37,7 @@ export default (
     if (!poseDef) return;
 
     const initialPose =
-      typeof poseDef === 'function' ? poseDef(props) : poseDef;
+      typeof poseDef === 'function' ? poseDef(props, {}, {}) : poseDef;
 
     // We'll need to filter out options like staggerChildren etc
     Object.keys(initialPose).forEach(valueKey => {

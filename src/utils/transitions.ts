@@ -1,5 +1,5 @@
 import { tween, spring, keyframes, decay, physics, easing } from 'popmotion';
-import { Transition, TransitionMap, Tween } from '../motion/types';
+import { Transition, TransitionMap, Tween, Keyframes } from '../motion/types';
 import { invariant } from 'hey-listen';
 
 const transitions = { tween, spring, keyframes, decay, physics };
@@ -39,7 +39,7 @@ const easingLookup: { [key: string]: (num: number) => number } = {
 };
 
 const transitionOptionParser = {
-  tween: (opts: Tween) => {
+  tween: (opts: Tween): Tween => {
     const { ease } = opts;
 
     if (Array.isArray(ease)) {
@@ -59,7 +59,10 @@ const transitionOptionParser = {
       );
       opts.ease = easingLookup[ease];
     }
-  }
+
+    return opts;
+  },
+  keyframes: ({ from, to, ...opts }: Keyframes) => opts
 };
 
 const preprocessOptions = (
