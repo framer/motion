@@ -41,9 +41,12 @@ export class MotionValue {
   transformer?: Transformer;
 
   // A reference to the currently-controlling animation
-  controller: ColdSubscription;
+  controller?: ColdSubscription;
 
-  constructor(init: ValuePrimitive, { onRender, transformer, parent }: Config) {
+  constructor(
+    init: ValuePrimitive,
+    { onRender, transformer, parent }: Config = {}
+  ) {
     this.parent = parent;
     this.transformer = transformer;
     if (onRender) this.setOnRender(onRender);
@@ -142,7 +145,7 @@ export class MotionValue {
   }
 
   stop() {
-    this.controller && this.controller.stop();
+    if (this.controller) this.controller.stop();
   }
 
   destroy() {

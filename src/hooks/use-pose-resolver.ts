@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, MutableRefObject } from 'react';
 import { invariant } from 'hey-listen';
 import { tween, spring, keyframes, decay, physics } from 'popmotion';
 import { poseToArray } from '../utils/pose-resolvers';
@@ -12,6 +12,8 @@ import {
   TransitionMap
 } from '../motion/types';
 
+type PoseSubscriber = (v: string | string[]) => void;
+
 const transitions = { tween, spring, keyframes, decay, physics };
 
 const defaultTransition = {
@@ -22,8 +24,8 @@ const defaultTransition = {
 
 const getTransition = (
   valueKey: string,
-  transition: Transition,
-  to: string | number
+  to: string | number,
+  transition?: Transition
 ) => {
   const transitionDefinition = transition
     ? transition[valueKey] ||
@@ -68,9 +70,9 @@ const createPoseResolver = (
         'Value not found. Ensure all animated values are created on component mount.' // Maybe create this value on the fly instead?
       );
 
-      const [action, opts] = getTransition(valueKey, transition, target);
+      const [action, opts] = getTransition(valueKey, target, transition);
 
-      value.control(action, opts);
+      value && value.control(action, opts);
     });
   });
 };
@@ -80,7 +82,7 @@ const usePoseResolver = (
   config: MotionConfig,
   props: MotionProps
 ) => {
-  const poseSubscriber = useRef(null);
+  const poseSubscriber: MutableRefObject<null | PoseSubscriber> = useRef(null);
   const { pose } = props;
   const poseIsSubscription = pose instanceof MotionValue;
   const poseResolver = createPoseResolver(values, config, props);
@@ -102,7 +104,9 @@ const usePoseResolver = (
     (pose as MotionValue).addSubscriber(poseSubscriber.current);
 
     return () => {
-      (pose as MotionValue).removeSubscriber(poseSubscriber.current);
+      if (poseSubscriber.current) {
+        (pose as MotionValue).removeSubscriber(poseSubscriber.current);
+      }
     };
   });
 };

@@ -35,7 +35,7 @@ export type Physics = {};
 
 export type Transition = Tween | Spring | Decay | Keyframes | Physics;
 
-export type TransitionMap = { default?: Transition; [key: string]: Transition };
+export type TransitionMap = { [key: string]: Transition };
 
 export type TransitionDefinition = Transition | TransitionMap;
 

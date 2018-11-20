@@ -1,8 +1,9 @@
 import * as React from 'react';
+import { motion } from '@framer';
+import { Box } from '../styled';
 
-export class App extends React.Component {
-  // I've had to return `any` here, I thought this was usually inferred?
-  render(): any {
-    return null;
-  }
-}
+const MotionBox = motion(Box)();
+
+export const App = () => {
+  return <MotionBox />;
+};

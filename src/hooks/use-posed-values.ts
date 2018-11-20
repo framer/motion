@@ -48,6 +48,8 @@ export default (
 
   // 3. Bind stylers when ref is ready
   useEffect(() => {
+    if (!ref.current) return;
+
     const domStyler = styler(ref.current);
 
     values.forEach((value, key) => {

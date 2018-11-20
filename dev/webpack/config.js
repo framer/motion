@@ -27,4 +27,5 @@ config.devServer = {
   stats: 'errors-only',
   port: DEV_SERVER_PORT
 };
+
 Object.assign(exports, config);

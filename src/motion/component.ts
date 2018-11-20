@@ -17,7 +17,7 @@ import useStyleAttr from '../hooks/use-style-attr';
 
 const createMotionComponent = (
   Component: string | ComponentType
-): ComponentFactory => motionConfig => {
+): ComponentFactory => (motionConfig = {}) => {
   const MotionComponent = forwardRef(
     (props: MotionProps, externalRef?: Ref<Element>) => {
       const ref = useExternalRef(externalRef);
