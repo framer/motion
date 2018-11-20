@@ -1,3 +1,6 @@
 /node_modules
 /.cache-loader
 .DS_Store
+/dist
+/lib
+/tmp

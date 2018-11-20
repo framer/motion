@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "target": "es2015",
-        "module": "commonjs",
+        "target": "es5",
+        "module": "ESNext",
         "moduleResolution": "node",
         "isolatedModules": false,
         "jsx": "react",
@@ -25,7 +25,8 @@
         "noImplicitUseStrict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "removeComments": true
+        "removeComments": true,
+        "lib": ["es5", "es6", "dom"],
     },
     "compileOnSave": false,
     "buildOnSave": false,
