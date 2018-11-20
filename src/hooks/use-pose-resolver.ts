@@ -1,47 +1,15 @@
 import { useRef, useEffect, MutableRefObject } from 'react';
 import { invariant } from 'hey-listen';
-import { tween, spring, keyframes, decay, physics } from 'popmotion';
+import getTransition from '../utils/transitions';
 import { poseToArray } from '../utils/pose-resolvers';
 import { MotionValue } from '../motion-value';
-import {
-  MotionConfig,
-  MotionProps,
-  PoseResolver,
-  Pose,
-  Transition,
-  TransitionMap
-} from '../motion/types';
+import { PoseConfig, MotionProps, PoseResolver, Pose } from '../motion/types';
 
 type PoseSubscriber = (v: string | string[]) => void;
 
-const transitions = { tween, spring, keyframes, decay, physics };
-
-const defaultTransition = {
-  type: 'spring',
-  stiffness: 800,
-  damping: 15
-};
-
-const getTransition = (
-  valueKey: string,
-  to: string | number,
-  transition?: Transition
-) => {
-  const transitionDefinition = transition
-    ? transition[valueKey] ||
-      (transition as TransitionMap).default ||
-      transition
-    : defaultTransition;
-
-  const action = transitions[transitionDefinition.type || 'tween'];
-  const opts = { ...transitionDefinition, to };
-
-  return [action, opts];
-};
-
 const createPoseResolver = (
   values: Map<string, MotionValue>,
-  config: MotionConfig,
+  config: PoseConfig,
   props: MotionProps
 ) => (poseList: string[]) => {
   poseList.forEach(poseKey => {
@@ -79,7 +47,7 @@ const createPoseResolver = (
 
 const usePoseResolver = (
   values: Map<string, MotionValue>,
-  config: MotionConfig,
+  config: PoseConfig,
   props: MotionProps
 ) => {
   const poseSubscriber: MutableRefObject<null | PoseSubscriber> = useRef(null);

@@ -4,7 +4,6 @@ import {
   createElement,
   Ref,
   ComponentType,
-  createRef,
   HTMLProps,
   SVGProps
 } from 'react';
@@ -17,11 +16,11 @@ import useStyleAttr from '../hooks/use-style-attr';
 
 const createMotionComponent = (
   Component: string | ComponentType
-): ComponentFactory => (motionConfig = {}) => {
+): ComponentFactory => (PoseConfig = {}) => {
   const MotionComponent = forwardRef(
     (props: MotionProps, externalRef?: Ref<Element>) => {
       const ref = useExternalRef(externalRef);
-      const config = useConfig(motionConfig, props);
+      const config = useConfig(PoseConfig, props);
 
       // Create motion values
       const [values, componentProps] = usePosedValues(config, props, ref);
@@ -32,7 +31,7 @@ const createMotionComponent = (
       return createElement<HTMLProps<any> | SVGProps<any> & MotionProps>(
         Component,
         {
-          ref: createRef(),
+          ref,
           ...componentProps,
           style: useStyleAttr(values, props.style)
         }

@@ -1,11 +1,12 @@
 import motionValue, { MotionValue } from '../motion-value';
 import { resolvePoses } from '../utils/pose-resolvers';
-import { MotionConfig, MotionProps } from '../motion/types';
+import { PoseConfig, MotionProps } from '../motion/types';
 import { useRef, useEffect, RefObject } from 'react';
 import styler from 'stylefire';
+import { invariant } from 'hey-listen';
 
 export default (
-  config: MotionConfig,
+  config: PoseConfig,
   props: MotionProps,
   ref: RefObject<Element>
 ): [Map<string, MotionValue>, Partial<MotionProps>] => {
@@ -48,6 +49,11 @@ export default (
 
   // 3. Bind stylers when ref is ready
   useEffect(() => {
+    invariant(
+      ref.current !== null,
+      'No DOM reference found. Ensure custom components use `forwardRef` to forward the `ref` property to the host DOM component.'
+    );
+
     if (!ref.current) return;
 
     const domStyler = styler(ref.current);

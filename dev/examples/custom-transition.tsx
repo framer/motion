@@ -4,8 +4,12 @@ import { Box } from '../styled';
 import useInterval from '../inc/use-interval';
 
 const MotionBox = motion(Box)({
-  ping: { x: 100 },
-  pong: { x: -100 }
+  ping: {
+    x: 100,
+    y: '0vh',
+    transition: { duration: 23000 }
+  },
+  pong: { x: -100, y: '20vh' }
 });
 
 export const App = () => {

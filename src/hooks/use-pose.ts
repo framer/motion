@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
-import motionValue from '../motion-value';
-import { poseToArray } from '../utils/pose-resolvers';
+import motionValue, { MotionValue } from '../motion-value';
+
+type PoseSetter = (pose: string | string[]) => void;
 
 const usePose = (initPose = 'default') => {
-  return useMemo(() => {
-    const pose = motionValue(initPose, {
-      transformer: (v: string | string[]) => poseToArray(v)
-    });
+  return useMemo((): [MotionValue, PoseSetter] => {
+    const pose = motionValue(initPose);
 
-    const setPose = (newPose: string | string[]) => pose.set(newPose);
+    const setPose: PoseSetter = newPose => pose.set(newPose);
 
     return [pose, setPose];
   }, []);

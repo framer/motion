@@ -6,3 +6,4 @@
 ## Features
 - Coordination across children (ie `staggerChildren`)
 - Gestures
+- `setPose.cycle`

@@ -7,10 +7,8 @@ export default (
   styles?: CSSProperties
 ): CSSProperties =>
   useMemo(() => {
-    const resolvedValues = Object.keys(values).reduce((acc, key) => {
-      acc[key] = values[key].get();
-      return acc;
-    }, {});
+    const resolvedValues = {};
+    values.forEach((value, key) => (resolvedValues[key] = value.get()));
 
     return {
       ...styles,
