@@ -14,14 +14,14 @@ import {
   Tween,
   Keyframes,
   EasingFunction,
-  TransitionMap,
-  Just
+  TransitionMap
 } from '../motion/types';
 import getDefaultTransition from './default-transitions';
 import { invariant } from 'hey-listen';
+import { ActionFactory } from '../motion-value';
 
 type JustProps = { to: string | number };
-const just = ({ to }: JustProps): Action =>
+const just: ActionFactory = ({ to }: JustProps): Action =>
   action(({ update, complete }) => {
     update(to);
     complete();
@@ -112,14 +112,14 @@ export default (
   valueKey: string,
   to: string | number,
   transition?: TransitionProp
-) => {
+): [ActionFactory, Transition] => {
   const { type = 'tween', ...transitionDefinition } = getTransition(
     valueKey,
     to,
     transition
   );
 
-  const action = transitions[type];
+  const action: ActionFactory = transitions[type];
   const opts: Transition = preprocessOptions(type, transitionDefinition);
 
   return [action, opts];
