@@ -4,6 +4,7 @@
 - Add Rollup for production bundle generation (will save multiple kb)
 
 ## Features
+- `false` for `transition` support.
 - Fix prop types on `motion`
 - Add intelligent defaults
 - Add velocity tracking

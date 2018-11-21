@@ -25,7 +25,7 @@ const createMotionComponent = (
       // Create motion values
       const [values, componentProps] = usePosedValues(config, props, ref);
 
-      usePoseResolver(values, config, props);
+      usePoseResolver(values, config, props, ref);
 
       // Types here are a bit of a hack
       return createElement<HTMLProps<any> | SVGProps<any> & MotionProps>(

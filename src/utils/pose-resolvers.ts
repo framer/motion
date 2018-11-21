@@ -5,7 +5,7 @@ type PoseName = string | PoseNameList;
 type UnresolvedPose = PoseName | MotionValue;
 
 export const poseToArray = (pose?: PoseName): PoseNameList =>
-  Array.isArray(pose) ? [...pose].reverse() : pose ? [pose] : [];
+  Array.isArray(pose) ? [...pose] : pose ? [pose] : [];
 
 export const resolvePoses = (pose: UnresolvedPose): PoseNameList => {
   const unresolvedPose =

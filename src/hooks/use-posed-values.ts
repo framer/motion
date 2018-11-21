@@ -1,23 +1,22 @@
-import motionValue, { MotionValue } from '../motion-value';
+import { MotionValue } from '../motion-value';
 import { resolvePoses } from '../utils/pose-resolvers';
-import { PoseConfig, MotionProps } from '../motion/types';
+import { PoseConfig, MotionProps, MotionValueMap } from '../motion/types';
 import { useRef, useEffect, RefObject } from 'react';
-import styler from 'stylefire';
-import { invariant } from 'hey-listen';
+import { createValuesFromPose, bindValuesToRef } from '../utils/create-value';
 
 export default (
   config: PoseConfig,
   props: MotionProps,
   ref: RefObject<Element>
-): [Map<string, MotionValue>, Partial<MotionProps>] => {
-  const values = useRef(new Map()).current;
+): [MotionValueMap, Partial<MotionProps>] => {
+  const values: MotionValueMap = useRef(new Map()).current;
   const returnedProps = {};
 
   // In this function we want to find the right approach to ensure
   // we successfully remove MotionValues from the returned props
   // in a performant way over subsequent renders.
 
-  // 1. Bind stylers to provided motion values via props
+  // 1. Add provided motion values via props to value map
   Object.keys(props).forEach(key => {
     const prop = props[key];
 
@@ -36,31 +35,15 @@ export default (
     const poseDef = config[poseKey];
     if (!poseDef) return;
 
-    const initialPose =
+    const pose =
       typeof poseDef === 'function' ? poseDef(props, {}, {}) : poseDef;
 
-    // We'll need to filter out options like staggerChildren etc
-    Object.keys(initialPose).forEach(valueKey => {
-      if (!values.has(valueKey)) {
-        values.set(valueKey, motionValue(initialPose[valueKey]));
-      }
-    });
+    createValuesFromPose(values, pose);
   });
 
   // 3. Bind stylers when ref is ready
   useEffect(() => {
-    invariant(
-      ref.current !== null,
-      'No DOM reference found. Ensure custom components use `forwardRef` to forward the `ref` property to the host DOM component.'
-    );
-
-    if (!ref.current) return;
-
-    const domStyler = styler(ref.current);
-
-    values.forEach((value, key) => {
-      value.setOnRender((v: any) => domStyler.set(key, v));
-    });
+    bindValuesToRef(values, ref);
 
     return () => values.forEach(value => value.destroy());
   }, []);

@@ -1,19 +1,33 @@
-import { useRef, useEffect, MutableRefObject } from 'react';
+import { useRef, useEffect, MutableRefObject, RefObject } from 'react';
 import { invariant } from 'hey-listen';
 import getTransition from '../utils/transitions';
 import { poseToArray } from '../utils/pose-resolvers';
 import { resolveCurrent, resolveVelocity } from '../utils/resolve-values';
 import { MotionValue } from '../motion-value';
-import { PoseConfig, MotionProps, PoseResolver, Pose } from '../motion/types';
+import { createValuesFromPose, bindValuesToRef } from '../utils/create-value';
+import {
+  PoseConfig,
+  MotionProps,
+  PoseResolver,
+  Pose,
+  MotionValueMap
+} from '../motion/types';
+import { complex } from 'style-value-types';
 
 type PoseSubscriber = (v: string | string[]) => void;
 
+const isAnimatable = (value: string | number) =>
+  typeof value === 'number' || complex.test(value);
+
 const createPoseResolver = (
-  values: Map<string, MotionValue>,
+  values: MotionValueMap,
   config: PoseConfig,
-  props: MotionProps
+  { onTransitionEnd, props }: MotionProps,
+  ref: RefObject<Element>
 ) => (poseList: string[]) => {
-  poseList.forEach(poseKey => {
+  const poseTransitions: Promise<any>[] = [];
+
+  poseList.reverse().forEach(poseKey => {
     invariant(
       config[poseKey] !== undefined,
       `Pose with name ${poseKey} not found.`
@@ -28,37 +42,62 @@ const createPoseResolver = (
           )
         : (config[poseKey] as Pose);
 
-    const { transition, ...thisPose } = pose;
+    const { transition, transitionEnd, ...thisPose } = pose;
 
-    // TODO: Check to see if `transition` exists and generate default
-    // based on keys being animated if not
+    const valueTransitions: Promise<any>[] = [];
 
-    // Filter pose options like stagger children here
     Object.keys(thisPose).forEach(valueKey => {
-      const value = values.get(valueKey);
       const target = thisPose[valueKey];
 
-      invariant(
-        value !== undefined,
-        'Value not found. Ensure all animated values are created on component mount.' // Maybe create this value on the fly instead?
-      );
+      // If this value doesn't exist in the value map, create it
+      if (!values.has(valueKey)) {
+        createValuesFromPose(values, pose);
+        bindValuesToRef(values, ref);
+      }
 
-      const [action, opts] = getTransition(valueKey, target, transition);
+      const value: MotionValue = values.get(valueKey) as MotionValue;
 
-      value && value.control(action, opts);
+      if (isAnimatable(target)) {
+        // If we can animate this value, for instance 100, '100px' or '#fff'
+        const [action, opts] = getTransition(valueKey, target, transition);
+
+        if (value) {
+          valueTransitions.push(value.control(action, opts));
+        }
+      } else {
+        // If this is not an animatable value, for instance `display: block`, just set it.
+        value.set(target);
+      }
     });
+
+    poseTransitions.push(
+      Promise.all(valueTransitions).then(() => {
+        if (!transitionEnd) return;
+
+        Object.keys(transitionEnd).forEach(valueKey => {
+          if (values.has(valueKey)) {
+            (values.get(valueKey) as MotionValue).set(transitionEnd[valueKey]);
+          }
+        });
+      })
+    );
+  });
+
+  Promise.all(poseTransitions).then(() => {
+    onTransitionEnd && onTransitionEnd();
   });
 };
 
 const usePoseResolver = (
   values: Map<string, MotionValue>,
   config: PoseConfig,
-  props: MotionProps
+  props: MotionProps,
+  ref: RefObject<Element>
 ) => {
   const poseSubscriber: MutableRefObject<null | PoseSubscriber> = useRef(null);
   const { pose } = props;
   const poseIsSubscription = pose instanceof MotionValue;
-  const poseResolver = createPoseResolver(values, config, props);
+  const poseResolver = createPoseResolver(values, config, props, ref);
 
   // If we're controlled by props, fire resolver with latest pose
   const poseList = !poseIsSubscription

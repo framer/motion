@@ -1,5 +1,6 @@
-import sync from 'framesync';
+import sync, { getFrameData, FrameData } from 'framesync';
 import { Action, ColdSubscription } from 'popmotion';
+import { velocityPerSecond } from '@popmotion/popcorn';
 
 export type ValuePrimitive = any;
 
@@ -19,29 +20,34 @@ export type ActionFactory = (actionConfig: ActionConfig) => Action;
 
 export class MotionValue {
   // Current state
-  current: ValuePrimitive;
+  private current: ValuePrimitive;
 
   // Previous state
-  prev: ValuePrimitive;
+  private prev: ValuePrimitive;
+
+  private timeDelta: number = 0;
+  private lastUpdated: number = 0;
 
   // Children get updated onUpdate
-  children: Set<MotionValue>;
+  private children: Set<MotionValue>;
 
   // A reference to the value's parent - currently used for unregistering as a child,
   // but maybe it'd be better for this to be just a disconnect function
-  parent?: MotionValue;
+  private parent?: MotionValue;
 
   // onRender is fired on render step after update
-  onRender: Subscriber | null;
+  private onRender: Subscriber | null;
 
   // Fired
-  subscribers: Set<Subscriber>;
+  private subscribers: Set<Subscriber>;
 
   // If set, will pass `set` values through this function first
-  transformer?: Transformer;
+  private transformer?: Transformer;
 
   // A reference to the currently-controlling animation
-  controller?: ColdSubscription;
+  private controller?: ColdSubscription;
+
+  private canTrackVelocity = false;
 
   constructor(
     init: ValuePrimitive,
@@ -51,6 +57,7 @@ export class MotionValue {
     this.transformer = transformer;
     if (onRender) this.setOnRender(onRender);
     this.set(init);
+    this.canTrackVelocity = !isNaN(parseFloat(this.current));
   }
 
   addChild(config: Config) {
@@ -101,7 +108,21 @@ export class MotionValue {
     if (this.onRender) {
       sync.render(this.render);
     }
+
+    // Update timestamp
+    const { delta, timestamp } = getFrameData();
+    this.timeDelta = delta;
+    this.lastUpdated = timestamp;
+    sync.postRender(this.scheduleVelocityCheck);
   }
+
+  scheduleVelocityCheck = () => sync.postRender(this.velocityCheck);
+
+  velocityCheck = ({ timestamp }: FrameData) => {
+    if (timestamp !== this.lastUpdated) {
+      this.prev = this.current;
+    }
+  };
 
   notifySubscribers = () => this.subscribers.forEach(this.setSubscriber);
   setSubscriber = (sub: Subscriber) => sub(this.current);
@@ -112,7 +133,12 @@ export class MotionValue {
   }
 
   getVelocity() {
-    return 0;
+    return this.canTrackVelocity
+      ? velocityPerSecond(
+          parseFloat(this.prev) - parseFloat(this.current),
+          this.timeDelta
+        )
+      : 0;
   }
 
   render = () => {
@@ -152,6 +178,10 @@ export class MotionValue {
     this.setOnRender(null);
     this.parent && this.parent.removeChild(this);
     this.stop();
+  }
+
+  hasOnRender() {
+    return !!this.onRender;
   }
 }
 

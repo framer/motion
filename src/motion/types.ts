@@ -21,6 +21,7 @@ export type MotionProps = {
   ref: RefObject<Element>;
   pose: string | string[] | MotionValue;
   style: CSSProperties;
+  onTransitionEnd?: () => void;
 };
 
 export type EasingFunction = (v: number) => number;
@@ -46,6 +47,12 @@ export type BaseTransition = {
   from?: number | string;
   to?: number | string;
   velocity?: number;
+  delay?: number;
+  delayChildren?: number;
+  staggerDirection?: number;
+  staggerChildren?: number;
+  beforeChildren?: boolean;
+  afterChildren?: boolean;
 };
 
 export type Tween = BaseTransition & {
@@ -181,12 +188,23 @@ export type Pose = {
 
   // Options
   transition?: TransitionDefinition;
-  staggerDirection?: number;
-  staggerChildren?: number;
+  transitionEnd?: StyleProps | ResolveStyleProps;
 };
+
+export type ResolveStyleProps = (
+  current: CurrentValues,
+  velocity: VelocityValues
+) => StyleProps;
+
+export type StyleProps = { [key: string]: string | number };
+
+export type CurrentValues = { [key: string]: string | number };
+export type VelocityValues = { [key: string]: number };
 
 export type PoseResolver = (
   props: { [key: string]: any },
-  current: { [key: string]: number | string },
-  velocity: { [key: string]: number | false }
+  current: CurrentValues,
+  velocity: VelocityValues
 ) => Pose;
+
+export type MotionValueMap = Map<string, MotionValue>;
