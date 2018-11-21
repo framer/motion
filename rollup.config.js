@@ -19,7 +19,8 @@ const external = [
   'framesync',
   'stylefire',
   'hey-listen',
-  'popmotion'
+  'popmotion',
+  'style-value-types'
 ];
 
 const umd = Object.assign({}, config, {

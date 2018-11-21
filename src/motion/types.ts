@@ -44,15 +44,10 @@ export type Easing =
   | EasingFunction;
 
 export type BaseTransition = {
+  delay?: number;
   from?: number | string;
   to?: number | string;
   velocity?: number;
-  delay?: number;
-  delayChildren?: number;
-  staggerDirection?: number;
-  staggerChildren?: number;
-  beforeChildren?: boolean;
-  afterChildren?: boolean;
 };
 
 export type Tween = BaseTransition & {
@@ -101,7 +96,20 @@ export type Physics = BaseTransition & {
   restSpeed?: number | false;
 };
 
-export type Transition = Tween | Spring | Decay | Keyframes | Physics;
+export type Just = BaseTransition & {
+  type: 'just';
+};
+
+export type TransitionProp =
+  | Tween
+  | Spring
+  | Decay
+  | Keyframes
+  | Physics
+  | BaseTransition
+  | false;
+
+export type Transition = Tween | Spring | Decay | Keyframes | Physics | Just;
 
 export type TransitionMap = { [key: string]: Transition };
 

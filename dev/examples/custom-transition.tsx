@@ -8,7 +8,10 @@ const MotionBox = motion(Box)({
     x: 100,
     y: '0vh',
     opacity: 0,
-    transition: { duration: 300 },
+    transition: {
+      x: false,
+      default: { duration: 4000 }
+    },
     transitionEnd: { display: 'none' }
   },
   pong: {

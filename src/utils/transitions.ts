@@ -1,14 +1,33 @@
-import { tween, spring, keyframes, decay, physics, easing } from 'popmotion';
-import { Transition, TransitionMap, Tween, Keyframes } from '../motion/types';
+import {
+  action,
+  tween,
+  spring,
+  keyframes,
+  decay,
+  physics,
+  easing,
+  Action
+} from 'popmotion';
+import {
+  Transition,
+  TransitionProp,
+  Tween,
+  Keyframes,
+  EasingFunction,
+  TransitionMap,
+  Just
+} from '../motion/types';
+import getDefaultTransition from './default-transitions';
 import { invariant } from 'hey-listen';
 
-const transitions = { tween, spring, keyframes, decay, physics };
+type JustProps = { to: string | number };
+const just = ({ to }: JustProps): Action =>
+  action(({ update, complete }) => {
+    update(to);
+    complete();
+  });
 
-const defaultTransition = {
-  type: 'spring',
-  stiffness: 800,
-  damping: 15
-};
+const transitions = { tween, spring, keyframes, decay, physics, just };
 
 const {
   linear,
@@ -24,7 +43,7 @@ const {
   anticipate
 } = easing;
 
-const easingLookup: { [key: string]: (num: number) => number } = {
+const easingLookup: { [key: string]: EasingFunction } = {
   linear,
   easeIn,
   easeOut,
@@ -65,26 +84,43 @@ const transitionOptionParser = {
   keyframes: ({ from, to, ...opts }: Keyframes) => opts
 };
 
-const preprocessOptions = (
-  type: string,
-  opts: Partial<Transition>
-): Partial<Transition> =>
+const getTransition = (
+  valueKey: string,
+  to: string | number,
+  transitionProp?: TransitionProp
+): Transition => {
+  if (transitionProp !== undefined) {
+    let transition: Transition = {};
+
+    if (transitionProp === false || transitionProp[valueKey] === false) {
+      transition = { type: 'just' };
+    } else {
+      transition =
+        transitionProp[valueKey] || (transitionProp as TransitionMap).default;
+    }
+
+    return { ...transition, to };
+  }
+
+  return getDefaultTransition(valueKey, to);
+};
+
+const preprocessOptions = (type: string, opts: Transition): Transition =>
   transitionOptionParser[type] ? transitionOptionParser[type](opts) : opts;
 
 export default (
   valueKey: string,
   to: string | number,
-  transition?: Transition
+  transition?: TransitionProp
 ) => {
-  const transitionDefinition = transition
-    ? transition[valueKey] ||
-      (transition as TransitionMap).default ||
-      transition
-    : defaultTransition;
+  const { type = 'tween', ...transitionDefinition } = getTransition(
+    valueKey,
+    to,
+    transition
+  );
 
-  const type = transitionDefinition.type || 'tween';
   const action = transitions[type];
-  const opts = preprocessOptions(type, { ...transitionDefinition, to });
+  const opts: Transition = preprocessOptions(type, transitionDefinition);
 
   return [action, opts];
 };

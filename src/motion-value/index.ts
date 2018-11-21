@@ -1,5 +1,10 @@
 import sync, { getFrameData, FrameData } from 'framesync';
-import { Action, ColdSubscription } from 'popmotion';
+import {
+  chain,
+  delay as delayAction,
+  Action,
+  ColdSubscription
+} from 'popmotion';
 import { velocityPerSecond } from '@popmotion/popcorn';
 
 export type ValuePrimitive = any;
@@ -147,7 +152,7 @@ export class MotionValue {
 
   control(
     controller: ActionFactory,
-    config: ActionConfig,
+    { delay, ...config }: ActionConfig,
     transformer?: Transformer
   ) {
     this.stop();
@@ -160,6 +165,10 @@ export class MotionValue {
 
     if (transformer) {
       initialisedController = initialisedController.pipe(transformer);
+    }
+
+    if (delay) {
+      initialisedController = chain(delayAction(delay), initialisedController);
     }
 
     return new Promise(complete => {

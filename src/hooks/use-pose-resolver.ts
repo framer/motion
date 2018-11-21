@@ -83,7 +83,7 @@ const createPoseResolver = (
     );
   });
 
-  Promise.all(poseTransitions).then(() => {
+  return Promise.all(poseTransitions).then(() => {
     onTransitionEnd && onTransitionEnd();
   });
 };

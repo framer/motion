@@ -30,6 +30,8 @@ export const bindValuesToRef = (
   const domStyler = styler(ref.current);
 
   values.forEach((value, key) => {
-    if (!value.onRender) value.setOnRender((v: any) => domStyler.set(key, v));
+    if (!value.hasOnRender()) {
+      value.setOnRender((v: any) => domStyler.set(key, v));
+    }
   });
 };
