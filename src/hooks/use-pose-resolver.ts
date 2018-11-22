@@ -12,6 +12,7 @@ import {
   Pose,
   MotionValueMap
 } from '../motion/types';
+import useSubsequentRenderEffect from '../hooks/use-subsequent-render-effect';
 import { complex } from 'style-value-types';
 
 type PoseSubscriber = (v: string | string[]) => void;
@@ -22,7 +23,7 @@ const isAnimatable = (value: string | number) =>
 const createPoseResolver = (
   values: MotionValueMap,
   config: PoseConfig,
-  { onTransitionEnd, props }: MotionProps,
+  { onPoseComplete, props }: MotionProps,
   ref: RefObject<Element>
 ) => (poseList: string[]) => {
   const poseTransitions: Promise<any>[] = [];
@@ -84,7 +85,8 @@ const createPoseResolver = (
   });
 
   return Promise.all(poseTransitions).then(() => {
-    onTransitionEnd && onTransitionEnd();
+    onPoseComplete &&
+      onPoseComplete(resolveCurrent(values), resolveVelocity(values));
   });
 };
 
@@ -103,7 +105,8 @@ const usePoseResolver = (
   const poseList = !poseIsSubscription
     ? poseToArray(pose as string | string[])
     : [];
-  useEffect(() => {
+
+  useSubsequentRenderEffect(() => {
     if (!poseIsSubscription) poseResolver(poseList);
   }, poseList);
 

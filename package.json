@@ -29,12 +29,14 @@
     "fork-ts-checker-webpack-plugin": "^0.4.15",
     "husky": "^1.1.4",
     "jest": "^23.6.0",
+    "jest-dom": "^2.1.1",
     "lint-staged": "^8.0.4",
     "prettier": "^1.15.2",
     "progress-bar-webpack-plugin": "^1.11.0",
     "react": "^16.7.0-alpha.2",
     "react-dev-utils": "^6.1.1",
     "react-dom": "^16.7.0-alpha.2",
+    "react-testing-library": "^5.3.0",
     "rollup": "^0.67.3",
     "rollup-plugin-node-resolve": "^3.4.0",
     "rollup-plugin-replace": "^2.1.0",
@@ -74,7 +76,7 @@
   },
   "jest": {
     "preset": "ts-jest",
-    "testEnvironment": "node",
-    "rootDir": "src"
+    "rootDir": "src",
+    "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts"
   }
 }

@@ -1,14 +1,9 @@
 import { MotionValue } from '../motion-value';
-import { RefObject, CSSProperties, ComponentType } from 'react';
+import { CSSProperties, ComponentType, Ref } from 'react';
 
-export type ComponentFactory = (
+export type ComponentFactory<T> = (
   config?: PoseConfigFactory | PoseConfig
-) => ComponentType;
-
-export type Motion = {
-  (component: ComponentType): ComponentFactory;
-  [key: string]: ComponentFactory;
-};
+) => ComponentType<T>;
 
 export type PoseConfigFactory = (props: MotionProps) => PoseConfig;
 
@@ -18,10 +13,10 @@ export type PoseConfig = {
 
 export type MotionProps = {
   [key: string]: any;
-  ref: RefObject<Element>;
-  pose: string | string[] | MotionValue;
-  style: CSSProperties;
-  onTransitionEnd?: () => void;
+  ref?: Ref<any>;
+  pose?: string | string[] | MotionValue;
+  style?: CSSProperties;
+  onPoseComplete?: (current: CurrentValues, velocity: VelocityValues) => void;
 };
 
 export type EasingFunction = (v: number) => number;
@@ -111,9 +106,9 @@ export type TransitionProp =
 
 export type Transition = Tween | Spring | Decay | Keyframes | Physics | Just;
 
-export type TransitionMap = { [key: string]: Transition };
+export type TransitionMap = { [key: string]: TransitionProp };
 
-export type TransitionDefinition = Transition | TransitionMap;
+export type TransitionDefinition = TransitionProp | TransitionMap;
 
 // Framer Motion accepts any value, not just those listed below.
 // Add more here as found.
@@ -187,6 +182,7 @@ export type Pose = {
   stroke?: string;
 
   // Misc
+  background?: string;
   backgroundImage?: string;
 
   // SVG

@@ -8,12 +8,19 @@ type PoseSetter = {
 
 const usePose = (initPose: string | string[] = 'default', poses?: string[]) => {
   return useMemo((): [MotionValue, PoseSetter] => {
+    let i = 0;
+
     const pose = motionValue(initPose);
 
-    const setPose: PoseSetter = newPose => pose.set(newPose);
+    const setPose: PoseSetter = newPose => {
+      if (poses && typeof newPose === 'string') {
+        const poseIndex = poses.indexOf(newPose);
+        i = poseIndex > -1 ? poseIndex : i;
+      }
+      pose.set(newPose);
+    };
 
     // Add cycle functionality
-    let i = 0;
     setPose.cycle = () => {
       if (!poses) return;
 

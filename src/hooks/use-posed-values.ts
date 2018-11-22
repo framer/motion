@@ -6,7 +6,7 @@ import { createValuesFromPose, bindValuesToRef } from '../utils/create-value';
 
 export default (
   config: PoseConfig,
-  props: MotionProps,
+  { onPoseComplete, ...props }: MotionProps,
   ref: RefObject<Element>
 ): [MotionValueMap, Partial<MotionProps>] => {
   const values: MotionValueMap = useRef(new Map()).current;
@@ -22,7 +22,7 @@ export default (
 
     if (prop instanceof MotionValue) {
       values.set(key, prop);
-    } else {
+    } else if (key !== 'pose') {
       returnedProps[key] = prop;
     }
   });

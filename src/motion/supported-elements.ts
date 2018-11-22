@@ -1,4 +1,4 @@
-export default [
+export const htmlElements = [
   'a',
   'article',
   'aside',
@@ -68,8 +68,10 @@ export default [
   'tr',
   'ul',
   'video',
+  'svg'
+];
 
-  // SVG
+export const svgElements = [
   'circle',
   'clipPath',
   'defs',
@@ -86,7 +88,6 @@ export default [
   'radialGradient',
   'rect',
   'stop',
-  'svg',
   'text',
   'tspan'
 ];

@@ -6,12 +6,9 @@ import usePosedValues from '../hooks/use-posed-values';
 import usePoseResolver from '../hooks/use-pose-resolver';
 import useStyleAttr from '../hooks/use-style-attr';
 
-// TODO: tighten component type checking
-type Props = { [key: string]: any };
-
-const createMotionComponent = (
-  Component: string | ComponentType
-): ComponentFactory => (poseConfig = {}) => {
+const createMotionComponent = <P extends MotionProps>(
+  Component: string | ComponentType<P>
+): ComponentFactory<P> => (poseConfig = {}): ComponentType<P> => {
   const MotionComponent = (props: MotionProps, externalRef?: Ref<Element>) => {
     const ref = useExternalRef(externalRef);
     const config = useConfig(poseConfig, props);
@@ -21,7 +18,7 @@ const createMotionComponent = (
 
     usePoseResolver(values, config, props, ref);
 
-    return createElement<Props>(Component, {
+    return createElement<any>(Component, {
       ...componentProps,
       ref,
       style: useStyleAttr(values, props.style)
