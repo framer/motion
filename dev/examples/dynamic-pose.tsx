@@ -9,7 +9,9 @@ const MotionBox = motion(Box)({
         y: "0vh",
         transition: { duration: 100 },
     },
-    pong: ({ target }) => ({ x: target, y: "0vh" }),
+    pong: ({ targetValue }) => {
+        return { x: targetValue, y: "0vh" }
+    },
 })
 
 export const App = () => {
@@ -19,5 +21,5 @@ export const App = () => {
         setPose(pose.get() === "ping" ? "pong" : "ping")
     }, 1000)
 
-    return <MotionBox pose={pose} target={-100} />
+    return <MotionBox pose={pose} targetValue={-100} />
 }
