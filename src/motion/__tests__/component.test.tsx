@@ -22,31 +22,16 @@ import * as React from 'react';
 //   expect(getByTestId('child')).toBeTruthy();
 // });
 
-test('motion component accepts function ref', () => {
+test('motion component accepts function ref', async () => {
   const Box = motion.div();
 
-  return new Promise(resolve => {
-    const setRef = (ref: Element) => {
-      console.log(ref);
-      resolve();
-    };
-
-    const Container = () => {
-      return <Box ref={setRef} />;
-    };
-
-    render(<Container />);
-
-    // const Container = () => {
-    //   const setRef = (n?: Element) => {
-    //     console.log(n);
-    //     n ? resolve() : reject();
-    //   };
-    //   return <Box ref={setRef} />;
-    // };
-
-    // render(<Container />);
+  const promise = new Promise(resolve => {
+    const Component = () => <Box ref={resolve} />;
+    const { rerender } = render(<Component />);
+    rerender(<Component />);
   });
+
+  await expect(promise).resolves.toBeTruthy();
 });
 
 // test('motion component accepts createRef', () => {
