@@ -4,6 +4,8 @@ import { motionValue } from "../motion-value"
 import styler from "stylefire"
 import { invariant } from "hey-listen"
 
+const poseSpecialProps = new Set(["transition", "transitionEnd"])
+
 export const createValuesFromPose = (values: MotionValueMap, { transition, transitionEnd, ...pose }: Pose) => {
     const valuesToAdd = { ...pose, ...transitionEnd }
     Object.keys(valuesToAdd).forEach(valueKey => {
@@ -28,4 +30,13 @@ export const bindValuesToRef = (values: MotionValueMap, ref: RefObject<Element>)
             value.setOnRender((v: any) => domStyler.set(key, v))
         }
     })
+}
+
+export const checkForNewValues = (pose: Pose, values: MotionValueMap, ref: RefObject<Element>) => {
+    const newValueKeys = Object.keys(pose).filter(key => !poseSpecialProps.has(key) && !values.has(key))
+
+    if (newValueKeys.length) {
+        createValuesFromPose(values, pose)
+        bindValuesToRef(values, ref)
+    }
 }

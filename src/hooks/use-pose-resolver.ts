@@ -4,7 +4,7 @@ import { getTransition } from "../utils/transitions"
 import { poseToArray } from "../utils/pose-resolvers"
 import { resolveCurrent, resolveVelocity } from "../utils/resolve-values"
 import { MotionValue } from "../motion-value"
-import { createValuesFromPose, bindValuesToRef } from "../utils/create-value"
+import { checkForNewValues } from "../utils/create-value"
 import { PoseConfig, MotionProps, PoseResolver, Pose, MotionValueMap } from "../motion/types"
 import { useSubsequentRenderEffect } from "../hooks/use-subsequent-render-effect"
 import { transformPose } from "../dom/unit-type-conversion"
@@ -34,9 +34,13 @@ const createPoseResolver = (
                 ? poseDefinition(props, resolveCurrent(values), resolveVelocity(values))
                 : poseDefinition
 
+            checkForNewValues(pose, values, ref)
+
             // This feels like a good candidate to inject a transform function via
             // a `PluginContext`, or perhaps a factory function, that can take a pose,
             // maybe run side-effects (ie DOM measurement), and return a new one
+            // We may need a second `checkForNewValues` after this if we open it up in case
+            // new values are created.
             pose = transformPose(pose, values, ref)
 
             const { transition, transitionEnd, ...remainingPoseValues } = pose
@@ -49,12 +53,6 @@ const createPoseResolver = (
                 animating.add(valueKey)
 
                 const target = thisPose[valueKey]
-
-                // If this value doesn't exist in the value map, create it
-                if (!values.has(valueKey)) {
-                    createValuesFromPose(values, pose)
-                    bindValuesToRef(values, ref)
-                }
 
                 const value: MotionValue = values.get(valueKey) as MotionValue
 

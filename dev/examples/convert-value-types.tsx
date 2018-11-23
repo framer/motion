@@ -3,7 +3,7 @@ import { motion, usePose } from "@framer"
 import { Box } from "../styled"
 
 const MotionBox = motion(Box)({
-    b: { width: "auto", x: "50%" },
+    b: { width: "auto" },
     c: { width: "calc(50vw)", x: 0 },
     a: { width: 100, x: 100 },
 })
