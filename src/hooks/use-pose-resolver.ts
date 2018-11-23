@@ -16,7 +16,7 @@ const isAnimatable = (value: string | number) => typeof value === "number" || co
 const createPoseResolver = (
     values: MotionValueMap,
     config: PoseConfig,
-    { onPoseComplete, props }: MotionProps,
+    { onPoseComplete, ...props }: MotionProps,
     ref: RefObject<Element>
 ) => (poseList: string[]) => {
     const poseTransitions: Promise<any>[] = []
