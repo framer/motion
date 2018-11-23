@@ -2,6 +2,7 @@ import { fireEvent, render } from "react-testing-library"
 import motion from "../"
 import * as React from "react"
 import useMotionValue from "../../hooks/use-motion-value"
+import useTransform from "../../hooks/use-transform"
 import usePose from "../../hooks/use-pose"
 import styled from "styled-components"
 
@@ -226,5 +227,17 @@ test("setPose.cycle starts at the initially-defined pose", async () => {
     await expect(promise).resolves.toEqual(2)
 })
 
-// usePose setPose.cycle
-// useTransform
+test("useTransform", async () => {
+    const Box = motion.div()
+
+    const Component = () => {
+        const x = useMotionValue(75)
+        const y = useTransform(x, [0, 100], [200, 100])
+
+        return <Box x={x} y={y} />
+    }
+
+    const { container } = render(<Component />)
+
+    expect(container.firstChild).toHaveStyle("transform: translateX(75px) translateY(175px) translateZ(0)")
+})
