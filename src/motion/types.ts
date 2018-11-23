@@ -1,7 +1,7 @@
 import { MotionValue } from "../motion-value"
 import { CSSProperties, ComponentType, Ref } from "react"
 
-export type ComponentFactory<T> = (config?: PoseConfigFactory | PoseConfig) => ComponentType<T>
+export type ComponentFactory<T> = (config?: PoseConfigFactory | PoseConfig) => ComponentType<T & MotionProps>
 
 export type PoseConfigFactory = (props: MotionProps) => PoseConfig
 

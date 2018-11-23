@@ -4,7 +4,7 @@ import { htmlElements, svgElements } from "./supported-elements"
 import { ComponentFactory, MotionProps } from "./types"
 
 export type Motion = {
-    (component: ComponentType): ComponentFactory<(HTMLProps<any> | SVGProps<any>) & MotionProps>
+    (component: ComponentType): ComponentFactory<HTMLProps<any> | SVGProps<any>>
     [key: string]: ComponentFactory<(HTMLProps<any> | SVGProps<any>) & MotionProps>
 }
 
