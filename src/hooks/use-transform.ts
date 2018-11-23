@@ -2,7 +2,7 @@ import { useMemo, useRef, MutableRefObject } from "react"
 import { MotionValue } from "../motion-value"
 import { interpolate } from "@popmotion/popcorn"
 
-export default (value: MotionValue, from: number[], to: string[] | number[]) => {
+export const useTransform = (value: MotionValue, from: number[], to: string[] | number[]) => {
     const transformedValue: MutableRefObject<null | MotionValue> = useRef(null)
 
     return useMemo(

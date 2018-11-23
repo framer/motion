@@ -1,14 +1,14 @@
 import { memo, forwardRef, createElement, Ref, ComponentType } from "react"
 import { MotionProps, ComponentFactory } from "./types"
-import useConfig from "../hooks/use-config"
-import useExternalRef from "../hooks/use-external-ref"
-import usePosedValues from "../hooks/use-posed-values"
-import usePoseResolver from "../hooks/use-pose-resolver"
-import useStyleAttr from "../hooks/use-style-attr"
+import { useConfig } from "../hooks/use-config"
+import { useExternalRef } from "../hooks/use-external-ref"
+import { usePosedValues } from "../hooks/use-posed-values"
+import { usePoseResolver } from "../hooks/use-pose-resolver"
+import { useStyleAttr } from "../hooks/use-style-attr"
 
-const createMotionComponent = <P extends MotionProps>(Component: string | ComponentType<P>): ComponentFactory<P> => (
-    poseConfig = {}
-): ComponentType<P> => {
+export const createMotionComponent = <P extends MotionProps>(
+    Component: string | ComponentType<P>
+): ComponentFactory<P> => (poseConfig = {}): ComponentType<P> => {
     const MotionComponent = (props: MotionProps, externalRef?: Ref<Element>) => {
         const ref = useExternalRef(externalRef)
         const config = useConfig(poseConfig, props)
@@ -27,5 +27,3 @@ const createMotionComponent = <P extends MotionProps>(Component: string | Compon
 
     return memo(forwardRef(MotionComponent))
 }
-
-export default createMotionComponent

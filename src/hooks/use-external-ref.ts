@@ -1,6 +1,6 @@
 import { useEffect, useRef, Ref, MutableRefObject } from "react"
 
-const useExternalRef = (external?: Ref<Element | null>) => {
+export const useExternalRef = (external?: Ref<Element | null>) => {
     const ref = !external || typeof external === "function" ? useRef(null) : external
 
     useEffect(() => {
@@ -13,5 +13,3 @@ const useExternalRef = (external?: Ref<Element | null>) => {
 
     return ref
 }
-
-export default useExternalRef

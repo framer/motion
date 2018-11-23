@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react"
 
-const useSubsequentRenderEffect = (callback: () => void, conditions: any[]) => {
+export const useSubsequentRenderEffect = (callback: () => void, conditions: any[]) => {
     const isInitialRender = useRef(true)
 
     return useEffect(() => {
@@ -11,5 +11,3 @@ const useSubsequentRenderEffect = (callback: () => void, conditions: any[]) => {
         }
     }, conditions)
 }
-
-export default useSubsequentRenderEffect

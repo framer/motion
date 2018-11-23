@@ -179,4 +179,4 @@ export class MotionValue {
     }
 }
 
-export default (init: ValuePrimitive, opts?: Config) => new MotionValue(init, opts)
+export const motionValue = (init: ValuePrimitive, opts?: Config) => new MotionValue(init, opts)

@@ -1,6 +1,6 @@
 import { action, tween, spring, keyframes, decay, physics, easing, Action } from "popmotion"
 import { Transition, TransitionProp, Tween, Keyframes, EasingFunction, TransitionMap } from "../motion/types"
-import getDefaultTransition from "./default-transitions"
+import { getDefaultTransition } from "./default-transitions"
 import { invariant } from "hey-listen"
 import { ActionFactory } from "../motion-value"
 
@@ -62,7 +62,7 @@ const transitionOptionParser = {
     keyframes: ({ from, to, ...opts }: Keyframes) => opts,
 }
 
-const getTransition = (valueKey: string, to: string | number, transitionProp?: TransitionProp): Transition => {
+const getTransitionProps = (valueKey: string, to: string | number, transitionProp?: TransitionProp): Transition => {
     if (transitionProp !== undefined) {
         let transition: Transition = {}
 
@@ -81,11 +81,15 @@ const getTransition = (valueKey: string, to: string | number, transitionProp?: T
 const preprocessOptions = (type: string, opts: Transition): Transition =>
     transitionOptionParser[type] ? transitionOptionParser[type](opts) : opts
 
-export default (valueKey: string, to: string | number, transition?: TransitionProp): [ActionFactory, Transition] => {
-    const { type = "tween", ...transitionDefinition } = getTransition(valueKey, to, transition)
+export const getTransition = (
+    valueKey: string,
+    to: string | number,
+    transition?: TransitionProp
+): [ActionFactory, Transition] => {
+    const { type = "tween", ...transitionDefinition } = getTransitionProps(valueKey, to, transition)
 
-    const action: ActionFactory = transitions[type]
+    const actionFactory: ActionFactory = transitions[type]
     const opts: Transition = preprocessOptions(type, transitionDefinition)
 
-    return [action, opts]
+    return [actionFactory, opts]
 }

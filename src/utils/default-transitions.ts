@@ -36,7 +36,7 @@ const defaultTransitions = {
     default: overDampedSpring,
 }
 
-export default (valueKey: string, to: string | number): Transition => {
+export const getDefaultTransition = (valueKey: string, to: string | number): Transition => {
     const transitionFactory = defaultTransitions[valueKey] || defaultTransitions.default
     return { ...transitionFactory(to), to }
 }

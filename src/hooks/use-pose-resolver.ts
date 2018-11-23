@@ -1,12 +1,12 @@
 import { useRef, useEffect, MutableRefObject, RefObject } from "react"
 import { invariant } from "hey-listen"
-import getTransition from "../utils/transitions"
+import { getTransition } from "../utils/transitions"
 import { poseToArray } from "../utils/pose-resolvers"
 import { resolveCurrent, resolveVelocity } from "../utils/resolve-values"
 import { MotionValue } from "../motion-value"
 import { createValuesFromPose, bindValuesToRef } from "../utils/create-value"
 import { PoseConfig, MotionProps, PoseResolver, Pose, MotionValueMap } from "../motion/types"
-import useSubsequentRenderEffect from "../hooks/use-subsequent-render-effect"
+import { useSubsequentRenderEffect } from "../hooks/use-subsequent-render-effect"
 import { complex } from "style-value-types"
 
 type PoseSubscriber = (v: string | string[]) => void
@@ -75,7 +75,7 @@ const createPoseResolver = (
     })
 }
 
-const usePoseResolver = (
+export const usePoseResolver = (
     values: Map<string, MotionValue>,
     config: PoseConfig,
     props: MotionProps,
@@ -107,5 +107,3 @@ const usePoseResolver = (
         }
     })
 }
-
-export default usePoseResolver

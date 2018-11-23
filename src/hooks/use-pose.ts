@@ -1,12 +1,12 @@
 import { useMemo } from "react"
-import motionValue, { MotionValue } from "../motion-value"
+import { MotionValue, motionValue } from "../motion-value"
 
 type PoseSetter = {
     (pose: string | string[]): void
     cycle: () => void
 }
 
-const usePose = (initPose: string | string[] = "default", poses?: string[]) => {
+export const usePose = (initPose: string | string[] = "default", poses?: string[]) => {
     return useMemo((): [MotionValue, PoseSetter] => {
         let i = typeof initPose === "string" && poses ? poses.indexOf(initPose) : 0
 
@@ -33,5 +33,3 @@ const usePose = (initPose: string | string[] = "default", poses?: string[]) => {
         return [pose, setPose]
     }, poses || [])
 }
-
-export default usePose

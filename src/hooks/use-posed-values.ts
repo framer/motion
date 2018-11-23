@@ -4,7 +4,7 @@ import { PoseConfig, MotionProps, MotionValueMap } from "../motion/types"
 import { useRef, useEffect, RefObject } from "react"
 import { createValuesFromPose, bindValuesToRef } from "../utils/create-value"
 
-export default (
+export const usePosedValues = (
     config: PoseConfig,
     { onPoseComplete, ...props }: MotionProps,
     ref: RefObject<Element>
@@ -35,9 +35,9 @@ export default (
         const poseDef = config[poseKey]
         if (!poseDef) return
 
-        const pose = typeof poseDef === "function" ? poseDef(props, {}, {}) : poseDef
+        const currentPose = typeof poseDef === "function" ? poseDef(props, {}, {}) : poseDef
 
-        createValuesFromPose(values, pose)
+        createValuesFromPose(values, currentPose)
     })
 
     // 3. Bind stylers when ref is ready

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { motion } from "@framer"
 import { Box } from "../styled"
-import useInterval from "../inc/use-interval"
+import { useInterval } from "../inc/use-interval"
 
 const MotionBox = motion(Box)({
     a: { scale: 2 },

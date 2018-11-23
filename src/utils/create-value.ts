@@ -1,6 +1,6 @@
 import { RefObject } from "react"
 import { MotionValueMap, Pose } from "../motion/types"
-import motionValue from "../motion-value"
+import { motionValue } from "../motion-value"
 import styler from "stylefire"
 import { invariant } from "hey-listen"
 
