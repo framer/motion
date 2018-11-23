@@ -59,10 +59,6 @@
     "style-value-types": "^3.0.7",
     "stylefire": "^2.3.1"
   },
-  "prettier": {
-    "parser": "typescript",
-    "singleQuote": true
-  },
   "husky": {
     "hooks": {
       "pre-commit": "lint-staged"
@@ -70,7 +66,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "prettier --write --config .prettierrc.json",
+      "prettier --write",
       "git add"
     ]
   },
