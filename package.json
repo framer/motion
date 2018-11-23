@@ -70,7 +70,7 @@
   },
   "lint-staged": {
     "*.{ts,tsx}": [
-      "prettier --write",
+      "prettier --write --config .prettierrc.json",
       "git add"
     ]
   },
