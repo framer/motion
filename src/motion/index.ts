@@ -1,4 +1,4 @@
-import { ReactSVG, SVGAttributes, SVGProps, ComponentType, ReactHTML, DetailedHTMLFactory } from "react"
+import { SVGAttributes, ComponentType, ReactHTML, DetailedHTMLFactory } from "react"
 import { createMotionComponent } from "./component"
 import { htmlElements, svgElements, HTMLElements, SVGElements } from "./supported-elements"
 import { ComponentFactory } from "./types"
