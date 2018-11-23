@@ -103,7 +103,7 @@ export class MotionValue {
         }
 
         if (this.onRender) {
-            sync.render(this.render)
+            this.onRender(this.current)
         }
 
         // Update timestamp

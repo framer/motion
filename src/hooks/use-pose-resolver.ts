@@ -7,6 +7,7 @@ import { MotionValue } from "../motion-value"
 import { createValuesFromPose, bindValuesToRef } from "../utils/create-value"
 import { PoseConfig, MotionProps, PoseResolver, Pose, MotionValueMap } from "../motion/types"
 import { useSubsequentRenderEffect } from "../hooks/use-subsequent-render-effect"
+import { transformPose } from "../dom/unit-type-conversion"
 import { complex } from "style-value-types"
 
 type PoseSubscriber = (v: string | string[]) => void
@@ -29,9 +30,14 @@ const createPoseResolver = (
             invariant(config[poseKey] !== undefined, `Pose with name ${poseKey} not found.`)
 
             const poseDefinition = config[poseKey]
-            const pose: Pose = isPoseResolver(poseDefinition)
+            let pose: Pose = isPoseResolver(poseDefinition)
                 ? poseDefinition(props, resolveCurrent(values), resolveVelocity(values))
                 : poseDefinition
+
+            // This feels like a good candidate to inject a transform function via
+            // a `PluginContext`, or perhaps a factory function, that can take a pose,
+            // maybe run side-effects (ie DOM measurement), and return a new one
+            pose = transformPose(pose, values, ref)
 
             const { transition, transitionEnd, ...remainingPoseValues } = pose
             let thisPose = remainingPoseValues

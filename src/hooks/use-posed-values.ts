@@ -6,7 +6,7 @@ import { createValuesFromPose, bindValuesToRef } from "../utils/create-value"
 
 export const usePosedValues = (
     config: PoseConfig,
-    { onPoseComplete, ...props }: MotionProps,
+    { onPoseComplete, pose = "default", ...props }: MotionProps,
     ref: RefObject<Element>
 ): [MotionValueMap, Partial<MotionProps>] => {
     const values: MotionValueMap = useRef(new Map()).current
@@ -28,7 +28,6 @@ export const usePosedValues = (
     })
 
     // 2. Create values from poses
-    const { pose = "default" } = props
     const initialPoses = resolvePoses(pose)
 
     initialPoses.forEach(poseKey => {
