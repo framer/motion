@@ -41,6 +41,7 @@ export type BaseTransition = {
     from?: number | string
     to?: number | string
     velocity?: number
+    staggerChildren?: number
 }
 
 export type Tween = BaseTransition & {
