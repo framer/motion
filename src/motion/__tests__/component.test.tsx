@@ -1,9 +1,9 @@
 import { fireEvent, render } from "react-testing-library"
-import motion from "../"
+import { motion } from "../"
 import * as React from "react"
-import useMotionValue from "../../hooks/use-motion-value"
-import useTransform from "../../hooks/use-transform"
-import usePose from "../../hooks/use-pose"
+import { useMotionValue } from "../../hooks/use-motion-value"
+import { useTransform } from "../../hooks/use-transform"
+import { usePose } from "../../hooks/use-pose"
 import styled from "styled-components"
 
 /**
