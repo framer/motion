@@ -43,7 +43,6 @@ export const usePosedValues = (
     // 3. Bind stylers when ref is ready
     useEffect(() => {
         bindValuesToRef(values, ref)
-
         return () => values.forEach(value => value.destroy())
     }, [])
 

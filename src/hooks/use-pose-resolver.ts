@@ -13,66 +13,77 @@ type PoseSubscriber = (v: string | string[]) => void
 
 const isAnimatable = (value: string | number) => typeof value === "number" || complex.test(value)
 
+const isPoseResolver = (pose: Pose | PoseResolver): pose is PoseResolver => typeof pose === "function"
+
 const createPoseResolver = (
     values: MotionValueMap,
     config: PoseConfig,
     { onPoseComplete, ...props }: MotionProps,
     ref: RefObject<Element>
-) => (poseList: string[]) => {
-    const poseTransitions: Promise<any>[] = []
+) => {
+    const poseResolver = (poseList: string[]) => {
+        const poseTransitions: Promise<any>[] = []
+        const animating = new Set<string>()
 
-    poseList.reverse().forEach(poseKey => {
-        invariant(config[poseKey] !== undefined, `Pose with name ${poseKey} not found.`)
+        poseList.reverse().forEach(poseKey => {
+            invariant(config[poseKey] !== undefined, `Pose with name ${poseKey} not found.`)
 
-        const pose: Pose =
-            typeof config[poseKey] === "function"
-                ? (config[poseKey] as PoseResolver)(props, resolveCurrent(values), resolveVelocity(values))
-                : (config[poseKey] as Pose)
+            const poseDefinition = config[poseKey]
+            const pose: Pose = isPoseResolver(poseDefinition)
+                ? poseDefinition(props, resolveCurrent(values), resolveVelocity(values))
+                : poseDefinition
 
-        const { transition, transitionEnd, ...thisPose } = pose
+            const { transition, transitionEnd, ...remainingPoseValues } = pose
+            let thisPose = remainingPoseValues
 
-        const valueTransitions: Promise<any>[] = []
+            const valueTransitions: Promise<any>[] = []
 
-        Object.keys(thisPose).forEach(valueKey => {
-            const target = thisPose[valueKey]
+            Object.keys(thisPose).forEach(valueKey => {
+                if (animating.has(valueKey)) return
+                animating.add(valueKey)
 
-            // If this value doesn't exist in the value map, create it
-            if (!values.has(valueKey)) {
-                createValuesFromPose(values, pose)
-                bindValuesToRef(values, ref)
-            }
+                const target = thisPose[valueKey]
 
-            const value: MotionValue = values.get(valueKey) as MotionValue
-
-            if (isAnimatable(target)) {
-                // If we can animate this value, for instance 100, '100px' or '#fff'
-                const [action, opts] = getTransition(valueKey, target, transition)
-
-                if (value) {
-                    valueTransitions.push(value.control(action, opts))
+                // If this value doesn't exist in the value map, create it
+                if (!values.has(valueKey)) {
+                    createValuesFromPose(values, pose)
+                    bindValuesToRef(values, ref)
                 }
-            } else {
-                // If this is not an animatable value, for instance `display: block`, just set it.
-                value.set(target)
-            }
+
+                const value: MotionValue = values.get(valueKey) as MotionValue
+
+                if (isAnimatable(target)) {
+                    // If we can animate this value, for instance 100, '100px' or '#fff'
+                    const [action, opts] = getTransition(valueKey, target, transition)
+
+                    if (value) {
+                        valueTransitions.push(value.control(action, opts))
+                    }
+                } else {
+                    // If this is not an animatable value, for instance `display: block`, just set it.
+                    value.set(target)
+                }
+            })
+
+            poseTransitions.push(
+                Promise.all(valueTransitions).then(() => {
+                    if (!transitionEnd) return
+
+                    Object.keys(transitionEnd).forEach(valueKey => {
+                        if (values.has(valueKey)) {
+                            ;(values.get(valueKey) as MotionValue).set(transitionEnd[valueKey])
+                        }
+                    })
+                })
+            )
         })
 
-        poseTransitions.push(
-            Promise.all(valueTransitions).then(() => {
-                if (!transitionEnd) return
+        return Promise.all(poseTransitions).then(() => {
+            onPoseComplete && onPoseComplete(resolveCurrent(values), resolveVelocity(values))
+        })
+    }
 
-                Object.keys(transitionEnd).forEach(valueKey => {
-                    if (values.has(valueKey)) {
-                        ;(values.get(valueKey) as MotionValue).set(transitionEnd[valueKey])
-                    }
-                })
-            })
-        )
-    })
-
-    return Promise.all(poseTransitions).then(() => {
-        onPoseComplete && onPoseComplete(resolveCurrent(values), resolveVelocity(values))
-    })
+    return poseResolver
 }
 
 export const usePoseResolver = (
