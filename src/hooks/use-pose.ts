@@ -8,7 +8,7 @@ type PoseSetter = {
 
 const usePose = (initPose: string | string[] = "default", poses?: string[]) => {
     return useMemo((): [MotionValue, PoseSetter] => {
-        let i = 0
+        let i = typeof initPose === "string" && poses ? poses.indexOf(initPose) : 0
 
         const pose = motionValue(initPose)
 
