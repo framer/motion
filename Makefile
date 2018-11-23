@@ -22,4 +22,7 @@ dev: bootstrap
 lint: bootstrap
 	tslint --project tsconfig.json
 
+test: bootstrap
+	yarn test
+
 .PHONY: dev lint
