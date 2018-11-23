@@ -6,7 +6,7 @@ import { usePosedValues } from "../hooks/use-posed-values"
 import { usePoseResolver } from "../hooks/use-pose-resolver"
 import { useStyleAttr } from "../hooks/use-style-attr"
 
-export const createMotionComponent = <P>(Component: string | ComponentType<P>): ComponentFactory<P> => {
+export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>): ComponentFactory<P> => {
     return (poseConfig = {}): NamedExoticComponent<P & MotionProps> => {
         {
             const MotionComponent = (props: P & MotionProps, externalRef?: Ref<Element>) => {

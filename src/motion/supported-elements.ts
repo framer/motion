@@ -1,4 +1,10 @@
-export const htmlElements = [
+/**
+ * This is the identity function that helps TypeScript understand the type of the provided array
+ */
+const tuple = <T extends string>(args: T[]) => args
+type UnionStringArray<T extends string[]> = T[number]
+
+export const htmlElements = tuple([
     "a",
     "article",
     "aside",
@@ -69,9 +75,9 @@ export const htmlElements = [
     "ul",
     "video",
     "svg",
-]
+])
 
-export const svgElements = [
+export const svgElements = tuple([
     "circle",
     "clipPath",
     "defs",
@@ -90,4 +96,6 @@ export const svgElements = [
     "stop",
     "text",
     "tspan",
-]
+])
+export type HTMLElements = UnionStringArray<typeof htmlElements>
+export type SVGElements = UnionStringArray<typeof svgElements>
