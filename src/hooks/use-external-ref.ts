@@ -1,18 +1,17 @@
-import { useEffect, useRef, Ref, MutableRefObject } from 'react';
+import { useEffect, useRef, Ref, MutableRefObject } from "react"
 
 const useExternalRef = (external?: Ref<Element | null>) => {
-  const ref =
-    !external || typeof external === 'function' ? useRef(null) : external;
+    const ref = !external || typeof external === "function" ? useRef(null) : external
 
-  useEffect(() => {
-    if (external && typeof external === 'function') {
-      external((ref as MutableRefObject<Element | null>).current);
+    useEffect(() => {
+        if (external && typeof external === "function") {
+            external((ref as MutableRefObject<Element | null>).current)
 
-      return () => external(null);
-    }
-  });
+            return () => external(null)
+        }
+    })
 
-  return ref;
-};
+    return ref
+}
 
-export default useExternalRef;
+export default useExternalRef
