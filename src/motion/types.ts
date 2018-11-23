@@ -1,7 +1,13 @@
 import { MotionValue } from "../motion-value"
 import { CSSProperties, ComponentType, Ref } from "react"
 
-export type ComponentFactory<T> = (config?: PoseConfigFactory | PoseConfig) => ComponentType<T & MotionProps>
+type PoseNames<Config extends PoseConfigFactory | PoseConfig> = Config extends PoseConfigFactory
+    ? keyof ReturnType<Config>
+    : keyof Config
+
+export type ComponentFactory<T> = <Config extends PoseConfigFactory | PoseConfig>(
+    config?: Config
+) => ComponentType<T & MotionProps<PoseNames<Config>>>
 
 export type PoseConfigFactory = (props: MotionProps) => PoseConfig
 
@@ -9,10 +15,10 @@ export type PoseConfig = {
     [key: string]: Pose | PoseResolver
 }
 
-export type MotionProps = {
+export type MotionProps<Poses = string> = {
     [key: string]: any
     ref?: Ref<any>
-    pose?: string | string[] | MotionValue
+    pose?: Poses | Poses[] | MotionValue
     style?: CSSProperties
     onPoseComplete?: (current: CurrentValues, velocity: VelocityValues) => void
 }
