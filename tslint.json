@@ -23,7 +23,7 @@
         "quotemark": [true, "double", "avoid-escape"],
         "react-this-binding-issue": true,
         "react-unused-props-and-state": true,
-        "semicolon": [true, "never"],
+        "semicolon": false,
         "triple-equals": [true],
         "typedef-whitespace": [
             true,
