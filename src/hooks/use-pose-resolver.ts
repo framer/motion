@@ -105,5 +105,5 @@ export const usePoseResolver = (
                 ;(pose as MotionValue).removeSubscriber(poseSubscriber.current)
             }
         }
-    })
+    }, [])
 }

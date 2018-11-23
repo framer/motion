@@ -239,5 +239,5 @@ test("useTransform", async () => {
 
     const { container } = render(<Component />)
 
-    expect(container.firstChild).toHaveStyle("transform: translateX(75px) translateY(175px) translateZ(0)")
+    expect(container.firstChild).toHaveStyle("transform: translateX(75px) translateY(125px) translateZ(0)")
 })
