@@ -19,10 +19,13 @@ bootstrap:: node_modules/.yarn-integrity
 dev: bootstrap
 	webpack-dev-server --config=dev/webpack/config.js
 
-lint: bootstrap
-	tslint --project tsconfig.json
-
 test: bootstrap
 	yarn test
+
+lint: bootstrap
+	tslint --project tsconfig.json --fix
+
+pretty: bootstrap
+	prettier --write */**/*.tsx */**/*.ts
 
 .PHONY: dev lint
