@@ -3,7 +3,7 @@ import { createMotionComponent } from "./component"
 import { htmlElements, svgElements, HTMLElements, SVGElements } from "./supported-elements"
 import { ComponentFactory } from "./types"
 
-type UnwrapFactory<F> = F extends DetailedHTMLFactory<infer P, infer T> ? P : never
+type UnwrapFactory<F> = F extends DetailedHTMLFactory<infer P, any> ? P : never
 
 export type Motion = {
     <P>(component: ComponentType<P>): ComponentFactory<P>
