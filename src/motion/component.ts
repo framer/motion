@@ -1,5 +1,5 @@
 import { memo, forwardRef, createElement, Ref, ComponentType, NamedExoticComponent } from "react"
-import { MotionProps, ComponentFactory } from "./types"
+import { MotionProps, ComponentFactory, PoseConfig, PoseConfigFactory } from "./types"
 import { useConfig } from "../hooks/use-config"
 import { useExternalRef } from "../hooks/use-external-ref"
 import { usePosedValues } from "../hooks/use-posed-values"
@@ -7,7 +7,7 @@ import { usePoseResolver } from "../hooks/use-pose-resolver"
 import { useStyleAttr } from "../hooks/use-style-attr"
 
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>): ComponentFactory<P> => {
-    return (poseConfig = {}): NamedExoticComponent<P & MotionProps> => {
+    return (poseConfig: PoseConfigFactory | PoseConfig = {}): NamedExoticComponent<P & MotionProps> => {
         {
             const MotionComponent = (props: P & MotionProps, externalRef?: Ref<Element>) => {
                 const ref = useExternalRef(externalRef)

@@ -10,7 +10,7 @@ const MotionBox = motion(Box)({
 })
 
 export const App = () => {
-    const [pose, setPose] = React.useState("a")
+    const [pose, setPose] = React.useState<"a" | "b" | "c">("a")
 
     useInterval(
         () => {

@@ -11,6 +11,8 @@ export type ComponentFactory<T> = <Config extends PoseConfigFactory | PoseConfig
     config?: Config
 ) => ComponentType<T & MotionProps<PoseNames<Config>>>
 
+export type ComponentPoseNames<C> = C extends ComponentType<MotionProps<infer P>> ? P : never
+
 export type PoseConfigFactory = (props: MotionProps) => PoseConfig
 
 export type PoseConfig = {

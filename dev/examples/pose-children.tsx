@@ -34,7 +34,7 @@ const childStyles = {
 }
 
 export const App = () => {
-    const [pose, setPose] = useState("hidden")
+    const [pose, setPose] = useState<"visible" | "hidden">("hidden")
 
     useInterval(() => setPose(pose === "hidden" ? "visible" : "hidden"), 2000, [pose])
 

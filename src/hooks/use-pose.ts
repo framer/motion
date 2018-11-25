@@ -1,18 +1,27 @@
-import { useMemo } from "react"
+import { useMemo, ComponentType } from "react"
 import { MotionValue, motionValue } from "../motion-value"
+import { DefaultPose, ComponentPoseNames } from "motion/types"
 
-type PoseSetter = {
-    (pose: string | string[]): void
+type PoseSetter<Poses> = {
+    (pose: Poses | Poses[]): void
     cycle: () => void
 }
 
-export const usePose = (initPose: string | string[] = "default", poses?: string[]) => {
-    return useMemo((): [MotionValue, PoseSetter] => {
+type PoseNames<T> = DefaultPose<T extends ComponentType ? ComponentPoseNames<T> : T>
+
+export const usePose = <AllowedPoses extends ComponentType | string = string>(
+    initPose: (PoseNames<AllowedPoses>) | PoseNames<AllowedPoses>[] = "default",
+    posesOrComponent?: (PoseNames<AllowedPoses>)[]
+) => {
+    type Poses = PoseNames<AllowedPoses>
+    type Setter = PoseSetter<Poses>
+    const poses = posesOrComponent ? (Array.isArray(posesOrComponent) ? posesOrComponent : []) : undefined
+    return useMemo((): [MotionValue, Setter] => {
         let i = typeof initPose === "string" && poses ? poses.indexOf(initPose) : 0
 
         const pose = motionValue(initPose)
 
-        const setPose: PoseSetter = newPose => {
+        const setPose: Setter = newPose => {
             if (poses && typeof newPose === "string") {
                 const poseIndex = poses.indexOf(newPose)
                 i = poseIndex > -1 ? poseIndex : i

@@ -15,7 +15,7 @@ const MotionBox = motion(Box)({
 })
 
 export const App = () => {
-    const [pose, setPose] = usePose("ping")
+    const [pose, setPose] = usePose<typeof MotionBox>("ping")
 
     useInterval(() => {
         setPose(pose.get() === "ping" ? "pong" : "ping")
