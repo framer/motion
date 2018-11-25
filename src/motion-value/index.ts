@@ -2,23 +2,25 @@ import sync, { getFrameData, FrameData } from "framesync"
 import { chain, delay as delayAction, Action, ColdSubscription } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 
-export type ValuePrimitive = any
+export type Transformer<T> = (v: T) => T
 
-export type Transformer = (v: ValuePrimitive) => ValuePrimitive
+export type Subscriber<T> = (v: T) => void
 
-export type Subscriber = (v: ValuePrimitive) => void
-
-export type Config = {
-    transformer?: Transformer
-    onRender?: Subscriber
-    parent?: MotionValue
+export type Config<T> = {
+    transformer?: Transformer<T>
+    onRender?: Subscriber<T>
+    parent?: MotionValue<T>
 }
 
 export type ActionConfig = { [key: string]: any }
 
 export type ActionFactory = (actionConfig: ActionConfig) => Action
 
-export class MotionValue {
+const isFloat = (value: any): value is string => {
+    return !isNaN(parseFloat(value))
+}
+
+export class MotionValue<ValuePrimitive = any> {
     // Current state
     private current: ValuePrimitive
 
@@ -36,28 +38,28 @@ export class MotionValue {
     private parent?: MotionValue
 
     // onRender is fired on render step after update
-    private onRender: Subscriber | null
+    private onRender: Subscriber<ValuePrimitive> | null
 
     // Fired
-    private subscribers: Set<Subscriber>
+    private subscribers: Set<Subscriber<ValuePrimitive>>
 
     // If set, will pass `set` values through this function first
-    private transformer?: Transformer
+    private transformer?: Transformer<ValuePrimitive>
 
     // A reference to the currently-controlling animation
     private controller?: ColdSubscription
 
     private canTrackVelocity = false
 
-    constructor(init: ValuePrimitive, { onRender, transformer, parent }: Config = {}) {
+    constructor(init: ValuePrimitive, { onRender, transformer, parent }: Config<ValuePrimitive> = {}) {
         this.parent = parent
         this.transformer = transformer
         if (onRender) this.setOnRender(onRender)
         this.set(init)
-        this.canTrackVelocity = !isNaN(parseFloat(this.current))
+        this.canTrackVelocity = isFloat(this.current)
     }
 
-    addChild(config: Config) {
+    addChild(config: Config<ValuePrimitive>) {
         const child = new MotionValue(this.current, {
             parent: this,
             ...config,
@@ -74,17 +76,17 @@ export class MotionValue {
         this.children.delete(child)
     }
 
-    setOnRender(onRender: Subscriber | null) {
+    setOnRender(onRender: Subscriber<ValuePrimitive> | null) {
         this.onRender = onRender
         if (this.onRender) sync.render(this.render)
     }
 
-    addSubscriber(sub: Subscriber) {
+    addSubscriber(sub: Subscriber<ValuePrimitive>) {
         if (!this.subscribers) this.subscribers = new Set()
         this.subscribers.add(sub)
     }
 
-    removeSubscriber(sub: Subscriber) {
+    removeSubscriber(sub: Subscriber<ValuePrimitive>) {
         if (this.subscribers) {
             this.subscribers.delete(sub)
         }
@@ -122,7 +124,7 @@ export class MotionValue {
     }
 
     notifySubscribers = () => this.subscribers.forEach(this.setSubscriber)
-    setSubscriber = (sub: Subscriber) => sub(this.current)
+    setSubscriber = (sub: Subscriber<ValuePrimitive>) => sub(this.current)
     setChild = (child: MotionValue) => child.set(this.current)
 
     get() {
@@ -130,8 +132,10 @@ export class MotionValue {
     }
 
     getVelocity() {
+        // This could be isFloat(this.prev) && isFloat(this.current), but that would be wastefull
         return this.canTrackVelocity
-            ? velocityPerSecond(parseFloat(this.prev) - parseFloat(this.current), this.timeDelta)
+            ? // These casts could be avoided if parseFloat would be typed better
+              velocityPerSecond(parseFloat(this.prev as any) - parseFloat(this.current as any), this.timeDelta)
             : 0
     }
 
@@ -139,7 +143,7 @@ export class MotionValue {
         if (this.onRender) this.onRender(this.current)
     }
 
-    control(controller: ActionFactory, { delay, ...config }: ActionConfig, transformer?: Transformer) {
+    control(controller: ActionFactory, { delay, ...config }: ActionConfig, transformer?: Transformer<ValuePrimitive>) {
         this.stop()
 
         let initialisedController = controller({
@@ -179,4 +183,4 @@ export class MotionValue {
     }
 }
 
-export const motionValue = (init: ValuePrimitive, opts?: Config) => new MotionValue(init, opts)
+export const motionValue = <V>(init: V, opts?: Config<V>) => new MotionValue<V>(init, opts)
