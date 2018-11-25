@@ -1,9 +1,11 @@
 import { MotionValue } from "../motion-value"
 import { CSSProperties, ComponentType, Ref } from "react"
 
-type PoseNames<Config extends PoseConfigFactory | PoseConfig> = Config extends PoseConfigFactory
-    ? keyof ReturnType<Config>
-    : keyof Config
+export type DefaultPose<T> = T | "default"
+
+type PoseNames<Config extends PoseConfigFactory | PoseConfig> = DefaultPose<
+    Config extends PoseConfigFactory ? keyof ReturnType<Config> : keyof Config
+>
 
 export type ComponentFactory<T> = <Config extends PoseConfigFactory | PoseConfig>(
     config?: Config
