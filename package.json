@@ -1,78 +1,79 @@
 {
-  "name": "framer-motion",
-  "version": "0.0.1",
-  "private": true,
-  "main": "dist/framer-motion.js",
-  "types": "dist/framer-motion.d.ts",
-  "author": "Framer Motion",
-  "license": "MIT",
-  "scripts": {
-    "coverage": "jest --coverage",
-    "test": "jest",
-    "watch": "jest --watch",
-    "prettier": "prettier ./src/* --write",
-    "build": "rollup -c && yarn measure",
-    "measure": "gzip -c dist/framer-motion.js | wc -c"
-  },
-  "peerDependencies": {
-    "react": "^16.7",
-    "react-dom": "^16.7"
-  },
-  "devDependencies": {
-    "@types/jest": "^23.3.9",
-    "@types/node": "^10.12.9",
-    "@types/react": "^16.7.6",
-    "@types/react-dom": "^16.0.9",
-    "@types/styled-components": "^4.1.0",
-    "cache-loader": "^1.2.5",
-    "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
-    "fork-ts-checker-webpack-plugin": "^0.4.15",
-    "husky": "^1.1.4",
-    "jest": "^23.6.0",
-    "jest-dom": "^2.1.1",
-    "lint-staged": "^8.0.4",
-    "prettier": "^1.15.2",
-    "progress-bar-webpack-plugin": "^1.11.0",
-    "react": "^16.7.0-alpha.2",
-    "react-dev-utils": "^6.1.1",
-    "react-dom": "^16.7.0-alpha.2",
-    "react-testing-library": "^5.3.0",
-    "rollup": "^0.67.3",
-    "rollup-plugin-node-resolve": "^3.4.0",
-    "rollup-plugin-replace": "^2.1.0",
-    "rollup-plugin-typescript2": "^0.18.0",
-    "rollup-plugin-uglify": "^6.0.0",
-    "styled-components": "^4.1.1",
-    "ts-jest": "^23.10.4",
-    "ts-loader": "^5.3.0",
-    "tslint": "^5.11.0",
-    "tslint-microsoft-contrib": "^5.2.1",
-    "typescript": "^3.1.6",
-    "webpack": "^4.25.1",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.10"
-  },
-  "dependencies": {
-    "@popmotion/popcorn": "^0.2.0",
-    "hey-listen": "^1.0.5",
-    "popmotion": "8.5.3",
-    "style-value-types": "^3.0.7",
-    "stylefire": "^2.3.1"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
+    "name": "framer-motion",
+    "version": "0.0.1",
+    "private": true,
+    "main": "dist/framer-motion.cjs.js",
+    "module": "dist/framer-motion.es.js",
+    "types": "dist/index.d.ts",
+    "author": "Framer Motion",
+    "license": "MIT",
+    "scripts": {
+        "coverage": "jest --coverage",
+        "test": "jest",
+        "watch": "jest --watch",
+        "prettier": "prettier ./src/* --write",
+        "build": "rollup -c && yarn measure",
+        "measure": "gzip -c dist/framer-motion.js | wc -c"
+    },
+    "peerDependencies": {
+        "react": "^16.7",
+        "react-dom": "^16.7"
+    },
+    "devDependencies": {
+        "@types/jest": "^23.3.9",
+        "@types/node": "^10.12.9",
+        "@types/react": "^16.7.6",
+        "@types/react-dom": "^16.0.9",
+        "@types/styled-components": "^4.1.0",
+        "cache-loader": "^1.2.5",
+        "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
+        "fork-ts-checker-webpack-plugin": "^0.4.15",
+        "husky": "^1.1.4",
+        "jest": "^23.6.0",
+        "jest-dom": "^2.1.1",
+        "lint-staged": "^8.0.4",
+        "prettier": "^1.15.2",
+        "progress-bar-webpack-plugin": "^1.11.0",
+        "react": "^16.7.0-alpha.2",
+        "react-dev-utils": "^6.1.1",
+        "react-dom": "^16.7.0-alpha.2",
+        "react-testing-library": "^5.3.0",
+        "rollup": "^0.67.3",
+        "rollup-plugin-node-resolve": "^3.4.0",
+        "rollup-plugin-replace": "^2.1.0",
+        "rollup-plugin-typescript2": "^0.18.0",
+        "rollup-plugin-uglify": "^6.0.0",
+        "styled-components": "^4.1.1",
+        "ts-jest": "^23.10.4",
+        "ts-loader": "^5.3.0",
+        "tslint": "^5.11.0",
+        "tslint-microsoft-contrib": "^5.2.1",
+        "typescript": "^3.1.6",
+        "webpack": "^4.25.1",
+        "webpack-cli": "^3.1.2",
+        "webpack-dev-server": "^3.1.10"
+    },
+    "dependencies": {
+        "@popmotion/popcorn": "^0.2.0",
+        "hey-listen": "^1.0.5",
+        "popmotion": "8.5.3",
+        "style-value-types": "^3.0.7",
+        "stylefire": "^2.3.1"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.{ts,tsx}": [
+            "prettier --write",
+            "git add"
+        ]
+    },
+    "jest": {
+        "preset": "ts-jest",
+        "rootDir": "src",
+        "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts"
     }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier --write",
-      "git add"
-    ]
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "rootDir": "src",
-    "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts"
-  }
 }
