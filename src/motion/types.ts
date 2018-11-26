@@ -23,6 +23,7 @@ export type MotionProps<Poses = string> = {
     [key: string]: any
     ref?: Ref<any>
     pose?: Poses | Poses[] | MotionValue
+    motionValues?: { [key: string]: MotionValue }
     style?: CSSProperties
     onPoseComplete?: (current: CurrentValues, velocity: VelocityValues) => void
 }

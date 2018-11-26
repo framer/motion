@@ -20,7 +20,7 @@ import { motionValue } from "../motion-value"
  * const x = useMotionValue(0)
  * ```
  *
- * This can be passed to a motion component via props:
+ * This can be passed to a motion component via the `motionValue` prop:
  *
  * ```javascript
  * const MotionComponent = motion.div()
@@ -28,7 +28,7 @@ import { motionValue } from "../motion-value"
  * export const () => {
  *   const x = useMotionValue(0)
  *
- *   return <MotionComponent x={x} />
+ *   return <MotionComponent motionValues={{ x }} />
  * }
  * ```
  *

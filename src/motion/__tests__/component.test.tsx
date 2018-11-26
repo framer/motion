@@ -110,7 +110,7 @@ test("motion component accepts motion value", () => {
 
     const Component = () => {
         const x = useMotionValue(800)
-        return <Box x={x} />
+        return <Box motionValues={{ x }} />
     }
 
     const { container } = render(<Component />)
@@ -234,7 +234,7 @@ test("useTransform", async () => {
         const x = useMotionValue(75)
         const y = useTransform(x, [0, 100], [200, 100])
 
-        return <Box x={x} y={y} />
+        return <Box motionValues={{ x, y }} />
     }
 
     const { container } = render(<Component />)

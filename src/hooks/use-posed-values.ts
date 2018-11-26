@@ -6,26 +6,25 @@ import { createValuesFromPose, bindValuesToRef } from "../utils/create-value"
 
 export const usePosedValues = (
     config: PoseConfig,
-    { onPoseComplete, pose = "default", ...props }: MotionProps,
+    { onPoseComplete, pose = "default", motionValues, ...props }: MotionProps,
     ref: RefObject<Element>
 ): [MotionValueMap, Partial<MotionProps>] => {
     const values: MotionValueMap = useRef(new Map()).current
-    const returnedProps = {}
 
     // In this function we want to find the right approach to ensure
     // we successfully remove MotionValues from the returned props
     // in a performant way over subsequent renders.
 
     // 1. Add provided motion values via props to value map
-    Object.keys(props).forEach(key => {
-        const prop = props[key]
+    if (motionValues) {
+        Object.keys(motionValues).forEach(key => {
+            const motionValue = motionValues[key]
 
-        if (prop instanceof MotionValue) {
-            values.set(key, prop)
-        } else if (key !== "pose") {
-            returnedProps[key] = prop
-        }
-    })
+            if (motionValue instanceof MotionValue) {
+                values.set(key, motionValue)
+            }
+        })
+    }
 
     // 2. Create values from poses
     const initialPoses = resolvePoses(pose)
@@ -45,5 +44,5 @@ export const usePosedValues = (
         return () => values.forEach(value => value.destroy())
     }, [])
 
-    return [values, returnedProps]
+    return [values, props]
 }
