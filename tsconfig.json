@@ -12,7 +12,8 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "outDir": "build",
+        "rootDir": "src",
+        "outDir": "lib",
         "sourceMap": true,
         "baseUrl": "src",
         "paths": {
@@ -30,6 +31,17 @@
     },
     "compileOnSave": false,
     "buildOnSave": false,
-    "exclude": ["node_modules", "build", "**/__tests__/*", "types", "dev/examples.framer", "test", "skins", "dist"],
+    "exclude": [
+        "node_modules",
+        "build",
+        "**/__tests__/*",
+        "jest.setup.ts",
+        "dev",
+        "types",
+        "dev/examples.framer",
+        "test",
+        "skins",
+        "dist"
+    ],
     "filesGlob": ["./src/**/*.ts"]
 }
