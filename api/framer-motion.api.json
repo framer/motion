@@ -1,0 +1,46 @@
+{
+  "kind": "package",
+  "name": "framer-motion",
+  "summary": [],
+  "remarks": [],
+  "exports": {
+    "usePose": {
+      "kind": "function",
+      "signature": "export function usePose<AllowedPoses extends ComponentType | string = string>(initialPose?: (PoseNames<AllowedPoses>) | PoseNames<AllowedPoses>[], cyclePoses?: (PoseNames<AllowedPoses>)[]): [MotionValue<any>, PoseSetter<DefaultPose<AllowedPoses extends ComponentType<{}> ? ComponentPoseNames<AllowedPoses> : AllowedPoses>>];",
+      "returnValue": {
+        "type": "[MotionValue<any>, PoseSetter<DefaultPose<AllowedPoses extends ComponentType<{}> ? ComponentPoseNames<AllowedPoses> : AllowedPoses>>]",
+        "description": []
+      },
+      "parameters": {
+        "initialPose": {
+          "name": "initialPose",
+          "description": [
+            {
+              "kind": "text",
+              "text": "initial pose"
+            }
+          ],
+          "isOptional": true,
+          "isSpread": false,
+          "type": "(PoseNames<AllowedPoses>) | PoseNames<AllowedPoses>[]"
+        },
+        "cyclePoses": {
+          "name": "cyclePoses",
+          "description": [
+            {
+              "kind": "text",
+              "text": "Poses to cycle through using setPose.cycle"
+            }
+          ],
+          "isOptional": true,
+          "isSpread": false,
+          "type": "(PoseNames<AllowedPoses>)[]"
+        }
+      },
+      "deprecatedMessage": [],
+      "summary": [],
+      "remarks": [],
+      "isBeta": false
+    }
+  }
+}
