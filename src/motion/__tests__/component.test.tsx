@@ -152,7 +152,7 @@ test("usePose changes pose", async () => {
 
     const promise = new Promise(resolve => {
         const Component = () => {
-            const [pose, setPose] = usePose("foo")
+            const [pose, setPose] = usePose<typeof Box>("foo")
 
             return <Box pose={pose} onClick={() => setPose("bar")} onPoseComplete={current => resolve(current.scale)} />
         }
