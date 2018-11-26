@@ -5,7 +5,7 @@
         "rootFolder": "."
     },
     "project": {
-        "entryPointSourceFile": "types/src/index.d.ts"
+        "entryPointSourceFile": "types/index.d.ts"
     },
     "validationRules": {
         "missingReleaseTags": "error"

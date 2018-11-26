@@ -43,7 +43,9 @@
         "test",
         "skins",
         "dist",
-        "_src"
+        "temp",
+        "api"
     ],
+
     "filesGlob": ["./src/**/*.ts"]
 }
