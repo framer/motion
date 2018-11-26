@@ -1,0 +1,32 @@
+{
+    "$schema": "https://dev.office.com/json-schemas/api-extractor/api-extractor.schema.json",
+    "compiler": {
+        "configType": "tsconfig",
+        "rootFolder": "."
+    },
+    "project": {
+        "entryPointSourceFile": "types/src/index.d.ts"
+    },
+    "validationRules": {
+        "missingReleaseTags": "error"
+    },
+    "apiReviewFile": {
+        "enabled": true,
+        "apiReviewFolder": "./api"
+    },
+    "apiJsonFile": {
+        "enabled": true,
+        "outputFolder": "./api"
+    },
+    "dtsRollup": {
+        "enabled": true,
+        "mainDtsRollupPath": "build/framer.d.ts",
+        "publishFolderForPublic": "./dist/public",
+        "publishFolderForInternal": "./dist/internal",
+        "publishFolderForBeta": "./dist/beta",
+        "trimming": true
+    },
+    "policies": {
+        "namespaceSupport": "permissive"
+    }
+}
