@@ -11,11 +11,11 @@ type PoseNames<T> = DefaultPose<T extends ComponentType ? ComponentPoseNames<T> 
 
 export const usePose = <AllowedPoses extends ComponentType | string = string>(
     initPose: (PoseNames<AllowedPoses>) | PoseNames<AllowedPoses>[] = "default",
-    posesOrComponent?: (PoseNames<AllowedPoses>)[]
+    cyclePoses?: (PoseNames<AllowedPoses>)[]
 ) => {
     type Poses = PoseNames<AllowedPoses>
     type Setter = PoseSetter<Poses>
-    const poses = posesOrComponent ? (Array.isArray(posesOrComponent) ? posesOrComponent : []) : undefined
+    const poses = cyclePoses ? (Array.isArray(cyclePoses) ? cyclePoses : []) : undefined
     return useMemo((): [MotionValue, Setter] => {
         let i = typeof initPose === "string" && poses ? poses.indexOf(initPose) : 0
 
