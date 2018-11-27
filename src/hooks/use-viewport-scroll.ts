@@ -1,6 +1,13 @@
 import { useEffect } from "react"
 import { useMotionValue } from "../motion-value/use-motion-value"
 
+/**
+ * `useViewportScroll` provides `MotionValue`s that update when the viewport scrolls.
+ *
+ * This makes it possible to transform viewport scroll into other values.
+ *
+ * For instance, highlighting different table of contents items to correspond with page scroll.
+ */
 const useViewportScroll = () => {
     const x = useMotionValue(0)
     const y = useMotionValue(0)
