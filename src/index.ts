@@ -7,6 +7,6 @@ import { useViewportScroll } from "./hooks/use-viewport-scroll"
 export { motion, useMotionValue, useTransform, usePose, useViewportScroll }
 
 export { useMouseEvents, useTouchEvents, usePointerEvents } from "./events"
-export { usePanGesture } from "./gestures"
+export { usePanGesture, useTapGesture } from "./gestures"
 
 export { Frame } from "./framer/Frame"
