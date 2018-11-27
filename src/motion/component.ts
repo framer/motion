@@ -5,6 +5,7 @@ import { useExternalRef } from "../hooks/use-external-ref"
 import { usePosedValues } from "../hooks/use-posed-values"
 import { usePoseResolver } from "../hooks/use-pose-resolver"
 import { useStyleAttr } from "../hooks/use-style-attr"
+import { useScrollValues } from "../scroll/use-scroll-values"
 
 /**
  * `motion` creates React components that are optimised for use in animation and interactions.
@@ -207,6 +208,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
                     ...componentProps,
                     ref,
                     style: useStyleAttr(values, props.style),
+                    onScroll: useScrollValues(values, props.onScroll),
                 })
             }
 
