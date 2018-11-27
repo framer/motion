@@ -6415,6 +6415,15 @@ styled-components@^4.1.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
+stylefire@2.3.2:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.3.2.tgz#a83b824fc7c4ada04849780f109ce6084e9ca307"
+  integrity sha512-4TuazPH39yejaklxCoPpfT2zPx3Gcuz+Xyo85Us5kJUjO4f9540TGKM71RzUBxp7bPm33XsN/tApa/B8zhhqBQ==
+  dependencies:
+    framesync "^4.0.0"
+    hey-listen "^1.0.4"
+    style-value-types "^3.0.6"
+
 stylefire@^2.0.7:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.2.1.tgz#3ae1f74477fa5117d410757cefe5878179708e38"
@@ -6424,15 +6433,6 @@ stylefire@^2.0.7:
     hey-listen "^1.0.4"
     style-value-types "^3.0.6"
     tslib "^1.9.1"
-
-stylefire@^2.3.1:
-  version "2.3.1"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.3.1.tgz#05b65601d65d717b9ac34ece81160f48d9442009"
-  integrity sha512-RNSf3ofR7n6+DG0zamrx81Ub7b83FqECbK+f4ks8piOogaNhZAKwYeMe5eBOz2cKF7eeD31OgTkfeVTyeGgAdw==
-  dependencies:
-    framesync "^4.0.0"
-    hey-listen "^1.0.4"
-    style-value-types "^3.0.6"
 
 stylis-rule-sheet@^0.0.10:
   version "0.0.10"

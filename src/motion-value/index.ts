@@ -40,6 +40,9 @@ export class MotionValue<ValuePrimitive = any> {
     // onRender is fired on render step after update
     private onRender: Subscriber<ValuePrimitive> | null
 
+    // Can override returning `this.current`
+    private getter?: () => any
+
     // Fired
     private subscribers: Set<Subscriber<ValuePrimitive>>
 
@@ -128,7 +131,11 @@ export class MotionValue<ValuePrimitive = any> {
     setChild = (child: MotionValue) => child.set(this.current)
 
     get() {
-        return this.current
+        return this.getter ? this.getter() : this.current
+    }
+
+    setGetter(getter: () => any) {
+        this.getter = getter
     }
 
     getVelocity() {
@@ -180,6 +187,10 @@ export class MotionValue<ValuePrimitive = any> {
 
     hasOnRender() {
         return !!this.onRender
+    }
+
+    hasGetter() {
+        return !!this.getter
     }
 }
 
