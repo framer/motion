@@ -7,3 +7,5 @@ export { motion, useMotionValue, useTransform, usePose }
 
 export { useMouseEvents, useTouchEvents, usePointerEvents } from "./events"
 export { usePanGesture } from "./gestures"
+
+export { Frame } from "./framer/Frame"
