@@ -1,4 +1,4 @@
-import { RefObject, useMemo } from "react"
+import { RefObject, useMemo, useEffect } from "react"
 import { EventInfo, usePointerEvents, Point } from "../events"
 
 interface EventSession {
@@ -88,7 +88,12 @@ export const usePanGesture = (
     )
 
     usePointerEvents({ onPointerDown }, ref)
-
+    useEffect(() => {
+        return () => {
+            stopPointerMove()
+            stopPointerUp()
+        }
+    })
     // TODO
     const handlers = {}
 
