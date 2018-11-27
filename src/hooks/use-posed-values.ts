@@ -4,12 +4,14 @@ import { PoseConfig, MotionProps, MotionValueMap } from "../motion/types"
 import { useRef, useEffect, RefObject } from "react"
 import { createValuesFromPose, bindValuesToRef } from "../utils/create-value"
 
+const isMotionValue = (value: any): value is MotionValue => value instanceof MotionValue
+
 export const usePosedValues = (
     config: PoseConfig,
     { onPoseComplete, pose = "default", motionValues, ...props }: MotionProps,
     ref: RefObject<Element>
 ): [MotionValueMap, Partial<MotionProps>] => {
-    const values: MotionValueMap = useRef(new Map()).current
+    const values: MotionValueMap = useRef(new Map<string, MotionValue>()).current
 
     // In this function we want to find the right approach to ensure
     // we successfully remove MotionValues from the returned props
@@ -20,7 +22,7 @@ export const usePosedValues = (
         Object.keys(motionValues).forEach(key => {
             const motionValue = motionValues[key]
 
-            if (motionValue instanceof MotionValue) {
+            if (isMotionValue(motionValue)) {
                 values.set(key, motionValue)
             }
         })
