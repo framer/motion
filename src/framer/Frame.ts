@@ -5,6 +5,7 @@ import { motion } from "../motion"
 const frameDefaults = {
     x: 0,
     y: 0,
+    rotate: 0,
     width: 100,
     height: 100,
     background: "#0AF",
