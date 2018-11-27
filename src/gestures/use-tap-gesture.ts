@@ -48,7 +48,7 @@ export const useTapGesture = ({ onTap }: TapHandlers, ref: RefObject<Element>) =
     )
 
     const onPointerDown = (event: Event) => {
-        startPointerUp
+        startPointerUp()
         if (event.target !== ref.current) return
         session = {
             target: event.target,
