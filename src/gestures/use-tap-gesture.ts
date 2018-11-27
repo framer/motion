@@ -1,6 +1,5 @@
 import { RefObject, useEffect, useMemo } from "react"
 import { usePointerEvents, EventInfo, Point } from "../events"
-import { start } from "repl"
 
 interface TapInfo {
     point: Point
@@ -47,19 +46,15 @@ export const useTapGesture = ({ onTap }: TapHandlers, ref: RefObject<Element>) =
         [onTap]
         //   [onTap, dragging, device.current]
     )
-    const [startPointerUp, stopPointerUp] = usePointerEvents({ onPointerUp }, window)
 
-    const onPointerDown = useMemo(
-        () => (event: Event) => {
-            console.log("pointerdown")
-            startPointerUp()
-            if (event.target !== ref.current) return
-            session = {
-                target: event.target,
-            }
-        },
-        [startPointerUp, session]
-    )
+    const onPointerDown = (event: Event) => {
+        startPointerUp
+        if (event.target !== ref.current) return
+        session = {
+            target: event.target,
+        }
+    }
+    const [startPointerUp, stopPointerUp] = usePointerEvents({ onPointerUp }, window)
     usePointerEvents({ onPointerDown }, ref)
     useEffect(
         () => {

@@ -1,11 +1,12 @@
 import { RefObject, useEffect } from "react"
+import { ListenerControls, TargetBasedReturnType, TargetOrRef } from "./types"
 
 export const eventListener = (
     target: EventTarget,
     name: string,
     handler: EventListenerOrEventListenerObject,
     options?: AddEventListenerOptions
-): [() => void, () => void] => {
+): ListenerControls => {
     const startListening = () => {
         target.addEventListener(name, handler, options)
     }
@@ -15,25 +16,26 @@ export const eventListener = (
     return [startListening, stopListening]
 }
 
-export const useEvent = (
+export const useEvent = <Target extends TargetOrRef>(
     type: string,
-    ref: RefObject<EventTarget> | EventTarget,
+    target: Target,
     handler?: EventListener,
     options?: AddEventListenerOptions
-): [() => void, () => void] | undefined => {
+): TargetBasedReturnType<Target> => {
     if (!handler) {
-        return
+        return undefined as TargetBasedReturnType<Target>
     }
-    if (ref instanceof EventTarget) {
-        return eventListener(ref, type, handler, options)
+    if (target instanceof EventTarget) {
+        return eventListener(target, type, handler, options) as TargetBasedReturnType<Target>
     }
+    const ref = target as RefObject<EventTarget>
     useEffect(() => {
-        if (!handler || !ref.current) {
+        if (!ref.current) {
             return
         }
         const [start, stop] = eventListener(ref.current, type, handler, options)
         start()
         return stop
     })
-    return
+    return undefined as TargetBasedReturnType<Target>
 }
