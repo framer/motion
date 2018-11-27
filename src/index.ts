@@ -5,5 +5,5 @@ import { usePose } from "./hooks/use-pose"
 
 export { motion, useMotionValue, useTransform, usePose }
 
-export { useMouseEvents, useTouchEvents, usePointerEvents } from "./hooks/use-mouse-events"
-export { usePanGesture } from "./hooks/use-pan-gesture"
+export { useMouseEvents, useTouchEvents, usePointerEvents } from "./events"
+export { usePanGesture } from "./gestures"

@@ -1,20 +1,24 @@
 import { RefObject, useMemo } from "react"
-import { EventHandler, usePointerEvents } from "./use-mouse-events"
+import { EventInfo, usePointerEvents, Point } from "../events"
 
 export const usePanGesture = (
-    { onPan, onPanStart, onPanEnd }: { [key: string]: Function },
+    {
+        onPan,
+        onPanStart,
+        onPanEnd,
+    }: { [key: string]: (info: { point: Point; devicePoint: Point; delta: Point }, event: Event) => void },
     ref: RefObject<Element>
 ) => {
     let session: null | any = null
     const onPointerMove = useMemo(
         () => {
-            return ({ point, devicePoint }, event) => {
-                if (!session || !session.target) {
-                    console.error("Mouse move with started session")
+            return (event: Event, { point, devicePoint }: EventInfo) => {
+                if (!session) {
+                    // tslint:disable-next-line:no-console
+                    console.error("Pointer move without started session")
                     return
                 }
 
-                // const deviceElement = device && device.current ? device.current : document.body
                 const delta = {
                     x: devicePoint.x - session.lastDevicePoint.x,
                     y: devicePoint.y - session.lastDevicePoint.y,
@@ -35,18 +39,25 @@ export const usePanGesture = (
             }
         },
         [onPan, onPanStart]
-        // [device.current, onPan, onPanStart]
     )
     const onPointerUp = useMemo(
         () => {
-            return ({ point, devicePoint }, event) => {
+            return (event: Event, { point, devicePoint }: EventInfo) => {
+                if (!session) {
+                    // tslint:disable-next-line:no-console
+                    console.error("Pointer end without started session")
+                    return
+                }
+                const delta = {
+                    x: devicePoint.x - session.lastDevicePoint.x,
+                    y: devicePoint.y - session.lastDevicePoint.y,
+                }
                 stopPointerMove()
                 stopPointerUp()
                 if (onPanEnd) {
-                    onPanEnd(event)
+                    onPanEnd({ point, devicePoint, delta }, event)
                 }
                 session = null
-                // console.log("mouseUp");
             }
         },
         [onPanEnd, onPointerMove]
@@ -56,8 +67,7 @@ export const usePanGesture = (
     const [startPointerMove, stopPointerMove] = usePointerEvents({ onPointerMove }, window, { capture: true })
     const onPointerDown = useMemo(
         () => {
-            return ({ point, devicePoint }, event) => {
-                // const deviceElement = device && device.current ? device.current : document.body
+            return (event: Event, { devicePoint }: EventInfo) => {
                 session = {
                     target: event.target,
                     lastDevicePoint: devicePoint,
@@ -66,7 +76,6 @@ export const usePanGesture = (
                 startPointerUp()
             }
         },
-        // [device.current, onPointerUp, onPointerMove]
         [onPointerUp, onPointerMove]
     )
 

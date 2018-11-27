@@ -1,13 +1,13 @@
 import * as React from "react"
 import { useRef } from "react"
-import { useMouseEvents, useTouchEvents, usePointerEvents, usePanGesture } from "@framer"
+import { usePanGesture } from "@framer"
 import { Box } from "../styled"
 export const App = () => {
     const ref = useRef(null)
     const [point, setPoint] = React.useState({ x: 0, y: 0 })
     usePanGesture(
         {
-            onPan: ({ point, devicePoint, delta }) => {
+            onPan: ({ devicePoint }) => {
                 setPoint(devicePoint)
             },
         },
