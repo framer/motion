@@ -6,6 +6,6 @@ const MovingFrame = Frame({
     hidden: { opacity: 0 },
 })
 export function App() {
-    const [pose, setPose] = usePose<typeof MovingFrame>("default", ["visible", "hidden"])
+    const [pose, setPose] = usePose<typeof MovingFrame>("visible", ["visible", "hidden"])
     return <MovingFrame pose={pose} onClick={() => setPose.cycle()} />
 }
