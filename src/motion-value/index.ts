@@ -92,7 +92,7 @@ export class MotionValue<ValuePrimitive = any> {
         }
     }
 
-    set(v: ValuePrimitive) {
+    set(v: ValuePrimitive, render = true) {
         this.prev = this.current
         this.current = this.transformer ? this.transformer(v) : v
 
@@ -104,7 +104,7 @@ export class MotionValue<ValuePrimitive = any> {
             this.children.forEach(this.setChild)
         }
 
-        if (this.onRender) {
+        if (render && this.onRender) {
             this.onRender(this.current)
         }
 
