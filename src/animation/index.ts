@@ -1,6 +1,7 @@
 import { MotionValue } from "../motion-value"
 import { getTransition } from "../utils/transitions"
 import { invariant } from "hey-listen"
+import { TransitionProp } from "../motion/types"
 
 type ValueMap = { [key: string]: MotionValue }
 type Values = ValueMap | MotionValue
@@ -10,7 +11,7 @@ type Target = string | number | TargetMap
 
 const isMap = <T>(v: any): v is T => typeof v === "object" && !(v instanceof MotionValue)
 
-const createAnimation = (values: Values, target: Target, opts: {}) => {
+const createAnimation = (values: Values, target: Target, opts: TransitionProp) => {
     invariant(
         isMap<ValueMap>(values) === isMap<TargetMap>(target),
         "*Both* values and animation targets must be either a single value or an object of values"
