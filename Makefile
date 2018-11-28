@@ -6,6 +6,9 @@ PATH := $(CURDIR)/node_modules/.bin:$(PATH)
 # Use a modern shell
 SHELL := /bin/bash
 
+# Default target is build
+default: build
+
 # Cleaning removes build dir and node_modules. Use double colon so it can be extended.
 clean::
 	rm -rf build
@@ -21,6 +24,9 @@ node_modules/.yarn-integrity: yarn.lock package.json
 bootstrap:: node_modules/.yarn-integrity
 
 ######
+
+build: bootstrap
+	yarn build
 
 dev: bootstrap
 	webpack-dev-server --config=dev/webpack/config.js
