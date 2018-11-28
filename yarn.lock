@@ -79,10 +79,10 @@
     hey-listen "^1.0.5"
     style-value-types "^3.0.7"
 
-"@popmotion/popcorn@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@popmotion/popcorn/-/popcorn-0.3.0.tgz#d75da7a0def2a949016d1cd3794f36514d69019f"
-  integrity sha512-iTPnu07k8mGBuJEt9NhAJ132sd0dNG9/AwqzJeKHjZA9aqtxnP9X0AFbklJrGc18HdPtdzwvGufpcJerSMGdvQ==
+"@popmotion/popcorn@^0.3.1":
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/@popmotion/popcorn/-/popcorn-0.3.1.tgz#f0f33fbf7ff66f2cd0bf28be24bee0b1d46b65e8"
+  integrity sha512-TRhDPxfzM4CrUff2ELyzDj6xSEp5fcmbnrTO0VkmrN/TxJrAzP2H/VfIDRQQy82Yn65Vwn1ohrIi8eZLqzrCMA==
   dependencies:
     "@popmotion/easing" "^1.0.1"
     framesync "^4.0.1"
