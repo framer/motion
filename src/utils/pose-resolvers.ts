@@ -4,11 +4,18 @@ type PoseNameList = string[]
 type PoseName = string | PoseNameList
 type UnresolvedPose = PoseName | MotionValue
 
-export const poseToArray = (pose?: PoseName): PoseNameList =>
-    Array.isArray(pose) ? ["default", ...pose] : pose ? ["default", pose] : ["default"]
+const poseToArray = (pose?: PoseName): PoseNameList => {
+    if (!pose) {
+        return []
+    }
+    if (Array.isArray(pose)) {
+        return pose
+    }
+    return [pose]
+}
 
-export const resolvePoses = (pose: UnresolvedPose): PoseNameList => {
+export const resolvePoses = (pose?: UnresolvedPose): PoseNameList => {
     const unresolvedPose = pose instanceof MotionValue ? (pose.get() as string) : pose
 
-    return poseToArray(unresolvedPose)
+    return ["default", ...poseToArray(unresolvedPose)]
 }

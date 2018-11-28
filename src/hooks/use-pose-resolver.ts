@@ -1,7 +1,7 @@
 import { useRef, useEffect, MutableRefObject, RefObject } from "react"
 import { invariant } from "hey-listen"
 import { getTransition } from "../utils/transitions"
-import { poseToArray } from "../utils/pose-resolvers"
+import { resolvePoses } from "../utils/pose-resolvers"
 import { resolveCurrent, resolveVelocity } from "../utils/resolve-values"
 import { MotionValue } from "../motion-value"
 import { checkForNewValues } from "../utils/create-value"
@@ -102,7 +102,7 @@ export const usePoseResolver = (
     const poseResolver = createPoseResolver(values, config, props, ref)
 
     // If we're controlled by props, fire resolver with latest pose
-    const poseList = !poseIsSubscription ? poseToArray(pose as string | string[]) : []
+    const poseList = !poseIsSubscription ? resolvePoses(pose as string | string[]) : []
 
     useSubsequentRenderEffect(() => {
         if (!poseIsSubscription) poseResolver(poseList)
@@ -112,7 +112,7 @@ export const usePoseResolver = (
     useEffect(() => {
         if (!poseIsSubscription) return
 
-        poseSubscriber.current = (v: string | string[]) => poseResolver(poseToArray(v))
+        poseSubscriber.current = (v: string | string[]) => poseResolver(resolvePoses(v))
         ;(pose as MotionValue).addSubscriber(poseSubscriber.current)
 
         return () => {
