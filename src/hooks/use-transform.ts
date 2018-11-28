@@ -50,8 +50,12 @@ import { interpolate } from "@popmotion/popcorn"
  * @param {number[]} from - A linear numerical sequence.
  * @param {string[] | number[]} to - A series of numbers, colors or
  */
-export const useTransform = (value: MotionValue<number | string>, from: number[], to: string[] | number[]) => {
-    const transformedValue: MutableRefObject<null | MotionValue> = useRef(null)
+export const useTransform = <T extends string[] | number[]>(
+    value: MotionValue<number | string>,
+    from: number[],
+    to: T
+) => {
+    const transformedValue: MutableRefObject<null | MotionValue<T[number]>> = useRef(null)
     return useMemo(
         () => {
             if (transformedValue.current) transformedValue.current.destroy()
