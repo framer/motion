@@ -1,4 +1,3 @@
-import { useEffect } from "react"
 import { useMotionValue } from "../motion-value/use-motion-value"
 import { useEvent } from "../events/use-event"
 
