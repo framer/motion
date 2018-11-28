@@ -1,15 +1,23 @@
-import { RefObject, useMemo } from "react"
+import { RefObject, useMemo, useEffect } from "react"
 import { EventInfo, usePointerEvents, Point } from "../events"
 
+interface EventSession {
+    lastDevicePoint: Point
+    startEvent?: Event
+    target: EventTarget | null
+}
+
+interface PanInfo {
+    point: Point
+    devicePoint: Point
+    delta: Point
+}
+
 export const usePanGesture = (
-    {
-        onPan,
-        onPanStart,
-        onPanEnd,
-    }: { [key: string]: (info: { point: Point; devicePoint: Point; delta: Point }, event: Event) => void },
+    { onPan, onPanStart, onPanEnd }: { [key: string]: (info: PanInfo, event: Event) => void },
     ref: RefObject<Element>
 ) => {
-    let session: null | any = null
+    let session: null | EventSession = null
     const onPointerMove = useMemo(
         () => {
             return (event: Event, { point, devicePoint }: EventInfo) => {
@@ -80,7 +88,12 @@ export const usePanGesture = (
     )
 
     usePointerEvents({ onPointerDown }, ref)
-
+    useEffect(() => {
+        return () => {
+            stopPointerMove()
+            stopPointerUp()
+        }
+    })
     // TODO
     const handlers = {}
 
