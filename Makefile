@@ -6,6 +6,12 @@ PATH := $(CURDIR)/node_modules/.bin:$(PATH)
 # Use a modern shell
 SHELL := /bin/bash
 
+# Cleaning removes build dir and node_modules. Use double colon so it can be extended.
+clean::
+	rm -rf build
+	rm -rf node_modules
+	git clean -fdX .
+
 # Update node modules if package.json is newer than node_modules or yarn lockfile
 # Use a mutex file so multiple Source dirs can be built in parallel.
 node_modules/.yarn-integrity: yarn.lock package.json
