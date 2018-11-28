@@ -1,3 +1,4 @@
+import "../../../jest.setup"
 import { fireEvent, render } from "react-testing-library"
 import { motion } from "../"
 import * as React from "react"
@@ -97,6 +98,26 @@ test("motion component takes styles of defined initial pose", () => {
     })
     const { container } = render(<Box pose="foo" />)
     expect(container.firstChild).toHaveStyle("transform: translateX(100px) translateZ(0); display: none;")
+})
+
+test("motion component takes a list of defined poses", () => {
+    const Box = motion.div({
+        foo: { x: 100 },
+        bar: { y: 100 },
+    })
+    const { container } = render(<Box pose={["foo", "bar"]} />)
+    expect(container.firstChild).toHaveStyle("transform: translateX(100px) translateY(100px) translateZ(0)")
+})
+
+test("motion component poses are applied in order", () => {
+    const Box = motion.div({
+        foo: { x: 100, rotate: 123 },
+        bar: { y: 100, rotate: 456 },
+    })
+    const { container } = render(<Box pose={["foo", "bar"]} />)
+    expect(container.firstChild).toHaveStyle(
+        "transform: translateX(100px) translateY(100px) rotate(456deg) translateZ(0)"
+    )
 })
 
 test("motion component doesn't forward pose prop", () => {
