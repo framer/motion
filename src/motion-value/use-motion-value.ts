@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { motionValue } from "../motion-value"
+import { motionValue } from "."
 
 /**
  * For advanced use-cases, you can assume external control of the motion values used by `motion` components.
