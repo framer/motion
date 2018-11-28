@@ -4,4 +4,5 @@
 /dist
 /lib
 /tmp
+yarn-error.log
 /src/coverage
