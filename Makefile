@@ -31,13 +31,21 @@ build: bootstrap
 dev: bootstrap
 	webpack-dev-server --config=dev/webpack/config.js
 
+watch: bootstrap
+	yarn watch
+
 test: bootstrap
 	yarn test
+
+coverage: bootstrap
+	yarn coverage
 
 lint: bootstrap
 	tslint --project tsconfig.json --fix
 
 pretty: bootstrap
 	prettier --write */**/*.tsx */**/*.ts
+
+
 
 .PHONY: dev lint
