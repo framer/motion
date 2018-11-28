@@ -1,10 +1,9 @@
-import { motion } from "./motion"
-import { useMotionValue } from "./motion-value/use-motion-value"
-import { useTransform } from "./hooks/use-transform"
-import { usePose } from "./hooks/use-pose"
-import { useViewportScroll } from "./hooks/use-viewport-scroll"
-
-export { motion, useMotionValue, useTransform, usePose, useViewportScroll }
+export { motion } from "./motion"
+export { useMotionValue } from "./motion-value/use-motion-value"
+export { useTransform } from "./hooks/use-transform"
+export { usePose } from "./hooks/use-pose"
+export { useViewportScroll } from "./hooks/use-viewport-scroll"
+export { createAnimation } from "./animation"
 
 export { useMouseEvents, useTouchEvents, usePointerEvents } from "./events"
 export { usePanGesture, useTapGesture } from "./gestures"
