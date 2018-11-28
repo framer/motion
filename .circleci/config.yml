@@ -13,6 +13,8 @@ jobs:
             # CircleCI maintains a library of pre-built images
             # documented at https://circleci.com/docs/2.0/circleci-images/
             # - image: circleci/mongo:3.4.4
+        environment:
+            CC_TEST_REPORTER_ID: 9919eb70aea3b16ee55969b91e1c19c455289b6c9d72ac85037c2e1b26dfd307
 
         working_directory: ~/repo
 
@@ -26,12 +28,17 @@ jobs:
                       # fallback to using the latest cache if no exact match is found
                       - v1-dependencies-
 
-            - run: yarn install
+            # run tests!
+            - run: |
+                  curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-0.6.3-linux-amd64 > ./cc-test-reporter
+                  chmod +x ./cc-test-reporter
+            - run: |
+                  ./cc-test-reporter before-build
+                  make test
+                  ./cc-test-reporter format-coverage coverage/lcov.info -t lcov
+                  ./cc-test-reporter upload-coverage
 
             - save_cache:
                   paths:
                       - node_modules
                   key: v1-dependencies-{{ checksum "package.json" }}
-
-            # run tests!
-            - run: yarn test

@@ -8,8 +8,7 @@
     "author": "Framer Motion",
     "license": "MIT",
     "scripts": {
-        "coverage": "jest --coverage",
-        "test": "jest",
+        "test": "jest --coverage",
         "watch": "jest --watch --coverage",
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && yarn measure",
@@ -31,6 +30,7 @@
         "husky": "^1.1.4",
         "jest": "^23.6.0",
         "jest-dom": "^2.1.1",
+        "jest-junit": "^5.2.0",
         "lint-staged": "^8.0.4",
         "prettier": "^1.15.2",
         "progress-bar-webpack-plugin": "^1.11.0",
