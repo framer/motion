@@ -1,5 +1,5 @@
 import { useMemo, useRef, MutableRefObject } from "react"
-import { MotionValue, UnboxMotionValue, Transformer } from "../motion-value"
+import { MotionValue, Transformer } from "../motion-value"
 import { interpolate } from "@popmotion/popcorn"
 
 /**
