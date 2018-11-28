@@ -22,20 +22,27 @@ const createAnimation = (values: Values, target: Target, opts: TransitionProp) =
         target = { default: target }
     }
 
-    // TODO: Could be some refactoring with `use-pose-resolver`
-    const animations = Object.keys(values).reduce(
-        (acc, key) => {
-            const value = values[key]
-            const [action, actionOpts] = getTransition(key, target[key], opts)
+    return {
+        start: () => {
+            // TODO: Could be some refactoring with `use-pose-resolver`
+            const animations = Object.keys(values).reduce(
+                (acc, key) => {
+                    const value = values[key]
+                    const [action, actionOpts] = getTransition(key, target[key], opts)
 
-            acc.push(value.control(action, actionOpts))
+                    acc.push(value.control(action, actionOpts))
 
-            return acc
+                    return acc
+                },
+                [] as Promise<any>[]
+            )
+
+            return Promise.all(animations)
         },
-        [] as Promise<any>[]
-    )
-
-    return Promise.all(animations)
+        stop: () => {
+            Object.keys(values).forEach(key => values[key].stop())
+        },
+    }
 }
 
 export { createAnimation }
