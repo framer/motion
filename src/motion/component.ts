@@ -191,10 +191,6 @@ import { useScrollValues } from "../scroll/use-scroll-values"
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>): ComponentFactory<P> => {
     return (poseConfig: PoseConfigFactory | PoseConfig = {}): NamedExoticComponent<P & MotionProps> => {
         {
-            /**
-             *
-             * @param props
-             */
             const MotionComponent = (props: P & MotionProps, externalRef?: Ref<Element>) => {
                 const ref = useExternalRef(externalRef)
                 const config = useConfig(poseConfig, props)

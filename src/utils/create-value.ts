@@ -5,7 +5,6 @@ import styler from "stylefire"
 import { invariant } from "hey-listen"
 
 const poseSpecialProps = new Set(["transition", "transitionEnd"])
-const scrollKeys = new Set(["scrollX", "scrollY"])
 
 export const createValuesFromPose = (values: MotionValueMap, { transition, transitionEnd, ...pose }: Pose) => {
     const valuesToAdd = { ...pose, ...transitionEnd }
@@ -29,10 +28,6 @@ export const bindValuesToRef = (values: MotionValueMap, ref: RefObject<Element>)
     values.forEach((value, key) => {
         if (!value.hasOnRender()) {
             value.setOnRender((v: any) => domStyler.set(key, v))
-        }
-
-        if (scrollKeys.has(key) && !value.hasGetter()) {
-            value.setGetter(() => domStyler.get(key))
         }
     })
 }

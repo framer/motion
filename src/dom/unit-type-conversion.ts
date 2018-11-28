@@ -11,7 +11,7 @@ const hasPositionalKey = (pose: Pose) => Object.keys(pose).some(isPositionalKey)
 const setAndResetVelocity = (value: MotionValue, to: string | number) => {
     // Looks odd but setting it twice doesn't render, it'll just
     // set both prev and current to the latest value
-    value.set(to)
+    value.set(to, false)
     value.set(to)
 }
 

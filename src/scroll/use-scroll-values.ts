@@ -17,3 +17,5 @@ const useScrollValues = (values: MotionValueMap, externalOnScroll: (e: Synthetic
 
     return onScroll
 }
+
+export { useScrollValues }
