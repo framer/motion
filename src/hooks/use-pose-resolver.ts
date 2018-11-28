@@ -27,6 +27,9 @@ const createPoseResolver = (
         const animating = new Set<string>()
 
         poseList.reverse().forEach(poseKey => {
+            if (poseKey === "default" && config[poseKey] === undefined) {
+                return
+            }
             invariant(config[poseKey] !== undefined, `Pose with name ${poseKey} not found.`)
 
             const poseDefinition = config[poseKey]
