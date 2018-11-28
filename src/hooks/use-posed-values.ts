@@ -30,8 +30,7 @@ export const usePosedValues = (
 
     // 2. Create values from poses
     const initialPoses = resolvePoses(pose)
-
-    initialPoses.forEach(poseKey => {
+    initialPoses.reverse().forEach(poseKey => {
         const poseDef = config[poseKey]
         if (!poseDef) return
 
