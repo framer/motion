@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { motionValue } from "."
+import { motionValue, MotionValue } from "."
 
 /**
  * For advanced use-cases, you can assume external control of the motion values used by `motion` components.
@@ -34,4 +34,4 @@ import { motionValue } from "."
  *
  * @param {number | string} init - The initial state of the `MotionValue`
  */
-export const useMotionValue = (init: number | string) => useMemo(() => motionValue(init), [])
+export const useMotionValue = <T>(init: T): MotionValue<T> => useMemo(() => motionValue(init), [])
