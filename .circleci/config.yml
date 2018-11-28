@@ -30,7 +30,7 @@ jobs:
 
             # run tests!
             - run: |
-                  curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-0.6.3-darwin-amd64 > ./cc-test-reporter
+                  curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-0.6.3-linux-amd64 > ./cc-test-reporter
                   chmod +x ./cc-test-reporter
             - run: |
                   ./cc-test-reporter before-build
