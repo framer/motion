@@ -25,6 +25,9 @@ bootstrap:: node_modules/.yarn-integrity
 
 ######
 
+# The location to gather test reports
+TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)/test_reports)
+
 build: bootstrap
 	yarn build
 
@@ -35,10 +38,8 @@ watch: bootstrap
 	yarn watch
 
 test: bootstrap
-	yarn test
-
-coverage: bootstrap
-	yarn coverage
+	mkdir -p $(TEST_REPORT_PATH)
+	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test $(if $(CI),--ci --reporters=jest-junit)
 
 lint: bootstrap
 	tslint --project tsconfig.json --fix
