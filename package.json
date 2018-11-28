@@ -10,7 +10,7 @@
     "scripts": {
         "coverage": "jest --coverage",
         "test": "jest",
-        "watch": "jest --watch",
+        "watch": "jest --watch --coverage",
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && yarn measure",
         "measure": "gzip -c dist/framer-motion.js | wc -c"
