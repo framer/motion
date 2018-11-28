@@ -5,6 +5,7 @@
         "moduleResolution": "node",
         "isolatedModules": false,
         "jsx": "react",
+        "esModuleInterop": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": true,
