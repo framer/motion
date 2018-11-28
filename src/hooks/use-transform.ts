@@ -1,5 +1,5 @@
 import { useMemo, useRef, MutableRefObject } from "react"
-import { MotionValue, Transformer } from "../motion-value"
+import { MotionValue } from "../motion-value"
 import { interpolate } from "@popmotion/popcorn"
 
 /**
@@ -57,7 +57,7 @@ export const useTransform = (value: MotionValue, from: number[], to: string[] | 
         () => {
             if (transformedValue.current) transformedValue.current.destroy()
 
-            const transformer = interpolate(from, to) as Transformer<any>
+            const transformer = interpolate(from, to)
             transformedValue.current = value.addChild({ transformer })
             return transformedValue.current
         },
