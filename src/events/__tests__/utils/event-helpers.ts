@@ -1,4 +1,4 @@
-export const enableTouch = () => {
+export const enableTouchEvents = () => {
     const originalEvents = {
         ontouchstart: window.ontouchstart,
         ontouchmove: window.ontouchmove,
@@ -14,7 +14,7 @@ export const enableTouch = () => {
     }
 }
 
-export const enablePointer = () => {
+export const enablePointerEvents = () => {
     const originalEvents = {
         onpointerdown: window.onpointerdown,
         onpointermove: window.onpointermove,

@@ -1,5 +1,5 @@
-import "../../../jest.setup"
-import { fireEvent, render } from "react-testing-library"
+import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { render, fireEvent } from "react-testing-library"
 import * as React from "react"
 import { useRef } from "react"
 import { usePointerEvents } from "../"
@@ -35,8 +35,8 @@ const mouseHandlers = {
     onPointerUp: fireEvent.mouseUp,
     onPointerOver: fireEvent.mouseOver,
     onPointerOut: fireEvent.mouseOut,
-    onPointerEnter: fireEvent.mouseEnter,
-    onPointerLeave: fireEvent.mouseLeave,
+    onPointerEnter: mouseEnter,
+    onPointerLeave: mouseLeave,
 }
 
 const pointerHandlers = {
@@ -69,7 +69,7 @@ describe("usePointerEvents", () => {
     })
     describe.skip("on pointer devices", () => {
         for (const key in pointerHandlers) {
-            it.only(`should call ${key} handler`, () => {
+            it(`should call ${key} handler`, () => {
                 const restore = enablePointer()
                 testEvents(key, pointerHandlers[key])
                 restore()

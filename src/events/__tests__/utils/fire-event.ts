@@ -6,7 +6,7 @@ function fireEvent(element, event) {
 export const fireCustomEvent = (
     eventName: string,
     EventType: string = "Event",
-    defaultInit: {} = { bubbles: false, cancelable: false }
+    defaultInit: {} = { bubbles: true, cancelable: true }
 ) => {
     return function(node, init) {
         const eventInit = Object.assign({}, defaultInit, init)
