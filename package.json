@@ -9,7 +9,7 @@
     "license": "MIT",
     "scripts": {
         "test": "jest --coverage",
-        "watch": "jest --watch --coverage",
+        "watch": "jest --watch --coverage --coverageReporters=lcov",
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && yarn measure",
         "measure": "gzip -c dist/framer-motion.js | wc -c"
