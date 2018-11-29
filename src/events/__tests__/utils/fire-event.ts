@@ -8,8 +8,8 @@ export const fireCustomEvent = (
     EventType: string = "Event",
     defaultInit: {} = { bubbles: true, cancelable: true }
 ) => {
-    return function(node, init) {
-        const eventInit = Object.assign({}, defaultInit, init)
+    return function(node: Element, init?: {}): boolean {
+        const eventInit: any = Object.assign({}, defaultInit, init)
         let _eventInit$target = eventInit.target
         _eventInit$target = _eventInit$target === undefined ? {} : _eventInit$target
 

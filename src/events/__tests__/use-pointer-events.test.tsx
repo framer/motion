@@ -3,14 +3,14 @@ import { render, fireEvent } from "react-testing-library"
 import * as React from "react"
 import { useRef } from "react"
 import { usePointerEvents } from "../"
-import { PointerEventHandlers } from "../use-pointer-events"
-import { enableTouch, enablePointer } from "./utils/event-helpers"
+import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
 
-function testEvents(name: string, fireFunction: (element: Element) => boolean) {
-    const handler = jest.fn()
-    const handlers: Partial<PointerEventHandlers> = {}
-    handlers[name] = handler
+function testEvents(fireFunctions: { [key: string]: (element: Element) => boolean }) {
+    const handlers = {}
+    for (const key in fireFunctions) {
+        handlers[key] = jest.fn()
+    }
     const Component = () => {
         const ref = useRef(null)
         usePointerEvents(handlers, ref)
@@ -18,18 +18,21 @@ function testEvents(name: string, fireFunction: (element: Element) => boolean) {
     }
     const { container, rerender } = render(<Component />)
     rerender(<Component />)
-    fireFunction(container.firstChild as Element)
-    expect(handler).toHaveBeenCalledTimes(1)
+    for (const key in fireFunctions) {
+        expect(handlers[key]).toHaveBeenCalledTimes(0)
+        fireFunctions[key](container.firstChild as Element)
+        expect(handlers[key]).toHaveBeenCalledTimes(1)
+    }
 }
 
-const touchHandlers = {
+const touchEvents = {
     onPointerDown: fireEvent.touchStart,
     onPointerMove: fireEvent.touchMove,
     onPointerUp: fireEvent.touchEnd,
     onPointerCancel: fireEvent.touchCancel,
 }
 
-const mouseHandlers = {
+const mouseEvents = {
     onPointerDown: fireEvent.mouseDown,
     onPointerMove: fireEvent.mouseMove,
     onPointerUp: fireEvent.mouseUp,
@@ -39,7 +42,7 @@ const mouseHandlers = {
     onPointerLeave: mouseLeave,
 }
 
-const pointerHandlers = {
+const pointerEvents = {
     onPointerDown: fireCustomEvent("pointerdown"),
     onPointerMove: fireCustomEvent("pointermove"),
     onPointerUp: fireCustomEvent("pointerup"),
@@ -51,29 +54,17 @@ const pointerHandlers = {
 }
 
 describe("usePointerEvents", () => {
-    describe("on touch devices", () => {
-        for (const key in touchHandlers) {
-            it(`should call ${key} handler`, () => {
-                const restore = enableTouch()
-                testEvents(key, touchHandlers[key])
-                restore()
-            })
-        }
+    it(`should call touch handlers`, async () => {
+        const restore = enableTouchEvents()
+        testEvents(touchEvents)
+        restore()
     })
-    describe("on mouse devices", () => {
-        for (const key in mouseHandlers) {
-            it(`should call ${key} handler`, () => {
-                testEvents(key, mouseHandlers[key])
-            })
-        }
+    it(`should call mouse handlers`, () => {
+        testEvents(mouseEvents)
     })
-    describe.skip("on pointer devices", () => {
-        for (const key in pointerHandlers) {
-            it(`should call ${key} handler`, () => {
-                const restore = enablePointer()
-                testEvents(key, pointerHandlers[key])
-                restore()
-            })
-        }
+    it(`should call pointer handlers`, () => {
+        const restore = enablePointerEvents()
+        testEvents(pointerEvents)
+        restore()
     })
 })
