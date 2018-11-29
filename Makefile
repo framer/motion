@@ -35,6 +35,9 @@ dev: bootstrap
 	webpack-dev-server --config=dev/webpack/config.js
 
 watch: bootstrap
+	if test -f coverage/lcov-report/index.html; then \
+	 open coverage/lcov-report/index.html; \
+	fi;
 	yarn watch
 
 test: bootstrap
