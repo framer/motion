@@ -79,6 +79,13 @@
             "!**/node_modules/**"
         ],
         "coverageDirectory": "<rootDir>/../coverage",
-        "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts"
+        "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts",
+        "globals": {
+            "ts-jest": {
+                "diagnostics": {
+                    "warnOnly": true
+                }
+            }
+        }
     }
 }
