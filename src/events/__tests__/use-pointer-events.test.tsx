@@ -6,7 +6,7 @@ import { usePointerEvents } from "../"
 import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
 
-function testEvents(fireFunctions: { [key: string]: (element: Element) => boolean }) {
+function testEventsWithRef(fireFunctions: { [key: string]: (element: Element) => boolean }) {
     const handlers = {}
     for (const key in fireFunctions) {
         handlers[key] = jest.fn()
@@ -22,6 +22,34 @@ function testEvents(fireFunctions: { [key: string]: (element: Element) => boolea
         expect(handlers[key]).toHaveBeenCalledTimes(0)
         fireFunctions[key](container.firstChild as Element)
         expect(handlers[key]).toHaveBeenCalledTimes(1)
+    }
+}
+
+function testEventsWithElement(fireFunctions: { [key: string]: (element: Element) => boolean }) {
+    const handlers = {}
+    for (const key in fireFunctions) {
+        handlers[key] = jest.fn()
+    }
+    const target = document.body
+    const capture: { result?: any } = {}
+    const Component = () => {
+        capture.result = usePointerEvents(handlers, target)
+        return <div />
+    }
+    const { rerender } = render(<Component />)
+    rerender(<Component />)
+    const [start, stop] = capture.result
+    for (const key in fireFunctions) {
+        fireFunctions[key](document.body)
+        expect(handlers[key]).toHaveBeenCalledTimes(0)
+        start()
+        fireFunctions[key](document.body)
+        expect(handlers[key]).toHaveBeenCalledTimes(1)
+        fireFunctions[key](document.body)
+        expect(handlers[key]).toHaveBeenCalledTimes(2)
+        stop()
+        fireFunctions[key](document.body)
+        expect(handlers[key]).toHaveBeenCalledTimes(2)
     }
 }
 
@@ -54,17 +82,42 @@ const pointerEvents = {
 }
 
 describe("usePointerEvents", () => {
-    it(`should call touch handlers`, async () => {
-        const restore = enableTouchEvents()
-        testEvents(touchEvents)
-        restore()
+    describe("with touch events", () => {
+        let restore: Function
+        beforeAll(() => {
+            restore = enableTouchEvents()
+        })
+        afterAll(() => {
+            restore()
+        })
+        it(`should call handlers with ref`, async () => {
+            testEventsWithRef(touchEvents)
+        })
+        it(`should call handlers with element`, async () => {
+            testEventsWithElement(touchEvents)
+        })
     })
-    it(`should call mouse handlers`, () => {
-        testEvents(mouseEvents)
+    describe("with mouse events", () => {
+        it(`should call handlers with ref`, async () => {
+            testEventsWithRef(mouseEvents)
+        })
+        it(`should call handlers with element`, async () => {
+            testEventsWithElement(mouseEvents)
+        })
     })
-    it(`should call pointer handlers`, () => {
-        const restore = enablePointerEvents()
-        testEvents(pointerEvents)
-        restore()
+    describe("with pointer events", () => {
+        let restore: Function
+        beforeAll(() => {
+            restore = enablePointerEvents()
+        })
+        afterAll(() => {
+            restore()
+        })
+        it(`should call handlers with ref`, async () => {
+            testEventsWithRef(pointerEvents)
+        })
+        it(`should call handlers with element`, async () => {
+            testEventsWithElement(pointerEvents)
+        })
     })
 })
