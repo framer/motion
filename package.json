@@ -9,7 +9,7 @@
     "license": "MIT",
     "scripts": {
         "test": "jest --coverage",
-        "watch": "jest --watch --coverage",
+        "watch": "jest --watch --coverage --coverageReporters=lcov",
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && yarn measure",
         "measure": "gzip -c dist/framer-motion.js | wc -c"
@@ -76,9 +76,20 @@
         "rootDir": "src",
         "collectCoverageFrom": [
             "**/*.{js,jsx,ts,tsx}",
-            "!**/node_modules/**"
+            "!**/node_modules/**",
+            "!**/__tests__/**"
         ],
         "coverageDirectory": "<rootDir>/../coverage",
-        "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts"
+        "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts",
+        "testMatch": [
+            "**/__tests__/**/*.test.(js|ts)?(x)"
+        ],
+        "globals": {
+            "ts-jest": {
+                "diagnostics": {
+                    "warnOnly": true
+                }
+            }
+        }
     }
 }
