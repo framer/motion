@@ -69,7 +69,7 @@ const getTransitionProps = (valueKey: string, to: string | number, transitionPro
         if (transitionProp === false || transitionProp[valueKey] === false) {
             transition = { type: "just" }
         } else {
-            transition = transitionProp[valueKey] || (transitionProp as TransitionMap).default
+            transition = transitionProp[valueKey] || (transitionProp as TransitionMap).default || transitionProp
         }
 
         return { ...transition, to }
@@ -87,7 +87,6 @@ export const getTransition = (
     transition?: TransitionProp
 ): [ActionFactory, Transition] => {
     const { type = "tween", ...transitionDefinition } = getTransitionProps(valueKey, to, transition)
-
     const actionFactory: ActionFactory = transitions[type]
     const opts: Transition = preprocessOptions(type, transitionDefinition)
 

@@ -177,10 +177,6 @@ export class MotionValue<ValuePrimitive = any> {
         this.parent && this.parent.removeChild(this)
         this.stop()
     }
-
-    hasOnRender() {
-        return !!this.onRender
-    }
 }
 
 export const motionValue = <V>(init: V, opts?: Config<V>) => new MotionValue<V>(init, opts)

@@ -1,4 +1,4 @@
-import { MotionValue } from "../motion-value"
+import { MotionValue } from "../../value"
 
 type PoseNameList = string[]
 type PoseName = string | PoseNameList
