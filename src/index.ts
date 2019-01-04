@@ -1,4 +1,4 @@
 export { motion } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
-// export { useTransformValue } from "./value/use-transform-value"
-export { useAnimator } from "./animator/use-animator"
+export { useTransformedValue } from "./value/use-transformed-value"
+export { useAnimation } from "./animation/use-animation"

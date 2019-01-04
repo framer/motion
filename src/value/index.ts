@@ -1,4 +1,4 @@
-import sync, { getFrameData, FrameData } from "framesync"
+import sync, { getFrameData, FrameData, cancelSync } from "framesync"
 import { chain, delay as delayAction, Action, ColdSubscription } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 
@@ -8,7 +8,6 @@ export type Subscriber<T> = (v: T) => void
 
 export type Config<T> = {
     transformer?: Transformer<T>
-    onRender?: Subscriber<T>
     parent?: MotionValue<T>
 }
 
@@ -20,12 +19,12 @@ const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
 
-export class MotionValue<ValuePrimitive = any> {
+export class MotionValue<V = any> {
     // Current state
-    private current: ValuePrimitive
+    private current: V
 
     // Previous state
-    private prev: ValuePrimitive
+    private prev: V
 
     private timeDelta: number = 0
     private lastUpdated: number = 0
@@ -37,29 +36,30 @@ export class MotionValue<ValuePrimitive = any> {
     // but maybe it'd be better for this to be just a disconnect function
     private parent?: MotionValue
 
-    // onRender is fired on render step after update
-    private onRender: Subscriber<ValuePrimitive> | null
+    // Update subscribers are updated on the update step
+    private updateSubscribers: Set<Subscriber<V>>
 
-    // Fired
-    private subscribers: Set<Subscriber<ValuePrimitive>>
+    // Render subscribers are updated on the render step
+    private renderSubscribers: Set<Subscriber<V>>
+
+    private cancelSubscriber: Set<() => void> = new Set()
 
     // If set, will pass `set` values through this function first
-    private transformer?: Transformer<ValuePrimitive>
+    private transformer?: Transformer<V>
 
     // A reference to the currently-controlling animation
     private controller?: ColdSubscription
 
     private canTrackVelocity = false
 
-    constructor(init: ValuePrimitive, { onRender, transformer, parent }: Config<ValuePrimitive> = {}) {
+    constructor(init: V, { transformer, parent }: Config<V> = {}) {
         this.parent = parent
         this.transformer = transformer
-        if (onRender) this.setOnRender(onRender)
         this.set(init)
         this.canTrackVelocity = isFloat(this.current)
     }
 
-    addChild(config: Config<ValuePrimitive>) {
+    addChild(config: Config<V>) {
         const child = new MotionValue(this.current, {
             parent: this,
             ...config,
@@ -76,36 +76,46 @@ export class MotionValue<ValuePrimitive = any> {
         this.children.delete(child)
     }
 
-    setOnRender(onRender: Subscriber<ValuePrimitive> | null) {
-        this.onRender = onRender
-        if (this.onRender) sync.render(this.render)
+    addUpdateSubscription(subscription: Subscriber<V>) {
+        if (!this.updateSubscribers) this.updateSubscribers = new Set()
+
+        const updateSubscriber = () => subscription(this.current)
+        const scheduleUpdate = () => sync.update(updateSubscriber, false, true)
+        this.updateSubscribers.add(scheduleUpdate)
+
+        this.cancelSubscriber.add(() => cancelSync.update(updateSubscriber))
+
+        return () => this.updateSubscribers.delete(scheduleUpdate)
     }
 
-    addSubscriber(sub: Subscriber<ValuePrimitive>) {
-        if (!this.subscribers) this.subscribers = new Set()
-        this.subscribers.add(sub)
+    addRenderSubscription(subscription: Subscriber<V>) {
+        if (!this.renderSubscribers) this.renderSubscribers = new Set()
+
+        const updateSubscriber = () => subscription(this.current)
+        const scheduleUpdate = () => sync.render(updateSubscriber)
+        this.renderSubscribers.add(scheduleUpdate)
+
+        scheduleUpdate()
+
+        this.cancelSubscriber.add(() => cancelSync.render(updateSubscriber))
+
+        return () => this.renderSubscribers.delete(scheduleUpdate)
     }
 
-    removeSubscriber(sub: Subscriber<ValuePrimitive>) {
-        if (this.subscribers) {
-            this.subscribers.delete(sub)
-        }
-    }
-
-    set(v: ValuePrimitive, render = true) {
+    set(v: V, render = true) {
         this.prev = this.current
         this.current = this.transformer ? this.transformer(v) : v
 
-        if (this.subscribers) {
-            sync.update(this.notifySubscribers, false, true)
+        if (this.updateSubscribers) {
+            this.updateSubscribers.forEach(this.notifySubscriber)
         }
 
         if (this.children) {
             this.children.forEach(this.setChild)
         }
 
-        if (render && this.onRender) {
-            this.onRender(this.current)
+        if (render && this.renderSubscribers) {
+            this.renderSubscribers.forEach(this.notifySubscriber)
         }
 
         // Update timestamp
@@ -113,6 +123,10 @@ export class MotionValue<ValuePrimitive = any> {
         this.timeDelta = delta
         this.lastUpdated = timestamp
         sync.postRender(this.scheduleVelocityCheck)
+    }
+
+    notifySubscriber = (subscriber: Subscriber<V>) => {
+        subscriber(this.current)
     }
 
     scheduleVelocityCheck = () => sync.postRender(this.velocityCheck)
@@ -123,8 +137,6 @@ export class MotionValue<ValuePrimitive = any> {
         }
     }
 
-    notifySubscribers = () => this.subscribers.forEach(this.setSubscriber)
-    setSubscriber = (sub: Subscriber<ValuePrimitive>) => sub(this.current)
     setChild = (child: MotionValue) => child.set(this.current)
 
     get() {
@@ -139,11 +151,7 @@ export class MotionValue<ValuePrimitive = any> {
             : 0
     }
 
-    render = () => {
-        if (this.onRender) this.onRender(this.current)
-    }
-
-    control(controller: ActionFactory, { delay, ...config }: ActionConfig, transformer?: Transformer<ValuePrimitive>) {
+    control(controller: ActionFactory, { delay, ...config }: ActionConfig, transformer?: Transformer<V>) {
         this.stop()
 
         let initialisedController = controller({
@@ -162,7 +170,7 @@ export class MotionValue<ValuePrimitive = any> {
 
         return new Promise(complete => {
             this.controller = initialisedController.start({
-                update: (v: ValuePrimitive) => this.set(v),
+                update: (v: V) => this.set(v),
                 complete,
             })
         })
@@ -173,7 +181,10 @@ export class MotionValue<ValuePrimitive = any> {
     }
 
     destroy() {
-        this.setOnRender(null)
+        this.updateSubscribers.clear()
+        this.renderSubscribers.clear()
+        this.cancelSubscriber.forEach(cancel => cancel())
+        this.cancelSubscriber.clear()
         this.parent && this.parent.removeChild(this)
         this.stop()
     }

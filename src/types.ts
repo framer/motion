@@ -1,122 +1,8 @@
-import { MotionValue } from "../motion-value"
-import { CSSProperties, ComponentType, Ref } from "react"
+export type Props = { [key: string]: any }
 
-export type DefaultPose<T> = T | "default"
+export type PoseTransition = {}
 
-type PoseNames<Config extends PoseConfigFactory | PoseConfig> = DefaultPose<
-    Config extends PoseConfigFactory ? keyof ReturnType<Config> : keyof Config
->
-
-export type ComponentFactory<T> = <Config extends PoseConfigFactory | PoseConfig>(
-    config?: Config
-) => ComponentType<T & MotionProps<PoseNames<Config>>>
-
-export type ComponentPoseNames<C> = C extends ComponentType<MotionProps<infer P>> ? P : never
-
-export type PoseConfigFactory = (props: MotionProps) => PoseConfig
-
-export type PoseConfig = {
-    [key: string]: Pose | PoseResolver
-}
-
-export type MotionProps<Poses = string> = {
-    [key: string]: any
-    ref?: Ref<any>
-    pose?: Poses | Poses[] | MotionValue
-    motionValues?: { [key: string]: MotionValue }
-    style?: CSSProperties
-    onPoseComplete?: (current: CurrentValues, velocity: VelocityValues) => void
-}
-
-export type EasingFunction = (v: number) => number
-
-export type CubicBezier = [number, number, number, number]
-
-export type Easing =
-    | CubicBezier
-    | "linear"
-    | "easeIn"
-    | "easeOut"
-    | "easeInOut"
-    | "circIn"
-    | "circOut"
-    | "circInOut"
-    | "backIn"
-    | "backOut"
-    | "backInOut"
-    | "anticipate"
-    | EasingFunction
-
-export type BaseTransition = {
-    delay?: number
-    from?: number | string
-    to?: number | string
-    velocity?: number
-    staggerChildren?: number
-}
-
-export type Tween = BaseTransition & {
-    type?: "tween"
-    duration?: number
-    ease?: Easing
-    elapsed?: number
-    loop?: number
-    flip?: number
-    yoyo?: number
-}
-
-export type Spring = BaseTransition & {
-    type: "spring"
-    stiffness?: number
-    damping?: number
-    mass?: number
-    restSpeed?: number
-    restDelta?: number
-}
-
-export type Decay = BaseTransition & {
-    type: "decay"
-    modifyTarget?: (v: number) => number
-    power?: number
-    timeConstant?: number
-    restDelta?: number
-}
-
-export type Keyframes = BaseTransition & {
-    type: "keyframes"
-    values: number[] | string[]
-    easings?: Easing[]
-    easeAll?: Easing
-    elapsed?: number
-    duration?: number
-    loop?: number
-    flip?: number
-    yoyo?: number
-}
-
-export type Physics = BaseTransition & {
-    type: "physics"
-    acceleration?: number
-    friction?: number
-    restSpeed?: number | false
-}
-
-export type Just = BaseTransition & {
-    type: "just"
-}
-
-export type TransitionProp = Tween | Spring | Decay | Keyframes | Physics | BaseTransition | false
-
-export type Transition = Tween | Spring | Decay | Keyframes | Physics | Just
-
-export type TransitionMap = { [key: string]: TransitionProp }
-
-export type TransitionDefinition = TransitionProp | TransitionMap
-
-// Framer Motion accepts any value, not just those listed below.
-// Add more here as found.
-export type Pose = {
-    // Transforms
+export type PoseDefinition = {
     x?: number | string
     y?: number | string
     z?: number | string
@@ -192,19 +78,147 @@ export type Pose = {
     d?: string
     pathLength?: number
     pathSpacing?: number
-
-    // Options
-    transition?: TransitionDefinition
-    transitionEnd?: StyleProps | ResolveStyleProps
 }
 
-export type ResolveStyleProps = (current: CurrentValues, velocity: VelocityValues) => StyleProps
+export type PoseAndTransition = [PoseDefinition, PoseTransition]
 
-export type StyleProps = { [key: string]: string | number }
+export type PoseResolver = (props: Props) => PoseDefinition | PoseAndTransition
 
-export type CurrentValues = { [key: string]: string | number }
-export type VelocityValues = { [key: string]: number }
+export type Pose = PoseDefinition | PoseAndTransition | PoseResolver
 
-export type PoseResolver = (props: { [key: string]: any }, current: CurrentValues, velocity: VelocityValues) => Pose
+export type Poses = {
+    [key: string]: Pose
+}
 
-export type MotionValueMap = Map<string, MotionValue>
+// import { MotionValue } from "../motion-value"
+// import { CSSProperties, ComponentType, Ref } from "react"
+
+// export type DefaultPose<T> = T | "default"
+
+// type PoseNames<Config extends PoseConfigFactory | PoseConfig> = DefaultPose<
+//     Config extends PoseConfigFactory ? keyof ReturnType<Config> : keyof Config
+// >
+
+// export type ComponentFactory<T> = <Config extends PoseConfigFactory | PoseConfig>(
+//     config?: Config
+// ) => ComponentType<T & MotionProps<PoseNames<Config>>>
+
+// export type ComponentPoseNames<C> = C extends ComponentType<MotionProps<infer P>> ? P : never
+
+// export type PoseConfigFactory = (props: MotionProps) => PoseConfig
+
+// export type PoseConfig = {
+//     [key: string]: Pose | PoseResolver
+// }
+
+// export type MotionProps<Poses = string> = {
+//     [key: string]: any
+//     ref?: Ref<any>
+//     pose?: Poses | Poses[] | MotionValue
+//     motionValues?: { [key: string]: MotionValue }
+//     style?: CSSProperties
+//     onPoseComplete?: (current: CurrentValues, velocity: VelocityValues) => void
+// }
+
+// export type EasingFunction = (v: number) => number
+
+// export type CubicBezier = [number, number, number, number]
+
+// export type Easing =
+//     | CubicBezier
+//     | "linear"
+//     | "easeIn"
+//     | "easeOut"
+//     | "easeInOut"
+//     | "circIn"
+//     | "circOut"
+//     | "circInOut"
+//     | "backIn"
+//     | "backOut"
+//     | "backInOut"
+//     | "anticipate"
+//     | EasingFunction
+
+// export type BaseTransition = {
+//     delay?: number
+//     from?: number | string
+//     to?: number | string
+//     velocity?: number
+//     staggerChildren?: number
+// }
+
+// export type Tween = BaseTransition & {
+//     type?: "tween"
+//     duration?: number
+//     ease?: Easing
+//     elapsed?: number
+//     loop?: number
+//     flip?: number
+//     yoyo?: number
+// }
+
+// export type Spring = BaseTransition & {
+//     type: "spring"
+//     stiffness?: number
+//     damping?: number
+//     mass?: number
+//     restSpeed?: number
+//     restDelta?: number
+// }
+
+// export type Decay = BaseTransition & {
+//     type: "decay"
+//     modifyTarget?: (v: number) => number
+//     power?: number
+//     timeConstant?: number
+//     restDelta?: number
+// }
+
+// export type Keyframes = BaseTransition & {
+//     type: "keyframes"
+//     values: number[] | string[]
+//     easings?: Easing[]
+//     easeAll?: Easing
+//     elapsed?: number
+//     duration?: number
+//     loop?: number
+//     flip?: number
+//     yoyo?: number
+// }
+
+// export type Physics = BaseTransition & {
+//     type: "physics"
+//     acceleration?: number
+//     friction?: number
+//     restSpeed?: number | false
+// }
+
+// export type Just = BaseTransition & {
+//     type: "just"
+// }
+
+// export type TransitionProp = Tween | Spring | Decay | Keyframes | Physics | BaseTransition | false
+
+// export type Transition = Tween | Spring | Decay | Keyframes | Physics | Just
+
+// export type TransitionMap = { [key: string]: TransitionProp }
+
+// export type TransitionDefinition = TransitionProp | TransitionMap
+
+// // Framer Motion accepts any value, not just those listed below.
+// // Add more here as found.
+// export type Pose = {
+//     // Transforms
+
+// }
+
+// export type ResolveStyleProps = (current: CurrentValues, velocity: VelocityValues) => StyleProps
+
+// export type StyleProps = { [key: string]: string | number }
+
+// export type CurrentValues = { [key: string]: string | number }
+// export type VelocityValues = { [key: string]: number }
+
+// export type PoseResolver = (props: { [key: string]: any }, current: CurrentValues, velocity: VelocityValues) => Pose
+
+// export type MotionValueMap = Map<string, MotionValue>

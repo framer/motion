@@ -1,5 +1,6 @@
 import * as React from "react"
-import { motion, useAnimator } from "@framer"
+import { useState } from "react"
+import { motion, useAnimation } from "@framer"
 
 const style = {
     width: 100,
@@ -10,30 +11,24 @@ const stylea = {
     width: 50,
     height: 50,
     background: "blue",
+    x: 100,
 }
 
 export const App = () => {
-    const animator = useAnimator({
-        visible: { opacity: 1, transition: { beforeChildren: true } },
-        hidden: { opacity: 0.3 },
-    })
+    const animation = {
+        active: { x: 200 },
+    }
 
-    const childAnimator = useAnimator({
-        visible: { x: 0 },
-        hidden: { x: 100 },
-    })
-
-    const [isVisible, setVisible] = React.useState(false)
+    const [isActive, setActive] = useState(true)
 
     return (
         <motion.div
-            animator={animator}
+            animation={animation}
+            pose={isActive ? "active" : "default"}
+            onClick={() => setActive(!isActive)}
             style={style}
-            pose={isVisible ? "visible" : "hidden"}
-            onClick={() => setVisible(!isVisible)}
-            onPoseComplete={console.log}
         >
-            <motion.div animator={childAnimator} style={stylea} inheritPose />
+            <motion.div style={stylea} />
         </motion.div>
     )
 }

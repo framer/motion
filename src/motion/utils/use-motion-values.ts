@@ -1,11 +1,13 @@
 import { useMemo, useEffect, RefObject } from "react"
 import { MotionValue } from "value"
 import styler, { Styler } from "stylefire"
+import { invariant } from "hey-listen"
 
 export class MotionValuesMap {
     private hasMounted = false
     private styler: Styler
     private values = new Map<string, MotionValue>()
+    private unsubscribers = new Map<string, () => void>()
 
     has(key: string) {
         return this.values.has(key)
@@ -14,9 +16,7 @@ export class MotionValuesMap {
     set(key: string, value: MotionValue) {
         this.values.set(key, value)
 
-        if (this.hasMounted) {
-            this.bindValueToStyler(key, value)
-        }
+        if (this.hasMounted) this.bindValueToStyler(key, value)
     }
 
     get(key: string) {
@@ -28,7 +28,9 @@ export class MotionValuesMap {
     }
 
     bindValueToStyler(key: string, value: MotionValue) {
-        value.setOnRender((v: any) => this.styler.set(key, v))
+        const update = (v: any) => this.styler.set(key, v)
+        const unsubscribe = value.addRenderSubscription(update)
+        this.unsubscribers.set(key, unsubscribe)
     }
 
     mount(element: Element) {
@@ -38,17 +40,26 @@ export class MotionValuesMap {
     }
 
     unmount() {
-        this.values.forEach(value => value.destroy())
+        this.values.forEach((_value, key) => {
+            const unsubscribe = this.unsubscribers.get(key)
+            unsubscribe && unsubscribe()
+        })
     }
 }
 
-export const useMotionValues = ref => {
-    const motionValuesMap = useMemo(() => new MotionValuesMap(), [])
+export const useMotionValues = (ref: RefObject<Element>) => {
+    const motionValues = useMemo(() => new MotionValuesMap(), [])
 
     useEffect(() => {
-        motionValuesMap.mount(ref.current)
-        return () => motionValuesMap.unmount()
-    }, [])
+        invariant(
+            ref.current instanceof Element,
+            "No `ref` found. Ensure components created with `motion.custom` forward refs using `React.forwardRef`"
+        )
 
-    return motionValuesMap
+        motionValues.mount(ref.current as Element)
+
+        return () => motionValues.unmount()
+    })
+
+    return motionValues
 }
