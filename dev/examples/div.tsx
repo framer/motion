@@ -16,7 +16,13 @@ const stylea = {
 
 export const App = () => {
     const animation = {
-        active: { x: 200 },
+        default: { x: 0 },
+        active: () => [{ x: 200 }, { beforeChildren: true }],
+    }
+
+    const childPoses = {
+        default: { opacity: 0.2 },
+        active: { opacity: 1 },
     }
 
     const [isActive, setActive] = useState(true)
@@ -28,7 +34,7 @@ export const App = () => {
             onClick={() => setActive(!isActive)}
             style={style}
         >
-            <motion.div style={stylea} />
+            <motion.div animation={childPoses} pose={isActive ? "active" : "default"} style={stylea} />
         </motion.div>
     )
 }

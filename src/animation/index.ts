@@ -1,40 +1,39 @@
-import { Pose, Poses, PoseResolver, PoseTransition, PoseAndTransition } from "../types"
+import { Poses, PoseResolver, PoseTransition, PoseDefinition } from "../types"
 import { AnimationControls } from "../motion/utils/use-animation-controls"
 
-const isPoseResolver = (p: any): p is PoseResolver => typeof p === "function"
+export type AnimationDefinition = [PoseResolver] | [PoseDefinition, PoseTransition] | [PoseDefinition] | [string]
 
 export class AnimationManager {
     private hasMounted = false
-    private pendingAnimations: Array<PoseResolver | PoseAndTransition> = []
+    private pendingAnimations: AnimationDefinition[] = []
     private subscribers = new Set<AnimationControls>()
     private poses: Poses = {}
 
     setPoses(poses: Poses) {
         this.poses = poses
+        this.subscribers.forEach(subscriber => subscriber.setPoses(poses))
     }
 
     subscribe(subscriber: AnimationControls) {
         this.subscribers.add(subscriber)
 
+        if (this.poses) subscriber.setPoses(this.poses)
+
         return () => this.subscribers.delete(subscriber)
     }
 
-    start(to: PoseResolver): Promise<any>
-    start(to: Pose, options: PoseTransition): Promise<any>
-    start(to: Pose | PoseResolver, options: PoseTransition = {}): Promise<any> {
+    start(...animationDefinition: AnimationDefinition): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
-
-            this.subscribers.forEach(subscriber => {
-                const animation = subscriber.start(to, options)
+            this.subscribers.forEach(controls => {
+                const animation = controls.start(...animationDefinition)
                 animations.push(animation)
             })
 
             return Promise.all(animations)
         } else {
-            const definition = isPoseResolver(to) ? to : ([to, options] as PoseAndTransition)
-            this.pendingAnimations.push(definition)
-            return Promise.resolve()
+            this.pendingAnimations.push(animationDefinition)
+            return Promise.resolve() // Will this cause problems?
         }
     }
 
@@ -44,14 +43,7 @@ export class AnimationManager {
 
     mount() {
         this.hasMounted = true
-        this.pendingAnimations.map(definition => {
-            if (isPoseResolver(definition)) {
-                this.start(definition)
-            } else {
-                const [to, opts] = definition
-                this.start(to, opts)
-            }
-        })
+        this.pendingAnimations.forEach(animationDefinition => this.start(...animationDefinition))
     }
 
     unmount() {

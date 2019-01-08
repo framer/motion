@@ -37,14 +37,6 @@ export type MotionProps = {
     style?: CSSProperties & MotionStyleProperties
     animation?: AnimationManager | Poses
     pose?: PoseKeys
+    inherit: boolean
     onPoseComplete?: () => void
 }
-
-// export type MotionProps<Poses = string> = {
-//     [key: string]: any
-//     ref?: Ref<any>
-//     pose?: Poses | Poses[] | MotionValue
-//     motionValues?: { [key: string]: MotionValue }
-//     style?: CSSProperties
-//     onPoseComplete?: (current: CurrentValues, velocity: VelocityValues) => void
-// }

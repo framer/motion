@@ -9,15 +9,7 @@ export const useAnimationSubscription = (
     animation: AnimationManager | Poses | undefined,
     controls: AnimationControls
 ) => {
-    const unsubscribe = useMemo(
-        () => {
-            if (isAnimationManager(animation)) {
-                return animation.subscribe(controls)
-            }
-        },
-        [animation]
-    )
-
+    const unsubscribe = useMemo(() => isAnimationManager(animation) && animation.subscribe(controls), [animation])
     useEffect(() => () => unsubscribe && unsubscribe(), [unsubscribe])
 }
 
