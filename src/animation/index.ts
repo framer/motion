@@ -1,7 +1,7 @@
 import { Poses, PoseResolver, PoseTransition, PoseDefinition } from "../types"
 import { AnimationControls } from "../motion/utils/use-animation-controls"
 
-export type AnimationDefinition = [PoseResolver] | [PoseDefinition, PoseTransition] | [PoseDefinition] | [string]
+export type AnimationDefinition = [string | PoseResolver | PoseDefinition, PoseTransition?]
 
 export class AnimationManager {
     private hasMounted = false
@@ -16,23 +16,22 @@ export class AnimationManager {
 
     subscribe(subscriber: AnimationControls) {
         this.subscribers.add(subscriber)
-
         if (this.poses) subscriber.setPoses(this.poses)
 
         return () => this.subscribers.delete(subscriber)
     }
 
-    start(...animationDefinition: AnimationDefinition): Promise<any> {
+    start(definition: string | PoseDefinition | PoseResolver, transition?: PoseTransition): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
             this.subscribers.forEach(controls => {
-                const animation = controls.start(...animationDefinition)
+                const animation = controls.start(definition, transition)
                 animations.push(animation)
             })
 
             return Promise.all(animations)
         } else {
-            this.pendingAnimations.push(animationDefinition)
+            this.pendingAnimations.push([definition, transition])
             return Promise.resolve() // Will this cause problems?
         }
     }
@@ -43,7 +42,7 @@ export class AnimationManager {
 
     mount() {
         this.hasMounted = true
-        this.pendingAnimations.forEach(animationDefinition => this.start(...animationDefinition))
+        this.pendingAnimations.forEach(([definition, transition]) => this.start(definition, transition))
     }
 
     unmount() {

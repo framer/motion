@@ -12,22 +12,3 @@ export const useAnimationSubscription = (
     const unsubscribe = useMemo(() => isAnimationManager(animation) && animation.subscribe(controls), [animation])
     useEffect(() => () => unsubscribe && unsubscribe(), [unsubscribe])
 }
-
-//useEffect(
-//         () => {
-//             animator.subscribe(controls)
-
-//             if (inheritPose && parentControls) {
-//                 parentControls.addChild(controls)
-//             }
-
-//             return () => {
-//                 animator.unsubscribe(controls)
-
-//                 if (inheritPose && parentControls) {
-//                     parentControls.removeChild(controls)
-//                 }
-//             }
-//         },
-//         [inheritPose, animator]
-//     )

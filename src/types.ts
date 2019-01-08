@@ -1,10 +1,92 @@
 export type Props = { [key: string]: any }
 
-export type PoseTransition = {
+export type EasingFunction = (v: number) => number
+
+export type CubicBezier = [number, number, number, number]
+
+export type Easing =
+    | CubicBezier
+    | "linear"
+    | "easeIn"
+    | "easeOut"
+    | "easeInOut"
+    | "circIn"
+    | "circOut"
+    | "circInOut"
+    | "backIn"
+    | "backOut"
+    | "backInOut"
+    | "anticipate"
+    | EasingFunction
+
+export type BaseTransition = {
+    delay?: number
+    from?: number | string
+    to?: number | string
+    velocity?: number
     beforeChildren?: boolean
     afterChildren?: boolean
     delayChildren?: number
+    staggerChildren?: number
+    staggerDirection?: 1 | -1
+    applyOnEnd?: PoseDefinition
 }
+
+export type Tween = BaseTransition & {
+    type?: "tween"
+    duration?: number
+    ease?: Easing
+    elapsed?: number
+    loop?: number
+    flip?: number
+    yoyo?: number
+}
+
+export type Spring = BaseTransition & {
+    type: "spring"
+    stiffness?: number
+    damping?: number
+    mass?: number
+    restSpeed?: number
+    restDelta?: number
+}
+
+export type Decay = BaseTransition & {
+    type: "decay"
+    modifyTarget?: (v: number) => number
+    power?: number
+    timeConstant?: number
+    restDelta?: number
+}
+
+export type Keyframes = BaseTransition & {
+    type: "keyframes"
+    values: number[] | string[]
+    easings?: Easing[]
+    easeAll?: Easing
+    elapsed?: number
+    duration?: number
+    loop?: number
+    flip?: number
+    yoyo?: number
+}
+
+export type Physics = BaseTransition & {
+    type: "physics"
+    acceleration?: number
+    friction?: number
+    restSpeed?: number | false
+}
+
+export type Just = BaseTransition & {
+    type: "just"
+}
+
+export type Transition = Tween | Spring | Decay | Keyframes | Physics | Just
+
+export type PoseTransition = Tween | Spring | Decay | Keyframes | Physics | BaseTransition | false
+
+export type TransitionMap = { [key: string]: PoseTransition }
 
 export type PoseDefinition = {
     x?: number | string
@@ -124,81 +206,12 @@ export type Poses = {
 //     onPoseComplete?: (current: CurrentValues, velocity: VelocityValues) => void
 // }
 
-// export type EasingFunction = (v: number) => number
-
-// export type CubicBezier = [number, number, number, number]
-
-// export type Easing =
-//     | CubicBezier
-//     | "linear"
-//     | "easeIn"
-//     | "easeOut"
-//     | "easeInOut"
-//     | "circIn"
-//     | "circOut"
-//     | "circInOut"
-//     | "backIn"
-//     | "backOut"
-//     | "backInOut"
-//     | "anticipate"
-//     | EasingFunction
-
 // export type BaseTransition = {
 //     delay?: number
 //     from?: number | string
 //     to?: number | string
 //     velocity?: number
 //     staggerChildren?: number
-// }
-
-// export type Tween = BaseTransition & {
-//     type?: "tween"
-//     duration?: number
-//     ease?: Easing
-//     elapsed?: number
-//     loop?: number
-//     flip?: number
-//     yoyo?: number
-// }
-
-// export type Spring = BaseTransition & {
-//     type: "spring"
-//     stiffness?: number
-//     damping?: number
-//     mass?: number
-//     restSpeed?: number
-//     restDelta?: number
-// }
-
-// export type Decay = BaseTransition & {
-//     type: "decay"
-//     modifyTarget?: (v: number) => number
-//     power?: number
-//     timeConstant?: number
-//     restDelta?: number
-// }
-
-// export type Keyframes = BaseTransition & {
-//     type: "keyframes"
-//     values: number[] | string[]
-//     easings?: Easing[]
-//     easeAll?: Easing
-//     elapsed?: number
-//     duration?: number
-//     loop?: number
-//     flip?: number
-//     yoyo?: number
-// }
-
-// export type Physics = BaseTransition & {
-//     type: "physics"
-//     acceleration?: number
-//     friction?: number
-//     restSpeed?: number | false
-// }
-
-// export type Just = BaseTransition & {
-//     type: "just"
 // }
 
 // export type TransitionProp = Tween | Spring | Decay | Keyframes | Physics | BaseTransition | false

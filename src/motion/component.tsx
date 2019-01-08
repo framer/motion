@@ -7,9 +7,9 @@ import { useAnimationControls } from "./utils/use-animation-controls"
 import { useAnimationSubscription } from "./utils/use-animation-subscription"
 import { usePoses } from "./utils/use-poses"
 import { MotionContext, useMotionContext } from "./utils/MotionContext"
-import { ComponentFactory, MotionProps } from "./types"
+import { MotionProps } from "./types"
 
-export const createMotionComponent: ComponentFactory = <P extends {}>(Component: ComponentType<P>) => {
+export const createMotionComponent = <P extends {}>(Component: ComponentType<P>) => {
     const MotionComponent = (
         { animation, pose = "default", style, onPoseComplete, inherit = false, ...props }: P & MotionProps,
         externalRef?: Ref<Element>

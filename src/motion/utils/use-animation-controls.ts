@@ -3,110 +3,29 @@ import { MotionValuesMap } from "./use-motion-values"
 import { getTransition } from "./transitions"
 import { motionValue } from "../../value"
 import { complex } from "style-value-types"
-import { transformPose } from "../../dom/unit-type-conversion"
 import { MotionContext } from "./MotionContext"
 import { PoseResolver, Pose, PoseTransition, Props, Poses, PoseDefinition } from "../../types"
 
 const isAnimatable = (value: string | number) => typeof value === "number" || complex.test(value)
-
-// export class AnimationControls {
-//     private animator: any
-//     private values: MotionValuesMap
-//     private props: { [key: string]: any }
-//     private children = new Set<AnimationControls>()
-
-//     constructor(animator, values) {
-//         this.animator = animator
-//         this.values = values
-//     }
-
-//     set(def) {
-//         if (typeof def === "function") {
-//             def = def(this.props)
-//         }
-
-//         // TODO resolve pose as string
-
-//         const { transition, options, ...values } = def
-//         Object.keys(values).forEach(key => {
-//             if (!this.values.has(key)) {
-//                 this.values.set(key, motionValue(values[key]))
-//             } else {
-//                 this.values.get(key).set(values[key])
-//             }
-//         })
-//     }
-
-//     start(def) {
-//         let getChildrenAnimations = () => []
-
-//         if (typeof def === "function") {
-//             def = def(this.props)
-//         }
-
-//         if (typeof def === "string") {
-//             const pose = def
-//             getChildrenAnimations = () => {
-//                 const animations = []
-//                 this.children.forEach(child => animations.push(child.start(pose)))
-//                 return animations
-//             }
-
-//             def = this.animator.getPose(def)
-//         }
-
-//         if (!def) return
-
-//         const { transition = {}, options, transitionEnd, ...values } = def
-//         const { beforeChildren, afterChildren } = transition
-// getanimations
-
-//         let animations
-
-//         if (this.children.size && (beforeChildren || afterChildren)) {
-//             const [first, last] = beforeChildren
-//                 ? [getAnimations, getChildrenAnimations]
-//                 : [getChildrenAnimations, getAnimations]
-
-//             animations = Promise.all(first()).then(() => Promise.all(last()))
-//         } else {
-//             animations = Promise.all([...getAnimations(), ...getChildrenAnimations()])
-//         }
-
-//         return animations.then(() => {
-//             if (!transitionEnd) return
-
-//             Object.keys(transitionEnd).forEach(key => {
-//                 if (this.values.has(key)) {
-//                     this.values.get(key).set(transitionEnd[key])
-//                 }
-//             })
-//         })
-//     }
-
 const isPoseResolver = (p: any): p is PoseResolver => typeof p === "function"
-
 const isPoseKeyList = (v: any): v is string[] => Array.isArray(v)
-
-const setValue = (values: MotionValuesMap, key: string, v: any) => {
-    if (values.has(key)) {
-        const value = values.get(key)
-        value && value.set(v)
-    } else {
-        values.set(key, motionValue(v))
-    }
-}
 
 const setValues = (target: Pose, values: MotionValuesMap, isActive: Set<string> = new Set()) => {
     return Object.keys(target).forEach(key => {
         if (isActive.has(key)) return
 
         isActive.add(key)
-        setValue(values, key, target[key])
+
+        if (values.has(key)) {
+            const value = values.get(key)
+            value && value.set(target[key])
+        } else {
+            values.set(key, motionValue(target[key]))
+        }
     })
 }
 
-const resolveAnimationDefinition = (definition?: Pose | PoseResolver, props: Props = {}) => {
+const resolveAnimationDefinition = (definition?: Pose, props: Props = {}): [PoseDefinition?, PoseTransition?] => {
     if (!definition) return []
 
     if (isPoseResolver(definition)) {
@@ -135,10 +54,6 @@ export class AnimationControls<P = {}> {
         this.poses = poses
     }
 
-    start(poseKey: string): Promise<any>
-    start(poseList: string[]): Promise<any>
-    start(target: PoseDefinition, transition?: PoseTransition): Promise<any>
-    start(resolver: PoseResolver): Promise<any>
     start(definition: string | string[] | PoseDefinition | PoseResolver, transition?: PoseTransition): Promise<any> {
         this.resetIsAnimating()
 
@@ -147,7 +62,7 @@ export class AnimationControls<P = {}> {
         } else if (typeof definition === "string") {
             return this.animatePose(definition)
         } else {
-            return this.animate([definition, transition])
+            return this.animate([definition, transition] as Pose)
         }
     }
 
@@ -160,8 +75,11 @@ export class AnimationControls<P = {}> {
         })
     }
 
-    private animate(animationDefinition, delay: number = 0) {
+    private animate(animationDefinition: Pose, delay: number = 0) {
         const [target, transition = {}] = resolveAnimationDefinition(animationDefinition)
+
+        if (!target) return Promise.resolve()
+
         const animations = Object.keys(target).reduce(
             (acc, key) => {
                 if (this.isAnimating.has(key)) return acc
@@ -193,8 +111,8 @@ export class AnimationControls<P = {}> {
         )
 
         return Promise.all(animations).then(() => {
+            if (!transition || !transition.applyOnEnd) return
             const { applyOnEnd } = transition
-            if (!applyOnEnd) return
 
             setValues(applyOnEnd, this.values)
         })
@@ -228,8 +146,9 @@ export class AnimationControls<P = {}> {
         }
 
         if (beforeChildren || afterChildren) {
-            const first = beforeChildren ? getAnimations : getChildrenAnimations
-            const last = beforeChildren ? getChildrenAnimations : getAnimations
+            const [first, last] = beforeChildren
+                ? [getAnimations, getChildrenAnimations]
+                : [getChildrenAnimations, getAnimations]
             return first().then(last)
         } else {
             return Promise.all([getAnimations(), getChildrenAnimations()])

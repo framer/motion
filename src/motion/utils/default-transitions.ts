@@ -1,4 +1,4 @@
-import { Transition } from "../motion/types"
+import { Transition } from "../../types"
 
 const underDampedSpring = () => ({
     type: "spring",

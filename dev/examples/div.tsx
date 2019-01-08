@@ -15,25 +15,22 @@ const stylea = {
 }
 
 export const App = () => {
-    const animation = {
+    const animation = useAnimation({
         default: { x: 0 },
         active: () => [{ x: 200 }, { delayChildren: 300 }],
-    }
+    })
 
-    const childPoses = {
+    const childPoses = useAnimation({
         default: { opacity: 0.2 },
         active: { opacity: 1 },
-    }
+    })
 
     const [isActive, setActive] = useState(true)
 
+    animation.start("active", "tes", "sssa")
+
     return (
-        <motion.div
-            animation={animation}
-            pose={isActive ? "active" : "default"}
-            onClick={() => setActive(!isActive)}
-            style={style}
-        >
+        <motion.div animation={animation} onClick={() => setActive(!isActive)} style={style}>
             <motion.div animation={childPoses} inherit style={stylea} />
         </motion.div>
     )
