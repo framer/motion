@@ -17,7 +17,7 @@ const poseToArray = (pose?: PoseName): PoseNameList => {
 export const resolvePoses = (pose?: UnresolvedPose): PoseNameList => {
     const unresolvedPose = pose instanceof MotionValue ? (pose.get() as string) : pose
 
-    return Array.from(new Set(["default", ...poseToArray(unresolvedPose)]))
+    return Array.from(new Set(poseToArray(unresolvedPose)))
 }
 
 /**

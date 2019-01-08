@@ -17,7 +17,7 @@ const stylea = {
 export const App = () => {
     const animation = {
         default: { x: 0 },
-        active: () => [{ x: 200 }, { beforeChildren: true }],
+        active: () => [{ x: 200 }, { delayChildren: 300 }],
     }
 
     const childPoses = {

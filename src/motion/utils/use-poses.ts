@@ -38,7 +38,7 @@ export const usePoses = (
 
     // Fire animations when poses change
     useEffect(() => {
-        if (!isPoseControlled) return
+        if (inherit || !isPoseControlled) return
 
         if (hasMounted.current) {
             controls.start(poseList).then(() => {

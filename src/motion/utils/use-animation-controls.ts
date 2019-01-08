@@ -160,7 +160,7 @@ export class AnimationControls<P = {}> {
         })
     }
 
-    private animate(animationDefinition) {
+    private animate(animationDefinition, delay: number = 0) {
         const [target, transition = {}] = resolveAnimationDefinition(animationDefinition)
         const animations = Object.keys(target).reduce(
             (acc, key) => {
@@ -176,7 +176,10 @@ export class AnimationControls<P = {}> {
                 const valueTarget = target[key]
 
                 if (isAnimatable(valueTarget)) {
-                    const [action, options] = getTransition(key, valueTarget, transition)
+                    const [action, options] = getTransition(key, valueTarget, {
+                        delay,
+                        ...transition,
+                    })
                     acc.push(value.control(action, options))
                 } else {
                     value.set(valueTarget)
@@ -202,16 +205,18 @@ export class AnimationControls<P = {}> {
         return Promise.all(animations)
     }
 
-    private animatePose(poseKey: string): Promise<any> {
-        const pose = this.poses[poseKey]
-        const getAnimations: () => Promise<any> = pose ? () => this.animate(pose) : () => Promise.resolve()
-        const getChildrenAnimations: () => Promise<any> = this.children
-            ? () => this.animateChildren(poseKey)
-            : () => Promise.resolve()
-
+    private animatePose(poseKey: string, delay: number = 0): Promise<any> {
         let beforeChildren = false
         let afterChildren = false
         let delayChildren = 0
+        let staggerChildren = 0
+        let staggerDirection = 1
+
+        const pose = this.poses[poseKey]
+        const getAnimations: () => Promise<any> = pose ? () => this.animate(pose, delay) : () => Promise.resolve()
+        const getChildrenAnimations: () => Promise<any> = this.children
+            ? () => this.animateChildren(poseKey, delayChildren, staggerChildren, staggerDirection)
+            : () => Promise.resolve()
 
         if (pose && this.children) {
             const [, transition] = resolveAnimationDefinition(pose)
@@ -231,11 +236,22 @@ export class AnimationControls<P = {}> {
         }
     }
 
-    private animateChildren(poseKey: string) {
+    private animateChildren(
+        poseKey: string,
+        delayChildren: number = 0,
+        staggerChildren: number = 0,
+        staggerDirection: number = 1
+    ) {
         const animations: Array<Promise<any>> = []
 
-        this.children.forEach(childControls => {
-            const animation = childControls.animatePose(poseKey)
+        const maxStaggerDuration = (this.children.size - 1) * staggerChildren
+        const generateStaggerDuration =
+            staggerDirection === 1
+                ? (i: number) => i * staggerChildren
+                : (i: number) => maxStaggerDuration - i * staggerChildren
+
+        Array.from(this.children).forEach((childControls, i) => {
+            const animation = childControls.animatePose(poseKey, delayChildren + generateStaggerDuration(i))
             animations.push(animation)
         })
 
@@ -263,13 +279,22 @@ export class AnimationControls<P = {}> {
     removeChild(controls: AnimationControls) {
         this.children.delete(controls)
     }
+
+    resetChildren() {
+        if (this.children) this.children.clear()
+    }
 }
 
 export const useAnimationControls = <P>(values: MotionValuesMap, inherit: boolean, props: P) => {
     const parentControls = useContext(MotionContext).controls
     const controls = useMemo(() => new AnimationControls<P>(values), [])
 
-    useMemo(() => inherit && parentControls && parentControls.addChild(controls), [])
+    // Reset and resubscribe children every render to ensure stagger order is correct
+    controls.resetChildren()
+    if (inherit && parentControls) {
+        parentControls.addChild(controls)
+    }
+
     useEffect(() => () => parentControls && parentControls.removeChild(controls), [])
 
     controls.setProps(props)

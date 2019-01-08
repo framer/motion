@@ -11,7 +11,7 @@ import { ComponentFactory, MotionProps } from "./types"
 
 export const createMotionComponent: ComponentFactory = <P extends {}>(Component: ComponentType<P>) => {
     const MotionComponent = (
-        { animation, pose, style, onPoseComplete, inherit = false, ...props }: P & MotionProps,
+        { animation, pose = "default", style, onPoseComplete, inherit = false, ...props }: P & MotionProps,
         externalRef?: Ref<Element>
     ) => {
         const ref = useExternalRef(externalRef)
