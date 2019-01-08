@@ -1,16 +1,18 @@
-import { SVGAttributes, ComponentType, ReactHTML, DetailedHTMLFactory } from "react"
-import { htmlElements, svgElements, HTMLElements, SVGElements } from "./utils/supported-elements"
+import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { createMotionComponent } from "./component"
-import { ComponentFactory } from "./types"
+import { ComponentType, ReactHTML, SVGAttributes, HTMLAttributes } from "react"
+import { MotionProps } from "./types"
 
-type UnwrapFactory<F> = F extends DetailedHTMLFactory<infer P, any> ? P : never
+export type HTMLMotionComponents = { [K in HTMLElements]: ComponentType<HTMLAttributes<ReactHTML[K]> & MotionProps> }
+export type SVGMotionComponents = { [K in SVGElements]: ComponentType<SVGAttributes<SVGElement> & MotionProps> }
+export type CustomMotionComponent = { custom: typeof createMotionComponent }
 
-export type MotionComponents = { [K in HTMLElements]: ComponentType<UnwrapFactory<ReactHTML[K]>> } &
-    { [K in SVGElements]: ComponentType<SVGAttributes<SVGElement>> } & { custom: ComponentFactory }
+export type MotionComponents = CustomMotionComponent & HTMLMotionComponents & SVGMotionComponents
 
-export const motion: Partial<MotionComponents> = {
-    custom: createMotionComponent,
-}
-
-htmlElements.forEach(element => (motion[element] = createMotionComponent(element)))
-svgElements.forEach(element => (motion[element] = createMotionComponent(element)))
+export const motion: MotionComponents = elements.reduce(
+    (acc, element) => {
+        acc[element] = createMotionComponent(element)
+        return acc
+    },
+    { custom: createMotionComponent } as MotionComponents
+)

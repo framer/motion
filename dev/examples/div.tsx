@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, useAnimation } from "@framer"
+import { motion, useAnimation } from "../../src"
 
 const style = {
     width: 100,
@@ -27,7 +27,7 @@ export const App = () => {
 
     const [isActive, setActive] = useState(true)
 
-    animation.start("active", "tes", "sssa")
+    animation.start("active")
 
     return (
         <motion.div animation={animation} onClick={() => setActive(!isActive)} style={style}>

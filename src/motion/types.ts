@@ -1,9 +1,7 @@
-import { Ref, CSSProperties, ComponentType } from "react"
+import { Ref, CSSProperties } from "react"
 import { MotionValue } from "../value"
 import { AnimationManager } from "../animation"
 import { Poses } from "../types"
-
-export type ComponentFactory = <T>(Component: ComponentType<T>) => ComponentType<T & MotionProps>
 
 export type MotionStyle = string | number | MotionValue
 
@@ -37,6 +35,6 @@ export type MotionProps = {
     style?: CSSProperties & MotionStyleProperties
     animation?: AnimationManager | Poses
     pose?: PoseKeys
-    inherit: boolean
+    inherit?: boolean
     onPoseComplete?: () => void
 }
