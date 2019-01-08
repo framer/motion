@@ -1,4 +1,5 @@
 1. scheduling via `transition`
 2. useTransformedValue
-3. draggable
-4. Allow mulitple render subscriptions on motion value
+3. Gestures
+4. Tests
+5. onMount pose

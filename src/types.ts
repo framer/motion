@@ -1,6 +1,10 @@
 export type Props = { [key: string]: any }
 
-export type PoseTransition = {}
+export type PoseTransition = {
+    beforeChildren?: boolean
+    afterChildren?: boolean
+    delayChildren?: number
+}
 
 export type PoseDefinition = {
     x?: number | string

@@ -34,7 +34,7 @@ export const App = () => {
             onClick={() => setActive(!isActive)}
             style={style}
         >
-            <motion.div animation={childPoses} pose={isActive ? "active" : "default"} style={stylea} />
+            <motion.div animation={childPoses} inherit style={stylea} />
         </motion.div>
     )
 }

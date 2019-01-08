@@ -158,8 +158,6 @@ export class AnimationControls<P = {}> {
             const [target] = resolveAnimationDefinition(this.poses[poseKey], this.props)
             target && setValues(target, this.values, isSetting)
         })
-
-        console.log(this.children)
     }
 
     private animate(animationDefinition) {
@@ -204,22 +202,44 @@ export class AnimationControls<P = {}> {
         return Promise.all(animations)
     }
 
-    private animatePose(poseKey: string) {
+    private animatePose(poseKey: string): Promise<any> {
         const pose = this.poses[poseKey]
-        const getAnimations = pose ? () => this.animate(pose) : () => Promise.resolve()
+        const getAnimations: () => Promise<any> = pose ? () => this.animate(pose) : () => Promise.resolve()
+        const getChildrenAnimations: () => Promise<any> = this.children
+            ? () => this.animateChildren(poseKey)
+            : () => Promise.resolve()
 
-        // TODO: Figure out how to do children. The current problem is giving each one a new isAnimating set
+        let beforeChildren = false
+        let afterChildren = false
+        let delayChildren = 0
 
-        const getChildrenAnimations = this.children ? () => this.animateChildren(poseKey) : () => Promise.resolve()
-        getChildrenAnimations()
+        if (pose && this.children) {
+            const [, transition] = resolveAnimationDefinition(pose)
+            if (transition) {
+                beforeChildren = transition.beforeChildren || beforeChildren
+                afterChildren = transition.afterChildren || afterChildren
+                delayChildren = transition.delayChildren || delayChildren
+            }
+        }
 
-        return getAnimations()
+        if (beforeChildren || afterChildren) {
+            const first = beforeChildren ? getAnimations : getChildrenAnimations
+            const last = beforeChildren ? getChildrenAnimations : getAnimations
+            return first().then(last)
+        } else {
+            return Promise.all([getAnimations(), getChildrenAnimations()])
+        }
     }
 
     private animateChildren(poseKey: string) {
+        const animations: Array<Promise<any>> = []
+
         this.children.forEach(childControls => {
-            childControls.animatePose(poseKey)
+            const animation = childControls.animatePose(poseKey)
+            animations.push(animation)
         })
+
+        return Promise.all(animations)
     }
 
     private resetIsAnimating() {
@@ -246,7 +266,7 @@ export class AnimationControls<P = {}> {
 }
 
 export const useAnimationControls = <P>(values: MotionValuesMap, inherit: boolean, props: P) => {
-    const parentControls = useContext(MotionContext)
+    const parentControls = useContext(MotionContext).controls
     const controls = useMemo(() => new AnimationControls<P>(values), [])
 
     useMemo(() => inherit && parentControls && parentControls.addChild(controls), [])

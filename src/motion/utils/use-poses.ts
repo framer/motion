@@ -18,7 +18,7 @@ export const usePoses = (
     pose?: PoseKeys
 ) => {
     const parentPose = useContext(MotionContext).pose
-    const poseToResolve = inherit ? pose : parentPose
+    const poseToResolve = inherit ? parentPose : pose
     const poseList = resolvePoses(poseToResolve)
     const hasMounted = useRef(false)
     const isPoseControlled = isPoses(animation)
