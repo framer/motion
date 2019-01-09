@@ -2,6 +2,7 @@ import { Ref, CSSProperties } from "react"
 import { MotionValue } from "../value"
 import { AnimationManager } from "../animation"
 import { Poses } from "../types"
+import { GestureHandlers } from "../gestures/use-gestures"
 
 export type MotionStyle = string | number | MotionValue
 
@@ -30,7 +31,7 @@ export type MotionStyleProperties = {
     transform?: string
 }
 
-export type MotionProps = {
+export interface MotionProps extends GestureHandlers {
     ref?: Ref<Element>
     style?: CSSProperties & MotionStyleProperties
     animation?: AnimationManager | Poses

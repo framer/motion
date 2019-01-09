@@ -12,8 +12,8 @@ interface TapSession {
 
 type TapHandler = (session: TapInfo, event: Event) => void
 
-interface TapHandlers {
-    onTap: TapHandler
+export interface TapHandlers {
+    onTap?: TapHandler
 }
 
 export const useTapGesture = ({ onTap }: TapHandlers, ref: RefObject<Element>) => {

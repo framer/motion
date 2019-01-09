@@ -1,2 +1,3 @@
-export { usePanGesture } from "./use-pan-gesture"
-export { useTapGesture } from "./use-tap-gesture"
+export { usePanGesture, PanHandlers } from "./use-pan-gesture"
+export { useTapGesture, TapHandlers } from "./use-tap-gesture"
+export { useGestures, GestureHandlers } from "./use-gestures"

@@ -1,5 +1,6 @@
 import { RefObject, useMemo, useEffect } from "react"
 import { EventInfo, usePointerEvents, Point } from "../events"
+import { EventHandler } from "events/types"
 
 interface EventSession {
     lastDevicePoint: Point
@@ -13,10 +14,17 @@ interface PanInfo {
     delta: Point
 }
 
-export const usePanGesture = (
-    { onPan, onPanStart, onPanEnd }: { [key: string]: (info: PanInfo, event: Event) => void },
-    ref: RefObject<Element>
-) => {
+type PanHandler = (info: PanInfo, event: Event) => void
+
+export interface PanHandlers {
+    onPan?: PanHandler
+    onPanStart?: PanHandler
+    onPanEnd?: PanHandler
+}
+
+export function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined
+export function usePanGesture(handlers: PanHandlers): { onPointerDown: EventHandler }
+export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?: RefObject<Element>) {
     let session: null | EventSession = null
     const onPointerMove = useMemo(
         () => {
@@ -70,7 +78,6 @@ export const usePanGesture = (
         },
         [onPanEnd, onPointerMove]
     )
-
     const [startPointerUp, stopPointerUp] = usePointerEvents({ onPointerUp }, window)
     const [startPointerMove, stopPointerMove] = usePointerEvents({ onPointerMove }, window, { capture: true })
     const onPointerDown = useMemo(
@@ -87,15 +94,15 @@ export const usePanGesture = (
         [onPointerUp, onPointerMove]
     )
 
-    usePointerEvents({ onPointerDown }, ref)
     useEffect(() => {
         return () => {
             stopPointerMove()
             stopPointerUp()
         }
     })
-    // TODO
-    const handlers = {}
-
-    return handlers
+    const handlers = { onPointerDown }
+    if (!ref) {
+        return handlers
+    }
+    usePointerEvents(handlers, ref)
 }
