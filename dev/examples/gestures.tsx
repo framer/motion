@@ -18,8 +18,5 @@ export const App = () => {
         rotation += 10
         animation.start({ rotate: rotation })
     }
-    useTapGesture({ onTap }, ref)
-    const onPan = () => {}
-    usePanGesture({ onPan }, ref)
-    return <motion.div animation={animation} pose={"default"} ref={ref} style={style} />
+    return <motion.div animation={animation} pose={"default"} ref={ref} style={style} onTap={onTap} />
 }
