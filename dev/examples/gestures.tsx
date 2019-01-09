@@ -1,8 +1,6 @@
 import * as React from "react"
 import { useRef, useState } from "react"
-import { useTapGesture, motion } from "@framer"
-import { useAnimation, usePanGesture } from "../../src"
-import { notDeepEqual } from "assert"
+import { motion, useAnimation } from "@framer"
 
 const style = {
     width: 100,

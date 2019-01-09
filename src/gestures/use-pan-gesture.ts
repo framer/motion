@@ -1,6 +1,6 @@
 import { RefObject, useMemo, useEffect } from "react"
 import { EventInfo, usePointerEvents, Point } from "../events"
-import { EventHandler } from "events/types"
+import { EventHandler } from "../events/types"
 
 interface EventSession {
     lastDevicePoint: Point
