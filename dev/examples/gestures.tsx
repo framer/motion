@@ -11,12 +11,11 @@ const style = {
 }
 
 export const App = () => {
-    const ref = useRef(null)
     const animation = useAnimation({})
-    let rotation = 0
+    let rotate = 0
     const onTap = () => {
-        rotation += 10
-        animation.start({ rotate: rotation })
+        rotate += 10
+        animation.start({ rotate })
     }
-    return <motion.div animation={animation} pose={"default"} ref={ref} style={style} onTap={onTap} />
+    return <motion.div animation={animation} onTap={onTap} style={style} />
 }
