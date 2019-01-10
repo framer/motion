@@ -88,6 +88,7 @@ export type PoseTransition = Tween | Spring | Decay | Keyframes | Physics | Base
 
 export type TransitionMap = { [key: string]: PoseTransition }
 
+// TODO Maybe make CSSProperties + additional supported transforms and SVG props?
 export type PoseDefinition = {
     x?: number | string
     y?: number | string
@@ -159,6 +160,8 @@ export type PoseDefinition = {
     // Misc
     background?: string
     backgroundImage?: string
+    display?: string
+    position?: string
 
     // SVG
     d?: string

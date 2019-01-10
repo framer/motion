@@ -70,7 +70,13 @@ export class AnimationControls<P = {}> {
         const isSetting: Set<string> = new Set()
         const reversedList = [...poseKeyList].reverse()
         reversedList.forEach(poseKey => {
-            const [target] = resolveAnimationDefinition(this.poses[poseKey], this.props)
+            const [target, transition] = resolveAnimationDefinition(this.poses[poseKey], this.props)
+
+            if (transition) {
+                const { applyOnEnd } = transition
+                applyOnEnd && setValues(applyOnEnd, this.values, isSetting)
+            }
+
             target && setValues(target, this.values, isSetting)
         })
     }

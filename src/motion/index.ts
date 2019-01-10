@@ -1,10 +1,17 @@
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { createMotionComponent } from "./component"
-import { ComponentType, ReactHTML, SVGAttributes, HTMLAttributes } from "react"
+import { ComponentType, ReactHTML, SVGAttributes, DetailedHTMLFactory } from "react"
 import { MotionProps } from "./types"
 
-export type HTMLMotionComponents = { [K in HTMLElements]: ComponentType<HTMLAttributes<ReactHTML[K]> & MotionProps> }
-export type SVGMotionComponents = { [K in SVGElements]: ComponentType<SVGAttributes<SVGElement> & MotionProps> }
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+type UnwrapFactory<F> = F extends DetailedHTMLFactory<infer P, any> ? P : never
+
+export type HTMLMotionComponents = {
+    [K in HTMLElements]: ComponentType<Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps>
+}
+export type SVGMotionComponents = {
+    [K in SVGElements]: ComponentType<Omit<SVGAttributes<SVGElement>, "style"> & MotionProps>
+}
 export type CustomMotionComponent = { custom: typeof createMotionComponent }
 
 export type MotionComponents = CustomMotionComponent & HTMLMotionComponents & SVGMotionComponents

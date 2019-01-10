@@ -8,7 +8,7 @@ export type MotionStyle = string | number | MotionValue
 
 export type PoseKeys = string | string[]
 
-export type MotionStyleProperties = {
+export interface MotionStyleProperties {
     x?: MotionStyle
     y?: MotionStyle
     z?: MotionStyle
@@ -26,14 +26,14 @@ export type MotionStyleProperties = {
     originX?: MotionStyle
     originY?: MotionStyle
     originZ?: MotionStyle
-    opacity?: MotionStyle
     perspective?: MotionStyle
-    transform?: string
 }
 
-export interface MotionProps extends GestureHandlers {
+type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
+
+export type MotionProps = {
     ref?: Ref<Element>
-    style?: CSSProperties & MotionStyleProperties
+    style?: MakeMotion<CSSProperties> & MotionStyleProperties
     animation?: AnimationManager | Poses
     pose?: PoseKeys
     inherit?: boolean
