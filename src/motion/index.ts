@@ -9,10 +9,10 @@ export type CustomMotionComponent = { custom: typeof createMotionComponent }
 
 export type MotionComponents = CustomMotionComponent & HTMLMotionComponents & SVGMotionComponents
 
-export const motion: MotionComponents = elements.reduce(
+export const motion = elements.reduce(
     (acc, element) => {
         acc[element] = createMotionComponent(element)
         return acc
     },
-    { custom: createMotionComponent } as MotionComponents
-)
+    { custom: createMotionComponent }
+) as MotionComponents
