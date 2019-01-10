@@ -31,7 +31,7 @@ export interface MotionStyleProperties {
 
 type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
 
-export type MotionProps = {
+export interface MotionProps extends GestureHandlers {
     ref?: Ref<Element>
     style?: MakeMotion<CSSProperties> & MotionStyleProperties
     animation?: AnimationManager | Poses
