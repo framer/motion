@@ -4,7 +4,8 @@ import { motion } from "../"
 import * as React from "react"
 import styled from "styled-components"
 import { useMotionValue } from "../../value/use-motion-value"
-import { PoseAndTransition, Poses } from "../../types"
+import { Poses } from "../../types"
+import { motionValue } from "../../value"
 
 /**
  * Note:
@@ -35,8 +36,8 @@ describe("motion component rendering and styles", () => {
         ))
         const MotionComponent = motion.custom(Component)
 
-        const promise = new Promise(resolve => {
-            const { rerender } = render(<MotionComponent ref={ref => resolve(ref)} />)
+        const promise = new Promise<Element>(resolve => {
+            const { rerender } = render(<MotionComponent ref={ref => resolve(ref as Element)} />)
             rerender(<Component />)
         })
 
@@ -44,11 +45,11 @@ describe("motion component rendering and styles", () => {
     })
 
     test("accepts createref", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise<Element>(resolve => {
             const ref = React.createRef<null | Element>()
             const Component = () => {
                 React.useEffect(() => {
-                    resolve(ref.current)
+                    resolve(ref.current as Element)
                 })
                 return <motion.button type="submit" ref={ref} />
             }
@@ -130,6 +131,26 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toHaveStyle("display: none")
     })
 
+    test("uses `initialPose` as initial value if set", () => {
+        const poses: Poses = {
+            foo: { x: 222 },
+            bar: { x: 333 },
+        }
+
+        const childPoses: Poses = {
+            foo: { backgroundColor: "#000" },
+            bar: { backgroundColor: "#444" },
+        }
+
+        const { getByTestId, container } = render(
+            <motion.div animation={poses} initialPose="foo" pose="bar">
+                <motion.button animation={childPoses} inherit data-testid="child" />
+            </motion.div>
+        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(222px) translateZ(0)")
+        expect(getByTestId("child")).toHaveStyle("background-color: #000")
+    })
+
     test("accepts motion value and renders as an initial style", () => {
         const Component = () => {
             const x = useMotionValue(100)
@@ -139,9 +160,7 @@ describe("motion component rendering and styles", () => {
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle("transform: translateX(100px) translateZ(0)")
     })
-})
 
-describe("motion component pose animations", () => {
     test("fires onPoseComplete", async () => {
         const poses: Poses = {
             foo: { x: 100 },
@@ -150,14 +169,96 @@ describe("motion component pose animations", () => {
 
         const promise = new Promise(resolve => {
             const { rerender } = render(<motion.div animation={poses} pose="foo" />)
-            const onComplete = () => {
-                resolve("fired")
-            }
+            const onComplete = () => resolve("fired")
 
             rerender(<motion.div animation={poses} pose="bar" onPoseComplete={onComplete} />)
             rerender(<motion.div animation={poses} pose="bar" />)
         })
 
         await expect(promise).resolves.toEqual("fired")
+    })
+})
+
+describe("motion component pose animations", () => {
+    test("fires transitions into new pose", async () => {
+        const poses: Poses = {
+            foo: { x: 100 },
+            bar: [{ x: 300 }, false],
+        }
+
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const { rerender } = render(<motion.div animation={poses} pose="foo" style={{ x }} />)
+            const onComplete = () => resolve(x.get())
+
+            rerender(<motion.div animation={poses} pose="bar" onPoseComplete={onComplete} />)
+            rerender(<motion.div animation={poses} pose="bar" />)
+        })
+
+        await expect(promise).resolves.toBe(300)
+    })
+
+    test("fires child transitions into new pose", async () => {
+        const poses: Poses = {
+            foo: { x: 100 },
+            bar: { x: 300 },
+        }
+
+        const childPoses: Poses = {
+            foo: { x: 0 },
+            bar: { x: 1000 },
+        }
+
+        const parentX = motionValue(0)
+        const childX = motionValue(0)
+
+        const promise = new Promise(resolve => {
+            const Component = props => (
+                <motion.div {...props} animation={poses} style={{ x: parentX }}>
+                    <motion.button animation={childPoses} inherit style={{ x: childX }} />
+                </motion.div>
+            )
+            const { rerender } = render(<Component pose="foo" />)
+            const onComplete = () => resolve(childX.get())
+
+            rerender(<Component pose="bar" onPoseComplete={onComplete} />)
+            rerender(<Component pose="bar" />)
+        })
+
+        await expect(promise).resolves.toEqual(1000)
+    })
+
+    test("animates to pose on mount if initialPose is set", async () => {
+        const poses: Poses = {
+            foo: { x: 222 },
+            bar: { x: 333 },
+        }
+
+        const childPoses: Poses = {
+            foo: { backgroundColor: "#000" },
+            bar: { backgroundColor: "#444" },
+        }
+
+        const x = motionValue(0)
+        const backgroundColor = motionValue("#fff")
+
+        const promise = new Promise(resolve => {
+            const Component = () => (
+                <motion.div
+                    animation={poses}
+                    style={{ x }}
+                    initialPose="foo"
+                    pose="bar"
+                    onPoseComplete={() => resolve([x.get(), backgroundColor.get()])}
+                >
+                    <motion.button inherit animation={childPoses} style={{ backgroundColor }} />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toEqual([333, "rgba(68, 68, 68, 1)"])
     })
 })

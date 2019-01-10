@@ -37,6 +37,7 @@ export interface MotionProps extends GestureHandlers, DraggableProps {
     style?: MakeMotion<CSSProperties> & MotionStyleProperties
     animation?: AnimationManager | Poses
     pose?: PoseKeys
+    initialPose?: PoseKeys
     inherit?: boolean
     onPoseComplete?: () => void
 }

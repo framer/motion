@@ -20,15 +20,16 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
             onPoseComplete,
             inherit = false,
             draggable,
+            initialPose,
             ...props
         } = p as MotionProps
         const ref = useExternalRef(externalRef)
         const values = useMotionValues(ref)
         const controls = useAnimationControls(values, inherit, props)
-        const context = useMotionContext(controls, inherit, pose)
+        const context = useMotionContext(controls, inherit, initialPose || pose)
 
         useAnimationSubscription(animation, controls)
-        usePoses(animation, inherit, controls, onPoseComplete, pose)
+        usePoses(animation, inherit, controls, onPoseComplete, pose, initialPose)
 
         useGestures(props, ref, controls)
         useDraggable({ draggable }, ref, values)

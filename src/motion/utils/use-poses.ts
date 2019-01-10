@@ -15,7 +15,8 @@ export const usePoses = (
     inherit: boolean,
     controls: AnimationControls,
     onPoseComplete?: () => void,
-    pose?: PoseKeys
+    pose?: PoseKeys,
+    initialPose?: PoseKeys
 ) => {
     const parentPose = useContext(MotionContext).pose
     const poseToResolve = inherit ? parentPose : pose
@@ -31,7 +32,8 @@ export const usePoses = (
     useMemo(
         () => {
             if (!isPoseControlled) return
-            controls.set(poseList)
+            const initial = initialPose ? resolvePoses(initialPose) : poseList
+            controls.set(initial)
         },
         [isPoseControlled]
     )
@@ -40,7 +42,7 @@ export const usePoses = (
     useEffect(() => {
         if (inherit || !isPoseControlled) return
 
-        if (hasMounted.current) {
+        if (hasMounted.current || initialPose) {
             controls.start(poseList).then(() => {
                 onPoseComplete && onPoseComplete()
             })
