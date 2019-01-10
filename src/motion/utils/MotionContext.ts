@@ -6,13 +6,14 @@ import { asDependencyList, resolvePoses } from "./pose-resolvers"
 type MotionContextProps = {
     controls?: AnimationControls
     pose?: PoseKeys
+    dragging: boolean
 }
 
-export const MotionContext = createContext<MotionContextProps>({})
+export const MotionContext = createContext<MotionContextProps>({ dragging: false })
 
 export const useMotionContext = (controls: AnimationControls, inherit: boolean, pose?: PoseKeys) => {
-    const parentPose = useContext(MotionContext).pose
-    const context: MotionContextProps = useMemo(() => ({ controls }), asDependencyList(resolvePoses(pose)))
+    const { pose: parentPose, dragging } = useContext(MotionContext)
+    const context: MotionContextProps = useMemo(() => ({ controls, dragging }), asDependencyList(resolvePoses(pose)))
 
     context.pose = inherit ? parentPose : pose
 

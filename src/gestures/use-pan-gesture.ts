@@ -8,13 +8,13 @@ interface EventSession {
     target: EventTarget | null
 }
 
-interface PanInfo {
+export interface PanInfo {
     point: Point
     devicePoint: Point
     delta: Point
 }
 
-type PanHandler = (info: PanInfo, event: Event) => void
+export type PanHandler = (info: PanInfo, event: Event) => void
 
 export interface PanHandlers {
     onPan?: PanHandler

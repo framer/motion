@@ -9,10 +9,19 @@ import { usePoses } from "./utils/use-poses"
 import { MotionContext, useMotionContext } from "./utils/MotionContext"
 import { MotionProps } from "./types"
 import { useGestures } from "../gestures"
+import { useDraggable } from "../behaviours/use-draggable"
 
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>) => {
     const MotionComponent = (p: P & MotionProps, externalRef?: Ref<Element>) => {
-        const { animation, pose = "default", style, onPoseComplete, inherit = false, ...props } = p as MotionProps
+        const {
+            animation,
+            pose = "default",
+            style,
+            onPoseComplete,
+            inherit = false,
+            draggable,
+            ...props
+        } = p as MotionProps
         const ref = useExternalRef(externalRef)
         const values = useMotionValues(ref)
         const controls = useAnimationControls(values, inherit, props)
@@ -22,6 +31,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         usePoses(animation, inherit, controls, onPoseComplete, pose)
 
         useGestures(props, ref, controls)
+        useDraggable({ draggable }, ref, values)
 
         return (
             <MotionContext.Provider value={context}>
