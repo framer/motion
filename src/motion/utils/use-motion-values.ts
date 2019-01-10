@@ -1,5 +1,5 @@
 import { useMemo, useEffect, RefObject } from "react"
-import { MotionValue } from "value"
+import { MotionValue } from "../../value"
 import styler, { Styler } from "stylefire"
 import { invariant } from "hey-listen"
 
@@ -19,8 +19,15 @@ export class MotionValuesMap {
         if (this.hasMounted) this.bindValueToStyler(key, value)
     }
 
-    get(key: string) {
-        return this.values.get(key)
+    get<Value>(key: string): MotionValue<Value> | undefined
+    get<Value>(key: string, defaultValue: Value): MotionValue<Value>
+    get<Value>(key: string, defaultValue?: Value): MotionValue<Value> | undefined {
+        let value = this.values.get(key)
+        if (value === undefined && defaultValue !== undefined) {
+            value = new MotionValue(defaultValue)
+            this.set(key, value)
+        }
+        return value
     }
 
     forEach(callback: (value: MotionValue, key: string) => void) {
