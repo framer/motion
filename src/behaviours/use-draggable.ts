@@ -23,22 +23,7 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPanStart = useMemo(
         () =>
             function() {
-                if (draggable === "y") {
-                    openLock = verticalLock()
-                } else if (draggable === "x") {
-                    openLock = horizontalLock()
-                } else {
-                    const openHorizontal = horizontalLock()
-                    const openVertical = verticalLock()
-                    if (openHorizontal && openVertical) {
-                        openLock = () => {
-                            openHorizontal()
-                            openVertical()
-                        }
-                    } else {
-                        openLock = false
-                    }
-                }
+                openLock = getLock(draggable)
                 if (!openLock) {
                     return
                 }
@@ -75,4 +60,23 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     )
 
     usePanGesture({ onPanStart, onPan, onPanEnd }, ref)
+}
+
+function getLock(draggable: true | "x" | "y"): Lock {
+    let lock: Lock = false
+    if (draggable === "y") {
+        lock = verticalLock()
+    } else if (draggable === "x") {
+        lock = horizontalLock()
+    } else {
+        const openHorizontal = horizontalLock()
+        const openVertical = verticalLock()
+        if (openHorizontal && openVertical) {
+            lock = () => {
+                openHorizontal()
+                openVertical()
+            }
+        }
+    }
+    return lock
 }
