@@ -1,6 +1,8 @@
+export type Lock = (() => void) | false
+
 export function createLock(name: string) {
     let lock: null | string = null
-    return (): (() => void) | false => {
+    return (): Lock => {
         const openLock = (): void => {
             lock = null
         }

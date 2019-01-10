@@ -1,33 +1,50 @@
 import { RefObject, useRef, useContext, useMemo } from "react"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { PanHandler, usePanGesture, PanInfo } from "../gestures"
-import { createLock } from "./utils/lock"
+import { createLock, Lock } from "./utils/lock"
 import { MotionContext } from "../motion/utils/MotionContext"
 
 export interface DraggableProps {
     draggable?: boolean | "x" | "y"
 }
 
-const dragLock = createLock("drag")
+const horizontalLock = createLock("dragHorizontal")
+const verticalLock = createLock("dragVertical")
 
 export function useDraggable(props: DraggableProps, ref: RefObject<Element | null>, values: MotionValuesMap) {
-    if (!props.draggable) {
+    const { draggable } = props
+    if (!draggable) {
         return
     }
     const point = useRef({ x: values.get("x", 0), y: values.get("y", 0) })
     const motionContext = useContext(MotionContext)
-    let openLock: (() => void) | false = false
+    let openLock: Lock = false
 
     const onPanStart = useMemo(
         () =>
             function() {
-                openLock = dragLock()
+                if (draggable === "y") {
+                    openLock = verticalLock()
+                } else if (draggable === "x") {
+                    openLock = horizontalLock()
+                } else {
+                    const openHorizontal = horizontalLock()
+                    const openVertical = verticalLock()
+                    if (openHorizontal && openVertical) {
+                        openLock = () => {
+                            openHorizontal()
+                            openVertical()
+                        }
+                    } else {
+                        openLock = false
+                    }
+                }
                 if (!openLock) {
                     return
                 }
                 motionContext.dragging = true
             },
-        [openLock, motionContext]
+        [openLock, draggable, motionContext]
     )
 
     const onPan: PanHandler = useMemo(
@@ -36,10 +53,13 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
                 if (!openLock) {
                     return
                 }
-                console.log("pan", point, delta)
                 const { x, y } = point.current
-                x.set(x.get() + delta.x)
-                y.set(y.get() + delta.y)
+                if (props.draggable === "x" || props.draggable === true) {
+                    x.set(x.get() + delta.x)
+                }
+                if (props.draggable === "y" || props.draggable === true) {
+                    y.set(y.get() + delta.y)
+                }
             },
         [openLock, point]
     )
