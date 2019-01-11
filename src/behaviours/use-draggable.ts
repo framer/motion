@@ -12,10 +12,16 @@ export interface DraggableProps {
      *  @default false
      */
     dragEnabled?: boolean | "x" | "y"
+    /**
+     * When using nested dragging, setting this to true will enable parents to also drag
+     * @default false
+     */
+    dragPropagation?: boolean
 }
 
 const draggableDefaults = {
     dragEnabled: false,
+    dragPropagation: false,
 }
 
 function defaults<Props>(props: Props, defaultProps: Required<Props>): Props {
@@ -37,9 +43,11 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPanStart = useMemo(
         () =>
             function() {
-                if (!openLock) {
-                    return
+                if (!dragPropagation) {
                     openLock = getLock(dragEnabled)
+                    if (!openLock) {
+                        return
+                    }
                 }
                 motionContext.dragging = true
             },
@@ -49,7 +57,7 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPan: PanHandler = useMemo(
         () =>
             function({ delta }: PanInfo) {
-                if (!openLock) {
+                if (!dragPropagation && !openLock) {
                     return
                 }
                 const { x, y } = point.current
@@ -65,7 +73,7 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPanEnd = useMemo(
         () =>
             function() {
-                if (openLock) {
+                if (!dragPropagation && openLock) {
                     openLock()
                 }
                 motionContext.dragging = false
