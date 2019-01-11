@@ -5,12 +5,14 @@ interface EventSession {
     lastDevicePoint: Point
     startEvent?: Event
     target: EventTarget | null
+    startDevicePoint: Point
 }
 
 export interface PanInfo {
     point: Point
     devicePoint: Point
     delta: Point
+    offset: Point
 }
 
 export type PanHandler = (info: PanInfo, event: Event) => void
@@ -34,18 +36,16 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
                     return
                 }
 
-                const delta = {
-                    x: devicePoint.x - session.lastDevicePoint.x,
-                    y: devicePoint.y - session.lastDevicePoint.y,
-                }
+                const delta = Point.subtract(devicePoint, session.lastDevicePoint)
+                const offset = Point.subtract(devicePoint, session.startDevicePoint)
                 if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
                     if (session.startEvent) {
                         if (onPan) {
-                            onPan({ point, devicePoint, delta }, event)
+                            onPan({ point, devicePoint, delta, offset }, event)
                         }
                     } else {
                         if (onPanStart) {
-                            onPanStart({ point, devicePoint, delta }, event)
+                            onPanStart({ point, devicePoint, delta, offset }, event)
                         }
                         session.startEvent = event
                     }
@@ -63,14 +63,12 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
                     console.error("Pointer end without started session")
                     return
                 }
-                const delta = {
-                    x: devicePoint.x - session.lastDevicePoint.x,
-                    y: devicePoint.y - session.lastDevicePoint.y,
-                }
+                const delta = Point.subtract(devicePoint, session.lastDevicePoint)
+                const offset = Point.subtract(devicePoint, session.startDevicePoint)
                 stopPointerMove()
                 stopPointerUp()
                 if (onPanEnd) {
-                    onPanEnd({ point, devicePoint, delta }, event)
+                    onPanEnd({ point, devicePoint, delta, offset }, event)
                 }
                 session = null
             }
@@ -85,6 +83,7 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
                 session = {
                     target: event.target,
                     lastDevicePoint: devicePoint,
+                    startDevicePoint: devicePoint,
                 }
                 startPointerMove()
                 startPointerUp()
