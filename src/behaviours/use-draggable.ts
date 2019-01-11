@@ -1,9 +1,10 @@
 import { RefObject, useRef, useContext, useMemo } from "react"
-import { MotionValuesMap } from "../motion/utils/use-motion-values"
-import { PanHandler, usePanGesture, PanInfo } from "../gestures"
+import { PanHandler, usePanGesture, PanInfo, PanHandlers } from "../gestures"
 import { createLock, Lock } from "./utils/lock"
-import { MotionContext } from "../motion/utils/MotionContext"
+import { MotionContext, MotionValuesMap } from "../motion"
+import { Point } from "../events"
 
+type DragDirection = "x" | "y"
 export interface DraggableProps {
     /**
      * Enable dragging for this element
@@ -11,8 +12,15 @@ export interface DraggableProps {
      * Set "x" or "y" to only drag in a specific direction
      *  @default false
      */
-    dragEnabled?: boolean | "x" | "y"
+    dragEnabled?: boolean | DragDirection
     /**
+     * Locks dragging direction
+     * When dragging starts in a specific direction, do not allow dragging in the other direction
+     * @default false
+     */
+    dragLocksDirection?: boolean
+    /**
+     * Disable global drag locking
      * When using nested dragging, setting this to true will enable parents to also drag
      * @default false
      */
@@ -21,83 +29,134 @@ export interface DraggableProps {
 
 const draggableDefaults = {
     dragEnabled: false,
+    dragLocksDirection: false,
     dragPropagation: false,
 }
 
-function defaults<Props>(props: Props, defaultProps: Required<Props>): Props {
-    return { ...defaultProps, ...props }
+function defaults<Props>(props: Props, defaultProps: Required<Props>): Required<Props> {
+    const result = defaultProps
+    Object.assign(result, props)
+    return result
 }
 
-const horizontalLock = createLock("dragHorizontal")
-const verticalLock = createLock("dragVertical")
+function shouldDrag(
+    direction: DragDirection,
+    dragEnabled: true | DragDirection,
+    currentDirection: null | DragDirection
+) {
+    return (
+        (dragEnabled === true || dragEnabled === direction) &&
+        (currentDirection === null || currentDirection === direction)
+    )
+}
 
 export function useDraggable(props: DraggableProps, ref: RefObject<Element | null>, values: MotionValuesMap) {
-    const { dragEnabled, dragPropagation } = defaults(props, draggableDefaults)
+    const { dragEnabled, dragPropagation, dragLocksDirection } = defaults(props, draggableDefaults)
     if (!dragEnabled) {
         return
     }
     const point = useRef({ x: values.get("x", 0), y: values.get("y", 0) })
+    console.log(point)
     const motionContext = useContext(MotionContext)
-    let openLock: Lock = false
+    // XXX: directionLocking and having something called Lock is confusing, especially, because they're not really realted
+    let openGlobalLock: Lock = false
+    let currentDirection: null | DragDirection = null
 
     const onPanStart = useMemo(
         () =>
             function() {
+                if (!dragEnabled) {
+                    return
+                }
                 if (!dragPropagation) {
-                    openLock = getLock(dragEnabled)
-                    if (!openLock) {
+                    openGlobalLock = getGlobalLock(dragEnabled)
+                    if (!openGlobalLock) {
                         return
                     }
                 }
+                currentDirection = null
                 motionContext.dragging = true
             },
-        [openLock, dragEnabled, dragPropagation, motionContext]
+        [dragEnabled, dragPropagation, motionContext]
     )
 
     const onPan: PanHandler = useMemo(
         () =>
-            function({ delta }: PanInfo) {
-                if (!dragPropagation && !openLock) {
+            function({ delta, offset }: PanInfo) {
+                if (!dragEnabled) {
                     return
                 }
+                if (!dragPropagation && !openGlobalLock) {
+                    return
+                }
+                if (dragLocksDirection) {
+                    if (currentDirection === null) {
+                        currentDirection = getCurrentDirection(offset)
+                        return
+                    }
+                }
                 const { x, y } = point.current
-                if (dragEnabled === "x" || dragEnabled === true) {
+                if (shouldDrag("x", dragEnabled, currentDirection)) {
                     x.set(x.get() + delta.x)
                 }
-                if (dragEnabled === "y" || dragEnabled === true) {
+                if (shouldDrag("y", dragEnabled, currentDirection)) {
                     y.set(y.get() + delta.y)
                 }
             },
-        [openLock, dragEnabled, point]
+        [openGlobalLock, dragEnabled, point]
     )
     const onPanEnd = useMemo(
         () =>
             function() {
-                if (!dragPropagation && openLock) {
-                    openLock()
+                if (!dragEnabled) {
+                    return
+                }
+                if (!dragPropagation && openGlobalLock) {
+                    openGlobalLock()
                 }
                 motionContext.dragging = false
             },
-        [openLock, motionContext]
+        [openGlobalLock, motionContext, dragEnabled]
     )
+    let handlers: PanHandlers = {}
+    if (!dragEnabled) {
+        handlers = { onPanStart, onPan, onPanEnd }
+    }
 
-    usePanGesture({ onPanStart, onPan, onPanEnd }, ref)
+    usePanGesture(handlers, ref)
 }
 
-function getLock(dragEnabled: true | "x" | "y"): Lock {
+function getCurrentDirection(offset: Point): DragDirection | null {
+    const lockThreshold = 10
+    let direction: DragDirection | null = null
+    if (Math.abs(offset.y) > lockThreshold) {
+        direction = "y"
+    } else if (Math.abs(offset.x) > lockThreshold) {
+        direction = "x"
+    }
+    return direction
+}
+
+const globalHorizontalLock = createLock("dragHorizontal")
+const globalVerticalLock = createLock("dragVertical")
+function getGlobalLock(dragEnabled: true | "x" | "y"): Lock {
     let lock: Lock = false
     if (dragEnabled === "y") {
-        lock = verticalLock()
+        lock = globalVerticalLock()
     } else if (dragEnabled === "x") {
-        lock = horizontalLock()
+        lock = globalHorizontalLock()
     } else {
-        const openHorizontal = horizontalLock()
-        const openVertical = verticalLock()
+        const openHorizontal = globalHorizontalLock()
+        const openVertical = globalVerticalLock()
         if (openHorizontal && openVertical) {
             lock = () => {
                 openHorizontal()
                 openVertical()
             }
+        } else {
+            // Release the locks because we don't use them
+            if (openHorizontal) openHorizontal()
+            if (openVertical) openVertical()
         }
     }
     return lock
