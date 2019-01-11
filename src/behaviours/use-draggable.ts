@@ -41,7 +41,7 @@ function defaults<Props>(props: Props, defaultProps: Required<Props>): Required<
 
 function shouldDrag(
     direction: DragDirection,
-    dragEnabled: true | DragDirection,
+    dragEnabled: boolean | DragDirection,
     currentDirection: null | DragDirection
 ) {
     return (
