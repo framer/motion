@@ -1,5 +1,5 @@
 import { Poses, PoseResolver, PoseTransition, PoseDefinition } from "../types"
-import { AnimationControls } from "../motion/utils/use-animation-controls"
+import { AnimationControls } from "../motion"
 
 export type AnimationDefinition = [string | PoseResolver | PoseDefinition, PoseTransition?]
 

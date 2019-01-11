@@ -1,6 +1,8 @@
-import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
-import { createMotionComponent } from "./component"
 import { ComponentType, ReactHTML, SVGAttributes, DetailedHTMLFactory } from "react"
+import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
+export { MotionContext } from "./utils/MotionContext"
+export { MotionValuesMap } from "./utils/use-motion-values"
+import { createMotionComponent } from "./component"
 import { MotionProps } from "./types"
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
