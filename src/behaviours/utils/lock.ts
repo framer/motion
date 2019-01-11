@@ -10,7 +10,6 @@ export function createLock(name: string) {
             lock = name
             return openLock
         }
-        console.log(`lock ${name} is closed`)
         return false
     }
 }

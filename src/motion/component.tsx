@@ -8,8 +8,8 @@ import { useAnimationSubscription } from "./utils/use-animation-subscription"
 import { usePoses } from "./utils/use-poses"
 import { MotionContext, useMotionContext } from "./utils/MotionContext"
 import { MotionProps } from "./types"
-// import { useGestures } from "../gestures"
-// import { useDraggable } from "../behaviours/use-draggable"
+import { useGestures } from "../gestures"
+import { useDraggable } from "../behaviours/use-draggable"
 
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>) => {
     const MotionComponent = (p: P & MotionProps, externalRef?: Ref<Element>) => {
@@ -19,7 +19,6 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
             style,
             onPoseComplete,
             inherit = false,
-            draggable,
             initialPose,
             ...props
         } = p as MotionProps
@@ -31,8 +30,8 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         useAnimationSubscription(animation, controls)
         usePoses(animation, inherit, controls, onPoseComplete, pose, initialPose)
 
-        // useGestures(props, ref, controls)
-        // useDraggable({ draggable }, ref, values)
+        useGestures(props, ref, controls)
+        useDraggable(props, ref, values)
 
         return (
             <MotionContext.Provider value={context}>

@@ -5,15 +5,29 @@ import { createLock, Lock } from "./utils/lock"
 import { MotionContext } from "../motion/utils/MotionContext"
 
 export interface DraggableProps {
-    draggable?: boolean | "x" | "y"
+    /**
+     * Enable dragging for this element
+     *
+     * Set "x" or "y" to only drag in a specific direction
+     *  @default false
+     */
+    dragEnabled?: boolean | "x" | "y"
+}
+
+const draggableDefaults = {
+    dragEnabled: false,
+}
+
+function defaults<Props>(props: Props, defaultProps: Required<Props>): Props {
+    return { ...defaultProps, ...props }
 }
 
 const horizontalLock = createLock("dragHorizontal")
 const verticalLock = createLock("dragVertical")
 
 export function useDraggable(props: DraggableProps, ref: RefObject<Element | null>, values: MotionValuesMap) {
-    const { draggable } = props
-    if (!draggable) {
+    const { dragEnabled, dragPropagation } = defaults(props, draggableDefaults)
+    if (!dragEnabled) {
         return
     }
     const point = useRef({ x: values.get("x", 0), y: values.get("y", 0) })
@@ -23,13 +37,13 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPanStart = useMemo(
         () =>
             function() {
-                openLock = getLock(draggable)
                 if (!openLock) {
                     return
+                    openLock = getLock(dragEnabled)
                 }
                 motionContext.dragging = true
             },
-        [openLock, draggable, motionContext]
+        [openLock, dragEnabled, dragPropagation, motionContext]
     )
 
     const onPan: PanHandler = useMemo(
@@ -39,14 +53,14 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
                     return
                 }
                 const { x, y } = point.current
-                if (props.draggable === "x" || props.draggable === true) {
+                if (dragEnabled === "x" || dragEnabled === true) {
                     x.set(x.get() + delta.x)
                 }
-                if (props.draggable === "y" || props.draggable === true) {
+                if (dragEnabled === "y" || dragEnabled === true) {
                     y.set(y.get() + delta.y)
                 }
             },
-        [openLock, point]
+        [openLock, dragEnabled, point]
     )
     const onPanEnd = useMemo(
         () =>
@@ -62,11 +76,11 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     usePanGesture({ onPanStart, onPan, onPanEnd }, ref)
 }
 
-function getLock(draggable: true | "x" | "y"): Lock {
+function getLock(dragEnabled: true | "x" | "y"): Lock {
     let lock: Lock = false
-    if (draggable === "y") {
+    if (dragEnabled === "y") {
         lock = verticalLock()
-    } else if (draggable === "x") {
+    } else if (dragEnabled === "x") {
         lock = horizontalLock()
     } else {
         const openHorizontal = horizontalLock()
