@@ -16,17 +16,10 @@ const styleB = {
 export const App = () => {
     const [dragEnabled, setDragEnabled] = useState(true)
     const onTap = () => setDragEnabled(!dragEnabled)
-    const ref: React.RefObject<Element> | undefined = undefined
-    const test = usePanGesture({}, undefined)
     return (
         <>
-            <motion.div dragEnabled={dragEnabled} style={{ ...styleA, background: dragEnabled ? "green" : "yellow" }}>
-                {/* <motion.div dragEnabled style={styleB} dragPropagation={true} />
-
-            <motion.div dragEnabled={"x"} style={styleB} /> */}
-            </motion.div>
-
-            <motion.div onTap={onTap} dragLocksDirection style={styleB} />
+            <motion.div dragEnabled={dragEnabled} style={{ ...styleA, background: dragEnabled ? "green" : "yellow" }} />
+            <motion.div onTap={onTap} style={styleB} />
         </>
     )
 }

@@ -52,11 +52,7 @@ function shouldDrag(
 
 export function useDraggable(props: DraggableProps, ref: RefObject<Element | null>, values: MotionValuesMap) {
     const { dragEnabled, dragPropagation, dragLocksDirection } = defaults(props, draggableDefaults)
-    if (!dragEnabled) {
-        return
-    }
     const point = useRef({ x: values.get("x", 0), y: values.get("y", 0) })
-    console.log(point)
     const motionContext = useContext(MotionContext)
     // XXX: directionLocking and having something called Lock is confusing, especially, because they're not really realted
     let openGlobalLock: Lock = false
@@ -119,7 +115,7 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
         [openGlobalLock, motionContext, dragEnabled]
     )
     let handlers: PanHandlers = {}
-    if (!dragEnabled) {
+    if (dragEnabled) {
         handlers = { onPanStart, onPan, onPanEnd }
     }
 
