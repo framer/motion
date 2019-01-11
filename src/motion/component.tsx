@@ -20,6 +20,9 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
             onPoseComplete,
             inherit = false,
             initialPose,
+            dragEnabled,
+            dragLocksDirection,
+            dragPropagation,
             ...props
         } = p as MotionProps
         const ref = useExternalRef(externalRef)
@@ -31,7 +34,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         usePoses(animation, inherit, controls, onPoseComplete, pose, initialPose)
 
         useGestures(props, ref, controls)
-        useDraggable(props, ref, values)
+        useDraggable({ dragEnabled, dragLocksDirection, dragPropagation }, ref, values)
 
         return (
             <MotionContext.Provider value={context}>
