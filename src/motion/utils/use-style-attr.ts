@@ -26,6 +26,6 @@ export const useStyleAttr = (values: MotionValuesMap, styleProp = {}): CSSProper
             ...style,
             ...buildStyleProperty(resolveCurrent(values)),
         }),
-        []
+        [style, values]
     )
 }
