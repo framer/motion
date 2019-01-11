@@ -1,6 +1,5 @@
 import { RefObject, useEffect, useMemo } from "react"
-import { usePointerEvents, EventInfo, Point } from "../events"
-import { EventHandler } from "../events/types"
+import { usePointerEvents, useConditionalPointerEvents, EventInfo, Point, EventHandler } from "../events"
 
 interface TapInfo {
     point: Point
@@ -69,9 +68,5 @@ export function useTapGesture(
         },
         [ref && ref.current, onPointerUp]
     )
-    const handlers = { onPointerDown }
-    if (!ref) {
-        return handlers
-    }
-    usePointerEvents(handlers, ref)
+    return useConditionalPointerEvents({ onPointerDown }, ref)
 }

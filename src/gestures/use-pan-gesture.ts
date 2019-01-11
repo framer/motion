@@ -1,6 +1,5 @@
 import { RefObject, useMemo, useEffect } from "react"
-import { EventInfo, usePointerEvents, Point } from "../events"
-import { EventHandler } from "../events/types"
+import { EventInfo, usePointerEvents, Point, EventHandler, useConditionalPointerEvents } from "../events"
 
 interface EventSession {
     lastDevicePoint: Point
@@ -100,9 +99,6 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
             stopPointerUp()
         }
     })
-    const handlers = { onPointerDown }
-    if (!ref) {
-        return handlers
-    }
-    usePointerEvents(handlers, ref)
+
+    return useConditionalPointerEvents({ onPointerDown }, ref)
 }
