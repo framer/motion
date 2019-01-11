@@ -61,9 +61,6 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPanStart = useMemo(
         () =>
             function() {
-                if (!dragEnabled) {
-                    return
-                }
                 if (!dragPropagation) {
                     openGlobalLock = getGlobalLock(dragEnabled)
                     if (!openGlobalLock) {
@@ -79,9 +76,6 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPan: PanHandler = useMemo(
         () =>
             function({ delta, offset }: PanInfo) {
-                if (!dragEnabled) {
-                    return
-                }
                 if (!dragPropagation && !openGlobalLock) {
                     return
                 }
@@ -104,9 +98,6 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     const onPanEnd = useMemo(
         () =>
             function() {
-                if (!dragEnabled) {
-                    return
-                }
                 if (!dragPropagation && openGlobalLock) {
                     openGlobalLock()
                 }
@@ -118,7 +109,6 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     if (dragEnabled) {
         handlers = { onPanStart, onPan, onPanEnd }
     }
-
     usePanGesture(handlers, ref)
 }
 
