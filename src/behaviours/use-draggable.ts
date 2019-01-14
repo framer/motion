@@ -29,15 +29,29 @@ export interface DraggableProps {
     dragPropagation?: boolean
 }
 
-const draggableDefaults = {
-    dragEnabled: false,
-    dragLocksDirection: false,
-    dragPropagation: false,
+const draggableDefaults = (props: DraggableProps): Required<DraggableProps> => {
+    const defaultValues = { dragEnabled: false, dragLocksDirection: false, dragPropagation: false }
+    const result = defaultValues
+    Object.assign(result, props)
+    if (props.dragEnabled === undefined) {
+        if (props.dragLocksDirection || props.dragPropagation) {
+            result.dragEnabled = true
+        }
+    }
+    return result
 }
 
-function defaults<Props>(props: Props, defaultProps: Required<Props>): Required<Props> {
-    const result = defaultProps
-    Object.assign(result, props)
+function defaults<Props>(
+    props: Props,
+    defaultProps: Required<Props> | ((props: Props) => Required<Props>)
+): Required<Props> {
+    let result: Required<Props>
+    if (typeof defaultProps === "function") {
+        result = defaultProps(props)
+    } else {
+        result = defaultProps
+        Object.assign(result, props)
+    }
     return result
 }
 
