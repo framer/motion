@@ -1,9 +1,8 @@
-import { RefObject, useContext, useMemo } from "react"
+import { RefObject, useRef, useContext, useMemo } from "react"
 import { PanHandler, usePanGesture, PanInfo, PanHandlers } from "../gestures"
 import { createLock, Lock } from "./utils/lock"
 import { MotionContext, MotionValuesMap } from "../motion"
 import { Point } from "../events"
-import { MotionValue } from "value"
 
 type DragDirection = "x" | "y"
 export interface DraggableProps {
@@ -53,17 +52,11 @@ function shouldDrag(
 
 export function useDraggable(props: DraggableProps, ref: RefObject<Element | null>, values: MotionValuesMap) {
     const { dragEnabled, dragPropagation, dragLocksDirection } = defaults(props, draggableDefaults)
-    const point: Partial<{ x: MotionValue<number>; y: MotionValue<number> }> = {}
-    let currentDirection: null | DragDirection = null
-    if (shouldDrag("x", dragEnabled, currentDirection)) {
-        point.x = values.get("x", 0)
-    }
-    if (shouldDrag("y", dragEnabled, currentDirection)) {
-        point.y = values.get("y", 0)
-    }
+    const point = useRef({ x: values.get("x", 0), y: values.get("y", 0) })
     const motionContext = useContext(MotionContext)
     // XXX: directionLocking and having something called Lock is confusing, especially, because they're not really realted
     let openGlobalLock: Lock = false
+    let currentDirection: null | DragDirection = null
 
     const onPanStart = useMemo(
         () =>
@@ -82,7 +75,7 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
 
     const onPan: PanHandler = useMemo(
         () =>
-            function({ delta, offset }: PanInfo) {
+            function(_event: MouseEvent | TouchEvent, { delta, offset }: PanInfo) {
                 if (!dragPropagation && !openGlobalLock) {
                     return
                 }
@@ -92,11 +85,11 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
                         return
                     }
                 }
-                const { x, y } = point
-                if (shouldDrag("x", dragEnabled, currentDirection) && x) {
+                const { x, y } = point.current
+                if (shouldDrag("x", dragEnabled, currentDirection)) {
                     x.set(x.get() + delta.x)
                 }
-                if (shouldDrag("y", dragEnabled, currentDirection) && y) {
+                if (shouldDrag("y", dragEnabled, currentDirection)) {
                     y.set(y.get() + delta.y)
                 }
             },

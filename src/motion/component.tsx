@@ -41,7 +41,6 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
                 {createElement<any>(Component, {
                     ...props,
                     ref,
-                    // ...handlers,
                     style: useStyleAttr(values, style),
                 })}
             </MotionContext.Provider>
