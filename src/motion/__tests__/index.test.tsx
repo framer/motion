@@ -164,7 +164,7 @@ describe("motion component rendering and styles", () => {
     test("fires onPoseComplete", async () => {
         const poses: Poses = {
             foo: { x: 100 },
-            bar: [{ x: 0 }, false],
+            bar: [{ x: 0 }, { type: false }],
         }
 
         const promise = new Promise(resolve => {
@@ -183,7 +183,7 @@ describe("motion component pose animations", () => {
     test("fires transitions into new pose", async () => {
         const poses: Poses = {
             foo: { x: 100 },
-            bar: [{ x: 300 }, false],
+            bar: [{ x: 300 }, { type: false }],
         }
 
         const promise = new Promise(resolve => {
