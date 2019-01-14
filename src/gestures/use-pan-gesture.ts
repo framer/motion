@@ -1,5 +1,7 @@
-import { RefObject, useMemo, useEffect } from "react"
+import { RefObject, useMemo, useEffect, useRef } from "react"
 import { EventInfo, usePointerEvents, Point, EventHandler, useConditionalPointerEvents } from "../events"
+import { motionValue, MotionValue } from "value"
+import { pointer } from "popmotion"
 
 interface EventSession {
     lastDevicePoint: Point
@@ -13,9 +15,10 @@ export interface PanInfo {
     devicePoint: Point
     delta: Point
     offset: Point
+    velocity: Point
 }
 
-export type PanHandler = (info: PanInfo, event: Event) => void
+export type PanHandler = (event: Event, info: PanInfo) => void
 
 export interface PanHandlers {
     onPan?: PanHandler
@@ -23,14 +26,23 @@ export interface PanHandlers {
     onPanEnd?: PanHandler
 }
 
+type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
+
+const getVelocity = ({ x, y }: MotionXY): Point => ({
+    x: x.getVelocity(),
+    y: y.getVelocity(),
+})
+
 export function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined
 export function usePanGesture(handlers: PanHandlers): { onPointerDown: EventHandler }
 export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?: RefObject<Element>) {
     let session: null | EventSession = null
+    const pointer = useRef<MotionXY | null>(null)
+
     const onPointerMove = useMemo(
         () => {
             return (event: Event, { point, devicePoint }: EventInfo) => {
-                if (!session) {
+                if (!session || pointer.current === null) {
                     // tslint:disable-next-line:no-console
                     console.error("Pointer move without started session")
                     return
@@ -38,14 +50,24 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
 
                 const delta = Point.subtract(devicePoint, session.lastDevicePoint)
                 const offset = Point.subtract(devicePoint, session.startDevicePoint)
+
+                pointer.current.x.set(point.x)
+                pointer.current.y.set(point.y)
+
                 if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
                     if (session.startEvent) {
                         if (onPan) {
-                            onPan({ point, devicePoint, delta, offset }, event)
+                            onPan(event, { point, devicePoint, delta, offset, velocity: getVelocity(pointer.current) })
                         }
                     } else {
                         if (onPanStart) {
-                            onPanStart({ point, devicePoint, delta, offset }, event)
+                            onPanStart(event, {
+                                point,
+                                devicePoint,
+                                delta,
+                                offset,
+                                velocity: getVelocity(pointer.current),
+                            })
                         }
                         session.startEvent = event
                     }
@@ -58,7 +80,7 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
     const onPointerUp = useMemo(
         () => {
             return (event: Event, { point, devicePoint }: EventInfo) => {
-                if (!session) {
+                if (!session || pointer.current === null) {
                     // tslint:disable-next-line:no-console
                     console.error("Pointer end without started session")
                     return
@@ -68,7 +90,7 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
                 stopPointerMove()
                 stopPointerUp()
                 if (onPanEnd) {
-                    onPanEnd({ point, devicePoint, delta, offset }, event)
+                    onPanEnd(event, { point, devicePoint, delta, offset, velocity: getVelocity(pointer.current) })
                 }
                 session = null
             }
@@ -79,7 +101,12 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
     const [startPointerMove, stopPointerMove] = usePointerEvents({ onPointerMove }, window, { capture: true })
     const onPointerDown = useMemo(
         () => {
-            return (event: Event, { devicePoint }: EventInfo) => {
+            return (event: Event, { devicePoint, point }: EventInfo) => {
+                pointer.current = {
+                    x: motionValue(point.x),
+                    y: motionValue(point.y),
+                }
+
                 session = {
                     target: event.target,
                     lastDevicePoint: devicePoint,
