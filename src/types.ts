@@ -19,17 +19,21 @@ export type Easing =
     | "anticipate"
     | EasingFunction
 
-export type BaseTransition = {
-    delay?: number
-    from?: number | string
-    to?: number | string
-    velocity?: number
+export type TransitionOrchestration = {
     beforeChildren?: boolean
     afterChildren?: boolean
     delayChildren?: number
     staggerChildren?: number
     staggerDirection?: 1 | -1
     applyOnEnd?: PoseDefinition
+}
+
+export type BaseTransition = {
+    type?: false
+    delay?: number
+    from?: number | string
+    to?: number | string
+    velocity?: number
 }
 
 export type Tween = BaseTransition & {
@@ -82,11 +86,15 @@ export type Just = BaseTransition & {
     type: "just"
 }
 
-export type Transition = Tween | Spring | Decay | Keyframes | Physics | Just
+export type PopmotionTransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | Just
 
-export type PoseTransition = Tween | Spring | Decay | Keyframes | Physics | BaseTransition | false
+export type TransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | BaseTransition
 
-export type TransitionMap = { [key: string]: PoseTransition }
+export type TransitionMap = TransitionOrchestration & { [key: string]: TransitionDefinition }
+
+export type PoseTransition =
+    | (TransitionDefinition & TransitionOrchestration)
+    | (TransitionMap & TransitionOrchestration)
 
 // TODO Maybe make CSSProperties + additional supported transforms and SVG props?
 export type PoseDefinition = {
