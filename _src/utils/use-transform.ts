@@ -1,6 +1,5 @@
 import { useMemo, useRef, MutableRefObject } from "react"
 import { MotionValue, Transformer } from "../motion-value"
-import { interpolate } from "@popmotion/popcorn"
 
 /**
  * `useTransform` is used to transform the output of one `MotionValue` into another.

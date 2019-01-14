@@ -1,4 +1,4 @@
-import { MotionValue } from "../motion-value"
+import { MotionValue } from "../../value"
 
 type PoseNameList = string[]
 type PoseName = string | PoseNameList
@@ -17,5 +17,12 @@ const poseToArray = (pose?: PoseName): PoseNameList => {
 export const resolvePoses = (pose?: UnresolvedPose): PoseNameList => {
     const unresolvedPose = pose instanceof MotionValue ? (pose.get() as string) : pose
 
-    return ["default", ...poseToArray(unresolvedPose)]
+    return Array.from(new Set(poseToArray(unresolvedPose)))
 }
+
+/**
+ * Hooks in React sometimes accept a dependency array as their final argument. (ie useEffect/useMemo)
+ * When values in this array change, React re-runs the dependency. However if the array
+ * contains a variable number of items, React throws an error.
+ */
+export const asDependencyList = (list: PoseNameList): string[] => [list.join(",")]

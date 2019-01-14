@@ -5,6 +5,13 @@ export interface Point {
     y: number
 }
 
+export namespace Point {
+    /** @alpha */
+    export const subtract = (a: Point, b: Point): Point => {
+        return { x: a.x - b.x, y: a.y - b.y }
+    }
+}
+
 export interface EventInfo {
     point: Point
     devicePoint: Point

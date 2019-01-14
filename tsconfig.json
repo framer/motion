@@ -42,7 +42,8 @@
         "dev/examples.framer",
         "test",
         "skins",
-        "dist"
+        "dist",
+        "_src"
     ],
     "filesGlob": ["./src/**/*.ts"]
 }

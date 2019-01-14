@@ -1,22 +1,31 @@
 import { RefObject, useMemo, useEffect } from "react"
-import { EventInfo, usePointerEvents, Point } from "../events"
+import { EventInfo, usePointerEvents, Point, EventHandler, useConditionalPointerEvents } from "../events"
 
 interface EventSession {
     lastDevicePoint: Point
     startEvent?: Event
     target: EventTarget | null
+    startDevicePoint: Point
 }
 
-interface PanInfo {
+export interface PanInfo {
     point: Point
     devicePoint: Point
     delta: Point
+    offset: Point
 }
 
-export const usePanGesture = (
-    { onPan, onPanStart, onPanEnd }: { [key: string]: (info: PanInfo, event: Event) => void },
-    ref: RefObject<Element>
-) => {
+export type PanHandler = (info: PanInfo, event: Event) => void
+
+export interface PanHandlers {
+    onPan?: PanHandler
+    onPanStart?: PanHandler
+    onPanEnd?: PanHandler
+}
+
+export function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined
+export function usePanGesture(handlers: PanHandlers): { onPointerDown: EventHandler }
+export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?: RefObject<Element>) {
     let session: null | EventSession = null
     const onPointerMove = useMemo(
         () => {
@@ -27,18 +36,16 @@ export const usePanGesture = (
                     return
                 }
 
-                const delta = {
-                    x: devicePoint.x - session.lastDevicePoint.x,
-                    y: devicePoint.y - session.lastDevicePoint.y,
-                }
+                const delta = Point.subtract(devicePoint, session.lastDevicePoint)
+                const offset = Point.subtract(devicePoint, session.startDevicePoint)
                 if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
                     if (session.startEvent) {
                         if (onPan) {
-                            onPan({ point, devicePoint, delta }, event)
+                            onPan({ point, devicePoint, delta, offset }, event)
                         }
                     } else {
                         if (onPanStart) {
-                            onPanStart({ point, devicePoint, delta }, event)
+                            onPanStart({ point, devicePoint, delta, offset }, event)
                         }
                         session.startEvent = event
                     }
@@ -56,21 +63,18 @@ export const usePanGesture = (
                     console.error("Pointer end without started session")
                     return
                 }
-                const delta = {
-                    x: devicePoint.x - session.lastDevicePoint.x,
-                    y: devicePoint.y - session.lastDevicePoint.y,
-                }
+                const delta = Point.subtract(devicePoint, session.lastDevicePoint)
+                const offset = Point.subtract(devicePoint, session.startDevicePoint)
                 stopPointerMove()
                 stopPointerUp()
                 if (onPanEnd) {
-                    onPanEnd({ point, devicePoint, delta }, event)
+                    onPanEnd({ point, devicePoint, delta, offset }, event)
                 }
                 session = null
             }
         },
         [onPanEnd, onPointerMove]
     )
-
     const [startPointerUp, stopPointerUp] = usePointerEvents({ onPointerUp }, window)
     const [startPointerMove, stopPointerMove] = usePointerEvents({ onPointerMove }, window, { capture: true })
     const onPointerDown = useMemo(
@@ -79,6 +83,7 @@ export const usePanGesture = (
                 session = {
                     target: event.target,
                     lastDevicePoint: devicePoint,
+                    startDevicePoint: devicePoint,
                 }
                 startPointerMove()
                 startPointerUp()
@@ -87,15 +92,12 @@ export const usePanGesture = (
         [onPointerUp, onPointerMove]
     )
 
-    usePointerEvents({ onPointerDown }, ref)
     useEffect(() => {
         return () => {
             stopPointerMove()
             stopPointerUp()
         }
     })
-    // TODO
-    const handlers = {}
 
-    return handlers
+    return useConditionalPointerEvents({ onPointerDown }, ref)
 }

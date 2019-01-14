@@ -1,6 +1,7 @@
 import { useEvent } from "./use-event"
 import { wrapHandler } from "./event-info"
 import { EventHandler, ListenerControls, TargetOrRef, TargetBasedReturnType } from "./types"
+import { useRef, RefObject, useState } from "react"
 
 const mergeUseEventResults = (...values: (ListenerControls | undefined)[]): ListenerControls | undefined => {
     if (values.every(v => v === undefined)) {
@@ -160,4 +161,36 @@ export const usePointerEvents = <Target extends TargetOrRef>(
     const touch = useTouchEvents(touchEvents, ref, options)
     const mouse = useMouseEvents(mouseEvents, ref, options)
     return mergeUseEventResults(pointer, touch, mouse) as TargetBasedReturnType<Target>
+}
+
+/**
+ * A Conditional version of usePointerEvents
+ * As opposed to usePointerEvents, this function does not require to pass a target or ref.
+ * When calling this without a target, the handlers passed to the function are returned
+ * @param eventHandlers
+ * @param ref
+ * @param options
+ */
+export const useConditionalPointerEvents = <Target extends TargetOrRef, Handlers extends Partial<PointerEventHandlers>>(
+    eventHandlers: Handlers,
+    ref?: Target,
+    options?: AddEventListenerOptions
+): Handlers | undefined => {
+    let pointerEventsRef: Target
+    let pointerEventsHandlers: Partial<PointerEventHandlers>
+    const emptyRef = useRef(null)
+    // Because hooks can't be conditional, we need to this dance, instead of just an early return
+    if (ref) {
+        pointerEventsRef = ref
+        pointerEventsHandlers = eventHandlers
+    } else {
+        pointerEventsRef = emptyRef as Target
+        pointerEventsHandlers = {}
+    }
+    usePointerEvents(pointerEventsHandlers, pointerEventsRef, options)
+    if (ref) {
+        return undefined
+    } else {
+        return eventHandlers
+    }
 }

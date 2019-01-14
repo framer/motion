@@ -22,20 +22,21 @@ export const useEvent = <Target extends TargetOrRef>(
     handler?: EventListener,
     options?: AddEventListenerOptions
 ): TargetBasedReturnType<Target> => {
-    if (!handler) {
-        return undefined as TargetBasedReturnType<Target>
+    let result: ListenerControls | undefined = undefined
+    if (target instanceof EventTarget && handler) {
+        result = eventListener(target, type, handler, options) as TargetBasedReturnType<Target>
     }
-    if (target instanceof EventTarget) {
-        return eventListener(target, type, handler, options) as TargetBasedReturnType<Target>
-    }
-    const ref = target as RefObject<EventTarget>
-    useEffect(() => {
-        if (!ref.current) {
-            return
-        }
-        const [start, stop] = eventListener(ref.current, type, handler, options)
-        start()
-        return stop
-    })
-    return undefined as TargetBasedReturnType<Target>
+    useEffect(
+        () => {
+            const ref = target as RefObject<EventTarget>
+            if (!handler || target instanceof EventTarget || !ref.current) {
+                return
+            }
+            const [start, stop] = eventListener(ref.current, type, handler, options)
+            start()
+            return stop
+        },
+        [type, target, handler, options]
+    )
+    return result as TargetBasedReturnType<Target>
 }

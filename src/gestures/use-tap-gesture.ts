@@ -1,5 +1,5 @@
 import { RefObject, useEffect, useMemo } from "react"
-import { usePointerEvents, EventInfo, Point } from "../events"
+import { usePointerEvents, useConditionalPointerEvents, EventInfo, Point, EventHandler } from "../events"
 
 interface TapInfo {
     point: Point
@@ -12,11 +12,16 @@ interface TapSession {
 
 type TapHandler = (session: TapInfo, event: Event) => void
 
-interface TapHandlers {
-    onTap: TapHandler
+export interface TapHandlers {
+    onTap?: TapHandler
 }
 
-export const useTapGesture = ({ onTap }: TapHandlers, ref: RefObject<Element>) => {
+export function useTapGesture(handlers: TapHandlers): { onPointerDown: EventHandler }
+export function useTapGesture(handlers: TapHandlers, ref: RefObject<Element>): undefined
+export function useTapGesture(
+    { onTap }: TapHandlers,
+    ref?: RefObject<Element>
+): undefined | { onPointerDown: EventHandler } {
     // // console.log("tap gesture");
     // const device = useContext(DeviceContext);
     // // console.log("mouseMove");
@@ -29,7 +34,7 @@ export const useTapGesture = ({ onTap }: TapHandlers, ref: RefObject<Element>) =
                 if (!session) {
                     return
                 }
-                if (event.target !== ref.current) {
+                if (!ref || event.target !== ref.current) {
                     return
                 }
                 //   const deviceElement =
@@ -49,19 +54,19 @@ export const useTapGesture = ({ onTap }: TapHandlers, ref: RefObject<Element>) =
 
     const onPointerDown = (event: Event) => {
         startPointerUp()
-        if (event.target !== ref.current) return
+        if (!ref || event.target !== ref.current) return
         session = {
             target: event.target,
         }
     }
     const [startPointerUp, stopPointerUp] = usePointerEvents({ onPointerUp }, window)
-    usePointerEvents({ onPointerDown }, ref)
     useEffect(
         () => {
             return () => {
                 stopPointerUp()
             }
         },
-        [ref.current, onPointerUp]
+        [ref && ref.current, onPointerUp]
     )
+    return useConditionalPointerEvents({ onPointerDown }, ref)
 }
