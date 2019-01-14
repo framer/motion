@@ -1,6 +1,6 @@
 import { RefObject, useMemo, useEffect, useRef } from "react"
 import { EventInfo, usePointerEvents, Point, EventHandler, useConditionalPointerEvents } from "../events"
-import { motionValue, MotionValue } from "value"
+import { motionValue, MotionValue } from "../value"
 
 interface EventSession {
     lastDevicePoint: Point
