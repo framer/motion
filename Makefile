@@ -40,6 +40,12 @@ watch: bootstrap
 	fi;
 	yarn watch
 
+bump:
+	npm version patch
+
+publish: build bump
+	npm publish
+
 test: bootstrap
 	mkdir -p $(TEST_REPORT_PATH)
 	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test $(if $(CI),--ci --reporters=jest-junit)
