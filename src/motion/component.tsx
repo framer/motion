@@ -9,7 +9,7 @@ import { usePoses } from "./utils/use-poses"
 import { MotionContext, useMotionContext } from "./utils/MotionContext"
 import { MotionProps } from "./types"
 import { useGestures } from "../gestures"
-import { useDraggable } from "../behaviours/use-draggable"
+import { useDraggable } from "../behaviours"
 
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>) => {
     const MotionComponent = (p: P & MotionProps, externalRef?: Ref<Element>) => {
