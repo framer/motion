@@ -21,7 +21,7 @@ describe("useAnimation", () => {
                     animation.start({ x: 100 }).then(() => resolve(x.get()))
                 }, [])
 
-                return <motion.div animation={animation} style={{ x }} />
+                return <motion.div animate={animation} style={{ x }} />
             }
 
             const { rerender } = render(<Component />)
@@ -43,7 +43,7 @@ describe("useAnimation", () => {
                     animation.start("foo").then(() => resolve(x.get()))
                 }, [])
 
-                return <motion.div animation={animation} style={{ x }} />
+                return <motion.div animate={animation} style={{ x }} />
             }
 
             const { rerender } = render(<Component />)
@@ -72,8 +72,8 @@ describe("useAnimation", () => {
                 }, [])
 
                 return (
-                    <motion.div animation={animation} style={{ x }}>
-                        <motion.div inherit animation={childAnimation} style={{ backgroundColor }} />
+                    <motion.div animate={animation} style={{ x }}>
+                        <motion.div inherit animate={childAnimation} style={{ backgroundColor }} />
                     </motion.div>
                 )
             }
