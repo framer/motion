@@ -14,7 +14,7 @@ import { useDraggable } from "../behaviours/use-draggable"
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>) => {
     const MotionComponent = (p: P & MotionProps, externalRef?: Ref<Element>) => {
         const {
-            animation,
+            animate,
             pose = "default",
             style,
             onPoseComplete,
@@ -30,8 +30,8 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         const controls = useAnimationControls(values, inherit, props)
         const context = useMotionContext(controls, inherit, initialPose || pose)
 
-        useAnimationSubscription(animation, controls)
-        usePoses(animation, inherit, controls, onPoseComplete, pose, initialPose)
+        useAnimationSubscription(animate, controls)
+        usePoses(animate, inherit, controls, onPoseComplete, pose, initialPose)
 
         useGestures(props, ref, controls)
         useDraggable({ dragEnabled, dragLocksDirection, dragPropagation }, ref, values)

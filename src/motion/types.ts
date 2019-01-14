@@ -35,7 +35,7 @@ type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
 export interface MotionProps extends GestureHandlers, DraggableProps {
     ref?: Ref<Element>
     style?: MakeMotion<CSSProperties> & MotionStyleProperties
-    animation?: AnimationManager | Poses
+    animate?: AnimationManager | Poses
     pose?: PoseKeys
     initialPose?: PoseKeys
     inherit?: boolean

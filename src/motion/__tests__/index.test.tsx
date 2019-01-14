@@ -65,7 +65,7 @@ describe("motion component rendering and styles", () => {
             default: { backgroundColor: "#fff" },
         }
 
-        const { container } = render(<motion.div animation={poses} />)
+        const { container } = render(<motion.div animate={poses} />)
         expect(container.firstChild).toHaveStyle("background-color: #fff")
     })
 
@@ -75,7 +75,7 @@ describe("motion component rendering and styles", () => {
             foo: { backgroundColor: "#000" },
         }
 
-        const { container } = render(<motion.div animation={poses} pose="foo" />)
+        const { container } = render(<motion.div animate={poses} pose="foo" />)
         expect(container.firstChild).toHaveStyle("background-color: #000")
     })
 
@@ -85,7 +85,7 @@ describe("motion component rendering and styles", () => {
             foo: { backgroundColor: "#000" },
         }
 
-        const { container } = render(<motion.div animation={poses} pose={["default", "foo"]} />)
+        const { container } = render(<motion.div animate={poses} pose={["default", "foo"]} />)
         expect(container.firstChild).toHaveStyle("background-color: #000; transform: translateX(100px) translateZ(0)")
     })
 
@@ -94,7 +94,7 @@ describe("motion component rendering and styles", () => {
             default: { backgroundColor: "#fff" },
         }
 
-        const { container } = render(<motion.div animation={poses} style={{ backgroundColor: "#f00", left: 500 }} />)
+        const { container } = render(<motion.div animate={poses} style={{ backgroundColor: "#f00", left: 500 }} />)
         expect(container.firstChild).toHaveStyle("background-color: #fff; left: 500px")
     })
 
@@ -105,7 +105,7 @@ describe("motion component rendering and styles", () => {
 
         const { getByTestId } = render(
             <motion.div pose="foo">
-                <motion.div animation={childPoses} inherit data-testid="child" />
+                <motion.div animate={childPoses} inherit data-testid="child" />
             </motion.div>
         )
 
@@ -127,7 +127,7 @@ describe("motion component rendering and styles", () => {
             default: [{ backgroundColor: "#f00" }, { applyOnEnd: { display: "none" } }],
         }
 
-        const { container } = render(<motion.div animation={poses} />)
+        const { container } = render(<motion.div animate={poses} />)
         expect(container.firstChild).toHaveStyle("display: none")
     })
 
@@ -143,8 +143,8 @@ describe("motion component rendering and styles", () => {
         }
 
         const { getByTestId, container } = render(
-            <motion.div animation={poses} initialPose="foo" pose="bar">
-                <motion.button animation={childPoses} inherit data-testid="child" />
+            <motion.div animate={poses} initialPose="foo" pose="bar">
+                <motion.button animate={childPoses} inherit data-testid="child" />
             </motion.div>
         )
         expect(container.firstChild).toHaveStyle("transform: translateX(222px) translateZ(0)")
@@ -168,11 +168,11 @@ describe("motion component rendering and styles", () => {
         }
 
         const promise = new Promise(resolve => {
-            const { rerender } = render(<motion.div animation={poses} pose="foo" />)
+            const { rerender } = render(<motion.div animate={poses} pose="foo" />)
             const onComplete = () => resolve("fired")
 
-            rerender(<motion.div animation={poses} pose="bar" onPoseComplete={onComplete} />)
-            rerender(<motion.div animation={poses} pose="bar" />)
+            rerender(<motion.div animate={poses} pose="bar" onPoseComplete={onComplete} />)
+            rerender(<motion.div animate={poses} pose="bar" />)
         })
 
         await expect(promise).resolves.toEqual("fired")
@@ -188,11 +188,11 @@ describe("motion component pose animations", () => {
 
         const promise = new Promise(resolve => {
             const x = motionValue(0)
-            const { rerender } = render(<motion.div animation={poses} pose="foo" style={{ x }} />)
+            const { rerender } = render(<motion.div animate={poses} pose="foo" style={{ x }} />)
             const onComplete = () => resolve(x.get())
 
-            rerender(<motion.div animation={poses} pose="bar" onPoseComplete={onComplete} />)
-            rerender(<motion.div animation={poses} pose="bar" />)
+            rerender(<motion.div animate={poses} pose="bar" onPoseComplete={onComplete} />)
+            rerender(<motion.div animate={poses} pose="bar" />)
         })
 
         await expect(promise).resolves.toBe(300)
@@ -214,8 +214,8 @@ describe("motion component pose animations", () => {
 
         const promise = new Promise(resolve => {
             const Component = props => (
-                <motion.div {...props} animation={poses} style={{ x: parentX }}>
-                    <motion.button animation={childPoses} inherit style={{ x: childX }} />
+                <motion.div {...props} animate={poses} style={{ x: parentX }}>
+                    <motion.button animate={childPoses} inherit style={{ x: childX }} />
                 </motion.div>
             )
             const { rerender } = render(<Component pose="foo" />)
@@ -245,13 +245,13 @@ describe("motion component pose animations", () => {
         const promise = new Promise(resolve => {
             const Component = () => (
                 <motion.div
-                    animation={poses}
+                    animate={poses}
                     style={{ x }}
                     initialPose="foo"
                     pose="bar"
                     onPoseComplete={() => resolve([x.get(), backgroundColor.get()])}
                 >
-                    <motion.button inherit animation={childPoses} style={{ backgroundColor }} />
+                    <motion.button inherit animate={childPoses} style={{ backgroundColor }} />
                 </motion.div>
             )
 
