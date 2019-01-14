@@ -30,8 +30,8 @@ export const App = () => {
     animation.start("active")
 
     return (
-        <motion.div animation={animation} onClick={() => setActive(!isActive)} style={style}>
-            <motion.div animation={childPoses} inherit style={stylea} />
+        <motion.div animate={animation} onClick={() => setActive(!isActive)} style={style}>
+            <motion.div animate={childPoses} inherit style={stylea} />
         </motion.div>
     )
 }
