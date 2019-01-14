@@ -29,7 +29,7 @@ export class MotionValue<V = any> {
     private lastUpdated: number = 0
 
     // Children get updated onUpdate
-    private children: Set<MotionValue>
+    private children?: Set<MotionValue>
 
     // A reference to the value's parent - currently used for unregistering as a child,
     // but maybe it'd be better for this to be just a disconnect function
@@ -72,6 +72,9 @@ export class MotionValue<V = any> {
     }
 
     removeChild(child: MotionValue) {
+        if (!this.children) {
+            return
+        }
         this.children.delete(child)
     }
 

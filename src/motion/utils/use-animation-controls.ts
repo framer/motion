@@ -39,7 +39,7 @@ export class AnimationControls<P = {}> {
     private props: P
     private values: MotionValuesMap
     private poses: Poses = {}
-    private children: Set<AnimationControls>
+    private children?: Set<AnimationControls>
     private isAnimating: Set<string> = new Set()
 
     constructor(values: MotionValuesMap) {
@@ -167,6 +167,9 @@ export class AnimationControls<P = {}> {
         staggerChildren: number = 0,
         staggerDirection: number = 1
     ) {
+        if (!this.children) {
+            return Promise.resolve()
+        }
         const animations: Array<Promise<any>> = []
 
         const maxStaggerDuration = (this.children.size - 1) * staggerChildren
@@ -202,6 +205,9 @@ export class AnimationControls<P = {}> {
     }
 
     removeChild(controls: AnimationControls) {
+        if (!this.children) {
+            return
+        }
         this.children.delete(controls)
     }
 
