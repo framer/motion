@@ -1,6 +1,7 @@
 import sync, { getFrameData, FrameData, cancelSync } from "framesync"
 import { chain, delay as delayAction, Action, ColdSubscription } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
+import { PopmotionTransitionDefinition } from "../types"
 
 export type Transformer<T> = (v: T) => T
 
@@ -11,9 +12,7 @@ export type Config<T> = {
     parent?: MotionValue<T>
 }
 
-export type ActionConfig = { [key: string]: any }
-
-export type ActionFactory = (actionConfig: ActionConfig) => Action
+export type ActionFactory = (actionConfig: PopmotionTransitionDefinition) => Action
 
 const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
@@ -151,11 +150,15 @@ export class MotionValue<V = any> {
             : 0
     }
 
-    control(controller: ActionFactory, { delay, ...config }: ActionConfig, transformer?: Transformer<V>) {
+    control(
+        controller: ActionFactory,
+        { delay, ...config }: PopmotionTransitionDefinition,
+        transformer?: Transformer<V>
+    ) {
         this.stop()
 
         let initialisedController = controller({
-            from: this.get(),
+            from: this.get() as any,
             velocity: this.getVelocity(),
             ...config,
         })

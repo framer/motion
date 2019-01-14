@@ -1,5 +1,13 @@
 import { action, tween, spring, keyframes, decay, physics, easing, Action } from "popmotion"
-import { Transition, PoseTransition, Tween, Keyframes, EasingFunction, TransitionMap } from "../../types"
+import {
+    PoseTransition,
+    Tween,
+    Keyframes,
+    EasingFunction,
+    TransitionMap,
+    PopmotionTransitionDefinition,
+    TransitionDefinition,
+} from "../../types"
 import { getDefaultTransition } from "./default-transitions"
 import { invariant } from "hey-listen"
 import { ActionFactory } from "../../value"
@@ -63,33 +71,35 @@ const transitionOptionParser = {
     keyframes: ({ from, to, ...opts }: Keyframes) => opts,
 }
 
-const getPoseTransitions = (valueKey: string, to: string | number, transitionProp?: PoseTransition): Transition => {
-    if (transitionProp !== undefined) {
-        let transition: Transition = {}
-
-        if (transitionProp === false || transitionProp[valueKey] === false) {
-            transition = { type: "just" }
-        } else {
-            transition = transitionProp[valueKey] || (transitionProp as TransitionMap).default || transitionProp
-        }
-
-        return { ...transition, to }
+const getTransitionForValue = (
+    key: string,
+    to: string | number,
+    transitionDefinition?: PoseTransition
+): PopmotionTransitionDefinition => {
+    // If no object, return default transition
+    if (transitionDefinition === undefined) {
+        return getDefaultTransition(key, to)
     }
 
-    return getDefaultTransition(valueKey, to)
+    const valueTransitionDefinition: TransitionDefinition =
+        transitionDefinition[key] || (transitionDefinition as TransitionMap).default || transitionDefinition
+
+    return valueTransitionDefinition.type === false
+        ? ({ type: "just", to } as PopmotionTransitionDefinition)
+        : ({ ...valueTransitionDefinition, to } as PopmotionTransitionDefinition)
 }
 
-const preprocessOptions = (type: string, opts: Transition): Transition =>
+const preprocessOptions = (type: string, opts: PopmotionTransitionDefinition): PopmotionTransitionDefinition =>
     transitionOptionParser[type] ? transitionOptionParser[type](opts) : opts
 
 export const getTransition = (
     valueKey: string,
     to: string | number,
     transition?: PoseTransition
-): [ActionFactory, Transition] => {
-    const { type = "tween", ...transitionDefinition } = getPoseTransitions(valueKey, to, transition)
+): [ActionFactory, PopmotionTransitionDefinition] => {
+    const { type = "tween", ...transitionDefinition } = getTransitionForValue(valueKey, to, transition)
     const actionFactory: ActionFactory = transitions[type]
-    const opts: Transition = preprocessOptions(type, transitionDefinition)
+    const opts: PopmotionTransitionDefinition = preprocessOptions(type, transitionDefinition)
 
     return [actionFactory, opts]
 }
