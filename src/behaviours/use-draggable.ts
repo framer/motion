@@ -1,9 +1,10 @@
 import { RefObject, useContext, useMemo } from "react"
 import { PanHandler, usePanGesture, PanInfo, PanHandlers } from "../gestures"
 import { createLock, Lock } from "./utils/lock"
-import { MotionContext, MotionValuesMap } from "../motion"
+import { MotionValuesMap } from "../motion/utils/use-motion-values"
+import { MotionContext } from "../motion/utils/MotionContext"
+import { MotionValue } from "../value"
 import { Point } from "../events"
-import { MotionValue } from "value"
 
 type DragDirection = "x" | "y"
 export interface DraggableProps {
