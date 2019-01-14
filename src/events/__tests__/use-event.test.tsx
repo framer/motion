@@ -66,7 +66,7 @@ describe("useEvent", () => {
     })
 
     describe("when an element is provided", () => {
-        const target = document.body
+        const target = window
         it("should return an start and an stop function", () => {
             const handler = jest.fn()
             const capture: { result?: any } = {}
@@ -128,6 +128,36 @@ describe("useEvent", () => {
             }
             render(<Component />)
             expect(capture.result).toBe(undefined)
+        })
+    })
+
+    describe("in non-browser environments", () => {
+        // In server side some rendering environments window can be undefined
+        it("should return an start and an stop function when no target is provided", () => {
+            const handler = jest.fn()
+            const capture: { result?: any } = {}
+            const Component = () => {
+                capture.result = useEvent("mousedown", undefined, handler)
+                return <div />
+            }
+            render(<Component />)
+            const [start, stop] = capture.result
+            expect(start).toBeInstanceOf(Function)
+            expect(stop).toBeInstanceOf(Function)
+            expect(() => start()).not.toThrow()
+            expect(() => stop()).not.toThrow()
+        })
+        it("should return an start and an stop function when a mocked window is provided", () => {
+            const handler = jest.fn()
+            const capture: { result?: any } = {}
+            const Component = () => {
+                capture.result = useEvent("mousedown", window, handler)
+                return <div />
+            }
+            render(<Component />)
+            const [start, stop] = capture.result
+            expect(start).toBeInstanceOf(Function)
+            expect(stop).toBeInstanceOf(Function)
         })
     })
 })
