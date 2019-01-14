@@ -2,6 +2,7 @@ import { ComponentType, ReactHTML, SVGAttributes, DetailedHTMLFactory } from "re
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 export { MotionContext } from "./utils/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
+export { AnimationControls } from "./utils/use-animation-controls"
 import { createMotionComponent } from "./component"
 import { MotionProps } from "./types"
 

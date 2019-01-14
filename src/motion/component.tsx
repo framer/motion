@@ -33,7 +33,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         useAnimationSubscription(animate, controls)
         usePoses(animate, inherit, controls, onPoseComplete, pose, initialPose)
 
-        useGestures(props, ref, controls)
+        useGestures(props, ref)
         useDraggable({ dragEnabled, dragLocksDirection, dragPropagation }, ref, values)
 
         return (

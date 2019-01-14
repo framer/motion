@@ -125,7 +125,7 @@ function getCurrentDirection(offset: Point): DragDirection | null {
 
 const globalHorizontalLock = createLock("dragHorizontal")
 const globalVerticalLock = createLock("dragVertical")
-function getGlobalLock(dragEnabled: true | "x" | "y"): Lock {
+function getGlobalLock(dragEnabled: boolean | "x" | "y"): Lock {
     let lock: Lock = false
     if (dragEnabled === "y") {
         lock = globalVerticalLock()

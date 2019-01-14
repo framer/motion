@@ -1,7 +1,7 @@
 import { useEvent } from "./use-event"
 import { wrapHandler } from "./event-info"
 import { EventHandler, ListenerControls, TargetOrRef, TargetBasedReturnType } from "./types"
-import { useRef, RefObject, useState } from "react"
+import { useRef } from "react"
 
 const mergeUseEventResults = (...values: (ListenerControls | undefined)[]): ListenerControls | undefined => {
     if (values.every(v => v === undefined)) {
