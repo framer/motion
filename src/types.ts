@@ -93,8 +93,8 @@ export type TransitionDefinition = Tween | Spring | Decay | Keyframes | Physics 
 export type TransitionMap = TransitionOrchestration & { [key: string]: TransitionDefinition }
 
 export type PoseTransition =
-    | (TransitionDefinition & TransitionOrchestration)
-    | (TransitionMap & TransitionOrchestration)
+    | (TransitionOrchestration & TransitionDefinition)
+    | (TransitionOrchestration & TransitionMap)
 
 // TODO Maybe make CSSProperties + additional supported transforms and SVG props?
 export type PoseDefinition = {

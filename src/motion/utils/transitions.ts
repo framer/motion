@@ -77,16 +77,19 @@ const getTransitionForValue = (
     transitionDefinition?: PoseTransition
 ): PopmotionTransitionDefinition => {
     // If no object, return default transition
+    // A better way to handle this would be to deconstruct out all the shared TransitionOrchestration props
+    // and see if there's any props remaining
     if (transitionDefinition === undefined) {
         return getDefaultTransition(key, to)
     }
 
+    const { delay = 0 } = transitionDefinition
     const valueTransitionDefinition: TransitionDefinition =
         transitionDefinition[key] || (transitionDefinition as TransitionMap).default || transitionDefinition
 
     return valueTransitionDefinition.type === false
-        ? ({ type: "just", to } as PopmotionTransitionDefinition)
-        : ({ ...valueTransitionDefinition, to } as PopmotionTransitionDefinition)
+        ? ({ type: "just", delay, to } as PopmotionTransitionDefinition)
+        : ({ delay, to, ...valueTransitionDefinition } as PopmotionTransitionDefinition)
 }
 
 const preprocessOptions = (type: string, opts: PopmotionTransitionDefinition): PopmotionTransitionDefinition =>
