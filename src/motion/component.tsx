@@ -2,7 +2,7 @@ import * as React from "react"
 import { memo, forwardRef, createElement, Ref, ComponentType } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues } from "./utils/use-motion-values"
-import { useStyleAttr } from "./utils/use-style-attr"
+import { buildStyleAttr, addMotionStyles } from "./utils/style-attr"
 import { useAnimationControls } from "./utils/use-animation-controls"
 import { useAnimationSubscription } from "./utils/use-animation-subscription"
 import { usePoses } from "./utils/use-poses"
@@ -16,7 +16,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         const {
             animate,
             pose = "default",
-            style,
+            style: motionStyle,
             onPoseComplete,
             inherit = false,
             initialPose,
@@ -27,6 +27,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         } = p as MotionProps
         const ref = useExternalRef(externalRef)
         const values = useMotionValues(ref)
+        const style = addMotionStyles(values, motionStyle)
         const controls = useAnimationControls(values, inherit, props)
         const context = useMotionContext(controls, inherit, initialPose || pose)
 
@@ -41,7 +42,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
                 {createElement<any>(Component, {
                     ...props,
                     ref,
-                    style: useStyleAttr(values, style),
+                    style: buildStyleAttr(values, style),
                 })}
             </MotionContext.Provider>
         )

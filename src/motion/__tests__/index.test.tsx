@@ -161,6 +161,16 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toHaveStyle("transform: translateX(100px) translateZ(0)")
     })
 
+    test("doesnt override motion value if is draggable", () => {
+        const Component = () => {
+            const x = useMotionValue(100)
+            return <motion.div style={{ x }} dragEnabled />
+        }
+
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle("transform: translateX(100px) translateZ(0)")
+    })
+
     test("fires onPoseComplete", async () => {
         const poses: Poses = {
             foo: { x: 100 },

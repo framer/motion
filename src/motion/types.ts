@@ -5,36 +5,38 @@ import { Poses } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours"
 
-export type MotionStyle = string | number | MotionValue
+export type MotionStyleProp = string | number | MotionValue
 
 export type PoseKeys = string | string[]
 
 export interface MotionStyleProperties {
-    x?: MotionStyle
-    y?: MotionStyle
-    z?: MotionStyle
-    rotate?: MotionStyle
-    rotateX?: MotionStyle
-    rotateY?: MotionStyle
-    rotateZ?: MotionStyle
-    scale?: MotionStyle
-    scaleX?: MotionStyle
-    scaleY?: MotionStyle
-    scaleZ?: MotionStyle
-    skew?: MotionStyle
-    skewX?: MotionStyle
-    skewY?: MotionStyle
-    originX?: MotionStyle
-    originY?: MotionStyle
-    originZ?: MotionStyle
-    perspective?: MotionStyle
+    x?: MotionStyleProp
+    y?: MotionStyleProp
+    z?: MotionStyleProp
+    rotate?: MotionStyleProp
+    rotateX?: MotionStyleProp
+    rotateY?: MotionStyleProp
+    rotateZ?: MotionStyleProp
+    scale?: MotionStyleProp
+    scaleX?: MotionStyleProp
+    scaleY?: MotionStyleProp
+    scaleZ?: MotionStyleProp
+    skew?: MotionStyleProp
+    skewX?: MotionStyleProp
+    skewY?: MotionStyleProp
+    originX?: MotionStyleProp
+    originY?: MotionStyleProp
+    originZ?: MotionStyleProp
+    perspective?: MotionStyleProp
 }
 
-type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
+export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
+
+export type MotionStyle = MakeMotion<CSSProperties> & MotionStyleProperties
 
 export interface MotionProps extends GestureHandlers, DraggableProps {
     ref?: Ref<Element>
-    style?: MakeMotion<CSSProperties> & MotionStyleProperties
+    style?: MotionStyle
     animate?: AnimationManager | Poses
     pose?: PoseKeys
     initialPose?: PoseKeys
