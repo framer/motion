@@ -133,8 +133,8 @@ export class AnimationControls<P = {}> {
         let beforeChildren = false
         let afterChildren = false
         let delayChildren = 0
-        const staggerChildren = 0
-        const staggerDirection = 1
+        let staggerChildren = 0
+        let staggerDirection = 1
 
         const pose = this.poses[poseKey]
         const getAnimations: () => Promise<any> = pose ? () => this.animate(pose, delay) : () => Promise.resolve()
@@ -148,6 +148,8 @@ export class AnimationControls<P = {}> {
                 beforeChildren = transition.beforeChildren || beforeChildren
                 afterChildren = transition.afterChildren || afterChildren
                 delayChildren = transition.delayChildren || delayChildren
+                staggerChildren = transition.staggerChildren || staggerChildren
+                staggerDirection = transition.staggerDirection || staggerDirection
             }
         }
 
@@ -171,7 +173,6 @@ export class AnimationControls<P = {}> {
             return Promise.resolve()
         }
         const animations: Array<Promise<any>> = []
-
         const maxStaggerDuration = (this.children.size - 1) * staggerChildren
         const generateStaggerDuration =
             staggerDirection === 1
