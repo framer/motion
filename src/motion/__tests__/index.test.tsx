@@ -164,7 +164,7 @@ describe("motion component rendering and styles", () => {
     test("doesnt override motion value if is draggable", () => {
         const Component = () => {
             const x = useMotionValue(100)
-            return <motion.div style={{ x }} dragEnabled />
+            return <motion.div style={{ x }} dragEnabled="x" />
         }
 
         const { container } = render(<Component />)
