@@ -37,7 +37,6 @@ export function usePanGesture(handlers: PanHandlers): { onPointerDown: EventHand
 export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?: RefObject<Element>) {
     let session: null | EventSession = null
     const pointer = useRef<MotionXY | null>(null)
-
     const onPointerMove = useMemo(
         () => {
             return (event: Event, { point, devicePoint }: EventInfo) => {
@@ -123,7 +122,11 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
             stopPointerMove()
             stopPointerUp()
         }
-    })
+    }, [])
+    let handlers: Partial<{ onPointerDown: EventHandler }> = { onPointerDown }
+    if (!onPan && !onPanStart && !onPanEnd) {
+        handlers = {}
+    }
 
-    return useConditionalPointerEvents({ onPointerDown }, ref)
+    return useConditionalPointerEvents(handlers, ref)
 }

@@ -21,7 +21,7 @@ describe("useAnimation", () => {
                     animation.start({ x: 100 }).then(() => resolve(x.get()))
                 }, [])
 
-                return <motion.div animate={animation} style={{ x }} />
+                return <motion.div test="y" animate={animation} style={{ x }} />
             }
 
             const { rerender } = render(<Component />)

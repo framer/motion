@@ -49,6 +49,7 @@ export const wrapHandler = (handler?: EventHandler): EventListener | undefined =
     if (!handler) {
         return undefined
     }
+
     const listener: EventListener = (event: any, info?: EventInfo) => {
         if (!info) {
             info = extractEventInfo(event)

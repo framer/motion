@@ -187,6 +187,7 @@ export const useConditionalPointerEvents = <Target extends TargetOrRef, Handlers
         pointerEventsRef = emptyRef as Target
         pointerEventsHandlers = {}
     }
+
     usePointerEvents(pointerEventsHandlers, pointerEventsRef, options)
     if (ref) {
         return undefined

@@ -1,15 +1,22 @@
 import * as React from "react"
-import { memo, forwardRef, createElement, Ref, ComponentType } from "react"
+import { memo, forwardRef, Ref, ComponentType } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues } from "./utils/use-motion-values"
-import { buildStyleAttr, addMotionStyles } from "./utils/style-attr"
+import { addMotionStyles } from "./utils/style-attr"
 import { useAnimationControls } from "./utils/use-animation-controls"
-import { useAnimationSubscription } from "./utils/use-animation-subscription"
-import { usePoses } from "./utils/use-poses"
 import { MotionContext, useMotionContext } from "./utils/MotionContext"
 import { MotionProps } from "./types"
-import { useGestures } from "../gestures"
-import { useDraggable } from "../behaviours"
+import {
+    isGesturesEnabled,
+    isDragEnabled,
+    isAnimationSubscription,
+    isPosed,
+    AnimationSubscription,
+    Posed,
+    Gestures,
+    Draggable,
+    RenderComponent,
+} from "./utils/functionality"
 
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>) => {
     const MotionComponent = (p: P & MotionProps, externalRef?: Ref<Element>) => {
@@ -31,19 +38,45 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         const controls = useAnimationControls(values, inherit, props)
         const context = useMotionContext(controls, inherit, initialPose || pose)
 
-        useAnimationSubscription(animate, controls)
-        usePoses(animate, inherit, controls, onPoseComplete, pose, initialPose)
+        // Add functionality
+        const handleAnimation = isAnimationSubscription(animate) && (
+            <AnimationSubscription animate={animate} controls={controls} />
+        )
 
-        useGestures(props, ref)
-        useDraggable({ dragEnabled, dragLocksDirection, dragPropagation }, ref, values)
+        const handlePoses = isPosed(animate) && (
+            <Posed
+                animate={animate}
+                inherit={inherit}
+                controls={controls}
+                onPoseComplete={onPoseComplete}
+                pose={pose}
+                initialPose={initialPose}
+            />
+        )
+
+        const handleGestures = isGesturesEnabled(p) && <Gestures {...p} innerRef={ref} />
+
+        const handleDrag = isDragEnabled(p) && (
+            <Draggable
+                dragEnabled={dragEnabled}
+                dragLocksDirection={dragLocksDirection}
+                dragPropagation={dragPropagation}
+                innerRef={ref}
+                values={values}
+            />
+        )
+
+        const handleComponent = (
+            <RenderComponent base={Component} remainingProps={props} innerRef={ref} style={style} values={values} />
+        )
 
         return (
             <MotionContext.Provider value={context}>
-                {createElement<any>(Component, {
-                    ...props,
-                    ref,
-                    style: buildStyleAttr(values, style),
-                })}
+                {handleAnimation}
+                {handlePoses}
+                {handleGestures}
+                {handleDrag}
+                {handleComponent}
             </MotionContext.Provider>
         )
     }
