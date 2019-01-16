@@ -22,6 +22,6 @@ export const useTransformedValue = <To extends string[] | number[]>(
             transformedValue.current = value.addChild({ transformer })
             return transformedValue.current
         },
-        [value, ...from, ...to]
+        [value, from.join(","), to.join(",")]
     )
 }
