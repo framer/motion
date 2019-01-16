@@ -87,7 +87,7 @@ export class MotionValue<V = any> {
 
         this.cancelSubscriber.add(() => cancelSync.update(updateSubscriber))
 
-        return () => this.updateSubscribers.delete(scheduleUpdate)
+        return () => (this.updateSubscribers as Set<Subscriber<V>>).delete(scheduleUpdate)
     }
 
     addRenderSubscription(subscription: Subscriber<V>) {
@@ -101,7 +101,7 @@ export class MotionValue<V = any> {
 
         this.cancelSubscriber.add(() => cancelSync.render(updateSubscriber))
 
-        return () => this.renderSubscribers.delete(scheduleUpdate)
+        return () => (this.renderSubscribers as Set<Subscriber<V>>).delete(scheduleUpdate)
     }
 
     set(v: V, render = true) {
