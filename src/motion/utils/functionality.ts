@@ -44,6 +44,7 @@ type RenderProps<P> = {
 }
 
 export const RenderComponent = <P>({ base, remainingProps, innerRef, style, values }: RenderProps<P>) => {
+    console.log(buildStyleAttr(values, style))
     return createElement<any>(base, {
         ...remainingProps,
         ref: innerRef,
