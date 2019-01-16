@@ -36,10 +36,10 @@ export class MotionValue<V = any> {
     private parent?: MotionValue
 
     // Update subscribers are updated on the update step
-    private updateSubscribers: Set<Subscriber<V>>
+    private updateSubscribers?: Set<Subscriber<V>>
 
     // Render subscribers are updated on the render step
-    private renderSubscribers: Set<Subscriber<V>>
+    private renderSubscribers?: Set<Subscriber<V>>
 
     private cancelSubscriber: Set<() => void> = new Set()
 
@@ -187,8 +187,8 @@ export class MotionValue<V = any> {
     }
 
     destroy() {
-        this.updateSubscribers.clear()
-        this.renderSubscribers.clear()
+        this.updateSubscribers && this.updateSubscribers.clear()
+        this.renderSubscribers && this.renderSubscribers.clear()
         this.cancelSubscriber.forEach(cancel => cancel())
         this.cancelSubscriber.clear()
         this.parent && this.parent.removeChild(this)
