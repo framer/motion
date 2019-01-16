@@ -21,9 +21,7 @@ export const addMotionStyles = (values: MotionValuesMap, styleProp: MotionStyle 
         const thisStyle = styleProp[key]
 
         if (isMotionValue(thisStyle)) {
-            if (!values.has(key)) {
-                values.set(key, thisStyle)
-            }
+            values.set(key, thisStyle)
         } else {
             style[key] = thisStyle
         }
