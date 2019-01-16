@@ -11,6 +11,7 @@
         "watch": "jest --watch --coverage --coverageReporters=lcov",
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && yarn measure",
+        "prepublishOnly": "yarn test && yarn build",
         "measure": "gzip -c dist/framer-motion.js | wc -c"
     },
     "peerDependencies": {
