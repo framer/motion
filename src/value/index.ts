@@ -1,4 +1,4 @@
-import sync, { getFrameData, FrameData, cancelSync } from "framesync"
+import sync, { getFrameData, FrameData } from "framesync"
 import { chain, delay as delayAction, Action, ColdSubscription } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 import { PopmotionTransitionDefinition } from "../types"
@@ -41,8 +41,6 @@ export class MotionValue<V = any> {
     // Render subscribers are updated on the render step
     private renderSubscribers?: Set<Subscriber<V>>
 
-    private cancelSubscriber: Set<() => void> = new Set()
-
     // If set, will pass `set` values through this function first
     private transformer?: Transformer<V>
 
@@ -78,30 +76,20 @@ export class MotionValue<V = any> {
         this.children.delete(child)
     }
 
+    subscribeTo(subscriptions: Set<Subscriber<V>>, subscription: Subscriber<V>) {
+        const updateSubscriber = () => subscription(this.current)
+        subscriptions.add(updateSubscriber)
+        return () => subscriptions.delete(updateSubscriber)
+    }
+
     addUpdateSubscription(subscription: Subscriber<V>) {
         if (!this.updateSubscribers) this.updateSubscribers = new Set()
-
-        const updateSubscriber = () => subscription(this.current)
-        const scheduleUpdate = () => sync.update(updateSubscriber, false, true)
-        this.updateSubscribers.add(scheduleUpdate)
-
-        this.cancelSubscriber.add(() => cancelSync.update(updateSubscriber))
-
-        return () => (this.updateSubscribers as Set<Subscriber<V>>).delete(scheduleUpdate)
+        return this.subscribeTo(this.updateSubscribers, subscription)
     }
 
     addRenderSubscription(subscription: Subscriber<V>) {
         if (!this.renderSubscribers) this.renderSubscribers = new Set()
-
-        const updateSubscriber = () => subscription(this.current)
-        const scheduleUpdate = () => sync.render(updateSubscriber)
-        this.renderSubscribers.add(scheduleUpdate)
-
-        scheduleUpdate()
-
-        this.cancelSubscriber.add(() => cancelSync.render(updateSubscriber))
-
-        return () => (this.renderSubscribers as Set<Subscriber<V>>).delete(scheduleUpdate)
+        return this.subscribeTo(this.renderSubscribers, subscription)
     }
 
     set(v: V, render = true) {
@@ -189,8 +177,6 @@ export class MotionValue<V = any> {
     destroy() {
         this.updateSubscribers && this.updateSubscribers.clear()
         this.renderSubscribers && this.renderSubscribers.clear()
-        this.cancelSubscriber.forEach(cancel => cancel())
-        this.cancelSubscriber.clear()
         this.parent && this.parent.removeChild(this)
         this.stop()
     }

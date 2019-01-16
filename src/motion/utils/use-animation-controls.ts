@@ -1,10 +1,12 @@
-import { useMemo, useEffect, useContext } from "react"
+import { useMemo, useEffect, useContext, RefObject } from "react"
 import { MotionValuesMap } from "./use-motion-values"
 import { getTransition } from "./transitions"
 import { motionValue } from "../../value"
 import { complex } from "style-value-types"
 import { MotionContext } from "./MotionContext"
 import { PoseResolver, Pose, PoseTransition, Props, Poses, PoseDefinition } from "../../types"
+import { unitConversion } from "../../dom/unit-type-conversion"
+import styler from "stylefire"
 
 const isAnimatable = (value: string | number) => typeof value === "number" || complex.test(value)
 const isPoseResolver = (p: any): p is PoseResolver => typeof p === "function"
@@ -35,15 +37,29 @@ const resolveAnimationDefinition = (definition?: Pose, props: Props = {}): [Pose
     return Array.isArray(definition) ? definition : [definition]
 }
 
+const checkForNewValues = (target: PoseDefinition, values: MotionValuesMap, ref: RefObject<Element>) => {
+    const newValueKeys = Object.keys(target).filter(key => !values.has(key))
+
+    if (!newValueKeys.length) return
+
+    const domStyler = styler(ref.current as Element)
+    newValueKeys.forEach(key => {
+        const domValue = domStyler.get(key)
+        values.set(key, motionValue(domValue))
+    })
+}
+
 export class AnimationControls<P = {}> {
     private props: P
     private values: MotionValuesMap
+    private ref: RefObject<Element>
     private poses: Poses = {}
     private children?: Set<AnimationControls>
     private isAnimating: Set<string> = new Set()
 
-    constructor(values: MotionValuesMap) {
+    constructor(values: MotionValuesMap, ref: RefObject<Element>) {
         this.values = values
+        this.ref = ref
     }
 
     setProps(props: P) {
@@ -82,22 +98,24 @@ export class AnimationControls<P = {}> {
     }
 
     private animate(animationDefinition: Pose, delay: number = 0) {
-        const [target, transition = {}] = resolveAnimationDefinition(animationDefinition)
+        let [target, transition = {}] = resolveAnimationDefinition(animationDefinition)
 
         if (!target) return Promise.resolve()
+
+        checkForNewValues(target, this.values, this.ref)
+        ;[target, transition] = unitConversion(target, transition, this.values, this.ref) as [
+            PoseDefinition,
+            PoseTransition
+        ]
 
         const animations = Object.keys(target).reduce(
             (acc, key) => {
                 if (this.isAnimating.has(key)) return acc
 
-                if (!this.values.has(key)) {
-                    this.values.set(key, motionValue(0)) // TODO get this initial value properly
-                }
-
                 const value = this.values.get(key)
                 if (!value) return acc
 
-                const valueTarget = target[key]
+                const valueTarget = (target as PoseDefinition)[key]
 
                 if (isAnimatable(valueTarget)) {
                     const [action, options] = getTransition(key, valueTarget, {
@@ -217,9 +235,14 @@ export class AnimationControls<P = {}> {
     }
 }
 
-export const useAnimationControls = <P>(values: MotionValuesMap, inherit: boolean, props: P) => {
+export const useAnimationControls = <P>(
+    values: MotionValuesMap,
+    inherit: boolean,
+    props: P,
+    ref: RefObject<Element>
+) => {
     const parentControls = useContext(MotionContext).controls
-    const controls = useMemo(() => new AnimationControls<P>(values), [])
+    const controls = useMemo(() => new AnimationControls<P>(values, ref), [])
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     controls.resetChildren()

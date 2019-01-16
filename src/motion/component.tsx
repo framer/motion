@@ -35,7 +35,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         const ref = useExternalRef(externalRef)
         const values = useMotionValues(ref)
         const style = addMotionStyles(values, motionStyle)
-        const controls = useAnimationControls(values, inherit, props)
+        const controls = useAnimationControls(values, inherit, props, ref)
         const context = useMotionContext(controls, inherit, initialPose || pose)
 
         // Add functionality

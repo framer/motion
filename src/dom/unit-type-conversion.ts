@@ -1,8 +1,9 @@
-import { Pose, MotionValueMap } from "../motion/types"
 import { RefObject } from "react"
-import { getValueType } from "../utils/value-types"
+import { PoseDefinition, Pose, PoseTransition } from "../types"
+import { MotionValuesMap } from "../motion"
+import { MotionValue } from "value"
 import styler from "stylefire"
-import { MotionValue } from "../motion-value"
+import { getValueType } from "./value-types"
 
 const positionalKeys = new Set(["width", "height", "top", "left", "right", "bottom", "x", "y"])
 const isPositionalKey = (key: string) => positionalKeys.has(key)
@@ -59,8 +60,8 @@ const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
 }
 
 const convertChangedValueTypes = (
-    pose: Pose,
-    values: MotionValueMap,
+    pose: PoseDefinition,
+    values: MotionValuesMap,
     ref: RefObject<Element>,
     changedKeys: string[]
 ) => {
@@ -90,9 +91,14 @@ const convertChangedValueTypes = (
     return pose
 }
 
-const checkAndConvertChangedValueTypes = (pose: Pose, values: MotionValueMap, ref: RefObject<Element>) => {
-    let { transitionEnd = {} } = pose
-    transitionEnd = { ...transitionEnd }
+const checkAndConvertChangedValueTypes = (
+    pose: PoseDefinition,
+    transition: PoseTransition,
+    values: MotionValuesMap,
+    ref: RefObject<Element>
+): [PoseDefinition, PoseTransition] => {
+    let { applyOnEnd = {} } = transition
+    applyOnEnd = { ...applyOnEnd }
     const posePositionalKeys = Object.keys(pose).filter(isPositionalKey)
 
     const changedValueTypeKeys: string[] = posePositionalKeys.reduce(
@@ -105,7 +111,7 @@ const checkAndConvertChangedValueTypes = (pose: Pose, values: MotionValueMap, re
 
             if (fromType !== toType) {
                 acc.push(key)
-                transitionEnd[key] = transitionEnd[key] || pose[key]
+                applyOnEnd[key] = applyOnEnd[key] || pose[key]
                 setAndResetVelocity(value, to)
             }
 
@@ -115,10 +121,15 @@ const checkAndConvertChangedValueTypes = (pose: Pose, values: MotionValueMap, re
     )
 
     return changedValueTypeKeys.length
-        ? convertChangedValueTypes({ ...pose, transitionEnd }, values, ref, changedValueTypeKeys)
-        : pose
+        ? [convertChangedValueTypes(pose, values, ref, changedValueTypeKeys), { ...transition, applyOnEnd }]
+        : [pose, transition]
 }
 
-export const transformPose = (pose: Pose, values: MotionValueMap, ref: RefObject<Element>) => {
-    return hasPositionalKey(pose) ? checkAndConvertChangedValueTypes(pose, values, ref) : pose
+export const unitConversion = (
+    pose: PoseDefinition,
+    transition: PoseTransition = {},
+    values: MotionValuesMap,
+    ref: RefObject<Element>
+): [PoseDefinition, PoseTransition] => {
+    return hasPositionalKey(pose) ? checkAndConvertChangedValueTypes(pose, transition, values, ref) : [pose, transition]
 }
