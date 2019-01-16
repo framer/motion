@@ -73,14 +73,15 @@ export const App = () => {
     const dotScale = useTransformedValue(x, [-300, -50, 50, 300], [1, 0.5, 0.5, 1])
 
     return (
-        <Container pose={down ? "dragging" : "default"} style={{ background }}>
+        <Container pose={down ? "dragging" : "default"} animate={containerPoses} style={{ background }}>
             <Dot />
             <Slider
-                dragEnabled="x"
+                animate={sliderPoses}
                 inherit
                 style={{ x }}
-                onPanStart={() => setDown(true)}
-                onPanEnd={() => setDown(false)}
+                onMouseDown={() => (console.log("yo"), setDown(true))}
+                onMouseUp={() => setDown(false)}
+                //onPanStart={() => console.log("yo")}
             >
                 Slide
             </Slider>

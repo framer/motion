@@ -66,6 +66,10 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
             />
         )
 
+        // We use an intermediate component here rather than calling `createElement` directly
+        // because we want to resolve the style from our motion values only once every
+        // functional component has resolved. Resolving it here would do it before the functional components
+        // themselves are executed.
         const handleComponent = (
             <RenderComponent base={Component} remainingProps={props} innerRef={ref} style={style} values={values} />
         )
