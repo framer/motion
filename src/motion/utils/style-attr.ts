@@ -26,7 +26,8 @@ export const addMotionStyles = (values: MotionValuesMap, styleProp: MotionStyle 
             if (!values.has(key)) {
                 values.set(key, motionValue(thisStyle))
             } else {
-                ;(values.get(key) as MotionValue).set(thisStyle)
+                // TODO we might need to keep a ref and only reset this if its changed
+                //;(values.get(key) as MotionValue).set(thisStyle)
             }
         } else {
             style[key] = thisStyle
