@@ -60,6 +60,11 @@ describe("motion component rendering and styles", () => {
         await expect(promise).resolves.toHaveAttribute("type", "submit")
     })
 
+    test("generates style attribute if passed a special transform style attr", () => {
+        const { container } = render(<motion.div style={{ x: 10 }} />)
+        expect(container.firstChild).toHaveStyle("transform: translateX(10px) translateZ(0)")
+    })
+
     test("generates style attribute from default pose", () => {
         const poses = {
             default: { backgroundColor: "#fff" },

@@ -1,8 +1,8 @@
 import { CSSProperties } from "react"
-import { buildStyleProperty } from "stylefire"
+import { buildStyleProperty, isTransformProp } from "stylefire"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
-import { MotionValue } from "../../value"
+import { MotionValue, motionValue } from "../../value"
 import { MotionStyle } from "../types"
 
 const isMotionValue = (value: any): value is MotionValue => value instanceof MotionValue
@@ -22,6 +22,12 @@ export const addMotionStyles = (values: MotionValuesMap, styleProp: MotionStyle 
 
         if (isMotionValue(thisStyle)) {
             values.set(key, thisStyle)
+        } else if (isTransformProp(key)) {
+            if (!values.has(key)) {
+                values.set(key, motionValue(thisStyle))
+            } else {
+                ;(values.get(key) as MotionValue).set(thisStyle)
+            }
         } else {
             style[key] = thisStyle
         }
