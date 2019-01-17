@@ -71,6 +71,19 @@ const transitionOptionParser = {
     keyframes: ({ from, to, ...opts }: Keyframes) => opts,
 }
 
+const isTransitionDefined = ({
+    beforeChildren,
+    afterChildren,
+    delay,
+    delayChildren,
+    staggerChildren,
+    staggerDirection,
+    applyOnEnd,
+    ...transition
+}: PoseTransition) => {
+    return Object.keys(transition).length
+}
+
 const getTransitionForValue = (
     key: string,
     to: string | number,
@@ -79,7 +92,7 @@ const getTransitionForValue = (
     // If no object, return default transition
     // A better way to handle this would be to deconstruct out all the shared TransitionOrchestration props
     // and see if there's any props remaining
-    if (transitionDefinition === undefined) {
+    if (transitionDefinition === undefined || !isTransitionDefined(transitionDefinition)) {
         return getDefaultTransition(key, to)
     }
 

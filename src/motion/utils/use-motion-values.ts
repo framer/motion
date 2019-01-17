@@ -66,7 +66,7 @@ export const useMotionValues = (ref: RefObject<Element>) => {
         motionValues.mount(ref.current as Element)
 
         return () => motionValues.unmount()
-    }, [])
+    })
 
     return motionValues
 }
