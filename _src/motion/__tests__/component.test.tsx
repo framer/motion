@@ -138,7 +138,7 @@ describe("motion component", () => {
         expect(container.firstChild).toHaveStyle("transform: translateX(800px) translateZ(0)")
     })
 
-    test("fires onPoseComplete", async () => {
+    test("fires onAnimationComplete", async () => {
         const Box = motion.div({
             foo: { x: 100 },
             bar: { x: 0, transition: false },
@@ -152,7 +152,7 @@ describe("motion component", () => {
                 expect(current.x).toBe(0)
                 resolve("fired")
             }
-            rerender(<Box pose="bar" onPoseComplete={onComplete} />)
+            rerender(<Box pose="bar" onAnimationComplete={onComplete} />)
 
             // To fire effects
             rerender(<Box pose="bar" />)

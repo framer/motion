@@ -8,7 +8,7 @@ const isMotionValue = (value: any): value is MotionValue => value instanceof Mot
 
 export const usePosedValues = (
     config: PoseConfig,
-    { onPoseComplete, pose = "default", motionValues, ...props }: MotionProps,
+    { onAnimationComplete, pose = "default", motionValues, ...props }: MotionProps,
     ref: RefObject<Element>
 ): [MotionValueMap, Partial<MotionProps>] => {
     const values: MotionValueMap = useRef(new Map<string, MotionValue>()).current

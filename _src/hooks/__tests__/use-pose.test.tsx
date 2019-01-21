@@ -19,7 +19,7 @@ describe("usePose", () => {
                     <Box
                         pose={pose}
                         onClick={() => setPose("bar")}
-                        onPoseComplete={current => resolve(current.scale)}
+                        onAnimationComplete={current => resolve(current.scale)}
                     />
                 )
             }
@@ -53,7 +53,7 @@ describe("setPose.cycle", () => {
                     <Box
                         pose={pose}
                         onClick={() => setPose.cycle()}
-                        onPoseComplete={current => resolve(current.scale)}
+                        onAnimationComplete={current => resolve(current.scale)}
                     />
                 )
             }
@@ -86,7 +86,7 @@ describe("setPose.cycle", () => {
                     <Box
                         pose={pose}
                         onClick={() => setPose.cycle()}
-                        onPoseComplete={current => resolve(current.scale)}
+                        onAnimationComplete={current => resolve(current.scale)}
                     />
                 )
             }

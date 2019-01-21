@@ -11,7 +11,9 @@ import {
     isDragEnabled,
     isAnimationSubscription,
     isPosed,
+    isAnimateValues,
     AnimationSubscription,
+    AnimateValues,
     Posed,
     Gestures,
     Draggable,
@@ -22,9 +24,10 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
     const MotionComponent = (p: P & MotionProps, externalRef?: Ref<Element>) => {
         const {
             animate,
-            pose = "default",
+            variants,
             style: motionStyle,
-            onPoseComplete,
+            onAnimationComplete,
+            transition,
             inherit = false,
             initialPose,
             dragEnabled,
@@ -36,7 +39,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         const values = useMotionValues(ref)
         const style = addMotionStyles(values, motionStyle)
         const controls = useAnimationControls(values, inherit, props, ref)
-        const context = useMotionContext(controls, inherit, initialPose || pose)
+        const context = useMotionContext(controls, inherit) // initialPose || animate ?
 
         // Add functionality
         const handleAnimation = isAnimationSubscription(animate) && (
@@ -45,12 +48,22 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
 
         const handlePoses = isPosed(animate) && (
             <Posed
-                animate={animate}
+                variants={variants}
+                target={animate}
                 inherit={inherit}
                 controls={controls}
-                onPoseComplete={onPoseComplete}
-                pose={pose}
+                onAnimationComplete={onAnimationComplete}
                 initialPose={initialPose}
+            />
+        )
+
+        const handleAnimateValues = isAnimateValues(animate) && (
+            <AnimateValues
+                target={animate}
+                transition={transition}
+                values={values}
+                controls={controls}
+                onComplete={onAnimationComplete}
             />
         )
 
@@ -78,6 +91,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
             <MotionContext.Provider value={context}>
                 {handleAnimation}
                 {handlePoses}
+                {handleAnimateValues}
                 {handleGestures}
                 {handleDrag}
                 {handleComponent}

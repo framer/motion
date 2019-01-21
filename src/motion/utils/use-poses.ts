@@ -6,23 +6,23 @@ import { useMemo, useEffect, useRef, useContext } from "react"
 import { MotionContext } from "./MotionContext"
 
 export const usePoses = (
-    poses: Poses,
+    targetVariant: PoseKeys,
+    variants: Poses,
     inherit: boolean,
     controls: AnimationControls,
-    onPoseComplete?: () => void,
-    pose?: PoseKeys,
-    initialPose?: PoseKeys
+    initialVariant: PoseKeys,
+    onAnimationComplete?: () => void
 ) => {
-    const parentPose = useContext(MotionContext).pose
-    const poseToResolve = inherit ? parentPose : pose
-    const poseList = resolvePoses(poseToResolve)
+    const parentVariant = useContext(MotionContext).variant
+    const variantToResolve = inherit ? parentVariant : targetVariant
+    const variantList = resolvePoses(variantToResolve)
     const hasMounted = useRef(false)
 
-    controls.setPoses(poses)
+    controls.setPoses(variants)
 
     // Set initial value according to Pose
     useMemo(() => {
-        const initial = initialPose ? resolvePoses(initialPose) : poseList
+        const initial = initialVariant ? resolvePoses(initialVariant) : variantList
         controls.set(initial)
     }, [])
 
@@ -30,12 +30,12 @@ export const usePoses = (
     useEffect(() => {
         if (inherit) return
 
-        if (hasMounted.current || initialPose) {
-            controls.start(poseList).then(() => {
-                onPoseComplete && onPoseComplete()
+        if (hasMounted.current || initialVariant) {
+            controls.start(variantList).then(() => {
+                onAnimationComplete && onAnimationComplete()
             })
         }
 
         hasMounted.current = true
-    }, asDependencyList(poseList))
+    }, asDependencyList(variantList))
 }

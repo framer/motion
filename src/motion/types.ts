@@ -1,7 +1,7 @@
 import { Ref, CSSProperties } from "react"
 import { MotionValue } from "../value"
 import { AnimationManager } from "../animation"
-import { Poses } from "../types"
+import { Poses, PoseDefinition, PoseTransition } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours"
 
@@ -37,9 +37,10 @@ export type MotionStyle = MakeMotion<CSSProperties> & MotionStyleProperties
 export interface MotionProps extends GestureHandlers, DraggableProps {
     ref?: Ref<Element>
     style?: MotionStyle
-    animate?: AnimationManager | Poses
-    pose?: PoseKeys
+    animate?: AnimationManager | PoseDefinition | PoseKeys
+    poses?: Poses
     initialPose?: PoseKeys
+    transition?: PoseTransition
     inherit?: boolean
-    onPoseComplete?: () => void
+    onAnimationComplete?: () => void
 }

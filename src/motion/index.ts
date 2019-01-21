@@ -19,6 +19,8 @@ export type CustomMotionComponent = { custom: typeof createMotionComponent }
 
 export type MotionComponents = CustomMotionComponent & HTMLMotionComponents & SVGMotionComponents
 
+// At some point we might want to explore a "headless" component that renders only `children`
+// in the event
 export const motion = elements.reduce(
     (acc, element) => {
         acc[element] = createMotionComponent(element)

@@ -19,7 +19,7 @@ const isPoseResolver = (pose: Pose | PoseResolver): pose is PoseResolver => type
 const createPoseResolver = (
     values: MotionValueMap,
     config: PoseConfig,
-    { onPoseComplete, ...props }: MotionProps,
+    { onAnimationComplete, ...props }: MotionProps,
     ref: RefObject<Element>
 ) => {
     const poseResolver = (poseList: string[]) => {
@@ -86,7 +86,7 @@ const createPoseResolver = (
         })
 
         return Promise.all(poseTransitions).then(() => {
-            onPoseComplete && onPoseComplete(resolveCurrent(values), resolveVelocity(values))
+            onAnimationComplete && onAnimationComplete(resolveCurrent(values), resolveVelocity(values))
         })
     }
 
