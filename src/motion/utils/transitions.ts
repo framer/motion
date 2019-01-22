@@ -1,11 +1,11 @@
 import { action, tween, spring, keyframes, decay, physics, easing, Action } from "popmotion"
 import {
-    PoseTransition,
+    Transition,
     Tween,
     Keyframes,
     EasingFunction,
     TransitionMap,
-    PopmotionTransitionDefinition,
+    PopmotionTransitionProps,
     TransitionDefinition,
 } from "../../types"
 import { getDefaultTransition } from "./default-transitions"
@@ -78,17 +78,16 @@ const isTransitionDefined = ({
     delayChildren,
     staggerChildren,
     staggerDirection,
-    applyOnEnd,
     ...transition
-}: PoseTransition) => {
+}: Transition) => {
     return Object.keys(transition).length
 }
 
 const getTransitionForValue = (
     key: string,
     to: string | number,
-    transitionDefinition?: PoseTransition
-): PopmotionTransitionDefinition => {
+    transitionDefinition?: Transition
+): PopmotionTransitionProps => {
     // If no object, return default transition
     // A better way to handle this would be to deconstruct out all the shared TransitionOrchestration props
     // and see if there's any props remaining
@@ -101,21 +100,21 @@ const getTransitionForValue = (
         transitionDefinition[key] || (transitionDefinition as TransitionMap).default || transitionDefinition
 
     return valueTransitionDefinition.type === false
-        ? ({ type: "just", delay, to } as PopmotionTransitionDefinition)
-        : ({ delay, to, ...valueTransitionDefinition } as PopmotionTransitionDefinition)
+        ? ({ type: "just", delay, to } as PopmotionTransitionProps)
+        : ({ delay, to, ...valueTransitionDefinition } as PopmotionTransitionProps)
 }
 
-const preprocessOptions = (type: string, opts: PopmotionTransitionDefinition): PopmotionTransitionDefinition =>
+const preprocessOptions = (type: string, opts: PopmotionTransitionProps): PopmotionTransitionProps =>
     transitionOptionParser[type] ? transitionOptionParser[type](opts) : opts
 
 export const getTransition = (
     valueKey: string,
     to: string | number,
-    transition?: PoseTransition
-): [ActionFactory, PopmotionTransitionDefinition] => {
+    transition?: Transition
+): [ActionFactory, PopmotionTransitionProps] => {
     const { type = "tween", ...transitionDefinition } = getTransitionForValue(valueKey, to, transition)
     const actionFactory: ActionFactory = transitions[type]
-    const opts: PopmotionTransitionDefinition = preprocessOptions(type, transitionDefinition)
+    const opts: PopmotionTransitionProps = preprocessOptions(type, transitionDefinition)
 
     return [actionFactory, opts]
 }

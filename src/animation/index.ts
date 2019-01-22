@@ -1,48 +1,53 @@
-import { Poses, PoseResolver, PoseTransition, PoseDefinition } from "../types"
+import { Variants, Variant, Transition } from "../types"
 import { AnimationControls } from "../motion"
-
-export type AnimationDefinition = [string | PoseResolver | PoseDefinition, PoseTransition?]
 
 export class AnimationManager {
     private hasMounted = false
-    private pendingAnimations: AnimationDefinition[] = []
-    private subscribers = new Set<AnimationControls>()
-    private poses: Poses = {}
+    private defaultTransition: Transition
+    private pendingAnimations: Array<Variant | string> = []
+    private componentControls = new Set<AnimationControls>()
+    private variants: Variants = {}
 
-    setPoses(poses: Poses) {
-        this.poses = poses
-        this.subscribers.forEach(subscriber => subscriber.setPoses(poses))
+    setVariants(variants: Variants) {
+        this.variants = variants
+        this.componentControls.forEach(controls => controls.setVariants(variants))
     }
 
-    subscribe(subscriber: AnimationControls) {
-        this.subscribers.add(subscriber)
-        if (this.poses) subscriber.setPoses(this.poses)
-
-        return () => this.subscribers.delete(subscriber)
+    setDefaultTransition(transition: Transition) {
+        this.defaultTransition = transition
+        this.componentControls.forEach(controls => controls.setDefaultTransition(transition))
     }
 
-    start(definition: string | PoseDefinition | PoseResolver, transition?: PoseTransition): Promise<any> {
+    subscribe(controls: AnimationControls) {
+        this.componentControls.add(controls)
+        if (this.variants) controls.setVariants(this.variants)
+        if (this.defaultTransition) controls.setDefaultTransition(this.defaultTransition)
+
+        return () => this.componentControls.delete(controls)
+    }
+
+    start(definition: Variant | string): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
-            this.subscribers.forEach(controls => {
-                const animation = controls.start(definition, transition)
+            this.componentControls.forEach(controls => {
+                const animation = controls.start(definition)
                 animations.push(animation)
             })
 
             return Promise.all(animations)
         } else {
-            this.pendingAnimations.push([definition, transition])
+            this.pendingAnimations.push(definition)
             return Promise.resolve() // Will this cause problems?
         }
     }
 
     stop() {
-        this.subscribers.forEach(subscriber => subscriber.stop())
+        this.componentControls.forEach(controls => controls.stop())
     }
 
     mount() {
         this.hasMounted = true
-        this.pendingAnimations.forEach(([definition, transition]) => this.start(definition, transition))
+        this.pendingAnimations.forEach(variant => this.start(variant))
     }
 
     unmount() {

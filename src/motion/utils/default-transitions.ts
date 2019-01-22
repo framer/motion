@@ -1,4 +1,4 @@
-import { PopmotionTransitionDefinition } from "../../types"
+import { PopmotionTransitionProps } from "../../types"
 
 const underDampedSpring = () => ({
     type: "spring",
@@ -36,7 +36,7 @@ const defaultTransitions = {
     default: overDampedSpring,
 }
 
-export const getDefaultTransition = (valueKey: string, to: string | number): PopmotionTransitionDefinition => {
+export const getDefaultTransition = (valueKey: string, to: string | number): PopmotionTransitionProps => {
     const transitionFactory = defaultTransitions[valueKey] || defaultTransitions.default
     return { ...transitionFactory(to), to }
 }

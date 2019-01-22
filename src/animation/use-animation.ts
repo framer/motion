@@ -1,15 +1,22 @@
 import { AnimationManager } from "."
 import { useMemo, useEffect } from "react"
-import { Poses } from "../types"
+import { Transition, Variants } from "../types"
 
-export const useAnimation = (poses?: Poses) => {
-    const animation = useMemo(() => new AnimationManager(), [])
-    poses && animation.setPoses(poses)
+export const useAnimation = (variants?: Variants, defaultTransition?: Transition) => {
+    const animationManager = useMemo(() => new AnimationManager(), [])
+
+    if (variants) {
+        animationManager.setVariants(variants)
+    }
+
+    if (defaultTransition) {
+        animationManager.setDefaultTransition(defaultTransition)
+    }
 
     useEffect(() => {
-        animation.mount()
-        return () => animation.unmount()
+        animationManager.mount()
+        return () => animationManager.unmount()
     }, [])
 
-    return animation
+    return animationManager
 }

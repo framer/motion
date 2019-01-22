@@ -1,5 +1,5 @@
 import { RefObject } from "react"
-import { PoseDefinition, Pose, PoseTransition } from "../types"
+import { Target } from "../types"
 import { MotionValuesMap } from "../motion"
 import { MotionValue } from "value"
 import styler from "stylefire"
@@ -7,7 +7,7 @@ import { getValueType } from "./value-types"
 
 const positionalKeys = new Set(["width", "height", "top", "left", "right", "bottom", "x", "y"])
 const isPositionalKey = (key: string) => positionalKeys.has(key)
-const hasPositionalKey = (pose: Pose) => Object.keys(pose).some(isPositionalKey)
+const hasPositionalKey = (target: Target) => Object.keys(target).some(isPositionalKey)
 
 const setAndResetVelocity = (value: MotionValue, to: string | number) => {
     // Looks odd but setting it twice doesn't render, it'll just
@@ -60,7 +60,7 @@ const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
 }
 
 const convertChangedValueTypes = (
-    pose: PoseDefinition,
+    pose: Target,
     values: MotionValuesMap,
     ref: RefObject<Element>,
     changedKeys: string[]
@@ -92,26 +92,25 @@ const convertChangedValueTypes = (
 }
 
 const checkAndConvertChangedValueTypes = (
-    pose: PoseDefinition,
-    transition: PoseTransition,
     values: MotionValuesMap,
-    ref: RefObject<Element>
-): [PoseDefinition, PoseTransition] => {
-    let { applyOnEnd = {} } = transition
-    applyOnEnd = { ...applyOnEnd }
-    const posePositionalKeys = Object.keys(pose).filter(isPositionalKey)
+    ref: RefObject<Element>,
+    target: Target,
+    transitionEnd: Target = {}
+): { target: Target; transitionEnd: Target } => {
+    transitionEnd = { ...transitionEnd }
+    const posePositionalKeys = Object.keys(target).filter(isPositionalKey)
 
     const changedValueTypeKeys: string[] = posePositionalKeys.reduce(
         (acc, key) => {
             const value = values.get(key) as MotionValue
             const from = value!.get()
-            const to = pose[key]
+            const to = target[key]
             const fromType = getValueType(from)
             const toType = getValueType(to)
 
             if (fromType !== toType) {
                 acc.push(key)
-                applyOnEnd[key] = applyOnEnd[key] || pose[key]
+                transitionEnd[key] = transitionEnd[key] !== undefined ? transitionEnd[key] : target[key]
                 setAndResetVelocity(value, to)
             }
 
@@ -121,15 +120,17 @@ const checkAndConvertChangedValueTypes = (
     )
 
     return changedValueTypeKeys.length
-        ? [convertChangedValueTypes(pose, values, ref, changedValueTypeKeys), { ...transition, applyOnEnd }]
-        : [pose, transition]
+        ? { target: convertChangedValueTypes(target, values, ref, changedValueTypeKeys), transitionEnd }
+        : { target, transitionEnd }
 }
 
 export const unitConversion = (
-    pose: PoseDefinition,
-    transition: PoseTransition = {},
     values: MotionValuesMap,
-    ref: RefObject<Element>
-): [PoseDefinition, PoseTransition] => {
-    return hasPositionalKey(pose) ? checkAndConvertChangedValueTypes(pose, transition, values, ref) : [pose, transition]
+    ref: RefObject<Element>,
+    target: Target,
+    transitionEnd?: Target
+): { target: Target; transitionEnd?: Target } => {
+    return hasPositionalKey(target)
+        ? checkAndConvertChangedValueTypes(values, ref, target, transitionEnd)
+        : { target, transitionEnd }
 }

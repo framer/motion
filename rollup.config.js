@@ -1,3 +1,4 @@
+import commonjs from "rollup-plugin-commonjs"
 import typescript from "rollup-plugin-typescript2"
 import resolve from "rollup-plugin-node-resolve"
 import { uglify } from "rollup-plugin-uglify"
@@ -33,6 +34,7 @@ const umd = Object.assign({}, config, {
     },
     external: ["react", "react-dom"],
     plugins: [
+        commonjs(),
         typescript(noDeclarationConfig),
         resolve(),
         replace({
@@ -46,6 +48,7 @@ const umdProd = Object.assign({}, umd, {
         file: `dist/${pkg.name}.js`,
     }),
     plugins: [
+        commonjs(),
         typescript(noDeclarationConfig),
         resolve(),
         replace({
@@ -61,7 +64,7 @@ const cjs = Object.assign({}, config, {
         format: "cjs",
         exports: "named",
     },
-    plugins: [typescript(typescriptConfig)],
+    plugins: [commonjs(), typescript(typescriptConfig)],
     external,
 })
 
@@ -71,7 +74,7 @@ const es = Object.assign({}, config, {
         format: "es",
         exports: "named",
     },
-    plugins: [typescript(noDeclarationConfig)],
+    plugins: [commonjs(), typescript(noDeclarationConfig)],
     external,
 })
 

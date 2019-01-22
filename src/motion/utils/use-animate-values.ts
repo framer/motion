@@ -1,14 +1,14 @@
 import { AnimationControls } from "./use-animation-controls"
-import { PoseDefinition, PoseTransition } from "types"
+import { Target, Transition } from "types"
 import { useRef, useEffect } from "react"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue } from "value"
 
 export const useAnimateValues = (
-    target: PoseDefinition,
+    target: Target,
     controls: AnimationControls,
     values: MotionValuesMap,
-    transition?: PoseTransition,
+    transition?: Transition,
     onComplete?: () => void
 ) => {
     const isInitialRender = useRef(true)
@@ -16,7 +16,7 @@ export const useAnimateValues = (
 
     useEffect(
         () => {
-            const toAnimate: PoseDefinition = Object.keys(prevValues.current).reduce((acc, key) => {
+            const toAnimate: Target = Object.keys(prevValues.current).reduce((acc, key) => {
                 const hasUpdated = prevValues.current[key] !== target[key]
                 const animateOnMount =
                     isInitialRender.current &&

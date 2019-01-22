@@ -3,8 +3,7 @@ import { render } from "react-testing-library"
 import { motion } from "../"
 import * as React from "react"
 import styled from "styled-components"
-import { useMotionValue } from "../../value/use-motion-value"
-import { Poses } from "../../types"
+import { Variants } from "../../types"
 import { motionValue } from "../../value"
 
 /**
@@ -65,6 +64,53 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toHaveStyle("transform: translateX(10px) translateZ(0); background: #fff")
     })
 
+    test("generates style attribute if passed initial", () => {
+        const { container } = render(<motion.div initial={{ x: 10, background: "#fff" }} />)
+        expect(container.firstChild).toHaveStyle("transform: translateX(10px) translateZ(0); background: #fff")
+    })
+
+    test("generates style attribute if passed initial as variant label", () => {
+        const variants = {
+            foo: { x: 10, background: "#fff" },
+        }
+        const { container } = render(<motion.div initial="foo" variants={variants} />)
+        expect(container.firstChild).toHaveStyle("transform: translateX(10px) translateZ(0); background: #fff")
+    })
+
+    test("generates style attribute if passed initial as variant label is function", () => {
+        const variants = {
+            foo: ({ i }: { i: number }) => ({ x: i * 10 }),
+        }
+        const childVariants = {
+            foo: ({ i }: { i: number }) => ({ x: i * 10 }),
+        }
+
+        const { getByTestId } = render(
+            <motion.div initial="foo" variants={variants}>
+                <motion.div variants={childVariants} data-testid="a" i={0} />
+                <motion.div variants={childVariants} data-testid="b" i={1} />
+            </motion.div>
+        )
+        expect(getByTestId("a")).toHaveStyle("transform: none")
+        expect(getByTestId("b")).toHaveStyle("transform: translateX(10px) translateZ(0)")
+    })
+
+    test("generates style attribute for children if passed initial as variant label", () => {
+        const variants = {
+            foo: { x: 10, background: "#fff" },
+        }
+        const childVariants = {
+            foo: { opacity: 0, color: "#f00" },
+        }
+
+        const { getByTestId } = render(
+            <motion.div initial="foo" variants={variants}>
+                <motion.div variants={childVariants} data-testid="child" />
+            </motion.div>
+        )
+        expect(getByTestId("child")).toHaveStyle("opacity: 0; color: #f00")
+    })
+
     test("renders styled component and overwrites style", () => {
         const Box = styled.div`
             background-color: #fff;
@@ -114,6 +160,10 @@ describe("animate prop as variant", () => {
         hidden: { opacity: 0, x: -100 },
         visible: { opacity: 1, x: 100 },
     }
+    const childVariants = {
+        hidden: { opacity: 0, x: -100 },
+        visible: { opacity: 1, x: 50 },
+    }
 
     test("animates to set variant", async () => {
         const promise = new Promise(resolve => {
@@ -122,211 +172,96 @@ describe("animate prop as variant", () => {
             const { rerender } = render(
                 <motion.div animate="visible" variants={variants} style={{ x }} onAnimationComplete={onComplete} />
             )
-            rerender(<motion.div animate="hidden" variants={variants} style={{ x }} />)
+            rerender(
+                <motion.div animate="visible" variants={variants} style={{ x }} onAnimationComplete={onComplete} />
+            )
         })
 
         await expect(promise).resolves.toBe(100)
     })
+
+    test("child animates to set variant", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const onComplete = () => resolve(x.get())
+            const Component = () => (
+                <motion.div animate="visible" variants={variants} onAnimationComplete={onComplete}>
+                    <motion.div variants={childVariants} style={{ x }} />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe(50)
+    })
+
+    test("applies applyOnEnd", () => {
+        const variants: Variants = {
+            visible: {
+                background: "#f00",
+                transitionEnd: { display: "none" },
+            },
+        }
+
+        const { container } = render(<motion.div variants={variants} initial="visible" />)
+        expect(container.firstChild).toHaveStyle("display: none")
+    })
+
+    test("applies applyOnEnd and end of animation", async () => {
+        const promise = new Promise(resolve => {
+            const variants: Variants = {
+                hidden: { background: "#00f" },
+                visible: {
+                    background: "#f00",
+                    transitionEnd: { display: "none" },
+                },
+            }
+            const display = motionValue("block")
+            const onComplete = () => resolve(display.get())
+            const Component = () => (
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={variants}
+                    onAnimationComplete={onComplete}
+                    style={{ display }}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe("none")
+    })
+
+    test("accepts custom transition", async () => {
+        const promise = new Promise(resolve => {
+            const variants: Variants = {
+                hidden: { background: "#00f" },
+                visible: {
+                    background: "#f00",
+                    transition: { to: "#555" },
+                },
+            }
+            const background = motionValue("#00f")
+            const onComplete = () => resolve(background.get())
+            const Component = () => (
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={variants}
+                    onAnimationComplete={onComplete}
+                    style={{ background }}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
+    })
 })
-
-// test("generates style attribute from default pose", () => {
-//     const poses = {
-//         default: { backgroundColor: "#fff" },
-//     }
-
-//     const { container } = render(<motion.div animate={poses} />)
-//     expect(container.firstChild).toHaveStyle("background-color: #fff")
-// })
-
-// test("generates style attribute from set pose", () => {
-//     const poses = {
-//         default: { backgroundColor: "#fff" },
-//         foo: { backgroundColor: "#000" },
-//     }
-
-//     const { container } = render(<motion.div animate={poses} pose="foo" />)
-//     expect(container.firstChild).toHaveStyle("background-color: #000")
-// })
-
-// test("generates correct style attribute from list of poses", () => {
-//     const poses = {
-//         default: { x: 100, backgroundColor: "#fff" },
-//         foo: { backgroundColor: "#000" },
-//     }
-
-//     const { container } = render(<motion.div animate={poses} pose={["default", "foo"]} />)
-//     expect(container.firstChild).toHaveStyle("background-color: #000; transform: translateX(100px) translateZ(0)")
-// })
-
-// test("overwrites provided style attr with pose", () => {
-//     const poses = {
-//         default: { backgroundColor: "#fff" },
-//     }
-
-//     const { container } = render(<motion.div animate={poses} style={{ backgroundColor: "#f00", left: 500 }} />)
-//     expect(container.firstChild).toHaveStyle("background-color: #fff; left: 500px")
-// })
-
-// test("generates correct style attribute for children components", () => {
-//     const childPoses = {
-//         foo: { backgroundColor: "#333" },
-//     }
-
-//     const { getByTestId } = render(
-//         <motion.div pose="foo">
-//             <motion.div animate={childPoses} inherit data-testid="child" />
-//         </motion.div>
-//     )
-
-//     expect(getByTestId("child")).toHaveStyle("background-color: #333")
-// })
-
-// test("applies styles defined in applyOnEnd", () => {
-//     const poses: Poses = {
-//         default: [{ backgroundColor: "#f00" }, { applyOnEnd: { display: "none" } }],
-//     }
-
-//     const { container } = render(<motion.div animate={poses} />)
-//     expect(container.firstChild).toHaveStyle("display: none")
-// })
-
-// test("uses `initialPose` as initial value if set", () => {
-//     const poses: Poses = {
-//         foo: { x: 222 },
-//         bar: { x: 333 },
-//     }
-
-//     const childPoses: Poses = {
-//         foo: { backgroundColor: "#000" },
-//         bar: { backgroundColor: "#444" },
-//     }
-
-//     const { getByTestId, container } = render(
-//         <motion.div animate={poses} initialPose="foo" pose="bar">
-//             <motion.button animate={childPoses} inherit data-testid="child" />
-//         </motion.div>
-//     )
-//     expect(container.firstChild).toHaveStyle("transform: translateX(222px) translateZ(0)")
-//     expect(getByTestId("child")).toHaveStyle("background-color: #000")
-// })
-
-// test("accepts motion value and renders as an initial style", () => {
-//     const Component = () => {
-//         const x = useMotionValue(100)
-//         return <motion.div style={{ x }} />
-//     }
-
-//     const { container } = render(<Component />)
-//     expect(container.firstChild).toHaveStyle("transform: translateX(100px) translateZ(0)")
-// })
-
-// test("doesnt override motion value if is draggable", () => {
-//     const Component = () => {
-//         const x = useMotionValue(100)
-//         return <motion.div style={{ x }} dragEnabled="x" />
-//     }
-
-//     const { container } = render(<Component />)
-//     expect(container.firstChild).toHaveStyle("transform: translateX(100px) translateZ(0)")
-// })
-
-// test("fires onAnimationComplete", async () => {
-//     const poses: Poses = {
-//         foo: { x: 100 },
-//         bar: [{ x: 0 }, { type: false }],
-//     }
-
-//     const promise = new Promise(resolve => {
-//         const { rerender } = render(<motion.div animate={poses} pose="foo" />)
-//         const onComplete = () => resolve("fired")
-
-//         rerender(<motion.div animate={poses} pose="bar" onAnimationComplete={onComplete} />)
-//         rerender(<motion.div animate={poses} pose="bar" />)
-//     })
-
-//     await expect(promise).resolves.toEqual("fired")
-// })
-
-// describe("motion component pose animations", () => {
-//     test("fires transitions into new pose", async () => {
-//         const poses: Poses = {
-//             foo: { x: 100 },
-//             bar: [{ x: 300 }, { type: false }],
-//         }
-
-//         const promise = new Promise(resolve => {
-//             const x = motionValue(0)
-//             const { rerender } = render(<motion.div animate={poses} pose="foo" style={{ x }} />)
-//             const onComplete = () => resolve(x.get())
-
-//             rerender(<motion.div animate={poses} pose="bar" onAnimationComplete={onComplete} />)
-//             rerender(<motion.div animate={poses} pose="bar" />)
-//         })
-
-//         await expect(promise).resolves.toBe(300)
-//     })
-
-//     test("fires child transitions into new pose", async () => {
-//         const poses: Poses = {
-//             foo: { x: 100 },
-//             bar: { x: 300 },
-//         }
-
-//         const childPoses: Poses = {
-//             foo: { x: 0 },
-//             bar: { x: 1000 },
-//         }
-
-//         const parentX = motionValue(0)
-//         const childX = motionValue(0)
-
-//         const promise = new Promise(resolve => {
-//             const Component = props => (
-//                 <motion.div {...props} animate={poses} style={{ x: parentX }}>
-//                     <motion.button animate={childPoses} inherit style={{ x: childX }} />
-//                 </motion.div>
-//             )
-//             const { rerender } = render(<Component pose="foo" />)
-//             const onComplete = () => resolve(childX.get())
-
-//             rerender(<Component pose="bar" onAnimationComplete={onComplete} />)
-//             rerender(<Component pose="bar" />)
-//         })
-
-//         await expect(promise).resolves.toEqual(1000)
-//     })
-
-//     test("animates to pose on mount if initialPose is set", async () => {
-//         const poses: Poses = {
-//             foo: { x: 222 },
-//             bar: { x: 333 },
-//         }
-
-//         const childPoses: Poses = {
-//             foo: { backgroundColor: "#000" },
-//             bar: { backgroundColor: "#444" },
-//         }
-
-//         const x = motionValue(0)
-//         const backgroundColor = motionValue("#fff")
-
-//         const promise = new Promise(resolve => {
-//             const Component = () => (
-//                 <motion.div
-//                     animate={poses}
-//                     style={{ x }}
-//                     initialPose="foo"
-//                     pose="bar"
-//                     onAnimationComplete={() => resolve([x.get(), backgroundColor.get()])}
-//                 >
-//                     <motion.button inherit animate={childPoses} style={{ backgroundColor }} />
-//                 </motion.div>
-//             )
-
-//             const { rerender } = render(<Component />)
-//             rerender(<Component />)
-//         })
-
-//         await expect(promise).resolves.toEqual([333, "rgba(68, 68, 68, 1)"])
-//     })
-// })

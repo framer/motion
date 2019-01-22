@@ -1,21 +1,27 @@
 import { createContext, useContext, useMemo } from "react"
 import { AnimationControls } from "./use-animation-controls"
-import { PoseKeys } from "motion/types"
-import { asDependencyList, resolvePoses } from "./pose-resolvers"
+import { VariantLabels } from "motion/types"
+import { Target } from "types"
 
 type MotionContextProps = {
     controls?: AnimationControls
-    variant?: PoseKeys
-    dragging: boolean
+    initial?: VariantLabels | Target
+    dragging?: boolean
 }
 
 export const MotionContext = createContext<MotionContextProps>({ dragging: false })
 
-export const useMotionContext = (controls: AnimationControls, inherit: boolean, variant?: PoseKeys) => {
-    const { variant: parentVariant, dragging } = useContext(MotionContext)
-    const context: MotionContextProps = useMemo(() => ({ controls, dragging }), asDependencyList(resolvePoses(variant)))
+export const useMotionContext = (controls: AnimationControls, initialProp?: VariantLabels | Target) => {
+    const parentContext = useContext(MotionContext)
+    const initial = initialProp || parentContext.initial
+    const context: MotionContextProps = useMemo(() => ({ controls, initial }), [])
 
-    context.variant = inherit ? parentVariant : variant
+    context.dragging = parentContext.dragging
+
+    // Set initial state
+    useMemo(() => {
+        initial && controls.set(initial)
+    }, [])
 
     return context
 }

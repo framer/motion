@@ -3,7 +3,7 @@ import { MotionProps, ComponentFactory, PoseConfig, PoseConfigFactory } from "./
 import { useConfig } from "../hooks/use-config"
 import { useExternalRef } from "../hooks/use-external-ref"
 import { usePosedValues } from "../hooks/use-posed-values"
-import { usePoseResolver } from "../hooks/use-pose-resolver"
+import { useTargetResolver } from "../hooks/use-pose-resolver"
 import { useStyleAttr } from "../hooks/use-style-attr"
 import { useScrollValues } from "../scroll/use-scroll-values"
 
@@ -198,7 +198,7 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
                 // Create motion values
                 const [values, componentProps] = usePosedValues(config, props, ref)
 
-                usePoseResolver(values, config, props, ref)
+                useTargetResolver(values, config, props, ref)
 
                 return createElement<any>(Component, {
                     ...componentProps,

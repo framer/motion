@@ -4,15 +4,32 @@ import { getTransition } from "./transitions"
 import { motionValue } from "../../value"
 import { complex } from "style-value-types"
 import { MotionContext } from "./MotionContext"
-import { PoseResolver, Pose, PoseTransition, Props, Poses, PoseDefinition } from "../../types"
+import { TargetResolver, Transition, Variants, Target, TargetAndTransition, Props, Variant } from "../../types"
 import { unitConversion } from "../../dom/unit-type-conversion"
 import styler from "stylefire"
+import { MotionProps, VariantLabels } from "motion/types"
 
 const isAnimatable = (value: string | number) => typeof value === "number" || complex.test(value)
-const isPoseResolver = (p: any): p is PoseResolver => typeof p === "function"
-const isPoseKeyList = (v: any): v is string[] => Array.isArray(v)
+const isTargetResolver = (p: any): p is TargetResolver => typeof p === "function"
+const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 
-const setValues = (target: Pose, values: MotionValuesMap, isActive: Set<string> = new Set()) => {
+const resolveVariant = (
+    variant?: Variant,
+    props: Props = {}
+): { target?: Target; transition?: Transition; transitionEnd?: Target } => {
+    if (!variant) {
+        return { target: undefined, transition: undefined, transitionEnd: undefined }
+    }
+
+    if (isTargetResolver(variant)) {
+        variant = variant(props)
+    }
+
+    const { transition, transitionEnd, ...target } = variant
+    return { transition, transitionEnd, target }
+}
+
+const setValues = (target: Target, values: MotionValuesMap, isActive: Set<string> = new Set()) => {
     return Object.keys(target).forEach(key => {
         if (isActive.has(key)) return
 
@@ -27,17 +44,7 @@ const setValues = (target: Pose, values: MotionValuesMap, isActive: Set<string> 
     })
 }
 
-const resolveAnimationDefinition = (definition?: Pose, props: Props = {}): [PoseDefinition?, PoseTransition?] => {
-    if (!definition) return []
-
-    if (isPoseResolver(definition)) {
-        definition = definition(props)
-    }
-
-    return Array.isArray(definition) ? definition : [definition]
-}
-
-const checkForNewValues = (target: PoseDefinition, values: MotionValuesMap, ref: RefObject<Element>) => {
+const checkForNewValues = (target: Target, values: MotionValuesMap, ref: RefObject<Element>) => {
     const newValueKeys = Object.keys(target).filter(key => !values.has(key))
 
     if (!newValueKeys.length) return
@@ -53,7 +60,8 @@ export class AnimationControls<P = {}> {
     private props: P
     private values: MotionValuesMap
     private ref: RefObject<Element>
-    private poses: Poses = {}
+    private variants: Variants = {}
+    private defaultTransition?: Transition
     private children?: Set<AnimationControls>
     private isAnimating: Set<string> = new Set()
 
@@ -62,51 +70,73 @@ export class AnimationControls<P = {}> {
         this.ref = ref
     }
 
-    setProps(props: P) {
+    setProps(props: P & MotionProps) {
         this.props = props
+        this.setDefaultTransition(props.transition)
+        this.setVariants(props.variants)
     }
 
-    setPoses(poses: Poses) {
-        this.poses = poses
+    setVariants(variants?: Variants) {
+        if (variants) this.variants = variants
     }
 
-    start(definition: string | string[] | PoseDefinition | PoseResolver, transition?: PoseTransition): Promise<any> {
-        this.resetIsAnimating()
+    setDefaultTransition(transition?: Transition) {
+        if (transition) this.defaultTransition = transition
+    }
 
-        if (isPoseKeyList(definition)) {
-            return this.animateMultiplePoses(definition)
+    set(definition: VariantLabels | TargetAndTransition) {
+        if (Array.isArray(definition)) {
+            return this.applyVariantLabels(definition)
         } else if (typeof definition === "string") {
-            return this.animatePose(definition)
+            return this.applyVariantLabels([definition])
         } else {
-            return this.animate([definition, transition] as Pose)
+            setValues(definition, this.values)
         }
     }
 
-    set(poseKeyList: string[]) {
+    private applyVariantLabels(variantLabelList: string[]) {
         const isSetting: Set<string> = new Set()
-        const reversedList = [...poseKeyList].reverse()
-        reversedList.forEach(poseKey => {
-            const [target, transition] = resolveAnimationDefinition(this.poses[poseKey], this.props)
+        const reversedList = [...variantLabelList].reverse()
 
-            if (transition) {
-                const { applyOnEnd } = transition
-                applyOnEnd && setValues(applyOnEnd, this.values, isSetting)
+        reversedList.forEach(key => {
+            const { target, transitionEnd } = resolveVariant(this.variants[key], this.props)
+
+            if (transitionEnd) {
+                setValues(transitionEnd, this.values, isSetting)
             }
 
-            target && setValues(target, this.values, isSetting)
+            if (target) {
+                setValues(target, this.values, isSetting)
+            }
         })
     }
 
-    private animate(animationDefinition: Pose, delay: number = 0) {
-        let [target, transition = {}] = resolveAnimationDefinition(animationDefinition)
+    start(definition: VariantLabels | TargetAndTransition | TargetResolver, _transition?: Transition): Promise<any> {
+        this.resetIsAnimating()
+
+        if (isVariantLabels(definition)) {
+            return this.animateVariantLabels(definition)
+        } else if (typeof definition === "string") {
+            return this.animateVariant(definition)
+        } else {
+            return this.animate(definition)
+        }
+    }
+
+    private animate(animationDefinition: Variant, delay: number = 0) {
+        let { target, transition, transitionEnd } = resolveVariant(animationDefinition)
 
         if (!target) return Promise.resolve()
 
         checkForNewValues(target, this.values, this.ref)
-        ;[target, transition] = unitConversion(target, transition, this.values, this.ref) as [
-            PoseDefinition,
-            PoseTransition
-        ]
+
+        const converted = unitConversion(this.values, this.ref, target, transitionEnd)
+        target = converted.target
+        transitionEnd = converted.transitionEnd
+
+        if (!transition && this.defaultTransition) {
+            transition = this.defaultTransition
+        }
 
         const animations = Object.keys(target).reduce(
             (acc, key) => {
@@ -115,7 +145,7 @@ export class AnimationControls<P = {}> {
                 const value = this.values.get(key)
                 if (!value) return acc
 
-                const valueTarget = (target as PoseDefinition)[key]
+                const valueTarget = (target as Target)[key]
 
                 if (isAnimatable(valueTarget)) {
                     const [action, options] = getTransition(key, valueTarget, {
@@ -135,33 +165,32 @@ export class AnimationControls<P = {}> {
         )
 
         return Promise.all(animations).then(() => {
-            if (!transition || !transition.applyOnEnd) return
-            const { applyOnEnd } = transition
+            if (!transitionEnd) return
 
-            setValues(applyOnEnd, this.values)
+            setValues(transitionEnd, this.values)
         })
     }
 
-    private animateMultiplePoses(poseKeyList: string[]) {
-        const animations = [...poseKeyList].reverse().map(poseKey => this.animatePose(poseKey))
+    private animateVariantLabels(variantLabels: string[]) {
+        const animations = [...variantLabels].reverse().map(label => this.animateVariant(label))
         return Promise.all(animations)
     }
 
-    private animatePose(poseKey: string, delay: number = 0): Promise<any> {
+    private animateVariant(variantLabel: string, delay: number = 0): Promise<any> {
         let beforeChildren = false
         let afterChildren = false
         let delayChildren = 0
         let staggerChildren = 0
         let staggerDirection = 1
 
-        const pose = this.poses[poseKey]
-        const getAnimations: () => Promise<any> = pose ? () => this.animate(pose, delay) : () => Promise.resolve()
+        const variant = this.variants[variantLabel]
+        const getAnimations: () => Promise<any> = variant ? () => this.animate(variant, delay) : () => Promise.resolve()
         const getChildrenAnimations: () => Promise<any> = this.children
-            ? () => this.animateChildren(poseKey, delayChildren, staggerChildren, staggerDirection)
+            ? () => this.animateChildren(variantLabel, delayChildren, staggerChildren, staggerDirection)
             : () => Promise.resolve()
 
-        if (pose && this.children) {
-            const [, transition] = resolveAnimationDefinition(pose)
+        if (variant && this.children) {
+            const { transition } = resolveVariant(variant)
             if (transition) {
                 beforeChildren = transition.beforeChildren || beforeChildren
                 afterChildren = transition.afterChildren || afterChildren
@@ -182,7 +211,7 @@ export class AnimationControls<P = {}> {
     }
 
     private animateChildren(
-        poseKey: string,
+        variantLabel: string,
         delayChildren: number = 0,
         staggerChildren: number = 0,
         staggerDirection: number = 1
@@ -198,7 +227,7 @@ export class AnimationControls<P = {}> {
                 : (i: number) => maxStaggerDuration - i * staggerChildren
 
         Array.from(this.children).forEach((childControls, i) => {
-            const animation = childControls.animatePose(poseKey, delayChildren + generateStaggerDuration(i))
+            const animation = childControls.animateVariant(variantLabel, delayChildren + generateStaggerDuration(i))
             animations.push(animation)
         })
 
@@ -237,15 +266,16 @@ export class AnimationControls<P = {}> {
 
 export const useAnimationControls = <P>(
     values: MotionValuesMap,
-    inherit: boolean,
-    props: P,
-    ref: RefObject<Element>
+    props: P & MotionProps,
+    ref: RefObject<Element>,
+    inherit: boolean
 ) => {
     const parentControls = useContext(MotionContext).controls
     const controls = useMemo(() => new AnimationControls<P>(values, ref), [])
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     controls.resetChildren()
+
     if (inherit && parentControls) {
         parentControls.addChild(controls)
     }
@@ -253,5 +283,6 @@ export const useAnimationControls = <P>(
     useEffect(() => () => parentControls && parentControls.removeChild(controls), [])
 
     controls.setProps(props)
+
     return controls
 }

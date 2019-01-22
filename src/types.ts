@@ -1,3 +1,5 @@
+import { CSSProperties } from "react"
+
 export type Props = { [key: string]: any }
 
 export type EasingFunction = (v: number) => number
@@ -25,10 +27,9 @@ export type TransitionOrchestration = {
     delayChildren?: number
     staggerChildren?: number
     staggerDirection?: 1 | -1
-    applyOnEnd?: PoseDefinition
 }
 
-export type BaseTransition = {
+export type ValueTransition = {
     type?: false
     delay?: number
     from?: number | string
@@ -36,7 +37,7 @@ export type BaseTransition = {
     velocity?: number
 }
 
-export type Tween = BaseTransition & {
+export type Tween = ValueTransition & {
     type?: "tween"
     duration?: number
     ease?: Easing
@@ -46,7 +47,7 @@ export type Tween = BaseTransition & {
     yoyo?: number
 }
 
-export type Spring = BaseTransition & {
+export type Spring = ValueTransition & {
     type: "spring"
     stiffness?: number
     damping?: number
@@ -55,7 +56,7 @@ export type Spring = BaseTransition & {
     restDelta?: number
 }
 
-export type Decay = BaseTransition & {
+export type Decay = ValueTransition & {
     type: "decay"
     modifyTarget?: (v: number) => number
     power?: number
@@ -63,7 +64,7 @@ export type Decay = BaseTransition & {
     restDelta?: number
 }
 
-export type Keyframes = BaseTransition & {
+export type Keyframes = ValueTransition & {
     type: "keyframes"
     values: number[] | string[]
     easings?: Easing[]
@@ -75,29 +76,29 @@ export type Keyframes = BaseTransition & {
     yoyo?: number
 }
 
-export type Physics = BaseTransition & {
+export type Physics = ValueTransition & {
     type: "physics"
     acceleration?: number
     friction?: number
     restSpeed?: number | false
 }
 
-export type Just = BaseTransition & {
+export type Just = ValueTransition & {
     type: "just"
 }
 
-export type PopmotionTransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | Just
+export type PopmotionTransitionProps = Tween | Spring | Decay | Keyframes | Physics | Just
 
-export type TransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | BaseTransition
+export type TransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | ValueTransition
 
 export type TransitionMap = TransitionOrchestration & { [key: string]: TransitionDefinition }
 
-export type PoseTransition =
-    | (TransitionOrchestration & TransitionDefinition)
-    | (TransitionOrchestration & TransitionMap)
+export type Transition = (TransitionOrchestration & TransitionDefinition) | (TransitionOrchestration & TransitionMap)
 
-// TODO Maybe make CSSProperties + additional supported transforms and SVG props?
-export type PoseDefinition = {
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+type CSSPropertiesWithoutTransition = Omit<CSSProperties, "transition">
+
+export type Target = CSSPropertiesWithoutTransition & {
     x?: number | string
     y?: number | string
     z?: number | string
@@ -115,74 +116,19 @@ export type PoseDefinition = {
     originX?: number | string
     originY?: number | string
     originZ?: number | string
-    opacity?: number
-    perspective?: number | string
-    transform?: string
-
-    // Positioning
-    width?: number | string
-    height?: number | string
-    maxWidth?: number | string
-    maxHeight?: number | string
-    top?: number | string
-    left?: number | string
-    right?: number | string
-    bottom?: number | string
-
-    // Spacing
-    padding?: number | string
-    paddingTop?: number | string
-    paddingRight?: number | string
-    paddingBottom?: number | string
-    paddingLeft?: number | string
-    margin?: number | string
-    marginTop?: number | string
-    marginRight?: number | string
-    marginBottom?: number | string
-    marginLeft?: number | string
-
-    // Borders
-    borderColor?: number | string
-    borderTopColor?: number | string
-    borderRightColor?: number | string
-    borderBottomColor?: number | string
-    borderLeftColor?: number | string
-    borderWidth?: number | string
-    borderTopWidth?: number | string
-    borderRightWidth?: number | string
-    borderBottomWidth?: number | string
-    borderLeftWidth?: number | string
-    borderRadius?: number | string
-    borderTopLeftRadius?: number | string
-    borderTopRightRadius?: number | string
-    borderBottomRightRadius?: number | string
-    borderBottomLeftRadius?: number | string
-
-    // Colors
-    color?: string
-    backgroundColor?: string
-    outlineColor?: string
-    fill?: string
-    stroke?: string
-
-    // Misc
-    background?: string
-    backgroundImage?: string
-    display?: string
-    position?: string
-
-    // SVG
-    d?: string
     pathLength?: number
     pathSpacing?: number
 }
 
-export type PoseAndTransition = [PoseDefinition, PoseTransition]
+export type TargetAndTransition = Target & {
+    transition?: Transition
+    transitionEnd?: Target
+}
 
-export type PoseResolver = (props: Props) => PoseDefinition | PoseAndTransition
+export type TargetResolver = (props: Props) => TargetAndTransition
 
-export type Pose = PoseDefinition | PoseAndTransition | PoseResolver
+export type Variant = TargetAndTransition | TargetResolver
 
-export type Poses = {
-    [key: string]: Pose
+export type Variants = {
+    [key: string]: Variant
 }

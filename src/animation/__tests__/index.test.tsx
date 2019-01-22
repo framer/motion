@@ -73,7 +73,7 @@ describe("useAnimation", () => {
 
                 return (
                     <motion.div animate={animation} style={{ x }}>
-                        <motion.div inherit animate={childAnimation} style={{ backgroundColor }} />
+                        <motion.div animate={childAnimation} style={{ backgroundColor }} />
                     </motion.div>
                 )
             }

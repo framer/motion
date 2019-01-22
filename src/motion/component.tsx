@@ -9,74 +9,37 @@ import { MotionProps } from "./types"
 import {
     isGesturesEnabled,
     isDragEnabled,
-    isAnimationSubscription,
-    isPosed,
-    isAnimateValues,
-    AnimationSubscription,
-    AnimateValues,
-    Posed,
     Gestures,
     Draggable,
     RenderComponent,
+    getAnimatePropType,
+    getAnimateComponent,
+    checkShouldInheritVariant,
 } from "./utils/functionality"
 
 export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>) => {
-    const MotionComponent = (p: P & MotionProps, externalRef?: Ref<Element>) => {
-        const {
-            animate,
-            variants,
-            style: motionStyle,
-            onAnimationComplete,
-            transition,
-            inherit = false,
-            initialPose,
-            dragEnabled,
-            dragLocksDirection,
-            dragPropagation,
-            ...props
-        } = p as MotionProps
+    const MotionComponent = (props: P & MotionProps, externalRef?: Ref<Element>) => {
         const ref = useExternalRef(externalRef)
         const values = useMotionValues(ref)
-        const style = addMotionStyles(values, motionStyle)
-        const controls = useAnimationControls(values, inherit, props, ref)
-        const context = useMotionContext(controls, inherit) // initialPose || animate ?
+        const style = addMotionStyles(values, props.style)
+        const animatePropType = getAnimatePropType(props)
+        const shouldInheritVariant = checkShouldInheritVariant(props, animatePropType)
+        const controls = useAnimationControls(values, props, ref, shouldInheritVariant)
+        const context = useMotionContext(controls, props.initial)
 
         // Add functionality
-        const handleAnimation = isAnimationSubscription(animate) && (
-            <AnimationSubscription animate={animate} controls={controls} />
+        const Animate = getAnimateComponent(animatePropType)
+
+        const handleAnimate = Animate && (
+            <Animate {...props} inherit={shouldInheritVariant} innerRef={ref} values={values} controls={controls} />
         )
 
-        const handlePoses = isPosed(animate) && (
-            <Posed
-                variants={variants}
-                target={animate}
-                inherit={inherit}
-                controls={controls}
-                onAnimationComplete={onAnimationComplete}
-                initialPose={initialPose}
-            />
+        const handleGestures = isGesturesEnabled(props) && (
+            <Gestures {...props} values={values} controls={controls} innerRef={ref} />
         )
 
-        const handleAnimateValues = isAnimateValues(animate) && (
-            <AnimateValues
-                target={animate}
-                transition={transition}
-                values={values}
-                controls={controls}
-                onComplete={onAnimationComplete}
-            />
-        )
-
-        const handleGestures = isGesturesEnabled(p) && <Gestures {...p} innerRef={ref} />
-
-        const handleDrag = isDragEnabled(p) && (
-            <Draggable
-                dragEnabled={dragEnabled}
-                dragLocksDirection={dragLocksDirection}
-                dragPropagation={dragPropagation}
-                innerRef={ref}
-                values={values}
-            />
+        const handleDrag = isDragEnabled(props) && (
+            <Draggable {...props} innerRef={ref} controls={controls} values={values} />
         )
 
         // We use an intermediate component here rather than calling `createElement` directly
@@ -84,14 +47,12 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         // functional component has resolved. Resolving it here would do it before the functional components
         // themselves are executed.
         const handleComponent = (
-            <RenderComponent base={Component} remainingProps={props} innerRef={ref} style={style} values={values} />
+            <RenderComponent base={Component} props={props} innerRef={ref} style={style} values={values} />
         )
 
         return (
             <MotionContext.Provider value={context}>
-                {handleAnimation}
-                {handlePoses}
-                {handleAnimateValues}
+                {handleAnimate}
                 {handleGestures}
                 {handleDrag}
                 {handleComponent}

@@ -1,13 +1,13 @@
 import { Ref, CSSProperties } from "react"
 import { MotionValue } from "../value"
 import { AnimationManager } from "../animation"
-import { Poses, PoseDefinition, PoseTransition } from "../types"
+import { Variants, Target, Transition, TargetAndTransition } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours"
 
 export type MotionStyleProp = string | number | MotionValue
 
-export type PoseKeys = string | string[]
+export type VariantLabels = string | string[]
 
 export interface MotionStyleProperties {
     x?: MotionStyleProp
@@ -37,10 +37,16 @@ export type MotionStyle = MakeMotion<CSSProperties> & MotionStyleProperties
 export interface MotionProps extends GestureHandlers, DraggableProps {
     ref?: Ref<Element>
     style?: MotionStyle
-    animate?: AnimationManager | PoseDefinition | PoseKeys
-    poses?: Poses
-    initialPose?: PoseKeys
-    transition?: PoseTransition
+    animate?: AnimationManager | TargetAndTransition | VariantLabels
+    initial?: Target | VariantLabels
+    variants?: Variants
+    transition?: Transition
     inherit?: boolean
     onAnimationComplete?: () => void
+}
+
+export enum AnimatePropType {
+    Target = "Target",
+    VariantLabel = "VariantLabel",
+    AnimationSubscription = "AnimationSubscription",
 }

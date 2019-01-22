@@ -5,7 +5,7 @@ import { resolvePoses } from "../utils/pose-resolvers"
 import { resolveCurrent, resolveVelocity } from "../utils/resolve-values"
 import { MotionValue } from "../motion-value"
 import { checkForNewValues } from "../utils/create-value"
-import { PoseConfig, MotionProps, PoseResolver, Pose, MotionValueMap } from "../motion/types"
+import { PoseConfig, MotionProps, TargetResolver, Pose, MotionValueMap } from "../motion/types"
 import { useSubsequentRenderEffect } from "../hooks/use-subsequent-render-effect"
 import { transformPose } from "../dom/unit-type-conversion"
 import { complex } from "style-value-types"
@@ -14,9 +14,9 @@ type PoseSubscriber = (v: string | string[]) => void
 
 const isAnimatable = (value: string | number) => typeof value === "number" || complex.test(value)
 
-const isPoseResolver = (pose: Pose | PoseResolver): pose is PoseResolver => typeof pose === "function"
+const isTargetResolver = (pose: Pose | TargetResolver): pose is TargetResolver => typeof pose === "function"
 
-const createPoseResolver = (
+const createTargetResolver = (
     values: MotionValueMap,
     config: PoseConfig,
     { onAnimationComplete, ...props }: MotionProps,
@@ -33,7 +33,7 @@ const createPoseResolver = (
             invariant(config[poseKey] !== undefined, `Pose with name ${poseKey} not found.`)
 
             const poseDefinition = config[poseKey]
-            let pose: Pose = isPoseResolver(poseDefinition)
+            let pose: Pose = isTargetResolver(poseDefinition)
                 ? poseDefinition(props, resolveCurrent(values), resolveVelocity(values))
                 : poseDefinition
 
@@ -93,7 +93,7 @@ const createPoseResolver = (
     return poseResolver
 }
 
-export const usePoseResolver = (
+export const useTargetResolver = (
     values: Map<string, MotionValue>,
     config: PoseConfig,
     props: MotionProps,
@@ -102,7 +102,7 @@ export const usePoseResolver = (
     const poseSubscriber: MutableRefObject<null | PoseSubscriber> = useRef(null)
     const { pose } = props
     const poseIsSubscription = pose instanceof MotionValue
-    const poseResolver = createPoseResolver(values, config, props, ref)
+    const poseResolver = createTargetResolver(values, config, props, ref)
 
     // If we're controlled by props, fire resolver with latest pose
     const poseList = !poseIsSubscription ? resolvePoses(pose as string | string[]) : []
