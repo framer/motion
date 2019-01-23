@@ -79,10 +79,10 @@ describe("motion component rendering and styles", () => {
 
     test("generates style attribute if passed initial as variant label is function", () => {
         const variants = {
-            foo: ({ i }: { i: number }) => ({ x: i * 10 }),
+            foo: ({ i }) => ({ x: i * 10 }),
         }
         const childVariants = {
-            foo: ({ i }: { i: number }) => ({ x: i * 10 }),
+            foo: ({ i }) => ({ x: i * 10 }),
         }
 
         const { getByTestId } = render(

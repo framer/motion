@@ -125,7 +125,7 @@ export type TargetAndTransition = Target & {
     transitionEnd?: Target
 }
 
-export type TargetResolver = (props: Props) => TargetAndTransition
+export type TargetResolver = (props: any) => TargetAndTransition
 
 export type Variant = TargetAndTransition | TargetResolver
 

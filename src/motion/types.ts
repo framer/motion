@@ -43,6 +43,7 @@ export interface MotionProps extends GestureHandlers, DraggableProps {
     transition?: Transition
     inherit?: boolean
     onAnimationComplete?: () => void
+    [key: string]: any
 }
 
 export enum AnimatePropType {

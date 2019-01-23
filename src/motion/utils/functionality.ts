@@ -11,6 +11,7 @@ import { MotionValuesMap } from "./use-motion-values"
 import { AnimatePropType } from "../types"
 import { Target } from "../../types"
 import { AnimationControls } from "./use-animation-controls"
+import isPropValid from "@emotion/is-prop-valid"
 
 // TODO: We can tidy this up. There's probably a neater or more consistent way to structure this.
 
@@ -83,9 +84,7 @@ const gestureProps = [
 export const isGesturesEnabled = (props: MotionProps) => gestureProps.some(key => props.hasOwnProperty(key))
 export const isDragEnabled = (props: MotionProps) => !!props.dragEnabled
 
-export const Gestures = makeHookComponent(({ innerRef, controls, ...props }: AnimateProps) =>
-    useGestures({ ...props, controls }, innerRef)
-)
+export const Gestures = makeHookComponent(({ innerRef, ...props }: AnimateProps) => useGestures(props, innerRef))
 export const Draggable = makeHookComponent(({ innerRef, values, ...props }: AnimateProps) =>
     useDraggable(props, innerRef, values)
 )
@@ -98,30 +97,22 @@ type RenderProps<P> = {
     values: MotionValuesMap
 }
 
-const filterProps = <P>({
-    ref,
-    style,
-    animate,
-    initial,
-    variants,
-    transition,
-    inherit,
-    onAnimationComplete,
-    onPan,
-    onPanStart,
-    onPanEnd,
-    onTap,
-    onPressStart,
-    onPressEnd,
-    pressActive,
-    dragEnabled,
-    dragLocksDirection,
-    dragPropagation,
-    ...filtered
-}: P & MotionProps): P => filtered as P
+const eventHandlers = new Set(["onTap", "onAnimationComplete"])
+
+const validProps = (props: MotionProps) => {
+    const valid = {}
+
+    for (const key in props) {
+        if (isPropValid(key) && !eventHandlers.has(key)) {
+            valid[key] = props[key]
+        }
+    }
+
+    return valid
+}
 
 export const RenderComponent = <P>({ base, props, innerRef, style, values }: RenderProps<P>) => {
-    const forwardProps = typeof base === "string" ? filterProps(props) : props
+    const forwardProps = typeof base === "string" ? validProps(props) : props
 
     return createElement<any>(base, {
         ...forwardProps,

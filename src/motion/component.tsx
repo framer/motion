@@ -1,5 +1,5 @@
 import * as React from "react"
-import { memo, forwardRef, Ref, ComponentType } from "react"
+import { forwardRef, Ref, ComponentType } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues } from "./utils/use-motion-values"
 import { addMotionStyles } from "./utils/style-attr"
@@ -60,5 +60,5 @@ export const createMotionComponent = <P extends {}>(Component: string | Componen
         )
     }
 
-    return memo(forwardRef(MotionComponent))
+    return forwardRef(MotionComponent)
 }

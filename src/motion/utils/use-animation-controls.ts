@@ -4,7 +4,7 @@ import { getTransition } from "./transitions"
 import { motionValue } from "../../value"
 import { complex } from "style-value-types"
 import { MotionContext } from "./MotionContext"
-import { TargetResolver, Transition, Variants, Target, TargetAndTransition, Props, Variant } from "../../types"
+import { TargetResolver, Transition, Variants, Target, TargetAndTransition, Variant } from "../../types"
 import { unitConversion } from "../../dom/unit-type-conversion"
 import styler from "stylefire"
 import { MotionProps, VariantLabels } from "motion/types"
@@ -15,7 +15,7 @@ const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 
 const resolveVariant = (
     variant?: Variant,
-    props: Props = {}
+    props?: any
 ): { target?: Target; transition?: Transition; transitionEnd?: Target } => {
     if (!variant) {
         return { target: undefined, transition: undefined, transitionEnd: undefined }
@@ -70,10 +70,8 @@ export class AnimationControls<P = {}> {
         this.ref = ref
     }
 
-    setProps(props: P & MotionProps) {
+    setProps(props: P) {
         this.props = props
-        this.setDefaultTransition(props.transition)
-        this.setVariants(props.variants)
     }
 
     setVariants(variants?: Variants) {
@@ -270,6 +268,7 @@ export const useAnimationControls = <P>(
     ref: RefObject<Element>,
     inherit: boolean
 ) => {
+    const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
     const controls = useMemo(() => new AnimationControls<P>(values, ref), [])
 
@@ -283,6 +282,8 @@ export const useAnimationControls = <P>(
     useEffect(() => () => parentControls && parentControls.removeChild(controls), [])
 
     controls.setProps(props)
+    controls.setVariants(variants)
+    controls.setDefaultTransition(transition)
 
     return controls
 }
