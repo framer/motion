@@ -7,6 +7,14 @@ import { Point } from "../events"
 import { MotionValue } from "../value"
 
 type DragDirection = "x" | "y"
+
+export type Constraints = {
+    left?: number
+    right?: number
+    top?: number
+    bottom?: number
+}
+
 export interface DraggableProps {
     /**
      * Enable dragging for this element
@@ -27,10 +35,19 @@ export interface DraggableProps {
      * @default false
      */
     dragPropagation?: boolean
+    /**
+     * Apply constraints to dragging
+     * @default false
+     */
+    dragConstraints?: Constraints
 }
 
-const draggableDefaults = (props: DraggableProps): Required<DraggableProps> => {
-    const defaultValues = { dragEnabled: false, dragLocksDirection: false, dragPropagation: false }
+const draggableDefaults = (props: DraggableProps): DraggableProps => {
+    const defaultValues = {
+        dragEnabled: false,
+        dragLocksDirection: false,
+        dragPropagation: false,
+    }
     const result = defaultValues
     Object.assign(result, props)
     if (props.dragEnabled === undefined) {
@@ -66,9 +83,18 @@ function shouldDrag(
     )
 }
 
+const getConstraints = (axis: "x" | "y", { top, right, bottom, left }: Constraints) => {
+    if (axis === "x") {
+        return { min: left, max: right }
+    } else {
+        return { min: top, max: bottom }
+    }
+}
+
 export function useDraggable(props: DraggableProps, ref: RefObject<Element | null>, values: MotionValuesMap) {
-    const { dragEnabled, dragPropagation, dragLocksDirection } = defaults(props, draggableDefaults)
+    const { dragEnabled, dragPropagation, dragLocksDirection, dragConstraints } = defaults(props, draggableDefaults)
     const point: Partial<{ x: MotionValue<number>; y: MotionValue<number> }> = {}
+    const origin = { x: 0, y: 0 }
     let currentDirection: null | DragDirection = null
     if (shouldDrag("x", dragEnabled, currentDirection)) {
         point.x = values.get("x", 0)
@@ -76,28 +102,50 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
     if (shouldDrag("y", dragEnabled, currentDirection)) {
         point.y = values.get("y", 0)
     }
+
+    const updatePoint = (axis: "x" | "y", offset: { x: number; y: number }) => {
+        const p = point[axis]
+        if (!shouldDrag(axis, dragEnabled, currentDirection) || !p) return
+
+        let current = origin[axis] + offset[axis]
+
+        if (dragConstraints) {
+            const { min, max } = getConstraints(axis, dragConstraints)
+
+            if (min !== undefined && current < min) {
+                current = Math.max(min, current)
+            } else if (max !== undefined && current > max) {
+                current = Math.min(max, current)
+            }
+        }
+
+        p.set(current)
+    }
+
     const motionContext = useContext(MotionContext)
     // XXX: directionLocking and having something called Lock is confusing, especially, because they're not really realted
     let openGlobalLock: Lock = false
 
     const onPanStart = useMemo(
-        () =>
-            function() {
-                if (!dragPropagation) {
-                    openGlobalLock = getGlobalLock(dragEnabled)
-                    if (!openGlobalLock) {
-                        return
-                    }
+        () => () => {
+            if (point.x) origin.x = point.x.get()
+            if (point.y) origin.y = point.y.get()
+
+            if (!dragPropagation) {
+                openGlobalLock = getGlobalLock(dragEnabled)
+                if (!openGlobalLock) {
+                    return
                 }
-                currentDirection = null
-                motionContext.dragging = true
-            },
+            }
+            currentDirection = null
+            motionContext.dragging = true
+        },
         [dragEnabled, dragPropagation, motionContext]
     )
 
     const onPan: PanHandler = useMemo(
-        () =>
-            function(_event: MouseEvent | TouchEvent, { delta, offset }: PanInfo) {
+        () => {
+            const updateDrag = (_event: MouseEvent | TouchEvent, { offset }: PanInfo) => {
                 if (!dragPropagation && !openGlobalLock) {
                     return
                 }
@@ -107,14 +155,13 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
                         return
                     }
                 }
-                const { x, y } = point
-                if (shouldDrag("x", dragEnabled, currentDirection) && x) {
-                    x.set(x.get() + delta.x)
-                }
-                if (shouldDrag("y", dragEnabled, currentDirection) && y) {
-                    y.set(y.get() + delta.y)
-                }
-            },
+
+                updatePoint("x", offset)
+                updatePoint("y", offset)
+            }
+
+            return updateDrag
+        },
         [openGlobalLock, dragEnabled, point]
     )
     const onPanEnd = useMemo(
