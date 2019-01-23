@@ -1,10 +1,18 @@
 import { useMemo, useEffect, useContext, RefObject } from "react"
 import { MotionValuesMap } from "./use-motion-values"
 import { getTransition } from "./transitions"
-import { motionValue } from "../../value"
+import { motionValue, ActionFactory } from "../../value"
 import { complex } from "style-value-types"
 import { MotionContext } from "./MotionContext"
-import { TargetResolver, Transition, Variants, Target, TargetAndTransition, Variant } from "../../types"
+import {
+    TargetResolver,
+    Transition,
+    Variants,
+    Target,
+    TargetAndTransition,
+    Variant,
+    PopmotionTransitionProps,
+} from "../../types"
 import { unitConversion } from "../../dom/unit-type-conversion"
 import styler from "stylefire"
 import { MotionProps, VariantLabels } from "motion/types"
@@ -150,7 +158,7 @@ export class AnimationControls<P = {}> {
                         delay,
                         ...transition,
                     })
-                    acc.push(value.control(action, options))
+                    acc.push(value.control(action as ActionFactory, options as PopmotionTransitionProps))
                 } else {
                     value.set(valueTarget)
                 }

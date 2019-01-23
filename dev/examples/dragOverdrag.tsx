@@ -4,13 +4,14 @@ import { motion } from "../../src"
 const styleA = {
     width: 300,
     height: 300,
-    background: "blue",
+    background: "white",
+    borderRadius: "10px",
 }
 export const App = () => {
     return (
         <motion.div
-            dragEnabled
-            dragConstraints={{ left: -100, bottom: 100, top: -100, right: 100 }}
+            dragEnabled="x"
+            dragConstraints={{ left: -500, right: 500 }}
             dragElastic
             dragMomentum
             style={styleA}

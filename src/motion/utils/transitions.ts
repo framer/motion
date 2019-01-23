@@ -1,4 +1,4 @@
-import { action, tween, spring, keyframes, decay, physics, easing, Action } from "popmotion"
+import { action, tween, spring, keyframes, decay, inertia, physics, easing, Action } from "popmotion"
 import {
     Transition,
     Tween,
@@ -20,7 +20,7 @@ const just: ActionFactory = ({ to }: JustProps): Action => {
     })
 }
 
-const transitions = { tween, spring, keyframes, decay, physics, just }
+const transitions = { tween, spring, keyframes, decay, physics, inertia, just }
 
 const {
     linear,
@@ -107,13 +107,9 @@ const getTransitionForValue = (
 const preprocessOptions = (type: string, opts: PopmotionTransitionProps): PopmotionTransitionProps =>
     transitionOptionParser[type] ? transitionOptionParser[type](opts) : opts
 
-export const getTransition = (
-    valueKey: string,
-    to: string | number,
-    transition?: Transition
-): [ActionFactory, PopmotionTransitionProps] => {
+export const getTransition = (valueKey: string, to: string | number, transition?: Transition) => {
     const { type = "tween", ...transitionDefinition } = getTransitionForValue(valueKey, to, transition)
-    const actionFactory: ActionFactory = transitions[type]
+    const actionFactory = transitions[type]
     const opts: PopmotionTransitionProps = preprocessOptions(type, transitionDefinition)
 
     return [actionFactory, opts]

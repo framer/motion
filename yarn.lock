@@ -81,17 +81,7 @@
   resolved "https://registry.yarnpkg.com/@popmotion/easing/-/easing-1.0.1.tgz#48336aea29542113df10aeb81b4fd10f0b95f937"
   integrity sha512-NbIEz9mZAem0F0sjg2v57LbU9Y2Xc50QEX434jYrwEQzXJuJipyUV48Qz4hjHqbB/8xiUj0JMQfRvP8K9nUbxg==
 
-"@popmotion/popcorn@^0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@popmotion/popcorn/-/popcorn-0.2.0.tgz#02750f55c27febd7b3009cc8ce29392735d235d0"
-  integrity sha512-IdVpvrvZ6mv7eYwxymQKjmVgOEu5byEwI566JpCIX9GD4/MwT8w0yq5LmC649iXvtYg2JAOW4o1Y+RKYl6dTPA==
-  dependencies:
-    "@popmotion/easing" "^1.0.1"
-    framesync "^4.0.1"
-    hey-listen "^1.0.5"
-    style-value-types "^3.0.7"
-
-"@popmotion/popcorn@^0.3.1":
+"@popmotion/popcorn@^0.3.0", "@popmotion/popcorn@^0.3.1":
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/@popmotion/popcorn/-/popcorn-0.3.1.tgz#f0f33fbf7ff66f2cd0bf28be24bee0b1d46b65e8"
   integrity sha512-TRhDPxfzM4CrUff2ELyzDj6xSEp5fcmbnrTO0VkmrN/TxJrAzP2H/VfIDRQQy82Yn65Vwn1ohrIi8eZLqzrCMA==
@@ -5193,17 +5183,17 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-popmotion@8.5.3:
-  version "8.5.3"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.5.3.tgz#693a197c7d724ce9999cc1b6410530360ac347cd"
-  integrity sha512-y6Fi/K1JvRFfvYn0BUPH7EUMYywvMwB5MocYwAPD2PkDwZ5D+L5ZidAQ9M/4nto9YU//2F2Q9xR6XztGnDfvyQ==
+popmotion@^8.6.0:
+  version "8.6.0"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.6.0.tgz#14edf50376fc2d656b59e0d46390896577818abb"
+  integrity sha512-rU0idZO8fQi8xhHJsFRQKrDIvbLc3aCF6wLcPBVLIYRI/KvQVzprxF6bu2P+PVaYG5G6rf1qSpcn4XgZsNxoyg==
   dependencies:
     "@popmotion/easing" "^1.0.1"
-    "@popmotion/popcorn" "^0.2.0"
+    "@popmotion/popcorn" "^0.3.0"
     framesync "^4.0.0"
     hey-listen "^1.0.5"
     style-value-types "^3.0.6"
-    stylefire "^2.0.7"
+    stylefire "^2.3.4"
     tslib "^1.9.1"
 
 portfinder@^1.0.9:
@@ -6465,17 +6455,7 @@ styled-components@^4.1.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
-stylefire@^2.0.7:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.2.1.tgz#3ae1f74477fa5117d410757cefe5878179708e38"
-  integrity sha512-0Yc5ILS2kVIow8UnbGLGRQhkECxIZTH23Y/KwjVJfuvocWyF/VfuRYwW8MngOkOhJ9oea6E38QgDWWJkj0EqJQ==
-  dependencies:
-    framesync "^4.0.0"
-    hey-listen "^1.0.4"
-    style-value-types "^3.0.6"
-    tslib "^1.9.1"
-
-stylefire@^2.3.7:
+stylefire@^2.3.4, stylefire@^2.3.7:
   version "2.3.7"
   resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.3.7.tgz#285b86a48f6c25bbdcccb5dafa26b9f578235bb5"
   integrity sha512-0JSN+tIZDYda3RYEFK5j8GZjeVIHggyvOCySM0LmOLx/1QUVixMEIM2SyXohj6RgyNEiIxCaVHGaComq/k0KBw==

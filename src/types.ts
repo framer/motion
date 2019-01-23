@@ -22,6 +22,7 @@ export type Easing =
     | EasingFunction
 
 export type TransitionOrchestration = {
+    delay?: number
     beforeChildren?: boolean
     afterChildren?: boolean
     delayChildren?: number
@@ -29,15 +30,7 @@ export type TransitionOrchestration = {
     staggerDirection?: 1 | -1
 }
 
-export type ValueTransition = {
-    type?: false
-    delay?: number
-    from?: number | string
-    to?: number | string
-    velocity?: number
-}
-
-export type Tween = ValueTransition & {
+export type Tween = {
     type?: "tween"
     duration?: number
     ease?: Easing
@@ -45,26 +38,52 @@ export type Tween = ValueTransition & {
     loop?: number
     flip?: number
     yoyo?: number
+    from?: number | string
+    to?: number | string
+    velocity?: number
+    delay?: number
 }
 
-export type Spring = ValueTransition & {
+export type Spring = {
     type: "spring"
     stiffness?: number
     damping?: number
     mass?: number
     restSpeed?: number
     restDelta?: number
+    from?: number | string
+    to?: number | string
+    velocity?: number
+    delay?: number
 }
 
-export type Decay = ValueTransition & {
+export type Decay = {
     type: "decay"
     modifyTarget?: (v: number) => number
     power?: number
     timeConstant?: number
     restDelta?: number
+    from?: number | string
+    velocity?: number
+    delay?: number
 }
 
-export type Keyframes = ValueTransition & {
+export type Inertia = {
+    type: "inertia"
+    modifyTarget?: (v: number) => number
+    bounceStiffness?: number
+    bounceDamping?: number
+    power?: number
+    timeConstant?: number
+    restDelta?: number
+    min?: number
+    max?: number
+    from?: number | string
+    velocity?: number
+    delay?: number
+}
+
+export type Keyframes = {
     type: "keyframes"
     values: number[] | string[]
     easings?: Easing[]
@@ -74,22 +93,39 @@ export type Keyframes = ValueTransition & {
     loop?: number
     flip?: number
     yoyo?: number
+    from?: number | string
+    to?: number | string
+    velocity?: number
+    delay?: number
 }
 
-export type Physics = ValueTransition & {
+export type Physics = {
     type: "physics"
     acceleration?: number
     friction?: number
     restSpeed?: number | false
+    from?: number | string
+    velocity?: number
+    delay?: number
 }
 
-export type Just = ValueTransition & {
+export type Just = {
     type: "just"
+    from?: number | string
+    delay?: number
+    velocity?: number
 }
 
-export type PopmotionTransitionProps = Tween | Spring | Decay | Keyframes | Physics | Just
+export type None = {
+    type: false
+    from?: number | string
+    delay?: number
+    velocity?: number
+}
 
-export type TransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | ValueTransition
+export type PopmotionTransitionProps = Tween | Spring | Decay | Keyframes | Physics | Inertia | Just
+
+export type TransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | Inertia | Just | None
 
 export type TransitionMap = TransitionOrchestration & { [key: string]: TransitionDefinition }
 

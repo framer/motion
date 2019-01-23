@@ -5,6 +5,8 @@ import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { MotionContext } from "../motion/utils/MotionContext"
 import { Point } from "../events"
 import { MotionValue } from "../value"
+import { mix } from "@popmotion/popcorn"
+import { AnimationControls } from "motion"
 
 type DragDirection = "x" | "y"
 
@@ -14,6 +16,8 @@ export type Constraints = {
     top?: number
     bottom?: number
 }
+
+export type Overdrag = boolean | number
 
 export interface DraggableProps {
     /**
@@ -40,36 +44,13 @@ export interface DraggableProps {
      * @default false
      */
     dragConstraints?: Constraints
-}
+    /**
+     * Allow "overdragging" beyond the drag constraints
+     * @default false
+     */
+    overdrag?: Overdrag
 
-const draggableDefaults = (props: DraggableProps): DraggableProps => {
-    const defaultValues = {
-        dragEnabled: false,
-        dragLocksDirection: false,
-        dragPropagation: false,
-    }
-    const result = defaultValues
-    Object.assign(result, props)
-    if (props.dragEnabled === undefined) {
-        if (props.dragLocksDirection || props.dragPropagation) {
-            result.dragEnabled = true
-        }
-    }
-    return result
-}
-
-function defaults<Props>(
-    props: Props,
-    defaultProps: Required<Props> | ((props: Props) => Required<Props>)
-): Required<Props> {
-    let result: Required<Props>
-    if (typeof defaultProps === "function") {
-        result = defaultProps(props)
-    } else {
-        result = defaultProps
-        Object.assign(result, props)
-    }
-    return result
+    dragMomentum?: boolean
 }
 
 function shouldDrag(
@@ -91,8 +72,18 @@ const getConstraints = (axis: "x" | "y", { top, right, bottom, left }: Constrain
     }
 }
 
-export function useDraggable(props: DraggableProps, ref: RefObject<Element | null>, values: MotionValuesMap) {
-    const { dragEnabled, dragPropagation, dragLocksDirection, dragConstraints } = defaults(props, draggableDefaults)
+const applyOverdrag = (origin: number, current: number, overdrag: Overdrag) => {
+    const dragFactor = typeof overdrag === "number" ? overdrag : 0.5
+    return mix(origin, current, dragFactor)
+}
+
+export function useDraggable(
+    props: DraggableProps,
+    ref: RefObject<Element | null>,
+    values: MotionValuesMap,
+    controls: AnimationControls
+) {
+    const { dragEnabled = false, dragPropagation, dragLocksDirection, dragConstraints, overdrag, dragMomentum } = props
     const point: Partial<{ x: MotionValue<number>; y: MotionValue<number> }> = {}
     const origin = { x: 0, y: 0 }
     let currentDirection: null | DragDirection = null
@@ -113,9 +104,9 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
             const { min, max } = getConstraints(axis, dragConstraints)
 
             if (min !== undefined && current < min) {
-                current = Math.max(min, current)
+                current = overdrag ? applyOverdrag(min, current, overdrag) : Math.max(min, current)
             } else if (max !== undefined && current > max) {
-                current = Math.min(max, current)
+                current = overdrag ? applyOverdrag(max, current, overdrag) : Math.min(max, current)
             }
         }
 
@@ -128,8 +119,14 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
 
     const onPanStart = useMemo(
         () => () => {
-            if (point.x) origin.x = point.x.get()
-            if (point.y) origin.y = point.y.get()
+            if (point.x) {
+                origin.x = point.x.get()
+                point.x.stop()
+            }
+            if (point.y) {
+                origin.y = point.y.get()
+                point.y.stop()
+            }
 
             if (!dragPropagation) {
                 openGlobalLock = getGlobalLock(dragEnabled)
@@ -165,13 +162,32 @@ export function useDraggable(props: DraggableProps, ref: RefObject<Element | nul
         [openGlobalLock, dragEnabled, point]
     )
     const onPanEnd = useMemo(
-        () =>
-            function() {
-                if (!dragPropagation && openGlobalLock) {
-                    openGlobalLock()
+        () => (_event: MouseEvent | TouchEvent, { velocity }: PanInfo) => {
+            if (!dragPropagation && openGlobalLock) {
+                openGlobalLock()
+            }
+
+            if (dragMomentum) {
+                const startMomentum = (axis: "x" | "y") => {
+                    if (!shouldDrag(axis, dragEnabled, currentDirection)) return
+                    const transition = dragConstraints ? getConstraints(axis, dragConstraints) : {}
+
+                    controls.start({
+                        [axis]: 0,
+                        transition: {
+                            type: "inertia",
+                            velocity: velocity[axis],
+                            ...transition,
+                        },
+                    })
                 }
-                motionContext.dragging = false
-            },
+
+                startMomentum("x")
+                startMomentum("y")
+            }
+
+            motionContext.dragging = false
+        },
         [openGlobalLock, motionContext, dragEnabled]
     )
     let handlers: PanHandlers = {}

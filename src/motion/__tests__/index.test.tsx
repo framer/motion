@@ -143,7 +143,7 @@ describe("animate prop as object", () => {
             const { rerender } = render(
                 <motion.div
                     animate={{ x: 20 }}
-                    transition={{ x: { to: 50 } }}
+                    transition={{ x: { type: "tween", to: 50 } }}
                     style={{ x }}
                     onAnimationComplete={onComplete}
                 />

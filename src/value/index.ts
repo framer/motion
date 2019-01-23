@@ -110,9 +110,12 @@ export class MotionValue<V = any> {
 
         // Update timestamp
         const { delta, timestamp } = getFrameData()
-        this.timeDelta = delta
-        this.lastUpdated = timestamp
-        sync.postRender(this.scheduleVelocityCheck)
+
+        if (this.lastUpdated !== timestamp) {
+            this.timeDelta = delta
+            this.lastUpdated = timestamp
+            sync.postRender(this.scheduleVelocityCheck)
+        }
     }
 
     notifySubscriber = (subscriber: Subscriber<V>) => {
@@ -137,7 +140,7 @@ export class MotionValue<V = any> {
         // This could be isFloat(this.prev) && isFloat(this.current), but that would be wastefull
         return this.canTrackVelocity
             ? // These casts could be avoided if parseFloat would be typed better
-              velocityPerSecond(parseFloat(this.prev as any) - parseFloat(this.current as any), this.timeDelta)
+              velocityPerSecond(parseFloat(this.current as any) - parseFloat(this.prev as any), this.timeDelta)
             : 0
     }
 
