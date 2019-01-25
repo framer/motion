@@ -4,9 +4,9 @@ import { getGesturePriority } from "./utils/gesture-priority"
 import { TargetAndTransition } from "../types"
 
 export type HoverProps = {
-    hoverActive: TargetAndTransition
-    onMouseEnter: (e: SyntheticEvent) => void
-    onMouseLeave: (e: SyntheticEvent) => void
+    hoverActive?: TargetAndTransition
+    onMouseEnter?: (e: SyntheticEvent) => void
+    onMouseLeave?: (e: SyntheticEvent) => void
 }
 
 const hoverPriority = getGesturePriority("hover")

@@ -30,13 +30,17 @@ describe("motion component rendering and styles", () => {
     })
 
     test("renders custom component", async () => {
-        const Component = React.forwardRef((_props, ref: React.RefObject<HTMLButtonElement>) => (
-            <button type="submit" disabled ref={ref} />
-        ))
+        const Component = React.forwardRef(
+            (_props, ref: React.RefObject<HTMLButtonElement>) => (
+                <button type="submit" disabled ref={ref} />
+            )
+        )
         const MotionComponent = motion.custom(Component)
 
         const promise = new Promise<Element>(resolve => {
-            const { rerender } = render(<MotionComponent ref={ref => resolve(ref as Element)} />)
+            const { rerender } = render(
+                <MotionComponent ref={ref => resolve(ref as Element)} />
+            )
             rerender(<Component />)
         })
 
@@ -60,21 +64,33 @@ describe("motion component rendering and styles", () => {
     })
 
     test("generates style attribute if passed a special transform style attr", () => {
-        const { container } = render(<motion.div style={{ x: 10, background: "#fff" }} />)
-        expect(container.firstChild).toHaveStyle("transform: translateX(10px) translateZ(0); background: #fff")
+        const { container } = render(
+            <motion.div style={{ x: 10, background: "#fff" }} />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(10px) translateZ(0); background: #fff"
+        )
     })
 
     test("generates style attribute if passed initial", () => {
-        const { container } = render(<motion.div initial={{ x: 10, background: "#fff" }} />)
-        expect(container.firstChild).toHaveStyle("transform: translateX(10px) translateZ(0); background: #fff")
+        const { container } = render(
+            <motion.div initial={{ x: 10, background: "#fff" }} />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(10px) translateZ(0); background: #fff"
+        )
     })
 
     test("generates style attribute if passed initial as variant label", () => {
         const variants = {
             foo: { x: 10, background: "#fff" },
         }
-        const { container } = render(<motion.div initial="foo" variants={variants} />)
-        expect(container.firstChild).toHaveStyle("transform: translateX(10px) translateZ(0); background: #fff")
+        const { container } = render(
+            <motion.div initial="foo" variants={variants} />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(10px) translateZ(0); background: #fff"
+        )
     })
 
     test("generates style attribute if passed initial as variant label is function", () => {
@@ -92,7 +108,9 @@ describe("motion component rendering and styles", () => {
             </motion.div>
         )
         expect(getByTestId("a")).toHaveStyle("transform: none")
-        expect(getByTestId("b")).toHaveStyle("transform: translateX(10px) translateZ(0)")
+        expect(getByTestId("b")).toHaveStyle(
+            "transform: translateX(10px) translateZ(0)"
+        )
     })
 
     test("generates style attribute for children if passed initial as variant label", () => {
@@ -117,7 +135,9 @@ describe("motion component rendering and styles", () => {
         `
 
         const MotionBox = motion.custom(Box)
-        const { container } = render(<MotionBox style={{ backgroundColor: "#f00" }} />)
+        const { container } = render(
+            <MotionBox style={{ backgroundColor: "#f00" }} />
+        )
         expect(container.firstChild).toHaveStyle("background-color: #f00")
     })
 })
@@ -128,7 +148,11 @@ describe("animate prop as object", () => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const { rerender } = render(
-                <motion.div animate={{ x: 20 }} style={{ x }} onAnimationComplete={onComplete} />
+                <motion.div
+                    animate={{ x: 20 }}
+                    style={{ x }}
+                    onAnimationComplete={onComplete}
+                />
             )
             rerender(<motion.div animate={{ x: 20 }} style={{ x }} />)
         })
@@ -170,10 +194,20 @@ describe("animate prop as variant", () => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const { rerender } = render(
-                <motion.div animate="visible" variants={variants} style={{ x }} onAnimationComplete={onComplete} />
+                <motion.div
+                    animate="visible"
+                    variants={variants}
+                    style={{ x }}
+                    onAnimationComplete={onComplete}
+                />
             )
             rerender(
-                <motion.div animate="visible" variants={variants} style={{ x }} onAnimationComplete={onComplete} />
+                <motion.div
+                    animate="visible"
+                    variants={variants}
+                    style={{ x }}
+                    onAnimationComplete={onComplete}
+                />
             )
         })
 
@@ -185,7 +219,11 @@ describe("animate prop as variant", () => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const Component = () => (
-                <motion.div animate="visible" variants={variants} onAnimationComplete={onComplete}>
+                <motion.div
+                    animate="visible"
+                    variants={variants}
+                    onAnimationComplete={onComplete}
+                >
                     <motion.div variants={childVariants} style={{ x }} />
                 </motion.div>
             )
@@ -205,7 +243,9 @@ describe("animate prop as variant", () => {
             },
         }
 
-        const { container } = render(<motion.div variants={variants} initial="visible" />)
+        const { container } = render(
+            <motion.div variants={variants} initial="visible" />
+        )
         expect(container.firstChild).toHaveStyle("display: none")
     })
 
@@ -265,3 +305,10 @@ describe("animate prop as variant", () => {
         await expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
     })
 })
+
+/**
+ * TODO:
+ *
+ * xActive
+ * xActive as variant with children
+ */
