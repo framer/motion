@@ -123,13 +123,32 @@ export type None = {
     velocity?: number
 }
 
-export type PopmotionTransitionProps = Tween | Spring | Decay | Keyframes | Physics | Inertia | Just
+export type PopmotionTransitionProps =
+    | Tween
+    | Spring
+    | Decay
+    | Keyframes
+    | Physics
+    | Inertia
+    | Just
 
-export type TransitionDefinition = Tween | Spring | Decay | Keyframes | Physics | Inertia | Just | None
+export type TransitionDefinition =
+    | Tween
+    | Spring
+    | Decay
+    | Keyframes
+    | Physics
+    | Inertia
+    | Just
+    | None
 
-export type TransitionMap = TransitionOrchestration & { [key: string]: TransitionDefinition }
+export type TransitionMap = TransitionOrchestration & {
+    [key: string]: TransitionDefinition
+}
 
-export type Transition = (TransitionOrchestration & TransitionDefinition) | (TransitionOrchestration & TransitionMap)
+export type Transition =
+    | (TransitionOrchestration & TransitionDefinition)
+    | (TransitionOrchestration & TransitionMap)
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type CSSPropertiesWithoutTransition = Omit<CSSProperties, "transition">
@@ -161,7 +180,11 @@ export type TargetAndTransition = Target & {
     transitionEnd?: Target
 }
 
-export type TargetResolver = (props: any) => TargetAndTransition
+export type TargetResolver = (
+    props: any,
+    current: Target,
+    velocity: Target
+) => TargetAndTransition
 
 export type Variant = TargetAndTransition | TargetResolver
 

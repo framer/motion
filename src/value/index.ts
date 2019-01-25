@@ -1,5 +1,10 @@
 import sync, { getFrameData, FrameData } from "framesync"
-import { chain, delay as delayAction, Action, ColdSubscription } from "popmotion"
+import {
+    chain,
+    delay as delayAction,
+    Action,
+    ColdSubscription,
+} from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 import { PopmotionTransitionProps } from "../types"
 
@@ -76,7 +81,10 @@ export class MotionValue<V = any> {
         this.children.delete(child)
     }
 
-    subscribeTo(subscriptions: Set<Subscriber<V>>, subscription: Subscriber<V>) {
+    subscribeTo(
+        subscriptions: Set<Subscriber<V>>,
+        subscription: Subscriber<V>
+    ) {
         const updateSubscriber = () => subscription(this.current)
         subscriptions.add(updateSubscriber)
         return () => subscriptions.delete(updateSubscriber)
@@ -140,13 +148,25 @@ export class MotionValue<V = any> {
         // This could be isFloat(this.prev) && isFloat(this.current), but that would be wastefull
         return this.canTrackVelocity
             ? // These casts could be avoided if parseFloat would be typed better
-              velocityPerSecond(parseFloat(this.current as any) - parseFloat(this.prev as any), this.timeDelta)
+              velocityPerSecond(
+                  parseFloat(this.current as any) -
+                      parseFloat(this.prev as any),
+                  this.timeDelta
+              )
             : 0
     }
 
-    control(controller: ActionFactory, { delay, ...config }: PopmotionTransitionProps, transformer?: Transformer<V>) {
+    control(
+        controller: ActionFactory,
+        { delay, ...config }: PopmotionTransitionProps,
+        transformer?: Transformer<V>
+    ) {
         this.stop()
-
+        console.log({
+            from: this.get() as any,
+            velocity: this.getVelocity(),
+            ...config,
+        })
         let initialisedController = controller({
             from: this.get() as any,
             velocity: this.getVelocity(),
@@ -158,7 +178,10 @@ export class MotionValue<V = any> {
         }
 
         if (delay) {
-            initialisedController = chain(delayAction(delay), initialisedController)
+            initialisedController = chain(
+                delayAction(delay),
+                initialisedController
+            )
         }
 
         return new Promise(complete => {
@@ -181,4 +204,5 @@ export class MotionValue<V = any> {
     }
 }
 
-export const motionValue = <V>(init: V, opts?: Config<V>) => new MotionValue<V>(init, opts)
+export const motionValue = <V>(init: V, opts?: Config<V>) =>
+    new MotionValue<V>(init, opts)

@@ -12,6 +12,7 @@ import {
     CSSProperties,
     EventHandler,
     SyntheticEvent,
+    useMemo,
 } from "react"
 import { buildStyleAttr } from "./style-attr"
 import { MotionValuesMap } from "./use-motion-values"
@@ -19,6 +20,7 @@ import { AnimatePropType } from "../types"
 import { Target } from "../../types"
 import { AnimationControls } from "./use-animation-controls"
 import isPropValid from "@emotion/is-prop-valid"
+import { svgElements } from "./supported-elements"
 
 // TODO: We can tidy this up. There's probably a neater or more consistent way to structure this.
 
@@ -167,13 +169,15 @@ export const RenderComponent = <P>({
     handlers,
     values,
 }: RenderProps<P>) => {
-    const forwardProps = typeof base === "string" ? validProps(props) : props
+    const isDOM = typeof base === "string"
+    const isSVG = isDOM && svgElements.indexOf(base as any) !== -1
+    const forwardProps = isDOM ? validProps(props) : props
 
     return createElement<any>(base, {
         ...forwardProps,
         ...handlers,
         ref: innerRef,
-        style: buildStyleAttr(values, style),
+        style: isSVG ? style : buildStyleAttr(values, style),
     })
 }
 

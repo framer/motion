@@ -9,8 +9,12 @@ const style = {
 }
 
 export const App = () => {
-    const [x, setX] = useState(0)
-    const transition = {}
-
-    return <motion.div animate={{ x }} transition={transition} style={style} onTap={() => setX(x + 200)} />
+    return (
+        <motion.div
+            animate={{ background: "#000" }}
+            initial={{ background: "#fff" }}
+            transition={{ duration: 3000 }}
+            style={style}
+        />
+    )
 }

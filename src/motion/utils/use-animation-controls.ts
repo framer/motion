@@ -23,31 +23,23 @@ type AnimationOptions = {
     priority?: number
 }
 
+const getCurrent = (values: MotionValuesMap) => {
+    const current = {}
+    values.forEach((value, key) => (current[key] = value.get()))
+    return current
+}
+
+const getVelocity = (values: MotionValuesMap) => {
+    const velocity = {}
+    values.forEach((value, key) => (velocity[key] = value.getVelocity()))
+    return velocity
+}
+
 const isAnimatable = (value: string | number) =>
     typeof value === "number" || complex.test(value)
 const isTargetResolver = (p: any): p is TargetResolver =>
     typeof p === "function"
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
-
-const resolveVariant = (
-    variant?: Variant,
-    props?: any
-): { target?: Target; transition?: Transition; transitionEnd?: Target } => {
-    if (!variant) {
-        return {
-            target: undefined,
-            transition: undefined,
-            transitionEnd: undefined,
-        }
-    }
-
-    if (isTargetResolver(variant)) {
-        variant = variant(props)
-    }
-
-    const { transition, transitionEnd, ...target } = variant
-    return { transition, transitionEnd, target }
-}
 
 export class AnimationControls<P = {}> {
     private props: P
@@ -108,6 +100,30 @@ export class AnimationControls<P = {}> {
         })
     }
 
+    resolveVariant(
+        variant?: Variant
+    ): { target?: Target; transition?: Transition; transitionEnd?: Target } {
+        if (!variant) {
+            return {
+                target: undefined,
+                transition: undefined,
+                transitionEnd: undefined,
+            }
+        }
+
+        if (isTargetResolver(variant)) {
+            // resolve current and velocity
+            variant = variant(
+                this.props,
+                getCurrent(this.values),
+                getVelocity(this.values)
+            )
+        }
+
+        const { transition, transitionEnd, ...target } = variant
+        return { transition, transitionEnd, target }
+    }
+
     getHighestPriority() {
         let highest = 0
         const numOverrides = this.overrides.length
@@ -156,9 +172,8 @@ export class AnimationControls<P = {}> {
         const reversedList = [...variantLabelList].reverse()
 
         reversedList.forEach(key => {
-            const { target, transitionEnd } = resolveVariant(
-                this.variants[key],
-                this.props
+            const { target, transitionEnd } = this.resolveVariant(
+                this.variants[key]
             )
 
             if (transitionEnd) {
@@ -214,7 +229,7 @@ export class AnimationControls<P = {}> {
         animationDefinition: Variant,
         { delay = 0, priority = 0 }: AnimationOptions = {}
     ) {
-        let { target, transition, transitionEnd } = resolveVariant(
+        let { target, transition, transitionEnd } = this.resolveVariant(
             animationDefinition
         )
 
@@ -322,7 +337,7 @@ export class AnimationControls<P = {}> {
             : () => Promise.resolve()
 
         if (variant && this.children) {
-            const { transition } = resolveVariant(variant)
+            const { transition } = this.resolveVariant(variant)
             if (transition) {
                 beforeChildren = transition.beforeChildren || beforeChildren
                 afterChildren = transition.afterChildren || afterChildren

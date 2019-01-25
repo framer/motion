@@ -9,6 +9,12 @@ const styleA = {
 }
 export const App = () => {
     return (
-        <motion.div dragEnabled="x" dragConstraints={{ left: -500, right: 500 }} overdrag dragMomentum style={styleA} />
+        <motion.div
+            dragEnabled="x"
+            dragConstraints={{ left: -500, right: 500 }}
+            overdrag
+            dragMomentum
+            style={styleA}
+        />
     )
 }
