@@ -44,12 +44,17 @@ export interface DraggableProps {
      * @default false
      */
     dragConstraints?: Constraints
+
     /**
      * Allow "overdragging" beyond the drag constraints
      * @default false
      */
     overdrag?: Overdrag
 
+    /**
+     * Allow smooth scrolling
+     * @default false
+     */
     dragMomentum?: boolean
 }
 
@@ -64,7 +69,10 @@ function shouldDrag(
     )
 }
 
-const getConstraints = (axis: "x" | "y", { top, right, bottom, left }: Constraints) => {
+const getConstraints = (
+    axis: "x" | "y",
+    { top, right, bottom, left }: Constraints
+) => {
     if (axis === "x") {
         return { min: left, max: right }
     } else {
@@ -83,8 +91,18 @@ export function useDraggable(
     values: MotionValuesMap,
     controls: AnimationControls
 ) {
-    const { dragEnabled = false, dragPropagation, dragLocksDirection, dragConstraints, overdrag, dragMomentum } = props
-    const point: Partial<{ x: MotionValue<number>; y: MotionValue<number> }> = {}
+    const {
+        dragEnabled = false,
+        dragPropagation,
+        dragLocksDirection,
+        dragConstraints,
+        overdrag,
+        dragMomentum,
+    } = props
+    const point: Partial<{
+        x: MotionValue<number>
+        y: MotionValue<number>
+    }> = {}
     const origin = { x: 0, y: 0 }
     let currentDirection: null | DragDirection = null
     if (shouldDrag("x", dragEnabled, currentDirection)) {
@@ -104,9 +122,13 @@ export function useDraggable(
             const { min, max } = getConstraints(axis, dragConstraints)
 
             if (min !== undefined && current < min) {
-                current = overdrag ? applyOverdrag(min, current, overdrag) : Math.max(min, current)
+                current = overdrag
+                    ? applyOverdrag(min, current, overdrag)
+                    : Math.max(min, current)
             } else if (max !== undefined && current > max) {
-                current = overdrag ? applyOverdrag(max, current, overdrag) : Math.min(max, current)
+                current = overdrag
+                    ? applyOverdrag(max, current, overdrag)
+                    : Math.min(max, current)
             }
         }
 
@@ -142,7 +164,10 @@ export function useDraggable(
 
     const onPan: PanHandler = useMemo(
         () => {
-            const updateDrag = (_event: MouseEvent | TouchEvent, { offset }: PanInfo) => {
+            const updateDrag = (
+                _event: MouseEvent | TouchEvent,
+                { offset }: PanInfo
+            ) => {
                 if (!dragPropagation && !openGlobalLock) {
                     return
                 }
@@ -170,7 +195,9 @@ export function useDraggable(
             if (dragMomentum) {
                 const startMomentum = (axis: "x" | "y") => {
                     if (!shouldDrag(axis, dragEnabled, currentDirection)) return
-                    const transition = dragConstraints ? getConstraints(axis, dragConstraints) : {}
+                    const transition = dragConstraints
+                        ? getConstraints(axis, dragConstraints)
+                        : {}
 
                     controls.start({
                         [axis]: 0,

@@ -10,18 +10,23 @@ export class AnimationManager {
 
     setVariants(variants: Variants) {
         this.variants = variants
-        this.componentControls.forEach(controls => controls.setVariants(variants))
+        this.componentControls.forEach(controls =>
+            controls.setVariants(variants)
+        )
     }
 
     setDefaultTransition(transition: Transition) {
         this.defaultTransition = transition
-        this.componentControls.forEach(controls => controls.setDefaultTransition(transition))
+        this.componentControls.forEach(controls =>
+            controls.setDefaultTransition(transition)
+        )
     }
 
     subscribe(controls: AnimationControls) {
         this.componentControls.add(controls)
         if (this.variants) controls.setVariants(this.variants)
-        if (this.defaultTransition) controls.setDefaultTransition(this.defaultTransition)
+        if (this.defaultTransition)
+            controls.setDefaultTransition(this.defaultTransition)
 
         return () => this.componentControls.delete(controls)
     }

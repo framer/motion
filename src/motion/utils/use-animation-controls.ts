@@ -17,8 +17,16 @@ import { unitConversion } from "../../dom/unit-type-conversion"
 import styler from "stylefire"
 import { MotionProps, VariantLabels } from "motion/types"
 
-const isAnimatable = (value: string | number) => typeof value === "number" || complex.test(value)
-const isTargetResolver = (p: any): p is TargetResolver => typeof p === "function"
+type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
+type AnimationOptions = {
+    delay?: number
+    priority?: number
+}
+
+const isAnimatable = (value: string | number) =>
+    typeof value === "number" || complex.test(value)
+const isTargetResolver = (p: any): p is TargetResolver =>
+    typeof p === "function"
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 
 const resolveVariant = (
@@ -26,7 +34,11 @@ const resolveVariant = (
     props?: any
 ): { target?: Target; transition?: Transition; transitionEnd?: Target } => {
     if (!variant) {
-        return { target: undefined, transition: undefined, transitionEnd: undefined }
+        return {
+            target: undefined,
+            transition: undefined,
+            transitionEnd: undefined,
+        }
     }
 
     if (isTargetResolver(variant)) {
@@ -37,38 +49,13 @@ const resolveVariant = (
     return { transition, transitionEnd, target }
 }
 
-const setValues = (target: Target, values: MotionValuesMap, isActive: Set<string> = new Set()) => {
-    return Object.keys(target).forEach(key => {
-        if (isActive.has(key)) return
-
-        isActive.add(key)
-
-        if (values.has(key)) {
-            const value = values.get(key)
-            value && value.set(target[key])
-        } else {
-            values.set(key, motionValue(target[key]))
-        }
-    })
-}
-
-const checkForNewValues = (target: Target, values: MotionValuesMap, ref: RefObject<Element>) => {
-    const newValueKeys = Object.keys(target).filter(key => !values.has(key))
-
-    if (!newValueKeys.length) return
-
-    const domStyler = styler(ref.current as Element)
-    newValueKeys.forEach(key => {
-        const domValue = domStyler.get(key)
-        values.set(key, motionValue(domValue))
-    })
-}
-
 export class AnimationControls<P = {}> {
     private props: P
     private values: MotionValuesMap
     private ref: RefObject<Element>
     private variants: Variants = {}
+    private baseTarget: Target = {}
+    private overrides: Array<AnimationDefinition | undefined> = []
     private defaultTransition?: Transition
     private children?: Set<AnimationControls>
     private isAnimating: Set<string> = new Set()
@@ -90,13 +77,77 @@ export class AnimationControls<P = {}> {
         if (transition) this.defaultTransition = transition
     }
 
-    set(definition: VariantLabels | TargetAndTransition) {
+    setValues(target: Target, isActive: Set<string> = new Set()) {
+        return Object.keys(target).forEach(key => {
+            if (isActive.has(key)) return
+
+            isActive.add(key)
+
+            if (this.values.has(key)) {
+                const value = this.values.get(key)
+                value && value.set(target[key])
+            } else {
+                this.values.set(key, motionValue(target[key]))
+            }
+
+            this.baseTarget[key] = target[key]
+        })
+    }
+
+    checkForNewValues(target: Target) {
+        const newValueKeys = Object.keys(target).filter(
+            key => !this.values.has(key)
+        )
+        if (!newValueKeys.length) return
+
+        const domStyler = styler(this.ref.current as Element)
+        newValueKeys.forEach(key => {
+            const domValue = domStyler.get(key)
+            this.values.set(key, motionValue(domValue))
+            this.baseTarget[key] = domValue
+        })
+    }
+
+    getHighestPriority() {
+        let highest = 0
+        const numOverrides = this.overrides.length
+
+        if (!numOverrides) return highest
+
+        for (let i = 0; i < numOverrides; i++) {
+            if (this.overrides[i] !== undefined) {
+                highest = i
+            }
+        }
+
+        return highest
+    }
+
+    clearOverride(overrideIndex: number) {
+        const override = this.overrides[overrideIndex]
+        if (!override) return
+
+        this.overrides[overrideIndex] = undefined
+        const highest = this.getHighestPriority()
+
+        this.resetIsAnimating()
+        if (highest > overrideIndex) {
+            return
+        } else {
+            const highestOverride = this.overrides[highest]
+            highestOverride &&
+                this.start(highestOverride, { priority: highest })
+        }
+        this.animate(this.baseTarget)
+    }
+
+    apply(definition: VariantLabels | TargetAndTransition) {
         if (Array.isArray(definition)) {
             return this.applyVariantLabels(definition)
         } else if (typeof definition === "string") {
             return this.applyVariantLabels([definition])
         } else {
-            setValues(definition, this.values)
+            this.setValues(definition)
         }
     }
 
@@ -105,38 +156,78 @@ export class AnimationControls<P = {}> {
         const reversedList = [...variantLabelList].reverse()
 
         reversedList.forEach(key => {
-            const { target, transitionEnd } = resolveVariant(this.variants[key], this.props)
+            const { target, transitionEnd } = resolveVariant(
+                this.variants[key],
+                this.props
+            )
 
             if (transitionEnd) {
-                setValues(transitionEnd, this.values, isSetting)
+                this.setValues(transitionEnd, isSetting)
             }
 
             if (target) {
-                setValues(target, this.values, isSetting)
+                this.setValues(target, isSetting)
             }
         })
     }
 
-    start(definition: VariantLabels | TargetAndTransition | TargetResolver, _transition?: Transition): Promise<any> {
+    start(
+        definition: AnimationDefinition,
+        opts: AnimationOptions = {}
+    ): Promise<any> {
+        this.setPriorityAnimation(definition, opts.priority || 0)
+        // Check if this is a priority gesture animation
+        if (
+            opts.priority !== undefined &&
+            !this.isHighestPriority(opts.priority)
+        ) {
+            // TODO: It might be highest priority for children
+            return Promise.resolve()
+        }
+
         this.resetIsAnimating()
 
         if (isVariantLabels(definition)) {
-            return this.animateVariantLabels(definition)
+            return this.animateVariantLabels(definition, opts)
         } else if (typeof definition === "string") {
-            return this.animateVariant(definition)
+            return this.animateVariant(definition, opts)
         } else {
-            return this.animate(definition)
+            return this.animate(definition, opts)
         }
     }
 
-    private animate(animationDefinition: Variant, delay: number = 0) {
-        let { target, transition, transitionEnd } = resolveVariant(animationDefinition)
+    setPriorityAnimation(definition: AnimationDefinition, priority: number) {
+        this.overrides[priority] = definition
+    }
+
+    isHighestPriority(priority: number) {
+        const numOverrides = this.overrides.length
+        for (let i = priority + 1; i < numOverrides; i++) {
+            if (this.overrides[i] !== undefined) {
+                return false
+            }
+        }
+        return true
+    }
+
+    private animate(
+        animationDefinition: Variant,
+        { delay = 0, priority = 0 }: AnimationOptions = {}
+    ) {
+        let { target, transition, transitionEnd } = resolveVariant(
+            animationDefinition
+        )
 
         if (!target) return Promise.resolve()
 
-        checkForNewValues(target, this.values, this.ref)
+        this.checkForNewValues(target)
 
-        const converted = unitConversion(this.values, this.ref, target, transitionEnd)
+        const converted = unitConversion(
+            this.values,
+            this.ref,
+            target,
+            transitionEnd
+        )
         target = converted.target
         transitionEnd = converted.transitionEnd
 
@@ -153,12 +244,21 @@ export class AnimationControls<P = {}> {
 
                 const valueTarget = (target as Target)[key]
 
+                if (!priority) {
+                    this.baseTarget[key] = valueTarget
+                }
+
                 if (isAnimatable(valueTarget)) {
                     const [action, options] = getTransition(key, valueTarget, {
                         delay,
                         ...transition,
                     })
-                    acc.push(value.control(action as ActionFactory, options as PopmotionTransitionProps))
+                    acc.push(
+                        value.control(
+                            action as ActionFactory,
+                            options as PopmotionTransitionProps
+                        )
+                    )
                 } else {
                     value.set(valueTarget)
                 }
@@ -173,16 +273,24 @@ export class AnimationControls<P = {}> {
         return Promise.all(animations).then(() => {
             if (!transitionEnd) return
 
-            setValues(transitionEnd, this.values)
+            this.setValues(transitionEnd)
         })
     }
 
-    private animateVariantLabels(variantLabels: string[]) {
-        const animations = [...variantLabels].reverse().map(label => this.animateVariant(label))
+    private animateVariantLabels(
+        variantLabels: string[],
+        opts?: AnimationOptions
+    ) {
+        const animations = [...variantLabels]
+            .reverse()
+            .map(label => this.animateVariant(label, opts))
         return Promise.all(animations)
     }
 
-    private animateVariant(variantLabel: string, delay: number = 0): Promise<any> {
+    private animateVariant(
+        variantLabel: string,
+        opts?: AnimationOptions
+    ): Promise<any> {
         let beforeChildren = false
         let afterChildren = false
         let delayChildren = 0
@@ -190,9 +298,20 @@ export class AnimationControls<P = {}> {
         let staggerDirection = 1
 
         const variant = this.variants[variantLabel]
-        const getAnimations: () => Promise<any> = variant ? () => this.animate(variant, delay) : () => Promise.resolve()
+
+        const getAnimations: () => Promise<any> = variant
+            ? () => this.animate(variant, opts)
+            : () => Promise.resolve()
+
         const getChildrenAnimations: () => Promise<any> = this.children
-            ? () => this.animateChildren(variantLabel, delayChildren, staggerChildren, staggerDirection)
+            ? () => {
+                  return this.animateChildren(
+                      variantLabel,
+                      delayChildren,
+                      staggerChildren,
+                      staggerDirection
+                  )
+              }
             : () => Promise.resolve()
 
         if (variant && this.children) {
@@ -202,7 +321,8 @@ export class AnimationControls<P = {}> {
                 afterChildren = transition.afterChildren || afterChildren
                 delayChildren = transition.delayChildren || delayChildren
                 staggerChildren = transition.staggerChildren || staggerChildren
-                staggerDirection = transition.staggerDirection || staggerDirection
+                staggerDirection =
+                    transition.staggerDirection || staggerDirection
             }
         }
 
@@ -233,7 +353,9 @@ export class AnimationControls<P = {}> {
                 : (i: number) => maxStaggerDuration - i * staggerChildren
 
         Array.from(this.children).forEach((childControls, i) => {
-            const animation = childControls.animateVariant(variantLabel, delayChildren + generateStaggerDuration(i))
+            const animation = childControls.animateVariant(variantLabel, {
+                delay: delayChildren + generateStaggerDuration(i),
+            })
             animations.push(animation)
         })
 
@@ -242,6 +364,7 @@ export class AnimationControls<P = {}> {
 
     private resetIsAnimating() {
         this.isAnimating.clear()
+
         if (this.children) {
             this.children.forEach(child => child.resetIsAnimating())
         }
@@ -287,7 +410,10 @@ export const useAnimationControls = <P>(
         parentControls.addChild(controls)
     }
 
-    useEffect(() => () => parentControls && parentControls.removeChild(controls), [])
+    useEffect(
+        () => () => parentControls && parentControls.removeChild(controls),
+        []
+    )
 
     controls.setProps(props)
     controls.setVariants(variants)

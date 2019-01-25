@@ -9,18 +9,26 @@ type MotionContextProps = {
     dragging?: boolean
 }
 
-export const MotionContext = createContext<MotionContextProps>({ dragging: false })
+export const MotionContext = createContext<MotionContextProps>({
+    dragging: false,
+})
 
-export const useMotionContext = (controls: AnimationControls, initialProp?: VariantLabels | Target) => {
+export const useMotionContext = (
+    controls: AnimationControls,
+    initialProp?: VariantLabels | Target
+) => {
     const parentContext = useContext(MotionContext)
     const initial = initialProp || parentContext.initial
-    const context: MotionContextProps = useMemo(() => ({ controls, initial }), [])
+    const context: MotionContextProps = useMemo(
+        () => ({ controls, initial }),
+        []
+    )
 
     context.dragging = parentContext.dragging
 
     // Set initial state
     useMemo(() => {
-        initial && controls.set(initial)
+        initial && controls.apply(initial)
     }, [])
 
     return context

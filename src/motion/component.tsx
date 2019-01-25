@@ -16,38 +16,77 @@ import {
     getAnimateComponent,
     checkShouldInheritVariant,
 } from "./utils/functionality"
+import { useHover } from "../gestures/use-hover-gesture"
 
-export const createMotionComponent = <P extends {}>(Component: string | ComponentType<P>) => {
-    const MotionComponent = (props: P & MotionProps, externalRef?: Ref<Element>) => {
+export const createMotionComponent = <P extends {}>(
+    Component: string | ComponentType<P>
+) => {
+    const MotionComponent = (
+        props: P & MotionProps,
+        externalRef?: Ref<Element>
+    ) => {
         const ref = useExternalRef(externalRef)
         const values = useMotionValues(ref)
         const style = addMotionStyles(values, props.style)
         const animatePropType = getAnimatePropType(props)
-        const shouldInheritVariant = checkShouldInheritVariant(props, animatePropType)
-        const controls = useAnimationControls(values, props, ref, shouldInheritVariant)
+        const shouldInheritVariant = checkShouldInheritVariant(
+            props,
+            animatePropType
+        )
+        const controls = useAnimationControls(
+            values,
+            props,
+            ref,
+            shouldInheritVariant
+        )
         const context = useMotionContext(controls, props.initial)
 
         // Add functionality
         const Animate = getAnimateComponent(animatePropType)
 
         const handleAnimate = Animate && (
-            <Animate {...props} inherit={shouldInheritVariant} innerRef={ref} values={values} controls={controls} />
+            <Animate
+                {...props}
+                inherit={shouldInheritVariant}
+                innerRef={ref}
+                values={values}
+                controls={controls}
+            />
         )
 
         const handleGestures = isGesturesEnabled(props) && (
-            <Gestures {...props} values={values} controls={controls} innerRef={ref} />
+            <Gestures
+                {...props}
+                values={values}
+                controls={controls}
+                innerRef={ref}
+            />
         )
 
         const handleDrag = isDragEnabled(props) && (
-            <Draggable {...props} innerRef={ref} controls={controls} values={values} />
+            <Draggable
+                {...props}
+                innerRef={ref}
+                controls={controls}
+                values={values}
+            />
         )
+
+        const hoverHandlers = useHover(props, controls)
 
         // We use an intermediate component here rather than calling `createElement` directly
         // because we want to resolve the style from our motion values only once every
         // functional component has resolved. Resolving it here would do it before the functional components
         // themselves are executed.
         const handleComponent = (
-            <RenderComponent base={Component} props={props} innerRef={ref} style={style} values={values} />
+            <RenderComponent
+                base={Component}
+                props={props}
+                handlers={hoverHandlers}
+                innerRef={ref}
+                style={style}
+                values={values}
+            />
         )
 
         return (

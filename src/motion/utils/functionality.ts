@@ -5,7 +5,14 @@ import { useVariants } from "./use-variants"
 import { useGestures } from "../../gestures"
 import { useDraggable } from "../../behaviours"
 import { useAnimateValues } from "./use-animate-values"
-import { createElement, ComponentType, RefObject, CSSProperties } from "react"
+import {
+    createElement,
+    ComponentType,
+    RefObject,
+    CSSProperties,
+    EventHandler,
+    SyntheticEvent,
+} from "react"
 import { buildStyleAttr } from "./style-attr"
 import { MotionValuesMap } from "./use-motion-values"
 import { AnimatePropType } from "../types"
@@ -28,12 +35,30 @@ const makeHookComponent = (hook: Function) => (props: AnimateProps) => {
 
 export const AnimatePropComponents = {
     [AnimatePropType.Target]: makeHookComponent(
-        ({ animate, controls, values, transition, onAnimationComplete }: AnimateProps) => {
-            return useAnimateValues(animate as Target, controls, values, transition, onAnimationComplete)
+        ({
+            animate,
+            controls,
+            values,
+            transition,
+            onAnimationComplete,
+        }: AnimateProps) => {
+            return useAnimateValues(
+                animate as Target,
+                controls,
+                values,
+                transition,
+                onAnimationComplete
+            )
         }
     ),
     [AnimatePropType.VariantLabel]: makeHookComponent(
-        ({ animate, inherit = true, controls, onAnimationComplete, initial }: AnimateProps) => {
+        ({
+            animate,
+            inherit = true,
+            controls,
+            onAnimationComplete,
+            initial,
+        }: AnimateProps) => {
             return useVariants(
                 animate as VariantLabels,
                 inherit,
@@ -43,30 +68,44 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.AnimationSubscription]: makeHookComponent(({ animate, controls }: AnimateProps) => {
-        return useAnimationSubscription(animate as AnimationManager, controls)
-    }),
+    [AnimatePropType.AnimationSubscription]: makeHookComponent(
+        ({ animate, controls }: AnimateProps) => {
+            return useAnimationSubscription(
+                animate as AnimationManager,
+                controls
+            )
+        }
+    ),
 }
 
-const isVariantLabel = (prop?: any): prop is VariantLabels => Array.isArray(prop) || typeof prop === "string"
+const isVariantLabel = (prop?: any): prop is VariantLabels =>
+    Array.isArray(prop) || typeof prop === "string"
 
-const isAnimationSubscription = ({ animate }: AnimateProps) => animate instanceof AnimationManager
+const isAnimationSubscription = ({ animate }: AnimateProps) =>
+    animate instanceof AnimationManager
 
 const animatePropTypeTests = {
     [AnimatePropType.Target]: (props: AnimateProps) =>
-        props.animate !== undefined && !isVariantLabel(props.animate) && !isAnimationSubscription(props),
-    [AnimatePropType.VariantLabel]: ({ variants }: AnimateProps) => variants !== undefined,
+        props.animate !== undefined &&
+        !isVariantLabel(props.animate) &&
+        !isAnimationSubscription(props),
+    [AnimatePropType.VariantLabel]: ({ variants }: AnimateProps) =>
+        variants !== undefined,
     [AnimatePropType.AnimationSubscription]: isAnimationSubscription,
 }
 
-export const getAnimatePropType = (props: MotionProps): AnimatePropType | undefined => {
+export const getAnimatePropType = (
+    props: MotionProps
+): AnimatePropType | undefined => {
     for (const key in AnimatePropType) {
         if (animatePropTypeTests[key](props)) return key as AnimatePropType
     }
     return undefined
 }
 
-export const getAnimateComponent = (animatePropType?: string): ComponentType<AnimateProps> | undefined => {
+export const getAnimateComponent = (
+    animatePropType?: string
+): ComponentType<AnimateProps> | undefined => {
     return animatePropType ? AnimatePropComponents[animatePropType] : undefined
 }
 
@@ -78,21 +117,30 @@ const gestureProps = [
     "onTap",
     "onPressStart",
     "onPressEnd",
+    "hoverActive",
     "pressActive",
 ]
 
-export const isGesturesEnabled = (props: MotionProps) => gestureProps.some(key => props.hasOwnProperty(key))
+export const isGesturesEnabled = (props: MotionProps) =>
+    gestureProps.some(key => props.hasOwnProperty(key))
 export const isDragEnabled = (props: MotionProps) => !!props.dragEnabled
 
-export const Gestures = makeHookComponent(({ innerRef, ...props }: AnimateProps) => useGestures(props, innerRef))
-export const Draggable = makeHookComponent(({ innerRef, values, controls, ...props }: AnimateProps) =>
-    useDraggable(props, innerRef, values, controls)
+export const Gestures = makeHookComponent(
+    ({ innerRef, ...props }: AnimateProps) => useGestures(props, innerRef)
+)
+export const Draggable = makeHookComponent(
+    ({ innerRef, values, controls, ...props }: AnimateProps) =>
+        useDraggable(props, innerRef, values, controls)
 )
 
 type RenderProps<P> = {
     base: string | ComponentType<P>
-    props: { [key: string]: any }
+    props: P & MotionProps
     innerRef: RefObject<Element | null>
+    handlers?: {
+        onMouseEnter?: EventHandler<SyntheticEvent>
+        onMouseLeave?: EventHandler<SyntheticEvent>
+    }
     style: CSSProperties
     values: MotionValuesMap
 }
@@ -111,17 +159,28 @@ const validProps = (props: MotionProps) => {
     return valid
 }
 
-export const RenderComponent = <P>({ base, props, innerRef, style, values }: RenderProps<P>) => {
+export const RenderComponent = <P>({
+    base,
+    props,
+    innerRef,
+    style,
+    handlers,
+    values,
+}: RenderProps<P>) => {
     const forwardProps = typeof base === "string" ? validProps(props) : props
 
     return createElement<any>(base, {
         ...forwardProps,
+        ...handlers,
         ref: innerRef,
         style: buildStyleAttr(values, style),
     })
 }
 
-const bindParent = new Set([AnimatePropType.AnimationSubscription, AnimatePropType.VariantLabel])
+const bindParent = new Set([
+    AnimatePropType.AnimationSubscription,
+    AnimatePropType.VariantLabel,
+])
 export const checkShouldInheritVariant = (
     { animate, inherit = true }: MotionProps,
     animatePropType?: AnimatePropType

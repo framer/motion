@@ -5,9 +5,19 @@ import { MotionValue } from "value"
 import styler from "stylefire"
 import { getValueType } from "./value-types"
 
-const positionalKeys = new Set(["width", "height", "top", "left", "right", "bottom", "x", "y"])
+const positionalKeys = new Set([
+    "width",
+    "height",
+    "top",
+    "left",
+    "right",
+    "bottom",
+    "x",
+    "y",
+])
 const isPositionalKey = (key: string) => positionalKeys.has(key)
-const hasPositionalKey = (target: Target) => Object.keys(target).some(isPositionalKey)
+const hasPositionalKey = (target: Target) =>
+    Object.keys(target).some(isPositionalKey)
 
 const setAndResetVelocity = (value: MotionValue, to: string | number) => {
     // Looks odd but setting it twice doesn't render, it'll just
@@ -27,11 +37,18 @@ export enum BoundingBoxDimension {
     bottom = "bottom",
 }
 
-type GetActualMeasurementInPixels = (bbox: ClientRect | DOMRect, computedStyle: Partial<CSSStyleDeclaration>) => number
+type GetActualMeasurementInPixels = (
+    bbox: ClientRect | DOMRect,
+    computedStyle: Partial<CSSStyleDeclaration>
+) => number
 
-const getPosFromMatrix = (matrix: string, pos: number) => parseFloat(matrix.split(", ")[pos])
+const getPosFromMatrix = (matrix: string, pos: number) =>
+    parseFloat(matrix.split(", ")[pos])
 
-const getTranslateFromMatrix = (pos2: number, pos3: number): GetActualMeasurementInPixels => (_bbox, { transform }) => {
+const getTranslateFromMatrix = (
+    pos2: number,
+    pos3: number
+): GetActualMeasurementInPixels => (_bbox, { transform }) => {
     if (transform === "none" || !transform) return 0
 
     const matrix3d = transform.match(/^matrix3d\((.+)\)$/)
@@ -81,7 +98,10 @@ const convertChangedValueTypes = (
         // Restore styles to their **calculated computed style**, not their actual
         // originally set style. This allows us to animate between equivalent pixel units.
         const value = values.get(key) as MotionValue
-        setAndResetVelocity(value, positionalValues[key](originBbox, originComputedStyle))
+        setAndResetVelocity(
+            value,
+            positionalValues[key](originBbox, originComputedStyle)
+        )
         pose[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
 
@@ -110,7 +130,10 @@ const checkAndConvertChangedValueTypes = (
 
             if (fromType !== toType) {
                 acc.push(key)
-                transitionEnd[key] = transitionEnd[key] !== undefined ? transitionEnd[key] : target[key]
+                transitionEnd[key] =
+                    transitionEnd[key] !== undefined
+                        ? transitionEnd[key]
+                        : target[key]
                 setAndResetVelocity(value, to)
             }
 
@@ -120,7 +143,15 @@ const checkAndConvertChangedValueTypes = (
     )
 
     return changedValueTypeKeys.length
-        ? { target: convertChangedValueTypes(target, values, ref, changedValueTypeKeys), transitionEnd }
+        ? {
+              target: convertChangedValueTypes(
+                  target,
+                  values,
+                  ref,
+                  changedValueTypeKeys
+              ),
+              transitionEnd,
+          }
         : { target, transitionEnd }
 }
 

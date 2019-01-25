@@ -21,7 +21,10 @@ export class MotionValuesMap {
 
     get<Value>(key: string): MotionValue<Value> | undefined
     get<Value>(key: string, defaultValue: Value): MotionValue<Value>
-    get<Value>(key: string, defaultValue?: Value): MotionValue<Value> | undefined {
+    get<Value>(
+        key: string,
+        defaultValue?: Value
+    ): MotionValue<Value> | undefined {
         let value = this.values.get(key)
         if (value === undefined && defaultValue !== undefined) {
             value = new MotionValue(defaultValue)
@@ -42,7 +45,7 @@ export class MotionValuesMap {
 
     mount(element: Element) {
         this.hasMounted = true
-        this.styler = styler(element)
+        this.styler = styler(element, { preparseOutput: false })
         this.values.forEach((value, key) => this.bindValueToStyler(key, value))
     }
 
