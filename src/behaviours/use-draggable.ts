@@ -93,8 +93,8 @@ export function useDraggable(
 ) {
     const {
         dragEnabled = false,
-        dragPropagation,
-        dragLocksDirection,
+        dragPropagation = false,
+        dragLocksDirection = false,
         dragConstraints,
         overdrag,
         dragMomentum,

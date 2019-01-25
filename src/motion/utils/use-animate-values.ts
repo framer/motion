@@ -16,20 +16,32 @@ export const useAnimateValues = (
 
     useEffect(
         () => {
-            const toAnimate: Target = Object.keys(prevValues.current).reduce((acc, key) => {
-                const hasUpdated = prevValues.current[key] !== target[key]
-                const animateOnMount =
-                    isInitialRender.current &&
-                    (!values.has(key) || (values.has(key) && (values.get(key) as MotionValue).get() !== target[key]))
+            const toAnimate: Target = Object.keys(prevValues.current).reduce(
+                (acc, key) => {
+                    const hasUpdated =
+                        target[key] !== undefined &&
+                        prevValues.current[key] !== target[key]
 
-                if (hasUpdated || animateOnMount) {
-                    acc[key] = target[key]
-                }
-                return acc
-            }, {})
+                    const animateOnMount =
+                        isInitialRender.current &&
+                        (!values.has(key) ||
+                            (values.has(key) &&
+                                (values.get(key) as MotionValue).get() !==
+                                    target[key]))
+
+                    if (hasUpdated || animateOnMount) {
+                        acc[key] = target[key]
+                    }
+                    return acc
+                },
+                {}
+            )
 
             isInitialRender.current = false
-            prevValues.current = target
+            prevValues.current = {
+                ...prevValues.current,
+                ...target,
+            }
 
             if (Object.keys(toAnimate).length) {
                 controls.start(toAnimate, transition).then(onComplete)

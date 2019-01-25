@@ -1,4 +1,14 @@
-import { action, tween, spring, keyframes, decay, inertia, physics, easing, Action } from "popmotion"
+import {
+    action,
+    tween,
+    spring,
+    keyframes,
+    decay,
+    inertia,
+    physics,
+    easing,
+    Action,
+} from "popmotion"
 import {
     Transition,
     Tween,
@@ -11,6 +21,7 @@ import {
 import { getDefaultTransition } from "./default-transitions"
 import { invariant } from "hey-listen"
 import { ActionFactory } from "../../value"
+import { POINT_CONVERSION_COMPRESSED } from "constants"
 
 type JustProps = { to: string | number }
 const just: ActionFactory = ({ to }: JustProps): Action => {
@@ -56,13 +67,19 @@ const transitionOptionParser = {
 
         if (Array.isArray(ease)) {
             // If cubic bezier definition, create bezier curve
-            invariant(ease.length === 4, `Cubic bezier arrays must contain four numerical values.`)
+            invariant(
+                ease.length === 4,
+                `Cubic bezier arrays must contain four numerical values.`
+            )
 
             const [x1, y1, x2, y2] = ease
             opts.ease = easing.cubicBezier(x1, y1, x2, y2)
         } else if (typeof ease === "string") {
             // Else lookup from table
-            invariant(easingLookup[ease] !== undefined, `Invalid easing type '${ease}'`)
+            invariant(
+                easingLookup[ease] !== undefined,
+                `Invalid easing type '${ease}'`
+            )
             opts.ease = easingLookup[ease]
         }
 
@@ -88,29 +105,57 @@ const getTransitionForValue = (
     to: string | number,
     transitionDefinition?: Transition
 ): PopmotionTransitionProps => {
+    const delay = transitionDefinition ? transitionDefinition.delay : 0
+
     // If no object, return default transition
     // A better way to handle this would be to deconstruct out all the shared TransitionOrchestration props
     // and see if there's any props remaining
-    if (transitionDefinition === undefined || !isTransitionDefined(transitionDefinition)) {
-        return getDefaultTransition(key, to)
+    if (
+        transitionDefinition === undefined ||
+        !isTransitionDefined(transitionDefinition)
+    ) {
+        return {
+            delay,
+            ...getDefaultTransition(key, to),
+        }
     }
 
-    const { delay = 0 } = transitionDefinition
     const valueTransitionDefinition: TransitionDefinition =
-        transitionDefinition[key] || (transitionDefinition as TransitionMap).default || transitionDefinition
+        transitionDefinition[key] ||
+        (transitionDefinition as TransitionMap).default ||
+        transitionDefinition
 
     return valueTransitionDefinition.type === false
         ? ({ type: "just", delay, to } as PopmotionTransitionProps)
-        : ({ delay, to, ...valueTransitionDefinition } as PopmotionTransitionProps)
+        : ({
+              delay,
+              to,
+              ...valueTransitionDefinition,
+          } as PopmotionTransitionProps)
 }
 
-const preprocessOptions = (type: string, opts: PopmotionTransitionProps): PopmotionTransitionProps =>
+const preprocessOptions = (
+    type: string,
+    opts: PopmotionTransitionProps
+): PopmotionTransitionProps =>
     transitionOptionParser[type] ? transitionOptionParser[type](opts) : opts
 
-export const getTransition = (valueKey: string, to: string | number, transition?: Transition) => {
-    const { type = "tween", ...transitionDefinition } = getTransitionForValue(valueKey, to, transition)
+export const getTransition = (
+    valueKey: string,
+    to: string | number,
+    transition?: Transition
+) => {
+    const { type = "tween", ...transitionDefinition } = getTransitionForValue(
+        valueKey,
+        to,
+        transition
+    )
+
     const actionFactory = transitions[type]
-    const opts: PopmotionTransitionProps = preprocessOptions(type, transitionDefinition)
+    const opts: PopmotionTransitionProps = preprocessOptions(
+        type,
+        transitionDefinition
+    )
 
     return [actionFactory, opts]
 }

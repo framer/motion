@@ -237,12 +237,17 @@ export class AnimationControls<P = {}> {
 
         const animations = Object.keys(target).reduce(
             (acc, key) => {
-                if (this.isAnimating.has(key)) return acc
-
                 const value = this.values.get(key)
-                if (!value) return acc
+                if (
+                    this.isAnimating.has(key) ||
+                    !target ||
+                    !value ||
+                    target[key] === undefined
+                ) {
+                    return acc
+                }
 
-                const valueTarget = (target as Target)[key]
+                const valueTarget = target[key]
 
                 if (!priority) {
                     this.baseTarget[key] = valueTarget
@@ -253,6 +258,7 @@ export class AnimationControls<P = {}> {
                         delay,
                         ...transition,
                     })
+
                     acc.push(
                         value.control(
                             action as ActionFactory,
@@ -296,7 +302,7 @@ export class AnimationControls<P = {}> {
         let delayChildren = 0
         let staggerChildren = 0
         let staggerDirection = 1
-
+        const priority = (opts && opts.priority) || 0
         const variant = this.variants[variantLabel]
 
         const getAnimations: () => Promise<any> = variant
@@ -309,7 +315,8 @@ export class AnimationControls<P = {}> {
                       variantLabel,
                       delayChildren,
                       staggerChildren,
-                      staggerDirection
+                      staggerDirection,
+                      priority
                   )
               }
             : () => Promise.resolve()
@@ -340,11 +347,13 @@ export class AnimationControls<P = {}> {
         variantLabel: string,
         delayChildren: number = 0,
         staggerChildren: number = 0,
-        staggerDirection: number = 1
+        staggerDirection: number = 1,
+        priority: number = 0
     ) {
         if (!this.children) {
             return Promise.resolve()
         }
+
         const animations: Array<Promise<any>> = []
         const maxStaggerDuration = (this.children.size - 1) * staggerChildren
         const generateStaggerDuration =
@@ -354,6 +363,7 @@ export class AnimationControls<P = {}> {
 
         Array.from(this.children).forEach((childControls, i) => {
             const animation = childControls.animateVariant(variantLabel, {
+                priority,
                 delay: delayChildren + generateStaggerDuration(i),
             })
             animations.push(animation)
