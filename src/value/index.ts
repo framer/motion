@@ -162,11 +162,7 @@ export class MotionValue<V = any> {
         transformer?: Transformer<V>
     ) {
         this.stop()
-        console.log({
-            from: this.get() as any,
-            velocity: this.getVelocity(),
-            ...config,
-        })
+
         let initialisedController = controller({
             from: this.get() as any,
             velocity: this.getVelocity(),

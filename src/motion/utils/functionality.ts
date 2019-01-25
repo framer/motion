@@ -12,7 +12,6 @@ import {
     CSSProperties,
     EventHandler,
     SyntheticEvent,
-    useMemo,
 } from "react"
 import { buildStyleAttr } from "./style-attr"
 import { MotionValuesMap } from "./use-motion-values"
