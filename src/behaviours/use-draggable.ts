@@ -204,6 +204,7 @@ export function useDraggable(
                         transition: {
                             type: "inertia",
                             velocity: velocity[axis],
+                            bounceDamping: 25,
                             ...transition,
                         },
                     })

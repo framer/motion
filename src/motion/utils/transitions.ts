@@ -21,7 +21,6 @@ import {
 import { getDefaultTransition } from "./default-transitions"
 import { invariant } from "hey-listen"
 import { ActionFactory } from "../../value"
-import { POINT_CONVERSION_COMPRESSED } from "constants"
 
 type JustProps = { to: string | number }
 const just: ActionFactory = ({ to }: JustProps): Action => {
