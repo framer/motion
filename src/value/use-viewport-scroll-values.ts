@@ -29,7 +29,6 @@ const addScrollListener = () => {
         scrollXProgress.set(xOffset === 0 ? 0 : xOffset / maxXOffset)
 
         const maxYOffset = documentHeight - windowHeight
-        console.log(maxYOffset, documentHeight, windowHeight, yOffset)
         scrollYProgress.set(yOffset === 0 ? 0 : yOffset / maxYOffset)
     }
 
