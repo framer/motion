@@ -5,11 +5,6 @@ const scrollY = motionValue(0)
 const scrollXProgress = motionValue(0)
 const scrollYProgress = motionValue(0)
 
-let documentWidth = 0
-let documentHeight = 0
-let windowWidth = 0
-let windowHeight = 0
-
 let hasEventListener = false
 const addScrollListener = () => {
     hasEventListener = true
@@ -25,24 +20,16 @@ const addScrollListener = () => {
         scrollY.set(yOffset)
 
         // Set progress
-        const maxXOffset = documentWidth - windowWidth
+        const maxXOffset = document.body.clientWidth - window.innerWidth
         scrollXProgress.set(xOffset === 0 ? 0 : xOffset / maxXOffset)
 
-        const maxYOffset = documentHeight - windowHeight
+        const maxYOffset = document.body.clientHeight - window.innerHeight
         scrollYProgress.set(yOffset === 0 ? 0 : yOffset / maxYOffset)
     }
 
-    const updateViewportMeasurements = () => {
-        documentWidth = document.body.clientWidth
-        documentHeight = document.body.clientHeight
-        windowWidth = window.innerWidth
-        windowHeight = window.innerHeight
-    }
-
-    updateViewportMeasurements()
     updateScrollValues()
 
-    window.addEventListener("resize", updateViewportMeasurements)
+    window.addEventListener("resize", updateScrollValues)
     window.addEventListener("scroll", updateScrollValues, { passive: true })
 }
 
