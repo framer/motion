@@ -4,17 +4,27 @@ import { motion } from "../../src"
 const styleA = {
     width: 300,
     height: 300,
-    background: "white",
+    background: "blue",
     borderRadius: "10px",
 }
+
+const containerStyle = {
+    background: "#6dc1f9",
+    width: 300,
+    height: 300,
+    padding: 20,
+}
+
 export const App = () => {
     return (
-        <motion.div
-            dragEnabled="x"
-            dragConstraints={{ left: -500, right: 500 }}
-            dragElastic
-            dragMomentum
-            style={styleA}
-        />
+        <div>
+            <motion.div
+                dragEnabled={"x"}
+                dragPropagation
+                style={containerStyle}
+            >
+                <motion.div dragEnabled={"y"} style={styleA} />
+            </motion.div>
+        </div>
     )
 }

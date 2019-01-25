@@ -13,16 +13,23 @@ let windowHeight = 0
 let hasEventListener = false
 const addScrollListener = () => {
     hasEventListener = true
+
     if (typeof window === "undefined") return
 
     const updateScrollValues = () => {
         const xOffset = window.pageXOffset
         const yOffset = window.pageYOffset
 
+        // Set absolute positions
         scrollX.set(xOffset)
         scrollY.set(yOffset)
-        scrollXProgress.set(documentWidth - xOffset - windowWidth)
-        scrollYProgress.set(documentHeight - yOffset - windowHeight)
+
+        // Set progress
+        const maxXOffset = documentWidth - windowWidth
+        scrollXProgress.set(xOffset === 0 ? 0 : xOffset / maxXOffset)
+
+        const maxYOffset = documentHeight - windowHeight
+        scrollYProgress.set(yOffset === 0 ? 0 : yOffset / maxYOffset)
     }
 
     const updateViewportMeasurements = () => {
@@ -39,7 +46,12 @@ const addScrollListener = () => {
     window.addEventListener("scroll", updateScrollValues, { passive: true })
 }
 
-const viewportMotionValues = { scrollX, scrollY, scrollXProgress, scrollYProgress }
+const viewportMotionValues = {
+    scrollX,
+    scrollY,
+    scrollXProgress,
+    scrollYProgress,
+}
 
 /**
  * `useViewportScroll` provides `MotionValue`s that update when the viewport scrolls.
