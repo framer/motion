@@ -24,21 +24,18 @@ export interface DraggableProps {
      * Enable dragging for this element
      *
      * Set "x" or "y" to only drag in a specific direction
+     * Set "lockDirection" to lock dragging into the initial direction
      *  @default false
      */
-    dragEnabled?: boolean | DragDirection
-    /**
-     * Locks dragging direction
-     * When dragging starts in a specific direction, do not allow dragging in the other direction
-     * @default false
-     */
-    dragLocksDirection?: boolean
+    drag?: boolean | DragDirection | "lockDirection"
+
     /**
      * Disable global drag locking
      * When using nested dragging, setting this to true will enable parents to also drag
      * @default false
      */
     dragPropagation?: boolean
+
     /**
      * Apply constraints to dragging
      * @default false
@@ -56,15 +53,19 @@ export interface DraggableProps {
      * @default false
      */
     dragMomentum?: boolean
+
+    onDragStart?: (e: MouseEvent | TouchEvent) => void
+    onDragEnd?: (e: MouseEvent | TouchEvent) => void
+    onDirectionLock?: (axis: string) => void
 }
 
 function shouldDrag(
     direction: DragDirection,
-    dragEnabled: boolean | DragDirection,
+    drag: boolean | DragDirection | "lockDirection",
     currentDirection: null | DragDirection
 ) {
     return (
-        (dragEnabled === true || dragEnabled === direction) &&
+        (drag === true || drag === "lockDirection" || drag === direction) &&
         (currentDirection === null || currentDirection === direction)
     )
 }
@@ -92,12 +93,14 @@ export function useDraggable(
     controls: AnimationControls
 ) {
     const {
-        dragEnabled = false,
+        drag = false,
         dragPropagation = false,
-        dragLocksDirection = false,
         dragConstraints,
         overdrag,
         dragMomentum,
+        onDragStart,
+        onDragEnd,
+        onDirectionLock,
     } = props
     const point: Partial<{
         x: MotionValue<number>
@@ -105,16 +108,16 @@ export function useDraggable(
     }> = {}
     const origin = { x: 0, y: 0 }
     let currentDirection: null | DragDirection = null
-    if (shouldDrag("x", dragEnabled, currentDirection)) {
+    if (shouldDrag("x", drag, currentDirection)) {
         point.x = values.get("x", 0)
     }
-    if (shouldDrag("y", dragEnabled, currentDirection)) {
+    if (shouldDrag("y", drag, currentDirection)) {
         point.y = values.get("y", 0)
     }
 
     const updatePoint = (axis: "x" | "y", offset: { x: number; y: number }) => {
         const p = point[axis]
-        if (!shouldDrag(axis, dragEnabled, currentDirection) || !p) return
+        if (!shouldDrag(axis, drag, currentDirection) || !p) return
 
         let current = origin[axis] + offset[axis]
 
@@ -140,7 +143,7 @@ export function useDraggable(
     let openGlobalLock: Lock = false
 
     const onPanStart = useMemo(
-        () => () => {
+        () => (event: MouseEvent | TouchEvent) => {
             if (point.x) {
                 origin.x = point.x.get()
                 point.x.stop()
@@ -151,15 +154,17 @@ export function useDraggable(
             }
 
             if (!dragPropagation) {
-                openGlobalLock = getGlobalLock(dragEnabled)
+                openGlobalLock = getGlobalLock(drag)
                 if (!openGlobalLock) {
                     return
                 }
             }
             currentDirection = null
             motionContext.dragging = true
+
+            onDragStart && onDragStart(event)
         },
-        [dragEnabled, dragPropagation, motionContext]
+        [drag, dragPropagation, motionContext]
     )
 
     const onPan: PanHandler = useMemo(
@@ -171,9 +176,13 @@ export function useDraggable(
                 if (!dragPropagation && !openGlobalLock) {
                     return
                 }
-                if (dragLocksDirection) {
+                if (drag === "lockDirection") {
                     if (currentDirection === null) {
                         currentDirection = getCurrentDirection(offset)
+
+                        if (currentDirection !== null) {
+                            onDirectionLock && onDirectionLock(currentDirection)
+                        }
                         return
                     }
                 }
@@ -184,17 +193,17 @@ export function useDraggable(
 
             return updateDrag
         },
-        [openGlobalLock, dragEnabled, point]
+        [openGlobalLock, drag, point]
     )
     const onPanEnd = useMemo(
-        () => (_event: MouseEvent | TouchEvent, { velocity }: PanInfo) => {
+        () => (event: MouseEvent | TouchEvent, { velocity }: PanInfo) => {
             if (!dragPropagation && openGlobalLock) {
                 openGlobalLock()
             }
 
             if (dragMomentum) {
                 const startMomentum = (axis: "x" | "y") => {
-                    if (!shouldDrag(axis, dragEnabled, currentDirection)) return
+                    if (!shouldDrag(axis, drag, currentDirection)) return
                     const transition = dragConstraints
                         ? getConstraints(axis, dragConstraints)
                         : {}
@@ -215,11 +224,12 @@ export function useDraggable(
             }
 
             motionContext.dragging = false
+            onDragEnd && onDragEnd(event)
         },
-        [openGlobalLock, motionContext, dragEnabled]
+        [openGlobalLock, motionContext, drag]
     )
     let handlers: PanHandlers = {}
-    if (dragEnabled) {
+    if (drag) {
         handlers = { onPanStart, onPan, onPanEnd }
     }
     usePanGesture(handlers, ref)
@@ -238,11 +248,11 @@ function getCurrentDirection(offset: Point): DragDirection | null {
 
 const globalHorizontalLock = createLock("dragHorizontal")
 const globalVerticalLock = createLock("dragVertical")
-function getGlobalLock(dragEnabled: boolean | "x" | "y"): Lock {
+function getGlobalLock(drag: boolean | "x" | "y" | "lockDirection"): Lock {
     let lock: Lock = false
-    if (dragEnabled === "y") {
+    if (drag === "y") {
         lock = globalVerticalLock()
-    } else if (dragEnabled === "x") {
+    } else if (drag === "x") {
         lock = globalHorizontalLock()
     } else {
         const openHorizontal = globalHorizontalLock()

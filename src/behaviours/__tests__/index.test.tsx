@@ -11,7 +11,7 @@ describe("dragging", () => {
         //     const x = motionValue(0)
         //     const y = motionValue(0)
 
-        //     const Component = () => <motion.div style={{ x, y }} dragEnabled />
+        //     const Component = () => <motion.div style={{ x, y }} drag />
 
         //     const { container, rerender } = render(<Component />)
         //     rerender(<Component />)

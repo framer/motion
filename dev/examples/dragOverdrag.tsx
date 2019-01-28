@@ -18,12 +18,8 @@ const containerStyle = {
 export const App = () => {
     return (
         <div>
-            <motion.div
-                dragEnabled={"x"}
-                dragPropagation
-                style={containerStyle}
-            >
-                <motion.div dragEnabled={"y"} style={styleA} />
+            <motion.div drag={"x"} style={containerStyle}>
+                <motion.div drag={"y"} style={styleA} />
             </motion.div>
         </div>
     )

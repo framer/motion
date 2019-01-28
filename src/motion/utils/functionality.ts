@@ -111,7 +111,7 @@ export const getAnimateComponent = (
 }
 
 const gestureProps = [
-    "dragEnabled",
+    "drag",
     "onPan",
     "onPanStart",
     "onPanEnd",
@@ -124,7 +124,7 @@ const gestureProps = [
 
 export const isGesturesEnabled = (props: MotionProps) =>
     gestureProps.some(key => props.hasOwnProperty(key))
-export const isDragEnabled = (props: MotionProps) => !!props.dragEnabled
+export const isDragEnabled = (props: MotionProps) => !!props.drag
 
 export const Gestures = makeHookComponent(
     ({ innerRef, ...props }: AnimateProps) => useGestures(props, innerRef)

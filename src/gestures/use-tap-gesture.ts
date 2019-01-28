@@ -25,9 +25,9 @@ type TapHandler = (session: TapInfo, event: Event) => void
 
 export interface TapHandlers {
     onTap?: TapHandler
-    onPressStart?: TapHandler
-    onPressEnd?: TapHandler
-    pressActive?: string | TargetAndTransition
+    onTapStart?: TapHandler
+    onTapCancel?: TapHandler
+    tapActive?: string | TargetAndTransition
 }
 
 export interface Animation {
@@ -46,9 +46,9 @@ export function useTapGesture(
 export function useTapGesture(
     {
         onTap,
-        onPressStart,
-        onPressEnd,
-        pressActive,
+        onTapStart,
+        onTapCancel,
+        tapActive,
         controls,
     }: TapHandlers & Animation,
     ref?: RefObject<Element>
@@ -61,15 +61,14 @@ export function useTapGesture(
                 return
             }
 
-            if (onPressEnd) {
-                onPressEnd({ point, devicePoint }, event)
-            }
-
-            if (controls && pressActive) {
-                controls.clearOverride(getGesturePriority("press"))
+            if (controls && tapActive) {
+                controls.clearOverride(getGesturePriority("tap"))
             }
 
             if (!ref || event.target !== ref.current) {
+                if (onTapCancel) {
+                    onTapCancel({ point, devicePoint }, event)
+                }
                 return
             }
 
@@ -89,13 +88,13 @@ export function useTapGesture(
             target: event.target,
         }
 
-        if (onPressStart) {
-            onPressStart({ point, devicePoint }, event)
+        if (onTapStart) {
+            onTapStart({ point, devicePoint }, event)
         }
 
-        if (controls && pressActive) {
-            controls.start(pressActive, {
-                priority: getGesturePriority("press"),
+        if (controls && tapActive) {
+            controls.start(tapActive, {
+                priority: getGesturePriority("tap"),
             })
         }
     }
