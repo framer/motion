@@ -1,4 +1,4 @@
-import { RefObject, useContext, useMemo } from "react"
+import { RefObject, useContext, useMemo, useRef } from "react"
 import { PanHandler, usePanGesture, PanInfo, PanHandlers } from "../gestures"
 import { createLock, Lock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
@@ -106,7 +106,7 @@ export function useDraggable(
         x: MotionValue<number>
         y: MotionValue<number>
     }> = {}
-    const origin = { x: 0, y: 0 }
+    const origin = useRef({ x: 0, y: 0 }).current
     let currentDirection: null | DragDirection = null
     if (shouldDrag("x", drag, currentDirection)) {
         point.x = values.get("x", 0)
@@ -140,7 +140,7 @@ export function useDraggable(
 
     const motionContext = useContext(MotionContext)
     // XXX: directionLocking and having something called Lock is confusing, especially, because they're not really realted
-    let openGlobalLock: Lock = false
+    const openGlobalLock = useRef<Lock | null>(null)
 
     const onPanStart = useMemo(
         () => (event: MouseEvent | TouchEvent) => {
@@ -154,8 +154,9 @@ export function useDraggable(
             }
 
             if (!dragPropagation) {
-                openGlobalLock = getGlobalLock(drag)
-                if (!openGlobalLock) {
+                openGlobalLock.current = getGlobalLock(drag)
+
+                if (!openGlobalLock.current) {
                     return
                 }
             }
@@ -173,9 +174,10 @@ export function useDraggable(
                 _event: MouseEvent | TouchEvent,
                 { offset }: PanInfo
             ) => {
-                if (!dragPropagation && !openGlobalLock) {
+                if (!dragPropagation && !openGlobalLock.current) {
                     return
                 }
+
                 if (drag === "lockDirection") {
                     if (currentDirection === null) {
                         currentDirection = getCurrentDirection(offset)
@@ -193,12 +195,12 @@ export function useDraggable(
 
             return updateDrag
         },
-        [openGlobalLock, drag, point]
+        [openGlobalLock.current, drag, point]
     )
     const onPanEnd = useMemo(
         () => (event: MouseEvent | TouchEvent, { velocity }: PanInfo) => {
-            if (!dragPropagation && openGlobalLock) {
-                openGlobalLock()
+            if (!dragPropagation && openGlobalLock.current) {
+                openGlobalLock.current()
             }
 
             if (dragMomentum) {
@@ -226,7 +228,7 @@ export function useDraggable(
             motionContext.dragging = false
             onDragEnd && onDragEnd(event)
         },
-        [openGlobalLock, motionContext, drag]
+        [openGlobalLock.current, motionContext, drag]
     )
     let handlers: PanHandlers = {}
     if (drag) {

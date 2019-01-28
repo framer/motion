@@ -2,25 +2,39 @@ import * as React from "react"
 import { motion } from "../../src"
 
 const styleA = {
-    width: 300,
-    height: 300,
-    background: "blue",
+    width: 100,
+    height: 100,
+    background: "white",
     borderRadius: "10px",
 }
 
-const containerStyle = {
-    background: "#6dc1f9",
-    width: 300,
-    height: 300,
-    padding: 20,
-}
+import { useState } from "react"
 
 export const App = () => {
+    const variants = {
+        default: { scaleX: 1, scaleY: 1 },
+        squishX: { scaleX: 0.5, scaleY: 1.3 },
+        squishY: { scaleX: 1.3, scaleY: 0.5 },
+    }
+
+    const [squish, setSquish] = useState("default")
+
+    const onLock = axis => {
+        if (axis === "x") {
+            setSquish("squishY")
+        } else {
+            setSquish("squishX")
+        }
+    }
+
     return (
-        <div>
-            <motion.div drag={"x"} style={containerStyle}>
-                <motion.div drag={"y"} style={styleA} />
-            </motion.div>
-        </div>
+        <motion.div
+            drag="lockDirection"
+            onDirectionLock={onLock}
+            onDragEnd={() => setSquish("default")}
+            style={styleA}
+            variants={variants}
+            animate={squish}
+        />
     )
 }
