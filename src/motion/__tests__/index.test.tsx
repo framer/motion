@@ -77,7 +77,7 @@ describe("motion component rendering and styles", () => {
             <motion.div initial={{ x: 10, background: "#fff" }} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px) translateZ(0); background: #fff"
+            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
         )
     })
 
@@ -89,7 +89,7 @@ describe("motion component rendering and styles", () => {
             <motion.div initial="foo" variants={variants} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px) translateZ(0); background: #fff"
+            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
         )
     })
 
@@ -127,6 +127,21 @@ describe("motion component rendering and styles", () => {
             </motion.div>
         )
         expect(getByTestId("child")).toHaveStyle("opacity: 0; color: #f00")
+    })
+
+    test("doesnt propagate style for children if passed initial as object", () => {
+        const { getByTestId } = render(
+            <motion.ul
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+            >
+                <motion.li data-testid="child" />
+            </motion.ul>
+        )
+
+        expect(getByTestId("child")).not.toHaveStyle(
+            "opacity: 0; transform: translateY(50px) translateZ(0)"
+        )
     })
 
     test("renders styled component and overwrites style", () => {

@@ -1,5 +1,11 @@
 import { RefObject, useMemo, useEffect, useRef } from "react"
-import { EventInfo, usePointerEvents, Point, EventHandler, useConditionalPointerEvents } from "../events"
+import {
+    EventInfo,
+    usePointerEvents,
+    Point,
+    EventHandler,
+    useConditionalPointerEvents,
+} from "../events"
 import { motionValue, MotionValue } from "../value"
 import sync, { cancelSync } from "framesync"
 
@@ -33,9 +39,17 @@ const getVelocity = ({ x, y }: MotionXY): Point => ({
     y: y.getVelocity(),
 })
 
-export function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined
-export function usePanGesture(handlers: PanHandlers): { onPointerDown: EventHandler }
-export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?: RefObject<Element>) {
+export function usePanGesture(
+    handlers: PanHandlers,
+    ref: RefObject<Element>
+): undefined
+export function usePanGesture(
+    handlers: PanHandlers
+): { onPointerDown: EventHandler }
+export function usePanGesture(
+    { onPan, onPanStart, onPanEnd }: PanHandlers,
+    ref?: RefObject<Element>
+) {
     let session: null | EventSession = null
     const pointer = useRef<MotionXY | null>(null)
     const lastMoveEvent = useRef<Event | null>(null)
@@ -62,25 +76,21 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
             pointer.current.y.set(devicePoint.y)
 
             if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
+                const info = {
+                    point,
+                    devicePoint,
+                    delta,
+                    offset,
+                    velocity: getVelocity(pointer.current),
+                }
+
                 if (session.startEvent) {
                     if (onPan) {
-                        onPan(lastMoveEvent.current, {
-                            point,
-                            devicePoint,
-                            delta,
-                            offset,
-                            velocity: getVelocity(pointer.current),
-                        })
+                        onPan(lastMoveEvent.current, info)
                     }
                 } else {
                     if (onPanStart) {
-                        onPanStart(lastMoveEvent.current, {
-                            point,
-                            devicePoint,
-                            delta,
-                            offset,
-                            velocity: getVelocity(pointer.current),
-                        })
+                        onPanStart(lastMoveEvent.current, info)
                     }
                     session.startEvent = lastMoveEvent.current
                 }
@@ -119,15 +129,28 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd }: PanHandlers, ref?
             stopPointerMove()
             stopPointerUp()
             if (onPanEnd) {
-                onPanEnd(event, { point, devicePoint, delta, offset, velocity: getVelocity(pointer.current) })
+                onPanEnd(event, {
+                    point,
+                    devicePoint,
+                    delta,
+                    offset,
+                    velocity: getVelocity(pointer.current),
+                })
             }
             session = null
         },
         [onPanEnd, onPointerMove]
     )
 
-    const [startPointerUp, stopPointerUp] = usePointerEvents({ onPointerUp }, window)
-    const [startPointerMove, stopPointerMove] = usePointerEvents({ onPointerMove }, window, { capture: true })
+    const [startPointerUp, stopPointerUp] = usePointerEvents(
+        { onPointerUp },
+        window
+    )
+    const [startPointerMove, stopPointerMove] = usePointerEvents(
+        { onPointerMove },
+        window,
+        { capture: true }
+    )
     const onPointerDown = useMemo(
         () => {
             return (event: Event, { devicePoint, point }: EventInfo) => {
