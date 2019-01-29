@@ -6,11 +6,9 @@ import {
     Point,
     EventHandler,
 } from "../events"
-import { AnimationManager } from "../animation"
-import { VariantLabels } from "../motion/types"
-import { Target, TargetAndTransition } from "../types"
-import { AnimationControls } from "../motion"
+import { TargetAndTransition } from "../types"
 import { getGesturePriority } from "./utils/gesture-priority"
+import { ControlsProp } from "./types"
 
 interface TapInfo {
     point: Point
@@ -28,12 +26,6 @@ export interface TapHandlers {
     onTapStart?: TapHandler
     onTapCancel?: TapHandler
     tapActive?: string | TargetAndTransition
-}
-
-export interface Animation {
-    controls?: AnimationControls
-    animate?: AnimationManager | VariantLabels | Target
-    initial?: VariantLabels | Target
 }
 
 /**
@@ -70,14 +62,14 @@ const usePropsRef = <T>(props: T) => {
 }
 
 export function useTapGesture(
-    handlers: TapHandlers & Animation
+    handlers: TapHandlers & ControlsProp
 ): { onPointerDown: EventHandler }
 export function useTapGesture(
-    handlers: TapHandlers & Animation,
+    handlers: TapHandlers & ControlsProp,
     ref: RefObject<Element>
 ): undefined
 export function useTapGesture(
-    props: TapHandlers & Animation,
+    props: TapHandlers & ControlsProp,
     ref?: RefObject<Element>
 ): undefined | { onPointerDown: EventHandler } {
     let session: TapSession | null = null

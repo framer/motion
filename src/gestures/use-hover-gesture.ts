@@ -1,45 +1,51 @@
-import { useMemo, SyntheticEvent } from "react"
-import { AnimationControls } from "../motion"
+import { useMemo, RefObject } from "react"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { TargetAndTransition } from "../types"
+import { useConditionalPointerEvents } from "../events"
+import { ControlsProp } from "./types"
 
-export type HoverProps = {
-    hoverActive?: TargetAndTransition
-    onMouseEnter?: (e: SyntheticEvent) => void
-    onMouseLeave?: (e: SyntheticEvent) => void
+type HoverHandler = (event: Event) => void
+export interface HoverHandlers {
+    hoverActive?: string | TargetAndTransition
+    onHoverStart?: HoverHandler
+    onHoverEnd?: HoverHandler
 }
 
 const hoverPriority = getGesturePriority("hover")
 
-export const useHover = (
-    { hoverActive, onMouseEnter, onMouseLeave }: HoverProps,
-    controls: AnimationControls
+export const useHoverGesture = (
+    {
+        hoverActive,
+        onHoverStart,
+        onHoverEnd,
+        controls,
+    }: HoverHandlers & ControlsProp,
+    ref?: RefObject<Element>
 ) => {
-    return useMemo(
-        () => {
-            if (!hoverActive) {
-                return {}
+    const onPointerEnter = useMemo(
+        () => (event: Event) => {
+            if (onHoverStart) {
+                onHoverStart(event)
             }
-
-            return {
-                onMouseEnter: (e: SyntheticEvent) => {
-                    if (onMouseEnter) onMouseEnter(e)
-
-                    if (hoverActive) {
-                        controls.start(hoverActive, {
-                            priority: hoverPriority,
-                        })
-                    }
-                },
-                onMouseLeave: (e: SyntheticEvent) => {
-                    if (onMouseLeave) onMouseLeave(e)
-
-                    if (hoverActive) {
-                        controls.clearOverride(hoverPriority)
-                    }
-                },
+            if (hoverActive && controls) {
+                controls.start(hoverActive, {
+                    priority: hoverPriority,
+                })
             }
         },
-        [hoverActive, onMouseEnter, onMouseLeave]
+        [hoverActive, onHoverStart, controls]
     )
+
+    const onPointerLeave = useMemo(
+        () => (event: Event) => {
+            if (onHoverEnd) onHoverEnd(event)
+
+            if (hoverActive && controls) {
+                controls.clearOverride(hoverPriority)
+            }
+        },
+        [hoverActive, onHoverEnd, controls]
+    )
+
+    return useConditionalPointerEvents({ onPointerEnter, onPointerLeave }, ref)
 }
