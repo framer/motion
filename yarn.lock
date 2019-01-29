@@ -5183,10 +5183,10 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-popmotion@^8.6.0:
-  version "8.6.0"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.6.0.tgz#14edf50376fc2d656b59e0d46390896577818abb"
-  integrity sha512-rU0idZO8fQi8xhHJsFRQKrDIvbLc3aCF6wLcPBVLIYRI/KvQVzprxF6bu2P+PVaYG5G6rf1qSpcn4XgZsNxoyg==
+popmotion@^8.6.2:
+  version "8.6.2"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.6.2.tgz#9066f0b33c5aa03783dc5af55143f6ac5b5d4a49"
+  integrity sha512-t4kb78sl/gETCdnBKPguVYbL/BfBjax0Z7CQXMV9mEaxmBvIODCcJ2lPn8S0AAQS/bHYekA8TxMszwCF6NAcAA==
   dependencies:
     "@popmotion/easing" "^1.0.1"
     "@popmotion/popcorn" "^0.3.0"
