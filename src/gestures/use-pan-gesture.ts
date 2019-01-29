@@ -7,13 +7,68 @@ import {
     useConditionalPointerEvents,
 } from "../events"
 import { motionValue, MotionValue } from "../value"
-import sync, { cancelSync } from "framesync"
+import sync, { cancelSync, getFrameData } from "framesync"
+
+interface TimestampedPoint extends Point {
+    timestamp: number
+}
 
 interface EventSession {
-    lastDevicePoint: Point
     startEvent?: Event
     target: EventTarget | null
-    startDevicePoint: Point
+    pointHistory: TimestampedPoint[]
+}
+
+function startDevicePoint(session: EventSession): TimestampedPoint {
+    return session.pointHistory[0]
+}
+
+function lastDevicePoint(session: EventSession): TimestampedPoint {
+    return session.pointHistory[session.pointHistory.length - 1]
+}
+
+function getVelocity(session: EventSession, timeDelta: number): Point {
+    const { pointHistory } = session
+    if (pointHistory.length < 2) {
+        return { x: 0, y: 0 }
+    }
+
+    let i = pointHistory.length - 1
+    let timestampedPoint: TimestampedPoint | null = null
+    const lastPoint = lastDevicePoint(session)
+    while (i >= 0) {
+        timestampedPoint = pointHistory[i]
+        if (
+            lastPoint.timestamp - timestampedPoint.timestamp >
+            timeDelta * 1000
+        ) {
+            break
+        }
+        i--
+    }
+
+    if (!timestampedPoint) {
+        return { x: 0, y: 0 }
+    }
+
+    const time = (lastPoint.timestamp - timestampedPoint.timestamp) / 1000
+    if (time === 0) {
+        return { x: 0, y: 0 }
+    }
+
+    const currentVelocity = {
+        x: (lastPoint.x - timestampedPoint.x) / time,
+        y: (lastPoint.y - timestampedPoint.y) / time,
+    }
+
+    if (currentVelocity.x === Infinity) {
+        currentVelocity.x = 0
+    }
+    if (currentVelocity.y === Infinity) {
+        currentVelocity.y = 0
+    }
+
+    return currentVelocity
 }
 
 export interface PanInfo {
@@ -33,11 +88,6 @@ export interface PanHandlers {
 }
 
 type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
-
-const getVelocity = ({ x, y }: MotionXY): Point => ({
-    x: x.getVelocity(),
-    y: y.getVelocity(),
-})
 
 export function usePanGesture(
     handlers: PanHandlers,
@@ -69,19 +119,24 @@ export function usePanGesture(
             }
 
             const { point, devicePoint } = lastMoveEventInfo.current
-            const delta = Point.subtract(devicePoint, session.lastDevicePoint)
-            const offset = Point.subtract(devicePoint, session.startDevicePoint)
-
+            const delta = Point.subtract(devicePoint, lastDevicePoint(session))
+            const offset = Point.subtract(
+                devicePoint,
+                startDevicePoint(session)
+            )
+            const { timestamp } = getFrameData()
+            session.pointHistory.push({ ...devicePoint, timestamp })
             pointer.current.x.set(devicePoint.x)
             pointer.current.y.set(devicePoint.y)
 
             if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
+                const velocity = getVelocity(session, 0.1)
                 const info = {
                     point,
                     devicePoint,
                     delta,
                     offset,
-                    velocity: getVelocity(pointer.current),
+                    velocity,
                 }
 
                 if (session.startEvent) {
@@ -95,8 +150,6 @@ export function usePanGesture(
                     session.startEvent = lastMoveEvent.current
                 }
             }
-
-            session.lastDevicePoint = devicePoint
 
             // Reset delta
             delta.x = 0
@@ -124,8 +177,12 @@ export function usePanGesture(
                 return
             }
             cancelSync.update(updatePoint)
-            const delta = Point.subtract(devicePoint, session.lastDevicePoint)
-            const offset = Point.subtract(devicePoint, session.startDevicePoint)
+            const delta = Point.subtract(devicePoint, lastDevicePoint(session))
+            const offset = Point.subtract(
+                devicePoint,
+                startDevicePoint(session)
+            )
+            const velocity = getVelocity(session, 0.1)
             stopPointerMove()
             stopPointerUp()
             if (onPanEnd) {
@@ -134,7 +191,7 @@ export function usePanGesture(
                     devicePoint,
                     delta,
                     offset,
-                    velocity: getVelocity(pointer.current),
+                    velocity,
                 })
             }
             session = null
@@ -159,10 +216,10 @@ export function usePanGesture(
                     y: motionValue(point.y),
                 }
 
+                const { timestamp } = getFrameData()
                 session = {
                     target: event.target,
-                    lastDevicePoint: devicePoint,
-                    startDevicePoint: devicePoint,
+                    pointHistory: [{ ...devicePoint, timestamp }],
                 }
                 startPointerMove()
                 startPointerUp()
