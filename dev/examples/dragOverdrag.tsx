@@ -32,9 +32,12 @@ export const App = () => {
             drag="lockDirection"
             onDirectionLock={onLock}
             onDragEnd={() => setSquish("default")}
-            style={styleA}
+            initial={{ scale: 1 }}
+            tapActive={{ scale: 0.6 }}
+            hoverActive={{ scale: 1.2 }}
             variants={variants}
             animate={squish}
+            style={styleA}
         />
     )
 }

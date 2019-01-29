@@ -81,32 +81,38 @@ export function useTapGesture(
         [onTap]
     )
 
-    const onPointerDown = (event: Event, { point, devicePoint }: EventInfo) => {
-        startPointerUp()
-        if (!ref || event.target !== ref.current) return
-        session = {
-            target: event.target,
-        }
+    const onPointerDown = useMemo(
+        () => (event: Event, { point, devicePoint }: EventInfo) => {
+            startPointerUp()
+            if (!ref || event.target !== ref.current) return
+            session = {
+                target: event.target,
+            }
 
-        if (onTapStart) {
-            onTapStart({ point, devicePoint }, event)
-        }
+            if (onTapStart) {
+                onTapStart({ point, devicePoint }, event)
+            }
 
-        if (controls && tapActive) {
-            controls.start(tapActive, {
-                priority: getGesturePriority("tap"),
-            })
-        }
-    }
+            if (controls && tapActive) {
+                controls.start(tapActive, {
+                    priority: getGesturePriority("tap"),
+                })
+            }
+        },
+        [onPointerUp]
+    )
+
     const [startPointerUp, stopPointerUp] = usePointerEvents(
         { onPointerUp },
         window
     )
+
     useEffect(
         () => () => {
             stopPointerUp()
         },
         [ref && ref.current, onPointerUp]
     )
+
     return useConditionalPointerEvents({ onPointerDown }, ref)
 }
