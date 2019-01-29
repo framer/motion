@@ -48,6 +48,7 @@ export class AnimationControls<P = {}> {
     private variants: Variants = {}
     private baseTarget: Target = {}
     private overrides: Array<AnimationDefinition | undefined> = []
+    private resolvedOverrides: Array<TargetAndTransition | undefined> = []
     private defaultTransition?: Transition
     private children?: Set<AnimationControls>
     private isAnimating: Set<string> = new Set()
@@ -147,14 +148,28 @@ export class AnimationControls<P = {}> {
         const highest = this.getHighestPriority()
 
         this.resetIsAnimating()
-        if (highest > overrideIndex) {
-            return
-        } else {
+
+        if (highest >= overrideIndex) {
             const highestOverride = this.overrides[highest]
             highestOverride &&
                 this.start(highestOverride, { priority: highest })
         }
-        this.animate(this.baseTarget)
+
+        // Figure out which remaining values were affected by the override and animate those
+        const overrideTarget = this.resolvedOverrides[overrideIndex]
+
+        if (!overrideTarget) return
+        const remainingValues = Object.keys(this.baseTarget).reduce(
+            (acc, key) => {
+                if (overrideTarget[key] !== undefined) {
+                    acc[key] = this.baseTarget[key]
+                }
+
+                return acc
+            },
+            {}
+        )
+        this.animate(remainingValues)
     }
 
     apply(definition: VariantLabels | TargetAndTransition) {
@@ -234,6 +249,10 @@ export class AnimationControls<P = {}> {
         )
 
         if (!target) return Promise.resolve()
+
+        if (priority) {
+            this.resolvedOverrides[priority] = target
+        }
 
         this.checkForNewValues(target)
 

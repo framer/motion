@@ -2,7 +2,10 @@ import { RefObject, useEffect } from "react"
 import { ListenerControls, TargetBasedReturnType, TargetOrRef } from "./types"
 
 function isEventTarget(target: any): target is EventTarget {
-    return typeof target.addEventListener === "function" && typeof target.removeEventListener === "function"
+    return (
+        typeof target.addEventListener === "function" &&
+        typeof target.removeEventListener === "function"
+    )
 }
 
 export const eventListener = (
@@ -15,12 +18,14 @@ export const eventListener = (
         if (!target) {
             return
         }
+        if (target === window) console.log("start window", name, handler)
         target.addEventListener(name, handler, options)
     }
     const stopListening = () => {
         if (!target) {
             return
         }
+        if (target === window) console.log("stop window", name)
         target.removeEventListener(name, handler, options)
     }
     return [startListening, stopListening]
@@ -34,15 +39,26 @@ export const useEvent = <Target extends TargetOrRef>(
 ): TargetBasedReturnType<Target> => {
     let result: ListenerControls | undefined = undefined
     if ((!target || isEventTarget(target)) && handler) {
-        result = eventListener(target, type, handler, options) as TargetBasedReturnType<Target>
+        result = eventListener(
+            target,
+            type,
+            handler,
+            options
+        ) as TargetBasedReturnType<Target>
     }
+
     useEffect(
         () => {
             const ref = target as RefObject<EventTarget>
             if (!handler || !target || isEventTarget(target) || !ref.current) {
                 return
             }
-            const [start, stop] = eventListener(ref.current, type, handler, options)
+            const [start, stop] = eventListener(
+                ref.current,
+                type,
+                handler,
+                options
+            )
             start()
             return stop
         },

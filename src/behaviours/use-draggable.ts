@@ -1,5 +1,5 @@
 import { RefObject, useContext, useMemo, useRef } from "react"
-import { PanHandler, usePanGesture, PanInfo, PanHandlers } from "../gestures"
+import { usePanGesture, PanInfo } from "../gestures"
 import { createLock, Lock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { MotionContext } from "../motion/utils/MotionContext"
@@ -86,13 +86,13 @@ const applyOverdrag = (origin: number, current: number, overdrag: Overdrag) => {
     return mix(origin, current, dragFactor)
 }
 
+type MotionPoint = Partial<{
+    x: MotionValue<number>
+    y: MotionValue<number>
+}>
+
 export function useDraggable(
-    props: DraggableProps,
-    ref: RefObject<Element | null>,
-    values: MotionValuesMap,
-    controls: AnimationControls
-) {
-    const {
+    {
         drag = false,
         dragPropagation = false,
         dragConstraints,
@@ -101,80 +101,83 @@ export function useDraggable(
         onDragStart,
         onDragEnd,
         onDirectionLock,
-    } = props
-    const point: Partial<{
-        x: MotionValue<number>
-        y: MotionValue<number>
-    }> = {}
+    }: DraggableProps,
+    ref: RefObject<Element | null>,
+    values: MotionValuesMap,
+    controls: AnimationControls
+) {
+    const point = useRef<MotionPoint>({}).current
     const origin = useRef({ x: 0, y: 0 }).current
-    let currentDirection: null | DragDirection = null
-    if (shouldDrag("x", drag, currentDirection)) {
-        point.x = values.get("x", 0)
-    }
-    if (shouldDrag("y", drag, currentDirection)) {
-        point.y = values.get("y", 0)
-    }
-
-    const updatePoint = (axis: "x" | "y", offset: { x: number; y: number }) => {
-        const p = point[axis]
-        if (!shouldDrag(axis, drag, currentDirection) || !p) return
-
-        let current = origin[axis] + offset[axis]
-
-        if (dragConstraints) {
-            const { min, max } = getConstraints(axis, dragConstraints)
-
-            if (min !== undefined && current < min) {
-                current = overdrag
-                    ? applyOverdrag(min, current, overdrag)
-                    : Math.max(min, current)
-            } else if (max !== undefined && current > max) {
-                current = overdrag
-                    ? applyOverdrag(max, current, overdrag)
-                    : Math.min(max, current)
-            }
-        }
-
-        p.set(current)
-    }
-
     const motionContext = useContext(MotionContext)
-    // XXX: directionLocking and having something called Lock is confusing, especially, because they're not really realted
-    const openGlobalLock = useRef<Lock | null>(null)
 
-    const onPanStart = useMemo(
-        () => (event: MouseEvent | TouchEvent) => {
-            if (point.x) {
-                origin.x = point.x.get()
-                point.x.stop()
-            }
-            if (point.y) {
-                origin.y = point.y.get()
-                point.y.stop()
-            }
-
-            if (!dragPropagation) {
-                openGlobalLock.current = getGlobalLock(drag)
-
-                if (!openGlobalLock.current) {
-                    return
-                }
-            }
-            currentDirection = null
-            motionContext.dragging = true
-
-            onDragStart && onDragStart(event)
-        },
-        [drag, dragPropagation, motionContext]
-    )
-
-    const onPan: PanHandler = useMemo(
+    const handlers = useMemo(
         () => {
-            const updateDrag = (
+            if (!drag) return {}
+
+            let currentDirection: null | DragDirection = null
+            let openGlobalLock: null | Lock = null
+
+            if (shouldDrag("x", drag, currentDirection)) {
+                point.x = values.get("x", 0)
+            }
+            if (shouldDrag("y", drag, currentDirection)) {
+                point.y = values.get("y", 0)
+            }
+
+            const updatePoint = (
+                axis: "x" | "y",
+                offset: { x: number; y: number }
+            ) => {
+                const p = point[axis]
+                if (!shouldDrag(axis, drag, currentDirection) || !p) return
+
+                let current = origin[axis] + offset[axis]
+
+                if (dragConstraints) {
+                    const { min, max } = getConstraints(axis, dragConstraints)
+
+                    if (min !== undefined && current < min) {
+                        current = overdrag
+                            ? applyOverdrag(min, current, overdrag)
+                            : Math.max(min, current)
+                    } else if (max !== undefined && current > max) {
+                        current = overdrag
+                            ? applyOverdrag(max, current, overdrag)
+                            : Math.min(max, current)
+                    }
+                }
+
+                p.set(current)
+            }
+
+            const onPanStart = (event: MouseEvent | TouchEvent) => {
+                if (point.x) {
+                    origin.x = point.x.get()
+                    point.x.stop()
+                }
+                if (point.y) {
+                    origin.y = point.y.get()
+                    point.y.stop()
+                }
+
+                if (!dragPropagation) {
+                    openGlobalLock = getGlobalLock(drag)
+
+                    if (!openGlobalLock) {
+                        return
+                    }
+                }
+                currentDirection = null
+                motionContext.dragging = true
+
+                onDragStart && onDragStart(event)
+            }
+
+            const onPan = (
                 _event: MouseEvent | TouchEvent,
                 { offset }: PanInfo
             ) => {
-                if (!dragPropagation && !openGlobalLock.current) {
+                if (!dragPropagation && !openGlobalLock) {
                     return
                 }
 
@@ -193,50 +196,49 @@ export function useDraggable(
                 updatePoint("y", offset)
             }
 
-            return updateDrag
-        },
-        [openGlobalLock.current, drag, point]
-    )
-    const onPanEnd = useMemo(
-        () => (event: MouseEvent | TouchEvent, { velocity }: PanInfo) => {
-            if (!dragPropagation && openGlobalLock.current) {
-                openGlobalLock.current()
-            }
-
-            if (dragMomentum) {
-                const startMomentum = (axis: "x" | "y") => {
-                    if (!shouldDrag(axis, drag, currentDirection)) return
-                    const transition = dragConstraints
-                        ? getConstraints(axis, dragConstraints)
-                        : {}
-
-                    controls.start({
-                        [axis]: 0,
-                        transition: {
-                            type: "inertia",
-                            velocity: velocity[axis],
-                            bounceStiffness: 200,
-                            bounceDamping: 40,
-                            timeConstant: 325,
-                            restDelta: 1,
-                            ...transition,
-                        },
-                    })
+            const onPanEnd = (
+                event: MouseEvent | TouchEvent,
+                { velocity }: PanInfo
+            ) => {
+                if (!dragPropagation && openGlobalLock) {
+                    openGlobalLock()
                 }
 
-                startMomentum("x")
-                startMomentum("y")
+                if (dragMomentum) {
+                    const startMomentum = (axis: "x" | "y") => {
+                        if (!shouldDrag(axis, drag, currentDirection)) return
+
+                        const transition = dragConstraints
+                            ? getConstraints(axis, dragConstraints)
+                            : {}
+
+                        controls.start({
+                            [axis]: 0,
+                            transition: {
+                                type: "inertia",
+                                velocity: velocity[axis],
+                                bounceStiffness: 200,
+                                bounceDamping: 40,
+                                timeConstant: 325,
+                                restDelta: 1,
+                                ...transition,
+                            },
+                        })
+                    }
+
+                    startMomentum("x")
+                    startMomentum("y")
+                }
+
+                motionContext.dragging = false
+                onDragEnd && onDragEnd(event)
             }
 
-            motionContext.dragging = false
-            onDragEnd && onDragEnd(event)
+            return { onPanStart, onPan, onPanEnd }
         },
-        [openGlobalLock.current, motionContext, drag]
+        [drag, motionContext.dragging]
     )
-    let handlers: PanHandlers = {}
-    if (drag) {
-        handlers = { onPanStart, onPan, onPanEnd }
-    }
+
     usePanGesture(handlers, ref)
 }
 

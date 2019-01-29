@@ -1,9 +1,16 @@
 import { useEvent } from "./use-event"
 import { wrapHandler } from "./event-info"
-import { EventHandler, ListenerControls, TargetOrRef, TargetBasedReturnType } from "./types"
+import {
+    EventHandler,
+    ListenerControls,
+    TargetOrRef,
+    TargetBasedReturnType,
+} from "./types"
 import { useRef } from "react"
 
-const mergeUseEventResults = (...values: (ListenerControls | undefined)[]): ListenerControls | undefined => {
+const mergeUseEventResults = (
+    ...values: (ListenerControls | undefined)[]
+): ListenerControls | undefined => {
     if (values.every(v => v === undefined)) {
         return
     }
@@ -52,9 +59,27 @@ export const useMouseEvents = <Target extends TargetOrRef>(
     const up = useEvent("mouseup", ref, wrapHandler(onMouseUp), options)
     const over = useEvent("mouseover", ref, wrapHandler(onMouseOver), options)
     const out = useEvent("mouseout", ref, wrapHandler(onMouseOut), options)
-    const enter = useEvent("mouseenter", ref, wrapHandler(onMouseEnter), options)
-    const leave = useEvent("mouseleave", ref, wrapHandler(onMouseLeave), options)
-    return mergeUseEventResults(down, move, up, over, out, enter, leave) as TargetBasedReturnType<Target>
+    const enter = useEvent(
+        "mouseenter",
+        ref,
+        wrapHandler(onMouseEnter),
+        options
+    )
+    const leave = useEvent(
+        "mouseleave",
+        ref,
+        wrapHandler(onMouseLeave),
+        options
+    )
+    return mergeUseEventResults(
+        down,
+        move,
+        up,
+        over,
+        out,
+        enter,
+        leave
+    ) as TargetBasedReturnType<Target>
 }
 
 export interface TouchEventHandlers {
@@ -65,15 +90,30 @@ export interface TouchEventHandlers {
 }
 
 export const useTouchEvents = <Target extends TargetOrRef>(
-    { onTouchStart, onTouchMove, onTouchEnd, onTouchCancel }: Partial<TouchEventHandlers>,
+    {
+        onTouchStart,
+        onTouchMove,
+        onTouchEnd,
+        onTouchCancel,
+    }: Partial<TouchEventHandlers>,
     ref: Target,
     options?: AddEventListenerOptions
 ): TargetBasedReturnType<Target> => {
     const down = useEvent("touchstart", ref, wrapHandler(onTouchStart), options)
     const move = useEvent("touchmove", ref, wrapHandler(onTouchMove), options)
     const up = useEvent("touchend", ref, wrapHandler(onTouchEnd), options)
-    const cancel = useEvent("touchcancel", ref, wrapHandler(onTouchCancel), options)
-    return mergeUseEventResults(down, move, up, cancel) as TargetBasedReturnType<Target>
+    const cancel = useEvent(
+        "touchcancel",
+        ref,
+        wrapHandler(onTouchCancel),
+        options
+    )
+    return mergeUseEventResults(
+        down,
+        move,
+        up,
+        cancel
+    ) as TargetBasedReturnType<Target>
 }
 
 export const useNativePointerEvents = <Target extends TargetOrRef>(
@@ -90,23 +130,68 @@ export const useNativePointerEvents = <Target extends TargetOrRef>(
     ref: Target,
     options?: AddEventListenerOptions
 ): TargetBasedReturnType<Target> => {
-    const down = useEvent("pointerdown", ref, wrapHandler(onPointerDown), options)
-    const move = useEvent("pointermove", ref, wrapHandler(onPointerMove), options)
+    const down = useEvent(
+        "pointerdown",
+        ref,
+        wrapHandler(onPointerDown),
+        options
+    )
+    const move = useEvent(
+        "pointermove",
+        ref,
+        wrapHandler(onPointerMove),
+        options
+    )
     const up = useEvent("pointerup", ref, wrapHandler(onPointerUp), options)
-    const cancel = useEvent("pointercancel", ref, wrapHandler(onPointerCancel), options)
-    const over = useEvent("pointerover", ref, wrapHandler(onPointerOver), options)
+    const cancel = useEvent(
+        "pointercancel",
+        ref,
+        wrapHandler(onPointerCancel),
+        options
+    )
+    const over = useEvent(
+        "pointerover",
+        ref,
+        wrapHandler(onPointerOver),
+        options
+    )
     const out = useEvent("pointerout", ref, wrapHandler(onPointerOut), options)
-    const enter = useEvent("pointerenter", ref, wrapHandler(onPointerEnter), options)
-    const leave = useEvent("pointerleave", ref, wrapHandler(onPointerLeave), options)
-    return mergeUseEventResults(down, move, up, cancel, over, out, enter, leave) as TargetBasedReturnType<Target>
+    const enter = useEvent(
+        "pointerenter",
+        ref,
+        wrapHandler(onPointerEnter),
+        options
+    )
+    const leave = useEvent(
+        "pointerleave",
+        ref,
+        wrapHandler(onPointerLeave),
+        options
+    )
+    return mergeUseEventResults(
+        down,
+        move,
+        up,
+        cancel,
+        over,
+        out,
+        enter,
+        leave
+    ) as TargetBasedReturnType<Target>
 }
 
 const supportsPointerEvents = () =>
-    window.onpointerdown === null && window.onpointermove === null && window.onpointerup === null
+    window.onpointerdown === null &&
+    window.onpointermove === null &&
+    window.onpointerup === null
 const supportsTouchEvents = () =>
-    window.ontouchstart === null && window.ontouchmove === null && window.ontouchend === null
+    window.ontouchstart === null &&
+    window.ontouchmove === null &&
+    window.ontouchend === null
 const supportsMouseEvents = () =>
-    window.onmousedown === null && window.onmousemove === null && window.onmouseup === null
+    window.onmousedown === null &&
+    window.onmousemove === null &&
+    window.onmouseup === null
 
 export interface PointerEventHandlers {
     onPointerDown: EventHandler
@@ -160,7 +245,9 @@ export const usePointerEvents = <Target extends TargetOrRef>(
     const pointer = useNativePointerEvents(pointerEvents, ref, options)
     const touch = useTouchEvents(touchEvents, ref, options)
     const mouse = useMouseEvents(mouseEvents, ref, options)
-    return mergeUseEventResults(pointer, touch, mouse) as TargetBasedReturnType<Target>
+    return mergeUseEventResults(pointer, touch, mouse) as TargetBasedReturnType<
+        Target
+    >
 }
 
 /**
@@ -171,7 +258,10 @@ export const usePointerEvents = <Target extends TargetOrRef>(
  * @param ref
  * @param options
  */
-export const useConditionalPointerEvents = <Target extends TargetOrRef, Handlers extends Partial<PointerEventHandlers>>(
+export const useConditionalPointerEvents = <
+    Target extends TargetOrRef,
+    Handlers extends Partial<PointerEventHandlers>
+>(
     eventHandlers: Handlers,
     ref?: Target,
     options?: AddEventListenerOptions

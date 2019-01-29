@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useMemo } from "react"
+import { RefObject, useEffect, useMemo, useRef } from "react"
 import {
     usePointerEvents,
     useConditionalPointerEvents,
@@ -36,6 +36,31 @@ export interface Animation {
     initial?: VariantLabels | Target
 }
 
+/**
+ * Explanation:
+ *
+ * Currently there's a problem where props can change while a gesture is active. In
+ * this hook, we have event handlers that are created in `useMemo`, which is sync.
+ * The event handlers themselves are activated in `useEvent` with `useEffect`, which
+ * is async.
+ *
+ * Most event handlers are being set like this: onTap={() => {}}
+ * This creates a new function every render, thus breaking `useMemo`. When any props
+ * are set during a gesture, this creates a new event. We then have a `useEffect` in this
+ * hook that, when props change, unsets the previous event handlers.
+ *
+ * @param props
+ */
+const usePropsRef = <T>(props: T) => {
+    const propsRef = useRef(props)
+
+    for (const key in props) {
+        propsRef.current[key] = props[key]
+    }
+
+    return propsRef.current
+}
+
 export function useTapGesture(
     handlers: TapHandlers & Animation
 ): { onPointerDown: EventHandler }
@@ -44,66 +69,80 @@ export function useTapGesture(
     ref: RefObject<Element>
 ): undefined
 export function useTapGesture(
-    {
-        onTap,
-        onTapStart,
-        onTapCancel,
-        tapActive,
-        controls,
-    }: TapHandlers & Animation,
+    props: TapHandlers & Animation,
     ref?: RefObject<Element>
 ): undefined | { onPointerDown: EventHandler } {
     let session: TapSession | null = null
+    const { onTap, onTapStart, onTapCancel, tapActive, controls } = props
+    const propsRef = usePropsRef(props)
 
-    const onPointerUp = useMemo(
-        () => (event: Event, { point, devicePoint }: EventInfo) => {
-            if (!session) {
-                return
-            }
-
-            if (controls && tapActive) {
-                controls.clearOverride(getGesturePriority("tap"))
-            }
-
-            if (!ref || event.target !== ref.current) {
-                if (onTapCancel) {
-                    onTapCancel({ point, devicePoint }, event)
+    const handlers = useMemo(
+        () => {
+            if (!onTap && !onTapStart && !onTapCancel && !tapActive) {
+                return {
+                    onPointerUp: () => {},
+                    onPointerDown: () => {},
                 }
-                return
             }
 
-            if (onTap) {
-                onTap({ point, devicePoint }, event)
+            const onPointerUp = (
+                event: Event,
+                { point, devicePoint }: EventInfo
+            ) => {
+                if (!session) {
+                    return
+                }
+
+                if (controls && propsRef.tapActive) {
+                    controls.clearOverride(getGesturePriority("tap"))
+                }
+
+                if (!ref || event.target !== ref.current) {
+                    if (propsRef.onTapCancel) {
+                        propsRef.onTapCancel({ point, devicePoint }, event)
+                    }
+                    return
+                }
+
+                if (propsRef.onTap) {
+                    propsRef.onTap({ point, devicePoint }, event)
+                }
+
+                session = null
             }
 
-            session = null
+            const onPointerDown = (
+                event: Event,
+                { point, devicePoint }: EventInfo
+            ) => {
+                startPointerUp()
+                if (!ref || event.target !== ref.current) return
+                session = {
+                    target: event.target,
+                }
+
+                if (propsRef.onTapStart) {
+                    propsRef.onTapStart({ point, devicePoint }, event)
+                }
+
+                if (controls && propsRef.tapActive) {
+                    controls.start(propsRef.tapActive, {
+                        priority: getGesturePriority("tap"),
+                    })
+                }
+            }
+
+            return { onPointerUp, onPointerDown }
         },
-        [onTap]
-    )
-
-    const onPointerDown = useMemo(
-        () => (event: Event, { point, devicePoint }: EventInfo) => {
-            startPointerUp()
-            if (!ref || event.target !== ref.current) return
-            session = {
-                target: event.target,
-            }
-
-            if (onTapStart) {
-                onTapStart({ point, devicePoint }, event)
-            }
-
-            if (controls && tapActive) {
-                controls.start(tapActive, {
-                    priority: getGesturePriority("tap"),
-                })
-            }
-        },
-        [onPointerUp]
+        [
+            onTap === undefined,
+            onTapStart === undefined,
+            onTapCancel === undefined,
+        ]
     )
 
     const [startPointerUp, stopPointerUp] = usePointerEvents(
-        { onPointerUp },
+        { onPointerUp: handlers.onPointerUp },
         window
     )
 
@@ -111,8 +150,11 @@ export function useTapGesture(
         () => () => {
             stopPointerUp()
         },
-        [ref && ref.current, onPointerUp]
+        [handlers.onPointerUp]
     )
 
-    return useConditionalPointerEvents({ onPointerDown }, ref)
+    return useConditionalPointerEvents(
+        { onPointerDown: handlers.onPointerDown },
+        ref
+    )
 }
