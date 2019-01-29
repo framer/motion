@@ -96,8 +96,8 @@ export function useDraggable(
         drag = false,
         dragPropagation = false,
         dragConstraints,
-        overdrag,
-        dragMomentum,
+        overdrag = true,
+        dragMomentum = true,
         onDragStart,
         onDragEnd,
         onDirectionLock,
@@ -215,7 +215,10 @@ export function useDraggable(
                         transition: {
                             type: "inertia",
                             velocity: velocity[axis],
-                            bounceDamping: 25,
+                            bounceStiffness: 200,
+                            bounceDamping: 40,
+                            timeConstant: 325,
+                            restDelta: 1,
                             ...transition,
                         },
                     })
