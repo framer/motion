@@ -18,14 +18,12 @@ export const eventListener = (
         if (!target) {
             return
         }
-        if (target === window) console.log("start window", name, handler)
         target.addEventListener(name, handler, options)
     }
     const stopListening = () => {
         if (!target) {
             return
         }
-        if (target === window) console.log("stop window", name)
         target.removeEventListener(name, handler, options)
     }
     return [startListening, stopListening]
