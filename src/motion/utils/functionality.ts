@@ -109,10 +109,14 @@ const gestureProps = [
     "onPanStart",
     "onPanEnd",
     "onTap",
+    "onTapStart",
+    "onTapCancel",
+    "tapActive",
     "onPressStart",
     "onPressEnd",
     "hoverActive",
-    "pressActive",
+    "onHoverStart",
+    "onHoverEnd",
 ]
 
 export const isGesturesEnabled = (props: MotionProps) =>
