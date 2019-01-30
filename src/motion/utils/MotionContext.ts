@@ -21,10 +21,12 @@ export const useMotionContext = (
     initial?: VariantLabels | Target
 ) => {
     const parentContext = useContext(MotionContext)
+
     const context: MotionContextProps = useMemo(
         () => ({
             controls,
-            initial: !isTarget(initial) ? initial : parentContext.initial,
+            initial:
+                initial && !isTarget(initial) ? initial : parentContext.initial,
         }),
         []
     )

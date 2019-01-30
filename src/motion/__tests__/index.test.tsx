@@ -129,6 +129,29 @@ describe("motion component rendering and styles", () => {
         expect(getByTestId("child")).toHaveStyle("opacity: 0; color: #f00")
     })
 
+    test("generates style attribute for nested children if passed initial as variant label", () => {
+        const variants = {
+            foo: { x: 10, background: "#fff" },
+        }
+        const childVariants = {
+            foo: { opacity: 0, color: "#f00" },
+        }
+
+        const { getByTestId } = render(
+            <motion.div initial="foo" variants={variants}>
+                <motion.div variants={childVariants} data-testid="child">
+                    <motion.div
+                        variants={childVariants}
+                        data-testid="nestedchild"
+                    />
+                </motion.div>
+            </motion.div>
+        )
+        expect(getByTestId("nestedchild")).toHaveStyle(
+            "opacity: 0; color: #f00"
+        )
+    })
+
     test("doesnt propagate style for children if passed initial as object", () => {
         const { getByTestId } = render(
             <motion.ul
