@@ -2,7 +2,7 @@ import { useMemo, useEffect, RefObject } from "react"
 import { MotionValue } from "../../value"
 import styler, { createStylerFactory, Styler } from "stylefire"
 import { invariant } from "hey-listen"
-import { OnUpdate } from "motion/types"
+import { OnUpdate, MotionProps } from "motion/types"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
 // to fire and the `onUpdate` prop will only fire once per frame
@@ -15,6 +15,7 @@ export class MotionValuesMap {
     private hasMounted = false
     private styler: Styler
     private onUpdate?: Styler
+    private shouldRender: boolean = true
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
 
@@ -48,8 +49,12 @@ export class MotionValuesMap {
 
     bindValueToStyler(key: string, value: MotionValue) {
         const update = (v: any) => {
-            this.styler.set(key, v)
-            if (this.onUpdate) this.onUpdate.set(key, v)
+            if (this.shouldRender) {
+                this.styler.set(key, v)
+            }
+            if (this.onUpdate) {
+                this.onUpdate.set(key, v)
+            }
         }
         const unsubscribe = value.addRenderSubscription(update)
         this.unsubscribers.set(key, unsubscribe)
@@ -60,6 +65,11 @@ export class MotionValuesMap {
         if (onUpdate) {
             this.onUpdate = updateStyler({ onUpdate })
         }
+    }
+
+    setShouldRender(render: boolean) {
+        this.shouldRender = render
+        // TODO: Maybe force a render if this goes false -> true
     }
 
     mount(element: Element) {
@@ -78,10 +88,11 @@ export class MotionValuesMap {
 
 export const useMotionValues = (
     ref: RefObject<Element>,
-    onUpdate?: OnUpdate
+    { onUpdate, render = true }: MotionProps
 ) => {
     const motionValues = useMemo(() => new MotionValuesMap(), [])
     motionValues.setOnUpdate(onUpdate)
+    motionValues.setShouldRender(render)
 
     useEffect(() => {
         invariant(

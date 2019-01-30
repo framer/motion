@@ -44,6 +44,7 @@ export interface MotionProps extends GestureHandlers, DraggableProps {
     transition?: Transition
     inherit?: boolean
     onUpdate?: OnUpdate
+    render?: boolean
     onAnimationComplete?: () => void
     [key: string]: any
 }
