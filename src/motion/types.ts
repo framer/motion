@@ -35,8 +35,6 @@ export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
 export type MotionStyle = MakeMotion<CSSProperties> & MotionStyleProperties
 
 export type OnUpdate = (v: Target) => void
-
-export interface MotionProps
 export interface MotionProps extends GestureHandlers, DraggableProps {
     ref?: Ref<Element>
     style?: MotionStyle
