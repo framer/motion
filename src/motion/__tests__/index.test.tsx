@@ -157,6 +157,24 @@ describe("motion component rendering and styles", () => {
     })
 })
 
+describe("SVG", () => {
+    // We can't offer SSR support for transforms as the sanitisation (as in mental
+    // sanity) of the SVG transform model relies on measuring the dimensions
+    // of the SVG element. So we prevent the setting of initial CSS properties
+    // that may be in conflict.
+    test("sets initial attributes", () => {
+        const { getByTestId } = render(
+            <svg>
+                <motion.g data-testid="g" initial={{ x: 100 }} />
+            </svg>
+        )
+
+        expect(getByTestId("g")).not.toHaveStyle(
+            "transform: translateX(100px) translateZ(0)"
+        )
+    })
+})
+
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
         const promise = new Promise(resolve => {
@@ -248,6 +266,28 @@ describe("animate prop as variant", () => {
         })
 
         await expect(promise).resolves.toBe(50)
+    })
+
+    test("onUpdate", async () => {
+        const promise = new Promise(resolve => {
+            let latest = {}
+
+            const onUpdate = l => (latest = l)
+
+            const Component = () => (
+                <motion.div
+                    onUpdate={onUpdate}
+                    initial={{ x: 0, y: 0 }}
+                    animate={{ x: 100, y: 100 }}
+                    onAnimationComplete={() => resolve(latest)}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toEqual({ x: 100, y: 100 })
     })
 
     test("applies applyOnEnd", () => {

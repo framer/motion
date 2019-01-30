@@ -26,7 +26,7 @@ export const createMotionComponent = <P extends {}>(
         externalRef?: Ref<Element>
     ) => {
         const ref = useExternalRef(externalRef)
-        const values = useMotionValues(ref)
+        const values = useMotionValues(ref, props.onUpdate)
         const style = addMotionStyles(values, props.style)
         const animatePropType = getAnimatePropType(props)
         const shouldInheritVariant = checkShouldInheritVariant(

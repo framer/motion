@@ -43,10 +43,10 @@ export interface DraggableProps {
     dragConstraints?: Constraints
 
     /**
-     * Allow "overdragging" beyond the drag constraints
+     * Allow "dragElasticging" beyond the drag constraints
      * @default false
      */
-    overdrag?: Overdrag
+    dragElastic?: Overdrag
 
     /**
      * Allow smooth scrolling
@@ -81,8 +81,12 @@ const getConstraints = (
     }
 }
 
-const applyOverdrag = (origin: number, current: number, overdrag: Overdrag) => {
-    const dragFactor = typeof overdrag === "number" ? overdrag : 0.5
+const applyOverdrag = (
+    origin: number,
+    current: number,
+    dragElastic: Overdrag
+) => {
+    const dragFactor = typeof dragElastic === "number" ? dragElastic : 0.5
     return mix(origin, current, dragFactor)
 }
 
@@ -96,7 +100,7 @@ export function useDraggable(
         drag = false,
         dragPropagation = false,
         dragConstraints,
-        overdrag = true,
+        dragElastic = true,
         dragMomentum = true,
         onDragStart,
         onDragEnd,
@@ -137,12 +141,12 @@ export function useDraggable(
                     const { min, max } = getConstraints(axis, dragConstraints)
 
                     if (min !== undefined && current < min) {
-                        current = overdrag
-                            ? applyOverdrag(min, current, overdrag)
+                        current = dragElastic
+                            ? applyOverdrag(min, current, dragElastic)
                             : Math.max(min, current)
                     } else if (max !== undefined && current > max) {
-                        current = overdrag
-                            ? applyOverdrag(max, current, overdrag)
+                        current = dragElastic
+                            ? applyOverdrag(max, current, dragElastic)
                             : Math.min(max, current)
                     }
                 }

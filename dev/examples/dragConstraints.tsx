@@ -12,7 +12,7 @@ export const App = () => {
         <motion.div
             drag="x"
             dragConstraints={{ left: -500, right: 500 }}
-            overdrag
+            dragElastic
             dragMomentum
             style={styleA}
         />

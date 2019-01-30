@@ -5,7 +5,22 @@ import { motion } from "../../motion"
 import { useMotionValue } from "../use-motion-value"
 import { useTransformedValue } from "../use-transformed-value"
 
-describe("useTransformedValue", () => {
+describe("as function", () => {
+    test("sets initial value", async () => {
+        const Component = () => {
+            const x = useMotionValue(100)
+            const y = useTransformedValue(x, v => -v)
+            return <motion.div style={{ x, y }} />
+        }
+
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(100px) translateY(-100px) translateZ(0)"
+        )
+    })
+})
+
+describe("as input/output range", () => {
     test("sets initial value", async () => {
         const Component = () => {
             const x = useMotionValue(100)

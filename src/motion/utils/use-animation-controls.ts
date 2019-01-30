@@ -443,7 +443,7 @@ export const useAnimationControls = <P>(
     ref: RefObject<Element>,
     inherit: boolean
 ) => {
-    const { variants, transition } = props
+    const { variants, transition, onUpdate } = props
     const parentControls = useContext(MotionContext).controls
     const controls = useMemo(() => new AnimationControls<P>(values, ref), [])
 

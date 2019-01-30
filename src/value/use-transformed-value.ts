@@ -1,37 +1,43 @@
-import { useMemo, useRef, MutableRefObject } from "react"
-import { MotionValue, Transformer } from "./"
+import { MotionValue } from "value"
+import { useCustomValue } from "./use-custom-value"
 import { interpolate } from "@popmotion/popcorn"
 
-/**
- * @param {MotionValue} value - The `MotionValue` to transform
- * @param {number[]} from - A linear numerical sequence.
- * @param {string[] | number[]} to - A series of numbers, colors or
- *
- * TODO: Maybe a second implementation, or value
- *
- * Arbitrary functions
- * useTransformedValue(x, (v) => `${x}px`)
- *
- * Multiple values
- * useTransformedValue({ x, y }, (v) => [v.x, v.y])
- */
-export const useTransformedValue = <To extends string[] | number[]>(
+type TransformerOptions = { clamp: true }
+
+type Transformer = (v: any) => any
+
+const isTransformer = (v: number[] | Transformer): v is Transformer => {
+    return typeof v === "function"
+}
+
+const noop = () => (v: any) => v
+
+export function useTransformedValue(
+    value: MotionValue,
+    transform: Transformer
+): MotionValue
+export function useTransformedValue(
     value: MotionValue<number>,
     from: number[],
-    to: To
-): MotionValue<typeof to[number]> => {
-    const transformedValue: MutableRefObject<null | MotionValue<
-        To[number]
-    >> = useRef(null)
-    return useMemo(
-        () => {
-            if (transformedValue.current) transformedValue.current.destroy()
+    to: any[],
+    options?: TransformerOptions
+): MotionValue
+export function useTransformedValue(
+    value: MotionValue,
+    transform: Transformer | number[],
+    to?: any[],
+    opts?: TransformerOptions
+): MotionValue {
+    let comparitor: any[] = [value]
+    let transformer = noop
 
-            // This cast is needed because interpolate does not base it's return type on the to type (yet)
-            const transformer = interpolate(from, to) as Transformer<number>
-            transformedValue.current = value.addChild({ transformer })
-            return transformedValue.current
-        },
-        [value, from.join(","), to.join(",")]
-    )
+    if (isTransformer(transform)) {
+        transformer = () => transform
+    } else if (Array.isArray(to)) {
+        const from = transform
+        transformer = () => interpolate(from, to, opts)
+        comparitor = [value, from.join(","), to.join(",")]
+    }
+
+    return useCustomValue(value, transformer, comparitor)
 }

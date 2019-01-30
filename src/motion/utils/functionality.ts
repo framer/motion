@@ -146,7 +146,7 @@ type RenderProps<P> = {
     values: MotionValuesMap
 }
 
-const eventHandlers = new Set(["onTap", "onAnimationComplete"])
+const eventHandlers = new Set(["onTap", "onAnimationComplete", "onUpdate"])
 
 const validProps = (props: MotionProps) => {
     const valid = {}

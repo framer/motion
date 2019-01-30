@@ -47,7 +47,15 @@ export interface Animation {
  * Most event handlers are being set like this: onTap={() => {}}
  * This creates a new function every render, thus breaking `useMemo`. When any props
  * are set during a gesture, this creates a new event. We then have a `useEffect` in this
- * hook that, when props change, unsets the previous event handlers.
+ * hook that, when props change, unsets the previous event handlers. I suspect that at
+ * some point, the pointer up event is fired in between the previous one
+ * being deactivate and the new one being activated.
+ *
+ * I attempted to rewrite the hook without `useMemo` at all but encountered the same issue.
+ * At some point the `pointerUp` event is being unset and not reapplied until after it fires.
+ *
+ * By setting props to a ref we maintain longer gesture sessions and don't encounter this funny
+ * business, but I'd rather a solution that required less code.
  *
  * @param props
  */
