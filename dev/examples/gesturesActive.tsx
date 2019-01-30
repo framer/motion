@@ -1,5 +1,6 @@
 import * as React from "react"
 import { motion } from "@framer"
+import { useAnimation } from "../../src"
 
 const style = {
     width: 100,
@@ -8,10 +9,18 @@ const style = {
 }
 
 export const App = () => {
+    const animation = useAnimation()
     return (
         <motion.div
+            animate={animation}
             hoverActive={{ scale: 1.5 }}
-            pressActive={{ scale: 0.5, backgroundColor: "rgba(0, 255, 0, .5)" }}
+            tapActive={{ scale: 0.5, backgroundColor: "rgba(0, 255, 0, .5)" }}
+            onHoverStart={() => {
+                animation.start({ background: "#00F" })
+            }}
+            onHoverEnd={() => {
+                animation.start({ background: "#F00" })
+            }}
             style={style}
         />
     )

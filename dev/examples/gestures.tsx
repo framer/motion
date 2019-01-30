@@ -15,5 +15,5 @@ export const App = () => {
         rotate += 10
         animation.start({ rotate })
     }
-    return <motion.div animation={animation} onTap={onTap} style={style} />
+    return <motion.div animate={animation} onTap={onTap} style={style} />
 }

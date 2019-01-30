@@ -3,7 +3,6 @@ import { MotionValue } from "../value"
 import { AnimationManager } from "../animation"
 import { Variants, Target, Transition, TargetAndTransition } from "../types"
 import { GestureHandlers } from "../gestures"
-import { HoverProps } from "../gestures/use-hover-gesture"
 import { DraggableProps } from "../behaviours"
 
 export type MotionStyleProp = string | number | MotionValue
@@ -36,11 +35,7 @@ export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
 export type MotionStyle = MakeMotion<CSSProperties> & MotionStyleProperties
 
 export type OnUpdate = (v: Target) => void
-
-export interface MotionProps
-    extends GestureHandlers,
-        DraggableProps,
-        HoverProps {
+export interface MotionProps extends GestureHandlers, DraggableProps {
     ref?: Ref<Element>
     style?: MotionStyle
     animate?: AnimationManager | TargetAndTransition | VariantLabels

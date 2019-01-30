@@ -16,7 +16,6 @@ import {
     getAnimateComponent,
     checkShouldInheritVariant,
 } from "./utils/functionality"
-import { useHover } from "../gestures/use-hover-gesture"
 
 export const createMotionComponent = <P extends {}>(
     Component: string | ComponentType<P>
@@ -72,8 +71,6 @@ export const createMotionComponent = <P extends {}>(
             />
         )
 
-        const hoverHandlers = useHover(props, controls)
-
         // We use an intermediate component here rather than calling `createElement` directly
         // because we want to resolve the style from our motion values only once every
         // functional component has resolved. Resolving it here would do it before the functional components
@@ -82,7 +79,6 @@ export const createMotionComponent = <P extends {}>(
             <RenderComponent
                 base={Component}
                 props={props}
-                handlers={hoverHandlers}
                 innerRef={ref}
                 style={style}
                 values={values}

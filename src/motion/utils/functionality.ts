@@ -5,14 +5,7 @@ import { useVariants } from "./use-variants"
 import { useGestures } from "../../gestures"
 import { useDraggable } from "../../behaviours"
 import { useAnimateValues } from "./use-animate-values"
-import {
-    createElement,
-    ComponentType,
-    RefObject,
-    CSSProperties,
-    EventHandler,
-    SyntheticEvent,
-} from "react"
+import { createElement, ComponentType, RefObject, CSSProperties } from "react"
 import { buildStyleAttr } from "./style-attr"
 import { MotionValuesMap } from "./use-motion-values"
 import { AnimatePropType } from "../types"
@@ -116,10 +109,14 @@ const gestureProps = [
     "onPanStart",
     "onPanEnd",
     "onTap",
+    "onTapStart",
+    "onTapCancel",
+    "tapActive",
     "onPressStart",
     "onPressEnd",
     "hoverActive",
-    "pressActive",
+    "onHoverStart",
+    "onHoverEnd",
 ]
 
 export const isGesturesEnabled = (props: MotionProps) =>
@@ -138,10 +135,6 @@ type RenderProps<P> = {
     base: string | ComponentType<P>
     props: P & MotionProps
     innerRef: RefObject<Element | null>
-    handlers?: {
-        onMouseEnter?: EventHandler<SyntheticEvent>
-        onMouseLeave?: EventHandler<SyntheticEvent>
-    }
     style: CSSProperties
     values: MotionValuesMap
 }
@@ -165,7 +158,6 @@ export const RenderComponent = <P>({
     props,
     innerRef,
     style,
-    handlers,
     values,
 }: RenderProps<P>) => {
     const isDOM = typeof base === "string"
@@ -174,7 +166,6 @@ export const RenderComponent = <P>({
 
     return createElement<any>(base, {
         ...forwardProps,
-        ...handlers,
         ref: innerRef,
         style: isSVG ? style : buildStyleAttr(values, style),
     })
