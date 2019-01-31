@@ -56,6 +56,10 @@ export class AnimationControls<P = {}> {
     constructor(values: MotionValuesMap, ref: RefObject<Element>) {
         this.values = values
         this.ref = ref
+
+        this.values.forEach(
+            (value, key) => (this.baseTarget[key] = value.get())
+        )
     }
 
     setProps(props: P) {
@@ -207,15 +211,8 @@ export class AnimationControls<P = {}> {
     ): Promise<any> {
         this.setPriorityAnimation(definition, opts.priority || 0)
         // Check if this is a priority gesture animation
-        if (
-            opts.priority !== undefined &&
-            !this.isHighestPriority(opts.priority)
-        ) {
-            // TODO: It might be highest priority for children
-            return Promise.resolve()
-        }
 
-        this.resetIsAnimating()
+        this.resetIsAnimating(opts.priority)
 
         if (isVariantLabels(definition)) {
             return this.animateVariantLabels(definition, opts)
@@ -406,11 +403,30 @@ export class AnimationControls<P = {}> {
         return Promise.all(animations)
     }
 
-    private resetIsAnimating() {
+    private checkOverrideIsAnimating(priority: number) {
+        const numOverrides = this.overrides.length
+        for (let i = priority + 1; i < numOverrides; i++) {
+            const resolvedOverride = this.resolvedOverrides[i]
+
+            if (resolvedOverride) {
+                for (const key in resolvedOverride) {
+                    this.isAnimating.add(key)
+                }
+            }
+        }
+    }
+
+    private resetIsAnimating(priority: number = 0) {
         this.isAnimating.clear()
 
+        // If this isn't the highest priority gesture, block the animation
+        // of anything that's currently being animated
+        if (priority < this.getHighestPriority()) {
+            this.checkOverrideIsAnimating(priority)
+        }
+
         if (this.children) {
-            this.children.forEach(child => child.resetIsAnimating())
+            this.children.forEach(child => child.resetIsAnimating(priority))
         }
     }
 
