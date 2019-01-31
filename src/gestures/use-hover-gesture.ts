@@ -14,7 +14,7 @@ export interface HoverHandlers {
 const hoverPriority = getGesturePriority("hover")
 
 // TODO: Optimisation here is find a way to conditionally add these listeners based on
-// whether we're receiving hoverActive or evnet listeners
+// whether we're receiving hoverActive or event listeners
 export const useHoverGesture = (
     {
         hoverActive,
