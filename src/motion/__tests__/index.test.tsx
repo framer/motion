@@ -44,7 +44,7 @@ describe("motion component rendering and styles", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toHaveAttribute("disabled")
+        return expect(promise).resolves.toHaveAttribute("disabled")
     })
 
     test("accepts createref", async () => {
@@ -60,7 +60,7 @@ describe("motion component rendering and styles", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toHaveAttribute("type", "submit")
+        return expect(promise).resolves.toHaveAttribute("type", "submit")
     })
 
     test("generates style attribute if passed a special transform style attr", () => {
@@ -213,7 +213,7 @@ describe("animate prop as object", () => {
             rerender(<motion.div animate={{ x: 20 }} style={{ x }} />)
         })
 
-        await expect(promise).resolves.toBe(20)
+        return expect(promise).resolves.toBe(20)
     })
 
     test("accepts custom transition prop", async () => {
@@ -231,7 +231,7 @@ describe("animate prop as object", () => {
             rerender(<motion.div animate={{ x: 20 }} style={{ x }} />)
         })
 
-        await expect(promise).resolves.toBe(50)
+        return expect(promise).resolves.toBe(50)
     })
 })
 
@@ -267,7 +267,7 @@ describe("animate prop as variant", () => {
             )
         })
 
-        await expect(promise).resolves.toBe(100)
+        return expect(promise).resolves.toBe(100)
     })
 
     test("child animates to set variant", async () => {
@@ -288,7 +288,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toBe(50)
+        return expect(promise).resolves.toBe(50)
     })
 
     test("onUpdate", async () => {
@@ -310,7 +310,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toEqual({ x: 100, y: 100 })
+        return expect(promise).resolves.toEqual({ x: 100, y: 100 })
     })
 
     test("applies applyOnEnd", () => {
@@ -352,7 +352,7 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toBe("none")
+        return expect(promise).resolves.toBe("none")
     })
 
     test("accepts custom transition", async () => {
@@ -380,13 +380,6 @@ describe("animate prop as variant", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
+        return expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
     })
 })
-
-/**
- * TODO:
- *
- * xActive
- * xActive as variant with children
- */

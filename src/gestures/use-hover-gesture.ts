@@ -13,6 +13,8 @@ export interface HoverHandlers {
 
 const hoverPriority = getGesturePriority("hover")
 
+// TODO: Optimisation here is find a way to conditionally add these listeners based on
+// whether we're receiving hoverActive or event listeners
 export const useHoverGesture = (
     {
         hoverActive,
@@ -22,30 +24,30 @@ export const useHoverGesture = (
     }: HoverHandlers & ControlsProp,
     ref?: RefObject<Element>
 ) => {
-    const onPointerEnter = useMemo(
-        () => (event: Event) => {
-            if (onHoverStart) {
-                onHoverStart(event)
+    const handlers = useMemo(
+        () => {
+            const onPointerEnter = (event: Event) => {
+                if (onHoverStart) onHoverStart(event)
+
+                if (hoverActive && controls) {
+                    controls.start(hoverActive, {
+                        priority: hoverPriority,
+                    })
+                }
             }
-            if (hoverActive && controls) {
-                controls.start(hoverActive, {
-                    priority: hoverPriority,
-                })
+
+            const onPointerLeave = (event: Event) => {
+                if (onHoverEnd) onHoverEnd(event)
+
+                if (hoverActive && controls) {
+                    controls.clearOverride(hoverPriority)
+                }
             }
+
+            return { onPointerEnter, onPointerLeave }
         },
-        [hoverActive, onHoverStart, controls]
+        [hoverActive, onHoverStart, onHoverEnd, controls]
     )
 
-    const onPointerLeave = useMemo(
-        () => (event: Event) => {
-            if (onHoverEnd) onHoverEnd(event)
-
-            if (hoverActive && controls) {
-                controls.clearOverride(hoverPriority)
-            }
-        },
-        [hoverActive, onHoverEnd, controls]
-    )
-
-    return useConditionalPointerEvents({ onPointerEnter, onPointerLeave }, ref)
+    return useConditionalPointerEvents(handlers, ref)
 }

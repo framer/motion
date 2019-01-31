@@ -139,7 +139,13 @@ type RenderProps<P> = {
     values: MotionValuesMap
 }
 
-const eventHandlers = new Set(["onTap", "onAnimationComplete", "onUpdate"])
+const eventHandlers = new Set([
+    "onTap",
+    "onAnimationComplete",
+    "onUpdate",
+    "onHoverStart",
+    "onHoverEnd",
+])
 
 const validProps = (props: MotionProps) => {
     const valid = {}
@@ -171,18 +177,20 @@ export const RenderComponent = <P>({
     })
 }
 
-const bindParent = new Set([
-    AnimatePropType.AnimationSubscription,
-    AnimatePropType.VariantLabel,
-])
-export const checkShouldInheritVariant = (
-    { animate, inherit = true }: MotionProps,
-    animatePropType?: AnimatePropType
-): boolean => {
-    return !!(
-        inherit &&
-        (animate === undefined || animate instanceof AnimationManager) &&
-        animatePropType &&
-        bindParent.has(animatePropType)
-    )
+export const checkShouldInheritVariant = ({
+    animate,
+    inherit = true,
+    variants,
+    hoverActive,
+    tapActive,
+}: MotionProps): boolean => {
+    const isVariantChild =
+        inherit && variants && !animate && !hoverActive && !tapActive
+    const isAnimationHookChild = inherit && animate instanceof AnimationManager
+
+    if (isVariantChild || isAnimationHookChild) {
+        return true
+    } else {
+        return false
+    }
 }

@@ -24,16 +24,15 @@ describe("tap", () => {
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
         rerender(<Component />)
-        rerender(<Component />)
 
         fireEvent.mouseDown(container.firstChild as Element)
         fireEvent.mouseUp(container.firstChild as Element)
 
+        rerender(<Component />)
+        rerender(<Component />)
+
         fireEvent.mouseDown(container.firstChild as Element)
         fireEvent.mouseUp(container.firstChild as Element)
-
-        rerender(<Component />)
-        rerender(<Component />)
 
         fireEvent.mouseDown(container.firstChild as Element)
         fireEvent.mouseUp(container.firstChild as Element)

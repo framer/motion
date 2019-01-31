@@ -28,10 +28,7 @@ export const createMotionComponent = <P extends {}>(
         const values = useMotionValues(ref, props)
         const style = addMotionStyles(values, props.style)
         const animatePropType = getAnimatePropType(props)
-        const shouldInheritVariant = checkShouldInheritVariant(
-            props,
-            animatePropType
-        )
+        const shouldInheritVariant = checkShouldInheritVariant(props)
         const controls = useAnimationControls(
             values,
             props,
@@ -39,7 +36,6 @@ export const createMotionComponent = <P extends {}>(
             shouldInheritVariant
         )
         const context = useMotionContext(controls, props.initial)
-
         // Add functionality
         const Animate = getAnimateComponent(animatePropType)
 
