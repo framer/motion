@@ -6,16 +6,31 @@ interface EventLike {
     target: EventTarget | null
 }
 
-const pointForTarget = (event: EventLike, target: HTMLElement | null): Point => {
+// A limitation of JSDom is the inability to create custom MouseEvents with our own
+// `pageX` and `pageY` properties. So we create this default pointer, and expose it internally.
+// To test mouse movement, import and update _DANGER_TEST_POINTER and then trigger mouseMove.
+export const _TEST_POINTER_DO_NOT_USE = { x: 0, y: 0 }
+
+const pointForTarget = (
+    {
+        pageX = _TEST_POINTER_DO_NOT_USE.x,
+        pageY = _TEST_POINTER_DO_NOT_USE.y,
+    }: EventLike,
+    target: HTMLElement | null
+): Point => {
     if (!target) {
-        return { x: event.pageX, y: event.pageY }
+        return { x: pageX, y: pageY }
     }
     // Safari
     if (window.webkitConvertPointFromPageToNode) {
-        let webkitPoint = new WebKitPoint(event.pageX, event.pageY)
-        webkitPoint = window.webkitConvertPointFromPageToNode(target, webkitPoint)
+        let webkitPoint = new WebKitPoint(pageX, pageY)
+        webkitPoint = window.webkitConvertPointFromPageToNode(
+            target,
+            webkitPoint
+        )
         return { x: webkitPoint.x, y: webkitPoint.y }
     }
+
     // All other browsers
     // TODO: This does not work with rotate yet
     const rect = target.getBoundingClientRect()
@@ -27,14 +42,12 @@ const pointForTarget = (event: EventLike, target: HTMLElement | null): Point => 
     if (target.style.height && target.style.height !== "") {
         scaleY = parseFloat(target.style.height) / rect.height
     }
-    const scale = {
-        x: scaleX,
-        y: scaleY,
-    }
+
     const point = {
-        x: scale.x * (event.pageX - rect.left - target.clientLeft + target.scrollLeft),
-        y: scale.y * (event.pageY - rect.top - target.clientTop + target.scrollTop),
+        x: scaleX * (pageX - rect.left - target.clientLeft + target.scrollLeft),
+        y: scaleY * (pageY - rect.top - target.clientTop + target.scrollTop),
     }
+
     return point
 }
 
@@ -45,7 +58,9 @@ const extractEventInfo = (event: EventLike): EventInfo => {
     return { point, devicePoint }
 }
 
-export const wrapHandler = (handler?: EventHandler): EventListener | undefined => {
+export const wrapHandler = (
+    handler?: EventHandler
+): EventListener | undefined => {
     if (!handler) {
         return undefined
     }
