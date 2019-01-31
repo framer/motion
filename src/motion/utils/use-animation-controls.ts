@@ -15,7 +15,7 @@ import {
 } from "../../types"
 import { unitConversion } from "../../dom/unit-type-conversion"
 import styler from "stylefire"
-import { MotionProps, VariantLabels } from "motion/types"
+import { MotionProps, VariantLabels } from "../types"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {

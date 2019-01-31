@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react"
 import { AnimationControls } from "./use-animation-controls"
-import { VariantLabels } from "motion/types"
-import { Target } from "types"
+import { VariantLabels } from "../types"
+import { Target } from "../../types"
 
 type MotionContextProps = {
     controls?: AnimationControls

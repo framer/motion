@@ -1,8 +1,10 @@
-import { AnimationControls } from "./use-animation-controls"
-import { Target, Transition } from "types"
 import { useRef, useEffect } from "react"
+
+import { Target, Transition } from "../../types"
+import { MotionValue } from "../../value"
+
+import { AnimationControls } from "./use-animation-controls"
 import { MotionValuesMap } from "./use-motion-values"
-import { MotionValue } from "value"
 
 export const useAnimateValues = (
     target: Target,
