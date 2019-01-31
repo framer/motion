@@ -46,7 +46,7 @@ export const useHoverGesture = (
 
             return { onPointerEnter, onPointerLeave }
         },
-        [hoverActive, onHoverStart, onHoverEnd]
+        [hoverActive, onHoverStart, onHoverEnd, controls]
     )
 
     return useConditionalPointerEvents(handlers, ref)
