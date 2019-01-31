@@ -1,7 +1,7 @@
-import { mouseEnter, mouseLeave, mouseDown } from "../../../jest.setup"
+import { mouseEnter, mouseLeave } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
-import { render } from "react-testing-library"
+import { render, fireEvent } from "react-testing-library"
 import { motionValue } from "../../value"
 
 describe("hover", () => {
@@ -157,7 +157,7 @@ describe("hover", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            mouseDown(container.firstChild as Element)
+            fireEvent.mouseDown(container.firstChild as Element)
             mouseEnter(container.firstChild as Element)
 
             resolve([opacity.get(), scale.get()])
