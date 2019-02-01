@@ -11,6 +11,19 @@ interface EventLike {
 // To test mouse movement, import and update _DANGER_TEST_POINTER and then trigger mouseMove.
 export const _TEST_POINTER_DO_NOT_USE = { x: 0, y: 0 }
 
+const getScale = (
+    target: HTMLElement,
+    rect: ClientRect | DOMRect,
+    axis: "width" | "height"
+) => {
+    const measured = target.style[axis]
+    if (measured && measured !== "") {
+        return parseFloat(measured) / rect[axis]
+    }
+
+    return 1
+}
+
 const pointForTarget = (
     {
         pageX = _TEST_POINTER_DO_NOT_USE.x,
@@ -34,14 +47,8 @@ const pointForTarget = (
     // All other browsers
     // TODO: This does not work with rotate yet
     const rect = target.getBoundingClientRect()
-    let scaleX = 1
-    if (target.style.width && target.style.width !== "") {
-        scaleX = parseFloat(target.style.width) / rect.width
-    }
-    let scaleY = 1
-    if (target.style.height && target.style.height !== "") {
-        scaleY = parseFloat(target.style.height) / rect.height
-    }
+    const scaleX = getScale(target, rect, "width")
+    const scaleY = getScale(target, rect, "height")
 
     const point = {
         x: scaleX * (pageX - rect.left - target.clientLeft + target.scrollLeft),
