@@ -1,7 +1,7 @@
 import { RefObject } from "react"
 import { Target } from "../types"
 import { MotionValuesMap } from "../motion"
-import { MotionValue } from "value"
+import { MotionValue } from "../value"
 import styler from "stylefire"
 import { getValueType } from "./value-types"
 

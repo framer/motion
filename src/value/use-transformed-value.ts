@@ -1,4 +1,4 @@
-import { MotionValue } from "value"
+import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
 import { interpolate } from "@popmotion/popcorn"
 

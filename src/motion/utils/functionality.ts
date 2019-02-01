@@ -1,4 +1,4 @@
-import { MotionProps, VariantLabels } from "motion/types"
+import { MotionProps, VariantLabels } from "../types"
 import { AnimationManager } from "../../animation"
 import { useAnimationSubscription } from "./use-animation-subscription"
 import { useVariants } from "./use-variants"

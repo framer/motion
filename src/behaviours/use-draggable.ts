@@ -6,7 +6,7 @@ import { MotionContext } from "../motion/utils/MotionContext"
 import { Point } from "../events"
 import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
-import { AnimationControls } from "motion"
+import { AnimationControls } from "../motion"
 
 type DragDirection = "x" | "y"
 

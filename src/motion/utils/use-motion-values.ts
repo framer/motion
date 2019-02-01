@@ -2,7 +2,7 @@ import { useMemo, useEffect, RefObject } from "react"
 import { MotionValue } from "../../value"
 import styler, { createStylerFactory, Styler } from "stylefire"
 import { invariant } from "hey-listen"
-import { OnUpdate, MotionProps } from "motion/types"
+import { OnUpdate, MotionProps } from "../types"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
 // to fire and the `onUpdate` prop will only fire once per frame
