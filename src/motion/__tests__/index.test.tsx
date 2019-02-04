@@ -94,11 +94,13 @@ describe("motion component rendering and styles", () => {
     })
 
     test("generates style attribute if passed initial as variant label is function", () => {
+        type Props = { i: number }
+
         const variants = {
-            foo: ({ i }) => ({ x: i * 10 }),
+            foo: ({ i }: Props) => ({ x: i * 10 }),
         }
         const childVariants = {
-            foo: ({ i }) => ({ x: i * 10 }),
+            foo: ({ i }: Props) => ({ x: i * 10 }),
         }
 
         const { getByTestId } = render(
@@ -177,6 +179,20 @@ describe("motion component rendering and styles", () => {
             <MotionBox style={{ backgroundColor: "#f00" }} />
         )
         expect(container.firstChild).toHaveStyle("background-color: #f00")
+    })
+
+    test("updates style for transform values", () => {
+        let rotate = 0
+
+        const Component = () => {
+            rotate += 45
+            return <motion.div style={{ rotate }} />
+        }
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: rotate(90deg) translateZ(0)"
+        )
     })
 })
 
