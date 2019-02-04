@@ -30,9 +30,10 @@ export interface MotionStyleProperties {
     perspective?: MotionStyleProp
 }
 
-export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
+export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> } &
+    MotionStyleProperties
 
-export type MotionStyle = MakeMotion<CSSProperties> & MotionStyleProperties
+export type MotionStyle = MakeMotion<CSSProperties>
 
 export type OnUpdate = (v: Target) => void
 export interface MotionProps extends GestureHandlers, DraggableProps {
