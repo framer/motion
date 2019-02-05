@@ -99,7 +99,7 @@ export class AnimationControls<P = {}> {
 
         const domStyler = styler(this.ref.current as Element)
         newValueKeys.forEach(key => {
-            const domValue = domStyler.get(key)
+            const domValue = domStyler.get(key) || 0
             this.values.set(key, motionValue(domValue))
             this.baseTarget[key] = domValue
         })
