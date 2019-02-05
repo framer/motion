@@ -13,7 +13,7 @@ export const App = () => {
         <motion.div
             animate={{ background: "#000" }}
             initial={{ background: "#fff" }}
-            transition={{ duration: 3000 }}
+            transition={{ duration: 3 }}
             style={style}
         />
     )

@@ -11,7 +11,7 @@ const style = {
 const containerVariants = {
     loading: {
         opacity: 1,
-        transition: { duration: 300 },
+        transition: { duration: 0.3 },
     },
     loaded: {},
 }
@@ -22,7 +22,7 @@ const circleVariants = {
         rotate: 0,
         transition: {
             pathLength: {
-                duration: 500,
+                duration: 0.5,
             },
             rotate: {
                 type: "physics",
@@ -35,7 +35,7 @@ const circleVariants = {
             pathLength: 100,
             rotate: current.rotate + 360,
             transition: {
-                duration: 600,
+                duration: 0.6,
             },
         }
     },
@@ -47,7 +47,7 @@ const tickVariants = {
     },
     loaded: {
         pathLength: 100,
-        transition: { delay: 300 },
+        transition: { delay: 0.3 },
     },
 }
 

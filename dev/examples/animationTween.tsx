@@ -13,8 +13,15 @@ export const App = () => {
     const transition = {
         type: "tween",
         ease: "anticipate",
-        duration: 400,
+        duration: 0.4,
     }
 
-    return <motion.div animate={{ x }} transition={transition} style={style} onTap={() => setX(x + 200)} />
+    return (
+        <motion.div
+            animate={{ x }}
+            transition={transition}
+            style={style}
+            onTap={() => setX(x + 200)}
+        />
+    )
 }

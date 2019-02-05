@@ -2,6 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.0.1] 2019-01-14
+## [0.3.0] 2019-02-05
 
--   First publish
+### Changed
+
+-   `duration` and `delay` are now defined as seconds.
+-   `tapActive` -> `tap`
+-   `hoverActive` -> `hover`
+-   `drag` -> `dragEnabled`

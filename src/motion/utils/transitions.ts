@@ -136,8 +136,11 @@ const getTransitionForValue = (
 const preprocessOptions = (
     type: string,
     opts: PopmotionTransitionProps
-): PopmotionTransitionProps =>
-    transitionOptionParser[type] ? transitionOptionParser[type](opts) : opts
+): PopmotionTransitionProps => {
+    return transitionOptionParser[type]
+        ? transitionOptionParser[type](opts)
+        : opts
+}
 
 export const getTransition = (
     valueKey: string,

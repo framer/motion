@@ -111,8 +111,8 @@ const gestureProps = [
     "onTap",
     "onTapStart",
     "onTapCancel",
-    "tapActive",
-    "hoverActive",
+    "tap",
+    "hover",
     "onHoverStart",
     "onHoverEnd",
 ]
@@ -179,11 +179,10 @@ export const checkShouldInheritVariant = ({
     animate,
     inherit = true,
     variants,
-    hoverActive,
-    tapActive,
+    hover,
+    tap,
 }: MotionProps): boolean => {
-    const isVariantChild =
-        inherit && variants && !animate && !hoverActive && !tapActive
+    const isVariantChild = inherit && variants && !animate && !hover && !tap
     const isAnimationHookChild = inherit && animate instanceof AnimationManager
 
     if (isVariantChild || isAnimationHookChild) {

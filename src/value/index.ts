@@ -6,7 +6,7 @@ import {
     ColdSubscription,
 } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
-import { PopmotionTransitionProps } from "../types"
+import { PopmotionTransitionProps, Tween } from "../types"
 
 export type Transformer<T> = (v: T) => T
 
@@ -21,6 +21,21 @@ export type ActionFactory = (actionConfig: PopmotionTransitionProps) => Action
 
 const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
+}
+
+// This function is unrolled and mutative, as the number of props
+// is too small to really warrent a loop and by this point config
+// has been recreated many times over.
+const parseDurations = (config: PopmotionTransitionProps) => {
+    if (config["duration"]) {
+        config["duration"] = config["duration"] * 1000
+    }
+
+    if (config.delay) {
+        config.delay = config.delay * 1000
+    }
+
+    return config
 }
 
 export class MotionValue<V = any> {
@@ -158,15 +173,17 @@ export class MotionValue<V = any> {
 
     control(
         controller: ActionFactory,
-        { delay, ...config }: PopmotionTransitionProps,
+        config: PopmotionTransitionProps,
         transformer?: Transformer<V>
     ) {
         this.stop()
 
+        const { delay, ...timeAdjustedConfig } = parseDurations(config)
+
         let initialisedController = controller({
             from: this.get() as any,
             velocity: this.getVelocity(),
-            ...config,
+            ...timeAdjustedConfig,
         })
 
         if (transformer) {
