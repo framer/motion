@@ -6,14 +6,14 @@ const style = {
     width: 100,
     height: 100,
     background: "red",
+    opacity: 1,
 }
 
 export const App = () => {
     const animation = useAnimation()
 
     const seq = async () => {
-        await animation.start({ opacity: 1 })
-        animation.start({ x: 100, transition: { duration: 0.4 } })
+        await animation.start({ opacity: 0 })
     }
 
     React.useEffect(() => {
@@ -23,7 +23,6 @@ export const App = () => {
     return (
         <motion.div
             animate={animation}
-            initial={{ opacity: 0 }}
             transition={{ duration: 5 }}
             style={style}
         />

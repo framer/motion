@@ -76,17 +76,11 @@ export const App = () => {
                     <motion.path
                         d="M14 28c7.732 0 14-6.268 14-14S21.732 0 14 0 0 6.268 0 14s6.268 14 14 14z"
                         opacity="1"
-                        initial={{
-                            pathLength: 0,
-                            originX: 0,
-                            originY: 0,
-                        }}
                         variants={circleVariants}
                     />
                     <motion.path
                         d="M6.173 16.252l5.722 4.228 9.22-12.69"
                         opacity="1"
-                        initial={{ pathLength: 0 }}
                         variants={tickVariants}
                     />
                 </g>
