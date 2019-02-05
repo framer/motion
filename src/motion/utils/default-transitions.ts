@@ -16,7 +16,7 @@ const overDampedSpring = (to: string | number) => ({
 
 const linearTween = () => ({
     ease: "linear",
-    duration: 250,
+    duration: 0.25,
 })
 
 const defaultTransitions = {
@@ -36,7 +36,11 @@ const defaultTransitions = {
     default: overDampedSpring,
 }
 
-export const getDefaultTransition = (valueKey: string, to: string | number): PopmotionTransitionProps => {
-    const transitionFactory = defaultTransitions[valueKey] || defaultTransitions.default
+export const getDefaultTransition = (
+    valueKey: string,
+    to: string | number
+): PopmotionTransitionProps => {
+    const transitionFactory =
+        defaultTransitions[valueKey] || defaultTransitions.default
     return { ...transitionFactory(to), to }
 }

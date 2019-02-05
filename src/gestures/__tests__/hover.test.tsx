@@ -22,12 +22,12 @@ describe("hover", () => {
         expect(hoverOut).toBeCalledTimes(1)
     })
 
-    test("hoverActive applied", async () => {
+    test("hover applied", async () => {
         const promise = new Promise(resolve => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hoverActive={{ opacity: 0 }}
+                    hover={{ opacity: 0 }}
                     transition={{ type: false }}
                     style={{ opacity }}
                 />
@@ -44,7 +44,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(0)
     })
 
-    test("hoverActive applied as variant", async () => {
+    test("hover applied as variant", async () => {
         const target = 0.5
         const promise = new Promise(resolve => {
             const variant = {
@@ -53,7 +53,7 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hoverActive="hidden"
+                    hover="hidden"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity }}
@@ -71,7 +71,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(target)
     })
 
-    test("hoverActive propagates to children", async () => {
+    test("hover propagates to children", async () => {
         const target = 0.2
         const promise = new Promise(resolve => {
             const parent = {
@@ -83,7 +83,7 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hoverActive="hidden"
+                    hover="hidden"
                     variants={parent}
                     transition={{ type: false }}
                     data-id="hoverparent"
@@ -107,7 +107,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(target)
     })
 
-    test("hoverActive is unapplied when hover ends", () => {
+    test("hover is unapplied when hover ends", () => {
         const promise = new Promise(resolve => {
             const variant = {
                 hidden: { opacity: 0.5 },
@@ -115,7 +115,7 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hoverActive="hidden"
+                    hover="hidden"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity }}
@@ -136,7 +136,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(1)
     })
 
-    test("hoverActive only animates values that arent being controlled by a higher-priority gesture ", () => {
+    test("hover only animates values that arent being controlled by a higher-priority gesture ", () => {
         const promise = new Promise(resolve => {
             const variant = {
                 hovering: { opacity: 0.5, scale: 0.5 },
@@ -146,8 +146,8 @@ describe("hover", () => {
             const scale = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hoverActive="hovering"
-                    tapActive="tapping"
+                    hover="hovering"
+                    tap="tapping"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity, scale }}

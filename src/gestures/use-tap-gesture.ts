@@ -25,7 +25,7 @@ export interface TapHandlers {
     onTap?: TapHandler
     onTapStart?: TapHandler
     onTapCancel?: TapHandler
-    tapActive?: string | TargetAndTransition
+    tap?: string | TargetAndTransition
 }
 
 /**
@@ -73,12 +73,12 @@ export function useTapGesture(
     ref?: RefObject<Element>
 ): undefined | { onPointerDown: EventHandler } {
     let session: TapSession | null = null
-    const { onTap, onTapStart, onTapCancel, tapActive, controls } = props
+    const { onTap, onTapStart, onTapCancel, tap, controls } = props
     const propsRef = usePropsRef(props)
 
     const handlers = useMemo(
         () => {
-            if (!onTap && !onTapStart && !onTapCancel && !tapActive) {
+            if (!onTap && !onTapStart && !onTapCancel && !tap) {
                 return {
                     onPointerUp: () => {},
                     onPointerDown: () => {},
@@ -93,7 +93,7 @@ export function useTapGesture(
                     return
                 }
 
-                if (controls && propsRef.tapActive) {
+                if (controls && propsRef.tap) {
                     controls.clearOverride(getGesturePriority("tap"))
                 }
 
@@ -125,8 +125,8 @@ export function useTapGesture(
                     propsRef.onTapStart({ point, devicePoint }, event)
                 }
 
-                if (controls && propsRef.tapActive) {
-                    controls.start(propsRef.tapActive, {
+                if (controls && propsRef.tap) {
+                    controls.start(propsRef.tap, {
                         priority: getGesturePriority("tap"),
                     })
                 }

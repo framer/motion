@@ -17,7 +17,7 @@ const stylea = {
 export const App = () => {
     const animation = useAnimation({
         default: { x: 0 },
-        active: () => [{ x: 200 }, { delayChildren: 300 }],
+        active: () => ({ x: 200, transition: { delayChildren: 0.3 } }),
     })
 
     const childPoses = useAnimation({

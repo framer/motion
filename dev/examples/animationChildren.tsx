@@ -27,7 +27,7 @@ const itemVariants = {
     open: {
         opacity: 1,
         x: 0,
-        transition: { staggerChildren: 40, beforeChildren: true },
+        transition: { staggerChildren: 0.04, beforeChildren: true },
     },
 }
 
@@ -38,8 +38,8 @@ const modalVariants = {
         y: 0,
         transition: {
             beforeChildren: true,
-            staggerChildren: 100,
-            duration: 300,
+            staggerChildren: 0.1,
+            duration: 0.3,
         },
     },
 }
