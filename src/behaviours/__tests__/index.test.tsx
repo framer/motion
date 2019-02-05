@@ -73,7 +73,9 @@ describe("dragging", () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
             const y = motionValue(0)
-            const Component = () => <motion.div drag="x" style={{ x, y }} />
+            const Component = () => (
+                <motion.div dragEnabled="x" style={{ x, y }} />
+            )
 
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
@@ -96,7 +98,9 @@ describe("dragging", () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
             const y = motionValue(0)
-            const Component = () => <motion.div drag="y" style={{ x, y }} />
+            const Component = () => (
+                <motion.div dragEnabled="y" style={{ x, y }} />
+            )
 
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
@@ -120,7 +124,7 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div drag="lockDirection" style={{ x, y }} />
+                <motion.div dragEnabled="lockDirection" style={{ x, y }} />
             )
 
             const { container, rerender } = render(<Component />)
@@ -149,7 +153,7 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div drag="lockDirection" style={{ x, y }} />
+                <motion.div dragEnabled="lockDirection" style={{ x, y }} />
             )
 
             const { container, rerender } = render(<Component />)
