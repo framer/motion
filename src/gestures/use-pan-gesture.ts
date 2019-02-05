@@ -117,7 +117,6 @@ export function usePanGesture(
                 console.error("Pointer move without started session")
                 return
             }
-
             const { point, devicePoint } = lastMoveEventInfo.current
             const delta = Point.subtract(devicePoint, lastDevicePoint(session))
             const offset = Point.subtract(
@@ -164,25 +163,28 @@ export function usePanGesture(
             lastMoveEventInfo.current = info
 
             // Throttle mouse move event to once per frame
-            sync.update(updatePoint)
+            sync.update(updatePoint, true)
         },
         [onPan, onPanStart]
     )
 
     const onPointerUp = useMemo(
         () => (event: Event, { point, devicePoint }: EventInfo) => {
+            cancelSync.update(updatePoint)
+
             if (!session || pointer.current === null) {
                 // tslint:disable-next-line:no-console
                 console.error("Pointer end without started session")
                 return
             }
-            cancelSync.update(updatePoint)
+
             const delta = Point.subtract(devicePoint, lastDevicePoint(session))
             const offset = Point.subtract(
                 devicePoint,
                 startDevicePoint(session)
             )
             const velocity = getVelocity(session, 0.1)
+
             stopPointerMove()
             stopPointerUp()
             if (onPanEnd) {
