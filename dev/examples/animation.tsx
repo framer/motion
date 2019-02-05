@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
+import { motion, useAnimation } from "@framer"
 
 const style = {
     width: 100,
@@ -9,11 +9,22 @@ const style = {
 }
 
 export const App = () => {
+    const animation = useAnimation()
+
+    const seq = async () => {
+        await animation.start({ opacity: 1 })
+        animation.start({ x: 100, transition: { duration: 0.4 } })
+    }
+
+    React.useEffect(() => {
+        seq()
+    }, [])
+
     return (
         <motion.div
-            animate={{ background: "#000" }}
-            initial={{ background: "#fff" }}
-            transition={{ duration: 3 }}
+            animate={animation}
+            initial={{ opacity: 0 }}
+            transition={{ duration: 5 }}
             style={style}
         />
     )
