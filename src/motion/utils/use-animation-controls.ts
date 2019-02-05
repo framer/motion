@@ -40,6 +40,7 @@ const isAnimatable = (value: string | number) =>
 const isTargetResolver = (p: any): p is TargetResolver =>
     typeof p === "function"
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
+const isNumericalString = (v: string) => /^\d*\.?\d+$/.test(v)
 
 export class AnimationControls<P = {}> {
     private props: P
@@ -100,8 +101,13 @@ export class AnimationControls<P = {}> {
         const domStyler = styler(this.ref.current as Element)
         newValueKeys.forEach(key => {
             const domValue = domStyler.get(key) || 0
-            this.values.set(key, motionValue(domValue))
-            this.baseTarget[key] = domValue
+            const value =
+                typeof domValue === "string" && isNumericalString(domValue)
+                    ? parseFloat(domValue)
+                    : domValue
+
+            this.values.set(key, motionValue(value))
+            this.baseTarget[key] = value
         })
     }
 
