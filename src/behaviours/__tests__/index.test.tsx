@@ -32,7 +32,7 @@ describe("dragging", () => {
         const promise = new Promise(resolve => {
             const onDragStart = jest.fn()
             const Component = () => (
-                <motion.div drag onDragStart={onDragStart} />
+                <motion.div dragEnabled onDragStart={onDragStart} />
             )
 
             const { container, rerender } = render(<Component />)
@@ -52,7 +52,9 @@ describe("dragging", () => {
     test("dragEnd fires", async () => {
         const promise = new Promise(resolve => {
             const onDragEnd = jest.fn()
-            const Component = () => <motion.div drag onDragEnd={onDragEnd} />
+            const Component = () => (
+                <motion.div dragEnabled onDragEnd={onDragEnd} />
+            )
 
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
@@ -183,7 +185,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <motion.div
-                    drag
+                    dragEnabled
                     dragConstraints={{ left: -100 }}
                     dragElastic={false}
                     style={{ x, y }}
@@ -213,7 +215,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <motion.div
-                    drag
+                    dragEnabled
                     dragConstraints={{ right: 300 }}
                     dragElastic={false}
                     style={{ x, y }}
@@ -243,7 +245,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <motion.div
-                    drag
+                    dragEnabled
                     dragConstraints={{ top: -100 }}
                     dragElastic={false}
                     style={{ x, y }}
@@ -273,7 +275,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <motion.div
-                    drag
+                    dragEnabled
                     dragConstraints={{ bottom: 100 }}
                     dragElastic={false}
                     style={{ x, y }}
