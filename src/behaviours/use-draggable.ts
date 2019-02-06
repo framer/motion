@@ -27,7 +27,7 @@ export interface DraggableProps {
      * Set "lockDirection" to lock dragging into the initial direction
      *  @default false
      */
-    drag?: boolean | DragDirection | "lockDirection"
+    dragEnabled?: boolean | DragDirection | "lockDirection"
 
     /**
      * Disable global drag locking
@@ -97,7 +97,7 @@ type MotionPoint = Partial<{
 
 export function useDraggable(
     {
-        drag = false,
+        dragEnabled = false,
         dragPropagation = false,
         dragConstraints,
         dragElastic = true,
@@ -116,15 +116,15 @@ export function useDraggable(
 
     const handlers = useMemo(
         () => {
-            if (!drag) return {}
+            if (!dragEnabled) return {}
 
             let currentDirection: null | DragDirection = null
             let openGlobalLock: null | Lock = null
 
-            if (shouldDrag("x", drag, currentDirection)) {
+            if (shouldDrag("x", dragEnabled, currentDirection)) {
                 point.x = values.get("x", 0)
             }
-            if (shouldDrag("y", drag, currentDirection)) {
+            if (shouldDrag("y", dragEnabled, currentDirection)) {
                 point.y = values.get("y", 0)
             }
 
@@ -133,7 +133,8 @@ export function useDraggable(
                 offset: { x: number; y: number }
             ) => {
                 const p = point[axis]
-                if (!shouldDrag(axis, drag, currentDirection) || !p) return
+                if (!shouldDrag(axis, dragEnabled, currentDirection) || !p)
+                    return
 
                 let current = origin[axis] + offset[axis]
 
@@ -165,7 +166,7 @@ export function useDraggable(
                 }
 
                 if (!dragPropagation) {
-                    openGlobalLock = getGlobalLock(drag)
+                    openGlobalLock = getGlobalLock(dragEnabled)
 
                     if (!openGlobalLock) {
                         return
@@ -185,7 +186,7 @@ export function useDraggable(
                     return
                 }
 
-                if (drag === "lockDirection") {
+                if (dragEnabled === "lockDirection") {
                     if (currentDirection === null) {
                         currentDirection = getCurrentDirection(offset)
 
@@ -210,7 +211,8 @@ export function useDraggable(
 
                 if (dragMomentum) {
                     const startMomentum = (axis: "x" | "y") => {
-                        if (!shouldDrag(axis, drag, currentDirection)) return
+                        if (!shouldDrag(axis, dragEnabled, currentDirection))
+                            return
 
                         const transition = dragConstraints
                             ? getConstraints(axis, dragConstraints)
@@ -240,7 +242,7 @@ export function useDraggable(
 
             return { onPanStart, onPan, onPanEnd }
         },
-        [drag, motionContext.dragging]
+        [dragEnabled, motionContext.dragging]
     )
 
     usePanGesture(handlers, ref)

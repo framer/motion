@@ -19,7 +19,7 @@ export const App = () => {
     return (
         <>
             <motion.div
-                drag={drag}
+                dragEnabled={drag}
                 style={{ ...styleA, background: drag ? "green" : "yellow" }}
             />
             <motion.div onTap={onTap} style={styleB} />

@@ -6,7 +6,7 @@ import {
     ColdSubscription,
 } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
-import { PopmotionTransitionProps, Tween } from "../types"
+import { PopmotionTransitionProps } from "../types"
 
 export type Transformer<T> = (v: T) => T
 
