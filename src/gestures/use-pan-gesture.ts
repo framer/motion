@@ -130,6 +130,7 @@ export function usePanGesture(
 
             if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
                 const velocity = getVelocity(session, 0.1)
+
                 const info = {
                     point,
                     devicePoint,

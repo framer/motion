@@ -10,10 +10,14 @@ const style = {
 }
 
 export const App = () => {
-    const animation = useAnimation()
+    const animation = useAnimation({
+        visible: { opacity: 1 },
+        right: { x: 100 },
+    })
 
     const seq = async () => {
-        await animation.start({ opacity: 0 })
+        animation.start("visible")
+        animation.start("right")
     }
 
     React.useEffect(() => {
@@ -23,6 +27,7 @@ export const App = () => {
     return (
         <motion.div
             animate={animation}
+            initial={{ opacity: 0 }}
             transition={{ duration: 5 }}
             style={style}
         />
