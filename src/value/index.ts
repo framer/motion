@@ -7,6 +7,7 @@ import {
 } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 import { PopmotionTransitionProps } from "../types"
+export { unwrapMotionValue } from "./utils/unwrap-value"
 
 export type Transformer<T> = (v: T) => T
 
