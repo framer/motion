@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useEffect, useRef } from "react"
+import { RefObject, useMemo, useEffect, useRef, useContext } from "react"
 import {
     EventInfo,
     usePointerEvents,
@@ -8,6 +8,7 @@ import {
 } from "../events"
 import { motionValue, MotionValue } from "../value"
 import sync, { cancelSync, getFrameData } from "framesync"
+import { MotionPluginContext } from "../motion/utils/MotionPluginContext"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -104,6 +105,7 @@ export function usePanGesture(
     const pointer = useRef<MotionXY | null>(null)
     const lastMoveEvent = useRef<Event | null>(null)
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
+    const { transformInput } = useContext(MotionPluginContext)
 
     const updatePoint = useMemo(
         () => () => {
@@ -161,7 +163,15 @@ export function usePanGesture(
     const onPointerMove = useMemo(
         () => (event: Event, info: EventInfo) => {
             lastMoveEvent.current = event
-            lastMoveEventInfo.current = info
+
+            if (transformInput) {
+                lastMoveEventInfo.current = {
+                    point: transformInput(info.point),
+                    devicePoint: transformInput(info.devicePoint),
+                }
+            } else {
+                lastMoveEventInfo.current = info
+            }
 
             // Throttle mouse move event to once per frame
             sync.update(updatePoint, true)
