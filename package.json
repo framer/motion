@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
     "types": "dist/index.d.ts",

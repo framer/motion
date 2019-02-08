@@ -1,4 +1,5 @@
 *
 **/*
 !dist/**
+!src/**
 !LICENSE.md

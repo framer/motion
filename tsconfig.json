@@ -27,7 +27,7 @@
         "noImplicitUseStrict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "removeComments": true,
+        "removeComments": false,
         "lib": ["es5", "es6", "dom"]
     },
     "compileOnSave": false,
