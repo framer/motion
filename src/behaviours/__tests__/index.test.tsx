@@ -5,17 +5,21 @@ import { MotionPlugins } from "../../motion/utils/MotionPluginContext"
 import { render } from "react-testing-library"
 import { fireEvent } from "dom-testing-library"
 import sync from "framesync"
-import { _TEST_POINTER_DO_NOT_USE } from "../../events/event-info"
+
+const pos = {
+    x: 0,
+    y: 0,
+}
 
 const drag = (element: any) => {
-    _TEST_POINTER_DO_NOT_USE.x = 0
-    _TEST_POINTER_DO_NOT_USE.y = 0
+    pos.x = 0
+    pos.y = 0
     fireEvent.mouseDown(element)
 
     const controls = {
         to: (x: number, y: number) => {
-            _TEST_POINTER_DO_NOT_USE.x = x
-            _TEST_POINTER_DO_NOT_USE.y = y
+            pos.x = x
+            pos.y = y
             fireEvent.mouseMove(document.body)
 
             return controls
@@ -28,12 +32,18 @@ const drag = (element: any) => {
     return controls
 }
 
+const Draggable = ({ children }: { children: React.ReactNode }) => (
+    <MotionPlugins transformPointer={() => pos}>{children}</MotionPlugins>
+)
+
 describe("dragging", () => {
     test("dragStart fires", async () => {
         const promise = new Promise(resolve => {
             const onDragStart = jest.fn()
             const Component = () => (
-                <motion.div dragEnabled onDragStart={onDragStart} />
+                <Draggable>
+                    <motion.div dragEnabled onDragStart={onDragStart} />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -54,7 +64,9 @@ describe("dragging", () => {
         const promise = new Promise(resolve => {
             const onDragEnd = jest.fn()
             const Component = () => (
-                <motion.div dragEnabled onDragEnd={onDragEnd} />
+                <Draggable>
+                    <motion.div dragEnabled onDragEnd={onDragEnd} />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -77,7 +89,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="x" style={{ x, y }} />
+                <Draggable>
+                    <motion.div dragEnabled="x" style={{ x, y }} />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -102,7 +116,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="y" style={{ x, y }} />
+                <Draggable>
+                    <motion.div dragEnabled="y" style={{ x, y }} />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -127,7 +143,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                <Draggable>
+                    <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -156,7 +174,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                <Draggable>
+                    <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -185,12 +205,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ left: -100 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <Draggable>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ left: -100 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -215,12 +237,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ right: 300 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <Draggable>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ right: 300 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -245,12 +269,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ top: -100 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <Draggable>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ top: -100 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -275,12 +301,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ bottom: 100 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <Draggable>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ bottom: 100 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </Draggable>
             )
 
             const { container, rerender } = render(<Component />)
@@ -298,36 +326,5 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toEqual([500, 100])
-    })
-
-    test("transformPointer plugin", async () => {
-        const invert = (scale: number, point: number) => (point * 1) / scale
-        const invertScale = (scale: number) => point => {
-            return { x: invert(scale, point.x), y: invert(scale, point.y) }
-        }
-        const promise = new Promise(resolve => {
-            const x = motionValue(0)
-            const y = motionValue(0)
-            const Component = () => (
-                <MotionPlugins transformPointer={invertScale(0.5)}>
-                    <motion.div dragEnabled style={{ x, y }} />
-                </MotionPlugins>
-            )
-
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
-
-            const pointer = drag(container.firstChild).to(1, 1)
-
-            sync.postRender(() => {
-                pointer.to(50, 50)
-                sync.postRender(() => {
-                    pointer.end()
-                    resolve([x.get(), y.get()])
-                })
-            })
-        })
-
-        return expect(promise).resolves.toEqual([100, 100])
     })
 })
