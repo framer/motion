@@ -14,7 +14,7 @@ export const MotionPluginContext = createContext<Partial<MotionPlugins>>({})
 
 export const MotionPlugins = ({ children, ...props }: MotionPluginProps) => {
     const pluginContext = useContext(MotionPluginContext)
-    const value = useRef({ ...pluginContext, ...props }).current
+    const value = useRef({ ...pluginContext }).current
 
     // Mutative to prevent triggering rerenders in all listening
     // components every time this component renders

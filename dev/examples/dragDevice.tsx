@@ -20,7 +20,7 @@ const invertScale = (scale: number) => point => {
 }
 
 const Device = ({ children }) => (
-    <MotionPlugins transformPan={invertScale(0.5)}>
+    <MotionPlugins transformPointer={invertScale(0.5)}>
         <div style={device}>{children}</div>
     </MotionPlugins>
 )
