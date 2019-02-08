@@ -3,7 +3,7 @@ import { createContext, useContext, useRef, ReactNode } from "react"
 import { Point } from "../../events"
 
 export interface MotionPlugins {
-    transformInput: (point: Point) => Point
+    transformPointer: (point: Point) => Point
 }
 
 export interface MotionPluginProps extends MotionPlugins {

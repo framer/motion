@@ -105,7 +105,7 @@ export function usePanGesture(
     const pointer = useRef<MotionXY | null>(null)
     const lastMoveEvent = useRef<Event | null>(null)
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
-    const { transformInput } = useContext(MotionPluginContext)
+    const { transformPointer } = useContext(MotionPluginContext)
 
     const updatePoint = useMemo(
         () => () => {
@@ -164,10 +164,10 @@ export function usePanGesture(
         () => (event: Event, info: EventInfo) => {
             lastMoveEvent.current = event
 
-            if (transformInput) {
+            if (transformPointer) {
                 lastMoveEventInfo.current = {
-                    point: transformInput(info.point),
-                    devicePoint: transformInput(info.devicePoint),
+                    point: transformPointer(info.point),
+                    devicePoint: transformPointer(info.devicePoint),
                 }
             } else {
                 lastMoveEventInfo.current = info

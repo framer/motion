@@ -300,7 +300,7 @@ describe("dragging", () => {
         return expect(promise).resolves.toEqual([500, 100])
     })
 
-    test("transformInput plugin", async () => {
+    test("transformPointer plugin", async () => {
         const invert = (scale: number, point: number) => (point * 1) / scale
         const invertScale = (scale: number) => point => {
             return { x: invert(scale, point.x), y: invert(scale, point.y) }
@@ -309,7 +309,7 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <MotionPlugins transformInput={invertScale(0.5)}>
+                <MotionPlugins transformPointer={invertScale(0.5)}>
                     <motion.div dragEnabled style={{ x, y }} />
                 </MotionPlugins>
             )
