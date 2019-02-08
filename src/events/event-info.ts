@@ -59,10 +59,12 @@ const pointForTarget = (
 }
 
 const extractEventInfo = (event: EventLike): EventInfo => {
-    const target = event.target instanceof HTMLElement ? event.target : null
-    const point = pointForTarget(event, target)
-    const devicePoint = pointForTarget(event, document.body)
-    return { point, devicePoint }
+    const point = pointForTarget(event, document.body)
+    return { point }
+
+    // TODO: Reintroduce element-relative point that is always relative to the `pointerDown` triggering element.
+    // const target = event.target instanceof HTMLElement ? event.target : null
+    // const point = pointForTarget(event, target)
 }
 
 export const wrapHandler = (

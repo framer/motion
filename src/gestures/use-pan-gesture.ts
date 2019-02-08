@@ -74,7 +74,6 @@ function getVelocity(session: EventSession, timeDelta: number): Point {
 
 export interface PanInfo {
     point: Point
-    devicePoint: Point
     delta: Point
     offset: Point
     velocity: Point
@@ -119,23 +118,19 @@ export function usePanGesture(
                 console.error("Pointer move without started session")
                 return
             }
-            const { point, devicePoint } = lastMoveEventInfo.current
-            const delta = Point.subtract(devicePoint, lastDevicePoint(session))
-            const offset = Point.subtract(
-                devicePoint,
-                startDevicePoint(session)
-            )
+            const { point } = lastMoveEventInfo.current
+            const delta = Point.subtract(point, lastDevicePoint(session))
+            const offset = Point.subtract(point, startDevicePoint(session))
             const { timestamp } = getFrameData()
-            session.pointHistory.push({ ...devicePoint, timestamp })
-            pointer.current.x.set(devicePoint.x)
-            pointer.current.y.set(devicePoint.y)
+            session.pointHistory.push({ ...point, timestamp })
+            pointer.current.x.set(point.x)
+            pointer.current.y.set(point.y)
 
             if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
                 const velocity = getVelocity(session, 0.1)
 
                 const info = {
                     point,
-                    devicePoint,
                     delta,
                     offset,
                     velocity,
@@ -167,7 +162,6 @@ export function usePanGesture(
             if (transformPointer) {
                 lastMoveEventInfo.current = {
                     point: transformPointer(info.point),
-                    devicePoint: transformPointer(info.devicePoint),
                 }
             } else {
                 lastMoveEventInfo.current = info
@@ -180,7 +174,7 @@ export function usePanGesture(
     )
 
     const onPointerUp = useMemo(
-        () => (event: Event, { point, devicePoint }: EventInfo) => {
+        () => (event: Event, { point }: EventInfo) => {
             cancelSync.update(updatePoint)
 
             if (!session || pointer.current === null) {
@@ -189,11 +183,8 @@ export function usePanGesture(
                 return
             }
 
-            const delta = Point.subtract(devicePoint, lastDevicePoint(session))
-            const offset = Point.subtract(
-                devicePoint,
-                startDevicePoint(session)
-            )
+            const delta = Point.subtract(point, lastDevicePoint(session))
+            const offset = Point.subtract(point, startDevicePoint(session))
             const velocity = getVelocity(session, 0.1)
 
             stopPointerMove()
@@ -201,7 +192,6 @@ export function usePanGesture(
             if (onPanEnd) {
                 onPanEnd(event, {
                     point,
-                    devicePoint,
                     delta,
                     offset,
                     velocity,
@@ -223,7 +213,7 @@ export function usePanGesture(
     )
     const onPointerDown = useMemo(
         () => {
-            return (event: Event, { devicePoint, point }: EventInfo) => {
+            return (event: Event, { point }: EventInfo) => {
                 pointer.current = {
                     x: motionValue(point.x),
                     y: motionValue(point.y),
@@ -232,7 +222,7 @@ export function usePanGesture(
                 const { timestamp } = getFrameData()
                 session = {
                     target: event.target,
-                    pointHistory: [{ ...devicePoint, timestamp }],
+                    pointHistory: [{ ...point, timestamp }],
                 }
                 startPointerMove()
                 startPointerUp()

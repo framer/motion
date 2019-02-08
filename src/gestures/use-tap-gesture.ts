@@ -12,7 +12,6 @@ import { ControlsProp } from "./types"
 
 interface TapInfo {
     point: Point
-    devicePoint: Point
 }
 
 interface TapSession {
@@ -85,10 +84,7 @@ export function useTapGesture(
                 }
             }
 
-            const onPointerUp = (
-                event: Event,
-                { point, devicePoint }: EventInfo
-            ) => {
+            const onPointerUp = (event: Event, { point }: EventInfo) => {
                 if (!session) {
                     return
                 }
@@ -99,22 +95,19 @@ export function useTapGesture(
 
                 if (!ref || event.target !== ref.current) {
                     if (propsRef.onTapCancel) {
-                        propsRef.onTapCancel({ point, devicePoint }, event)
+                        propsRef.onTapCancel({ point }, event)
                     }
                     return
                 }
 
                 if (propsRef.onTap) {
-                    propsRef.onTap({ point, devicePoint }, event)
+                    propsRef.onTap({ point }, event)
                 }
 
                 session = null
             }
 
-            const onPointerDown = (
-                event: Event,
-                { point, devicePoint }: EventInfo
-            ) => {
+            const onPointerDown = (event: Event, { point }: EventInfo) => {
                 startPointerUp()
                 if (!ref || event.target !== ref.current) return
                 session = {
@@ -122,7 +115,7 @@ export function useTapGesture(
                 }
 
                 if (propsRef.onTapStart) {
-                    propsRef.onTapStart({ point, devicePoint }, event)
+                    propsRef.onTapStart({ point }, event)
                 }
 
                 if (controls && propsRef.tap) {
