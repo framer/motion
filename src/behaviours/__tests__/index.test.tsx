@@ -1,20 +1,25 @@
 import * as React from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
+import { MotionPlugins } from "../../motion/utils/MotionPluginContext"
 import { render } from "react-testing-library"
 import { fireEvent } from "dom-testing-library"
 import sync from "framesync"
-import { _TEST_POINTER_DO_NOT_USE } from "../../events/event-info"
+
+const pos = {
+    x: 0,
+    y: 0,
+}
 
 const drag = (element: any) => {
-    _TEST_POINTER_DO_NOT_USE.x = 0
-    _TEST_POINTER_DO_NOT_USE.y = 0
+    pos.x = 0
+    pos.y = 0
     fireEvent.mouseDown(element)
 
     const controls = {
         to: (x: number, y: number) => {
-            _TEST_POINTER_DO_NOT_USE.x = x
-            _TEST_POINTER_DO_NOT_USE.y = y
+            pos.x = x
+            pos.y = y
             fireEvent.mouseMove(document.body)
 
             return controls
@@ -27,12 +32,18 @@ const drag = (element: any) => {
     return controls
 }
 
+const MockDrag = ({ children }: { children: React.ReactNode }) => (
+    <MotionPlugins transformPagePoint={() => pos}>{children}</MotionPlugins>
+)
+
 describe("dragging", () => {
     test("dragStart fires", async () => {
         const promise = new Promise(resolve => {
             const onDragStart = jest.fn()
             const Component = () => (
-                <motion.div dragEnabled onDragStart={onDragStart} />
+                <MockDrag>
+                    <motion.div dragEnabled onDragStart={onDragStart} />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -53,7 +64,9 @@ describe("dragging", () => {
         const promise = new Promise(resolve => {
             const onDragEnd = jest.fn()
             const Component = () => (
-                <motion.div dragEnabled onDragEnd={onDragEnd} />
+                <MockDrag>
+                    <motion.div dragEnabled onDragEnd={onDragEnd} />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -76,7 +89,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="x" style={{ x, y }} />
+                <MockDrag>
+                    <motion.div dragEnabled="x" style={{ x, y }} />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -101,7 +116,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="y" style={{ x, y }} />
+                <MockDrag>
+                    <motion.div dragEnabled="y" style={{ x, y }} />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -126,7 +143,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                <MockDrag>
+                    <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -155,7 +174,9 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                <MockDrag>
+                    <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -184,12 +205,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ left: -100 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <MockDrag>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ left: -100 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -214,12 +237,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ right: 300 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <MockDrag>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ right: 300 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -244,12 +269,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ top: -100 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <MockDrag>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ top: -100 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
@@ -274,12 +301,14 @@ describe("dragging", () => {
             const x = motionValue(0)
             const y = motionValue(0)
             const Component = () => (
-                <motion.div
-                    dragEnabled
-                    dragConstraints={{ bottom: 100 }}
-                    dragElastic={false}
-                    style={{ x, y }}
-                />
+                <MockDrag>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={{ bottom: 100 }}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
             )
 
             const { container, rerender } = render(<Component />)
