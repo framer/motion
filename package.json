@@ -7,8 +7,9 @@
     "author": "Framer Motion",
     "license": "MIT",
     "scripts": {
-        "test": "jest --coverage --config jest.config.json",
-        "test-ssr": "jest --config jest.config.ssr.json",
+        "test": "yarn test-client && yarn test-server",
+        "test-client": "jest --coverage --config jest.config.json",
+        "test-server": "jest --config jest.config.ssr.json",
         "watch": "jest --watch --coverage --coverageReporters=lcov",
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && yarn measure",
