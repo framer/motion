@@ -45,10 +45,14 @@ describe("tap", () => {
     test("tap gesture variant applies and unapplies", () => {
         const promise = new Promise(resolve => {
 <<<<<<< HEAD
+<<<<<<< HEAD
             const opacityHistory: number[] = []
 =======
             const opacityHistory = []
 >>>>>>> adding failing event
+=======
+            const opacityHistory: number[] = []
+>>>>>>> fix for gesture behaviour
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
             const Component = () => (
@@ -64,19 +68,19 @@ describe("tap", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            logOpacity()
+            logOpacity() // 0.5
 
             // Trigger hover
             mouseEnter(container.firstChild as Element)
-            logOpacity()
+            logOpacity() // 0.75
 
             // Trigger mouse down
             fireEvent.mouseDown(container.firstChild as Element)
-            logOpacity()
+            logOpacity() // 1
 
             // Trigger mouse up
             fireEvent.mouseUp(container.firstChild as Element)
-            logOpacity()
+            logOpacity() // 0.75
 
             // Trigger hover end
             mouseLeave(container.firstChild as Element)
