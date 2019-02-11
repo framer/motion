@@ -39,6 +39,9 @@ const parseDurations = (config: PopmotionTransitionProps) => {
     return config
 }
 
+/**
+ * @public
+ */
 export class MotionValue<V = any> {
     // Current state
     private current: V

@@ -12,6 +12,12 @@ const isTransformer = (v: number[] | Transformer): v is Transformer => {
 
 const noop = () => (v: any) => v
 
+/**
+ *
+ * @param value
+ * @param transform
+ * @public
+ */
 export function useTransformedValue(
     value: MotionValue,
     transform: Transformer

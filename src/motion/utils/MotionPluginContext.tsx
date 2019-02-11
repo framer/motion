@@ -10,10 +10,17 @@ export interface MotionPluginProps extends MotionPlugins {
     children?: ReactNode
 }
 
+/**
+ * @internal
+ */
 export const MotionPluginContext = createContext<Partial<MotionPlugins>>({})
 
-// For now I think this should remain a private API for our own use until
-// we can figure out a nicer way of allowing people to add these
+/**
+ *
+ * @internal
+ * @internalremarks For now I think this should remain a private API for our own use
+ * until we can figure out a nicer way of allowing people to add these
+ */
 export const MotionPlugins = ({ children, ...props }: MotionPluginProps) => {
     const pluginContext = useContext(MotionPluginContext)
     const value = useRef({ ...pluginContext }).current

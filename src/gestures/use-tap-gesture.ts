@@ -60,6 +60,11 @@ const usePropsRef = <T>(props: T) => {
     return propsRef.current
 }
 
+/**
+ *
+ * @param handlers
+ * @public
+ */
 export function useTapGesture(
     handlers: TapHandlers & ControlsProp
 ): { onPointerDown: EventHandler }
