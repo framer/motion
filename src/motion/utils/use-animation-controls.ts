@@ -171,7 +171,7 @@ export class AnimationControls<P = {}> {
         const remainingValues: Target = {}
 
         for (const key in this.baseTarget) {
-            if (overrideTarget !== undefined) {
+            if (overrideTarget[key] !== undefined) {
                 remainingValues[key] = this.baseTarget[key]
             }
         }
