@@ -19,15 +19,17 @@ export const useHoverGesture = (
     { hover, onHoverStart, onHoverEnd, controls }: HoverHandlers & ControlsProp,
     ref?: RefObject<Element>
 ) => {
+    if (hover && controls) {
+        controls.setOverride(hover, hoverPriority)
+    }
+
     const handlers = useMemo(
         () => {
             const onPointerEnter = (event: Event) => {
                 if (onHoverStart) onHoverStart(event)
 
                 if (hover && controls) {
-                    controls.start(hover, {
-                        priority: hoverPriority,
-                    })
+                    controls.startOverride(hoverPriority)
                 }
             }
 
