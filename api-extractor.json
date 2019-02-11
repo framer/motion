@@ -1,5 +1,5 @@
 {
-    "$schema": "https://dev.office.com/json-schemas/api-extractor/api-extractor.schema.json",
+    "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/api-extractor.schema.json",
     "compiler": {
         "configType": "tsconfig",
         "rootFolder": "."
@@ -16,15 +16,12 @@
     },
     "apiJsonFile": {
         "enabled": true,
-        "outputFolder": "./api"
+        "outputFolder": "./dist"
     },
     "dtsRollup": {
         "enabled": true,
-        "mainDtsRollupPath": "build/framer.d.ts",
-        "publishFolderForPublic": "./dist/public",
-        "publishFolderForInternal": "./dist/internal",
-        "publishFolderForBeta": "./dist/beta",
-        "trimming": true
+        "mainDtsRollupPath": "framer-motion.d.ts",
+        "trimming": false
     },
     "policies": {
         "namespaceSupport": "permissive"

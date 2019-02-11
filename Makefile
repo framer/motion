@@ -67,7 +67,4 @@ $(API_TARGET): api-extractor.json $(DECLARATION_TARGET)
 
 api: bootstrap $(API_TARGET)
 
-docs: bootstrap $(API_TARGET)
-	yarn api-documenter markdown --input-folder api --output-folder docs
-
 .PHONY: dev lint

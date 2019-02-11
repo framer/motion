@@ -5,10 +5,10 @@ import { uglify } from "rollup-plugin-uglify"
 import replace from "rollup-plugin-replace"
 import pkg from "./package.json"
 
-const typescriptConfig = { cacheRoot: "tmp/.rpt2_cache" }
-const noDeclarationConfig = Object.assign({}, typescriptConfig, {
+const typescriptConfig = {
+    cacheRoot: "tmp/.rpt2_cache",
     tsconfigOverride: { compilerOptions: { declaration: false } },
-})
+}
 
 const config = {
     input: "src/index.ts",
@@ -36,7 +36,7 @@ const umd = Object.assign({}, config, {
     external: ["react", "react-dom"],
     plugins: [
         commonjs(),
-        typescript(noDeclarationConfig),
+        typescript(typescriptConfig),
         resolve(),
         replace({
             "process.env.NODE_ENV": JSON.stringify("development"),
@@ -50,7 +50,7 @@ const umdProd = Object.assign({}, umd, {
     }),
     plugins: [
         commonjs(),
-        typescript(noDeclarationConfig),
+        typescript(typescriptConfig),
         resolve(),
         replace({
             "process.env.NODE_ENV": JSON.stringify("production"),
@@ -75,7 +75,7 @@ const es = Object.assign({}, config, {
         format: "es",
         exports: "named",
     },
-    plugins: [commonjs(), typescript(noDeclarationConfig)],
+    plugins: [commonjs(), typescript(typescriptConfig)],
     external,
 })
 
