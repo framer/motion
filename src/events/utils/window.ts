@@ -1,4 +1,4 @@
-interface ServerSafeWindow extends EventTarget {
+export interface ServerSafeWindow extends EventTarget {
     onpointerdown: false
     onpointermove: false
     onpointerup: false
