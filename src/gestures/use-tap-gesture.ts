@@ -11,6 +11,8 @@ import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp } from "./types"
 import { safeWindow } from "../events/utils/window"
 
+const tapGesturePriority = getGesturePriority("tap")
+
 interface TapInfo {
     point: Point
 }
@@ -80,6 +82,10 @@ export function useTapGesture(
     const { onTap, onTapStart, onTapCancel, tap, controls } = props
     const propsRef = usePropsRef(props)
 
+    if (tap && controls) {
+        controls.setOverride(tap, tapGesturePriority)
+    }
+
     const handlers = useMemo(
         () => {
             if (!onTap && !onTapStart && !onTapCancel && !tap) {
@@ -95,7 +101,7 @@ export function useTapGesture(
                 }
 
                 if (controls && propsRef.tap) {
-                    controls.clearOverride(getGesturePriority("tap"))
+                    controls.clearOverride(tapGesturePriority)
                 }
 
                 if (!ref || event.target !== ref.current) {
@@ -124,9 +130,7 @@ export function useTapGesture(
                 }
 
                 if (controls && propsRef.tap) {
-                    controls.start(propsRef.tap, {
-                        priority: getGesturePriority("tap"),
-                    })
+                    controls.startOverride(tapGesturePriority)
                 }
             }
 

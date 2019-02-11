@@ -48,6 +48,7 @@ export class AnimationControls<P = {}> {
     private variants: Variants = {}
     private baseTarget: Target = {}
     private overrides: Array<AnimationDefinition | undefined> = []
+    private activeOverrides: Set<number> = new Set()
     private resolvedOverrides: Array<TargetAndTransition | undefined> = []
     private defaultTransition?: Transition
     private children?: Set<AnimationControls>
@@ -135,32 +136,33 @@ export class AnimationControls<P = {}> {
     }
 
     getHighestPriority() {
-        let highest = 0
-        const numOverrides = this.overrides.length
+        if (!this.activeOverrides.size) return 0
+        return Math.max(...Array.from(this.activeOverrides))
+    }
 
-        if (!numOverrides) return highest
+    setOverride(definition: AnimationDefinition, overrideIndex: number) {
+        this.overrides[overrideIndex] = definition
+    }
 
-        for (let i = 0; i < numOverrides; i++) {
-            if (this.overrides[i] !== undefined) {
-                highest = i
-            }
+    startOverride(overrideIndex: number) {
+        const override = this.overrides[overrideIndex]
+
+        if (override) {
+            return this.start(override, { priority: overrideIndex })
         }
-
-        return highest
     }
 
     clearOverride(overrideIndex: number) {
         const override = this.overrides[overrideIndex]
         if (!override) return
 
-        this.overrides[overrideIndex] = undefined
+        this.activeOverrides.delete(overrideIndex)
         const highest = this.getHighestPriority()
         this.resetIsAnimating()
 
         if (highest) {
             const highestOverride = this.overrides[highest]
-            highestOverride &&
-                this.start(highestOverride, { priority: highest })
+            highestOverride && this.startOverride(highest)
         }
 
         // Figure out which remaining values were affected by the override and animate those
@@ -211,8 +213,9 @@ export class AnimationControls<P = {}> {
         definition: AnimationDefinition,
         opts: AnimationOptions = {}
     ): Promise<any> {
-        this.setPriorityAnimation(definition, opts.priority || 0)
-        // Check if this is a priority gesture animation
+        if (opts.priority) {
+            this.activeOverrides.add(opts.priority)
+        }
 
         this.resetIsAnimating(opts.priority)
 
@@ -223,10 +226,6 @@ export class AnimationControls<P = {}> {
         } else {
             return this.animate(definition, opts)
         }
-    }
-
-    setPriorityAnimation(definition: AnimationDefinition, priority: number) {
-        this.overrides[priority] = definition
     }
 
     isHighestPriority(priority: number) {
@@ -271,20 +270,16 @@ export class AnimationControls<P = {}> {
         const animations = Object.keys(target).reduce(
             (acc, key) => {
                 const value = this.values.get(key)
-                if (
-                    this.isAnimating.has(key) ||
-                    !target ||
-                    !value ||
-                    target[key] === undefined
-                ) {
-                    return acc
-                }
+
+                if (!value || !target || target[key] === undefined) return acc
 
                 const valueTarget = target[key]
 
                 if (!priority) {
                     this.baseTarget[key] = valueTarget
                 }
+
+                if (this.isAnimating.has(key)) return acc
 
                 if (isAnimatable(valueTarget)) {
                     const [action, options] = getTransition(key, valueTarget, {
