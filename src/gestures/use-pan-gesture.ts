@@ -9,6 +9,7 @@ import {
 import { motionValue, MotionValue } from "../value"
 import sync, { cancelSync, getFrameData } from "framesync"
 import { MotionPluginContext } from "../motion/utils/MotionPluginContext"
+import { safeWindow } from "../events/utils/window"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -189,6 +190,7 @@ export function usePanGesture(
 
             stopPointerMove()
             stopPointerUp()
+
             if (onPanEnd) {
                 onPanEnd(event, {
                     point,
@@ -204,11 +206,11 @@ export function usePanGesture(
 
     const [startPointerUp, stopPointerUp] = usePointerEvents(
         { onPointerUp },
-        window
+        safeWindow
     )
     const [startPointerMove, stopPointerMove] = usePointerEvents(
         { onPointerMove },
-        window,
+        safeWindow,
         { capture: true }
     )
     const onPointerDown = useMemo(
@@ -224,6 +226,7 @@ export function usePanGesture(
                     target: event.target,
                     pointHistory: [{ ...point, timestamp }],
                 }
+
                 startPointerMove()
                 startPointerUp()
             }

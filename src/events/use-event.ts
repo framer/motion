@@ -1,5 +1,5 @@
 import { RefObject, useEffect } from "react"
-import { ListenerControls, TargetBasedReturnType, TargetOrRef } from "./types"
+import { ListenerControls, TargetOrRef } from "./types"
 
 function isEventTarget(target: any): target is EventTarget {
     return (
@@ -34,15 +34,10 @@ export const useEvent = <Target extends TargetOrRef>(
     target: Target | undefined,
     handler?: EventListener,
     options?: AddEventListenerOptions
-): TargetBasedReturnType<Target> => {
+): ListenerControls => {
     let result: ListenerControls | undefined = undefined
     if ((!target || isEventTarget(target)) && handler) {
-        result = eventListener(
-            target,
-            type,
-            handler,
-            options
-        ) as TargetBasedReturnType<Target>
+        result = eventListener(target, type, handler, options)
     }
 
     useEffect(
@@ -62,5 +57,5 @@ export const useEvent = <Target extends TargetOrRef>(
         },
         [type, target, handler, options]
     )
-    return result as TargetBasedReturnType<Target>
+    return result as ListenerControls
 }

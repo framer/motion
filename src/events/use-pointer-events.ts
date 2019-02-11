@@ -1,19 +1,18 @@
 import { useEvent } from "./use-event"
 import { wrapHandler } from "./event-info"
-import {
-    EventHandler,
-    ListenerControls,
-    TargetOrRef,
-    TargetBasedReturnType,
-} from "./types"
+import { EventHandler, ListenerControls, TargetOrRef } from "./types"
 import { useRef } from "react"
+import { safeWindow } from "./utils/window"
+
+const noop: ListenerControls = [() => {}, () => {}]
 
 const mergeUseEventResults = (
     ...values: (ListenerControls | undefined)[]
-): ListenerControls | undefined => {
+): ListenerControls => {
     if (values.every(v => v === undefined)) {
-        return
+        return noop
     }
+
     const start = () => {
         for (const value of values) {
             if (value) {
@@ -53,7 +52,7 @@ export const useMouseEvents = <Target extends TargetOrRef>(
     }: Partial<MouseEventHandlers>,
     ref: Target,
     options?: AddEventListenerOptions
-): TargetBasedReturnType<Target> => {
+): ListenerControls => {
     const down = useEvent("mousedown", ref, wrapHandler(onMouseDown), options)
     const move = useEvent("mousemove", ref, wrapHandler(onMouseMove), options)
     const up = useEvent("mouseup", ref, wrapHandler(onMouseUp), options)
@@ -79,7 +78,7 @@ export const useMouseEvents = <Target extends TargetOrRef>(
         out,
         enter,
         leave
-    ) as TargetBasedReturnType<Target>
+    ) as ListenerControls
 }
 
 export interface TouchEventHandlers {
@@ -98,7 +97,7 @@ export const useTouchEvents = <Target extends TargetOrRef>(
     }: Partial<TouchEventHandlers>,
     ref: Target,
     options?: AddEventListenerOptions
-): TargetBasedReturnType<Target> => {
+): ListenerControls => {
     const down = useEvent("touchstart", ref, wrapHandler(onTouchStart), options)
     const move = useEvent("touchmove", ref, wrapHandler(onTouchMove), options)
     const up = useEvent("touchend", ref, wrapHandler(onTouchEnd), options)
@@ -108,12 +107,7 @@ export const useTouchEvents = <Target extends TargetOrRef>(
         wrapHandler(onTouchCancel),
         options
     )
-    return mergeUseEventResults(
-        down,
-        move,
-        up,
-        cancel
-    ) as TargetBasedReturnType<Target>
+    return mergeUseEventResults(down, move, up, cancel) as ListenerControls
 }
 
 export const useNativePointerEvents = <Target extends TargetOrRef>(
@@ -129,7 +123,7 @@ export const useNativePointerEvents = <Target extends TargetOrRef>(
     }: Partial<PointerEventHandlers>,
     ref: Target,
     options?: AddEventListenerOptions
-): TargetBasedReturnType<Target> => {
+): ListenerControls => {
     const down = useEvent(
         "pointerdown",
         ref,
@@ -177,21 +171,21 @@ export const useNativePointerEvents = <Target extends TargetOrRef>(
         out,
         enter,
         leave
-    ) as TargetBasedReturnType<Target>
+    ) as ListenerControls
 }
 
 const supportsPointerEvents = () =>
-    window.onpointerdown === null &&
-    window.onpointermove === null &&
-    window.onpointerup === null
+    safeWindow.onpointerdown === null &&
+    safeWindow.onpointermove === null &&
+    safeWindow.onpointerup === null
 const supportsTouchEvents = () =>
-    window.ontouchstart === null &&
-    window.ontouchmove === null &&
-    window.ontouchend === null
+    safeWindow.ontouchstart === null &&
+    safeWindow.ontouchmove === null &&
+    safeWindow.ontouchend === null
 const supportsMouseEvents = () =>
-    window.onmousedown === null &&
-    window.onmousemove === null &&
-    window.onmouseup === null
+    safeWindow.onmousedown === null &&
+    safeWindow.onmousemove === null &&
+    safeWindow.onmouseup === null
 
 export interface PointerEventHandlers {
     onPointerDown: EventHandler
@@ -208,7 +202,7 @@ export const usePointerEvents = <Target extends TargetOrRef>(
     eventHandlers: Partial<PointerEventHandlers>,
     ref: Target,
     options?: AddEventListenerOptions
-): TargetBasedReturnType<Target> => {
+): ListenerControls => {
     const {
         onPointerDown,
         onPointerMove,
@@ -245,9 +239,7 @@ export const usePointerEvents = <Target extends TargetOrRef>(
     const pointer = useNativePointerEvents(pointerEvents, ref, options)
     const touch = useTouchEvents(touchEvents, ref, options)
     const mouse = useMouseEvents(mouseEvents, ref, options)
-    return mergeUseEventResults(pointer, touch, mouse) as TargetBasedReturnType<
-        Target
-    >
+    return mergeUseEventResults(pointer, touch, mouse) as ListenerControls
 }
 
 /**
