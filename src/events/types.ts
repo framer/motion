@@ -1,5 +1,4 @@
 import { RefObject } from "react"
-import { ServerSafeWindow } from "./utils/window"
 
 export interface Point {
     x: number
@@ -23,8 +22,6 @@ export type ListenerControls = [() => void, () => void]
 
 export type TargetOrRef = EventTarget | RefObject<EventTarget>
 
-export type TargetBasedReturnType<Target> = Target extends
-    | EventTarget
-    | ServerSafeWindow
+export type TargetBasedReturnType<Target> = Target extends EventTarget
     ? ListenerControls
     : undefined
