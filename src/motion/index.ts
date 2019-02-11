@@ -31,8 +31,25 @@ export type MotionComponents = CustomMotionComponent &
     SVGMotionComponents
 
 /**
+ * Components optimised for use in gestures and animation.
+ *
  * @public
  * @internalremarks At some point we might want to explore a "headless" component that renders only `children` in the event
+ *
+ * @remarks
+ *
+ *
+ *
+ * # Supported elements
+ *
+ * @param animate - Either properties to animate to, variant label, array of variant labels, or `AnimationController`
+ * @param initial - Properties, variant label or array of variant labels to start in
+ * @param variants - Object of variants
+ * @param transition - Default transition
+ * @param onAnimationComplete - Callback when animation to `animate` is complete
+ * @param onUpdate - Callback with latest motion values, fired once per frame
+ * @param render - Render updated motion values. Defaults to `true`
+ * @param style - Supports `MotionValue`s and separate `transform` values.
  */
 export const motion = elements.reduce(
     (acc, element) => {

@@ -2,6 +2,9 @@ import * as React from "react"
 import { createContext, useContext, useRef, ReactNode } from "react"
 import { Point } from "../../events"
 
+/**
+ * @private
+ */
 export interface MotionPlugins {
     transformPagePoint: (point: Point) => Point
 }
@@ -16,7 +19,6 @@ export interface MotionPluginProps extends MotionPlugins {
 export const MotionPluginContext = createContext<Partial<MotionPlugins>>({})
 
 /**
- *
  * @internal
  * @internalremarks For now I think this should remain a private API for our own use
  * until we can figure out a nicer way of allowing people to add these
