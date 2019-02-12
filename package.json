@@ -21,6 +21,7 @@
         "react-dom": "^16.7"
     },
     "devDependencies": {
+        "@microsoft/api-extractor": "7.0.13",
         "@types/jest": "^23.3.9",
         "@types/node": "^10.12.9",
         "@types/react": "^16.7.6",
@@ -58,7 +59,6 @@
     },
     "dependencies": {
         "@emotion/is-prop-valid": "^0.7.3",
-        "@microsoft/api-extractor": "^7",
         "@popmotion/popcorn": "^0.3.1",
         "framesync": "^4.0.2",
         "hey-listen": "^1.0.5",

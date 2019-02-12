@@ -63,14 +63,14 @@
   resolved "https://registry.yarnpkg.com/@emotion/unitless/-/unitless-0.7.2.tgz#b180097bb44a40c3b59efea9cf28df2fe542d518"
   integrity sha512-mK4SHgIiJiwRZyenDXlaLUdR7vm8xUvJ4VYmpWNTDtF3ykEbI1XNVcbhAZwt07xjtCvLenoJMP8Eqx1FXvoWDQ==
 
-"@microsoft/api-extractor@^7":
-  version "7.0.17"
-  resolved "https://registry.yarnpkg.com/@microsoft/api-extractor/-/api-extractor-7.0.17.tgz#fadb376908a57144ba4a8eb18787d6337bfe6b56"
-  integrity sha512-Mm+6x5/1HRAKno0vow4DyMKcVtB+b6wehMUx21huN+FSpfxID5kAEqKw9OR9XCp7YBXjiISqFBlY4dVYq/bdCw==
+"@microsoft/api-extractor@7.0.13":
+  version "7.0.13"
+  resolved "https://registry.yarnpkg.com/@microsoft/api-extractor/-/api-extractor-7.0.13.tgz#0f5118af66c2c09d1b32dade63b32e8d18195f58"
+  integrity sha512-Hb4KgOFeA1TUWX8Y7ZC79Xwp+ZC6ltIT8vtpQoFjDY+ynEaRcGKRlGMn/yRJOcAikZztApXGsbF5WaPCkbvmdA==
   dependencies:
-    "@microsoft/node-core-library" "3.10.0"
+    "@microsoft/node-core-library" "3.9.0"
     "@microsoft/ts-command-line" "4.2.3"
-    "@microsoft/tsdoc" "0.12.5"
+    "@microsoft/tsdoc" "0.12.4"
     "@types/node" "8.5.8"
     "@types/z-schema" "3.16.31"
     colors "~1.2.1"
@@ -79,10 +79,10 @@
     typescript "~3.1.6"
     z-schema "~3.18.3"
 
-"@microsoft/node-core-library@3.10.0":
-  version "3.10.0"
-  resolved "https://registry.yarnpkg.com/@microsoft/node-core-library/-/node-core-library-3.10.0.tgz#70e089534d8e20f6a0f9c7a4a12a6aeafd6a1ddb"
-  integrity sha512-1SbU+XNYAabhV9noGXHtsUVPc5ELV+oEuJQtZQoCncbOd6WAMeTgB1xFwh96hmdEXyKQyML/pnByiKocmh/nbQ==
+"@microsoft/node-core-library@3.9.0":
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/@microsoft/node-core-library/-/node-core-library-3.9.0.tgz#a999c15c45707bfd5e2329518e00cb2c8d33b55c"
+  integrity sha512-zmP6zNddcIrRXbg8NX9oHX2iCBLU9hZF/+7GeUi3hLbp13xMDHfdT4KepoT+8ZMOMZzRF1lcqiTiVy24VYvCEg==
   dependencies:
     "@types/fs-extra" "5.0.4"
     "@types/jju" "~1.4.0"
@@ -103,10 +103,10 @@
     argparse "~1.0.9"
     colors "~1.2.1"
 
-"@microsoft/tsdoc@0.12.5":
-  version "0.12.5"
-  resolved "https://registry.yarnpkg.com/@microsoft/tsdoc/-/tsdoc-0.12.5.tgz#c448a38902ccb5601c1b2ef3b1a105012ef7712c"
-  integrity sha512-xEAyvLXo4Cter/b0EMCWUZTgXOfLOPJ/Xr52WdjVclPx9eDmNTGFtZl8Pn/nqSnZsQBNcHL0eHk/YyRyyXXpiQ==
+"@microsoft/tsdoc@0.12.4":
+  version "0.12.4"
+  resolved "https://registry.yarnpkg.com/@microsoft/tsdoc/-/tsdoc-0.12.4.tgz#42159590f2b12e23f6028c70aed41dd5b11275c3"
+  integrity sha512-nQZVQg3fXygj+9JT/FSPZOz3vqAIVAAR3ZuAuUdU4DSM/ubJq5lbl1hpLtl+REFmEq1rkvDmmPoJAbSoqjcmZQ==
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
