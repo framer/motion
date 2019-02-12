@@ -19,7 +19,7 @@ const hoverPriority = getGesturePriority("hover")
  *
  * @param props
  * @param ref
- * @public
+ * @internal
  */
 export const useHoverGesture = (
     { hover, onHoverStart, onHoverEnd, controls }: HoverHandlers & ControlsProp,
