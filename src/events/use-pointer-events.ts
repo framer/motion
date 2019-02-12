@@ -7,12 +7,15 @@ import {
     TargetBasedReturnType,
 } from "./types"
 import { useRef } from "react"
+import { safeWindow } from "./utils/window"
+
+const noop: ListenerControls = [() => {}, () => {}]
 
 const mergeUseEventResults = (
     ...values: (ListenerControls | undefined)[]
-): ListenerControls | undefined => {
+): ListenerControls => {
     if (values.every(v => v === undefined)) {
-        return
+        return noop
     }
     const start = () => {
         for (const value of values) {
@@ -181,17 +184,17 @@ export const useNativePointerEvents = <Target extends TargetOrRef>(
 }
 
 const supportsPointerEvents = () =>
-    window.onpointerdown === null &&
-    window.onpointermove === null &&
-    window.onpointerup === null
+    safeWindow.onpointerdown === null &&
+    safeWindow.onpointermove === null &&
+    safeWindow.onpointerup === null
 const supportsTouchEvents = () =>
-    window.ontouchstart === null &&
-    window.ontouchmove === null &&
-    window.ontouchend === null
+    safeWindow.ontouchstart === null &&
+    safeWindow.ontouchmove === null &&
+    safeWindow.ontouchend === null
 const supportsMouseEvents = () =>
-    window.onmousedown === null &&
-    window.onmousemove === null &&
-    window.onmouseup === null
+    safeWindow.onmousedown === null &&
+    safeWindow.onmousemove === null &&
+    safeWindow.onmouseup === null
 
 export interface PointerEventHandlers {
     onPointerDown: EventHandler

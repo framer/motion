@@ -1,0 +1,20 @@
+{
+    "preset": "ts-jest",
+    "rootDir": "src",
+    "testEnvironment": "node",
+    "collectCoverageFrom": [
+        "**/*.{js,jsx,ts,tsx}",
+        "!**/node_modules/**",
+        "!**/__tests__/**"
+    ],
+    "coverageDirectory": "<rootDir>/../coverage",
+    "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts",
+    "testMatch": ["**/__tests__/**/*ssr.test.(js|ts)?(x)"],
+    "globals": {
+        "ts-jest": {
+            "diagnostics": {
+                "warnOnly": true
+            }
+        }
+    }
+}
