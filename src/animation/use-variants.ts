@@ -11,21 +11,23 @@ const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
 }
 
 /**
+ * Handle variants and the `animate` prop when its set as variant labels.
  *
  * @param targetVariant
  * @param inherit
  * @param controls
  * @param initialVariant
  * @param onAnimationComplete
+ *
  * @internal
  */
-export const useVariants = (
+export function useVariants(
     targetVariant: VariantLabels,
     inherit: boolean,
     controls: AnimationControls,
     initialVariant: VariantLabels,
     onAnimationComplete?: () => void
-) => {
+) {
     const variantList = resolveVariantLabels(targetVariant)
     const hasMounted = useRef(false)
 

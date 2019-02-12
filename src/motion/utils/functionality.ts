@@ -4,7 +4,7 @@ import { useAnimationGroupSubscription } from "../../animation/use-animation-gro
 import { useVariants } from "../../animation/use-variants"
 import { useGestures } from "../../gestures"
 import { useDraggable } from "../../behaviours"
-import { useAnimateValues } from "../../animation/use-animate-prop"
+import { useAnimateProp } from "../../animation/use-animate-prop"
 import { createElement, ComponentType, RefObject, CSSProperties } from "react"
 import { buildStyleAttr } from "./style-attr"
 import { MotionValuesMap } from "./use-motion-values"
@@ -36,7 +36,7 @@ export const AnimatePropComponents = {
             transition,
             onAnimationComplete,
         }: AnimateProps) => {
-            return useAnimateValues(
+            return useAnimateProp(
                 animate as Target,
                 controls,
                 values,

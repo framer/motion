@@ -4,13 +4,34 @@ import { MotionValue } from "../value"
 import { AnimationControls } from "./AnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 
-export const useAnimateValues = (
+/**
+ * Handle the `animate` prop when its an object of values, ie:
+ *
+ * ```jsx
+ * <motion.div animate={{ opacity: 1 }} />
+ * ```
+ *
+ * @internalremarks
+ * It might be worth consolidating this with `use-variants`
+ *
+ * ```jsx
+ * <motion.div animate="visible" />
+ * ```
+ *
+ * @param target
+ * @param controls
+ * @param values
+ * @param transition
+ * @param onComplete
+ * @internal
+ */
+export function useAnimateProp(
     target: Target,
     controls: AnimationControls,
     values: MotionValuesMap,
     transition?: Transition,
     onComplete?: () => void
-) => {
+) {
     const isInitialRender = useRef(true)
     const prevValues = useRef(target)
 

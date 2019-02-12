@@ -4,12 +4,24 @@ import { MotionValuesMap } from "../motion"
 import { MotionProps } from "../motion/types"
 import { MotionContext } from "../motion/context/MotionContext"
 
-export const useAnimationControls = <P>(
+/**
+ * Creates an imperative set of controls to trigger animations.
+ *
+ * This allows a consolidated, uniform API for animations, to be triggered by other APIs like the `animate` prop, or the gesture handlers.
+ *
+ * @param values
+ * @param props
+ * @param ref
+ * @param inherit
+ *
+ * @internal
+ */
+export function useAnimationControls<P>(
     values: MotionValuesMap,
     props: P & MotionProps,
     ref: RefObject<Element>,
     inherit: boolean
-) => {
+) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
     const controls = useMemo(() => new AnimationControls<P>(values, ref), [])
