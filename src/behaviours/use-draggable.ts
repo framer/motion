@@ -95,6 +95,21 @@ type MotionPoint = Partial<{
     y: MotionValue<number>
 }>
 
+/**
+ * A hook that allows an element to be dragged.
+ *
+ * @internalremarks
+ * TODO:
+ * 1. Allow `dragMomentum` to accept richer properties that adjust this behaviour
+ * 2. Allow a parent motion component to become the drag boundaries for a child
+ *
+ * @param param
+ * @param ref
+ * @param values
+ * @param controls
+ *
+ * @internal
+ */
 export function useDraggable(
     {
         dragEnabled = false,

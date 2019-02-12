@@ -155,12 +155,23 @@ const checkAndConvertChangedValueTypes = (
         : { target, transitionEnd }
 }
 
-export const unitConversion = (
+/**
+ * Convert value types for x/y/width/height/top/left/bottom/right
+ *
+ * Allows animation between `'auto'` -> `'100%'` or `0` -> `'calc(50% - 10vw)'`
+ *
+ * @param values
+ * @param ref
+ * @param target
+ * @param transitionEnd
+ * @internal
+ */
+export function unitConversion(
     values: MotionValuesMap,
     ref: RefObject<Element>,
     target: Target,
     transitionEnd?: Target
-): { target: Target; transitionEnd?: Target } => {
+): { target: Target; transitionEnd?: Target } {
     return hasPositionalKey(target)
         ? checkAndConvertChangedValueTypes(values, ref, target, transitionEnd)
         : { target, transitionEnd }
