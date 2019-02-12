@@ -46,7 +46,7 @@ watch: bootstrap
 bump:
 	npm version patch
 
-publish: clean
+publish: clean bootstrap
 	npm publish
 
 test: bootstrap
