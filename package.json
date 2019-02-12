@@ -72,9 +72,14 @@
         }
     },
     "lint-staged": {
-        "*.{ts,tsx}": [
-            "prettier --write",
-            "git add"
+        "linters": {
+            "*.{ts,tsx}": [
+                "prettier --write",
+                "git add"
+            ]
+        },
+        "ignore": [
+            "**/api/*.api.ts"
         ]
     }
 }
