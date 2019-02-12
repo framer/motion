@@ -1,7 +1,7 @@
 import * as React from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
-import { MotionPlugins } from "../../motion/utils/MotionPluginContext"
+import { MotionPlugins } from "../../motion/context/MotionPluginContext"
 import { render } from "react-testing-library"
 import { fireEvent } from "dom-testing-library"
 import sync from "framesync"

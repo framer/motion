@@ -1,7 +1,7 @@
 import { Variants, Variant, Transition } from "../types"
 import { AnimationControls } from "../motion"
 
-export class AnimationManager {
+export class AnimationGroupControls {
     private hasMounted = false
     private defaultTransition: Transition
     private pendingAnimations: Array<Variant | string> = []

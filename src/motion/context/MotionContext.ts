@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from "react"
-import { AnimationControls } from "./use-animation-controls"
+import { AnimationControls } from "../../animation/AnimationControls"
 import { VariantLabels } from "../types"
 import { Target } from "../../types"
 

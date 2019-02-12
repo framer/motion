@@ -3,8 +3,8 @@ import { forwardRef, Ref, ComponentType } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues } from "./utils/use-motion-values"
 import { addMotionStyles } from "./utils/style-attr"
-import { useAnimationControls } from "./utils/use-animation-controls"
-import { MotionContext, useMotionContext } from "./utils/MotionContext"
+import { useAnimationControls } from "../animation/use-animation-controls"
+import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
 import {
     isGesturesEnabled,

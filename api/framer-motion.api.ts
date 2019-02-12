@@ -4,16 +4,17 @@ declare const motion: MotionComponents
 // @internal (undocumented)
 declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>
 
+// @internal
+declare function MotionPlugins({
+    children,
+    ...props
+}: MotionPluginProps): JSX.Element
+
 // @internal (undocumented)
 interface MotionPlugins {
     // (undocumented)
     transformPagePoint: (point: Point) => Point
 }
-
-// @internal
-declare const MotionPlugins: (
-    { children, ...props }: MotionPluginProps
-) => JSX.Element
 
 // @internal (undocumented)
 declare class MotionValue<V = any> {
@@ -65,22 +66,22 @@ declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V
 declare function useAnimation(
     variants?: Variants,
     defaultTransition?: Transition
-): AnimationManager
+): AnimationGroupControls
 
 // @public
-declare const useCycle: <T>(
+declare function useCycle<T>(
     items: T[],
     initialIndex?: number
-) => [T, (i?: any) => void]
+): [T, (i?: any) => void]
 
 // @public
-declare const useGestures: <P extends GestureHandlers>(
+declare function useGestures<P extends GestureHandlers>(
     props: P,
     ref: RefObject<Element>
-) => void
+): void
 
 // @public
-declare const useMotionValue: <T>(init: T) => MotionValue<T>
+declare function useMotionValue<T>(init: T): MotionValue<T>
 
 // @internal (undocumented)
 declare function usePanGesture(
@@ -125,7 +126,7 @@ declare function useTransformedValue(
 ): MotionValue
 
 // @public
-declare const useViewportScrollValues: () => {
+declare function useViewportScrollValues(): {
     // (undocumented)
     scrollX: import(".").MotionValue<number>
     // (undocumented)
