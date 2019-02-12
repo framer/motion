@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 ###### This is coming from our shared.mk in the FramerStudio repo
 
 # Include node modules in the path
@@ -28,7 +30,8 @@ SOURCE_FILES := $(shell find ./src -type f)
 
 # The location to gather test reports
 TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)/test_reports)
-API_TARGET=api/framer.api.json
+API_TARGET=dist/framer-motion.api.json
+API_REVIEW_FILE=api/framer-motion.api.ts
 DECLARATION_TARGET=types/index.d.ts
 
 build: bootstrap
@@ -62,7 +65,7 @@ pretty: bootstrap
 $(DECLARATION_TARGET): $(SOURCE_FILES)
 	tsc -p . --emitDeclarationOnly --removeComments false
 
-$(API_TARGET): api-extractor.json $(DECLARATION_TARGET)
+$(API_TARGET) $(API_REVIEW_FILE): api-extractor.json $(DECLARATION_TARGET)
 	api-extractor run -l
 
 api: bootstrap $(API_TARGET)
