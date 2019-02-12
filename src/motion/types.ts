@@ -1,6 +1,6 @@
 import { Ref, CSSProperties } from "react"
 import { MotionValue } from "../value"
-import { AnimationManager } from "../animation"
+import { AnimationGroupControls } from "../animation/AnimationGroupControls"
 import { Variants, Target, Transition, TargetAndTransition } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours"
@@ -39,7 +39,7 @@ export type OnUpdate = (v: Target) => void
 export interface MotionProps extends GestureHandlers, DraggableProps {
     ref?: Ref<Element>
     style?: MotionStyle
-    animate?: AnimationManager | TargetAndTransition | VariantLabels
+    animate?: AnimationGroupControls | TargetAndTransition | VariantLabels
     initial?: Target | VariantLabels
     variants?: Variants
     transition?: Transition

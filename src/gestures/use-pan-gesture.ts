@@ -8,7 +8,7 @@ import {
 } from "../events"
 import { motionValue, MotionValue } from "../value"
 import sync, { cancelSync, getFrameData } from "framesync"
-import { MotionPluginContext } from "../motion/utils/MotionPluginContext"
+import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { safeWindow } from "../events/utils/window"
 
 interface TimestampedPoint extends Point {

@@ -66,13 +66,13 @@ declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V
 declare function useAnimation(
     variants?: Variants,
     defaultTransition?: Transition
-): AnimationManager
+): AnimationGroupControls
 
 // @public
-declare const useCycle: <T>(
+declare function useCycle<T>(
     items: T[],
     initialIndex?: number
-) => [T, (i?: any) => void]
+): [T, (i?: any) => void]
 
 // @public
 declare function useGestures<P extends GestureHandlers>(

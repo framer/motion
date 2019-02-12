@@ -5,9 +5,9 @@ import {
     DetailedHTMLFactory,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
-export { MotionContext } from "./utils/MotionContext"
+export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
-export { AnimationControls } from "./utils/use-animation-controls"
+export { AnimationControls } from "../animation/AnimationControls"
 import { MotionProps } from "./types"
 import { createMotionComponent } from "./component"
 

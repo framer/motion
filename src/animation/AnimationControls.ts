@@ -1,9 +1,8 @@
-import { useMemo, useEffect, useContext, RefObject } from "react"
-import { MotionValuesMap } from "./use-motion-values"
-import { getTransition } from "./transitions"
-import { motionValue, ActionFactory } from "../../value"
+import { RefObject } from "react"
+import { MotionValuesMap } from "../motion/utils/use-motion-values"
+import { getTransition } from "./utils/transitions"
+import { motionValue, ActionFactory } from "../value"
 import { complex } from "style-value-types"
-import { MotionContext } from "./MotionContext"
 import {
     TargetResolver,
     Transition,
@@ -12,10 +11,10 @@ import {
     TargetAndTransition,
     Variant,
     PopmotionTransitionProps,
-} from "../../types"
-import { unitConversion } from "../../dom/unit-type-conversion"
+} from "../types"
+import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
-import { MotionProps, VariantLabels } from "../types"
+import { VariantLabels } from "../motion/types"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -454,33 +453,4 @@ export class AnimationControls<P = {}> {
     resetChildren() {
         if (this.children) this.children.clear()
     }
-}
-
-export const useAnimationControls = <P>(
-    values: MotionValuesMap,
-    props: P & MotionProps,
-    ref: RefObject<Element>,
-    inherit: boolean
-) => {
-    const { variants, transition } = props
-    const parentControls = useContext(MotionContext).controls
-    const controls = useMemo(() => new AnimationControls<P>(values, ref), [])
-
-    // Reset and resubscribe children every render to ensure stagger order is correct
-    controls.resetChildren()
-
-    if (inherit && parentControls) {
-        parentControls.addChild(controls)
-    }
-
-    useEffect(
-        () => () => parentControls && parentControls.removeChild(controls),
-        []
-    )
-
-    controls.setProps(props)
-    controls.setVariants(variants)
-    controls.setDefaultTransition(transition)
-
-    return controls
 }

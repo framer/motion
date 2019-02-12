@@ -1,16 +1,16 @@
 import { MotionProps, VariantLabels } from "../types"
-import { AnimationManager } from "../../animation"
-import { useAnimationSubscription } from "./use-animation-subscription"
-import { useVariants } from "./use-variants"
+import { AnimationGroupControls } from "../../animation/AnimationGroupControls"
+import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
+import { useVariants } from "../../animation/use-variants"
 import { useGestures } from "../../gestures"
 import { useDraggable } from "../../behaviours"
-import { useAnimateValues } from "./use-animate-values"
+import { useAnimateValues } from "../../animation/use-animate-prop"
 import { createElement, ComponentType, RefObject, CSSProperties } from "react"
 import { buildStyleAttr } from "./style-attr"
 import { MotionValuesMap } from "./use-motion-values"
 import { AnimatePropType } from "../types"
 import { Target } from "../../types"
-import { AnimationControls } from "./use-animation-controls"
+import { AnimationControls } from "../../animation/AnimationControls"
 import isPropValid from "@emotion/is-prop-valid"
 import { svgElements } from "./supported-elements"
 
@@ -64,8 +64,8 @@ export const AnimatePropComponents = {
     ),
     [AnimatePropType.AnimationSubscription]: makeHookComponent(
         ({ animate, controls }: AnimateProps) => {
-            return useAnimationSubscription(
-                animate as AnimationManager,
+            return useAnimationGroupSubscription(
+                animate as AnimationGroupControls,
                 controls
             )
         }
@@ -76,7 +76,7 @@ const isVariantLabel = (prop?: any): prop is VariantLabels =>
     Array.isArray(prop) || typeof prop === "string"
 
 const isAnimationSubscription = ({ animate }: AnimateProps) =>
-    animate instanceof AnimationManager
+    animate instanceof AnimationGroupControls
 
 const animatePropTypeTests = {
     [AnimatePropType.Target]: (props: AnimateProps) =>
@@ -186,7 +186,8 @@ export const checkShouldInheritVariant = ({
     tap,
 }: MotionProps): boolean => {
     const isVariantChild = inherit && variants && !animate && !hover && !tap
-    const isAnimationHookChild = inherit && animate instanceof AnimationManager
+    const isAnimationHookChild =
+        inherit && animate instanceof AnimationGroupControls
 
     if (isVariantChild || isAnimationHookChild) {
         return true

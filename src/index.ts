@@ -10,4 +10,4 @@ export { useCycle } from "./utils/use-cycle"
 export {
     MotionPlugins,
     MotionPluginContext,
-} from "./motion/utils/MotionPluginContext"
+} from "./motion/context/MotionPluginContext"

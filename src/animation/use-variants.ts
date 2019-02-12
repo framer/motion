@@ -1,12 +1,24 @@
-import { VariantLabels } from "../types"
-import { AnimationControls } from "./use-animation-controls"
-import { resolvePoses, asDependencyList } from "./pose-resolvers"
+import { VariantLabels } from "../motion/types"
+import { AnimationControls } from "./AnimationControls"
+import {
+    resolveVariantLabels,
+    asDependencyList,
+} from "./utils/variant-resolvers"
 import { useEffect, useRef } from "react"
 
 const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
     return oldVariant.join(",") !== newVariant.join(",")
 }
 
+/**
+ *
+ * @param targetVariant
+ * @param inherit
+ * @param controls
+ * @param initialVariant
+ * @param onAnimationComplete
+ * @internal
+ */
 export const useVariants = (
     targetVariant: VariantLabels,
     inherit: boolean,
@@ -14,7 +26,7 @@ export const useVariants = (
     initialVariant: VariantLabels,
     onAnimationComplete?: () => void
 ) => {
-    const variantList = resolvePoses(targetVariant)
+    const variantList = resolveVariantLabels(targetVariant)
     const hasMounted = useRef(false)
 
     // Fire animations when poses change
@@ -22,7 +34,10 @@ export const useVariants = (
         // TODO: This logic might mean we don't need to load this hook at all
         if (inherit) return
 
-        if (hasMounted.current || hasVariantChanged(resolvePoses(initialVariant), variantList)) {
+        if (
+            hasMounted.current ||
+            hasVariantChanged(resolveVariantLabels(initialVariant), variantList)
+        ) {
             controls.start(variantList).then(() => {
                 onAnimationComplete && onAnimationComplete()
             })

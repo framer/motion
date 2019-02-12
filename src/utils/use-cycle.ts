@@ -15,7 +15,7 @@ import { wrap } from "@popmotion/popcorn"
  * ```jsx
  * const [x, cycleX] = useCycle([0, 100, 200])
  *
- * return <Frame animate={{ x }} onClick={cycleX} />
+ * return <motion.div animate={{ x }} onClick={cycleX} />
  * ```
  *
  * By default, the initial state is the first item in the provided array (`0` in the above example).
@@ -38,10 +38,10 @@ import { wrap } from "@popmotion/popcorn"
  *
  * @public
  */
-export const useCycle = <T>(
+export function useCycle<T>(
     items: T[],
     initialIndex: number = 0
-): [T, (i?: any) => void] => {
+): [T, (i?: any) => void] {
     const numItems = items.length
     const [index, setIndex] = useState(initialIndex)
 
