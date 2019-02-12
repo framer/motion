@@ -41,10 +41,10 @@ export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers
  * @param ref
  * @public
  */
-export const useGestures = <P extends GestureHandlers>(
+export function useGestures<P extends GestureHandlers>(
     props: P,
     ref: RefObject<Element>
-) => {
+) {
     usePanGesture(props, ref)
     useTapGesture(props, ref)
     useHoverGesture(props, ref)

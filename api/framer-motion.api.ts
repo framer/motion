@@ -15,7 +15,7 @@ declare const MotionPlugins: (
     { children, ...props }: MotionPluginProps
 ) => JSX.Element
 
-// @public (undocumented)
+// @internal (undocumented)
 declare class MotionValue<V = any> {
     // (undocumented)
     constructor(init: V, { transformer, parent }?: Config<V>)
@@ -58,30 +58,14 @@ declare class MotionValue<V = any> {
     velocityCheck: ({ timestamp }: FrameData) => void
 }
 
-// @public
+// @internal
 declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V
 
-// @public (undocumented)
-declare const useAnimation: (
-    variants?: Variants | undefined,
-    defaultTransition?:
-        | import("../types").TransitionMap
-        | (import("../types").TransitionOrchestration &
-              import("../types").Tween)
-        | (import("../types").TransitionOrchestration &
-              import("../types").Spring)
-        | (import("../types").TransitionOrchestration &
-              import("../types").Decay)
-        | (import("../types").TransitionOrchestration &
-              import("../types").Inertia)
-        | (import("../types").TransitionOrchestration &
-              import("../types").Keyframes)
-        | (import("../types").TransitionOrchestration &
-              import("../types").Physics)
-        | (import("../types").TransitionOrchestration & import("../types").Just)
-        | (import("../types").TransitionOrchestration & import("../types").None)
-        | undefined
-) => AnimationManager
+// @public
+declare function useAnimation(
+    variants?: Variants,
+    defaultTransition?: Transition
+): AnimationManager
 
 // @public
 declare const useCycle: <T>(
@@ -89,7 +73,7 @@ declare const useCycle: <T>(
     initialIndex?: number
 ) => [T, (i?: any) => void]
 
-// @public (undocumented)
+// @public
 declare const useGestures: <P extends GestureHandlers>(
     props: P,
     ref: RefObject<Element>
@@ -98,13 +82,13 @@ declare const useGestures: <P extends GestureHandlers>(
 // @public
 declare const useMotionValue: <T>(init: T) => MotionValue<T>
 
-// @public (undocumented)
+// @internal (undocumented)
 declare function usePanGesture(
     handlers: PanHandlers,
     ref: RefObject<Element>
 ): undefined
 
-// @public (undocumented)
+// @internal (undocumented)
 declare function usePanGesture(
     handlers: PanHandlers
 ): {
@@ -112,7 +96,7 @@ declare function usePanGesture(
     onPointerDown: EventHandler
 }
 
-// @public (undocumented)
+// @internal (undocumented)
 declare function useTapGesture(
     handlers: TapHandlers & ControlsProp
 ): {
@@ -120,19 +104,19 @@ declare function useTapGesture(
     onPointerDown: EventHandler
 }
 
-// @public (undocumented)
+// @internal (undocumented)
 declare function useTapGesture(
     handlers: TapHandlers & ControlsProp,
     ref: RefObject<Element>
 ): undefined
 
-// @public (undocumented)
+// @public
 declare function useTransformedValue(
     value: MotionValue,
     transform: Transformer_2
 ): MotionValue
 
-// @public (undocumented)
+// @public
 declare function useTransformedValue(
     value: MotionValue<number>,
     from: number[],

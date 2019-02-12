@@ -60,7 +60,7 @@ const viewportMotionValues = {
  *
  * @public
  */
-export const useViewportScrollValues = () => {
+export function useViewportScrollValues() {
     if (!hasEventListener) {
         addScrollListener()
     }

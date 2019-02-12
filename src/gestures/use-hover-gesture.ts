@@ -21,10 +21,10 @@ const hoverPriority = getGesturePriority("hover")
  * @param ref
  * @internal
  */
-export const useHoverGesture = (
+export function useHoverGesture(
     { hover, onHoverStart, onHoverEnd, controls }: HoverHandlers & ControlsProp,
     ref?: RefObject<Element>
-) => {
+) {
     const handlers = useMemo(
         () => {
             const onPointerEnter = (event: Event) => {

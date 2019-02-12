@@ -61,10 +61,10 @@ import { Transition, Variants } from "../types"
  *
  * @public
  */
-export const useAnimation = (
+export function useAnimation(
     variants?: Variants,
     defaultTransition?: Transition
-) => {
+) {
     const animationManager = useMemo(() => new AnimationManager(), [])
 
     if (variants) {
