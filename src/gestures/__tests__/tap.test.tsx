@@ -109,4 +109,79 @@ describe("tap", () => {
             0.5,
         ])
     })
+
+    test("tap gesture variant applies and unapplies as state changes", () => {
+        const promise = new Promise(resolve => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = ({ isActive }) => {
+                return (
+                    <motion.div
+                        initial={{ opacity: isActive ? 1 : 0.5 }}
+                        animate={{ opacity: isActive ? 1 : 0.5 }}
+                        hover={{ opacity: isActive ? 1 : 0.75 }}
+                        tap={{ opacity: 1 }}
+                        transition={{ type: false }}
+                        style={{ opacity }}
+                    />
+                )
+            }
+
+            const { container, rerender } = render(
+                <Component isActive={false} />
+            )
+            rerender(<Component isActive={false} />)
+
+            logOpacity() // 0.5
+
+            // Trigger hover
+            mouseEnter(container.firstChild as Element)
+            logOpacity() // 0.75
+
+            // Trigger mouse down
+            fireEvent.mouseDown(container.firstChild as Element)
+            logOpacity() // 1
+            rerender(<Component isActive={true} />)
+            rerender(<Component isActive={true} />)
+
+            // Trigger mouse up
+            fireEvent.mouseUp(container.firstChild as Element)
+            logOpacity() // 1
+
+            // Trigger hover end
+            mouseLeave(container.firstChild as Element)
+            logOpacity() // 1
+
+            // Trigger hover
+            mouseEnter(container.firstChild as Element)
+            logOpacity() // 1
+
+            // Trigger mouse down
+            fireEvent.mouseDown(container.firstChild as Element)
+            logOpacity() // 1
+
+            // Trigger hover end
+            mouseLeave(container.firstChild as Element)
+            logOpacity() // 1
+
+            // Trigger mouse up
+            fireEvent.mouseUp(container.firstChild as Element)
+            logOpacity() // 1
+
+            resolve(opacityHistory)
+        })
+
+        return expect(promise).resolves.toEqual([
+            0.5,
+            0.75,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+        ])
+    })
 })
