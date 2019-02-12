@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.0] 2019-02-12
+
+### Changed
+
+-   Standardizing `(event, pointInfo)` as signature for gesture callbacks.
+
+### Fixed
+
+-   Gesture priority bugs
+
 ## [0.3.2] 2019-02-08
 
 ### Changed

@@ -19,7 +19,7 @@ interface TapSession {
     target: EventTarget | null
 }
 
-type TapHandler = (session: TapInfo, event: Event) => void
+type TapHandler = (event: Event, session: TapInfo) => void
 
 export interface TapHandlers {
     onTap?: TapHandler
@@ -62,9 +62,8 @@ const usePropsRef = <T>(props: T) => {
 }
 
 /**
- *
  * @param handlers
- * @public
+ * @internal
  */
 export function useTapGesture(
     handlers: TapHandlers & ControlsProp
@@ -101,13 +100,13 @@ export function useTapGesture(
 
                 if (!ref || event.target !== ref.current) {
                     if (propsRef.onTapCancel) {
-                        propsRef.onTapCancel({ point }, event)
+                        propsRef.onTapCancel(event, { point })
                     }
                     return
                 }
 
                 if (propsRef.onTap) {
-                    propsRef.onTap({ point }, event)
+                    propsRef.onTap(event, { point })
                 }
 
                 session = null
@@ -121,7 +120,7 @@ export function useTapGesture(
                 }
 
                 if (propsRef.onTapStart) {
-                    propsRef.onTapStart({ point }, event)
+                    propsRef.onTapStart(event, { point })
                 }
 
                 if (controls && propsRef.tap) {

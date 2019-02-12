@@ -33,7 +33,10 @@ import { motionValue, MotionValue } from "."
  * ```
  *
  * @param {number | string} init - The initial state of the `MotionValue`
+ * @returns `MotionValue`
+ *
  * @public
  */
-export const useMotionValue = <T>(init: T): MotionValue<T> =>
-    useMemo(() => motionValue(init), [])
+export const useMotionValue = <T>(init: T): MotionValue<T> => {
+    return useMemo(() => motionValue(init), [])
+}

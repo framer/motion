@@ -41,11 +41,23 @@ const viewportMotionValues = {
 }
 
 /**
- * `useViewportScroll` provides `MotionValue`s that update when the viewport scrolls.
+ * Provides `MotionValue`s that update when the viewport scrolls.
  *
- * This makes it possible to transform viewport scroll into other values.
+ * @remarks
  *
- * For instance, highlighting different table of contents items to correspond with page scroll.
+ * This makes it possible to transform viewport scrolls into other values.
+ *
+ * Four `MotionValue`s are returned:
+ *
+ *  - `scrollX`/`scrollY`: The x/y scroll offset in pixels.
+ *  - `scrollXProgress`/`scrollYProgress`: The x/y scroll offset as a progress value between `0` and `1`.
+ *
+ * ```jsx
+ * const { scrollX } = useViewportScrollValues()
+ * ```
+ *
+ * @returns `{ scrollX, scrollY, scrollXProgress, scrollYProgress }` `MotionValue`s
+ *
  * @public
  */
 export const useViewportScrollValues = () => {

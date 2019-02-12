@@ -7,7 +7,6 @@ import {
 } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 import { PopmotionTransitionProps } from "../types"
-export { unwrapMotionValue } from "./utils/unwrap-value"
 
 export type Transformer<T> = (v: T) => T
 
@@ -38,9 +37,8 @@ const parseDurations = (config: PopmotionTransitionProps) => {
 
     return config
 }
-
 /**
- * @public
+ * @internal
  */
 export class MotionValue<V = any> {
     // Current state
