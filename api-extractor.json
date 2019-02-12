@@ -1,0 +1,29 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/api-extractor.schema.json",
+    "compiler": {
+        "configType": "tsconfig",
+        "rootFolder": "."
+    },
+    "project": {
+        "entryPointSourceFile": "types/index.d.ts"
+    },
+    "validationRules": {
+        "missingReleaseTags": "error"
+    },
+    "apiReviewFile": {
+        "enabled": true,
+        "apiReviewFolder": "./api"
+    },
+    "apiJsonFile": {
+        "enabled": true,
+        "outputFolder": "./dist"
+    },
+    "dtsRollup": {
+        "enabled": true,
+        "mainDtsRollupPath": "framer-motion.d.ts",
+        "trimming": false
+    },
+    "policies": {
+        "namespaceSupport": "permissive"
+    }
+}

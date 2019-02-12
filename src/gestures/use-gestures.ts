@@ -4,6 +4,12 @@ import { TapHandlers, useTapGesture } from "./use-tap-gesture"
 import { HoverHandlers, useHoverGesture } from "./use-hover-gesture"
 
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers
+/**
+ *
+ * @param props
+ * @param ref
+ * @public
+ */
 export const useGestures = <P extends GestureHandlers>(
     props: P,
     ref: RefObject<Element>

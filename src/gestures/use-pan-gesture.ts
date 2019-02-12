@@ -90,6 +90,12 @@ export interface PanHandlers {
 
 type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
 
+/**
+ *
+ * @param handlers
+ * @param ref
+ * @public
+ */
 export function usePanGesture(
     handlers: PanHandlers,
     ref: RefObject<Element>

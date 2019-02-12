@@ -2,6 +2,12 @@ import { AnimationManager } from "."
 import { useMemo, useEffect } from "react"
 import { Transition, Variants } from "../types"
 
+/**
+ *
+ * @param variants
+ * @param defaultTransition
+ * @public
+ */
 export const useAnimation = (
     variants?: Variants,
     defaultTransition?: Transition

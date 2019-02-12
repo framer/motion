@@ -15,6 +15,12 @@ const hoverPriority = getGesturePriority("hover")
 
 // TODO: Optimisation here is find a way to conditionally add these listeners based on
 // whether we're receiving hover or event listeners
+/**
+ *
+ * @param props
+ * @param ref
+ * @public
+ */
 export const useHoverGesture = (
     { hover, onHoverStart, onHoverEnd, controls }: HoverHandlers & ControlsProp,
     ref?: RefObject<Element>

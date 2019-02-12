@@ -12,7 +12,7 @@
         "test-server": "jest --config jest.config.ssr.json",
         "watch": "jest --watch --coverage --coverageReporters=lcov",
         "prettier": "prettier ./src/* --write",
-        "build": "rollup -c && yarn measure",
+        "build": "rollup -c && make api && yarn measure",
         "prepublishOnly": "yarn test && yarn build",
         "measure": "gzip -c dist/framer-motion.js | wc -c"
     },
@@ -58,6 +58,7 @@
     },
     "dependencies": {
         "@emotion/is-prop-valid": "^0.7.3",
+        "@microsoft/api-extractor": "^7",
         "@popmotion/popcorn": "^0.3.1",
         "framesync": "^4.0.2",
         "hey-listen": "^1.0.5",

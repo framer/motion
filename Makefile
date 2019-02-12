@@ -22,11 +22,14 @@ node_modules/.yarn-integrity: yarn.lock package.json
 	touch $@
 
 bootstrap:: node_modules/.yarn-integrity
+SOURCE_FILES := $(shell find ./src -type f)
 
 ######
 
 # The location to gather test reports
 TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)/test_reports)
+API_TARGET=api/framer.api.json
+DECLARATION_TARGET=types/index.d.ts
 
 build: bootstrap
 	yarn build
@@ -56,6 +59,12 @@ lint: bootstrap
 pretty: bootstrap
 	prettier --write */**/*.tsx */**/*.ts
 
+$(DECLARATION_TARGET): $(SOURCE_FILES)
+	yarn tsc -p . --emitDeclarationOnly --removeComments false
 
+$(API_TARGET): api-extractor.json $(DECLARATION_TARGET)
+	yarn api-extractor run -l
+
+api: bootstrap $(API_TARGET)
 
 .PHONY: dev lint

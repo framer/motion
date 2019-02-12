@@ -46,6 +46,7 @@ const viewportMotionValues = {
  * This makes it possible to transform viewport scroll into other values.
  *
  * For instance, highlighting different table of contents items to correspond with page scroll.
+ * @public
  */
 export const useViewportScrollValues = () => {
     if (!hasEventListener) {
