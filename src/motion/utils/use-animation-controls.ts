@@ -156,10 +156,9 @@ export class AnimationControls<P = {}> {
 
         this.overrides[overrideIndex] = undefined
         const highest = this.getHighestPriority()
-
         this.resetIsAnimating()
 
-        if (highest >= overrideIndex) {
+        if (highest) {
             const highestOverride = this.overrides[highest]
             highestOverride &&
                 this.start(highestOverride, { priority: highest })
@@ -167,18 +166,16 @@ export class AnimationControls<P = {}> {
 
         // Figure out which remaining values were affected by the override and animate those
         const overrideTarget = this.resolvedOverrides[overrideIndex]
-
         if (!overrideTarget) return
-        const remainingValues = Object.keys(this.baseTarget).reduce(
-            (acc, key) => {
-                if (overrideTarget[key] !== undefined) {
-                    acc[key] = this.baseTarget[key]
-                }
 
-                return acc
-            },
-            {}
-        )
+        const remainingValues: Target = {}
+
+        for (const key in this.baseTarget) {
+            if (overrideTarget[key] !== undefined) {
+                remainingValues[key] = this.baseTarget[key]
+            }
+        }
+
         this.animate(remainingValues)
     }
 
