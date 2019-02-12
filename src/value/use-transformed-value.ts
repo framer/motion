@@ -13,18 +13,12 @@ const isTransformer = (v: number[] | Transformer): v is Transformer => {
 const noop = () => (v: any) => v
 
 /**
-<<<<<<< HEAD
- *
- * @param value
- * @param transform
-=======
  * Creates a new `MotionValue` that takes the output of another `MotionValue` and transforms it with a function
  *
  * @param value - `MotionValue`
  * @param transform - Function that accepts the output of `value` and returns a new value.
  * @returns `MotionValue`
  *
->>>>>>> updating docs
  * @public
  */
 export function useTransformedValue(

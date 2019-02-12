@@ -2,19 +2,34 @@ import { useMemo } from "react"
 import { motionValue, MotionValue } from "."
 
 /**
- * Create a motion value externally from a motion component for advanced use-cases.
+ * For advanced use-cases, you can assume external control of the motion values used by `motion` components.
  *
- * @remarks
- * Usually, a `motion` component is responsible for creating its own `MotionValue`s for maintaining animation state.
+ * This is usually used in conjunction with `useTransform`.
  *
- * `useMotionValue` can create `MotionValue`s externally, to be used with `useTransformedValue`.
+ * ## Import
  *
- * `MotionValue`s should be passed into `motion` components via the `style` prop:
+ * ```javascript
+ * import { useMotionValue } from 'framer-motion'
+ * ```
  *
- * ```jsx
+ * ## Usage
+ *
+ * Motion values are created with the `useMotionValue` hook, providing it an initial value:
+ *
+ * ```javascript
  * const x = useMotionValue(0)
+ * ```
  *
- * return <motion.div style={{ x }} />
+ * This can be passed to a motion component via the `motionValue` prop:
+ *
+ * ```javascript
+ * const MotionComponent = motion.div()
+ *
+ * export const () => {
+ *   const x = useMotionValue(0)
+ *
+ *   return <MotionComponent motionValues={{ x }} />
+ * }
  * ```
  *
  * @param {number | string} init - The initial state of the `MotionValue`
