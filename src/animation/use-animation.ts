@@ -56,7 +56,7 @@ import { Transition, Variants } from "../types"
  * animation.start('visible')
  * ```
  *
- * @params variants - List of `Variant`s. Optional
+ * @params variants - List of variants. Optional
  * @returns Animation controller with `start` and `stop` methods
  *
  * @public
