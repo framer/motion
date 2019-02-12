@@ -44,15 +44,7 @@ describe("tap", () => {
 
     test("tap gesture variant applies and unapplies", () => {
         const promise = new Promise(resolve => {
-<<<<<<< HEAD
-<<<<<<< HEAD
             const opacityHistory: number[] = []
-=======
-            const opacityHistory = []
->>>>>>> adding failing event
-=======
-            const opacityHistory: number[] = []
->>>>>>> fix for gesture behaviour
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
             const Component = () => (
