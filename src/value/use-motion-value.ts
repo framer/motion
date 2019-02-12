@@ -37,6 +37,6 @@ import { motionValue, MotionValue } from "."
  *
  * @public
  */
-export const useMotionValue = <T>(init: T): MotionValue<T> => {
+export function useMotionValue<T>(init: T): MotionValue<T> {
     return useMemo(() => motionValue(init), [])
 }

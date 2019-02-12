@@ -219,5 +219,6 @@ export class MotionValue<V = any> {
     }
 }
 
-export const motionValue = <V>(init: V, opts?: Config<V>) =>
-    new MotionValue<V>(init, opts)
+export function motionValue<V>(init: V, opts?: Config<V>) {
+    return new MotionValue<V>(init, opts)
+}

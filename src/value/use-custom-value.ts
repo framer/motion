@@ -1,11 +1,11 @@
 import { useMemo, useRef } from "react"
 import { MotionValue } from "./"
 
-export const useCustomValue = (
+export function useCustomValue(
     parent: MotionValue<any>,
     getTransformer: () => (v: any) => any,
     comparitor: any[]
-) => {
+) {
     const value = useRef<MotionValue | null>(null)
 
     return useMemo(() => {
