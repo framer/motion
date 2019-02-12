@@ -1,4 +1,11 @@
-import { motionValue } from "./"
+import { motionValue, MotionValue } from "./"
+
+export interface ScrollMotionValues {
+    scrollX: MotionValue<number>
+    scrollY: MotionValue<number>
+    scrollXProgress: MotionValue<number>
+    scrollYProgress: MotionValue<number>
+}
 
 const scrollX = motionValue(0)
 const scrollY = motionValue(0)
@@ -33,7 +40,7 @@ const addScrollListener = () => {
     window.addEventListener("scroll", updateScrollValues, { passive: true })
 }
 
-const viewportMotionValues = {
+const viewportMotionValues: ScrollMotionValues = {
     scrollX,
     scrollY,
     scrollXProgress,

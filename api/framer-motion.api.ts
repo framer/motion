@@ -1,140 +1,95 @@
 // @public
-declare const motion: MotionComponents
+declare const motion: MotionComponents;
 
 // @internal (undocumented)
-declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>
+declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>;
 
 // @internal
-declare function MotionPlugins({
-    children,
-    ...props
-}: MotionPluginProps): JSX.Element
+declare function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
 // @internal (undocumented)
 interface MotionPlugins {
     // (undocumented)
-    transformPagePoint: (point: Point) => Point
+    transformPagePoint: (point: Point) => Point;
 }
 
 // @internal (undocumented)
 declare class MotionValue<V = any> {
     // (undocumented)
-    constructor(init: V, { transformer, parent }?: Config<V>)
+    constructor(init: V, { transformer, parent }?: Config<V>);
     // (undocumented)
-    addChild(config: Config<V>): MotionValue<V>
+    addChild(config: Config<V>): MotionValue<V>;
     // (undocumented)
-    addRenderSubscription(subscription: Subscriber<V>): () => boolean
+    addRenderSubscription(subscription: Subscriber<V>): () => boolean;
     // (undocumented)
-    addUpdateSubscription(subscription: Subscriber<V>): () => boolean
+    addUpdateSubscription(subscription: Subscriber<V>): () => boolean;
     // (undocumented)
-    control(
-        controller: ActionFactory,
-        config: PopmotionTransitionProps,
-        transformer?: Transformer<V>
-    ): Promise<{}>
+    control(controller: ActionFactory, config: PopmotionTransitionProps, transformer?: Transformer<V>): Promise<{}>;
     // (undocumented)
-    destroy(): void
+    destroy(): void;
     // (undocumented)
-    get(): V
+    get(): V;
     // (undocumented)
-    getVelocity(): number
+    getVelocity(): number;
     // (undocumented)
-    notifySubscriber: (subscriber: Subscriber<V>) => void
+    notifySubscriber: (subscriber: Subscriber<V>) => void;
     // (undocumented)
-    removeChild(child: MotionValue): void
+    removeChild(child: MotionValue): void;
     // (undocumented)
-    scheduleVelocityCheck: () => import("framesync/lib/types").Process
+    scheduleVelocityCheck: () => import("framesync/lib/types").Process;
     // (undocumented)
-    set(v: V, render?: boolean): void
+    set(v: V, render?: boolean): void;
     // (undocumented)
-    setChild: (child: MotionValue<any>) => void
+    setChild: (child: MotionValue<any>) => void;
     // (undocumented)
-    stop(): void
+    stop(): void;
     // (undocumented)
-    subscribeTo(
-        subscriptions: Set<Subscriber<V>>,
-        subscription: Subscriber<V>
-    ): () => boolean
+    subscribeTo(subscriptions: Set<Subscriber<V>>, subscription: Subscriber<V>): () => boolean;
     // (undocumented)
-    velocityCheck: ({ timestamp }: FrameData) => void
+    velocityCheck: ({ timestamp }: FrameData) => void;
 }
 
 // @internal
-declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V
+declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V;
 
 // @public
-declare function useAnimation(
-    variants?: Variants,
-    defaultTransition?: Transition
-): AnimationGroupControls
+declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationGroupControls;
 
 // @public
-declare function useCycle<T>(
-    items: T[],
-    initialIndex?: number
-): [T, (i?: any) => void]
+declare function useCycle<T>(items: T[], initialIndex?: number): [T, (i?: any) => void];
 
 // @public
-declare function useGestures<P extends GestureHandlers>(
-    props: P,
-    ref: RefObject<Element>
-): void
+declare function useGestures<P extends GestureHandlers>(props: P, ref: RefObject<Element>): void;
 
 // @public
-declare function useMotionValue<T>(init: T): MotionValue<T>
+declare function useMotionValue<T>(init: T): MotionValue<T>;
 
 // @internal (undocumented)
-declare function usePanGesture(
-    handlers: PanHandlers,
-    ref: RefObject<Element>
-): undefined
+declare function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined;
 
 // @internal (undocumented)
-declare function usePanGesture(
-    handlers: PanHandlers
-): {
+declare function usePanGesture(handlers: PanHandlers): {
     // (undocumented)
-    onPointerDown: EventHandler
-}
+    onPointerDown: EventHandler;
+};
 
 // @internal (undocumented)
-declare function useTapGesture(
-    handlers: TapHandlers & ControlsProp
-): {
+declare function useTapGesture(handlers: TapHandlers & ControlsProp): {
     // (undocumented)
-    onPointerDown: EventHandler
-}
+    onPointerDown: EventHandler;
+};
 
 // @internal (undocumented)
-declare function useTapGesture(
-    handlers: TapHandlers & ControlsProp,
-    ref: RefObject<Element>
-): undefined
+declare function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObject<Element>): undefined;
 
 // @public
-declare function useTransformedValue(
-    value: MotionValue,
-    transform: Transformer_2
-): MotionValue
+declare function useTransformedValue(value: MotionValue, transform: Transformer_2): MotionValue;
 
 // @public
-declare function useTransformedValue(
-    value: MotionValue<number>,
-    from: number[],
-    to: any[],
-    options?: TransformerOptions
-): MotionValue
+declare function useTransformedValue(value: MotionValue<number>, from: number[], to: any[], options?: TransformerOptions): MotionValue;
 
 // @public
-declare function useViewportScrollValues(): {
-    // (undocumented)
-    scrollX: import(".").MotionValue<number>
-    // (undocumented)
-    scrollY: import(".").MotionValue<number>
-    // (undocumented)
-    scrollXProgress: import(".").MotionValue<number>
-    // (undocumented)
-    scrollYProgress: import(".").MotionValue<number>
-}
+declare function useViewportScrollValues(): ScrollMotionValues;
+
 
 // (No @packageDocumentation comment for this package)
