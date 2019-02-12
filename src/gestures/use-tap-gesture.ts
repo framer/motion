@@ -9,6 +9,7 @@ import {
 import { TargetAndTransition } from "../types"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp } from "./types"
+import { safeWindow } from "../events/utils/window"
 
 interface TapInfo {
     point: Point
@@ -136,7 +137,7 @@ export function useTapGesture(
 
     const [startPointerUp, stopPointerUp] = usePointerEvents(
         { onPointerUp: handlers.onPointerUp },
-        window
+        safeWindow
     )
 
     useEffect(
