@@ -6,8 +6,19 @@ import { ControlsProp } from "./types"
 
 type HoverHandler = (event: Event) => void
 export interface HoverHandlers {
+    /**
+     * Properties or variant label to animate to while the hover gesture is recognised
+     */
     hover?: string | TargetAndTransition
+
+    /**
+     * Callback that fires when pointer starts hovering over the component
+     */
     onHoverStart?: HoverHandler
+
+    /**
+     * Callback that fires when pointer stops hovering over the component
+     */
     onHoverEnd?: HoverHandler
 }
 

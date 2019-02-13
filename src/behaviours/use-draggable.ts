@@ -30,32 +30,42 @@ export interface DraggableProps {
     dragEnabled?: boolean | DragDirection | "lockDirection"
 
     /**
-     * Disable global drag locking
-     * When using nested dragging, setting this to true will enable parents to also drag
+     * Allows drag gesture propagation to child components.
      * @default false
      */
     dragPropagation?: boolean
 
     /**
-     * Apply constraints to dragging
-     * @default false
+     * An object of optional `top`, `left`, `right`, `bottom` pixel values, beyond which dragging is constrained
+     * @default undefined
      */
     dragConstraints?: Constraints
 
     /**
-     * Allow "dragElasticging" beyond the drag constraints
-     * @default false
+     * The degree of movement allowed outside constraints. Set to `false` for no movement.
+     * @default 0.5
      */
     dragElastic?: Overdrag
 
     /**
-     * Allow smooth scrolling
-     * @default false
+     * Apply momentum from the pan gesture to the component when dragging finishes.
+     * @default true
      */
     dragMomentum?: boolean
 
+    /**
+     * Callback that fires when dragging starts
+     */
     onDragStart?: (e: MouseEvent | TouchEvent) => void
+
+    /**
+     * Callback that fires when dragging ends
+     */
     onDragEnd?: (e: MouseEvent | TouchEvent) => void
+
+    /**
+     * Callback that fires a drag direction is determined
+     */
     onDirectionLock?: (axis: string) => void
 }
 

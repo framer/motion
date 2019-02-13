@@ -83,8 +83,19 @@ export interface PanInfo {
 export type PanHandler = (event: Event, info: PanInfo) => void
 
 export interface PanHandlers {
+    /**
+     * Callback when the pan gesture is recognised on this element
+     */
     onPan?: PanHandler
+
+    /**
+     * Callback when the pan gesture begins on this element
+     */
     onPanStart?: PanHandler
+
+    /**
+     * Callback when the pan gesture ends on this element
+     */
     onPanEnd?: PanHandler
 }
 
