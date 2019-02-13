@@ -37,15 +37,51 @@ export type MotionStyle = MakeMotion<CSSProperties>
 
 export type OnUpdate = (v: Target) => void
 export interface MotionProps extends GestureHandlers, DraggableProps {
-    ref?: Ref<Element>
+    /**
+     * Supports `MotionValue`s and separate `transform` values.
+     */
     style?: MotionStyle
+
+    /**
+     * Either properties to animate to, variant label, array of variant labels, or `AnimationController`
+     */
     animate?: AnimationGroupControls | TargetAndTransition | VariantLabels
+
+    /**
+     * Properties, variant label or array of variant labels to start in
+     */
     initial?: Target | VariantLabels
+
+    /**
+     * Object of variants
+     */
     variants?: Variants
+
+    /**
+     * Default transition
+     */
     transition?: Transition
+
+    /**
+     * Set to `false` to prevent inheriting variant changes from a parent `motion` component.
+     * @default true
+     */
     inherit?: boolean
+
+    /**
+     * Set to `false` to block rendering the latest motion values on the component - can be used to temporarily disable animations for performance reasons.
+     * @default true
+     */
     render?: boolean
+
+    /**
+     * Callback with latest motion values, fired max once per frame
+     */
     onUpdate?: OnUpdate
+
+    /**
+     * Callback when animation defined in `animate` is complete
+     */
     onAnimationComplete?: () => void
     [key: string]: any
 }

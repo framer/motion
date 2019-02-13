@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.1] 2019-02-13
+
+### Changed
+
+-   Simplifying inline tsdocs.
+
 ## [0.4.0] 2019-02-12
 
 ### Changed

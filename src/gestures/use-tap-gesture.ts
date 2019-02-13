@@ -24,9 +24,24 @@ interface TapSession {
 type TapHandler = (event: Event, session: TapInfo) => void
 
 export interface TapHandlers {
+    /**
+     * Callback when the tap gesture successfully ends on this element
+     */
     onTap?: TapHandler
+
+    /**
+     * Callback when the tap gesture starts on this element
+     */
     onTapStart?: TapHandler
+
+    /**
+     * Callback when the tap gesture ends outside this element
+     */
     onTapCancel?: TapHandler
+
+    /**
+     * Properties or variant label to animate to while the component is pressed
+     */
     tap?: string | TargetAndTransition
 }
 
