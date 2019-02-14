@@ -17,6 +17,9 @@ import {
     checkShouldInheritVariant,
 } from "./utils/functionality"
 
+/**
+ * @internal
+ */
 export const createMotionComponent = <P extends {}>(
     Component: string | ComponentType<P>
 ) => {

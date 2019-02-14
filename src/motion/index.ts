@@ -5,12 +5,14 @@ import {
     DetailedHTMLFactory,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
+import { MotionProps } from "./types"
+import { createMotionComponent } from "./component"
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
 export { AnimationControls } from "../animation/AnimationControls"
-import { MotionProps } from "./types"
-import { createMotionComponent } from "./component"
+export { createMotionComponent }
+export { htmlElements, svgElements } from "./utils/supported-elements"
 
 type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type UnwrapFactory<F> = F extends DetailedHTMLFactory<infer P, any> ? P : never

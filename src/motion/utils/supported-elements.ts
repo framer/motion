@@ -4,6 +4,9 @@ const htmlTuple = <T extends keyof ReactHTML>(args: T[]) => args
 const svgTuple = <T extends keyof ReactSVG>(args: T[]) => args
 type UnionStringArray<T extends string[]> = T[number]
 
+/**
+ * @internal
+ */
 export const htmlElements = htmlTuple([
     "a",
     "abbr",
@@ -122,6 +125,9 @@ export const htmlElements = htmlTuple([
 ])
 export type HTMLElements = UnionStringArray<typeof htmlElements>
 
+/**
+ * @internal
+ */
 export const svgElements: (keyof ReactSVG)[] = svgTuple([
     "animate",
     "circle",

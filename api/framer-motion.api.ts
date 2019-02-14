@@ -5,6 +5,9 @@ interface AnimationProps {
     variants?: Variants;
 }
 
+// @internal (undocumented)
+declare const createMotionComponent: <P extends {}>(Component: string | React.ComponentClass<P, any> | React.FunctionComponent<P>) => React.ForwardRefExoticComponent<Pick<P & MotionProps, string | number | Exclude<keyof P, "ref">> & React.RefAttributes<Element>>;
+
 // @public (undocumented)
 interface DraggableProps {
     dragConstraints?: false | {
@@ -35,6 +38,9 @@ interface HoverHandlers {
     onHoverEnd?(event: MouseEvent): void;
     onHoverStart?(event: MouseEvent): void;
 }
+
+// @internal (undocumented)
+declare const htmlElements: ("object" | "track" | "progress" | "a" | "abbr" | "address" | "area" | "article" | "aside" | "audio" | "b" | "base" | "bdo" | "blockquote" | "body" | "br" | "button" | "canvas" | "caption" | "cite" | "code" | "col" | "colgroup" | "data" | "datalist" | "dd" | "del" | "details" | "dfn" | "dialog" | "div" | "dl" | "dt" | "em" | "embed" | "fieldset" | "figcaption" | "figure" | "footer" | "form" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "head" | "header" | "hgroup" | "hr" | "html" | "i" | "iframe" | "img" | "input" | "ins" | "kbd" | "label" | "legend" | "li" | "link" | "map" | "mark" | "menu" | "meta" | "meter" | "nav" | "noscript" | "ol" | "optgroup" | "option" | "output" | "p" | "param" | "picture" | "pre" | "q" | "rt" | "ruby" | "s" | "samp" | "script" | "section" | "select" | "small" | "source" | "span" | "strong" | "style" | "sub" | "sup" | "table" | "tbody" | "td" | "textarea" | "tfoot" | "th" | "thead" | "time" | "title" | "tr" | "u" | "ul" | "var" | "video" | "wbr" | "menuitem" | "bdi" | "big" | "keygen" | "main" | "rp" | "summary" | "webview")[];
 
 // @public (undocumented)
 interface Inertia {
@@ -203,6 +209,9 @@ interface Spring {
     type: "spring";
     velocity?: number;
 }
+
+// @internal (undocumented)
+declare const svgElements: (keyof ReactSVG)[];
 
 // @public (undocumented)
 interface TapHandlers {
