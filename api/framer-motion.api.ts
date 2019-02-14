@@ -7,8 +7,17 @@ interface AnimationProps {
 
 // @public (undocumented)
 interface DraggableProps {
-    dragConstraints?: Constraints;
-    dragElastic?: Overdrag;
+    dragConstraints?: false | {
+        // (undocumented)
+        top?: number;
+        // (undocumented)
+        right?: number;
+        // (undocumented)
+        bottom?: number;
+        // (undocumented)
+        left?: number;
+    };
+    dragElastic?: boolean | number;
     dragEnabled?: boolean | "x" | "y" | "lockDirection";
     dragMomentum?: boolean;
     dragPropagation?: boolean;
@@ -25,6 +34,45 @@ interface HoverHandlers {
     hover?: string | TargetAndTransition;
     onHoverEnd?(event: MouseEvent): void;
     onHoverStart?(event: MouseEvent): void;
+}
+
+// @public (undocumented)
+interface Inertia {
+    bounceDamping?: number;
+    bounceStiffness?: number;
+    // @internal (undocumented)
+    delay?: number;
+    from?: number | string;
+    max?: number;
+    min?: number;
+    modifyTarget?(v: number): number;
+    power?: number;
+    restDelta?: number;
+    timeConstant?: number;
+    type: "inertia";
+    velocity?: number;
+}
+
+// @public (undocumented)
+interface Keyframes {
+    // @internal (undocumented)
+    delay?: number;
+    duration?: number;
+    easings?: Easing[];
+    // @internal (undocumented)
+    elapsed?: number;
+    flip?: number;
+    // @internal (undocumented)
+    from?: number | string;
+    loop?: number;
+    times: number[];
+    // @internal (undocumented)
+    to?: number | string;
+    type: "keyframes";
+    values: number[] | string[];
+    // @internal (undocumented)
+    velocity?: number;
+    yoyo?: number;
 }
 
 // @public
@@ -102,18 +150,85 @@ declare class MotionValue<V = any> {
 }
 
 // @public (undocumented)
+interface None {
+    // @internal (undocumented)
+    delay?: number;
+    // @internal (undocumented)
+    from?: number | string;
+    type: false;
+    // @internal (undocumented)
+    velocity?: number;
+}
+
+// @public (undocumented)
+interface Orchestration {
+    delay?: number;
+    delayChildren?: number;
+    staggerChildren?: number;
+    staggerDirection?: 1 | -1;
+    when?: false | "beforeChildren" | "afterChildren";
+}
+
+// @public (undocumented)
 interface PanHandlers {
-    onPan?: PanHandler;
-    onPanEnd?: PanHandler;
-    onPanStart?: PanHandler;
+    onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+}
+
+// @public (undocumented)
+interface Physics {
+    acceleration?: number;
+    // @internal (undocumented)
+    delay?: number;
+    friction?: number;
+    from?: number | string;
+    restSpeed?: number;
+    type: "physics";
+    velocity?: number;
+}
+
+// @public (undocumented)
+interface Spring {
+    damping?: number;
+    // (undocumented)
+    delay?: number;
+    from?: number | string;
+    mass?: number;
+    restDelta?: number;
+    restSpeed?: number;
+    stiffness?: number;
+    // @internal (undocumented)
+    to?: number | string;
+    type: "spring";
+    velocity?: number;
 }
 
 // @public (undocumented)
 interface TapHandlers {
-    onTap?: TapHandler;
-    onTapCancel?: TapHandler;
-    onTapStart?: TapHandler;
+    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     tap?: string | TargetAndTransition;
+}
+
+// @public
+interface Tween {
+    // @internal (undocumented)
+    delay?: number;
+    duration?: number;
+    ease?: [number, number, number, number] | "linear" | "easeIn" | "easeOut" | "easeInOut" | "circIn" | "circOut" | "circInOut" | "backIn" | "backOut" | "backInOut" | "anticipate" | EasingFunction;
+    // @internal
+    elapsed?: number;
+    flip?: number;
+    from?: number | string;
+    loop?: number;
+    // @internal (undocumented)
+    to?: number | string;
+    type?: "tween";
+    // @internal (undocumented)
+    velocity?: number;
+    yoyo?: number;
 }
 
 // @internal

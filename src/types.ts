@@ -83,6 +83,7 @@ export interface Orchestration {
 }
 
 /**
+ * A duration-based animation.
  * @public
  */
 export interface Tween {
@@ -99,7 +100,7 @@ export interface Tween {
      * The duration of the tween animation.
      *
      * @public
-     * @default 0.3
+     * @default `0.3`
      */
     duration?: number
 
