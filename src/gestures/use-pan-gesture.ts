@@ -129,7 +129,7 @@ export function usePanGesture(
 ) {
     let session: null | EventSession = null
     const pointer = useRef<MotionXY | null>(null)
-    const lastMoveEvent = useRef<Event | null>(null)
+    const lastMoveEvent = useRef<MouseEvent | TouchEvent | null>(null)
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
 
@@ -183,7 +183,7 @@ export function usePanGesture(
     )
 
     const onPointerMove = useMemo(
-        () => (event: Event, info: EventInfo) => {
+        () => (event: MouseEvent | TouchEvent, info: EventInfo) => {
             lastMoveEvent.current = event
 
             if (transformPagePoint) {
@@ -201,7 +201,7 @@ export function usePanGesture(
     )
 
     const onPointerUp = useMemo(
-        () => (event: Event, { point }: EventInfo) => {
+        () => (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
             cancelSync.update(updatePoint)
 
             if (!session || pointer.current === null) {
