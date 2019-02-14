@@ -14,7 +14,8 @@
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && make api && yarn measure",
         "prepublishOnly": "yarn test && yarn build",
-        "measure": "gzip -c dist/framer-motion.js | wc -c"
+        "measure": "gzip -c dist/framer-motion.js | wc -c",
+        "tt": "tsc dist/framer-motion.d.ts"
     },
     "peerDependencies": {
         "react": "^16.7",

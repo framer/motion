@@ -114,6 +114,8 @@ export class MotionValue<V = any> {
 
     addRenderSubscription(subscription: Subscriber<V>) {
         if (!this.renderSubscribers) this.renderSubscribers = new Set()
+        // Render immediately
+        this.notifySubscriber(subscription)
         return this.subscribeTo(this.renderSubscribers, subscription)
     }
 

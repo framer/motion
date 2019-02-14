@@ -249,6 +249,27 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toBe(50)
     })
+
+    test("animates to set prop and preserves existing initial transform props", async () => {
+        const promise = new Promise(resolve => {
+            const onComplete = () => {
+                // Animation complete currently fires when animation is complete, before the actual render
+                setTimeout(() => resolve(container.firstChild as any), 20)
+            }
+            const { container, rerender } = render(
+                <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ x: 20 }}
+                    onAnimationComplete={onComplete}
+                />
+            )
+            rerender(<motion.div initial={{ scale: 0 }} animate={{ x: 20 }} />)
+        })
+
+        return expect(promise).resolves.toHaveStyle(
+            "transform: translateX(20px) scale(0) translateZ(0)"
+        )
+    })
 })
 
 describe("animate prop as variant", () => {

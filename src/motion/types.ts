@@ -30,8 +30,8 @@ export interface MotionStyleProperties {
     perspective?: MotionStyleProp
 }
 
-export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> } &
-    MotionStyleProperties
+export type MakeMotion<T> = MotionStyleProperties &
+    { [K in keyof T]: T[K] | MotionValue<T[K]> }
 
 export type MotionStyle = MakeMotion<CSSProperties>
 

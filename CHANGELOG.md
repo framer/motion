@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.3] Unreleased
+
+### Fixed
+
+-   Rendering `initial` properties via Stylefire when component mounts to ensure its in-sync with all transform values set in `initial` that might not later be rendered.
+
 ## [0.4.2] 2019-02-14
 
 ### Changed
