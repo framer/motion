@@ -2,11 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.4.3] Unreleased
+## [0.4.3] 2019-02-14
 
 ### Fixed
 
 -   Rendering `initial` properties via Stylefire when component mounts to ensure its in-sync with all transform values set in `initial` that might not later be rendered.
+-   Exporting `htmlElements`, `svgElements` and `createMotionComponent` as their exclusion was causing errors with the output declaration file.
 
 ## [0.4.2] 2019-02-14
 
