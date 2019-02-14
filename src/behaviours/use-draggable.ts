@@ -19,6 +19,9 @@ export type Constraints = {
 
 export type Overdrag = boolean | number
 
+/**
+ * @public
+ */
 export interface DraggableProps {
     /**
      * Enable dragging for this element

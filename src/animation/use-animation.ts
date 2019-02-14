@@ -5,7 +5,8 @@ import { Transition, Variants } from "../types"
 /**
  * Manually start, stop and sequence animations on one or more `motion` components.
  *
- * @params variants - List of variants. Optional
+ * @param variants - Named map of variants. Optional.
+ * @param defaultTransition - A default `Transition` to use when a variant doesn't have a `transition` property set. Optional.
  * @returns Animation controller with `start` and `stop` methods
  *
  * @public
