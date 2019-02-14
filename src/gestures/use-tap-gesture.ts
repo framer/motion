@@ -119,7 +119,10 @@ export function useTapGesture(
                 }
             }
 
-            const onPointerUp = (event: Event, { point }: EventInfo) => {
+            const onPointerUp = (
+                event: MouseEvent | TouchEvent,
+                { point }: EventInfo
+            ) => {
                 if (!session) {
                     return
                 }
@@ -142,7 +145,10 @@ export function useTapGesture(
                 session = null
             }
 
-            const onPointerDown = (event: Event, { point }: EventInfo) => {
+            const onPointerDown = (
+                event: MouseEvent | TouchEvent,
+                { point }: EventInfo
+            ) => {
                 startPointerUp()
                 if (!ref || event.target !== ref.current) return
                 session = {
