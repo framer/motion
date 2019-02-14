@@ -7,6 +7,7 @@ import {
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
+export { useExternalRef } from "./utils/use-external-ref"
 export { AnimationControls } from "../animation/AnimationControls"
 import { MotionProps } from "./types"
 import { createMotionComponent } from "./component"

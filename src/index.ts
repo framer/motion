@@ -1,4 +1,4 @@
-export { motion } from "./motion"
+export { motion, useExternalRef } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue } from "./value"
 export { unwrapMotionValue } from "./value/utils/unwrap-value"
