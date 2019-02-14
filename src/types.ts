@@ -26,7 +26,8 @@ export interface Orchestration {
     /**
      * Delay the animation by this duration (in seconds). Defaults to `0`.
      *
-     * ```jsx
+     * @remarks
+     * ```
      * const transition = {
      *   delay: 0.2
      * }
@@ -37,10 +38,14 @@ export interface Orchestration {
     delay?: number
 
     /**
-     * When using variants, the transition can be scheduled in relation to its children with either:
+     * Describes the relationship between the transition and its children. Set
+     * to `false` by default.
      *
-     *   - `'beforeChildren'` to finish this transition before starting children transitions,
-     *   - `'afterChildren'` to finish children transitions before starting this transition.
+     * @remarks
+     * When using variants, the transition can be scheduled in relation to its
+     * children with either `'beforeChildren'` to finish this transition before
+     * starting children transitions, `'afterChildren'` to finish children
+     * transitions before starting this transition.
      *
      * ```jsx
      * const transition = {
@@ -49,21 +54,24 @@ export interface Orchestration {
      * ```
      *
      * @public
-     * @default false
      */
     when?: false | "beforeChildren" | "afterChildren"
 
     /**
-     * When using variants, children animations will start after this duration (in seconds).
+     * When using variants, children animations will start after this duration
+     * (in seconds).
      *
      * @public
      */
     delayChildren?: number
 
     /**
-     * When using variants, children animations can be staggered by this duration (in seconds).
+     * When using variants, children animations can be staggered by this
+     * duration (in seconds).
      *
-     * For instance, if `staggerChildren` is `0.01`, the first child will be delayed by `0` seconds, the second by `0.01`, the third by `0.02` and so on.
+     * For instance, if `staggerChildren` is `0.01`, the first child will be
+     * delayed by `0` seconds, the second by `0.01`, the third by `0.02` and so
+     * on.
      *
      * The calculated stagger delay will be added to `delayChildren`.
      *
@@ -74,8 +82,10 @@ export interface Orchestration {
     /**
      * The direction in which to stagger children.
      *
-     *  - `1` staggers from the first child to the last,
-     *  - `-1` staggers from the last child to the first.
+     * @remarks
+     *
+     * A value of `1` staggers from the first child to the last while `-1`
+     * staggers from the last child to the first.
      *
      * @public
      */
@@ -90,6 +100,7 @@ export interface Tween {
     /**
      * Set `type` to `'tween'` to use a duration-based tween animation.
      *
+     * @remarks
      * If any `transition` properties are set, the selected animation will default to tween.
      *
      * @public
@@ -97,10 +108,13 @@ export interface Tween {
     type?: "tween"
 
     /**
-     * The duration of the tween animation.
+     * The duration of the tween animation. Set to `0.3` by default.
      *
      * @public
+<<<<<<< HEAD
      * @default `0.3`
+=======
+>>>>>>> Remove the @default tag from documentation
      */
     duration?: number
 
@@ -135,10 +149,10 @@ export interface Tween {
         | EasingFunction
 
     /**
-     * The duration of time already elapsed in the animation.
+     * The duration of time already elapsed in the animation. Set to `0` by
+     * default.
      *
      * @internal
-     * @default 0
      */
     elapsed?: number
 
@@ -197,45 +211,46 @@ export interface Tween {
  */
 export interface Spring {
     /**
-     * Set `type` to `'spring'` to animate using spring physics for natural movement.
+     * Set `type` to `'spring'` to animate using spring physics for natural
+     * movement. Set to `'spring'` by default.
      *
      * @public
-     * @default 'tween'
      */
     type: "spring"
 
     /**
      * Stiffness of the spring. Higher values will create more sudden movement.
+     * Set to `100` by default.
      * @public
-     * @default 100
      */
     stiffness?: number
 
     /**
-     * Strength of opposing force. If set to 0, spring will oscillate indefinitely.
+     * Strength of opposing force. If set to 0, spring will oscillate
+     * indefinitely. Set to `10` by default.
      * @public
-     * @default 10
      */
     damping?: number
 
     /**
-     * Mass of the moving object. Higher values will result in more lethargic movement.
+     * Mass of the moving object. Higher values will result in more lethargic
+     * movement. Set to `1` by default.
      * @public
-     * @default 1
      */
     mass?: number
 
     /**
-     * End animation if absolute speed (in units per second) drops below this value and delta is smaller than `restDelta`.
+     * End animation if absolute speed (in units per second) drops below this
+     * value and delta is smaller than `restDelta`. Set to `0.01` by default.
      * @public
-     * @default 0.01
      */
     restSpeed?: number
 
     /**
-     * End animation if distance to to is below this value and speed is below `restSpeed`. When animation ends, spring gets “snapped” to to.
+     * End animation if distance to to is below this value and speed is below
+     * `restSpeed`. When animation ends, spring gets “snapped” to to. Set to
+     * `0.01` by default.
      * @public
-     * @default 0.01
      */
     restDelta?: number
 
@@ -268,12 +283,14 @@ export interface Spring {
  */
 export interface Inertia {
     /**
-     * Set `type` to animate using the inertia animation.
+     * Set `type` to animate using the inertia animation. Set to `'tween'` by
+     * default.
+     *
+     * @remarks
      *
      * This can be used for natural deceleration, for instance with momentum scrolling.
      *
      * @public
-     * @default 'tween'
      */
     type: "inertia"
 
@@ -285,39 +302,41 @@ export interface Inertia {
     modifyTarget?(v: number): number
 
     /**
-     * If `min` or `max` is set, this affects the stiffness of the bounce spring. Higher values will create more sudden movement.
+     * If `min` or `max` is set, this affects the stiffness of the bounce
+     * spring. Higher values will create more sudden movement. Set to `500` by
+     * default.
      *
      * @public
-     * @default 500
      */
     bounceStiffness?: number
 
     /**
-     * If `min` or `max` is set, this affects the damping of the bounce spring. If set to `0`, spring will oscillate indefinitely.
+     * If `min` or `max` is set, this affects the damping of the bounce spring.
+     * If set to `0`, spring will oscillate indefinitely. Set to `10` by
+     * default.
      * @public
-     * @default 10
      */
     bounceDamping?: number
 
     /**
-     * Higher power = further target.
+     * Higher power = further target. Set to `0.8` by default.
      * @public
-     * @default 0.8
      */
     power?: number
 
     /**
-     * Adjusting the time constant will change the duration of the deceleration, thereby affecting its feel.
+     * Adjusting the time constant will change the duration of the
+     * deceleration, thereby affecting its feel. Set to `700` by default.
      *
      * @public
-     * @default 700
      */
     timeConstant?: number
 
     /**
-     * End animation if distance to to is below this value and speed is below `restSpeed`. When animation ends, spring gets “snapped” to to.
+     * End animation if distance to to is below this value and speed is below
+     * `restSpeed`. When animation ends, spring gets “snapped” to to. Set to
+     * `0.01` by default.
      * @public
-     * @default 0.01
      */
     restDelta?: number
 
@@ -357,11 +376,13 @@ export interface Inertia {
 export interface Keyframes {
     /**
      * Set `type` to `'keyframes'` to animate using the keyframes animation.
+     * Set to `'tween'` by default.
+     *
+     * @remarks
      *
      * This can be used to animate between a series of values.
      *
      * @public
-     * @default 'tween'
      */
     type: "keyframes"
 
@@ -417,10 +438,9 @@ export interface Keyframes {
     elapsed?: number
 
     /**
-     * The total duration of the animation.
+     * The total duration of the animation. Set to `0.3` by default.
      *
      * @public
-     * @default 0.3
      */
     duration?: number
 
@@ -507,9 +527,9 @@ export interface Physics {
     friction?: number
 
     /**
-     * End animation if absolute speed (in units per second) drops below this value .
+     * End animation if absolute speed (in units per second) drops below this
+     * value. Set to `0.01` by default.
      * @public
-     * @default 0.01
      */
     restSpeed?: number
 

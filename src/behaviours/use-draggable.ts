@@ -22,46 +22,47 @@ export type Constraints = {
  */
 export interface DraggableProps {
     /**
-     * Enable dragging for this element
+     * Enable dragging for this element. Set to `false` by default.
      *
+     * @remarks
      * Set "x" or "y" to only drag in a specific direction
      * Set "lockDirection" to lock dragging into the initial direction
      *
      * ```jsx
      * <motion.div dragEnabled="x" />
      * ```
-     *
-     *  @default false
      */
     dragEnabled?: boolean | "x" | "y" | "lockDirection"
 
     /**
-     * Allows drag gesture propagation to child components.
+     * Allows drag gesture propagation to child components. Set to `false` by
+     * default.
      *
+     * @remarks
      * ```jsx
      * <motion.div dragEnabled="x" dragPropagation />
      * ```
-     *
-     * @default false
      */
     dragPropagation?: boolean
 
     /**
-     * An object of optional `top`, `left`, `right`, `bottom` pixel values, beyond which dragging is constrained
+     * An object of optional `top`, `left`, `right`, `bottom` pixel values,
+     * beyond which dragging is constrained
      *
+     * @remarks
      * ```jsx
      * <motion.div dragEnabled="x" dragConstraints={{ left: 0, right: 300 }} />
      * ```
-     *
-     * @default undefined
      */
     dragConstraints?:
         | false
         | { top?: number; right?: number; bottom?: number; left?: number }
 
     /**
-     * The degree of movement allowed outside constraints. 0 = no movement, 1 = full movement.
+     * The degree of movement allowed outside constraints. 0 = no movement, 1 =
+     * full movement. Set to `0.5` by default.
      *
+     * @remarks
      * ```jsx
      * <motion.div
      *   dragEnabled="x"
@@ -69,14 +70,14 @@ export interface DraggableProps {
      *   dragElastic={0.2}
      * />
      * ```
-     *
-     * @default 0.5
      */
     dragElastic?: boolean | number
 
     /**
-     * Apply momentum from the pan gesture to the component when dragging finishes.
+     * Apply momentum from the pan gesture to the component when dragging
+     * finishes. Set to `true` by default.
      *
+     * @remarks
      * ```jsx
      * <motion.div
      *   dragEnabled="x"
@@ -84,8 +85,6 @@ export interface DraggableProps {
      *   dragMomentum={false}
      * />
      * ```
-     *
-     * @default true
      */
     dragMomentum?: boolean
 

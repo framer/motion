@@ -137,14 +137,15 @@ export interface MotionCallbacks {
  */
 export interface MotionAdvancedProps {
     /**
-     * Set to `false` to prevent inheriting variant changes from a parent `motion` component.
-     * @default true
+     * Set to `false` to prevent inheriting variant changes from a parent
+     * `motion` component.
      */
     inherit?: boolean
 
     /**
-     * Set to `false` to block rendering the latest motion values on the component - can be used to temporarily disable animations for performance reasons.
-     * @default true
+     * Set to `false` to block rendering the latest motion values on the
+     * component - can be used to temporarily disable animations for
+     * performance reasons.
      */
     render?: boolean
 }
