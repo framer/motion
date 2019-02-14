@@ -5,15 +5,15 @@ import { useEffect, useRef, Ref, MutableRefObject, RefObject } from "react"
  * @param external - External ref
  * @internal
  */
-export const useExternalRef = (
-    external?: Ref<Element | null>
-): RefObject<Element | null> => {
+export function useExternalRef<E = Element>(
+    external?: Ref<E | null>
+): RefObject<E | null> {
     const ref =
         !external || typeof external === "function" ? useRef(null) : external
 
     useEffect(() => {
         if (external && typeof external === "function") {
-            external((ref as MutableRefObject<Element | null>).current)
+            external((ref as MutableRefObject<E | null>).current)
 
             return () => external(null)
         }

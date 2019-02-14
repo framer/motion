@@ -250,7 +250,7 @@ declare function useAnimation(variants?: Variants, defaultTransition?: Transitio
 declare function useCycle<T>(items: T[], initialIndex?: number): CycleState<T>;
 
 // @internal
-declare const useExternalRef: (external?: RefObject<Element | null> | ((instance: Element | null) => void) | null | undefined) => RefObject<Element | null>;
+declare function useExternalRef<E = Element>(external?: Ref<E | null>): RefObject<E | null>;
 
 // @public
 declare function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
