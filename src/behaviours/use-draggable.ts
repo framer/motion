@@ -17,8 +17,6 @@ export type Constraints = {
     bottom?: number
 }
 
-export type Overdrag = boolean | number
-
 /**
  * @public
  */
@@ -28,30 +26,65 @@ export interface DraggableProps {
      *
      * Set "x" or "y" to only drag in a specific direction
      * Set "lockDirection" to lock dragging into the initial direction
+     *
+     * ```jsx
+     * <motion.div dragEnabled="x" />
+     * ```
+     *
      *  @default false
      */
-    dragEnabled?: boolean | DragDirection | "lockDirection"
+    dragEnabled?: boolean | "x" | "y" | "lockDirection"
 
     /**
      * Allows drag gesture propagation to child components.
+     *
+     * ```jsx
+     * <motion.div dragEnabled="x" dragPropagation />
+     * ```
+     *
      * @default false
      */
     dragPropagation?: boolean
 
     /**
      * An object of optional `top`, `left`, `right`, `bottom` pixel values, beyond which dragging is constrained
+     *
+     * ```jsx
+     * <motion.div dragEnabled="x" dragConstraints={{ left: 0, right: 300 }} />
+     * ```
+     *
      * @default undefined
      */
-    dragConstraints?: Constraints
+    dragConstraints?:
+        | false
+        | { top?: number; right?: number; bottom?: number; left?: number }
 
     /**
-     * The degree of movement allowed outside constraints. Set to `false` for no movement.
+     * The degree of movement allowed outside constraints. 0 = no movement, 1 = full movement.
+     *
+     * ```jsx
+     * <motion.div
+     *   dragEnabled="x"
+     *   dragConstraints={{ left: 0, right: 300 }}
+     *   dragElastic={0.2}
+     * />
+     * ```
+     *
      * @default 0.5
      */
-    dragElastic?: Overdrag
+    dragElastic?: boolean | number
 
     /**
      * Apply momentum from the pan gesture to the component when dragging finishes.
+     *
+     * ```jsx
+     * <motion.div
+     *   dragEnabled="x"
+     *   dragConstraints={{ left: 0, right: 300 }}
+     *   dragMomentum={false}
+     * />
+     * ```
+     *
      * @default true
      */
     dragMomentum?: boolean
@@ -59,17 +92,17 @@ export interface DraggableProps {
     /**
      * Callback that fires when dragging starts
      */
-    onDragStart?: (e: MouseEvent | TouchEvent) => void
+    onDragStart?(e: MouseEvent | TouchEvent): void
 
     /**
      * Callback that fires when dragging ends
      */
-    onDragEnd?: (e: MouseEvent | TouchEvent) => void
+    onDragEnd?(e: MouseEvent | TouchEvent): void
 
     /**
      * Callback that fires a drag direction is determined
      */
-    onDirectionLock?: (axis: string) => void
+    onDirectionLock?(axis: "x" | "y"): void
 }
 
 function shouldDrag(
@@ -97,7 +130,7 @@ const getConstraints = (
 const applyOverdrag = (
     origin: number,
     current: number,
-    dragElastic: Overdrag
+    dragElastic: boolean | number
 ) => {
     const dragFactor = typeof dragElastic === "number" ? dragElastic : 0.5
     return mix(origin, current, dragFactor)

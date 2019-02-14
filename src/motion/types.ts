@@ -110,7 +110,7 @@ export interface MotionCallbacks {
      * return <motion.li animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
      * ```
      */
-    onUpdate?: OnUpdate
+    onUpdate?(latest: { [key: string]: string | number }): void
 
     /**
      * Callback when animation defined in `animate` is complete.

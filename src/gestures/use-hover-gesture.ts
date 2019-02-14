@@ -4,8 +4,6 @@ import { TargetAndTransition } from "../types"
 import { useConditionalPointerEvents } from "../events"
 import { ControlsProp } from "./types"
 
-type HoverHandler = (event: Event) => void
-
 /**
  * @public
  */
@@ -18,12 +16,12 @@ export interface HoverHandlers {
     /**
      * Callback that fires when pointer starts hovering over the component
      */
-    onHoverStart?: HoverHandler
+    onHoverStart?(event: MouseEvent): void
 
     /**
      * Callback that fires when pointer stops hovering over the component
      */
-    onHoverEnd?: HoverHandler
+    onHoverEnd?(event: MouseEvent): void
 }
 
 const hoverPriority = getGesturePriority("hover")
@@ -46,7 +44,7 @@ export function useHoverGesture(
 
     const handlers = useMemo(
         () => {
-            const onPointerEnter = (event: Event) => {
+            const onPointerEnter = (event: MouseEvent) => {
                 if (onHoverStart) onHoverStart(event)
 
                 if (hover && controls) {
@@ -54,7 +52,7 @@ export function useHoverGesture(
                 }
             }
 
-            const onPointerLeave = (event: Event) => {
+            const onPointerLeave = (event: MouseEvent) => {
                 if (onHoverEnd) onHoverEnd(event)
 
                 if (hover && controls) {

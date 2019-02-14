@@ -9,12 +9,12 @@ interface AnimationProps {
 interface DraggableProps {
     dragConstraints?: Constraints;
     dragElastic?: Overdrag;
-    dragEnabled?: boolean | DragDirection | "lockDirection";
+    dragEnabled?: boolean | "x" | "y" | "lockDirection";
     dragMomentum?: boolean;
     dragPropagation?: boolean;
-    onDirectionLock?: (axis: string) => void;
-    onDragEnd?: (e: MouseEvent | TouchEvent) => void;
-    onDragStart?: (e: MouseEvent | TouchEvent) => void;
+    onDirectionLock?(axis: "x" | "y"): void;
+    onDragEnd?(e: MouseEvent | TouchEvent): void;
+    onDragStart?(e: MouseEvent | TouchEvent): void;
 }
 
 // @public (undocumented)
@@ -23,8 +23,8 @@ declare type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 // @public (undocumented)
 interface HoverHandlers {
     hover?: string | TargetAndTransition;
-    onHoverEnd?: HoverHandler;
-    onHoverStart?: HoverHandler;
+    onHoverEnd?(event: MouseEvent): void;
+    onHoverStart?(event: MouseEvent): void;
 }
 
 // @public
@@ -39,7 +39,10 @@ interface MotionAdvancedProps {
 // @public (undocumented)
 interface MotionCallbacks {
     onAnimationComplete?(): void;
-    onUpdate?: OnUpdate;
+    onUpdate?(latest: {
+        // (undocumented)
+        [key: string]: string | number;
+    }): void;
 }
 
 // @internal (undocumented)
@@ -121,6 +124,9 @@ declare function useAnimation(variants?: Variants, defaultTransition?: Transitio
 
 // @public
 declare function useCycle<T>(items: T[], initialIndex?: number): CycleState<T>;
+
+// @internal
+declare const useExternalRef: (external?: RefObject<Element | null> | ((instance: Element | null) => void) | null | undefined) => RefObject<Element | null>;
 
 // @public
 declare function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;

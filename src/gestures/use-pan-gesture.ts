@@ -88,18 +88,24 @@ export type PanHandler = (event: Event, info: PanInfo) => void
 export interface PanHandlers {
     /**
      * Callback when the pan gesture is recognised on this element.
+     *
+     * ```jsx
+     * function onPan(event, { point, delta, offset, velocity }) {
+     *
+     * }
+     * ```
      */
-    onPan?: PanHandler
+    onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
      * Callback when the pan gesture begins on this element.
      */
-    onPanStart?: PanHandler
+    onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
      * Callback when the pan gesture ends on this element.
      */
-    onPanEnd?: PanHandler
+    onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void
 }
 
 type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
