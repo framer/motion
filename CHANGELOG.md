@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.2] 2019-02-14
+
+### Changed
+
+-   Exporting `useExternalRef`.
+
 ## [0.4.1] 2019-02-13
 
 ### Changed
