@@ -34,6 +34,10 @@ export type MotionComponents = CustomMotionComponent &
 /**
  * HTML & SVG components, optimised for use with gestures and animation.
  *
+ * ```jsx
+ * <motion.div animate={{ x: 100 }} />
+ * ```
+ *
  * @public
  */
 export const motion = elements.reduce(

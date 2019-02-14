@@ -1,11 +1,15 @@
 import { useState } from "react"
 import { wrap } from "@popmotion/popcorn"
 
+type Cycle = (i?: number) => void
+
+type CycleState<T> = [T, Cycle]
+
 /**
- * Cycles through a series of states.
+ * Cycles through a series of states. Can be used to toggle between or cycle through animations.
  *
  * @param items - An array of the possible states
- * @param initialIndex - Index of initial state. Optional, defaults to 0
+ * @param initialIndex - Index of initial state. Defaults to `0`
  * @returns [currentState, cycleState]
  *
  * @public
@@ -13,7 +17,7 @@ import { wrap } from "@popmotion/popcorn"
 export function useCycle<T>(
     items: T[],
     initialIndex: number = 0
-): [T, (i?: any) => void] {
+): CycleState<T> {
     const numItems = items.length
     const [index, setIndex] = useState(initialIndex)
 

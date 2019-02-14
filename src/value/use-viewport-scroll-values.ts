@@ -50,21 +50,6 @@ const viewportMotionValues: ScrollMotionValues = {
 /**
  * Provides `MotionValue`s that update when the viewport scrolls.
  *
- * @remarks
- *
- * This makes it possible to transform viewport scrolls into other values.
- *
- * Four `MotionValue`s are returned:
- *
- *  - `scrollX`/`scrollY`: The x/y scroll offset in pixels.
- *  - `scrollXProgress`/`scrollYProgress`: The x/y scroll offset as a progress value between `0` and `1`.
- *
- * ```jsx
- * const { scrollX } = useViewportScrollValues()
- * ```
- *
- * @returns `{ scrollX, scrollY, scrollXProgress, scrollYProgress }` `MotionValue`s
- *
  * @public
  */
 export function useViewportScrollValues() {

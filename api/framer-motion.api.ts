@@ -1,5 +1,46 @@
+// @public (undocumented)
+interface AnimationProps {
+    animate?: AnimationGroupControls | TargetAndTransition | VariantLabels;
+    transition?: Transition;
+    variants?: Variants;
+}
+
+// @public (undocumented)
+interface DraggableProps {
+    dragConstraints?: Constraints;
+    dragElastic?: Overdrag;
+    dragEnabled?: boolean | DragDirection | "lockDirection";
+    dragMomentum?: boolean;
+    dragPropagation?: boolean;
+    onDirectionLock?: (axis: string) => void;
+    onDragEnd?: (e: MouseEvent | TouchEvent) => void;
+    onDragStart?: (e: MouseEvent | TouchEvent) => void;
+}
+
+// @public (undocumented)
+declare type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
+
+// @public (undocumented)
+interface HoverHandlers {
+    hover?: string | TargetAndTransition;
+    onHoverEnd?: HoverHandler;
+    onHoverStart?: HoverHandler;
+}
+
 // @public
 declare const motion: MotionComponents;
+
+// @public (undocumented)
+interface MotionAdvancedProps {
+    inherit?: boolean;
+    render?: boolean;
+}
+
+// @public (undocumented)
+interface MotionCallbacks {
+    onAnimationComplete?(): void;
+    onUpdate?: OnUpdate;
+}
 
 // @internal (undocumented)
 declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>;
@@ -11,6 +52,14 @@ declare function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.E
 interface MotionPlugins {
     // (undocumented)
     transformPagePoint: (point: Point) => Point;
+}
+
+// @public
+interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
+    // @internal (undocumented)
+    [key: string]: any;
+    initial?: Target | VariantLabels;
+    style?: MotionStyle;
 }
 
 // @internal (undocumented)
@@ -49,6 +98,21 @@ declare class MotionValue<V = any> {
     velocityCheck: ({ timestamp }: FrameData) => void;
 }
 
+// @public (undocumented)
+interface PanHandlers {
+    onPan?: PanHandler;
+    onPanEnd?: PanHandler;
+    onPanStart?: PanHandler;
+}
+
+// @public (undocumented)
+interface TapHandlers {
+    onTap?: TapHandler;
+    onTapCancel?: TapHandler;
+    onTapStart?: TapHandler;
+    tap?: string | TargetAndTransition;
+}
+
 // @internal
 declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V;
 
@@ -56,13 +120,13 @@ declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V;
 declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationGroupControls;
 
 // @public
-declare function useCycle<T>(items: T[], initialIndex?: number): [T, (i?: any) => void];
+declare function useCycle<T>(items: T[], initialIndex?: number): CycleState<T>;
 
 // @public
-declare function useGestures<P extends GestureHandlers>(props: P, ref: RefObject<Element>): void;
+declare function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
 
 // @public
-declare function useMotionValue<T>(init: T): MotionValue<T>;
+declare function useMotionValue<T>(initial: T): MotionValue<T>;
 
 // @internal (undocumented)
 declare function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined;
@@ -86,7 +150,7 @@ declare function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObj
 declare function useTransformedValue(value: MotionValue, transform: Transformer_2): MotionValue;
 
 // @public
-declare function useTransformedValue(value: MotionValue<number>, from: number[], to: any[], options?: TransformerOptions): MotionValue;
+declare function useTransformedValue(value: MotionValue<number>, from: number[], to: any[], options?: MapOptions): MotionValue;
 
 // @public
 declare function useViewportScrollValues(): ScrollMotionValues;

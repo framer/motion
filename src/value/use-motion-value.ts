@@ -2,13 +2,13 @@ import { useMemo } from "react"
 import { motionValue, MotionValue } from "."
 
 /**
- * Create a `MotionValue`
+ * Create a `MotionValue`.
  *
- * @param {number | string} init - The initial state of the `MotionValue`
+ * @param initial - The initial state of the `MotionValue`
  * @returns `MotionValue`
  *
  * @public
  */
-export function useMotionValue<T>(init: T): MotionValue<T> {
-    return useMemo(() => motionValue(init), [])
+export function useMotionValue<T>(initial: T): MotionValue<T> {
+    return useMemo(() => motionValue(initial), [])
 }

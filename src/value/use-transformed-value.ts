@@ -2,7 +2,7 @@ import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
 import { interpolate } from "@popmotion/popcorn"
 
-type TransformerOptions = { clamp: true }
+type MapOptions = { clamp: true }
 
 type Transformer = (v: any) => any
 
@@ -13,9 +13,9 @@ const isTransformer = (v: number[] | Transformer): v is Transformer => {
 const noop = () => (v: any) => v
 
 /**
- * Creates a new `MotionValue` that takes the output of another `MotionValue` and transforms it with a function
+ * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
  *
- * @param value - `MotionValue`
+ * @param value - The `MotionValue` to transform the output of.
  * @param transform - Function that accepts the output of `value` and returns a new value.
  * @returns `MotionValue`
  *
@@ -26,16 +26,15 @@ export function useTransformedValue(
     transform: Transformer
 ): MotionValue
 /**
- * Creates a new `MotionValue` that takes the output of another `MotionValue` and transforms between the `from` range to the `to` range.
- *
- * @remarks
- * Options:
- * - `clamp`: Default `true`. Clamps output to the provided array
+ * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
  *
  * @param value - `MotionValue`
- * @param from - A linear series of numbers (either all increasing or decreasing)
- * @param to - A series of numbers, colors or strings. Must be the same length as `from`.
- * @param options - Options
+ * @param fromRange - A linear series of numbers (either all increasing or decreasing)
+ * @param toRange - A series of numbers, colors or strings. Must be the same length as `from`.
+ * @param options -
+ *
+ *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`
+ *
  * @returns `MotionValue`
  *
  * @public
@@ -44,13 +43,13 @@ export function useTransformedValue(
     value: MotionValue<number>,
     from: number[],
     to: any[],
-    options?: TransformerOptions
+    options?: MapOptions
 ): MotionValue
 export function useTransformedValue(
     value: MotionValue,
     transform: Transformer | number[],
     to?: any[],
-    opts?: TransformerOptions
+    opts?: MapOptions
 ): MotionValue {
     let comparitor: any[] = [value]
     let transformer = noop

@@ -36,32 +36,98 @@ export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> } &
 export type MotionStyle = MakeMotion<CSSProperties>
 
 export type OnUpdate = (v: Target) => void
-export interface MotionProps extends GestureHandlers, DraggableProps {
-    /**
-     * Supports `MotionValue`s and separate `transform` values.
-     */
-    style?: MotionStyle
 
+/**
+ * @public
+ */
+export interface AnimationProps {
     /**
-     * Either properties to animate to, variant label, array of variant labels, or `AnimationController`
+     * Values to animate to, variant label(s), or `AnimationGroupControls`
+     *
+     * ```jsx
+     * // As values
+     * <motion.div animate={{ opacity: 1 }} />
+     *
+     * // As variant
+     * <motion.div animate="visible" variants={variants} />
+     *
+     * // Multiple variants
+     * <motion.div animate={["visible", "active"]} variants={variants} />
+     *
+     * // `AnimationGroupControls`
+     * <motion.div animate={animation} />
+     * ```
      */
     animate?: AnimationGroupControls | TargetAndTransition | VariantLabels
 
     /**
-     * Properties, variant label or array of variant labels to start in
-     */
-    initial?: Target | VariantLabels
-
-    /**
-     * Object of variants
+     * Object of labelled variants.
+     *
+     * ```jsx
+     * const variants = {
+     *   active: {
+     *     backgroundColor: '#f00'
+     *   },
+     *   inactive: {
+     *     backgroundColor: '#fff',
+     *     transition: { duration: 2 }
+     *   }
+     * }
+     *
+     * return <motion.div variants={variants} animate="active" />
+     * ```
      */
     variants?: Variants
 
     /**
-     * Default transition
+     * Default transition, to fall back on if no `transition` is defined in `animate`.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: 'spring',
+     *   damping: 10,
+     *   stiffness: 100
+     * }
+     *
+     * <motion.div transition={transition} animate={{ scale: 1.2 }} />
+     * ```
      */
     transition?: Transition
+}
 
+/**
+ * @public
+ */
+export interface MotionCallbacks {
+    /**
+     * Callback with latest motion values, fired max once per frame.
+     *
+     * ```jsx
+     * function onUpdate({ x, opacity }) {
+     *   // Do something
+     * }
+     *
+     * return <motion.li animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     * ```
+     */
+    onUpdate?: OnUpdate
+
+    /**
+     * Callback when animation defined in `animate` is complete.
+     *
+     * ```jsx
+     * function onComplete() {}
+     *
+     * return <motion.div onAnimationComplete={onComplete} />
+     * ```
+     */
+    onAnimationComplete?(): void
+}
+
+/**
+ * @public
+ */
+export interface MotionAdvancedProps {
     /**
      * Set to `false` to prevent inheriting variant changes from a parent `motion` component.
      * @default true
@@ -73,16 +139,49 @@ export interface MotionProps extends GestureHandlers, DraggableProps {
      * @default true
      */
     render?: boolean
+}
+
+/**
+ * Props for `motion` components.
+ *
+ * @public
+ */
+export interface MotionProps
+    extends AnimationProps,
+        MotionCallbacks,
+        GestureHandlers,
+        DraggableProps,
+        MotionAdvancedProps {
+    /**
+     * Properties, variant label or array of variant labels to start in
+     *
+     * ```jsx
+     * // As values
+     * <motion.div initial={{ opacity: 1 }} />
+     *
+     * // As variant
+     * <motion.div initial="visible" variants={variants} />
+     *
+     * // Multiple variants
+     * <motion.div initial={["visible", "active"]} variants={variants} />
+     * ```
+     */
+    initial?: Target | VariantLabels
 
     /**
-     * Callback with latest motion values, fired max once per frame
+     * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
+     *
+     * ```jsx
+     * const x = useMotionValue(0)
+     *
+     * return <motion.div style={{ x, opacity: 1, scale: 0.5 }} />
+     * ```
      */
-    onUpdate?: OnUpdate
+    style?: MotionStyle
 
     /**
-     * Callback when animation defined in `animate` is complete
+     * @internal
      */
-    onAnimationComplete?: () => void
     [key: string]: any
 }
 

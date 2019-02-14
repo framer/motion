@@ -5,6 +5,10 @@ import { useConditionalPointerEvents } from "../events"
 import { ControlsProp } from "./types"
 
 type HoverHandler = (event: Event) => void
+
+/**
+ * @public
+ */
 export interface HoverHandlers {
     /**
      * Properties or variant label to animate to while the hover gesture is recognised
