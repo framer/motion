@@ -325,8 +325,7 @@ export class AnimationControls<P = {}> {
         variantLabel: string,
         opts?: AnimationOptions
     ): Promise<any> {
-        let beforeChildren = false
-        let afterChildren = false
+        let when: false | "beforeChildren" | "afterChildren" = false
         let delayChildren = 0
         let staggerChildren = 0
         let staggerDirection = 1
@@ -352,8 +351,7 @@ export class AnimationControls<P = {}> {
         if (variant && this.children) {
             const { transition } = this.resolveVariant(variant)
             if (transition) {
-                beforeChildren = transition.beforeChildren || beforeChildren
-                afterChildren = transition.afterChildren || afterChildren
+                when = transition.when || when
                 delayChildren = transition.delayChildren || delayChildren
                 staggerChildren = transition.staggerChildren || staggerChildren
                 staggerDirection =
@@ -361,10 +359,11 @@ export class AnimationControls<P = {}> {
             }
         }
 
-        if (beforeChildren || afterChildren) {
-            const [first, last] = beforeChildren
-                ? [getAnimations, getChildrenAnimations]
-                : [getChildrenAnimations, getAnimations]
+        if (when) {
+            const [first, last] =
+                when === "beforeChildren"
+                    ? [getAnimations, getChildrenAnimations]
+                    : [getChildrenAnimations, getAnimations]
             return first().then(last)
         } else {
             return Promise.all([getAnimations(), getChildrenAnimations()])

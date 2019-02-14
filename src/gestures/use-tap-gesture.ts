@@ -28,17 +28,17 @@ export interface TapHandlers {
     /**
      * Callback when the tap gesture successfully ends on this element.
      */
-    onTap?(event: MouseEvent | TouchEvent, session: TapInfo): void
+    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture starts on this element.
      */
-    onTapStart?(event: MouseEvent | TouchEvent, session: TapInfo): void
+    onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture ends outside this element.
      */
-    onTapCancel?(event: MouseEvent | TouchEvent, session: TapInfo): void
+    onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
     /**
      * Properties or variant label to animate to while the component is pressed.

@@ -26,3 +26,12 @@ export {
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps } from "./behaviours"
+export {
+    Orchestration,
+    Tween,
+    Spring,
+    Keyframes,
+    Physics,
+    Inertia,
+    None,
+} from "./types"

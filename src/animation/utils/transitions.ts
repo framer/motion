@@ -3,7 +3,6 @@ import {
     tween,
     spring,
     keyframes,
-    decay,
     inertia,
     physics,
     easing,
@@ -30,7 +29,7 @@ const just: ActionFactory = ({ to }: JustProps): Action => {
     })
 }
 
-const transitions = { tween, spring, keyframes, decay, physics, inertia, just }
+const transitions = { tween, spring, keyframes, physics, inertia, just }
 
 const {
     linear,
@@ -88,8 +87,7 @@ const transitionOptionParser = {
 }
 
 const isTransitionDefined = ({
-    beforeChildren,
-    afterChildren,
+    when,
     delay,
     delayChildren,
     staggerChildren,
@@ -107,7 +105,7 @@ const getTransitionForValue = (
     const delay = transitionDefinition ? transitionDefinition.delay : 0
 
     // If no object, return default transition
-    // A better way to handle this would be to deconstruct out all the shared TransitionOrchestration props
+    // A better way to handle this would be to deconstruct out all the shared Orchestration props
     // and see if there's any props remaining
     if (
         transitionDefinition === undefined ||
