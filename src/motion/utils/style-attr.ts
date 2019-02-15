@@ -5,6 +5,9 @@ import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
 import { MotionStyle } from "../types"
 
+const transformOriginProps = new Set(["originX", "originY"])
+const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
+
 const isMotionValue = (value: any): value is MotionValue =>
     value instanceof MotionValue
 
@@ -29,7 +32,7 @@ export const addMotionStyles = (
 
         if (isMotionValue(thisStyle)) {
             values.set(key, thisStyle)
-        } else if (isTransformProp(key)) {
+        } else if (isTransformProp(key) || isTransformOriginProp(key)) {
             if (!values.has(key)) {
                 values.set(key, motionValue(thisStyle))
             } else {

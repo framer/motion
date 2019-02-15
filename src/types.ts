@@ -597,7 +597,7 @@ export type Transition =
     | (Orchestration & TransitionDefinition)
     | (Orchestration & TransitionMap)
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type CSSPropertiesWithoutTransition = Omit<CSSProperties, "transition">
 
 export type Target = CSSPropertiesWithoutTransition & {

@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.4.5] 2019-02-15
+
+### Fixed
+
+-   Fixing `originX` and `originY` SSR.
+-   Updating `style` props to overwrite CSS `rotate`, `scale` and `perspective`.
+
 ## [0.4.3] 2019-02-14
 
 ### Fixed

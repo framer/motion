@@ -1,7 +1,13 @@
 import { CSSProperties } from "react"
 import { MotionValue } from "../value"
 import { AnimationGroupControls } from "../animation/AnimationGroupControls"
-import { Variants, Target, Transition, TargetAndTransition } from "../types"
+import {
+    Variants,
+    Target,
+    Transition,
+    TargetAndTransition,
+    Omit,
+} from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours"
 
@@ -33,7 +39,9 @@ export interface MotionStyleProperties {
 export type MakeMotion<T> = MotionStyleProperties &
     { [K in keyof T]: T[K] | MotionValue<T[K]> }
 
-export type MotionStyle = MakeMotion<CSSProperties>
+export type MotionStyle = MakeMotion<
+    Omit<CSSProperties, "rotate" | "scale" | "perspective">
+>
 
 export type OnUpdate = (v: Target) => void
 

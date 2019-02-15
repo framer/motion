@@ -181,6 +181,11 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toHaveStyle("background-color: #f00")
     })
 
+    test("style supports originX and originY", () => {
+        const { container } = render(<motion.div style={{ originX: "25%" }} />)
+        expect(container.firstChild).toHaveStyle("transform-origin: 25% 50%")
+    })
+
     test("updates style for transform values", () => {
         let rotate = 0
 
