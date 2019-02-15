@@ -51,10 +51,12 @@ bump:
 
 publish: clean bootstrap
 	npm publish
+	git push
 
 test: bootstrap
 	mkdir -p $(TEST_REPORT_PATH)
 	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test $(if $(CI),--ci --reporters=jest-junit)
+	tsc dist/framer-motion.d.ts
 
 lint: bootstrap
 	tslint --project tsconfig.json --fix
