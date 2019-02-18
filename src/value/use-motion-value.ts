@@ -2,10 +2,9 @@ import { useMemo } from "react"
 import { motionValue, MotionValue } from "."
 
 /**
- * Create a `MotionValue`.
+ * Returns a `MotionValue` for use in advanced cases like `useTransformedValue()`
  *
- * @param initial - The initial state of the `MotionValue`
- * @returns `MotionValue`
+ * @param initial - The initial state.
  *
  * @public
  */
