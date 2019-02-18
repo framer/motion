@@ -53,7 +53,7 @@ publish: clean bootstrap
 	npm publish
 	git push
 
-test: bootstrap
+test: bootstrap $(API_TARGET)
 	mkdir -p $(TEST_REPORT_PATH)
 	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test $(if $(CI),--ci --reporters=jest-junit)
 	tsc dist/framer-motion.d.ts
