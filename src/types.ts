@@ -111,10 +111,6 @@ export interface Tween {
      * The duration of the tween animation. Set to `0.3` by default.
      *
      * @public
-<<<<<<< HEAD
-     * @default `0.3`
-=======
->>>>>>> Remove the @default tag from documentation
      */
     duration?: number
 
