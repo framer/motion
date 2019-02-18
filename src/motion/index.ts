@@ -34,10 +34,15 @@ export type MotionComponents = CustomMotionComponent &
     SVGMotionComponents
 
 /**
- * HTML & SVG components, optimised for use with gestures and animation.
+ * HTML & SVG components, optimised for use with gestures and animation. These can be used as
+ * drop-in replacements for any HTML & SVG component, all CSS & SVG properties are supported.
  *
  * ```jsx
  * <motion.div animate={{ x: 100 }} />
+ *
+ * <motion.p animate={{ height: 200 }} />
+ *
+ * <svg><motion.circle r={10} animate={{ r: 20 }} /></svg>
  * ```
  *
  * @public
