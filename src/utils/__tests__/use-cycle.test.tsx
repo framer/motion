@@ -10,7 +10,7 @@ describe("useCycle", () => {
         const Component = () => {
             const [latest, cycle] = useCycle([1, 2, 3, 4])
             results.push(latest)
-            return <div onClick={cycle} />
+            return <div onClick={() => cycle()} />
         }
 
         const { container } = render(<Component />)
@@ -28,7 +28,7 @@ describe("useCycle", () => {
         const Component = () => {
             const [latest, cycle] = useCycle([1, 2, 3, 4], 1)
             result = latest
-            return <div onClick={cycle} />
+            return <div onClick={() => cycle()} />
         }
 
         render(<Component />)
