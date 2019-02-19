@@ -27,16 +27,46 @@ interface TapSession {
 export interface TapHandlers {
     /**
      * Callback when the tap gesture successfully ends on this element.
+     *
+     * ```jsx
+     * const MyComponent = () => {
+     *   const onTap = (event, { point }) => {
+     *      console.log(`Tapped at ${point.x} ${point.y}`)
+     *   }
+     *
+     *   return <motion.div onTap={onPan} />
+     * }
+     * ```
      */
     onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture starts on this element.
+     *
+     * ```jsx
+     * const MyComponent = () => {
+     *   const onTapStart = (event, { point }) => {
+     *      console.log(`Tap started at ${point.x} ${point.y}`)
+     *   }
+     *
+     *   return <motion.div onTapStart={onPan} />
+     * }
+     * ```
      */
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture ends outside this element.
+     *
+     * ```jsx
+     * const MyComponent = () => {
+     *   const onTapCancel = (event, { point }) => {
+     *      console.log(`Tap cancelled at ${point.x} ${point.y}`)
+     *   }
+     *
+     *   return <motion.div onTapCancel={onPan} />
+     * }
+     * ```
      */
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
@@ -44,11 +74,18 @@ export interface TapHandlers {
      * Properties or variant label to animate to while the component is pressed.
      *
      * ```jsx
-     * // As properties
-     * <motion.div press={{ scale: 0.8, y: 5 }} />
+     * const MyComponent = () => {
+     *   return <motion.div press={{ scale: 0.8 }} />
+     * }
      *
-     * // As variant
-     * <motion.div press="pressed" variants={variants} />
+     * // With variants
+     * const MyComponent = () => {
+     *   const variants = {
+     *     pressed: { scale: 0.8 }
+     *   }
+     *
+     *   return <motion.div variants={variants} press="pressed" />
+     * }
      * ```
      */
     press?: string | TargetAndTransition

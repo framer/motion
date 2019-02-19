@@ -75,17 +75,19 @@ export interface AnimationProps {
      * Object of labelled variants.
      *
      * ```jsx
-     * const variants = {
-     *   active: {
-     *     backgroundColor: '#f00'
-     *   },
-     *   inactive: {
-     *     backgroundColor: '#fff',
-     *     transition: { duration: 2 }
+     * const MyComponent = () => {
+     *   const variants = {
+     *     active: {
+     *       backgroundColor: '#f00'
+     *    },
+     *     inactive: {
+     *       backgroundColor: '#fff',
+     *       transition: { duration: 2 }
+     *     }
      *   }
-     * }
      *
-     * return <motion.div variants={variants} animate="active" />
+     *   return <motion.div variants={variants} animate="active" />
+     * }
      * ```
      */
     variants?: Variants
@@ -94,13 +96,15 @@ export interface AnimationProps {
      * Default transition, to fall back on if no `transition` is defined in `animate`.
      *
      * ```jsx
-     * const transition = {
-     *   type: 'spring',
-     *   damping: 10,
-     *   stiffness: 100
-     * }
+     * const MyComponent = () => {
+     *   const transition = {
+     *     type: 'spring',
+     *     damping: 10,
+     *     stiffness: 100
+     *   }
      *
-     * <motion.div transition={transition} animate={{ scale: 1.2 }} />
+     *   return <motion.div transition={transition} animate={{ scale: 1.2 }} />
+     * }
      * ```
      */
     transition?: Transition
@@ -114,11 +118,13 @@ export interface MotionCallbacks {
      * Callback with latest motion values, fired max once per frame.
      *
      * ```jsx
-     * function onUpdate({ x, opacity }) {
-     *   // Do something
-     * }
+     * const MyComponent = () => {
+     *   const onUpdate = ({ x, opacity }) => {
+     *     console.log(`Latest values: ${x} ${opacity}`)
+     *   }
      *
-     * return <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     *   return <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     * }
      * ```
      */
     onUpdate?(latest: { [key: string]: string | number }): void
@@ -127,9 +133,13 @@ export interface MotionCallbacks {
      * Callback when animation defined in `animate` is complete.
      *
      * ```jsx
-     * function onComplete() {}
+     * const MyComponent = () => {
+     *   const onComplete = () => {
+     *     console.log(`Animation has completed`)
+     *   }
      *
-     * return <motion.div onAnimationComplete={onComplete} />
+     *   return <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />
+     * }
      * ```
      */
     onAnimationComplete?(): void
@@ -184,10 +194,11 @@ export interface MotionProps
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
      *
      * ```jsx
-     * const x = useMotionValue(0)
+     * const MyComponent = () => {
+     *   const x = useMotionValue(0)
      *
-     * return <motion.div style={{ x, opacity: 1, scale: 0.5 }} />
-     * ```
+     *   return <motion.div style={{ x, opacity: 1, scale: 0.5 }} />
+     * }
      */
     style?: MotionStyle
 

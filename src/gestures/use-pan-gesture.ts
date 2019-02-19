@@ -95,7 +95,7 @@ export interface PanHandlers {
      *      console.log(`Panned to ${point.x} ${point.y}`)
      *   }
      *
-     *   return <Frame onPan={onPan} />
+     *   return <motion.div onPan={onPan} />
      * }
      * ```
      */
@@ -110,7 +110,7 @@ export interface PanHandlers {
      *      console.log(`Started panning at ${point.x} ${point.y}`)
      *   }
      *
-     *   return <Frame onPanStart={onPan} />
+     *   return <motion.div onPanStart={onPan} />
      * }
      * ```
      */
@@ -125,7 +125,7 @@ export interface PanHandlers {
      *      console.log(`Stopped panning at ${point.x} ${point.y}`)
      *   }
      *
-     *   return <Frame onPanEnd={onPan} />
+     *   return <motion.div onPanEnd={onPan} />
      * }
      * ```
      */

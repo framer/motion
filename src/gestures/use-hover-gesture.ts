@@ -13,7 +13,7 @@ export interface HoverHandlers {
      *
      * ```jsx
      * const MyComponent = () => {
-     *   return <Frame hover={{ scale: 1.2 }} />
+     *   return <motion.div hover={{ scale: 1.2 }} />
      * }
      * ```
      */
@@ -28,7 +28,7 @@ export interface HoverHandlers {
      *      console.log('Pointer is hovering over this Frame')
      *   }
      *
-     *   return <Frame onHoverStart={onHoverStart} />
+     *   return <motion.div onHoverStart={onHoverStart} />
      * }
      * ```
      */
@@ -43,7 +43,7 @@ export interface HoverHandlers {
      *      console.log('Pointer stopped hovering over this Frame')
      *   }
      *
-     *   return <Frame onHoverEnd={onHoverEnd} />
+     *   return <motion.div onHoverEnd={onHoverEnd} />
      * }
      * ```
      */
