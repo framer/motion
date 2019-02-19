@@ -9,17 +9,43 @@ import { ControlsProp } from "./types"
  */
 export interface HoverHandlers {
     /**
-     * Properties or variant label to animate to while the hover gesture is recognised
+     * Properties or variant label to animate to while the hover gesture is recognised.
+     *
+     * ```jsx
+     * const MyComponent = () => {
+     *   return <Frame hover={{ scale: 1.2 }} />
+     * }
+     * ```
      */
     hover?: string | TargetAndTransition
 
     /**
-     * Callback that fires when pointer starts hovering over the component
+     * Callback that fires when pointer starts hovering over the component.
+     *
+     * ```jsx
+     * const MyComponent = () => {
+     *   const onHoverStart = (event) => {
+     *      console.log('Pointer is hovering over this Frame')
+     *   }
+     *
+     *   return <Frame onHoverStart={onHoverStart} />
+     * }
+     * ```
      */
     onHoverStart?(event: MouseEvent): void
 
     /**
-     * Callback that fires when pointer stops hovering over the component
+     * Callback that fires when pointer stops hovering over the component.
+     *
+     * ```jsx
+     * const MyComponent = () => {
+     *   const onHoverEnd = (event) => {
+     *      console.log('Pointer stopped hovering over this Frame')
+     *   }
+     *
+     *   return <Frame onHoverEnd={onHoverEnd} />
+     * }
+     * ```
      */
     onHoverEnd?(event: MouseEvent): void
 }
