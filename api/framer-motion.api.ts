@@ -120,6 +120,9 @@ interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, 
     style?: MotionStyle;
 }
 
+// @public (undocumented)
+declare type MotionStyle = MakeMotion<Omit_2<CSSProperties, "rotate" | "scale" | "perspective">>;
+
 // @internal (undocumented)
 declare class MotionValue<V = any> {
     // (undocumented)
@@ -219,7 +222,7 @@ interface TapHandlers {
     onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
-    tap?: string | TargetAndTransition;
+    press?: string | TargetAndTransition;
 }
 
 // @public

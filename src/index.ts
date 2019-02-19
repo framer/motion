@@ -29,6 +29,7 @@ export {
     MotionCallbacks,
     MotionAdvancedProps,
     AnimationProps,
+    MotionStyle,
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps } from "./behaviours"

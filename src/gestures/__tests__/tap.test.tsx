@@ -52,7 +52,7 @@ describe("tap", () => {
                     initial={{ opacity: 0.5 }}
                     transition={{ type: false }}
                     hover={{ opacity: 0.75 }}
-                    tap={{ opacity: 1 }}
+                    press={{ opacity: 1 }}
                     style={{ opacity }}
                 />
             )
@@ -121,7 +121,7 @@ describe("tap", () => {
                         initial={{ opacity: isActive ? 1 : 0.5 }}
                         animate={{ opacity: isActive ? 1 : 0.5 }}
                         hover={{ opacity: isActive ? 1 : 0.75 }}
-                        tap={{ opacity: 1 }}
+                        press={{ opacity: 1 }}
                         transition={{ type: false }}
                         style={{ opacity }}
                     />

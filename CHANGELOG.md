@@ -7,6 +7,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   `onDrag` event listener
+-   Exporting `MotionStyles` type.
+
+### Changed
+
+-   `tap` -> `press`
 
 ## [0.4.5] 2019-02-15
 
