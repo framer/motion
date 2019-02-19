@@ -39,6 +39,9 @@ export interface MotionStyleProperties {
 export type MakeMotion<T> = MotionStyleProperties &
     { [K in keyof T]: T[K] | MotionValue<T[K]> }
 
+/**
+ * @public
+ */
 export type MotionStyle = MakeMotion<
     Omit<CSSProperties, "rotate" | "scale" | "perspective">
 >
