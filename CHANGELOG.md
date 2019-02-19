@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.0] Unreleased
+
+### Added
+
+-   `onDrag` event listener
+
 ## [0.4.5] 2019-02-15
 
 ### Fixed

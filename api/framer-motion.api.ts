@@ -25,6 +25,7 @@ interface DraggableProps {
     dragMomentum?: boolean;
     dragPropagation?: boolean;
     onDirectionLock?(axis: "x" | "y"): void;
+    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void;
     onDragEnd?(e: MouseEvent | TouchEvent): void;
     onDragStart?(e: MouseEvent | TouchEvent): void;
 }

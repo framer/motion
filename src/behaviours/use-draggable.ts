@@ -99,6 +99,11 @@ export interface DraggableProps {
     onDragEnd?(e: MouseEvent | TouchEvent): void
 
     /**
+     * Callback that fires when the component is dragged
+     */
+    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
+
+    /**
      * Callback that fires a drag direction is determined
      */
     onDirectionLock?(axis: "x" | "y"): void
@@ -164,6 +169,7 @@ export function useDraggable(
         dragMomentum = true,
         onDragStart,
         onDragEnd,
+        onDrag,
         onDirectionLock,
     }: DraggableProps,
     ref: RefObject<Element | null>,
@@ -238,13 +244,12 @@ export function useDraggable(
                 onDragStart && onDragStart(event)
             }
 
-            const onPan = (
-                _event: MouseEvent | TouchEvent,
-                { offset }: PanInfo
-            ) => {
+            const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
                 if (!dragPropagation && !openGlobalLock) {
                     return
                 }
+
+                const { offset } = info
 
                 if (dragEnabled === "lockDirection") {
                     if (currentDirection === null) {
@@ -259,6 +264,16 @@ export function useDraggable(
 
                 updatePoint("x", offset)
                 updatePoint("y", offset)
+
+                if (onDrag) {
+                    onDrag(event, {
+                        ...info,
+                        point: {
+                            x: point.x ? point.x.get() : 0,
+                            y: point.y ? point.y.get() : 0,
+                        },
+                    })
+                }
             }
 
             const onPanEnd = (
