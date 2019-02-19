@@ -15,6 +15,18 @@ const noop = () => (v: any) => v
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
  *
+ * ```jsx
+ * const double = (v) => v * 2
+ *
+ * const MyComponent = () => {
+ *   const x = useMotionValue(0)
+ *   const y = useTransformedValue(x, double)
+ *   // y will be x, doubled
+ *
+ *   return <Frame style={{ x, y }} />
+ * }
+ * ```
+ *
  * @param value - The `MotionValue` to transform the output of.
  * @param transform - Function that accepts the output of `value` and returns a new value.
  * @returns `MotionValue`
@@ -27,6 +39,17 @@ export function useTransformedValue(
 ): MotionValue
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
+ *
+ * ```jsx
+ * const MyComponent = () => {
+ *   const x = useMotionValue(0)
+ *   const xRange = [-200, -100, 100, 200]
+ *   const opacityRange = [0, 1, 1, 0]
+ *   const opacity = useTransformedValue(x, xRange, opacityRange)
+ *
+ *   return <Frame dragEnabled="x" style={{ opacity, x }} />
+ * }
+ * ```
  *
  * @param value - `MotionValue`
  * @param fromRange - A linear series of numbers (either all increasing or decreasing)

@@ -8,6 +8,12 @@ interface AnimationProps {
 // @internal (undocumented)
 declare const createMotionComponent: <P extends {}>(Component: string | React.ComponentClass<P, any> | React.FunctionComponent<P>) => React.ForwardRefExoticComponent<Pick<P & MotionProps, string | number | Exclude<keyof P, "ref">> & React.RefAttributes<Element>>;
 
+// @public
+declare type CustomMotionComponent = {
+    // (undocumented)
+    custom: typeof createMotionComponent;
+};
+
 // @public (undocumented)
 interface DraggableProps {
     dragConstraints?: false | {
@@ -42,6 +48,11 @@ interface HoverHandlers {
 
 // @internal (undocumented)
 declare const htmlElements: ("object" | "track" | "progress" | "a" | "abbr" | "address" | "area" | "article" | "aside" | "audio" | "b" | "base" | "bdo" | "blockquote" | "body" | "br" | "button" | "canvas" | "caption" | "cite" | "code" | "col" | "colgroup" | "data" | "datalist" | "dd" | "del" | "details" | "dfn" | "dialog" | "div" | "dl" | "dt" | "em" | "embed" | "fieldset" | "figcaption" | "figure" | "footer" | "form" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "head" | "header" | "hgroup" | "hr" | "html" | "i" | "iframe" | "img" | "input" | "ins" | "kbd" | "label" | "legend" | "li" | "link" | "map" | "mark" | "menu" | "meta" | "meter" | "nav" | "noscript" | "ol" | "optgroup" | "option" | "output" | "p" | "param" | "picture" | "pre" | "q" | "rt" | "ruby" | "s" | "samp" | "script" | "section" | "select" | "small" | "source" | "span" | "strong" | "style" | "sub" | "sup" | "table" | "tbody" | "td" | "textarea" | "tfoot" | "th" | "thead" | "time" | "title" | "tr" | "u" | "ul" | "var" | "video" | "wbr" | "menuitem" | "bdi" | "big" | "keygen" | "main" | "rp" | "summary" | "webview")[];
+
+// @public
+declare type HTMLMotionComponents = {
+    [K in HTMLElements]: ComponentType<Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps>;
+};
 
 // @public (undocumented)
 interface Inertia {
@@ -99,6 +110,9 @@ interface MotionCallbacks {
         [key: string]: string | number;
     }): void;
 }
+
+// @public
+declare type MotionComponents = CustomMotionComponent & HTMLMotionComponents & SVGMotionComponents;
 
 // @internal (undocumented)
 declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>;
@@ -198,6 +212,9 @@ interface Physics {
     velocity?: number;
 }
 
+// @internal
+declare const safeWindow: Window | ServerSafeWindow;
+
 // @public (undocumented)
 interface Spring {
     damping?: number;
@@ -216,6 +233,11 @@ interface Spring {
 
 // @internal (undocumented)
 declare const svgElements: (keyof ReactSVG)[];
+
+// @public
+declare type SVGMotionComponents = {
+    [K in SVGElements]: ComponentType<Omit<SVGAttributes<SVGElement>, "style"> & MotionProps>;
+};
 
 // @public (undocumented)
 interface TapHandlers {

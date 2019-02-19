@@ -50,6 +50,18 @@ const viewportMotionValues: ScrollMotionValues = {
 /**
  * Provides `MotionValue`s that update when the viewport scrolls.
  *
+ * - Test
+ * - Test 2
+ *
+ * ```jsx
+ * const MyComponent = () => {
+ *   const { scrollYProgress } = useViewportScrollValues()
+ *   const scaleX = useTransformedValue(scrollYProgress, [0, 1], [0, 1])
+ *
+ *   return <Frame style={{ scaleX }} />
+ * }
+ * ```
+ *
  * @public
  */
 export function useViewportScrollValues() {

@@ -25,4 +25,9 @@ const mockWindow: ServerSafeWindow = {
     onmouseup: false,
 }
 
+/**
+ * Creates a server-safe reference to `window`, returning a mock if none is available.
+ *
+ * @internal
+ */
 export const safeWindow = typeof window === "undefined" ? mockWindow : window

@@ -4,6 +4,10 @@ export {
     createMotionComponent,
     htmlElements,
     svgElements,
+    MotionComponents,
+    CustomMotionComponent,
+    HTMLMotionComponents,
+    SVGMotionComponents,
 } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue } from "./value"
@@ -42,3 +46,4 @@ export {
     Inertia,
     None,
 } from "./types"
+export { safeWindow } from "./events/utils/window"
