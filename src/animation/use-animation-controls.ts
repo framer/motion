@@ -1,4 +1,4 @@
-import { AnimationControls } from "./AnimationControls"
+import { ComponentAnimationControls } from "./ComponentAnimationControls"
 import { useContext, useMemo, useEffect, RefObject } from "react"
 import { MotionValuesMap } from "../motion"
 import { MotionProps } from "../motion/types"
@@ -16,7 +16,7 @@ import { MotionContext } from "../motion/context/MotionContext"
  *
  * @internal
  */
-export function useAnimationControls<P>(
+export function useComponentAnimationControls<P>(
     values: MotionValuesMap,
     props: P & MotionProps,
     ref: RefObject<Element>,
@@ -24,7 +24,10 @@ export function useAnimationControls<P>(
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
-    const controls = useMemo(() => new AnimationControls<P>(values, ref), [])
+    const controls = useMemo(
+        () => new ComponentAnimationControls<P>(values, ref),
+        []
+    )
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     controls.resetChildren()

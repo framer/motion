@@ -1,5 +1,5 @@
 import { MotionProps, VariantLabels } from "../types"
-import { AnimationGroupControls } from "../../animation/AnimationGroupControls"
+import { AnimationControls } from "../../animation/AnimationControls"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { useVariants } from "../../animation/use-variants"
 import { useGestures } from "../../gestures"
@@ -10,14 +10,14 @@ import { buildStyleAttr } from "./style-attr"
 import { MotionValuesMap } from "./use-motion-values"
 import { AnimatePropType } from "../types"
 import { Target } from "../../types"
-import { AnimationControls } from "../../animation/AnimationControls"
+import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
 import isPropValid from "@emotion/is-prop-valid"
 import { svgElements } from "./supported-elements"
 
 // TODO: We can tidy this up. There's probably a neater or more consistent way to structure this.
 
 type AnimateProps = MotionProps & {
-    controls: AnimationControls
+    controls: ComponentAnimationControls
     values: MotionValuesMap
     innerRef: RefObject<Element | null>
 }
@@ -65,7 +65,7 @@ export const AnimatePropComponents = {
     [AnimatePropType.AnimationSubscription]: makeHookComponent(
         ({ animate, controls }: AnimateProps) => {
             return useAnimationGroupSubscription(
-                animate as AnimationGroupControls,
+                animate as AnimationControls,
                 controls
             )
         }
@@ -76,7 +76,7 @@ const isVariantLabel = (prop?: any): prop is VariantLabels =>
     Array.isArray(prop) || typeof prop === "string"
 
 const isAnimationSubscription = ({ animate }: AnimateProps) =>
-    animate instanceof AnimationGroupControls
+    animate instanceof AnimationControls
 
 const animatePropTypeTests = {
     [AnimatePropType.Target]: (props: AnimateProps) =>
@@ -186,8 +186,7 @@ export const checkShouldInheritVariant = ({
     tap,
 }: MotionProps): boolean => {
     const isVariantChild = inherit && variants && !animate && !hover && !tap
-    const isAnimationHookChild =
-        inherit && animate instanceof AnimationGroupControls
+    const isAnimationHookChild = inherit && animate instanceof AnimationControls
 
     if (isVariantChild || isAnimationHookChild) {
         return true

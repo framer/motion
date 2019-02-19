@@ -1,10 +1,10 @@
 import { createContext, useContext, useMemo } from "react"
-import { AnimationControls } from "../../animation/AnimationControls"
+import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
 import { VariantLabels } from "../types"
 import { Target } from "../../types"
 
 type MotionContextProps = {
-    controls?: AnimationControls
+    controls?: ComponentAnimationControls
     initial?: VariantLabels
     dragging?: boolean
 }
@@ -17,7 +17,7 @@ const isTarget = (v?: VariantLabels | Target): v is Target =>
     v !== undefined && typeof v !== "string" && !Array.isArray(v)
 
 export const useMotionContext = (
-    controls: AnimationControls,
+    controls: ComponentAnimationControls,
     initial?: VariantLabels | Target
 ) => {
     const parentContext = useContext(MotionContext)

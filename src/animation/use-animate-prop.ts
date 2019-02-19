@@ -1,7 +1,7 @@
 import { useRef, useEffect } from "react"
 import { Target, Transition } from "../types"
 import { MotionValue } from "../value"
-import { AnimationControls } from "./AnimationControls"
+import { ComponentAnimationControls } from "./ComponentAnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 
 /**
@@ -27,7 +27,7 @@ import { MotionValuesMap } from "../motion/utils/use-motion-values"
  */
 export function useAnimateProp(
     target: Target,
-    controls: AnimationControls,
+    controls: ComponentAnimationControls,
     values: MotionValuesMap,
     transition?: Transition,
     onComplete?: () => void

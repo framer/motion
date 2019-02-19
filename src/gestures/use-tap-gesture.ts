@@ -45,10 +45,10 @@ export interface TapHandlers {
      *
      * ```jsx
      * // As properties
-     * <motion.button tap={{ scale: 0.8, y: 5 }} />
+     * <motion.div tap={{ scale: 0.8, y: 5 }} />
      *
      * // As variant
-     * <motion.button tap="pressed" variants={variants} />
+     * <motion.div tap="pressed" variants={variants} />
      * ```
      */
     tap?: string | TargetAndTransition

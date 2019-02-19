@@ -1,6 +1,6 @@
 // @public (undocumented)
 interface AnimationProps {
-    animate?: AnimationGroupControls | TargetAndTransition | VariantLabels;
+    animate?: AnimationControls | TargetAndTransition | VariantLabels;
     transition?: Transition;
     variants?: Variants;
 }
@@ -245,7 +245,7 @@ interface Tween {
 declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V;
 
 // @public
-declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationGroupControls;
+declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationControls;
 
 // @public
 declare function useCycle<T>(items: T[], initialIndex?: number): CycleState<T>;

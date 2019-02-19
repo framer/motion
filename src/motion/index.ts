@@ -10,7 +10,9 @@ import { createMotionComponent } from "./component"
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
-export { AnimationControls } from "../animation/AnimationControls"
+export {
+    ComponentAnimationControls,
+} from "../animation/ComponentAnimationControls"
 export { createMotionComponent }
 export { htmlElements, svgElements } from "./utils/supported-elements"
 

@@ -6,7 +6,7 @@ import { MotionContext } from "../motion/context/MotionContext"
 import { Point } from "../events"
 import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
-import { AnimationControls } from "../motion"
+import { ComponentAnimationControls } from "../motion"
 
 type DragDirection = "x" | "y"
 
@@ -174,7 +174,7 @@ export function useDraggable(
     }: DraggableProps,
     ref: RefObject<Element | null>,
     values: MotionValuesMap,
-    controls: AnimationControls
+    controls: ComponentAnimationControls
 ) {
     const point = useRef<MotionPoint>({}).current
     const origin = useRef({ x: 0, y: 0 }).current

@@ -1,6 +1,6 @@
 import { CSSProperties } from "react"
 import { MotionValue } from "../value"
-import { AnimationGroupControls } from "../animation/AnimationGroupControls"
+import { AnimationControls } from "../animation/AnimationControls"
 import {
     Variants,
     Target,
@@ -50,7 +50,7 @@ export type OnUpdate = (v: Target) => void
  */
 export interface AnimationProps {
     /**
-     * Values to animate to, variant label(s), or `AnimationGroupControls`
+     * Values to animate to, variant label(s), or `AnimationControls`
      *
      * ```jsx
      * // As values
@@ -62,11 +62,11 @@ export interface AnimationProps {
      * // Multiple variants
      * <motion.div animate={["visible", "active"]} variants={variants} />
      *
-     * // `AnimationGroupControls`
+     * // `AnimationControls`
      * <motion.div animate={animation} />
      * ```
      */
-    animate?: AnimationGroupControls | TargetAndTransition | VariantLabels
+    animate?: AnimationControls | TargetAndTransition | VariantLabels
 
     /**
      * Object of labelled variants.
@@ -115,7 +115,7 @@ export interface MotionCallbacks {
      *   // Do something
      * }
      *
-     * return <motion.li animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     * return <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
      * ```
      */
     onUpdate?(latest: { [key: string]: string | number }): void

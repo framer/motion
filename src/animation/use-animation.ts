@@ -1,4 +1,4 @@
-import { AnimationGroupControls } from "./AnimationGroupControls"
+import { AnimationControls } from "./AnimationControls"
 import { useMemo, useEffect } from "react"
 import { Transition, Variants } from "../types"
 
@@ -15,7 +15,7 @@ export function useAnimation(
     variants?: Variants,
     defaultTransition?: Transition
 ) {
-    const animationManager = useMemo(() => new AnimationGroupControls(), [])
+    const animationManager = useMemo(() => new AnimationControls(), [])
 
     if (variants) {
         animationManager.setVariants(variants)

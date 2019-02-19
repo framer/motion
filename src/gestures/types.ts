@@ -1,5 +1,5 @@
-import { AnimationControls } from "../motion"
+import { ComponentAnimationControls } from "../motion"
 
 export interface ControlsProp {
-    controls?: AnimationControls
+    controls?: ComponentAnimationControls
 }

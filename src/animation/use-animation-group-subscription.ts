@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react"
-import { AnimationGroupControls } from "./AnimationGroupControls"
 import { AnimationControls } from "./AnimationControls"
+import { ComponentAnimationControls } from "./ComponentAnimationControls"
 
 /**
  * `useAnimationGroupSubscription` allows a component to subscribe to an
- * externally-created `AnimationGroupControls`, created by the `useAnimation` hook.
+ * externally-created `AnimationControls`, created by the `useAnimation` hook.
  *
  * @param animation
  * @param controls
@@ -12,8 +12,8 @@ import { AnimationControls } from "./AnimationControls"
  * @internal
  */
 export function useAnimationGroupSubscription(
-    animation: AnimationGroupControls,
-    controls: AnimationControls
+    animation: AnimationControls,
+    controls: ComponentAnimationControls
 ) {
     const unsubscribe = useMemo(() => animation.subscribe(controls), [
         animation,
