@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.0] 2019-02-20
+
+### Added
+
+-   `static` prop. Set `static` on a motion component to prevent animation and interaction.
+
+### Removed
+
+-   `render`
+
 ## [0.5.2] 2019-02-20
 
 ### Fixed
