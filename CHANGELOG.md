@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.1] 2019-02-20
+
+### Fixed
+
+-   Fixed an issue where values set to `style` would overwrite `animate` values even if they hadn't changed.
+
 ## [0.6.0] 2019-02-20
 
 ### Added
