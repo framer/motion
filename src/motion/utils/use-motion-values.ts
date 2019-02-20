@@ -15,7 +15,6 @@ export class MotionValuesMap {
     private hasMounted = false
     private styler: Styler
     private onUpdate?: Styler
-    private shouldRender: boolean = true
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
 
@@ -49,9 +48,7 @@ export class MotionValuesMap {
 
     bindValueToStyler(key: string, value: MotionValue) {
         const update = (v: any) => {
-            if (this.shouldRender) {
-                this.styler.set(key, v)
-            }
+            this.styler.set(key, v)
             if (this.onUpdate) {
                 this.onUpdate.set(key, v)
             }
@@ -65,11 +62,6 @@ export class MotionValuesMap {
         if (onUpdate) {
             this.onUpdate = updateStyler({ onUpdate })
         }
-    }
-
-    setShouldRender(render: boolean) {
-        this.shouldRender = render
-        // TODO: Maybe force a render if this goes false -> true
     }
 
     mount(element: Element) {
@@ -86,10 +78,9 @@ export class MotionValuesMap {
     }
 }
 
-export const useMotionValues = ({ onUpdate, render = true }: MotionProps) => {
+export const useMotionValues = ({ onUpdate }: MotionProps) => {
     const motionValues = useMemo(() => new MotionValuesMap(), [])
     motionValues.setOnUpdate(onUpdate)
-    motionValues.setShouldRender(render)
 
     return motionValues
 }

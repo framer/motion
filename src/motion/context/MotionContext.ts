@@ -7,10 +7,12 @@ type MotionContextProps = {
     controls?: ComponentAnimationControls
     initial?: VariantLabels
     dragging?: boolean
+    static?: boolean
 }
 
 export const MotionContext = createContext<MotionContextProps>({
     dragging: false,
+    static: false,
 })
 
 const isTarget = (v?: VariantLabels | Target): v is Target =>
@@ -18,6 +20,7 @@ const isTarget = (v?: VariantLabels | Target): v is Target =>
 
 export const useMotionContext = (
     controls: ComponentAnimationControls,
+    staticComponent: boolean = false,
     initial?: VariantLabels | Target
 ) => {
     const parentContext = useContext(MotionContext)
@@ -32,6 +35,7 @@ export const useMotionContext = (
     )
 
     context.dragging = parentContext.dragging
+    context.static = parentContext.static || staticComponent
 
     // Set initial state
     useMemo(() => {

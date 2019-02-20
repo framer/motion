@@ -156,11 +156,12 @@ export interface MotionAdvancedProps {
     inherit?: boolean
 
     /**
-     * Set to `false` to block rendering the latest motion values on the
-     * component - can be used to temporarily disable animations for
-     * performance reasons.
+     * Set to `true` to block rendering motion values (`animate`, gestures etc)
+     * on the component.
+     *
+     * This can be used to temporarily disable animations for performance reasons.
      */
-    render?: boolean
+    static?: boolean
 }
 
 /**
