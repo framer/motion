@@ -275,6 +275,49 @@ describe("animate prop as object", () => {
             "transform: translateX(20px) scale(0) translateZ(0)"
         )
     })
+
+    test("style doesnt overwrite in subsequent renders", async () => {
+        const promise = new Promise(resolve => {
+            const history: number[] = []
+            const onAnimationComplete = () => {
+                setTimeout(() => {
+                    let styleHasOverridden = false
+                    let prev = 0
+
+                    for (let i = 0; i < history.length; i++) {
+                        if (history[i] < prev) {
+                            styleHasOverridden = true
+                            break
+                        }
+
+                        prev = history[i]
+                    }
+
+                    resolve(styleHasOverridden)
+                }, 20)
+            }
+            const Component = ({ rotate, onComplete }) => (
+                <motion.div
+                    animate={{ rotate }}
+                    transition={{ duration: 0.05 }}
+                    style={{ rotate: "0deg" }}
+                    onUpdate={({ rotate }) => history.push(parseFloat(rotate))}
+                    onAnimationComplete={onComplete}
+                />
+            )
+
+            const { rerender } = render(<Component rotate={1000} />)
+
+            rerender(<Component rotate={1000} />)
+            setTimeout(() => {
+                rerender(
+                    <Component rotate={1001} onComplete={onAnimationComplete} />
+                )
+            }, 120)
+        })
+
+        return expect(promise).resolves.toBe(false)
+    })
 })
 
 describe("animate prop as variant", () => {

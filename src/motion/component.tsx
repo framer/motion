@@ -2,7 +2,7 @@ import * as React from "react"
 import { forwardRef, Ref, ComponentType } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues, MountMotionValues } from "./utils/use-motion-values"
-import { addMotionStyles } from "./utils/style-attr"
+import { useMotionStyles } from "./utils/use-styles"
 import { useComponentAnimationControls } from "../animation/use-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
@@ -29,7 +29,7 @@ export const createMotionComponent = <P extends {}>(
     ) {
         const ref = useExternalRef(externalRef)
         const values = useMotionValues(props)
-        const style = addMotionStyles(values, props.style)
+        const style = useMotionStyles(values, props.style)
         const animatePropType = getAnimatePropType(props)
         const shouldInheritVariant = checkShouldInheritVariant(props)
         const controls = useComponentAnimationControls(
