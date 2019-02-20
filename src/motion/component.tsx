@@ -38,9 +38,10 @@ export const createMotionComponent = <P extends {}>(
             ref,
             shouldInheritVariant
         )
-        const context = useMotionContext(controls, props.initial)
+        const context = useMotionContext(controls, props.static, props.initial)
+
         // Add functionality
-        const Animate = getAnimateComponent(animatePropType)
+        const Animate = getAnimateComponent(animatePropType, context.static)
 
         const handleAnimate = Animate && (
             <Animate
@@ -52,7 +53,7 @@ export const createMotionComponent = <P extends {}>(
             />
         )
 
-        const handleGestures = isGesturesEnabled(props) && (
+        const handleGestures = !context.static && isGesturesEnabled(props) && (
             <Gestures
                 {...props}
                 values={values}
@@ -61,7 +62,7 @@ export const createMotionComponent = <P extends {}>(
             />
         )
 
-        const handleDrag = isDragEnabled(props) && (
+        const handleDrag = !context.static && isDragEnabled(props) && (
             <Draggable
                 {...props}
                 innerRef={ref}

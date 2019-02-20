@@ -98,9 +98,12 @@ export const getAnimatePropType = (
 }
 
 export const getAnimateComponent = (
-    animatePropType?: string
+    animatePropType?: string,
+    isStatic: boolean = false
 ): ComponentType<AnimateProps> | undefined => {
-    return animatePropType ? AnimatePropComponents[animatePropType] : undefined
+    return !isStatic && animatePropType
+        ? AnimatePropComponents[animatePropType]
+        : undefined
 }
 
 const gestureProps = [

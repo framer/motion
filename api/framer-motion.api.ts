@@ -99,7 +99,7 @@ declare const motion: MotionComponents;
 // @public (undocumented)
 interface MotionAdvancedProps {
     inherit?: boolean;
-    render?: boolean;
+    static?: boolean;
 }
 
 // @public (undocumented)

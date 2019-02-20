@@ -425,3 +425,63 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
     })
 })
+
+describe("static prop", () => {
+    test("it prevents rendering of animated values", async () => {
+        const promise = new Promise(resolve => {
+            const scale = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ scale: 2 }}
+                    transition={{ type: false }}
+                    style={{ scale }}
+                    static
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            setTimeout(() => resolve(scale.get()), 50)
+        })
+
+        return expect(promise).resolves.toBe(0)
+    })
+
+    test("it permits updating transform values via style", () => {
+        const { container, rerender } = render(
+            <motion.div static style={{ x: 100 }} />
+        )
+        rerender(<motion.div static style={{ x: 200 }} />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(200px) translateZ(0)"
+        )
+    })
+
+    test("it prevents rendering of children via context", () => {
+        const promise = new Promise(resolve => {
+            const scale = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ opacity: 0 }}
+                    transition={{ type: false }}
+                    static
+                >
+                    <motion.button
+                        animate={{ scale: 2 }}
+                        transition={{ type: false }}
+                        style={{ scale }}
+                    />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            setTimeout(() => resolve(scale.get()), 50)
+        })
+
+        return expect(promise).resolves.toBe(0)
+    })
+})
