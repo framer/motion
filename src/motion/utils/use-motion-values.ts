@@ -1,8 +1,8 @@
-import { useMemo, useEffect, RefObject } from "react"
+import { forwardRef, useEffect, useMemo, memo } from "react"
 import { MotionValue } from "../../value"
 import styler, { createStylerFactory, Styler } from "stylefire"
-import { invariant } from "hey-listen"
 import { OnUpdate, MotionProps } from "../types"
+import { invariant } from "hey-listen"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
 // to fire and the `onUpdate` prop will only fire once per frame
@@ -86,24 +86,35 @@ export class MotionValuesMap {
     }
 }
 
-export const useMotionValues = (
-    ref: RefObject<Element>,
-    { onUpdate, render = true }: MotionProps
-) => {
+export const useMotionValues = ({ onUpdate, render = true }: MotionProps) => {
     const motionValues = useMemo(() => new MotionValuesMap(), [])
     motionValues.setOnUpdate(onUpdate)
     motionValues.setShouldRender(render)
 
+    return motionValues
+}
+
+/**
+ * `useEffect` gets resolved bottom-up. We defer some optional functionality to child
+ * components, so to ensure everything runs correctly we export the ref-binding logic
+ * to a new component rather than in `useMotionValues`.
+ */
+const MountMotionValuesComponent = (
+    { values }: { values: MotionValuesMap },
+    ref: React.RefObject<Element>
+) => {
     useEffect(() => {
         invariant(
             ref.current instanceof Element,
             "No `ref` found. Ensure components created with `motion.custom` forward refs using `React.forwardRef`"
         )
 
-        motionValues.mount(ref.current as Element)
+        values.mount(ref.current as Element)
 
-        return () => motionValues.unmount()
+        return () => values.unmount()
     })
 
-    return motionValues
+    return null
 }
+
+export const MountMotionValues = memo(forwardRef(MountMotionValuesComponent))

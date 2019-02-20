@@ -37,6 +37,7 @@ export function useAnimateProp(
 
     useEffect(
         () => {
+            console.log("animate stuff")
             const toAnimate: Target = Object.keys(prevValues.current).reduce(
                 (acc, key) => {
                     const hasUpdated =

@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.5.2] 2019-02-20
+
+### Fixed
+
+-   Animating unit-converting values on mount.
+
 ## [0.5.1] 2019-02-19
 
 ### Added

@@ -9,19 +9,5 @@ const style = {
 }
 
 export const App = () => {
-    const animation = useAnimation()
-
-    const animate = async () => {
-        // Start with normal number, which is default value type (in this case px)
-        await animation.start({ x: 100 })
-
-        // Then animate to a different value type like calc
-        animation.start({ x: "-100%" })
-    }
-
-    useEffect(() => {
-        animate()
-    }, [])
-
-    return <motion.div animate={animation} style={style} />
+    return <motion.div animate={{ width: "100%" }} style={style} />
 }
