@@ -114,7 +114,7 @@ const gestureProps = [
     "onTap",
     "onTapStart",
     "onTapCancel",
-    "tap",
+    "press",
     "hover",
     "onHoverStart",
     "onHoverEnd",

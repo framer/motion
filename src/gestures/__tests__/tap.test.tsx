@@ -51,6 +51,39 @@ describe("tap", () => {
                 <motion.div
                     initial={{ opacity: 0.5 }}
                     transition={{ type: false }}
+                    press={{ opacity: 1 }}
+                    style={{ opacity }}
+                />
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            logOpacity() // 0.5
+
+            // Trigger mouse down
+            fireEvent.mouseDown(container.firstChild as Element)
+            logOpacity() // 1
+
+            // Trigger mouse up
+            fireEvent.mouseUp(container.firstChild as Element)
+            logOpacity() // 0.5
+
+            resolve(opacityHistory)
+        })
+
+        return expect(promise).resolves.toEqual([0.5, 1, 0.5])
+    })
+
+    test("tap gesture variant applies and unapplies with hover", () => {
+        const promise = new Promise(resolve => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 0.5 }}
+                    transition={{ type: false }}
                     hover={{ opacity: 0.75 }}
                     press={{ opacity: 1 }}
                     style={{ opacity }}
