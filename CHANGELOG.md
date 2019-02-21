@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.2] 2019-02-21
+
+### Fixed
+
+-   Recognising `press` when it's the lone gesture.
+
 ## [0.6.1] 2019-02-20
 
 ### Fixed
