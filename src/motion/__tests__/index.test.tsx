@@ -1,5 +1,5 @@
 import "../../../jest.setup"
-import { render } from "react-testing-library"
+import { render, fireEvent } from "react-testing-library"
 import { motion } from "../"
 import * as React from "react"
 import styled from "styled-components"
@@ -27,6 +27,24 @@ describe("motion component rendering and styles", () => {
             </motion.div>
         )
         expect(getByTestId("child")).toBeTruthy()
+    })
+
+    test("renders normal event listeners", () => {
+        console.log("mouseenter test")
+        const onMouseEnter = jest.fn()
+        const onMouseLeave = jest.fn()
+        const { container, rerender } = render(
+            <motion.div
+                onMouseEnter={onMouseEnter}
+                onMouseLeave={onMouseLeave}
+            />
+        )
+
+        fireEvent.mouseEnter(container.firstChild as Element)
+        fireEvent.mouseLeave(container.firstChild as Element)
+
+        expect(onMouseEnter).toBeCalled()
+        expect(onMouseLeave).toBeCalled()
     })
 
     test("renders custom component", async () => {
