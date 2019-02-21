@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.3] 2019-02-21
+
+### Fixed
+
+-   If `transformPagePoint` is present, transforming initial point.
+
 ## [0.6.2] 2019-02-21
 
 ### Fixed

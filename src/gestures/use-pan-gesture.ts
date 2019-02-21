@@ -266,15 +266,19 @@ export function usePanGesture(
     const onPointerDown = useMemo(
         () => {
             return (event: Event, { point }: EventInfo) => {
+                const initialPoint = transformPagePoint
+                    ? transformPagePoint(point)
+                    : point
+
                 pointer.current = {
-                    x: motionValue(point.x),
-                    y: motionValue(point.y),
+                    x: motionValue(initialPoint.x),
+                    y: motionValue(initialPoint.y),
                 }
 
                 const { timestamp } = getFrameData()
                 session = {
                     target: event.target,
-                    pointHistory: [{ ...point, timestamp }],
+                    pointHistory: [{ ...initialPoint, timestamp }],
                 }
 
                 startPointerMove()
