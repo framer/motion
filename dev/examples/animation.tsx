@@ -30,6 +30,7 @@ export const App = () => {
             initial={{ opacity: 0 }}
             transition={{ duration: 5 }}
             style={style}
+            onMouseEnter={() => console.log("test")}
         />
     )
 }

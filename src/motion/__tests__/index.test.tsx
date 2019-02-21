@@ -30,10 +30,9 @@ describe("motion component rendering and styles", () => {
     })
 
     test("renders normal event listeners", () => {
-        console.log("mouseenter test")
         const onMouseEnter = jest.fn()
         const onMouseLeave = jest.fn()
-        const { container, rerender } = render(
+        const { container } = render(
             <motion.div
                 onMouseEnter={onMouseEnter}
                 onMouseLeave={onMouseLeave}

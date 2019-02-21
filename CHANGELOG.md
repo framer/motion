@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.3] Unreleased
+
+### Update
+
+-   Updated `popmotion@8.6.3` to improve synchronisation across tweens when yoyoing.
+
 ## [0.6.3] 2019-02-21
 
 ### Fixed

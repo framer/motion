@@ -63,7 +63,7 @@
         "@popmotion/popcorn": "^0.3.1",
         "framesync": "^4.0.2",
         "hey-listen": "^1.0.5",
-        "popmotion": "^8.6.2",
+        "popmotion": "^8.6.3",
         "style-value-types": "^3.0.7",
         "stylefire": "2.4.0"
     },
