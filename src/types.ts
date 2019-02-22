@@ -20,6 +20,8 @@ export type Easing =
     | EasingFunction
 
 /**
+ * Options for orchestrating the timing of animations.
+ *
  * @public
  */
 export interface Orchestration {
@@ -27,7 +29,7 @@ export interface Orchestration {
      * Delay the animation by this duration (in seconds). Defaults to `0`.
      *
      * @remarks
-     * ```
+     * ```javascript
      * const transition = {
      *   delay: 0.2
      * }
@@ -48,9 +50,29 @@ export interface Orchestration {
      * transitions before starting this transition.
      *
      * ```jsx
-     * const transition = {
-     *   when: 'beforeChildren'
+     * const container = {
+     *   hidden: {
+     *     opacity: 0,
+     *     // This will ensure all children animations
+     *     // finish before this animation starts
+     *     transition: { when: 'afterChildren' }
+     *   }
      * }
+     *
+     * const item = {
+     *   hidden: { opacity: 0 }
+     * }
+     *
+     * return (
+     *   <Frame
+     *     variants={container}
+     *     animate="hidden"
+     *   >
+     *     <Frame variants={item} />
+     *     <Frame variants={item} />
+     *     <Frame variants={item} />
+     *   </Frame>
+     * )
      * ```
      *
      * @public
@@ -93,7 +115,10 @@ export interface Orchestration {
 }
 
 /**
- * A duration-based animation.
+ * An animation that animates between two values over a specific duration of time.
+ *
+ * This is the default animation for non-physical values like `color` and `opacity`.
+ *
  * @public
  */
 export interface Tween {
@@ -101,7 +126,8 @@ export interface Tween {
      * Set `type` to `'tween'` to use a duration-based tween animation.
      *
      * @remarks
-     * If any `transition` properties are set, the selected animation will default to tween.
+     * If any non-orchestration `transition` values are set without a `type` prop,
+     * "tween" is used as the default animation.
      *
      * @public
      */
@@ -203,6 +229,10 @@ export interface Tween {
 }
 
 /**
+ * An animation that simulates spring physics for realistic motion.
+ *
+ * This is the default animation for physical values like `x`, `y`, `scale` and `rotate`.
+ *
  * @public
  */
 export interface Spring {
@@ -275,6 +305,16 @@ export interface Spring {
 }
 
 /**
+ * An animation that decelerates a value based on its initial velocity,
+ * usually used to implement inertial scrolling.
+ *
+ * Optionally, `min` and `max` boundaries can be defined, and inertia
+ * will snap to these with a spring animation.
+ *
+ * This animation will automatically precalculate a target value,
+ * which can be modified with the `modifyTarget` property.
+ * This allows you to add snap-to-grid or similar functionality.
+ *
  * @public
  */
 export interface Inertia {
@@ -367,6 +407,14 @@ export interface Inertia {
 }
 
 /**
+ * Keyframes tweens between multiple `values`.
+ *
+ * These tweens can be arranged using the `duration`, `easings`, and `times` properties.
+ *
+ * @internalremarks
+ * We could possibly make the `type` property redundant, if not for all animations
+ * then for this one quite easily.
+ *
  * @public
  */
 export interface Keyframes {
@@ -489,6 +537,8 @@ export interface Keyframes {
 }
 
 /**
+ * An animation that simulates velocity, acceleration, and friction.
+ *
  * @public
  */
 export interface Physics {

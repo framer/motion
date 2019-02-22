@@ -10,13 +10,17 @@ type MotionContextProps = {
     static?: boolean
 }
 
+/**
+ * @internal
+ */
 export const MotionContext = createContext<MotionContextProps>({
     dragging: false,
     static: false,
 })
 
-const isTarget = (v?: VariantLabels | Target): v is Target =>
-    v !== undefined && typeof v !== "string" && !Array.isArray(v)
+const isTarget = (v?: VariantLabels | Target): v is Target => {
+    return v !== undefined && typeof v !== "string" && !Array.isArray(v)
+}
 
 export const useMotionContext = (
     controls: ComponentAnimationControls,

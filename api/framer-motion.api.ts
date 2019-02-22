@@ -54,7 +54,7 @@ declare type HTMLMotionComponents = {
     [K in HTMLElements]: ComponentType<Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps>;
 };
 
-// @public (undocumented)
+// @public
 interface Inertia {
     bounceDamping?: number;
     bounceStiffness?: number;
@@ -71,7 +71,7 @@ interface Inertia {
     velocity?: number;
 }
 
-// @public (undocumented)
+// @public
 interface Keyframes {
     // @internal (undocumented)
     delay?: number;
@@ -184,7 +184,7 @@ interface None {
     velocity?: number;
 }
 
-// @public (undocumented)
+// @public
 interface Orchestration {
     delay?: number;
     delayChildren?: number;
@@ -200,7 +200,7 @@ interface PanHandlers {
     onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
 }
 
-// @public (undocumented)
+// @public
 interface Physics {
     acceleration?: number;
     // @internal (undocumented)
@@ -215,7 +215,7 @@ interface Physics {
 // @internal
 declare const safeWindow: Window | ServerSafeWindow;
 
-// @public (undocumented)
+// @public
 interface Spring {
     damping?: number;
     // (undocumented)

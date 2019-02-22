@@ -28,6 +28,7 @@ export {
     MotionPlugins,
     MotionPluginContext,
 } from "./motion/context/MotionPluginContext"
+export { MotionContext } from "./motion/context/MotionContext"
 export {
     MotionProps,
     MotionCallbacks,

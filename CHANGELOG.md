@@ -2,7 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.6.4] Unreleased
+## [0.6.4] 2019-02-22
+
+### Added
+
+-   Exporting `MotionContext`.
 
 ### Update
 
