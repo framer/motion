@@ -34,8 +34,8 @@ describe("motion component rendering and styles", () => {
         const onMouseLeave = jest.fn()
         const { container } = render(
             <motion.div
-                onMouseEnter={onMouseEnter}
-                onMouseLeave={onMouseLeave}
+                onMouseEnter={() => onMouseEnter()}
+                onMouseLeave={() => onMouseLeave()}
             />
         )
 
