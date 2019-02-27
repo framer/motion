@@ -1,7 +1,7 @@
 import { forwardRef, useEffect, useMemo, memo } from "react"
 import { MotionValue } from "../../value"
 import styler, { createStylerFactory, Styler } from "stylefire"
-import { OnUpdate, MotionProps } from "../types"
+import { OnUpdate, MotionProps, TransformTemplate } from "../types"
 import { invariant } from "hey-listen"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
@@ -14,6 +14,7 @@ const updateStyler = createStylerFactory({
 export class MotionValuesMap {
     private hasMounted = false
     private styler: Styler
+    private transformTemplate: TransformTemplate | undefined
     private onUpdate?: Styler
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
@@ -25,7 +26,9 @@ export class MotionValuesMap {
     set(key: string, value: MotionValue) {
         this.values.set(key, value)
 
-        if (this.hasMounted) this.bindValueToStyler(key, value)
+        if (this.hasMounted) {
+            this.bindValueToStyler(key, value)
+        }
     }
 
     get<Value>(key: string): MotionValue<Value> | undefined
@@ -64,10 +67,28 @@ export class MotionValuesMap {
         }
     }
 
+    setTransformTemplate(transformTemplate?: TransformTemplate | undefined) {
+        if (this.transformTemplate !== transformTemplate) {
+            this.transformTemplate = transformTemplate
+            this.updateTransformTemplate()
+        }
+    }
+
+    getTransformTemplate() {
+        return this.transformTemplate
+    }
+
+    updateTransformTemplate() {
+        if (this.styler) {
+            this.styler.set("transform", this.transformTemplate)
+        }
+    }
+
     mount(element: Element) {
         this.hasMounted = true
         this.styler = styler(element, { preparseOutput: false })
         this.values.forEach((value, key) => this.bindValueToStyler(key, value))
+        this.updateTransformTemplate()
     }
 
     unmount() {
@@ -78,9 +99,13 @@ export class MotionValuesMap {
     }
 }
 
-export const useMotionValues = ({ onUpdate }: MotionProps) => {
+export const useMotionValues = ({
+    onUpdate,
+    transformTemplate,
+}: MotionProps) => {
     const motionValues = useMemo(() => new MotionValuesMap(), [])
     motionValues.setOnUpdate(onUpdate)
+    motionValues.setTransformTemplate(transformTemplate)
 
     return motionValues
 }

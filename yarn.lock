@@ -6563,19 +6563,19 @@ styled-components@^4.1.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
-stylefire@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.4.0.tgz#1c52b82d951ac9f5046dbb359af7229d10c59007"
-  integrity sha512-soSvx0Xc4If/8EGmU/HrE0HHOOzQ+JEEyhj1xJFfOx5PCIy19veoN588e2QGJfOZJYJeAYQx/YzofbzWCAi6DA==
+stylefire@^2.3.4:
+  version "2.3.7"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.3.7.tgz#285b86a48f6c25bbdcccb5dafa26b9f578235bb5"
+  integrity sha512-0JSN+tIZDYda3RYEFK5j8GZjeVIHggyvOCySM0LmOLx/1QUVixMEIM2SyXohj6RgyNEiIxCaVHGaComq/k0KBw==
   dependencies:
     framesync "^4.0.0"
     hey-listen "^1.0.4"
     style-value-types "^3.0.6"
 
-stylefire@^2.3.4:
-  version "2.3.7"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.3.7.tgz#285b86a48f6c25bbdcccb5dafa26b9f578235bb5"
-  integrity sha512-0JSN+tIZDYda3RYEFK5j8GZjeVIHggyvOCySM0LmOLx/1QUVixMEIM2SyXohj6RgyNEiIxCaVHGaComq/k0KBw==
+stylefire@^2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.4.1.tgz#30945b5499acb59284a0f79645da6ff6759d561a"
+  integrity sha512-4xjQf6AL+rYwc85wOj2Rzbr9W1mk5x+dVW+p6l4pMME8bCl3fiBWC4/2wYAN6oWadupqNsfU4GwhglMO7NaFSg==
   dependencies:
     framesync "^4.0.0"
     hey-listen "^1.0.4"

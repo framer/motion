@@ -40,6 +40,18 @@ export function useTransformedValue(
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
  *
+ * @remarks
+ *
+ * Given an input range of `[-200, -100, 100, 200]` and an output range of
+ * `[0, 1, 1, 0]`, the returned `MotionValue` will:
+ *
+ * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`
+ * - When provided a value between `-100` and `100`, will return `1`
+ * - When provided a value between `100` and `200, will return a value between `1` and  `0`
+ *
+ * The input range must be a linear series of numbers. The output range
+ * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
+ *
  * ```jsx
  * const MyComponent = () => {
  *   const x = useMotionValue(0)
@@ -51,9 +63,9 @@ export function useTransformedValue(
  * }
  * ```
  *
- * @param value - `MotionValue`
- * @param fromRange - A linear series of numbers (either all increasing or decreasing)
- * @param toRange - A series of numbers, colors or strings. Must be the same length as `from`.
+ * @param inputValue - `MotionValue`
+ * @param inputRange - A linear series of numbers (either all increasing or decreasing)
+ * @param outputRange - A series of numbers, colors or strings. Must be the same length as `from`.
  * @param options -
  *
  *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`

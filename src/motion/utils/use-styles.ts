@@ -17,7 +17,10 @@ export const buildStyleAttr = (
 ): CSSProperties => {
     return {
         ...styleProp,
-        ...buildStyleProperty(resolveCurrent(values)),
+        ...buildStyleProperty({
+            transform: values.getTransformTemplate(),
+            ...resolveCurrent(values),
+        }),
     }
 }
 
