@@ -6572,10 +6572,10 @@ stylefire@^2.3.4:
     hey-listen "^1.0.4"
     style-value-types "^3.0.6"
 
-stylefire@^2.4.2:
-  version "2.4.2"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.4.2.tgz#d4a7f574ea7d75fd6962c6a57b757713467ea49a"
-  integrity sha512-uvZwrpMMXWmUJUJ/AhNm8g/4qMxh4K4RIyQQS43IqFaWuvr3EieycblHfs0NikZdPWnvLVb4JzeXwHkpIOPJQA==
+stylefire@^2.4.3:
+  version "2.4.3"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.4.3.tgz#1b39847251000bda86ebf82fa2bb4be7dafe6bc4"
+  integrity sha512-8rckFzuDlVWSyrkmnyTg8avadQavk2t6YkFKUUocsXoj/8NScOjb+/avbB4nrmoPtzD0kN7IyuhKq8jimIBTBQ==
   dependencies:
     framesync "^4.0.0"
     hey-listen "^1.0.4"
