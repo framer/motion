@@ -8,8 +8,9 @@ import { MotionStyle } from "../types"
 const transformOriginProps = new Set(["originX", "originY"])
 const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
 
-const isMotionValue = (value: any): value is MotionValue =>
-    value instanceof MotionValue
+const isMotionValue = (value: any): value is MotionValue => {
+    return value instanceof MotionValue
+}
 
 export const buildStyleAttr = (
     values: MotionValuesMap,

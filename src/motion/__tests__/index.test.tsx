@@ -403,7 +403,7 @@ describe("animate prop as object", () => {
         })
 
         expect(promise).resolves.toHaveStyle(
-            "transform: translateY(30px) translateX(30px) translateZ(0)"
+            "transform: translateX(30px) translateX(30px) translateZ(0)"
         )
     })
 })
