@@ -135,8 +135,7 @@ interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, 
     [key: string]: any;
     initial?: Target | VariantLabels;
     style?: MotionStyle;
-    // (undocumented)
-    transformTemplate?(): string;
+    transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
 }
 
 // @public (undocumented)
