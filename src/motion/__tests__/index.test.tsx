@@ -216,6 +216,47 @@ describe("motion component rendering and styles", () => {
             "transform: rotate(90deg) translateZ(0)"
         )
     })
+
+    test("applies transformTemplate on initial render", () => {
+        const { container } = render(
+            <motion.div
+                initial={{ x: 10 }}
+                transformTemplate={({ x }, generated) =>
+                    `translateY(${x}) ${generated}`
+                }
+            />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateY(10px) translateX(10px) translateZ(0)"
+        )
+    })
+
+    test("applies updated transformTemplate", () => {
+        const { container, rerender } = render(
+            <motion.div
+                initial={{ x: 10 }}
+                transformTemplate={({ x }, generated) =>
+                    `translateY(${x}) ${generated}`
+                }
+            />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateY(10px) translateX(10px) translateZ(0)"
+        )
+
+        rerender(
+            <motion.div
+                initial={{ x: 10 }}
+                transformTemplate={({ x }, generated) => {
+                    const newX = typeof x === "string" ? parseFloat(x) : x
+                    return `translateY(${newX * 2}px) ${generated}`
+                }}
+            />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateY(20px) translateX(10px) translateZ(0)"
+        )
+    })
 })
 
 describe("SVG", () => {
@@ -334,6 +375,36 @@ describe("animate prop as object", () => {
         })
 
         return expect(promise).resolves.toBe(false)
+    })
+
+    test("applies custom transform", async () => {
+        const promise = new Promise(resolve => {
+            const resolveContainer = () => {
+                requestAnimationFrame(() => {
+                    resolve(container)
+                })
+            }
+
+            const Component = () => (
+                <motion.div
+                    initial={{ x: 10 }}
+                    animate={{ x: 30 }}
+                    transition={{ duration: 10 }}
+                    transformTemplate={({ x }, generated) =>
+                        `translateY(${x}) ${generated}`
+                    }
+                    onAnimationComplete={resolveContainer}
+                />
+            )
+
+            const { container, rerender } = render(<Component />)
+
+            rerender(<Component />)
+        })
+
+        expect(promise).resolves.toHaveStyle(
+            "transform: translateX(30px) translateX(30px) translateZ(0)"
+        )
     })
 })
 

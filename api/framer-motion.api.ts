@@ -115,6 +115,9 @@ interface MotionCallbacks {
 declare type MotionComponents = CustomMotionComponent & HTMLMotionComponents & SVGMotionComponents;
 
 // @internal (undocumented)
+declare const MotionContext: import("react").Context<MotionContextProps>;
+
+// @internal (undocumented)
 declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>;
 
 // @internal
@@ -132,10 +135,11 @@ interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, 
     [key: string]: any;
     initial?: Target | VariantLabels;
     style?: MotionStyle;
+    transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
 }
 
 // @public (undocumented)
-declare type MotionStyle = MakeMotion<Omit_2<CSSProperties, "rotate" | "scale" | "perspective">>;
+declare type MotionStyle = MotionCSS & MotionTransform;
 
 // @internal (undocumented)
 declare class MotionValue<V = any> {
