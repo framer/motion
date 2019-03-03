@@ -9,7 +9,7 @@ type CycleState<T> = [T, Cycle]
  * Cycles through a series of states. Can be used to toggle between or cycle through animations.
  *
  * ```jsx
- * const MyComponent = () => {
+ * function App() {
  *   const [x, cycleX] = useCycle([0, 100, 200])
  *
  *   return <Frame animate={{ x: x }} onClick={() => cycleX()} />
