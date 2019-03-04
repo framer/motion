@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.7] Unreleased
+
+### Updated
+
+-   Removing GPU-acceleration for `static` components.
+-   Adding `customStyles` plugin.
+
 ## [0.6.6] 2019-02-29
 
 ### Updated
