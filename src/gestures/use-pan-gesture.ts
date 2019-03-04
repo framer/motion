@@ -91,7 +91,7 @@ export interface PanHandlers {
      *
      * ```jsx
      * function App() {
-     *   const onPan = (event, { point, delta, offset, velocity }) => {
+     *   function onPan(event, { point, delta, offset, velocity }) {
      *      console.log(`Panned to ${point.x} ${point.y}`)
      *   }
      *
@@ -106,11 +106,11 @@ export interface PanHandlers {
      *
      * ```jsx
      * function App() {
-     *   const onPanStart = (event, { point, delta, offset, velocity }) => {
+     *   function onPanStart(event, { point, delta, offset, velocity }) {
      *      console.log(`Started panning at ${point.x} ${point.y}`)
      *   }
      *
-     *   return <motion.div onPanStart={onPan} />
+     *   return <motion.div onPanStart={onPanStart} />
      * }
      * ```
      */
@@ -121,11 +121,11 @@ export interface PanHandlers {
      *
      * ```jsx
      * function App() {
-     *   const onPanEnd = (event, { point, delta, offset, velocity }) => {
+     *   function onPanEnd(event, { point, delta, offset, velocity }) {
      *      console.log(`Stopped panning at ${point.x} ${point.y}`)
      *   }
      *
-     *   return <motion.div onPanEnd={onPan} />
+     *   return <motion.div onPanEnd={onPanEnd} />
      * }
      * ```
      */

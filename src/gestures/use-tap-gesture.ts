@@ -30,11 +30,11 @@ export interface TapHandlers {
      *
      * ```jsx
      * function App() {
-     *   const onTap = (event, { point }) => {
+     *   function onTap = (event, { point }) {
      *      console.log(`Tapped at ${point.x} ${point.y}`)
      *   }
      *
-     *   return <motion.div onTap={onPan} />
+     *   return <motion.div onTap={onTap} />
      * }
      * ```
      */
@@ -45,11 +45,11 @@ export interface TapHandlers {
      *
      * ```jsx
      * function App() {
-     *   const onTapStart = (event, { point }) => {
+     *   function onTapStart(event, { point }) {
      *      console.log(`Tap started at ${point.x} ${point.y}`)
      *   }
      *
-     *   return <motion.div onTapStart={onPan} />
+     *   return <motion.div onTapStart={onTapStart} />
      * }
      * ```
      */
@@ -60,11 +60,11 @@ export interface TapHandlers {
      *
      * ```jsx
      * function App() {
-     *   const onTapCancel = (event, { point }) => {
+     *   function onTapCancel(event, { point }) {
      *      console.log(`Tap cancelled at ${point.x} ${point.y}`)
      *   }
      *
-     *   return <motion.div onTapCancel={onPan} />
+     *   return <motion.div onTapCancel={onTapCancel} />
      * }
      * ```
      */

@@ -132,7 +132,7 @@ export interface MotionCallbacks {
      *
      * ```jsx
      * function App() {
-     *   const onUpdate = ({ x, opacity }) => {
+     *   function onUpdate({ x, opacity }) {
      *     console.log(`Latest values: ${x} ${opacity}`)
      *   }
      *
@@ -147,7 +147,7 @@ export interface MotionCallbacks {
      *
      * ```jsx
      * function App() {
-     *   const onComplete = () => {
+     *   function onComplete() {
      *     console.log(`Animation has completed`)
      *   }
      *
