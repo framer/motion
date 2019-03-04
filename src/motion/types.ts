@@ -214,6 +214,7 @@ export interface MotionProps
      *
      *   return <motion.div style={{ x, opacity: 1, scale: 0.5 }} />
      * }
+     * ```
      */
     style?: MotionStyle
 
