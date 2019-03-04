@@ -5,7 +5,7 @@ import { OnUpdate, MotionProps, TransformTemplate } from "../types"
 import { invariant } from "hey-listen"
 import {
     MotionPluginContext,
-    CustomValueMap,
+    CustomStyleMap,
 } from "../context/MotionPluginContext"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
@@ -25,11 +25,11 @@ export class MotionValuesMap {
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
     private isStatic: boolean
-    private customValues?: CustomValueMap
+    private customStyles?: CustomStyleMap
 
-    constructor(isStatic: boolean, customValues?: CustomValueMap) {
+    constructor(isStatic: boolean, customStyles?: CustomStyleMap) {
         this.isStatic = isStatic
-        this.customValues = customValues
+        this.customStyles = customStyles
     }
 
     has(key: string) {
@@ -65,10 +65,10 @@ export class MotionValuesMap {
     bindValueToStyler(key: string, value: MotionValue) {
         let setStyler: StyleSetter = v => this.styler.set(key, v)
 
-        const { customValues } = this
-        if (customValues && customValues[key]) {
+        const { customStyles } = this
+        if (customStyles && customStyles[key]) {
             setStyler = v => {
-                this.styler.set(customValues[key].transform(v))
+                this.styler.set(customStyles[key].transform(v))
             }
         }
 
@@ -132,9 +132,9 @@ export const useMotionValues = (
     { onUpdate, transformTemplate }: MotionProps,
     isStatic: boolean
 ) => {
-    const { customValues } = useContext(MotionPluginContext)
+    const { customStyles } = useContext(MotionPluginContext)
     const motionValues = useMemo(
-        () => new MotionValuesMap(isStatic, customValues),
+        () => new MotionValuesMap(isStatic, customStyles),
         []
     )
     motionValues.setOnUpdate(onUpdate)

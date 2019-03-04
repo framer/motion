@@ -25,9 +25,9 @@ export function useComponentAnimationControls<P>(
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
-    const { customValues } = useContext(MotionPluginContext)
+    const { customStyles } = useContext(MotionPluginContext)
     const controls = useMemo(
-        () => new ComponentAnimationControls<P>(values, ref, customValues),
+        () => new ComponentAnimationControls<P>(values, ref, customStyles),
         []
     )
 

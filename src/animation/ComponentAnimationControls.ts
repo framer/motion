@@ -15,7 +15,7 @@ import {
 import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
 import { VariantLabels } from "../motion/types"
-import { CustomValueMap } from "../motion/context/MotionPluginContext"
+import { CustomStyleMap } from "../motion/context/MotionPluginContext"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -38,13 +38,13 @@ const getVelocity = (values: MotionValuesMap) => {
 const isAnimatable = (
     value: string | number,
     key: string,
-    customValues?: CustomValueMap
+    customStyles?: CustomStyleMap
 ) => {
     // If motion has been specifically disabled for this value, return false
     if (
-        customValues &&
-        customValues[key] &&
-        customValues[key].motionEnabled === false
+        customStyles &&
+        customStyles[key] &&
+        customStyles[key].motionEnabled === false
     ) {
         return false
     } else if (typeof value === "number") {
@@ -79,16 +79,16 @@ export class ComponentAnimationControls<P = {}> {
     private defaultTransition?: Transition
     private children?: Set<ComponentAnimationControls>
     private isAnimating: Set<string> = new Set()
-    private customValues?: CustomValueMap
+    private customStyles?: CustomStyleMap
 
     constructor(
         values: MotionValuesMap,
         ref: RefObject<Element>,
-        customValues?: CustomValueMap
+        customStyles?: CustomStyleMap
     ) {
         this.values = values
         this.ref = ref
-        this.customValues = customValues
+        this.customStyles = customStyles
 
         this.values.forEach(
             (value, key) => (this.baseTarget[key] = value.get())
@@ -315,7 +315,7 @@ export class ComponentAnimationControls<P = {}> {
 
                 if (this.isAnimating.has(key)) return acc
 
-                if (isAnimatable(valueTarget, key, this.customValues)) {
+                if (isAnimatable(valueTarget, key, this.customStyles)) {
                     const [action, options] = getTransition(key, valueTarget, {
                         delay,
                         ...transition,

@@ -5,7 +5,7 @@ import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
 import { MotionStyle } from "../types"
 import {
-    CustomValueMap,
+    CustomStyleMap,
     MotionPluginContext,
 } from "../context/MotionPluginContext"
 
@@ -20,14 +20,14 @@ export const buildStyleAttr = (
     values: MotionValuesMap,
     styleProp: CSSProperties,
     isStatic: boolean,
-    customValues?: CustomValueMap
+    customStyles?: CustomStyleMap
 ): CSSProperties => {
     return {
         ...styleProp,
         ...buildStyleProperty(
             {
                 transform: values.getTransformTemplate(),
-                ...resolveCurrent(values, customValues),
+                ...resolveCurrent(values, customStyles),
             },
             !isStatic
         ),
@@ -40,7 +40,7 @@ export const useMotionStyles = (
 ): CSSProperties => {
     const style = useRef<CSSProperties>({}).current
     const prevMotionStyles = useRef({}).current
-    const { customValues } = useContext(MotionPluginContext)
+    const { customStyles } = useContext(MotionPluginContext)
 
     for (const key in styleProp) {
         const thisStyle = styleProp[key]
@@ -51,7 +51,7 @@ export const useMotionStyles = (
         } else if (
             isTransformProp(key) ||
             isTransformOriginProp(key) ||
-            (customValues && customValues[key])
+            (customStyles && customStyles[key])
         ) {
             // Or if it's a transform prop, create a motion value (or update an existing one)
             // to ensure Stylefire can reconcile all the transform values together.

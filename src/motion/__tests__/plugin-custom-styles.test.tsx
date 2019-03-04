@@ -1,6 +1,6 @@
 import "../../../jest.setup"
 import { render } from "react-testing-library"
-import { motion } from "../"
+import { motion } from ".."
 import { MotionPlugins } from "../context/MotionPluginContext"
 import * as React from "react"
 
@@ -18,7 +18,7 @@ describe("custom values plugin", () => {
     test("renders", () => {
         const Component = () => {
             return (
-                <MotionPlugins customValues={customPlugin}>
+                <MotionPlugins customStyles={customPlugin}>
                     <motion.div style={{ size: "100%" }} />
                 </MotionPlugins>
             )
@@ -37,7 +37,7 @@ describe("custom values plugin", () => {
 
             const Component = () => {
                 return (
-                    <MotionPlugins customValues={customPlugin}>
+                    <MotionPlugins customStyles={customPlugin}>
                         <motion.div
                             initial={{ size: "0%" }}
                             animate={{ size: "50%" }}
@@ -63,7 +63,7 @@ describe("custom values plugin", () => {
 
             const Component = () => {
                 return (
-                    <MotionPlugins customValues={customPlugin}>
+                    <MotionPlugins customStyles={customPlugin}>
                         <motion.div
                             initial={{ image: "url(1.jpg)" }}
                             animate={{ image: "url(2.jpg)" }}

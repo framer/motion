@@ -182,14 +182,14 @@ export const RenderComponent = <P>({
     const isDOM = typeof base === "string"
     const isSVG = isDOM && svgElements.indexOf(base as any) !== -1
     const forwardProps = isDOM ? validProps(props) : props
-    const { customValues } = useContext(MotionPluginContext)
+    const { customStyles } = useContext(MotionPluginContext)
 
     return createElement<any>(base, {
         ...forwardProps,
         ref: innerRef,
         style: isSVG
             ? style
-            : buildStyleAttr(values, style, isStatic, customValues),
+            : buildStyleAttr(values, style, isStatic, customStyles),
     })
 }
 
