@@ -1,507 +1,321 @@
 // @public (undocumented)
 interface AnimationProps {
-    animate?: AnimationControls | TargetAndTransition | VariantLabels
-    transition?: Transition
-    variants?: Variants
+    animate?: AnimationControls | TargetAndTransition | VariantLabels;
+    transition?: Transition;
+    variants?: Variants;
 }
 
 // @internal (undocumented)
-declare const createMotionComponent: <P extends {}>(
-    Component:
-        | string
-        | React.ComponentClass<P, any>
-        | React.FunctionComponent<P>
-) => React.ForwardRefExoticComponent<
-    Pick<P & MotionProps, string | number | Exclude<keyof P, "ref">> &
-        React.RefAttributes<Element>
->
+declare const createMotionComponent: <P extends {}>(Component: string | React.ComponentClass<P, any> | React.FunctionComponent<P>) => React.ForwardRefExoticComponent<Pick<P & MotionProps, string | number | Exclude<keyof P, "ref">> & React.RefAttributes<Element>>;
 
 // @public
 declare type CustomMotionComponent = {
     // (undocumented)
-    custom: typeof createMotionComponent
-}
+    custom: typeof createMotionComponent;
+};
 
 // @public (undocumented)
 interface DraggableProps {
-    dragConstraints?:
-        | false
-        | {
-              // (undocumented)
-              top?: number
-              // (undocumented)
-              right?: number
-              // (undocumented)
-              bottom?: number
-              // (undocumented)
-              left?: number
-          }
-    dragElastic?: boolean | number
-    dragEnabled?: boolean | "x" | "y" | "lockDirection"
-    dragMomentum?: boolean
-    dragPropagation?: boolean
-    onDirectionLock?(axis: "x" | "y"): void
-    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
-    onDragEnd?(e: MouseEvent | TouchEvent): void
-    onDragStart?(e: MouseEvent | TouchEvent): void
+    dragConstraints?: false | {
+        // (undocumented)
+        top?: number;
+        // (undocumented)
+        right?: number;
+        // (undocumented)
+        bottom?: number;
+        // (undocumented)
+        left?: number;
+    };
+    dragElastic?: boolean | number;
+    dragEnabled?: boolean | "x" | "y" | "lockDirection";
+    dragMomentum?: boolean;
+    dragPropagation?: boolean;
+    onDirectionLock?(axis: "x" | "y"): void;
+    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDragEnd?(e: MouseEvent | TouchEvent): void;
+    onDragStart?(e: MouseEvent | TouchEvent): void;
 }
 
 // @public (undocumented)
-declare type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers
+declare type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 
 // @public (undocumented)
 interface HoverHandlers {
-    hover?: string | TargetAndTransition
-    onHoverEnd?(event: MouseEvent): void
-    onHoverStart?(event: MouseEvent): void
+    hover?: string | TargetAndTransition;
+    onHoverEnd?(event: MouseEvent): void;
+    onHoverStart?(event: MouseEvent): void;
 }
 
 // @internal (undocumented)
-declare const htmlElements: (
-    | "object"
-    | "track"
-    | "progress"
-    | "a"
-    | "abbr"
-    | "address"
-    | "area"
-    | "article"
-    | "aside"
-    | "audio"
-    | "b"
-    | "base"
-    | "bdo"
-    | "blockquote"
-    | "body"
-    | "br"
-    | "button"
-    | "canvas"
-    | "caption"
-    | "cite"
-    | "code"
-    | "col"
-    | "colgroup"
-    | "data"
-    | "datalist"
-    | "dd"
-    | "del"
-    | "details"
-    | "dfn"
-    | "dialog"
-    | "div"
-    | "dl"
-    | "dt"
-    | "em"
-    | "embed"
-    | "fieldset"
-    | "figcaption"
-    | "figure"
-    | "footer"
-    | "form"
-    | "h1"
-    | "h2"
-    | "h3"
-    | "h4"
-    | "h5"
-    | "h6"
-    | "head"
-    | "header"
-    | "hgroup"
-    | "hr"
-    | "html"
-    | "i"
-    | "iframe"
-    | "img"
-    | "input"
-    | "ins"
-    | "kbd"
-    | "label"
-    | "legend"
-    | "li"
-    | "link"
-    | "map"
-    | "mark"
-    | "menu"
-    | "meta"
-    | "meter"
-    | "nav"
-    | "noscript"
-    | "ol"
-    | "optgroup"
-    | "option"
-    | "output"
-    | "p"
-    | "param"
-    | "picture"
-    | "pre"
-    | "q"
-    | "rt"
-    | "ruby"
-    | "s"
-    | "samp"
-    | "script"
-    | "section"
-    | "select"
-    | "small"
-    | "source"
-    | "span"
-    | "strong"
-    | "style"
-    | "sub"
-    | "sup"
-    | "table"
-    | "tbody"
-    | "td"
-    | "textarea"
-    | "tfoot"
-    | "th"
-    | "thead"
-    | "time"
-    | "title"
-    | "tr"
-    | "u"
-    | "ul"
-    | "var"
-    | "video"
-    | "wbr"
-    | "menuitem"
-    | "bdi"
-    | "big"
-    | "keygen"
-    | "main"
-    | "rp"
-    | "summary"
-    | "webview")[]
+declare const htmlElements: ("object" | "track" | "progress" | "a" | "abbr" | "address" | "area" | "article" | "aside" | "audio" | "b" | "base" | "bdo" | "blockquote" | "body" | "br" | "button" | "canvas" | "caption" | "cite" | "code" | "col" | "colgroup" | "data" | "datalist" | "dd" | "del" | "details" | "dfn" | "dialog" | "div" | "dl" | "dt" | "em" | "embed" | "fieldset" | "figcaption" | "figure" | "footer" | "form" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "head" | "header" | "hgroup" | "hr" | "html" | "i" | "iframe" | "img" | "input" | "ins" | "kbd" | "label" | "legend" | "li" | "link" | "map" | "mark" | "menu" | "meta" | "meter" | "nav" | "noscript" | "ol" | "optgroup" | "option" | "output" | "p" | "param" | "picture" | "pre" | "q" | "rt" | "ruby" | "s" | "samp" | "script" | "section" | "select" | "small" | "source" | "span" | "strong" | "style" | "sub" | "sup" | "table" | "tbody" | "td" | "textarea" | "tfoot" | "th" | "thead" | "time" | "title" | "tr" | "u" | "ul" | "var" | "video" | "wbr" | "menuitem" | "bdi" | "big" | "keygen" | "main" | "rp" | "summary" | "webview")[];
 
 // @public
 declare type HTMLMotionComponents = {
-    [K in HTMLElements]: ComponentType<
-        Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps
-    >
-}
+    [K in HTMLElements]: ComponentType<Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps>;
+};
 
 // @public
 interface Inertia {
-    bounceDamping?: number
-    bounceStiffness?: number
+    bounceDamping?: number;
+    bounceStiffness?: number;
     // @internal (undocumented)
-    delay?: number
-    from?: number | string
-    max?: number
-    min?: number
-    modifyTarget?(v: number): number
-    power?: number
-    restDelta?: number
-    timeConstant?: number
-    type: "inertia"
-    velocity?: number
+    delay?: number;
+    from?: number | string;
+    max?: number;
+    min?: number;
+    modifyTarget?(v: number): number;
+    power?: number;
+    restDelta?: number;
+    timeConstant?: number;
+    type: "inertia";
+    velocity?: number;
 }
 
 // @public
 interface Keyframes {
     // @internal (undocumented)
-    delay?: number
-    duration?: number
-    easings?: Easing[]
+    delay?: number;
+    duration?: number;
+    easings?: Easing[];
     // @internal (undocumented)
-    elapsed?: number
-    flip?: number
+    elapsed?: number;
+    flip?: number;
     // @internal (undocumented)
-    from?: number | string
-    loop?: number
-    times: number[]
+    from?: number | string;
+    loop?: number;
+    times: number[];
     // @internal (undocumented)
-    to?: number | string
-    type: "keyframes"
-    values: number[] | string[]
+    to?: number | string;
+    type: "keyframes";
+    values: number[] | string[];
     // @internal (undocumented)
-    velocity?: number
-    yoyo?: number
+    velocity?: number;
+    yoyo?: number;
 }
 
 // @public
-declare const motion: MotionComponents
+declare const motion: MotionComponents;
 
 // @public (undocumented)
 interface MotionAdvancedProps {
-    inherit?: boolean
-    static?: boolean
+    inherit?: boolean;
+    static?: boolean;
 }
 
 // @public (undocumented)
 interface MotionCallbacks {
-    onAnimationComplete?(): void
+    onAnimationComplete?(): void;
     onUpdate?(latest: {
         // (undocumented)
-        [key: string]: string | number
-    }): void
+        [key: string]: string | number;
+    }): void;
 }
 
 // @public
-declare type MotionComponents = CustomMotionComponent &
-    HTMLMotionComponents &
-    SVGMotionComponents
+declare type MotionComponents = CustomMotionComponent & HTMLMotionComponents & SVGMotionComponents;
 
 // @internal (undocumented)
-declare const MotionContext: import("react").Context<MotionContextProps>
+declare const MotionContext: import("react").Context<MotionContextProps>;
 
 // @internal (undocumented)
-declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>
+declare const MotionPluginContext: React.Context<Partial<MotionPlugins>>;
 
 // @internal
-declare function MotionPlugins({
-    children,
-    ...props
-}: MotionPluginProps): JSX.Element
+declare function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
 // @internal (undocumented)
 interface MotionPlugins {
     // (undocumented)
-    customStyles?: CustomStyleMap
+    customStyles?: CustomStyleMap;
     // (undocumented)
-    transformPagePoint?: (point: Point) => Point
+    transformPagePoint?: (point: Point) => Point;
 }
 
 // @public
-interface MotionProps
-    extends AnimationProps,
-        MotionCallbacks,
-        GestureHandlers,
-        DraggableProps,
-        MotionAdvancedProps {
+interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
     // @internal (undocumented)
-    [key: string]: any
-    initial?: Target | VariantLabels
-    style?: MotionStyle
-    transformTemplate?(
-        transform: TransformProperties,
-        generatedTransform: string
-    ): string
+    [key: string]: any;
+    initial?: Target | VariantLabels;
+    style?: MotionStyle;
+    transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
 }
 
 // @public (undocumented)
-declare type MotionStyle = MotionCSS & MotionTransform & MotionCustom
+declare type MotionStyle = MotionCSS & MotionTransform & MotionCustom;
 
 // @internal (undocumented)
 declare class MotionValue<V = any> {
     // (undocumented)
-    constructor(init: V, { transformer, parent }?: Config<V>)
+    constructor(init: V, { transformer, parent }?: Config<V>);
     // (undocumented)
-    addChild(config: Config<V>): MotionValue<V>
+    addChild(config: Config<V>): MotionValue<V>;
     // (undocumented)
-    addRenderSubscription(subscription: Subscriber<V>): () => boolean
+    addRenderSubscription(subscription: Subscriber<V>): () => boolean;
     // (undocumented)
-    addUpdateSubscription(subscription: Subscriber<V>): () => boolean
+    addUpdateSubscription(subscription: Subscriber<V>): () => boolean;
     // (undocumented)
-    control(
-        controller: ActionFactory,
-        config: PopmotionTransitionProps,
-        transformer?: Transformer<V>
-    ): Promise<{}>
+    control(controller: ActionFactory, config: PopmotionTransitionProps, transformer?: Transformer<V>): Promise<{}>;
     // (undocumented)
-    destroy(): void
+    destroy(): void;
     // (undocumented)
-    get(): V
+    get(): V;
     // (undocumented)
-    getVelocity(): number
+    getVelocity(): number;
     // (undocumented)
-    notifySubscriber: (subscriber: Subscriber<V>) => void
+    notifySubscriber: (subscriber: Subscriber<V>) => void;
     // (undocumented)
-    removeChild(child: MotionValue): void
+    removeChild(child: MotionValue): void;
     // (undocumented)
-    scheduleVelocityCheck: () => import("framesync/lib/types").Process
+    scheduleVelocityCheck: () => import("framesync/lib/types").Process;
     // (undocumented)
-    set(v: V, render?: boolean): void
+    set(v: V, render?: boolean): void;
     // (undocumented)
-    setChild: (child: MotionValue<any>) => void
+    setChild: (child: MotionValue<any>) => void;
     // (undocumented)
-    stop(): void
+    stop(): void;
     // (undocumented)
-    subscribeTo(
-        subscriptions: Set<Subscriber<V>>,
-        subscription: Subscriber<V>
-    ): () => boolean
+    subscribeTo(subscriptions: Set<Subscriber<V>>, subscription: Subscriber<V>): () => boolean;
     // (undocumented)
-    velocityCheck: ({ timestamp }: FrameData) => void
+    velocityCheck: ({ timestamp }: FrameData) => void;
 }
 
 // @public (undocumented)
 interface None {
     // @internal (undocumented)
-    delay?: number
+    delay?: number;
     // @internal (undocumented)
-    from?: number | string
-    type: false
+    from?: number | string;
+    type: false;
     // @internal (undocumented)
-    velocity?: number
+    velocity?: number;
 }
 
 // @public
 interface Orchestration {
-    delay?: number
-    delayChildren?: number
-    staggerChildren?: number
-    staggerDirection?: 1 | -1
-    when?: false | "beforeChildren" | "afterChildren"
+    delay?: number;
+    delayChildren?: number;
+    staggerChildren?: number;
+    staggerDirection?: 1 | -1;
+    when?: false | "beforeChildren" | "afterChildren";
 }
 
 // @public (undocumented)
 interface PanHandlers {
-    onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void
-    onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void
-    onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
+    onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
 }
 
 // @public
 interface Physics {
-    acceleration?: number
+    acceleration?: number;
     // @internal (undocumented)
-    delay?: number
-    friction?: number
-    from?: number | string
-    restSpeed?: number
-    type: "physics"
-    velocity?: number
+    delay?: number;
+    friction?: number;
+    from?: number | string;
+    restSpeed?: number;
+    type: "physics";
+    velocity?: number;
 }
 
 // @internal
-declare const safeWindow: Window | ServerSafeWindow
+declare const safeWindow: Window | ServerSafeWindow;
 
 // @public
 interface Spring {
-    damping?: number
+    damping?: number;
     // (undocumented)
-    delay?: number
-    from?: number | string
-    mass?: number
-    restDelta?: number
-    restSpeed?: number
-    stiffness?: number
+    delay?: number;
+    from?: number | string;
+    mass?: number;
+    restDelta?: number;
+    restSpeed?: number;
+    stiffness?: number;
     // @internal (undocumented)
-    to?: number | string
-    type: "spring"
-    velocity?: number
+    to?: number | string;
+    type: "spring";
+    velocity?: number;
 }
 
 // @internal (undocumented)
-declare const svgElements: (keyof ReactSVG)[]
+declare const svgElements: (keyof ReactSVG)[];
 
 // @public
 declare type SVGMotionComponents = {
-    [K in SVGElements]: ComponentType<
-        Omit<SVGAttributes<SVGElement>, "style"> & MotionProps
-    >
-}
+    [K in SVGElements]: ComponentType<Omit<SVGAttributes<SVGElement>, "style"> & MotionProps>;
+};
 
 // @public (undocumented)
 interface TapHandlers {
-    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void
-    onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void
-    onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void
-    press?: string | TargetAndTransition
+    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    press?: string | TargetAndTransition;
 }
 
 // @public
 interface Tween {
     // @internal (undocumented)
-    delay?: number
-    duration?: number
-    ease?:
-        | [number, number, number, number]
-        | "linear"
-        | "easeIn"
-        | "easeOut"
-        | "easeInOut"
-        | "circIn"
-        | "circOut"
-        | "circInOut"
-        | "backIn"
-        | "backOut"
-        | "backInOut"
-        | "anticipate"
-        | EasingFunction
+    delay?: number;
+    duration?: number;
+    ease?: [number, number, number, number] | "linear" | "easeIn" | "easeOut" | "easeInOut" | "circIn" | "circOut" | "circInOut" | "backIn" | "backOut" | "backInOut" | "anticipate" | EasingFunction;
     // @internal
-    elapsed?: number
-    flip?: number
-    from?: number | string
-    loop?: number
+    elapsed?: number;
+    flip?: number;
+    from?: number | string;
+    loop?: number;
     // @internal (undocumented)
-    to?: number | string
-    type?: "tween"
+    to?: number | string;
+    type?: "tween";
     // @internal (undocumented)
-    velocity?: number
-    yoyo?: number
+    velocity?: number;
+    yoyo?: number;
 }
 
 // @internal
-declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V
+declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V;
 
 // @public
-declare function useAnimation(
-    variants?: Variants,
-    defaultTransition?: Transition
-): AnimationControls
+declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationControls;
 
 // @public
-declare function useCycle<T>(items: T[], initialIndex?: number): CycleState<T>
+declare function useCycle<T>(items: T[], initialIndex?: number): CycleState<T>;
 
 // @internal
-declare function useExternalRef<E = Element>(
-    external?: Ref<E | null>
-): RefObject<E | null>
+declare function useExternalRef<E = Element>(external?: Ref<E | null>): RefObject<E | null>;
 
 // @public
-declare function useGestures<GestureHandlers>(
-    props: GestureHandlers,
-    ref: RefObject<Element>
-): void
+declare function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
 
 // @public
-declare function useMotionValue<T>(initial: T): MotionValue<T>
+declare function useMotionValue<T>(initial: T): MotionValue<T>;
 
 // @internal (undocumented)
-declare function usePanGesture(
-    handlers: PanHandlers,
-    ref: RefObject<Element>
-): undefined
+declare function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined;
 
 // @internal (undocumented)
-declare function usePanGesture(
-    handlers: PanHandlers
-): {
+declare function usePanGesture(handlers: PanHandlers): {
     // (undocumented)
-    onPointerDown: EventHandler
-}
+    onPointerDown: EventHandler;
+};
 
 // @internal (undocumented)
-declare function useTapGesture(
-    handlers: TapHandlers & ControlsProp
-): {
+declare function useTapGesture(handlers: TapHandlers & ControlsProp): {
     // (undocumented)
-    onPointerDown: EventHandler
-}
+    onPointerDown: EventHandler;
+};
 
 // @internal (undocumented)
-declare function useTapGesture(
-    handlers: TapHandlers & ControlsProp,
-    ref: RefObject<Element>
-): undefined
+declare function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObject<Element>): undefined;
 
 // @public
-declare function useTransformedValue(
-    value: MotionValue,
-    transform: Transformer_2
-): MotionValue
+declare function useTransformedValue(value: MotionValue, transform: Transformer_2): MotionValue;
 
 // @public
-declare function useTransformedValue(
-    value: MotionValue<number>,
-    from: number[],
-    to: any[],
-    options?: MapOptions
-): MotionValue
+declare function useTransformedValue(value: MotionValue<number>, from: number[], to: any[], options?: MapOptions): MotionValue;
 
 // @public
-declare function useViewportScrollValues(): ScrollMotionValues
+declare function useViewportScrollValues(): ScrollMotionValues;
+
 
 // (No @packageDocumentation comment for this package)
