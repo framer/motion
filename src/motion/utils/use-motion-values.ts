@@ -68,7 +68,7 @@ export class MotionValuesMap {
         const { customStyles } = this
         if (customStyles && customStyles[key]) {
             setStyler = v => {
-                this.styler.set(customStyles[key].transform(v))
+                this.styler.set(customStyles[key].transformToStyles(v))
             }
         }
 

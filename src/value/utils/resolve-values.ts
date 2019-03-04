@@ -11,7 +11,9 @@ const createValueResolver = (resolver: Resolver) => (
     const resolvedValues = {}
     values.forEach((value, key) => {
         if (customStyles && customStyles[key]) {
-            const resolved = customStyles[key].transform(resolver(value))
+            const resolved = customStyles[key].transformToStyles(
+                resolver(value)
+            )
             for (const resolvedKey in resolved) {
                 resolvedValues[resolvedKey] = resolved[resolvedKey]
             }

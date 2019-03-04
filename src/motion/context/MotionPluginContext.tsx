@@ -3,7 +3,9 @@ import { createContext, useContext, useRef, ReactNode } from "react"
 import { Point } from "../../events"
 
 export type CustomStyle = {
-    transform: (v: number | string) => { [key: string]: number | string }
+    transformToStyles: (
+        v: number | string
+    ) => { [key: string]: number | string }
     motionEnabled?: boolean
 }
 

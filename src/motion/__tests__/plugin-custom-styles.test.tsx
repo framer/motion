@@ -6,10 +6,10 @@ import * as React from "react"
 
 const customPlugin = {
     size: {
-        transform: v => ({ width: v, height: v }),
+        transformToStyles: v => ({ width: v, height: v }),
     },
     image: {
-        transform: v => ({ backgroundImage: v }),
+        transformToStyles: v => ({ backgroundImage: v }),
         motionEnabled: false,
     },
 }
