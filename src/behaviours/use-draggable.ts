@@ -29,7 +29,7 @@ export interface DraggableProps {
      * Set "lockDirection" to lock dragging into the initial direction
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   return <motion.div dragEnabled="x" />
      * }
      * ```
@@ -41,7 +41,7 @@ export interface DraggableProps {
      * default.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   return <motion.div dragEnabled="x" dragPropagation />
      * }
      * ```
@@ -53,7 +53,7 @@ export interface DraggableProps {
      * beyond which dragging is constrained
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   return (
      *     <motion.div
      *       dragEnabled="x"
@@ -72,7 +72,7 @@ export interface DraggableProps {
      * full movement. Set to `0.5` by default.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   return (
      *     <motion.div
      *       dragEnabled
@@ -90,7 +90,7 @@ export interface DraggableProps {
      * finishes. Set to `true` by default.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   return (
      *     <motion.div
      *       dragEnabled
@@ -107,7 +107,7 @@ export interface DraggableProps {
      * Callback that fires when dragging starts.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const onDragStart = (event, { point, delta, offset, velocity }) => {
      *     console.log(`Dragging started at ${point.x} ${point.y}`)
      *   }
@@ -122,7 +122,7 @@ export interface DraggableProps {
      * Callback that fires when dragging ends.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const onDragEnd = (event, { point, delta, offset, velocity }) => {
      *     console.log(`Dragging ended at ${point.x} ${point.y}`)
      *   }
@@ -137,7 +137,7 @@ export interface DraggableProps {
      * Callback that fires when the component is dragged.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const onDrag = (event, { point, delta, offset, velocity }) => {
      *     console.log(`Drag velocity is ${velocity.x} ${velocity.y}`)
      *   }
@@ -152,7 +152,7 @@ export interface DraggableProps {
      * Callback that fires a drag direction is determined.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const onDirectionLock = (axis) => {
      *     console.log(`Dragging locked to the ${axis} axis`)
      *   }

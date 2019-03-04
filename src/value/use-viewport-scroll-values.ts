@@ -54,7 +54,7 @@ const viewportMotionValues: ScrollMotionValues = {
  * - Test 2
  *
  * ```jsx
- * const MyComponent = () => {
+ * function App() {
  *   const { scrollYProgress } = useViewportScrollValues()
  *   const scaleX = useTransformedValue(scrollYProgress, [0, 1], [0, 1])
  *

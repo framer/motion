@@ -7,7 +7,7 @@ import { motionValue, MotionValue } from "."
  * Usually, these are created automatically. For advanced use-cases, like use with `useTransformedValue`, you can create `MotionValue`s externally and pass them into the animated component via the `style` prop.
  *
  * ```jsx
- * const MyComponent = () => {
+ * function App() {
  *   const scale = useMotionValue(1)
  *
  *   return <Frame style={{ scale: scale }} />

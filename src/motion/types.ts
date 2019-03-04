@@ -77,7 +77,7 @@ export interface AnimationProps {
      * Object of labelled variants.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const variants = {
      *     active: {
      *       backgroundColor: '#f00'
@@ -98,7 +98,7 @@ export interface AnimationProps {
      * Default transition, to fall back on if no `transition` is defined in `animate`.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const transition = {
      *     type: 'spring',
      *     damping: 10,
@@ -120,7 +120,7 @@ export interface MotionCallbacks {
      * Callback with latest motion values, fired max once per frame.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const onUpdate = ({ x, opacity }) => {
      *     console.log(`Latest values: ${x} ${opacity}`)
      *   }
@@ -135,7 +135,7 @@ export interface MotionCallbacks {
      * Callback when animation defined in `animate` is complete.
      *
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const onComplete = () => {
      *     console.log(`Animation has completed`)
      *   }
@@ -198,7 +198,7 @@ export interface MotionProps
      *
      * @remarks
      * ```jsx
-     * const MyComponent = () => {
+     * function App() {
      *   const x = useMotionValue(0)
      *
      *   return <motion.div style={{ x, opacity: 1, scale: 0.5 }} />
