@@ -1,5 +1,5 @@
 import * as React from "react"
-import { forwardRef, Ref, ComponentType } from "react"
+import { useContext, forwardRef, Ref, ComponentType } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues, MountMotionValues } from "./utils/use-motion-values"
 import { useMotionStyles } from "./utils/use-styles"
@@ -28,7 +28,9 @@ export const createMotionComponent = <P extends {}>(
         externalRef?: Ref<Element>
     ) {
         const ref = useExternalRef(externalRef)
-        const values = useMotionValues(props)
+        const parentContext = useContext(MotionContext)
+        const isStatic = parentContext.static || props.static || false
+        const values = useMotionValues(props, isStatic)
         const style = useMotionStyles(values, props.style)
         const animatePropType = getAnimatePropType(props)
         const shouldInheritVariant = checkShouldInheritVariant(props)
@@ -38,7 +40,12 @@ export const createMotionComponent = <P extends {}>(
             ref,
             shouldInheritVariant
         )
-        const context = useMotionContext(controls, props.static, props.initial)
+        const context = useMotionContext(
+            parentContext,
+            controls,
+            isStatic,
+            props.initial
+        )
 
         // Add functionality
         const Animate = getAnimateComponent(animatePropType, context.static)
@@ -82,6 +89,7 @@ export const createMotionComponent = <P extends {}>(
                 innerRef={ref}
                 style={style}
                 values={values}
+                isStatic={isStatic}
             />
         )
 

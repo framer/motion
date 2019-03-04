@@ -12,7 +12,9 @@ describe("useMotionValue", () => {
         }
 
         const { container } = render(<Component />)
-        expect(container.firstChild).toHaveStyle("transform: translateX(100px)")
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(100px) translateZ(0)"
+        )
     })
 
     test("can be set manually", async () => {
@@ -25,6 +27,8 @@ describe("useMotionValue", () => {
         }
 
         const { container } = render(<Component />)
-        expect(container.firstChild).toHaveStyle("transform: translateX(500px)")
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(500px) translateZ(0)"
+        )
     })
 })

@@ -15,7 +15,7 @@ describe("as function", () => {
 
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(100px) translateY(-100px)"
+            "transform: translateX(100px) translateY(-100px) translateZ(0)"
         )
     })
 })

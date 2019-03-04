@@ -85,7 +85,7 @@ describe("motion component rendering and styles", () => {
             <motion.div style={{ x: 10, background: "#fff" }} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px); background: #fff"
+            "transform: translateX(10px) translateZ(0); background: #fff"
         )
     })
 
@@ -94,7 +94,7 @@ describe("motion component rendering and styles", () => {
             <motion.div initial={{ x: 10, background: "#fff" }} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px); background: rgb(255, 255, 255)"
+            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
         )
     })
 
@@ -106,7 +106,7 @@ describe("motion component rendering and styles", () => {
             <motion.div initial="foo" variants={variants} />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px); background: rgb(255, 255, 255)"
+            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
         )
     })
 
@@ -127,7 +127,9 @@ describe("motion component rendering and styles", () => {
             </motion.div>
         )
         expect(getByTestId("a")).toHaveStyle("transform: none")
-        expect(getByTestId("b")).toHaveStyle("transform: translateX(10px)")
+        expect(getByTestId("b")).toHaveStyle(
+            "transform: translateX(10px) translateZ(0)"
+        )
     })
 
     test("generates style attribute for children if passed initial as variant label", () => {
@@ -210,7 +212,9 @@ describe("motion component rendering and styles", () => {
         }
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
-        expect(container.firstChild).toHaveStyle("transform: rotate(90deg)")
+        expect(container.firstChild).toHaveStyle(
+            "transform: rotate(90deg) translateZ(0)"
+        )
     })
 
     test("applies transformTemplate on initial render", () => {
@@ -223,7 +227,7 @@ describe("motion component rendering and styles", () => {
             />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(10px) translateX(10px)"
+            "transform: translateY(10px) translateX(10px) translateZ(0)"
         )
     })
 
@@ -237,7 +241,7 @@ describe("motion component rendering and styles", () => {
             />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(10px) translateX(10px)"
+            "transform: translateY(10px) translateX(10px) translateZ(0)"
         )
 
         rerender(
@@ -250,7 +254,7 @@ describe("motion component rendering and styles", () => {
             />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(20px) translateX(10px)"
+            "transform: translateY(20px) translateX(10px) translateZ(0)"
         )
     })
 })

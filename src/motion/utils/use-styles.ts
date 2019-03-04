@@ -14,7 +14,8 @@ const isMotionValue = (value: any): value is MotionValue => {
 
 export const buildStyleAttr = (
     values: MotionValuesMap,
-    styleProp: CSSProperties
+    styleProp: CSSProperties,
+    isStatic: boolean
 ): CSSProperties => {
     return {
         ...styleProp,
@@ -23,12 +24,7 @@ export const buildStyleAttr = (
                 transform: values.getTransformTemplate(),
                 ...resolveCurrent(values),
             },
-            // Disable GPU acceleration for React-set styles. This shouldn't
-            // cause any issues but should improve page load performance.
-            // Something to keep an eye out for is potentially stuff like animating
-            // scale to 2, there's a potential that on re-render blurry content will become
-            // sharp, issues of that nature.
-            false
+            !isStatic
         ),
     }
 }
