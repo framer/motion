@@ -586,7 +586,7 @@ describe("static prop", () => {
         rerender(<motion.div static style={{ x: 200 }} />)
 
         expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(200px) translateZ(0)"
+            "transform: translateX(200px)"
         )
     })
 

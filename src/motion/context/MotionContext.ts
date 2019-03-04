@@ -1,4 +1,4 @@
-import { createContext, useContext, useMemo } from "react"
+import { createContext, useMemo } from "react"
 import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
 import { VariantLabels } from "../types"
 import { Target } from "../../types"
@@ -23,12 +23,11 @@ const isTarget = (v?: VariantLabels | Target): v is Target => {
 }
 
 export const useMotionContext = (
+    parentContext: MotionContextProps,
     controls: ComponentAnimationControls,
-    staticComponent: boolean = false,
+    isStatic: boolean = false,
     initial?: VariantLabels | Target
 ) => {
-    const parentContext = useContext(MotionContext)
-
     const context: MotionContextProps = useMemo(
         () => ({
             controls,
@@ -39,7 +38,7 @@ export const useMotionContext = (
     )
 
     context.dragging = parentContext.dragging
-    context.static = parentContext.static || staticComponent
+    context.static = isStatic
 
     // Set initial state
     useMemo(() => {

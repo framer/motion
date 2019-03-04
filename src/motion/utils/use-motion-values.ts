@@ -18,6 +18,11 @@ export class MotionValuesMap {
     private onUpdate?: Styler
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
+    private isStatic: boolean
+
+    constructor(isStatic: boolean) {
+        this.isStatic = isStatic
+    }
 
     has(key: string) {
         return this.values.has(key)
@@ -86,7 +91,10 @@ export class MotionValuesMap {
 
     mount(element: Element) {
         this.hasMounted = true
-        this.styler = styler(element, { preparseOutput: false })
+        this.styler = styler(element, {
+            preparseOutput: false,
+            enableHardwareAcceleration: !this.isStatic,
+        })
         this.values.forEach((value, key) => this.bindValueToStyler(key, value))
         this.updateTransformTemplate()
     }
@@ -99,11 +107,11 @@ export class MotionValuesMap {
     }
 }
 
-export const useMotionValues = ({
-    onUpdate,
-    transformTemplate,
-}: MotionProps) => {
-    const motionValues = useMemo(() => new MotionValuesMap(), [])
+export const useMotionValues = (
+    { onUpdate, transformTemplate }: MotionProps,
+    isStatic: boolean
+) => {
+    const motionValues = useMemo(() => new MotionValuesMap(isStatic), [])
     motionValues.setOnUpdate(onUpdate)
     motionValues.setTransformTemplate(transformTemplate)
 

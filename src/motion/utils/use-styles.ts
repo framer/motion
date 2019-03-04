@@ -14,14 +14,18 @@ const isMotionValue = (value: any): value is MotionValue => {
 
 export const buildStyleAttr = (
     values: MotionValuesMap,
-    styleProp: CSSProperties
+    styleProp: CSSProperties,
+    isStatic: boolean
 ): CSSProperties => {
     return {
         ...styleProp,
-        ...buildStyleProperty({
-            transform: values.getTransformTemplate(),
-            ...resolveCurrent(values),
-        }),
+        ...buildStyleProperty(
+            {
+                transform: values.getTransformTemplate(),
+                ...resolveCurrent(values),
+            },
+            !isStatic
+        ),
     }
 }
 

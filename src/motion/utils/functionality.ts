@@ -141,6 +141,7 @@ type RenderProps<P> = {
     innerRef: RefObject<Element | null>
     style: CSSProperties
     values: MotionValuesMap
+    isStatic: boolean
 }
 
 const eventHandlers = new Set([
@@ -169,6 +170,7 @@ export const RenderComponent = <P>({
     innerRef,
     style,
     values,
+    isStatic,
 }: RenderProps<P>) => {
     const isDOM = typeof base === "string"
     const isSVG = isDOM && svgElements.indexOf(base as any) !== -1
@@ -177,7 +179,7 @@ export const RenderComponent = <P>({
     return createElement<any>(base, {
         ...forwardProps,
         ref: innerRef,
-        style: isSVG ? style : buildStyleAttr(values, style),
+        style: isSVG ? style : buildStyleAttr(values, style, isStatic),
     })
 }
 

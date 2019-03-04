@@ -10,5 +10,7 @@ const style = {
 
 export const App = () => {
     const [x, setX] = useState(0)
-    return <motion.div animate={{ x }} style={style} onTap={() => setX(x + 45)} />
+    return (
+        <motion.div animate={{ x }} style={style} onTap={() => setX(x + 45)} />
+    )
 }
