@@ -1,7 +1,7 @@
 import { useMemo, useRef } from "react"
 import { MotionValue } from "./"
 
-export function useCustomValue(
+export function useCustomStyle(
     parent: MotionValue<any>,
     getTransformer: () => (v: any) => any,
     comparitor: any[]

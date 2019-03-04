@@ -2,8 +2,20 @@ import * as React from "react"
 import { createContext, useContext, useRef, ReactNode } from "react"
 import { Point } from "../../events"
 
+export type CustomStyle = {
+    transformToStyles: (
+        v: number | string
+    ) => { [key: string]: number | string }
+    motionEnabled?: boolean
+}
+
+export type CustomStyleMap = {
+    [key: string]: CustomStyle
+}
+
 export interface MotionPlugins {
-    transformPagePoint: (point: Point) => Point
+    transformPagePoint?: (point: Point) => Point
+    customStyles?: CustomStyleMap
 }
 
 export interface MotionPluginProps extends MotionPlugins {

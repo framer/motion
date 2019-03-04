@@ -15,6 +15,7 @@ import {
 import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
 import { VariantLabels } from "../motion/types"
+import { CustomStyleMap } from "../motion/context/MotionPluginContext"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -34,10 +35,35 @@ const getVelocity = (values: MotionValuesMap) => {
     return velocity
 }
 
-const isAnimatable = (value: string | number) =>
-    typeof value === "number" || complex.test(value)
-const isTargetResolver = (p: any): p is TargetResolver =>
-    typeof p === "function"
+const isAnimatable = (
+    value: string | number,
+    key: string,
+    customStyles?: CustomStyleMap
+) => {
+    // If motion has been specifically disabled for this value, return false
+    if (
+        customStyles &&
+        customStyles[key] &&
+        customStyles[key].motionEnabled === false
+    ) {
+        return false
+    } else if (typeof value === "number") {
+        return true
+    } else if (
+        typeof value === "string" &&
+        complex.test(value) &&
+        value.substring(0, 4) !== "url("
+    ) {
+        return true
+    }
+
+    return false
+}
+
+const isTargetResolver = (p: any): p is TargetResolver => {
+    return typeof p === "function"
+}
+
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 const isNumericalString = (v: string) => /^\d*\.?\d+$/.test(v)
 
@@ -53,10 +79,16 @@ export class ComponentAnimationControls<P = {}> {
     private defaultTransition?: Transition
     private children?: Set<ComponentAnimationControls>
     private isAnimating: Set<string> = new Set()
+    private customStyles?: CustomStyleMap
 
-    constructor(values: MotionValuesMap, ref: RefObject<Element>) {
+    constructor(
+        values: MotionValuesMap,
+        ref: RefObject<Element>,
+        customStyles?: CustomStyleMap
+    ) {
         this.values = values
         this.ref = ref
+        this.customStyles = customStyles
 
         this.values.forEach(
             (value, key) => (this.baseTarget[key] = value.get())
@@ -98,6 +130,7 @@ export class ComponentAnimationControls<P = {}> {
         )
         if (!newValueKeys.length) return
 
+        // Might live better in `MotionValuesMap`
         const domStyler = styler(this.ref.current as Element)
         newValueKeys.forEach(key => {
             const domValue = domStyler.get(key) || 0
@@ -132,6 +165,7 @@ export class ComponentAnimationControls<P = {}> {
         }
 
         const { transition, transitionEnd, ...target } = variant
+
         return { transition, transitionEnd, target }
     }
 
@@ -281,7 +315,7 @@ export class ComponentAnimationControls<P = {}> {
 
                 if (this.isAnimating.has(key)) return acc
 
-                if (isAnimatable(valueTarget)) {
+                if (isAnimatable(valueTarget, key, this.customStyles)) {
                     const [action, options] = getTransition(key, valueTarget, {
                         delay,
                         ...transition,
