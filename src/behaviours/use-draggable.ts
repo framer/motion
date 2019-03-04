@@ -164,6 +164,15 @@ export interface DraggableProps {
     onDirectionLock?(axis: "x" | "y"): void
 }
 
+const flattenConstraints = (constraints: Constraints | false) => {
+    if (!constraints) {
+        return [0, 0, 0, 0]
+    } else {
+        const { top, left, bottom, right } = constraints
+        return [top, left, bottom, right]
+    }
+}
+
 function shouldDrag(
     direction: DragDirection,
     drag: boolean | DragDirection | "lockDirection",
@@ -219,7 +228,7 @@ export function useDraggable(
     {
         dragEnabled = false,
         dragPropagation = false,
-        dragConstraints,
+        dragConstraints = false,
         dragElastic = true,
         dragMomentum = true,
         onDragStart,
@@ -372,7 +381,11 @@ export function useDraggable(
 
             return { onPanStart, onPan, onPanEnd }
         },
-        [dragEnabled, motionContext.dragging]
+        [
+            dragEnabled,
+            motionContext.dragging,
+            ...flattenConstraints(dragConstraints),
+        ]
     )
 
     usePanGesture(handlers, ref)
