@@ -5,7 +5,13 @@ import { useVariants } from "../../animation/use-variants"
 import { useGestures } from "../../gestures"
 import { useDraggable } from "../../behaviours"
 import { useAnimateProp } from "../../animation/use-animate-prop"
-import { createElement, ComponentType, RefObject, CSSProperties } from "react"
+import {
+    createElement,
+    useContext,
+    ComponentType,
+    RefObject,
+    CSSProperties,
+} from "react"
 import { buildStyleAttr } from "./use-styles"
 import { MotionValuesMap } from "./use-motion-values"
 import { AnimatePropType } from "../types"
@@ -13,6 +19,7 @@ import { Target } from "../../types"
 import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
 import isPropValid from "@emotion/is-prop-valid"
 import { svgElements } from "./supported-elements"
+import { MotionPluginContext } from "../context/MotionPluginContext"
 
 // TODO: We can tidy this up. There's probably a neater or more consistent way to structure this.
 
@@ -175,11 +182,14 @@ export const RenderComponent = <P>({
     const isDOM = typeof base === "string"
     const isSVG = isDOM && svgElements.indexOf(base as any) !== -1
     const forwardProps = isDOM ? validProps(props) : props
+    const { customValues } = useContext(MotionPluginContext)
 
     return createElement<any>(base, {
         ...forwardProps,
         ref: innerRef,
-        style: isSVG ? style : buildStyleAttr(values, style, isStatic),
+        style: isSVG
+            ? style
+            : buildStyleAttr(values, style, isStatic, customValues),
     })
 }
 

@@ -46,7 +46,8 @@ export type MotionTransform = MakeMotion<TransformProperties>
 /**
  * @public
  */
-export type MotionStyle = MotionCSS & MotionTransform
+export type MotionStyle = MotionCSS &
+    MotionTransform & { [key: string]: number | string }
 
 export type OnUpdate = (v: Target) => void
 

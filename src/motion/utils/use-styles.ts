@@ -1,9 +1,13 @@
-import { useRef, CSSProperties } from "react"
+import { useRef, CSSProperties, useContext } from "react"
 import { buildStyleProperty, isTransformProp } from "stylefire"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
 import { MotionStyle } from "../types"
+import {
+    CustomValueMap,
+    MotionPluginContext,
+} from "../context/MotionPluginContext"
 
 const transformOriginProps = new Set(["originX", "originY"])
 const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
@@ -15,14 +19,15 @@ const isMotionValue = (value: any): value is MotionValue => {
 export const buildStyleAttr = (
     values: MotionValuesMap,
     styleProp: CSSProperties,
-    isStatic: boolean
+    isStatic: boolean,
+    customValues?: CustomValueMap
 ): CSSProperties => {
     return {
         ...styleProp,
         ...buildStyleProperty(
             {
                 transform: values.getTransformTemplate(),
-                ...resolveCurrent(values),
+                ...resolveCurrent(values, customValues),
             },
             !isStatic
         ),
@@ -35,6 +40,7 @@ export const useMotionStyles = (
 ): CSSProperties => {
     const style = useRef<CSSProperties>({}).current
     const prevMotionStyles = useRef({}).current
+    const { customValues } = useContext(MotionPluginContext)
 
     for (const key in styleProp) {
         const thisStyle = styleProp[key]
@@ -42,7 +48,11 @@ export const useMotionStyles = (
         if (isMotionValue(thisStyle)) {
             // If this is a motion value, add it to our MotionValuesMap
             values.set(key, thisStyle)
-        } else if (isTransformProp(key) || isTransformOriginProp(key)) {
+        } else if (
+            isTransformProp(key) ||
+            isTransformOriginProp(key) ||
+            (customValues && customValues[key])
+        ) {
             // Or if it's a transform prop, create a motion value (or update an existing one)
             // to ensure Stylefire can reconcile all the transform values together.
             if (!values.has(key)) {
