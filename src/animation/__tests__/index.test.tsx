@@ -68,12 +68,17 @@ describe("useAnimation", () => {
                 const backgroundColor = useMotionValue("#000")
 
                 useEffect(() => {
-                    animation.start("foo").then(() => resolve([x.get(), backgroundColor.get()]))
+                    animation
+                        .start("foo")
+                        .then(() => resolve([x.get(), backgroundColor.get()]))
                 }, [])
 
                 return (
                     <motion.div animate={animation} style={{ x }}>
-                        <motion.div animate={childAnimation} style={{ backgroundColor }} />
+                        <motion.div
+                            animate={childAnimation}
+                            style={{ backgroundColor }}
+                        />
                     </motion.div>
                 )
             }

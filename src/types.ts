@@ -1,5 +1,5 @@
 import { CSSProperties } from "react"
-import { TransformProperties } from "./motion/types"
+import { TransformProperties, CustomProperties } from "./motion/types"
 
 export type Props = { [key: string]: any }
 
@@ -668,11 +668,10 @@ export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type CSSPropertiesWithoutTransition = Omit<CSSProperties, "transition">
 
 export type Target = CSSPropertiesWithoutTransition &
-    TransformProperties & {
+    TransformProperties &
+    CustomProperties & {
         pathLength?: number
         pathSpacing?: number
-    } & {
-        [key: string]: number | string
     }
 
 export type TargetAndTransition = Target & {

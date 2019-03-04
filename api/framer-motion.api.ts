@@ -126,7 +126,9 @@ declare function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.E
 // @internal (undocumented)
 interface MotionPlugins {
     // (undocumented)
-    transformPagePoint: (point: Point) => Point;
+    customValues?: CustomValueMap;
+    // (undocumented)
+    transformPagePoint?: (point: Point) => Point;
 }
 
 // @public
@@ -139,7 +141,7 @@ interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, 
 }
 
 // @public (undocumented)
-declare type MotionStyle = MotionCSS & MotionTransform;
+declare type MotionStyle = MotionCSS & MotionTransform & MotionCustom;
 
 // @internal (undocumented)
 declare class MotionValue<V = any> {
