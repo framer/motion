@@ -98,6 +98,14 @@ export interface PanHandlers {
      *   return <motion.div onPan={onPan} />
      * }
      * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     *
+     *   - `point`: Relative to the document.
+     *   - `delta`: Distance moved since the last event.
+     *   - `offset`: Offset from the original pan event.
+     *   - `velocity`: Current velocity of the pointer.
      */
     onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
@@ -113,6 +121,14 @@ export interface PanHandlers {
      *   return <motion.div onPanStart={onPanStart} />
      * }
      * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     *
+     *   - `point`: Relative to the document.
+     *   - `delta`: Distance moved since the last event.
+     *   - `offset`: Offset from the original pan event.
+     *   - `velocity`: Current velocity of the pointer.
      */
     onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
@@ -128,6 +144,14 @@ export interface PanHandlers {
      *   return <motion.div onPanEnd={onPanEnd} />
      * }
      * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     *
+     *   - `point`: Relative to the document.
+     *   - `delta`: Distance moved since the last event.
+     *   - `offset`: Offset from the original pan event.
+     *   - `velocity`: Current velocity of the pointer.
      */
     onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void
 }

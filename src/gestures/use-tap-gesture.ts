@@ -30,13 +30,18 @@ export interface TapHandlers {
      *
      * ```jsx
      * export function MyComponent() {
-     *   function onTap = (event, { point }) {
+     *   function onTap(event, { point }) {
      *      console.log(`Tapped at ${point.x} ${point.y}`)
      *   }
      *
      *   return <motion.div onTap={onTap} />
      * }
      * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link TapInfo} object containing `x`/`y` values for:
+     *
+     *  - `point` relative to the document.
      */
     onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
@@ -52,6 +57,11 @@ export interface TapHandlers {
      *   return <motion.div onTapStart={onTapStart} />
      * }
      * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link TapInfo} object containing `x`/`y` values for:
+     *
+     *  - `point` relative to the document.
      */
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
@@ -67,6 +77,11 @@ export interface TapHandlers {
      *   return <motion.div onTapCancel={onTapCancel} />
      * }
      * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link TapInfo} object containing `x`/`y` values for:
+     *
+     *  - `point` relative to the document.
      */
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
