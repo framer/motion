@@ -90,7 +90,7 @@ export interface PanHandlers {
      * Callback when the pan gesture is recognised on this element.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   function onPan(event, { point, delta, offset, velocity }) {
      *      console.log(`Panned to ${point.x} ${point.y}`)
      *   }
@@ -105,7 +105,7 @@ export interface PanHandlers {
      * Callback when the pan gesture begins on this element.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   function onPanStart(event, { point, delta, offset, velocity }) {
      *      console.log(`Started panning at ${point.x} ${point.y}`)
      *   }
@@ -120,7 +120,7 @@ export interface PanHandlers {
      * Callback when the pan gesture ends on this element.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   function onPanEnd(event, { point, delta, offset, velocity }) {
      *      console.log(`Stopped panning at ${point.x} ${point.y}`)
      *   }

@@ -18,7 +18,7 @@ const noop = () => (v: any) => v
  * ```jsx
  * const double = (v) => v * 2
  *
- * function App() {
+ * export function MyComponent() {
  *   const x = useMotionValue(0)
  *   const y = useTransformedValue(x, double)
  *   // y will be x, doubled
@@ -53,7 +53,7 @@ export function useTransformedValue(
  * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
  *
  * ```jsx
- * function App() {
+ * export function MyComponent() {
  *   const x = useMotionValue(0)
  *   const xRange = [-200, -100, 100, 200]
  *   const opacityRange = [0, 1, 1, 0]

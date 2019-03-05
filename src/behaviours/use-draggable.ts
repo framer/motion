@@ -23,7 +23,7 @@ export interface DragHandlers {
      * Callback that fires when dragging starts.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   const onDragStart = (event, { point, delta, offset, velocity }) => {
      *     console.log(`Dragging started at ${point.x} ${point.y}`)
      *   }
@@ -38,7 +38,7 @@ export interface DragHandlers {
      * Callback that fires when dragging ends.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   const onDragEnd = (event, { point, delta, offset, velocity }) => {
      *     console.log(`Dragging ended at ${point.x} ${point.y}`)
      *   }
@@ -53,7 +53,7 @@ export interface DragHandlers {
      * Callback that fires when the component is dragged.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   const onDrag = (event, { point, delta, offset, velocity }) => {
      *     console.log(`Drag velocity is ${velocity.x} ${velocity.y}`)
      *   }
@@ -68,7 +68,7 @@ export interface DragHandlers {
      * Callback that fires a drag direction is determined.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   const onDirectionLock = (axis) => {
      *     console.log(`Dragging locked to the ${axis} axis`)
      *   }
@@ -92,7 +92,7 @@ export interface DraggableProps extends DragHandlers {
      * Set "lockDirection" to lock dragging into the initial direction
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   return <motion.div dragEnabled="x" />
      * }
      * ```
@@ -104,7 +104,7 @@ export interface DraggableProps extends DragHandlers {
      * default.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   return <motion.div dragEnabled="x" dragPropagation />
      * }
      * ```
@@ -116,7 +116,7 @@ export interface DraggableProps extends DragHandlers {
      * beyond which dragging is constrained
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   return (
      *     <motion.div
      *       dragEnabled="x"
@@ -135,7 +135,7 @@ export interface DraggableProps extends DragHandlers {
      * full movement. Set to `0.5` by default.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   return (
      *     <motion.div
      *       dragEnabled
@@ -153,7 +153,7 @@ export interface DraggableProps extends DragHandlers {
      * finishes. Set to `true` by default.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   return (
      *     <motion.div
      *       dragEnabled
