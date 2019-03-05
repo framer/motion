@@ -29,7 +29,7 @@ export interface TapHandlers {
      * Callback when the tap gesture successfully ends on this element.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   function onTap = (event, { point }) {
      *      console.log(`Tapped at ${point.x} ${point.y}`)
      *   }
@@ -44,7 +44,7 @@ export interface TapHandlers {
      * Callback when the tap gesture starts on this element.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   function onTapStart(event, { point }) {
      *      console.log(`Tap started at ${point.x} ${point.y}`)
      *   }
@@ -59,7 +59,7 @@ export interface TapHandlers {
      * Callback when the tap gesture ends outside this element.
      *
      * ```jsx
-     * function App() {
+     * export function MyComponent() {
      *   function onTapCancel(event, { point }) {
      *      console.log(`Tap cancelled at ${point.x} ${point.y}`)
      *   }
@@ -74,18 +74,7 @@ export interface TapHandlers {
      * Properties or variant label to animate to while the component is pressed.
      *
      * ```jsx
-     * function App() {
-     *   return <motion.div press={{ scale: 0.8 }} />
-     * }
-     *
-     * // With variants
-     * function App() {
-     *   const variants = {
-     *     pressed: { scale: 0.8 }
-     *   }
-     *
-     *   return <motion.div variants={variants} press="pressed" />
-     * }
+     * <motion.div press={{ scale: 0.8 }} />
      * ```
      */
     press?: string | TargetAndTransition
