@@ -84,9 +84,7 @@ export interface DraggableProps extends DragHandlers {
      * Set "lockDirection" to lock dragging into the initial direction
      *
      * ```jsx
-     * export function MyComponent() {
-     *   return <motion.div dragEnabled="x" />
-     * }
+     * <motion.div dragEnabled="x" />
      * ```
      */
     dragEnabled?: boolean | "x" | "y" | "lockDirection"
@@ -96,9 +94,7 @@ export interface DraggableProps extends DragHandlers {
      * default.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   return <motion.div dragEnabled="x" dragPropagation />
-     * }
+     * <motion.div dragEnabled="x" dragPropagation />
      * ```
      */
     dragPropagation?: boolean
