@@ -17,10 +17,73 @@ export type Constraints = {
     bottom?: number
 }
 
+/** @public */
+export interface DragHandlers {
+    /**
+     * Callback that fires when dragging starts.
+     *
+     * ```jsx
+     * function App() {
+     *   const onDragStart = (event, { point, delta, offset, velocity }) => {
+     *     console.log(`Dragging started at ${point.x} ${point.y}`)
+     *   }
+     *
+     *   return <motion.div dragEnabled onDragStart={onDragStart} />
+     * }
+     * ```
+     */
+    onDragStart?(e: MouseEvent | TouchEvent): void
+
+    /**
+     * Callback that fires when dragging ends.
+     *
+     * ```jsx
+     * function App() {
+     *   const onDragEnd = (event, { point, delta, offset, velocity }) => {
+     *     console.log(`Dragging ended at ${point.x} ${point.y}`)
+     *   }
+     *
+     *   return <motion.div dragEnabled onDragEnd={onDragEnd} />
+     * }
+     * ```
+     */
+    onDragEnd?(e: MouseEvent | TouchEvent): void
+
+    /**
+     * Callback that fires when the component is dragged.
+     *
+     * ```jsx
+     * function App() {
+     *   const onDrag = (event, { point, delta, offset, velocity }) => {
+     *     console.log(`Drag velocity is ${velocity.x} ${velocity.y}`)
+     *   }
+     *
+     *   return <motion.div dragEnabled onDrag={onDrag} />
+     * }
+     * ```
+     */
+    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
+
+    /**
+     * Callback that fires a drag direction is determined.
+     *
+     * ```jsx
+     * function App() {
+     *   const onDirectionLock = (axis) => {
+     *     console.log(`Dragging locked to the ${axis} axis`)
+     *   }
+     *
+     *   return <motion.div dragEnabled onDirectionLock={onDirectionLock} />
+     * }
+     * ```
+     */
+    onDirectionLock?(axis: "x" | "y"): void
+}
+
 /**
  * @public
  */
-export interface DraggableProps {
+export interface DraggableProps extends DragHandlers {
     /**
      * Enable dragging for this element. Set to `false` by default.
      *
@@ -102,66 +165,6 @@ export interface DraggableProps {
      * ```
      */
     dragMomentum?: boolean
-
-    /**
-     * Callback that fires when dragging starts.
-     *
-     * ```jsx
-     * function App() {
-     *   const onDragStart = (event, { point, delta, offset, velocity }) => {
-     *     console.log(`Dragging started at ${point.x} ${point.y}`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDragStart={onDragStart} />
-     * }
-     * ```
-     */
-    onDragStart?(e: MouseEvent | TouchEvent): void
-
-    /**
-     * Callback that fires when dragging ends.
-     *
-     * ```jsx
-     * function App() {
-     *   const onDragEnd = (event, { point, delta, offset, velocity }) => {
-     *     console.log(`Dragging ended at ${point.x} ${point.y}`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDragEnd={onDragEnd} />
-     * }
-     * ```
-     */
-    onDragEnd?(e: MouseEvent | TouchEvent): void
-
-    /**
-     * Callback that fires when the component is dragged.
-     *
-     * ```jsx
-     * function App() {
-     *   const onDrag = (event, { point, delta, offset, velocity }) => {
-     *     console.log(`Drag velocity is ${velocity.x} ${velocity.y}`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDrag={onDrag} />
-     * }
-     * ```
-     */
-    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
-
-    /**
-     * Callback that fires a drag direction is determined.
-     *
-     * ```jsx
-     * function App() {
-     *   const onDirectionLock = (axis) => {
-     *     console.log(`Dragging locked to the ${axis} axis`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDirectionLock={onDirectionLock} />
-     * }
-     * ```
-     */
-    onDirectionLock?(axis: "x" | "y"): void
 }
 
 const flattenConstraints = (constraints: Constraints | false) => {

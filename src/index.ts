@@ -37,7 +37,7 @@ export {
     MotionStyle,
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
-export { DraggableProps } from "./behaviours"
+export { DraggableProps, DragHandlers } from "./behaviours"
 export {
     Orchestration,
     Tween,

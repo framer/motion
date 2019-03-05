@@ -1,1 +1,1 @@
-export { useDraggable, DraggableProps } from "./use-draggable"
+export { useDraggable, DraggableProps, DragHandlers } from "./use-draggable"
