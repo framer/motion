@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.6.8] 2019-03-04
+
+### Fixed
+
+-   Updating `dragConstraints` when they change.
+
 ## [0.6.7] 2019-03-04
 
 ### Updated

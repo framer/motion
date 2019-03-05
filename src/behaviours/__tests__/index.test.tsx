@@ -327,4 +327,40 @@ describe("dragging", () => {
 
         return expect(promise).resolves.toEqual([500, 100])
     })
+
+    test("drag constraints can be updated", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const y = motionValue(0)
+            const Component = ({ constraints }) => (
+                <MockDrag>
+                    <motion.div
+                        dragEnabled
+                        dragConstraints={constraints}
+                        dragElastic={false}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(
+                <Component constraints={{ top: -100, bottom: 0 }} />
+            )
+            rerender(<Component constraints={{ top: -100, bottom: 0 }} />)
+            rerender(<Component constraints={{ top: -50, bottom: 0 }} />)
+            rerender(<Component constraints={{ top: -50, bottom: 0 }} />)
+
+            const pointer = drag(container.firstChild).to(1, 1)
+
+            sync.postRender(() => {
+                pointer.to(500, -500)
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve([x.get(), y.get()])
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([500, -50])
+    })
 })
