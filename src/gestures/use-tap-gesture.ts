@@ -29,13 +29,11 @@ export interface TapHandlers {
      * Callback when the tap gesture successfully ends on this element.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   function onTap(event, { point }) {
-     *      console.log(`Tapped at ${point.x} ${point.y}`)
-     *   }
-     *
-     *   return <motion.div onTap={onTap} />
+     * function onTap(event, { point }) {
+     *   console.log(`Tapped at ${point.x} ${point.y}`)
      * }
+     *
+     * <motion.div onTap={onTap} />
      * ```
      *
      * @param event - The originating pointer event.
@@ -49,13 +47,11 @@ export interface TapHandlers {
      * Callback when the tap gesture starts on this element.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   function onTapStart(event, { point }) {
-     *      console.log(`Tap started at ${point.x} ${point.y}`)
-     *   }
-     *
-     *   return <motion.div onTapStart={onTapStart} />
+     * function onTapStart(event, { point }) {
+     *   console.log(`Tap started at ${point.x} ${point.y}`)
      * }
+     *
+     * <motion.div onTapStart={onTapStart} />
      * ```
      *
      * @param event - The originating pointer event.
@@ -69,13 +65,11 @@ export interface TapHandlers {
      * Callback when the tap gesture ends outside this element.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   function onTapCancel(event, { point }) {
-     *      console.log(`Tap cancelled at ${point.x} ${point.y}`)
-     *   }
-     *
-     *   return <motion.div onTapCancel={onTapCancel} />
+     * function onTapCancel(event, { point }) {
+     *   console.log(`Tap cancelled at ${point.x} ${point.y}`)
      * }
+     *
+     * return <motion.div onTapCancel={onTapCancel} />
      * ```
      *
      * @param event - The originating pointer event.

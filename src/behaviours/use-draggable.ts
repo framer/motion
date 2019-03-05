@@ -23,13 +23,11 @@ export interface DragHandlers {
      * Callback that fires when dragging starts.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const onDragStart = (event, { point, delta, offset, velocity }) => {
-     *     console.log(`Dragging started at ${point.x} ${point.y}`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDragStart={onDragStart} />
+     * function onDragStart(event, { point, delta, offset, velocity }) {
+     *   console.log(`Dragging started at ${point.x} ${point.y}`)
      * }
+     *
+     *  <motion.div dragEnabled onDragStart={onDragStart} />
      * ```
      */
     onDragStart?(e: MouseEvent | TouchEvent): void
@@ -38,13 +36,11 @@ export interface DragHandlers {
      * Callback that fires when dragging ends.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const onDragEnd = (event, { point, delta, offset, velocity }) => {
-     *     console.log(`Dragging ended at ${point.x} ${point.y}`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDragEnd={onDragEnd} />
+     * function onDragEnd(event, { point, delta, offset, velocity }) {
+     *   console.log(`Dragging ended at ${point.x} ${point.y}`)
      * }
+     *
+     * <motion.div dragEnabled onDragEnd={onDragEnd} />
      * ```
      */
     onDragEnd?(e: MouseEvent | TouchEvent): void
@@ -53,13 +49,11 @@ export interface DragHandlers {
      * Callback that fires when the component is dragged.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const onDrag = (event, { point, delta, offset, velocity }) => {
-     *     console.log(`Drag velocity is ${velocity.x} ${velocity.y}`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDrag={onDrag} />
+     * function onDrag (event, { point, delta, offset, velocity }) {
+     *   console.log(`Drag velocity is ${velocity.x} ${velocity.y}`)
      * }
+     *
+     * <motion.div dragEnabled onDrag={onDrag} />
      * ```
      */
     onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
@@ -68,13 +62,11 @@ export interface DragHandlers {
      * Callback that fires a drag direction is determined.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const onDirectionLock = (axis) => {
-     *     console.log(`Dragging locked to the ${axis} axis`)
-     *   }
-     *
-     *   return <motion.div dragEnabled onDirectionLock={onDirectionLock} />
+     * function onDirectionLock(axis) {
+     *   console.log(`Dragging locked to the ${axis} axis`)
      * }
+     *
+     * <motion.div dragEnabled onDirectionLock={onDirectionLock} />
      * ```
      */
     onDirectionLock?(axis: "x" | "y"): void
@@ -116,14 +108,10 @@ export interface DraggableProps extends DragHandlers {
      * beyond which dragging is constrained
      *
      * ```jsx
-     * export function MyComponent() {
-     *   return (
-     *     <motion.div
-     *       dragEnabled="x"
-     *       dragConstraints={{ left: 0, right: 300 }}
-     *     />
-     *   )
-     * }
+     * <motion.div
+     *   dragEnabled="x"
+     *   dragConstraints={{ left: 0, right: 300 }}
+     * />
      * ```
      */
     dragConstraints?:
@@ -135,15 +123,11 @@ export interface DraggableProps extends DragHandlers {
      * full movement. Set to `0.5` by default.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   return (
-     *     <motion.div
-     *       dragEnabled
-     *       dragConstraints={{ left: 0, right: 300 }}
-     *       dragElastic={0.2}
-     *     />
-     *   )
-     * }
+     * <motion.div
+     *   dragEnabled
+     *   dragConstraints={{ left: 0, right: 300 }}
+     *   dragElastic={0.2}
+     * />
      * ```
      */
     dragElastic?: boolean | number
@@ -153,15 +137,11 @@ export interface DraggableProps extends DragHandlers {
      * finishes. Set to `true` by default.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   return (
-     *     <motion.div
-     *       dragEnabled
-     *       dragConstraints={{ left: 0, right: 300 }}
-     *       dragMomentum={false}
-     *     />
-     *   )
-     * }
+     * <motion.div
+     *   dragEnabled
+     *   dragConstraints={{ left: 0, right: 300 }}
+     *   dragMomentum={false}
+     * />
      * ```
      */
     dragMomentum?: boolean
