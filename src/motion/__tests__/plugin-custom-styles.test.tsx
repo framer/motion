@@ -32,7 +32,7 @@ describe("custom values plugin", () => {
     test("animates", async () => {
         const promise = new Promise(resolve => {
             const resolvePromise = () => {
-                setTimeout(() => resolve(container.firstChild), 17)
+                setTimeout(() => resolve(container.firstChild), 20)
             }
 
             const Component = () => {
