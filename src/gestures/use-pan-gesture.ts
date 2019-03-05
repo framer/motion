@@ -101,6 +101,7 @@ export interface PanHandlers {
      *
      * @param event - The originating pointer event.
      * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     *
      *   - `point`: Relative to the document.
      *   - `delta`: Distance moved since the last event.
      *   - `offset`: Offset from the original pan event.
@@ -123,6 +124,7 @@ export interface PanHandlers {
      *
      * @param event - The originating pointer event.
      * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     *
      *   - `point`: Relative to the document.
      *   - `delta`: Distance moved since the last event.
      *   - `offset`: Offset from the original pan event.
@@ -145,6 +147,7 @@ export interface PanHandlers {
      *
      * @param event - The originating pointer event.
      * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     *
      *   - `point`: Relative to the document.
      *   - `delta`: Distance moved since the last event.
      *   - `offset`: Offset from the original pan event.
