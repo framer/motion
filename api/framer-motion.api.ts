@@ -15,7 +15,7 @@ declare type CustomMotionComponent = {
 };
 
 // @public (undocumented)
-interface DraggableProps {
+interface DraggableProps extends DragHandlers {
     dragConstraints?: false | {
         // (undocumented)
         top?: number;
@@ -30,6 +30,10 @@ interface DraggableProps {
     dragEnabled?: boolean | "x" | "y" | "lockDirection";
     dragMomentum?: boolean;
     dragPropagation?: boolean;
+}
+
+// @public (undocumented)
+interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
     onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void;
     onDragEnd?(e: MouseEvent | TouchEvent): void;
