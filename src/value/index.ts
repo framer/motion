@@ -183,12 +183,7 @@ export class MotionValue<V = any> {
         this.stop()
 
         const { delay, ...timeAdjustedConfig } = parseDurations(config)
-
-        let initialisedController = controller({
-            from: this.get() as any,
-            velocity: this.getVelocity(),
-            ...timeAdjustedConfig,
-        })
+        let initialisedController = controller(timeAdjustedConfig)
 
         if (transformer) {
             initialisedController = initialisedController.pipe(transformer)

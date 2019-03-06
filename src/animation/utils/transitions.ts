@@ -19,7 +19,7 @@ import {
 } from "../../types"
 import { getDefaultTransition } from "./default-transitions"
 import { invariant } from "hey-listen"
-import { ActionFactory } from "../../value"
+import { ActionFactory, MotionValue } from "../../value"
 
 type JustProps = { to: string | number }
 const just: ActionFactory = ({ to }: JustProps): Action => {
@@ -83,7 +83,7 @@ const transitionOptionParser = {
 
         return opts
     },
-    keyframes: ({ from, to, ...opts }: Keyframes) => opts,
+    keyframes: ({ from, to, velocity, ...opts }: Keyframes) => opts,
 }
 
 const isTransitionDefined = ({
@@ -141,6 +141,7 @@ const preprocessOptions = (
 }
 
 export const getTransition = (
+    value: MotionValue,
     valueKey: string,
     to: string | number,
     transition?: Transition
@@ -152,10 +153,11 @@ export const getTransition = (
     )
 
     const actionFactory = transitions[type]
-    const opts: PopmotionTransitionProps = preprocessOptions(
-        type,
-        transitionDefinition
-    )
+    const opts = preprocessOptions(type, {
+        from: value.get(),
+        velocity: value.getVelocity(),
+        ...transitionDefinition,
+    })
 
     return [actionFactory, opts]
 }

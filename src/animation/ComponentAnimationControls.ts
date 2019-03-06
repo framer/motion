@@ -303,10 +303,15 @@ export class ComponentAnimationControls<P = {}> {
                 if (this.isAnimating.has(key)) return acc
 
                 if (isAnimatable(valueTarget)) {
-                    const [action, options] = getTransition(key, valueTarget, {
-                        delay,
-                        ...transition,
-                    })
+                    const [action, options] = getTransition(
+                        value,
+                        key,
+                        valueTarget,
+                        {
+                            delay,
+                            ...transition,
+                        }
+                    )
 
                     acc.push(
                         value.control(
