@@ -14,14 +14,14 @@ const noop = () => (v: any) => v
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
- *
+ * Here, the `y` value will always be twice the `x` value.
  * ```jsx
- * const double = (v) => v * 2
+ * import * as React from "react"
+ * import { Frame, useMotionValue, useTransformedValue } from "framer"
  *
  * export function MyComponent() {
- *   const x = useMotionValue(0)
- *   const y = useTransformedValue(x, double)
- *   // y will be x, doubled
+ *   const x = useMotionValue(10)
+ *   const y = useTransformedValue(x, value => value * 2)
  *
  *   return <Frame style={{ x, y }} />
  * }
