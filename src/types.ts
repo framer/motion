@@ -46,22 +46,23 @@ export interface Orchestration {
      *
      * @remarks
      * When using variants, the transition can be scheduled in relation to its
-     * children with either `'beforeChildren'` to finish this transition before
-     * starting children transitions, `'afterChildren'` to finish children
+     * children with either `"beforeChildren"` to finish this transition before
+     * starting children transitions, `"afterChildren"` to finish children
      * transitions before starting this transition.
      *
      * ```jsx
      * const container = {
      *   hidden: {
      *     opacity: 0,
-     *     // This will ensure all children animations
-     *     // finish before this animation starts
-     *     transition: { when: 'afterChildren' }
+     *     transition: { when: "afterChildren" }
      *   }
      * }
      *
      * const item = {
-     *   hidden: { opacity: 0 }
+     *   hidden: {
+     *     opacity: 0,
+     *     transition: { duration: 2 }
+     *   }
      * }
      *
      * return (
@@ -69,9 +70,8 @@ export interface Orchestration {
      *     variants={container}
      *     animate="hidden"
      *   >
-     *     <Frame variants={item} />
-     *     <Frame variants={item} />
-     *     <Frame variants={item} />
+     *     <Frame variants={item} size={50} />
+     *     <Frame variants={item} size={50} />
      *   </Frame>
      * )
      * ```
@@ -82,14 +82,42 @@ export interface Orchestration {
 
     /**
      * When using variants, children animations will start after this duration
-     * (in seconds).
+     * (in seconds). You can add the `transition` property to both the `Frame` and the `variant` directly. Adding it to the `variant` generally offers more flexibility, as it allows you to customize the delay per visual state.
+     *
+     * ```jsx
+     * const container = {
+     *   hidden: { opacity: 0 },
+     *   show: {
+     *     opacity: 1,
+     *     transition: {
+     *       delayChildren: 0.5
+     *     }
+     *   }
+     * }
+     *
+     * const item = {
+     *   hidden: { opacity: 0 },
+     *   show: { opacity: 1 }
+     * }
+     *
+     * return (
+     *   <Frame
+     *     variants={container}
+     *     initial="hidden"
+     *     animate="show"
+     *   >
+     *     <Frame variants={item} size={50} />
+     *     <Frame variants={item} size={50} />
+     *   </Frame>
+     * )
+     * ```
      *
      * @public
      */
     delayChildren?: number
 
     /**
-     * When using variants, children animations can be staggered by this
+     * When using variants, animations of child Frames can be staggered by this
      * duration (in seconds).
      *
      * For instance, if `staggerChildren` is `0.01`, the first child will be
@@ -98,18 +126,70 @@ export interface Orchestration {
      *
      * The calculated stagger delay will be added to `delayChildren`.
      *
+     * ```jsx
+     * const container = {
+     *   hidden: { opacity: 0 },
+     *   show: {
+     *     opacity: 1,
+     *     transition: {
+     *       staggerChildren: 0.5
+     *     }
+     *   }
+     * }
+     *
+     * const item = {
+     *   hidden: { opacity: 0 },
+     *   show: { opacity: 1 }
+     * }
+     *
+     * return (
+     *   <Frame
+     *     variants={container}
+     *     initial="hidden"
+     *     animate="show"
+     *   >
+     *     <Frame variants={item} size={50} />
+     *     <Frame variants={item} size={50} />
+     *   </Frame>
+     * )
+     * ```
      * @public
      */
     staggerChildren?: number
 
     /**
      * The direction in which to stagger children.
+     * A value of `1` staggers from the first to the last while `-1`
+     * staggers from the last to the first.
      *
-     * @remarks
+     * ```jsx
+     * const container = {
+     *   hidden: { opacity: 0 },
+     *   show: {
+     *     opacity: 1,
+     *     transition: {
+     *       delayChildren: 0.5,
+     *       staggerDirection: -1
+     *     }
+     *   }
+     * }
      *
-     * A value of `1` staggers from the first child to the last while `-1`
-     * staggers from the last child to the first.
+     * const item = {
+     *   hidden: { opacity: 0 },
+     *   show: { opacity: 1 }
+     * }
      *
+     * return (
+     *   <Frame
+     *     variants={container}
+     *     initial="hidden"
+     *     animate="show"
+     *   >
+     *     <Frame variants={item} size={50} />
+     *     <Frame variants={item} size={50} />
+     *   </Frame>
+     * )
+     * ```
      * @public
      */
     staggerDirection?: 1 | -1
