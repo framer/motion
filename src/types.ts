@@ -197,18 +197,22 @@ export interface Orchestration {
 
 /**
  * An animation that animates between two values over a specific duration of time.
- *
  * This is the default animation for non-physical values like `color` and `opacity`.
  *
  * @public
  */
 export interface Tween {
     /**
-     * Set `type` to `'tween'` to use a duration-based tween animation.
+     * Set `type` to `"tween"` to use a duration-based tween animation.
+     * If any non-orchestration `transition` values are set without a `type` property,
+     * this is used as the default animation.
      *
-     * @remarks
-     * If any non-orchestration `transition` values are set without a `type` prop,
-     * "tween" is used as the default animation.
+     * ```jsx
+     * <Frame
+     *   animate={{ opacity: 0 }}
+     *   transition={{ duration: 2, type: "tween" }}
+     * />
+     * ```
      *
      * @public
      */
@@ -217,21 +221,34 @@ export interface Tween {
     /**
      * The duration of the tween animation. Set to `0.3` by default.
      *
+     * ```jsx
+     * <Frame
+     *   animate={{ opacity: 0 }}
+     *   transition={{ duration: 2 }}
+     * />
+     * ```
      * @public
      */
     duration?: number
 
     /**
-     * The easing function to use. Set either as:
+     * The easing function to use. Set as one of the below.
      *
-     *   - The name of an inbuilt easing function,
-     *   - An array of four numbers to define a cubic bezier curve,
-     *   - An easing function, that accepts and returns a value `0-1`.
+     * - The name of an inbuilt easing function
+     *
+     * - An array of four numbers to define a cubic bezier curve
+     *
+     * - An easing function, that accepts and returns a value `0-1`.
      *
      * ```jsx
      * const transition = {
      *   ease: [0.17, 0.67, 0.83, 0.67]
      * }
+     *
+     * <Frame
+     *   animate={{ opacity: 0 }}
+     *   transition={transition}
+     * />
      * ```
      *
      * @public
@@ -261,17 +278,39 @@ export interface Tween {
 
     /**
      * The number of times to loop the animation.
-     *
      * Set to `Infinity` for perpetual looping.
+     *
+     * ```jsx
+     * const transition = {
+     *   loop: Infinity,
+     *   ease: "linear",
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 360 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
     loop?: number
 
     /**
-     * The number of times to flip the animation by swapping the `to` and `from` values.
+     * The number of times to flip the animation by swapping the `to` and `from` values. Set to `Infinity` for perpetual flipping.
      *
-     * Set to `Infinity` for perpetual flipping.
+     * ```jsx
+     * const transition = {
+     *   flip: Infinity,
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ opacity: 0 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
@@ -279,15 +318,39 @@ export interface Tween {
 
     /**
      * The number of times to reverse the animation.
-     *
      * Set to `Infinity` for perpetual reversing.
+     *
+     * ```jsx
+     * const transition = {
+     *   yoyo: Infinity,
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
     yoyo?: number
 
     /**
-     * The value to animate from. By default, this is the current state of the `MotionValue`.
+     * The value to animate from.
+     * By default, this is the initial state of the animating value.
+     *
+     * ```jsx
+     * const transition = {
+     *   from: 90,
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
@@ -380,7 +443,7 @@ export interface Spring {
     velocity?: number
 
     /**
-     * @public
+     * @internal
      */
     delay?: number
 }
@@ -580,8 +643,19 @@ export interface Keyframes {
 
     /**
      * The number of times to flip the animation by swapping the `to` and `from` values.
-     *
      * Set to `Infinity` for perpetual flipping.
+     *
+     * ```jsx
+     * const transition = {
+     *   flip: Infinity,
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ opacity: 0 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
@@ -589,9 +663,20 @@ export interface Keyframes {
 
     /**
      * The number of times to reverse the animation.
-     *
      * Set to `Infinity` for perpetual reversing.
      *
+     * ```jsx
+     * const transition = {
+     *   yoyo: Infinity,
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     *
+     * ```
      * @public
      */
     yoyo?: number

@@ -228,7 +228,7 @@ declare const safeWindow: Window | ServerSafeWindow;
 // @public
 interface Spring {
     damping?: number;
-    // (undocumented)
+    // @internal (undocumented)
     delay?: number;
     from?: number | string;
     mass?: number;
