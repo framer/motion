@@ -60,7 +60,7 @@ export type OnUpdate = (v: Target) => void
  */
 export interface AnimationProps {
     /**
-     * Values to animate to, variant label(s), or `AnimationControls`
+     * Values to animate to, variant label(s), or `AnimationControls`.
      *
      * ```jsx
      * // As values
@@ -79,39 +79,35 @@ export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels
 
     /**
-     * Object of labelled variants.
+     * Object of labelled variants. Variants are visual states that can be defined externally from a `Frame` and passed in via the variants property. This allows variant labels to be used in place of values on the `animate`, `initial`, `press`, and `hover` properties.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const variants = {
-     *     active: {
-     *       backgroundColor: '#f00'
+     * const variants = {
+     *   active: {
+     *       backgroundColor: "#f00"
      *    },
-     *     inactive: {
-     *       backgroundColor: '#fff',
+     *    inactive: {
+     *       backgroundColor: "#fff",
      *       transition: { duration: 2 }
      *     }
      *   }
      *
-     *   return <motion.div variants={variants} animate="active" />
-     * }
+     * <motion.div variants={variants} animate="active" />
      * ```
      */
     variants?: Variants
 
     /**
-     * Default transition, to fall back on if no `transition` is defined in `animate`.
+     * Default transition. If no `transition` is defined in `animate`, it will use the transition defined here.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const transition = {
-     *     type: 'spring',
-     *     damping: 10,
-     *     stiffness: 100
-     *   }
-     *
-     *   return <motion.div transition={transition} animate={{ scale: 1.2 }} />
+     * const spring = {
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
      * }
+     *
+     * <motion.div transition={spring} animate={{ scale: 1.2 }} />
      * ```
      */
     transition?: Transition
@@ -125,13 +121,11 @@ export interface MotionCallbacks {
      * Callback with latest motion values, fired max once per frame.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   function onUpdate({ x, opacity }) {
-     *     console.log(`Latest values: ${x} ${opacity}`)
-     *   }
-     *
-     *   return <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     * function onUpdate({ x, opacity }) {
+     *   console.log(`Latest values: ${x} ${opacity}`)
      * }
+     *
+     * <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
      * ```
      */
     onUpdate?(latest: { [key: string]: string | number }): void
@@ -140,13 +134,11 @@ export interface MotionCallbacks {
      * Callback when animation defined in `animate` is complete.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   function onComplete() {
-     *     console.log(`Animation has completed`)
-     *   }
-     *
-     *   return <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />
+     * function onComplete() {
+     *   console.log(`Animation has completed`)
      * }
+     *
+     * <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />
      * ```
      */
     onAnimationComplete?(): void
@@ -157,16 +149,15 @@ export interface MotionCallbacks {
  */
 export interface MotionAdvancedProps {
     /**
-     * Set to `false` to prevent inheriting variant changes from a parent
-     * `motion` component.
+     * @internal
+     * Set to `false` to prevent inheriting variant changes from its parent.
      */
     inherit?: boolean
 
     /**
-     * Set to `true` to block rendering motion values (`animate`, gestures etc)
-     * on the component.
-     *
-     * This can be used to temporarily disable animations for performance reasons.
+     * @internal
+     * Set to `true` to block rendering motion values (`animate`, gestures, etcetera)
+     * on the component. This can be used to temporarily disable animations for performance reasons.
      */
     static?: boolean
 }
