@@ -59,7 +59,11 @@ const viewportMotionValues: ScrollMotionValues = {
  *
  * ```jsx
  * import * as React from "react"
- * import { Frame, useViewportScrollValues, useTransformedValue } from "framer"
+ * import {
+ *   Frame,
+ *   useViewportScrollValues,
+ *   useTransformedValue
+ * } from "framer"
  *
  * export function MyComponent() {
  *   const { scrollYProgress } = useViewportScrollValues()
