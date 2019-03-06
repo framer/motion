@@ -563,12 +563,20 @@ export interface Spring {
  */
 export interface Inertia {
     /**
-     * Set `type` to animate using the inertia animation. Set to `'tween'` by
-     * default.
+     * Set `type` to animate using the inertia animation. Set to `"tween"` by
+     * default. This can be used for natural deceleration, like momentum scrolling.
      *
-     * @remarks
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 50
+     * }
      *
-     * This can be used for natural deceleration, for instance with momentum scrolling.
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
@@ -586,6 +594,21 @@ export interface Inertia {
      * spring. Higher values will create more sudden movement. Set to `500` by
      * default.
      *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 500,
+     *   min: 0,
+     *   max: 90,
+     *   bounceStiffness: 100
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     bounceStiffness?: number
@@ -594,13 +617,42 @@ export interface Inertia {
      * If `min` or `max` is set, this affects the damping of the bounce spring.
      * If set to `0`, spring will oscillate indefinitely. Set to `10` by
      * default.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 500,
+     *   min: 0,
+     *   max: 90,
+     *   bounceDamping: 8
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     bounceDamping?: number
 
     /**
-     * Higher power = further target. Set to `0.8` by default.
+     * A higher power value equals a further target. Set to `0.8` by default.
      * @public
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 500,
+     *   power: 0.5
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      */
     power?: number
 
@@ -608,14 +660,41 @@ export interface Inertia {
      * Adjusting the time constant will change the duration of the
      * deceleration, thereby affecting its feel. Set to `700` by default.
      *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 500,
+     *   timeConstant: 250
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     timeConstant?: number
 
     /**
-     * End animation if distance to to is below this value and speed is below
-     * `restSpeed`. When animation ends, spring gets “snapped” to to. Set to
-     * `0.01` by default.
+     * End the animation if the distance to the animation target is below this value, and the absolute speed is below `restSpeed`.
+     * When the animation ends, the value gets snapped to the animation target. Set to `0.01` by default.
+     * Generally the default values provide smooth animation endings, only in rare cases should you need to customize these.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 500,
+     *   restDelta: 10,
+     *   restSpeed: 10
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      * @public
      */
     restDelta?: number
@@ -623,24 +702,78 @@ export interface Inertia {
     /**
      * Minimum constraint. If set, the value will "bump" against this value (or immediately spring to it if the animation starts as less than this value).
      * @public
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 300,
+     *   min: 0,
+     *   max: 90
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      */
     min?: number
 
     /**
-     * Maximum constraint. If set, the value will "bump" against this value (or immediately spring to it if the animation starts as more than this value).
+     * Maximum constraint. If set, the value will "bump" against this value (or immediately snap to it, if the initial animation value exceeds this value).
      * @public
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 300,
+     *   min: 0,
+     *   max: 90
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      */
     max?: number
 
     /**
      * The value to animate from. By default, this is the current state of the `MotionValue`.
      * @public
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 300,
+     *   from: 90
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      */
     from?: number | string
 
     /**
-     * The initial velocity of the animation. By default this is the current velocity of the `MotionValue`.
+     * The initial velocity of the animation.
+     * By default this is the current velocity of the component.
      * @public
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "inertia",
+     *   velocity: 200
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      */
     velocity?: number
 
