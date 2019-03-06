@@ -102,7 +102,9 @@ declare const motion: MotionComponents;
 
 // @public (undocumented)
 interface MotionAdvancedProps {
+    // @internal
     inherit?: boolean;
+    // @internal
     static?: boolean;
 }
 
@@ -226,7 +228,7 @@ declare const safeWindow: Window | ServerSafeWindow;
 // @public
 interface Spring {
     damping?: number;
-    // (undocumented)
+    // @internal (undocumented)
     delay?: number;
     from?: number | string;
     mass?: number;

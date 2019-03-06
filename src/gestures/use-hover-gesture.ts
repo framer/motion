@@ -12,9 +12,7 @@ export interface HoverHandlers {
      * Properties or variant label to animate to while the hover gesture is recognised.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   return <motion.div hover={{ scale: 1.2 }} />
-     * }
+     * <motion.div hover={{ scale: 1.2 }} />
      * ```
      */
     hover?: string | TargetAndTransition
@@ -23,13 +21,11 @@ export interface HoverHandlers {
      * Callback that fires when pointer starts hovering over the component.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const onHoverStart = (event) => {
-     *      console.log('Pointer is hovering over this Frame')
-     *   }
-     *
-     *   return <motion.div onHoverStart={onHoverStart} />
+     * function onHoverStart(event) {
+     *   console.log("Pointer is hovering over this Frame")
      * }
+     *
+     * <motion.div onHoverStart={onHoverStart} />
      * ```
      */
     onHoverStart?(event: MouseEvent): void
@@ -38,13 +34,11 @@ export interface HoverHandlers {
      * Callback that fires when pointer stops hovering over the component.
      *
      * ```jsx
-     * export function MyComponent() {
-     *   const onHoverEnd = (event) => {
-     *      console.log('Pointer stopped hovering over this Frame')
-     *   }
-     *
-     *   return <motion.div onHoverEnd={onHoverEnd} />
+     * function onHoverEnd(event) {
+     *   console.log("Pointer stopped hovering over this Frame")
      * }
+     *
+     * <motion.div onHoverEnd={onHoverEnd} />
      * ```
      */
     onHoverEnd?(event: MouseEvent): void
