@@ -1,13 +1,10 @@
-import { useRef, CSSProperties, useContext } from "react"
+import { useRef, CSSProperties } from "react"
 import { buildStyleProperty, isTransformProp } from "stylefire"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
-import { MotionStyle } from "../types"
-import {
-    CustomStyleMap,
-    MotionPluginContext,
-} from "../context/MotionPluginContext"
+import { MotionStyle, CustomStyles } from "../types"
+import { transformCustomValues } from "./transform-custom-values"
 
 const transformOriginProps = new Set(["originX", "originY"])
 const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
@@ -19,15 +16,14 @@ const isMotionValue = (value: any): value is MotionValue => {
 export const buildStyleAttr = (
     values: MotionValuesMap,
     styleProp: CSSProperties,
-    isStatic: boolean,
-    customStyles?: CustomStyleMap
+    isStatic: boolean
 ): CSSProperties => {
     return {
         ...styleProp,
         ...buildStyleProperty(
             {
                 transform: values.getTransformTemplate(),
-                ...resolveCurrent(values, customStyles),
+                ...resolveCurrent(values),
             },
             !isStatic
         ),
@@ -38,9 +34,8 @@ export const useMotionStyles = (
     values: MotionValuesMap,
     styleProp: MotionStyle = {}
 ): CSSProperties => {
-    const style = useRef<CSSProperties>({}).current
+    const style = useRef<CSSProperties & CustomStyles>({}).current
     const prevMotionStyles = useRef({}).current
-    const { customStyles } = useContext(MotionPluginContext)
 
     for (const key in styleProp) {
         const thisStyle = styleProp[key]
@@ -48,11 +43,7 @@ export const useMotionStyles = (
         if (isMotionValue(thisStyle)) {
             // If this is a motion value, add it to our MotionValuesMap
             values.set(key, thisStyle)
-        } else if (
-            isTransformProp(key) ||
-            isTransformOriginProp(key) ||
-            (customStyles && customStyles[key])
-        ) {
+        } else if (isTransformProp(key) || isTransformOriginProp(key)) {
             // Or if it's a transform prop, create a motion value (or update an existing one)
             // to ensure Stylefire can reconcile all the transform values together.
             if (!values.has(key)) {
@@ -73,5 +64,5 @@ export const useMotionStyles = (
         }
     }
 
-    return style
+    return transformCustomValues(style) as CSSProperties
 }

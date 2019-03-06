@@ -1,12 +1,8 @@
-import { forwardRef, useEffect, useMemo, memo, useContext } from "react"
+import { forwardRef, useEffect, useMemo, memo } from "react"
 import { MotionValue } from "../../value"
 import styler, { createStylerFactory, Styler } from "stylefire"
 import { OnUpdate, MotionProps, TransformTemplate } from "../types"
 import { invariant } from "hey-listen"
-import {
-    MotionPluginContext,
-    CustomStyleMap,
-} from "../context/MotionPluginContext"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
 // to fire and the `onUpdate` prop will only fire once per frame
@@ -14,8 +10,6 @@ const updateStyler = createStylerFactory({
     onRead: () => null,
     onRender: (state, { onUpdate }) => onUpdate(state),
 })
-
-type StyleSetter = (v: string | number) => void
 
 export class MotionValuesMap {
     private hasMounted = false
@@ -25,11 +19,9 @@ export class MotionValuesMap {
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
     private isStatic: boolean
-    private customStyles?: CustomStyleMap
 
-    constructor(isStatic: boolean, customStyles?: CustomStyleMap) {
+    constructor(isStatic: boolean) {
         this.isStatic = isStatic
-        this.customStyles = customStyles
     }
 
     has(key: string) {
@@ -63,18 +55,9 @@ export class MotionValuesMap {
     }
 
     bindValueToStyler(key: string, value: MotionValue) {
-        let setStyler: StyleSetter = v => this.styler.set(key, v)
-
-        const { customStyles } = this
-        if (customStyles && customStyles[key]) {
-            setStyler = v => {
-                this.styler.set(customStyles[key].transformToStyles(v))
-            }
-        }
-
         const update = (v: any) => {
             // If this is a custom value, resolve it and then set the return value
-            setStyler(v)
+            this.styler.set(key, v)
 
             // If these have been changed by a custom value, add those to onUpdate
             if (this.onUpdate) {
@@ -132,11 +115,7 @@ export const useMotionValues = (
     { onUpdate, transformTemplate }: MotionProps,
     isStatic: boolean
 ) => {
-    const { customStyles } = useContext(MotionPluginContext)
-    const motionValues = useMemo(
-        () => new MotionValuesMap(isStatic, customStyles),
-        []
-    )
+    const motionValues = useMemo(() => new MotionValuesMap(isStatic), [])
     motionValues.setOnUpdate(onUpdate)
     motionValues.setTransformTemplate(transformTemplate)
 
