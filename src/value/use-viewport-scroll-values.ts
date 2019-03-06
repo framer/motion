@@ -48,10 +48,8 @@ const viewportMotionValues: ScrollMotionValues = {
 }
 
 /**
- * Provides `MotionValue`s that update when the viewport scrolls.
+ * Provides a `MotionValue` that updates when the viewport scrolls.
  *
- * - Test
- * - Test 2
  *
  * ```jsx
  * export function MyComponent() {
