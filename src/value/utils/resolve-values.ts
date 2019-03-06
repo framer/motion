@@ -7,9 +7,7 @@ const createValueResolver = (resolver: Resolver) => (
     values: MotionValuesMap
 ) => {
     const resolvedValues = {}
-    for (const key in values) {
-        resolvedValues[key] = resolver(values[key])
-    }
+    values.forEach((value, key) => (resolvedValues[key] = resolver(value)))
 
     return resolvedValues
 }

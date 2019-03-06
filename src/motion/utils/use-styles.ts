@@ -64,5 +64,5 @@ export const useMotionStyles = (
         }
     }
 
-    return transformCustomValues(style) as CSSProperties
+    return transformCustomValues(style)
 }

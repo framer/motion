@@ -271,7 +271,7 @@ export class ComponentAnimationControls<P = {}> {
             this.resolvedOverrides[priority] = target
         }
 
-        target = transformCustomValues(target)
+        target = transformCustomValues(target) as Target
 
         this.checkForNewValues(target)
 
