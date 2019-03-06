@@ -1,7 +1,6 @@
 import "../../../jest.setup"
 import { render } from "react-testing-library"
 import { motion } from ".."
-import { MotionPlugins } from "../context/MotionPluginContext"
 import * as React from "react"
 
 describe("custom values plugin", () => {
@@ -39,7 +38,33 @@ describe("custom values plugin", () => {
         return expect(promise).resolves.toHaveStyle("width: 50%; height: 50%;")
     })
 
-    test("doesn't animate when motionEnabled is false, even if prop is animatable", async () => {
+    test("adds url to image if none exists", async () => {
+        const promise = new Promise(resolve => {
+            const resolvePromise = () => {
+                resolve(container.firstChild)
+            }
+
+            const Component = () => {
+                return (
+                    <motion.div
+                        initial={{ image: "1.jpg" }}
+                        animate={{ image: "2.jpg" }}
+                        transition={{ duration: 0.1 }}
+                        onAnimationComplete={resolvePromise}
+                    />
+                )
+            }
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toHaveStyle(
+            "background-image: url(2.jpg)"
+        )
+    })
+
+    test("doesn't animate numerical image", async () => {
         const promise = new Promise(resolve => {
             const resolvePromise = () => {
                 resolve(container.firstChild)
