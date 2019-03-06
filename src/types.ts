@@ -1,5 +1,5 @@
 import { CSSProperties } from "react"
-import { TransformProperties, CustomProperties } from "./motion/types"
+import { TransformProperties, CustomStyles } from "./motion/types"
 
 export type Props = { [key: string]: any }
 
@@ -669,7 +669,7 @@ type CSSPropertiesWithoutTransition = Omit<CSSProperties, "transition">
 
 export type Target = CSSPropertiesWithoutTransition &
     TransformProperties &
-    CustomProperties & {
+    CustomStyles & {
         pathLength?: number
         pathSpacing?: number
     }

@@ -15,7 +15,7 @@ import {
 import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
 import { VariantLabels } from "../motion/types"
-import { CustomStyleMap } from "../motion/context/MotionPluginContext"
+import { transformCustomValues } from "../motion/utils/transform-custom-values"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -35,19 +35,8 @@ const getVelocity = (values: MotionValuesMap) => {
     return velocity
 }
 
-const isAnimatable = (
-    value: string | number,
-    key: string,
-    customStyles?: CustomStyleMap
-) => {
-    // If motion has been specifically disabled for this value, return false
-    if (
-        customStyles &&
-        customStyles[key] &&
-        customStyles[key].motionEnabled === false
-    ) {
-        return false
-    } else if (typeof value === "number") {
+const isAnimatable = (value: string | number) => {
+    if (typeof value === "number") {
         return true
     } else if (
         typeof value === "string" &&
@@ -79,16 +68,10 @@ export class ComponentAnimationControls<P = {}> {
     private defaultTransition?: Transition
     private children?: Set<ComponentAnimationControls>
     private isAnimating: Set<string> = new Set()
-    private customStyles?: CustomStyleMap
 
-    constructor(
-        values: MotionValuesMap,
-        ref: RefObject<Element>,
-        customStyles?: CustomStyleMap
-    ) {
+    constructor(values: MotionValuesMap, ref: RefObject<Element>) {
         this.values = values
         this.ref = ref
-        this.customStyles = customStyles
 
         this.values.forEach(
             (value, key) => (this.baseTarget[key] = value.get())
@@ -108,6 +91,8 @@ export class ComponentAnimationControls<P = {}> {
     }
 
     setValues(target: Target, isActive: Set<string> = new Set()) {
+        target = transformCustomValues(target)
+
         return Object.keys(target).forEach(key => {
             if (isActive.has(key)) return
 
@@ -286,6 +271,8 @@ export class ComponentAnimationControls<P = {}> {
             this.resolvedOverrides[priority] = target
         }
 
+        target = transformCustomValues(target) as Target
+
         this.checkForNewValues(target)
 
         const converted = unitConversion(
@@ -315,7 +302,7 @@ export class ComponentAnimationControls<P = {}> {
 
                 if (this.isAnimating.has(key)) return acc
 
-                if (isAnimatable(valueTarget, key, this.customStyles)) {
+                if (isAnimatable(valueTarget)) {
                     const [action, options] = getTransition(key, valueTarget, {
                         delay,
                         ...transition,

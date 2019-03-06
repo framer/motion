@@ -3,7 +3,6 @@ import { useContext, useMemo, useEffect, RefObject } from "react"
 import { MotionValuesMap } from "../motion"
 import { MotionProps } from "../motion/types"
 import { MotionContext } from "../motion/context/MotionContext"
-import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 
 /**
  * Creates an imperative set of controls to trigger animations.
@@ -25,9 +24,8 @@ export function useComponentAnimationControls<P>(
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
-    const { customStyles } = useContext(MotionPluginContext)
     const controls = useMemo(
-        () => new ComponentAnimationControls<P>(values, ref, customStyles),
+        () => new ComponentAnimationControls<P>(values, ref),
         []
     )
 

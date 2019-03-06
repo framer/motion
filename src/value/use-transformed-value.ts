@@ -1,5 +1,5 @@
 import { MotionValue } from "../value"
-import { useCustomStyle } from "./use-custom-value"
+import { useCustomValue } from "./use-custom-value"
 import { interpolate } from "@popmotion/popcorn"
 
 type MapOptions = { clamp: true }
@@ -97,5 +97,5 @@ export function useTransformedValue(
         comparitor = [value, from.join(","), to.join(",")]
     }
 
-    return useCustomStyle(value, transformer, comparitor)
+    return useCustomValue(value, transformer, comparitor)
 }

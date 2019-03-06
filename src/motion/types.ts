@@ -36,11 +36,7 @@ export interface TransformProperties {
     perspective?: string | number
 }
 
-// TODO: We're hard-adding these to the types here even though they're
-// injected from Framer via a CustomStylePlugin. I'd like to find a way
-// to be able to support custom values in the type system via context
-// but for now this makes things work.
-export interface CustomProperties {
+export interface CustomStyles {
     size?: string | number
     image?: string
 }
@@ -52,12 +48,10 @@ export type MotionCSS = MakeMotion<
 >
 export type MotionTransform = MakeMotion<TransformProperties>
 
-export type MotionCustom = MakeMotion<CustomProperties>
-
 /**
  * @public
  */
-export type MotionStyle = MotionCSS & MotionTransform & MotionCustom
+export type MotionStyle = MotionCSS & MotionTransform & CustomStyles
 
 export type OnUpdate = (v: Target) => void
 
