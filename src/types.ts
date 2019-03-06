@@ -374,7 +374,6 @@ export interface Tween {
 
 /**
  * An animation that simulates spring physics for realistic motion.
- *
  * This is the default animation for physical values like `x`, `y`, `scale` and `rotate`.
  *
  * @public
@@ -384,6 +383,17 @@ export interface Spring {
      * Set `type` to `'spring'` to animate using spring physics for natural
      * movement. Set to `'spring'` by default.
      *
+     * ```jsx
+     * const transition = {
+     *   type: "spring"
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     type: "spring"
@@ -391,6 +401,19 @@ export interface Spring {
     /**
      * Stiffness of the spring. Higher values will create more sudden movement.
      * Set to `100` by default.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   stiffness: 50
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     stiffness?: number
@@ -398,6 +421,19 @@ export interface Spring {
     /**
      * Strength of opposing force. If set to 0, spring will oscillate
      * indefinitely. Set to `10` by default.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   damping: 300
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     damping?: number
@@ -405,6 +441,19 @@ export interface Spring {
     /**
      * Mass of the moving object. Higher values will result in more lethargic
      * movement. Set to `1` by default.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   mass: 0.5
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     mass?: number
@@ -412,20 +461,58 @@ export interface Spring {
     /**
      * End animation if absolute speed (in units per second) drops below this
      * value and delta is smaller than `restDelta`. Set to `0.01` by default.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   restSpeed: 0.5
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     restSpeed?: number
 
     /**
-     * End animation if distance to to is below this value and speed is below
-     * `restSpeed`. When animation ends, spring gets “snapped” to to. Set to
+     * End animation if distance is below this value and speed is below
+     * `restSpeed`. When animation ends, spring gets “snapped” to. Set to
      * `0.01` by default.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   restDelta: 0.5
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     restDelta?: number
 
     /**
-     * The value to animate from. By default, this is the current state of the `MotionValue`.
+     * The value to animate from.
+     * By default, this is the initial state of the animating value.
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   from: 90
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
@@ -437,7 +524,20 @@ export interface Spring {
     to?: number | string
 
     /**
-     * The initial velocity of the spring. By default this is the current velocity of the `MotionValue`.
+     * The initial velocity of the spring. By default this is the current velocity of the component.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   velocity: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     velocity?: number
@@ -563,12 +663,8 @@ export interface Inertia {
  */
 export interface Keyframes {
     /**
-     * Set `type` to `'keyframes'` to animate using the keyframes animation.
-     * Set to `'tween'` by default.
-     *
-     * @remarks
-     *
-     * This can be used to animate between a series of values.
+     * Set `type` to `"keyframes"` to animate using the keyframes animation.
+     * Set to `"tween"` by default. This can be used to animate between a series of values.
      *
      * @public
      */
@@ -579,9 +675,9 @@ export interface Keyframes {
      *
      * ```jsx
      * const transition = {
-     *   type: 'keyframes',
+     *   type: "keyframes",
      *   backgroundColor: {
-     *     values: ['#0f0', '#f00', '#00f']
+     *     values: ["#0f0", "#f00", "#00f"]
      *   }
      * }
      * ```
@@ -608,10 +704,10 @@ export interface Keyframes {
      *
      * ```jsx
      * const transition = {
-     *   type: 'keyframes',
+     *   type: "keyframes",
      *   backgroundColor: {
-     *     values: ['#0f0', '#f00', '#00f'],
-     *     easings: ['circIn', 'circOut']
+     *     values: ["#0f0", "#f00", "#00f"],
+     *     easings: ["circIn", "circOut"]
      *   }
      * }
      * ```
@@ -627,6 +723,18 @@ export interface Keyframes {
 
     /**
      * The total duration of the animation. Set to `0.3` by default.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "keyframes",
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ opacity: 0 }}
+     *   transition={transition}
+     * />
+     * ```
      *
      * @public
      */
@@ -703,13 +811,24 @@ export interface Keyframes {
 }
 
 /**
- * An animation that simulates velocity, acceleration, and friction.
+ * An animation type that simulates velocity, acceleration, and friction.
  *
  * @public
  */
 export interface Physics {
     /**
      * Set `type` to `'physics'` to use an animation that will simulate velocity, friction and acceleration.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "physics",
+     *   velocity: 50,
+     *   friction: 0.05,
+     * }
+     *
+     * <Frame animate={{ rotate: 180 }} transition={transition} />
+     * ```
+     *
      * @public
      */
     type: "physics"
@@ -718,12 +837,12 @@ export interface Physics {
      * Accelerates `velocity` by this amount every second.
      *
      * ```jsx
-     * // `velocity` will be `102` after one second:
      * const transition = {
-     *   type: 'physics',
-     *   velocity: 100,
-     *   acceleration: 2
+     *   type: "physics",
+     *   velocity: 50,
      * }
+     *
+     * <Frame animate={{ rotate: 180 }} transition={transition} />
      * ```
      *
      * @public
@@ -731,9 +850,18 @@ export interface Physics {
     acceleration?: number
 
     /**
-     * Amount of friction to apply per frame, from `0` to `1`.
+     * Amount of friction to apply per frame, from `0` to `1`, where `0` is no friction, and `1` is a total stop. The default value is `0`.
      *
-     * `0` is no friction, `1` is a total stop.
+     * ```jsx
+     * const transition = {
+     *   type: "physics",
+     *   velocity: 100,
+     *   friction: 0.1
+     * }
+     *
+     * <Frame animate={{ rotate: 180 }} transition={transition} />
+     * ```
+     *
      * @public
      */
     friction?: number
@@ -742,18 +870,54 @@ export interface Physics {
      * End animation if absolute speed (in units per second) drops below this
      * value. Set to `0.01` by default.
      * @public
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "physics",
+     *   velocity: 50,
+     *   friction: 0.05,
+     *   restSpeed: 20
+     * }
+     *
+     * <Frame animate={{ rotate: 180 }} transition={transition} />
+     * ```
+     *
      */
     restSpeed?: number
 
     /**
-     * The value to animate from. By default, this is the current state of the `MotionValue`.
+     * The value to animate from.
+     * By default, this is the initial state of the animating value.
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "physics",
+     *   velocity: 50,
+     *   friction: 0.05,
+     *   from: 90
+     * }
+     *
+     * <Frame animate={{ rotate: 180 }} transition={transition} />
+     * ```
      *
      * @public
      */
     from?: number | string
 
     /**
-     * The initial velocity of the spring. By default this is the current velocity of the `MotionValue`.
+     * The initial velocity of the spring.
+     * By default, this is the current state of the animating value
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "physics",
+     *   velocity: 50,
+     *   friction: 0.05,
+     * }
+     *
+     * <Frame animate={{ rotate: 180 }} transition={transition} />
+     * ```
+     *
      * @public
      */
     velocity?: number
