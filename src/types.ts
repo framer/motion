@@ -287,6 +287,50 @@ export interface Tween {
     elapsed?: number
 
     /**
+     * When animating keyframes, `times` can be used to determine where in the animation each keyframe is reached.
+     *
+     * Each value in `times` is a value between `0` adn `1`, `1` representing `duration`
+     *
+     * There must be the same number of `times` as there are keyframes.
+     *
+     * Defaults to an array of evenly-spread durations.
+     *
+     * ```jsx
+     * const transition = {
+     *   times: [0, 0.1, 0.9, 1]
+     * }
+     *
+     * <Frame
+     *   animate={{ scale: [0, 1, 0.5, 1] }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @public
+     */
+    times?: number[]
+
+    /**
+     * When animating keyframes, `easings` can be used to define easing functions between each keyframe
+     *
+     * This array should be one item fewer than the number of keyframes, as these easings apply to the transitions *between* the keyframes.
+     *
+     * ```jsx
+     * const transition = {
+     *   easings: ['easeIn', 'easeOut']
+     * }
+     *
+     * <Frame
+     *   animate={{ backgroundColor: ['#0f0', '#00f', '#f00'] }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @public
+     */
+    easings?: Easing[]
+
+    /**
      * The number of times to loop the animation.
      * Set to `Infinity` for perpetual looping.
      *
@@ -802,7 +846,7 @@ export interface Inertia {
  * We could possibly make the `type` property redundant, if not for all animations
  * then for this one quite easily.
  *
- * @public
+ * @internal
  */
 export interface Keyframes {
     /**

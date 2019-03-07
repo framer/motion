@@ -75,26 +75,32 @@ interface Inertia {
     velocity?: number;
 }
 
-// @public
+// @internal
 interface Keyframes {
-    // @internal (undocumented)
+    // (undocumented)
     delay?: number;
+    // @public
     duration?: number;
+    // @public
     easings?: Easing[];
-    // @internal (undocumented)
+    // (undocumented)
     elapsed?: number;
+    // @public
     flip?: number;
-    // @internal (undocumented)
+    // (undocumented)
     from?: number | string;
+    // @public
     loop?: number;
+    // @public
     times?: number[];
-    // @internal (undocumented)
+    // (undocumented)
     to?: number | string;
+    // @public
     type: "keyframes";
-    // @internal
     values: KeyframesTarget;
-    // @internal (undocumented)
+    // (undocumented)
     velocity?: number;
+    // @public
     yoyo?: number;
 }
 
@@ -264,11 +270,13 @@ interface Tween {
     delay?: number;
     duration?: number;
     ease?: [number, number, number, number] | "linear" | "easeIn" | "easeOut" | "easeInOut" | "circIn" | "circOut" | "circInOut" | "backIn" | "backOut" | "backInOut" | "anticipate" | EasingFunction;
+    easings?: Easing[];
     // @internal
     elapsed?: number;
     flip?: number;
     from?: number | string;
     loop?: number;
+    times?: number[];
     // @internal (undocumented)
     to?: number | string;
     type?: "tween";
