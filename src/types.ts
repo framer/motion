@@ -1,6 +1,16 @@
 import { CSSProperties } from "react"
 import { TransformProperties, CustomStyles } from "./motion/types"
 
+export type KeyframesTarget =
+    | [null, ...number[]]
+    | number[]
+    | [null, ...string[]]
+    | string[]
+
+export type SingleTarget = string | number
+
+export type ValueTarget = SingleTarget | KeyframesTarget
+
 export type Props = { [key: string]: any }
 
 export type EasingFunction = (v: number) => number
@@ -806,29 +816,20 @@ export interface Keyframes {
     /**
      * An array of values to animate between.
      *
-     * ```jsx
-     * const transition = {
-     *   type: "keyframes",
-     *   backgroundColor: {
-     *     values: ["#0f0", "#f00", "#00f"]
-     *   }
-     * }
-     * ```
-     *
-     * @public
+     * @internal
      */
-    values: number[] | string[]
+    values: KeyframesTarget
 
     /**
      * An array of numbers between 0 and 1, where `1` represents the `total` duration.
      *
-     * Each value represents at which point during the animation each item in `values` should be hit, so the array should be the same length as `values`.
+     * Each value represents at which point during the animation each item in the animation target should be hit, so the array should be the same length as `values`.
      *
      * Defaults to an array of evenly-spread durations.
      *
      * @public
      */
-    times: number[]
+    times?: number[]
 
     /**
      * An array of easing functions for each generated tween, or a single easing function applied to all tweens.
@@ -837,10 +838,9 @@ export interface Keyframes {
      *
      * ```jsx
      * const transition = {
-     *   type: "keyframes",
      *   backgroundColor: {
-     *     values: ["#0f0", "#f00", "#00f"],
-     *     easings: ["circIn", "circOut"]
+     *     type: 'keyframes',
+     *     easings: ['circIn', 'circOut']
      *   }
      * }
      * ```
@@ -1066,6 +1066,7 @@ export interface Physics {
  */
 export interface Just {
     type: "just"
+    to?: number | string
     from?: number | string
     delay?: number
     velocity?: number
@@ -1136,7 +1137,13 @@ export type Target = CSSPropertiesWithoutTransition &
         pathSpacing?: number
     }
 
-export type TargetAndTransition = Target & {
+export type MakeKeyframes<T> = {
+    [K in keyof T]: T[K] | T[K][] | [null, ...T[K][]]
+}
+
+export type TargetWithKeyframes = MakeKeyframes<Target>
+
+export type TargetAndTransition = TargetWithKeyframes & {
     transition?: Transition
     transitionEnd?: Target
 }

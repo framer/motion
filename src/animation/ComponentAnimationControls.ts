@@ -1,7 +1,7 @@
 import { RefObject } from "react"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { getTransition } from "./utils/transitions"
-import { motionValue, ActionFactory } from "../value"
+import { motionValue } from "../value"
 import { complex } from "style-value-types"
 import {
     TargetResolver,
@@ -10,12 +10,14 @@ import {
     Target,
     TargetAndTransition,
     Variant,
-    PopmotionTransitionProps,
+    TargetWithKeyframes,
+    ValueTarget,
 } from "../types"
 import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
 import { VariantLabels } from "../motion/types"
 import { transformCustomValues } from "../motion/utils/transform-custom-values"
+import { resolveSingleTargetFromKeyframes } from "./utils/is-keyframes-target"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -35,8 +37,8 @@ const getVelocity = (values: MotionValuesMap) => {
     return velocity
 }
 
-const isAnimatable = (value: string | number) => {
-    if (typeof value === "number") {
+const isAnimatable = (value: ValueTarget) => {
+    if (typeof value === "number" || Array.isArray(value)) {
         return true
     } else if (
         typeof value === "string" &&
@@ -90,7 +92,7 @@ export class ComponentAnimationControls<P = {}> {
         if (transition) this.defaultTransition = transition
     }
 
-    setValues(target: Target, isActive: Set<string> = new Set()) {
+    setValues(target: TargetWithKeyframes, isActive: Set<string> = new Set()) {
         target = transformCustomValues(target)
 
         return Object.keys(target).forEach(key => {
@@ -98,18 +100,19 @@ export class ComponentAnimationControls<P = {}> {
 
             isActive.add(key)
 
+            const targetValue = resolveSingleTargetFromKeyframes(target[key])
             if (this.values.has(key)) {
                 const value = this.values.get(key)
-                value && value.set(target[key])
+                value && value.set(targetValue)
             } else {
-                this.values.set(key, motionValue(target[key]))
+                this.values.set(key, motionValue(targetValue))
             }
 
-            this.baseTarget[key] = target[key]
+            this.baseTarget[key] = targetValue
         })
     }
 
-    checkForNewValues(target: Target) {
+    checkForNewValues(target: TargetWithKeyframes) {
         const newValueKeys = Object.keys(target).filter(
             key => !this.values.has(key)
         )
@@ -131,7 +134,11 @@ export class ComponentAnimationControls<P = {}> {
 
     resolveVariant(
         variant?: Variant
-    ): { target?: Target; transition?: Transition; transitionEnd?: Target } {
+    ): {
+        target?: TargetWithKeyframes
+        transition?: Transition
+        transitionEnd?: Target
+    } {
         if (!variant) {
             return {
                 target: undefined,
@@ -271,7 +278,7 @@ export class ComponentAnimationControls<P = {}> {
             this.resolvedOverrides[priority] = target
         }
 
-        target = transformCustomValues(target) as Target
+        target = transformCustomValues(target)
 
         this.checkForNewValues(target)
 
@@ -281,6 +288,7 @@ export class ComponentAnimationControls<P = {}> {
             target,
             transitionEnd
         )
+
         target = converted.target
         transitionEnd = converted.transitionEnd
 
@@ -297,7 +305,9 @@ export class ComponentAnimationControls<P = {}> {
                 const valueTarget = target[key]
 
                 if (!priority) {
-                    this.baseTarget[key] = valueTarget
+                    this.baseTarget[key] = resolveSingleTargetFromKeyframes(
+                        valueTarget
+                    )
                 }
 
                 if (this.isAnimating.has(key)) return acc
@@ -313,12 +323,7 @@ export class ComponentAnimationControls<P = {}> {
                         }
                     )
 
-                    acc.push(
-                        value.control(
-                            action as ActionFactory,
-                            options as PopmotionTransitionProps
-                        )
-                    )
+                    acc.push(value.control(action, options))
                 } else {
                     value.set(valueTarget)
                 }

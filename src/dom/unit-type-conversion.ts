@@ -1,9 +1,12 @@
 import { RefObject } from "react"
-import { Target } from "../types"
+import { Target, TargetWithKeyframes } from "../types"
 import { MotionValuesMap } from "../motion"
 import { MotionValue } from "../value"
 import styler from "stylefire"
 import { getValueType } from "./value-types"
+import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
+import { invariant } from "hey-listen"
+import { number, px, ValueType } from "style-value-types"
 
 const positionalKeys = new Set([
     "width",
@@ -16,8 +19,9 @@ const positionalKeys = new Set([
     "y",
 ])
 const isPositionalKey = (key: string) => positionalKeys.has(key)
-const hasPositionalKey = (target: Target) =>
-    Object.keys(target).some(isPositionalKey)
+const hasPositionalKey = (target: TargetWithKeyframes) => {
+    return Object.keys(target).some(isPositionalKey)
+}
 
 const setAndResetVelocity = (value: MotionValue, to: string | number) => {
     // Looks odd but setting it twice doesn't render, it'll just
@@ -25,6 +29,9 @@ const setAndResetVelocity = (value: MotionValue, to: string | number) => {
     value.set(to, false)
     value.set(to)
 }
+
+const isNumOrPxType = (v?: ValueType): v is ValueType =>
+    v === number || v === px
 
 export type BoundingBox = { [key in BoundingBoxDimension]: number }
 
@@ -77,7 +84,7 @@ const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
 }
 
 const convertChangedValueTypes = (
-    pose: Target,
+    target: TargetWithKeyframes,
     values: MotionValuesMap,
     ref: RefObject<Element>,
     changedKeys: string[]
@@ -102,46 +109,90 @@ const convertChangedValueTypes = (
             value,
             positionalValues[key](originBbox, originComputedStyle)
         )
-        pose[key] = positionalValues[key](targetBbox, elementComputedStyle)
+        target[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
 
     // Reapply original values
     elementStyler.render()
 
-    return pose
+    return target
 }
 
 const checkAndConvertChangedValueTypes = (
     values: MotionValuesMap,
     ref: RefObject<Element>,
-    target: Target,
+    target: TargetWithKeyframes,
     transitionEnd: Target = {}
-): { target: Target; transitionEnd: Target } => {
+): { target: TargetWithKeyframes; transitionEnd: Target } => {
+    target = { ...target }
     transitionEnd = { ...transitionEnd }
-    const posePositionalKeys = Object.keys(target).filter(isPositionalKey)
+    const targetPositionalKeys = Object.keys(target).filter(isPositionalKey)
 
-    const changedValueTypeKeys: string[] = posePositionalKeys.reduce(
+    const changedValueTypeKeys: string[] = targetPositionalKeys.reduce(
         (acc, key) => {
-            const value = values.get(key) as MotionValue
-            const from = value!.get()
+            const value = values.get(key) as MotionValue<number | string>
+            if (!value) return acc
+
+            const from = value.get()
             const to = target[key]
             const fromType = getValueType(from)
-            const toType = getValueType(to)
+            let toType
+
+            // TODO: The current implementation of this basically throws an error
+            // if you try and do value conversion via keyframes. There's probably
+            // a way of doing this but the performance implications would need greater scrutiny,
+            // as it'd be doing multiple resize-remeasure operations.
+            if (isKeyframesTarget(to)) {
+                const numKeyframes = to.length
+
+                for (let i = to[0] === null ? 1 : 0; i < numKeyframes; i++) {
+                    if (!toType) {
+                        toType = getValueType(to[i])
+
+                        invariant(
+                            toType === fromType ||
+                                (isNumOrPxType(fromType) &&
+                                    isNumOrPxType(toType)),
+                            "Keyframes must be of the same dimension as the current value"
+                        )
+                    } else {
+                        invariant(
+                            getValueType(to[i]) === toType,
+                            "All keyframes must be of the same type"
+                        )
+                    }
+                }
+            } else {
+                toType = getValueType(to)
+            }
 
             if (fromType !== toType) {
-                acc.push(key)
-                transitionEnd[key] =
-                    transitionEnd[key] !== undefined
-                        ? transitionEnd[key]
-                        : target[key]
-                setAndResetVelocity(value, to)
+                // If they're both just number or px, convert them both to numbers rather than
+                // relying on resize/remeasure to convert (which is wasteful in this situation)
+                if (isNumOrPxType(fromType) && isNumOrPxType(toType)) {
+                    const current = value.get()
+                    if (typeof current === "string") {
+                        value.set(parseFloat(current))
+                    }
+                    if (typeof to === "string") {
+                        target[key] = parseFloat(to)
+                    } else if (Array.isArray(to) && toType === px) {
+                        target[key] = to.map(parseFloat)
+                    }
+                } else {
+                    acc.push(key)
+                    transitionEnd[key] =
+                        transitionEnd[key] !== undefined
+                            ? transitionEnd[key]
+                            : target[key]
+                    setAndResetVelocity(value, to)
+                }
             }
 
             return acc
         },
         [] as string[]
     )
-
     return changedValueTypeKeys.length
         ? {
               target: convertChangedValueTypes(
@@ -169,9 +220,9 @@ const checkAndConvertChangedValueTypes = (
 export function unitConversion(
     values: MotionValuesMap,
     ref: RefObject<Element>,
-    target: Target,
+    target: TargetWithKeyframes,
     transitionEnd?: Target
-): { target: Target; transitionEnd?: Target } {
+): { target: TargetWithKeyframes; transitionEnd?: Target } {
     return hasPositionalKey(target)
         ? checkAndConvertChangedValueTypes(values, ref, target, transitionEnd)
         : { target, transitionEnd }

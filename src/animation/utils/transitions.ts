@@ -16,10 +16,12 @@ import {
     TransitionMap,
     PopmotionTransitionProps,
     TransitionDefinition,
+    ValueTarget,
 } from "../../types"
 import { getDefaultTransition } from "./default-transitions"
 import { invariant } from "hey-listen"
 import { ActionFactory, MotionValue } from "../../value"
+import { isKeyframesTarget } from "./is-keyframes-target"
 
 type JustProps = { to: string | number }
 const just: ActionFactory = ({ to }: JustProps): Action => {
@@ -83,7 +85,14 @@ const transitionOptionParser = {
 
         return opts
     },
-    keyframes: ({ from, to, velocity, ...opts }: Keyframes) => opts,
+    keyframes: ({ from, to, velocity, ...opts }: Keyframes) => {
+        if (opts.values[0] === null) {
+            const values = [...opts.values]
+            values[0] = from as string | number
+            opts.values = values as string[] | number[]
+        }
+        return opts
+    },
 }
 
 const isTransitionDefined = ({
@@ -99,9 +108,9 @@ const isTransitionDefined = ({
 
 const getTransitionForValue = (
     key: string,
-    to: string | number,
+    to: ValueTarget,
     transitionDefinition?: Transition
-): PopmotionTransitionProps => {
+) => {
     const delay = transitionDefinition ? transitionDefinition.delay : 0
 
     // If no object, return default transition
@@ -122,13 +131,30 @@ const getTransitionForValue = (
         (transitionDefinition as TransitionMap).default ||
         transitionDefinition
 
-    return valueTransitionDefinition.type === false
-        ? ({ type: "just", delay, to } as PopmotionTransitionProps)
-        : ({
-              delay,
-              to,
-              ...valueTransitionDefinition,
-          } as PopmotionTransitionProps)
+    if (valueTransitionDefinition.type === false) {
+        return {
+            type: "just",
+            delay,
+            to: isKeyframesTarget(to)
+                ? (to[to.length - 1] as string | number)
+                : to,
+        }
+    } else if (isKeyframesTarget(to)) {
+        return {
+            type: "keyframes",
+            values: to,
+            duration: 0.8,
+            delay,
+            ...valueTransitionDefinition,
+        }
+    } else {
+        return {
+            type: "tween",
+            to,
+            delay,
+            ...valueTransitionDefinition,
+        }
+    }
 }
 
 const preprocessOptions = (
@@ -143,16 +169,16 @@ const preprocessOptions = (
 export const getTransition = (
     value: MotionValue,
     valueKey: string,
-    to: string | number,
+    to: ValueTarget,
     transition?: Transition
-) => {
+): [ActionFactory, PopmotionTransitionProps] => {
     const { type = "tween", ...transitionDefinition } = getTransitionForValue(
         valueKey,
         to,
         transition
     )
 
-    const actionFactory = transitions[type]
+    const actionFactory = transitions[type] as ActionFactory
     const opts = preprocessOptions(type, {
         from: value.get(),
         velocity: value.getVelocity(),
