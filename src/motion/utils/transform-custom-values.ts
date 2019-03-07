@@ -12,7 +12,10 @@ export const transformCustomValues = <T extends any>(values: T): T => {
     }
 
     if (image !== undefined) {
-        remainingValues.backgroundImage = image
+        let backgroundImage = image
+        if (!image.startsWith("url(")) {
+            backgroundImage = `url(${image})`
+        }
     }
 
     return remainingValues

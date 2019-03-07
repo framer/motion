@@ -14,6 +14,17 @@ describe("custom values plugin", () => {
         expect(container.firstChild).toHaveStyle("width: 100%; height: 100%;")
     })
 
+    test("adds a url if it does not exist yet", () => {
+        const Component = () => {
+            return <motion.div style={{ image: "image.jpg" }} />
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle(
+            "background-image: url(image.jpg); "
+        )
+    })
     test("animates", async () => {
         const promise = new Promise<ChildNode | null>(resolve => {
             const resolvePromise = () => {
