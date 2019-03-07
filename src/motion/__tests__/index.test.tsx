@@ -486,7 +486,7 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toEqual({ x: 100, y: 100 })
     })
 
-    test("applies applyOnEnd", () => {
+    test("applies applyOnEnd if set on initial", () => {
         const variants: Variants = {
             visible: {
                 background: "#f00",
@@ -555,6 +555,34 @@ describe("animate prop as variant", () => {
 
         return expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
     })
+
+    test("respects default `transition` if no transition is defined", async () => {
+        const promise = new Promise(resolve => {
+            const opacity = motionValue(0)
+            const variants: Variants = {
+                visible: {
+                    opacity: 1,
+                },
+                hidden: {
+                    opacity: 0,
+                },
+            }
+
+            const { container } = render(
+                <motion.div
+                    variants={variants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                />
+            )
+
+            requestAnimationFrame(() => resolve(opacity.get()))
+        })
+
+        return expect(promise).resolves.toBe(1)
+    })
 })
 
 describe("static prop", () => {
@@ -590,7 +618,7 @@ describe("static prop", () => {
         )
     })
 
-    test("it prevents rendering of children via context", () => {
+    test("it prevents rendering of children via context", async () => {
         const promise = new Promise(resolve => {
             const scale = motionValue(0)
             const Component = () => (
