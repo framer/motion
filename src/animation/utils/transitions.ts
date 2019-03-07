@@ -92,8 +92,8 @@ const transitionOptionParser = {
 
         return opts
     },
-    keyframes: ({ from, to, velocity, ...opts }: Keyframes) => {
-        if (opts.values[0] === null) {
+    keyframes: ({ from, to, velocity, ...opts }: Partial<Keyframes>) => {
+        if (opts.values && opts.values[0] === null) {
             const values = [...opts.values]
             values[0] = from as string | number
             opts.values = values as string[] | number[]
@@ -176,7 +176,7 @@ const getTransitionForValue = (
 
 const preprocessOptions = (
     type: string,
-    opts: PopmotionTransitionProps
+    opts: Partial<PopmotionTransitionProps>
 ): PopmotionTransitionProps => {
     return transitionOptionParser[type]
         ? transitionOptionParser[type](opts)
