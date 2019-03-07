@@ -15,7 +15,7 @@ describe("custom values plugin", () => {
     })
 
     test("animates", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise<ChildNode | null>(resolve => {
             const resolvePromise = () => {
                 setTimeout(() => resolve(container.firstChild), 20)
             }
