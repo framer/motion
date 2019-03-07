@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.0] 2019-03-07
+
+### Added
+
+-   Animation targets can be set as `keyframes`.
+
 ## [0.6.8] 2019-03-05
 
 ### Fixed

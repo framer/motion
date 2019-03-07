@@ -206,7 +206,7 @@ export interface Orchestration {
 }
 
 /**
- * An animation that animates between two values over a specific duration of time.
+ * An animation that animates between two or more values over a specific duration of time.
  * This is the default animation for non-physical values like `color` and `opacity`.
  *
  * @public
@@ -229,7 +229,7 @@ export interface Tween {
     type?: "tween"
 
     /**
-     * The duration of the tween animation. Set to `0.3` by default.
+     * The duration of the tween animation. Set to `0.3` by default, 0r `0.8` if animating a series of keyframes.
      *
      * ```jsx
      * <Frame
