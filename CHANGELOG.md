@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.1] 2019-03-07
+
+### Fixed
+
+-   Enforcing keyframes animation if target is array.
+
 ## [0.7.0] 2019-03-07
 
 ### Added

@@ -141,11 +141,12 @@ const getTransitionForValue = (
         }
     } else if (isKeyframesTarget(to)) {
         return {
-            type: "keyframes",
             values: to,
             duration: 0.8,
             delay,
             ...valueTransitionDefinition,
+            // This animation must be keyframes if we're animating through an array
+            type: "keyframes",
         }
     } else {
         return {
