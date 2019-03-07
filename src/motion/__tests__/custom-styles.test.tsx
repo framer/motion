@@ -14,8 +14,42 @@ describe("custom values plugin", () => {
         expect(container.firstChild).toHaveStyle("width: 100%; height: 100%;")
     })
 
+    test("adds a url if it does not exist yet", () => {
+        const Component = () => {
+            return <motion.div style={{ image: "image.jpg" }} />
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle(
+            "background-image: url(image.jpg); "
+        )
+    })
+    test("adds background-size: cover", () => {
+        const Component = () => {
+            return <motion.div style={{ image: "image.jpg" }} />
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle("background-size: cover")
+    })
+    test("allows override of backgroundSize", () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    style={{ image: "image.jpg", backgroundSize: "50%" }}
+                />
+            )
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle("background-size: 50%")
+    })
+
     test("animates", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise<ChildNode | null>(resolve => {
             const resolvePromise = () => {
                 setTimeout(() => resolve(container.firstChild), 20)
             }
