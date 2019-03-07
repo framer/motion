@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.2] 2019-03-07
+
+### Fixed
+
+-   Orchestration props in `transition` prop weren't being respected by variants with no `transition` of their own.
+
 ## [0.7.1] 2019-03-07
 
 ### Fixed
