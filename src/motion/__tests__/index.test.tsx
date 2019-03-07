@@ -556,7 +556,7 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe("rgba(85, 85, 85, 1)")
     })
 
-    test("respects default `transition` if no transition is defined", async () => {
+    test("respects orchestration props in transition prop", async () => {
         const promise = new Promise(resolve => {
             const opacity = motionValue(0)
             const variants: Variants = {
@@ -573,15 +573,20 @@ describe("animate prop as variant", () => {
                     variants={variants}
                     initial="hidden"
                     animate="visible"
-                    transition={{ type: false }}
-                    style={{ opacity }}
-                />
+                    transition={{ type: false, delayChildren: 1 }}
+                >
+                    <motion.div
+                        variants={variants}
+                        transition={{ type: false }}
+                        style={{ opacity }}
+                    />
+                </motion.div>
             )
 
             requestAnimationFrame(() => resolve(opacity.get()))
         })
 
-        return expect(promise).resolves.toBe(1)
+        return expect(promise).resolves.toBe(0)
     })
 })
 

@@ -156,7 +156,11 @@ export class ComponentAnimationControls<P = {}> {
             )
         }
 
-        const { transition, transitionEnd, ...target } = variant
+        const {
+            transition = this.defaultTransition,
+            transitionEnd,
+            ...target
+        } = variant
 
         return { transition, transitionEnd, target }
     }
