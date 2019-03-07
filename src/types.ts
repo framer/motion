@@ -244,11 +244,9 @@ export interface Tween {
     /**
      * The easing function to use. Set as one of the below.
      *
-     * - The name of an inbuilt easing function
-     *
-     * - An array of four numbers to define a cubic bezier curve
-     *
-     * - An easing function, that accepts and returns a value `0-1`.
+     * - The name of an inbuilt easing function. <br />
+     * - An array of four numbers to define a cubic bezier curve. <br />
+     * - An easing function, that accepts and returns a value `0-1`. <br />
      *
      * ```jsx
      * const transition = {
@@ -288,11 +286,9 @@ export interface Tween {
 
     /**
      * When animating keyframes, `times` can be used to determine where in the animation each keyframe is reached.
-     *
-     * Each value in `times` is a value between `0` adn `1`, `1` representing `duration`
+     * Each value in `times` is a value between `0` and `1`, representing `duration`.
      *
      * There must be the same number of `times` as there are keyframes.
-     *
      * Defaults to an array of evenly-spread durations.
      *
      * ```jsx
@@ -317,11 +313,11 @@ export interface Tween {
      *
      * ```jsx
      * const transition = {
-     *   easings: ['easeIn', 'easeOut']
+     *   easings: ["easeIn", "easeOut"]
      * }
      *
      * <Frame
-     *   animate={{ backgroundColor: ['#0f0', '#00f', '#f00'] }}
+     *   animate={{ backgroundColor: ["#0f0", "#00f", "#f00"] }}
      *   transition={transition}
      * />
      * ```
