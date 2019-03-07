@@ -81,6 +81,8 @@ interface Keyframes {
     delay?: number;
     // @public
     duration?: number;
+    // (undocumented)
+    ease?: Easing;
     // @public
     easings?: Easing[];
     // (undocumented)
