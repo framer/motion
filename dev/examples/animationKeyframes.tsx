@@ -12,7 +12,12 @@ export const App = () => {
     return (
         <motion.div
             animate={{
-                width: [null, 100, 300],
+                width: [null, 50, 200, 100],
+            }}
+            transition={{
+                duration: 2,
+                easings: ["circOut", "circOut", "circOut"],
+                times: [0, 0.1, 0.9, 1],
             }}
             style={style}
         />
