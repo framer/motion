@@ -99,6 +99,9 @@ const transitionOptionParser = {
             opts.values = values as string[] | number[]
         }
 
+        if (opts.ease) {
+            opts.ease = easingDefinitionToFunction(opts.ease)
+        }
         if (opts.easings) {
             opts.easings = opts.easings.map(easingDefinitionToFunction)
         }
@@ -156,6 +159,7 @@ const getTransitionForValue = (
             values: to,
             duration: 0.8,
             delay,
+            ease: "linear",
             ...valueTransitionDefinition,
             // This animation must be keyframes if we're animating through an array
             type: "keyframes",

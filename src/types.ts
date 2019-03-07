@@ -896,6 +896,11 @@ export interface Keyframes {
     /**
      * @internal
      */
+    ease?: Easing
+
+    /**
+     * @internal
+     */
     elapsed?: number
 
     /**
