@@ -17,6 +17,7 @@ import {
     PopmotionTransitionProps,
     TransitionDefinition,
     ValueTarget,
+    Easing,
 } from "../../types"
 import { getDefaultTransition } from "./default-transitions"
 import { invariant } from "hey-listen"
@@ -61,36 +62,50 @@ const easingLookup: { [key: string]: EasingFunction } = {
     anticipate,
 }
 
+const easingDefinitionToFunction = (definition: Easing) => {
+    if (Array.isArray(definition)) {
+        // If cubic bezier definition, create bezier curve
+        invariant(
+            definition.length === 4,
+            `Cubic bezier arrays must contain four numerical values.`
+        )
+
+        const [x1, y1, x2, y2] = definition
+        return easing.cubicBezier(x1, y1, x2, y2)
+    } else if (typeof definition === "string") {
+        // Else lookup from table
+        invariant(
+            easingLookup[definition] !== undefined,
+            `Invalid easing type '${definition}'`
+        )
+        return easingLookup[definition]
+    }
+
+    return definition
+}
+
 const transitionOptionParser = {
     tween: (opts: Tween): Tween => {
-        const { ease } = opts
-
-        if (Array.isArray(ease)) {
-            // If cubic bezier definition, create bezier curve
-            invariant(
-                ease.length === 4,
-                `Cubic bezier arrays must contain four numerical values.`
-            )
-
-            const [x1, y1, x2, y2] = ease
-            opts.ease = easing.cubicBezier(x1, y1, x2, y2)
-        } else if (typeof ease === "string") {
-            // Else lookup from table
-            invariant(
-                easingLookup[ease] !== undefined,
-                `Invalid easing type '${ease}'`
-            )
-            opts.ease = easingLookup[ease]
+        if (opts.ease) {
+            opts.ease = easingDefinitionToFunction(opts.ease)
         }
 
         return opts
     },
-    keyframes: ({ from, to, velocity, ...opts }: Keyframes) => {
-        if (opts.values[0] === null) {
+    keyframes: ({ from, to, velocity, ...opts }: Partial<Keyframes>) => {
+        if (opts.values && opts.values[0] === null) {
             const values = [...opts.values]
             values[0] = from as string | number
             opts.values = values as string[] | number[]
         }
+
+        if (opts.ease) {
+            opts.ease = easingDefinitionToFunction(opts.ease)
+        }
+        if (opts.easings) {
+            opts.easings = opts.easings.map(easingDefinitionToFunction)
+        }
+
         return opts
     },
 }
@@ -144,6 +159,7 @@ const getTransitionForValue = (
             values: to,
             duration: 0.8,
             delay,
+            ease: "linear",
             ...valueTransitionDefinition,
             // This animation must be keyframes if we're animating through an array
             type: "keyframes",
@@ -160,7 +176,7 @@ const getTransitionForValue = (
 
 const preprocessOptions = (
     type: string,
-    opts: PopmotionTransitionProps
+    opts: Partial<PopmotionTransitionProps>
 ): PopmotionTransitionProps => {
     return transitionOptionParser[type]
         ? transitionOptionParser[type](opts)
