@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.3] 2019-03-08
+
+### Added
+
+-   Passing `panInfo` through to `onDragStart` and `onDragEnd`.
+
 ## [0.7.2] 2019-03-07
 
 ### Fixed

@@ -30,7 +30,7 @@ export interface DragHandlers {
      *  <motion.div dragEnabled onDragStart={onDragStart} />
      * ```
      */
-    onDragStart?(e: MouseEvent | TouchEvent): void
+    onDragStart?(e: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
      * Callback that fires when dragging ends.
@@ -43,7 +43,7 @@ export interface DragHandlers {
      * <motion.div dragEnabled onDragEnd={onDragEnd} />
      * ```
      */
-    onDragEnd?(e: MouseEvent | TouchEvent): void
+    onDragEnd?(e: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
      * Callback that fires when the component is dragged.
@@ -264,7 +264,10 @@ export function useDraggable(
                 p.set(current)
             }
 
-            const onPanStart = (event: MouseEvent | TouchEvent) => {
+            const onPanStart = (
+                event: MouseEvent | TouchEvent,
+                info: PanInfo
+            ) => {
                 if (point.x) {
                     origin.x = point.x.get()
                     point.x.stop()
@@ -284,7 +287,7 @@ export function useDraggable(
                 currentDirection = null
                 motionContext.dragging = true
 
-                onDragStart && onDragStart(event)
+                onDragStart && onDragStart(event, info)
             }
 
             const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
@@ -321,8 +324,10 @@ export function useDraggable(
 
             const onPanEnd = (
                 event: MouseEvent | TouchEvent,
-                { velocity }: PanInfo
+                info: PanInfo
             ) => {
+                const { velocity } = info
+
                 if (!dragPropagation && openGlobalLock) {
                     openGlobalLock()
                 }
@@ -355,7 +360,7 @@ export function useDraggable(
                 }
 
                 motionContext.dragging = false
-                onDragEnd && onDragEnd(event)
+                onDragEnd && onDragEnd(event, info)
             }
 
             return { onPanStart, onPan, onPanEnd }
