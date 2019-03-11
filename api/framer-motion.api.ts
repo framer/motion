@@ -1,4 +1,22 @@
 // @internal (undocumented)
+declare class AnimationControls {
+    // (undocumented)
+    mount(): void;
+    // (undocumented)
+    setDefaultTransition(transition: Transition): void;
+    // (undocumented)
+    setVariants(variants: Variants): void;
+    // (undocumented)
+    start(definition: Variant | string): Promise<any>;
+    // (undocumented)
+    stop(): void;
+    // (undocumented)
+    subscribe(controls: ComponentAnimationControls): () => boolean;
+    // (undocumented)
+    unmount(): void;
+    }
+
+// @internal (undocumented)
 declare const animationControls: () => AnimationControls;
 
 // @public (undocumented)
