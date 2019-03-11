@@ -1,6 +1,9 @@
 import { Variants, Variant, Transition } from "../types"
 import { ComponentAnimationControls } from "../motion"
 
+/**
+ * @internal
+ */
 export class AnimationControls {
     private hasMounted = false
     private defaultTransition: Transition
