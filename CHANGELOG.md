@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.7.4] 2019-03-11
+
+### Added
+
+-   Exporting `animationControls` and `motionValue` for internal use.
+
 ## [0.7.3] 2019-03-08
 
 ### Added

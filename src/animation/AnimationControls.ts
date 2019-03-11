@@ -60,3 +60,8 @@ export class AnimationControls {
         this.stop()
     }
 }
+
+/**
+ * @internal
+ */
+export const animationControls = () => new AnimationControls()

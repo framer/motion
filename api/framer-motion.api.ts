@@ -1,3 +1,6 @@
+// @internal (undocumented)
+declare const animationControls: () => AnimationControls;
+
 // @public (undocumented)
 interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
@@ -36,8 +39,8 @@ interface DraggableProps extends DragHandlers {
 interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
     onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void;
-    onDragEnd?(e: MouseEvent | TouchEvent): void;
-    onDragStart?(e: MouseEvent | TouchEvent): void;
+    onDragEnd?(e: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDragStart?(e: MouseEvent | TouchEvent, info: PanInfo): void;
 }
 
 // @public (undocumented)
@@ -191,6 +194,9 @@ declare class MotionValue<V = any> {
     // (undocumented)
     velocityCheck: ({ timestamp }: FrameData) => void;
 }
+
+// @internal (undocumented)
+declare function motionValue<V>(init: V, opts?: Config<V>): MotionValue<V>;
 
 // @public (undocumented)
 interface None {

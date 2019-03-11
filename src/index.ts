@@ -10,10 +10,11 @@ export {
     SVGMotionComponents,
 } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
-export { MotionValue } from "./value"
+export { MotionValue, motionValue } from "./value"
 export { unwrapMotionValue } from "./value/utils/unwrap-value"
 export { useTransformedValue } from "./value/use-transformed-value"
 export { useViewportScrollValues } from "./value/use-viewport-scroll-values"
+export { animationControls } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
 export {
     HoverHandlers,
