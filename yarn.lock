@@ -6542,6 +6542,11 @@ strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
+style-value-types@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.1.0.tgz#07e06090e7581adff4c7955d544c1029d0663795"
+  integrity sha512-7eaMZ8RKWIQUKHPQK7qv3zLYmvZNb2pCmO4WguXdVFymd2Qj9xqSUoo7LQ8Wd8eiLuoSd+uqzsvcodyvD8nn6Q==
+
 style-value-types@^3.0.6, style-value-types@^3.0.7:
   version "3.0.7"
   resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.0.7.tgz#6e7a22cc8b1a4465193268ed66ad5f2a82579054"
@@ -6572,14 +6577,14 @@ stylefire@^2.3.4:
     hey-listen "^1.0.4"
     style-value-types "^3.0.6"
 
-stylefire@^2.4.3:
-  version "2.4.3"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-2.4.3.tgz#1b39847251000bda86ebf82fa2bb4be7dafe6bc4"
-  integrity sha512-8rckFzuDlVWSyrkmnyTg8avadQavk2t6YkFKUUocsXoj/8NScOjb+/avbB4nrmoPtzD0kN7IyuhKq8jimIBTBQ==
+stylefire@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-3.0.0.tgz#8174ae28f3b6952a815f97959f57239f22cd13b5"
+  integrity sha512-CLb+WKfJDc6bXPwKHJcOQ0N7mk5aKJ2NVKOjUT4o/HqEypukMhb4Ow4xlC8Hf39KTSVgaHU4xzl/24xmSkgYTQ==
   dependencies:
     framesync "^4.0.0"
     hey-listen "^1.0.4"
-    style-value-types "^3.0.6"
+    style-value-types "3.1.0"
 
 stylis-rule-sheet@^0.0.10:
   version "0.0.10"

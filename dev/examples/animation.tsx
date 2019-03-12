@@ -27,7 +27,7 @@ export const App = () => {
     return (
         <motion.div
             animate={animation}
-            initial={{ opacity: 0 }}
+            initial={{ rotate: 0, opacity: 0 }}
             transition={{ duration: 5 }}
             style={style}
             onMouseEnter={() => console.log("test")}

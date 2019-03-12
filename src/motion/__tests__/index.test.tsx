@@ -82,10 +82,11 @@ describe("motion component rendering and styles", () => {
 
     test("generates style attribute if passed a special transform style attr", () => {
         const { container } = render(
-            <motion.div style={{ x: 10, background: "#fff" }} />
+            <motion.div style={{ x: 10, background: "#fff", originX: 0.5 }} />
         )
+
         expect(container.firstChild).toHaveStyle(
-            "transform: translateX(10px) translateZ(0); background: #fff"
+            "transform-origin: 50% 0 0; transform: translateX(10px) translateZ(0); background: #fff"
         )
     })
 

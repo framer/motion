@@ -65,7 +65,7 @@
         "hey-listen": "^1.0.5",
         "popmotion": "^8.6.3",
         "style-value-types": "^3.0.7",
-        "stylefire": "^2.4.3"
+        "stylefire": "^3.0.0"
     },
     "husky": {
         "hooks": {

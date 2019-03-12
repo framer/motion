@@ -268,14 +268,17 @@ export function useDraggable(
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
-                if (point.x) {
-                    origin.x = point.x.get()
-                    point.x.stop()
+                const handle = (axis: "x" | "y") => {
+                    const axisPoint = point[axis]
+                    if (!axisPoint) return
+
+                    origin[axis] = axisPoint.get()
+                    axisPoint.stop()
+                    values.get(axis)!.stop()
                 }
-                if (point.y) {
-                    origin.y = point.y.get()
-                    point.y.stop()
-                }
+
+                handle("x")
+                handle("y")
 
                 if (!dragPropagation) {
                     openGlobalLock = getGlobalLock(dragEnabled)
