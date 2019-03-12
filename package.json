@@ -60,11 +60,11 @@
     },
     "dependencies": {
         "@emotion/is-prop-valid": "^0.7.3",
-        "@popmotion/popcorn": "^0.3.1",
+        "@popmotion/popcorn": "^0.3.2",
         "framesync": "^4.0.2",
         "hey-listen": "^1.0.5",
-        "popmotion": "^8.6.3",
-        "style-value-types": "^3.0.7",
+        "popmotion": "^8.6.4",
+        "style-value-types": "^3.1.0",
         "stylefire": "^3.0.0"
     },
     "husky": {
