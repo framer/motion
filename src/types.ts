@@ -244,9 +244,9 @@ export interface Tween {
     /**
      * The easing function to use. Set as one of the below.
      *
-     * - The name of an inbuilt easing function. <br />
-     * - An array of four numbers to define a cubic bezier curve. <br />
-     * - An easing function, that accepts and returns a value `0-1`. <br />
+     * - The name of an inbuilt easing function.
+     * - An array of four numbers to define a cubic bezier curve.
+     * - An easing function, that accepts and returns a value `0-1`.
      *
      * ```jsx
      * const transition = {
