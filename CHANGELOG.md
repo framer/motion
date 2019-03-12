@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.0] 2019-03-12
+
+### Changed
+
+-   `originX`, `originY`, `pathLength`, `pathOffset` changed from percent to progress value types.
+
 ## [0.7.5] 2019-03-11
 
 ### Added
