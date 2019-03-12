@@ -51,10 +51,10 @@ const viewportMotionValues: ScrollMotionValues = {
  * Provides a `MotionValue` that updates when the viewport scrolls.
  * Returns the following four values.
  *
- * - `scrollX` — Horizontal scroll distance in pixels. <br/>
- * - `scrollY` — Vertical scroll distance in pixels. <br/>
- * - `scrollXProgress` — Horizontal scroll distance between `0` and `1`. <br/>
- * - `scrollYProgress` — Vertical scroll distance between `0` and `1`. <br/>
+ * - `scrollX` — Horizontal scroll distance in pixels.
+ * - `scrollY` — Vertical scroll distance in pixels.
+ * - `scrollXProgress` — Horizontal scroll distance between `0` and `1`.
+ * - `scrollYProgress` — Vertical scroll distance between `0` and `1`.
  *
  *
  * ```jsx
