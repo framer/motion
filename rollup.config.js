@@ -35,9 +35,9 @@ const umd = Object.assign({}, config, {
     },
     external: ["react", "react-dom"],
     plugins: [
+        resolve(),
         commonjs(),
         typescript(typescriptConfig),
-        resolve(),
         replace({
             "process.env.NODE_ENV": JSON.stringify("development"),
         }),
@@ -49,9 +49,9 @@ const umdProd = Object.assign({}, umd, {
         file: `dist/${pkg.name}.js`,
     }),
     plugins: [
+        resolve(),
         commonjs(),
         typescript(typescriptConfig),
-        resolve(),
         replace({
             "process.env.NODE_ENV": JSON.stringify("production"),
         }),
