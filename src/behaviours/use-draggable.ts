@@ -141,6 +141,19 @@ export interface DraggableProps extends DragHandlers {
      * ```
      */
     dragMomentum?: boolean
+
+    /**
+     * Allows you to change dragging bounciness.
+     * Defaults are 200 for `bounceStiffness` and 40 for `bounceDamping`
+     *
+     * ```jsx
+     * <motion.div
+     *   dragEnabled
+     *   dragTransition={{ bounceStiffness: 600, bounceDamping: 10 }}
+     * />
+     * ```
+     */
+    dragTransition?: { bounceStiffness: number; bounceDamping: number }
 }
 
 const flattenConstraints = (constraints: Constraints | false) => {
@@ -210,6 +223,7 @@ export function useDraggable(
         dragConstraints = false,
         dragElastic = true,
         dragMomentum = true,
+        dragTransition,
         onDragStart,
         onDragEnd,
         onDrag,
@@ -343,14 +357,25 @@ export function useDraggable(
                         const transition = dragConstraints
                             ? getConstraints(axis, dragConstraints)
                             : {}
+                        let bounceStiffness: number = 200
+                        let bounceDamping: number = 40
+
+                        if (dragTransition) {
+                            if (dragTransition.bounceStiffness === undefined) {
+                                bounceStiffness = dragTransition.bounceStiffness
+                            }
+                            if (dragTransition.bounceDamping === undefined) {
+                                bounceDamping = dragTransition.bounceDamping
+                            }
+                        }
 
                         controls.start({
                             [axis]: 0,
                             transition: {
                                 type: "inertia",
                                 velocity: velocity[axis],
-                                bounceStiffness: 200,
-                                bounceDamping: 40,
+                                bounceStiffness,
+                                bounceDamping,
                                 timeConstant: 325,
                                 restDelta: 1,
                                 ...transition,
