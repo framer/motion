@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.3] 2019-03-14
+
+### Update
+
+-   Adding support for custom values.
+
 ## [0.8.2] 2019-03-14
 
 ### Update
