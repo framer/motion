@@ -37,7 +37,7 @@ export interface TapHandlers {
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the document.
+     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
     onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
@@ -53,7 +53,7 @@ export interface TapHandlers {
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the document.
+     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
@@ -69,7 +69,7 @@ export interface TapHandlers {
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the document.
+     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void
 
