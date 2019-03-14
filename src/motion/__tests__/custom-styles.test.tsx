@@ -92,6 +92,34 @@ describe("custom properties", () => {
         return expect(promise).resolves.toHaveStyle("width: 50%; height: 50%;")
     })
 
+    test("animates and sets custom values transitionEnd", async () => {
+        const promise = new Promise<ChildNode | null>(resolve => {
+            const resolvePromise = () => {
+                setTimeout(() => resolve(container.firstChild), 20)
+            }
+
+            const Component = () => {
+                return (
+                    <motion.div
+                        initial={{ size: "0%" }}
+                        animate={{ size: "50%", transitionEnd: { size: 100 } }}
+                        transition={{
+                            duration: 0.1,
+                        }}
+                        onAnimationComplete={resolvePromise}
+                    />
+                )
+            }
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toHaveStyle(
+            "width: 100px; height: 100px;"
+        )
+    })
+
     test("doesn't animate numerical image", async () => {
         const promise = new Promise(resolve => {
             const resolvePromise = () => {
@@ -152,10 +180,10 @@ describe("custom values type", () => {
         )
     })
 
-    test("doesn't animate numerical image", async () => {
+    test("animates custom value type", async () => {
         const promise = new Promise(resolve => {
             const resolvePromise = () => {
-                resolve(container.firstChild)
+                requestAnimationFrame(() => resolve(container.firstChild))
             }
 
             const Component = () => {

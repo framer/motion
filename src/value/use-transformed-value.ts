@@ -1,7 +1,7 @@
 import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
 import { interpolate } from "@popmotion/popcorn"
-import { Animatable } from "../types"
+import { CustomValueType } from "../types"
 
 type MapOptions = { clamp: true }
 
@@ -11,7 +11,7 @@ const isTransformer = (v: number[] | Transformer): v is Transformer => {
     return typeof v === "function"
 }
 
-const isCustomValueType = (v: any): v is Animatable => {
+const isCustomValueType = (v: any): v is CustomValueType => {
     return typeof v === "object" && v.mix
 }
 

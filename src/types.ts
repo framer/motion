@@ -1,14 +1,21 @@
 import { CSSProperties } from "react"
 import { TransformProperties, CustomStyles } from "./motion/types"
 
-export type KeyframesTarget =
+export type ResolvedKeyframesTarget =
     | [null, ...number[]]
     | number[]
     | [null, ...string[]]
     | string[]
 
-export type SingleTarget = string | number
+export type KeyframesTarget =
+    | ResolvedKeyframesTarget
+    | [null, ...CustomValueType[]]
+    | CustomValueType[]
 
+export type ResolvedSingleTarget = string | number
+export type SingleTarget = ResolvedSingleTarget | CustomValueType
+
+export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
 export type ValueTarget = SingleTarget | KeyframesTarget
 
 export type Props = { [key: string]: any }
