@@ -50,6 +50,7 @@ export {
     Keyframes,
     Physics,
     Inertia,
+    Point,
     None,
 } from "./types"
 export { safeWindow } from "./events/utils/window"
