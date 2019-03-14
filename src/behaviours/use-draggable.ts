@@ -7,6 +7,7 @@ import { Point } from "../events"
 import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
 import { ComponentAnimationControls } from "../motion"
+import { Omit, Inertia } from "../types"
 
 type DragDirection = "x" | "y"
 
@@ -143,8 +144,7 @@ export interface DraggableProps extends DragHandlers {
     dragMomentum?: boolean
 
     /**
-     * Allows you to change dragging bounciness.
-     * Defaults are 200 for `bounceStiffness` and 40 for `bounceDamping`
+     * Allows you to change dragging inertia params.
      *
      * ```jsx
      * <motion.div
@@ -153,7 +153,7 @@ export interface DraggableProps extends DragHandlers {
      * />
      * ```
      */
-    dragTransition?: { bounceStiffness: number; bounceDamping: number }
+    dragTransition?: Partial<Omit<Inertia, "velocity" | "type">>
 }
 
 const flattenConstraints = (constraints: Constraints | false) => {
@@ -357,27 +357,17 @@ export function useDraggable(
                         const transition = dragConstraints
                             ? getConstraints(axis, dragConstraints)
                             : {}
-                        let bounceStiffness: number = 200
-                        let bounceDamping: number = 40
-
-                        if (dragTransition) {
-                            if (dragTransition.bounceStiffness === undefined) {
-                                bounceStiffness = dragTransition.bounceStiffness
-                            }
-                            if (dragTransition.bounceDamping === undefined) {
-                                bounceDamping = dragTransition.bounceDamping
-                            }
-                        }
 
                         controls.start({
                             [axis]: 0,
                             transition: {
                                 type: "inertia",
                                 velocity: velocity[axis],
-                                bounceStiffness,
-                                bounceDamping,
+                                bounceStiffness: 200,
+                                bounceDamping: 40,
                                 timeConstant: 325,
                                 restDelta: 1,
+                                ...dragTransition,
                                 ...transition,
                             },
                         })
