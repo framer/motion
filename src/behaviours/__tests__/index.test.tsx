@@ -363,4 +363,43 @@ describe("dragging", () => {
 
         return expect(promise).resolves.toEqual([500, -50])
     })
+
+    test("applies drag transition", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const y = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        style={{ x, y }}
+                        dragEnabled="x"
+                        dragConstraints={{ left: -500, right: 500 }}
+                        dragElastic
+                        dragMomentum
+                        dragTransition={{
+                            bounceStiffness: 300000,
+                            bounceDamping: 1000000,
+                        }}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(1, 1)
+            sync.postRender(() => {
+                pointer.to(-500, 0)
+                sync.postRender(() => {
+                    pointer.end()
+                    setTimeout(() => {
+                        // if we set really strong spring and animation has ended - this has worked
+                        resolve(x.get())
+                    }, 50)
+                })
+            })
+        })
+
+        return expect(promise).resolves.toBeCloseTo(-500)
+    })
 })
