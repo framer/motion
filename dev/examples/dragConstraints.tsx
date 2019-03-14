@@ -14,6 +14,7 @@ export const App = () => {
             dragConstraints={{ left: -500, right: 500 }}
             dragElastic
             dragMomentum
+            dragTransition={{ bounceStiffness: 200, bounceDamping: 40 }}
             style={styleA}
         />
     )
