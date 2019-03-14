@@ -79,10 +79,8 @@ export interface DragHandlers {
 export interface DraggableProps extends DragHandlers {
     /**
      * Enable dragging for this element. Set to `false` by default.
-     *
-     * @remarks
-     * Set "x" or "y" to only drag in a specific direction
-     * Set "lockDirection" to lock dragging into the initial direction
+     * Set `"x"` or `"y"` to only drag in a specific direction.
+     * Set `"lockDirection"` to lock dragging into the initial direction.
      *
      * ```jsx
      * <motion.div dragEnabled="x" />
