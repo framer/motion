@@ -51,6 +51,7 @@ interface DraggableProps extends DragHandlers {
     dragEnabled?: boolean | "x" | "y" | "lockDirection";
     dragMomentum?: boolean;
     dragPropagation?: boolean;
+    dragTransition?: Partial<Omit_2<Inertia, "velocity" | "type">>;
 }
 
 // @public (undocumented)
