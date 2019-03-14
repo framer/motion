@@ -1175,12 +1175,16 @@ export type Transition =
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type CSSPropertiesWithoutTransition = Omit<CSSProperties, "transition">
 
-export type Target = CSSPropertiesWithoutTransition &
+type TargetProperties = CSSPropertiesWithoutTransition &
     TransformProperties &
     CustomStyles & {
         pathLength?: number
         pathSpacing?: number
     }
+
+export type MakeCustomValueType<T> = { [K in keyof T]: T[K] | CustomValueType }
+
+export type Target = MakeCustomValueType<TargetProperties>
 
 export type MakeKeyframes<T> = {
     [K in keyof T]: T[K] | T[K][] | [null, ...T[K][]]
@@ -1203,4 +1207,9 @@ export type Variant = TargetAndTransition | TargetResolver
 
 export type Variants = {
     [key: string]: Variant
+}
+
+export interface CustomValueType {
+    mix: (from: any, to: any) => (p: number) => number | string
+    toValue: () => number | string
 }

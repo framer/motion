@@ -8,7 +8,6 @@ const createValueResolver = (resolver: Resolver) => (
 ) => {
     const resolvedValues = {}
     values.forEach((value, key) => (resolvedValues[key] = resolver(value)))
-
     return resolvedValues
 }
 

@@ -3,7 +3,27 @@ import { render } from "react-testing-library"
 import { motion } from ".."
 import * as React from "react"
 
-describe("custom values plugin", () => {
+class Custom {
+    value: number = 0
+
+    constructor(value: number) {
+        this.value = value
+    }
+
+    get() {
+        return this.value
+    }
+
+    mix(from: Custom, to: Custom) {
+        return (p: number) => from.get() + to.get() * p
+    }
+
+    toValue() {
+        return this.get()
+    }
+}
+
+describe("custom properties", () => {
     test("renders", () => {
         const Component = () => {
             return <motion.div style={{ size: "100%" }} />
@@ -96,5 +116,63 @@ describe("custom values plugin", () => {
         return expect(promise).resolves.toHaveStyle(
             "background-image: url(2.jpg)"
         )
+    })
+})
+
+describe("custom values type", () => {
+    test("renders via style", () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    style={{ height: new Custom(200), x: new Custom(100) }}
+                />
+            )
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle(
+            "height: 200px; transform: translateX(100px) translateZ(0)"
+        )
+    })
+
+    test("renders via initial", () => {
+        const Component = () => {
+            return (
+                <motion.div
+                    initial={{ height: new Custom(200), x: new Custom(100) }}
+                />
+            )
+        }
+
+        const { container } = render(<Component />)
+
+        expect(container.firstChild).toHaveStyle(
+            "height: 200px; transform: translateX(100px) translateZ(0)"
+        )
+    })
+
+    test("doesn't animate numerical image", async () => {
+        const promise = new Promise(resolve => {
+            const resolvePromise = () => {
+                resolve(container.firstChild)
+            }
+
+            const Component = () => {
+                return (
+                    <motion.div
+                        initial={{ height: new Custom(0) }}
+                        animate={{ height: new Custom(100) }}
+                        transition={{ duration: 0.1 }}
+                        onAnimationComplete={resolvePromise}
+                    />
+                )
+            }
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toHaveStyle("height: 100px")
     })
 })
