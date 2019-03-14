@@ -7,6 +7,7 @@ import { Point } from "../events"
 import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
 import { ComponentAnimationControls } from "../motion"
+import { Omit, Inertia } from "../types"
 
 type DragDirection = "x" | "y"
 
@@ -141,6 +142,18 @@ export interface DraggableProps extends DragHandlers {
      * ```
      */
     dragMomentum?: boolean
+
+    /**
+     * Allows you to change dragging inertia params.
+     *
+     * ```jsx
+     * <motion.div
+     *   dragEnabled
+     *   dragTransition={{ bounceStiffness: 600, bounceDamping: 10 }}
+     * />
+     * ```
+     */
+    dragTransition?: Partial<Omit<Inertia, "velocity" | "type">>
 }
 
 const flattenConstraints = (constraints: Constraints | false) => {
@@ -210,6 +223,7 @@ export function useDraggable(
         dragConstraints = false,
         dragElastic = true,
         dragMomentum = true,
+        dragTransition,
         onDragStart,
         onDragEnd,
         onDrag,
@@ -353,6 +367,7 @@ export function useDraggable(
                                 bounceDamping: 40,
                                 timeConstant: 325,
                                 restDelta: 1,
+                                ...dragTransition,
                                 ...transition,
                             },
                         })
