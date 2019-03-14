@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.2] 2019-03-14
+
+### Update
+
+-   Updating tsdocs for `MotionValue`.
+
 ## [0.8.1] 2019-03-12
 
 ### Update

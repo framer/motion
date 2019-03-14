@@ -38,7 +38,9 @@ const parseDurations = (config: PopmotionTransitionProps) => {
     return config
 }
 /**
- * @internal
+ * `MotionValue` is used to track the state and velocity of motion values.
+ *
+ * @public
  */
 export class MotionValue<V = any> {
     // Current state
