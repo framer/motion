@@ -1,6 +1,7 @@
 import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
 import { interpolate } from "@popmotion/popcorn"
+import { CustomValueType } from "../types"
 
 type MapOptions = { clamp: true }
 
@@ -10,7 +11,17 @@ const isTransformer = (v: number[] | Transformer): v is Transformer => {
     return typeof v === "function"
 }
 
+const isCustomValueType = (v: any): v is CustomValueType => {
+    return typeof v === "object" && v.mix
+}
+
 const noop = () => (v: any) => v
+
+const getMixer = (v: any) => {
+    if (isCustomValueType(v)) {
+        return v.mix
+    }
+}
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
@@ -93,7 +104,12 @@ export function useTransformedValue(
         transformer = () => transform
     } else if (Array.isArray(to)) {
         const from = transform
-        transformer = () => interpolate(from, to, opts)
+
+        transformer = () =>
+            interpolate(from, to, {
+                mixer: getMixer(to[0]),
+                ...opts,
+            })
         comparitor = [value, from.join(","), to.join(",")]
     }
 

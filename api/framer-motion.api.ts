@@ -175,7 +175,7 @@ interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, 
 }
 
 // @public (undocumented)
-declare type MotionStyle = MotionCSS & MotionTransform & CustomStyles;
+declare type MotionStyle = MotionCSS & MotionTransform & MakeCustomValueType<CustomStyles>;
 
 // @public
 declare class MotionValue<V = any> {

@@ -17,7 +17,7 @@ import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
 import { VariantLabels } from "../motion/types"
 import { transformCustomValues } from "../motion/utils/transform-custom-values"
-import { resolveSingleTargetFromKeyframes } from "./utils/is-keyframes-target"
+import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -100,7 +100,7 @@ export class ComponentAnimationControls<P = {}> {
 
             isActive.add(key)
 
-            const targetValue = resolveSingleTargetFromKeyframes(target[key])
+            const targetValue = resolveFinalValueInKeyframes(target[key])
             if (this.values.has(key)) {
                 const value = this.values.get(key)
                 value && value.set(targetValue)
@@ -283,6 +283,9 @@ export class ComponentAnimationControls<P = {}> {
         }
 
         target = transformCustomValues(target)
+        if (transitionEnd) {
+            transitionEnd = transformCustomValues(transitionEnd)
+        }
 
         this.checkForNewValues(target)
 
@@ -296,6 +299,7 @@ export class ComponentAnimationControls<P = {}> {
         target = converted.target
         transitionEnd = converted.transitionEnd
 
+        // TODO: This might be redundant (see `resolveVariant`)
         if (!transition && this.defaultTransition) {
             transition = this.defaultTransition
         }
@@ -309,7 +313,7 @@ export class ComponentAnimationControls<P = {}> {
                 const valueTarget = target[key]
 
                 if (!priority) {
-                    this.baseTarget[key] = resolveSingleTargetFromKeyframes(
+                    this.baseTarget[key] = resolveFinalValueInKeyframes(
                         valueTarget
                     )
                 }

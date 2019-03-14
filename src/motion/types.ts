@@ -7,6 +7,7 @@ import {
     Transition,
     TargetAndTransition,
     Omit,
+    MakeCustomValueType,
 } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours"
@@ -41,7 +42,9 @@ export interface CustomStyles {
     image?: string
 }
 
-export type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<T[K]> }
+export type MakeMotion<T> = MakeCustomValueType<
+    { [K in keyof T]: T[K] | MotionValue<T[K]> }
+>
 
 export type MotionCSS = MakeMotion<
     Omit<CSSProperties, "rotate" | "scale" | "perspective">
@@ -51,7 +54,9 @@ export type MotionTransform = MakeMotion<TransformProperties>
 /**
  * @public
  */
-export type MotionStyle = MotionCSS & MotionTransform & CustomStyles
+export type MotionStyle = MotionCSS &
+    MotionTransform &
+    MakeCustomValueType<CustomStyles>
 
 export type OnUpdate = (v: Target) => void
 

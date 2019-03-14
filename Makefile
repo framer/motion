@@ -35,6 +35,7 @@ API_REVIEW_FILE=api/framer-motion.api.ts
 DECLARATION_TARGET=types/index.d.ts
 
 build: bootstrap
+	npm dedupe
 	yarn build
 
 dev: bootstrap

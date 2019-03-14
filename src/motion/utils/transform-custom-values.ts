@@ -1,5 +1,11 @@
+import { resolveValue } from "../../utils/resolve-value"
+
 // If this function grows with new properties it'll probably benefit from a map approach
 export const transformCustomValues = <T extends any>(values: T): T => {
+    for (const key in values) {
+        values[key] = resolveValue(values[key]) as any
+    }
+
     // Return early if we're not changing any values
     if (values.size === undefined && values.image === undefined) {
         return values
