@@ -16,7 +16,7 @@ const resolveSingleValue = (v: string | number | CustomValueType) => {
     if (typeof v === "object") {
         invariant(
             isCustomValue(v),
-            "Motion styles must be numbers, strings, or an instance with a `toValue` method."
+            "Motion styles must be numbers, strings, or an instance with a `toValue` and `mix` methods."
         )
 
         return v.toValue()
