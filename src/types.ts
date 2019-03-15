@@ -265,7 +265,7 @@ export interface Tween {
     /**
      * The easing function to use. Set as one of the below.
      *
-     * - The name of a built-in easing function.
+     * - The name of an existing easing function.
      * - An array of four numbers to define a cubic bezier curve.
      * - An easing function, that accepts and returns a value `0-1`.
      *
@@ -315,9 +315,7 @@ export interface Tween {
     times?: number[]
 
     /**
-     * When animating keyframes, `easings` can be used to define easing functions between each keyframe
-     *
-     * This array should be one item fewer than the number of keyframes, as these easings apply to the transitions *between* the keyframes.
+     * When animating keyframes, `easings` can be used to define easing functions between each keyframe. This array should be one item fewer than the number of keyframes, as these easings apply to the transitions between the keyframes.
      *
      * ```jsx
      * const transition = {
@@ -438,8 +436,8 @@ export interface Tween {
  */
 export interface Spring {
     /**
-     * Set `type` to `'spring'` to animate using spring physics for natural
-     * movement. Set to `'spring'` by default.
+     * Set `type` to `"spring"` to animate using spring physics for natural
+     * movement. Type is set to `"spring"` by default.
      *
      * ```jsx
      * const transition = {
