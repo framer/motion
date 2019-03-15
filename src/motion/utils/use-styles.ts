@@ -37,7 +37,8 @@ export const useMotionStyles = (
 ): CSSProperties => {
     const style = useRef<CSSProperties & CustomStyles>({}).current
     const prevMotionStyles = useRef({}).current
-    const currentStyleKeys = new Set<string>(Object.keys(style))
+    const currentStyleKeys = new Set(Object.keys(style))
+
     for (const key in styleProp) {
         currentStyleKeys.delete(key)
         const thisStyle = styleProp[key]
