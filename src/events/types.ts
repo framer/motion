@@ -12,16 +12,18 @@ export namespace Point {
     }
 
     /** @alpha */
-    export const pointRelativeTo = (id: string | HTMLElement) => {
+    export const pointRelativeTo = (idOrElem: string | HTMLElement) => {
         let elem: HTMLElement | null
 
         const getElem = () => {
-            if (elem) return elem
-            if (typeof id === "string") {
-                elem = document.getElementById(id)
+            // Caching element here could be leaky because of React lifecycle
+            if (elem !== undefined) return elem
+            if (typeof idOrElem === "string") {
+                elem = document.getElementById(idOrElem)
             } else {
-                elem = id
+                elem = idOrElem
             }
+            return elem
         }
 
         return ({ x, y }: Point): Point | undefined => {
