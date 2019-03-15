@@ -283,14 +283,15 @@ describe("animate prop as object", () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
-            const { rerender } = render(
+            const Component = () => (
                 <motion.div
                     animate={{ x: 20 }}
                     style={{ x }}
                     onAnimationComplete={onComplete}
                 />
             )
-            rerender(<motion.div animate={{ x: 20 }} style={{ x }} />)
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
         })
 
         return expect(promise).resolves.toBe(20)
@@ -300,7 +301,7 @@ describe("animate prop as object", () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
-            const { rerender } = render(
+            const Component = () => (
                 <motion.div
                     animate={{ x: 20 }}
                     transition={{ x: { type: "tween", to: 50 } }}
@@ -308,7 +309,8 @@ describe("animate prop as object", () => {
                     onAnimationComplete={onComplete}
                 />
             )
-            rerender(<motion.div animate={{ x: 20 }} style={{ x }} />)
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
         })
 
         return expect(promise).resolves.toBe(50)
@@ -327,7 +329,12 @@ describe("animate prop as object", () => {
                     onAnimationComplete={onComplete}
                 />
             )
-            rerender(<motion.div initial={{ scale: 0 }} animate={{ x: 20 }} />)
+            rerender(
+                <motion.div
+                    animate={{ x: 20 }}
+                    onAnimationComplete={onComplete}
+                />
+            )
         })
 
         return expect(promise).resolves.toHaveStyle(
