@@ -9,11 +9,11 @@ import { invariant } from "hey-listen"
 import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
 
 const isCustomValue = (v: any): v is CustomValueType => {
-    return typeof v === "object" && v.mix && v.toValue
+    return v && typeof v === "object" && v.mix && v.toValue
 }
 
 const resolveSingleValue = (v: string | number | CustomValueType) => {
-    if (typeof v === "object") {
+    if (v && typeof v === "object") {
         invariant(
             isCustomValue(v),
             "Motion styles must be numbers, strings, or an instance with a `toValue` and `mix` methods."
