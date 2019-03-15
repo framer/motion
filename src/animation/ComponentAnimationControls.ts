@@ -15,7 +15,7 @@ import {
 } from "../types"
 import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
-import { VariantLabels } from "../motion/types"
+import { VariantLabels, MotionProps } from "../motion/types"
 import { transformCustomValues } from "../motion/utils/transform-custom-values"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 
@@ -58,8 +58,8 @@ const isTargetResolver = (p: any): p is TargetResolver => {
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 const isNumericalString = (v: string) => /^\d*\.?\d+$/.test(v)
 
-export class ComponentAnimationControls<P = {}> {
-    private props: P
+export class ComponentAnimationControls<P extends {} = {}> {
+    private props: P & MotionProps
     private values: MotionValuesMap
     private ref: RefObject<Element>
     private variants: Variants = {}
@@ -80,7 +80,7 @@ export class ComponentAnimationControls<P = {}> {
         )
     }
 
-    setProps(props: P) {
+    setProps(props: P & MotionProps) {
         this.props = props
     }
 
@@ -249,13 +249,20 @@ export class ComponentAnimationControls<P = {}> {
 
         this.resetIsAnimating(opts.priority)
 
+        let animation
+
         if (isVariantLabels(definition)) {
-            return this.animateVariantLabels(definition, opts)
+            animation = this.animateVariantLabels(definition, opts)
         } else if (typeof definition === "string") {
-            return this.animateVariant(definition, opts)
+            animation = this.animateVariant(definition, opts)
         } else {
-            return this.animate(definition, opts)
+            animation = this.animate(definition, opts)
         }
+
+        const { onAnimationComplete } = this.props
+        return onAnimationComplete
+            ? animation.then(onAnimationComplete)
+            : animation
     }
 
     isHighestPriority(priority: number) {
