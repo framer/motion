@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.5] Unreleased
+
+### Fix
+
+-   Blocking extra gesture props from being passed to DOM.
+
 ## [0.8.4] 2019-03-15
 
 ### Fix

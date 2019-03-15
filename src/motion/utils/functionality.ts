@@ -150,6 +150,13 @@ const eventHandlers = new Set([
     "onUpdate",
     "onHoverStart",
     "onHoverEnd",
+    "onDragStart",
+    "onDrag",
+    "onDragEnd",
+    "onPanStart",
+    "onPan",
+    "onPanEnd",
+    "onDirectionLock",
 ])
 
 const validProps = (props: MotionProps) => {
