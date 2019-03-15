@@ -68,9 +68,8 @@ export const useMotionStyles = (
             style[key] = resolvedStyle
         }
     }
-    for (const key of Array.from(currentStyleKeys.values())) {
-        style[key] = undefined
-    }
+
+    currentStyleKeys.forEach(key => (style[key] = undefined))
 
     return transformCustomValues(style)
 }
