@@ -259,10 +259,10 @@ export class ComponentAnimationControls<P extends {} = {}> {
             animation = this.animate(definition, opts)
         }
 
-        const { onAnimationComplete } = this.props
-        return onAnimationComplete
-            ? animation.then(onAnimationComplete)
-            : animation
+        return animation.then(() => {
+            const { onAnimationComplete } = this.props
+            onAnimationComplete && onAnimationComplete()
+        })
     }
 
     isHighestPriority(priority: number) {
