@@ -12,7 +12,7 @@ export namespace Point {
     }
 
     /** @alpha */
-    export const pointRelativeTo = (idOrElem: string | HTMLElement) => {
+    export const relativeTo = (idOrElem: string | HTMLElement) => {
         let elem: HTMLElement | null
 
         const getElem = () => {

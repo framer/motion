@@ -11,8 +11,8 @@ const Slider = styled(motion.div)`
     width: 400px;
 `
 
-const convert1 = Point.pointRelativeTo("slider1")
-const convert2 = Point.pointRelativeTo("slider2")
+const convert1 = Point.relativeTo("slider1")
+const convert2 = Point.relativeTo("slider2")
 
 export const App = () => {
     const [point, setPoint] = useState({ x: 0, y: 0 })
