@@ -20,8 +20,22 @@ export type ValueTarget = SingleTarget | KeyframesTarget
 
 export type Props = { [key: string]: any }
 
+/**
+ * A function that accepts a progress value between `0` and `1` and returns a new one.
+ *
+ * @public
+ */
 export type EasingFunction = (v: number) => number
 
+/**
+ * The easing function to use. Set as one of:
+ *
+ * - The name of an in-built easing function.
+ * - An array of four numbers to define a cubic bezier curve.
+ * - An easing function, that accepts and returns a value `0-1`.
+ *
+ * @public
+ */
 export type Easing =
     | [number, number, number, number]
     | "linear"
@@ -268,20 +282,7 @@ export interface Tween {
      *
      * @public
      */
-    ease?:
-        | [number, number, number, number]
-        | "linear"
-        | "easeIn"
-        | "easeOut"
-        | "easeInOut"
-        | "circIn"
-        | "circOut"
-        | "circInOut"
-        | "backIn"
-        | "backOut"
-        | "backInOut"
-        | "anticipate"
-        | EasingFunction
+    ease?: Easing
 
     /**
      * The duration of time already elapsed in the animation. Set to `0` by
@@ -1199,6 +1200,26 @@ export type MakeKeyframes<T> = {
 
 export type TargetWithKeyframes = MakeKeyframes<Target>
 
+/**
+ * An object that specifies values to animate to. Each value may be set either as
+ * a single value, or an array of values.
+ *
+ * It may also option contain these properties:
+ *
+ * - `transition`: Specifies transitions for all or individual values.
+ * - `transitionEnd`: Specifies values to set when the animation finishes.
+ *
+ * ```jsx
+ * const target = {
+ *   x: '0%',
+ *   opacity: 0,
+ *   transition: { duration: 1 },
+ *   transitionEnd: { display: 'none' }
+ * }
+ * ```
+ *
+ * @public
+ */
 export type TargetAndTransition = TargetWithKeyframes & {
     transition?: Transition
     transitionEnd?: Target
