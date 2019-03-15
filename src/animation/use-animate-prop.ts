@@ -1,6 +1,5 @@
 import { useRef, useEffect } from "react"
 import { Target, Transition } from "../types"
-import { MotionValue } from "../value"
 import { ComponentAnimationControls } from "./ComponentAnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 
@@ -43,14 +42,11 @@ export function useAnimateProp(
                     target[key] !== undefined &&
                     prevValues.current[key] !== target[key]
 
-                const animateOnMount =
+                const shouldAnimateOnMount =
                     isInitialRender.current &&
-                    (!values.has(key) ||
-                        (values.has(key) &&
-                            (values.get(key) as MotionValue).get() !==
-                                target[key]))
+                    (!values.has(key) || values.get(key) !== target[key])
 
-                if (hasUpdated || animateOnMount) {
+                if (hasUpdated || shouldAnimateOnMount) {
                     toAnimate[key] = target[key]
                 }
             }
