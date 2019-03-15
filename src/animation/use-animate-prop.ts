@@ -22,41 +22,38 @@ import { MotionValuesMap } from "../motion/utils/use-motion-values"
  * @param controls
  * @param values
  * @param transition
- * @param onComplete
+ *
  * @internal
  */
 export function useAnimateProp(
     target: Target,
     controls: ComponentAnimationControls,
     values: MotionValuesMap,
-    transition?: Transition,
-    onComplete?: () => void
+    transition?: Transition
 ) {
     const isInitialRender = useRef(true)
     const prevValues = useRef(target)
 
     useEffect(
         () => {
-            const toAnimate: Target = Object.keys(prevValues.current).reduce(
-                (acc, key) => {
-                    const hasUpdated =
-                        target[key] !== undefined &&
-                        prevValues.current[key] !== target[key]
+            const toAnimate: Target = {}
 
-                    const animateOnMount =
-                        isInitialRender.current &&
-                        (!values.has(key) ||
-                            (values.has(key) &&
-                                (values.get(key) as MotionValue).get() !==
-                                    target[key]))
+            for (const key in prevValues.current) {
+                const hasUpdated =
+                    target[key] !== undefined &&
+                    prevValues.current[key] !== target[key]
 
-                    if (hasUpdated || animateOnMount) {
-                        acc[key] = target[key]
-                    }
-                    return acc
-                },
-                {}
-            )
+                const animateOnMount =
+                    isInitialRender.current &&
+                    (!values.has(key) ||
+                        (values.has(key) &&
+                            (values.get(key) as MotionValue).get() !==
+                                target[key]))
+
+                if (hasUpdated || animateOnMount) {
+                    toAnimate[key] = target[key]
+                }
+            }
 
             isInitialRender.current = false
             prevValues.current = {
@@ -65,7 +62,7 @@ export function useAnimateProp(
             }
 
             if (Object.keys(toAnimate).length) {
-                controls.start(toAnimate, transition).then(onComplete)
+                controls.start(toAnimate, transition)
             }
         },
         [target]
