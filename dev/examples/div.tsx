@@ -2,11 +2,6 @@ import * as React from "react"
 import { useState } from "react"
 import { motion, useAnimation } from "../../src"
 
-const style = {
-    width: 100,
-    height: 100,
-    background: "red",
-}
 const stylea = {
     width: 50,
     height: 50,
@@ -15,27 +10,18 @@ const stylea = {
 }
 
 export const App = () => {
-    const animation = useAnimation({
-        default: { x: 0 },
-        active: () => ({ x: 200, transition: { delayChildren: 0.3 } }),
-    })
-
-    const childPoses = useAnimation({
-        default: { opacity: 0.2 },
-        active: { opacity: 1 },
-    })
-
-    const [isActive, setActive] = useState(true)
-
-    animation.start("active")
-
+    const [isActive, setActive] = useState(false)
+    const style = {
+        width: 100,
+        height: 100,
+    }
+    if (isActive) {
+        style.background = "tomato"
+    }
     return (
-        <motion.div
-            animate={animation}
-            onClick={() => setActive(!isActive)}
-            style={style}
-        >
-            <motion.div animate={childPoses} inherit style={stylea} />
-        </motion.div>
+        <div>
+            <motion.div style={style} />
+            <div onClick={() => setActive(!isActive)} style={stylea} />
+        </div>
     )
 }
