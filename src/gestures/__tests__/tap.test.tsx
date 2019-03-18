@@ -48,7 +48,7 @@ describe("tap", () => {
             })
         })
 
-        return expect(promise).resolves.toBeCalledTimes(1)
+        return expect(promise).resolves.toBeCalledTimes(0)
     })
 
     test("tap event listeners unset", () => {

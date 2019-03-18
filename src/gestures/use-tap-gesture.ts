@@ -166,6 +166,7 @@ export function useTapGesture(
                 // Check the gesture lock - if we get it, it means no drag gesture is active
                 // and we can safely fire the tap gesture.
                 const openGestureLock = getGlobalLock(true)
+
                 if (!openGestureLock) {
                     return
                 }
