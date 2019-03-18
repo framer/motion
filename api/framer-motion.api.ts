@@ -237,6 +237,22 @@ interface Physics {
     velocity?: number;
 }
 
+// @public (undocumented)
+interface Point {
+    // (undocumented)
+    x: number;
+    // (undocumented)
+    y: number;
+}
+
+// @public (undocumented)
+declare namespace Point {
+    const // @beta (undocumented)
+ subtract: (a: Point, b: Point) => Point;
+    const // @beta (undocumented)
+ relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
+}
+
 // @internal
 declare const safeWindow: Window | ServerSafeWindow;
 
