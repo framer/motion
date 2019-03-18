@@ -1,18 +1,16 @@
-// @internal (undocumented)
+// @public
 declare class AnimationControls {
-    // (undocumented)
+    // @internal
     mount(): void;
-    // (undocumented)
+    // @internal
     setDefaultTransition(transition: Transition): void;
-    // (undocumented)
+    // @internal
     setVariants(variants: Variants): void;
-    // (undocumented)
     start(definition: Variant | string): Promise<any>;
-    // (undocumented)
     stop(): void;
-    // (undocumented)
+    // @internal
     subscribe(controls: ComponentAnimationControls): () => boolean;
-    // (undocumented)
+    // @internal
     unmount(): void;
     }
 
@@ -180,39 +178,22 @@ declare type MotionStyle = MotionCSS & MotionTransform & MakeCustomValueType<Cus
 
 // @public
 declare class MotionValue<V = any> {
-    // (undocumented)
+    // @internal (undocumented)
     constructor(init: V, { transformer, parent }?: Config<V>);
-    // (undocumented)
+    // @internal
     addChild(config: Config<V>): MotionValue<V>;
-    // (undocumented)
     addRenderSubscription(subscription: Subscriber<V>): () => boolean;
-    // (undocumented)
     addUpdateSubscription(subscription: Subscriber<V>): () => boolean;
-    // (undocumented)
+    // @internal
     control(controller: ActionFactory, config: PopmotionTransitionProps, transformer?: Transformer<V>): Promise<{}>;
-    // (undocumented)
     destroy(): void;
-    // (undocumented)
     get(): V;
-    // (undocumented)
     getVelocity(): number;
-    // (undocumented)
-    notifySubscriber: (subscriber: Subscriber<V>) => void;
-    // (undocumented)
+    // @internal
     removeChild(child: MotionValue): void;
-    // (undocumented)
-    scheduleVelocityCheck: () => import("framesync/lib/types").Process;
-    // (undocumented)
     set(v: V, render?: boolean): void;
-    // (undocumented)
-    setChild: (child: MotionValue<any>) => void;
-    // (undocumented)
     stop(): void;
-    // (undocumented)
-    subscribeTo(subscriptions: Set<Subscriber<V>>, subscription: Subscriber<V>): () => boolean;
-    // (undocumented)
-    velocityCheck: ({ timestamp }: FrameData) => void;
-}
+    }
 
 // @internal (undocumented)
 declare function motionValue<V>(init: V, opts?: Config<V>): MotionValue<V>;
@@ -292,11 +273,14 @@ interface TapHandlers {
 }
 
 // @public
+declare function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (v: number) => any;
+
+// @public
 interface Tween {
     // @internal (undocumented)
     delay?: number;
     duration?: number;
-    ease?: [number, number, number, number] | "linear" | "easeIn" | "easeOut" | "easeInOut" | "circIn" | "circOut" | "circInOut" | "backIn" | "backOut" | "backInOut" | "anticipate" | EasingFunction;
+    ease?: Easing;
     easings?: Easing[];
     // @internal
     elapsed?: number;
@@ -352,7 +336,7 @@ declare function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObj
 declare function useTransformedValue(value: MotionValue, transform: Transformer_2): MotionValue;
 
 // @public
-declare function useTransformedValue(value: MotionValue<number>, from: number[], to: any[], options?: MapOptions): MotionValue;
+declare function useTransformedValue<T>(value: MotionValue<number>, from: number[], to: any[], options?: TransformOptions<T>): MotionValue;
 
 // @public
 declare function useViewportScrollValues(): ScrollMotionValues;
