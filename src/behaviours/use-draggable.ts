@@ -21,11 +21,11 @@ export type Constraints = {
 /** @public */
 export interface DragHandlers {
     /**
-     * Callback that fires when dragging starts.
+     * Callback function that fires when dragging starts.
      *
      * ```jsx
-     * function onDragStart(event, { point, delta, offset, velocity }) {
-     *   console.log(`Dragging started at ${point.x} ${point.y}`)
+     * function onDragStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      *  <motion.div dragEnabled onDragStart={onDragStart} />
@@ -34,11 +34,11 @@ export interface DragHandlers {
     onDragStart?(e: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
-     * Callback that fires when dragging ends.
+     * Callback function that fires when dragging ends.
      *
      * ```jsx
-     * function onDragEnd(event, { point, delta, offset, velocity }) {
-     *   console.log(`Dragging ended at ${point.x} ${point.y}`)
+     * function onDragEnd(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div dragEnabled onDragEnd={onDragEnd} />
@@ -47,11 +47,11 @@ export interface DragHandlers {
     onDragEnd?(e: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
-     * Callback that fires when the component is dragged.
+     * Callback function that fires when the component is dragged.
      *
      * ```jsx
-     * function onDrag (event, { point, delta, offset, velocity }) {
-     *   console.log(`Drag velocity is ${velocity.x} ${velocity.y}`)
+     * function onDrag (event, info) {
+     *   console.log(info.velocity.x, info.velocity.y)
      * }
      *
      * <motion.div dragEnabled onDrag={onDrag} />
@@ -60,18 +60,23 @@ export interface DragHandlers {
     onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
-     * Callback that fires a drag direction is determined.
+     * Callback function that fires a drag direction is determined.
      *
      * ```jsx
      * function onDirectionLock(axis) {
-     *   console.log(`Dragging locked to the ${axis} axis`)
+     *   console.log(axis)
      * }
      *
-     * <motion.div dragEnabled onDirectionLock={onDirectionLock} />
+     * <motion.div dragEnabled="lockDirection" onDirectionLock={onDirectionLock} />
      * ```
      */
     onDirectionLock?(axis: "x" | "y"): void
 }
+
+/**
+ * @public
+ */
+export type InertiaOptions = Partial<Omit<Inertia, "velocity" | "type">>
 
 /**
  * @public
@@ -142,8 +147,9 @@ export interface DraggableProps extends DragHandlers {
     dragMomentum?: boolean
 
     /**
-     * Allows you to change dragging inertia params.
-     *
+     * Allows you to change dragging inertia parameters.
+     * When releasing a draggable Frame, an animation with type `inertia` starts. The animation is based on your dragging velocity. This property allows you to customize it.
+     * See {@link https://framer.com/api/animation/#inertia | Inertia} for all properties you can use.
      * ```jsx
      * <motion.div
      *   dragEnabled
@@ -151,7 +157,7 @@ export interface DraggableProps extends DragHandlers {
      * />
      * ```
      */
-    dragTransition?: Partial<Omit<Inertia, "velocity" | "type">>
+    dragTransition?: InertiaOptions
 }
 
 const flattenConstraints = (constraints: Constraints | false) => {

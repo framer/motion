@@ -18,11 +18,11 @@ export interface HoverHandlers {
     hover?: string | TargetAndTransition
 
     /**
-     * Callback that fires when pointer starts hovering over the component.
+     * Callback function that fires when pointer starts hovering over the component.
      *
      * ```jsx
      * function onHoverStart(event) {
-     *   console.log("Pointer is hovering over this Frame")
+     *   console.log("Hover starts")
      * }
      *
      * <motion.div onHoverStart={onHoverStart} />
@@ -31,11 +31,11 @@ export interface HoverHandlers {
     onHoverStart?(event: MouseEvent): void
 
     /**
-     * Callback that fires when pointer stops hovering over the component.
+     * Callback function that fires when pointer stops hovering over the component.
      *
      * ```jsx
      * function onHoverEnd(event) {
-     *   console.log("Pointer stopped hovering over this Frame")
+     *   console.log("Hover ends")
      * }
      *
      * <motion.div onHoverEnd={onHoverEnd} />
