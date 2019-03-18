@@ -142,8 +142,9 @@ export interface DraggableProps extends DragHandlers {
     dragMomentum?: boolean
 
     /**
-     * Allows you to change dragging inertia params.
-     *
+     * Allows you to change dragging inertia parameters.
+     * When releasing a draggable Frame, an animation with type `inertia` starts. The animation is based on your dragging velocity. This property allows you to customize it.
+     * See {@link https://framer.com/api/animation/#inertia | Inertia} for all properties you can use.
      * ```jsx
      * <motion.div
      *   dragEnabled
