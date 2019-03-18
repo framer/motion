@@ -22,7 +22,7 @@ export interface HoverHandlers {
      *
      * ```jsx
      * function onHoverStart(event) {
-     *   console.log("Pointer is hovering over this Frame")
+     *   console.log("Hover starts")
      * }
      *
      * <motion.div onHoverStart={onHoverStart} />
@@ -35,7 +35,7 @@ export interface HoverHandlers {
      *
      * ```jsx
      * function onHoverEnd(event) {
-     *   console.log("Pointer stopped hovering over this Frame")
+     *   console.log("Hover ends")
      * }
      *
      * <motion.div onHoverEnd={onHoverEnd} />
