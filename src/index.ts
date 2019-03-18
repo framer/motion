@@ -28,6 +28,7 @@ export {
     useGestures,
 } from "./gestures"
 export { useCycle } from "./utils/use-cycle"
+export { transform } from "./utils/transform"
 export {
     MotionPlugins,
     MotionPluginContext,
