@@ -1,6 +1,6 @@
 import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
-import { transform as interpolate, TransformOptions } from "../utils/transform"
+import { transform, TransformOptions } from "../utils/transform"
 
 type Transformer = (v: any) => any
 
@@ -15,11 +15,7 @@ const noop = () => (v: any) => v
  * Here, the `y` value will always be twice the `x` value.
  * ```jsx
  * import * as React from "react"
- * import {
- *   Frame,
- *   useMotionValue,
- *   useTransformedValue
- * } from "framer"
+ * import { Frame, useMotionValue, useTransformedValue } from "framer"
  *
  * export function MyComponent() {
  *   const x = useMotionValue(10)
@@ -49,10 +45,12 @@ export function useTransformedValue(
  *
  * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`
  * - When provided a value between `-100` and `100`, will return `1`
- * - When provided a value between `100` and `200, will return a value between `1` and  `0`
+ * - When provided a value between `100` and `200`, will return a value between `1` and  `0`
  *
  * The input range must be a linear series of numbers. The output range
  * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
+ *
+ * Every value in the output range must be of the same type and in the same format.
  *
  * ```jsx
  * export function MyComponent() {
@@ -67,7 +65,7 @@ export function useTransformedValue(
  *
  * @param inputValue - `MotionValue`
  * @param inputRange - A linear series of numbers (either all increasing or decreasing)
- * @param outputRange - A series of numbers, colors or strings. Must be the same length as `from`.
+ * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
  * @param options -
  *
  *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`
@@ -84,19 +82,19 @@ export function useTransformedValue<T>(
 ): MotionValue
 export function useTransformedValue<T>(
     value: MotionValue,
-    transform: Transformer | number[],
+    customTransform: Transformer | number[],
     to?: any[],
     options?: TransformOptions<T>
 ): MotionValue {
     let comparitor: any[] = [value]
     let transformer = noop
 
-    if (isTransformer(transform)) {
-        transformer = () => transform
+    if (isTransformer(customTransform)) {
+        transformer = () => customTransform
     } else if (Array.isArray(to)) {
-        const from = transform
+        const from = customTransform
 
-        transformer = () => interpolate(from, to, options)
+        transformer = () => transform(from, to, options)
 
         comparitor = [value, from.join(","), to.join(",")]
     }
