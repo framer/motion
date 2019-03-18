@@ -249,7 +249,7 @@ interface Point {
 declare namespace Point {
     const // @alpha (undocumented)
  subtract: (a: Point, b: Point) => Point;
-    const // @alpha (undocumented)
+    const // @beta (undocumented)
  relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
 }
 

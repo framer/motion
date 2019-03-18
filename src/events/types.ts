@@ -11,7 +11,7 @@ export namespace Point {
         return { x: a.x - b.x, y: a.y - b.y }
     }
 
-    /** @alpha */
+    /** @beta */
     export const relativeTo = (idOrElem: string | HTMLElement) => {
         let elem: HTMLElement | null
 
