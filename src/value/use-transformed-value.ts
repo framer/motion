@@ -1,9 +1,6 @@
 import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
-import { interpolate } from "@popmotion/popcorn"
-import { CustomValueType } from "../types"
-
-type MapOptions = { clamp: true }
+import { transform as interpolate, TransformOptions } from "../utils/transform"
 
 type Transformer = (v: any) => any
 
@@ -11,17 +8,7 @@ const isTransformer = (v: number[] | Transformer): v is Transformer => {
     return typeof v === "function"
 }
 
-const isCustomValueType = (v: any): v is CustomValueType => {
-    return typeof v === "object" && v.mix
-}
-
 const noop = () => (v: any) => v
-
-const getMixer = (v: any) => {
-    if (isCustomValueType(v)) {
-        return v.mix
-    }
-}
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
@@ -89,17 +76,17 @@ export function useTransformedValue(
  *
  * @public
  */
-export function useTransformedValue(
+export function useTransformedValue<T>(
     value: MotionValue<number>,
     from: number[],
     to: any[],
-    options?: MapOptions
+    options?: TransformOptions<T>
 ): MotionValue
-export function useTransformedValue(
+export function useTransformedValue<T>(
     value: MotionValue,
     transform: Transformer | number[],
     to?: any[],
-    opts?: MapOptions
+    options?: TransformOptions<T>
 ): MotionValue {
     let comparitor: any[] = [value]
     let transformer = noop
@@ -109,11 +96,8 @@ export function useTransformedValue(
     } else if (Array.isArray(to)) {
         const from = transform
 
-        transformer = () =>
-            interpolate(from, to, {
-                mixer: getMixer(to[0]),
-                ...opts,
-            })
+        transformer = () => interpolate(from, to, options)
+
         comparitor = [value, from.join(","), to.join(",")]
     }
 
