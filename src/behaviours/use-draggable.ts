@@ -353,6 +353,7 @@ export function useDraggable(
                     openGlobalLock()
                 }
 
+                console.log("dragging finished", motionContext.dragging)
                 if (dragMomentum) {
                     const startMomentum = (axis: "x" | "y") => {
                         if (!shouldDrag(axis, dragEnabled, currentDirection))

@@ -157,7 +157,7 @@ export function useTapGesture(
                 if (!session) {
                     return
                 }
-
+                console.log("tap finished", motionContext.dragging)
                 if (controls && propsRef.press) {
                     controls.clearOverride(pressGesturePriority)
                 }
@@ -185,7 +185,7 @@ export function useTapGesture(
                 session = {
                     target: event.target,
                 }
-                console.log(motionContext.dragging)
+
                 if (propsRef.onTapStart) {
                     propsRef.onTapStart(event, { point })
                 }
