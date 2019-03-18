@@ -76,6 +76,11 @@ export interface DragHandlers {
 /**
  * @public
  */
+export type InertiaOptions = Partial<Omit<Inertia, "velocity" | "type">>
+
+/**
+ * @public
+ */
 export interface DraggableProps extends DragHandlers {
     /**
      * Enable dragging for this element. Set to `false` by default.
@@ -152,7 +157,7 @@ export interface DraggableProps extends DragHandlers {
      * />
      * ```
      */
-    dragTransition?: Partial<Omit<Inertia, "velocity" | "type">>
+    dragTransition?: InertiaOptions
 }
 
 const flattenConstraints = (constraints: Constraints | false) => {
