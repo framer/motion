@@ -1,6 +1,6 @@
 import { CSSProperties } from "react"
 import { TransformProperties, CustomStyles } from "./motion/types"
-
+export { Point } from "./events/types"
 export type ResolvedKeyframesTarget =
     | [null, ...number[]]
     | number[]
