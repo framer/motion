@@ -1,6 +1,11 @@
 import { Variants, Variant, Transition } from "../types"
 import { ComponentAnimationControls } from "../motion"
 
+type PendingAnimations = {
+    definition: Variant | string
+    resolve: () => void
+}
+
 /**
  * Control animations on one or more components.
  *
@@ -26,7 +31,7 @@ export class AnimationControls {
      *
      * @internal
      */
-    private pendingAnimations: Array<Variant | string> = []
+    private pendingAnimations: PendingAnimations[] = []
 
     /**
      * A collection of linked component animation controls.
@@ -113,8 +118,9 @@ export class AnimationControls {
 
             return Promise.all(animations)
         } else {
-            this.pendingAnimations.push(definition)
-            return Promise.resolve() // Will this cause problems?
+            return new Promise(resolve => {
+                this.pendingAnimations.push({ definition, resolve })
+            })
         }
     }
 
@@ -134,7 +140,9 @@ export class AnimationControls {
      */
     mount() {
         this.hasMounted = true
-        this.pendingAnimations.forEach(variant => this.start(variant))
+        this.pendingAnimations.forEach(({ definition, resolve }) =>
+            this.start(definition).then(resolve)
+        )
     }
 
     /**
