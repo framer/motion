@@ -6,7 +6,6 @@ import { Target } from "../../types"
 type MotionContextProps = {
     controls?: ComponentAnimationControls
     initial?: VariantLabels
-    dragging?: boolean
     static?: boolean
 }
 
@@ -14,7 +13,6 @@ type MotionContextProps = {
  * @internal
  */
 export const MotionContext = createContext<MotionContextProps>({
-    dragging: false,
     static: false,
 })
 
@@ -37,7 +35,6 @@ export const useMotionContext = (
         []
     )
 
-    context.dragging = parentContext.dragging
     context.static = isStatic
 
     // Set initial state

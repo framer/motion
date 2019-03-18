@@ -13,5 +13,9 @@ const styleB = {
 }
 
 export const App = () => {
-    return <motion.div dragEnabled style={styleA} />
+    return (
+        <motion.div dragEnabled style={styleA}>
+            <motion.div dragEnabled style={styleB} />
+        </motion.div>
+    )
 }
