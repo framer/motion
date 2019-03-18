@@ -31,6 +31,50 @@ describe("useAnimation", () => {
         await expect(promise).resolves.toBe(100)
     })
 
+    test("doesn't fire a pre-mount animation callback until the animation has finished", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => {
+                const animation = useAnimation()
+
+                const x = useMotionValue(0)
+
+                animation.start({ x: 100 }).then(() => resolve(x.get()))
+
+                return <motion.div animate={animation} style={{ x }} />
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe(100)
+    })
+
+    test("fire's a component's onAnimationComplete", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => {
+                const animation = useAnimation()
+
+                const x = useMotionValue(0)
+
+                animation.start({ x: 100 })
+
+                return (
+                    <motion.div
+                        animate={animation}
+                        style={{ x }}
+                        onAnimationComplete={() => resolve(x.get())}
+                    />
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe(100)
+    })
+
     test("animates to named poses", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {

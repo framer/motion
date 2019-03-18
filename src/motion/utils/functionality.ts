@@ -29,36 +29,22 @@ const makeHookComponent = (hook: Function) => (props: AnimateProps) => {
 
 export const AnimatePropComponents = {
     [AnimatePropType.Target]: makeHookComponent(
-        ({
-            animate,
-            controls,
-            values,
-            transition,
-            onAnimationComplete,
-        }: AnimateProps) => {
+        ({ animate, controls, values, transition }: AnimateProps) => {
             return useAnimateProp(
                 animate as Target,
                 controls,
                 values,
-                transition,
-                onAnimationComplete
+                transition
             )
         }
     ),
     [AnimatePropType.VariantLabel]: makeHookComponent(
-        ({
-            animate,
-            inherit = true,
-            controls,
-            onAnimationComplete,
-            initial,
-        }: AnimateProps) => {
+        ({ animate, inherit = true, controls, initial }: AnimateProps) => {
             return useVariants(
                 animate as VariantLabels,
                 inherit,
                 controls,
-                initial as VariantLabels,
-                onAnimationComplete
+                initial as VariantLabels
             )
         }
     ),

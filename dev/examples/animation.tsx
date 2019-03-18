@@ -15,14 +15,7 @@ export const App = () => {
         right: { x: 100 },
     })
 
-    const seq = async () => {
-        animation.start("visible")
-        animation.start("right")
-    }
-
-    React.useEffect(() => {
-        seq()
-    }, [])
+    animation.start("visible")
 
     return (
         <motion.div

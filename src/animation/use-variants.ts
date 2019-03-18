@@ -17,7 +17,6 @@ const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
  * @param inherit
  * @param controls
  * @param initialVariant
- * @param onAnimationComplete
  *
  * @internal
  */
@@ -25,8 +24,7 @@ export function useVariants(
     targetVariant: VariantLabels,
     inherit: boolean,
     controls: ComponentAnimationControls,
-    initialVariant: VariantLabels,
-    onAnimationComplete?: () => void
+    initialVariant: VariantLabels
 ) {
     const variantList = resolveVariantLabels(targetVariant)
     const hasMounted = useRef(false)
@@ -40,9 +38,7 @@ export function useVariants(
             hasMounted.current ||
             hasVariantChanged(resolveVariantLabels(initialVariant), variantList)
         ) {
-            controls.start(variantList).then(() => {
-                onAnimationComplete && onAnimationComplete()
-            })
+            controls.start(variantList)
         }
 
         hasMounted.current = true
