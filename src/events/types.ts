@@ -1,12 +1,14 @@
 import { RefObject } from "react"
 
+/** @public */
 export interface Point {
     x: number
     y: number
 }
 
+/** @public */
 export namespace Point {
-    /** @alpha */
+    /** @beta */
     export const subtract = (a: Point, b: Point): Point => {
         return { x: a.x - b.x, y: a.y - b.y }
     }
@@ -40,6 +42,7 @@ export namespace Point {
     }
 }
 
+/** @public */
 export interface EventInfo {
     point: Point
 }
