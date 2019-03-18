@@ -28,7 +28,11 @@ const getMixer = (v: any) => {
  * Here, the `y` value will always be twice the `x` value.
  * ```jsx
  * import * as React from "react"
- * import { Frame, useMotionValue, useTransformedValue } from "framer"
+ * import {
+ *   Frame,
+ *   useMotionValue,
+ *   useTransformedValue
+ * } from "framer"
  *
  * export function MyComponent() {
  *   const x = useMotionValue(10)
