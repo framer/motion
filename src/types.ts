@@ -641,6 +641,18 @@ export interface Inertia {
     /**
      * A function that receives the automatically-calculated target and returns a new one. Useful for snapping the target to a grid.
      *
+     * ```jsx
+     * const transition = {
+     *   power: 0,
+     *   modifyTarget: v => Math.round(v / 50) * 50
+     * }
+     *
+     * <Frame
+     *   dragEnabled
+     *   dragTransition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     modifyTarget?(v: number): number
@@ -652,16 +664,14 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 500,
      *   min: 0,
-     *   max: 90,
+     *   max: 100,
      *   bounceStiffness: 100
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      *
@@ -676,16 +686,14 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 500,
      *   min: 0,
-     *   max: 90,
+     *   max: 100,
      *   bounceDamping: 8
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      *
@@ -699,14 +707,14 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 500,
-     *   power: 0.5
+     *   min: 0,
+     *   max: 100,
+     *   power: 0.2
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      */
@@ -718,14 +726,14 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 500,
-     *   timeConstant: 250
+     *   min: 0,
+     *   max: 100,
+     *   timeConstant: 200
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      *
@@ -740,15 +748,14 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 500,
-     *   restDelta: 10,
-     *   restSpeed: 10
+     *   min: 0,
+     *   max: 100,
+     *   restDelta: 10
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      * @public
@@ -761,15 +768,13 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 300,
      *   min: 0,
-     *   max: 90
+     *   max: 100,
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      */
@@ -781,15 +786,13 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 300,
      *   min: 0,
-     *   max: 90
+     *   max: 100,
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      */
@@ -801,14 +804,14 @@ export interface Inertia {
      *
      * ```jsx
      * const transition = {
-     *   type: "inertia",
-     *   velocity: 300,
-     *   from: 90
+     *   min: 0,
+     *   max: 100,
+     *   from: 50
      * }
      *
      * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
+     *   dragEnabled
+     *   dragTransition={transition}
      * />
      * ```
      */
