@@ -87,11 +87,11 @@ export type PanHandler = (event: Event, info: PanInfo) => void
  */
 export interface PanHandlers {
     /**
-     * Callback when the pan gesture is recognised on this element.
+     * Callback function that fires when the pan gesture is recognised on this element.
      *
      * ```jsx
-     * function onPan(event, { point, delta, offset, velocity }) {
-     *   console.log(`Panned to ${point.x} ${point.y}`)
+     * function onPan(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div onPan={onPan} />
@@ -108,11 +108,11 @@ export interface PanHandlers {
     onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
-     * Callback when the pan gesture begins on this element.
+     * Callback function that fires when the pan gesture begins on this element.
      *
      * ```jsx
-     * function onPanStart(event, { point, delta, offset, velocity }) {
-     *   console.log(`Started panning at ${point.x} ${point.y}`)
+     * function onPanStart(event, info) {
+     *   console.log(info.point.x, spoint.y)
      * }
      *
      * <motion.div onPanStart={onPanStart} />
@@ -129,11 +129,11 @@ export interface PanHandlers {
     onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
-     * Callback when the pan gesture ends on this element.
+     * Callback function that fires when the pan gesture ends on this element.
      *
      * ```jsx
-     * function onPanEnd(event, { point, delta, offset, velocity }) {
-     *   console.log(`Stopped panning at ${point.x} ${point.y}`)
+     * function onPanEnd(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div onPanEnd={onPanEnd} />
