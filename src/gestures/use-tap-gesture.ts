@@ -1,4 +1,4 @@
-import { RefObject, useEffect, useMemo, useRef } from "react"
+import { RefObject, useEffect, useMemo, useRef, useContext } from "react"
 import {
     usePointerEvents,
     useConditionalPointerEvents,
@@ -10,6 +10,7 @@ import { TargetAndTransition } from "../types"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp } from "./types"
 import { safeWindow } from "../events/utils/window"
+import { MotionContext } from "../"
 
 const pressGesturePriority = getGesturePriority("press")
 
@@ -134,6 +135,7 @@ export function useTapGesture(
     let session: TapSession | null = null
     const { onTap, onTapStart, onTapCancel, press, controls } = props
     const propsRef = usePropsRef(props)
+    const motionContext = useContext(MotionContext)
 
     if (press && controls) {
         controls.setOverride(press, pressGesturePriority)
@@ -167,7 +169,7 @@ export function useTapGesture(
                     return
                 }
 
-                if (propsRef.onTap) {
+                if (!motionContext.dragging && propsRef.onTap) {
                     propsRef.onTap(event, { point })
                 }
 
@@ -183,7 +185,7 @@ export function useTapGesture(
                 session = {
                     target: event.target,
                 }
-
+                console.log(motionContext.dragging)
                 if (propsRef.onTapStart) {
                     propsRef.onTapStart(event, { point })
                 }

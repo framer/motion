@@ -11,7 +11,7 @@ const pos = {
     y: 0,
 }
 
-const drag = (element: any) => {
+export const drag = (element: any) => {
     pos.x = 0
     pos.y = 0
     fireEvent.mouseDown(element)
@@ -32,7 +32,7 @@ const drag = (element: any) => {
     return controls
 }
 
-const MockDrag = ({ children }: { children: React.ReactNode }) => (
+export const MockDrag = ({ children }: { children: React.ReactNode }) => (
     <MotionPlugins transformPagePoint={() => pos}>{children}</MotionPlugins>
 )
 
