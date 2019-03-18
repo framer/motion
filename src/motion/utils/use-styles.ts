@@ -37,8 +37,10 @@ export const useMotionStyles = (
 ): CSSProperties => {
     const style = useRef<CSSProperties & CustomStyles>({}).current
     const prevMotionStyles = useRef({}).current
+    const currentStyleKeys = new Set(Object.keys(style))
 
     for (const key in styleProp) {
+        currentStyleKeys.delete(key)
         const thisStyle = styleProp[key]
 
         if (isMotionValue(thisStyle)) {
@@ -67,6 +69,8 @@ export const useMotionStyles = (
             style[key] = resolvedStyle
         }
     }
+
+    currentStyleKeys.forEach(key => (style[key] = undefined))
 
     return transformCustomValues(style)
 }
