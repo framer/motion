@@ -5,6 +5,7 @@ import { useEffect } from "react"
 import { motion } from "../../motion"
 import { useAnimation } from "../use-animation"
 import { useMotionValue } from "../../value/use-motion-value"
+import { motionValue } from "../../value"
 
 describe("useAnimation", () => {
     test("animates on mount", async () => {
@@ -132,5 +133,20 @@ describe("useAnimation", () => {
         })
 
         await expect(promise).resolves.toEqual([100, "rgba(255, 255, 255, 1)"])
+    })
+
+    test("animates on mount", () => {
+        const x = motionValue(0)
+        const Component = () => {
+            const animation = useAnimation({
+                test: { x: 100 },
+            })
+
+            animation.start("test", { type: false })
+            return <motion.div style={{ x }} animate={animation} />
+        }
+        const { rerender } = render(<Component />)
+        rerender(<Component />)
+        expect(x.get()).toBe(100)
     })
 })

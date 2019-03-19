@@ -23,6 +23,7 @@ type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
     delay?: number
     priority?: number
+    transitionOverride?: Transition
 }
 
 const getCurrent = (values: MotionValuesMap) => {
@@ -277,11 +278,15 @@ export class ComponentAnimationControls<P extends {} = {}> {
 
     private animate(
         animationDefinition: Variant,
-        { delay = 0, priority = 0 }: AnimationOptions = {}
+        { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
     ) {
         let { target, transition, transitionEnd } = this.resolveVariant(
             animationDefinition
         )
+
+        if (transitionOverride) {
+            transition = transitionOverride
+        }
 
         if (!target) return Promise.resolve()
 
