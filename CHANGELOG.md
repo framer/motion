@@ -25,6 +25,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Statefull style bug.
+-   Fixing `Promise` resolution with `animate.start()` when fired pre-mount.
 
 ## [0.8.5] 2019-03-15
 
