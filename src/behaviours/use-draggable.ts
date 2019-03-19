@@ -193,11 +193,14 @@ const getConstraints = (
 function applyConstraints(
     axis: "x" | "y",
     value: number | MotionValue<number>,
-    constraints: Constraints,
+    constraints: Constraints | false,
     dragElastic: boolean | number
 ): number {
-    const { min, max } = getConstraints(axis, constraints)
     const constrainedValue = value instanceof MotionValue ? value.get() : value
+    if (!constraints) {
+        return constrainedValue
+    }
+    const { min, max } = getConstraints(axis, constraints)
 
     if (min !== undefined && value < min) {
         value = dragElastic
@@ -272,16 +275,12 @@ export function useDraggable(
 
             if (shouldDrag("x", dragEnabled, currentDirection)) {
                 const x = values.get("x", 0)
-                if (dragConstraints) {
-                    applyConstraints("x", x, dragConstraints, dragElastic)
-                }
+                applyConstraints("x", x, dragConstraints, dragElastic)
                 point.x = x
             }
             if (shouldDrag("y", dragEnabled, currentDirection)) {
                 const y = values.get("y", 0)
-                if (dragConstraints) {
-                    applyConstraints("y", y, dragConstraints, dragElastic)
-                }
+                applyConstraints("y", y, dragConstraints, dragElastic)
                 point.y = y
             }
 
@@ -295,14 +294,12 @@ export function useDraggable(
 
                 let current = origin[axis] + offset[axis]
 
-                if (dragConstraints) {
-                    current = applyConstraints(
-                        axis,
-                        current,
-                        dragConstraints,
-                        dragElastic
-                    )
-                }
+                current = applyConstraints(
+                    axis,
+                    current,
+                    dragConstraints,
+                    dragElastic
+                )
 
                 p.set(current)
             }
