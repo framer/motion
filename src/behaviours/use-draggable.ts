@@ -289,8 +289,9 @@ export function useDraggable(
                 offset: { x: number; y: number }
             ) => {
                 const p = point[axis]
-                if (!shouldDrag(axis, dragEnabled, currentDirection) || !p)
+                if (!shouldDrag(axis, dragEnabled, currentDirection) || !p) {
                     return
+                }
 
                 let current = origin[axis] + offset[axis]
 
@@ -382,8 +383,9 @@ export function useDraggable(
 
                 if (dragMomentum) {
                     const startMomentum = (axis: "x" | "y") => {
-                        if (!shouldDrag(axis, dragEnabled, currentDirection))
+                        if (!shouldDrag(axis, dragEnabled, currentDirection)) {
                             return
+                        }
 
                         const transition = dragConstraints
                             ? getConstraints(axis, dragConstraints)
