@@ -4,6 +4,8 @@ import { render } from "react-testing-library"
 import { fireEvent } from "dom-testing-library"
 import { motionValue } from "../../value"
 import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { drag, MockDrag } from "../../behaviours/__tests__/index.test"
+import sync from "framesync"
 
 describe("tap", () => {
     test("tap event listeners fire", () => {
@@ -17,6 +19,36 @@ describe("tap", () => {
         fireEvent.mouseUp(container.firstChild as Element)
 
         expect(tap).toBeCalledTimes(1)
+    })
+
+    test("tap event listeners doesn't fire if parent is being dragged", async () => {
+        const tap = jest.fn()
+        const promise = new Promise(resolve => {
+            const Component = () => (
+                <MockDrag>
+                    <motion.div dragEnabled>
+                        <motion.div
+                            data-testid="tapTarget"
+                            onTap={() => tap()}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { rerender, getByTestId } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(getByTestId("tapTarget")).to(1, 1)
+            sync.postRender(() => {
+                pointer.to(10, 10)
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve(tap)
+                })
+            })
+        })
+
+        return expect(promise).resolves.toBeCalledTimes(0)
     })
 
     test("tap event listeners unset", () => {

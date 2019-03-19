@@ -1,9 +1,8 @@
-import { RefObject, useContext, useMemo, useRef } from "react"
+import { RefObject, useMemo, useRef } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
 import { createLock, Lock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
-import { MotionContext } from "../motion/context/MotionContext"
-import { Point } from "../events"
+import { Point, usePointerEvents } from "../events"
 import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
 import { ComponentAnimationControls } from "../motion"
@@ -239,7 +238,6 @@ export function useDraggable(
 ) {
     const point = useRef<MotionPoint>({}).current
     const origin = useRef({ x: 0, y: 0 }).current
-    const motionContext = useContext(MotionContext)
 
     const handlers = useMemo(
         () => {
@@ -282,6 +280,11 @@ export function useDraggable(
                 p.set(current)
             }
 
+            const onPointerDown = () => {
+                if (point.x) point.x.stop()
+                if (point.y) point.y.stop()
+            }
+
             const onPanStart = (
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
@@ -292,7 +295,6 @@ export function useDraggable(
 
                     origin[axis] = axisPoint.get()
                     axisPoint.stop()
-                    values.get(axis)!.stop()
                 }
 
                 handle("x")
@@ -306,7 +308,6 @@ export function useDraggable(
                     }
                 }
                 currentDirection = null
-                motionContext.dragging = true
 
                 onDragStart && onDragStart(event, info)
             }
@@ -351,6 +352,8 @@ export function useDraggable(
 
                 if (!dragPropagation && openGlobalLock) {
                     openGlobalLock()
+                } else if (!openGlobalLock) {
+                    return
                 }
 
                 if (dragMomentum) {
@@ -369,7 +372,7 @@ export function useDraggable(
                                 velocity: velocity[axis],
                                 bounceStiffness: 200,
                                 bounceDamping: 40,
-                                timeConstant: 325,
+                                timeConstant: 750,
                                 restDelta: 1,
                                 ...dragTransition,
                                 ...transition,
@@ -381,20 +384,21 @@ export function useDraggable(
                     startMomentum("y")
                 }
 
-                motionContext.dragging = false
                 onDragEnd && onDragEnd(event, info)
             }
 
-            return { onPanStart, onPan, onPanEnd }
+            return {
+                onPanStart,
+                onPan,
+                onPanEnd,
+                onPointerDown,
+            }
         },
-        [
-            dragEnabled,
-            motionContext.dragging,
-            ...flattenConstraints(dragConstraints),
-        ]
+        [dragEnabled, ...flattenConstraints(dragConstraints)]
     )
 
     usePanGesture(handlers, ref)
+    usePointerEvents({ onPointerDown: handlers.onPointerDown }, ref)
 }
 
 function getCurrentDirection(offset: Point): DragDirection | null {
@@ -410,7 +414,9 @@ function getCurrentDirection(offset: Point): DragDirection | null {
 
 const globalHorizontalLock = createLock("dragHorizontal")
 const globalVerticalLock = createLock("dragVertical")
-function getGlobalLock(drag: boolean | "x" | "y" | "lockDirection"): Lock {
+export function getGlobalLock(
+    drag: boolean | "x" | "y" | "lockDirection"
+): Lock {
     let lock: Lock = false
     if (drag === "y") {
         lock = globalVerticalLock()

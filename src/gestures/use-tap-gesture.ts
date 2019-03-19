@@ -10,6 +10,7 @@ import { TargetAndTransition } from "../types"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp } from "./types"
 import { safeWindow } from "../events/utils/window"
+import { getGlobalLock } from "../behaviours/use-draggable"
 
 const pressGesturePriority = getGesturePriority("press")
 
@@ -156,9 +157,20 @@ export function useTapGesture(
                     return
                 }
 
+                session = null
+
                 if (controls && propsRef.press) {
                     controls.clearOverride(pressGesturePriority)
                 }
+
+                // Check the gesture lock - if we get it, it means no drag gesture is active
+                // and we can safely fire the tap gesture.
+                const openGestureLock = getGlobalLock(true)
+
+                if (!openGestureLock) {
+                    return
+                }
+                openGestureLock()
 
                 if (!ref || event.target !== ref.current) {
                     if (propsRef.onTapCancel) {
@@ -170,8 +182,6 @@ export function useTapGesture(
                 if (propsRef.onTap) {
                     propsRef.onTap(event, { point })
                 }
-
-                session = null
             }
 
             const onPointerDown = (

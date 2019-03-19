@@ -5,13 +5,14 @@ import { MotionPlugins } from "../../motion/context/MotionPluginContext"
 import { render } from "react-testing-library"
 import { fireEvent } from "dom-testing-library"
 import sync from "framesync"
+import { pointer } from "popmotion"
 
 const pos = {
     x: 0,
     y: 0,
 }
 
-const drag = (element: any) => {
+export const drag = (element: any) => {
     pos.x = 0
     pos.y = 0
     fireEvent.mouseDown(element)
@@ -32,7 +33,7 @@ const drag = (element: any) => {
     return controls
 }
 
-const MockDrag = ({ children }: { children: React.ReactNode }) => (
+export const MockDrag = ({ children }: { children: React.ReactNode }) => (
     <MotionPlugins transformPagePoint={() => pos}>{children}</MotionPlugins>
 )
 
@@ -72,11 +73,10 @@ describe("dragging", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            drag(container.firstChild)
-                .to(100, 100)
-                .end()
+            const pointer = drag(container.firstChild).to(100, 100)
 
             sync.postRender(() => {
+                pointer.end()
                 resolve(onDragEnd)
             })
         })
@@ -401,5 +401,40 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toBeCloseTo(-500)
+    })
+
+    test("pointer down kills momentum", async () => {
+        let lastX = 0
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const y = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div style={{ x, y }} dragEnabled />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(1, 1)
+            sync.postRender(() => {
+                pointer.to(100, 100)
+                sync.postRender(() => {
+                    pointer.end()
+
+                    sync.postRender(() => {
+                        lastX = x.get()
+                        const pointer2 = drag(container.firstChild).to(100, 100)
+                        sync.postRender(() => {
+                            pointer2.end()
+                            resolve(x.get() === lastX)
+                        })
+                    })
+                })
+            })
+        })
+
+        return expect(promise).resolves.toBe(true)
     })
 })
