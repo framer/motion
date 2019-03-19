@@ -306,7 +306,7 @@ export function useDraggable(
                 let current = origin[axis] + offset[axis]
 
                 if (dragConstraints) {
-                    applyConstraints(
+                    current = applyConstraints(
                         axis,
                         current,
                         dragConstraints,
