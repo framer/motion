@@ -2,6 +2,31 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.8.7] Unreleased
+
+### Added
+
+-   Adding `transition` argument to `animation.start()`.
+
+### Fixed
+
+-   No longer fire tap gesture if parent is dragging.
+-   Adjusting default `inertia` settings to more naturally incorporate velocity.
+-   Killing drag momentum on subsequent `pressDown`.
+-   Preventing pan velocity from adjusting draggable parents that have not received `dragPropagation`.
+
+## [0.8.6] 2019-03-19
+
+### Added
+
+-   `Point.relativeTo`
+-   `transform`
+
+### Fixed
+
+-   Statefull style bug.
+-   Fixing `Promise` resolution with `animate.start()` when fired pre-mount.
+
 ## [0.8.5] 2019-03-15
 
 ### Fix
