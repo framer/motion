@@ -2,7 +2,7 @@ import { Variants, Variant, Transition } from "../types"
 import { ComponentAnimationControls } from "../motion"
 
 type PendingAnimations = {
-    definition: Variant | string
+    animation: [Variant | string, Transition | undefined]
     resolve: () => void
 }
 
@@ -108,18 +108,26 @@ export class AnimationControls {
      *
      * @public
      */
-    start(definition: Variant | string): Promise<any> {
+    start(
+        definition: Variant | string,
+        transitionOverride?: Transition
+    ): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
             this.componentControls.forEach(controls => {
-                const animation = controls.start(definition)
+                const animation = controls.start(definition, {
+                    transitionOverride,
+                })
                 animations.push(animation)
             })
 
             return Promise.all(animations)
         } else {
             return new Promise(resolve => {
-                this.pendingAnimations.push({ definition, resolve })
+                this.pendingAnimations.push({
+                    animation: [definition, transitionOverride],
+                    resolve,
+                })
             })
         }
     }
@@ -140,8 +148,8 @@ export class AnimationControls {
      */
     mount() {
         this.hasMounted = true
-        this.pendingAnimations.forEach(({ definition, resolve }) =>
-            this.start(definition).then(resolve)
+        this.pendingAnimations.forEach(({ animation, resolve }) =>
+            this.start(...animation).then(resolve)
         )
     }
 
