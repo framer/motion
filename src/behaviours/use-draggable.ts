@@ -190,6 +190,33 @@ const getConstraints = (
     }
 }
 
+function applyConstraints(
+    axis: "x" | "y",
+    value: number | MotionValue<number>,
+    constraints: Constraints | false,
+    dragElastic: boolean | number
+): number {
+    let constrainedValue = value instanceof MotionValue ? value.get() : value
+    if (!constraints) {
+        return constrainedValue
+    }
+    const { min, max } = getConstraints(axis, constraints)
+
+    if (min !== undefined && constrainedValue < min) {
+        constrainedValue = dragElastic
+            ? applyOverdrag(min, constrainedValue, dragElastic)
+            : Math.max(min, constrainedValue)
+    } else if (max !== undefined && constrainedValue > max) {
+        constrainedValue = dragElastic
+            ? applyOverdrag(max, constrainedValue, dragElastic)
+            : Math.min(max, constrainedValue)
+    }
+    if (value instanceof MotionValue) {
+        value.set(constrainedValue)
+    }
+    return constrainedValue
+}
+
 const applyOverdrag = (
     origin: number,
     current: number,
@@ -247,10 +274,14 @@ export function useDraggable(
             let openGlobalLock: null | Lock = null
 
             if (shouldDrag("x", dragEnabled, currentDirection)) {
-                point.x = values.get("x", 0)
+                const x = values.get("x", 0)
+                applyConstraints("x", x, dragConstraints, dragElastic)
+                point.x = x
             }
             if (shouldDrag("y", dragEnabled, currentDirection)) {
-                point.y = values.get("y", 0)
+                const y = values.get("y", 0)
+                applyConstraints("y", y, dragConstraints, dragElastic)
+                point.y = y
             }
 
             const updatePoint = (
@@ -258,24 +289,18 @@ export function useDraggable(
                 offset: { x: number; y: number }
             ) => {
                 const p = point[axis]
-                if (!shouldDrag(axis, dragEnabled, currentDirection) || !p)
+                if (!shouldDrag(axis, dragEnabled, currentDirection) || !p) {
                     return
+                }
 
                 let current = origin[axis] + offset[axis]
 
-                if (dragConstraints) {
-                    const { min, max } = getConstraints(axis, dragConstraints)
-
-                    if (min !== undefined && current < min) {
-                        current = dragElastic
-                            ? applyOverdrag(min, current, dragElastic)
-                            : Math.max(min, current)
-                    } else if (max !== undefined && current > max) {
-                        current = dragElastic
-                            ? applyOverdrag(max, current, dragElastic)
-                            : Math.min(max, current)
-                    }
-                }
+                current = applyConstraints(
+                    axis,
+                    current,
+                    dragConstraints,
+                    dragElastic
+                )
 
                 p.set(current)
             }
@@ -358,8 +383,9 @@ export function useDraggable(
 
                 if (dragMomentum) {
                     const startMomentum = (axis: "x" | "y") => {
-                        if (!shouldDrag(axis, dragEnabled, currentDirection))
+                        if (!shouldDrag(axis, dragEnabled, currentDirection)) {
                             return
+                        }
 
                         const transition = dragConstraints
                             ? getConstraints(axis, dragConstraints)

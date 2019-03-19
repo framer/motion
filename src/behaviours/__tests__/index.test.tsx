@@ -5,7 +5,7 @@ import { MotionPlugins } from "../../motion/context/MotionPluginContext"
 import { render } from "react-testing-library"
 import { fireEvent } from "dom-testing-library"
 import sync from "framesync"
-import { pointer } from "popmotion"
+import { Constraints } from "../use-draggable"
 
 const pos = {
     x: 0,
@@ -362,6 +362,45 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toEqual([500, -50])
+    })
+
+    test("updates position when updating drag constraints", async () => {
+        const x = motionValue(100)
+        const y = motionValue(100)
+        const Component = ({ constraints }: { constraints: Constraints }) => (
+            <MockDrag>
+                <motion.div
+                    dragEnabled
+                    dragConstraints={constraints}
+                    dragElastic={false}
+                    style={{ x, y }}
+                />
+            </MockDrag>
+        )
+
+        const { rerender } = render(
+            <Component constraints={{ right: 42, bottom: 53 }} />
+        )
+
+        // Should have updated the x and y
+        expect(x.get()).toEqual(42)
+        expect(y.get()).toEqual(53)
+
+        // Should not updated when broadening the constraints
+        rerender(
+            <Component
+                constraints={{ left: 10, top: 14, right: 100, bottom: 100 }}
+            />
+        )
+        expect(x.get()).toEqual(42)
+        expect(y.get()).toEqual(53)
+
+        // Should update when updating the contstraints again
+        render(<Component constraints={{ left: 60, top: 70 }} />)
+
+        // Should have updated the x and y
+        expect(x.get()).toEqual(60)
+        expect(y.get()).toEqual(70)
     })
 
     test("applies drag transition", async () => {

@@ -6,7 +6,7 @@ declare class AnimationControls {
     setDefaultTransition(transition: Transition): void;
     // @internal
     setVariants(variants: Variants): void;
-    start(definition: Variant | string): Promise<any>;
+    start(definition: Variant | string, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // @internal
     subscribe(controls: ComponentAnimationControls): () => boolean;
