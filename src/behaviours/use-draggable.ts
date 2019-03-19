@@ -1,6 +1,6 @@
 import { RefObject, useMemo, useRef } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
-import { createLock, Lock } from "./utils/lock"
+import { Lock, getGlobalLock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { Point, usePointerEvents } from "../events"
 import { MotionValue } from "../value"
@@ -436,31 +436,4 @@ function getCurrentDirection(offset: Point): DragDirection | null {
         direction = "x"
     }
     return direction
-}
-
-const globalHorizontalLock = createLock("dragHorizontal")
-const globalVerticalLock = createLock("dragVertical")
-export function getGlobalLock(
-    drag: boolean | "x" | "y" | "lockDirection"
-): Lock {
-    let lock: Lock = false
-    if (drag === "y") {
-        lock = globalVerticalLock()
-    } else if (drag === "x") {
-        lock = globalHorizontalLock()
-    } else {
-        const openHorizontal = globalHorizontalLock()
-        const openVertical = globalVerticalLock()
-        if (openHorizontal && openVertical) {
-            lock = () => {
-                openHorizontal()
-                openVertical()
-            }
-        } else {
-            // Release the locks because we don't use them
-            if (openHorizontal) openHorizontal()
-            if (openVertical) openVertical()
-        }
-    }
-    return lock
 }

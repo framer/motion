@@ -10,7 +10,7 @@ import { TargetAndTransition } from "../types"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp } from "./types"
 import { safeWindow } from "../events/utils/window"
-import { getGlobalLock } from "../behaviours/use-draggable"
+import { getGlobalLock } from "../behaviours/utils/lock"
 
 const pressGesturePriority = getGesturePriority("press")
 

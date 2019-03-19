@@ -13,3 +13,30 @@ export function createLock(name: string) {
         return false
     }
 }
+
+const globalHorizontalLock = createLock("dragHorizontal")
+const globalVerticalLock = createLock("dragVertical")
+export function getGlobalLock(
+    drag: boolean | "x" | "y" | "lockDirection"
+): Lock {
+    let lock: Lock = false
+    if (drag === "y") {
+        lock = globalVerticalLock()
+    } else if (drag === "x") {
+        lock = globalHorizontalLock()
+    } else {
+        const openHorizontal = globalHorizontalLock()
+        const openVertical = globalVerticalLock()
+        if (openHorizontal && openVertical) {
+            lock = () => {
+                openHorizontal()
+                openVertical()
+            }
+        } else {
+            // Release the locks because we don't use them
+            if (openHorizontal) openHorizontal()
+            if (openVertical) openVertical()
+        }
+    }
+    return lock
+}
