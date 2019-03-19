@@ -196,18 +196,18 @@ function applyConstraints(
     constraints: Constraints | false,
     dragElastic: boolean | number
 ): number {
-    const constrainedValue = value instanceof MotionValue ? value.get() : value
+    let constrainedValue = value instanceof MotionValue ? value.get() : value
     if (!constraints) {
         return constrainedValue
     }
     const { min, max } = getConstraints(axis, constraints)
 
-    if (min !== undefined && value < min) {
-        value = dragElastic
+    if (min !== undefined && constrainedValue < min) {
+        constrainedValue = dragElastic
             ? applyOverdrag(min, constrainedValue, dragElastic)
             : Math.max(min, constrainedValue)
-    } else if (max !== undefined && value > max) {
-        value = dragElastic
+    } else if (max !== undefined && constrainedValue > max) {
+        constrainedValue = dragElastic
             ? applyOverdrag(max, constrainedValue, dragElastic)
             : Math.min(max, constrainedValue)
     }
