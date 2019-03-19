@@ -14,6 +14,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Adjusting default `inertia` settings to more naturally incorporate velocity.
 -   Killing drag momentum on subsequent `pressDown`.
 -   Preventing pan velocity from adjusting draggable parents that have not received `dragPropagation`.
+-   Updating of `dragConstraints` repositions the draggable element to adhere to the new values
 
 ## [0.8.6] 2019-03-19
 
