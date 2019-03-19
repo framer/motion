@@ -192,22 +192,26 @@ const getConstraints = (
 
 function applyConstraints(
     axis: "x" | "y",
-    value: number,
+    value: number | MotionValue<number>,
     constraints: Constraints,
     dragElastic: boolean | number
 ): number {
     const { min, max } = getConstraints(axis, constraints)
+    const constrainedValue = value instanceof MotionValue ? value.get() : value
 
     if (min !== undefined && value < min) {
         value = dragElastic
-            ? applyOverdrag(min, value, dragElastic)
-            : Math.max(min, value)
+            ? applyOverdrag(min, constrainedValue, dragElastic)
+            : Math.max(min, constrainedValue)
     } else if (max !== undefined && value > max) {
         value = dragElastic
-            ? applyOverdrag(max, value, dragElastic)
-            : Math.min(max, value)
+            ? applyOverdrag(max, constrainedValue, dragElastic)
+            : Math.min(max, constrainedValue)
     }
-    return value
+    if (value instanceof MotionValue) {
+        value.set(constrainedValue)
+    }
+    return constrainedValue
 }
 
 const applyOverdrag = (
@@ -269,28 +273,14 @@ export function useDraggable(
             if (shouldDrag("x", dragEnabled, currentDirection)) {
                 const x = values.get("x", 0)
                 if (dragConstraints) {
-                    x.set(
-                        applyConstraints(
-                            "x",
-                            x.get(),
-                            dragConstraints,
-                            dragElastic
-                        )
-                    )
+                    applyConstraints("x", x, dragConstraints, dragElastic)
                 }
                 point.x = x
             }
             if (shouldDrag("y", dragEnabled, currentDirection)) {
                 const y = values.get("y", 0)
                 if (dragConstraints) {
-                    y.set(
-                        applyConstraints(
-                            "y",
-                            y.get(),
-                            dragConstraints,
-                            dragElastic
-                        )
-                    )
+                    applyConstraints("y", y, dragConstraints, dragElastic)
                 }
                 point.y = y
             }
