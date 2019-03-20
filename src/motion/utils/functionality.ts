@@ -181,9 +181,8 @@ export const checkShouldInheritVariant = ({
     inherit = true,
     variants,
     hover,
-    tap,
 }: MotionProps): boolean => {
-    const isVariantChild = inherit && variants && !animate && !hover && !tap
+    const isVariantChild = inherit && variants && !animate && !hover
     const isAnimationHookChild = inherit && animate instanceof AnimationControls
 
     if (isVariantChild || isAnimationHookChild) {

@@ -172,7 +172,7 @@ export interface MotionAdvancedProps {
  *
  * @public
  */
-export interface MotionProps
+export interface MotionProps<K extends Element = any>
     extends AnimationProps,
         MotionCallbacks,
         GestureHandlers,
@@ -228,7 +228,7 @@ export interface MotionProps
     /**
      * @internal
      */
-    [key: string]: any
+    ref?: React.Ref<K>
 }
 
 export type TransformTemplate = (

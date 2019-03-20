@@ -3,6 +3,7 @@ import {
     ReactHTML,
     SVGAttributes,
     DetailedHTMLFactory,
+    HTMLAttributes,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
@@ -20,15 +21,15 @@ type UnwrapFactory<F> = F extends DetailedHTMLFactory<any, infer P> ? P : never
 
 interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
     extends Pick<
-        React.HTMLAttributes<Original>,
-        Exclude<keyof React.HTMLAttributes<Original>, keyof MotionProps>
+        HTMLAttributes<Original>,
+        Exclude<keyof HTMLAttributes<Original>, keyof MotionProps<Original>>
     > {}
 
 export declare interface MotionComponentProps<Original extends keyof ReactHTML>
     extends HTMLAttributesWithoutMotionProps<
             UnwrapFactory<ReactHTML[Original]>
         >,
-        MotionProps {}
+        MotionProps<UnwrapFactory<ReactHTML[Original]>> {}
 
 /**
  * Motion-optimised versions of React's HTML components.
@@ -42,7 +43,7 @@ export declare type HTMLMotionComponents = {
 interface SVGAttributesWithoutMotionProps
     extends Pick<
         SVGAttributes<SVGElement>,
-        Exclude<keyof React.SVGAttributes<SVGElement>, keyof MotionProps>
+        Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps<SVGElement>>
     > {}
 
 /**
