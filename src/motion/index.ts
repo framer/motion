@@ -16,19 +16,34 @@ export {
 export { createMotionComponent }
 export { htmlElements, svgElements } from "./utils/supported-elements"
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-type UnwrapFactory<F> = F extends DetailedHTMLFactory<infer P, any> ? P : never
+type UnwrapFactory<F> = F extends DetailedHTMLFactory<any, infer P> ? P : never
+
+interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
+    extends Pick<
+        React.HTMLAttributes<Original>,
+        Exclude<keyof React.HTMLAttributes<Original>, keyof MotionProps>
+    > {}
+
+export declare interface MotionComponentProps<Original extends keyof ReactHTML>
+    extends HTMLAttributesWithoutMotionProps<
+            UnwrapFactory<ReactHTML[Original]>
+        >,
+        MotionProps {}
 
 /**
  * Motion-optimised versions of React's HTML components.
  *
  * @public
  */
-export type HTMLMotionComponents = {
-    [K in HTMLElements]: ComponentType<
-        Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps
-    >
+export declare type HTMLMotionComponents = {
+    [K in HTMLElements]: ComponentType<MotionComponentProps<K>>
 }
+
+interface SVGAttributesWithoutMotionProps
+    extends Pick<
+        SVGAttributes<SVGElement>,
+        Exclude<keyof React.SVGAttributes<SVGElement>, keyof MotionProps>
+    > {}
 
 /**
  * Motion-optimised versions of React's SVG components.
@@ -36,9 +51,7 @@ export type HTMLMotionComponents = {
  * @public
  */
 export type SVGMotionComponents = {
-    [K in SVGElements]: ComponentType<
-        Omit<SVGAttributes<SVGElement>, "style"> & MotionProps
-    >
+    [K in SVGElements]: ComponentType<SVGAttributesWithoutMotionProps>
 }
 
 /**
