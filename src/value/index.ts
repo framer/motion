@@ -219,13 +219,15 @@ export class MotionValue<V = any> {
     /**
      * Sets the state of the `MotionValue`.
      *
-     * @param latest - Latest value to set.
-     * @param render - Whether to notify render subscribers. Defaults to `true`
+     * @remarks
      *
      * ```jsx
      * const x = useMotionValue(0)
      * x.set(10)
      * ```
+     *
+     * @param latest - Latest value to set.
+     * @param render - Whether to notify render subscribers. Defaults to `true`
      *
      * @public
      */
