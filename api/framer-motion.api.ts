@@ -25,7 +25,7 @@ interface AnimationProps {
 }
 
 // @internal (undocumented)
-declare const createMotionComponent: <P extends {}>(Component: string | React.ComponentClass<P, any> | React.FunctionComponent<P>) => React.ForwardRefExoticComponent<Pick<P & MotionProps, string | number | Exclude<keyof P, "ref">> & React.RefAttributes<Element>>;
+declare const createMotionComponent: <P extends {}>(Component: string | React.ComponentClass<P, any> | React.FunctionComponent<P>) => React.ForwardRefExoticComponent<Pick<P & MotionProps<any>, "transition" | "inherit" | "style" | "initial" | "static" | "animate" | "hover" | "press" | "dragEnabled" | "onPan" | "onPanStart" | "onPanEnd" | "onTap" | "onTapStart" | "onTapCancel" | "onHoverStart" | "onHoverEnd" | "onAnimationComplete" | "onUpdate" | "onDragStart" | "onDrag" | "onDragEnd" | "onDirectionLock" | "transformTemplate" | "variants" | "dragPropagation" | "dragConstraints" | "dragElastic" | "dragMomentum" | "dragTransition" | Exclude<keyof P, "ref">> & React.RefAttributes<Element>>;
 
 // @public
 declare type CustomMotionComponent = {
@@ -75,7 +75,7 @@ declare const htmlElements: ("object" | "track" | "progress" | "a" | "abbr" | "a
 
 // @public
 declare type HTMLMotionComponents = {
-    [K in HTMLElements]: ComponentType<Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps>;
+    [K in HTMLElements]: ComponentType<MotionComponentProps<K>>;
 };
 
 // @public
@@ -165,10 +165,10 @@ interface MotionPlugins {
 }
 
 // @public
-interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
-    // @internal (undocumented)
-    [key: string]: any;
+interface MotionProps<K extends Element = any> extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
     initial?: Target | VariantLabels;
+    // @internal (undocumented)
+    ref?: Ref<K>;
     style?: MotionStyle;
     transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
 }
@@ -277,7 +277,7 @@ declare const svgElements: (keyof ReactSVG)[];
 
 // @public
 declare type SVGMotionComponents = {
-    [K in SVGElements]: ComponentType<Omit<SVGAttributes<SVGElement>, "style"> & MotionProps>;
+    [K in SVGElements]: ComponentType<SVGAttributesWithoutMotionProps>;
 };
 
 // @public (undocumented)

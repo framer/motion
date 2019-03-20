@@ -1,4 +1,4 @@
-import { CSSProperties } from "react"
+import { CSSProperties, Ref } from "react"
 import { MotionValue } from "../value"
 import { AnimationControls } from "../animation/AnimationControls"
 import {
@@ -228,7 +228,7 @@ export interface MotionProps<K extends Element = any>
     /**
      * @internal
      */
-    ref?: React.Ref<K>
+    ref?: Ref<K>
 }
 
 export type TransformTemplate = (
