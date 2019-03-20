@@ -1,4 +1,4 @@
-import { CSSProperties, Ref } from "react"
+import { CSSProperties } from "react"
 import { MotionValue } from "../value"
 import { AnimationControls } from "../animation/AnimationControls"
 import {

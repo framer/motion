@@ -1,5 +1,4 @@
 import {
-    ComponentType,
     ReactHTML,
     SVGAttributes,
     DetailedHTMLFactory,
