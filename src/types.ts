@@ -21,7 +21,21 @@ export type ValueTarget = SingleTarget | KeyframesTarget
 export type Props = { [key: string]: any }
 
 /**
- * A function that accepts a progress value between `0` and `1` and returns a new one.
+ * A function that accepts a progress value between `0` and `1` and returns a
+ * new one. Used by many of the animation apis.
+ *
+ * @remarks
+ *
+ * ```jsx
+ * const transition = {
+ *   ease: val => val * val // easeInQuad
+ * }
+ *
+ * <Frame
+ *   animate={{ opacity: 0 }}
+ *   transition={transition}
+ * />
+ * ```
  *
  * @public
  */

@@ -60,6 +60,9 @@ interface DragHandlers {
     onDragStart?(e: MouseEvent | TouchEvent, info: PanInfo): void;
 }
 
+// @public
+declare type EasingFunction = (v: number) => number;
+
 // @public (undocumented)
 declare type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 
@@ -287,6 +290,14 @@ interface TapHandlers {
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     press?: string | TargetAndTransition;
 }
+
+// @public
+declare type TargetAndTransition = TargetWithKeyframes & {
+    // (undocumented)
+    transition?: Transition;
+    // (undocumented)
+    transitionEnd?: Target;
+};
 
 // @public
 declare function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (v: number) => any;

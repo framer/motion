@@ -52,5 +52,7 @@ export {
     Inertia,
     Point,
     None,
+    EasingFunction,
+    TargetAndTransition,
 } from "./types"
 export { safeWindow } from "./events/utils/window"

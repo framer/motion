@@ -95,9 +95,7 @@ export class AnimationControls {
     /**
      * Starts an animation on all linked components.
      *
-     * @param definition - Properties or variant label to animate to
-     * @param transition - Optional `transtion` to apply to a variant
-     * @returns - A `Promise` that resolves when all animations have completed.
+     * @remarks
      *
      * ```jsx
      * animation.start('variantLabel')
@@ -106,6 +104,10 @@ export class AnimationControls {
      *   transition: { duration: 1 }
      * })
      * ```
+     *
+     * @param definition - Properties or variant label to animate to
+     * @param transition - Optional `transtion` to apply to a variant
+     * @returns - A `Promise` that resolves when all animations have completed.
      *
      * @public
      */
