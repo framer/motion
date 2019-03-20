@@ -224,11 +224,6 @@ export interface MotionProps
         transform: TransformProperties,
         generatedTransform: string
     ): string
-
-    /**
-     * @internal
-     */
-    [key: string]: any
 }
 
 export type TransformTemplate = (

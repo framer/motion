@@ -1,8 +1,9 @@
 import {
-    ComponentType,
     ReactHTML,
     SVGAttributes,
     DetailedHTMLFactory,
+    HTMLAttributes,
+    RefForwardingComponent,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
@@ -16,19 +17,38 @@ export {
 export { createMotionComponent }
 export { htmlElements, svgElements } from "./utils/supported-elements"
 
-type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-type UnwrapFactory<F> = F extends DetailedHTMLFactory<infer P, any> ? P : never
+type UnwrapFactory<F> = F extends DetailedHTMLFactory<any, infer P> ? P : never
+
+interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
+    extends Pick<
+        HTMLAttributes<Original>,
+        Exclude<keyof HTMLAttributes<Original>, keyof MotionProps>
+    > {}
+
+export declare interface HTMLMotionProps<Original extends keyof ReactHTML>
+    extends HTMLAttributesWithoutMotionProps<
+            UnwrapFactory<ReactHTML[Original]>
+        >,
+        MotionProps {}
 
 /**
  * Motion-optimised versions of React's HTML components.
  *
  * @public
  */
-export type HTMLMotionComponents = {
-    [K in HTMLElements]: ComponentType<
-        Omit<UnwrapFactory<ReactHTML[K]>, "style"> & MotionProps
+export declare type HTMLMotionComponents = {
+    [K in HTMLElements]: RefForwardingComponent<
+        UnwrapFactory<ReactHTML[K]>,
+        HTMLMotionProps<K>
     >
 }
+
+interface SVGAttributesWithoutMotionProps
+    extends Pick<
+        SVGAttributes<SVGElement>,
+        Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
+    > {}
+interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {}
 
 /**
  * Motion-optimised versions of React's SVG components.
@@ -36,9 +56,7 @@ export type HTMLMotionComponents = {
  * @public
  */
 export type SVGMotionComponents = {
-    [K in SVGElements]: ComponentType<
-        Omit<SVGAttributes<SVGElement>, "style"> & MotionProps
-    >
+    [K in SVGElements]: RefForwardingComponent<SVGElement, SVGMotionProps>
 }
 
 /**
