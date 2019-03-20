@@ -172,7 +172,7 @@ export interface MotionAdvancedProps {
  *
  * @public
  */
-export interface MotionProps<K extends Element = any>
+export interface MotionProps
     extends AnimationProps,
         MotionCallbacks,
         GestureHandlers,
@@ -224,11 +224,6 @@ export interface MotionProps<K extends Element = any>
         transform: TransformProperties,
         generatedTransform: string
     ): string
-
-    /**
-     * @internal
-     */
-    ref?: Ref<K>
 }
 
 export type TransformTemplate = (

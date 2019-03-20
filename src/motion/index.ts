@@ -4,6 +4,7 @@ import {
     SVGAttributes,
     DetailedHTMLFactory,
     HTMLAttributes,
+    RefForwardingComponent,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
@@ -22,14 +23,14 @@ type UnwrapFactory<F> = F extends DetailedHTMLFactory<any, infer P> ? P : never
 interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
     extends Pick<
         HTMLAttributes<Original>,
-        Exclude<keyof HTMLAttributes<Original>, keyof MotionProps<Original>>
+        Exclude<keyof HTMLAttributes<Original>, keyof MotionProps>
     > {}
 
-export declare interface MotionComponentProps<Original extends keyof ReactHTML>
+export declare interface HTMLMotionProps<Original extends keyof ReactHTML>
     extends HTMLAttributesWithoutMotionProps<
             UnwrapFactory<ReactHTML[Original]>
         >,
-        MotionProps<UnwrapFactory<ReactHTML[Original]>> {}
+        MotionProps {}
 
 /**
  * Motion-optimised versions of React's HTML components.
@@ -37,14 +38,18 @@ export declare interface MotionComponentProps<Original extends keyof ReactHTML>
  * @public
  */
 export declare type HTMLMotionComponents = {
-    [K in HTMLElements]: ComponentType<MotionComponentProps<K>>
+    [K in HTMLElements]: RefForwardingComponent<
+        UnwrapFactory<ReactHTML[K]>,
+        HTMLMotionProps<K>
+    >
 }
 
 interface SVGAttributesWithoutMotionProps
     extends Pick<
         SVGAttributes<SVGElement>,
-        Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps<SVGElement>>
+        Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
     > {}
+interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {}
 
 /**
  * Motion-optimised versions of React's SVG components.
@@ -52,7 +57,7 @@ interface SVGAttributesWithoutMotionProps
  * @public
  */
 export type SVGMotionComponents = {
-    [K in SVGElements]: ComponentType<SVGAttributesWithoutMotionProps>
+    [K in SVGElements]: RefForwardingComponent<SVGElement, SVGMotionProps>
 }
 
 /**
