@@ -23,6 +23,8 @@ export {
     HoverHandlers,
     TapHandlers,
     PanHandlers,
+    TapInfo,
+    PanInfo,
     useTapGesture,
     usePanGesture,
     useGestures,
