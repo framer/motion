@@ -14,7 +14,38 @@ import { getGlobalLock } from "../behaviours/utils/lock"
 
 const pressGesturePriority = getGesturePriority("press")
 
-interface TapInfo {
+/**
+ * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
+ * information about the tap gesture such as it‘s location.
+ *
+ * @remarks
+ * ```jsx
+ * function onTap(event, info) {
+ *   console.log(`Tap at ${info.point.x} ${info.point.y}`)
+ * }
+ *
+ * <motion.div onTap={onTap} />
+ * ```
+ *
+ * @public
+ */
+export interface TapInfo {
+    /**
+     * Contains `x` and `y` values for the tap gesture relative to the
+     * device or page.
+     *
+     * @remarks
+     * ```jsx
+     * function onTapStart(event, tapInfo) {
+     *   const point = tapInfo.point
+     *   console.log(`Tap started at ${point.x} ${point.y}`)
+     * }
+     *
+     * <motion.div onTapStart={onTapStart} />
+     * ```
+     *
+     * @public
+     */
     point: Point
 }
 

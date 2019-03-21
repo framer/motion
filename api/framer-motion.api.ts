@@ -227,6 +227,14 @@ interface PanHandlers {
 }
 
 // @public
+interface PanInfo {
+    delta: Point;
+    offset: Point;
+    point: Point;
+    velocity: Point;
+}
+
+// @public
 interface Physics {
     acceleration?: number;
     // @internal (undocumented)
@@ -287,6 +295,11 @@ interface TapHandlers {
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     press?: string | TargetAndTransition;
+}
+
+// @public
+interface TapInfo {
+    point: Point;
 }
 
 // @public
