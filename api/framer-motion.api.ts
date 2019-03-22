@@ -35,6 +35,7 @@ declare type CustomMotionComponent = {
 
 // @public (undocumented)
 interface DraggableProps extends DragHandlers {
+    drag?: boolean | "x" | "y";
     dragConstraints?: false | {
         // (undocumented)
         top?: number;
@@ -45,8 +46,8 @@ interface DraggableProps extends DragHandlers {
         // (undocumented)
         left?: number;
     };
+    dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
-    drag?: boolean | "x" | "y" | "lockDirection";
     dragMomentum?: boolean;
     dragPropagation?: boolean;
     dragTransition?: InertiaOptions;
