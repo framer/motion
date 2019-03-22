@@ -7,7 +7,7 @@ describe("ssr", () => {
         renderToString(
             <motion.div
                 initial={{ x: 100 }}
-                tap={{ opacity: 0 }}
+                press={{ opacity: 0 }}
                 drag
                 style={{ opacity: 1 }}
             />
