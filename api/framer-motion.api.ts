@@ -82,6 +82,10 @@ declare type HTMLMotionComponents = {
     [K in HTMLElements]: ForwardRefComponent<UnwrapFactory<ReactHTML[K]>, HTMLMotionProps<K>>;
 };
 
+// @public (undocumented)
+interface HTMLMotionProps<Original extends keyof ReactHTML> extends HTMLAttributesWithoutMotionProps<UnwrapFactory<ReactHTML[Original]>>, MotionProps {
+}
+
 // @public
 interface Inertia {
     bounceDamping?: number;
@@ -289,6 +293,10 @@ declare const svgElements: (keyof ReactSVG)[];
 declare type SVGMotionComponents = {
     [K in SVGElements]: ForwardRefComponent<SVGElement, SVGMotionProps>;
 };
+
+// @public (undocumented)
+interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {
+}
 
 // @public (undocumented)
 interface TapHandlers {
