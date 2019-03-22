@@ -2,7 +2,23 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.8.7] Unreleased
+## [0.9.0] 2019-03-22
+
+### Added
+
+-   Added `dragDirectionLock` prop.
+
+### Removed
+
+-   `"lockDirection"` from `dragEnabled`.
+
+### Changed
+
+-   Renamed `dragEnabled` to `drag`.
+
+## [0.8.8] 2019-03-20
+
+## [0.8.7] 2019-03-20
 
 ### Added
 

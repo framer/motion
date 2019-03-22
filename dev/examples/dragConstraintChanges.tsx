@@ -16,7 +16,7 @@ export const App = () => {
     return (
         <>
             <motion.div
-                dragEnabled="x"
+                drag="x"
                 dragConstraints={{ left: 0, right: constraint }}
                 dragElastic
                 dragMomentum
@@ -25,7 +25,7 @@ export const App = () => {
             />
 
             <motion.div
-                dragEnabled="x"
+                drag="x"
                 dragConstraints={{ left: 0, right: 500 }}
                 dragElastic
                 dragMomentum

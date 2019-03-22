@@ -27,7 +27,7 @@ export const App = () => {
     return (
         <div style={containerStyle}>
             <motion.div
-                dragEnabled="lockDirection"
+                drag="lockDirection"
                 dragConstraints={{ left: 0, right: 0, top: -1500, bottom: 0 }}
                 style={contentStyle}
             >

@@ -10,7 +10,7 @@ const styleA = {
 export const App = () => {
     return (
         <motion.div
-            dragEnabled="x"
+            drag="x"
             dragConstraints={{ left: -500, right: 500 }}
             dragElastic
             dragMomentum

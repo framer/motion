@@ -8,7 +8,7 @@ describe("ssr", () => {
             <motion.div
                 initial={{ x: 100 }}
                 tap={{ opacity: 0 }}
-                dragEnabled
+                drag
                 style={{ opacity: 1 }}
             />
         )
