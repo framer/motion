@@ -3,7 +3,9 @@ import {
     SVGAttributes,
     DetailedHTMLFactory,
     HTMLAttributes,
-    RefForwardingComponent,
+    ForwardRefExoticComponent,
+    PropsWithoutRef,
+    RefAttributes,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
@@ -37,7 +39,7 @@ export declare interface HTMLMotionProps<Original extends keyof ReactHTML>
  * @public
  */
 export declare type HTMLMotionComponents = {
-    [K in HTMLElements]: RefForwardingComponent<
+    [K in HTMLElements]: ForwardRefComponent<
         UnwrapFactory<ReactHTML[K]>,
         HTMLMotionProps<K>
     >
@@ -50,13 +52,17 @@ interface SVGAttributesWithoutMotionProps
     > {}
 interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {}
 
+type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
+    PropsWithoutRef<P> & RefAttributes<T>
+>
+
 /**
  * Motion-optimised versions of React's SVG components.
  *
  * @public
  */
 export type SVGMotionComponents = {
-    [K in SVGElements]: RefForwardingComponent<SVGElement, SVGMotionProps>
+    [K in SVGElements]: ForwardRefComponent<SVGElement, SVGMotionProps>
 }
 
 /**
