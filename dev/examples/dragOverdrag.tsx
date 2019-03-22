@@ -29,7 +29,7 @@ export const App = () => {
 
     return (
         <motion.div
-            dragEnabled="lockDirection"
+            drag="lockDirection"
             onDirectionLock={onLock}
             onDragEnd={() => setSquish("default")}
             initial={{ scale: 1 }}

@@ -43,7 +43,7 @@ describe("dragging", () => {
             const onDragStart = jest.fn()
             const Component = () => (
                 <MockDrag>
-                    <motion.div dragEnabled onDragStart={onDragStart} />
+                    <motion.div drag onDragStart={onDragStart} />
                 </MockDrag>
             )
 
@@ -66,7 +66,7 @@ describe("dragging", () => {
             const onDragEnd = jest.fn()
             const Component = () => (
                 <MockDrag>
-                    <motion.div dragEnabled onDragEnd={onDragEnd} />
+                    <motion.div drag onDragEnd={onDragEnd} />
                 </MockDrag>
             )
 
@@ -90,7 +90,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <MockDrag>
-                    <motion.div dragEnabled="x" style={{ x, y }} />
+                    <motion.div drag="x" style={{ x, y }} />
                 </MockDrag>
             )
 
@@ -117,7 +117,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <MockDrag>
-                    <motion.div dragEnabled="y" style={{ x, y }} />
+                    <motion.div drag="y" style={{ x, y }} />
                 </MockDrag>
             )
 
@@ -144,7 +144,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <MockDrag>
-                    <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                    <motion.div drag dragDirectionLock style={{ x, y }} />
                 </MockDrag>
             )
 
@@ -175,7 +175,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <MockDrag>
-                    <motion.div dragEnabled="lockDirection" style={{ x, y }} />
+                    <motion.div drag="y" dragDirectionLock style={{ x, y }} />
                 </MockDrag>
             )
 
@@ -200,6 +200,117 @@ describe("dragging", () => {
         return expect(promise).resolves.toEqual([0, 200])
     })
 
+    test("block drag propagation", async () => {
+        const promise = new Promise(resolve => {
+            const childX = motionValue(0)
+            const parentX = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div drag="x" style={{ x: parentX }}>
+                        <motion.div
+                            data-testid="child"
+                            drag
+                            style={{ x: childX }}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(getByTestId("child")).to(10, 0)
+
+            sync.postRender(() => {
+                pointer.to(20, 0)
+
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve([parentX.get(), childX.get()])
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([0, 20])
+    })
+
+    test("enable drag propagation", async () => {
+        const promise = new Promise(resolve => {
+            const childX = motionValue(0)
+            const parentX = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div drag="x" style={{ x: parentX }}>
+                        <motion.div
+                            data-testid="child"
+                            drag="x"
+                            dragPropagation
+                            style={{ x: childX }}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(getByTestId("child")).to(10, 0)
+
+            sync.postRender(() => {
+                pointer.to(20, 0)
+
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve([parentX.get(), childX.get()])
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([20, 20])
+    })
+
+    test("allow drag propagation on opposing axis", async () => {
+        const promise = new Promise(resolve => {
+            const childX = motionValue(0)
+            const childY = motionValue(0)
+            const parentX = motionValue(0)
+            const parentY = motionValue(0)
+
+            const Component = () => (
+                <MockDrag>
+                    <motion.div drag="x" style={{ x: parentX, y: parentY }}>
+                        <motion.div
+                            data-testid="child"
+                            drag="y"
+                            style={{ x: childX, y: childY }}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(getByTestId("child")).to(10, 10)
+
+            sync.postRender(() => {
+                pointer.to(20, 20)
+
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve([
+                        parentX.get(),
+                        parentY.get(),
+                        childX.get(),
+                        childY.get(),
+                    ])
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([20, 0, 0, 20])
+    })
+
     test("impose left drag constraint", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
@@ -207,7 +318,7 @@ describe("dragging", () => {
             const Component = () => (
                 <MockDrag>
                     <motion.div
-                        dragEnabled
+                        drag
                         dragConstraints={{ left: -100 }}
                         dragElastic={false}
                         style={{ x, y }}
@@ -239,7 +350,7 @@ describe("dragging", () => {
             const Component = () => (
                 <MockDrag>
                     <motion.div
-                        dragEnabled
+                        drag
                         dragConstraints={{ right: 300 }}
                         dragElastic={false}
                         style={{ x, y }}
@@ -271,7 +382,7 @@ describe("dragging", () => {
             const Component = () => (
                 <MockDrag>
                     <motion.div
-                        dragEnabled
+                        drag
                         dragConstraints={{ top: -100 }}
                         dragElastic={false}
                         style={{ x, y }}
@@ -303,7 +414,7 @@ describe("dragging", () => {
             const Component = () => (
                 <MockDrag>
                     <motion.div
-                        dragEnabled
+                        drag
                         dragConstraints={{ bottom: 100 }}
                         dragElastic={false}
                         style={{ x, y }}
@@ -335,7 +446,7 @@ describe("dragging", () => {
             const Component = ({ constraints }) => (
                 <MockDrag>
                     <motion.div
-                        dragEnabled
+                        drag
                         dragConstraints={constraints}
                         dragElastic={false}
                         style={{ x, y }}
@@ -370,7 +481,7 @@ describe("dragging", () => {
         const Component = ({ constraints }: { constraints: Constraints }) => (
             <MockDrag>
                 <motion.div
-                    dragEnabled
+                    drag
                     dragConstraints={constraints}
                     dragElastic={false}
                     style={{ x, y }}
@@ -411,7 +522,7 @@ describe("dragging", () => {
                 <MockDrag>
                     <motion.div
                         style={{ x, y }}
-                        dragEnabled="x"
+                        drag="x"
                         dragConstraints={{ left: -500, right: 500 }}
                         dragElastic
                         dragMomentum
@@ -449,7 +560,7 @@ describe("dragging", () => {
             const y = motionValue(0)
             const Component = () => (
                 <MockDrag>
-                    <motion.div style={{ x, y }} dragEnabled />
+                    <motion.div style={{ x, y }} drag />
                 </MockDrag>
             )
 

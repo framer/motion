@@ -662,7 +662,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -684,7 +684,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -706,7 +706,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -727,7 +727,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -746,7 +746,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -768,7 +768,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -787,7 +787,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -805,7 +805,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```
@@ -824,7 +824,7 @@ export interface Inertia {
      * }
      *
      * <Frame
-     *   dragEnabled
+     *   drag
      *   dragTransition={transition}
      * />
      * ```

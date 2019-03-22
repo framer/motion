@@ -232,4 +232,4 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   `duration` and `delay` are now defined as seconds.
 -   `tapActive` -> `tap`
 -   `hoverActive` -> `hover`
--   `drag` -> `dragEnabled`
+-   `drag` -> `drag`

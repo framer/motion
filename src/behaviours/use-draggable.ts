@@ -27,7 +27,7 @@ export interface DragHandlers {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     *  <motion.div dragEnabled onDragStart={onDragStart} />
+     *  <motion.div drag onDragStart={onDragStart} />
      * ```
      */
     onDragStart?(e: MouseEvent | TouchEvent, info: PanInfo): void
@@ -40,7 +40,7 @@ export interface DragHandlers {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <motion.div dragEnabled onDragEnd={onDragEnd} />
+     * <motion.div drag onDragEnd={onDragEnd} />
      * ```
      */
     onDragEnd?(e: MouseEvent | TouchEvent, info: PanInfo): void
@@ -53,7 +53,7 @@ export interface DragHandlers {
      *   console.log(info.velocity.x, info.velocity.y)
      * }
      *
-     * <motion.div dragEnabled onDrag={onDrag} />
+     * <motion.div drag onDrag={onDrag} />
      * ```
      */
     onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
@@ -66,7 +66,7 @@ export interface DragHandlers {
      *   console.log(axis)
      * }
      *
-     * <motion.div dragEnabled="lockDirection" onDirectionLock={onDirectionLock} />
+     * <motion.div drag="lockDirection" onDirectionLock={onDirectionLock} />
      * ```
      */
     onDirectionLock?(axis: "x" | "y"): void
@@ -83,21 +83,30 @@ export type InertiaOptions = Partial<Omit<Inertia, "velocity" | "type">>
 export interface DraggableProps extends DragHandlers {
     /**
      * Enable dragging for this element. Set to `false` by default.
+     * Set `true` to drag in both directions.
      * Set `"x"` or `"y"` to only drag in a specific direction.
-     * Set `"lockDirection"` to lock dragging into the initial direction.
      *
      * ```jsx
-     * <motion.div dragEnabled="x" />
+     * <motion.div drag="x" />
      * ```
      */
-    dragEnabled?: boolean | "x" | "y" | "lockDirection"
+    drag?: boolean | "x" | "y"
+
+    /**
+     * If `true`, this will lock dragging to the initially-detected direction. Defaults to `false`.
+     *
+     * ```jsx
+     * <motion.div drag dragDirectionLock />
+     * ```
+     */
+    dragDirectionLock?: boolean
 
     /**
      * Allows drag gesture propagation to child components. Set to `false` by
      * default.
      *
      * ```jsx
-     * <motion.div dragEnabled="x" dragPropagation />
+     * <motion.div drag="x" dragPropagation />
      * ```
      */
     dragPropagation?: boolean
@@ -108,7 +117,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * ```jsx
      * <motion.div
-     *   dragEnabled="x"
+     *   drag="x"
      *   dragConstraints={{ left: 0, right: 300 }}
      * />
      * ```
@@ -123,7 +132,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * ```jsx
      * <motion.div
-     *   dragEnabled
+     *   drag
      *   dragConstraints={{ left: 0, right: 300 }}
      *   dragElastic={0.2}
      * />
@@ -137,7 +146,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * ```jsx
      * <motion.div
-     *   dragEnabled
+     *   drag
      *   dragConstraints={{ left: 0, right: 300 }}
      *   dragMomentum={false}
      * />
@@ -151,7 +160,7 @@ export interface DraggableProps extends DragHandlers {
      * See {@link https://framer.com/api/animation/#inertia | Inertia} for all properties you can use.
      * ```jsx
      * <motion.div
-     *   dragEnabled
+     *   drag
      *   dragTransition={{ bounceStiffness: 600, bounceDamping: 10 }}
      * />
      * ```
@@ -170,11 +179,11 @@ const flattenConstraints = (constraints: Constraints | false) => {
 
 function shouldDrag(
     direction: DragDirection,
-    drag: boolean | DragDirection | "lockDirection",
+    drag: boolean | DragDirection,
     currentDirection: null | DragDirection
 ) {
     return (
-        (drag === true || drag === "lockDirection" || drag === direction) &&
+        (drag === true || drag === direction) &&
         (currentDirection === null || currentDirection === direction)
     )
 }
@@ -248,7 +257,8 @@ type MotionPoint = Partial<{
  */
 export function useDraggable(
     {
-        dragEnabled = false,
+        drag = false,
+        dragDirectionLock = false,
         dragPropagation = false,
         dragConstraints = false,
         dragElastic = true,
@@ -268,17 +278,17 @@ export function useDraggable(
 
     const handlers = useMemo(
         () => {
-            if (!dragEnabled) return {}
+            if (!drag) return {}
 
             let currentDirection: null | DragDirection = null
             let openGlobalLock: null | Lock = null
 
-            if (shouldDrag("x", dragEnabled, currentDirection)) {
+            if (shouldDrag("x", drag, currentDirection)) {
                 const x = values.get("x", 0)
                 applyConstraints("x", x, dragConstraints, dragElastic)
                 point.x = x
             }
-            if (shouldDrag("y", dragEnabled, currentDirection)) {
+            if (shouldDrag("y", drag, currentDirection)) {
                 const y = values.get("y", 0)
                 applyConstraints("y", y, dragConstraints, dragElastic)
                 point.y = y
@@ -289,7 +299,7 @@ export function useDraggable(
                 offset: { x: number; y: number }
             ) => {
                 const p = point[axis]
-                if (!shouldDrag(axis, dragEnabled, currentDirection) || !p) {
+                if (!shouldDrag(axis, drag, currentDirection) || !p) {
                     return
                 }
 
@@ -326,7 +336,7 @@ export function useDraggable(
                 handle("y")
 
                 if (!dragPropagation) {
-                    openGlobalLock = getGlobalLock(dragEnabled)
+                    openGlobalLock = getGlobalLock(drag)
 
                     if (!openGlobalLock) {
                         return
@@ -344,7 +354,7 @@ export function useDraggable(
 
                 const { offset } = info
 
-                if (dragEnabled === "lockDirection") {
+                if (dragDirectionLock) {
                     if (currentDirection === null) {
                         currentDirection = getCurrentDirection(offset)
 
@@ -383,7 +393,7 @@ export function useDraggable(
 
                 if (dragMomentum) {
                     const startMomentum = (axis: "x" | "y") => {
-                        if (!shouldDrag(axis, dragEnabled, currentDirection)) {
+                        if (!shouldDrag(axis, drag, currentDirection)) {
                             return
                         }
 
@@ -420,7 +430,7 @@ export function useDraggable(
                 onPointerDown,
             }
         },
-        [dragEnabled, ...flattenConstraints(dragConstraints)]
+        [drag, ...flattenConstraints(dragConstraints)]
     )
 
     usePanGesture(handlers, ref)

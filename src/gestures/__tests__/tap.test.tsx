@@ -26,7 +26,7 @@ describe("tap", () => {
         const promise = new Promise(resolve => {
             const Component = () => (
                 <MockDrag>
-                    <motion.div dragEnabled>
+                    <motion.div drag>
                         <motion.div
                             data-testid="tapTarget"
                             onTap={() => tap()}

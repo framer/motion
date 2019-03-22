@@ -28,7 +28,7 @@ const Device = ({ children }) => (
 export const App = () => {
     return (
         <Device>
-            <motion.div dragEnabled style={styleA} />
+            <motion.div drag style={styleA} />
         </Device>
     )
 }

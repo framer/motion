@@ -59,7 +59,7 @@ export function useTransformedValue(
  *   const opacityRange = [0, 1, 1, 0]
  *   const opacity = useTransformedValue(x, xRange, opacityRange)
  *
- *   return <Frame dragEnabled="x" style={{ opacity, x }} />
+ *   return <Frame drag="x" style={{ opacity, x }} />
  * }
  * ```
  *

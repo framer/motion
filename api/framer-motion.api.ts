@@ -46,7 +46,7 @@ interface DraggableProps extends DragHandlers {
         left?: number;
     };
     dragElastic?: boolean | number;
-    dragEnabled?: boolean | "x" | "y" | "lockDirection";
+    drag?: boolean | "x" | "y" | "lockDirection";
     dragMomentum?: boolean;
     dragPropagation?: boolean;
     dragTransition?: InertiaOptions;
