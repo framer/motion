@@ -79,8 +79,12 @@ declare const htmlElements: ("object" | "track" | "progress" | "a" | "abbr" | "a
 
 // @public
 declare type HTMLMotionComponents = {
-    [K in HTMLElements]: RefForwardingComponent<UnwrapFactory<ReactHTML[K]>, HTMLMotionProps<K>>;
+    [K in HTMLElements]: ForwardRefComponent<UnwrapFactory<ReactHTML[K]>, HTMLMotionProps<K>>;
 };
+
+// @public (undocumented)
+interface HTMLMotionProps<Original extends keyof ReactHTML> extends HTMLAttributesWithoutMotionProps<UnwrapFactory<ReactHTML[Original]>>, MotionProps {
+}
 
 // @public
 interface Inertia {
@@ -287,8 +291,12 @@ declare const svgElements: (keyof ReactSVG)[];
 
 // @public
 declare type SVGMotionComponents = {
-    [K in SVGElements]: RefForwardingComponent<SVGElement, SVGMotionProps>;
+    [K in SVGElements]: ForwardRefComponent<SVGElement, SVGMotionProps>;
 };
+
+// @public (undocumented)
+interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {
+}
 
 // @public (undocumented)
 interface TapHandlers {
