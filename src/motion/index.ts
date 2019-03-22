@@ -27,7 +27,7 @@ interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
         Exclude<keyof HTMLAttributes<Original>, keyof MotionProps>
     > {}
 
-export declare interface HTMLMotionProps<Original extends keyof ReactHTML>
+export interface HTMLMotionProps<Original extends keyof ReactHTML>
     extends HTMLAttributesWithoutMotionProps<
             UnwrapFactory<ReactHTML[Original]>
         >,
@@ -38,7 +38,7 @@ export declare interface HTMLMotionProps<Original extends keyof ReactHTML>
  *
  * @public
  */
-export declare type HTMLMotionComponents = {
+export type HTMLMotionComponents = {
     [K in HTMLElements]: ForwardRefComponent<
         UnwrapFactory<ReactHTML[K]>,
         HTMLMotionProps<K>
@@ -50,7 +50,9 @@ interface SVGAttributesWithoutMotionProps
         SVGAttributes<SVGElement>,
         Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
     > {}
-interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {}
+export interface SVGMotionProps
+    extends SVGAttributesWithoutMotionProps,
+        MotionProps {}
 
 type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
     PropsWithoutRef<P> & RefAttributes<T>
