@@ -1,6 +1,15 @@
 import { unwrapMotionValue } from "../utils/unwrap-value"
 import { MotionValue } from "../"
 
+class Test {
+    mix() {
+        return () => 0
+    }
+    toValue() {
+        return 5
+    }
+}
+
 describe("unwrapMotionValue", () => {
     it("should leave non-motion values alone", () => {
         let value: any = { test: "foo" }
@@ -14,5 +23,8 @@ describe("unwrapMotionValue", () => {
         const value = { test: "bar" }
         motionValue = new MotionValue(value)
         expect(unwrapMotionValue(motionValue)).toBe(value)
+    })
+    it("should should unwrap a custom value", () => {
+        expect(unwrapMotionValue(new Test())).toEqual(5)
     })
 })

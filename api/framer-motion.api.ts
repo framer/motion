@@ -344,7 +344,7 @@ interface Tween {
 }
 
 // @internal
-declare function unwrapMotionValue<V>(value: V | MotionValue<V>): V;
+declare function unwrapMotionValue(value: string | number | CustomValueType | MotionValue): string | number;
 
 // @public
 declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationControls;
