@@ -8,11 +8,11 @@ import {
 import { invariant } from "hey-listen"
 import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
 
-const isCustomValue = (v: any): v is CustomValueType => {
-    return v && typeof v === "object" && v.mix && v.toValue
+export const isCustomValue = (v: any): v is CustomValueType => {
+    return Boolean(v && typeof v === "object" && v.mix && v.toValue)
 }
 
-export const resolveSingleValue = (v: string | number | CustomValueType) => {
+const resolveSingleValue = (v: string | number | CustomValueType) => {
     if (v && typeof v === "object") {
         invariant(
             isCustomValue(v),

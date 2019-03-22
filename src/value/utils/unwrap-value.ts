@@ -1,5 +1,5 @@
 import { MotionValue } from "../"
-import { resolveSingleValue } from "../../utils/resolve-value"
+import { isCustomValue } from "../../utils/resolve-value"
 import { CustomValueType } from "../../types"
 
 /**
@@ -8,8 +8,10 @@ import { CustomValueType } from "../../types"
  * @internal
  */
 export function unwrapMotionValue(
-    value: string | number | CustomValueType | MotionValue<V>
+    value: string | number | CustomValueType | MotionValue
 ): string | number {
     const unwrappedValue = value instanceof MotionValue ? value.get() : value
-    return resolveSingleValue(unwrappedValue)
+    return isCustomValue(unwrappedValue)
+        ? unwrappedValue.toValue()
+        : unwrappedValue
 }
