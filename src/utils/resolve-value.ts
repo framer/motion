@@ -12,7 +12,7 @@ const isCustomValue = (v: any): v is CustomValueType => {
     return v && typeof v === "object" && v.mix && v.toValue
 }
 
-const resolveSingleValue = (v: string | number | CustomValueType) => {
+export const resolveSingleValue = (v: string | number | CustomValueType) => {
     if (v && typeof v === "object") {
         invariant(
             isCustomValue(v),
