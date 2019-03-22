@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.9.1] 2019-03-22
+
+### Added
+
+-   Added support for `CustomValueType` in `unwrapMotionValue`.
+
 ## [0.9.0] 2019-03-22
 
 ### Added
