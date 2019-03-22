@@ -27,6 +27,9 @@ interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
         Exclude<keyof HTMLAttributes<Original>, keyof MotionProps>
     > {}
 
+/**
+ * @public
+ */
 export interface HTMLMotionProps<Original extends keyof ReactHTML>
     extends HTMLAttributesWithoutMotionProps<
             UnwrapFactory<ReactHTML[Original]>
@@ -50,6 +53,9 @@ interface SVGAttributesWithoutMotionProps
         SVGAttributes<SVGElement>,
         Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
     > {}
+/**
+ * @public
+ */
 export interface SVGMotionProps
     extends SVGAttributesWithoutMotionProps,
         MotionProps {}
