@@ -39,11 +39,12 @@ export {
 } from "./motion/context/MotionPluginContext"
 export { MotionContext } from "./motion/context/MotionContext"
 export {
+    AnimationProps,
     MotionProps,
     MotionCallbacks,
     MotionAdvancedProps,
-    AnimationProps,
     MotionStyle,
+    MotionTransform,
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./behaviours"
