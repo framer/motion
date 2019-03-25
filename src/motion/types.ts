@@ -81,7 +81,7 @@ export interface AnimationProps {
      * // Multiple variants
      * <motion.div animate={["visible", "active"]} variants={variants} />
      *
-     * // `AnimationControls`
+     * // AnimationControls
      * <motion.div animate={animation} />
      * ```
      */
@@ -130,8 +130,8 @@ export interface MotionCallbacks {
      * Callback with latest motion values, fired max once per frame.
      *
      * ```jsx
-     * function onUpdate({ x, opacity }) {
-     *   console.log(`Latest values: ${x} ${opacity}`)
+     * function onUpdate(latest) {
+     *   console.log(latest.x, latest.opacity)
      * }
      *
      * <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
@@ -144,7 +144,7 @@ export interface MotionCallbacks {
      *
      * ```jsx
      * function onComplete() {
-     *   console.log(`Animation has completed`)
+     *   console.log("Animation completed")
      * }
      *
      * <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />

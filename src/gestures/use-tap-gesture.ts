@@ -77,8 +77,8 @@ export interface TapHandlers {
      * Callback when the tap gesture starts on this element.
      *
      * ```jsx
-     * function onTapStart(event, { point }) {
-     *   console.log(`Tap started at ${point.x} ${point.y}`)
+     * function onTapStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div onTapStart={onTapStart} />
@@ -93,8 +93,8 @@ export interface TapHandlers {
      * Callback when the tap gesture ends outside this element.
      *
      * ```jsx
-     * function onTapCancel(event, { point }) {
-     *   console.log(`Tap cancelled at ${point.x} ${point.y}`)
+     * function onTapCancel(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * return <motion.div onTapCancel={onTapCancel} />
