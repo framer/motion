@@ -6,6 +6,7 @@ import { motionValue } from "../../value"
 import { mouseEnter, mouseLeave } from "../../../jest.setup"
 import { drag, MockDrag } from "../../behaviours/__tests__/index.test"
 import sync from "framesync"
+import { useCycle } from "../../utils/use-cycle"
 
 describe("tap", () => {
     test("tap event listeners fire", () => {
@@ -19,6 +20,18 @@ describe("tap", () => {
         fireEvent.mouseUp(container.firstChild as Element)
 
         expect(tap).toBeCalledTimes(1)
+    })
+
+    test("tap event handler prop is permissive", () => {
+        const Component = () => {
+            const [, cycle] = useCycle([0, 1])
+            return <motion.div onTap={cycle} />
+        }
+
+        render(<Component />)
+
+        // Just pass without any type errors
+        expect(true).toBe(true)
     })
 
     test("tap event listeners doesn't fire if parent is being dragged", async () => {
@@ -180,7 +193,7 @@ describe("tap", () => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
-            const Component = ({ isActive }) => {
+            const Component = ({ isActive }: { isActive: boolean }) => {
                 return (
                     <motion.div
                         initial={{ opacity: isActive ? 1 : 0.5 }}

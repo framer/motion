@@ -1,5 +1,5 @@
 // Converted from dom-testing-library event.js: https://github.com/kentcdodds/dom-testing-library/blob/master/src/events.js
-function fireEvent(element, event) {
+function fireEvent(element: Element, event: any) {
     return element.dispatchEvent(event)
 }
 
@@ -11,7 +11,8 @@ export const fireCustomEvent = (
     return function(node: Element, init?: {}): boolean {
         const eventInit: any = Object.assign({}, defaultInit, init)
         let _eventInit$target = eventInit.target
-        _eventInit$target = _eventInit$target === undefined ? {} : _eventInit$target
+        _eventInit$target =
+            _eventInit$target === undefined ? {} : _eventInit$target
 
         const { value, files, targetProperties } = _eventInit$target
         Object.assign(node, targetProperties)
@@ -29,8 +30,8 @@ export const fireCustomEvent = (
                 value: files,
             })
         }
-        const window = node.ownerDocument.defaultView
-        const EventConstructor = window[EventType] || window.Event
+        const window = node.ownerDocument!.defaultView!
+        const EventConstructor = window[EventType] || (window as any).Event
         const event = new EventConstructor(eventName, eventInit)
         return fireEvent(node, event)
     }
@@ -38,7 +39,7 @@ export const fireCustomEvent = (
 
 // // function written after some investigation here:
 // // https://github.com/facebook/react/issues/10135#issuecomment-401496776
-function setNativeValue(element, value) {
+function setNativeValue(element: Element, value: any) {
     const _ref = Object.getOwnPropertyDescriptor(element, "value") || {},
         valueSetter = _ref.set
 
@@ -49,7 +50,9 @@ function setNativeValue(element, value) {
 
     if (prototypeValueSetter && valueSetter !== prototypeValueSetter) {
         prototypeValueSetter.call(element, value)
-    } /* istanbul ignore next (I don't want to bother) */ else if (valueSetter) {
+    } /* istanbul ignore next (I don't want to bother) */ else if (
+        valueSetter
+    ) {
         valueSetter.call(element, value)
     } else {
         throw new Error("The given element does not have a value setter")

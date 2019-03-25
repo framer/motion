@@ -120,10 +120,10 @@ describe("custom properties", () => {
         )
     })
 
-    test("doesn't animate numerical image", async () => {
+    test("doesn't animate numerical image", async (): Promise<any> => {
         const promise = new Promise(resolve => {
             const resolvePromise = () => {
-                resolve(container.firstChild)
+                resolve(container.firstChild!)
             }
 
             const Component = () => {
@@ -183,7 +183,7 @@ describe("custom values type", () => {
     test("animates custom value type", async () => {
         const promise = new Promise(resolve => {
             const resolvePromise = () => {
-                requestAnimationFrame(() => resolve(container.firstChild))
+                requestAnimationFrame(() => resolve(container.firstChild!))
             }
 
             const Component = () => {

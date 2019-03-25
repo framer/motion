@@ -79,11 +79,11 @@ declare const htmlElements: ("object" | "track" | "progress" | "a" | "abbr" | "a
 
 // @public
 declare type HTMLMotionComponents = {
-    [K in HTMLElements]: ForwardRefComponent<UnwrapFactory<ReactHTML[K]>, HTMLMotionProps<K>>;
+    [K in HTMLElements]: ReactType<HTMLMotionProps<K>>;
 };
 
 // @public (undocumented)
-interface HTMLMotionProps<Original extends keyof ReactHTML> extends HTMLAttributesWithoutMotionProps<UnwrapFactory<ReactHTML[Original]>>, MotionProps {
+interface HTMLMotionProps<K> extends HTMLAttributesWithoutMotionProps<K>, MotionProps {
 }
 
 // @public
@@ -303,7 +303,7 @@ interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {
 
 // @public (undocumented)
 interface TapHandlers {
-    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    onTap?: (event: MouseEvent | TouchEvent, info: TapInfo) => void;
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     press?: string | TargetAndTransition;
