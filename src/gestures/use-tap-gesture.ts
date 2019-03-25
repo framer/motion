@@ -21,7 +21,7 @@ const pressGesturePriority = getGesturePriority("press")
  * @remarks
  * ```jsx
  * function onTap(event, info) {
- *   console.log(`Tap at ${info.point.x} ${info.point.y}`)
+ *   console.log(info.point.x, info.point.y)
  * }
  *
  * <motion.div onTap={onTap} />
@@ -36,9 +36,8 @@ export interface TapInfo {
      *
      * @remarks
      * ```jsx
-     * function onTapStart(event, tapInfo) {
-     *   const point = tapInfo.point
-     *   console.log(`Tap started at ${point.x} ${point.y}`)
+     * function onTapStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div onTapStart={onTapStart} />
@@ -61,8 +60,8 @@ export interface TapHandlers {
      * Callback when the tap gesture successfully ends on this element.
      *
      * ```jsx
-     * function onTap(event, { point }) {
-     *   console.log(`Tapped at ${point.x} ${point.y}`)
+     * function onTap(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div onTap={onTap} />
