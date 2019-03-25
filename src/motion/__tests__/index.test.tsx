@@ -21,7 +21,7 @@ describe("motion component rendering and styles", () => {
     })
 
     test("renders HTML and SVG attributes without type errors", () => {
-        render(
+        const { container } = render(
             <>
                 <motion.button title="test" type="button" />
                 <motion.button style={{ overflow: "hidden" }} />
@@ -30,9 +30,7 @@ describe("motion component rendering and styles", () => {
                 <motion.div role="progressbar" aria-valuemax={100} />
             </>
         )
-
-        // Type errors will fail if this test is broken
-        expect(true).toBe(true)
+        expect(container.firstChild).toBeTruthy()
     })
 
     test("renders child", () => {

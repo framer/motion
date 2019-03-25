@@ -79,11 +79,11 @@ declare const htmlElements: ("object" | "track" | "progress" | "a" | "abbr" | "a
 
 // @public
 declare type HTMLMotionComponents = {
-    [K in HTMLElements]: ReactType<HTMLMotionProps<K>>;
+    [K in HTMLElements]: ForwardRefComponent<UnwrapFactory<ReactHTML[K]>, HTMLMotionProps<K>>;
 };
 
 // @public (undocumented)
-interface HTMLMotionProps<K> extends HTMLAttributesWithoutMotionProps<K>, MotionProps {
+interface HTMLMotionProps<Original extends keyof ReactHTML> extends HTMLAttributesWithoutMotionProps<UnwrapFactory<ReactHTML[Original]>>, MotionProps {
 }
 
 // @public
