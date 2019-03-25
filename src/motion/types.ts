@@ -81,7 +81,7 @@ export interface AnimationProps {
      * // Multiple variants
      * <motion.div animate={["visible", "active"]} variants={variants} />
      *
-     * // `AnimationControls`
+     * // AnimationControls
      * <motion.div animate={animation} />
      * ```
      */
