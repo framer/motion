@@ -303,7 +303,7 @@ interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {
 
 // @public (undocumented)
 interface TapHandlers {
-    onTap?: (event: MouseEvent | TouchEvent, info: TapInfo) => void;
+    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     press?: string | TargetAndTransition;

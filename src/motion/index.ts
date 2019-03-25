@@ -18,7 +18,7 @@ export {
 export { createMotionComponent }
 export { htmlElements, svgElements } from "./utils/supported-elements"
 
-interface HTMLAttributesWithoutMotionProps<K>
+interface HTMLAttributesWithoutMotionProps<K extends HTMLAttributes<K>>
     extends Pick<
         HTMLAttributes<K>,
         Exclude<keyof HTMLAttributes<K>, keyof MotionProps>
@@ -34,7 +34,7 @@ export interface HTMLMotionProps<K>
  * @public
  */
 export type HTMLMotionComponents = {
-    [K in HTMLElements]: ReactType<HTMLMotionProps<K>>
+    [K in HTMLElements]: ReactType<HTMLMotionProps<HTMLElement>>
 }
 
 interface SVGAttributesWithoutMotionProps

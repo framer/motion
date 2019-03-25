@@ -24,13 +24,15 @@ describe("motion component rendering and styles", () => {
         render(
             <>
                 <motion.button title="test" type="button" />
-                <motion.button />
+                <motion.button style={{ overflow: "hidden" }} />
                 <motion.img src="https://framer.com" alt="alternative tag" />
                 <motion.a href="https://framer.com" />
                 <motion.div role="progressbar" aria-valuemax={100} />
-                <motion.circle radius={100} />
             </>
         )
+
+        // Type errors will fail if this test is broken
+        expect(true).toBe(true)
     })
 
     test("renders child", () => {
@@ -377,7 +379,7 @@ describe("animate prop as object", () => {
                 }, 20)
             }
             const Component = ({ rotate, onComplete }: any) => (
-                <motion.input
+                <motion.div
                     animate={{ rotate }}
                     transition={{ duration: 0.05 }}
                     style={{ rotate: "0deg" }}
