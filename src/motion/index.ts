@@ -1,10 +1,11 @@
 import {
+    ReactHTML,
     SVGAttributes,
+    DetailedHTMLFactory,
     HTMLAttributes,
     ForwardRefExoticComponent,
     PropsWithoutRef,
     RefAttributes,
-    ReactType,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
@@ -18,14 +19,21 @@ export {
 export { createMotionComponent }
 export { htmlElements, svgElements } from "./utils/supported-elements"
 
-interface HTMLAttributesWithoutMotionProps<K extends HTMLAttributes<K>>
+type UnwrapFactory<F> = F extends DetailedHTMLFactory<any, infer P> ? P : never
+
+interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
     extends Pick<
-        HTMLAttributes<K>,
-        Exclude<keyof HTMLAttributes<K>, keyof MotionProps>
+        HTMLAttributes<Original>,
+        Exclude<keyof HTMLAttributes<Original>, keyof MotionProps>
     > {}
 
-export interface HTMLMotionProps<K>
-    extends HTMLAttributesWithoutMotionProps<K>,
+/**
+ * @public
+ */
+export interface HTMLMotionProps<Original extends keyof ReactHTML>
+    extends HTMLAttributesWithoutMotionProps<
+            UnwrapFactory<ReactHTML[Original]>
+        >,
         MotionProps {}
 
 /**
@@ -34,7 +42,10 @@ export interface HTMLMotionProps<K>
  * @public
  */
 export type HTMLMotionComponents = {
-    [K in HTMLElements]: ReactType<HTMLMotionProps<HTMLElement>>
+    [K in HTMLElements]: ForwardRefComponent<
+        UnwrapFactory<ReactHTML[K]>,
+        HTMLMotionProps<K>
+    >
 }
 
 interface SVGAttributesWithoutMotionProps

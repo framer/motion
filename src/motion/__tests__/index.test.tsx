@@ -21,15 +21,23 @@ describe("motion component rendering and styles", () => {
     })
 
     test("renders HTML and SVG attributes without type errors", () => {
-        const { container } = render(
-            <>
-                <motion.button title="test" type="button" />
-                <motion.button style={{ overflow: "hidden" }} />
-                <motion.img src="https://framer.com" alt="alternative tag" />
-                <motion.a href="https://framer.com" />
-                <motion.div role="progressbar" aria-valuemax={100} />
-            </>
-        )
+        const Component = () => {
+            const ref = React.useRef<HTMLButtonElement | null>(null)
+            return (
+                <>
+                    <motion.button title="test" type="button" />
+                    <motion.button ref={ref} />
+                    <motion.button style={{ overflow: "hidden" }} />
+                    <motion.img
+                        src="https://framer.com"
+                        alt="alternative tag"
+                    />
+                    <motion.a href="https://framer.com" />
+                    <motion.div role="progressbar" aria-valuemax={100} />
+                </>
+            )
+        }
+        const { container } = render(<Component />)
         expect(container.firstChild).toBeTruthy()
     })
 
