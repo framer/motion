@@ -49,6 +49,10 @@ export type MakeMotion<T> = MakeCustomValueType<
 export type MotionCSS = MakeMotion<
     Omit<CSSProperties, "rotate" | "scale" | "perspective">
 >
+
+/**
+ * @public
+ */
 export type MotionTransform = MakeMotion<TransformProperties>
 
 /**
