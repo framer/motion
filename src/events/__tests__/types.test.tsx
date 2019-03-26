@@ -3,7 +3,7 @@ import { Point } from "../types"
 
 describe("relativeTo", () => {
     it("should return nothing if there is no element available", () => {
-        const convert = Point.relativeTo(null)
+        const convert = Point.relativeTo(null as any)
         expect(convert({ x: 1, y: 1 })).toBeUndefined()
     })
     it("should use provided element", () => {

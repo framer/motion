@@ -20,6 +20,27 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toBeTruthy()
     })
 
+    test("renders HTML and SVG attributes without type errors", () => {
+        const Component = () => {
+            const ref = React.useRef<HTMLButtonElement | null>(null)
+            return (
+                <>
+                    <motion.button title="test" type="button" />
+                    <motion.button ref={ref} />
+                    <motion.button style={{ overflow: "hidden" }} />
+                    <motion.img
+                        src="https://framer.com"
+                        alt="alternative tag"
+                    />
+                    <motion.a href="https://framer.com" />
+                    <motion.div role="progressbar" aria-valuemax={100} />
+                </>
+            )
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild).toBeTruthy()
+    })
+
     test("renders child", () => {
         const { getByTestId } = render(
             <motion.div>
@@ -66,7 +87,7 @@ describe("motion component rendering and styles", () => {
 
     test("accepts createref", async () => {
         const promise = new Promise<Element>(resolve => {
-            const ref = React.createRef<null | Element>()
+            const ref = React.createRef<null | HTMLButtonElement>()
             const Component = () => {
                 React.useEffect(() => {
                     resolve(ref.current as Element)
@@ -111,27 +132,28 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("generates style attribute if passed initial as variant label is function", () => {
-        type Props = { i: number }
+    // TODO: Replace dynamic variable test when we implement `custom` attribute: https://github.com/framer/company/issues/12508
+    // test("generates style attribute if passed initial as variant label is function", () => {
+    //     type Props = { i: number }
 
-        const variants = {
-            foo: ({ i }: Props) => ({ x: i * 10 }),
-        }
-        const childVariants = {
-            foo: ({ i }: Props) => ({ x: i * 10 }),
-        }
+    //     const variants = {
+    //         foo: ({ i }: Props) => ({ x: i * 10 }),
+    //     }
+    //     const childVariants = {
+    //         foo: ({ i }: Props) => ({ x: i * 10 }),
+    //     }
 
-        const { getByTestId } = render(
-            <motion.div initial="foo" variants={variants}>
-                <motion.div variants={childVariants} data-testid="a" i={0} />
-                <motion.div variants={childVariants} data-testid="b" i={1} />
-            </motion.div>
-        )
-        expect(getByTestId("a")).toHaveStyle("transform: none")
-        expect(getByTestId("b")).toHaveStyle(
-            "transform: translateX(10px) translateZ(0)"
-        )
-    })
+    //     const { getByTestId } = render(
+    //         <motion.div initial="foo" variants={variants}>
+    //             <motion.div variants={childVariants} data-testid="a" i={0} />
+    //             <motion.div variants={childVariants} data-testid="b" i={1} />
+    //         </motion.div>
+    //     )
+    //     expect(getByTestId("a")).toHaveStyle("transform: none")
+    //     expect(getByTestId("b")).toHaveStyle(
+    //         "transform: translateX(10px) translateZ(0)"
+    //     )
+    // })
 
     test("generates style attribute for children if passed initial as variant label", () => {
         const variants = {
@@ -250,7 +272,7 @@ describe("motion component rendering and styles", () => {
                 initial={{ x: 10 }}
                 transformTemplate={({ x }, generated) => {
                     const newX = typeof x === "string" ? parseFloat(x) : x
-                    return `translateY(${newX * 2}px) ${generated}`
+                    return `translateY(${(newX as number) * 2}px) ${generated}`
                 }}
             />
         )
@@ -362,12 +384,14 @@ describe("animate prop as object", () => {
                     resolve(styleHasOverridden)
                 }, 20)
             }
-            const Component = ({ rotate, onComplete }) => (
+            const Component = ({ rotate, onComplete }: any) => (
                 <motion.div
                     animate={{ rotate }}
                     transition={{ duration: 0.05 }}
                     style={{ rotate: "0deg" }}
-                    onUpdate={({ rotate }) => history.push(parseFloat(rotate))}
+                    onUpdate={({ rotate }) =>
+                        history.push(parseFloat(rotate as string))
+                    }
                     onAnimationComplete={onComplete}
                 />
             )
@@ -476,7 +500,8 @@ describe("animate prop as variant", () => {
         const promise = new Promise(resolve => {
             let latest = {}
 
-            const onUpdate = l => (latest = l)
+            const onUpdate = (l: { [key: string]: number | string }) =>
+                (latest = l)
 
             const Component = () => (
                 <motion.div
@@ -576,7 +601,7 @@ describe("animate prop as variant", () => {
                 },
             }
 
-            const { container } = render(
+            render(
                 <motion.div
                     variants={variants}
                     initial="hidden"

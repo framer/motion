@@ -443,7 +443,11 @@ describe("dragging", () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
             const y = motionValue(0)
-            const Component = ({ constraints }) => (
+            const Component = ({
+                constraints,
+            }: {
+                constraints: Constraints
+            }) => (
                 <MockDrag>
                     <motion.div
                         drag

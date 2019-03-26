@@ -1,11 +1,11 @@
 import {
-    ReactHTML,
     SVGAttributes,
-    DetailedHTMLFactory,
-    HTMLAttributes,
     ForwardRefExoticComponent,
     PropsWithoutRef,
     RefAttributes,
+    ReactHTML,
+    DetailedHTMLFactory,
+    HTMLAttributes,
 } from "react"
 import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
@@ -19,22 +19,28 @@ export {
 export { createMotionComponent }
 export { htmlElements, svgElements } from "./utils/supported-elements"
 
-type UnwrapFactory<F> = F extends DetailedHTMLFactory<any, infer P> ? P : never
+type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
+    ? P
+    : never
+type UnwrapFactoryElement<F> = F extends DetailedHTMLFactory<any, infer P>
+    ? P
+    : never
 
-interface HTMLAttributesWithoutMotionProps<Original extends HTMLElement>
-    extends Pick<
-        HTMLAttributes<Original>,
-        Exclude<keyof HTMLAttributes<Original>, keyof MotionProps>
-    > {}
+type HTMLAttributesWithoutMotionProps<
+    Attributes extends HTMLAttributes<Element>,
+    Element extends HTMLElement
+> = { [K in Exclude<keyof Attributes, keyof MotionProps>]?: Attributes[K] }
 
 /**
  * @public
  */
-export interface HTMLMotionProps<Original extends keyof ReactHTML>
-    extends HTMLAttributesWithoutMotionProps<
-            UnwrapFactory<ReactHTML[Original]>
-        >,
-        MotionProps {}
+export type HTMLMotionProps<
+    TagName extends keyof ReactHTML
+> = HTMLAttributesWithoutMotionProps<
+    UnwrapFactoryAttributes<ReactHTML[TagName]>,
+    UnwrapFactoryElement<ReactHTML[TagName]>
+> &
+    MotionProps
 
 /**
  * Motion-optimised versions of React's HTML components.
@@ -43,7 +49,7 @@ export interface HTMLMotionProps<Original extends keyof ReactHTML>
  */
 export type HTMLMotionComponents = {
     [K in HTMLElements]: ForwardRefComponent<
-        UnwrapFactory<ReactHTML[K]>,
+        UnwrapFactoryElement<ReactHTML[K]>,
         HTMLMotionProps<K>
     >
 }

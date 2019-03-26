@@ -180,7 +180,7 @@ describe("tap", () => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
-            const Component = ({ isActive }) => {
+            const Component = ({ isActive }: { isActive: boolean }) => {
                 return (
                     <motion.div
                         initial={{ opacity: isActive ? 1 : 0.5 }}

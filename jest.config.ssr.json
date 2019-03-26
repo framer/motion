@@ -9,12 +9,5 @@
     ],
     "coverageDirectory": "<rootDir>/../coverage",
     "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts",
-    "testMatch": ["**/__tests__/**/*ssr.test.(js|ts)?(x)"],
-    "globals": {
-        "ts-jest": {
-            "diagnostics": {
-                "warnOnly": true
-            }
-        }
-    }
+    "testMatch": ["**/__tests__/**/*ssr.test.(js|ts)?(x)"]
 }
