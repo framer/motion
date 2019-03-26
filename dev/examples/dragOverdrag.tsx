@@ -29,12 +29,13 @@ export const App = () => {
 
     return (
         <motion.div
-            drag="lockDirection"
+            drag
+            dragDirectionLock={true}
             onDirectionLock={onLock}
             onDragEnd={() => setSquish("default")}
             initial={{ scale: 1 }}
-            tap={{ scale: 0.6 }}
-            hover={{ scale: 1.2 }}
+            whileTap={{ scale: 0.6 }}
+            whileHover={{ scale: 1.2 }}
             variants={variants}
             animate={squish}
             style={styleA}

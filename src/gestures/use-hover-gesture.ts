@@ -12,10 +12,10 @@ export interface HoverHandlers {
      * Properties or variant label to animate to while the hover gesture is recognised.
      *
      * ```jsx
-     * <motion.div hover={{ scale: 1.2 }} />
+     * <motion.div whileHover={{ scale: 1.2 }} />
      * ```
      */
-    hover?: string | TargetAndTransition
+    whileHover?: string | TargetAndTransition
 
     /**
      * Callback function that fires when pointer starts hovering over the component.
@@ -44,7 +44,7 @@ export interface HoverHandlers {
     onHoverEnd?(event: MouseEvent): void
 }
 
-const hoverPriority = getGesturePriority("hover")
+const hoverPriority = getGesturePriority("whileHover")
 
 // TODO: Optimisation here is find a way to conditionally add these listeners based on
 // whether we're receiving hover or event listeners
@@ -55,11 +55,16 @@ const hoverPriority = getGesturePriority("hover")
  * @internal
  */
 export function useHoverGesture(
-    { hover, onHoverStart, onHoverEnd, controls }: HoverHandlers & ControlsProp,
+    {
+        whileHover,
+        onHoverStart,
+        onHoverEnd,
+        controls,
+    }: HoverHandlers & ControlsProp,
     ref?: RefObject<Element>
 ) {
-    if (hover && controls) {
-        controls.setOverride(hover, hoverPriority)
+    if (whileHover && controls) {
+        controls.setOverride(whileHover, hoverPriority)
     }
 
     const handlers = useMemo(
@@ -67,7 +72,7 @@ export function useHoverGesture(
             const onPointerEnter = (event: MouseEvent) => {
                 if (onHoverStart) onHoverStart(event)
 
-                if (hover && controls) {
+                if (whileHover && controls) {
                     controls.startOverride(hoverPriority)
                 }
             }
@@ -75,14 +80,14 @@ export function useHoverGesture(
             const onPointerLeave = (event: MouseEvent) => {
                 if (onHoverEnd) onHoverEnd(event)
 
-                if (hover && controls) {
+                if (whileHover && controls) {
                     controls.clearOverride(hoverPriority)
                 }
             }
 
             return { onPointerEnter, onPointerLeave }
         },
-        [hover, onHoverStart, onHoverEnd, controls]
+        [whileHover, onHoverStart, onHoverEnd, controls]
     )
 
     return useConditionalPointerEvents(handlers, ref)
