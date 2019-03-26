@@ -2,6 +2,19 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.10.0] 2019-03-26
+
+### Changed
+
+-   `press` -> `whileTap`
+-   `hover` -> `whileHover`
+
+## [0.9.4] 2019-03-26
+
+### Fixed
+
+-   Fixing HTML types.
+
 ## [0.9.3] 2019-03-25
 
 ### Added
