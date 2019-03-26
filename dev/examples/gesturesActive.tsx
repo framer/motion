@@ -13,8 +13,8 @@ export const App = () => {
     return (
         <motion.div
             animate={animation}
-            hover={{ scale: 1.5 }}
-            tap={{ scale: 0.5, backgroundColor: "rgba(0, 255, 0, .5)" }}
+            whileHover={{ scale: 1.5 }}
+            whileTap={{ scale: 0.5, backgroundColor: "rgba(0, 255, 0, .5)" }}
             onHoverStart={() => {
                 animation.start({ background: "#00F" })
             }}

@@ -83,7 +83,7 @@ describe("tap", () => {
                 <motion.div
                     initial={{ opacity: 0.5 }}
                     transition={{ type: false }}
-                    press={{ opacity: 1 }}
+                    whileTap={{ opacity: 1 }}
                     style={{ opacity }}
                 />
             )
@@ -107,7 +107,7 @@ describe("tap", () => {
         return expect(promise).resolves.toEqual([0.5, 1, 0.5])
     })
 
-    test("tap gesture variant applies and unapplies with hover", () => {
+    test("tap gesture variant applies and unapplies with whileHover", () => {
         const promise = new Promise(resolve => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
@@ -116,8 +116,8 @@ describe("tap", () => {
                 <motion.div
                     initial={{ opacity: 0.5 }}
                     transition={{ type: false }}
-                    hover={{ opacity: 0.75 }}
-                    press={{ opacity: 1 }}
+                    whileHover={{ opacity: 0.75 }}
+                    whileTap={{ opacity: 1 }}
                     style={{ opacity }}
                 />
             )
@@ -185,8 +185,8 @@ describe("tap", () => {
                     <motion.div
                         initial={{ opacity: isActive ? 1 : 0.5 }}
                         animate={{ opacity: isActive ? 1 : 0.5 }}
-                        hover={{ opacity: isActive ? 1 : 0.75 }}
-                        press={{ opacity: 1 }}
+                        whileHover={{ opacity: isActive ? 1 : 0.75 }}
+                        whileTap={{ opacity: 1 }}
                         transition={{ type: false }}
                         style={{ opacity }}
                     />
