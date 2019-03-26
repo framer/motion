@@ -132,7 +132,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    // TODO: Replace dynamic variable test when we implement `custom` attribute
+    // TODO: Replace dynamic variable test when we implement `custom` attribute: https://github.com/framer/company/issues/12508
     // test("generates style attribute if passed initial as variant label is function", () => {
     //     type Props = { i: number }
 
