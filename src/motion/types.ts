@@ -88,7 +88,7 @@ export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels
 
     /**
-     * Object of labelled variants. Variants are visual states that can be defined externally from a `Frame` and passed in via the variants property. This allows variant labels to be used in place of values on the `animate`, `initial`, `press`, and `hover` properties.
+     * Object of labelled variants. Variants are visual states that can be defined externally from a `Frame` and passed in via the variants property. This allows variant labels to be used in place of values on the `animate`, `initial`, `whileTap`, and `whileHover` properties.
      *
      * ```jsx
      * const variants = {

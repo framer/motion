@@ -22,7 +22,7 @@ describe("hover", () => {
         expect(hoverOut).toBeCalledTimes(1)
     })
 
-    test("hover applied", async () => {
+    test("whileHover applied", async () => {
         const promise = new Promise(resolve => {
             const opacity = motionValue(1)
             const Component = () => (
@@ -44,7 +44,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(0)
     })
 
-    test("hover applied as variant", async () => {
+    test("whileHover applied as variant", async () => {
         const target = 0.5
         const promise = new Promise(resolve => {
             const variant = {
@@ -71,7 +71,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(target)
     })
 
-    test("hover propagates to children", async () => {
+    test("whileHover propagates to children", async () => {
         const target = 0.2
         const promise = new Promise(resolve => {
             const parent = {
@@ -107,7 +107,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(target)
     })
 
-    test("hover is unapplied when hover ends", () => {
+    test("whileHover is unapplied when hover ends", () => {
         const promise = new Promise(resolve => {
             const variant = {
                 hidden: { opacity: 0.5 },
@@ -136,7 +136,7 @@ describe("hover", () => {
         return expect(promise).resolves.toBe(1)
     })
 
-    test("hover only animates values that arent being controlled by a higher-priority gesture ", () => {
+    test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
         const promise = new Promise(resolve => {
             const variant = {
                 hovering: { opacity: 0.5, scale: 0.5 },

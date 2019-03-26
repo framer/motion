@@ -44,7 +44,7 @@ export interface HoverHandlers {
     onHoverEnd?(event: MouseEvent): void
 }
 
-const hoverPriority = getGesturePriority("hover")
+const hoverPriority = getGesturePriority("whileHover")
 
 // TODO: Optimisation here is find a way to conditionally add these listeners based on
 // whether we're receiving hover or event listeners

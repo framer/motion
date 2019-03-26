@@ -12,7 +12,7 @@ import { ControlsProp } from "./types"
 import { safeWindow } from "../events/utils/window"
 import { getGlobalLock } from "../behaviours/utils/lock"
 
-const tapGesturePriority = getGesturePriority("press")
+const tapGesturePriority = getGesturePriority("whileTap")
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains

@@ -107,7 +107,7 @@ describe("tap", () => {
         return expect(promise).resolves.toEqual([0.5, 1, 0.5])
     })
 
-    test("tap gesture variant applies and unapplies with hover", () => {
+    test("tap gesture variant applies and unapplies with whileHover", () => {
         const promise = new Promise(resolve => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
