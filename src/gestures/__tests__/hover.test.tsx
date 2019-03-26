@@ -27,7 +27,7 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hover={{ opacity: 0 }}
+                    whileHover={{ opacity: 0 }}
                     transition={{ type: false }}
                     style={{ opacity }}
                 />
@@ -53,7 +53,7 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hover="hidden"
+                    whileHover="hidden"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity }}
@@ -83,7 +83,7 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hover="hidden"
+                    whileHover="hidden"
                     variants={parent}
                     transition={{ type: false }}
                     data-id="hoverparent"
@@ -115,7 +115,7 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hover="hidden"
+                    whileHover="hidden"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity }}
@@ -146,8 +146,8 @@ describe("hover", () => {
             const scale = motionValue(1)
             const Component = () => (
                 <motion.div
-                    hover="hovering"
-                    press="tapping"
+                    whileHover="hovering"
+                    whileTap="tapping"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity, scale }}

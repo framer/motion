@@ -12,7 +12,7 @@ import { ControlsProp } from "./types"
 import { safeWindow } from "../events/utils/window"
 import { getGlobalLock } from "../behaviours/utils/lock"
 
-const pressGesturePriority = getGesturePriority("press")
+const tapGesturePriority = getGesturePriority("press")
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
@@ -108,10 +108,10 @@ export interface TapHandlers {
      * Properties or variant label to animate to while the component is pressed.
      *
      * ```jsx
-     * <motion.div press={{ scale: 0.8 }} />
+     * <motion.div whileTap={{ scale: 0.8 }} />
      * ```
      */
-    press?: string | TargetAndTransition
+    whileTap?: string | TargetAndTransition
 }
 
 /**
@@ -163,16 +163,16 @@ export function useTapGesture(
     ref?: RefObject<Element>
 ): undefined | { onPointerDown: EventHandler } {
     let session: TapSession | null = null
-    const { onTap, onTapStart, onTapCancel, press, controls } = props
+    const { onTap, onTapStart, onTapCancel, whileTap, controls } = props
     const propsRef = usePropsRef(props)
 
-    if (press && controls) {
-        controls.setOverride(press, pressGesturePriority)
+    if (whileTap && controls) {
+        controls.setOverride(whileTap, tapGesturePriority)
     }
 
     const handlers = useMemo(
         () => {
-            if (!onTap && !onTapStart && !onTapCancel && !press) {
+            if (!onTap && !onTapStart && !onTapCancel && !whileTap) {
                 return {
                     onPointerUp: () => {},
                     onPointerDown: () => {},
@@ -189,8 +189,8 @@ export function useTapGesture(
 
                 session = null
 
-                if (controls && propsRef.press) {
-                    controls.clearOverride(pressGesturePriority)
+                if (controls && propsRef.whileTap) {
+                    controls.clearOverride(tapGesturePriority)
                 }
 
                 // Check the gesture lock - if we get it, it means no drag gesture is active
@@ -228,8 +228,8 @@ export function useTapGesture(
                     propsRef.onTapStart(event, { point })
                 }
 
-                if (controls && propsRef.press) {
-                    controls.startOverride(pressGesturePriority)
+                if (controls && propsRef.whileTap) {
+                    controls.startOverride(tapGesturePriority)
                 }
             }
 

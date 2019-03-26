@@ -69,9 +69,9 @@ declare type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 
 // @public (undocumented)
 interface HoverHandlers {
-    hover?: string | TargetAndTransition;
     onHoverEnd?(event: MouseEvent): void;
     onHoverStart?(event: MouseEvent): void;
+    whileHover?: string | TargetAndTransition;
 }
 
 // @internal (undocumented)
@@ -305,7 +305,7 @@ interface TapHandlers {
     onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
     onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
-    press?: string | TargetAndTransition;
+    whileTap?: string | TargetAndTransition;
 }
 
 // @public
