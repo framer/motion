@@ -34,8 +34,17 @@ export const App = () => {
             animate={animation}
             onClick={() => setActive(!isActive)}
             style={style}
+            onDrag={(event, info) => {
+                console.log(event, info)
+            }}
         >
-            <motion.div animate={childPoses} inherit style={stylea} />
+            <motion.button
+                animate={childPoses}
+                inherit
+                style={stylea}
+                type={"test"}
+            />
+            <motion.table cellPadding={10} />
         </motion.div>
     )
 }
