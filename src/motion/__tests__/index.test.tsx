@@ -27,7 +27,10 @@ describe("motion component rendering and styles", () => {
                 <>
                     <motion.button title="test" type="button" />
                     <motion.button ref={ref} />
-                    <motion.button style={{ overflow: "hidden" }} />
+                    <motion.button
+                        animate={{ rotate: 90 }}
+                        style={{ overflow: "hidden" }}
+                    />
                     <motion.img
                         src="https://framer.com"
                         alt="alternative tag"

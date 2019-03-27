@@ -1196,9 +1196,12 @@ export type Transition =
     | (Orchestration & TransitionMap)
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-type CSSPropertiesWithoutTransition = Omit<CSSProperties, "transition">
+type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
+    CSSProperties,
+    "transition" | "rotate" | "scale" | "perspective"
+>
 
-type TargetProperties = CSSPropertiesWithoutTransition &
+type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
     TransformProperties &
     CustomStyles & {
         pathLength?: number
