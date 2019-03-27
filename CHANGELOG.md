@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.10.2] 2019-03-27
+
+### Changed
+
+-   Updating docs to avoid single-letter `event` vars.
+
 ## [0.10.1] 2019-03-27
 
 ### Fixed
