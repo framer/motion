@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.10.1] 2019-03-27
+
+### Fixed
+
+-   Fixing `TargetAndTransform` type to omit CSS-native `rotate` property.
+
 ## [0.10.0] 2019-03-26
 
 ### Changed
