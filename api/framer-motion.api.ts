@@ -56,9 +56,9 @@ interface DraggableProps extends DragHandlers {
 // @public (undocumented)
 interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
-    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void;
-    onDragEnd?(e: MouseEvent | TouchEvent, info: PanInfo): void;
-    onDragStart?(e: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDrag?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDragEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
 }
 
 // @public
