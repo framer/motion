@@ -30,7 +30,7 @@ export interface DragHandlers {
      *  <motion.div drag onDragStart={onDragStart} />
      * ```
      */
-    onDragStart?(e: MouseEvent | TouchEvent, info: PanInfo): void
+    onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when dragging ends.
@@ -43,7 +43,7 @@ export interface DragHandlers {
      * <motion.div drag onDragEnd={onDragEnd} />
      * ```
      */
-    onDragEnd?(e: MouseEvent | TouchEvent, info: PanInfo): void
+    onDragEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when the component is dragged.
@@ -56,7 +56,7 @@ export interface DragHandlers {
      * <motion.div drag onDrag={onDrag} />
      * ```
      */
-    onDrag?(e: MouseEvent | TouchEvent, info: PanInfo): void
+    onDrag?(event: MouseEvent | TouchEvent, info: PanInfo): void
 
     /**
      * Callback function that fires a drag direction is determined.
