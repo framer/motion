@@ -65,7 +65,7 @@ export class MotionValuesMap {
             }
         }
 
-        const unsubscribe = value.addRenderSubscription(update)
+        const unsubscribe = value.onRenderRequest(update)
         this.unsubscribers.set(key, unsubscribe)
     }
 

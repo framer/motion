@@ -31,4 +31,22 @@ describe("useMotionValue", () => {
             "transform: translateX(500px) translateZ(0)"
         )
     })
+
+    test("fires callbacks", async () => {
+        const onChange = jest.fn()
+        const onRenderRequest = jest.fn()
+        const Component = () => {
+            const x = useMotionValue(100)
+            x.onChange(onChange)
+            x.onRenderRequest(onRenderRequest)
+
+            x.set(500)
+
+            return <motion.div style={{ x }} />
+        }
+
+        render(<Component />)
+        expect(onChange).toHaveBeenCalled()
+        expect(onRenderRequest).toHaveBeenCalled()
+    })
 })

@@ -196,20 +196,20 @@ export class MotionValue<V = any> {
      *
      * @public
      */
-    addUpdateSubscription(subscription: Subscriber<V>) {
+    onChange(subscription: Subscriber<V>) {
         if (!this.updateSubscribers) this.updateSubscribers = new Set()
         return this.subscribeTo(this.updateSubscribers, subscription)
     }
 
     /**
-     * Adds a function that will be notified when the `MotionValue` is rendered.
+     * Adds a function that will be notified when the `MotionValue` requests a render.
      *
      * @param subscriber - A function that's provided the latest value.
      * @returns A function that, when called, will cancel this subscription.
      *
-     * @public
+     * @internal
      */
-    addRenderSubscription(subscription: Subscriber<V>) {
+    onRenderRequest(subscription: Subscriber<V>) {
         if (!this.renderSubscribers) this.renderSubscribers = new Set()
         // Render immediately
         this.notifySubscriber(subscription)

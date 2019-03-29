@@ -190,13 +190,14 @@ declare class MotionValue<V = any> {
     constructor(init: V, { transformer, parent }?: Config<V>);
     // @internal
     addChild(config: Config<V>): MotionValue<V>;
-    addRenderSubscription(subscription: Subscriber<V>): () => boolean;
-    addUpdateSubscription(subscription: Subscriber<V>): () => boolean;
     // @internal
     control(controller: ActionFactory, config: PopmotionTransitionProps, transformer?: Transformer<V>): Promise<{}>;
     destroy(): void;
     get(): V;
     getVelocity(): number;
+    onChange(subscription: Subscriber<V>): () => boolean;
+    // @internal
+    onRenderRequest(subscription: Subscriber<V>): () => boolean;
     // @internal
     removeChild(child: MotionValue): void;
     set(v: V, render?: boolean): void;
@@ -346,7 +347,7 @@ interface Tween {
 }
 
 // @internal
-declare function unwrapMotionValue(value: string | number | CustomValueType | MotionValue): string | number;
+declare function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
 // @public
 declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationControls;

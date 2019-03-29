@@ -8,7 +8,7 @@ import { CustomValueType } from "../../types"
  * @internal
  */
 export function unwrapMotionValue(
-    value: string | number | CustomValueType | MotionValue
+    value?: string | number | CustomValueType | MotionValue
 ): string | number {
     const unwrappedValue = value instanceof MotionValue ? value.get() : value
     return isCustomValue(unwrappedValue)

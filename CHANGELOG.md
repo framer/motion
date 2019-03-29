@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.11.0] Unreleased
+
+### Changed
+
+-   `value.addUpdateSubscription` => `value.onChange`
+-   `value.addRenderSubscription` => `value.onRenderRequest` (and made internal)
+
 ## [0.10.2] 2019-03-27
 
 ### Changed
