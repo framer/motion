@@ -9,6 +9,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   `value.addUpdateSubscription` => `value.onChange`
 -   `value.addRenderSubscription` => `value.onRenderRequest` (and made internal)
 
+### Upgraded
+
+-   `popmotion@8.6.5`
+
 ## [0.10.2] 2019-03-27
 
 ### Changed
