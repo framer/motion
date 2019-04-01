@@ -499,6 +499,23 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(50)
     })
 
+    test("child animates to set variant even if variants are not found on parent", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const onComplete = () => resolve(x.get())
+            const Component = () => (
+                <motion.div animate="visible" onAnimationComplete={onComplete}>
+                    <motion.div variants={childVariants} style={{ x }} />
+                </motion.div>
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe(50)
+    })
+
     test("onUpdate", async () => {
         const promise = new Promise(resolve => {
             let latest = {}

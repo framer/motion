@@ -13,6 +13,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `popmotion@8.6.5`
 
+### Fixed
+
+-   Variants propagate even if not present on parent.
+
 ## [0.10.2] 2019-03-27
 
 ### Changed

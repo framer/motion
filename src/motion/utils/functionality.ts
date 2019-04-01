@@ -64,13 +64,22 @@ const isVariantLabel = (prop?: any): prop is VariantLabels =>
 const isAnimationSubscription = ({ animate }: AnimateProps) =>
     animate instanceof AnimationControls
 
+const animationProps = ["initial", "animate", "whileTap", "whileHover"]
+
 const animatePropTypeTests = {
-    [AnimatePropType.Target]: (props: AnimateProps) =>
-        props.animate !== undefined &&
-        !isVariantLabel(props.animate) &&
-        !isAnimationSubscription(props),
-    [AnimatePropType.VariantLabel]: ({ variants }: AnimateProps) =>
-        variants !== undefined,
+    [AnimatePropType.Target]: (props: AnimateProps) => {
+        return (
+            props.animate !== undefined &&
+            !isVariantLabel(props.animate) &&
+            !isAnimationSubscription(props)
+        )
+    },
+    [AnimatePropType.VariantLabel]: (props: AnimateProps) => {
+        return (
+            props.variants !== undefined ||
+            animationProps.some(key => typeof props[key] === "string")
+        )
+    },
     [AnimatePropType.AnimationSubscription]: isAnimationSubscription,
 }
 
@@ -84,9 +93,11 @@ export const getAnimatePropType = (
 }
 
 export const getAnimateComponent = (
-    animatePropType?: string,
+    props: MotionProps,
     isStatic: boolean = false
 ): ComponentType<AnimateProps> | undefined => {
+    const animatePropType = getAnimatePropType(props)
+
     return !isStatic && animatePropType
         ? AnimatePropComponents[animatePropType]
         : undefined
