@@ -12,7 +12,6 @@ import {
     Gestures,
     Draggable,
     RenderComponent,
-    getAnimatePropType,
     getAnimateComponent,
     checkShouldInheritVariant,
 } from "./utils/functionality"
@@ -32,7 +31,6 @@ export const createMotionComponent = <P extends {}>(
         const isStatic = parentContext.static || props.static || false
         const values = useMotionValues(props, isStatic)
         const style = useMotionStyles(values, props.style)
-        const animatePropType = getAnimatePropType(props)
         const shouldInheritVariant = checkShouldInheritVariant(props)
         const controls = useComponentAnimationControls(
             values,
@@ -48,7 +46,7 @@ export const createMotionComponent = <P extends {}>(
         )
 
         // Add functionality
-        const Animate = getAnimateComponent(animatePropType, context.static)
+        const Animate = getAnimateComponent(props, context.static)
 
         const handleAnimate = Animate && (
             <Animate
