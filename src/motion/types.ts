@@ -3,7 +3,7 @@ import { MotionValue } from "../value"
 import { AnimationControls } from "../animation/AnimationControls"
 import {
     Variants,
-    Target,
+    Target as TargetType,
     Transition,
     TargetAndTransition,
     Omit,
@@ -62,7 +62,7 @@ export type MotionStyle = MotionCSS &
     MotionTransform &
     MakeCustomValueType<CustomStyles>
 
-export type OnUpdate = (v: Target) => void
+export type OnUpdate = (v: TargetType) => void
 
 /**
  * @public
@@ -196,7 +196,7 @@ export interface MotionProps
      * <motion.div initial={["visible", "active"]} variants={variants} />
      * ```
      */
-    initial?: Target | VariantLabels
+    initial?: TargetType | VariantLabels
 
     /**
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.

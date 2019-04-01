@@ -1,6 +1,9 @@
 import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
-import { transform, TransformOptions } from "../utils/transform"
+import {
+    transform as utilsTransform,
+    TransformOptions,
+} from "../utils/transform"
 
 type Transformer = (v: any) => any
 
@@ -94,7 +97,7 @@ export function useTransformedValue<T>(
     } else if (Array.isArray(to)) {
         const from = customTransform
 
-        transformer = () => transform(from, to, options)
+        transformer = () => utilsTransform(from, to, options)
 
         comparitor = [value, from.join(","), to.join(",")]
     }

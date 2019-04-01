@@ -212,6 +212,15 @@ const getConstraints = (
     }
 }
 
+const applyOverdrag = (
+    origin: number,
+    current: number,
+    dragElastic: boolean | number
+) => {
+    const dragFactor = typeof dragElastic === "number" ? dragElastic : 0.5
+    return mix(origin, current, dragFactor)
+}
+
 function applyConstraints(
     axis: "x" | "y",
     value: number | MotionValue<number>,
@@ -239,20 +248,21 @@ function applyConstraints(
     return constrainedValue
 }
 
-const applyOverdrag = (
-    origin: number,
-    current: number,
-    dragElastic: boolean | number
-) => {
-    const dragFactor = typeof dragElastic === "number" ? dragElastic : 0.5
-    return mix(origin, current, dragFactor)
-}
-
 type MotionPoint = Partial<{
     x: MotionValue<number>
     y: MotionValue<number>
 }>
 
+function getCurrentDirection(offset: Point): DragDirection | null {
+    const lockThreshold = 10
+    let direction: DragDirection | null = null
+    if (Math.abs(offset.y) > lockThreshold) {
+        direction = "y"
+    } else if (Math.abs(offset.x) > lockThreshold) {
+        direction = "x"
+    }
+    return direction
+}
 /**
  * A hook that allows an element to be dragged.
  *
@@ -452,15 +462,4 @@ export function useDraggable(
 
     usePanGesture(handlers, ref)
     usePointerEvents({ onPointerDown: handlers.onPointerDown }, ref)
-}
-
-function getCurrentDirection(offset: Point): DragDirection | null {
-    const lockThreshold = 10
-    let direction: DragDirection | null = null
-    if (Math.abs(offset.y) > lockThreshold) {
-        direction = "y"
-    } else if (Math.abs(offset.x) > lockThreshold) {
-        direction = "x"
-    }
-    return direction
 }
