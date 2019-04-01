@@ -60,12 +60,12 @@
     },
     "dependencies": {
         "@emotion/is-prop-valid": "^0.7.3",
-        "@popmotion/popcorn": "^0.3.4",
+        "@popmotion/popcorn": "^0.3.5",
         "framesync": "^4.0.2",
         "hey-listen": "^1.0.5",
-        "popmotion": "^8.6.5",
+        "popmotion": "^8.6.7",
         "style-value-types": "^3.1.0",
-        "stylefire": "^3.0.0"
+        "stylefire": "^3.0.1"
     },
     "husky": {
         "hooks": {
