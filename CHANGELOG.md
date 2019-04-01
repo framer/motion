@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.11.1] Unreleased
+
+### Upgraded
+
+-   Popmotion libraries.
+
 ## [0.11.0] 2019-04-01
 
 ### Changed
