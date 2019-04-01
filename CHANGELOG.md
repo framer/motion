@@ -2,7 +2,7 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.11.0] Unreleased
+## [0.11.0] 2019-04-01
 
 ### Changed
 
@@ -15,7 +15,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Variants propagate even if not present on parent.
+-   Variants propagate to children even if not present on parent.
 
 ## [0.10.2] 2019-03-27
 
