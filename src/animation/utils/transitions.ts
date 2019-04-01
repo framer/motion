@@ -196,6 +196,7 @@ export const getTransition = (
     )
 
     const actionFactory = transitions[type] as ActionFactory
+
     const opts = preprocessOptions(type, {
         from: value.get(),
         velocity: value.getVelocity(),
