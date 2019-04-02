@@ -1,6 +1,6 @@
 import {
     RefObject,
-    useMemo,
+    useCallback,
     useEffect,
     useRef,
     useContext,
@@ -262,8 +262,8 @@ export function usePanGesture(
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
 
-    const updatePoint = useMemo(
-        () => () => {
+    const updatePoint = useCallback(
+        () => {
             if (
                 !session.current ||
                 pointer.current === null ||
@@ -317,8 +317,8 @@ export function usePanGesture(
         [onPan, onPanStart]
     )
 
-    const onPointerMove = useMemo(
-        () => (event: MouseEvent | TouchEvent, info: EventInfo) => {
+    const onPointerMove = useCallback(
+        (event: MouseEvent | TouchEvent, info: EventInfo) => {
             lastMoveEvent.current = event
 
             if (transformPagePoint) {
@@ -335,8 +335,8 @@ export function usePanGesture(
         [onPan, onPanStart]
     )
 
-    const onPointerUp = useMemo(
-        () => (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
+    const onPointerUp = useCallback(
+        (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
             cancelSync.update(updatePoint)
 
             if (!session.current || pointer.current === null) {
@@ -381,27 +381,25 @@ export function usePanGesture(
         safeWindow,
         { capture: true }
     )
-    const onPointerDown = useMemo(
-        () => {
-            return (event: Event, { point }: EventInfo) => {
-                const initialPoint = transformPagePoint
-                    ? transformPagePoint(point)
-                    : point
+    const onPointerDown = useCallback(
+        (event: Event, { point }: EventInfo) => {
+            const initialPoint = transformPagePoint
+                ? transformPagePoint(point)
+                : point
 
-                pointer.current = {
-                    x: motionValue(initialPoint.x),
-                    y: motionValue(initialPoint.y),
-                }
-
-                const { timestamp } = getFrameData()
-                session.current = {
-                    target: event.target,
-                    pointHistory: [{ ...initialPoint, timestamp }],
-                }
-
-                startPointerMove()
-                startPointerUp()
+            pointer.current = {
+                x: motionValue(initialPoint.x),
+                y: motionValue(initialPoint.y),
             }
+
+            const { timestamp } = getFrameData()
+            session.current = {
+                target: event.target,
+                pointHistory: [{ ...initialPoint, timestamp }],
+            }
+
+            startPointerMove()
+            startPointerUp()
         },
         [onPointerUp, onPointerMove]
     )
@@ -412,20 +410,21 @@ export function usePanGesture(
             stopPointerUp()
         }
     }, [])
+
     let handlers: Partial<{ onPointerDown: EventHandler }> = { onPointerDown }
     if (!onPan && !onPanStart && !onPanEnd) {
         handlers = {}
     }
 
-    useEffect(
-        () => {
-            console.log(
-                `%c✓onPan changed ${onPan && onPan.renderId}`,
-                "background: orchid; color: white; border-radius: 4px; padding: 2px 5px"
-            )
-        },
-        [onPan]
-    )
+    // useEffect(
+    //     () => {
+    //         console.log(
+    //             `%c✔︎ onPan changed ${onPan && onPan.renderId}`,
+    //             "background: orchid; color: white; border-radius: 4px; padding: 2px 5px"
+    //         )
+    //     },
+    //     [onPan]
+    // )
 
     return useConditionalPointerEvents(handlers, ref)
 }

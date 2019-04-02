@@ -298,6 +298,7 @@ export function useDraggable(
     controls: ComponentAnimationControls
 ) {
     const point = useRef<MotionPoint>({}).current
+    const onDragRef = useRef<any>(onDrag)
     const origin = useRef({ x: 0, y: 0 }).current
 
     const handlers = useMemo(
@@ -370,10 +371,10 @@ export function useDraggable(
 
                 onDragStart && onDragStart(event, info)
             }
-            console.log(
-                "✔︎===================update on Pan===================",
-                onDrag.renderId
-            )
+            // console.log(
+            //     `%c✔ Update onPan ${onDrag.renderId}`,
+            //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
+            // )
             const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
                 if (!dragPropagation && !openGlobalLock) {
                     return
@@ -395,12 +396,27 @@ export function useDraggable(
                 updatePoint("x", offset)
                 updatePoint("y", offset)
 
-                if (onDrag) {
-                    console.log(
-                        "===================onDrag===================",
-                        onDrag.renderId
-                    )
-                    onDrag(event, {
+                // if (onDrag) {
+                //     // console.log(
+                //     //     `%c✖︎ Calling onDrag ${onDrag.renderId}`,
+                //     //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
+                //     // )
+
+                //     onDrag(event, {
+                //         ...info,
+                //         point: {
+                //             x: point.x ? point.x.get() : 0,
+                //             y: point.y ? point.y.get() : 0,
+                //         },
+                //     })
+                // }
+                if (onDragRef.current) {
+                    // console.log(
+                    //     `%c✖︎ Calling onDrag ${onDragRef.current.renderId}`,
+                    //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
+                    // )
+
+                    onDragRef.current(event, {
                         ...info,
                         point: {
                             x: point.x ? point.x.get() : 0,
@@ -409,7 +425,7 @@ export function useDraggable(
                     })
                 }
             }
-            onPan.renderId = onDrag.renderId
+            // onPan.renderId = onDragRef.current.renderId
 
             const onPanEnd = (
                 event: MouseEvent | TouchEvent,
@@ -488,10 +504,11 @@ export function useDraggable(
 
     useEffect(
         () => {
-            console.log(
-                `%c✔︎onDrag ${onDrag && onDrag.renderId}`,
-                "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
-            )
+            // console.log(
+            //     `%c✔︎ onDrag changed: ${onDrag && onDrag.renderId}`,
+            //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
+            // )
+            onDragRef.current = onDrag
         },
         [onDrag]
     )
