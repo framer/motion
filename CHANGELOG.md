@@ -2,7 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.11.1] Unreleased
+## [0.11.1] 2019-04-02
+
+### Added
+
+-   `onDragTransitionEnd`
 
 ### Upgraded
 
