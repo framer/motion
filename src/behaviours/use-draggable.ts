@@ -70,6 +70,19 @@ export interface DragHandlers {
      * ```
      */
     onDirectionLock?(axis: "x" | "y"): void
+
+    /**
+     * Callback function that fires when drag momentum/bounce transition finishes.
+     *
+     * ```jsx
+     * function onDragTransitionEnd() {
+     *   console.log('drag transition has ended')
+     * }
+     *
+     * <motion.div drag onDragTransitionEnd={onDragTransitionEnd} />
+     * ```
+     */
+    onDragTransitionEnd?(): void
 }
 
 /**
@@ -268,6 +281,7 @@ export function useDraggable(
         onDragEnd,
         onDrag,
         onDirectionLock,
+        onDragTransitionEnd,
     }: DraggableProps,
     ref: RefObject<Element | null>,
     values: MotionValuesMap,
@@ -401,7 +415,7 @@ export function useDraggable(
                             ? getConstraints(axis, dragConstraints)
                             : {}
 
-                        controls.start({
+                        return controls.start({
                             [axis]: 0,
                             transition: {
                                 type: "inertia",
@@ -416,8 +430,11 @@ export function useDraggable(
                         })
                     }
 
-                    startMomentum("x")
-                    startMomentum("y")
+                    Promise.all([startMomentum("x"), startMomentum("y")]).then(
+                        () => {
+                            onDragTransitionEnd && onDragTransitionEnd()
+                        }
+                    )
                 }
 
                 onDragEnd && onDragEnd(event, info)
@@ -430,7 +447,7 @@ export function useDraggable(
                 onPointerDown,
             }
         },
-        [drag, ...flattenConstraints(dragConstraints)]
+        [drag, ...flattenConstraints(dragConstraints), onDragTransitionEnd]
     )
 
     usePanGesture(handlers, ref)

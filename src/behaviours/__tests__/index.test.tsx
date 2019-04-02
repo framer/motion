@@ -84,6 +84,43 @@ describe("dragging", () => {
         return expect(promise).resolves.toBeCalledTimes(1)
     })
 
+    test("dragTransitionEnd fires", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        drag
+                        onDragTransitionEnd={() => resolve(true)}
+                        dragConstraints={{
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                        }}
+                        dragTransition={{
+                            bounceStiffness: 100000,
+                            bounceDamping: 100000,
+                        }}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(1, 1)
+
+            sync.postRender(() => {
+                pointer.to(50, 50)
+                sync.postRender(() => {
+                    pointer.end()
+                })
+            })
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
+
     test("limit to x", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)

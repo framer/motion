@@ -142,18 +142,14 @@ type RenderProps<P> = {
 }
 
 const eventHandlers = new Set([
-    "onTap",
     "onAnimationComplete",
     "onUpdate",
-    "onHoverStart",
-    "onHoverEnd",
     "onDragStart",
     "onDrag",
     "onDragEnd",
-    "onPanStart",
-    "onPan",
-    "onPanEnd",
     "onDirectionLock",
+    "onDragTransitionEnd",
+    ...gestureProps,
 ])
 
 const validProps = (props: MotionProps) => {
