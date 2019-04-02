@@ -1,4 +1,11 @@
-import { RefObject, useMemo, useEffect, useRef, useContext } from "react"
+import {
+    RefObject,
+    useMemo,
+    useEffect,
+    useRef,
+    useContext,
+    useState,
+} from "react"
 import {
     EventInfo,
     usePointerEvents,
@@ -368,6 +375,7 @@ export function usePanGesture(
         { onPointerUp },
         safeWindow
     )
+    // bug should be here
     const [startPointerMove, stopPointerMove] = usePointerEvents(
         { onPointerMove },
         safeWindow,
@@ -408,6 +416,16 @@ export function usePanGesture(
     if (!onPan && !onPanStart && !onPanEnd) {
         handlers = {}
     }
+
+    useEffect(
+        () => {
+            console.log(
+                `%c✓onPan changed ${onPan && onPan.renderId}`,
+                "background: orchid; color: white; border-radius: 4px; padding: 2px 5px"
+            )
+        },
+        [onPan]
+    )
 
     return useConditionalPointerEvents(handlers, ref)
 }

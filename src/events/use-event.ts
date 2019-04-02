@@ -18,11 +18,17 @@ export const eventListener = (
         if (!target) {
             return
         }
+        if (name === "pointermove") {
+            console.log("Added pointermove")
+        }
         target.addEventListener(name, handler, options)
     }
     const stopListening = () => {
         if (!target) {
             return
+        }
+        if (name === "pointermove") {
+            console.log("Removed pointermove")
         }
         target.removeEventListener(name, handler, options)
     }

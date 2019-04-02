@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useRef } from "react"
+import { RefObject, useMemo, useRef, useEffect } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
@@ -370,7 +370,10 @@ export function useDraggable(
 
                 onDragStart && onDragStart(event, info)
             }
-
+            console.log(
+                "✔︎===================update on Pan===================",
+                onDrag.renderId
+            )
             const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
                 if (!dragPropagation && !openGlobalLock) {
                     return
@@ -393,6 +396,10 @@ export function useDraggable(
                 updatePoint("y", offset)
 
                 if (onDrag) {
+                    console.log(
+                        "===================onDrag===================",
+                        onDrag.renderId
+                    )
                     onDrag(event, {
                         ...info,
                         point: {
@@ -402,6 +409,7 @@ export function useDraggable(
                     })
                 }
             }
+            onPan.renderId = onDrag.renderId
 
             const onPanEnd = (
                 event: MouseEvent | TouchEvent,
@@ -457,7 +465,35 @@ export function useDraggable(
                 onPointerDown,
             }
         },
-        [drag, ...flattenConstraints(dragConstraints), onDragTransitionEnd]
+        [
+            drag,
+            ...flattenConstraints(dragConstraints),
+            onDrag,
+            onDragTransitionEnd,
+            // controls,
+            // dragConstraints,
+            // dragDirectionLock,
+            // dragElastic,
+            // dragMomentum,
+            // dragPropagation,
+            // dragTransition,
+            // onDirectionLock,
+            // onDragEnd,
+            // onDragStart,
+            // origin,
+            // point,
+            // values,
+        ]
+    )
+
+    useEffect(
+        () => {
+            console.log(
+                `%c✔︎onDrag ${onDrag && onDrag.renderId}`,
+                "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
+            )
+        },
+        [onDrag]
     )
 
     usePanGesture(handlers, ref)
