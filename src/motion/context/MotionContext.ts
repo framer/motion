@@ -37,12 +37,16 @@ export const useMotionContext = (
 
     context.static = isStatic
 
-    // Set initial state
-    useMemo(() => {
-        const initialToApply = initial || parentContext.initial
+    // Set initial state. If this is a static component (ie in Framer canvas), respond to updates
+    // in `initial`
+    useMemo(
+        () => {
+            const initialToApply = initial || parentContext.initial
 
-        initialToApply && controls.apply(initialToApply)
-    }, [])
+            initialToApply && controls.apply(initialToApply)
+        },
+        isStatic ? [Math.random()] : []
+    )
 
     return context
 }
