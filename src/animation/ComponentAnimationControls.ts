@@ -44,7 +44,7 @@ const isAnimatable = (value: ValueTarget) => {
     } else if (
         typeof value === "string" &&
         complex.test(value) &&
-        value.substring(0, 4) !== "url("
+        !value.startsWith("url(")
     ) {
         return true
     }
@@ -290,13 +290,13 @@ export class ComponentAnimationControls<P extends {} = {}> {
 
         if (!target) return Promise.resolve()
 
-        if (priority) {
-            this.resolvedOverrides[priority] = target
-        }
-
         target = transformCustomValues(target)
         if (transitionEnd) {
             transitionEnd = transformCustomValues(transitionEnd)
+        }
+
+        if (priority) {
+            this.resolvedOverrides[priority] = target
         }
 
         this.checkForNewValues(target)

@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.12.1] 2019-04-03
+
+### Fixed
+
+-   `size` works with `while` gestures.
+
 ## [0.12.0] 2019-04-03
 
 ### Changed
