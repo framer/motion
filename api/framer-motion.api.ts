@@ -354,7 +354,7 @@ declare function unwrapMotionValue(value?: string | number | CustomValueType | M
 declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationControls;
 
 // @public
-declare function useCycle<T>(items: T[], initialIndex?: number): CycleState<T>;
+declare function useCycle<T>(...items: T[]): CycleState<T>;
 
 // @internal
 declare function useExternalRef<E = Element>(external?: Ref<E | null>): RefObject<E | null>;
