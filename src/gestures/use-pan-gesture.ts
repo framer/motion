@@ -375,12 +375,13 @@ export function usePanGesture(
         { onPointerUp },
         safeWindow
     )
-    // bug should be here
+
     const [startPointerMove, stopPointerMove] = usePointerEvents(
         { onPointerMove },
         safeWindow,
         { capture: true }
     )
+
     const onPointerDown = useCallback(
         (event: Event, { point }: EventInfo) => {
             const initialPoint = transformPagePoint
@@ -410,7 +411,6 @@ export function usePanGesture(
             stopPointerUp()
         }
     }, [])
-
     let handlers: Partial<{ onPointerDown: EventHandler }> = { onPointerDown }
     if (!onPan && !onPanStart && !onPanEnd) {
         handlers = {}

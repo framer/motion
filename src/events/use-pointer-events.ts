@@ -139,7 +139,6 @@ export const useNativePointerEvents = <Target extends TargetOrRef>(
         wrapHandler(onPointerDown),
         options
     )
-
     const move = useEvent(
         "pointermove",
         ref,

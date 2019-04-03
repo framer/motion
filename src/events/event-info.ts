@@ -25,5 +25,6 @@ export const wrapHandler = (
         }
         handler(event, info)
     }
+
     return listener
 }

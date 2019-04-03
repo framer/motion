@@ -121,6 +121,6 @@ export const motion = elements.reduce(
         return acc
     },
     {
-        custom: createMotionComponent as any,
+        custom: createMotionComponent,
     }
 ) as MotionComponents
