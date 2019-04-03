@@ -8,7 +8,7 @@ describe("useCycle", () => {
         let results: number[] = []
 
         const Component = () => {
-            const [latest, cycle] = useCycle([1, 2, 3, 4])
+            const [latest, cycle] = useCycle(1, 2, 3, 4)
             results.push(latest)
             return <div onClick={() => cycle()} />
         }
@@ -22,27 +22,28 @@ describe("useCycle", () => {
         expect(results).toEqual([1, 2, 3, 4, 1])
     })
 
-    test("starts from given initial index", () => {
-        let result: number = 0
-
-        const Component = () => {
-            const [latest, cycle] = useCycle([1, 2, 3, 4], 1)
-            result = latest
-            return <div onClick={() => cycle()} />
-        }
-
-        render(<Component />)
-
-        expect(result).toBe(2)
-    })
-
     test("jumps to a given index", () => {
         let result: number = 0
 
         const Component = () => {
-            const [latest, cycle] = useCycle([1, 2, 3, 4], 1)
+            const [latest, cycle] = useCycle(1, 2, 3, 4)
             result = latest
             return <div onClick={() => cycle(2)} />
+        }
+
+        const { container } = render(<Component />)
+        fireEvent.click(container.firstChild as Element)
+
+        expect(result).toBe(3)
+    })
+
+    test("is not functionally bound by the render cycle", () => {
+        let result: number = 0
+
+        const Component = () => {
+            const [latest, cycle] = useCycle(1, 2, 3, 4)
+            result = latest
+            return <div onClick={() => (cycle(), cycle())} />
         }
 
         const { container } = render(<Component />)
