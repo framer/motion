@@ -18,18 +18,12 @@ export const eventListener = (
         if (!target) {
             return
         }
-        // if (name === "pointermove") {
-        //     console.log("Added pointermove", handler.renderId)
-        // }
         target.addEventListener(name, handler, options)
     }
     const stopListening = () => {
         if (!target) {
             return
         }
-        // if (name === "pointermove") {
-        //     console.log("Removed pointermove", handler.renderId)
-        // }
         target.removeEventListener(name, handler, options)
     }
     return [startListening, stopListening]
@@ -68,16 +62,5 @@ export const useEvent = <Target extends TargetOrRef>(
         },
         [type, target, handler, options]
     )
-    // useEffect(
-    //     () => {
-    //         if (type === "pointermove") {
-    //             console.log(handler && handler.renderId)
-    //             console.log(
-    //                 "useEvent handler for pointermove changed. This should happen after each render"
-    //             )
-    //         }
-    //     },
-    //     [handler]
-    // )
     return result as TargetBasedReturnType<Target>
 }

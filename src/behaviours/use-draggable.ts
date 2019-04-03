@@ -371,10 +371,7 @@ export function useDraggable(
 
                 onDragStart && onDragStart(event, info)
             }
-            // console.log(
-            //     `%c✔ Update onPan ${onDrag.renderId}`,
-            //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
-            // )
+
             const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
                 if (!dragPropagation && !openGlobalLock) {
                     return
@@ -396,26 +393,7 @@ export function useDraggable(
                 updatePoint("x", offset)
                 updatePoint("y", offset)
 
-                // if (onDrag) {
-                //     // console.log(
-                //     //     `%c✖︎ Calling onDrag ${onDrag.renderId}`,
-                //     //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
-                //     // )
-
-                //     onDrag(event, {
-                //         ...info,
-                //         point: {
-                //             x: point.x ? point.x.get() : 0,
-                //             y: point.y ? point.y.get() : 0,
-                //         },
-                //     })
-                // }
                 if (onDragRef.current) {
-                    // console.log(
-                    //     `%c✖︎ Calling onDrag ${onDragRef.current.renderId}`,
-                    //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
-                    // )
-
                     onDragRef.current(event, {
                         ...info,
                         point: {
@@ -425,7 +403,6 @@ export function useDraggable(
                     })
                 }
             }
-            // onPan.renderId = onDragRef.current.renderId
 
             const onPanEnd = (
                 event: MouseEvent | TouchEvent,
@@ -481,33 +458,17 @@ export function useDraggable(
                 onPointerDown,
             }
         },
+
         [
             drag,
             ...flattenConstraints(dragConstraints),
             onDrag,
             onDragTransitionEnd,
-            // controls,
-            // dragConstraints,
-            // dragDirectionLock,
-            // dragElastic,
-            // dragMomentum,
-            // dragPropagation,
-            // dragTransition,
-            // onDirectionLock,
-            // onDragEnd,
-            // onDragStart,
-            // origin,
-            // point,
-            // values,
         ]
     )
 
     useEffect(
         () => {
-            // console.log(
-            //     `%c✔︎ onDrag changed: ${onDrag && onDrag.renderId}`,
-            //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
-            // )
             onDragRef.current = onDrag
         },
         [onDrag]

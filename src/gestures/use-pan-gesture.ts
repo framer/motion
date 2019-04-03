@@ -416,15 +416,5 @@ export function usePanGesture(
         handlers = {}
     }
 
-    // useEffect(
-    //     () => {
-    //         console.log(
-    //             `%c✔︎ onPan changed ${onPan && onPan.renderId}`,
-    //             "background: orchid; color: white; border-radius: 4px; padding: 2px 5px"
-    //         )
-    //     },
-    //     [onPan]
-    // )
-
     return useConditionalPointerEvents(handlers, ref)
 }

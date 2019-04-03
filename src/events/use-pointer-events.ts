@@ -140,11 +140,6 @@ export const useNativePointerEvents = <Target extends TargetOrRef>(
         options
     )
 
-    // console.log(
-    //     "%cPointer Move added/removed",
-    //     "background: tomato; color: white; border-radius: 4px; padding: 2px 5px"
-    // )
-
     const move = useEvent(
         "pointermove",
         ref,
@@ -218,7 +213,6 @@ export const usePointerEvents = <Target extends TargetOrRef>(
     ref: Target,
     options?: AddEventListenerOptions
 ): TargetBasedReturnType<Target> => {
-    // console.log("===================usePointerEvents===================")
     const {
         onPointerDown,
         onPointerMove,
@@ -276,9 +270,6 @@ export const useConditionalPointerEvents = <
     ref?: Target,
     options?: AddEventListenerOptions
 ): Handlers | undefined => {
-    // console.log(
-    //     "===================useConditionalPointerEvents==================="
-    // )
     let pointerEventsRef: Target
     let pointerEventsHandlers: Partial<PointerEventHandlers>
     const emptyRef = useRef(null)

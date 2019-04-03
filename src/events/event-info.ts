@@ -25,6 +25,5 @@ export const wrapHandler = (
         }
         handler(event, info)
     }
-    if (handler.renderId) listener.renderId = handler.renderId
     return listener
 }
