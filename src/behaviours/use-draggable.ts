@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useRef, useEffect } from "react"
+import { RefObject, useMemo, useRef, useLayoutEffect } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
@@ -383,6 +383,7 @@ export function useDraggable(
                 updatePoint("x", offset)
                 updatePoint("y", offset)
 
+                // here we use ref to call only the last event handler
                 if (onDragRef.current) {
                     onDragRef.current(event, {
                         ...info,
@@ -449,23 +450,17 @@ export function useDraggable(
             }
         },
 
-        [
-            drag,
-            ...flattenConstraints(dragConstraints),
-            onDrag,
-            onDragTransitionEnd,
-        ]
+        [drag, ...flattenConstraints(dragConstraints), onDragTransitionEnd]
     )
 
-    useEffect(
+    usePanGesture(handlers, ref)
+    usePointerEvents({ onPointerDown: handlers.onPointerDown }, ref)
+    useLayoutEffect(
         () => {
             onDragRef.current = onDrag
         },
         [onDrag]
     )
-
-    usePanGesture(handlers, ref)
-    usePointerEvents({ onPointerDown: handlers.onPointerDown }, ref)
 }
 
 function getCurrentDirection(offset: Point): DragDirection | null {

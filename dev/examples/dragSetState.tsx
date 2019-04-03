@@ -8,6 +8,7 @@ const styleA = {
     borderRadius: "10px",
 }
 
+console.clear()
 export const App = () => {
     const [state, setState] = React.useState(0)
 
@@ -15,8 +16,9 @@ export const App = () => {
         setState(state + 10)
     }
 
-    // eslint:disable-next-line:no-console
-    console.log(state)
+    // should be no duplicated and should steadily increase
+    console.log("state", state)
+
     return (
         <motion.div
             drag="x"
