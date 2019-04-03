@@ -3,6 +3,7 @@ import * as React from "react"
 import { motion } from "../../"
 import { render, fireEvent } from "react-testing-library"
 import { motionValue } from "../../value"
+import sync from "framesync"
 
 describe("hover", () => {
     test("hover event listeners fire", () => {
@@ -164,5 +165,36 @@ describe("hover", () => {
         })
 
         return expect(promise).resolves.toEqual([0.5, 2])
+    })
+
+    test("special value `size` is unapplied when hover ends", () => {
+        console.log("unapply size")
+        const promise = new Promise(resolve => {
+            const variant = {
+                hidden: { size: 50 },
+            }
+            const Component = () => (
+                <motion.div
+                    whileHover="hidden"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ size: 100 }}
+                />
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            mouseEnter(container.firstChild as Element)
+
+            sync.postRender(() => {
+                mouseLeave(container.firstChild as Element)
+                sync.postRender(() => resolve(container.firstChild as Element))
+            })
+        })
+
+        return expect(promise).resolves.toHaveStyle(
+            "width: 100px; height: 100px;"
+        )
     })
 })
