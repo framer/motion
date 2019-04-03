@@ -2,6 +2,7 @@ import { createContext, useMemo } from "react"
 import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
 import { VariantLabels } from "../types"
 import { Target } from "../../types"
+import { useMaxTimes } from "../../utils/use-max-times"
 
 type MotionContextProps = {
     controls?: ComponentAnimationControls
@@ -37,12 +38,16 @@ export const useMotionContext = (
 
     context.static = isStatic
 
-    // Set initial state
-    useMemo(() => {
-        const initialToApply = initial || parentContext.initial
+    // Set initial state. If this is a static component (ie in Framer canvas), respond to updates
+    // in `initial`
+    useMaxTimes(
+        () => {
+            const initialToApply = initial || parentContext.initial
 
-        initialToApply && controls.apply(initialToApply)
-    }, [])
+            initialToApply && controls.apply(initialToApply)
+        },
+        isStatic ? Infinity : 1
+    )
 
     return context
 }

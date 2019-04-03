@@ -676,6 +676,28 @@ describe("static prop", () => {
         )
     })
 
+    test("it doesn't respond to updates in `initial`", () => {
+        const { container, rerender } = render(
+            <motion.div initial={{ x: 100 }} />
+        )
+        rerender(<motion.div initial={{ x: 200 }} />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(100px) translateZ(0)"
+        )
+    })
+
+    test("it responds to updates in `initial` if static", () => {
+        const { container, rerender } = render(
+            <motion.div static initial={{ x: 100 }} />
+        )
+        rerender(<motion.div static initial={{ x: 200 }} />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(200px)"
+        )
+    })
+
     test("it prevents rendering of children via context", async () => {
         const promise = new Promise(resolve => {
             const scale = motionValue(0)
