@@ -1,5 +1,6 @@
 import { useState, useRef } from "react"
 import { wrap } from "@popmotion/popcorn"
+import { warning } from "hey-listen"
 
 type Cycle = (i?: number) => void
 
@@ -31,6 +32,12 @@ type CycleState<T> = [T, Cycle]
  * @public
  */
 export function useCycle<T>(...items: T[]): CycleState<T> {
+    // TODO: After Framer X beta, remove this warning
+    warning(
+        items.length > 1,
+        "useCycle syntax has changed. `useCycle([0, 1, 2])` becomes `useCycle(0, 1, 2)`"
+    )
+
     const index = useRef(0)
     const [item, setItem] = useState(items[index.current])
 
