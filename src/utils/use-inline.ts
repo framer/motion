@@ -32,13 +32,10 @@ export function shallowCompare(next: any[], prev: any[] | null) {
  */
 export function useInline(callback: Callback, deps: any[]) {
     const prevDeps = useRef<any[] | null>(null)
-    let callbackReturnValue
 
     if (!shallowCompare(deps, prevDeps.current)) {
-        callbackReturnValue = callback()
+        callback()
     }
 
     prevDeps.current = deps
-
-    return callbackReturnValue
 }

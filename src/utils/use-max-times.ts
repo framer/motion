@@ -14,5 +14,5 @@ export function useMaxTimes(callback: Callback, times = 1) {
     const count = useRef(0)
     count.current = Math.min(count.current + 1, times)
 
-    return useInline(callback, [count.current])
+    useInline(callback, [count.current])
 }
