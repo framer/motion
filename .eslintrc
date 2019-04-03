@@ -1,0 +1,38 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaFeatures": {
+            "jsx": true
+        },
+        "useJSXTextNode": true
+    },
+    "plugins": ["@typescript-eslint", "react", "react-hooks", "import"],
+    "extends": ["prettier", "prettier/@typescript-eslint"],
+    "rules": {
+        "@typescript-eslint/no-unused-vars": "warn",
+        "@typescript-eslint/no-use-before-define": "warn",
+        "@typescript-eslint/class-name-casing": "error",
+        "@typescript-eslint/type-annotation-spacing": "error",
+        "react/jsx-pascal-case": "error",
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn",
+        "import/no-default-export": "error",
+        "prefer-arrow-callback": "warn",
+        "no-sequences": "error",
+        "no-eval": "error",
+        "no-return-await": "error",
+        "no-shadow": "error",
+        "no-throw-literal": "error",
+        "no-extra-bind": "error",
+        "no-var": "error",
+        "prefer-const": "error",
+        "eqeqeq": "error",
+        // No direct replacement for these rules
+        // "no-internal-module": 1,
+        // "react-this-binding-issue": 1,
+        // "react-unused-props-and-state": 1,
+        // "variable-name": [1, "ban-keywords"]
+        "use-isnan": "error"
+    }
+}

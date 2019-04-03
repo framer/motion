@@ -33,7 +33,7 @@ const noop = () => (v: any) => v
  */
 export function useTransformedValue(
     value: MotionValue,
-    transform: Transformer
+    transform: Transformer // eslint-disable-line no-shadow
 ): MotionValue
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.

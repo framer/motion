@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useEffect, useRef, useContext } from "react"
+import { RefObject, useCallback, useEffect, useRef, useContext } from "react"
 import {
     EventInfo,
     usePointerEvents,
@@ -249,34 +249,39 @@ export function usePanGesture(
     { onPan, onPanStart, onPanEnd }: PanHandlers,
     ref?: RefObject<Element>
 ) {
-    let session: null | EventSession = null
+    const session = useRef<EventSession | null>(null)
     const pointer = useRef<MotionXY | null>(null)
     const lastMoveEvent = useRef<MouseEvent | TouchEvent | null>(null)
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
 
-    const updatePoint = useMemo(
-        () => () => {
+    const updatePoint = useCallback(
+        () => {
             if (
-                !session ||
+                !session.current ||
                 pointer.current === null ||
                 lastMoveEventInfo.current === null ||
                 lastMoveEvent.current === null
             ) {
-                // tslint:disable-next-line:no-console
-                console.error("Pointer move without started session")
+                console.error("Pointer move without started session") // eslint-disable-line no-console
                 return
             }
             const { point } = lastMoveEventInfo.current
-            const delta = Point.subtract(point, lastDevicePoint(session))
-            const offset = Point.subtract(point, startDevicePoint(session))
+            const delta = Point.subtract(
+                point,
+                lastDevicePoint(session.current)
+            )
+            const offset = Point.subtract(
+                point,
+                startDevicePoint(session.current)
+            )
             const { timestamp } = getFrameData()
-            session.pointHistory.push({ ...point, timestamp })
+            session.current.pointHistory.push({ ...point, timestamp })
             pointer.current.x.set(point.x)
             pointer.current.y.set(point.y)
 
             if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
-                const velocity = getVelocity(session, 0.1)
+                const velocity = getVelocity(session.current, 0.1)
 
                 const info = {
                     point,
@@ -285,7 +290,7 @@ export function usePanGesture(
                     velocity,
                 }
 
-                if (session.startEvent) {
+                if (session.current.startEvent) {
                     if (onPan) {
                         onPan(lastMoveEvent.current, info)
                     }
@@ -293,7 +298,7 @@ export function usePanGesture(
                     if (onPanStart) {
                         onPanStart(lastMoveEvent.current, info)
                     }
-                    session.startEvent = lastMoveEvent.current
+                    session.current.startEvent = lastMoveEvent.current
                 }
             }
 
@@ -304,8 +309,8 @@ export function usePanGesture(
         [onPan, onPanStart]
     )
 
-    const onPointerMove = useMemo(
-        () => (event: MouseEvent | TouchEvent, info: EventInfo) => {
+    const onPointerMove = useCallback(
+        (event: MouseEvent | TouchEvent, info: EventInfo) => {
             lastMoveEvent.current = event
 
             if (transformPagePoint) {
@@ -322,19 +327,24 @@ export function usePanGesture(
         [onPan, onPanStart]
     )
 
-    const onPointerUp = useMemo(
-        () => (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
+    const onPointerUp = useCallback(
+        (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
             cancelSync.update(updatePoint)
 
-            if (!session || pointer.current === null) {
-                // tslint:disable-next-line:no-console
-                console.error("Pointer end without started session")
+            if (!session.current || pointer.current === null) {
+                console.error("Pointer end without started session") // eslint-disable-line no-console
                 return
             }
 
-            const delta = Point.subtract(point, lastDevicePoint(session))
-            const offset = Point.subtract(point, startDevicePoint(session))
-            const velocity = getVelocity(session, 0.1)
+            const delta = Point.subtract(
+                point,
+                lastDevicePoint(session.current)
+            )
+            const offset = Point.subtract(
+                point,
+                startDevicePoint(session.current)
+            )
+            const velocity = getVelocity(session.current, 0.1)
 
             stopPointerMove()
             stopPointerUp()
@@ -347,7 +357,7 @@ export function usePanGesture(
                     velocity,
                 })
             }
-            session = null
+            session.current = null
         },
         [onPanEnd, onPointerMove]
     )
@@ -356,32 +366,32 @@ export function usePanGesture(
         { onPointerUp },
         safeWindow
     )
+
     const [startPointerMove, stopPointerMove] = usePointerEvents(
         { onPointerMove },
         safeWindow,
         { capture: true }
     )
-    const onPointerDown = useMemo(
-        () => {
-            return (event: Event, { point }: EventInfo) => {
-                const initialPoint = transformPagePoint
-                    ? transformPagePoint(point)
-                    : point
 
-                pointer.current = {
-                    x: motionValue(initialPoint.x),
-                    y: motionValue(initialPoint.y),
-                }
+    const onPointerDown = useCallback(
+        (event: Event, { point }: EventInfo) => {
+            const initialPoint = transformPagePoint
+                ? transformPagePoint(point)
+                : point
 
-                const { timestamp } = getFrameData()
-                session = {
-                    target: event.target,
-                    pointHistory: [{ ...initialPoint, timestamp }],
-                }
-
-                startPointerMove()
-                startPointerUp()
+            pointer.current = {
+                x: motionValue(initialPoint.x),
+                y: motionValue(initialPoint.y),
             }
+
+            const { timestamp } = getFrameData()
+            session.current = {
+                target: event.target,
+                pointHistory: [{ ...initialPoint, timestamp }],
+            }
+
+            startPointerMove()
+            startPointerUp()
         },
         [onPointerUp, onPointerMove]
     )

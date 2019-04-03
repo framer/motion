@@ -288,7 +288,9 @@ export function useDraggable(
     controls: ComponentAnimationControls
 ) {
     const point = useRef<MotionPoint>({}).current
+    const onDragRef = useRef<any>(onDrag)
     const origin = useRef({ x: 0, y: 0 }).current
+    onDragRef.current = onDrag
 
     const handlers = useMemo(
         () => {
@@ -382,8 +384,9 @@ export function useDraggable(
                 updatePoint("x", offset)
                 updatePoint("y", offset)
 
-                if (onDrag) {
-                    onDrag(event, {
+                // here we use ref to call only the last event handler
+                if (onDragRef.current) {
+                    onDragRef.current(event, {
                         ...info,
                         point: {
                             x: point.x ? point.x.get() : 0,
@@ -447,6 +450,7 @@ export function useDraggable(
                 onPointerDown,
             }
         },
+
         [drag, ...flattenConstraints(dragConstraints), onDragTransitionEnd]
     )
 

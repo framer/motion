@@ -236,7 +236,7 @@ export type TransformTemplate = (
 ) => string
 
 export enum AnimatePropType {
-    Target = "Target",
+    Target = "Target", // eslint-disable-line no-shadow
     VariantLabel = "VariantLabel",
     AnimationSubscription = "AnimationSubscription",
 }
