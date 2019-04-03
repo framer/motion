@@ -290,6 +290,7 @@ export function useDraggable(
     const point = useRef<MotionPoint>({}).current
     const onDragRef = useRef<any>(onDrag)
     const origin = useRef({ x: 0, y: 0 }).current
+    onDragRef.current = onDrag
 
     const handlers = useMemo(
         () => {
@@ -455,12 +456,6 @@ export function useDraggable(
 
     usePanGesture(handlers, ref)
     usePointerEvents({ onPointerDown: handlers.onPointerDown }, ref)
-    useLayoutEffect(
-        () => {
-            onDragRef.current = onDrag
-        },
-        [onDrag]
-    )
 }
 
 function getCurrentDirection(offset: Point): DragDirection | null {
