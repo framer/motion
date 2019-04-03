@@ -3,7 +3,7 @@ import { MotionValue } from "../value"
 import { AnimationControls } from "../animation/AnimationControls"
 import {
     Variants,
-    Target as TargetType,
+    Target,
     Transition,
     TargetAndTransition,
     Omit,
@@ -62,7 +62,7 @@ export type MotionStyle = MotionCSS &
     MotionTransform &
     MakeCustomValueType<CustomStyles>
 
-export type OnUpdate = (v: TargetType) => void
+export type OnUpdate = (v: Target) => void
 
 /**
  * @public
@@ -196,7 +196,7 @@ export interface MotionProps
      * <motion.div initial={["visible", "active"]} variants={variants} />
      * ```
      */
-    initial?: TargetType | VariantLabels
+    initial?: Target | VariantLabels
 
     /**
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
@@ -236,7 +236,7 @@ export type TransformTemplate = (
 ) => string
 
 export enum AnimatePropType {
-    Target = "Target",
+    Target = "Target", // eslint-disable-line no-shadow
     VariantLabel = "VariantLabel",
     AnimationSubscription = "AnimationSubscription",
 }

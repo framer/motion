@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useRef, useLayoutEffect } from "react"
+import { RefObject, useMemo, useRef } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"

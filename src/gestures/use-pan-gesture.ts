@@ -263,8 +263,7 @@ export function usePanGesture(
                 lastMoveEventInfo.current === null ||
                 lastMoveEvent.current === null
             ) {
-                // eslint:disable-next-line:no-console
-                console.error("Pointer move without started session")
+                console.error("Pointer move without started session") // eslint-disable-line no-console
                 return
             }
             const { point } = lastMoveEventInfo.current
@@ -333,8 +332,7 @@ export function usePanGesture(
             cancelSync.update(updatePoint)
 
             if (!session.current || pointer.current === null) {
-                // eslint:disable-next-line:no-console
-                console.error("Pointer end without started session")
+                console.error("Pointer end without started session") // eslint-disable-line no-console
                 return
             }
 

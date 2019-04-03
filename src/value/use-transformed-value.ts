@@ -1,9 +1,6 @@
 import { MotionValue } from "../value"
 import { useCustomValue } from "./use-custom-value"
-import {
-    transform as utilsTransform,
-    TransformOptions,
-} from "../utils/transform"
+import { transform, TransformOptions } from "../utils/transform"
 
 type Transformer = (v: any) => any
 
@@ -36,7 +33,7 @@ const noop = () => (v: any) => v
  */
 export function useTransformedValue(
     value: MotionValue,
-    transform: Transformer
+    transform: Transformer // eslint-disable-line no-shadow
 ): MotionValue
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
@@ -97,7 +94,7 @@ export function useTransformedValue<T>(
     } else if (Array.isArray(to)) {
         const from = customTransform
 
-        transformer = () => utilsTransform(from, to, options)
+        transformer = () => transform(from, to, options)
 
         comparitor = [value, from.join(","), to.join(",")]
     }
