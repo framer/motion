@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.11.2] 2019-04-03
+
+### Added
+
+-   `static` components reflect changes in `initial`.
+
+### Fixed
+
+-   Dragging doesn't break during re-renders.
+
 ## [0.11.1] 2019-04-02
 
 ### Added
