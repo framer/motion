@@ -1,5 +1,4 @@
 import { useRef } from "react"
-import { useInline } from "./use-inline"
 
 type Callback = () => void
 
@@ -12,7 +11,6 @@ type Callback = () => void
  */
 export function useMaxTimes(callback: Callback, times = 1) {
     const count = useRef(0)
-    count.current = Math.min(count.current + 1, times)
 
-    useInline(callback, [count.current])
+    if (count.current++ < times) callback()
 }
