@@ -2,7 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.11.2] 2019-04-03
+## [0.12.0] 2019-04-03
+
+### Changed
+
+-   `useCycle([...args])` -> `useCycle(...args)`
 
 ### Added
 
@@ -11,6 +15,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Dragging doesn't break during re-renders.
+-   `useCycle` setter is independent from render cycle.
+
+### Removed
+
+-   `useCycle` no longer has the ability to start at a different index.
 
 ## [0.11.1] 2019-04-02
 

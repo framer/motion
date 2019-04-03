@@ -1,5 +1,6 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { wrap } from "@popmotion/popcorn"
+import { warning } from "hey-listen"
 
 type Cycle = (i?: number) => void
 
@@ -14,7 +15,7 @@ type CycleState<T> = [T, Cycle]
  * import { Frame, useCycle } from "framer"
  *
  * export function MyComponent() {
- *   const [x, cycleX] = useCycle([0, 50, 100])
+ *   const [x, cycleX] = useCycle(0, 50, 100)
  *
  *   return (
  *     <Frame
@@ -25,26 +26,30 @@ type CycleState<T> = [T, Cycle]
  * }
  * ```
  *
- * @param items - An array of the possible states
- * @param initialIndex - Index of initial state. Defaults to `0`
+ * @param items... - items to cycle through
  * @returns [currentState, cycleState]
  *
  * @public
  */
-export function useCycle<T>(
-    items: T[],
-    initialIndex: number = 0
-): CycleState<T> {
-    const numItems = items.length
-    const [index, setIndex] = useState(initialIndex)
+export function useCycle<T>(...items: T[]): CycleState<T> {
+    // TODO: After Framer X beta, remove this warning
+    warning(
+        items.length > 1,
+        "useCycle syntax has changed. `useCycle([0, 1, 2])` becomes `useCycle(0, 1, 2)`"
+    )
+
+    const index = useRef(0)
+    const [item, setItem] = useState(items[index.current])
 
     return [
-        items[index],
+        item,
         (next?: number) => {
-            const newIndex =
-                typeof next !== "number" ? wrap(0, numItems, index + 1) : next
+            index.current =
+                typeof next !== "number"
+                    ? wrap(0, items.length, index.current + 1)
+                    : next
 
-            setIndex(newIndex)
+            setItem(items[index.current])
         },
     ]
 }
