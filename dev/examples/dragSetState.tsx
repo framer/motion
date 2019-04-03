@@ -15,7 +15,7 @@ export const App = () => {
         setState(state + 10)
     }
 
-    // tslint:disable-next-line:no-console
+    // eslint:disable-next-line:no-console
     console.log(state)
     return (
         <motion.div

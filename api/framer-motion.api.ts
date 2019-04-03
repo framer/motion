@@ -59,6 +59,7 @@ interface DragHandlers {
     onDrag?(event: MouseEvent | TouchEvent, info: PanInfo): void;
     onDragEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
     onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDragTransitionEnd?(): void;
 }
 
 // @public

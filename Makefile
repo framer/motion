@@ -59,7 +59,7 @@ test: bootstrap $(API_TARGET)
 	tsc dist/framer-motion.d.ts
 
 lint: bootstrap
-	tslint --project tsconfig.json --fix
+	yarn lint
 
 pretty: bootstrap
 	prettier --write */**/*.tsx */**/*.ts

@@ -1,11 +1,4 @@
-import {
-    RefObject,
-    useCallback,
-    useEffect,
-    useRef,
-    useContext,
-    useState,
-} from "react"
+import { RefObject, useCallback, useEffect, useRef, useContext } from "react"
 import {
     EventInfo,
     usePointerEvents,
@@ -270,7 +263,7 @@ export function usePanGesture(
                 lastMoveEventInfo.current === null ||
                 lastMoveEvent.current === null
             ) {
-                // tslint:disable-next-line:no-console
+                // eslint:disable-next-line:no-console
                 console.error("Pointer move without started session")
                 return
             }
@@ -340,7 +333,7 @@ export function usePanGesture(
             cancelSync.update(updatePoint)
 
             if (!session.current || pointer.current === null) {
-                // tslint:disable-next-line:no-console
+                // eslint:disable-next-line:no-console
                 console.error("Pointer end without started session")
                 return
             }
