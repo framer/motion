@@ -70,7 +70,7 @@ export const useMotionStyles = (
         }
     }
 
-    currentStyleKeys.forEach(key => (style[key] = undefined))
+    currentStyleKeys.forEach(key => delete style[key])
 
     return transformCustomValues(style)
 }
