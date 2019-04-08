@@ -7,6 +7,7 @@ import {
     EventHandler,
 } from "../events"
 import { TargetAndTransition } from "../types"
+import { isNodeOrChild } from "./utils/is-node-or-child"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp } from "./types"
 import { safeWindow } from "../events/utils/window"
@@ -46,10 +47,6 @@ export interface TapInfo {
      * @public
      */
     point: Point
-}
-
-interface TapSession {
-    target: EventTarget | null
 }
 
 /**
@@ -162,7 +159,7 @@ export function useTapGesture(
     props: TapHandlers & ControlsProp,
     ref?: RefObject<Element>
 ): undefined | { onPointerDown: EventHandler } {
-    let session: TapSession | null = null
+    const isTapping = useRef(false)
     const { onTap, onTapStart, onTapCancel, whileTap, controls } = props
     const propsRef = usePropsRef(props)
 
@@ -183,11 +180,11 @@ export function useTapGesture(
                 event: MouseEvent | TouchEvent,
                 { point }: EventInfo
             ) => {
-                if (!session) {
+                if (!isTapping.current) {
                     return
                 }
 
-                session = null
+                isTapping.current = false
 
                 if (controls && propsRef.whileTap) {
                     controls.clearOverride(tapGesturePriority)
@@ -202,7 +199,11 @@ export function useTapGesture(
                 }
                 openGestureLock()
 
-                if (!ref || event.target !== ref.current) {
+                if (
+                    !ref ||
+                    !ref.current ||
+                    !isNodeOrChild(ref.current, event.target as Element)
+                ) {
                     if (propsRef.onTapCancel) {
                         propsRef.onTapCancel(event, { point })
                     }
@@ -219,10 +220,8 @@ export function useTapGesture(
                 { point }: EventInfo
             ) => {
                 startPointerUp()
-                if (!ref || event.target !== ref.current) return
-                session = {
-                    target: event.target,
-                }
+                if (!ref || !ref.current) return
+                isTapping.current = true
 
                 if (propsRef.onTapStart) {
                     propsRef.onTapStart(event, { point })
