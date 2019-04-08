@@ -168,7 +168,6 @@ describe("hover", () => {
     })
 
     test("special value `size` is unapplied when hover ends", () => {
-        console.log("unapply size")
         const promise = new Promise(resolve => {
             const variant = {
                 hidden: { size: 50 },
