@@ -6,13 +6,13 @@ import { Variants } from "../../types"
 import { motionValue } from "../../value"
 
 describe("animate prop as variant", () => {
-    const variants = {
-        hidden: { opacity: 0, x: -100 },
-        visible: { opacity: 1, x: 100 },
+    const variants: Variants = {
+        hidden: { opacity: 0, x: -100, transition: { type: false } },
+        visible: { opacity: 1, x: 100, transition: { type: false } },
     }
-    const childVariants = {
-        hidden: { opacity: 0, x: -100 },
-        visible: { opacity: 1, x: 50 },
+    const childVariants: Variants = {
+        hidden: { opacity: 0, x: -100, transition: { type: false } },
+        visible: { opacity: 1, x: 50, transition: { type: false } },
     }
 
     test("animates to set variant", async () => {
@@ -78,29 +78,6 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(50)
     })
 
-    test("onUpdate", async () => {
-        const promise = new Promise(resolve => {
-            let latest = {}
-
-            const onUpdate = (l: { [key: string]: number | string }) =>
-                (latest = l)
-
-            const Component = () => (
-                <motion.div
-                    onUpdate={onUpdate}
-                    initial={{ x: 0, y: 0 }}
-                    animate={{ x: 100, y: 100 }}
-                    onAnimationComplete={() => resolve(latest)}
-                />
-            )
-
-            const { rerender } = render(<Component />)
-            rerender(<Component />)
-        })
-
-        return expect(promise).resolves.toEqual({ x: 100, y: 100 })
-    })
-
     test("applies applyOnEnd if set on initial", () => {
         const variants: Variants = {
             visible: {
@@ -131,6 +108,7 @@ describe("animate prop as variant", () => {
                     initial="hidden"
                     animate="visible"
                     variants={variants}
+                    transition={{ type: false }}
                     onAnimationComplete={onComplete}
                     style={{ display }}
                 />
@@ -159,6 +137,7 @@ describe("animate prop as variant", () => {
                     initial="hidden"
                     animate="visible"
                     variants={variants}
+                    transition={{ type: false }}
                     onAnimationComplete={onComplete}
                     style={{ background }}
                 />
@@ -202,5 +181,29 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toBe(0)
+    })
+
+    test("onUpdate", async () => {
+        const promise = new Promise(resolve => {
+            let latest = {}
+
+            const onUpdate = (l: { [key: string]: number | string }) =>
+                (latest = l)
+
+            const Component = () => (
+                <motion.div
+                    onUpdate={onUpdate}
+                    initial={{ x: 0, y: 0 }}
+                    animate={{ x: 100, y: 100 }}
+                    transition={{ duration: 0.1 }}
+                    onAnimationComplete={() => resolve(latest)}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toEqual({ x: 100, y: 100 })
     })
 })
