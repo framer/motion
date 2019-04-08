@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Fragment } from "react"
 import styled from "styled-components"
-import { useViewportScrollValues, useTransformedValue } from "@framer"
+import { useViewportScrollValues, useTransform } from "@framer"
 import { motion } from "../../src"
 
 const Container = styled.div`
@@ -207,7 +207,7 @@ const progressStyle = {
 
 const ProgressBar = () => {
     const { scrollYProgress } = useViewportScrollValues()
-    const scaleX = useTransformedValue(scrollYProgress, [0, 1], [0, 1])
+    const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1])
 
     return (
         <div style={containerStyle}>

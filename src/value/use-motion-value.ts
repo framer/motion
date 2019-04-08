@@ -4,7 +4,7 @@ import { motionValue, MotionValue } from "."
 /**
  * Creates a `MotionValue` to track the state and velocity of a value.
  *
- * Usually, these are created automatically. For advanced use-cases, like use with `useTransformedValue`, you can create `MotionValue`s externally and pass them into the animated component via the `style` prop.
+ * Usually, these are created automatically. For advanced use-cases, like use with `useTransform`, you can create `MotionValue`s externally and pass them into the animated component via the `style` prop.
  *
  * ```jsx
  * export function MyComponent() {

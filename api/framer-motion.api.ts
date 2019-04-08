@@ -387,10 +387,10 @@ declare function useTapGesture(handlers: TapHandlers & ControlsProp): {
 declare function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObject<Element>): undefined;
 
 // @public
-declare function useTransformedValue(value: MotionValue, transform: Transformer_2): MotionValue;
+declare function useTransform(value: MotionValue, transform: Transformer_2): MotionValue;
 
 // @public
-declare function useTransformedValue<T>(value: MotionValue<number>, from: number[], to: any[], options?: TransformOptions<T>): MotionValue;
+declare function useTransform<T>(value: MotionValue<number>, from: number[], to: any[], options?: TransformOptions<T>): MotionValue;
 
 // @public
 declare function useViewportScrollValues(): ScrollMotionValues;

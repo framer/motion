@@ -62,12 +62,12 @@ const viewportMotionValues: ScrollMotionValues = {
  * import {
  *   Frame,
  *   useViewportScrollValues,
- *   useTransformedValue
+ *   useTransform
  * } from "framer"
  *
  * export function MyComponent() {
  *   const { scrollYProgress } = useViewportScrollValues()
- *   const scaleX = useTransformedValue(scrollYProgress, [0, 1], [0, 1])
+ *   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1])
  *
  *   return <Frame style={{ scaleX }} />
  * }

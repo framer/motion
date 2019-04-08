@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, useTransformedValue, useMotionValue } from "@framer"
+import { motion, useTransform, useMotionValue } from "@framer"
 import styled from "styled-components"
 
 const Container = styled(motion.div)`
@@ -65,15 +65,22 @@ const sliderPoses = {
 export const App = () => {
     const [down, setDown] = useState(false)
     const x = useMotionValue(0)
-    const background = useTransformedValue(
+    const background = useTransform(
         x,
         [-50, 50],
-        ["linear-gradient(120deg, #f093fb 0%, #f5576c 100%)", "linear-gradient(120deg, #96fbc4 0%, #f9f586 100%)"]
+        [
+            "linear-gradient(120deg, #f093fb 0%, #f5576c 100%)",
+            "linear-gradient(120deg, #96fbc4 0%, #f9f586 100%)",
+        ]
     )
-    const dotScale = useTransformedValue(x, [-300, -50, 50, 300], [1, 0.5, 0.5, 1])
+    const dotScale = useTransform(x, [-300, -50, 50, 300], [1, 0.5, 0.5, 1])
 
     return (
-        <Container pose={down ? "dragging" : "default"} animate={containerPoses} style={{ background }}>
+        <Container
+            pose={down ? "dragging" : "default"}
+            animate={containerPoses}
+            style={{ background }}
+        >
             <Dot />
             <Slider
                 animate={sliderPoses}
