@@ -1,4 +1,18 @@
 export interface ServerSafeWindow extends EventTarget {
+    addEventListener(
+        type: string,
+        listener: EventListenerOrEventListenerObject,
+        options?: boolean | AddEventListenerOptions
+    ): void
+    removeEventListener(
+        type: string,
+        listener: EventListenerOrEventListenerObject,
+        options?: boolean | EventListenerOptions
+    ): void
+    clearInterval(handle?: number): void
+    clearTimeout(handle?: number): void
+    setInterval(handler: TimerHandler, timeout?: number, ...args: any[]): number
+    setTimeout(handler: TimerHandler, timeout?: number, ...args: any[]): number
     onpointerdown: false
     onpointermove: false
     onpointerup: false
@@ -8,6 +22,13 @@ export interface ServerSafeWindow extends EventTarget {
     onmousedown: false
     onmousemove: false
     onmouseup: false
+    scrollX: 0
+    scrollY: 0
+    devicePixelRatio: 1
+    location: {
+        href: ""
+    }
+    webkitConvertPointFromPageToNode(node: Node, pt: WebKitPoint): WebKitPoint
 }
 
 const mockWindow: ServerSafeWindow = {
@@ -23,6 +44,17 @@ const mockWindow: ServerSafeWindow = {
     onmousedown: false,
     onmousemove: false,
     onmouseup: false,
+    devicePixelRatio: 1,
+    scrollX: 0,
+    scrollY: 0,
+    location: {
+        href: "",
+    },
+    setTimeout: () => 0,
+    clearTimeout: () => {},
+    setInterval: () => 0,
+    clearInterval: () => {},
+    webkitConvertPointFromPageToNode: (_: Node, pt: WebKitPoint) => pt,
 }
 
 /**
