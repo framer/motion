@@ -67,13 +67,44 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  *
  * @public
  */
+// export function transform<T>(
+//     inputRange: number[],
+//     outputRange: T[],
+//     options?: TransformOptions<T>
+// ) {
+//     return interpolate(inputRange, outputRange, {
+//         mixer: getMixer(outputRange[0]),
+//         ...options,
+//     })
+// }
+
+export function transform<T>(
+    inputValue: number,
+    inputRange: number[],
+    outputRange: T[],
+    options?: TransformOptions<T>
+): T
 export function transform<T>(
     inputRange: number[],
     outputRange: T[],
     options?: TransformOptions<T>
+): (input: number) => T
+export function transform<T>(
+    ...args:
+        | [number, number[], T[], TransformOptions<T>?]
+        | [number[], T[], TransformOptions<T>?]
 ) {
-    return interpolate(inputRange, outputRange, {
+    const useImmediate = !Array.isArray(args[0])
+    const argOffset = useImmediate ? 0 : -1
+    const inputValue = args[0 + argOffset] as number
+    const inputRange = args[1 + argOffset] as number[]
+    const outputRange = args[2 + argOffset] as T[]
+    const options = args[3 + argOffset] as TransformOptions<T>
+
+    const interpolator = interpolate(inputRange, outputRange, {
         mixer: getMixer(outputRange[0]),
         ...options,
     })
+
+    return useImmediate ? interpolator(inputValue) : interpolator
 }
