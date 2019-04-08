@@ -11,8 +11,16 @@ export interface ServerSafeWindow extends EventTarget {
     ): void
     clearInterval(handle?: number): void
     clearTimeout(handle?: number): void
-    setInterval(handler: TimerHandler, timeout?: number, ...args: any[]): number
-    setTimeout(handler: TimerHandler, timeout?: number, ...args: any[]): number
+    setInterval(
+        handler: string | Function,
+        timeout?: number,
+        ...args: any[]
+    ): number
+    setTimeout(
+        handler: string | Function,
+        timeout?: number,
+        ...args: any[]
+    ): number
     onpointerdown: false
     onpointermove: false
     onpointerup: false
