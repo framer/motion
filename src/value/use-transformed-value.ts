@@ -15,11 +15,11 @@ const noop = () => (v: any) => v
  * Here, the `y` value will always be twice the `x` value.
  * ```jsx
  * import * as React from "react"
- * import { Frame, useMotionValue, useTransformedValue } from "framer"
+ * import { Frame, useMotionValue, useTransform } from "framer"
  *
  * export function MyComponent() {
  *   const x = useMotionValue(10)
- *   const y = useTransformedValue(x, value => value * 2)
+ *   const y = useTransform(x, value => value * 2)
  *
  *   return <Frame style={{ x, y }} />
  * }
@@ -31,7 +31,7 @@ const noop = () => (v: any) => v
  *
  * @public
  */
-export function useTransformedValue(
+export function useTransform(
     value: MotionValue,
     transform: Transformer // eslint-disable-line no-shadow
 ): MotionValue
@@ -57,7 +57,7 @@ export function useTransformedValue(
  *   const x = useMotionValue(0)
  *   const xRange = [-200, -100, 100, 200]
  *   const opacityRange = [0, 1, 1, 0]
- *   const opacity = useTransformedValue(x, xRange, opacityRange)
+ *   const opacity = useTransform(x, xRange, opacityRange)
  *
  *   return <Frame drag="x" style={{ opacity, x }} />
  * }
@@ -74,13 +74,13 @@ export function useTransformedValue(
  *
  * @public
  */
-export function useTransformedValue<T>(
+export function useTransform<T>(
     value: MotionValue<number>,
     from: number[],
     to: any[],
     options?: TransformOptions<T>
 ): MotionValue
-export function useTransformedValue<T>(
+export function useTransform<T>(
     value: MotionValue,
     customTransform: Transformer | number[],
     to?: any[],

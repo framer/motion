@@ -2,6 +2,26 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.13.0] 2019-04-08
+
+### Changed
+
+-   `useTransformedValue` => `useTransform`
+
+### Added
+
+-   `transform(value, input, output, options)` overload.
+
+## [0.12.2] 2019-04-08
+
+### Changed
+
+-   Added new methods to `safeWindow` SSR window mocking.
+
+### Fixed
+
+-   Deleting unused props from `style` object rather than setting to `undefined`. [#99](https://github.com/framer/motion/pull/99)
+
 ## [0.12.1] 2019-04-03
 
 ### Fixed

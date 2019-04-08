@@ -35,21 +35,45 @@ const isCustomValueType = (v: any): v is CustomValueType => {
 const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
 
 /**
- * Create a function that transforms numbers into other values by mapping them from an input range to an output range.
+ * Transforms numbers into other values by mapping them from an input range to an output range.
  *
  * @remarks
  *
  * Given an input range of `[-200, -100, 100, 200]` and an output range of
- * `[0, 1, 1, 0]`, the returned function will:
+ * `[0, 1, 1, 0]`, this function will:
  *
- * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`
- * - When provided a value between `-100` and `100`, will return `1`
- * - When provided a value between `100` and `200`, will return a value between `1` and  `0`
+ * - When provided an input value between `-200` and `-100`, will return a value between `0` and  `1`
+ * - When provided an input value between `-100` and `100`, will return `1`
+ * - When provided an input value between `100` and `200`, will return a value between `1` and  `0`
  *
  * The input range must be a linear series of numbers. The output range
  * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
  *
  * Every value in the output range must be of the same type and in the same format.
+ *
+ * ```jsx
+ * const xRange = [-200, -100, 100, 200]
+ * const opacityRange = [0, 1, 1, 0]
+ * transform(-150, xRange, opacityRange) // Returns 0.5
+ * ```
+ *
+ * @param inputValue - A number to transform between the input and output ranges.
+ * @param inputRange - A linear series of numbers (either all increasing or decreasing)
+ * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
+ * @param options -
+ *
+ *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`
+ *
+ * @public
+ */
+export function transform<T>(
+    inputValue: number,
+    inputRange: number[],
+    outputRange: T[],
+    options?: TransformOptions<T>
+): T
+/**
+ * For improved performance, `transform` can pre-calculate the function that will transform a value between two ranges.
  *
  * ```jsx
  * const xRange = [-200, -100, 100, 200]
@@ -71,9 +95,23 @@ export function transform<T>(
     inputRange: number[],
     outputRange: T[],
     options?: TransformOptions<T>
+): (input: number) => T
+export function transform<T>(
+    ...args:
+        | [number, number[], T[], TransformOptions<T>?]
+        | [number[], T[], TransformOptions<T>?]
 ) {
-    return interpolate(inputRange, outputRange, {
+    const useImmediate = !Array.isArray(args[0])
+    const argOffset = useImmediate ? 0 : -1
+    const inputValue = args[0 + argOffset] as number
+    const inputRange = args[1 + argOffset] as number[]
+    const outputRange = args[2 + argOffset] as T[]
+    const options = args[3 + argOffset] as TransformOptions<T>
+
+    const interpolator = interpolate(inputRange, outputRange, {
         mixer: getMixer(outputRange[0]),
         ...options,
     })
+
+    return useImmediate ? interpolator(inputValue) : interpolator
 }

@@ -3,7 +3,7 @@ import { render } from "react-testing-library"
 import * as React from "react"
 import { motion } from "../../motion"
 import { useMotionValue } from "../use-motion-value"
-import { useTransformedValue } from "../use-transformed-value"
+import { useTransform } from "../use-transformed-value"
 
 class Custom {
     value: number = 0
@@ -25,7 +25,7 @@ describe("as function", () => {
     test("sets initial value", async () => {
         const Component = () => {
             const x = useMotionValue(100)
-            const y = useTransformedValue(x, v => -v)
+            const y = useTransform(x, v => -v)
             return <motion.div style={{ x, y }} />
         }
 
@@ -40,7 +40,7 @@ describe("as input/output range", () => {
     test("sets initial value", async () => {
         const Component = () => {
             const x = useMotionValue(100)
-            const opacity = useTransformedValue(x, [0, 200], [0, 1])
+            const opacity = useTransform(x, [0, 200], [0, 1])
             return <motion.div style={{ x, opacity }} />
         }
 
@@ -51,7 +51,7 @@ describe("as input/output range", () => {
     test("responds to manual setting from parent value", async () => {
         const Component = () => {
             const x = useMotionValue(100)
-            const opacity = useTransformedValue(x, [0, 200], [0, 1])
+            const opacity = useTransform(x, [0, 200], [0, 1])
 
             x.set(20)
 
@@ -65,7 +65,7 @@ describe("as input/output range", () => {
     test("detects custom mixer on value type", async () => {
         const Component = () => {
             const x = useMotionValue(100)
-            const y = useTransformedValue(
+            const y = useTransform(
                 x,
                 [0, 200],
                 [new Custom(100), new Custom(200)]

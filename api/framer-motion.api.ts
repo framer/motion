@@ -324,7 +324,10 @@ declare type TargetAndTransition = TargetWithKeyframes & {
 };
 
 // @public
-declare function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (v: number) => any;
+declare function transform<T>(inputValue: number, inputRange: number[], outputRange: T[], options?: TransformOptions<T>): T;
+
+// @public
+declare function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (input: number) => T;
 
 // @public
 interface Tween {
@@ -384,10 +387,10 @@ declare function useTapGesture(handlers: TapHandlers & ControlsProp): {
 declare function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObject<Element>): undefined;
 
 // @public
-declare function useTransformedValue(value: MotionValue, transform: Transformer_2): MotionValue;
+declare function useTransform(value: MotionValue, transform: Transformer_2): MotionValue;
 
 // @public
-declare function useTransformedValue<T>(value: MotionValue<number>, from: number[], to: any[], options?: TransformOptions<T>): MotionValue;
+declare function useTransform<T>(value: MotionValue<number>, from: number[], to: any[], options?: TransformOptions<T>): MotionValue;
 
 // @public
 declare function useViewportScrollValues(): ScrollMotionValues;
