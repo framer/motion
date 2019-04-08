@@ -1,4 +1,4 @@
-export interface ServerSafeWindow extends EventTarget, WindowTimers {
+export interface ServerSafeWindow extends EventTarget {
     addEventListener(
         type: string,
         listener: EventListenerOrEventListenerObject,
@@ -9,6 +9,10 @@ export interface ServerSafeWindow extends EventTarget, WindowTimers {
         listener: EventListenerOrEventListenerObject,
         options?: boolean | EventListenerOptions
     ): void
+    clearInterval(handle?: number): void
+    clearTimeout(handle?: number): void
+    setInterval(handler: TimerHandler, timeout?: number, ...args: any[]): number
+    setTimeout(handler: TimerHandler, timeout?: number, ...args: any[]): number
     onpointerdown: false
     onpointermove: false
     onpointerup: false
@@ -50,8 +54,6 @@ const mockWindow: ServerSafeWindow = {
     clearTimeout: () => {},
     setInterval: () => 0,
     clearInterval: () => {},
-    setImmediate: () => 0,
-    clearImmediate: () => {},
     webkitConvertPointFromPageToNode: (_: Node, pt: WebKitPoint) => pt,
 }
 
