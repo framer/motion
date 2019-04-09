@@ -48,7 +48,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  *
  * ```jsx
  * import * as React from "react"
- * import { transform } from "framer"
+ * import { Frame, transform } from "framer"
  *
  * export function MyComponent() {
  *    const rangeA = [0, 200]
@@ -56,7 +56,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  *    const output = transform(100, rangeA, rangeB)
  *
  *    // Returns 0.5
- *    return { output }
+ *    return <Frame>{output}</Frame>
  * }
  * ```
  *
@@ -79,11 +79,19 @@ export function transform<T>(
  * Returns a function.
  *
  * ```jsx
- * const xRange = [-200, -100, 100, 200]
- * const opacityRange = [0, 1, 1, 0]
- * const transformXToOpacity = transform(xRange, opacityRange)
+ * import * as React from "react"
+ * import { Frame, transform } from "framer"
  *
- * transformXToOpacity(-150) // Returns 0.5
+ * export function MyComponent() {
+ *     const rangeA = [-200, -100, 100, 200]
+ *     const rangeB = [0, 1, 1, 0]
+ *     const convertRange = transform(rangeA, rangeB)
+ *     const output = convertRange(-150)
+ *
+ *     // Returns 0.5
+ *     return <Frame>{output}</Frame>
+ * }
+ *
  * ```
  *
  * @param inputRange - A linear series of numbers (either all increasing or decreasing)
