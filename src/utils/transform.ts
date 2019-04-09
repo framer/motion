@@ -36,25 +36,28 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
 
 /**
  * Transforms numbers into other values by mapping them from an input range to an output range.
+ * Returns a number.
  *
  * @remarks
  *
- * Given an input range of `[-200, -100, 100, 200]` and an output range of
- * `[0, 1, 1, 0]`, this function will:
- *
- * - When provided an input value between `-200` and `-100`, will return a value between `0` and  `1`
- * - When provided an input value between `-100` and `100`, will return `1`
- * - When provided an input value between `100` and `200`, will return a value between `1` and  `0`
- *
+ * Given an input range of `[0, 200]` and an output range of
+ * `[0, 1]`, this function will return a value between `0` and `1`.
  * The input range must be a linear series of numbers. The output range
- * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
- *
+ * can be any supported value type, such as numbers, colors, shadows and more.
  * Every value in the output range must be of the same type and in the same format.
  *
  * ```jsx
- * const xRange = [-200, -100, 100, 200]
- * const opacityRange = [0, 1, 1, 0]
- * transform(-150, xRange, opacityRange) // Returns 0.5
+ * import * as React from "react"
+ * import { transform } from "framer"
+ *
+ * export function MyComponent() {
+ *    const rangeA = [0, 200]
+ *     const rangeB = [0, 1]
+ *     const output = transform(100, rangeA, rangeB)
+ *
+ *     return { output }
+ * }
+ *
  * ```
  *
  * @param inputValue - A number to transform between the input and output ranges.
