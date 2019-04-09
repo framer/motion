@@ -64,7 +64,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * @param inputRange - A linear series of numbers (either all increasing or decreasing).
  * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
  * @param options -
- *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`
+ *  - clamp: Clamp values to within the given range. Defaults to `true`.
  *
  * @public
  */
@@ -94,11 +94,11 @@ export function transform<T>(
  *
  * ```
  *
- * @param inputRange - A linear series of numbers (either all increasing or decreasing)
+ * @param inputRange - A linear series of numbers (either all increasing or decreasing).
  * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
  * @param options -
  *
- *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`
+ *  - clamp: Clamp values to within the given range. Defaults to `true`.
  *
  * @public
  */
@@ -106,7 +106,7 @@ export function transform<T>(
     inputRange: number[],
     outputRange: T[],
     options?: TransformOptions<T>
-): (input: number) => T
+): (inputValue: number) => T
 export function transform<T>(
     ...args:
         | [number, number[], T[], TransformOptions<T>?]

@@ -327,7 +327,7 @@ declare type TargetAndTransition = TargetWithKeyframes & {
 declare function transform<T>(inputValue: number, inputRange: number[], outputRange: T[], options?: TransformOptions<T>): T;
 
 // @public
-declare function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (input: number) => T;
+declare function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (inputValue: number) => T;
 
 // @public
 interface Tween {
