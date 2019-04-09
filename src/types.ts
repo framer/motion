@@ -1229,10 +1229,10 @@ export type TargetWithKeyframes = MakeKeyframes<Target>
  *
  * ```jsx
  * const target = {
- *   x: '0%',
+ *   x: "0%",
  *   opacity: 0,
  *   transition: { duration: 1 },
- *   transitionEnd: { display: 'none' }
+ *   transitionEnd: { display: "none" }
  * }
  * ```
  *
