@@ -38,6 +38,8 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * Transforms numbers into other values by mapping them from an input range to an output range.
  * Returns a number.
  *
+ * @remarks
+ *
  * Given an input range of `[0, 200]` and an output range of
  * `[0, 1]`, this function will return a value between `0` and `1`.
  * The input range must be a linear series of numbers. The output range
@@ -74,6 +76,7 @@ export function transform<T>(
 ): T
 /**
  * For improved performance, `transform` can pre-calculate the function that will transform a value between two ranges.
+ * Returns a function.
  *
  * ```jsx
  * const xRange = [-200, -100, 100, 200]
