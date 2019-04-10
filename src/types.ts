@@ -1,21 +1,38 @@
 import { CSSProperties } from "react"
 import { TransformProperties, CustomStyles } from "./motion/types"
 export { Point } from "./events/types"
+/**
+ * @public
+ */
 export type ResolvedKeyframesTarget =
     | [null, ...number[]]
     | number[]
     | [null, ...string[]]
     | string[]
 
+/**
+ * @public
+ */
 export type KeyframesTarget =
     | ResolvedKeyframesTarget
     | [null, ...CustomValueType[]]
     | CustomValueType[]
 
+/**
+ * @public
+ */
 export type ResolvedSingleTarget = string | number
+/**
+ * @public
+ */
 export type SingleTarget = ResolvedSingleTarget | CustomValueType
-
+/**
+ * @public
+ */
 export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
+/**
+ * @public
+ */
 export type ValueTarget = SingleTarget | KeyframesTarget
 
 export type Props = { [key: string]: any }
@@ -1255,6 +1272,9 @@ export type Variants = {
     [key: string]: Variant
 }
 
+/**
+ * @public
+ */
 export interface CustomValueType {
     mix: (from: any, to: any) => (p: number) => number | string
     toValue: () => number | string

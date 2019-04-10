@@ -34,6 +34,14 @@ declare type CustomMotionComponent = {
 };
 
 // @public (undocumented)
+interface CustomValueType {
+    // (undocumented)
+    mix: (from: any, to: any) => (p: number) => number | string;
+    // (undocumented)
+    toValue: () => number | string;
+}
+
+// @public (undocumented)
 interface DraggableProps extends DragHandlers {
     drag?: boolean | "x" | "y";
     dragConstraints?: false | {
@@ -133,6 +141,9 @@ interface Keyframes {
     // @public
     yoyo?: number;
 }
+
+// @public (undocumented)
+declare type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
 // @public
 declare const motion: MotionComponents;
@@ -273,8 +284,20 @@ declare namespace Point {
  relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
 }
 
+// @public (undocumented)
+declare type ResolvedKeyframesTarget = [null, ...number[]] | number[] | [null, ...string[]] | string[];
+
+// @public (undocumented)
+declare type ResolvedSingleTarget = string | number;
+
+// @public (undocumented)
+declare type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget;
+
 // @internal
 declare const safeWindow: Window | ServerSafeWindow;
+
+// @public (undocumented)
+declare type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
 interface Spring {
@@ -396,6 +419,9 @@ declare function useTransform<T>(value: MotionValue<number>, from: number[], to:
 
 // @public
 declare function useViewportScrollValues(): ScrollMotionValues;
+
+// @public (undocumented)
+declare type ValueTarget = SingleTarget | KeyframesTarget;
 
 
 // (No @packageDocumentation comment for this package)
