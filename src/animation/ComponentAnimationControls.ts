@@ -16,7 +16,6 @@ import {
 import { unitConversion } from "../dom/unit-type-conversion"
 import styler from "stylefire"
 import { VariantLabels, MotionProps } from "../motion/types"
-import { transformCustomValues } from "../motion/utils/transform-custom-values"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
@@ -59,7 +58,7 @@ const isTargetResolver = (p: any): p is TargetResolver => {
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 const isNumericalString = (v: string) => /^\d*\.?\d+$/.test(v)
 
-export class ComponentAnimationControls<P extends {} = {}> {
+export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
     private props: P & MotionProps
     private values: MotionValuesMap
     private ref: RefObject<Element>
@@ -94,7 +93,7 @@ export class ComponentAnimationControls<P extends {} = {}> {
     }
 
     setValues(target: TargetWithKeyframes, isActive: Set<string> = new Set()) {
-        target = transformCustomValues(target)
+        target = this.transformValues(target as any)
 
         return Object.keys(target).forEach(key => {
             if (isActive.has(key)) return
@@ -111,6 +110,11 @@ export class ComponentAnimationControls<P extends {} = {}> {
 
             this.baseTarget[key] = targetValue
         })
+    }
+
+    transformValues(values: V): V {
+        const { transformValues } = this.props
+        return transformValues ? transformValues(values) : values
     }
 
     checkForNewValues(target: TargetWithKeyframes) {
@@ -290,9 +294,9 @@ export class ComponentAnimationControls<P extends {} = {}> {
 
         if (!target) return Promise.resolve()
 
-        target = transformCustomValues(target)
+        target = this.transformValues(target as any)
         if (transitionEnd) {
-            transitionEnd = transformCustomValues(transitionEnd)
+            transitionEnd = this.transformValues(transitionEnd as any)
         }
 
         if (priority) {

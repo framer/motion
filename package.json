@@ -15,8 +15,7 @@
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && make api && yarn measure",
         "prepublishOnly": "yarn test && yarn build",
-        "measure": "gzip -c dist/framer-motion.js | wc -c",
-        "tt": "tsc dist/framer-motion.d.ts"
+        "measure": "gzip -c dist/framer-motion.js | wc -c"
     },
     "peerDependencies": {
         "react": "^16.7",
@@ -68,10 +67,10 @@
         "@emotion/is-prop-valid": "^0.7.3",
         "@popmotion/popcorn": "^0.3.6",
         "framesync": "^4.0.2",
-        "hey-listen": "^1.0.5",
+        "hey-listen": "^1.0.7",
         "popmotion": "^8.6.8",
         "style-value-types": "^3.1.0",
-        "stylefire": "^3.0.2"
+        "stylefire": "^4.1.0"
     },
     "husky": {
         "hooks": {

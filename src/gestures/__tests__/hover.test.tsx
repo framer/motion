@@ -3,6 +3,7 @@ import * as React from "react"
 import { motion } from "../../"
 import { render, fireEvent } from "react-testing-library"
 import { motionValue } from "../../value"
+import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"
 
 describe("hover", () => {
@@ -167,13 +168,14 @@ describe("hover", () => {
         return expect(promise).resolves.toEqual([0.5, 2])
     })
 
-    test("special value `size` is unapplied when hover ends", () => {
+    test("special transform values are unapplied when hover ends", () => {
         const promise = new Promise(resolve => {
             const variant = {
                 hidden: { size: 50 },
             }
             const Component = () => (
                 <motion.div
+                    transformValues={transformValues}
                     whileHover="hidden"
                     variants={variant}
                     transition={{ type: false }}
