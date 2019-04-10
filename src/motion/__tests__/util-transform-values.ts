@@ -1,7 +1,35 @@
-import { resolveValue } from "../../utils/resolve-value"
+import { invariant } from "hey-listen"
+import { isCustomValue } from "../../utils/resolve-value"
+import {
+    CustomValueType,
+    ValueTarget,
+    ResolvedValueTarget,
+    ResolvedKeyframesTarget,
+} from "../../types"
+
+const resolveSingleValue = (
+    v: string | number | CustomValueType
+): string | number => {
+    if (v && typeof v === "object") {
+        invariant(
+            isCustomValue(v),
+            "Motion styles must be numbers, strings, or an instance with a `toValue` and `mix` methods."
+        )
+
+        return v.toValue()
+    } else {
+        return v as string | number
+    }
+}
+
+const resolveValue = (v: ValueTarget): ResolvedValueTarget => {
+    return Array.isArray(v)
+        ? ((v as []).map(resolveSingleValue) as ResolvedKeyframesTarget)
+        : resolveSingleValue(v)
+}
 
 // If this function grows with new properties it'll probably benefit from a map approach
-export const transformCustomValues = <T extends any>(values: T): T => {
+export const transformValues = <T extends any>(values: T): T => {
     for (const key in values) {
         values[key] = resolveValue(values[key]) as any
     }

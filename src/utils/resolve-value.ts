@@ -1,34 +1,8 @@
-import {
-    CustomValueType,
-    ValueTarget,
-    ResolvedValueTarget,
-    ResolvedKeyframesTarget,
-    SingleTarget,
-} from "../types"
-import { invariant } from "hey-listen"
+import { CustomValueType, ValueTarget, SingleTarget } from "../types"
 import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
 
 export const isCustomValue = (v: any): v is CustomValueType => {
     return Boolean(v && typeof v === "object" && v.mix && v.toValue)
-}
-
-const resolveSingleValue = (v: string | number | CustomValueType) => {
-    if (v && typeof v === "object") {
-        invariant(
-            isCustomValue(v),
-            "Motion styles must be numbers, strings, or an instance with a `toValue` and `mix` methods."
-        )
-
-        return v.toValue()
-    } else {
-        return v
-    }
-}
-
-export const resolveValue = (v: ValueTarget): ResolvedValueTarget => {
-    return Array.isArray(v)
-        ? ((v as []).map(resolveSingleValue) as ResolvedKeyframesTarget)
-        : resolveSingleValue(v)
 }
 
 export const resolveFinalValueInKeyframes = (v: ValueTarget): SingleTarget => {

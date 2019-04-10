@@ -30,7 +30,11 @@ export const createMotionComponent = <P extends {}>(
         const parentContext = useContext(MotionContext)
         const isStatic = parentContext.static || props.static || false
         const values = useMotionValues(props, isStatic)
-        const style = useMotionStyles(values, props.style)
+        const style = useMotionStyles(
+            values,
+            props.style,
+            props.transformValues
+        )
         const shouldInheritVariant = checkShouldInheritVariant(props)
         const controls = useComponentAnimationControls(
             values,

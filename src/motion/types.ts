@@ -228,6 +228,14 @@ export interface MotionProps
         transform: TransformProperties,
         generatedTransform: string
     ): string
+
+    /**
+     *
+     * @param values
+     *
+     * @internal
+     */
+    transformValues?<V extends any>(values: V): V
 }
 
 export type TransformTemplate = (

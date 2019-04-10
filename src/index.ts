@@ -59,5 +59,12 @@ export {
     None,
     EasingFunction,
     TargetAndTransition,
+    ResolvedKeyframesTarget,
+    KeyframesTarget,
+    CustomValueType,
+    ResolvedSingleTarget,
+    SingleTarget,
+    ResolvedValueTarget,
+    ValueTarget,
 } from "./types"
 export { safeWindow } from "./events/utils/window"

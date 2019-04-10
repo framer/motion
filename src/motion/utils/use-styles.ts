@@ -4,8 +4,6 @@ import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
 import { MotionStyle, CustomStyles } from "../types"
-import { transformCustomValues } from "./transform-custom-values"
-import { resolveValue } from "../../utils/resolve-value"
 
 const transformOriginProps = new Set(["originX", "originY"])
 const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
@@ -31,9 +29,10 @@ export const buildStyleAttr = (
     }
 }
 
-export const useMotionStyles = (
+export const useMotionStyles = <V extends {} = {}>(
     values: MotionValuesMap,
-    styleProp: MotionStyle = {}
+    styleProp: MotionStyle = {},
+    transformValues?: (values: V) => V
 ): CSSProperties => {
     const style = useRef<CSSProperties & CustomStyles>({}).current
     const prevMotionStyles = useRef({}).current
@@ -47,30 +46,26 @@ export const useMotionStyles = (
             // If this is a motion value, add it to our MotionValuesMap
             values.set(key, thisStyle)
         } else if (isTransformProp(key) || isTransformOriginProp(key)) {
-            const resolvedStyle = resolveValue(thisStyle)
-
             // Or if it's a transform prop, create a motion value (or update an existing one)
             // to ensure Stylefire can reconcile all the transform values together.
             if (!values.has(key)) {
                 // If it doesn't exist as a motion value, create it
-                values.set(key, motionValue(resolvedStyle))
+                values.set(key, motionValue(thisStyle))
             } else {
                 // Otherwise only update it if it's changed from a previous render
-                if (resolvedStyle !== prevMotionStyles[key]) {
+                if (thisStyle !== prevMotionStyles[key]) {
                     const value = values.get(key) as MotionValue
-                    value.set(resolvedStyle)
+                    value.set(thisStyle)
                 }
             }
 
-            prevMotionStyles[key] = resolvedStyle
+            prevMotionStyles[key] = thisStyle
         } else {
-            const resolvedStyle = resolveValue(thisStyle)
-            // Otherwise this is a normal style, add it as normal
-            style[key] = resolvedStyle
+            style[key] = thisStyle
         }
     }
 
     currentStyleKeys.forEach(key => delete style[key])
 
-    return transformCustomValues(style)
+    return transformValues ? transformValues(style as any) : style
 }

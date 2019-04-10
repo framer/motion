@@ -2,6 +2,7 @@ import "../../../jest.setup"
 import { render } from "react-testing-library"
 import { motion } from ".."
 import * as React from "react"
+import { transformValues } from "./util-transform-values"
 
 class Custom {
     value: number = 0
@@ -26,7 +27,12 @@ class Custom {
 describe("custom properties", () => {
     test("renders", () => {
         const Component = () => {
-            return <motion.div style={{ size: "100%" }} />
+            return (
+                <motion.div
+                    transformValues={transformValues}
+                    style={{ size: "100%" }}
+                />
+            )
         }
 
         const { container } = render(<Component />)
@@ -36,7 +42,12 @@ describe("custom properties", () => {
 
     test("adds a url if it does not exist yet", () => {
         const Component = () => {
-            return <motion.div style={{ image: "image.jpg" }} />
+            return (
+                <motion.div
+                    transformValues={transformValues}
+                    style={{ image: "image.jpg" }}
+                />
+            )
         }
 
         const { container } = render(<Component />)
@@ -47,7 +58,12 @@ describe("custom properties", () => {
     })
     test("adds background-size: cover", () => {
         const Component = () => {
-            return <motion.div style={{ image: "image.jpg" }} />
+            return (
+                <motion.div
+                    transformValues={transformValues}
+                    style={{ image: "image.jpg" }}
+                />
+            )
         }
 
         const { container } = render(<Component />)
@@ -58,6 +74,7 @@ describe("custom properties", () => {
         const Component = () => {
             return (
                 <motion.div
+                    transformValues={transformValues}
                     style={{ image: "image.jpg", backgroundSize: "50%" }}
                 />
             )
@@ -77,6 +94,7 @@ describe("custom properties", () => {
             const Component = () => {
                 return (
                     <motion.div
+                        transformValues={transformValues}
                         initial={{ size: "0%" }}
                         animate={{ size: "50%" }}
                         transition={{ duration: 0.1 }}
@@ -101,6 +119,7 @@ describe("custom properties", () => {
             const Component = () => {
                 return (
                     <motion.div
+                        transformValues={transformValues}
                         initial={{ size: "0%" }}
                         animate={{ size: "50%", transitionEnd: { size: 100 } }}
                         transition={{
@@ -129,6 +148,7 @@ describe("custom properties", () => {
             const Component = () => {
                 return (
                     <motion.div
+                        transformValues={transformValues}
                         initial={{ image: "url(1.jpg)" }}
                         animate={{ image: "url(2.jpg)" }}
                         transition={{ duration: 0.1 }}
@@ -152,32 +172,30 @@ describe("custom values type", () => {
         const Component = () => {
             return (
                 <motion.div
-                    style={{ height: new Custom(200), x: new Custom(100) }}
+                    transformValues={transformValues}
+                    style={{ height: new Custom(200) }}
                 />
             )
         }
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle(
-            "height: 200px; transform: translateX(100px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("height: 200px")
     })
 
     test("renders via initial", () => {
         const Component = () => {
             return (
                 <motion.div
-                    initial={{ height: new Custom(200), x: new Custom(100) }}
+                    transformValues={transformValues}
+                    initial={{ height: new Custom(200) }}
                 />
             )
         }
 
         const { container } = render(<Component />)
 
-        expect(container.firstChild).toHaveStyle(
-            "height: 200px; transform: translateX(100px) translateZ(0)"
-        )
+        expect(container.firstChild).toHaveStyle("height: 200px")
     })
 
     test("animates custom value type", async () => {
@@ -189,6 +207,7 @@ describe("custom values type", () => {
             const Component = () => {
                 return (
                     <motion.div
+                        transformValues={transformValues}
                         initial={{ height: new Custom(0) }}
                         animate={{ height: new Custom(100) }}
                         transition={{ duration: 0.1 }}
