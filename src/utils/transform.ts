@@ -36,7 +36,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
 
 /**
  * Transforms numbers into other values by mapping them from an input range to an output range.
- * Returns a number.
+ * Returns the type of the input provided.
  *
  * @remarks
  *
