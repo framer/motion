@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.14.2] 2019-04-12
+
+### Fixed
+
+-   Updating `hey-listen`.
+
 ## [0.14.1] 2019-04-11
 
 ### Added
