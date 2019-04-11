@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.14.1] 2019-04-11
+
+### Added
+
+-   Explicit support for the `radius` value.
+
 ## [0.14.0] 2019-04-10
 
 ### Changed
