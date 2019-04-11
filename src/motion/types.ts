@@ -39,6 +39,7 @@ export interface TransformProperties {
 
 export interface CustomStyles {
     size?: string | number
+    radius?: string | number
     image?: string
 }
 
@@ -230,6 +231,14 @@ export interface MotionProps
     ): string
 
     /**
+     * This allows values to be transformed before being animated or set as styles.
+     *
+     * For instance, this allows custom values in Framer Library like `size` to be converted into `width` and `height`.
+     * It also allows us a chance to take a value like `Color` and convert it to an animatable color string.
+     *
+     * A few structural typing changes need making before this can be a public property:
+     * - Allow `Target` values to be appended by user-defined types (delete `CustomStyles` - does `size` throw a type error?)
+     * - Extract `CustomValueType` as a separate user-defined type (delete `CustomValueType` and animate a `Color` - does this throw a type error?).
      *
      * @param values
      *
