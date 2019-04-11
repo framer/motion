@@ -67,7 +67,7 @@
         "@emotion/is-prop-valid": "^0.7.3",
         "@popmotion/popcorn": "^0.3.6",
         "framesync": "^4.0.2",
-        "hey-listen": "^1.0.7",
+        "hey-listen": "^1.0.8",
         "popmotion": "^8.6.8",
         "style-value-types": "^3.1.0",
         "stylefire": "^4.1.0"
