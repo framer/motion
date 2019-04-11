@@ -98,7 +98,7 @@ export class AnimationControls {
      * @remarks
      *
      * ```jsx
-     * animation.start('variantLabel')
+     * animation.start("variantLabel")
      * animation.start({
      *   x: 0,
      *   transition: { duration: 1 }
