@@ -188,7 +188,7 @@ interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, 
     initial?: Target | VariantLabels;
     style?: MotionStyle;
     transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
-    // @internal (undocumented)
+    // @internal
     transformValues?<V extends any>(values: V): V;
 }
 
