@@ -3,7 +3,7 @@ import { render } from "react-testing-library"
 import * as React from "react"
 import { motion } from "../../motion"
 import { useMotionValue } from "../use-motion-value"
-import { useTransform } from "../use-transformed-value"
+import { useTransform } from "../use-transform"
 
 class Custom {
     value: number = 0
