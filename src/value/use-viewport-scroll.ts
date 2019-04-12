@@ -1,4 +1,4 @@
-import { motionValue, MotionValue } from "./"
+import { motionValue, MotionValue } from "."
 
 export interface ScrollMotionValues {
     scrollX: MotionValue<number>
@@ -61,12 +61,12 @@ const viewportMotionValues: ScrollMotionValues = {
  * import * as React from "react"
  * import {
  *   Frame,
- *   useViewportScrollValues,
+ *   useViewportScroll,
  *   useTransform
  * } from "framer"
  *
  * export function MyComponent() {
- *   const { scrollYProgress } = useViewportScrollValues()
+ *   const { scrollYProgress } = useViewportScroll()
  *   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1])
  *
  *   return <Frame style={{ scaleX }} />
@@ -75,7 +75,7 @@ const viewportMotionValues: ScrollMotionValues = {
  *
  * @public
  */
-export function useViewportScrollValues() {
+export function useViewportScroll() {
     if (!hasEventListener) {
         addScrollListener()
     }

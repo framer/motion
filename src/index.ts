@@ -15,7 +15,7 @@ export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue } from "./value"
 export { unwrapMotionValue } from "./value/utils/unwrap-value"
 export { useTransform } from "./value/use-transformed-value"
-export { useViewportScrollValues } from "./value/use-viewport-scroll-values"
+export { useViewportScroll } from "./value/use-viewport-scroll"
 export {
     AnimationControls,
     animationControls,
