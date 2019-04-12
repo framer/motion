@@ -235,7 +235,7 @@ export class MotionValue<V = any> {
         this.prev = this.current
         this.current = this.transformer ? this.transformer(v) : v
 
-        if (this.updateSubscribers) {
+        if (this.updateSubscribers && this.prev !== this.current) {
             this.updateSubscribers.forEach(this.notifySubscriber)
         }
 

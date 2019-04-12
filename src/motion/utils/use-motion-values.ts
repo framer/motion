@@ -55,18 +55,16 @@ export class MotionValuesMap {
     }
 
     bindValueToStyler(key: string, value: MotionValue) {
-        const update = (v: any) => {
-            // If this is a custom value, resolve it and then set the return value
-            this.styler.set(key, v)
+        const onRender = (v: any) => this.styler.set(key, v)
+        const unsubscribeOnRender = value.onRenderRequest(onRender)
 
-            // If these have been changed by a custom value, add those to onUpdate
-            if (this.onUpdate) {
-                this.onUpdate.set(key, v)
-            }
-        }
+        const onChange = (v: any) => this.onUpdate && this.onUpdate.set(key, v)
+        const unsubscribeOnChange = value.onChange(onChange)
 
-        const unsubscribe = value.onRenderRequest(update)
-        this.unsubscribers.set(key, unsubscribe)
+        this.unsubscribers.set(key, () => {
+            unsubscribeOnRender()
+            unsubscribeOnChange()
+        })
     }
 
     setOnUpdate(onUpdate?: OnUpdate) {

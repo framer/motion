@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.14.2] 2019-04-12
+## [0.14.3] 2019-04-12
+
+### Fixed
+
+-   Only firing `value.onChange` when value actually changes.
+
+## [0.14.2] 2019-04-11
 
 ### Fixed
 

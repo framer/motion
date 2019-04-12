@@ -187,8 +187,9 @@ describe("animate prop as variant", () => {
         const promise = new Promise(resolve => {
             let latest = {}
 
-            const onUpdate = (l: { [key: string]: number | string }) =>
-                (latest = l)
+            const onUpdate = (l: { [key: string]: number | string }) => {
+                latest = l
+            }
 
             const Component = () => (
                 <motion.div
@@ -205,5 +206,28 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toEqual({ x: 100, y: 100 })
+    })
+
+    test("onUpdate doesnt fire if no values have changed", async () => {
+        const onUpdate = jest.fn()
+
+        await new Promise(resolve => {
+            const x = motionValue(0)
+            const Component = ({ xTarget = 0 }) => (
+                <motion.div
+                    animate={{ x: xTarget }}
+                    transition={{ type: false }}
+                    onUpdate={onUpdate}
+                    style={{ x }}
+                />
+            )
+
+            const { rerender } = render(<Component xTarget={0} />)
+            setTimeout(() => rerender(<Component xTarget={1} />), 30)
+            setTimeout(() => rerender(<Component xTarget={1} />), 60)
+            setTimeout(() => resolve(), 90)
+        })
+
+        expect(onUpdate).toHaveBeenCalledTimes(1)
     })
 })
