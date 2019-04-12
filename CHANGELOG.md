@@ -8,6 +8,14 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `useViewportScrollValues` => `useViewportScroll`.
 
+### Added
+
+-   `ease` can now be an array for keyframes animations.
+
+### Removed
+
+-   `easings` prop.
+
 ## [0.14.3] 2019-04-12
 
 ### Fixed
