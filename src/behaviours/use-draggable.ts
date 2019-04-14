@@ -316,7 +316,7 @@ export function useDraggable(
             ) => {
                 const p = point[axis]
                 if (!shouldDrag(axis, drag, currentDirection) || !p) {
-                    return
+                    return false
                 }
 
                 let current = origin[axis] + offset[axis]
@@ -329,6 +329,8 @@ export function useDraggable(
                 )
 
                 p.set(current)
+
+                return true
             }
 
             const onPointerDown = () => {
@@ -381,8 +383,12 @@ export function useDraggable(
                     }
                 }
 
-                updatePoint("x", offset)
-                updatePoint("y", offset)
+                let hasDragged = updatePoint("x", offset)
+                hasDragged = updatePoint("y", offset) || hasDragged
+
+                if (hasDragged) {
+                    event.preventDefault()
+                }
 
                 // here we use ref to call only the last event handler
                 if (onDragRef.current) {

@@ -370,7 +370,7 @@ export function usePanGesture(
     const [startPointerMove, stopPointerMove] = usePointerEvents(
         { onPointerMove },
         safeWindow,
-        { capture: true }
+        { capture: true, passive: false }
     )
 
     const onPointerDown = useCallback(
