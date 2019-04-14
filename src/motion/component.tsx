@@ -1,27 +1,25 @@
 import * as React from "react"
-import { useContext, forwardRef, Ref, ComponentType } from "react"
+import { useContext, forwardRef, ComponentType, Ref } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues, MountMotionValues } from "./utils/use-motion-values"
 import { useMotionStyles } from "./utils/use-styles"
 import { useComponentAnimationControls } from "../animation/use-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
-import {
-    isGesturesEnabled,
-    isDragEnabled,
-    Gestures,
-    Draggable,
-    RenderComponent,
-    getAnimateComponent,
-    checkShouldInheritVariant,
-} from "./utils/functionality"
+import { GetFunctionalityComponents } from "./functionality/types"
+import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
+import { getAnimateComponent } from "./functionality/animation"
+
+export interface MotionComponentConfig {
+    useFunctionalityComponents: GetFunctionalityComponents
+}
 
 /**
  * @internal
  */
-export const createMotionComponent = <P extends {}>(
-    Component: string | ComponentType<P>
-) => {
+export const createMotionComponent = <P extends {}>({
+    useFunctionalityComponents,
+}: MotionComponentConfig) => {
     function MotionComponent(
         props: P & MotionProps,
         externalRef?: Ref<Element>
@@ -62,46 +60,20 @@ export const createMotionComponent = <P extends {}>(
             />
         )
 
-        const handleGestures = !context.static && isGesturesEnabled(props) && (
-            <Gestures
-                {...props}
-                values={values}
-                controls={controls}
-                innerRef={ref}
-            />
-        )
-
-        const handleDrag = !context.static && isDragEnabled(props) && (
-            <Draggable
-                {...props}
-                innerRef={ref}
-                controls={controls}
-                values={values}
-            />
-        )
-
-        // We use an intermediate component here rather than calling `createElement` directly
-        // because we want to resolve the style from our motion values only once every
-        // functional component has resolved. Resolving it here would do it before the functional components
-        // themselves are executed.
-        const handleComponent = (
-            <RenderComponent
-                base={Component}
-                props={props}
-                innerRef={ref}
-                style={style}
-                values={values}
-                isStatic={isStatic}
-            />
+        const handleActiveFunctionality = useFunctionalityComponents(
+            props,
+            values,
+            controls,
+            ref,
+            style,
+            context.static
         )
 
         return (
             <MotionContext.Provider value={context}>
                 <MountMotionValues ref={ref} values={values} />
                 {handleAnimate}
-                {handleGestures}
-                {handleDrag}
-                {handleComponent}
+                {handleActiveFunctionality}
             </MotionContext.Provider>
         )
     }
