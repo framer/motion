@@ -3,7 +3,7 @@ import { useDraggable } from "../../behaviours"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps } from "./types"
 
-export const drag = {
+export const Drag = {
     test: (props: MotionProps) => !!props.drag,
     component: makeHookComponent(
         ({ innerRef, values, controls, ...props }: FunctionalProps) => {

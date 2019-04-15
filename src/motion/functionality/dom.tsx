@@ -9,13 +9,13 @@ import {
 import { buildStyleAttr } from "../utils/use-styles"
 import isPropValid from "@emotion/is-prop-valid"
 import { svgElements } from "../utils/supported-elements"
-import { gestureProps, gestures } from "./gestures"
+import { gestureProps, Gestures } from "./gestures"
 import { MotionComponentConfig } from "../component"
-import { drag } from "./drag"
+import { Drag } from "./drag"
 import { FunctionalProps } from "./types"
 
 type RenderProps = FunctionalProps & {
-    props: MotionProps
+    componentProps: MotionProps
     style: CSSProperties
     isStatic: boolean | undefined
 }
@@ -54,9 +54,9 @@ export function createDomMotionConfig<P>(
         style,
         values,
         isStatic,
-        props,
+        componentProps,
     }: RenderProps) => {
-        const forwardProps = isDOM ? validProps(props) : props
+        const forwardProps = isDOM ? validProps(componentProps) : componentProps
 
         return createElement<any>(Component, {
             ...forwardProps,
@@ -76,9 +76,9 @@ export function createDomMotionConfig<P>(
         ) => {
             const activeComponents: ReactElement<P>[] = []
 
-            if (!isStatic && drag.test(props)) {
+            if (!isStatic && Drag.test(props)) {
                 activeComponents.push(
-                    <drag.component
+                    <Drag.component
                         {...props}
                         values={values}
                         controls={controls}
@@ -88,9 +88,9 @@ export function createDomMotionConfig<P>(
                 )
             }
 
-            if (!isStatic && gestures.test(props)) {
+            if (!isStatic && Gestures.test(props)) {
                 activeComponents.push(
-                    <gestures.component
+                    <Gestures.component
                         {...props}
                         values={values}
                         controls={controls}
@@ -102,7 +102,7 @@ export function createDomMotionConfig<P>(
 
             activeComponents.push(
                 <RenderComponent
-                    props={props}
+                    componentProps={props}
                     values={values}
                     controls={controls}
                     innerRef={ref}

@@ -1,7 +1,7 @@
 import { FunctionalProps } from "../functionality/types"
 
-export const makeHookComponent = (hook: Function) => (
-    props: FunctionalProps
+export const makeHookComponent = <P = FunctionalProps>(hook: Function) => (
+    props: P
 ) => {
     hook(props)
     return null

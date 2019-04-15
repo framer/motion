@@ -3,7 +3,7 @@ import { MotionProps } from "../types"
 import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
 
-export type FunctionalProps = MotionProps & {
+export interface FunctionalProps extends MotionProps {
     controls: ComponentAnimationControls
     values: MotionValuesMap
     innerRef: RefObject<Element | null>

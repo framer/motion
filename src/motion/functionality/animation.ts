@@ -1,16 +1,29 @@
-import { ComponentType } from "react"
+import { ComponentType, RefObject } from "react"
 import { MotionProps, AnimatePropType, VariantLabels } from "../types"
-import { FunctionalProps } from "./types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { useAnimateProp } from "../../animation/use-animate-prop"
 import { useVariants } from "../../animation/use-variants"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
+import { ComponentAnimationControls } from "animation/ComponentAnimationControls"
+import { MotionValuesMap } from "motion/utils/use-motion-values"
+
+interface AnimationFunctionalProps extends MotionProps {
+    controls: ComponentAnimationControls
+    values: MotionValuesMap
+    innerRef: RefObject<Element | null>
+    inherit: boolean
+}
 
 export const AnimatePropComponents = {
-    [AnimatePropType.Target]: makeHookComponent(
-        ({ animate, controls, values, transition }: FunctionalProps) => {
+    [AnimatePropType.Target]: makeHookComponent<AnimationFunctionalProps>(
+        ({
+            animate,
+            controls,
+            values,
+            transition,
+        }: AnimationFunctionalProps) => {
             return useAnimateProp(
                 animate as Target,
                 controls,
@@ -19,8 +32,13 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.VariantLabel]: makeHookComponent(
-        ({ animate, inherit = true, controls, initial }: FunctionalProps) => {
+    [AnimatePropType.VariantLabel]: makeHookComponent<AnimationFunctionalProps>(
+        ({
+            animate,
+            inherit = true,
+            controls,
+            initial,
+        }: AnimationFunctionalProps) => {
             return useVariants(
                 animate as VariantLabels,
                 inherit,
@@ -29,33 +47,33 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.AnimationSubscription]: makeHookComponent(
-        ({ animate, controls }: FunctionalProps) => {
-            return useAnimationGroupSubscription(
-                animate as AnimationControls,
-                controls
-            )
-        }
-    ),
+    [AnimatePropType.AnimationSubscription]: makeHookComponent<
+        AnimationFunctionalProps
+    >(({ animate, controls }: AnimationFunctionalProps) => {
+        return useAnimationGroupSubscription(
+            animate as AnimationControls,
+            controls
+        )
+    }),
 }
 
 const isVariantLabel = (prop?: any): prop is VariantLabels =>
     Array.isArray(prop) || typeof prop === "string"
 
-const isAnimationSubscription = ({ animate }: FunctionalProps) =>
+const isAnimationSubscription = ({ animate }: AnimationFunctionalProps) =>
     animate instanceof AnimationControls
 
 const animationProps = ["initial", "animate", "whileTap", "whileHover"]
 
 const animatePropTypeTests = {
-    [AnimatePropType.Target]: (props: FunctionalProps) => {
+    [AnimatePropType.Target]: (props: AnimationFunctionalProps) => {
         return (
             props.animate !== undefined &&
             !isVariantLabel(props.animate) &&
             !isAnimationSubscription(props)
         )
     },
-    [AnimatePropType.VariantLabel]: (props: FunctionalProps) => {
+    [AnimatePropType.VariantLabel]: (props: AnimationFunctionalProps) => {
         return (
             props.variants !== undefined ||
             animationProps.some(key => typeof props[key] === "string")
@@ -67,7 +85,7 @@ const animatePropTypeTests = {
 export const getAnimateComponent = (
     props: MotionProps,
     isStatic: boolean = false
-): ComponentType<FunctionalProps> | undefined => {
+): ComponentType<AnimationFunctionalProps> | undefined => {
     let animatePropType: AnimatePropType | undefined = undefined
 
     for (const key in AnimatePropType) {

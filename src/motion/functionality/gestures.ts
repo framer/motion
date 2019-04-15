@@ -18,7 +18,7 @@ export const gestureProps = [
     "onHoverEnd",
 ]
 
-export const gestures = {
+export const Gestures = {
     test: (props: MotionProps) => {
         return gestureProps.some(key => props.hasOwnProperty(key))
     },

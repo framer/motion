@@ -18,7 +18,7 @@ export { createMotionComponent }
  * @internalremarks
  *
  * I'd like to make it possible for these to be loaded "on demand" - to reduce bundle size by only
- * including HTML/SVG stylers, animation and gesture support when necessary.
+ * including HTML/SVG stylers, animation and/or gesture support when necessary.
  *
  * ```jsx
  * <motion.div animate={{ x: 100 }} />
