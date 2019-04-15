@@ -26,7 +26,7 @@ export const eventListener = (
         if (!target) {
             return
         }
-        target.removeEventListener(name, handler)
+        target.removeEventListener(name, handler, options)
     }
     return [startListening, stopListening]
 }
