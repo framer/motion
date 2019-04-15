@@ -34,6 +34,10 @@ export type SVGMotionComponents = {
     [K in SVGElements]: ForwardRefComponent<SVGElement, SVGMotionProps>
 }
 
-export const svgMotionComponents = svgElements.map(Component => {
-    return createMotionComponent(createDomMotionConfig(Component))
-})
+export const svgMotionComponents: SVGMotionComponents = svgElements.reduce(
+    (acc, Component) => {
+        acc[Component] = createMotionComponent(createDomMotionConfig(Component))
+        return acc
+    },
+    {} as SVGMotionComponents
+)

@@ -7,7 +7,7 @@ import {
     ForwardRefExoticComponent,
 } from "react"
 import { HTMLElements, htmlElements } from "./utils/supported-elements"
-import { createMotionComponent } from "motion"
+import { createMotionComponent } from "../motion"
 import { createDomMotionConfig } from "./functionality/dom"
 import { MotionProps } from "./types"
 
@@ -50,6 +50,10 @@ export type HTMLMotionComponents = {
     >
 }
 
-export const htmlMotionComponents = htmlElements.map(Component => {
-    return createMotionComponent(createDomMotionConfig(Component))
-})
+export const htmlMotionComponents: HTMLMotionComponents = htmlElements.reduce(
+    (acc, Component) => {
+        acc[Component] = createMotionComponent(createDomMotionConfig(Component))
+        return acc
+    },
+    {} as HTMLMotionComponents
+)

@@ -1,17 +1,17 @@
 import * as React from "react"
-import { useContext, forwardRef, ComponentType, Ref } from "react"
+import { useContext, forwardRef, Ref } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues, MountMotionValues } from "./utils/use-motion-values"
 import { useMotionStyles } from "./utils/use-styles"
 import { useComponentAnimationControls } from "../animation/use-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
-import { GetFunctionalityComponents } from "./functionality/types"
+import { UseFunctionalityComponents } from "./functionality/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { getAnimateComponent } from "./functionality/animation"
 
 export interface MotionComponentConfig {
-    useFunctionalityComponents: GetFunctionalityComponents
+    useFunctionalityComponents: UseFunctionalityComponents
 }
 
 /**

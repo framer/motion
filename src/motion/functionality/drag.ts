@@ -1,6 +1,6 @@
-import { MotionProps } from "motion/types"
-import { useDraggable } from "behaviours"
-import { makeHookComponent } from "motion/utils/make-hook-component"
+import { MotionProps } from "../types"
+import { useDraggable } from "../../behaviours"
+import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps } from "./types"
 
 export const drag = {

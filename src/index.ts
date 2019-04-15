@@ -1,9 +1,4 @@
-export {
-    motion,
-    useExternalRef,
-    createMotionComponent,
-    CustomMotionComponent,
-} from "./motion"
+export { motion, useExternalRef, createMotionComponent } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue } from "./value"
 export { unwrapMotionValue } from "./value/utils/unwrap-value"

@@ -1,20 +1,23 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { createElement, ComponentType, RefObject, CSSProperties } from "react"
+import {
+    createElement,
+    ComponentType,
+    CSSProperties,
+    ReactElement,
+} from "react"
 import { buildStyleAttr } from "../utils/use-styles"
-import { MotionValuesMap } from "../utils/use-motion-values"
 import isPropValid from "@emotion/is-prop-valid"
 import { svgElements } from "../utils/supported-elements"
 import { gestureProps, gestures } from "./gestures"
 import { MotionComponentConfig } from "../component"
 import { drag } from "./drag"
+import { FunctionalProps } from "./types"
 
-type RenderProps<P> = {
-    props: P & MotionProps
-    innerRef: RefObject<Element | null>
+type RenderProps = FunctionalProps & {
+    props: MotionProps
     style: CSSProperties
-    values: MotionValuesMap
-    isStatic: boolean
+    isStatic: boolean | undefined
 }
 
 const eventHandlers = new Set([
@@ -47,12 +50,12 @@ export function createDomMotionConfig<P>(
     const isSVG = isDOM && svgElements.indexOf(Component as any) !== -1
 
     const RenderComponent = ({
-        props,
         innerRef,
         style,
         values,
         isStatic,
-    }: RenderProps<P>) => {
+        props,
+    }: RenderProps) => {
         const forwardProps = isDOM ? validProps(props) : props
 
         return createElement<any>(Component, {
@@ -71,7 +74,7 @@ export function createDomMotionConfig<P>(
             style,
             isStatic
         ) => {
-            const activeComponents = []
+            const activeComponents: ReactElement<P>[] = []
 
             if (!isStatic && drag.test(props)) {
                 activeComponents.push(
@@ -80,6 +83,7 @@ export function createDomMotionConfig<P>(
                         values={values}
                         controls={controls}
                         innerRef={ref}
+                        key="drag"
                     />
                 )
             }
@@ -91,18 +95,20 @@ export function createDomMotionConfig<P>(
                         values={values}
                         controls={controls}
                         innerRef={ref}
+                        key="gestures"
                     />
                 )
             }
 
             activeComponents.push(
                 <RenderComponent
-                    {...props}
+                    props={props}
                     values={values}
                     controls={controls}
                     innerRef={ref}
                     style={style}
                     isStatic={isStatic}
+                    key="renderComponent"
                 />
             )
 

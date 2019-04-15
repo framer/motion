@@ -31,7 +31,7 @@ export { createMotionComponent }
  * @public
  */
 export const motion = {
-    custom: (Component: ComponentType) => {
+    custom: (Component: ComponentType<any>) => {
         return createMotionComponent(createDomMotionConfig(Component))
     },
     ...htmlMotionComponents,

@@ -1,5 +1,5 @@
 import { MotionProps } from "../types"
-import { useGestures } from "gestures"
+import { useGestures } from "../../gestures"
 import { FunctionalProps } from "./types"
 import { makeHookComponent } from "../utils/make-hook-component"
 
