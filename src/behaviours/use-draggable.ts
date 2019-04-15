@@ -7,6 +7,10 @@ import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
 import { ComponentAnimationControls } from "../motion"
 import { Omit, Inertia } from "../types"
+import {
+    blockViewportScroll,
+    unblockViewportScroll,
+} from "./utils/block-viewport-scroll"
 
 type DragDirection = "x" | "y"
 
@@ -372,23 +376,19 @@ export function useDraggable(
 
                 const { offset } = info
 
-                if (dragDirectionLock) {
-                    if (currentDirection === null) {
-                        currentDirection = getCurrentDirection(offset)
+                if (dragDirectionLock && currentDirection === null) {
+                    currentDirection = getCurrentDirection(offset)
 
-                        if (currentDirection !== null) {
-                            onDirectionLock && onDirectionLock(currentDirection)
-                        }
-                        return
+                    if (currentDirection !== null) {
+                        onDirectionLock && onDirectionLock(currentDirection)
+                        blockViewportScroll()
                     }
+                    return
                 }
 
-                let hasDragged = updatePoint("x", offset)
-                hasDragged = updatePoint("y", offset) || hasDragged
-
-                if (hasDragged) {
-                    event.preventDefault()
-                }
+                blockViewportScroll()
+                updatePoint("x", offset)
+                updatePoint("y", offset)
 
                 // here we use ref to call only the last event handler
                 if (onDragRef.current) {
@@ -406,6 +406,7 @@ export function useDraggable(
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
+                unblockViewportScroll()
                 const { velocity } = info
 
                 if (!dragPropagation && openGlobalLock) {

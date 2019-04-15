@@ -18,13 +18,15 @@ export const eventListener = (
         if (!target) {
             return
         }
+
+        // TODO: Pointer events are stacking after every pan start
         target.addEventListener(name, handler, options)
     }
     const stopListening = () => {
         if (!target) {
             return
         }
-        target.removeEventListener(name, handler, options)
+        target.removeEventListener(name, handler)
     }
     return [startListening, stopListening]
 }

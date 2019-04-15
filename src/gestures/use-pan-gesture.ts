@@ -290,15 +290,15 @@ export function usePanGesture(
                     velocity,
                 }
 
-                if (session.current.startEvent) {
-                    if (onPan) {
-                        onPan(lastMoveEvent.current, info)
-                    }
-                } else {
+                if (!session.current.startEvent) {
                     if (onPanStart) {
                         onPanStart(lastMoveEvent.current, info)
                     }
                     session.current.startEvent = lastMoveEvent.current
+                }
+
+                if (onPan) {
+                    onPan(lastMoveEvent.current, info)
                 }
             }
 
@@ -370,11 +370,16 @@ export function usePanGesture(
     const [startPointerMove, stopPointerMove] = usePointerEvents(
         { onPointerMove },
         safeWindow,
-        { capture: true, passive: false }
+        { capture: true }
     )
 
     const onPointerDown = useCallback(
         (event: Event, { point }: EventInfo) => {
+            // TODO: We might need to add a callback here like `onPanDetectStart`
+            // We can't add our own `preventDefault()` as it unconditionally blocks scrolling on mobile
+            // but `onTouchStart` isn't able to preventDefault the same way as a DOM-attached listener
+            // (For instance it doesn't block the iOS text highlight magnifier)
+
             const initialPoint = transformPagePoint
                 ? transformPagePoint(point)
                 : point
