@@ -7,7 +7,7 @@ import {
     ForwardRefExoticComponent,
 } from "react"
 import { HTMLElements, htmlElements } from "./utils/supported-elements"
-import { createMotionComponent } from "../motion"
+import { createMotionComponent } from "../motion/component"
 import { createDomMotionConfig } from "./functionality/dom"
 import { MotionProps } from "./types"
 

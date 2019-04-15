@@ -5,7 +5,7 @@ import {
     PropsWithoutRef,
 } from "react"
 import { svgElements, SVGElements } from "./utils/supported-elements"
-import { createMotionComponent } from "../motion"
+import { createMotionComponent } from "../motion/component"
 import { createDomMotionConfig } from "./functionality/dom"
 import { MotionProps } from "./types"
 
