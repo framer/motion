@@ -142,4 +142,52 @@ describe("animate prop as object", () => {
             "transform: translateX(30px) translateX(30px) translateZ(0)"
         )
     })
+
+    test("keyframes - accepts ease as an array", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const easingListener = jest.fn()
+            const easing = (v: number) => {
+                easingListener()
+                return v
+            }
+            const onComplete = () => resolve(easingListener)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: [0, 1, 2] }}
+                    transition={{ ease: [easing, easing], duration: 0.1 }}
+                    style={{ x }}
+                    onAnimationComplete={onComplete}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toHaveBeenCalled()
+    })
+
+    test("tween - accepts ease as an array", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const easingListener = jest.fn()
+            const easing = (v: number) => {
+                easingListener()
+                return v
+            }
+            const onComplete = () => resolve(easingListener)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: 2 }}
+                    transition={{ ease: [easing, easing], duration: 0.1 }}
+                    style={{ x }}
+                    onAnimationComplete={onComplete}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toHaveBeenCalled()
+    })
 })

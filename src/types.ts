@@ -311,9 +311,13 @@ export interface Tween {
      * />
      * ```
      *
+     * If the animating value is set as an array of multiple values for a keyframes
+     * animation, `ease` can be set as an array of easing functions to set different easings between
+     * each of those values.
+     *
      * @public
      */
-    ease?: Easing
+    ease?: Easing | Easing[]
 
     /**
      * The duration of time already elapsed in the animation. Set to `0` by
@@ -927,12 +931,14 @@ export interface Keyframes {
      *
      * @public
      */
-    easings?: Easing[]
+    ease?: Easing | Easing[]
 
     /**
+     * Popmotion's easing prop to define individual easings. `ease` will be mapped to this prop in keyframes animations.
+     *
      * @internal
      */
-    ease?: Easing
+    easings?: Easing | Easing[]
 
     /**
      * @internal

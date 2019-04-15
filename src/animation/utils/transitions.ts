@@ -84,10 +84,15 @@ const easingDefinitionToFunction = (definition: Easing) => {
     return definition
 }
 
+const isEasingArray = (ease: any): ease is Easing[] => {
+    return Array.isArray(ease) && typeof ease[0] !== "number"
+}
+
 const transitionOptionParser = {
     tween: (opts: Tween): Tween => {
         if (opts.ease) {
-            opts.ease = easingDefinitionToFunction(opts.ease)
+            const ease = isEasingArray(opts.ease) ? opts.ease[0] : opts.ease
+            opts.ease = easingDefinitionToFunction(ease)
         }
 
         return opts
@@ -100,11 +105,11 @@ const transitionOptionParser = {
         }
 
         if (opts.ease) {
-            opts.ease = easingDefinitionToFunction(opts.ease)
+            opts.easings = isEasingArray(opts.ease)
+                ? opts.ease.map(easingDefinitionToFunction)
+                : easingDefinitionToFunction(opts.ease)
         }
-        if (opts.easings) {
-            opts.easings = opts.easings.map(easingDefinitionToFunction)
-        }
+        opts.ease = linear
 
         return opts
     },
