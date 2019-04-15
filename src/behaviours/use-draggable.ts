@@ -320,7 +320,7 @@ export function useDraggable(
             ) => {
                 const p = point[axis]
                 if (!shouldDrag(axis, drag, currentDirection) || !p) {
-                    return false
+                    return
                 }
 
                 let current = origin[axis] + offset[axis]
@@ -333,8 +333,6 @@ export function useDraggable(
                 )
 
                 p.set(current)
-
-                return true
             }
 
             const onPointerDown = () => {
