@@ -10,6 +10,8 @@ import { motionValue, MotionValue } from "../value"
 import sync, { cancelSync, getFrameData } from "framesync"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { safeWindow } from "../events/utils/window"
+import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
+import { warning } from "hey-listen"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -263,7 +265,10 @@ export function usePanGesture(
                 lastMoveEventInfo.current === null ||
                 lastMoveEvent.current === null
             ) {
-                console.error("Pointer move without started session") // eslint-disable-line no-console
+                warning(false, "Pointer move without started session")
+                stopPointerMove()
+                stopPointerUp()
+                unblockViewportScroll()
                 return
             }
             const { point } = lastMoveEventInfo.current
@@ -331,8 +336,12 @@ export function usePanGesture(
         (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
             cancelSync.update(updatePoint)
 
+            stopPointerMove()
+            stopPointerUp()
+
             if (!session.current || pointer.current === null) {
-                console.error("Pointer end without started session") // eslint-disable-line no-console
+                warning(false, "Pointer end without started session")
+                unblockViewportScroll()
                 return
             }
 
@@ -345,9 +354,6 @@ export function usePanGesture(
                 startDevicePoint(session.current)
             )
             const velocity = getVelocity(session.current, 0.1)
-
-            stopPointerMove()
-            stopPointerUp()
 
             if (onPanEnd) {
                 onPanEnd(event, {

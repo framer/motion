@@ -616,9 +616,10 @@ describe("dragging", () => {
 
                     sync.postRender(() => {
                         lastX = x.get()
-                        const pointer2 = drag(container.firstChild).to(100, 100)
+                        const pointer2 = drag(container.firstChild).to(99, 99)
                         sync.postRender(() => {
                             pointer2.end()
+                            console.log(x.get(), lastX)
                             resolve(x.get() === lastX)
                         })
                     })
