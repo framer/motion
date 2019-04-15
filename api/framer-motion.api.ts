@@ -418,7 +418,7 @@ declare function useTransform(value: MotionValue, transform: Transformer_2): Mot
 declare function useTransform<T>(value: MotionValue<number>, from: number[], to: any[], options?: TransformOptions<T>): MotionValue;
 
 // @public
-declare function useViewportScrollValues(): ScrollMotionValues;
+declare function useViewportScroll(): ScrollMotionValues;
 
 // @public (undocumented)
 declare type ValueTarget = SingleTarget | KeyframesTarget;
