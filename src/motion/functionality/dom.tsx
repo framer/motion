@@ -76,7 +76,7 @@ export function createDomMotionConfig<P>(
         ) => {
             const activeComponents: ReactElement<P>[] = []
 
-            if (!isStatic && Drag.test(props)) {
+            if (!isStatic && Drag.shouldRender(props)) {
                 activeComponents.push(
                     <Drag.component
                         {...props}
@@ -88,7 +88,7 @@ export function createDomMotionConfig<P>(
                 )
             }
 
-            if (!isStatic && Gestures.test(props)) {
+            if (!isStatic && Gestures.shouldRender(props)) {
                 activeComponents.push(
                     <Gestures.component
                         {...props}

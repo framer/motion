@@ -10,7 +10,7 @@ export interface FunctionalProps extends MotionProps {
 }
 
 export interface FunctionalComponentDefinition {
-    test: (props: MotionProps) => boolean
+    shouldRender: (props: MotionProps) => boolean
     component: ComponentType<FunctionalProps>
 }
 

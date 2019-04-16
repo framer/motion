@@ -1,8 +1,19 @@
 import { createMotionComponent } from "./component"
 import { createDomMotionConfig } from "./functionality/dom"
-import { htmlMotionComponents } from "./html"
-import { svgMotionComponents } from "./svg"
-import { ComponentType } from "react"
+import {
+    ComponentType,
+    ReactHTML,
+    DetailedHTMLFactory,
+    HTMLAttributes,
+    PropsWithoutRef,
+    RefAttributes,
+    SVGAttributes,
+    ForwardRefExoticComponent,
+} from "react"
+import { HTMLElements, htmlElements } from "./utils/supported-elements"
+import { svgElements, SVGElements } from "./utils/supported-elements"
+import { MotionProps } from "./types"
+
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
@@ -10,6 +21,22 @@ export {
     ComponentAnimationControls,
 } from "../animation/ComponentAnimationControls"
 export { createMotionComponent }
+
+export const htmlMotionComponents: HTMLMotionComponents = htmlElements.reduce(
+    (acc, Component) => {
+        acc[Component] = createMotionComponent(createDomMotionConfig(Component))
+        return acc
+    },
+    {} as HTMLMotionComponents
+)
+
+export const svgMotionComponents: SVGMotionComponents = svgElements.reduce(
+    (acc, Component) => {
+        acc[Component] = createMotionComponent(createDomMotionConfig(Component))
+        return acc
+    },
+    {} as SVGMotionComponents
+)
 
 /**
  * HTML & SVG components, optimised for use with gestures and animation. These can be used as
@@ -36,4 +63,64 @@ export const motion = {
     },
     ...htmlMotionComponents,
     ...svgMotionComponents,
+}
+
+type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
+    ? P
+    : never
+type UnwrapFactoryElement<F> = F extends DetailedHTMLFactory<any, infer P>
+    ? P
+    : never
+
+type HTMLAttributesWithoutMotionProps<
+    Attributes extends HTMLAttributes<Element>,
+    Element extends HTMLElement
+> = { [K in Exclude<keyof Attributes, keyof MotionProps>]?: Attributes[K] }
+
+/**
+ * @public
+ */
+export type HTMLMotionProps<
+    TagName extends keyof ReactHTML
+> = HTMLAttributesWithoutMotionProps<
+    UnwrapFactoryAttributes<ReactHTML[TagName]>,
+    UnwrapFactoryElement<ReactHTML[TagName]>
+> &
+    MotionProps
+
+/**
+ * Motion-optimised versions of React's HTML components.
+ *
+ * @public
+ */
+export type HTMLMotionComponents = {
+    [K in HTMLElements]: ForwardRefComponent<
+        UnwrapFactoryElement<ReactHTML[K]>,
+        HTMLMotionProps<K>
+    >
+}
+
+interface SVGAttributesWithoutMotionProps
+    extends Pick<
+        SVGAttributes<SVGElement>,
+        Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
+    > {}
+/**
+ * @public
+ */
+export interface SVGMotionProps
+    extends SVGAttributesWithoutMotionProps,
+        MotionProps {}
+
+type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
+    PropsWithoutRef<P> & RefAttributes<T>
+>
+
+/**
+ * Motion-optimised versions of React's SVG components.
+ *
+ * @public
+ */
+export type SVGMotionComponents = {
+    [K in SVGElements]: ForwardRefComponent<SVGElement, SVGMotionProps>
 }

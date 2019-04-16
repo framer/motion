@@ -9,6 +9,7 @@ import { MotionProps } from "./types"
 import { UseFunctionalityComponents } from "./functionality/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { getAnimateComponent } from "./functionality/animation"
+export { MotionProps }
 
 export interface MotionComponentConfig {
     useFunctionalityComponents: UseFunctionalityComponents

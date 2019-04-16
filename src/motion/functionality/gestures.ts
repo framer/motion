@@ -1,6 +1,6 @@
 import { MotionProps } from "../types"
 import { useGestures } from "../../gestures"
-import { FunctionalProps } from "./types"
+import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { makeHookComponent } from "../utils/make-hook-component"
 
 export const gestureProps = [
@@ -18,8 +18,8 @@ export const gestureProps = [
     "onHoverEnd",
 ]
 
-export const Gestures = {
-    test: (props: MotionProps) => {
+export const Gestures: FunctionalComponentDefinition = {
+    shouldRender: (props: MotionProps) => {
         return gestureProps.some(key => props.hasOwnProperty(key))
     },
     component: makeHookComponent(({ innerRef, ...props }: FunctionalProps) => {
