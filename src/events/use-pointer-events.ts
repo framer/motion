@@ -248,6 +248,7 @@ export const usePointerEvents = <Target extends TargetOrRef>(
     const pointer = useNativePointerEvents(pointerEvents, ref, options)
     const touch = useTouchEvents(touchEvents, ref, options)
     const mouse = useMouseEvents(mouseEvents, ref, options)
+
     return mergeUseEventResults(pointer, touch, mouse) as TargetBasedReturnType<
         Target
     >

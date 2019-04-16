@@ -10,6 +10,8 @@ import { motionValue, MotionValue } from "../value"
 import sync, { cancelSync, getFrameData } from "framesync"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { safeWindow } from "../events/utils/window"
+import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
+import { warning } from "hey-listen"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -192,7 +194,7 @@ export interface PanHandlers {
      *
      * ```jsx
      * function onPanStart(event, info) {
-     *   console.log(info.point.x, spoint.y)
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div onPanStart={onPanStart} />
@@ -207,6 +209,27 @@ export interface PanHandlers {
      *   - `velocity`: Current velocity of the pointer.
      */
     onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
+
+    /**
+     * Callback function that fires when we begin detecting a pan gesture. This
+     * is analogous to `onMouseStart` or `onTouchStart`.
+     * .
+     *
+     * ```jsx
+     * function onPanSessionStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <motion.div onPanSessionStart={onPanSessionStart} />
+     * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link EventInfo} object containing `x`/`y` values for:
+     *
+     *   - `point`: Relative to the device or page.
+     */
+
+    onPanSessionStart?(event: MouseEvent | TouchEvent, info: EventInfo): void
 
     /**
      * Callback function that fires when the pan gesture ends on this element.
@@ -246,7 +269,7 @@ export function usePanGesture(
     handlers: PanHandlers
 ): { onPointerDown: EventHandler }
 export function usePanGesture(
-    { onPan, onPanStart, onPanEnd }: PanHandlers,
+    { onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers,
     ref?: RefObject<Element>
 ) {
     const session = useRef<EventSession | null>(null)
@@ -263,7 +286,10 @@ export function usePanGesture(
                 lastMoveEventInfo.current === null ||
                 lastMoveEvent.current === null
             ) {
-                console.error("Pointer move without started session") // eslint-disable-line no-console
+                warning(false, "Pointer move without started session")
+                stopPointerMove()
+                stopPointerUp()
+                unblockViewportScroll()
                 return
             }
             const { point } = lastMoveEventInfo.current
@@ -290,15 +316,15 @@ export function usePanGesture(
                     velocity,
                 }
 
-                if (session.current.startEvent) {
-                    if (onPan) {
-                        onPan(lastMoveEvent.current, info)
-                    }
-                } else {
+                if (!session.current.startEvent) {
                     if (onPanStart) {
                         onPanStart(lastMoveEvent.current, info)
                     }
                     session.current.startEvent = lastMoveEvent.current
+                }
+
+                if (onPan) {
+                    onPan(lastMoveEvent.current, info)
                 }
             }
 
@@ -331,8 +357,12 @@ export function usePanGesture(
         (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
             cancelSync.update(updatePoint)
 
+            stopPointerMove()
+            stopPointerUp()
+
             if (!session.current || pointer.current === null) {
-                console.error("Pointer end without started session") // eslint-disable-line no-console
+                warning(false, "Pointer end without started session")
+                unblockViewportScroll()
                 return
             }
 
@@ -345,9 +375,6 @@ export function usePanGesture(
                 startDevicePoint(session.current)
             )
             const velocity = getVelocity(session.current, 0.1)
-
-            stopPointerMove()
-            stopPointerUp()
 
             if (onPanEnd) {
                 onPanEnd(event, {
@@ -374,7 +401,13 @@ export function usePanGesture(
     )
 
     const onPointerDown = useCallback(
-        (event: Event, { point }: EventInfo) => {
+        (event: MouseEvent | TouchEvent, info: EventInfo) => {
+            const { point } = info
+
+            if (onPanSessionStart) {
+                onPanSessionStart(event, info)
+            }
+
             const initialPoint = transformPagePoint
                 ? transformPagePoint(point)
                 : point
@@ -403,7 +436,7 @@ export function usePanGesture(
         }
     }, [])
     let handlers: Partial<{ onPointerDown: EventHandler }> = { onPointerDown }
-    if (!onPan && !onPanStart && !onPanEnd) {
+    if (!(onPan || onPanStart || onPanEnd || onPanSessionStart)) {
         handlers = {}
     }
 

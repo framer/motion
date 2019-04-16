@@ -34,8 +34,6 @@ export const App = () => {
             onDirectionLock={onLock}
             onDragEnd={() => setSquish("default")}
             initial={{ scale: 1 }}
-            whileTap={{ scale: 0.6 }}
-            whileHover={{ scale: 1.2 }}
             variants={variants}
             animate={squish}
             style={styleA}

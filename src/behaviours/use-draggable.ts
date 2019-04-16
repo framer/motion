@@ -7,6 +7,10 @@ import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
 import { ComponentAnimationControls } from "../motion"
 import { Omit, Inertia } from "../types"
+import {
+    blockViewportScroll,
+    unblockViewportScroll,
+} from "./utils/block-viewport-scroll"
 
 type DragDirection = "x" | "y"
 
@@ -370,17 +374,17 @@ export function useDraggable(
 
                 const { offset } = info
 
-                if (dragDirectionLock) {
-                    if (currentDirection === null) {
-                        currentDirection = getCurrentDirection(offset)
+                if (dragDirectionLock && currentDirection === null) {
+                    currentDirection = getCurrentDirection(offset)
 
-                        if (currentDirection !== null) {
-                            onDirectionLock && onDirectionLock(currentDirection)
-                        }
-                        return
+                    if (currentDirection !== null) {
+                        onDirectionLock && onDirectionLock(currentDirection)
+                        blockViewportScroll()
                     }
+                    return
                 }
 
+                blockViewportScroll()
                 updatePoint("x", offset)
                 updatePoint("y", offset)
 
@@ -400,6 +404,7 @@ export function useDraggable(
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
+                unblockViewportScroll()
                 const { velocity } = info
 
                 if (!dragPropagation && openGlobalLock) {
