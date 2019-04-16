@@ -14,6 +14,7 @@ import {
     ValueTarget,
 } from "../types"
 import { unitConversion } from "../dom/unit-type-conversion"
+import { resolveVariables } from "../dom/css-variables-conversion"
 import styler from "stylefire"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
@@ -295,6 +296,17 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         if (!target) return Promise.resolve()
 
         target = this.transformValues(target as any)
+
+        // Resolve CSS variables, returns modified copies if changed
+        const resolved = resolveVariables(
+            this.values,
+            target,
+            transitionEnd,
+            this.ref
+        )
+        target = resolved.target
+        transitionEnd = resolved.transitionEnd
+
         if (transitionEnd) {
             transitionEnd = this.transformValues(transitionEnd as any)
         }
