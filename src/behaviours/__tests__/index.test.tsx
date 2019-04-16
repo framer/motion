@@ -83,6 +83,28 @@ describe("dragging", () => {
 
         return expect(promise).resolves.toBeCalledTimes(1)
     })
+    test("panSessionStart fires", async () => {
+        const promise = new Promise(resolve => {
+            const onDragStart = jest.fn()
+            const Component = () => (
+                <MockDrag>
+                    <motion.div drag onPanSessionStart={onDragStart} />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(100, 100)
+
+            sync.postRender(() => {
+                pointer.end()
+                resolve(onDragStart)
+            })
+        })
+
+        return expect(promise).resolves.toBeCalledTimes(1)
+    })
 
     test("dragTransitionEnd fires", async () => {
         const promise = new Promise(resolve => {

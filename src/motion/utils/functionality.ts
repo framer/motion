@@ -107,6 +107,7 @@ const gestureProps = [
     "drag",
     "onPan",
     "onPanStart",
+    "onPanSessionStart",
     "onPanEnd",
     "onTap",
     "onTapStart",

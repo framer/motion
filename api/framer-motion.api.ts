@@ -245,6 +245,7 @@ interface Orchestration {
 interface PanHandlers {
     onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void;
     onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onPanSessionStart?(event: MouseEvent | TouchEvent, info: EventInfo): void;
     onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
 }
 

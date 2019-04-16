@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.15.0] 2019-04-12
 
+### Added
+
+-   `onPanSessionStart` event handler.
+
 ### Changed
 
 -   `useViewportScrollValues` => `useViewportScroll`.

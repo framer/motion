@@ -212,8 +212,7 @@ export interface PanHandlers {
 
     /**
      * Callback function that fires when we begin detecting a pan gesture. This
-     * is analogous to `onMouseStart` or `onTouchStart`, but only fires if this
-     * component detects pan gestures.
+     * is analogous to `onMouseStart` or `onTouchStart`.
      * .
      *
      * ```jsx
@@ -437,7 +436,7 @@ export function usePanGesture(
         }
     }, [])
     let handlers: Partial<{ onPointerDown: EventHandler }> = { onPointerDown }
-    if (!onPan && !onPanStart && !onPanEnd) {
+    if (!(onPan || onPanStart || onPanEnd || onPanSessionStart)) {
         handlers = {}
     }
 
