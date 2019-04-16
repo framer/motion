@@ -194,7 +194,7 @@ export interface PanHandlers {
      *
      * ```jsx
      * function onPanStart(event, info) {
-     *   console.log(info.point.x, spoint.y)
+     *   console.log(info.point.x, info.point.y)
      * }
      *
      * <motion.div onPanStart={onPanStart} />
@@ -209,6 +209,28 @@ export interface PanHandlers {
      *   - `velocity`: Current velocity of the pointer.
      */
     onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
+
+    /**
+     * Callback function that fires when we begin detecting a pan gesture. This
+     * is analogous to `onMouseStart` or `onTouchStart`, but only fires if this
+     * component detects pan gestures.
+     * .
+     *
+     * ```jsx
+     * function onPanSessionStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <motion.div onPanSessionStart={onPanSessionStart} />
+     * ```
+     *
+     * @param event - The originating pointer event.
+     * @param info - An {@link EventInfo} object containing `x`/`y` values for:
+     *
+     *   - `point`: Relative to the device or page.
+     */
+
+    onPanSessionStart?(event: MouseEvent | TouchEvent, info: EventInfo): void
 
     /**
      * Callback function that fires when the pan gesture ends on this element.
@@ -248,7 +270,7 @@ export function usePanGesture(
     handlers: PanHandlers
 ): { onPointerDown: EventHandler }
 export function usePanGesture(
-    { onPan, onPanStart, onPanEnd }: PanHandlers,
+    { onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers,
     ref?: RefObject<Element>
 ) {
     const session = useRef<EventSession | null>(null)
@@ -380,11 +402,12 @@ export function usePanGesture(
     )
 
     const onPointerDown = useCallback(
-        (event: Event, { point }: EventInfo) => {
-            // TODO: We might need to add a callback here like `onPanDetectStart`
-            // We can't add our own `preventDefault()` as it unconditionally blocks scrolling on mobile
-            // but `onTouchStart` isn't able to preventDefault the same way as a DOM-attached listener
-            // (For instance it doesn't block the iOS text highlight magnifier)
+        (event: MouseEvent | TouchEvent, info: EventInfo) => {
+            const { point } = info
+
+            if (onPanSessionStart) {
+                onPanSessionStart(event, info)
+            }
 
             const initialPoint = transformPagePoint
                 ? transformPagePoint(point)

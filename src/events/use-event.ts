@@ -20,6 +20,7 @@ export const eventListener = (
         }
 
         // TODO: Pointer events are stacking after every pan start
+        // https://github.com/framer/company/issues/12814
         target.addEventListener(name, handler, options)
     }
     const stopListening = () => {
