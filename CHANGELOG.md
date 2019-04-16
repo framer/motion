@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.15.0] 2019-04-12
+## [0.15.1] 2019-04-16
+
+### Added
+
+-   `HTMLMotionProps` and `SVGMotionProps`.
+
+## [0.15.0] 2019-04-16
 
 ### Added
 
