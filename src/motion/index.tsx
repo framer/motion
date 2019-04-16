@@ -1,15 +1,19 @@
+import { createMotionComponent } from "./component"
+import { createDomMotionConfig } from "./functionality/dom"
 import {
-    SVGAttributes,
-    ForwardRefExoticComponent,
-    PropsWithoutRef,
-    RefAttributes,
+    ComponentType,
     ReactHTML,
     DetailedHTMLFactory,
     HTMLAttributes,
+    PropsWithoutRef,
+    RefAttributes,
+    SVGAttributes,
+    ForwardRefExoticComponent,
 } from "react"
-import { elements, HTMLElements, SVGElements } from "./utils/supported-elements"
+import { HTMLElements, htmlElements } from "./utils/supported-elements"
+import { svgElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
-import { createMotionComponent } from "./component"
+
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
@@ -17,7 +21,49 @@ export {
     ComponentAnimationControls,
 } from "../animation/ComponentAnimationControls"
 export { createMotionComponent }
-export { htmlElements, svgElements } from "./utils/supported-elements"
+
+export const htmlMotionComponents: HTMLMotionComponents = htmlElements.reduce(
+    (acc, Component) => {
+        acc[Component] = createMotionComponent(createDomMotionConfig(Component))
+        return acc
+    },
+    {} as HTMLMotionComponents
+)
+
+export const svgMotionComponents: SVGMotionComponents = svgElements.reduce(
+    (acc, Component) => {
+        acc[Component] = createMotionComponent(createDomMotionConfig(Component))
+        return acc
+    },
+    {} as SVGMotionComponents
+)
+
+/**
+ * HTML & SVG components, optimised for use with gestures and animation. These can be used as
+ * drop-in replacements for any HTML & SVG component, all CSS & SVG properties are supported.
+ *
+ * @internalremarks
+ *
+ * I'd like to make it possible for these to be loaded "on demand" - to reduce bundle size by only
+ * including HTML/SVG stylers, animation and/or gesture support when necessary.
+ *
+ * ```jsx
+ * <motion.div animate={{ x: 100 }} />
+ *
+ * <motion.p animate={{ height: 200 }} />
+ *
+ * <svg><motion.circle r={10} animate={{ r: 20 }} /></svg>
+ * ```
+ *
+ * @public
+ */
+export const motion = {
+    custom: (Component: ComponentType<any>) => {
+        return createMotionComponent(createDomMotionConfig(Component))
+    },
+    ...htmlMotionComponents,
+    ...svgMotionComponents,
+}
 
 type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
     ? P
@@ -78,49 +124,3 @@ type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
 export type SVGMotionComponents = {
     [K in SVGElements]: ForwardRefComponent<SVGElement, SVGMotionProps>
 }
-
-/**
- * A factory to create motion-optimised versions of existing React DOM components.
- *
- * @public
- */
-export type CustomMotionComponent = { custom: typeof createMotionComponent }
-
-/**
- * Motion-optimised versions of React DOM components.
- *
- * ```jsx
- * <motion.div />
- * <motion.circle />
- * const Component = motion.custom(ExistingComponent)
- * ```
- *
- * @public
- */
-export type MotionComponents = CustomMotionComponent &
-    HTMLMotionComponents &
-    SVGMotionComponents
-
-/**
- * HTML & SVG components, optimised for use with gestures and animation. These can be used as
- * drop-in replacements for any HTML & SVG component, all CSS & SVG properties are supported.
- *
- * ```jsx
- * <motion.div animate={{ x: 100 }} />
- *
- * <motion.p animate={{ height: 200 }} />
- *
- * <svg><motion.circle r={10} animate={{ r: 20 }} /></svg>
- * ```
- *
- * @public
- */
-export const motion = elements.reduce(
-    (acc, element) => {
-        acc[element] = createMotionComponent(element)
-        return acc
-    },
-    {
-        custom: createMotionComponent,
-    }
-) as MotionComponents

@@ -15,7 +15,7 @@ const isMotionValue = (value: any): value is MotionValue => {
 export const buildStyleAttr = (
     values: MotionValuesMap,
     styleProp: CSSProperties,
-    isStatic: boolean
+    isStatic?: boolean
 ): CSSProperties => {
     return {
         ...styleProp,

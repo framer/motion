@@ -186,5 +186,3 @@ export const svgElements: (keyof ReactSVG)[] = svgTuple([
     "view",
 ])
 export type SVGElements = UnionStringArray<typeof svgElements>
-
-export const elements = [...htmlElements, ...svgElements]
