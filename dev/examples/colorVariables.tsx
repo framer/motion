@@ -27,10 +27,7 @@ export const App = () => {
     return (
         <div style={{ "--from": "#09F", "--to": "#F00" } as any} ref={ref}>
             <motion.div
-                animate={{
-                    background: "var(--to)",
-                    // transitionEnd: { background: "var(--to)" },
-                }}
+                animate={{ background: "var(--to)" }}
                 transition={transition}
                 style={style}
             />
