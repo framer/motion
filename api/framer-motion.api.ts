@@ -77,6 +77,9 @@ interface HoverHandlers {
     whileHover?: string | TargetAndTransition;
 }
 
+// @public (undocumented)
+declare type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWithoutMotionProps<UnwrapFactoryAttributes<ReactHTML[TagName]>, UnwrapFactoryElement<ReactHTML[TagName]>> & MotionProps;
+
 // @public
 interface Inertia {
     bounceDamping?: number;
@@ -634,6 +637,10 @@ interface Spring {
     to?: number | string;
     type: "spring";
     velocity?: number;
+}
+
+// @public (undocumented)
+interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {
 }
 
 // @public (undocumented)
