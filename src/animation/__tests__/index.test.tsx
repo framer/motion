@@ -76,7 +76,7 @@ describe("useAnimation", () => {
         await expect(promise).resolves.toBe(100)
     })
 
-    test("animates to named poses", async () => {
+    test("animates to named variants", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
                 const animation = useAnimation({
@@ -98,7 +98,36 @@ describe("useAnimation", () => {
         await expect(promise).resolves.toBe(100)
     })
 
-    test("propagates poses to children", async () => {
+    test("animates to named variants via variants prop", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => {
+                const animation = useAnimation()
+                const x = useMotionValue(0)
+                const variants = {
+                    foo: { x: 200 },
+                }
+
+                useEffect(() => {
+                    animation.start("foo").then(() => resolve(x.get()))
+                }, [])
+
+                return (
+                    <motion.div
+                        variants={variants}
+                        animate={animation}
+                        style={{ x }}
+                    />
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe(200)
+    })
+
+    test("propagates variants to children", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
                 const animation = useAnimation({

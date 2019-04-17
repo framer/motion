@@ -45,7 +45,7 @@ export class AnimationControls {
      *
      * @internal
      */
-    private variants: Variants = {}
+    private variants: Variants
 
     /**
      * Set variants on this and all child components.
