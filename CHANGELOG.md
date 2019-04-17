@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.15.2] 2019-04-17
+
+### Fixed
+
+-   `onDragEnd` not returning transformed point.
+
 ## [0.15.1] 2019-04-16
 
 ### Added
