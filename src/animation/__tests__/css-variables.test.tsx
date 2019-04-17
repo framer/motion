@@ -3,42 +3,48 @@ import { render } from "react-testing-library"
 import { motion } from "../../motion"
 import * as React from "react"
 
-describe("css variables", () => {
-    const fromName = "--from"
-    const toName = "--to"
-    const fromValue = "#09F"
-    const toValue = "#F00"
-    const fromVariable = `var(${fromName})`
-    const toVariable = `var(${toName})`
+const fromName = "--from"
+const toName = "--to"
+const fromValue = "#09F"
+const toValue = "#F00"
+const fromVariable = `var(${fromName})`
+const toVariable = `var(${toName})`
 
-    const style = {
-        [fromName]: fromValue,
-        [toName]: toValue,
-    } as React.CSSProperties
+const style = {
+    [fromName]: fromValue,
+    [toName]: toValue,
+} as React.CSSProperties
 
-    // Stub getPropertyValue because CSS variables aren't supported by JSDom
-    let originalGetComputedStyle: any
-    beforeAll(() => {
-        originalGetComputedStyle = window.getComputedStyle
-        ;(window as any).getComputedStyle = () => {
-            return {
-                getPropertyValue(variableName: "--from" | "--to") {
-                    switch (variableName) {
-                        case fromName:
-                            return fromValue
-                        case toName:
-                            return toValue
-                        default:
-                            throw Error("Should never happen")
-                    }
-                },
+// Stub getPropertyValue because CSS variables aren't supported by JSDom
+
+const originalGetComputedStyle = window.getComputedStyle
+
+function getComputedStyleStub() {
+    return {
+        getPropertyValue(variableName: "--from" | "--to") {
+            switch (variableName) {
+                case fromName:
+                    return fromValue
+                case toName:
+                    return toValue
+                default:
+                    throw Error("Should never happen")
             }
-        }
-    })
+        },
+    }
+}
 
-    afterAll(() => {
-        window.getComputedStyle = originalGetComputedStyle
-    })
+function stubGetComputedStyles() {
+    ;(window as any).getComputedStyle = getComputedStyleStub
+}
+
+function resetComputedStyles() {
+    window.getComputedStyle = originalGetComputedStyle
+}
+
+describe("css variables", () => {
+    beforeAll(stubGetComputedStyles)
+    afterAll(resetComputedStyles)
 
     test("should animate css color variables", async () => {
         const promise = new Promise(resolve => {
@@ -75,10 +81,7 @@ describe("css variables", () => {
     test("should put back the original target css variable on animation end", async () => {
         const promise = new Promise<ChildNode | null>(resolve => {
             const resolvePromise = () => {
-                // requestAnimationFrame(() => resolve(container.firstChild))
-                setTimeout(() => {
-                    resolve(container.firstChild)
-                }, 100)
+                requestAnimationFrame(() => resolve(container.firstChild))
             }
 
             const Component = () => {
@@ -98,10 +101,8 @@ describe("css variables", () => {
             rerender(<Component />)
         })
 
-        const element: any = await promise
-
-        expect(element.style).toEqual(
-            expect.objectContaining({ background: "var(--to)" })
-        )
+        resetComputedStyles()
+        expect(promise).resolves.toHaveStyle("background: pink")
+        stubGetComputedStyles()
     })
 })
