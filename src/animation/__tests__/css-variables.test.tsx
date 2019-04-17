@@ -78,7 +78,8 @@ describe("css variables", () => {
         expect(resolvedAs).not.toBe(toVariable)
     })
 
-    test("should put back the original target css variable on animation end", async () => {
+    // Skipping because this test always succeeds, no matter what style values you check for ¯\\_(ツ)_/¯
+    test.skip("should have the original target css variable on animation end", async () => {
         const promise = new Promise<ChildNode | null>(resolve => {
             const resolvePromise = () => {
                 requestAnimationFrame(() => resolve(container.firstChild))
@@ -102,7 +103,10 @@ describe("css variables", () => {
         })
 
         resetComputedStyles()
-        expect(promise).resolves.toHaveStyle("background: pink")
+        const result = expect(promise).resolves.toHaveStyle(
+            `background: ${toVariable}`
+        )
         stubGetComputedStyles()
+        return result
     })
 })
