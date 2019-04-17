@@ -2,13 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.15.3] 2019-04-17
+## [0.15.2] 2019-04-17
 
 ### Added
 
 -   Support for CSS variables.
-
-## [0.15.2] 2019-04-17
 
 ### Fixed
 
