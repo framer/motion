@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   `onDragEnd` not returning transformed point.
+-   Fixing use of `variants` prop with `useAnimation`.
 
 ## [0.15.1] 2019-04-16
 
