@@ -278,6 +278,22 @@ export function usePanGesture(
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
 
+    const getPanInfo = ({ point }: EventInfo): PanInfo => {
+        const currentPoint = session.current as EventSession
+        return {
+            point,
+            delta: Point.subtract(point, lastDevicePoint(currentPoint)),
+            offset: Point.subtract(point, startDevicePoint(currentPoint)),
+            velocity: getVelocity(currentPoint, 0.1),
+        }
+    }
+
+    const transformPoint = (info: EventInfo) => {
+        return transformPagePoint
+            ? { point: transformPagePoint(info.point) }
+            : info
+    }
+
     const updatePoint = useCallback(
         () => {
             if (
@@ -292,45 +308,25 @@ export function usePanGesture(
                 unblockViewportScroll()
                 return
             }
-            const { point } = lastMoveEventInfo.current
-            const delta = Point.subtract(
-                point,
-                lastDevicePoint(session.current)
-            )
-            const offset = Point.subtract(
-                point,
-                startDevicePoint(session.current)
-            )
+
+            const info = getPanInfo(lastMoveEventInfo.current)
+            const { point } = info
+
             const { timestamp } = getFrameData()
             session.current.pointHistory.push({ ...point, timestamp })
             pointer.current.x.set(point.x)
             pointer.current.y.set(point.y)
 
-            if (Math.abs(delta.x) > 0 || Math.abs(delta.y) > 0) {
-                const velocity = getVelocity(session.current, 0.1)
-
-                const info = {
-                    point,
-                    delta,
-                    offset,
-                    velocity,
+            if (!session.current.startEvent) {
+                if (onPanStart) {
+                    onPanStart(lastMoveEvent.current, info)
                 }
-
-                if (!session.current.startEvent) {
-                    if (onPanStart) {
-                        onPanStart(lastMoveEvent.current, info)
-                    }
-                    session.current.startEvent = lastMoveEvent.current
-                }
-
-                if (onPan) {
-                    onPan(lastMoveEvent.current, info)
-                }
+                session.current.startEvent = lastMoveEvent.current
             }
 
-            // Reset delta
-            delta.x = 0
-            delta.y = 0
+            if (onPan) {
+                onPan(lastMoveEvent.current, info)
+            }
         },
         [onPan, onPanStart]
     )
@@ -338,14 +334,7 @@ export function usePanGesture(
     const onPointerMove = useCallback(
         (event: MouseEvent | TouchEvent, info: EventInfo) => {
             lastMoveEvent.current = event
-
-            if (transformPagePoint) {
-                lastMoveEventInfo.current = {
-                    point: transformPagePoint(info.point),
-                }
-            } else {
-                lastMoveEventInfo.current = info
-            }
+            lastMoveEventInfo.current = transformPoint(info)
 
             // Throttle mouse move event to once per frame
             sync.update(updatePoint, true)
@@ -354,9 +343,8 @@ export function usePanGesture(
     )
 
     const onPointerUp = useCallback(
-        (event: MouseEvent | TouchEvent, { point }: EventInfo) => {
+        (event: MouseEvent | TouchEvent, info: EventInfo) => {
             cancelSync.update(updatePoint)
-
             stopPointerMove()
             stopPointerUp()
 
@@ -366,24 +354,10 @@ export function usePanGesture(
                 return
             }
 
-            const delta = Point.subtract(
-                point,
-                lastDevicePoint(session.current)
-            )
-            const offset = Point.subtract(
-                point,
-                startDevicePoint(session.current)
-            )
-            const velocity = getVelocity(session.current, 0.1)
-
             if (onPanEnd) {
-                onPanEnd(event, {
-                    point,
-                    delta,
-                    offset,
-                    velocity,
-                })
+                onPanEnd(event, getPanInfo(transformPoint(info)))
             }
+
             session.current = null
         },
         [onPanEnd, onPointerMove]
@@ -402,25 +376,22 @@ export function usePanGesture(
 
     const onPointerDown = useCallback(
         (event: MouseEvent | TouchEvent, info: EventInfo) => {
-            const { point } = info
-
-            if (onPanSessionStart) {
-                onPanSessionStart(event, info)
-            }
-
-            const initialPoint = transformPagePoint
-                ? transformPagePoint(point)
-                : point
+            const initialInfo = transformPoint(info)
+            const { point } = initialInfo
 
             pointer.current = {
-                x: motionValue(initialPoint.x),
-                y: motionValue(initialPoint.y),
+                x: motionValue(point.x),
+                y: motionValue(point.y),
             }
 
             const { timestamp } = getFrameData()
             session.current = {
                 target: event.target,
-                pointHistory: [{ ...initialPoint, timestamp }],
+                pointHistory: [{ ...point, timestamp }],
+            }
+
+            if (onPanSessionStart) {
+                onPanSessionStart(event, initialInfo)
             }
 
             startPointerMove()

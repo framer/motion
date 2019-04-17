@@ -7,7 +7,12 @@ import { fireEvent } from "dom-testing-library"
 import sync from "framesync"
 import { Constraints } from "../use-draggable"
 
-const pos = {
+type Point = {
+    x: number
+    y: number
+}
+
+const pos: Point = {
     x: 0,
     y: 0,
 }
@@ -83,6 +88,37 @@ describe("dragging", () => {
 
         return expect(promise).resolves.toBeCalledTimes(1)
     })
+
+    test("dragEnd returns transformed pointer", async () => {
+        const promise = new Promise(resolve => {
+            let p: Point = { x: 0, y: 0 }
+
+            const onDrag = (_e: MouseEvent, { point }: { point: Point }) => {
+                p.x = point.x
+                p.y = point.y
+            }
+            const onDragEnd = (_e: MouseEvent, { point }: { point: Point }) => {
+                resolve(point.x === p.x && point.y === p.y)
+            }
+            const Component = () => (
+                <MockDrag>
+                    <motion.div drag onDrag={onDrag} onDragEnd={onDragEnd} />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(100, 100)
+
+            sync.postRender(() => {
+                pointer.end()
+            })
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
+
     test("panSessionStart fires", async () => {
         const promise = new Promise(resolve => {
             const onDragStart = jest.fn()
