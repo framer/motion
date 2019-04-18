@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.15.3] Unreleased
+
+### Fixed
+
+-   Improving comparison for `animate` prop to account for keyframe arrays.
+
 ## [0.15.2] 2019-04-17
 
 ### Fixed
