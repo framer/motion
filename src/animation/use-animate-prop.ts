@@ -2,6 +2,19 @@ import { useRef, useEffect } from "react"
 import { Target, Transition } from "../types"
 import { ComponentAnimationControls } from "./ComponentAnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
+import { shallowCompare } from "../utils/use-inline"
+
+export const hasUpdated = (
+    prev: string | number | any[],
+    next: string | number | any[]
+) => {
+    return (
+        next !== undefined &&
+        (Array.isArray(prev) && Array.isArray(next)
+            ? !shallowCompare(next, prev)
+            : prev !== next)
+    )
+}
 
 /**
  * Handle the `animate` prop when its an object of values, ie:
@@ -38,15 +51,14 @@ export function useAnimateProp(
             const toAnimate: Target = {}
 
             for (const key in prevValues.current) {
-                const hasUpdated =
-                    target[key] !== undefined &&
-                    prevValues.current[key] !== target[key]
-
                 const shouldAnimateOnMount =
                     isInitialRender.current &&
                     (!values.has(key) || values.get(key) !== target[key])
 
-                if (hasUpdated || shouldAnimateOnMount) {
+                if (
+                    hasUpdated(prevValues.current[key], target[key]) ||
+                    shouldAnimateOnMount
+                ) {
                     toAnimate[key] = target[key]
                 }
             }
