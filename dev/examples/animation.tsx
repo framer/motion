@@ -10,10 +10,11 @@ const style = {
 }
 
 export const App = () => {
-    const animation = useAnimation({
+    const animation = useAnimationControls()
+    const variants = {
         visible: { opacity: 1 },
         right: { x: 100 },
-    })
+    }
 
     animation.start("visible")
 
@@ -21,6 +22,7 @@ export const App = () => {
         <motion.div
             animate={animation}
             initial={{ rotate: 0, opacity: 0 }}
+            variants={variants}
             transition={{ duration: 5 }}
             style={style}
             onMouseEnter={() => console.log("test")}
