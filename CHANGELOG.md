@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [0.15.3] Unreleased
 
+### Added
+
+-   `custom` prop for dynamic variants.
+
 ### Fixed
 
 -   Improving comparison for `animate` prop to account for keyframe arrays.

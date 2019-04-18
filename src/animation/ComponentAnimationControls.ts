@@ -156,7 +156,7 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         if (isTargetResolver(variant)) {
             // resolve current and velocity
             variant = variant(
-                this.props,
+                this.props.custom,
                 getCurrent(this.values),
                 getVelocity(this.values)
             )

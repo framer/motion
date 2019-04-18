@@ -1267,7 +1267,7 @@ export type TargetAndTransition = TargetWithKeyframes & {
 }
 
 export type TargetResolver = (
-    props: any,
+    custom: any,
     current: Target,
     velocity: Target
 ) => TargetAndTransition

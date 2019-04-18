@@ -476,6 +476,7 @@ declare const motion: {
 
 // @public (undocumented)
 interface MotionAdvancedProps {
+    custom?: any;
     // @internal
     inherit?: boolean;
     // @internal

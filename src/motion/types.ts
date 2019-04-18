@@ -159,6 +159,26 @@ export interface MotionCallbacks {
  */
 export interface MotionAdvancedProps {
     /**
+     * Custom data to use to resolve dynamic variants differently for each animating component.
+     *
+     * ```jsx
+     * const variants = {
+     *   visible: (custom) => ({
+     *     opacity: 1,
+     *     transition: { delay: custom * 0.2 }
+     *   })
+     * }
+     *
+     * <motion.div custom={0} animate="visible" variants={variants} />
+     * <motion.div custom={1} animate="visible" variants={variants} />
+     * <motion.div custom={2} animate="visible" variants={variants} />
+     * ```
+     *
+     * @public
+     */
+    custom?: any
+
+    /**
      * @internal
      * Set to `false` to prevent inheriting variant changes from its parent.
      */
