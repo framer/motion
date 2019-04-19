@@ -115,7 +115,7 @@ describe("dragging", () => {
             const { getByTestId, rerender } = render(<Component />)
             rerender(<Component />)
 
-            const pointer = drag(getByTestId("draggable")).to(100, 100)
+            const pointer = drag(getByTestId("draggable")).to(50, 50)
 
             sync.postRender(() => {
                 pointer.end()
