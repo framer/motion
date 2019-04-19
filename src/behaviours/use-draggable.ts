@@ -314,6 +314,14 @@ export function useDraggable(
                 point.y = y
             }
 
+            const convertPanToDrag = (info: PanInfo) => ({
+                ...info,
+                point: {
+                    x: point.x ? point.x.get() : 0,
+                    y: point.y ? point.y.get() : 0,
+                },
+            })
+
             const updatePoint = (
                 axis: "x" | "y",
                 offset: { x: number; y: number }
@@ -364,7 +372,7 @@ export function useDraggable(
                 }
                 currentDirection = null
 
-                onDragStart && onDragStart(event, info)
+                onDragStart && onDragStart(event, convertPanToDrag(info))
             }
 
             const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
@@ -390,13 +398,7 @@ export function useDraggable(
 
                 // here we use ref to call only the last event handler
                 if (onDragRef.current) {
-                    onDragRef.current(event, {
-                        ...info,
-                        point: {
-                            x: point.x ? point.x.get() : 0,
-                            y: point.y ? point.y.get() : 0,
-                        },
-                    })
+                    onDragRef.current(event, convertPanToDrag(info))
                 }
             }
 
@@ -445,7 +447,7 @@ export function useDraggable(
                     )
                 }
 
-                onDragEnd && onDragEnd(event, info)
+                onDragEnd && onDragEnd(event, convertPanToDrag(info))
             }
 
             return {

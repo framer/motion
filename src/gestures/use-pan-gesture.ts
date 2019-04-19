@@ -391,7 +391,7 @@ export function usePanGesture(
             }
 
             if (onPanSessionStart) {
-                onPanSessionStart(event, initialInfo)
+                onPanSessionStart(event, getPanInfo(initialInfo))
             }
 
             startPointerMove()
