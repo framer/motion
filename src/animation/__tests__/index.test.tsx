@@ -3,7 +3,7 @@ import { render } from "react-testing-library"
 import * as React from "react"
 import { useEffect } from "react"
 import { motion } from "../../motion"
-import { useAnimationControls } from "../use-animation"
+import { useAnimation } from "../use-animation"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue } from "../../value"
 
@@ -161,7 +161,10 @@ describe("useAnimation", () => {
                         variants={variants}
                         style={{ x }}
                     >
-                        <motion.div style={{ backgroundColor }} />
+                        <motion.div
+                            variants={childVariants}
+                            style={{ backgroundColor }}
+                        />
                     </motion.div>
                 )
             }
@@ -170,7 +173,10 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toEqual([100, "rgba(255, 255, 255, 1)"])
+        return await expect(promise).resolves.toEqual([
+            100,
+            "rgba(255, 255, 255, 1)",
+        ])
     })
 
     test("animates on mount", () => {

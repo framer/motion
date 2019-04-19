@@ -2,24 +2,24 @@ import { AnimationControls } from "./AnimationControls"
 import { useMemo, useEffect } from "react"
 
 /**
- * The `useAnimationControls` hook returns `AnimationControls`, which can be used to manually start, stop and sequence animations on one or more Frames.
+ * The `useAnimation` hook returns `AnimationControls`, which can be used to manually start, stop and sequence animations on one or more Frames.
  *
  * The returned `AnimationControls` should be passed as the `animate` property of the `Frame`. It can be passed to any number of Frames. These Frames can be animated with the `start` method. It accepts the same properties as the `animate` property.
  *
  * ```jsx
  *
  * import * as React from "react"
- * import { Frame, useAnimationControls } from "framer"
+ * import { Frame, useAnimation } from "framer"
  *
  * export function MyComponent(props) {
- *    const animation = useAnimation()
+ *    const controls = useAnimation()
  *
- *    animation.start({
+ *    controls.start({
  *        x: 100,
  *        transition: { duration: 0.5 },
  *    })
  *
- *    return <Frame animate={animation} />
+ *    return <Frame animate={controls} />
  * }
  *
  * ```

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, useAnimationControls } from "../../src"
+import { motion, useAnimation } from "../../src"
 
 const style = {
     width: 100,
