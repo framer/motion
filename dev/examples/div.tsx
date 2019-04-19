@@ -15,23 +15,25 @@ const stylea = {
 }
 
 export const App = () => {
-    const animation = useAnimation({
+    const parentControls = useAnimation()
+    const parentVariants = {
         default: { x: 0 },
         active: () => ({ x: 200, transition: { delayChildren: 0.3 } }),
-    })
+    }
 
-    const childPoses = useAnimation({
+    const childVariants = {
         default: { opacity: 0.2 },
         active: { opacity: 1 },
-    })
+    }
 
     const [isActive, setActive] = useState(true)
 
-    animation.start("active")
+    parentControls.start("active")
 
     return (
         <motion.div
-            animate={animation}
+            animate={parentControls}
+            variants={parentVariants}
             onClick={() => setActive(!isActive)}
             style={style}
             onDrag={(event, info) => {
@@ -39,7 +41,7 @@ export const App = () => {
             }}
         >
             <motion.button
-                animate={childPoses}
+                variants={childVariants}
                 inherit
                 style={stylea}
                 type={"test"}

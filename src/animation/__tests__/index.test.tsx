@@ -79,16 +79,23 @@ describe("useAnimation", () => {
     test("animates to named variants", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const animation = useAnimation({
+                const animation = useAnimation()
+                const variants = {
                     foo: { x: 100 },
-                })
+                }
                 const x = useMotionValue(0)
 
                 useEffect(() => {
                     animation.start("foo").then(() => resolve(x.get()))
                 }, [])
 
-                return <motion.div animate={animation} style={{ x }} />
+                return (
+                    <motion.div
+                        variants={variants}
+                        animate={animation}
+                        style={{ x }}
+                    />
+                )
             }
 
             const { rerender } = render(<Component />)
@@ -130,27 +137,32 @@ describe("useAnimation", () => {
     test("propagates variants to children", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const animation = useAnimation({
+                const controls = useAnimation()
+                const variants = {
                     foo: { x: 100 },
-                })
+                }
 
-                const childAnimation = useAnimation({
+                const childVariants = {
                     foo: { backgroundColor: "#fff" },
-                })
+                }
 
                 const x = useMotionValue(0)
                 const backgroundColor = useMotionValue("#000")
 
                 useEffect(() => {
-                    animation
+                    controls
                         .start("foo")
                         .then(() => resolve([x.get(), backgroundColor.get()]))
                 }, [])
 
                 return (
-                    <motion.div animate={animation} style={{ x }}>
+                    <motion.div
+                        animate={controls}
+                        variants={variants}
+                        style={{ x }}
+                    >
                         <motion.div
-                            animate={childAnimation}
+                            variants={childVariants}
                             style={{ backgroundColor }}
                         />
                     </motion.div>
@@ -161,18 +173,28 @@ describe("useAnimation", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toEqual([100, "rgba(255, 255, 255, 1)"])
+        return await expect(promise).resolves.toEqual([
+            100,
+            "rgba(255, 255, 255, 1)",
+        ])
     })
 
     test("animates on mount", () => {
         const x = motionValue(0)
         const Component = () => {
-            const animation = useAnimation({
+            const controls = useAnimation()
+            const variants = {
                 test: { x: 100 },
-            })
+            }
 
-            animation.start("test", { type: false })
-            return <motion.div style={{ x }} animate={animation} />
+            controls.start("test", { type: false })
+            return (
+                <motion.div
+                    style={{ x }}
+                    variants={variants}
+                    animate={controls}
+                />
+            )
         }
         const { rerender } = render(<Component />)
         rerender(<Component />)

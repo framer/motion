@@ -8,6 +8,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `custom` prop for dynamic variants.
 
+### Removed
+
+-   `useAnimation` no longer takes `variants` or `defaultTransition` arguments (provide these to the component).
+
 ### Fixed
 
 -   Improving comparison for `animate` prop to account for keyframe arrays.

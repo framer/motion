@@ -696,7 +696,7 @@ interface Tween {
 declare function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
 // @public
-declare function useAnimation(variants?: Variants, defaultTransition?: Transition): AnimationControls;
+declare function useAnimation(): AnimationControls;
 
 // @public
 declare function useCycle<T>(...items: T[]): CycleState<T>;
