@@ -2,7 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.15.3] Unreleased
+## [0.16.0] Unreleased
+
+### Added
+
+-   `custom` prop for dynamic variants.
 
 ### Fixed
 

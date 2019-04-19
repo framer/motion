@@ -126,27 +126,33 @@ describe("motion component rendering and styles", () => {
     })
 
     // TODO: Replace dynamic variable test when we implement `custom` attribute: https://github.com/framer/company/issues/12508
-    // test("generates style attribute if passed initial as variant label is function", () => {
-    //     type Props = { i: number }
+    test("generates style attribute if passed initial as variant label is function", () => {
+        const variants = {
+            foo: (i: number) => ({ x: i * 10 }),
+        }
+        const childVariants = {
+            foo: (i: number) => ({ x: i * 10 }),
+        }
 
-    //     const variants = {
-    //         foo: ({ i }: Props) => ({ x: i * 10 }),
-    //     }
-    //     const childVariants = {
-    //         foo: ({ i }: Props) => ({ x: i * 10 }),
-    //     }
-
-    //     const { getByTestId } = render(
-    //         <motion.div initial="foo" variants={variants}>
-    //             <motion.div variants={childVariants} data-testid="a" i={0} />
-    //             <motion.div variants={childVariants} data-testid="b" i={1} />
-    //         </motion.div>
-    //     )
-    //     expect(getByTestId("a")).toHaveStyle("transform: none")
-    //     expect(getByTestId("b")).toHaveStyle(
-    //         "transform: translateX(10px) translateZ(0)"
-    //     )
-    // })
+        const { getByTestId } = render(
+            <motion.div initial="foo" variants={variants}>
+                <motion.div
+                    variants={childVariants}
+                    data-testid="a"
+                    custom={0}
+                />
+                <motion.div
+                    variants={childVariants}
+                    data-testid="b"
+                    custom={1}
+                />
+            </motion.div>
+        )
+        expect(getByTestId("a")).toHaveStyle("transform: none")
+        expect(getByTestId("b")).toHaveStyle(
+            "transform: translateX(10px) translateZ(0)"
+        )
+    })
 
     test("generates style attribute for children if passed initial as variant label", () => {
         const variants = {
