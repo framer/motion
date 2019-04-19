@@ -11,6 +11,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Improving comparison for `animate` prop to account for keyframe arrays.
+-   Adding drag point in `onDragStart` and `onDragEnd` callbacks.
 
 ## [0.15.2] 2019-04-17
 
