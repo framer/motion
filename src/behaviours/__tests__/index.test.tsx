@@ -102,14 +102,20 @@ describe("dragging", () => {
             }
             const Component = () => (
                 <MockDrag>
-                    <motion.div drag onDrag={onDrag} onDragEnd={onDragEnd} />
+                    <motion.div
+                        data-testid="draggable"
+                        drag
+                        onDrag={onDrag}
+                        onDragEnd={onDragEnd}
+                        style={{ x: 100, y: 100 }}
+                    />
                 </MockDrag>
             )
 
-            const { container, rerender } = render(<Component />)
+            const { getByTestId, rerender } = render(<Component />)
             rerender(<Component />)
 
-            const pointer = drag(container.firstChild).to(100, 100)
+            const pointer = drag(getByTestId("draggable")).to(100, 100)
 
             sync.postRender(() => {
                 pointer.end()
