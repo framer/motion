@@ -9,7 +9,7 @@ const style = {
 }
 
 export const App = () => {
-    const animation = useAnimationControls()
+    const animation = useAnimation()
     let rotate = 0
     const onTap = () => {
         rotate += 10

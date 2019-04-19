@@ -1631,7 +1631,7 @@ declare function unwrapMotionValue(
 ): string | number
 
 // @public
-declare function useAnimationControls(
+declare function useAnimation(
     variants?: Variants,
     defaultTransition?: Transition
 ): AnimationControls

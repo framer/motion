@@ -15,7 +15,7 @@ const stylea = {
 }
 
 export const App = () => {
-    const parentControls = useAnimationControls()
+    const parentControls = useAnimation()
     const parentVariants = {
         default: { x: 0 },
         active: () => ({ x: 200, transition: { delayChildren: 0.3 } }),

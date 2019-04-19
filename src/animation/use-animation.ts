@@ -12,7 +12,7 @@ import { useMemo, useEffect } from "react"
  * import { Frame, useAnimationControls } from "framer"
  *
  * export function MyComponent(props) {
- *    const animation = useAnimationControls()
+ *    const animation = useAnimation()
  *
  *    animation.start({
  *        x: 100,
@@ -28,7 +28,7 @@ import { useMemo, useEffect } from "react"
  *
  * @public
  */
-export function useAnimationControls() {
+export function useAnimation() {
     const animationControls = useMemo(() => new AnimationControls(), [])
 
     useEffect(() => {

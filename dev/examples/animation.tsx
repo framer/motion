@@ -10,7 +10,7 @@ const style = {
 }
 
 export const App = () => {
-    const animation = useAnimationControls()
+    const animation = useAnimation()
     const variants = {
         visible: { opacity: 1 },
         right: { x: 100 },

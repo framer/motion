@@ -9,7 +9,7 @@ const style = {
 }
 
 export const App = () => {
-    const animation = useAnimationControls()
+    const animation = useAnimation()
     return (
         <motion.div
             animate={animation}

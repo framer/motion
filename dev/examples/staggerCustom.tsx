@@ -51,7 +51,7 @@ const Cell = ({ center, i, onClick }) => {
     const d = distance({ x, y }, center)
     const n = Math.max(d / max, 0.05) // normalized
 
-    const animation = useAnimationControls()
+    const animation = useAnimation()
 
     const animate = async () => {
         await animation.start({

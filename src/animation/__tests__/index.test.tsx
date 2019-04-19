@@ -11,7 +11,7 @@ describe("useAnimation", () => {
     test("animates on mount", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const animation = useAnimationControls()
+                const animation = useAnimation()
 
                 // We don't need to pass in x in normal use, but Jest will unmount the component
                 // before we can measure its styles when we run async. Using motion values
@@ -35,7 +35,7 @@ describe("useAnimation", () => {
     test("doesn't fire a pre-mount animation callback until the animation has finished", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const animation = useAnimationControls()
+                const animation = useAnimation()
 
                 const x = useMotionValue(0)
 
@@ -54,7 +54,7 @@ describe("useAnimation", () => {
     test("fire's a component's onAnimationComplete", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const animation = useAnimationControls()
+                const animation = useAnimation()
 
                 const x = useMotionValue(0)
 
@@ -79,7 +79,7 @@ describe("useAnimation", () => {
     test("animates to named variants", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const animation = useAnimationControls()
+                const animation = useAnimation()
                 const variants = {
                     foo: { x: 100 },
                 }
@@ -108,7 +108,7 @@ describe("useAnimation", () => {
     test("animates to named variants via variants prop", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const animation = useAnimationControls()
+                const animation = useAnimation()
                 const x = useMotionValue(0)
                 const variants = {
                     foo: { x: 200 },
@@ -137,7 +137,7 @@ describe("useAnimation", () => {
     test("propagates variants to children", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
-                const controls = useAnimationControls()
+                const controls = useAnimation()
                 const variants = {
                     foo: { x: 100 },
                 }
@@ -176,7 +176,7 @@ describe("useAnimation", () => {
     test("animates on mount", () => {
         const x = motionValue(0)
         const Component = () => {
-            const controls = useAnimationControls()
+            const controls = useAnimation()
             const variants = {
                 test: { x: 100 },
             }
