@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useState } from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
 import { MotionPlugins } from "../../motion/context/MotionPluginContext"
@@ -87,6 +88,45 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toBeCalledTimes(1)
+    })
+
+    test("drag handlers aren't frozen at drag session start", async () => {
+        const promise = new Promise(resolve => {
+            let count = 0
+            const Component = () => {
+                const [increment, setIncrement] = useState(1)
+                return (
+                    <MockDrag>
+                        <motion.div
+                            drag
+                            onDragStart={() => {
+                                count += increment
+                                setIncrement(2)
+                            }}
+                            onDrag={() => (count += increment)}
+                            onDragEnd={() => {
+                                count += increment
+                                resolve(count)
+                            }}
+                        />
+                    </MockDrag>
+                )
+            }
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(100, 100)
+
+            sync.postRender(() => {
+                pointer.to(50, 50)
+                sync.postRender(() => {
+                    pointer.end()
+                })
+            })
+        })
+
+        return expect(promise).resolves.toBe(7)
     })
 
     test("dragEnd returns transformed pointer", async () => {
