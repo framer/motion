@@ -6,15 +6,54 @@ function isVariable(value: any): value is string {
     return typeof value === "string" && value.startsWith("var(--")
 }
 
-const VariableRegex = /var\(([^\),]+)/
+const variableParametersRegex = /var\((.*)+\)/
+
+export function variableParameters(
+    str: string
+): {
+    mainParameter: string | undefined
+    fallbackParameter: string | undefined
+} {
+    const match = variableParametersRegex.exec(str)
+
+    let mainParameter: string | undefined
+    let fallbackParameter: string | undefined
+
+    if (!match || !match[1]) {
+        return { mainParameter, fallbackParameter }
+    }
+
+    const commaIndex = match[1].indexOf(",")
+    if (commaIndex === -1) {
+        mainParameter = match[1].trim()
+    } else {
+        mainParameter = match[1].slice(0, commaIndex).trim()
+        fallbackParameter = match[1].slice(commaIndex + 1).trim()
+    }
+
+    return { mainParameter, fallbackParameter }
+}
 
 function getVariableValue(
     name: string,
     element: HTMLElement
 ): string | undefined {
-    const match = VariableRegex.exec(name)
-    const customProperty = match ? match[1].trim() : ""
-    return getComputedStyle(element).getPropertyValue(customProperty)
+    const { mainParameter, fallbackParameter } = variableParameters(name)
+
+    if (!mainParameter) {
+        return
+    }
+
+    const value = getComputedStyle(element).getPropertyValue(mainParameter)
+
+    if (value) {
+        return value
+    } else if (isVariable(fallbackParameter)) {
+        // Would be nice to prevent recursion
+        return getVariableValue(fallbackParameter, element)
+    } else {
+        return fallbackParameter
+    }
 }
 
 export function resolveVariables(

@@ -1,6 +1,7 @@
 import "../../../jest.setup"
 import { render } from "react-testing-library"
 import { motion } from "../../motion"
+import { variableParameters } from "../../dom/css-variables-conversion"
 import * as React from "react"
 
 const fromName = "--from"
@@ -108,5 +109,29 @@ describe("css variables", () => {
         )
         stubGetComputedStyles()
         return result
+    })
+
+    test("css variable parsing", () => {
+        const { mainParameter, fallbackParameter } = variableParameters(
+            "var(--ID-123)"
+        )
+        expect(mainParameter).toBe("--ID-123")
+        expect(fallbackParameter).toBeUndefined()
+    })
+
+    test("css variable parsing fallback", () => {
+        const { mainParameter, fallbackParameter } = variableParameters(
+            "var(--ID-123, red)"
+        )
+        expect(mainParameter).toBe("--ID-123")
+        expect(fallbackParameter).toBe("red")
+    })
+
+    test("css variable parsing nested fallback", () => {
+        const { mainParameter, fallbackParameter } = variableParameters(
+            "var(--ID-123, var(--ID-234, cyan))"
+        )
+        expect(mainParameter).toBe("--ID-123")
+        expect(fallbackParameter).toBe("var(--ID-234, cyan)")
     })
 })
