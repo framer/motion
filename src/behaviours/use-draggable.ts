@@ -281,22 +281,24 @@ export function useDraggable(
         dragElastic = true,
         dragMomentum = true,
         dragTransition,
-        onDragStart,
-        onDragEnd,
-        onDrag,
-        onDirectionLock,
-        onDragTransitionEnd,
+        ...handlers
     }: DraggableProps,
     ref: RefObject<Element | null>,
     values: MotionValuesMap,
     controls: ComponentAnimationControls
 ) {
     const point = useRef<MotionPoint>({}).current
-    const onDragRef = useRef<any>(onDrag)
     const origin = useRef({ x: 0, y: 0 }).current
-    onDragRef.current = onDrag
 
-    const handlers = useMemo(
+    // By keeping a reference to the user-defined drag handlers and referring
+    // to that from within our `useMemo`-generated pan handlers, we can ensure
+    // we're always referring to the latest ones *without* having to reinitialise
+    // the handlers. These are almost guaranteed to be different every render
+    // but don't necessitate creating new handlers.
+    const dragHandlers = useRef<DragHandlers>(handlers)
+    dragHandlers.current = handlers
+
+    const panHandlers = useMemo(
         () => {
             if (!drag) return {}
 
@@ -372,6 +374,7 @@ export function useDraggable(
                 }
                 currentDirection = null
 
+                const { onDragStart } = dragHandlers.current
                 onDragStart && onDragStart(event, convertPanToDrag(info))
             }
 
@@ -386,6 +389,7 @@ export function useDraggable(
                     currentDirection = getCurrentDirection(offset)
 
                     if (currentDirection !== null) {
+                        const { onDirectionLock } = dragHandlers.current
                         onDirectionLock && onDirectionLock(currentDirection)
                         blockViewportScroll()
                     }
@@ -396,10 +400,8 @@ export function useDraggable(
                 updatePoint("x", offset)
                 updatePoint("y", offset)
 
-                // here we use ref to call only the last event handler
-                if (onDragRef.current) {
-                    onDragRef.current(event, convertPanToDrag(info))
-                }
+                const { onDrag } = dragHandlers.current
+                onDrag && onDrag(event, convertPanToDrag(info))
             }
 
             const onPanEnd = (
@@ -442,11 +444,13 @@ export function useDraggable(
 
                     Promise.all([startMomentum("x"), startMomentum("y")]).then(
                         () => {
+                            const { onDragTransitionEnd } = dragHandlers.current
                             onDragTransitionEnd && onDragTransitionEnd()
                         }
                     )
                 }
 
+                const { onDragEnd } = dragHandlers.current
                 onDragEnd && onDragEnd(event, convertPanToDrag(info))
             }
 
@@ -458,11 +462,18 @@ export function useDraggable(
             }
         },
 
-        [drag, ...flattenConstraints(dragConstraints), onDragTransitionEnd]
+        [
+            drag,
+            dragDirectionLock,
+            dragPropagation,
+            dragElastic,
+            dragMomentum,
+            ...flattenConstraints(dragConstraints),
+        ]
     )
 
-    usePanGesture(handlers, ref)
-    usePointerEvents({ onPointerDown: handlers.onPointerDown }, ref)
+    usePanGesture(panHandlers, ref)
+    usePointerEvents({ onPointerDown: panHandlers.onPointerDown }, ref)
 }
 
 function getCurrentDirection(offset: Point): DragDirection | null {
