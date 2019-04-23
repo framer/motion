@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.1] Unreleased
+
+### Fixed
+
+-   Filtering pointer events not from the primary pointer (ie non-left clicks for mouse).
+
 ## [0.16.0] 2019-04-19
 
 ### Added
