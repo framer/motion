@@ -5,6 +5,7 @@ import {
     ListenerControls,
     TargetOrRef,
     TargetBasedReturnType,
+    EventInfo,
 } from "./types"
 import { useRef } from "react"
 import { safeWindow } from "./utils/window"
@@ -44,6 +45,25 @@ interface MouseEventHandlers {
     onMouseLeave: EventHandler
 }
 
+/**
+ * Filters out events not attached to the primary pointer (currently left mouse button)
+ * @param eventHandler
+ */
+const filterPrimaryPointer = (eventHandler?: EventHandler) => {
+    if (!eventHandler) return undefined
+
+    return (event: Event, info: EventInfo) => {
+        const isMouseEvent = event instanceof MouseEvent
+        const isPrimaryPointer =
+            !isMouseEvent ||
+            (isMouseEvent && (event as MouseEvent).button === 0)
+
+        if (isPrimaryPointer) {
+            eventHandler(event, info)
+        }
+    }
+}
+
 export const useMouseEvents = <Target extends TargetOrRef>(
     {
         onMouseDown,
@@ -57,7 +77,12 @@ export const useMouseEvents = <Target extends TargetOrRef>(
     ref: Target,
     options?: AddEventListenerOptions
 ): TargetBasedReturnType<Target> => {
-    const down = useEvent("mousedown", ref, wrapHandler(onMouseDown), options)
+    const down = useEvent(
+        "mousedown",
+        ref,
+        wrapHandler(filterPrimaryPointer(onMouseDown)),
+        options
+    )
     const move = useEvent("mousemove", ref, wrapHandler(onMouseMove), options)
     const up = useEvent("mouseup", ref, wrapHandler(onMouseUp), options)
     const over = useEvent("mouseover", ref, wrapHandler(onMouseOver), options)
@@ -136,7 +161,7 @@ export const useNativePointerEvents = <Target extends TargetOrRef>(
     const down = useEvent(
         "pointerdown",
         ref,
-        wrapHandler(onPointerDown),
+        wrapHandler(filterPrimaryPointer(onPointerDown)),
         options
     )
     const move = useEvent(
@@ -245,6 +270,7 @@ export const usePointerEvents = <Target extends TargetOrRef>(
             onMouseLeave: onPointerLeave,
         }
     }
+
     const pointer = useNativePointerEvents(pointerEvents, ref, options)
     const touch = useTouchEvents(touchEvents, ref, options)
     const mouse = useMouseEvents(mouseEvents, ref, options)
