@@ -346,6 +346,7 @@ export function useDraggable(
             }
 
             const onPointerDown = () => {
+                blockViewportScroll()
                 if (point.x) point.x.stop()
                 if (point.y) point.y.stop()
             }
@@ -391,12 +392,10 @@ export function useDraggable(
                     if (currentDirection !== null) {
                         const { onDirectionLock } = dragHandlers.current
                         onDirectionLock && onDirectionLock(currentDirection)
-                        blockViewportScroll()
                     }
                     return
                 }
 
-                blockViewportScroll()
                 updatePoint("x", offset)
                 updatePoint("y", offset)
 
