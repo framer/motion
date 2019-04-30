@@ -253,6 +253,13 @@ describe("motion component rendering and styles", () => {
         )
     })
 
+    test("renders transform", () => {
+        const { container } = render(
+            <motion.div style={{ transform: "translateX(10px)" }} />
+        )
+        expect(container.firstChild).toHaveStyle("transform: translateX(10px)")
+    })
+
     test("applies updated transformTemplate", () => {
         const { container, rerender } = render(
             <motion.div

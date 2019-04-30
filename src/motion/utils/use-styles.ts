@@ -17,15 +17,16 @@ export const buildStyleAttr = (
     styleProp: CSSProperties,
     isStatic?: boolean
 ): CSSProperties => {
+    const motionValueStyles: { [key: string]: any } = resolveCurrent(values)
+    const transformTemplate = values.getTransformTemplate()
+
+    if (transformTemplate) {
+        motionValueStyles.transform = transformTemplate
+    }
+
     return {
         ...styleProp,
-        ...buildStyleProperty(
-            {
-                transform: values.getTransformTemplate(),
-                ...resolveCurrent(values),
-            },
-            !isStatic
-        ),
+        ...buildStyleProperty(motionValueStyles, !isStatic),
     }
 }
 

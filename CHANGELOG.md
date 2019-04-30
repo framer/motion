@@ -2,6 +2,10 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.5] 2019-04-30
+
+-   Fixing overwriting `transform`.
+
 ## [0.16.4] 2019-04-30
 
 -   Updating deps.
