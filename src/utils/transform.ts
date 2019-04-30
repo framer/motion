@@ -51,9 +51,9 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * import { Frame, transform } from "framer"
  *
  * export function MyComponent() {
- *    const rangeA = [0, 200]
- *    const rangeB = [0, 1]
- *    const output = transform(100, rangeA, rangeB)
+ *    const inputRange = [0, 200]
+ *    const outputRange = [0, 1]
+ *    const output = transform(100, inputRange, outputRange)
  *
  *    // Returns 0.5
  *    return <Frame>{output}</Frame>
@@ -63,8 +63,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * @param inputValue - A number to transform between the input and output ranges.
  * @param inputRange - A linear series of numbers (either all increasing or decreasing).
  * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
- * @param options -
- *  - clamp: Clamp values to within the given range. Defaults to `true`.
+ * @param options - Clamp: Clamp values to within the given range. Defaults to `true`.
  *
  * @public
  */
@@ -83,9 +82,9 @@ export function transform<T>(
  * import { Frame, transform } from "framer"
  *
  * export function MyComponent() {
- *     const rangeA = [-200, -100, 100, 200]
- *     const rangeB = [0, 1, 1, 0]
- *     const convertRange = transform(rangeA, rangeB)
+ *     const inputRange = [-200, -100, 100, 200]
+ *     const outputRange = [0, 1, 1, 0]
+ *     const convertRange = transform(inputRange, outputRange)
  *     const output = convertRange(-150)
  *
  *     // Returns 0.5
@@ -96,9 +95,7 @@ export function transform<T>(
  *
  * @param inputRange - A linear series of numbers (either all increasing or decreasing).
  * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
- * @param options -
- *
- *  - clamp: Clamp values to within the given range. Defaults to `true`.
+ * @param options - Clamp: clamp values to within the given range. Defaults to `true`.
  *
  * @public
  */
