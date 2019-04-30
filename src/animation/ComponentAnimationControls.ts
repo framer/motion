@@ -118,20 +118,25 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         return transformValues ? transformValues(values) : values
     }
 
+    // This should be a DOM-specific configurable function
     checkForNewValues(target: TargetWithKeyframes) {
         const newValueKeys = Object.keys(target).filter(
             key => !this.values.has(key)
         )
         if (!newValueKeys.length) return
 
-        // Might live better in `MotionValuesMap`
         const domStyler = styler(this.ref.current as Element)
         newValueKeys.forEach(key => {
             const domValue = domStyler.get(key) || 0
-            const value =
-                typeof domValue === "string" && isNumericalString(domValue)
-                    ? parseFloat(domValue)
-                    : domValue
+            let value: string | number = domValue
+
+            if (typeof domValue === "string") {
+                if (isNumericalString(domValue)) {
+                    value = parseFloat(domValue)
+                } else if (domValue === "none") {
+                    value = complex.getAnimatableNone(target[key])
+                }
+            }
 
             this.values.set(key, motionValue(value))
             this.baseTarget[key] = value
@@ -335,7 +340,6 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         const animations = Object.keys(target).reduce(
             (acc, key) => {
                 const value = this.values.get(key)
-
                 if (!value || !target || target[key] === undefined) return acc
 
                 const valueTarget = target[key]

@@ -3,7 +3,7 @@ import { Target, TargetWithKeyframes } from "../types"
 import { MotionValuesMap } from "../motion"
 import { MotionValue } from "../value"
 import styler from "stylefire"
-import { getValueType } from "./value-types"
+import { getDimensionValueType } from "./value-types"
 import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { number, px, ValueType } from "style-value-types"
@@ -135,7 +135,7 @@ const checkAndConvertChangedValueTypes = (
 
             const from = value.get()
             const to = target[key]
-            const fromType = getValueType(from)
+            const fromType = getDimensionValueType(from)
             let toType
 
             // TODO: The current implementation of this basically throws an error
@@ -147,7 +147,7 @@ const checkAndConvertChangedValueTypes = (
 
                 for (let i = to[0] === null ? 1 : 0; i < numKeyframes; i++) {
                     if (!toType) {
-                        toType = getValueType(to[i])
+                        toType = getDimensionValueType(to[i])
 
                         invariant(
                             toType === fromType ||
@@ -157,13 +157,13 @@ const checkAndConvertChangedValueTypes = (
                         )
                     } else {
                         invariant(
-                            getValueType(to[i]) === toType,
+                            getDimensionValueType(to[i]) === toType,
                             "All keyframes must be of the same type"
                         )
                     }
                 }
             } else {
-                toType = getValueType(to)
+                toType = getDimensionValueType(to)
             }
 
             if (fromType !== toType) {

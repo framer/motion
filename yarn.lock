@@ -7021,6 +7021,13 @@ style-value-types@^3.0.6:
   resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.0.7.tgz#6e7a22cc8b1a4465193268ed66ad5f2a82579054"
   integrity sha512-7vzeicDiPNnJjvTYfJbQhZ7P3OCkXfvkJOJQ+ifFnXNTA/7KBxMZacHLvlRjM5/TtXbVdrZE6u+2nzSUSPrbSQ==
 
+style-value-types@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.1.2.tgz#d90d45541c36ebfe74431d1e2778d8764e6bfda7"
+  integrity sha512-5ixWBsaHE80+NqCFe1AFpya7eYwq9nhov5CJQs5eNgKCp7BfjWRw234V19E/w4VmTk+ft5y0FG4LJgEdGNf46Q==
+  dependencies:
+    hey-listen "^1.0.8"
+
 styled-components@^4.1.1:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-4.1.1.tgz#943922048fae556e286bcbfdd29da4f1399446bc"
