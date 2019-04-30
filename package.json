@@ -38,7 +38,7 @@
         "eslint-plugin-react": "^7.12.4",
         "eslint-plugin-react-hooks": "^1.6.0",
         "fork-ts-checker-webpack-plugin": "^0.4.15",
-        "husky": "^1.1.4",
+        "husky": "1.1.4",
         "jest": "^23.6.0",
         "jest-dom": "^2.1.1",
         "jest-junit": "^5.2.0",
