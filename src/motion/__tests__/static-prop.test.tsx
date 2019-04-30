@@ -59,6 +59,27 @@ describe("static prop", () => {
         )
     })
 
+    test("it propagates changes in `initial` if static", () => {
+        const variants = {
+            visible: { opacity: 1 },
+            hidden: { opacity: 0 },
+        }
+
+        const Component = ({ initial }: { initial: string }) => (
+            <motion.div initial={initial} variants={variants} static>
+                <motion.div data-testid="child" variants={variants} />
+            </motion.div>
+        )
+
+        const { container, getByTestId, rerender } = render(
+            <Component initial="visible" />
+        )
+        rerender(<Component initial="hidden" />)
+
+        expect(container.firstChild as Element).toHaveStyle("opacity: 0")
+        expect(getByTestId("child")).toHaveStyle("opacity: 0")
+    })
+
     test("it prevents rendering of children via context", async () => {
         const promise = new Promise(resolve => {
             const scale = motionValue(0)
