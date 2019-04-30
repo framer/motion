@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, useAnimation, useCycle } from "@framer"
+import { motion, useAnimation } from "@framer"
 
 const style = {
     width: 100,
@@ -10,12 +10,22 @@ const style = {
 }
 
 export const App = () => {
-    const [elevation, cycle] = useCycle(
-        { boxShadow: "5px 5px 50px #000" },
-        { boxShadow: "5px 5px 5px #fff" }
-    )
+    const animation = useAnimation()
+    const variants = {
+        visible: { opacity: 1 },
+        right: { x: 100 },
+    }
+
+    animation.start("visible")
 
     return (
-        <motion.div style={style} animate={elevation} onTap={() => cycle()} />
+        <motion.div
+            animate={animation}
+            initial={{ rotate: 0, opacity: 0 }}
+            variants={variants}
+            transition={{ duration: 5 }}
+            style={style}
+            onMouseEnter={() => console.log("test")}
+        />
     )
 }
