@@ -37,9 +37,15 @@ export interface TransformProperties {
     perspective?: string | number
 }
 
+/**
+ * These types are to support custom prop names in Framer Library. We don't
+ * actually support them in Framer Motion - at some point we should try and let
+ * external sources augment the types here but I fear it'll be a nightmare.
+ */
 export interface CustomStyles {
     size?: string | number
     radius?: string | number
+    shadow?: string
     image?: string
 }
 

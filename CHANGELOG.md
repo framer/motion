@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.3] 2019-04-30
+
+### Added
+
+-   `shadow` to `CustomValueTypes`.
+
 ## [0.16.2] 2019-04-30
 
 ### Fixed
