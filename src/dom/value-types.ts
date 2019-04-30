@@ -5,6 +5,8 @@ import {
     px,
     vw,
     vh,
+    color,
+    complex,
     ValueType,
 } from "style-value-types"
 
@@ -13,7 +15,12 @@ export const auto: ValueType = {
     parse: v => v,
 }
 
-const valueTypeTests = [number, px, percent, degrees, vw, vh, auto]
+const dimensionTypes = [number, px, percent, degrees, vw, vh, auto]
+const valueTypes = [...dimensionTypes, color, complex]
+
 const testValueType = (v: any) => (type: ValueType) => type.test(v)
 
-export const getValueType = (v: any) => valueTypeTests.find(testValueType(v))
+export const getDimensionValueType = (v: any) =>
+    dimensionTypes.find(testValueType(v))
+
+export const getValueType = (v: any) => valueTypes.find(testValueType(v))

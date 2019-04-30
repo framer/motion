@@ -18,6 +18,7 @@ import { resolveVariables } from "../dom/css-variables-conversion"
 import styler from "stylefire"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
+import { getValueType } from "../dom/value-types"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -118,20 +119,25 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         return transformValues ? transformValues(values) : values
     }
 
+    // This should be a DOM-specific configurable function
     checkForNewValues(target: TargetWithKeyframes) {
         const newValueKeys = Object.keys(target).filter(
             key => !this.values.has(key)
         )
         if (!newValueKeys.length) return
 
-        // Might live better in `MotionValuesMap`
         const domStyler = styler(this.ref.current as Element)
         newValueKeys.forEach(key => {
             const domValue = domStyler.get(key) || 0
-            const value =
-                typeof domValue === "string" && isNumericalString(domValue)
-                    ? parseFloat(domValue)
-                    : domValue
+            let value: string | number = domValue
+
+            if (typeof value === "string" && isNumericalString(value)) {
+                // If this is a number read as a string, ie "0" or "200", convert it to a number
+                value = parseFloat(value)
+            } else if (!getValueType(value)) {
+                // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
+                value = complex.getAnimatableNone(target[key] as string)
+            }
 
             this.values.set(key, motionValue(value))
             this.baseTarget[key] = value
@@ -335,7 +341,6 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         const animations = Object.keys(target).reduce(
             (acc, key) => {
                 const value = this.values.get(key)
-
                 if (!value || !target || target[key] === undefined) return acc
 
                 const valueTarget = target[key]
