@@ -18,6 +18,7 @@ import { resolveVariables } from "../dom/css-variables-conversion"
 import styler from "stylefire"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
+import { getValueType } from "../dom/value-types"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -130,12 +131,12 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
             const domValue = domStyler.get(key) || 0
             let value: string | number = domValue
 
-            if (typeof domValue === "string") {
-                if (isNumericalString(domValue)) {
-                    value = parseFloat(domValue)
-                } else if (domValue === "none") {
-                    value = complex.getAnimatableNone(target[key])
-                }
+            if (typeof value === "string" && isNumericalString(value)) {
+                // If this is a number read as a string, ie "0" or "200", convert it to a number
+                value = parseFloat(value)
+            } else if (!getValueType(value)) {
+                // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
+                value = complex.getAnimatableNone(target[key] as string)
             }
 
             this.values.set(key, motionValue(value))
