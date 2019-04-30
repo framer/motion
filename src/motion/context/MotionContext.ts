@@ -27,13 +27,14 @@ export const useMotionContext = (
     isStatic: boolean = false,
     initial?: VariantLabels | Target
 ) => {
+    const targetInitial =
+        initial && !isTarget(initial) ? initial : parentContext.initial
     const context: MotionContextProps = useMemo(
         () => ({
             controls,
-            initial:
-                initial && !isTarget(initial) ? initial : parentContext.initial,
+            initial: targetInitial,
         }),
-        []
+        [isStatic ? targetInitial : null] // Only trigger updates if static and initial has changed
     )
 
     context.static = isStatic
