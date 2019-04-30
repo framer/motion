@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.16.1] Unreleased
+## [0.16.2] 2019-04-30
+
+### Fixed
+
+-   Fixed propagation of `initial` in `static` mode.
+
+## [0.16.1] 2019-04-25
 
 ### Fixed
 
