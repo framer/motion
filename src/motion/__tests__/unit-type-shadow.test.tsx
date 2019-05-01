@@ -9,7 +9,7 @@ describe("box-shadow support", () => {
             const Component = () => (
                 <motion.div
                     animate={{ boxShadow: "5px 5px 50px #000" }}
-                    transition={{ duration: 0.1 }}
+                    transition={{ duration: 0.05 }}
                     onAnimationComplete={resolveContainer}
                     // It'd be preferable for `boxShadow` to be read implicitly as "none" JSDom doesn't have this default
                     style={{ boxShadow: "none" }}
