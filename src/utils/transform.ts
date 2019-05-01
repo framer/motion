@@ -43,7 +43,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * Given an input range of `[0, 200]` and an output range of
  * `[0, 1]`, this function will return a value between `0` and `1`.
  * The input range must be a linear series of numbers. The output range
- * can be any supported value type, such as numbers, colors, shadows and more.
+ * can be any supported value type, such as numbers, colors, shadows, arrays, objects and more.
  * Every value in the output range must be of the same type and in the same format.
  *
  * ```jsx
