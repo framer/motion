@@ -21,7 +21,11 @@ export const buildStyleAttr = (
     const transformTemplate = values.getTransformTemplate()
 
     if (transformTemplate) {
-        motionValueStyles.transform = transformTemplate
+        // If `transform` has been manually set as a string, pass that through the template
+        // otherwise pass it forward to Stylefire's style property builder
+        motionValueStyles.transform = styleProp.transform
+            ? transformTemplate({}, styleProp.transform)
+            : transformTemplate
     }
 
     return {

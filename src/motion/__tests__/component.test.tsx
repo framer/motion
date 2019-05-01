@@ -286,4 +286,18 @@ describe("motion component rendering and styles", () => {
             "transform: translateY(20px) translateX(10px) translateZ(0)"
         )
     })
+
+    test("renders transform with transformTemplate", () => {
+        const { container } = render(
+            <motion.div
+                transformTemplate={(_, generated) =>
+                    `translateY(20px) ${generated}`
+                }
+                style={{ transform: "translateX(10px)" }}
+            />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateY(20px) translateX(10px)"
+        )
+    })
 })
