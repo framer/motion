@@ -17,15 +17,20 @@ export const buildStyleAttr = (
     styleProp: CSSProperties,
     isStatic?: boolean
 ): CSSProperties => {
+    const motionValueStyles: { [key: string]: any } = resolveCurrent(values)
+    const transformTemplate = values.getTransformTemplate()
+
+    if (transformTemplate) {
+        // If `transform` has been manually set as a string, pass that through the template
+        // otherwise pass it forward to Stylefire's style property builder
+        motionValueStyles.transform = styleProp.transform
+            ? transformTemplate({}, styleProp.transform)
+            : transformTemplate
+    }
+
     return {
         ...styleProp,
-        ...buildStyleProperty(
-            {
-                transform: values.getTransformTemplate(),
-                ...resolveCurrent(values),
-            },
-            !isStatic
-        ),
+        ...buildStyleProperty(motionValueStyles, !isStatic),
     }
 }
 
