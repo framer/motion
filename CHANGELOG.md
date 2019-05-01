@@ -11,7 +11,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Makes boxShadow and other complex value type support more robust.
--   No longer overwriting user-defined `transform`.
+-   Fixing overwriting `transform`.
 
 ## [0.16.4] 2019-04-30
 
