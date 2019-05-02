@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.16.5] 2019-05-30
+## [0.16.6] 2019-05-02
+
+### Fixed
+
+-   Improved handling of attempting to animate between non-animatable and animatable values.
+
+## [0.16.5] 2019-05-01
 
 ### Added
 

@@ -190,4 +190,21 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toHaveBeenCalled()
     })
+
+    test("will switch from non-animatable value to animatable value", async () => {
+        const promise = new Promise(resolve => {
+            const onComplete = () => resolve(container.firstChild as Element)
+            const Component = () => (
+                <motion.div
+                    animate={{ fontWeight: 100 }}
+                    style={{ fontWeight: "normal" }}
+                    onAnimationComplete={onComplete}
+                />
+            )
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toHaveStyle("font-weight: 100")
+    })
 })

@@ -1,7 +1,7 @@
 import { RefObject } from "react"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { getTransition } from "./utils/transitions"
-import { motionValue } from "../value"
+import { motionValue, MotionValue } from "../value"
 import { complex } from "style-value-types"
 import {
     TargetResolver,
@@ -19,6 +19,7 @@ import styler from "stylefire"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 import { getValueType } from "../dom/value-types"
+import { warning } from "hey-listen"
 
 type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
 type AnimationOptions = {
@@ -134,7 +135,7 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
             if (typeof value === "string" && isNumericalString(value)) {
                 // If this is a number read as a string, ie "0" or "200", convert it to a number
                 value = parseFloat(value)
-            } else if (!getValueType(value)) {
+            } else if (!getValueType(value) && complex.test(target[key])) {
                 // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
                 value = complex.getAnimatableNone(target[key] as string)
             }
@@ -340,7 +341,9 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
 
         const animations = Object.keys(target).reduce(
             (acc, key) => {
-                const value = this.values.get(key)
+                const value = this.values.get(key) as MotionValue<
+                    number | string
+                >
                 if (!value || !target || target[key] === undefined) return acc
 
                 const valueTarget = target[key]
@@ -353,7 +356,12 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
 
                 if (this.isAnimating.has(key)) return acc
 
-                if (isAnimatable(valueTarget)) {
+                const origin = value.get()
+                const isOriginAnimatable = isAnimatable(origin)
+                const isTargetAnimatable = isAnimatable(valueTarget)
+
+                // Only animate if both values are animatable
+                if (isOriginAnimatable && isTargetAnimatable) {
                     const [action, options] = getTransition(
                         value,
                         key,
@@ -366,6 +374,12 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
 
                     acc.push(value.control(action, options))
                 } else {
+                    // TODO we could probably improve this check to ensure both values are of the same type -
+                    // for instance 100 to #fff. This might live better in Popmotion.
+                    warning(
+                        !isOriginAnimatable && !isTargetAnimatable,
+                        `You are trying to animate ${key} from "${origin}" to ${valueTarget}. "${origin}" is not an animatable value - to enable this animation set ${origin} to a value animatable to ${valueTarget} via the \`style\` property.`
+                    )
                     value.set(valueTarget)
                 }
 
