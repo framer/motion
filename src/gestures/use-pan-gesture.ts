@@ -180,7 +180,7 @@ export interface PanHandlers {
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link PanInfo} object containing `x` and `y` values for:
+     * @param info - A {@link PanInfo} object containing `x` and `y` values for:
      *
      *   - `point`: Relative to the device or page.
      *   - `delta`: Distance moved since the last event.
@@ -201,7 +201,7 @@ export interface PanHandlers {
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     * @param info - A {@link PanInfo} object containing `x`/`y` values for:
      *
      *   - `point`: Relative to the device or page.
      *   - `delta`: Distance moved since the last event.
@@ -243,7 +243,7 @@ export interface PanHandlers {
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link PanInfo} object containing `x`/`y` values for:
+     * @param info - A {@link PanInfo} object containing `x`/`y` values for:
      *
      *   - `point`: Relative to the device or page.
      *   - `delta`: Distance moved since the last event.
