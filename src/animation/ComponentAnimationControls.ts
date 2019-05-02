@@ -359,6 +359,8 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
                 const origin = value.get()
                 const isOriginAnimatable = isAnimatable(origin)
                 const isTargetAnimatable = isAnimatable(valueTarget)
+
+                // Only animate if both values are animatable
                 if (isOriginAnimatable && isTargetAnimatable) {
                     const [action, options] = getTransition(
                         value,
@@ -372,9 +374,11 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
 
                     acc.push(value.control(action, options))
                 } else {
+                    // TODO we could probably improve this check to ensure both values are of the same type -
+                    // for instance 100 to #fff. This might live better in Popmotion.
                     warning(
-                        isOriginAnimatable && !isTargetAnimatable,
-                        `You are trying to animate ${key} from ${origin} to ${valueTarget}. ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${valueTarget} via the \`style\` property.`
+                        !isOriginAnimatable && !isTargetAnimatable,
+                        `You are trying to animate ${key} from "${origin}" to ${valueTarget}. "${origin}" is not an animatable value - to enable this animation set ${origin} to a value animatable to ${valueTarget} via the \`style\` property.`
                     )
                     value.set(valueTarget)
                 }
