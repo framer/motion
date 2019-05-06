@@ -27,7 +27,7 @@ export const drag = (element: any) => {
         to: (x: number, y: number) => {
             pos.x = x
             pos.y = y
-            fireEvent.mouseMove(document.body)
+            fireEvent.mouseMove(document.body, { buttons: 1 })
 
             return controls
         },

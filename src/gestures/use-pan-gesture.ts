@@ -335,7 +335,11 @@ export function usePanGesture(
         (event: MouseEvent | TouchEvent, info: EventInfo) => {
             lastMoveEvent.current = event
             lastMoveEventInfo.current = transformPoint(info)
-
+            // because Safari doesn't trigger mouseup event when it's happening above <select> tag
+            if (event instanceof MouseEvent && event.buttons === 0) {
+                onPointerUp(event, info)
+                return
+            }
             // Throttle mouse move event to once per frame
             sync.update(updatePoint, true)
         },
