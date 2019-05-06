@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.8] 2019-05-06
+
+### Fixed
+
+-   Cancelling pan gesture when the move events have no mouse button.
+
 ## [0.16.7] 2019-05-06
 
 ### Fixed
