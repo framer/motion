@@ -319,6 +319,12 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
      */
     setOverride(definition: AnimationDefinition, overrideIndex: number) {
         this.overrides[overrideIndex] = definition
+
+        if (this.children) {
+            this.children.forEach(child =>
+                child.setOverride(definition, overrideIndex)
+            )
+        }
     }
 
     /**
@@ -339,6 +345,10 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
      * @param overrideIndex
      */
     clearOverride(overrideIndex: number) {
+        if (this.children) {
+            this.children.forEach(child => child.clearOverride(overrideIndex))
+        }
+
         const override = this.overrides[overrideIndex]
         if (!override) return
 
@@ -655,11 +665,21 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         this.values.forEach(value => value.stop())
     }
 
+    /**
+     * Add the controls of a child component.
+     * @param controls
+     */
     addChild(controls: ComponentAnimationControls) {
         if (!this.children) {
             this.children = new Set()
         }
         this.children.add(controls)
+
+        // We set child overrides when `setOverride` is called, but also have to do it here
+        // as the first time `setOverride` is called all the children might not have been added yet.
+        this.overrides.forEach((override, i) => {
+            override && controls.setOverride(override, i)
+        })
     }
 
     removeChild(controls: ComponentAnimationControls) {
