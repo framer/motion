@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.7] 2019-05-06
+
+### Fixed
+
+-   Fixing propagation of unsetting variant overrides.
+
 ## [0.16.6] 2019-05-02
 
 ### Fixed

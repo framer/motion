@@ -178,6 +178,80 @@ describe("tap", () => {
         return expect(promise).resolves.toEqual([0.5, 1, 0.5])
     })
 
+    test("tap gesture variant unapplies children", () => {
+        const promise = new Promise(resolve => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div whileTap="pressed">
+                    <motion.div
+                        data-testid="child"
+                        variants={{ pressed: { opacity: 1 } }}
+                        style={{ opacity }}
+                        transition={{ type: false }}
+                    />
+                </motion.div>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            logOpacity() // 0.5
+
+            // Trigger mouse down
+            fireEvent.mouseDown(getByTestId("child") as Element)
+            logOpacity() // 1
+
+            // Trigger mouse up
+            fireEvent.mouseUp(getByTestId("child") as Element)
+            logOpacity() // 0.5
+
+            resolve(opacityHistory)
+        })
+
+        return expect(promise).resolves.toEqual([0.5, 1, 0.5])
+    })
+
+    test("tap gesture variants - children can override with own variant", () => {
+        const promise = new Promise(resolve => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div whileTap="pressed">
+                    <motion.div
+                        data-testid="child"
+                        variants={{
+                            pressed: { opacity: 1 },
+                            childPressed: { opacity: 0.1 },
+                        }}
+                        style={{ opacity }}
+                        transition={{ type: false }}
+                        whileTap="childPressed"
+                    />
+                </motion.div>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            logOpacity() // 0.5
+
+            // Trigger mouse down
+            fireEvent.mouseDown(getByTestId("child") as Element)
+            logOpacity() // 1
+
+            // Trigger mouse up
+            fireEvent.mouseUp(getByTestId("child") as Element)
+            logOpacity() // 0.5
+
+            resolve(opacityHistory)
+        })
+
+        return expect(promise).resolves.toEqual([0.5, 0.1, 0.5])
+    })
+
     test("tap gesture variant applies and unapplies with whileHover", () => {
         const promise = new Promise(resolve => {
             const opacityHistory: number[] = []
