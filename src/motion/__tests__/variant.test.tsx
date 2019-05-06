@@ -183,6 +183,38 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(0)
     })
 
+    test("propagates through components with no `animate` prop", async () => {
+        const promise = new Promise(resolve => {
+            const opacity = motionValue(0)
+            const variants: Variants = {
+                visible: {
+                    opacity: 1,
+                },
+            }
+
+            render(
+                <motion.div
+                    variants={variants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ type: false }}
+                >
+                    <motion.div>
+                        <motion.div
+                            variants={variants}
+                            transition={{ type: false }}
+                            style={{ opacity }}
+                        />
+                    </motion.div>
+                </motion.div>
+            )
+
+            requestAnimationFrame(() => resolve(opacity.get()))
+        })
+
+        return expect(promise).resolves.toBe(1)
+    })
+
     test("onUpdate", async () => {
         const promise = new Promise(resolve => {
             let latest = {}
