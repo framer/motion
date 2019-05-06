@@ -28,18 +28,33 @@ type AnimationOptions = {
     transitionOverride?: Transition
 }
 
+/**
+ * Get the current value of every `MotionValue`
+ * @param values
+ */
 const getCurrent = (values: MotionValuesMap) => {
     const current = {}
     values.forEach((value, key) => (current[key] = value.get()))
     return current
 }
 
+/**
+ * Get the current velocity of every `MotionValue`
+ * @param values
+ */
 const getVelocity = (values: MotionValuesMap) => {
     const velocity = {}
     values.forEach((value, key) => (velocity[key] = value.getVelocity()))
     return velocity
 }
 
+/**
+ * Check if a value is animatable. Examples:
+ *
+ * ✅: 100, "100px", "#fff"
+ * ❌: "block", "url(2.jpg)"
+ * @param value
+ */
 const isAnimatable = (value: ValueTarget) => {
     if (typeof value === "number" || Array.isArray(value)) {
         return true
@@ -54,24 +69,89 @@ const isAnimatable = (value: ValueTarget) => {
     return false
 }
 
+/**
+ * Check if value is a function that returns a `Target`. A generic typeof === 'function'
+ * check, just helps with typing.
+ * @param p
+ */
 const isTargetResolver = (p: any): p is TargetResolver => {
     return typeof p === "function"
 }
 
+/**
+ * Check if value is a list of variant labels
+ * @param v
+ */
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
+
+/**
+ * Check if value is a numerical string, ie "100" or "100px"
+ */
 const isNumericalString = (v: string) => /^\d*\.?\d+$/.test(v)
 
+/**
+ * Control animations for a single component
+ * @internal
+ */
 export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
+    /**
+     * A reference to the component's latest props. We could probably ditch this in
+     * favour to a reference to the `custom` prop now we don't send all props through
+     * to target resolvers.
+     */
     private props: P & MotionProps
+
+    /**
+     * A reference to the component's motion values
+     */
     private values: MotionValuesMap
+
+    /**
+     * A reference to the component's underlying DOM component. This is used here
+     * to read from the DOM in the event we're trying to animate a value that we
+     * haven't encountered before. That functionality would ideally be abstracted
+     * and set by the factory that creates DOM-specific components in motion/index.ts
+     */
     private ref: RefObject<Element>
-    private variants: Variants = {}
-    private baseTarget: Target = {}
-    private overrides: Array<AnimationDefinition | undefined> = []
-    private activeOverrides: Set<number> = new Set()
-    private resolvedOverrides: Array<TargetAndTransition | undefined> = []
+
+    /**
+     * The default transition to use for `Target`s without any `transition` prop.
+     */
     private defaultTransition?: Transition
+
+    /**
+     * The component's variants, as provided by `variants`
+     */
+    private variants: Variants = {}
+
+    /**
+     * A set of values that we animate back to when a value is cleared of all overrides.
+     */
+    private baseTarget: Target = {}
+
+    /**
+     * A series of target overrides that we can animate to/from when overrides are set/cleared.
+     */
+    private overrides: Array<AnimationDefinition | undefined> = []
+
+    /**
+     * A series of target overrides as they were originally resolved.
+     */
+    private resolvedOverrides: Array<TargetAndTransition | undefined> = []
+
+    /**
+     * A Set of currently active override indexes
+     */
+    private activeOverrides: Set<number> = new Set()
+
+    /**
+     * A Set of children component controls for variant propagation.
+     */
     private children?: Set<ComponentAnimationControls>
+
+    /**
+     * A Set of value keys that are currently animating.
+     */
     private isAnimating: Set<string> = new Set()
 
     constructor(values: MotionValuesMap, ref: RefObject<Element>) {
@@ -83,19 +163,40 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         )
     }
 
+    /**
+     * Set the reference to the component's props.
+     * @param props
+     */
     setProps(props: P & MotionProps) {
         this.props = props
     }
 
+    /**
+     * Set the reference to the component's variants
+     * @param variants
+     */
     setVariants(variants?: Variants) {
         if (variants) this.variants = variants
     }
 
+    /**
+     * Set the component's default transition
+     * @param transition
+     */
     setDefaultTransition(transition?: Transition) {
         if (transition) this.defaultTransition = transition
     }
 
-    setValues(target: TargetWithKeyframes, isActive: Set<string> = new Set()) {
+    /**
+     * Set motion values without animation.
+     *
+     * @param target
+     * @param isActive
+     */
+    private setValues(
+        target: TargetWithKeyframes,
+        isActive: Set<string> = new Set()
+    ) {
         target = this.transformValues(target as any)
 
         return Object.keys(target).forEach(key => {
@@ -115,13 +216,30 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
     }
 
-    transformValues(values: V): V {
+    /**
+     * Allows `transformValues` to be set by a component that allows us to
+     * transform the values in a given `Target`. This allows Framer Library
+     * to extend Framer Motion to animate `Color` variables etc. Currently we have
+     * to manually support these extended types here in Framer Motion.
+     *
+     * @param values
+     */
+    private transformValues(values: V): V {
         const { transformValues } = this.props
         return transformValues ? transformValues(values) : values
     }
 
-    // This should be a DOM-specific configurable function
-    checkForNewValues(target: TargetWithKeyframes) {
+    /**
+     * Check a `Target` for new values we haven't animated yet, and add them
+     * to the `MotionValueMap`.
+     *
+     * Currently there's functionality here that is DOM-specific, we should allow
+     * this functionality to be injected by the factory that creates DOM-specific
+     * components.
+     *
+     * @param target
+     */
+    private checkForNewValues(target: TargetWithKeyframes) {
         const newValueKeys = Object.keys(target).filter(
             key => !this.values.has(key)
         )
@@ -145,7 +263,11 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
     }
 
-    resolveVariant(
+    /**
+     * Resolve a variant from its label or resolver into an actual `Target` we can animate to.
+     * @param variant
+     */
+    private resolveVariant(
         variant?: Variant
     ): {
         target?: TargetWithKeyframes
@@ -178,15 +300,31 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         return { transition, transitionEnd, target }
     }
 
-    getHighestPriority() {
+    /**
+     * Get the highest active override priority index
+     */
+    private getHighestPriority() {
         if (!this.activeOverrides.size) return 0
         return Math.max(...Array.from(this.activeOverrides))
     }
 
+    /**
+     * Set an override. We add this layer of indirection so if, for instance, a tap gesture
+     * starts and overrides a hover gesture, when we clear the tap gesture and fallback to the
+     * hover gesture, if that hover gesture has changed in the meantime we can go to that rather
+     * than the one that was resolved when the hover gesture animation started.
+     *
+     * @param definition
+     * @param overrideIndex
+     */
     setOverride(definition: AnimationDefinition, overrideIndex: number) {
         this.overrides[overrideIndex] = definition
     }
 
+    /**
+     * Start an override animation.
+     * @param overrideIndex
+     */
     startOverride(overrideIndex: number) {
         const override = this.overrides[overrideIndex]
 
@@ -195,6 +333,11 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         }
     }
 
+    /**
+     * Clear an override. We check every value we animated to in this override to see if
+     * its present on any lower-priority overrides. If not, we animate it back to its base target.
+     * @param overrideIndex
+     */
     clearOverride(overrideIndex: number) {
         const override = this.overrides[overrideIndex]
         if (!override) return
@@ -223,6 +366,9 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         this.animate(remainingValues)
     }
 
+    /**
+     * Apply a target/variant without any animation
+     */
     apply(definition: VariantLabels | TargetAndTransition) {
         if (Array.isArray(definition)) {
             return this.applyVariantLabels(definition)
@@ -233,6 +379,9 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         }
     }
 
+    /**
+     * Apply variant labels without animation
+     */
     private applyVariantLabels(variantLabelList: string[]) {
         const isSetting: Set<string> = new Set()
         const reversedList = [...variantLabelList].reverse()
@@ -276,16 +425,6 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
             const { onAnimationComplete } = this.props
             onAnimationComplete && onAnimationComplete()
         })
-    }
-
-    isHighestPriority(priority: number) {
-        const numOverrides = this.overrides.length
-        for (let i = priority + 1; i < numOverrides; i++) {
-            if (this.overrides[i] !== undefined) {
-                return false
-            }
-        }
-        return true
     }
 
     private animate(
