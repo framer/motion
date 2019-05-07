@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Using `transition` and `transitionEnd` as direct values on the `animate` prop on subsequent renders.
+-   Rounding `zIndex`.
 
 ## [0.16.8] 2019-05-06
 
