@@ -5,9 +5,9 @@ import { useAnimateProp } from "../../animation/use-animate-prop"
 import { useVariants } from "../../animation/use-variants"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { AnimationControls } from "../../animation/AnimationControls"
-import { Target } from "../../types"
 import { ComponentAnimationControls } from "animation/ComponentAnimationControls"
-import { MotionValuesMap } from "motion/utils/use-motion-values"
+import { MotionValuesMap } from "../../motion/utils/use-motion-values"
+import { TargetAndTransition } from "../../types"
 
 interface AnimationFunctionalProps extends MotionProps {
     controls: ComponentAnimationControls
@@ -25,7 +25,7 @@ export const AnimatePropComponents = {
             transition,
         }: AnimationFunctionalProps) => {
             return useAnimateProp(
-                animate as Target,
+                animate as TargetAndTransition,
                 controls,
                 values,
                 transition

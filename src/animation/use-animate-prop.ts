@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react"
-import { Target, Transition } from "../types"
+import { Target, Transition, TargetAndTransition } from "../types"
 import { ComponentAnimationControls } from "./ComponentAnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { shallowCompare } from "../utils/use-inline"
@@ -38,10 +38,10 @@ export const hasUpdated = (
  * @internal
  */
 export function useAnimateProp(
-    target: Target,
+    target: TargetAndTransition,
     controls: ComponentAnimationControls,
     values: MotionValuesMap,
-    transition?: Transition
+    defaultTransition?: Transition
 ) {
     const isInitialRender = useRef(true)
     const prevValues = useRef(target)
@@ -49,6 +49,7 @@ export function useAnimateProp(
     useEffect(
         () => {
             const toAnimate: Target = {}
+            const { transition, transitionEnd } = target
 
             for (const key in prevValues.current) {
                 const shouldAnimateOnMount =
@@ -70,7 +71,11 @@ export function useAnimateProp(
             }
 
             if (Object.keys(toAnimate).length) {
-                controls.start(toAnimate, transition)
+                controls.start({
+                    ...toAnimate,
+                    transition: transition || defaultTransition,
+                    transitionEnd,
+                })
             }
         },
         [target]
