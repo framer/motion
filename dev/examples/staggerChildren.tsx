@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useEffect } from "react"
-import { motion, useAnimation } from "@framer"
+import { motion, useAnimation, useCycle } from "@framer"
 
 const sidebarStyle = {
     width: 100,
@@ -22,18 +22,21 @@ const itemStyle = {
     margin: 0,
 }
 
-const items = [0, 1, 2, 3, 4, 5]
-
 export const App = () => {
+    const [items, setItems] = React.useState([0, 1, 2, 3, 4, 5])
     const sidebarPoses = {
-        open: [{ x: 0 }, { beforeChildren: true, staggerChildren: 0.075 }],
+        open: {
+            x: 0,
+            transition: { when: "beforeChildren", staggerChildren: 0.05 },
+        },
         closed: { x: -180 },
     }
 
     const itemPoses = {
-        open: [
-            { scale: 1, opacity: 1 },
-            {
+        open: {
+            scale: 1,
+            opacity: 1,
+            transition: {
                 scale: {
                     type: "spring",
                     stiffness: 400,
@@ -41,19 +44,19 @@ export const App = () => {
                     damping: 20,
                 },
             },
-        ],
-        closed: [{ scale: 0.5, opacity: 0 }],
+        },
+        closed: { scale: 0.5, opacity: 0.1 },
     }
 
     return (
         <motion.ul
-            animate={sidebarPoses}
-            initialPose="closed"
-            pose="open"
+            variants={sidebarPoses}
+            initial="closed"
+            animate="open"
             style={sidebarStyle}
         >
             {items.map(i => (
-                <motion.li animate={itemPoses} inherit style={itemStyle} />
+                <motion.li key={i} variants={itemPoses} style={itemStyle} />
             ))}
         </motion.ul>
     )
