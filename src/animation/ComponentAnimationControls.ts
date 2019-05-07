@@ -21,7 +21,10 @@ import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 import { getValueType } from "../dom/value-types"
 import { warning } from "hey-listen"
 
-type AnimationDefinition = VariantLabels | TargetAndTransition | TargetResolver
+export type AnimationDefinition =
+    | VariantLabels
+    | TargetAndTransition
+    | TargetResolver
 type AnimationOptions = {
     delay?: number
     priority?: number
