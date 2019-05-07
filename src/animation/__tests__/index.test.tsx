@@ -200,4 +200,21 @@ describe("useAnimation", () => {
         rerender(<Component />)
         expect(x.get()).toBe(100)
     })
+
+    test("accepts array of variants", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => {
+                const animation = useAnimation()
+                animation.start(["a", "b"])
+                return <motion.div animate={animation} />
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            resolve(true)
+        })
+
+        await expect(promise).resolves.not.toThrowError()
+    })
 })

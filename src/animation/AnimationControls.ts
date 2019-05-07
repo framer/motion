@@ -1,8 +1,9 @@
-import { Variants, Variant, Transition } from "../types"
+import { Variants, Transition } from "../types"
 import { ComponentAnimationControls } from "../motion"
+import { AnimationDefinition } from "./ComponentAnimationControls"
 
 type PendingAnimations = {
-    animation: [Variant | string, Transition | undefined]
+    animation: [AnimationDefinition, Transition | undefined]
     resolve: () => void
 }
 
@@ -112,7 +113,7 @@ export class AnimationControls {
      * @public
      */
     start(
-        definition: Variant | string,
+        definition: AnimationDefinition,
         transitionOverride?: Transition
     ): Promise<any> {
         if (this.hasMounted) {
