@@ -8,6 +8,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   API
 
+### Fixed
+
+-   Variant propagation when rerendering children
+
 ## [0.16.9] 2019-05-07
 
 ### Fixed
