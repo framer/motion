@@ -268,4 +268,17 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toHaveStyle("font-weight: 100")
     })
+
+    test("doesn't animate zIndex", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => <motion.div animate={{ zIndex: 100 }} />
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+            requestAnimationFrame(() =>
+                resolve(container.firstChild as Element)
+            )
+        })
+
+        return expect(promise).resolves.toHaveStyle("z-index: 100")
+    })
 })

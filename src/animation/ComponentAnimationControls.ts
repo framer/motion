@@ -58,13 +58,19 @@ const getVelocity = (values: MotionValuesMap) => {
  * ❌: "block", "url(2.jpg)"
  * @param value
  */
-const isAnimatable = (value: ValueTarget) => {
-    if (typeof value === "number" || Array.isArray(value)) {
-        return true
-    } else if (
-        typeof value === "string" &&
-        complex.test(value) &&
-        !value.startsWith("url(")
+const isAnimatable = (key: string, value: ValueTarget) => {
+    // If the list of keys tat might be non-animatable grows, replace with Set
+    if (key === "zIndex") return false
+
+    // If it's a number or a keyframes array, we can animate it. We might at some point
+    // need to do a deep isAnimatable check of keyframes, or let Popmotion handle this,
+    // but for now lets leave it like this for performance reasons
+    if (typeof value === "number" || Array.isArray(value)) return true
+
+    if (
+        typeof value === "string" && // It's animatable if we have a string
+        complex.test(value) && // And it contains numbers and/or colors
+        !value.startsWith("url(") // Unless it starts with "url("
     ) {
         return true
     }
@@ -509,8 +515,8 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
                 if (this.isAnimating.has(key)) return acc
 
                 const origin = value.get()
-                const isOriginAnimatable = isAnimatable(origin)
-                const isTargetAnimatable = isAnimatable(valueTarget)
+                const isOriginAnimatable = isAnimatable(key, origin)
+                const isTargetAnimatable = isAnimatable(key, valueTarget)
 
                 // Only animate if both values are animatable
                 if (isOriginAnimatable && isTargetAnimatable) {
