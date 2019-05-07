@@ -1,6 +1,6 @@
 import { createContext, useMemo } from "react"
 import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
-import { VariantLabels } from "../types"
+import { VariantLabels, MotionProps } from "../types"
 import { Target } from "../../types"
 import { useMaxTimes } from "../../utils/use-max-times"
 
@@ -17,7 +17,7 @@ export const MotionContext = createContext<MotionContextProps>({
     static: false,
 })
 
-const isTarget = (v?: VariantLabels | Target): v is Target => {
+const isTarget = (v?: MotionProps["animate"]): v is Target => {
     return v !== undefined && typeof v !== "string" && !Array.isArray(v)
 }
 
@@ -25,17 +25,19 @@ export const useMotionContext = (
     parentContext: MotionContextProps,
     controls: ComponentAnimationControls,
     isStatic: boolean = false,
-    initial?: VariantLabels | Target
+    initial?: MotionProps["initial"],
+    animate?: MotionProps["animate"]
 ) => {
     const targetInitial =
         initial && !isTarget(initial) ? initial : parentContext.initial
     const initialDep = isStatic ? targetInitial : null // Only trigger updates if static and initial has changed
+    const animateDep = isTarget(animate) ? null : animate // Only trigger update if it's a variant label and it changes
     const context: MotionContextProps = useMemo(
         () => ({
             controls,
             initial: targetInitial,
         }),
-        [initialDep]
+        [initialDep, animateDep]
     )
 
     context.static = isStatic
