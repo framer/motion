@@ -48,7 +48,7 @@ export function useAnimateProp(
 
     useEffect(
         () => {
-            const toAnimate: Target = {}
+            const animateTarget: Target = {}
             const { transition, transitionEnd } = target
 
             for (const key in prevValues.current) {
@@ -60,7 +60,7 @@ export function useAnimateProp(
                     hasUpdated(prevValues.current[key], target[key]) ||
                     shouldAnimateOnMount
                 ) {
-                    toAnimate[key] = target[key]
+                    animateTarget[key] = target[key]
                 }
             }
 
@@ -70,9 +70,9 @@ export function useAnimateProp(
                 ...target,
             }
 
-            if (Object.keys(toAnimate).length) {
+            if (Object.keys(animateTarget).length) {
                 controls.start({
-                    ...toAnimate,
+                    ...animateTarget,
                     transition: transition || defaultTransition,
                     transitionEnd,
                 })
