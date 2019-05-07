@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.11] 2019-05-07
+
+### Fixed
+
+-   Disabling the animation of `zIndex`.
+
 ## [0.16.10] 2019-05-07
 
 ### Updated
