@@ -1272,8 +1272,14 @@ export type TargetResolver = (
     velocity: Target
 ) => TargetAndTransition
 
+/**
+ * @public
+ */
 export type Variant = TargetAndTransition | TargetResolver
 
+/**
+ * @public
+ */
 export type Variants = {
     [key: string]: Variant
 }

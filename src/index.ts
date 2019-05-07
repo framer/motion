@@ -60,5 +60,7 @@ export {
     SingleTarget,
     ResolvedValueTarget,
     ValueTarget,
+    Variant,
+    Variants,
 } from "./types"
 export { safeWindow } from "./events/utils/window"

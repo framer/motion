@@ -541,7 +541,6 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
 
         return Promise.all(animations).then(() => {
             if (!transitionEnd) return
-
             this.setValues(transitionEnd)
         })
     }

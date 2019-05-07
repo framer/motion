@@ -740,5 +740,14 @@ declare function useViewportScroll(): ScrollMotionValues;
 // @public (undocumented)
 declare type ValueTarget = SingleTarget | KeyframesTarget;
 
+// @public (undocumented)
+declare type Variant = TargetAndTransition | TargetResolver;
+
+// @public (undocumented)
+declare type Variants = {
+    // (undocumented)
+    [key: string]: Variant;
+};
+
 
 // (No @packageDocumentation comment for this package)
