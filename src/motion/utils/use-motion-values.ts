@@ -11,18 +11,18 @@ const updateStyler = createStylerFactory({
     onRender: (state, { onUpdate }) => onUpdate(state),
 })
 
+type Output = (
+    key: string,
+    value: string | number | TransformTemplate | undefined
+) => void
+
 export class MotionValuesMap {
     private hasMounted = false
-    private styler: Styler
     private transformTemplate: TransformTemplate | undefined
     private onUpdate?: Styler
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
-    private isStatic: boolean
-
-    constructor(isStatic: boolean) {
-        this.isStatic = isStatic
-    }
+    private output: Output
 
     has(key: string) {
         return this.values.has(key)
@@ -32,7 +32,7 @@ export class MotionValuesMap {
         this.values.set(key, value)
 
         if (this.hasMounted) {
-            this.bindValueToStyler(key, value)
+            this.bindValueToOutput(key, value)
         }
     }
 
@@ -54,11 +54,17 @@ export class MotionValuesMap {
         return this.values.forEach(callback)
     }
 
-    bindValueToStyler(key: string, value: MotionValue) {
-        const onRender = (v: any) => this.styler.set(key, v)
+    private bindValueToOutput(
+        key: string,
+        value: MotionValue,
+        output?: Output
+    ) {
+        const onRender = (v: any) => output && output(key, v)
         const unsubscribeOnRender = value.onRenderRequest(onRender)
 
-        const onChange = (v: any) => this.onUpdate && this.onUpdate.set(key, v)
+        const onChange = (v: any) => {
+            this.onUpdate && this.onUpdate.set(key, v)
+        }
         const unsubscribeOnChange = value.onChange(onChange)
 
         this.unsubscribers.set(key, () => {
@@ -86,18 +92,18 @@ export class MotionValuesMap {
     }
 
     updateTransformTemplate() {
-        if (this.styler) {
-            this.styler.set("transform", this.transformTemplate)
+        if (this.output) {
+            this.output("transform", this.transformTemplate)
         }
     }
 
-    mount(element: Element) {
+    mount(output?: Output) {
         this.hasMounted = true
-        this.styler = styler(element, {
-            preparseOutput: false,
-            enableHardwareAcceleration: !this.isStatic,
-        })
-        this.values.forEach((value, key) => this.bindValueToStyler(key, value))
+
+        if (output) this.output = output
+        this.values.forEach((value, key) =>
+            this.bindValueToOutput(key, value, output)
+        )
         this.updateTransformTemplate()
     }
 
@@ -109,11 +115,11 @@ export class MotionValuesMap {
     }
 }
 
-export const useMotionValues = (
-    { onUpdate, transformTemplate }: MotionProps,
-    isStatic: boolean
-) => {
-    const motionValues = useMemo(() => new MotionValuesMap(isStatic), [])
+export const useMotionValues = ({
+    onUpdate,
+    transformTemplate,
+}: MotionProps) => {
+    const motionValues = useMemo(() => new MotionValuesMap(), [])
     motionValues.setOnUpdate(onUpdate)
     motionValues.setTransformTemplate(transformTemplate)
 
@@ -126,7 +132,7 @@ export const useMotionValues = (
  * to a new component rather than in `useMotionValues`.
  */
 const MountMotionValuesComponent = (
-    { values }: { values: MotionValuesMap },
+    { values, isStatic }: { values: MotionValuesMap; isStatic: boolean },
     ref: React.RefObject<Element>
 ) => {
     useEffect(() => {
@@ -135,10 +141,15 @@ const MountMotionValuesComponent = (
             "No `ref` found. Ensure components created with `motion.custom` forward refs using `React.forwardRef`"
         )
 
-        values.mount(ref.current as Element)
+        const domStyler = styler(ref.current as Element, {
+            preparseOutput: false,
+            enableHardwareAcceleration: !isStatic,
+        })
+
+        values.mount((key, value) => domStyler.set(key, value))
 
         return () => values.unmount()
-    })
+    }, [])
 
     return null
 }

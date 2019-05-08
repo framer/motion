@@ -31,7 +31,7 @@ export const createMotionComponent = <P extends {}>({
         const ref = useExternalRef(externalRef)
         const parentContext = useContext(MotionContext)
         const isStatic = parentContext.static || props.static || false
-        const values = useMotionValues(props, isStatic)
+        const values = useMotionValues(props)
         const style = useMotionStyles(
             values,
             props.style,
@@ -84,7 +84,11 @@ export const createMotionComponent = <P extends {}>({
 
         return (
             <MotionContext.Provider value={context}>
-                <MountMotionValues ref={ref} values={values} />
+                <MountMotionValues
+                    ref={ref}
+                    values={values}
+                    isStatic={isStatic}
+                />
                 {handleAnimate}
                 {handleActiveFunctionality}
             </MotionContext.Provider>

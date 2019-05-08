@@ -698,7 +698,7 @@ declare function unwrapMotionValue(value?: string | number | CustomValueType | M
 // @public
 declare function useAnimation(): AnimationControls;
 
-// @beta (undocumented)
+// @beta
 declare function useAnimationState(initialState: any): any[];
 
 // @public
