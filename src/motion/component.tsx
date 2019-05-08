@@ -1,14 +1,17 @@
 import * as React from "react"
-import { useContext, forwardRef, Ref } from "react"
+import { useContext, useMemo, forwardRef, Ref } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues, MountMotionValues } from "./utils/use-motion-values"
 import { useMotionStyles } from "./utils/use-styles"
-import { useComponentAnimationControls } from "../animation/use-animation-controls"
+import { useValueAnimationControls } from "../animation/use-value-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
 import { UseFunctionalityComponents } from "./functionality/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { getAnimateComponent } from "./functionality/animation"
+import styler from "stylefire"
+import { parseDomVariant } from "../dom/parse-dom-variant"
+import { ValueAnimationConfig } from "animation/ValueAnimationControls"
 export { MotionProps }
 
 export interface MotionComponentConfig {
@@ -35,10 +38,19 @@ export const createMotionComponent = <P extends {}>({
             props.transformValues
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
-        const controls = useComponentAnimationControls(
-            values,
+
+        const controlsConfig = useMemo(
+            (): ValueAnimationConfig => ({
+                values,
+                readValueFromSource: key =>
+                    styler(ref.current as Element).get(key),
+                makeTargetAnimatable: parseDomVariant(values, ref),
+            }),
+            []
+        )
+        const controls = useValueAnimationControls(
+            controlsConfig,
             props,
-            ref,
             shouldInheritVariant
         )
         const context = useMotionContext(

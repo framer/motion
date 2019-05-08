@@ -9,7 +9,7 @@ declare class AnimationControls {
     start(definition: AnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // @internal
-    subscribe(controls: ComponentAnimationControls): () => boolean;
+    subscribe(controls: ValueAnimationControls): () => boolean;
     // @internal
     unmount(): void;
     }
@@ -697,6 +697,9 @@ declare function unwrapMotionValue(value?: string | number | CustomValueType | M
 
 // @public
 declare function useAnimation(): AnimationControls;
+
+// @beta (undocumented)
+declare function useAnimationState(initialState: any): any[];
 
 // @public
 declare function useCycle<T>(...items: T[]): CycleState<T>;

@@ -1,4 +1,3 @@
-import { RefObject } from "react"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { getTransition } from "./utils/transitions"
 import { motionValue, MotionValue } from "../value"
@@ -13,9 +12,6 @@ import {
     TargetWithKeyframes,
     ValueTarget,
 } from "../types"
-import { unitConversion } from "../dom/unit-type-conversion"
-import { resolveVariables } from "../dom/css-variables-conversion"
-import styler from "stylefire"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 import { getValueType } from "../dom/value-types"
@@ -98,11 +94,27 @@ const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
  */
 const isNumericalString = (v: string) => /^\d*\.?\d+$/.test(v)
 
+export type ReadValueFromSource = (key: string) => number | string
+
+export type MakeTargetAnimatable = (
+    target: TargetWithKeyframes,
+    transitionEnd?: Target | undefined
+) => {
+    target: TargetWithKeyframes
+    transitionEnd?: Target | undefined
+}
+
+export interface ValueAnimationConfig {
+    values: MotionValuesMap
+    readValueFromSource: ReadValueFromSource
+    makeTargetAnimatable?: MakeTargetAnimatable
+}
+
 /**
  * Control animations for a single component
  * @internal
  */
-export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
+export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     /**
      * A reference to the component's latest props. We could probably ditch this in
      * favour to a reference to the `custom` prop now we don't send all props through
@@ -114,14 +126,6 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
      * A reference to the component's motion values
      */
     private values: MotionValuesMap
-
-    /**
-     * A reference to the component's underlying DOM component. This is used here
-     * to read from the DOM in the event we're trying to animate a value that we
-     * haven't encountered before. That functionality would ideally be abstracted
-     * and set by the factory that creates DOM-specific components in motion/index.ts
-     */
-    private ref: RefObject<Element>
 
     /**
      * The default transition to use for `Target`s without any `transition` prop.
@@ -156,16 +160,32 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
     /**
      * A Set of children component controls for variant propagation.
      */
-    private children?: Set<ComponentAnimationControls>
+    private children?: Set<ValueAnimationControls>
 
     /**
      * A Set of value keys that are currently animating.
      */
     private isAnimating: Set<string> = new Set()
 
-    constructor(values: MotionValuesMap, ref: RefObject<Element>) {
+    /**
+     * In the event we attempt to animate a value that doesn't exist yet, we use this
+     * function to attempt to read it from the source (ie the DOM, or React state etc)
+     */
+    private readValueFromSource: ReadValueFromSource
+
+    /**
+     * A chance
+     */
+    private makeTargetAnimatable: MakeTargetAnimatable | undefined
+
+    constructor({
+        values,
+        readValueFromSource,
+        makeTargetAnimatable,
+    }: ValueAnimationConfig) {
         this.values = values
-        this.ref = ref
+        this.readValueFromSource = readValueFromSource
+        this.makeTargetAnimatable = makeTargetAnimatable
 
         this.values.forEach(
             (value, key) => (this.baseTarget[key] = value.get())
@@ -254,10 +274,8 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         )
         if (!newValueKeys.length) return
 
-        const domStyler = styler(this.ref.current as Element)
         newValueKeys.forEach(key => {
-            const domValue = domStyler.get(key) || 0
-            let value: string | number = domValue
+            let value: string | number = this.readValueFromSource(key)
 
             if (typeof value === "string" && isNumericalString(value)) {
                 // If this is a number read as a string, ie "0" or "200", convert it to a number
@@ -461,19 +479,17 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         if (!target) return Promise.resolve()
 
         target = this.transformValues(target as any)
-
-        // Resolve CSS variables, returns modified copies if changed
-        const resolved = resolveVariables(
-            this.values,
-            target,
-            transitionEnd,
-            this.ref
-        )
-        target = resolved.target
-        transitionEnd = resolved.transitionEnd
-
         if (transitionEnd) {
             transitionEnd = this.transformValues(transitionEnd as any)
+        }
+
+        if (this.makeTargetAnimatable) {
+            const animatable = this.makeTargetAnimatable(
+                target,
+                transitionEnd as any
+            )
+            target = animatable.target
+            transitionEnd = animatable.transitionEnd
         }
 
         if (priority) {
@@ -481,16 +497,6 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         }
 
         this.checkForNewValues(target)
-
-        const converted = unitConversion(
-            this.values,
-            this.ref,
-            target,
-            transitionEnd
-        )
-
-        target = converted.target
-        transitionEnd = converted.transitionEnd
 
         // TODO: This might be redundant (see `resolveVariant`)
         if (!transition && this.defaultTransition) {
@@ -677,7 +683,7 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
      * Add the controls of a child component.
      * @param controls
      */
-    addChild(controls: ComponentAnimationControls) {
+    addChild(controls: ValueAnimationControls) {
         if (!this.children) {
             this.children = new Set()
         }
@@ -690,7 +696,7 @@ export class ComponentAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
     }
 
-    removeChild(controls: ComponentAnimationControls) {
+    removeChild(controls: ValueAnimationControls) {
         if (!this.children) {
             return
         }

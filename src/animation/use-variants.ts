@@ -1,5 +1,5 @@
 import { VariantLabels } from "../motion/types"
-import { ComponentAnimationControls } from "./ComponentAnimationControls"
+import { ValueAnimationControls } from "./ValueAnimationControls"
 import {
     resolveVariantLabels,
     asDependencyList,
@@ -23,7 +23,7 @@ const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
 export function useVariants(
     targetVariant: VariantLabels,
     inherit: boolean,
-    controls: ComponentAnimationControls,
+    controls: ValueAnimationControls,
     initialVariant: VariantLabels
 ) {
     const variantList = resolveVariantLabels(targetVariant)

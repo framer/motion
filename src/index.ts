@@ -64,3 +64,4 @@ export {
     Variants,
 } from "./types"
 export { safeWindow } from "./events/utils/window"
+export { useAnimationState } from "./animation/use-animation-state"

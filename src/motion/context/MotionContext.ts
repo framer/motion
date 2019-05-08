@@ -1,10 +1,10 @@
 import { createContext, useMemo } from "react"
-import { ComponentAnimationControls } from "../../animation/ComponentAnimationControls"
+import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
 import { useMaxTimes } from "../../utils/use-max-times"
 
 type MotionContextProps = {
-    controls?: ComponentAnimationControls
+    controls?: ValueAnimationControls
     initial?: VariantLabels
     static?: boolean
 }
@@ -27,11 +27,11 @@ const isVariantLabel = (v?: MotionProps["animate"]): v is string | string[] => {
  */
 export const useMotionContext = (
     parentContext: MotionContextProps,
-    controls: ComponentAnimationControls,
+    controls: ValueAnimationControls,
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover }: MotionProps
 ) => {
-    // We pass on this component's ComponentAnimationControls *if* we're being provided variants,
+    // We pass on this component's ValueAnimationControls *if* we're being provided variants,
     // or if we're being used to control variants. Otherwise this component should be "invisible" to
     // variant propagation.
     const shouldPropagateControls =

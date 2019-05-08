@@ -56,11 +56,11 @@ function getVariableValue(
     }
 }
 
-export function resolveVariables(
+export function resolveCSSVariables(
     values: MotionValuesMap,
+    ref: RefObject<Element>,
     target: TargetWithKeyframes,
-    transitionEnd: Target | undefined,
-    ref: RefObject<Element>
+    transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     const { current: element } = ref
     if (!(element instanceof HTMLElement)) return { target, transitionEnd }

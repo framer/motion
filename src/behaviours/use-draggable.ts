@@ -5,7 +5,7 @@ import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { Point, usePointerEvents } from "../events"
 import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
-import { ComponentAnimationControls } from "../motion"
+import { ValueAnimationControls } from "../animation/ValueAnimationControls"
 import { Omit, Inertia } from "../types"
 import {
     blockViewportScroll,
@@ -285,7 +285,7 @@ export function useDraggable(
     }: DraggableProps,
     ref: RefObject<Element | null>,
     values: MotionValuesMap,
-    controls: ComponentAnimationControls
+    controls: ValueAnimationControls
 ) {
     const point = useRef<MotionPoint>({}).current
     const origin = useRef({ x: 0, y: 0 }).current

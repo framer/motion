@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react"
 import { AnimationControls } from "./AnimationControls"
-import { ComponentAnimationControls } from "./ComponentAnimationControls"
+import { ValueAnimationControls } from "./ValueAnimationControls"
 
 /**
  * `useAnimationGroupSubscription` allows a component to subscribe to an
@@ -13,7 +13,7 @@ import { ComponentAnimationControls } from "./ComponentAnimationControls"
  */
 export function useAnimationGroupSubscription(
     animation: AnimationControls,
-    controls: ComponentAnimationControls
+    controls: ValueAnimationControls
 ) {
     const unsubscribe = useMemo(() => animation.subscribe(controls), [
         animation,
