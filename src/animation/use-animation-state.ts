@@ -10,8 +10,8 @@ import { AnimationDefinition } from "./ValueAnimationControls"
  * When the state setter is called, values will be animated to their new position.
  *
  * TODO:
- * - Make hook accept a version of TargetAndTransition that accepts any value (not just DOM values)
- *
+ * - Make hook accept a version of Target that accepts any value (not just DOM values)
+ * - Allow hook to accept single values.
  *
  * @beta
  */
