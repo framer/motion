@@ -45,8 +45,7 @@ export const createMotionComponent = <P extends {}>({
             parentContext,
             controls,
             isStatic,
-            props.initial,
-            props.animate
+            props
         )
 
         // Add functionality

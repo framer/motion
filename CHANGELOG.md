@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.12] Unreleased
+
+### Fixed
+
+-   Making components without variants or animation-controlling props invisible to `staggerChildren`.
+
 ## [0.16.11] 2019-05-07
 
 ### Fixed

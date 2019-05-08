@@ -215,6 +215,65 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(1)
     })
 
+    test("components without variants are transparent to stagger order", async () => {
+        const promise = new Promise(resolve => {
+            const order: number[] = []
+
+            const parentVariants: Variants = {
+                visible: {
+                    transition: {
+                        staggerChildren: 0.1,
+                        staggerDirection: -1,
+                    },
+                },
+            }
+
+            const variants: Variants = {
+                hidden: { opacity: 0 },
+                visible: {
+                    opacity: 1,
+                    transition: {
+                        duration: 0.01,
+                    },
+                },
+            }
+
+            render(
+                <motion.div
+                    initial="hidden"
+                    animate="visible"
+                    variants={parentVariants}
+                    onAnimationComplete={() =>
+                        requestAnimationFrame(() => resolve(order))
+                    }
+                >
+                    <motion.div>
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => order.push(1)}
+                        />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => order.push(2)}
+                        />
+                    </motion.div>
+                    <motion.div>
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => order.push(3)}
+                        />
+                        <motion.div
+                            variants={variants}
+                            onUpdate={() => order.push(4)}
+                        />
+                    </motion.div>
+                </motion.div>
+            )
+        })
+
+        return expect(promise).resolves.toEqual([4, 3, 2, 1])
+    })
+
     test("onUpdate", async () => {
         const promise = new Promise(resolve => {
             let latest = {}
