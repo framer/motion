@@ -26,6 +26,6 @@ describe("useAnimationState", () => {
             rerender(<Component />)
         })
 
-        await expect(promise).resolves.toBe({ foo: 100 })
+        await expect(promise).resolves.toEqual({ foo: 100 })
     })
 })

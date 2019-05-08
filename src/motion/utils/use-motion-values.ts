@@ -54,12 +54,8 @@ export class MotionValuesMap {
         return this.values.forEach(callback)
     }
 
-    private bindValueToOutput(
-        key: string,
-        value: MotionValue,
-        output?: Output
-    ) {
-        const onRender = (v: any) => output && output(key, v)
+    private bindValueToOutput(key: string, value: MotionValue) {
+        const onRender = (v: any) => this.output && this.output(key, v)
         const unsubscribeOnRender = value.onRenderRequest(onRender)
 
         const onChange = (v: any) => {
@@ -101,9 +97,7 @@ export class MotionValuesMap {
         this.hasMounted = true
 
         if (output) this.output = output
-        this.values.forEach((value, key) =>
-            this.bindValueToOutput(key, value, output)
-        )
+        this.values.forEach((value, key) => this.bindValueToOutput(key, value))
         this.updateTransformTemplate()
     }
 
