@@ -1198,6 +1198,10 @@ export type PopmotionTransitionProps =
     | Inertia
     | Just
 
+export type PermissiveTransitionDefinition = {
+    [key: string]: any
+}
+
 /**
  * @public
  */
@@ -1209,6 +1213,7 @@ export type TransitionDefinition =
     | Inertia
     | Just
     | None
+    | PermissiveTransitionDefinition
 
 export type TransitionMap = Orchestration & {
     [key: string]: TransitionDefinition

@@ -321,4 +321,39 @@ describe("animate prop as variant", () => {
 
         expect(onUpdate).toHaveBeenCalledTimes(1)
     })
+
+    test("accepts variants without being typed", () => {
+        expect(() => {
+            const variants = {
+                withoutTransition: { opacity: 0 },
+                withJustDefaultTransitionType: {
+                    opacity: 0,
+                    transition: {
+                        duration: 1,
+                    },
+                },
+                withTransitionIndividual: {
+                    transition: {
+                        opacity: { type: "spring" },
+                    },
+                },
+                withTransitionType: {
+                    transition: {
+                        type: "spring",
+                    },
+                },
+                asResolver: () => ({
+                    opacity: 0,
+                    transition: {
+                        type: "physics",
+                        delay: 10,
+                    },
+                }),
+                withTransitionEnd: {
+                    transitionEnd: { opacity: 0 },
+                },
+            }
+            render(<motion.div variants={variants} />)
+        }).not.toThrowError()
+    })
 })
