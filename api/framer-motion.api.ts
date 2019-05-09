@@ -117,7 +117,7 @@ interface Keyframes {
     // @public
     times?: number[];
     // (undocumented)
-    to?: number | string;
+    to?: number | string | ValueTarget;
     // @public
     type: "keyframes";
     values: KeyframesTarget;
@@ -528,8 +528,6 @@ declare class MotionValue<V = any> {
     constructor(init: V, { transformer, parent }?: Config<V>);
     // @internal
     addChild(config: Config<V>): MotionValue<V>;
-    // @internal
-    control(controller: ActionFactory, config: PopmotionTransitionProps, transformer?: Transformer<V>): Promise<{}>;
     destroy(): void;
     get(): V;
     getVelocity(): number;
@@ -539,6 +537,8 @@ declare class MotionValue<V = any> {
     // @internal
     removeChild(child: MotionValue): void;
     set(v: V, render?: boolean): void;
+    // @internal
+    start(animation: StartAnimation): Promise<{}>;
     stop(): void;
     }
 
@@ -635,7 +635,7 @@ interface Spring {
     restSpeed?: number;
     stiffness?: number;
     // @internal (undocumented)
-    to?: number | string;
+    to?: number | string | ValueTarget;
     type: "spring";
     velocity?: number;
 }
@@ -685,7 +685,7 @@ interface Tween {
     loop?: number;
     times?: number[];
     // @internal (undocumented)
-    to?: number | string;
+    to?: number | string | ValueTarget;
     type?: "tween";
     // @internal (undocumented)
     velocity?: number;
