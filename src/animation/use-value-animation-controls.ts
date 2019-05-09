@@ -1,6 +1,8 @@
-import { ComponentAnimationControls } from "./ComponentAnimationControls"
-import { useContext, useMemo, useEffect, RefObject } from "react"
-import { MotionValuesMap } from "../motion"
+import {
+    ValueAnimationControls,
+    ValueAnimationConfig,
+} from "./ValueAnimationControls"
+import { useContext, useMemo, useEffect } from "react"
 import { MotionProps } from "../motion/types"
 import { MotionContext } from "../motion/context/MotionContext"
 
@@ -16,18 +18,14 @@ import { MotionContext } from "../motion/context/MotionContext"
  *
  * @internal
  */
-export function useComponentAnimationControls<P>(
-    values: MotionValuesMap,
+export function useValueAnimationControls<P>(
+    config: ValueAnimationConfig,
     props: P & MotionProps,
-    ref: RefObject<Element>,
     inherit: boolean
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
-    const controls = useMemo(
-        () => new ComponentAnimationControls<P>(values, ref),
-        []
-    )
+    const controls = useMemo(() => new ValueAnimationControls<P>(config), [])
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     controls.resetChildren()

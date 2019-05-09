@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react"
 import { Target, Transition, TargetAndTransition } from "../types"
-import { ComponentAnimationControls } from "./ComponentAnimationControls"
+import { ValueAnimationControls } from "./ValueAnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { shallowCompare } from "../utils/use-inline"
 
@@ -39,7 +39,7 @@ export const hasUpdated = (
  */
 export function useAnimateProp(
     target: TargetAndTransition,
-    controls: ComponentAnimationControls,
+    controls: ValueAnimationControls,
     values: MotionValuesMap,
     defaultTransition?: Transition
 ) {

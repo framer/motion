@@ -5,12 +5,12 @@ import { useAnimateProp } from "../../animation/use-animate-prop"
 import { useVariants } from "../../animation/use-variants"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { AnimationControls } from "../../animation/AnimationControls"
-import { ComponentAnimationControls } from "animation/ComponentAnimationControls"
+import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { TargetAndTransition } from "../../types"
 
 interface AnimationFunctionalProps extends MotionProps {
-    controls: ComponentAnimationControls
+    controls: ValueAnimationControls
     values: MotionValuesMap
     innerRef: RefObject<Element | null>
     inherit: boolean

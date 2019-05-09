@@ -17,9 +17,7 @@ import { MotionProps } from "./types"
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
-export {
-    ComponentAnimationControls,
-} from "../animation/ComponentAnimationControls"
+export { ValueAnimationControls } from "../animation/ValueAnimationControls"
 export { createMotionComponent }
 
 export const htmlMotionComponents: HTMLMotionComponents = htmlElements.reduce(

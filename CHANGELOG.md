@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.17.0] 2019-05-09
+
+### Added
+
+-   Experimental `useAnimatedState` Hook for animating arbitrary values.
+
 ## [0.16.11] 2019-05-08
 
 ### Fixed
@@ -25,7 +31,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Using `transition` and `transitionEnd` as direct values on the `animate` prop on subsequent renders.
 -   Rounding `zIndex`.
--   `AnimationControls.start` now accepts the same `AnimationDefinition` as `ComponentAnimationControls.start`.
+-   `AnimationControls.start` now accepts the same `AnimationDefinition` as `ValueAnimationControls.start`.
 
 ## [0.16.8] 2019-05-06
 

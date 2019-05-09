@@ -9,7 +9,7 @@ declare class AnimationControls {
     start(definition: AnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // @internal
-    subscribe(controls: ComponentAnimationControls): () => boolean;
+    subscribe(controls: ValueAnimationControls): () => boolean;
     // @internal
     unmount(): void;
     }
@@ -694,6 +694,9 @@ interface Tween {
 
 // @internal
 declare function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
+
+// @beta
+declare function useAnimatedState(initialState: any): any[];
 
 // @public
 declare function useAnimation(): AnimationControls;

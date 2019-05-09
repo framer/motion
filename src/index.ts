@@ -15,6 +15,7 @@ export {
     animationControls,
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
+export { useAnimatedState } from "./animation/use-animated-state"
 export {
     HoverHandlers,
     TapHandlers,
