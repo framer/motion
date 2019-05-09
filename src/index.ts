@@ -15,6 +15,7 @@ export {
     animationControls,
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
+export { useAnimatedState } from "./animation/use-animated-state"
 export {
     HoverHandlers,
     TapHandlers,
@@ -64,4 +65,3 @@ export {
     Variants,
 } from "./types"
 export { safeWindow } from "./events/utils/window"
-export { useAnimationState } from "./animation/use-animation-state"

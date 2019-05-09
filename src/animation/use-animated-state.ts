@@ -6,16 +6,18 @@ import { AnimationDefinition } from "./ValueAnimationControls"
 /**
  * Makes an animated version of `useState`.
  *
+ * @remarks
+ *
  * When the returned state setter is called, values will be animated to their new target.
  *
  * This allows the animation of arbitrary React components.
  *
  * **Note:** When animating DOM components, it's always preferable to use the `animate` prop, as Framer
- * will bypass React's rendering. This Hook is specifically for animating props on arbitrary React components,
- * or for animating text content.
+ * will bypass React's rendering cycle with one optimised for 60fps motion. This Hook is specifically
+ * for animating props on arbitrary React components, or for animating text content.
  *
  * ```jsx
- * const [state, setState] = useAnimationState({ percentage: 0 })
+ * const [state, setState] = useAnimatedState({ percentage: 0 })
  *
  * return (
  *   <Graph
@@ -25,14 +27,16 @@ import { AnimationDefinition } from "./ValueAnimationControls"
  * )
  * ```
  *
+ * @internalremarks
+ *
  * TODO:
  * - Make hook accept a typed version of Target that accepts any value (not just DOM values)
- * - Allow hook to accept single values. ie useAnimationState(0)
+ * - Allow hook to accept single values. ie useAnimatedState(0)
  * - Allow providing MotionValues via initialState.
  *
  * @beta
  */
-export function useAnimationState(initialState: any) {
+export function useAnimatedState(initialState: any) {
     const [animationState, onUpdate] = useState(initialState)
     const config = useMemo(() => ({ onUpdate }), [])
     const values = useMotionValues(config)

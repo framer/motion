@@ -2,15 +2,15 @@ import "../../../jest.setup"
 import { render } from "react-testing-library"
 import * as React from "react"
 import { useEffect } from "react"
-import { useAnimationState } from "../use-animation-state"
+import { useAnimatedState } from "../use-animated-state"
 
-describe("useAnimationState", () => {
+describe("useAnimatedState", () => {
     test("animates values", async () => {
         const promise = new Promise(resolve => {
             let latest = {}
 
             const Component = () => {
-                const [state, setState] = useAnimationState({ foo: 0 })
+                const [state, setState] = useAnimatedState({ foo: 0 })
                 latest = state
 
                 useEffect(() => {
