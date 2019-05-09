@@ -695,11 +695,11 @@ interface Tween {
 // @internal
 declare function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
+// @beta
+declare function useAnimatedState(initialState: any): any[];
+
 // @public
 declare function useAnimation(): AnimationControls;
-
-// @beta
-declare function useAnimationState(initialState: any): any[];
 
 // @public
 declare function useCycle<T>(...items: T[]): CycleState<T>;
