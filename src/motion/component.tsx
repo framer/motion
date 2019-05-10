@@ -13,7 +13,7 @@ import { MotionProps } from "./types"
 import { UseFunctionalityComponents } from "./functionality/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { getAnimateComponent } from "./functionality/animation"
-import { ValueAnimationConfig } from "animation/ValueAnimationControls"
+import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
 export { MotionProps }
 
