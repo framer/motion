@@ -1,7 +1,8 @@
-import { useState, useCallback, useMemo, useEffect } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { useValueAnimationControls } from "./use-value-animation-controls"
 import { useMotionValues } from "../motion/utils/use-motion-values"
 import { AnimationDefinition } from "./ValueAnimationControls"
+import { useConstant } from "../utils/use-constant"
 
 /**
  * Makes an animated version of `useState`.
@@ -38,7 +39,7 @@ import { AnimationDefinition } from "./ValueAnimationControls"
  */
 export function useAnimatedState(initialState: any) {
     const [animationState, onUpdate] = useState(initialState)
-    const config = useMemo(() => ({ onUpdate }), [])
+    const config = useConstant(() => ({ onUpdate }))
     const values = useMotionValues(config)
     const controls = useValueAnimationControls(
         {
@@ -49,11 +50,10 @@ export function useAnimatedState(initialState: any) {
         false
     )
 
-    const startAnimation = useCallback(
-        (animationDefinition: AnimationDefinition) => {
+    const startAnimation = useConstant(
+        () => (animationDefinition: AnimationDefinition) => {
             return controls.start(animationDefinition)
-        },
-        []
+        }
     )
 
     useEffect(() => {

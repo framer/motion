@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext, useMemo, forwardRef, Ref } from "react"
+import { useContext, forwardRef, Ref } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
 import { useMotionValues, MountMotionValues } from "./utils/use-motion-values"
 import { useMotionStyles } from "./utils/use-styles"
@@ -12,6 +12,7 @@ import { getAnimateComponent } from "./functionality/animation"
 import styler from "stylefire"
 import { parseDomVariant } from "../dom/parse-dom-variant"
 import { ValueAnimationConfig } from "animation/ValueAnimationControls"
+import { useConstant } from "../utils/use-constant"
 export { MotionProps }
 
 export interface MotionComponentConfig {
@@ -39,14 +40,13 @@ export const createMotionComponent = <P extends {}>({
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
 
-        const controlsConfig = useMemo(
+        const controlsConfig = useConstant(
             (): ValueAnimationConfig => ({
                 values,
                 readValueFromSource: key =>
                     styler(ref.current as Element).get(key),
                 makeTargetAnimatable: parseDomVariant(values, ref),
-            }),
-            []
+            })
         )
         const controls = useValueAnimationControls(
             controlsConfig,

@@ -1,5 +1,5 @@
-import { useMemo } from "react"
-import { motionValue, MotionValue } from "."
+import { motionValue } from "."
+import { useConstant } from "../utils/use-constant"
 
 /**
  * Creates a `MotionValue` to track the state and velocity of a value.
@@ -18,6 +18,6 @@ import { motionValue, MotionValue } from "."
  *
  * @public
  */
-export function useMotionValue<T>(initial: T): MotionValue<T> {
-    return useMemo(() => motionValue(initial), [])
+export function useMotionValue<T>(initial: T) {
+    return useConstant(() => motionValue(initial))
 }

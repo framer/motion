@@ -1,8 +1,9 @@
-import { forwardRef, useEffect, useMemo, memo } from "react"
+import { forwardRef, useEffect, memo } from "react"
 import { MotionValue } from "../../value"
 import styler, { createStylerFactory, Styler } from "stylefire"
 import { OnUpdate, MotionProps, TransformTemplate } from "../types"
 import { invariant } from "hey-listen"
+import { useConstant } from "../../utils/use-constant"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
 // to fire and the `onUpdate` prop will only fire once per frame
@@ -113,7 +114,7 @@ export const useMotionValues = ({
     onUpdate,
     transformTemplate,
 }: MotionProps) => {
-    const motionValues = useMemo(() => new MotionValuesMap(), [])
+    const motionValues = useConstant(() => new MotionValuesMap())
     motionValues.setOnUpdate(onUpdate)
     motionValues.setTransformTemplate(transformTemplate)
 
