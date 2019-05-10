@@ -1,4 +1,4 @@
-import { motionValue } from "."
+import { motionValue, MotionValue } from "."
 import { useConstant } from "../utils/use-constant"
 
 /**
@@ -18,6 +18,6 @@ import { useConstant } from "../utils/use-constant"
  *
  * @public
  */
-export function useMotionValue<T>(initial: T) {
+export function useMotionValue<T>(initial: T): MotionValue<T> {
     return useConstant(() => motionValue(initial))
 }

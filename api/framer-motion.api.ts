@@ -711,7 +711,7 @@ declare function useExternalRef<E = Element>(external?: Ref<E | null>): RefObjec
 declare function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
 
 // @public
-declare function useMotionValue<T>(initial: T): import(".").MotionValue<T>;
+declare function useMotionValue<T>(initial: T): MotionValue<T>;
 
 // @internal (undocumented)
 declare function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined;
