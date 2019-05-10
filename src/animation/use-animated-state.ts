@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { useValueAnimationControls } from "./use-value-animation-controls"
 import { useMotionValues } from "../motion/utils/use-motion-values"
 import { AnimationDefinition } from "./ValueAnimationControls"
