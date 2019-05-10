@@ -1,6 +1,6 @@
 import { AnimationControls } from "./AnimationControls"
 import { useEffect } from "react"
-import { useConstant } from "utils/use-constant"
+import { useConstant } from "../utils/use-constant"
 
 /**
  * The `useAnimation` hook returns `AnimationControls`, which can be used to manually start, stop and sequence animations on one or more Frames.
