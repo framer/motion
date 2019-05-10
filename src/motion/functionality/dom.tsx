@@ -58,6 +58,8 @@ const validProps = (props: MotionProps) => {
 }
 
 /**
+ * Create a configuration for `motion` components that provides DOM-specific functionality.
+ *
  * @internal
  */
 export function createDomMotionConfig<P>(
@@ -66,6 +68,11 @@ export function createDomMotionConfig<P>(
     const isDOM = typeof Component === "string"
     const isSVG = isDOM && svgElements.indexOf(Component as any) !== -1
 
+    /**
+     * Create a component that renders the DOM element. This step of indirection
+     * could probably be removed at this point, and `createElement` could be moved
+     * to the `activeComponents.push`.
+     */
     const RenderComponent = ({
         innerRef,
         style,
@@ -83,6 +90,24 @@ export function createDomMotionConfig<P>(
     }
 
     return {
+        /**
+         * This hook gets used by the `motion` component
+         *
+         * Each functionality component gets provided the `ref`, animation controls and the `MotionValuesMap`
+         * generated for that component, as well as all the `props` passed to it by the user.
+         *
+         * The pattern used to determine whether to load and use each piece of functionality is
+         * consistent (should render? Then push component) and could be used to extend functionality.
+         *
+         * By exposing a mutable piece of memory via an API like `extendMotionComponent` we could
+         * allow users to add `FunctionalComponentDefinition`s. This would allow us to offer file size
+         * reductions by shipping an entry point that doesn't load gesture and drag functionality, and
+         * also offer a way for users to develop plugins/other functionality.
+         *
+         * For user-defined functionality we'd need to allow
+         *  1) User-defined prop typing (extending `P`)
+         *  2) User-defined "clean props" that removes their plugin's props before being passed to the DOM.
+         */
         useFunctionalityComponents: (
             props,
             values,
