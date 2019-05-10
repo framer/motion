@@ -25,7 +25,7 @@ interface AnimationProps {
 }
 
 // @internal (undocumented)
-declare const createMotionComponent: <P extends {}>({ useFunctionalityComponents, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
+declare const createMotionComponent: <P extends {}>({ useFunctionalityComponents, getValueControlsConfig, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
 
 // @public (undocumented)
 interface CustomValueType {

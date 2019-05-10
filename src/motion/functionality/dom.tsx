@@ -1,3 +1,4 @@
+// TODO: Move this file to `src/dom/`
 import * as React from "react"
 import { MotionProps } from "../types"
 import {
@@ -13,6 +14,8 @@ import { gestureProps, Gestures } from "./gestures"
 import { MotionComponentConfig } from "../component"
 import { Drag } from "./drag"
 import { FunctionalProps } from "./types"
+import styler from "stylefire"
+import { parseDomVariant } from "../../dom/parse-dom-variant"
 
 type RenderProps = FunctionalProps & {
     componentProps: MotionProps
@@ -20,6 +23,10 @@ type RenderProps = FunctionalProps & {
     isStatic: boolean | undefined
 }
 
+/**
+ * Maintain a list of event handlers. Emotion's `is-prop-valid` doesn't whitelist every event
+ * handler, it just pattern-matches `onX`. So we can manually strip out ours.
+ */
 const eventHandlers = new Set([
     "onAnimationComplete",
     "onUpdate",
@@ -31,6 +38,13 @@ const eventHandlers = new Set([
     ...gestureProps,
 ])
 
+/**
+ * Returns an object of only valid props. We remove invalid DOM props according to
+ * Emotion's `isPropValid`, and any of our own event handlers. This was necessary when
+ * we passed all a component's props through to dynamic variant resolvers, but since
+ * moving that logic to custom it's possible for us to ditch this and save some filesize/performance
+ * by simply destructuring out the props that we use.
+ */
 const validProps = (props: MotionProps) => {
     const valid = {}
 
@@ -43,6 +57,9 @@ const validProps = (props: MotionProps) => {
     return valid
 }
 
+/**
+ * @internal
+ */
 export function createDomMotionConfig<P>(
     Component: string | ComponentType<P>
 ): MotionComponentConfig {
@@ -113,6 +130,14 @@ export function createDomMotionConfig<P>(
             )
 
             return activeComponents
+        },
+        getValueControlsConfig(ref, values) {
+            return {
+                values,
+                readValueFromSource: key =>
+                    styler(ref.current as Element).get(key),
+                makeTargetAnimatable: parseDomVariant(values, ref),
+            }
         },
     }
 }

@@ -1,7 +1,11 @@
 import * as React from "react"
-import { useContext, forwardRef, Ref } from "react"
+import { useContext, forwardRef, Ref, RefObject } from "react"
 import { useExternalRef } from "./utils/use-external-ref"
-import { useMotionValues, MountMotionValues } from "./utils/use-motion-values"
+import {
+    useMotionValues,
+    MountMotionValues,
+    MotionValuesMap,
+} from "./utils/use-motion-values"
 import { useMotionStyles } from "./utils/use-styles"
 import { useValueAnimationControls } from "../animation/use-value-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
@@ -9,14 +13,16 @@ import { MotionProps } from "./types"
 import { UseFunctionalityComponents } from "./functionality/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { getAnimateComponent } from "./functionality/animation"
-import styler from "stylefire"
-import { parseDomVariant } from "../dom/parse-dom-variant"
 import { ValueAnimationConfig } from "animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
 export { MotionProps }
 
 export interface MotionComponentConfig {
     useFunctionalityComponents: UseFunctionalityComponents
+    getValueControlsConfig: (
+        ref: RefObject<any>,
+        values: MotionValuesMap
+    ) => ValueAnimationConfig
 }
 
 /**
@@ -24,6 +30,7 @@ export interface MotionComponentConfig {
  */
 export const createMotionComponent = <P extends {}>({
     useFunctionalityComponents,
+    getValueControlsConfig,
 }: MotionComponentConfig) => {
     function MotionComponent(
         props: P & MotionProps,
@@ -40,14 +47,9 @@ export const createMotionComponent = <P extends {}>({
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
 
-        const controlsConfig = useConstant(
-            (): ValueAnimationConfig => ({
-                values,
-                readValueFromSource: key =>
-                    styler(ref.current as Element).get(key),
-                makeTargetAnimatable: parseDomVariant(values, ref),
-            })
-        )
+        const controlsConfig = useConstant(() => {
+            return getValueControlsConfig(ref, values)
+        })
         const controls = useValueAnimationControls(
             controlsConfig,
             props,
