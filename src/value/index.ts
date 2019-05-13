@@ -191,7 +191,38 @@ export class MotionValue<V = any> {
     /**
      * Adds a function that will be notified when the `MotionValue` is updated.
      *
-     * @param subscriber - A function that's provided the latest value.
+     * It returns a function that, when called, will cancel the subscription.
+     *
+     * When calling `onChange` inside a React component, it should be wrapped with the
+     * `useEffect` hook. As it returns an unsubscribe function, this should be returned
+     * from the `useEffect` function to ensure only one active subscription persists
+     * for the lifecycle of the component.
+     *
+     * ```jsx
+     * const MyComponent = () => {
+     *   const x = useMotionValue(0)
+     *
+     *   useEffect(() => {
+     *     const unsubscribe = x.onChange((latestX) => {
+     *       // Do stuff with latest x value
+     *     })
+     *
+     *     return unsubscribe
+     *   })
+     *
+     *   return <motion.div style={{ x }} />
+     * }
+     * ```
+     *
+     * @internalremarks
+     *
+     * We could look into a `useOnChange` hook if the above lifecycle management proves confusing.
+     *
+     * ```jsx
+     * useOnChange(x, () => {})
+     * ```
+     *
+     * @param subscriber - A function that receives the latest value.
      * @returns A function that, when called, will cancel this subscription.
      *
      * @public
