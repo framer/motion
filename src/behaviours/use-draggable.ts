@@ -468,6 +468,7 @@ export function useDraggable(
             dragElastic,
             dragMomentum,
             ...flattenConstraints(dragConstraints),
+            dragTransition,
         ]
     )
 

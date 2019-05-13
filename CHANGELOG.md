@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.17.1] 2019-05-13
+
+### Fixed
+
+-   `dragTransition` now listed as a `useDraggable` dependency.
+
 ## [0.17.0] 2019-05-09
 
 ### Added
