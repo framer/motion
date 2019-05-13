@@ -279,6 +279,7 @@ describe("animate prop as variant", () => {
                     }
                 >
                     <motion.div>
+                        <motion.div />
                         <motion.div
                             variants={variants}
                             onUpdate={() => {
