@@ -2,9 +2,10 @@ import {
     ValueAnimationControls,
     ValueAnimationConfig,
 } from "./ValueAnimationControls"
-import { useContext, useMemo, useEffect } from "react"
+import { useContext, useEffect } from "react"
 import { MotionProps } from "../motion/types"
 import { MotionContext } from "../motion/context/MotionContext"
+import { useConstant } from "../utils/use-constant"
 
 /**
  * Creates an imperative set of controls to trigger animations.
@@ -25,7 +26,7 @@ export function useValueAnimationControls<P>(
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
-    const controls = useMemo(() => new ValueAnimationControls<P>(config), [])
+    const controls = useConstant(() => new ValueAnimationControls<P>(config))
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     controls.resetChildren()

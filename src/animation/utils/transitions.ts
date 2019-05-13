@@ -1,92 +1,32 @@
 import {
-    action,
     tween,
     spring,
     keyframes,
     inertia,
-    physics,
-    easing,
-    Action,
+    chain,
+    delay as delayAction,
 } from "popmotion"
 import {
+    ResolvedValueTarget,
     Transition,
     Tween,
     Keyframes,
-    EasingFunction,
     TransitionMap,
     PopmotionTransitionProps,
     TransitionDefinition,
     ValueTarget,
-    Easing,
 } from "../../types"
-import { getDefaultTransition } from "./default-transitions"
-import { invariant } from "hey-listen"
 import { ActionFactory, MotionValue } from "../../value"
 import { isKeyframesTarget } from "./is-keyframes-target"
+import { getDefaultTransition } from "./default-transitions"
+import { just } from "./just"
+import { warning } from "hey-listen"
+import { isEasingArray, easingDefinitionToFunction } from "./easing"
+import { linear } from "@popmotion/easing"
+import { isDurationAnimation } from "./is-duration-animation"
+import { isAnimatable } from "./is-animatable"
 
-type JustProps = { to: string | number }
-const just: ActionFactory = ({ to }: JustProps): Action => {
-    return action(({ update, complete }) => {
-        update(to)
-        complete()
-    })
-}
-
-const transitions = { tween, spring, keyframes, physics, inertia, just }
-
-const {
-    linear,
-    easeIn,
-    easeOut,
-    easeInOut,
-    circIn,
-    circOut,
-    circInOut,
-    backIn,
-    backOut,
-    backInOut,
-    anticipate,
-} = easing
-
-const easingLookup: { [key: string]: EasingFunction } = {
-    linear,
-    easeIn,
-    easeOut,
-    easeInOut,
-    circIn,
-    circOut,
-    circInOut,
-    backIn,
-    backOut,
-    backInOut,
-    anticipate,
-}
-
-const easingDefinitionToFunction = (definition: Easing) => {
-    if (Array.isArray(definition)) {
-        // If cubic bezier definition, create bezier curve
-        invariant(
-            definition.length === 4,
-            `Cubic bezier arrays must contain four numerical values.`
-        )
-
-        const [x1, y1, x2, y2] = definition
-        return easing.cubicBezier(x1, y1, x2, y2)
-    } else if (typeof definition === "string") {
-        // Else lookup from table
-        invariant(
-            easingLookup[definition] !== undefined,
-            `Invalid easing type '${definition}'`
-        )
-        return easingLookup[definition]
-    }
-
-    return definition
-}
-
-const isEasingArray = (ease: any): ease is Easing[] => {
-    return Array.isArray(ease) && typeof ease[0] !== "number"
-}
+const transitions = { tween, spring, keyframes, inertia, just }
 
 const transitionOptionParser = {
     tween: (opts: Tween): Tween => {
@@ -126,11 +66,11 @@ const isTransitionDefined = ({
     return Object.keys(transition).length
 }
 
-const getTransitionForValue = (
+const getTransitionDefinition = (
     key: string,
     to: ValueTarget,
     transitionDefinition?: Transition
-) => {
+): PopmotionTransitionProps => {
     const delay = transitionDefinition ? transitionDefinition.delay : 0
 
     // If no object, return default transition
@@ -175,7 +115,7 @@ const getTransitionForValue = (
             to,
             delay,
             ...valueTransitionDefinition,
-        }
+        } as any
     }
 }
 
@@ -188,25 +128,82 @@ const preprocessOptions = (
         : opts
 }
 
-export const getTransition = (
+export const getAnimation = (
+    key: string,
     value: MotionValue,
-    valueKey: string,
-    to: ValueTarget,
+    target: ResolvedValueTarget,
     transition?: Transition
 ): [ActionFactory, PopmotionTransitionProps] => {
-    const { type = "tween", ...transitionDefinition } = getTransitionForValue(
-        valueKey,
-        to,
+    const origin = value.get()
+    const isOriginAnimatable = isAnimatable(key, origin)
+    const isTargetAnimatable = isAnimatable(key, target)
+
+    // TODO we could probably improve this check to ensure both values are of the same type -
+    // for instance 100 to #fff. This might live better in Popmotion.
+    warning(
+        isOriginAnimatable === isTargetAnimatable,
+        `You are trying to animate ${key} from "${origin}" to ${target}. "${origin}" is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
+    )
+
+    // Parse the `transition` prop and return options for the Popmotion animation
+    const { type = "tween", ...transitionDefinition } = getTransitionDefinition(
+        key,
+        target,
         transition
     )
 
-    const actionFactory = transitions[type] as ActionFactory
+    // If this is an animatable pair of values, return an animation, otherwise use `just`
+    const actionFactory: ActionFactory =
+        isOriginAnimatable && isTargetAnimatable ? transitions[type] : just
 
     const opts = preprocessOptions(type, {
-        from: value.get(),
+        from: origin,
         velocity: value.getVelocity(),
         ...transitionDefinition,
     })
 
     return [actionFactory, opts]
+}
+
+/**
+ * Start animation on a value. This function completely encapsulates Popmotion-specific logic.
+ *
+ * @internal
+ */
+export function startAnimation(
+    key: string,
+    value: MotionValue,
+    target: ResolvedValueTarget,
+    transition?: Transition,
+    delay: number = 0
+) {
+    const [animationFactory, opts] = getAnimation(
+        key,
+        value,
+        target,
+        transition
+    )
+
+    // Convert durations from Framer Motion seconds into Popmotion milliseconds
+    if (isDurationAnimation(opts) && opts.duration) {
+        opts.duration *= 1000
+    }
+    delay *= 1000
+
+    // Bind animation opts to animation
+    let animation = animationFactory(opts)
+
+    // Compose delay
+    if (delay) {
+        animation = chain(delayAction(delay), animation)
+    }
+
+    return value.start(complete => {
+        const activeAnimation = animation.start({
+            update: (v: any) => value.set(v),
+            complete,
+        })
+
+        return () => activeAnimation.stop()
+    })
 }

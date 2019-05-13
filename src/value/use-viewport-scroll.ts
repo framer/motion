@@ -12,6 +12,10 @@ const scrollY = motionValue(0)
 const scrollXProgress = motionValue(0)
 const scrollYProgress = motionValue(0)
 
+const setProgress = (offset: number, maxOffset: number, value: MotionValue) => {
+    value.set(!maxOffset || !offset ? 0 : offset / maxOffset)
+}
+
 let hasEventListener = false
 const addScrollListener = () => {
     hasEventListener = true
@@ -26,12 +30,17 @@ const addScrollListener = () => {
         scrollX.set(xOffset)
         scrollY.set(yOffset)
 
-        // Set progress
-        const maxXOffset = document.body.clientWidth - window.innerWidth
-        scrollXProgress.set(xOffset === 0 ? 0 : xOffset / maxXOffset)
-
-        const maxYOffset = document.body.clientHeight - window.innerHeight
-        scrollYProgress.set(yOffset === 0 ? 0 : yOffset / maxYOffset)
+        // Set 0-1 progress
+        setProgress(
+            xOffset,
+            document.body.clientWidth - window.innerWidth,
+            scrollXProgress
+        )
+        setProgress(
+            yOffset,
+            document.body.clientHeight - window.innerHeight,
+            scrollYProgress
+        )
     }
 
     updateScrollValues()
@@ -67,9 +76,7 @@ const viewportMotionValues: ScrollMotionValues = {
  *
  * export function MyComponent() {
  *   const { scrollYProgress } = useViewportScroll()
- *   const scaleX = useTransform(scrollYProgress, [0, 1], [0, 1])
- *
- *   return <Frame style={{ scaleX }} />
+ *   return <Frame style={{ scaleX: scrollYProgress }} />
  * }
  * ```
  *

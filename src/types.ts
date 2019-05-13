@@ -450,7 +450,7 @@ export interface Tween {
     /**
      * @internal
      */
-    to?: number | string
+    to?: number | string | ValueTarget
 
     /**
      * @internal
@@ -612,7 +612,7 @@ export interface Spring {
     /**
      * @internal
      */
-    to?: number | string
+    to?: number | string | ValueTarget
 
     /**
      * The initial velocity of the spring. By default this is the current velocity of the component.
@@ -1021,7 +1021,7 @@ export interface Keyframes {
     /**
      * @internal
      */
-    to?: number | string
+    to?: number | string | ValueTarget
 
     /**
      * @internal
@@ -1157,7 +1157,7 @@ export interface Physics {
  */
 export interface Just {
     type: "just"
-    to?: number | string
+    to?: number | string | ValueTarget
     from?: number | string
     delay?: number
     velocity?: number
@@ -1198,6 +1198,10 @@ export type PopmotionTransitionProps =
     | Inertia
     | Just
 
+export type PermissiveTransitionDefinition = {
+    [key: string]: any
+}
+
 /**
  * @public
  */
@@ -1209,6 +1213,7 @@ export type TransitionDefinition =
     | Inertia
     | Just
     | None
+    | PermissiveTransitionDefinition
 
 export type TransitionMap = Orchestration & {
     [key: string]: TransitionDefinition

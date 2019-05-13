@@ -1,10 +1,5 @@
 import sync, { getFrameData, FrameData } from "framesync"
-import {
-    chain,
-    delay as delayAction,
-    Action,
-    ColdSubscription,
-} from "popmotion"
+import { Action } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 import { PopmotionTransitionProps } from "../types"
 
@@ -19,24 +14,12 @@ export type Config<T> = {
 
 export type ActionFactory = (actionConfig: PopmotionTransitionProps) => Action
 
+export type StartAnimation = (complete: () => void) => () => void
+
 const isFloat = (value: any): value is string => {
     return !isNaN(parseFloat(value))
 }
 
-// This function is unrolled and mutative, as the number of props
-// is too small to really warrent a loop and by this point config
-// has been recreated many times over.
-const parseDurations = (config: PopmotionTransitionProps) => {
-    if (config["duration"]) {
-        config["duration"] = config["duration"] * 1000
-    }
-
-    if (config.delay) {
-        config.delay = config.delay * 1000
-    }
-
-    return config
-}
 /**
  * `MotionValue` is used to track the state and velocity of motion values.
  *
@@ -111,7 +94,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private controller?: ColdSubscription
+    private stopAnimation?: () => void
 
     /**
      * Tracks whether this value can output a velocity. Currently this is only true
@@ -367,41 +350,22 @@ export class MotionValue<V = any> {
     private setChild = (child: MotionValue) => child.set(this.current)
 
     /**
-     * Registers a new Popmotion animation to control this `MotionValue`. Only one
+     * Registers a new animation to control this `MotionValue`. Only one
      * animation can drive a `MotionValue` at one time.
      *
-     * @param action - The Popmotion animation or input to initialise.
-     * @param config - The configuration to pass to the Popmotion animation.
-     * @param transformer - An optional function to transform the output of the Popmotion animation.
+     * ```jsx
+     * value.start()
+     * ```
+     *
+     * @param animation - A function that starts the provided animation
      *
      * @internal
      */
-    control(
-        controller: ActionFactory,
-        config: PopmotionTransitionProps,
-        transformer?: Transformer<V>
-    ) {
+    start(animation: StartAnimation) {
         this.stop()
 
-        const { delay, ...timeAdjustedConfig } = parseDurations(config)
-        let initialisedController = controller(timeAdjustedConfig)
-
-        if (transformer) {
-            initialisedController = initialisedController.pipe(transformer)
-        }
-
-        if (delay) {
-            initialisedController = chain(
-                delayAction(delay),
-                initialisedController
-            )
-        }
-
-        return new Promise(complete => {
-            this.controller = initialisedController.start({
-                update: (v: V) => this.set(v),
-                complete,
-            })
+        return new Promise(resolve => {
+            this.stopAnimation = animation(resolve)
         })
     }
 
@@ -411,7 +375,7 @@ export class MotionValue<V = any> {
      * @public
      */
     stop() {
-        if (this.controller) this.controller.stop()
+        if (this.stopAnimation) this.stopAnimation()
     }
 
     /**

@@ -1,5 +1,4 @@
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
-import { getTransition } from "./utils/transitions"
 import { motionValue, MotionValue } from "../value"
 import { complex } from "style-value-types"
 import {
@@ -10,12 +9,11 @@ import {
     TargetAndTransition,
     Variant,
     TargetWithKeyframes,
-    ValueTarget,
 } from "../types"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 import { getValueType } from "../dom/value-types"
-import { warning } from "hey-listen"
+import { startAnimation } from "./utils/transitions"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -45,33 +43,6 @@ const getVelocity = (values: MotionValuesMap) => {
     const velocity = {}
     values.forEach((value, key) => (velocity[key] = value.getVelocity()))
     return velocity
-}
-
-/**
- * Check if a value is animatable. Examples:
- *
- * ✅: 100, "100px", "#fff"
- * ❌: "block", "url(2.jpg)"
- * @param value
- */
-const isAnimatable = (key: string, value: ValueTarget) => {
-    // If the list of keys tat might be non-animatable grows, replace with Set
-    if (key === "zIndex") return false
-
-    // If it's a number or a keyframes array, we can animate it. We might at some point
-    // need to do a deep isAnimatable check of keyframes, or let Popmotion handle this,
-    // but for now lets leave it like this for performance reasons
-    if (typeof value === "number" || Array.isArray(value)) return true
-
-    if (
-        typeof value === "string" && // It's animatable if we have a string
-        complex.test(value) && // And it contains numbers and/or colors
-        !value.startsWith("url(") // Unless it starts with "url("
-    ) {
-        return true
-    }
-
-    return false
 }
 
 /**
@@ -520,32 +491,9 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
                 if (this.isAnimating.has(key)) return acc
 
-                const origin = value.get()
-                const isOriginAnimatable = isAnimatable(key, origin)
-                const isTargetAnimatable = isAnimatable(key, valueTarget)
-
-                // Only animate if both values are animatable
-                if (isOriginAnimatable && isTargetAnimatable) {
-                    const [action, options] = getTransition(
-                        value,
-                        key,
-                        valueTarget,
-                        {
-                            delay,
-                            ...transition,
-                        }
-                    )
-
-                    acc.push(value.control(action, options))
-                } else {
-                    // TODO we could probably improve this check to ensure both values are of the same type -
-                    // for instance 100 to #fff. This might live better in Popmotion.
-                    warning(
-                        !isOriginAnimatable && !isTargetAnimatable,
-                        `You are trying to animate ${key} from "${origin}" to ${valueTarget}. "${origin}" is not an animatable value - to enable this animation set ${origin} to a value animatable to ${valueTarget} via the \`style\` property.`
-                    )
-                    value.set(valueTarget)
-                }
+                acc.push(
+                    startAnimation(key, value, valueTarget, transition, delay)
+                )
 
                 this.isAnimating.add(key)
 
