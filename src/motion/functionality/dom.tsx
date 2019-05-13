@@ -161,6 +161,9 @@ export function createDomMotionConfig<P>(
                 values,
                 readValueFromSource: key =>
                     styler(ref.current as Element).get(key),
+                // TODO: This is a good second source of plugins. This function contains the CSS variable
+                // and unit conversion support. These functions share a common signature. We could make another
+                // API for adding these and extend to support stuff like FLIP
                 makeTargetAnimatable: parseDomVariant(values, ref),
             }
         },
