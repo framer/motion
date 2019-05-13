@@ -62,7 +62,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  *
  * @param inputValue - A number to transform between the input and output ranges.
  * @param inputRange - A linear series of numbers (either all increasing or decreasing).
- * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
+ * @param outputRange - A series of numbers, colors, strings, or arrays/objects of those. Must be the same length as `inputRange`.
  * @param options - Clamp: Clamp values to within the given range. Defaults to `true`.
  *
  * @public
