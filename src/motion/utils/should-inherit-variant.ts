@@ -3,7 +3,12 @@ import { AnimationControls } from "../../animation/AnimationControls"
 
 export const checkShouldInheritVariant = ({
     animate,
+    variants,
     inherit = true,
 }: MotionProps): boolean => {
-    return inherit && (!animate || animate instanceof AnimationControls)
+    return (
+        inherit &&
+        !!variants &&
+        (!animate || animate instanceof AnimationControls)
+    )
 }

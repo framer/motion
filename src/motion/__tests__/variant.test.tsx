@@ -216,13 +216,42 @@ describe("animate prop as variant", () => {
     })
 
     test("components without variants are transparent to stagger order", async () => {
-        const promise = new Promise(resolve => {
+        const [recordedOrder, staggeredEqually] = await new Promise(resolve => {
             const order: number[] = []
+            const delayedBy: number[] = []
+            const staggerDuration = 0.1
+
+            const updateDelayedBy = (i: number) => {
+                if (delayedBy[i]) return
+                delayedBy[i] = performance.now()
+            }
+
+            // Checking a rough equidistance between stagger times allows us to see
+            // if any of the supposedly invisible interim `motion.div`s were considered part of the
+            // stagger order (which would mess up the timings)
+            const checkStaggerEquidistance = () => {
+                let isEquidistant = true
+                let prev = 0
+                for (let i = 0; i < delayedBy.length; i++) {
+                    if (prev) {
+                        const timeSincePrev = prev - delayedBy[i]
+                        if (
+                            Math.round(timeSincePrev / 100) * 100 !==
+                            staggerDuration * 1000
+                        ) {
+                            isEquidistant = false
+                        }
+                    }
+                    prev = delayedBy[i]
+                }
+
+                return isEquidistant
+            }
 
             const parentVariants: Variants = {
                 visible: {
                     transition: {
-                        staggerChildren: 0.1,
+                        staggerChildren: staggerDuration,
                         staggerDirection: -1,
                     },
                 },
@@ -244,34 +273,50 @@ describe("animate prop as variant", () => {
                     animate="visible"
                     variants={parentVariants}
                     onAnimationComplete={() =>
-                        requestAnimationFrame(() => resolve(order))
+                        requestAnimationFrame(() =>
+                            resolve([order, checkStaggerEquidistance()])
+                        )
                     }
                 >
                     <motion.div>
+                        <motion.div />
                         <motion.div
                             variants={variants}
-                            onUpdate={() => order.push(1)}
+                            onUpdate={() => {
+                                updateDelayedBy(0)
+                                order.push(1)
+                            }}
                         />
                         <motion.div
                             variants={variants}
-                            onUpdate={() => order.push(2)}
+                            onUpdate={() => {
+                                updateDelayedBy(1)
+                                order.push(2)
+                            }}
                         />
                     </motion.div>
                     <motion.div>
                         <motion.div
                             variants={variants}
-                            onUpdate={() => order.push(3)}
+                            onUpdate={() => {
+                                updateDelayedBy(2)
+                                order.push(3)
+                            }}
                         />
                         <motion.div
                             variants={variants}
-                            onUpdate={() => order.push(4)}
+                            onUpdate={() => {
+                                updateDelayedBy(3)
+                                order.push(4)
+                            }}
                         />
                     </motion.div>
                 </motion.div>
             )
         })
 
-        return expect(promise).resolves.toEqual([4, 3, 2, 1])
+        expect(recordedOrder).toEqual([4, 3, 2, 1])
+        expect(staggeredEqually).toEqual(true)
     })
 
     test("onUpdate", async () => {
