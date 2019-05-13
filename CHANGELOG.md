@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.17.2] 2019-05-13
+
+### Fixed
+
+-   Even if a `motion` component **wasn't** inheriting variant changes, it'd still register with its parent, meaning it'd be considered during stagger duration calculations.
+
 ## [0.17.1] 2019-05-13
 
 ### Fixed
