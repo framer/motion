@@ -235,7 +235,10 @@ describe("animate prop as variant", () => {
                 for (let i = 0; i < delayedBy.length; i++) {
                     if (prev) {
                         const timeSincePrev = prev - delayedBy[i]
-                        if (Math.round(timeSincePrev / 100) * 100 !== 100) {
+                        if (
+                            Math.round(timeSincePrev / 100) * 100 !==
+                            staggerDuration * 1000
+                        ) {
                             isEquidistant = false
                         }
                     }
