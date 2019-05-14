@@ -10,13 +10,5 @@
     },
     "dtsRollup": {
         "enabled": true
-    },
-    "messages": {
-        "extractorMessageReporting": {
-            "ae-incompatible-release-tags": {
-                "logLevel": "error",
-                "addToApiReportFile": true
-            }
-        }
     }
 }
