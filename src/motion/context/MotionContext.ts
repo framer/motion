@@ -1,4 +1,4 @@
-import { createContext, useMemo } from "react"
+import * as React from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
 import { useMaxTimes } from "../../utils/use-max-times"
@@ -12,7 +12,7 @@ type MotionContextProps = {
 /**
  * @internal
  */
-export const MotionContext = createContext<MotionContextProps>({
+export const MotionContext = React.createContext<MotionContextProps>({
     static: false,
 })
 
@@ -58,7 +58,7 @@ export const useMotionContext = (
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
     // unlikely to change, by making the context an object it'll be considered a new value every render.
     // So all child motion components will re-render as a result.
-    const context: MotionContextProps = useMemo(
+    const context: MotionContextProps = React.useMemo(
         () => ({
             controls: shouldPropagateControls
                 ? controls

@@ -368,7 +368,7 @@ export interface MotionCallbacks {
 // Warning: (ae-internal-missing-underscore) The name "MotionContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const MotionContext: import("react").Context<MotionContextProps>;
+export const MotionContext: React.Context<MotionContextProps>;
 
 // Warning: (ae-internal-missing-underscore) The name "MotionPluginContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
