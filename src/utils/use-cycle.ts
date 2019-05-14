@@ -26,7 +26,7 @@ type CycleState<T> = [T, Cycle]
  * }
  * ```
  *
- * @param items... - items to cycle through
+ * @param items - items to cycle through
  * @returns [currentState, cycleState]
  *
  * @public

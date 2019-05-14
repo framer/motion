@@ -266,7 +266,7 @@ export interface MotionProps
      * - Allow `Target` values to be appended by user-defined types (delete `CustomStyles` - does `size` throw a type error?)
      * - Extract `CustomValueType` as a separate user-defined type (delete `CustomValueType` and animate a `Color` - does this throw a type error?).
      *
-     * @param values
+     * @param values -
      *
      * @internal
      */

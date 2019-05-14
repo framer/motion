@@ -53,7 +53,7 @@ export class AnimationControls {
     /**
      * Set variants on this and all child components.
      *
-     * @param variants
+     * @param variants - The variants to set
      *
      * @internal
      */
@@ -67,7 +67,7 @@ export class AnimationControls {
     /**
      * Set a default transition on this and all child components
      *
-     * @param transition
+     * @param transition - The default transition to set
      *
      * @internal
      */
@@ -81,7 +81,7 @@ export class AnimationControls {
     /**
      * Subscribes a component's animation controls to this.
      *
-     * @param controls
+     * @param controls - The controls to subscribe
      * @returns An unsubscribe function.
      *
      * @internal

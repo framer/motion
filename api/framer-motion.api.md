@@ -97,6 +97,12 @@ export interface DragHandlers {
 export type EasingFunction = (v: number) => number;
 
 // @public (undocumented)
+export interface EventInfo {
+    // (undocumented)
+    point: Point;
+}
+
+// @public (undocumented)
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 
 // @public (undocumented)
@@ -458,7 +464,6 @@ export interface Orchestration {
 export interface PanHandlers {
     onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void;
     onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    // Warning: (ae-forgotten-export) The symbol "EventInfo" needs to be exported by the entry point index.d.ts
     onPanSessionStart?(event: MouseEvent | TouchEvent, info: EventInfo): void;
     onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
 }
