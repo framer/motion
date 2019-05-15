@@ -399,6 +399,7 @@ export function useDraggable(
                         const { onDirectionLock } = dragHandlers.current
                         onDirectionLock && onDirectionLock(currentDirection)
                     }
+
                     return
                 }
 
