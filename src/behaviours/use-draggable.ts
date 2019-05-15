@@ -390,11 +390,11 @@ export function useDraggable(
 
                 const { offset } = info
 
-                // If we're waiting to detect a drag direction before initiating dragging
+                // Attempt to detect drag direction if directionLock is true
                 if (dragDirectionLock && currentDirection === null) {
                     currentDirection = getCurrentDirection(offset)
 
-                    // If we have detected a drag direction, set the direction and
+                    // If we've successfully set a direction, notify listener
                     if (currentDirection !== null) {
                         const { onDirectionLock } = dragHandlers.current
                         onDirectionLock && onDirectionLock(currentDirection)
