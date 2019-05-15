@@ -22,7 +22,7 @@
         "react-dom": "^16.7"
     },
     "devDependencies": {
-        "@microsoft/api-extractor": "7.0.13",
+        "@microsoft/api-extractor": "^7.1.5",
         "@types/jest": "^23.3.9",
         "@types/node": "^10.12.9",
         "@types/react": "^16.7.6",

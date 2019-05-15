@@ -145,7 +145,7 @@ const usePropsRef = <T>(props: T) => {
 }
 
 /**
- * @param handlers
+ * @param handlers -
  * @internal
  */
 export function useTapGesture(

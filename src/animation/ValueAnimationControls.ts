@@ -27,7 +27,7 @@ type AnimationOptions = {
 
 /**
  * Get the current value of every `MotionValue`
- * @param values
+ * @param values -
  */
 const getCurrent = (values: MotionValuesMap) => {
     const current = {}
@@ -37,7 +37,7 @@ const getCurrent = (values: MotionValuesMap) => {
 
 /**
  * Get the current velocity of every `MotionValue`
- * @param values
+ * @param values -
  */
 const getVelocity = (values: MotionValuesMap) => {
     const velocity = {}
@@ -48,7 +48,7 @@ const getVelocity = (values: MotionValuesMap) => {
 /**
  * Check if value is a function that returns a `Target`. A generic typeof === 'function'
  * check, just helps with typing.
- * @param p
+ * @param p -
  */
 const isTargetResolver = (p: any): p is TargetResolver => {
     return typeof p === "function"
@@ -56,7 +56,7 @@ const isTargetResolver = (p: any): p is TargetResolver => {
 
 /**
  * Check if value is a list of variant labels
- * @param v
+ * @param v -
  */
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 
@@ -165,7 +165,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
     /**
      * Set the reference to the component's props.
-     * @param props
+     * @param props -
      */
     setProps(props: P & MotionProps) {
         this.props = props
@@ -173,7 +173,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
     /**
      * Set the reference to the component's variants
-     * @param variants
+     * @param variants -
      */
     setVariants(variants?: Variants) {
         if (variants) this.variants = variants
@@ -181,7 +181,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
     /**
      * Set the component's default transition
-     * @param transition
+     * @param transition -
      */
     setDefaultTransition(transition?: Transition) {
         if (transition) this.defaultTransition = transition
@@ -190,8 +190,8 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     /**
      * Set motion values without animation.
      *
-     * @param target
-     * @param isActive
+     * @param target -
+     * @param isActive -
      */
     private setValues(
         target: TargetWithKeyframes,
@@ -222,7 +222,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * to extend Framer Motion to animate `Color` variables etc. Currently we have
      * to manually support these extended types here in Framer Motion.
      *
-     * @param values
+     * @param values -
      */
     private transformValues(values: V): V {
         const { transformValues } = this.props
@@ -237,7 +237,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * this functionality to be injected by the factory that creates DOM-specific
      * components.
      *
-     * @param target
+     * @param target -
      */
     private checkForNewValues(target: TargetWithKeyframes) {
         const newValueKeys = Object.keys(target).filter(
@@ -263,7 +263,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
     /**
      * Resolve a variant from its label or resolver into an actual `Target` we can animate to.
-     * @param variant
+     * @param variant -
      */
     private resolveVariant(
         variant?: Variant
@@ -312,8 +312,8 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * hover gesture, if that hover gesture has changed in the meantime we can go to that rather
      * than the one that was resolved when the hover gesture animation started.
      *
-     * @param definition
-     * @param overrideIndex
+     * @param definition -
+     * @param overrideIndex -
      */
     setOverride(definition: AnimationDefinition, overrideIndex: number) {
         this.overrides[overrideIndex] = definition
@@ -327,7 +327,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
     /**
      * Start an override animation.
-     * @param overrideIndex
+     * @param overrideIndex -
      */
     startOverride(overrideIndex: number) {
         const override = this.overrides[overrideIndex]
@@ -340,7 +340,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     /**
      * Clear an override. We check every value we animated to in this override to see if
      * its present on any lower-priority overrides. If not, we animate it back to its base target.
-     * @param overrideIndex
+     * @param overrideIndex -
      */
     clearOverride(overrideIndex: number) {
         if (this.children) {
@@ -629,7 +629,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
     /**
      * Add the controls of a child component.
-     * @param controls
+     * @param controls -
      */
     addChild(controls: ValueAnimationControls) {
         if (!this.children) {

@@ -64,4 +64,5 @@ export {
     Variant,
     Variants,
 } from "./types"
+export { EventInfo } from "./events"
 export { safeWindow } from "./events/utils/window"

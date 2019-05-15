@@ -257,8 +257,8 @@ type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
 
 /**
  *
- * @param handlers
- * @param ref
+ * @param handlers -
+ * @param ref -
  * @internal
  */
 export function usePanGesture(
