@@ -91,7 +91,6 @@ describe("dragging", () => {
     })
 
     test("dragEnd doesn't fire if dragging never initiated", async () => {
-        console.log("========================== dragEnd test")
         const promise = new Promise(resolve => {
             const onDragEnd = jest.fn()
             const Component = () => (
