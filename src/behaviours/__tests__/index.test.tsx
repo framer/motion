@@ -90,6 +90,34 @@ describe("dragging", () => {
         return expect(promise).resolves.toBeCalledTimes(1)
     })
 
+    test("dragEnd doesn't fire if dragging never initiated", async () => {
+        console.log("========================== dragEnd test")
+        const promise = new Promise(resolve => {
+            const onDragEnd = jest.fn()
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        drag="x"
+                        dragDirectionLock
+                        onDragEnd={onDragEnd}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(0, 500)
+
+            sync.postRender(() => {
+                pointer.end()
+                resolve(onDragEnd)
+            })
+        })
+
+        return expect(promise).resolves.not.toBeCalled()
+    })
+
     test("drag handlers aren't frozen at drag session start", async () => {
         const promise = new Promise(resolve => {
             let count = 0
