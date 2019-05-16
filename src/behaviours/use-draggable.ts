@@ -11,6 +11,9 @@ import {
     blockViewportScroll,
     unblockViewportScroll,
 } from "./utils/block-viewport-scroll"
+import { invariant } from "hey-listen"
+import { useResize } from "../utils/use-resize"
+import { isRefObject } from "../utils/is-ref-object"
 
 type DragDirection = "x" | "y"
 
@@ -130,7 +133,7 @@ export interface DraggableProps extends DragHandlers {
 
     /**
      * An object of optional `top`, `left`, `right`, `bottom` pixel values,
-     * beyond which dragging is constrained
+     * beyond which dragging is constrained.
      *
      * ```jsx
      * <motion.div
@@ -138,10 +141,14 @@ export interface DraggableProps extends DragHandlers {
      *   dragConstraints={{ left: 0, right: 300 }}
      * />
      * ```
+     *
+     * Another component can be used as drag constraints by creating a `ref` with React's `useRef`.hook.
+     * This `ref` should be passed to that component's `ref` prop and to this component's `dragConstraints` prop.
      */
     dragConstraints?:
         | false
         | { top?: number; right?: number; bottom?: number; left?: number }
+        | RefObject<Element>
 
     /**
      * The degree of movement allowed outside constraints. 0 = no movement, 1 =
@@ -185,9 +192,66 @@ export interface DraggableProps extends DragHandlers {
     dragTransition?: InertiaOptions
 }
 
-const flattenConstraints = (constraints: Constraints | false) => {
+const getBoundingBox = (ref: RefObject<Element>) => {
+    return (ref.current as Element).getBoundingClientRect()
+}
+
+const getCurrentOffset = (point?: MotionValue<number>) =>
+    point ? point.get() : 0
+
+/**
+ * Takes a parent Element and a draggable Element and returns pixel-based drag constraints.
+ *
+ * @param constraintsRef
+ * @param draggableRef
+ */
+const calculateConstraintsFromDom = (
+    constraintsRef: RefObject<Element>,
+    draggableRef: RefObject<Element>,
+    point: MotionPoint
+) => {
+    invariant(
+        constraintsRef.current !== null && draggableRef.current !== null,
+        "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
+    )
+
+    const parentBoundingBox = getBoundingBox(constraintsRef)
+    const draggableBoundingBox = getBoundingBox(draggableRef)
+
+    const top =
+        parentBoundingBox.top -
+        draggableBoundingBox.top +
+        getCurrentOffset(point.y)
+    const left =
+        parentBoundingBox.left -
+        draggableBoundingBox.left +
+        getCurrentOffset(point.x)
+
+    const constraints = {
+        top,
+        left,
+        right: parentBoundingBox.width - draggableBoundingBox.width + left,
+        bottom: parentBoundingBox.height - draggableBoundingBox.height + top,
+    }
+
+    return constraints
+}
+
+const resolveDragConstraints = (
+    constraints: Constraints | RefObject<Element>,
+    draggableRef: RefObject<Element>,
+    point: MotionPoint
+): Constraints => {
+    return isRefObject(constraints)
+        ? calculateConstraintsFromDom(constraints, draggableRef, point)
+        : constraints
+}
+
+const flattenConstraints = (constraints: DraggableProps["dragConstraints"]) => {
     if (!constraints) {
         return [0, 0, 0, 0]
+    } else if (isRefObject(constraints)) {
+        return [constraints.current]
     } else {
         const { top, left, bottom, right } = constraints
         return [top, left, bottom, right]
@@ -298,6 +362,39 @@ export function useDraggable(
     const dragHandlers = useRef<DragHandlers>(handlers)
     dragHandlers.current = handlers
 
+    // If our dragConstraints is another element, we need to track changes in its
+    // size and update the current draggable position relative to that.
+    const prevBox = useRef({
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0,
+    }).current
+    useResize(dragConstraints, () => {
+        // We can safely cast dragConstraints to an element by virtue of the fact this callback is
+        // firing thanks to safety detection in useResize.
+        const constraintsBox = getBoundingBox(dragConstraints as RefObject<
+            Element
+        >)
+        const draggableBox = getBoundingBox(ref)
+
+        // Scale a point relative to the transformation of a constraints-providing element.
+        const scalePoint = (axis: "x" | "y", dimension: "width" | "height") => {
+            const pointToScale = point[axis]
+            if (!pointToScale) return
+
+            const scale = prevBox[dimension]
+                ? (constraintsBox[dimension] - draggableBox[dimension]) /
+                  prevBox[dimension]
+                : 1
+
+            pointToScale.set(prevBox[axis] * scale)
+        }
+
+        scalePoint("x", "width")
+        scalePoint("y", "height")
+    })
+
     const panHandlers = useMemo(
         () => {
             if (!drag) return {}
@@ -305,15 +402,16 @@ export function useDraggable(
             let hasDragged = false
             let currentDirection: null | DragDirection = null
             let openGlobalLock: null | Lock = null
+            let resolvedDragConstraints: Constraints | false = false
 
             if (shouldDrag("x", drag, currentDirection)) {
                 const x = values.get("x", 0)
-                applyConstraints("x", x, dragConstraints, dragElastic)
+                applyConstraints("x", x, resolvedDragConstraints, dragElastic)
                 point.x = x
             }
             if (shouldDrag("y", drag, currentDirection)) {
                 const y = values.get("y", 0)
-                applyConstraints("y", y, dragConstraints, dragElastic)
+                applyConstraints("y", y, resolvedDragConstraints, dragElastic)
                 point.y = y
             }
 
@@ -340,7 +438,7 @@ export function useDraggable(
                 current = applyConstraints(
                     axis,
                     current,
-                    dragConstraints,
+                    resolvedDragConstraints,
                     dragElastic
                 )
 
@@ -358,6 +456,14 @@ export function useDraggable(
                 info: PanInfo
             ) => {
                 hasDragged = false
+
+                if (dragConstraints) {
+                    resolvedDragConstraints = resolveDragConstraints(
+                        dragConstraints,
+                        ref,
+                        point
+                    )
+                }
 
                 const handle = (axis: "x" | "y") => {
                     const axisPoint = point[axis]
@@ -425,29 +531,50 @@ export function useDraggable(
 
                 if (!hasDragged) return
 
+                // If our drag constraints are a potentially live bounding box, record its previously-calculated
+                // dimensions and the current x/y
+                function recordBoxInfo() {
+                    if (!dragConstraints || !isRefObject(dragConstraints)) {
+                        return
+                    }
+
+                    const {
+                        right,
+                        left,
+                        bottom,
+                        top,
+                    } = resolvedDragConstraints as Constraints
+                    prevBox.width = (right || 0) - (left || 0)
+                    prevBox.height = (bottom || 0) - (top || 0)
+                    if (point.x) prevBox.x = point.x.get()
+                    if (point.y) prevBox.y = point.y.get()
+                }
+
                 if (dragMomentum) {
                     const startMomentum = (axis: "x" | "y") => {
                         if (!shouldDrag(axis, drag, currentDirection)) {
                             return
                         }
 
-                        const transition = dragConstraints
-                            ? getConstraints(axis, dragConstraints)
+                        const transition = resolvedDragConstraints
+                            ? getConstraints(axis, resolvedDragConstraints)
                             : {}
 
-                        return controls.start({
-                            [axis]: 0,
-                            transition: {
-                                type: "inertia",
-                                velocity: velocity[axis],
-                                bounceStiffness: 200,
-                                bounceDamping: 40,
-                                timeConstant: 750,
-                                restDelta: 1,
-                                ...dragTransition,
-                                ...transition,
-                            },
-                        })
+                        return controls
+                            .start({
+                                [axis]: 0,
+                                transition: {
+                                    type: "inertia",
+                                    velocity: velocity[axis],
+                                    bounceStiffness: 200,
+                                    bounceDamping: 40,
+                                    timeConstant: 750,
+                                    restDelta: 1,
+                                    ...dragTransition,
+                                    ...transition,
+                                },
+                            })
+                            .then(recordBoxInfo)
                     }
 
                     Promise.all([startMomentum("x"), startMomentum("y")]).then(
@@ -456,6 +583,8 @@ export function useDraggable(
                             onDragTransitionEnd && onDragTransitionEnd()
                         }
                     )
+                } else {
+                    recordBoxInfo()
                 }
 
                 const { onDragEnd } = dragHandlers.current
