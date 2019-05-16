@@ -75,7 +75,7 @@ export interface DraggableProps extends DragHandlers {
         right?: number;
         bottom?: number;
         left?: number;
-    };
+    } | RefObject<Element>;
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
     dragMomentum?: boolean;
