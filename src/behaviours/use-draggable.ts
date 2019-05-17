@@ -302,6 +302,7 @@ export function useDraggable(
         () => {
             if (!drag) return {}
 
+            let hasDragged = false
             let currentDirection: null | DragDirection = null
             let openGlobalLock: null | Lock = null
 
@@ -333,6 +334,7 @@ export function useDraggable(
                     return
                 }
 
+                hasDragged = true
                 let current = origin[axis] + offset[axis]
 
                 current = applyConstraints(
@@ -355,6 +357,8 @@ export function useDraggable(
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
+                hasDragged = false
+
                 const handle = (axis: "x" | "y") => {
                     const axisPoint = point[axis]
                     if (!axisPoint) return
@@ -386,13 +390,16 @@ export function useDraggable(
 
                 const { offset } = info
 
+                // Attempt to detect drag direction if directionLock is true
                 if (dragDirectionLock && currentDirection === null) {
                     currentDirection = getCurrentDirection(offset)
 
+                    // If we've successfully set a direction, notify listener
                     if (currentDirection !== null) {
                         const { onDirectionLock } = dragHandlers.current
                         onDirectionLock && onDirectionLock(currentDirection)
                     }
+
                     return
                 }
 
@@ -415,6 +422,8 @@ export function useDraggable(
                 } else if (!openGlobalLock) {
                     return
                 }
+
+                if (!hasDragged) return
 
                 if (dragMomentum) {
                     const startMomentum = (axis: "x" | "y") => {
@@ -460,7 +469,6 @@ export function useDraggable(
                 onPointerDown,
             }
         },
-
         [
             drag,
             dragDirectionLock,
