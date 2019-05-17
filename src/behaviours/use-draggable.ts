@@ -402,7 +402,12 @@ export function useDraggable(
             let hasDragged = false
             let currentDirection: null | DragDirection = null
             let openGlobalLock: null | Lock = null
-            let resolvedDragConstraints: Constraints | false = false
+            // If `dragConstraints` is set to `false` or `Constraints`, set immediately. Otherwise we'll resolve on mount.
+            let resolvedDragConstraints: Constraints | false =
+                !dragConstraints ||
+                (dragConstraints && !isRefObject(dragConstraints))
+                    ? dragConstraints
+                    : false
 
             if (shouldDrag("x", drag, currentDirection)) {
                 const x = values.get("x", 0)
