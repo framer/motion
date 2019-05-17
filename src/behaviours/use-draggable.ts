@@ -24,14 +24,27 @@ export type Constraints = {
 /** @public */
 export interface DragHandlers {
     /**
+     * @production
      * Callback function that fires when dragging starts.
+     *
+     * ```jsx
+     * <motion.div
+     *   drag
+     *   onDragStart={(event, info) => {
+     *     console.log(info.point.x, info.point.y)
+     *   }}
+     * />
+     * ```
+     *
+     * @prototype
+     * A function that fires when a user starts dragging this component.
      *
      * ```jsx
      * function onDragStart(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     *  <motion.div drag onDragStart={onDragStart} />
+     * <Frame drag onDragStart={onDragStart} />
      * ```
      */
     onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
