@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.18.0] 2019-05-20
+
+### Added
+
+-   `dragConstraints` can now be set as a `React.RefObject`.
+
 ## [0.17.2] 2019-05-15
 
 ### Fixed

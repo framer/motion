@@ -372,11 +372,9 @@ export function useDraggable(
     }).current
 
     const scalePoint = () => {
-        // We can safely cast `dragConstraints` to an element by virtue of the fact this callback is
-        // firing thanks to safety detection in useResize.
-        const constraintsBox = getBoundingBox(dragConstraints as RefObject<
-            Element
-        >)
+        if (!isRefObject(dragConstraints)) return
+
+        const constraintsBox = getBoundingBox(dragConstraints)
         const draggableBox = getBoundingBox(ref)
 
         // Scale a point relative to the transformation of a constraints-providing element.
