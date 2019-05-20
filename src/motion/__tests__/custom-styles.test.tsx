@@ -85,36 +85,34 @@ describe("custom properties", () => {
         expect(container.firstChild).toHaveStyle("background-size: 50%")
     })
 
-    // test("animates", async () => {
-    //     const promise = new Promise<ChildNode | null>(resolve => {
-    //         const resolvePromise = () => {
-    //             setTimeout(() => resolve(container.firstChild), 20)
-    //         }
+    test("animates", async () => {
+        const promise = new Promise<ChildNode | null>(resolve => {
+            const resolvePromise = () => {
+                setTimeout(() => resolve(container.firstChild), 20)
+            }
 
-    //         const Component = () => {
-    //             return (
-    //                 <motion.div
-    //                     transformValues={transformValues}
-    //                     initial={{ size: "0%" }}
-    //                     animate={{ size: "50%" }}
-    //                     transition={{ duration: 0.1 }}
-    //                     onAnimationComplete={resolvePromise}
-    //                 />
-    //             )
-    //         }
+            const Component = () => {
+                return (
+                    <motion.div
+                        transformValues={transformValues}
+                        initial={{ size: "0%" }}
+                        animate={{ size: "50%" }}
+                        transition={{ duration: 0.1 }}
+                        onAnimationComplete={resolvePromise}
+                    />
+                )
+            }
 
-    //         const { container, rerender } = render(<Component />)
-    //         rerender(<Component />)
-    //     })
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+        })
 
-    //     return expect(promise).resolves.toHaveStyle("width: 50%; height: 50%;")
-    // })
+        return expect(promise).resolves.toHaveStyle("width: 50%; height: 50%;")
+    })
 
     test("animates and sets custom values transitionEnd", async () => {
         const promise = new Promise<ChildNode | null>(resolve => {
-            console.log("--------- yooooooo")
             const resolvePromise = () => {
-                console.log("resolved promise")
                 requestAnimationFrame(() => resolve(container.firstChild))
             }
 

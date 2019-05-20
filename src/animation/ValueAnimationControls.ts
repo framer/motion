@@ -412,15 +412,6 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         definition: AnimationDefinition,
         opts: AnimationOptions = {}
     ): Promise<any> {
-        if (
-            (definition as any) &&
-            (definition as any).transitionEnd &&
-            (definition as any).transitionEnd.size
-        ) {
-            console.log(definition)
-            console.trace()
-        }
-
         if (opts.priority) {
             this.activeOverrides.add(opts.priority)
         }
@@ -438,7 +429,6 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         }
 
         return animation.then(() => {
-            console.log(definition, "completed promise")
             const { onAnimationComplete } = this.props
             onAnimationComplete && onAnimationComplete()
         })
