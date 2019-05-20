@@ -16,6 +16,14 @@ export const hasUpdated = (
     )
 }
 
+function justTarget({
+    transition,
+    transitionEnd,
+    ...target
+}: TargetAndTransition): Target {
+    return target as Target
+}
+
 /**
  * Handle the `animate` prop when its an object of values, ie:
  *
@@ -38,29 +46,38 @@ export const hasUpdated = (
  * @internal
  */
 export function useAnimateProp(
-    target: TargetAndTransition,
+    targetAndTransition: TargetAndTransition,
     controls: ValueAnimationControls,
     values: MotionValuesMap,
     defaultTransition?: Transition
 ) {
     const isInitialRender = useRef(true)
-    const prevValues = useRef(target)
+    const prevValues = useRef<Target | null>(null)
+
+    if (!prevValues.current) {
+        prevValues.current = justTarget(targetAndTransition)
+    }
 
     useEffect(
         () => {
-            const animateTarget: Target = {}
-            const { transition, transitionEnd } = target
+            const targetToAnimate: Target = {}
+            const target = justTarget(targetAndTransition)
 
+            // Detect which values have changed between renders
             for (const key in prevValues.current) {
+                // This value should animate on mount if this value doesn't already exist (wasn't
+                // defined in `style` or `initial`) or if it does exist and it's already changed.
                 const shouldAnimateOnMount =
                     isInitialRender.current &&
                     (!values.has(key) || values.get(key) !== target[key])
 
+                // If this value has updated between renders or it's we're animating this value on mount,
+                // add it to the animate target.
                 if (
                     hasUpdated(prevValues.current[key], target[key]) ||
                     shouldAnimateOnMount
                 ) {
-                    animateTarget[key] = target[key]
+                    targetToAnimate[key] = target[key]
                 }
             }
 
@@ -70,14 +87,15 @@ export function useAnimateProp(
                 ...target,
             }
 
-            if (Object.keys(animateTarget).length) {
+            if (Object.keys(targetToAnimate).length) {
                 controls.start({
-                    ...animateTarget,
-                    transition: transition || defaultTransition,
-                    transitionEnd,
+                    ...targetToAnimate,
+                    transition:
+                        targetAndTransition.transition || defaultTransition,
+                    transitionEnd: targetAndTransition.transitionEnd,
                 })
             }
         },
-        [target]
+        [targetAndTransition]
     )
 }

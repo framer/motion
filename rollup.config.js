@@ -16,6 +16,7 @@ const config = {
 
 const external = [
     "react",
+    "@popmotion/easing",
     "@popmotion/popcorn",
     "framesync",
     "stylefire",

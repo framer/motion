@@ -203,8 +203,8 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             if (isActive.has(key)) return
 
             isActive.add(key)
-
             const targetValue = resolveFinalValueInKeyframes(target[key])
+
             if (this.values.has(key)) {
                 const value = this.values.get(key)
                 value && value.set(targetValue)
@@ -244,7 +244,6 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             key => !this.values.has(key)
         )
         if (!newValueKeys.length) return
-
         newValueKeys.forEach(key => {
             let value: string | number = this.readValueFromSource(key)
 

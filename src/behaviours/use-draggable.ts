@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useRef } from "react"
+import { RefObject, useMemo, useRef, useEffect } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
@@ -11,6 +11,9 @@ import {
     blockViewportScroll,
     unblockViewportScroll,
 } from "./utils/block-viewport-scroll"
+import { invariant } from "hey-listen"
+import { useResize } from "../utils/use-resize"
+import { isRefObject } from "../utils/is-ref-object"
 
 type DragDirection = "x" | "y"
 
@@ -130,7 +133,7 @@ export interface DraggableProps extends DragHandlers {
 
     /**
      * An object of optional `top`, `left`, `right`, `bottom` pixel values,
-     * beyond which dragging is constrained
+     * beyond which dragging is constrained.
      *
      * ```jsx
      * <motion.div
@@ -138,10 +141,14 @@ export interface DraggableProps extends DragHandlers {
      *   dragConstraints={{ left: 0, right: 300 }}
      * />
      * ```
+     *
+     * Another component can be used as drag constraints by creating a `ref` with React's `useRef`.hook.
+     * This `ref` should be passed to that component's `ref` prop and to this component's `dragConstraints` prop.
      */
     dragConstraints?:
         | false
         | { top?: number; right?: number; bottom?: number; left?: number }
+        | RefObject<Element>
 
     /**
      * The degree of movement allowed outside constraints. 0 = no movement, 1 =
@@ -185,9 +192,56 @@ export interface DraggableProps extends DragHandlers {
     dragTransition?: InertiaOptions
 }
 
-const flattenConstraints = (constraints: Constraints | false) => {
+const getBoundingBox = (ref: RefObject<Element>) => {
+    return (ref.current as Element).getBoundingClientRect()
+}
+
+const getCurrentOffset = (point?: MotionValue<number>) =>
+    point ? point.get() : 0
+
+/**
+ * Takes a parent Element and a draggable Element and returns pixel-based drag constraints.
+ *
+ * @param constraintsRef
+ * @param draggableRef
+ */
+const calculateConstraintsFromDom = (
+    constraintsRef: RefObject<Element>,
+    draggableRef: RefObject<Element>,
+    point: MotionPoint
+) => {
+    invariant(
+        constraintsRef.current !== null && draggableRef.current !== null,
+        "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
+    )
+
+    const parentBoundingBox = getBoundingBox(constraintsRef)
+    const draggableBoundingBox = getBoundingBox(draggableRef)
+
+    const top =
+        parentBoundingBox.top -
+        draggableBoundingBox.top +
+        getCurrentOffset(point.y)
+    const left =
+        parentBoundingBox.left -
+        draggableBoundingBox.left +
+        getCurrentOffset(point.x)
+
+    const constraints = {
+        top,
+        left,
+        right: parentBoundingBox.width - draggableBoundingBox.width + left,
+        bottom: parentBoundingBox.height - draggableBoundingBox.height + top,
+    }
+
+    return constraints
+}
+
+const flattenConstraints = (constraints: DraggableProps["dragConstraints"]) => {
     if (!constraints) {
         return [0, 0, 0, 0]
+    } else if (isRefObject(constraints)) {
+        return [constraints.current]
     } else {
         const { top, left, bottom, right } = constraints
         return [top, left, bottom, right]
@@ -248,7 +302,7 @@ const applyOverdrag = (
     current: number,
     dragElastic: boolean | number
 ) => {
-    const dragFactor = typeof dragElastic === "number" ? dragElastic : 0.5
+    const dragFactor = typeof dragElastic === "number" ? dragElastic : 0.35
     return mix(origin, current, dragFactor)
 }
 
@@ -257,13 +311,19 @@ type MotionPoint = Partial<{
     y: MotionValue<number>
 }>
 
+const bothAxis = <T>(handler: (axis: "x" | "y") => T): T[] => [
+    handler("x"),
+    handler("y"),
+]
+
 /**
  * A hook that allows an element to be dragged.
  *
  * @internalremarks
+ *
  * TODO:
- * 1. Allow `dragMomentum` to accept richer properties that adjust this behaviour
- * 2. Allow a parent motion component to become the drag boundaries for a child
+ *  - When drag momentum animations are running and a `ref` constraints is resized,
+ *    everything breaks.
  *
  * @param param
  * @param ref
@@ -298,25 +358,129 @@ export function useDraggable(
     const dragHandlers = useRef<DragHandlers>(handlers)
     dragHandlers.current = handlers
 
+    // If `dragConstraints` is a React `ref`, we should resolve the constraints once the
+    // component has rendered.
+    const constraintsNeedResolution = isRefObject(dragConstraints)
+
+    // If `dragConstraints` is a React `ref`, we need to track changes in its
+    // size and update the current draggable position relative to that.
+    const prevConstraintsBox = useRef({
+        width: 0,
+        height: 0,
+        x: 0,
+        y: 0,
+    }).current
+
+    const scalePoint = () => {
+        if (!isRefObject(dragConstraints)) return
+
+        const constraintsBox = getBoundingBox(dragConstraints)
+        const draggableBox = getBoundingBox(ref)
+
+        // Scale a point relative to the transformation of a constraints-providing element.
+        const scaleAxisPoint = (
+            axis: "x" | "y",
+            dimension: "width" | "height"
+        ) => {
+            const pointToScale = point[axis]
+            if (!pointToScale) return
+
+            // Stop any current animations as they bug out if you resize during one
+            if (pointToScale.isAnimating()) {
+                pointToScale.stop()
+                recordBoxInfo()
+                return
+            }
+
+            // If the previous dimension was `0` (default), set `scale` to `1` to prevent
+            // divide by zero errors.
+            const scale = prevConstraintsBox[dimension]
+                ? (constraintsBox[dimension] - draggableBox[dimension]) /
+                  prevConstraintsBox[dimension]
+                : 1
+
+            pointToScale.set(prevConstraintsBox[axis] * scale)
+        }
+
+        scaleAxisPoint("x", "width")
+        scaleAxisPoint("y", "height")
+    }
+
+    useResize(dragConstraints, scalePoint)
+
+    // If our drag constraints are a potentially live bounding box, record its previously-calculated
+    // dimensions and the current x/y
+    const recordBoxInfo = (constraints?: Constraints | false) => {
+        if (constraints) {
+            const { right, left, bottom, top } = constraints
+            prevConstraintsBox.width = (right || 0) - (left || 0)
+            prevConstraintsBox.height = (bottom || 0) - (top || 0)
+        }
+
+        if (point.x) prevConstraintsBox.x = point.x.get()
+        if (point.y) prevConstraintsBox.y = point.y.get()
+    }
+
+    const applyConstraintsToPoint = (constraints: Constraints) => {
+        return bothAxis(axis => {
+            const axisPoint = point[axis]
+            axisPoint && applyConstraints(axis, axisPoint, constraints, 0)
+        })
+    }
+
+    // On mount, if our bounding box is a ref, we need to resolve the constraints
+    // and immediately apply them to our point.
+    useEffect(() => {
+        if (!constraintsNeedResolution) return
+        const constraints = calculateConstraintsFromDom(
+            dragConstraints as RefObject<Element>,
+            ref,
+            point
+        )
+
+        applyConstraintsToPoint(constraints)
+        recordBoxInfo(constraints)
+    })
+
+    // Create our handlers for the `pan` gesture.
     const panHandlers = useMemo(
         () => {
             if (!drag) return {}
 
+            // We'll use this to determine whether to fire the `onDragEnd` callback.
             let hasDragged = false
+
+            // Don't start dragging until we've detected a direction.
             let currentDirection: null | DragDirection = null
+
+            // This is a reference to the global drag gesture lock, ensuring only one component
+            // can "capture" the drag of one or both axes. In some odd circumstances, a re-render
+            // has caused reference to this lock to be lost, if we see this appear again it might
+            // be safer to move this to a hook-root `ref`.
             let openGlobalLock: null | Lock = null
 
-            if (shouldDrag("x", drag, currentDirection)) {
-                const x = values.get("x", 0)
-                applyConstraints("x", x, dragConstraints, dragElastic)
-                point.x = x
-            }
-            if (shouldDrag("y", drag, currentDirection)) {
-                const y = values.get("y", 0)
-                applyConstraints("y", y, dragConstraints, dragElastic)
-                point.y = y
+            // If `dragConstraints` is set to `false` or `Constraints`, set constraints immediately.
+            // Otherwise we'll resolve on mount.
+            let resolvedDragConstraints:
+                | Constraints
+                | false = constraintsNeedResolution
+                ? false
+                : (dragConstraints as Constraints | false)
+
+            // Get the `MotionValue` for both draggable axes, or create them if they don't already
+            // exist on this component.
+            bothAxis(axis => {
+                if (!shouldDrag(axis, drag, currentDirection)) return
+                const axisValue = values.get(axis, 0)
+                point[axis] = axisValue
+            })
+
+            // Apply constraints immediately, even before render, if our constraints are a plain object.
+            if (resolvedDragConstraints && !constraintsNeedResolution) {
+                applyConstraintsToPoint(resolvedDragConstraints)
             }
 
+            // Add additional information to the `PanInfo` object before passing it to drag listeners.
             const convertPanToDrag = (info: PanInfo) => ({
                 ...info,
                 point: {
@@ -325,12 +489,15 @@ export function useDraggable(
                 },
             })
 
+            // This function will be used to update each axis point every frame.
             const updatePoint = (
                 axis: "x" | "y",
                 offset: { x: number; y: number }
             ) => {
-                const p = point[axis]
-                if (!shouldDrag(axis, drag, currentDirection) || !p) {
+                const axisPoint = point[axis]
+
+                // If we're not dragging this axis, do an early return.
+                if (!shouldDrag(axis, drag, currentDirection) || !axisPoint) {
                     return
                 }
 
@@ -340,17 +507,29 @@ export function useDraggable(
                 current = applyConstraints(
                     axis,
                     current,
-                    dragConstraints,
+                    resolvedDragConstraints,
                     dragElastic
                 )
 
-                p.set(current)
+                axisPoint.set(current)
             }
 
             const onPointerDown = () => {
+                // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
+                // which has come out of the difficulty in us being able to do this once a scroll gesture
+                // has initiated in mobile browsers. This means if there's a horizontally-scrolling carousel
+                // on a page we can let a user scroll the page itself from it. Ideally what we'd do is
+                // trigger this once we've got a scroll direction determined. This approach sort-of worked
+                // but if the component was dragged quite far in a single frame page scrolling would initiate.
+                // Maybe if we turn the direction lock threshold down.
                 blockViewportScroll()
-                if (point.x) point.x.stop()
-                if (point.y) point.y.stop()
+
+                // Stop any animations on both axis values immediately. This allows the user to throw and catch
+                // the component.
+                bothAxis(axis => {
+                    const axisPoint = point[axis]
+                    axisPoint && axisPoint.stop()
+                })
             }
 
             const onPanStart = (
@@ -359,17 +538,27 @@ export function useDraggable(
             ) => {
                 hasDragged = false
 
-                const handle = (axis: "x" | "y") => {
+                // Resolve the constraints again in case anything has changed in the meantime.
+                if (constraintsNeedResolution) {
+                    resolvedDragConstraints = calculateConstraintsFromDom(
+                        dragConstraints as RefObject<Element>,
+                        ref,
+                        point
+                    )
+
+                    applyConstraintsToPoint(resolvedDragConstraints)
+                }
+
+                // Set point origin and stop any existing animations.
+                bothAxis(axis => {
                     const axisPoint = point[axis]
                     if (!axisPoint) return
 
                     origin[axis] = axisPoint.get()
                     axisPoint.stop()
-                }
+                })
 
-                handle("x")
-                handle("y")
-
+                // Attempt to grab the global drag gesture lock.
                 if (!dragPropagation) {
                     openGlobalLock = getGlobalLock(drag)
 
@@ -377,13 +566,16 @@ export function useDraggable(
                         return
                     }
                 }
+
                 currentDirection = null
 
+                // Alert listeners that dragging has started.
                 const { onDragStart } = dragHandlers.current
                 onDragStart && onDragStart(event, convertPanToDrag(info))
             }
 
             const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
+                // If we didn't successfully receive the gesture lock, early return.
                 if (!dragPropagation && !openGlobalLock) {
                     return
                 }
@@ -425,18 +617,22 @@ export function useDraggable(
 
                 if (!hasDragged) return
 
+                // If we have `dragMomentum` defined, initiate momentum animations for both axis.
                 if (dragMomentum) {
-                    const startMomentum = (axis: "x" | "y") => {
+                    const momentumAnimations = bothAxis(axis => {
                         if (!shouldDrag(axis, drag, currentDirection)) {
                             return
                         }
 
-                        const transition = dragConstraints
-                            ? getConstraints(axis, dragConstraints)
+                        const transition = resolvedDragConstraints
+                            ? getConstraints(axis, resolvedDragConstraints)
                             : {}
 
                         return controls.start({
                             [axis]: 0,
+                            // TODO: It might be possible to allow `type` animations to be set as
+                            // Popmotion animations as well as strings. Then people could define their own
+                            // and it'd open another route for us to code-split.
                             transition: {
                                 type: "inertia",
                                 velocity: velocity[axis],
@@ -448,14 +644,17 @@ export function useDraggable(
                                 ...transition,
                             },
                         })
-                    }
+                    })
 
-                    Promise.all([startMomentum("x"), startMomentum("y")]).then(
-                        () => {
-                            const { onDragTransitionEnd } = dragHandlers.current
-                            onDragTransitionEnd && onDragTransitionEnd()
-                        }
-                    )
+                    // Run all animations and then resolve the new drag constraints.
+                    Promise.all(momentumAnimations).then(() => {
+                        recordBoxInfo(resolvedDragConstraints)
+                        scalePoint()
+                        const { onDragTransitionEnd } = dragHandlers.current
+                        onDragTransitionEnd && onDragTransitionEnd()
+                    })
+                } else {
+                    recordBoxInfo(resolvedDragConstraints)
                 }
 
                 const { onDragEnd } = dragHandlers.current
@@ -484,13 +683,24 @@ export function useDraggable(
     usePointerEvents({ onPointerDown: panHandlers.onPointerDown }, ref)
 }
 
-function getCurrentDirection(offset: Point): DragDirection | null {
-    const lockThreshold = 10
+/**
+ * Based on an x/y offset determine the current drag direction. If both axis' offsets are lower
+ * than the provided threshold, return `null`.
+ *
+ * @param offset - The x/y offset from origin.
+ * @param lockThreshold - (Optional) - the minimum absolute offset before we can determine a drag direction.
+ */
+function getCurrentDirection(
+    offset: Point,
+    lockThreshold = 10
+): DragDirection | null {
     let direction: DragDirection | null = null
+
     if (Math.abs(offset.y) > lockThreshold) {
         direction = "y"
     } else if (Math.abs(offset.x) > lockThreshold) {
         direction = "x"
     }
+
     return direction
 }

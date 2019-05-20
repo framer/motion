@@ -113,7 +113,7 @@ describe("custom properties", () => {
     test("animates and sets custom values transitionEnd", async () => {
         const promise = new Promise<ChildNode | null>(resolve => {
             const resolvePromise = () => {
-                setTimeout(() => resolve(container.firstChild), 20)
+                requestAnimationFrame(() => resolve(container.firstChild))
             }
 
             const Component = () => {
