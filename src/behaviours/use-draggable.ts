@@ -385,7 +385,14 @@ export function useDraggable(
             dimension: "width" | "height"
         ) => {
             const pointToScale = point[axis]
-            if (!pointToScale || pointToScale.isAnimating()) return
+            if (!pointToScale) return
+
+            // Stop any current animations as they bug out if you resize during one
+            if (pointToScale.isAnimating()) {
+                pointToScale.stop()
+                recordBoxInfo()
+                return
+            }
 
             // If the previous dimension was `0` (default), set `scale` to `1` to prevent
             // divide by zero errors.
@@ -405,12 +412,13 @@ export function useDraggable(
 
     // If our drag constraints are a potentially live bounding box, record its previously-calculated
     // dimensions and the current x/y
-    const recordBoxInfo = (constraints: Constraints | false) => {
-        if (!constraints) return
+    const recordBoxInfo = (constraints?: Constraints | false) => {
+        if (constraints) {
+            const { right, left, bottom, top } = constraints
+            prevConstraintsBox.width = (right || 0) - (left || 0)
+            prevConstraintsBox.height = (bottom || 0) - (top || 0)
+        }
 
-        const { right, left, bottom, top } = constraints
-        prevConstraintsBox.width = (right || 0) - (left || 0)
-        prevConstraintsBox.height = (bottom || 0) - (top || 0)
         if (point.x) prevConstraintsBox.x = point.x.get()
         if (point.y) prevConstraintsBox.y = point.y.get()
     }
