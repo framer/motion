@@ -4,17 +4,18 @@ import { motion } from "../../src"
 
 const dragContainer = {
     width: "50%",
-    height: 400,
-    background: "blue",
+    height: "60vh",
+    background: "#F30552",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    borderRadius: "10px",
 }
 
 const draggable = {
     width: 100,
     height: 100,
-    background: "red",
+    background: "white",
     borderRadius: "10px",
 }
 export const App = () => {
@@ -25,7 +26,7 @@ export const App = () => {
             <motion.div
                 drag
                 dragConstraints={ref}
-                dragElastic={0}
+                dragElastic={0.2}
                 style={draggable}
             />
         </motion.div>

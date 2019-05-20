@@ -648,7 +648,6 @@ describe("dragging", () => {
     })
 
     test("updates position when updating drag constraints", async () => {
-        console.log("======= updating drag constraints")
         const x = motionValue(100)
         const y = motionValue(100)
         const Component = ({ constraints }: { constraints: Constraints }) => (

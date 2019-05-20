@@ -94,7 +94,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private stopAnimation?: () => void
+    private stopAnimation?: null | (() => void)
 
     /**
      * Tracks whether this value can output a velocity. Currently this is only true
@@ -366,7 +366,7 @@ export class MotionValue<V = any> {
 
         return new Promise(resolve => {
             this.stopAnimation = animation(resolve)
-        })
+        }).then(() => this.clearAnimation())
     }
 
     /**
@@ -376,6 +376,20 @@ export class MotionValue<V = any> {
      */
     stop() {
         if (this.stopAnimation) this.stopAnimation()
+        this.clearAnimation()
+    }
+
+    /**
+     * Returns `true` if this value is currently animating.
+     *
+     * @public
+     */
+    isAnimating() {
+        return !!this.stopAnimation
+    }
+
+    private clearAnimation() {
+        this.stopAnimation = null
     }
 
     /**

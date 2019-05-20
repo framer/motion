@@ -421,6 +421,7 @@ export class MotionValue<V = any> {
     destroy(): void;
     get(): V;
     getVelocity(): number;
+    isAnimating(): boolean;
     // Warning: (ae-forgotten-export) The symbol "Subscriber" needs to be exported by the entry point index.d.ts
     onChange(subscription: Subscriber<V>): () => boolean;
     // @internal
@@ -431,7 +432,7 @@ export class MotionValue<V = any> {
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
     // 
     // @internal
-    start(animation: StartAnimation): Promise<{}>;
+    start(animation: StartAnimation): Promise<void>;
     stop(): void;
     }
 
