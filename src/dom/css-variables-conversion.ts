@@ -32,7 +32,7 @@ function getVariableValue(
     depth = 1
 ): string | undefined {
     invariant(
-        depth < maxDepth,
+        depth <= maxDepth,
         `Max CSS variable fallback depth detected in property "${current}". This may indicate a circular fallback dependency.`
     )
 
@@ -63,10 +63,16 @@ export function resolveCSSVariables(
     values: MotionValuesMap,
     ref: RefObject<Element>,
     { ...target }: TargetWithKeyframes,
-    { ...transitionEnd }: Target | undefined
+    transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     const { current: element } = ref
     if (!(element instanceof HTMLElement)) return { target, transitionEnd }
+
+    // If `transitionEnd` isn't `undefined`, clone it. We could clone `target` and `transitionEnd`
+    // only if they change but I think this reads clearer and this isn't a performance-critical path.
+    if (transitionEnd) {
+        transitionEnd = { ...transitionEnd }
+    }
 
     // Go through existing `MotionValue`s and ensure any existing CSS variables are resolved
     values.forEach(value => {
