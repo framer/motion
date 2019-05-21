@@ -10,8 +10,6 @@ const fromValue = "#09F"
 const toValue = "#F00"
 const fromVariable = `var(${fromName})`
 const toVariable = `var(${toName})`
-const fromCircular = `var(--fromCircular, var(--toCircular))`
-const toCircular = `var(--toCircular, var(--fromCircular))`
 
 const style = {
     [fromName]: fromValue,
@@ -24,17 +22,12 @@ const originalGetComputedStyle = window.getComputedStyle
 
 function getComputedStyleStub() {
     return {
-        getPropertyValue(
-            variableName: "--from" | "--to" | "--fromCircular" | "--toCircular"
-        ) {
+        getPropertyValue(variableName: "--from" | "--to") {
             switch (variableName) {
                 case fromName:
                     return fromValue
                 case toName:
                     return toValue
-                case "--fromCircular":
-                case "--toCircular":
-                    return undefined
                 default:
                     throw Error("Should never happen")
             }
