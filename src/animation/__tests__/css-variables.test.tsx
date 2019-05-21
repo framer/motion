@@ -1,7 +1,7 @@
 import "../../../jest.setup"
 import { render } from "react-testing-library"
 import { motion } from "../../motion"
-import { variableParameters } from "../../dom/css-variables-conversion"
+import { parseCSSVariable } from "../../dom/css-variables-conversion"
 import * as React from "react"
 
 const fromName = "--from"
@@ -112,26 +112,29 @@ describe("css variables", () => {
     })
 
     test("css variable parsing", () => {
-        const { mainParameter, fallbackParameter } = variableParameters(
-            "var(--ID-123)"
-        )
-        expect(mainParameter).toBe("--ID-123")
-        expect(fallbackParameter).toBeUndefined()
+        expect(parseCSSVariable("var(--ID-123)")).toEqual([
+            "--ID-123",
+            undefined,
+        ])
     })
 
     test("css variable parsing fallback", () => {
-        const { mainParameter, fallbackParameter } = variableParameters(
-            "var(--ID-123, red)"
-        )
-        expect(mainParameter).toBe("--ID-123")
-        expect(fallbackParameter).toBe("red")
+        expect(parseCSSVariable("var(--ID-123, red)")).toEqual([
+            "--ID-123",
+            "red",
+        ])
     })
 
     test("css variable parsing nested fallback", () => {
-        const { mainParameter, fallbackParameter } = variableParameters(
-            "var(--ID-123, var(--ID-234, cyan))"
-        )
-        expect(mainParameter).toBe("--ID-123")
-        expect(fallbackParameter).toBe("var(--ID-234, cyan)")
+        expect(parseCSSVariable("var(--ID-123, var(--ID-234, cyan))")).toEqual([
+            "--ID-123",
+            "var(--ID-234, cyan)",
+        ])
+    })
+
+    test("css variable parsing ignores metadata", () => {
+        expect(
+            parseCSSVariable('var(--ID-123) /* { "name": "whatever" } */')
+        ).toEqual(["--ID-123", undefined])
     })
 })
