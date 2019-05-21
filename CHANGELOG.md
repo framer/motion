@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.18.1] 2019-05-21
+
+### Fixed
+
+-   Fixed regex detection for fallbacks containing a decimal.
+
 ## [0.18.0] 2019-05-21
 
 ### Added
