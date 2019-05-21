@@ -25,9 +25,14 @@ export const App = () => {
     })
 
     return (
-        <div style={{ "--from": "#09F", "--to": "#F00" } as any} ref={ref}>
+        <div ref={ref}>
             <motion.div
-                animate={{ background: "var(--to)" }}
+                initial={{
+                    background: `var(--token-31a8b72b-4f05-4fb3-b778-63a7fb0d9454, hsl(224, 78%, 54%)) /* {"name":"Midnight Blue"} */`,
+                }}
+                animate={{
+                    background: `var(--token-666a5765-0e05-4d0e-b396-a6c555d9cdb3, hsl(125, 74%, 43%)) /* {"name":"Goblin Green"} */`,
+                }}
                 transition={transition}
                 style={style}
             />
