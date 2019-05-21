@@ -16,7 +16,7 @@ function isCSSVariable(value: any): value is string {
  *
  * @param current
  */
-const cssVariableRegex = /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z,0-9 ()%#-]+)?\)/
+const cssVariableRegex = /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
 export function parseCSSVariable(current: string) {
     const match = cssVariableRegex.exec(current)
     if (!match) return [,]
