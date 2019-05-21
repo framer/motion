@@ -136,14 +136,13 @@ describe("css variables", () => {
         expect(
             parseCSSVariable('var(--ID-123) /* { "name": "whatever" } */')
         ).toEqual(["--ID-123", undefined])
+    })
 
+    test("css variable detects fallback values with decimal", () => {
         expect(
             parseCSSVariable(
-                'var(--token-b445a235-55e7-47a6-9997-3f984e89d1be, rgba(255, 204, 0, 0.35)) /* {"name":"Whaa"} */'
+                'var(--foo, rgba(255, 204, 0, 0.35)) /* {"name":"Whaa"} */'
             )
-        ).toEqual([
-            "--token-b445a235-55e7-47a6-9997-3f984e89d1be",
-            "rgba(255, 204, 0, 0.35)",
-        ])
+        ).toEqual(["--foo", "rgba(255, 204, 0, 0.35)"])
     })
 })
