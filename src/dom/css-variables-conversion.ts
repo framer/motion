@@ -33,7 +33,7 @@ function getVariableValue(
 ): string | undefined {
     invariant(
         depth < maxDepth,
-        `Max CSS variable depth detected in property "${current}"`
+        `Max CSS variable fallback depth detected in property "${current}". This may indicate a circular fallback dependency.`
     )
 
     const [token, fallback] = parseCSSVariable(current)
