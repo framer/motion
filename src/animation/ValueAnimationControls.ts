@@ -491,7 +491,10 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
                 if (this.isAnimating.has(key)) return acc
 
                 acc.push(
-                    startAnimation(key, value, valueTarget, transition, delay)
+                    startAnimation(key, value, valueTarget, {
+                        delay,
+                        ...transition,
+                    })
                 )
 
                 this.isAnimating.add(key)
