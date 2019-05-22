@@ -345,6 +345,21 @@ export interface Tween {
      * />
      * ```
      *
+     * @production
+     *
+     * This is a test transmission of the emergency broadcast system
+     *
+     * ```jsx
+     * const transition = {
+     *   times: [0, 0.1, 0.9, 1]
+     * }
+     *
+     * <motion.div
+     *   animate={{ scale: [0, 1, 0.5, 1] }}
+     *   transition={transition}
+     * />
+     * ```
+     *
      * @public
      */
     times?: number[]
