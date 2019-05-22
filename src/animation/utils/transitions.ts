@@ -176,7 +176,6 @@ export function startAnimation(
     target: ResolvedValueTarget,
     { delay = 0, ...transition }: Transition
 ) {
-    delay = transition && transition.delay ? transition.delay : delay
     const [animationFactory, opts] = getAnimation(
         key,
         value,
