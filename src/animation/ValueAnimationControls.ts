@@ -468,11 +468,6 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
         this.checkForNewValues(target)
 
-        // TODO: This might be redundant (see `resolveVariant`)
-        if (!transition && this.defaultTransition) {
-            transition = this.defaultTransition
-        }
-
         const animations = Object.keys(target).reduce(
             (acc, key) => {
                 const value = this.values.get(key) as MotionValue<

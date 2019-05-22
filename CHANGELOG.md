@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.18.2] 2019-05-22
+
+### Fixed
+
+-   Application of `delay`.
+
 ## [0.18.1] 2019-05-21
 
 ### Fixed
