@@ -52,7 +52,6 @@ export {
     Inertia,
     Point,
     None,
-    EasingFunction,
     TargetAndTransition,
     ResolvedKeyframesTarget,
     KeyframesTarget,
@@ -66,3 +65,6 @@ export {
 } from "./types"
 export { EventInfo } from "./events"
 export { safeWindow } from "./events/utils/window"
+
+export { Easing } from "./easing"
+export { EasingFunction, EasingDefinition } from "./easing/types"

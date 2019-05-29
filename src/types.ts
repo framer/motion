@@ -1,5 +1,6 @@
 import { CSSProperties } from "react"
 import { TransformProperties, CustomStyles } from "./motion/types"
+import { EasingDefinition } from "./easing/types"
 export { Point } from "./events/types"
 /**
  * @public
@@ -36,51 +37,6 @@ export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
 export type ValueTarget = SingleTarget | KeyframesTarget
 
 export type Props = { [key: string]: any }
-
-/**
- * A function that accepts a progress value between `0` and `1` and returns a
- * new one. Used by many of the animation apis.
- *
- * @remarks
- *
- * ```jsx
- * const transition = {
- *   ease: val => val * val // easeInQuad
- * }
- *
- * <Frame
- *   animate={{ opacity: 0 }}
- *   transition={transition}
- * />
- * ```
- *
- * @public
- */
-export type EasingFunction = (v: number) => number
-
-/**
- * The easing function to use. Set as one of:
- *
- * - The name of an in-built easing function.
- * - An array of four numbers to define a cubic bezier curve.
- * - An easing function, that accepts and returns a value `0-1`.
- *
- * @public
- */
-export type Easing =
-    | [number, number, number, number]
-    | "linear"
-    | "easeIn"
-    | "easeOut"
-    | "easeInOut"
-    | "circIn"
-    | "circOut"
-    | "circInOut"
-    | "backIn"
-    | "backOut"
-    | "backInOut"
-    | "anticipate"
-    | EasingFunction
 
 /**
  * Options for orchestrating the timing of animations.
@@ -317,7 +273,7 @@ export interface Tween {
      *
      * @public
      */
-    ease?: Easing | Easing[]
+    ease?: EasingDefinition | EasingDefinition[]
 
     /**
      * The duration of time already elapsed in the animation. Set to `0` by
@@ -365,7 +321,7 @@ export interface Tween {
      *
      * @public
      */
-    easings?: Easing[]
+    easings?: EasingDefinition[]
 
     /**
      * The number of times to loop the animation.
@@ -924,21 +880,21 @@ export interface Keyframes {
      * const transition = {
      *   backgroundColor: {
      *     type: 'keyframes',
-     *     easings: ['circIn', 'circOut']
+     *     easings: ['circIn', Easing.circOut]
      *   }
      * }
      * ```
      *
      * @public
      */
-    ease?: Easing | Easing[]
+    ease?: EasingDefinition | EasingDefinition[]
 
     /**
      * Popmotion's easing prop to define individual easings. `ease` will be mapped to this prop in keyframes animations.
      *
      * @internal
      */
-    easings?: Easing | Easing[]
+    easings?: EasingDefinition | EasingDefinition[]
 
     /**
      * @internal

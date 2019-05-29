@@ -21,8 +21,8 @@ import { isKeyframesTarget } from "./is-keyframes-target"
 import { getDefaultTransition } from "./default-transitions"
 import { just } from "./just"
 import { warning } from "hey-listen"
-import { isEasingArray, easingDefinitionToFunction } from "./easing"
-import { linear } from "@popmotion/easing"
+import { isEasingArray, easingLookup } from "../../easing/lookup"
+import { linear } from "../../easing/linear"
 import { isDurationAnimation } from "./is-duration-animation"
 import { isAnimatable } from "./is-animatable"
 
@@ -32,7 +32,7 @@ const transitionOptionParser = {
     tween: (opts: Tween): Tween => {
         if (opts.ease) {
             const ease = isEasingArray(opts.ease) ? opts.ease[0] : opts.ease
-            opts.ease = easingDefinitionToFunction(ease)
+            opts.ease = easingLookup(ease)
         }
 
         return opts
@@ -46,8 +46,8 @@ const transitionOptionParser = {
 
         if (opts.ease) {
             opts.easings = isEasingArray(opts.ease)
-                ? opts.ease.map(easingDefinitionToFunction)
-                : easingDefinitionToFunction(opts.ease)
+                ? opts.ease.map(easingLookup)
+                : easingLookup(opts.ease)
         }
         opts.ease = linear
 

@@ -93,8 +93,37 @@ export interface DragHandlers {
     onDragTransitionEnd?(): void;
 }
 
+// @public (undocumented)
+export const Easing: {
+    createAnticipate: (power?: number) => import("./types").EasingFunction;
+    anticipate: import("./types").EasingFunction;
+    createBackIn: (power?: number) => import("./types").EasingFunction;
+    backIn: import("./types").EasingFunction;
+    backOut: import("./types").EasingFunction;
+    backInOut: import("./types").EasingFunction;
+    createBounce: (thresholdA?: number, thresholdB?: number, thresholdC?: number) => import("./types").EasingFunction;
+    bounceIn: (p: number) => number;
+    bounceOut: import("./types").EasingFunction;
+    bounceInOut: (p: number) => number;
+    circIn: import("./types").EasingFunction;
+    circOut: import("./types").EasingFunction;
+    circInOut: import("./types").EasingFunction;
+    cubicBezier: typeof cubicBezier;
+    createExpoIn: (power?: number) => import("./types").EasingFunction;
+    expoIn: import("./types").EasingFunction;
+    expoOut: import("./types").EasingFunction;
+    expoInOut: import("./types").EasingFunction;
+    linear: import("./types").EasingFunction;
+    reversed: import("./modifiers").EasingModifier;
+    mirrored: import("./modifiers").EasingModifier;
+    steps: (steps: number, direction?: import("@popmotion/popcorn/lib/easing/steps").Direction) => import("./types").EasingFunction;
+};
+
 // @public
-export type EasingFunction = (v: number) => number;
+export type EasingDefinition = [number, number, number, number] | "linear" | "easeIn" | "easeOut" | "easeInOut" | "circIn" | "circOut" | "circInOut" | "backIn" | "backOut" | "backInOut" | "anticipate" | EasingFunction;
+
+// @public
+export type EasingFunction = (progress: number) => number;
 
 // @public (undocumented)
 export interface EventInfo {
@@ -144,11 +173,9 @@ export interface Keyframes {
     delay?: number;
     // @public
     duration?: number;
-    // Warning: (ae-forgotten-export) The symbol "Easing" needs to be exported by the entry point index.d.ts
-    // 
     // @public
-    ease?: Easing | Easing[];
-    easings?: Easing | Easing[];
+    ease?: EasingDefinition | EasingDefinition[];
+    easings?: EasingDefinition | EasingDefinition[];
     // (undocumented)
     elapsed?: number;
     // @public
@@ -579,8 +606,8 @@ export interface Tween {
     // @internal (undocumented)
     delay?: number;
     duration?: number;
-    ease?: Easing | Easing[];
-    easings?: Easing[];
+    ease?: EasingDefinition | EasingDefinition[];
+    easings?: EasingDefinition[];
     // @internal
     elapsed?: number;
     flip?: number;
@@ -672,6 +699,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
+// types/easing/index.d.ts:19:5 - (ae-forgotten-export) The symbol "cubicBezier" needs to be exported by the entry point index.d.ts
 // types/gestures/use-pan-gesture.d.ts:182:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
