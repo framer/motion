@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.18.3] 2019-05-30
+
+### Fixed
+
+-   Fixing drag when a multitouch gesture starts.
+
 ## [0.18.2] 2019-05-22
 
 ### Fixed
