@@ -515,9 +515,8 @@ export function useDraggable(
             }
 
             const onPointerDown = (event: MouseEvent | TouchEvent) => {
-                // Prevent browser-specific behaviours like text selection or Chrome's image dragging
+                // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
                 event.preventDefault()
-                event.stopPropagation()
 
                 // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
                 // which has come out of the difficulty in us being able to do this once a scroll gesture
