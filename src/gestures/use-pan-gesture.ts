@@ -255,6 +255,10 @@ export interface PanHandlers {
 
 type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
 
+function isTouchEvent(event: MouseEvent | TouchEvent): event is TouchEvent {
+    return !!(event as TouchEvent).touches
+}
+
 /**
  *
  * @param handlers -
@@ -311,7 +315,6 @@ export function usePanGesture(
 
             const info = getPanInfo(lastMoveEventInfo.current)
             const { point } = info
-
             const { timestamp } = getFrameData()
             session.current.pointHistory.push({ ...point, timestamp })
             pointer.current.x.set(point.x)
@@ -380,6 +383,11 @@ export function usePanGesture(
 
     const onPointerDown = useCallback(
         (event: MouseEvent | TouchEvent, info: EventInfo) => {
+            // If we have more than one touch, we don't want to start detecting this gesture.
+            if (isTouchEvent(event) && event.touches.length > 1) {
+                return
+            }
+
             const initialInfo = transformPoint(info)
             const { point } = initialInfo
 

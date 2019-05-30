@@ -560,6 +560,7 @@ export function useDraggable(
 
                 // Attempt to grab the global drag gesture lock.
                 if (!dragPropagation) {
+                    if (openGlobalLock) openGlobalLock()
                     openGlobalLock = getGlobalLock(drag)
 
                     if (!openGlobalLock) {
