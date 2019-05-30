@@ -337,7 +337,6 @@ export function usePanGesture(
     const onPointerMove = useCallback(
         (event: MouseEvent | TouchEvent, info: EventInfo) => {
             lastMoveEvent.current = event
-            console.log(event)
             lastMoveEventInfo.current = transformPoint(info)
             // because Safari doesn't trigger mouseup event when it's happening above <select> tag
             if (event instanceof MouseEvent && event.buttons === 0) {
