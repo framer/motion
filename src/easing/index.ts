@@ -5,15 +5,13 @@ import { circIn, circOut, circInOut } from "./circ"
 import { cubicBezier } from "./cubicBezier"
 import { createExpoIn, expoIn, expoOut, expoInOut } from "./expo"
 import { linear } from "./linear"
-import { reversed, mirrored } from "./modifiers"
+import { reverse, mirror } from "./modifiers"
 import { steps } from "./steps"
 
 // Without importing and exporting these types, TypeScript generates dynamic types
 // like import("./types").EasingFunction, which error in API extractor
-import { EasingModifier } from "./modifiers"
 import { EasingFunction } from "./types"
-import { Direction } from "./steps"
-export { EasingModifier, EasingFunction, Direction }
+export { EasingFunction }
 
 /**
  * @public
@@ -38,7 +36,7 @@ export const Easing = {
     expoOut,
     expoInOut,
     linear,
-    reversed,
-    mirrored,
+    reverse,
+    mirror,
     steps,
 }

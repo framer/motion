@@ -28,12 +28,22 @@ const calcBezier = (t: number, a1: number, a2: number) =>
     ((a(a1, a2) * t + b(a1, a2)) * t + c(a1)) * t
 
 /**
- * Create a cubic bezier easing function.
+ * Create an easing function based on a cubic bezier curve definition.
+ *
+ * This allows the creation of a great variety of easing curves with different feels.
+ *
+ * New curves can be created and tested at https://cubic-bezier.com
+ *
+ * ```jsx
+ * const softEase = Easing.cubicBezier(0.25, 0.1, 0.25, 1)
+ * ```
  *
  * @param x1 -
  * @param y1 -
  * @param x2 -
  * @param y2 -
+ *
+ * @public
  */
 export function cubicBezier(
     x1: number,

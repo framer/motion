@@ -1,6 +1,6 @@
 import { interpolate } from "@popmotion/popcorn"
-import { Easing } from "@popmotion/easing"
 import { CustomValueType } from "../types"
+import { EasingFunction } from "../easing/types"
 
 /**
  * @public
@@ -20,7 +20,7 @@ export interface TransformOptions<T> {
      *
      * @public
      */
-    ease?: Easing | Easing[]
+    ease?: EasingFunction | EasingFunction[]
 
     /**
      * @internal

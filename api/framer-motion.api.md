@@ -7,7 +7,6 @@
 import { ComponentType } from 'react';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
-import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import * as React from 'react';
@@ -53,11 +52,56 @@ export interface AnimationProps {
     variants?: Variants;
 }
 
+// @public
+export const anticipate: EasingFunction;
+
+// @public
+export const backIn: EasingFunction;
+
+// @public
+export const backInOut: EasingFunction;
+
+// @public
+export const backOut: EasingFunction;
+
+// @public
+export const bounceIn: EasingFunction;
+
+// @public
+export const bounceInOut: EasingFunction;
+
+// @public
+export const bounceOut: EasingFunction;
+
+// @public
+export const circIn: EasingFunction;
+
+// @public
+export const circInOut: EasingFunction;
+
+// @public
+export const circOut: EasingFunction;
+
+// @public
+export function createAnticipate(power?: number): EasingFunction;
+
+// @public
+export function createBackIn(power?: number): EasingFunction;
+
+// @public
+export function createBounce(thresholdA?: number, thresholdB?: number, thresholdC?: number): EasingFunction;
+
+// @public
+export function createExpoIn(power?: number): EasingFunction;
+
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
 export const createMotionComponent: <P extends {}>({ useFunctionalityComponents, getValueControlsConfig, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
+
+// @public
+export function cubicBezier(x1: number, y1: number, x2: number, y2: number): EasingFunction;
 
 // @public (undocumented)
 export interface CustomValueType {
@@ -95,28 +139,28 @@ export interface DragHandlers {
 
 // @public (undocumented)
 export const Easing: {
-    createAnticipate: (power?: number) => EasingFunction;
+    createAnticipate: typeof createAnticipate;
     anticipate: EasingFunction;
-    createBackIn: (power?: number) => EasingFunction;
+    createBackIn: typeof createBackIn;
     backIn: EasingFunction;
     backOut: EasingFunction;
     backInOut: EasingFunction;
-    createBounce: (thresholdA?: number, thresholdB?: number, thresholdC?: number) => EasingFunction;
-    bounceIn: (p: number) => number;
+    createBounce: typeof createBounce;
+    bounceIn: EasingFunction;
     bounceOut: EasingFunction;
-    bounceInOut: (p: number) => number;
+    bounceInOut: EasingFunction;
     circIn: EasingFunction;
     circOut: EasingFunction;
     circInOut: EasingFunction;
     cubicBezier: typeof cubicBezier;
-    createExpoIn: (power?: number) => EasingFunction;
+    createExpoIn: typeof createExpoIn;
     expoIn: EasingFunction;
     expoOut: EasingFunction;
     expoInOut: EasingFunction;
     linear: EasingFunction;
-    reversed: EasingModifier;
-    mirrored: EasingModifier;
-    steps: (steps: number, direction?: import("@popmotion/popcorn/lib/easing/steps").Direction) => EasingFunction;
+    reverse: typeof reverse;
+    mirror: typeof mirror;
+    steps: typeof steps;
 };
 
 // @public
@@ -130,6 +174,15 @@ export interface EventInfo {
     // (undocumented)
     point: Point;
 }
+
+// @public
+export const expoIn: EasingFunction;
+
+// @public
+export const expoInOut: EasingFunction;
+
+// @public
+export const expoOut: EasingFunction;
 
 // @public (undocumented)
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
@@ -199,6 +252,12 @@ export interface Keyframes {
 
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
+
+// @public
+export const linear: EasingFunction;
+
+// @public
+export function mirror(easing: EasingFunction): EasingFunction;
 
 // @public
 export const motion: {
@@ -541,6 +600,9 @@ export type ResolvedSingleTarget = string | number;
 // @public (undocumented)
 export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget;
 
+// @public
+export function reverse(easing: EasingFunction): EasingFunction;
+
 // Warning: (ae-forgotten-export) The symbol "ServerSafeWindow" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "safeWindow" should be prefixed with an underscore because the declaration is marked as @internal
 // 
@@ -565,6 +627,9 @@ export interface Spring {
     type: "spring";
     velocity?: number;
 }
+
+// @public
+export function steps(steps: number, direction?: "start" | "end"): EasingFunction;
 
 // Warning: (ae-forgotten-export) The symbol "SVGAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
 // 
@@ -699,8 +764,6 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/easing/index.d.ts:23:5 - (ae-forgotten-export) The symbol "cubicBezier" needs to be exported by the entry point index.d.ts
-// types/easing/index.d.ts:29:5 - (ae-forgotten-export) The symbol "EasingModifier" needs to be exported by the entry point index.d.ts
 // types/gestures/use-pan-gesture.d.ts:182:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
