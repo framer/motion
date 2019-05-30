@@ -6,7 +6,7 @@
  * @param value - The value to clamp within the given range.
  * @returns The value as clamped within `min` and `max`.
  *
- * @public
+ * @internal
  */
 export function clamp(min: number, max: number, v: number) {
     return Math.min(max, Math.max(min, v))

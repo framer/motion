@@ -95,28 +95,28 @@ export interface DragHandlers {
 
 // @public (undocumented)
 export const Easing: {
-    createAnticipate: (power?: number) => import("./types").EasingFunction;
-    anticipate: import("./types").EasingFunction;
-    createBackIn: (power?: number) => import("./types").EasingFunction;
-    backIn: import("./types").EasingFunction;
-    backOut: import("./types").EasingFunction;
-    backInOut: import("./types").EasingFunction;
-    createBounce: (thresholdA?: number, thresholdB?: number, thresholdC?: number) => import("./types").EasingFunction;
+    createAnticipate: (power?: number) => EasingFunction;
+    anticipate: EasingFunction;
+    createBackIn: (power?: number) => EasingFunction;
+    backIn: EasingFunction;
+    backOut: EasingFunction;
+    backInOut: EasingFunction;
+    createBounce: (thresholdA?: number, thresholdB?: number, thresholdC?: number) => EasingFunction;
     bounceIn: (p: number) => number;
-    bounceOut: import("./types").EasingFunction;
+    bounceOut: EasingFunction;
     bounceInOut: (p: number) => number;
-    circIn: import("./types").EasingFunction;
-    circOut: import("./types").EasingFunction;
-    circInOut: import("./types").EasingFunction;
+    circIn: EasingFunction;
+    circOut: EasingFunction;
+    circInOut: EasingFunction;
     cubicBezier: typeof cubicBezier;
-    createExpoIn: (power?: number) => import("./types").EasingFunction;
-    expoIn: import("./types").EasingFunction;
-    expoOut: import("./types").EasingFunction;
-    expoInOut: import("./types").EasingFunction;
-    linear: import("./types").EasingFunction;
-    reversed: import("./modifiers").EasingModifier;
-    mirrored: import("./modifiers").EasingModifier;
-    steps: (steps: number, direction?: import("@popmotion/popcorn/lib/easing/steps").Direction) => import("./types").EasingFunction;
+    createExpoIn: (power?: number) => EasingFunction;
+    expoIn: EasingFunction;
+    expoOut: EasingFunction;
+    expoInOut: EasingFunction;
+    linear: EasingFunction;
+    reversed: EasingModifier;
+    mirrored: EasingModifier;
+    steps: (steps: number, direction?: import("@popmotion/popcorn/lib/easing/steps").Direction) => EasingFunction;
 };
 
 // @public
@@ -699,7 +699,8 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/easing/index.d.ts:19:5 - (ae-forgotten-export) The symbol "cubicBezier" needs to be exported by the entry point index.d.ts
+// types/easing/index.d.ts:23:5 - (ae-forgotten-export) The symbol "cubicBezier" needs to be exported by the entry point index.d.ts
+// types/easing/index.d.ts:29:5 - (ae-forgotten-export) The symbol "EasingModifier" needs to be exported by the entry point index.d.ts
 // types/gestures/use-pan-gesture.d.ts:182:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)

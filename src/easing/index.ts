@@ -8,6 +8,13 @@ import { linear } from "./linear"
 import { reversed, mirrored } from "./modifiers"
 import { steps } from "./steps"
 
+// Without importing and exporting these types, TypeScript generates dynamic types
+// like import("./types").EasingFunction, which error in API extractor
+import { EasingModifier } from "./modifiers"
+import { EasingFunction } from "./types"
+import { Direction } from "./steps"
+export { EasingModifier, EasingFunction, Direction }
+
 /**
  * @public
  */
