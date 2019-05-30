@@ -68,6 +68,7 @@ export { safeWindow } from "./events/utils/window"
 
 export { Easing } from "./easing"
 export { EasingFunction, EasingDefinition } from "./easing/types"
+// Exporting easing functions individually to reference from `api-docs`.
 export { createAnticipate, anticipate } from "./easing/anticipate"
 export { createBackIn, backIn, backOut, backInOut } from "./easing/back"
 export { createBounce, bounceIn, bounceOut, bounceInOut } from "./easing/bounce"
