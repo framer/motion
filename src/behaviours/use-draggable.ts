@@ -514,7 +514,10 @@ export function useDraggable(
                 axisPoint.set(current)
             }
 
-            const onPointerDown = () => {
+            const onPointerDown = (event: MouseEvent | TouchEvent) => {
+                // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
+                event.preventDefault()
+
                 // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
                 // which has come out of the difficulty in us being able to do this once a scroll gesture
                 // has initiated in mobile browsers. This means if there's a horizontally-scrolling carousel
