@@ -7,6 +7,23 @@ import { mouseEnter, mouseLeave } from "../../../jest.setup"
 import { drag, MockDrag } from "../../behaviours/__tests__/index.test"
 import sync from "framesync"
 
+function mockWhenFirstArgumentIs(
+    original: (...args: any[]) => any,
+    firstArg: any
+) {
+    const mocked = jest.fn(original)
+    return [
+        (...args: any[]) => {
+            if (args[0] === firstArg) {
+                return mocked(...args)
+            } else {
+                return original(...args)
+            }
+        },
+        mocked,
+    ]
+}
+
 describe("tap", () => {
     test("tap event listeners fire", () => {
         const tap = jest.fn()
@@ -21,6 +38,65 @@ describe("tap", () => {
         expect(tap).toBeCalledTimes(1)
     })
 
+    test("tap event listeners are cleaned up when mouse up", () => {
+        const [
+            addEventListener,
+            mockedAddMouseUpListener,
+        ] = mockWhenFirstArgumentIs(window.addEventListener, "mouseup")
+        window.addEventListener = addEventListener
+        const [
+            removeEventListener,
+            mockedRemoveMouseUpListener,
+        ] = mockWhenFirstArgumentIs(window.removeEventListener, "mouseup")
+        window.removeEventListener = removeEventListener
+
+        const tap = jest.fn()
+        const Component = () => <motion.div onTap={() => tap()} />
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(0)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
+        fireEvent.mouseDown(container.firstChild as Element)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
+        fireEvent.mouseUp(container.firstChild as Element)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(1)
+
+        expect(tap).toBeCalledTimes(1)
+    })
+
+    test("tap event listeners are cleaned up when unmounted", () => {
+        const [
+            addEventListener,
+            mockedAddMouseUpListener,
+        ] = mockWhenFirstArgumentIs(window.addEventListener, "mouseup")
+        window.addEventListener = addEventListener
+        const [
+            removeEventListener,
+            mockedRemoveMouseUpListener,
+        ] = mockWhenFirstArgumentIs(window.removeEventListener, "mouseup")
+        window.removeEventListener = removeEventListener
+
+        const tap = jest.fn()
+        const Component = () => <motion.div onTap={() => tap()} />
+
+        const { container, rerender, unmount } = render(<Component />)
+        rerender(<Component />)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(0)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
+        fireEvent.mouseDown(container.firstChild as Element)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
+        unmount()
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
+        // When unmounting, both use-pan-gesture and use-tap-gesture remove their mouseup listener
+        // That's why this is called two times instead of one
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(2)
+
+        expect(tap).toBeCalledTimes(0)
+    })
     // test("tap event listeners fire if triggered by child", () => {
     //     const tap = jest.fn()
     //     const Component = () => (

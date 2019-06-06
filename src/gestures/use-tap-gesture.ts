@@ -180,6 +180,7 @@ export function useTapGesture(
                 event: MouseEvent | TouchEvent,
                 { point }: EventInfo
             ) => {
+                stopPointerUp()
                 if (!isTapping.current) {
                     return
                 }
@@ -245,10 +246,11 @@ export function useTapGesture(
         { onPointerUp: handlers.onPointerUp },
         safeWindow
     )
-
     useEffect(
-        () => () => {
-            stopPointerUp()
+        () => {
+            return () => {
+                stopPointerUp()
+            }
         },
         [handlers.onPointerUp]
     )
