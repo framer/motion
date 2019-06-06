@@ -198,6 +198,36 @@ describe("tap", () => {
         return expect(promise).resolves.toBeCalledTimes(0)
     })
 
+    test("tap event listeners do fire if parent is being dragged only a little bit", async () => {
+        const tap = jest.fn()
+        const promise = new Promise(resolve => {
+            const Component = () => (
+                <MockDrag>
+                    <motion.div drag>
+                        <motion.div
+                            data-testid="tapTarget"
+                            onTap={() => tap()}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { rerender, getByTestId } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(getByTestId("tapTarget"))
+            sync.postRender(() => {
+                pointer.to(0.5, 0.5)
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve(tap)
+                })
+            })
+        })
+
+        return expect(promise).resolves.toBeCalledTimes(1)
+    })
+
     test("tap event listeners unset", () => {
         const tap = jest.fn()
         const Component = () => <motion.div onTap={() => tap()} />
