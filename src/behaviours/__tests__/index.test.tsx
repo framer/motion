@@ -32,7 +32,7 @@ export const drag = (element: any) => {
             return controls
         },
         end: () => {
-            fireEvent.mouseUp(document.body)
+            fireEvent.mouseUp(element)
         },
     }
 

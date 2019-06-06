@@ -1,4 +1,5 @@
 import { RefObject, useCallback, useEffect, useRef, useContext } from "react"
+import { distance } from "@popmotion/popcorn"
 import {
     EventInfo,
     usePointerEvents,
@@ -314,13 +315,18 @@ export function usePanGesture(
             }
 
             const info = getPanInfo(lastMoveEventInfo.current)
+            const panStarted = session.current.startEvent !== undefined
+            // Only start panning if the offset is larger than 1 pixel
+            if (!panStarted && distance(info.offset, { x: 0, y: 0 }) < 1) {
+                return
+            }
             const { point } = info
             const { timestamp } = getFrameData()
             session.current.pointHistory.push({ ...point, timestamp })
             pointer.current.x.set(point.x)
             pointer.current.y.set(point.y)
 
-            if (!session.current.startEvent) {
+            if (!panStarted) {
                 if (onPanStart) {
                     onPanStart(lastMoveEvent.current, info)
                 }

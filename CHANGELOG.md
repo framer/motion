@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.18.5] Unreleased
+
+### Fixed
+
+-   Properly cleaning up event listeners in tap gesture
+-   Only starting pan gesture when pointer has moved more than one point
+
 ## [0.18.4] 2019-05-30
 
 ### Fixed
