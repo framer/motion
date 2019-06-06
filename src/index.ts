@@ -48,7 +48,6 @@ export {
     Tween,
     Spring,
     Keyframes,
-    Physics,
     Inertia,
     Point,
     None,

@@ -46,7 +46,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * can be any supported value type, such as numbers, colors, shadows, arrays, objects and more.
  * Every value in the output range must be of the same type and in the same format.
  *
- * @prototype
+ * @library
  *
  * ```jsx
  * import * as React from "react"
@@ -62,7 +62,7 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * }
  * ```
  *
- * @production
+ * @motion
  *
  * ```jsx
  * import * as React from "react"
