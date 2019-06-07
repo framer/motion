@@ -9,6 +9,7 @@ type CycleState<T> = [T, Cycle]
 /**
  * Cycles through a series of visual properties. Can be used to toggle between or cycle through animations. It works similar to `useState` in React. It is provided an initial array of possible states, and returns an array of two arguments.
  *
+ * @library
  *
  * ```jsx
  * import * as React from "react"
@@ -19,6 +20,24 @@ type CycleState<T> = [T, Cycle]
  *
  *   return (
  *     <Frame
+ *       animate={{ x: x }}
+ *       onTap={() => cycleX()}
+ *      />
+ *    )
+ * }
+ * ```
+ *
+ * @motion
+ *
+ * ```jsx
+ * import * as React from "react"
+ * import { motion, useCycle } from "framer-motion"
+ *
+ * export const MyComponent = () => {
+ *   const [x, cycleX] = useCycle(0, 50, 100)
+ *
+ *   return (
+ *     <motion.div
  *       animate={{ x: x }}
  *       onTap={() => cycleX()}
  *      />

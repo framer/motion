@@ -19,7 +19,18 @@ const tapGesturePriority = getGesturePriority("whileTap")
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
  * information about the tap gesture such as it‘s location.
  *
- * @remarks
+ * @library
+ *
+ * ```jsx
+ * function onTap(event, info) {
+ *   console.log(info.point.x, info.point.y)
+ * }
+ *
+ * <Frame onTap={onTap} />
+ * ```
+ *
+ * @motion
+ *
  * ```jsx
  * function onTap(event, info) {
  *   console.log(info.point.x, info.point.y)
@@ -35,7 +46,18 @@ export interface TapInfo {
      * Contains `x` and `y` values for the tap gesture relative to the
      * device or page.
      *
-     * @remarks
+     * @library
+     *
+     * ```jsx
+     * function onTapStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onTapStart={onTapStart} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * function onTapStart(event, info) {
      *   console.log(info.point.x, info.point.y)
@@ -56,6 +78,18 @@ export interface TapHandlers {
     /**
      * Callback when the tap gesture successfully ends on this element.
      *
+     * @library
+     *
+     * ```jsx
+     * function onTap(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onTap={onTap} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * function onTap(event, info) {
      *   console.log(info.point.x, info.point.y)
@@ -71,6 +105,18 @@ export interface TapHandlers {
 
     /**
      * Callback when the tap gesture starts on this element.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onTapStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onTapStart={onTapStart} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onTapStart(event, info) {
@@ -88,12 +134,24 @@ export interface TapHandlers {
     /**
      * Callback when the tap gesture ends outside this element.
      *
+     * @library
+     *
      * ```jsx
      * function onTapCancel(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * return <motion.div onTapCancel={onTapCancel} />
+     * <Frame onTapCancel={onTapCancel} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * function onTapCancel(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <motion.div onTapCancel={onTapCancel} />
      * ```
      *
      * @param event - The originating pointer event.
@@ -103,6 +161,14 @@ export interface TapHandlers {
 
     /**
      * Properties or variant label to animate to while the component is pressed.
+     *
+     * @library
+     *
+     * ```jsx
+     * <Frame whileTap={{ scale: 0.8 }} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * <motion.div whileTap={{ scale: 0.8 }} />

@@ -11,6 +11,14 @@ export interface HoverHandlers {
     /**
      * Properties or variant label to animate to while the hover gesture is recognised.
      *
+     * @library
+     *
+     * ```jsx
+     * <Frame whileHover={{ scale: 1.2 }} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * <motion.div whileHover={{ scale: 1.2 }} />
      * ```
@@ -20,12 +28,20 @@ export interface HoverHandlers {
     /**
      * Callback function that fires when pointer starts hovering over the component.
      *
+     * @library
+     *
      * ```jsx
      * function onHoverStart(event) {
      *   console.log("Hover starts")
      * }
      *
-     * <motion.div onHoverStart={onHoverStart} />
+     * <Frame onHoverStart={onHoverStart} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div onHoverStart={() => console.log('Hover starts')} />
      * ```
      */
     onHoverStart?(event: MouseEvent): void
@@ -33,12 +49,20 @@ export interface HoverHandlers {
     /**
      * Callback function that fires when pointer stops hovering over the component.
      *
+     * @library
+     *
      * ```jsx
      * function onHoverEnd(event) {
      *   console.log("Hover ends")
      * }
      *
-     * <motion.div onHoverEnd={onHoverEnd} />
+     * <Frame onHoverEnd={onHoverEnd} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div onHoverEnd={() => console.log("Hover ends")} />
      * ```
      */
     onHoverEnd?(event: MouseEvent): void

@@ -98,7 +98,17 @@ export interface PanInfo {
      * Contains `x` and `y` values for the current pan position relative
      * to the device or page.
      *
-     * @remarks
+     * @library
+     *
+     * ```jsx
+     * function onPan(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onPan={onPan} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onPan(event, info) {
@@ -115,7 +125,17 @@ export interface PanInfo {
      * Contains `x` and `y` values for the distance moved since
      * the last event.
      *
-     * @remarks
+     * @library
+     *
+     * ```jsx
+     * function onPan(event, info) {
+     *   console.log(info.delta.x, info.delta.y)
+     * }
+     *
+     * <Frame onPan={onPan} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onPan(event, info) {
@@ -132,7 +152,17 @@ export interface PanInfo {
      * Contains `x` and `y` values for the distance moved from
      * the first pan event.
      *
-     * @remarks
+     * @library
+     *
+     * ```jsx
+     * function onPan(event, info) {
+     *   console.log(info.offset.x, info.offset.y)
+     * }
+     *
+     * <Frame onPan={onPan} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onPan(event, info) {
@@ -148,7 +178,17 @@ export interface PanInfo {
     /**
      * Contains `x` and `y` values for the current velocity of the pointer.
      *
-     * @remarks
+     * @library
+     *
+     * ```jsx
+     * function onPan(event, info) {
+     *   console.log(info.velocity.x, info.velocity.y)
+     * }
+     *
+     * <Frame onPan={onPan} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onPan(event, info) {
@@ -172,6 +212,18 @@ export interface PanHandlers {
     /**
      * Callback function that fires when the pan gesture is recognised on this element.
      *
+     * @library
+     *
+     * ```jsx
+     * function onPan(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onPan={onPan} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * function onPan(event, info) {
      *   console.log(info.point.x, info.point.y)
@@ -192,6 +244,18 @@ export interface PanHandlers {
 
     /**
      * Callback function that fires when the pan gesture begins on this element.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onPanStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onPanStart={onPanStart} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onPanStart(event, info) {
@@ -214,7 +278,18 @@ export interface PanHandlers {
     /**
      * Callback function that fires when we begin detecting a pan gesture. This
      * is analogous to `onMouseStart` or `onTouchStart`.
-     * .
+     *
+     * @library
+     *
+     * ```jsx
+     * function onPanSessionStart(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onPanSessionStart={onPanSessionStart} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onPanSessionStart(event, info) {
@@ -234,6 +309,18 @@ export interface PanHandlers {
 
     /**
      * Callback function that fires when the pan gesture ends on this element.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onPanEnd(event, info) {
+     *   console.log(info.point.x, info.point.y)
+     * }
+     *
+     * <Frame onPanEnd={onPanEnd} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onPanEnd(event, info) {

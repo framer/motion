@@ -181,6 +181,26 @@ export class MotionValue<V = any> {
      * from the `useEffect` function to ensure only one active subscription persists
      * for the lifecycle of the component.
      *
+     * @library
+     *
+     * ```jsx
+     * function MyComponent() {
+     *   const x = useMotionValue(0)
+     *
+     *   useEffect(() => {
+     *     const unsubscribe = x.onChange((latestX) => {
+     *       // Do stuff with latest x value
+     *     })
+     *
+     *     return unsubscribe
+     *   })
+     *
+     *   return <Frame x={x} />
+     * }
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * const MyComponent = () => {
      *   const x = useMotionValue(0)
