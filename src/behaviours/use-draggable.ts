@@ -621,7 +621,7 @@ export function useDraggable(
 
                 if (!hasDragged) return
 
-                // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axis.
+                // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axes.
                 if (dragMomentum || dragElastic) {
                     const momentumAnimations = bothAxis(axis => {
                         if (!shouldDrag(axis, drag, currentDirection)) {
