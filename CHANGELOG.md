@@ -2,13 +2,14 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.18.5] Unreleased
+## [0.18.5] 2019-06-07
 
 ### Fixed
 
 -   Properly cleaning up event listeners in tap gesture.
 -   Only starting pan gesture when pointer has moved more than one point.
 -   Applying `transformPagePoint` to `dragConstraints` when it's a `RefObject<Element>` to ensure it works in scaled environments.
+-   Fixing `dragElastic` behaviour when `dragMomentum={false}`.
 
 ## [0.18.4] 2019-05-30
 
