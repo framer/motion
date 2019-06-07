@@ -141,6 +141,10 @@ export class AnimationControls {
     /**
      * Stops animations on all linked components.
      *
+     * ```jsx
+     * controls.stop()
+     * ```
+     *
      * @public
      */
     stop() {
