@@ -294,9 +294,7 @@ export function usePanGesture(
     }
 
     const transformPoint = (info: EventInfo) => {
-        return transformPagePoint
-            ? { point: transformPagePoint(info.point) }
-            : info
+        return { point: transformPagePoint(info.point) }
     }
 
     const updatePoint = useCallback(

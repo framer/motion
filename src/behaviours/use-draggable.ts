@@ -1,4 +1,4 @@
-import { RefObject, useMemo, useRef, useEffect } from "react"
+import { RefObject, useMemo, useRef, useEffect, useContext } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
@@ -14,6 +14,10 @@ import {
 import { invariant } from "hey-listen"
 import { useResize } from "../utils/use-resize"
 import { isRefObject } from "../utils/is-ref-object"
+import {
+    MotionPluginContext,
+    MotionPlugins,
+} from "../motion/context/MotionPluginContext"
 
 type DragDirection = "x" | "y"
 
@@ -192,8 +196,21 @@ export interface DraggableProps extends DragHandlers {
     dragTransition?: InertiaOptions
 }
 
-const getBoundingBox = (ref: RefObject<Element>) => {
-    return (ref.current as Element).getBoundingClientRect()
+const getBoundingBox = (
+    ref: RefObject<Element>,
+    transformPagePoint: MotionPlugins["transformPagePoint"]
+) => {
+    const rect = (ref.current as Element).getBoundingClientRect()
+
+    const { x: left, y: top } = transformPagePoint({
+        x: rect.left,
+        y: rect.top,
+    })
+    const { x: width, y: height } = transformPagePoint({
+        x: rect.width,
+        y: rect.height,
+    })
+    return { left, top, width, height }
 }
 
 const getCurrentOffset = (point?: MotionValue<number>) =>
@@ -208,33 +225,34 @@ const getCurrentOffset = (point?: MotionValue<number>) =>
 const calculateConstraintsFromDom = (
     constraintsRef: RefObject<Element>,
     draggableRef: RefObject<Element>,
-    point: MotionPoint
+    point: MotionPoint,
+    transformPagePoint: MotionPlugins["transformPagePoint"]
 ) => {
     invariant(
         constraintsRef.current !== null && draggableRef.current !== null,
         "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
     )
 
-    const parentBoundingBox = getBoundingBox(constraintsRef)
-    const draggableBoundingBox = getBoundingBox(draggableRef)
+    const parentBoundingBox = getBoundingBox(constraintsRef, transformPagePoint)
+    const draggableBoundingBox = getBoundingBox(
+        draggableRef,
+        transformPagePoint
+    )
 
-    const top =
-        parentBoundingBox.top -
-        draggableBoundingBox.top +
-        getCurrentOffset(point.y)
     const left =
         parentBoundingBox.left -
         draggableBoundingBox.left +
         getCurrentOffset(point.x)
 
-    const constraints = {
-        top,
-        left,
-        right: parentBoundingBox.width - draggableBoundingBox.width + left,
-        bottom: parentBoundingBox.height - draggableBoundingBox.height + top,
-    }
+    const top =
+        parentBoundingBox.top -
+        draggableBoundingBox.top +
+        getCurrentOffset(point.y)
 
-    return constraints
+    const right = parentBoundingBox.width - draggableBoundingBox.width + left
+    const bottom = parentBoundingBox.height - draggableBoundingBox.height + top
+
+    return { top, left, right, bottom }
 }
 
 const flattenConstraints = (constraints: DraggableProps["dragConstraints"]) => {
@@ -349,6 +367,7 @@ export function useDraggable(
 ) {
     const point = useRef<MotionPoint>({}).current
     const origin = useRef({ x: 0, y: 0 }).current
+    const { transformPagePoint } = useContext(MotionPluginContext)
 
     // By keeping a reference to the user-defined drag handlers and referring
     // to that from within our `useMemo`-generated pan handlers, we can ensure
@@ -374,8 +393,11 @@ export function useDraggable(
     const scalePoint = () => {
         if (!isRefObject(dragConstraints)) return
 
-        const constraintsBox = getBoundingBox(dragConstraints)
-        const draggableBox = getBoundingBox(ref)
+        const constraintsBox = getBoundingBox(
+            dragConstraints,
+            transformPagePoint
+        )
+        const draggableBox = getBoundingBox(ref, transformPagePoint)
 
         // Scale a point relative to the transformation of a constraints-providing element.
         const scaleAxisPoint = (
@@ -435,7 +457,8 @@ export function useDraggable(
         const constraints = calculateConstraintsFromDom(
             dragConstraints as RefObject<Element>,
             ref,
-            point
+            point,
+            transformPagePoint
         )
 
         applyConstraintsToPoint(constraints)
@@ -546,7 +569,8 @@ export function useDraggable(
                     resolvedDragConstraints = calculateConstraintsFromDom(
                         dragConstraints as RefObject<Element>,
                         ref,
-                        point
+                        point,
+                        transformPagePoint
                     )
 
                     applyConstraintsToPoint(resolvedDragConstraints)

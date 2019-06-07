@@ -3,7 +3,7 @@ import { createContext, useContext, useRef, ReactNode } from "react"
 import { Point } from "../../events"
 
 export interface MotionPlugins {
-    transformPagePoint?: (point: Point) => Point
+    transformPagePoint: (point: Point) => Point
 }
 
 export interface MotionPluginProps extends MotionPlugins {
@@ -13,7 +13,9 @@ export interface MotionPluginProps extends MotionPlugins {
 /**
  * @internal
  */
-export const MotionPluginContext = createContext<Partial<MotionPlugins>>({})
+export const MotionPluginContext = createContext<MotionPlugins>({
+    transformPagePoint: p => p,
+})
 
 /**
  * @internal
