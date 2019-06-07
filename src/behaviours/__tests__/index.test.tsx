@@ -697,7 +697,7 @@ describe("dragging", () => {
                         drag="x"
                         dragConstraints={{ left: -500, right: 500 }}
                         dragElastic
-                        dragMomentum
+                        dragMomentum={false}
                         dragTransition={{
                             bounceStiffness: 300000,
                             bounceDamping: 1000000,
