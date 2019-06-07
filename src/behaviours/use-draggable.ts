@@ -621,8 +621,8 @@ export function useDraggable(
 
                 if (!hasDragged) return
 
-                // If we have `dragMomentum` defined, initiate momentum animations for both axis.
-                if (dragMomentum) {
+                // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axis.
+                if (dragMomentum || dragElastic) {
                     const momentumAnimations = bothAxis(axis => {
                         if (!shouldDrag(axis, drag, currentDirection)) {
                             return
@@ -632,6 +632,15 @@ export function useDraggable(
                             ? getConstraints(axis, resolvedDragConstraints)
                             : {}
 
+                        /**
+                         * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
+                         * of spring animations so we should look into adding a disable spring option to `inertia`.
+                         * We could do something here where we affect the `bounceStiffness` and `bounceDamping`
+                         * using the value of `dragElastic`.
+                         */
+                        const bounceStiffness = dragElastic ? 200 : 1000000
+                        const bounceDamping = dragElastic ? 40 : 10000000
+
                         return controls.start({
                             [axis]: 0,
                             // TODO: It might be possible to allow `type` animations to be set as
@@ -639,9 +648,9 @@ export function useDraggable(
                             // and it'd open another route for us to code-split.
                             transition: {
                                 type: "inertia",
-                                velocity: velocity[axis],
-                                bounceStiffness: 200,
-                                bounceDamping: 40,
+                                velocity: dragMomentum ? velocity[axis] : 0,
+                                bounceStiffness,
+                                bounceDamping,
                                 timeConstant: 750,
                                 restDelta: 1,
                                 ...dragTransition,

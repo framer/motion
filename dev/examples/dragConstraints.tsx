@@ -10,11 +10,9 @@ const styleA = {
 export const App = () => {
     return (
         <motion.div
-            drag="x"
-            dragConstraints={{ left: -500, right: 500 }}
-            dragElastic
-            dragMomentum
-            dragTransition={{ bounceStiffness: 200, bounceDamping: 40 }}
+            drag
+            dragConstraints={{ left: 0, right: 400 }}
+            dragMomentum={false}
             style={styleA}
         />
     )
