@@ -19,7 +19,7 @@ import { useConstant } from "../utils/use-constant"
  * @motion
  *
  * ```jsx
- * export function MyComponent() {
+ * export const MyComponent = () => {
  *   const scale = useMotionValue(1)
  *
  *   return <motion.div style={{ scale }} />

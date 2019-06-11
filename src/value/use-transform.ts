@@ -12,7 +12,7 @@ const noop = () => (v: any) => v
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
- * Here, the `y` value will always be twice the `x` value.
+ * In this example, `y` will always be double `x`.
  *
  * @library
  *
@@ -31,9 +31,6 @@ const noop = () => (v: any) => v
  * @motion
  *
  * ```jsx
- * import * as React from "react"
- * import { motion, useMotionValue, useTransform } from "framer-motion"
- *
  * export const MyComponent = () => {
  *   const x = useMotionValue(10)
  *   const y = useTransform(x, value => value * 2)
@@ -60,9 +57,10 @@ export function useTransform(
  * Given an input range of `[-200, -100, 100, 200]` and an output range of
  * `[0, 1, 1, 0]`, the returned `MotionValue` will:
  *
- * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`
- * - When provided a value between `-100` and `100`, will return `1`
+ * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`.
+ * - When provided a value between `-100` and `100`, will return `1`.
  * - When provided a value between `100` and `200`, will return a value between `1` and  `0`
+ *
  *
  * The input range must be a linear series of numbers. The output range
  * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
@@ -101,6 +99,7 @@ export function useTransform(
  * @param options -
  *
  *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`
+ *  - ease: EasingFunction[] - Easing functions to use on the interpolations between each value in the input and output ranges. If provided as an array, the array must be one item shorter than the input and output ranges, as the easings apply to the transition **between** each.
  *
  * @returns `MotionValue`
  *

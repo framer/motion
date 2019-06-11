@@ -178,8 +178,7 @@ export class MotionValue<V = any> {
      *
      * When calling `onChange` inside a React component, it should be wrapped with the
      * `useEffect` hook. As it returns an unsubscribe function, this should be returned
-     * from the `useEffect` function to ensure only one active subscription persists
-     * for the lifecycle of the component.
+     * from the `useEffect` function to ensure you don't add duplicate subscribers..
      *
      * @library
      *
@@ -202,7 +201,7 @@ export class MotionValue<V = any> {
      * @motion
      *
      * ```jsx
-     * const MyComponent = () => {
+     * export const MyComponent = () => {
      *   const x = useMotionValue(0)
      *
      *   useEffect(() => {
@@ -230,7 +229,7 @@ export class MotionValue<V = any> {
      *
      * @public
      */
-    onChange(subscription: Subscriber<V>) {
+    onChange(subscription: Subscriber<V>): () => void {
         if (!this.updateSubscribers) this.updateSubscribers = new Set()
         return this.subscribeTo(this.updateSubscribers, subscription)
     }
@@ -390,7 +389,7 @@ export class MotionValue<V = any> {
     }
 
     /**
-     * Stop the currently controlling animation.
+     * Stop the currently active animation.
      *
      * @public
      */
@@ -413,7 +412,11 @@ export class MotionValue<V = any> {
     }
 
     /**
-     * Destroy and clean up this `MotionValue`.
+     * Destroy and clean up subscribers to this `MotionValue`.
+     *
+     * The `MotionValue` hooks like `useMotionValue` and `useTransform` automatically
+     * handle the lifecycle of the returned `MotionValue`, so this method is only necessary if you've manually
+     * created a `MotionValue` via the `motionValue` function.
      *
      * @public
      */

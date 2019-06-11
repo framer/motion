@@ -423,7 +423,7 @@ export class MotionValue<V = any> {
     getVelocity(): number;
     isAnimating(): boolean;
     // Warning: (ae-forgotten-export) The symbol "Subscriber" needs to be exported by the entry point index.d.ts
-    onChange(subscription: Subscriber<V>): () => boolean;
+    onChange(subscription: Subscriber<V>): () => void;
     // @internal
     onRenderRequest(subscription: Subscriber<V>): () => boolean;
     // @internal
