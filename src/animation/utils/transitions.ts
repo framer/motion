@@ -205,8 +205,7 @@ export function startAnimation(
         // ensure the value's resolve velocity is up-to-date.
         if (delay) {
             // Convert delay from Framer Motion's seconds into Popmotion's milliseconds
-            delay *= 1000
-            activeAnimation = delayAction(delay).start({
+            activeAnimation = delayAction(delay * 1000).start({
                 complete: animate,
             })
         } else {
