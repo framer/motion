@@ -23,6 +23,8 @@ import { SVGAttributes } from 'react';
 export class AnimationControls {
     // @internal
     mount(): void;
+    // Warning: (ae-forgotten-export) The symbol "VariantLabels" needs to be exported by the entry point index.d.ts
+    set(definition: VariantLabels | TargetAndTransition): void;
     // Warning: (ae-forgotten-export) The symbol "Transition" needs to be exported by the entry point index.d.ts
     // 
     // @internal
@@ -47,7 +49,6 @@ export const animationControls: () => AnimationControls;
 
 // @public (undocumented)
 export interface AnimationProps {
-    // Warning: (ae-forgotten-export) The symbol "VariantLabels" needs to be exported by the entry point index.d.ts
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
     transition?: Transition;
     variants?: Variants;
@@ -390,7 +391,7 @@ export interface MotionPlugins {
 // @public
 export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
     // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
-    initial?: Target | VariantLabels;
+    initial?: false | Target | VariantLabels;
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
     transformTemplate?(transform: TransformProperties, generatedTransform: string): string;

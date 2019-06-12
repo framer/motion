@@ -125,6 +125,15 @@ describe("motion component rendering and styles", () => {
         )
     })
 
+    test("generates style attribute if passed initial as false", () => {
+        const { container } = render(
+            <motion.div initial={false} animate={{ x: 100 }} />
+        )
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(100px) translateZ(0);"
+        )
+    })
+
     // TODO: Replace dynamic variable test when we implement `custom` attribute: https://github.com/framer/company/issues/12508
     test("generates style attribute if passed initial as variant label is function", () => {
         const variants = {

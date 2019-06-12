@@ -292,6 +292,8 @@ export interface MotionProps
     /**
      * Properties, variant label or array of variant labels to start in.
      *
+     * Set to `false` to initialise with the values in `animate` (disabling the mount animation)
+     *
      * @library
      *
      * ```jsx
@@ -303,6 +305,9 @@ export interface MotionProps
      *
      * // Multiple variants
      * <Frame initial={["visible", "active"]} variants={variants} />
+     *
+     * // As false (disable mount animation)
+     * <Frame initial={false} animate={{ opacity: 0 }} />
      * ```
      *
      * @motion
@@ -316,9 +321,12 @@ export interface MotionProps
      *
      * // Multiple variants
      * <motion.div initial={["visible", "active"]} variants={variants} />
+     *
+     * // As false (disable mount animation)
+     * <motion.div initial={false} animate={{ opacity: 0 }} />
      * ```
      */
-    initial?: Target | VariantLabels
+    initial?: false | Target | VariantLabels
 
     /**
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
