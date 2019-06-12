@@ -33,12 +33,25 @@ export interface DragHandlers {
     /**
      * Callback function that fires when dragging starts.
      *
+     * @library
+     *
      * ```jsx
      * function onDragStart(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     *  <motion.div drag onDragStart={onDragStart} />
+     * <Frame drag onDragStart={onDragStart} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   drag
+     *   onDragStart={
+     *     (event, info) => console.log(info.point.x, info.point.y)
+     *   }
+     * />
      * ```
      */
     onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
@@ -46,12 +59,25 @@ export interface DragHandlers {
     /**
      * Callback function that fires when dragging ends.
      *
+     * @library
+     *
      * ```jsx
      * function onDragEnd(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <motion.div drag onDragEnd={onDragEnd} />
+     * <Frame drag onDragEnd={onDragEnd} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   drag
+     *   onDragEnd={
+     *     (event, info) => console.log(info.point.x, info.point.y)
+     *   }
+     * />
      * ```
      */
     onDragEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void
@@ -59,12 +85,25 @@ export interface DragHandlers {
     /**
      * Callback function that fires when the component is dragged.
      *
+     * @library
+     *
      * ```jsx
-     * function onDrag (event, info) {
-     *   console.log(info.velocity.x, info.velocity.y)
+     * function onDrag(event, info) {
+     *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <motion.div drag onDrag={onDrag} />
+     * <Frame drag onDrag={onDrag} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   drag
+     *   onDrag={
+     *     (event, info) => console.log(info.point.x, info.point.y)
+     *   }
+     * />
      * ```
      */
     onDrag?(event: MouseEvent | TouchEvent, info: PanInfo): void
@@ -72,12 +111,28 @@ export interface DragHandlers {
     /**
      * Callback function that fires a drag direction is determined.
      *
+     * @library
+     *
      * ```jsx
      * function onDirectionLock(axis) {
      *   console.log(axis)
      * }
      *
-     * <motion.div drag="lockDirection" onDirectionLock={onDirectionLock} />
+     * <Frame
+     *   drag
+     *   dragDirectionLock
+     *   onDirectionLock={onDirectionLock}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   drag
+     *   dragDirectionLock
+     *   onDirectionLock={axis => console.log(axis)}
+     * />
      * ```
      */
     onDirectionLock?(axis: "x" | "y"): void
@@ -85,12 +140,26 @@ export interface DragHandlers {
     /**
      * Callback function that fires when drag momentum/bounce transition finishes.
      *
+     * @library
+     *
      * ```jsx
      * function onDragTransitionEnd() {
      *   console.log('drag transition has ended')
      * }
      *
-     * <motion.div drag onDragTransitionEnd={onDragTransitionEnd} />
+     * <Frame
+     *   drag
+     *   onDragTransitionEnd={onDragTransitionEnd}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   drag
+     *   onDragTransitionEnd={() => console.log('Drag transition complete')}
+     * />
      * ```
      */
     onDragTransitionEnd?(): void
@@ -110,6 +179,14 @@ export interface DraggableProps extends DragHandlers {
      * Set `true` to drag in both directions.
      * Set `"x"` or `"y"` to only drag in a specific direction.
      *
+     * @library
+     *
+     * ```jsx
+     * <Frame drag="x" />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * <motion.div drag="x" />
      * ```
@@ -118,6 +195,14 @@ export interface DraggableProps extends DragHandlers {
 
     /**
      * If `true`, this will lock dragging to the initially-detected direction. Defaults to `false`.
+     *
+     * @library
+     *
+     * ```jsx
+     * <Frame drag={true} dragDirectionLock={true} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * <motion.div drag dragDirectionLock />
@@ -129,6 +214,14 @@ export interface DraggableProps extends DragHandlers {
      * Allows drag gesture propagation to child components. Set to `false` by
      * default.
      *
+     * @library
+     *
+     * ```jsx
+     * <Frame drag="x" dragPropagation={true} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * <motion.div drag="x" dragPropagation />
      * ```
@@ -139,15 +232,26 @@ export interface DraggableProps extends DragHandlers {
      * An object of optional `top`, `left`, `right`, `bottom` pixel values,
      * beyond which dragging is constrained.
      *
+     * Another component can be used as drag constraints by creating a `ref` with React's `useRef`.hook.
+     * This `ref` should be passed to that component's `ref` prop and to this component's `dragConstraints` prop.
+     *
+     * @library
+     *
+     * ```jsx
+     * <Frame
+     *   drag="x"
+     *   dragConstraints={{ left: 0, right: 300 }}
+     * />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * <motion.div
      *   drag="x"
      *   dragConstraints={{ left: 0, right: 300 }}
      * />
      * ```
-     *
-     * Another component can be used as drag constraints by creating a `ref` with React's `useRef`.hook.
-     * This `ref` should be passed to that component's `ref` prop and to this component's `dragConstraints` prop.
      */
     dragConstraints?:
         | false
@@ -157,6 +261,18 @@ export interface DraggableProps extends DragHandlers {
     /**
      * The degree of movement allowed outside constraints. 0 = no movement, 1 =
      * full movement. Set to `0.5` by default.
+     *
+     * @library
+     *
+     * ```jsx
+     * <Frame
+     *   drag={true}
+     *   dragConstraints={{ left: 0, right: 300 }}
+     *   dragElastic={0.2}
+     * />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * <motion.div
@@ -172,6 +288,18 @@ export interface DraggableProps extends DragHandlers {
      * Apply momentum from the pan gesture to the component when dragging
      * finishes. Set to `true` by default.
      *
+     * @library
+     *
+     * ```jsx
+     * <motion.div
+     *   drag={true}
+     *   dragConstraints={{ left: 0, right: 300 }}
+     *   dragMomentum={false}
+     * />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * <motion.div
      *   drag
@@ -186,6 +314,18 @@ export interface DraggableProps extends DragHandlers {
      * Allows you to change dragging inertia parameters.
      * When releasing a draggable Frame, an animation with type `inertia` starts. The animation is based on your dragging velocity. This property allows you to customize it.
      * See {@link https://framer.com/api/animation/#inertia | Inertia} for all properties you can use.
+     *
+     * @library
+     *
+     * ```jsx
+     * <Frame
+     *   drag={true}
+     *   dragTransition={{ bounceStiffness: 600, bounceDamping: 10 }}
+     * />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * <motion.div
      *   drag

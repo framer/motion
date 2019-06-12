@@ -57,14 +57,14 @@ const viewportMotionValues: ScrollMotionValues = {
 }
 
 /**
- * Provides a `MotionValue` that updates when the viewport scrolls.
- * Returns the following four values.
+ * Provides `MotionValue`s that update when the viewport scrolls:
  *
  * - `scrollX` — Horizontal scroll distance in pixels.
  * - `scrollY` — Vertical scroll distance in pixels.
- * - `scrollXProgress` — Horizontal scroll distance between `0` and `1`.
- * - `scrollYProgress` — Vertical scroll distance between `0` and `1`.
+ * - `scrollXProgress` — Horizontal scroll progress between `0` and `1`.
+ * - `scrollYProgress` — Vertical scroll progress between `0` and `1`.
  *
+ * @library
  *
  * ```jsx
  * import * as React from "react"
@@ -76,7 +76,16 @@ const viewportMotionValues: ScrollMotionValues = {
  *
  * export function MyComponent() {
  *   const { scrollYProgress } = useViewportScroll()
- *   return <Frame style={{ scaleX: scrollYProgress }} />
+ *   return <Frame scaleX={scrollYProgress} />
+ * }
+ * ```
+ *
+ * @motion
+ *
+ * ```jsx
+ * export const MyComponent = () => {
+ *   const { scrollYProgress } = useViewportScroll()
+ *   return <motion.div style={{ scaleX: scrollYProgress }} />
  * }
  * ```
  *

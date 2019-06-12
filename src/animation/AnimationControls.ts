@@ -101,8 +101,8 @@ export class AnimationControls {
      * @remarks
      *
      * ```jsx
-     * animation.start("variantLabel")
-     * animation.start({
+     * controls.start("variantLabel")
+     * controls.start({
      *   x: 0,
      *   transition: { duration: 1 }
      * })
@@ -140,6 +140,10 @@ export class AnimationControls {
 
     /**
      * Stops animations on all linked components.
+     *
+     * ```jsx
+     * controls.stop()
+     * ```
      *
      * @public
      */

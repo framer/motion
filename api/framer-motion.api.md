@@ -423,7 +423,7 @@ export class MotionValue<V = any> {
     getVelocity(): number;
     isAnimating(): boolean;
     // Warning: (ae-forgotten-export) The symbol "Subscriber" needs to be exported by the entry point index.d.ts
-    onChange(subscription: Subscriber<V>): () => boolean;
+    onChange(subscription: Subscriber<V>): () => void;
     // @internal
     onRenderRequest(subscription: Subscriber<V>): () => boolean;
     // @internal
@@ -475,18 +475,6 @@ export interface PanInfo {
     offset: Point;
     point: Point;
     velocity: Point;
-}
-
-// @public
-export interface Physics {
-    acceleration?: number;
-    // @internal (undocumented)
-    delay?: number;
-    friction?: number;
-    from?: number | string;
-    restSpeed?: number;
-    type: "physics";
-    velocity?: number;
 }
 
 // @public (undocumented)
@@ -672,7 +660,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/gestures/use-pan-gesture.d.ts:182:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
+// types/gestures/use-pan-gesture.d.ts:269:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

@@ -154,7 +154,9 @@ export const getAnimation = (
 
     // If this is an animatable pair of values, return an animation, otherwise use `just`
     const actionFactory: ActionFactory =
-        isOriginAnimatable && isTargetAnimatable ? transitions[type] : just
+        isOriginAnimatable && isTargetAnimatable
+            ? (transitions[type] as ActionFactory)
+            : just
 
     const opts = preprocessOptions(type, {
         from: origin,

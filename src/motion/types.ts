@@ -78,6 +78,24 @@ export interface AnimationProps {
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.
      *
+     * @library
+     *
+     * ```jsx
+     * // As values
+     * <Frame animate={{ opacity: 1 }} />
+     *
+     * // As variant
+     * <Frame animate="visible" variants={variants} />
+     *
+     * // Multiple variants
+     * <Frame animate={["visible", "active"]} variants={variants} />
+     *
+     * // AnimationControls
+     * <Frame animate={animation} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * // As values
      * <motion.div animate={{ opacity: 1 }} />
@@ -96,6 +114,25 @@ export interface AnimationProps {
 
     /**
      * Object of labelled variants. Variants are visual states that can be defined externally from a `Frame` and passed in via the variants property. This allows variant labels to be used in place of values on the `animate`, `initial`, `whileTap`, and `whileHover` properties.
+     *
+     * @library
+     *
+     * ```jsx
+     * const variants = {
+     *   active: {
+     *       backgroundColor: "#f00"
+     *    },
+     *    inactive: {
+     *       backgroundColor: "#fff",
+     *       transition: { duration: 2 }
+     *     }
+     *   }
+     *
+     * <Frame variants={variants} animate="active" />
+     * ```
+     *
+     *
+     * @motion
      *
      * ```jsx
      * const variants = {
@@ -116,6 +153,20 @@ export interface AnimationProps {
     /**
      * Default transition. If no `transition` is defined in `animate`, it will use the transition defined here.
      *
+     * @library
+     *
+     * ```jsx
+     * const spring = {
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
+     * }
+     *
+     * <Frame transition={spring} animate={{ scale: 1.2 }} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * const spring = {
      *   type: "spring",
@@ -135,6 +186,18 @@ export interface AnimationProps {
 export interface MotionCallbacks {
     /**
      * Callback with latest motion values, fired max once per frame.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onUpdate(latest) {
+     *   console.log(latest.x, latest.opacity)
+     * }
+     *
+     * <Frame animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * function onUpdate(latest) {
@@ -166,6 +229,23 @@ export interface MotionCallbacks {
 export interface MotionAdvancedProps {
     /**
      * Custom data to use to resolve dynamic variants differently for each animating component.
+     *
+     * @library
+     *
+     * ```jsx
+     * const variants = {
+     *   visible: (custom) => ({
+     *     opacity: 1,
+     *     transition: { delay: custom * 0.2 }
+     *   })
+     * }
+     *
+     * <Frame custom={0} animate="visible" variants={variants} />
+     * <Frame custom={1} animate="visible" variants={variants} />
+     * <Frame custom={2} animate="visible" variants={variants} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * const variants = {
@@ -210,7 +290,22 @@ export interface MotionProps
         DraggableProps,
         MotionAdvancedProps {
     /**
-     * Properties, variant label or array of variant labels to start in
+     * Properties, variant label or array of variant labels to start in.
+     *
+     * @library
+     *
+     * ```jsx
+     * // As values
+     * <Frame initial={{ opacity: 1 }} />
+     *
+     * // As variant
+     * <Frame initial="visible" variants={variants} />
+     *
+     * // Multiple variants
+     * <Frame initial={["visible", "active"]} variants={variants} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * // As values
@@ -228,9 +323,20 @@ export interface MotionProps
     /**
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
      *
-     * @remarks
+     * @library
+     *
      * ```jsx
      * export function MyComponent() {
+     *   const x = useMotionValue(0)
+     *
+     *   return <Frame style={{ x, opacity: 1, scale: 0.5 }} />
+     * }
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * export const MyComponent = () => {
      *   const x = useMotionValue(0)
      *
      *   return <motion.div style={{ x, opacity: 1, scale: 0.5 }} />
@@ -243,8 +349,26 @@ export interface MotionProps
      * By default, Framer Motion generates a `transform` property with a sensible transform order. `transformTemplate`
      * can be used to create a different order, or to append/preprend the automatically generated `transform` property.
      *
-     * @remarks
+     * @library
      *
+     * ```jsx
+     * function transformTemplate({ x, rotate }) {
+     *   return `rotate(${rotate}deg) translateX(${x}px)`
+     * }
+     *
+     * <Frame x={0} rotate={180} transformTemplate={transformTemplate} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   style={{ x: 0, rotate: 180 }}
+     *   transformTemplate={
+     *     ({ x, rotate }) => `rotate(${rotate}deg) translateX(${x}px)`
+     *   }
+     * />
+     * ```
      *
      * @param transform - The latest animated transform props.
      * @param generatedTransform - The transform string as automatically generated by Framer Motion

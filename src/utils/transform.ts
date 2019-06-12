@@ -46,6 +46,8 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * can be any supported value type, such as numbers, colors, shadows, arrays, objects and more.
  * Every value in the output range must be of the same type and in the same format.
  *
+ * @library
+ *
  * ```jsx
  * import * as React from "react"
  * import { Frame, transform } from "framer"
@@ -57,6 +59,22 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  *
  *    // Returns 0.5
  *    return <Frame>{output}</Frame>
+ * }
+ * ```
+ *
+ * @motion
+ *
+ * ```jsx
+ * import * as React from "react"
+ * import { transform } from "framer-motion"
+ *
+ * export function MyComponent() {
+ *    const inputRange = [0, 200]
+ *    const outputRange = [0, 1]
+ *    const output = transform(100, inputRange, outputRange)
+ *
+ *    // Returns 0.5
+ *    return <div>{output}</div>
  * }
  * ```
  *
