@@ -133,7 +133,7 @@ export const getAnimation = (
     value: MotionValue,
     target: ResolvedValueTarget,
     transition?: Transition
-): [ActionFactory, PopmotionTransitionProps] => {
+) => {
     const origin = value.get()
     const isOriginAnimatable = isAnimatable(key, origin)
     const isTargetAnimatable = isAnimatable(key, target)
@@ -164,7 +164,12 @@ export const getAnimation = (
         ...transitionDefinition,
     })
 
-    return [actionFactory, opts]
+    // Convert duration from Framer Motion's seconds into Popmotion's milliseconds
+    if (isDurationAnimation(opts) && opts.duration) {
+        opts.duration *= 1000
+    }
+
+    return actionFactory(opts)
 }
 
 /**
@@ -182,20 +187,10 @@ export function startAnimation(
         let activeAnimation: ColdSubscription
 
         const animate = () => {
-            const [animationFactory, opts] = getAnimation(
-                key,
-                value,
-                target,
-                transition
-            )
-
-            // Convert duration from Framer Motion's seconds into Popmotion's milliseconds
-            if (isDurationAnimation(opts) && opts.duration) {
-                opts.duration *= 1000
-            }
+            const animation = getAnimation(key, value, target, transition)
 
             // Bind animation opts to animation
-            activeAnimation = animationFactory(opts).start({
+            activeAnimation = animation.start({
                 update: (v: any) => value.set(v),
                 complete,
             })
