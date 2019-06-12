@@ -3,8 +3,8 @@ import {
     spring,
     keyframes,
     inertia,
-    chain,
     delay as delayAction,
+    ColdSubscription,
 } from "popmotion"
 import {
     ResolvedValueTarget,
@@ -178,33 +178,43 @@ export function startAnimation(
     target: ResolvedValueTarget,
     { delay = 0, ...transition }: Transition
 ) {
-    const [animationFactory, opts] = getAnimation(
-        key,
-        value,
-        target,
-        transition
-    )
-
-    // Convert durations from Framer Motion seconds into Popmotion milliseconds
-    if (isDurationAnimation(opts) && opts.duration) {
-        opts.duration *= 1000
-    }
-    delay *= 1000
-
-    // Bind animation opts to animation
-    let animation = animationFactory(opts)
-
-    // Compose delay
-    if (delay) {
-        animation = chain(delayAction(delay), animation)
-    }
-
     return value.start(complete => {
-        const activeAnimation = animation.start({
-            update: (v: any) => value.set(v),
-            complete,
-        })
+        let activeAnimation: ColdSubscription
 
-        return () => activeAnimation.stop()
+        const animate = () => {
+            const [animationFactory, opts] = getAnimation(
+                key,
+                value,
+                target,
+                transition
+            )
+
+            // Convert duration from Framer Motion's seconds into Popmotion's milliseconds
+            if (isDurationAnimation(opts) && opts.duration) {
+                opts.duration *= 1000
+            }
+
+            // Bind animation opts to animation
+            activeAnimation = animationFactory(opts).start({
+                update: (v: any) => value.set(v),
+                complete,
+            })
+        }
+
+        // If we're delaying this animation, only resolve it **after** the delay to
+        // ensure the value's resolve velocity is up-to-date.
+        if (delay) {
+            // Convert delay from Framer Motion's seconds into Popmotion's milliseconds
+            delay *= 1000
+            activeAnimation = delayAction(delay).start({
+                complete: animate,
+            })
+        } else {
+            animate()
+        }
+
+        return () => {
+            if (activeAnimation) activeAnimation.stop()
+        }
     })
 }
