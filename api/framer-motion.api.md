@@ -373,7 +373,7 @@ export const MotionContext: React.Context<MotionContextProps>;
 // Warning: (ae-internal-missing-underscore) The name "MotionPluginContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const MotionPluginContext: React.Context<Partial<MotionPlugins>>;
+export const MotionPluginContext: React.Context<MotionPlugins>;
 
 // Warning: (ae-forgotten-export) The symbol "MotionPluginProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionPlugins" should be prefixed with an underscore because the declaration is marked as @internal
@@ -384,7 +384,7 @@ export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.El
 // @internal (undocumented)
 export interface MotionPlugins {
     // (undocumented)
-    transformPagePoint?: (point: Point) => Point;
+    transformPagePoint: (point: Point) => Point;
 }
 
 // @public
