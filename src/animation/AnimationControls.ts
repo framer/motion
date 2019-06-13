@@ -1,8 +1,10 @@
-import { Variants, Transition } from "../types"
+import { Variants, Transition, TargetAndTransition } from "../types"
 import {
     ValueAnimationControls,
     AnimationDefinition,
 } from "./ValueAnimationControls"
+import { VariantLabels } from "../motion/types"
+import { invariant } from "hey-listen"
 
 type PendingAnimations = {
     animation: [AnimationDefinition, Transition | undefined]
@@ -136,6 +138,37 @@ export class AnimationControls {
                 })
             })
         }
+    }
+
+    /**
+     * Instantly set to a set of properties or a variant.
+     *
+     * ```jsx
+     * // With properties
+     * controls.set({ opacity: 0 })
+     *
+     * // With variants
+     * controls.set("hidden")
+     * ```
+     *
+     * @internalremarks
+     * We could perform a similar trick to `.start` where this can be called before mount
+     * and we maintain a list of of pending actions that get applied on mount. But the
+     * expectation of `set` is that it happens synchronously and this would be difficult
+     * to do before any children have even attached themselves. It's also poor practise
+     * and we should discourage render-synchronous `.start` calls rather than lean into this.
+     *
+     * @public
+     */
+    set(definition: VariantLabels | TargetAndTransition) {
+        invariant(
+            this.hasMounted,
+            "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."
+        )
+
+        return this.componentControls.forEach(controls =>
+            controls.apply(definition)
+        )
     }
 
     /**

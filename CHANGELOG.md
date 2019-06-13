@@ -2,6 +2,17 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.19.1] 2019-06-13
+
+### Added
+
+-   `initial={false}` to shadow contents of `animate` thereby disabling on mount animation.
+-   `AnimationControls.set` for imperative setting of values.
+
+### Fixed
+
+-   Resolve animations only after a defined `delay` to ensure `velocity` is only resolved as an animation begins on a value.
+
 ## [0.19.0] 2019-06-13
 
 ### Upgraded

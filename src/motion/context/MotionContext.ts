@@ -2,10 +2,12 @@ import * as React from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
 import { useMaxTimes } from "../../utils/use-max-times"
+import { AnimationControls } from "../../animation/AnimationControls"
+import { Target } from "types"
 
 type MotionContextProps = {
     controls?: ValueAnimationControls
-    initial?: VariantLabels
+    initial?: false | VariantLabels
     static?: boolean
 }
 
@@ -20,6 +22,12 @@ const isVariantLabel = (v?: MotionProps["animate"]): v is string | string[] => {
     return typeof v === "string" || Array.isArray(v)
 }
 
+const isAnimationControls = (
+    v?: MotionProps["animate"]
+): v is AnimationControls => {
+    return v instanceof AnimationControls
+}
+
 /**
  * Set up the context for children motion components.
  *
@@ -31,6 +39,14 @@ export const useMotionContext = (
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover }: MotionProps
 ) => {
+    let initialState: Target | VariantLabels | undefined
+
+    if (initial === false && !isAnimationControls(animate)) {
+        initialState = animate as Target | VariantLabels
+    } else if (typeof initial !== "boolean") {
+        initialState = initial
+    }
+
     // We pass on this component's ValueAnimationControls *if* we're being provided variants,
     // or if we're being used to control variants. Otherwise this component should be "invisible" to
     // variant propagation.
@@ -41,8 +57,8 @@ export const useMotionContext = (
         isVariantLabel(whileHover)
 
     // If this component's `initial` prop is a variant label, propagate it. Otherwise pass the parent's.
-    const targetInitial = isVariantLabel(initial)
-        ? initial
+    const targetInitial = isVariantLabel(initialState)
+        ? initialState
         : parentContext.initial
 
     // Only allow `initial` to trigger context re-renders if this is a `static` component (ie we're on the Framer canvas)
@@ -75,8 +91,7 @@ export const useMotionContext = (
     // in `initial`.
     useMaxTimes(
         () => {
-            const initialToApply = initial || parentContext.initial
-
+            const initialToApply = initialState || parentContext.initial
             initialToApply && controls.apply(initialToApply)
         },
         isStatic ? Infinity : 1

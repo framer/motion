@@ -59,7 +59,7 @@ export function useAnimatedState(initialState: any) {
     useEffect(() => {
         values.mount()
         return () => values.unmount()
-    })
+    }, [])
 
     return [animationState, startAnimation]
 }

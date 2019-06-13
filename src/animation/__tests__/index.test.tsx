@@ -217,4 +217,69 @@ describe("useAnimation", () => {
 
         await expect(promise).resolves.not.toThrowError()
     })
+
+    test(".set sets values of bound components", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => {
+                const xa = useMotionValue(0)
+                const xb = useMotionValue(0)
+                const controls = useAnimation()
+
+                useEffect(() => {
+                    controls.set({ x: 1 })
+                    resolve([xa.get(), xb.get()])
+                })
+
+                return (
+                    <>
+                        <motion.div animate={controls} style={{ x: xa }} />
+                        <motion.div animate={controls} style={{ x: xb }} />
+                    </>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return await expect(promise).resolves.toEqual([1, 1])
+    })
+
+    test(".set updates variants throughout a tree", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => {
+                const xa = useMotionValue(0)
+                const xb = useMotionValue(0)
+                const controls = useAnimation()
+
+                useEffect(() => {
+                    controls.set("foo")
+                    resolve([xa.get(), xb.get()])
+                })
+
+                const parent = {
+                    foo: { x: 1 },
+                }
+
+                const child = {
+                    foo: { x: 2 },
+                }
+
+                return (
+                    <motion.div
+                        animate={controls}
+                        variants={parent}
+                        style={{ x: xa }}
+                    >
+                        <motion.div variants={child} style={{ x: xb }} />
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return await expect(promise).resolves.toEqual([1, 2])
+    })
 })

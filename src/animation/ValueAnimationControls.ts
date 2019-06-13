@@ -405,13 +405,16 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             if (target) {
                 this.setValues(target, isSetting)
             }
+
+            if (this.children && this.children.size) {
+                this.children.forEach(child =>
+                    child.applyVariantLabels(variantLabelList)
+                )
+            }
         })
     }
 
-    start(
-        definition: AnimationDefinition,
-        opts: AnimationOptions = {}
-    ): Promise<any> {
+    async start(definition: AnimationDefinition, opts: AnimationOptions = {}) {
         if (opts.priority) {
             this.activeOverrides.add(opts.priority)
         }
@@ -434,7 +437,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
     }
 
-    private animate(
+    private async animate(
         animationDefinition: Variant,
         { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
     ) {
@@ -515,10 +518,10 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         return Promise.all(animations)
     }
 
-    private animateVariant(
+    private async animateVariant(
         variantLabel: string,
         opts?: AnimationOptions
-    ): Promise<any> {
+    ) {
         let when: false | "beforeChildren" | "afterChildren" = false
         let delayChildren = 0
         let staggerChildren = 0

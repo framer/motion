@@ -3,8 +3,8 @@ import {
     spring,
     keyframes,
     inertia,
-    chain,
     delay as delayAction,
+    ColdSubscription,
 } from "popmotion"
 import {
     ResolvedValueTarget,
@@ -25,6 +25,7 @@ import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { linear } from "@popmotion/easing"
 import { isDurationAnimation } from "./is-duration-animation"
 import { isAnimatable } from "./is-animatable"
+import { secondsToMilliseconds } from "../../utils/time-conversion"
 
 const transitions = { tween, spring, keyframes, inertia, just }
 
@@ -133,7 +134,7 @@ export const getAnimation = (
     value: MotionValue,
     target: ResolvedValueTarget,
     transition?: Transition
-): [ActionFactory, PopmotionTransitionProps] => {
+) => {
     const origin = value.get()
     const isOriginAnimatable = isAnimatable(key, origin)
     const isTargetAnimatable = isAnimatable(key, target)
@@ -164,7 +165,12 @@ export const getAnimation = (
         ...transitionDefinition,
     })
 
-    return [actionFactory, opts]
+    // Convert duration from Framer Motion's seconds into Popmotion's milliseconds
+    if (isDurationAnimation(opts) && opts.duration) {
+        opts.duration = secondsToMilliseconds(opts.duration)
+    }
+
+    return actionFactory(opts)
 }
 
 /**
@@ -178,33 +184,31 @@ export function startAnimation(
     target: ResolvedValueTarget,
     { delay = 0, ...transition }: Transition
 ) {
-    const [animationFactory, opts] = getAnimation(
-        key,
-        value,
-        target,
-        transition
-    )
-
-    // Convert durations from Framer Motion seconds into Popmotion milliseconds
-    if (isDurationAnimation(opts) && opts.duration) {
-        opts.duration *= 1000
-    }
-    delay *= 1000
-
-    // Bind animation opts to animation
-    let animation = animationFactory(opts)
-
-    // Compose delay
-    if (delay) {
-        animation = chain(delayAction(delay), animation)
-    }
-
     return value.start(complete => {
-        const activeAnimation = animation.start({
-            update: (v: any) => value.set(v),
-            complete,
-        })
+        let activeAnimation: ColdSubscription
 
-        return () => activeAnimation.stop()
+        const animate = () => {
+            const animation = getAnimation(key, value, target, transition)
+
+            // Bind animation opts to animation
+            activeAnimation = animation.start({
+                update: (v: any) => value.set(v),
+                complete,
+            })
+        }
+
+        // If we're delaying this animation, only resolve it **after** the delay to
+        // ensure the value's resolve velocity is up-to-date.
+        if (delay) {
+            activeAnimation = delayAction(secondsToMilliseconds(delay)).start({
+                complete: animate,
+            })
+        } else {
+            animate()
+        }
+
+        return () => {
+            if (activeAnimation) activeAnimation.stop()
+        }
     })
 }
