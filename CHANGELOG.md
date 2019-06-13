@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.19.0] 2019-06-13
+
+### Upgraded
+
+-   `stylefire@5.0.0` - Changes `originX`/`Y` default to `"50%"`.
+
 ## [0.18.6] 2019-06-13
 
 ### Added
