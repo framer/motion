@@ -13,6 +13,7 @@ import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { safeWindow } from "../events/utils/window"
 import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
 import { warning } from "hey-listen"
+import { secondsToMilliseconds } from "../utils/time-conversion"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -45,7 +46,7 @@ function getVelocity(session: EventSession, timeDelta: number): Point {
         timestampedPoint = pointHistory[i]
         if (
             lastPoint.timestamp - timestampedPoint.timestamp >
-            timeDelta * 1000
+            secondsToMilliseconds(timeDelta)
         ) {
             break
         }

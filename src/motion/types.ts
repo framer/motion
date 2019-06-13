@@ -326,7 +326,7 @@ export interface MotionProps
      * <motion.div initial={false} animate={{ opacity: 0 }} />
      * ```
      */
-    initial?: false | Target | VariantLabels
+    initial?: boolean | Target | VariantLabels
 
     /**
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.

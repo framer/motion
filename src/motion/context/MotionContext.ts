@@ -43,7 +43,7 @@ export const useMotionContext = (
 
     if (initial === false && !isAnimationControls(animate)) {
         initialState = animate as Target | VariantLabels
-    } else if (initial !== false) {
+    } else if (typeof initial !== "boolean") {
         initialState = initial
     }
 

@@ -25,6 +25,7 @@ import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { linear } from "@popmotion/easing"
 import { isDurationAnimation } from "./is-duration-animation"
 import { isAnimatable } from "./is-animatable"
+import { secondsToMilliseconds } from "../../utils/time-conversion"
 
 const transitions = { tween, spring, keyframes, inertia, just }
 
@@ -166,7 +167,7 @@ export const getAnimation = (
 
     // Convert duration from Framer Motion's seconds into Popmotion's milliseconds
     if (isDurationAnimation(opts) && opts.duration) {
-        opts.duration *= 1000
+        opts.duration = secondsToMilliseconds(opts.duration)
     }
 
     return actionFactory(opts)
@@ -199,8 +200,7 @@ export function startAnimation(
         // If we're delaying this animation, only resolve it **after** the delay to
         // ensure the value's resolve velocity is up-to-date.
         if (delay) {
-            // Convert delay from Framer Motion's seconds into Popmotion's milliseconds
-            activeAnimation = delayAction(delay * 1000).start({
+            activeAnimation = delayAction(secondsToMilliseconds(delay)).start({
                 complete: animate,
             })
         } else {
