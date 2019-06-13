@@ -5,12 +5,12 @@ import * as React from "react"
 import styled from "styled-components"
 
 describe("motion component rendering and styles", () => {
-    test("renders", () => {
+    it("renders", () => {
         const { container } = render(<motion.div />)
         expect(container.firstChild).toBeTruthy()
     })
 
-    test("renders HTML and SVG attributes without type errors", () => {
+    it("renders HTML and SVG attributes without type errors", () => {
         const Component = () => {
             const ref = React.useRef<HTMLButtonElement | null>(null)
             return (
@@ -34,7 +34,7 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toBeTruthy()
     })
 
-    test("renders child", () => {
+    it("renders child", () => {
         const { getByTestId } = render(
             <motion.div>
                 <div data-testid="child" />
@@ -43,7 +43,7 @@ describe("motion component rendering and styles", () => {
         expect(getByTestId("child")).toBeTruthy()
     })
 
-    test("renders normal event listeners", () => {
+    it("renders normal event listeners", () => {
         const onMouseEnter = jest.fn()
         const onMouseLeave = jest.fn()
         const { container } = render(
@@ -60,7 +60,7 @@ describe("motion component rendering and styles", () => {
         expect(onMouseLeave).toBeCalled()
     })
 
-    test("renders custom component", async () => {
+    it("renders custom component", async () => {
         const Component = React.forwardRef(
             (_props, ref: React.RefObject<HTMLButtonElement>) => (
                 <button type="submit" disabled ref={ref} />
@@ -78,7 +78,7 @@ describe("motion component rendering and styles", () => {
         return expect(promise).resolves.toHaveAttribute("disabled")
     })
 
-    test("accepts createref", async () => {
+    it("accepts createref", async () => {
         const promise = new Promise<Element>(resolve => {
             const ref = React.createRef<null | HTMLButtonElement>()
             const Component = () => {
@@ -94,17 +94,29 @@ describe("motion component rendering and styles", () => {
         return expect(promise).resolves.toHaveAttribute("type", "submit")
     })
 
-    test("generates style attribute if passed a special transform style attr", () => {
+    it("generates style attribute if passed a special transform style attr", () => {
         const { container } = render(
             <motion.div style={{ x: 10, background: "#fff", originX: 0.5 }} />
         )
 
         expect(container.firstChild).toHaveStyle(
-            "transform-origin: 50% 0 0; transform: translateX(10px) translateZ(0); background: #fff"
+            "transform: translateX(10px) translateZ(0)"
         )
+        expect(container.firstChild).toHaveStyle("background: #fff")
+        expect(container.firstChild).toHaveStyle("transform-origin-x: center")
+
+        console.log(
+            container!.firstChild!.ownerDocument!.defaultView!.getComputedStyle(
+                container.firstChild as Element
+            )
+        )
+
+        // expect(container.firstChild).toHaveStyle(
+        //     "transform-origin: 50% 330 0; transform: translateX(10000px) translateZ(0); background: #fff"
+        // )
     })
 
-    test("generates style attribute if passed initial", () => {
+    it("generates style attribute if passed initial", () => {
         const { container } = render(
             <motion.div initial={{ x: 10, background: "#fff" }} />
         )
@@ -113,7 +125,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("generates style attribute if passed initial as variant label", () => {
+    it("generates style attribute if passed initial as variant label", () => {
         const variants = {
             foo: { x: 10, background: "#fff" },
         }
@@ -125,7 +137,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("generates style attribute if passed initial as false", () => {
+    it("generates style attribute if passed initial as false", () => {
         const { container } = render(
             <motion.div initial={false} animate={{ x: 100 }} />
         )
@@ -135,7 +147,7 @@ describe("motion component rendering and styles", () => {
     })
 
     // TODO: Replace dynamic variable test when we implement `custom` attribute: https://github.com/framer/company/issues/12508
-    test("generates style attribute if passed initial as variant label is function", () => {
+    it("generates style attribute if passed initial as variant label is function", () => {
         const variants = {
             foo: (i: number) => ({ x: i * 10 }),
         }
@@ -163,7 +175,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("generates style attribute for children if passed initial as variant label", () => {
+    it("generates style attribute for children if passed initial as variant label", () => {
         const variants = {
             foo: { x: 10, background: "#fff" },
         }
@@ -179,7 +191,7 @@ describe("motion component rendering and styles", () => {
         expect(getByTestId("child")).toHaveStyle("opacity: 0; color: #f00")
     })
 
-    test("generates style attribute for nested children if passed initial as variant label", () => {
+    it("generates style attribute for nested children if passed initial as variant label", () => {
         const variants = {
             foo: { x: 10, background: "#fff" },
         }
@@ -202,7 +214,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("doesnt propagate style for children if passed initial as object", () => {
+    it("doesnt propagate style for children if passed initial as object", () => {
         const { getByTestId } = render(
             <motion.ul
                 initial={{ opacity: 0, y: 50 }}
@@ -217,7 +229,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("renders styled component and overwrites style", () => {
+    it("renders styled component and overwrites style", () => {
         const Box = styled.div`
             background-color: #fff;
         `
@@ -229,12 +241,21 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toHaveStyle("background-color: #f00")
     })
 
-    test("style supports originX and originY", () => {
+    it("style supports originX and originY", () => {
         const { container } = render(<motion.div style={{ originX: "25%" }} />)
-        expect(container.firstChild).toHaveStyle("transform-origin: 25% 50%")
+        return expect(container.firstChild).toHaveStyle(
+            "transform-origin: 24% 50%"
+        )
     })
 
-    test("updates style for transform values", () => {
+    it("style supports originZ", () => {
+        const { container } = render(<motion.div style={{ originZ: "25px" }} />)
+        expect(container.firstChild).toHaveStyle(
+            "transform-origin: 50% 50% 25px"
+        )
+    })
+
+    it("updates style for transform values", () => {
         let rotate = 0
 
         const Component = () => {
@@ -248,7 +269,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("applies transformTemplate on initial render", () => {
+    it("applies transformTemplate on initial render", () => {
         const { container } = render(
             <motion.div
                 initial={{ x: 10 }}
@@ -262,14 +283,14 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("renders transform", () => {
+    it("renders transform", () => {
         const { container } = render(
             <motion.div style={{ transform: "translateX(10px)" }} />
         )
         expect(container.firstChild).toHaveStyle("transform: translateX(10px)")
     })
 
-    test("applies updated transformTemplate", () => {
+    it("applies updated transformTemplate", () => {
         const { container, rerender } = render(
             <motion.div
                 initial={{ x: 10 }}
@@ -296,7 +317,7 @@ describe("motion component rendering and styles", () => {
         )
     })
 
-    test("renders transform with transformTemplate", () => {
+    it("renders transform with transformTemplate", () => {
         const { container } = render(
             <motion.div
                 transformTemplate={(_, generated) =>
