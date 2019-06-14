@@ -82,14 +82,22 @@ function getVelocity(session: EventSession, timeDelta: number): Point {
  * information about the current state of the tap gesture such as its
  * `point`, `delta`, `offset` and `velocity`.
  *
- * @remarks
+ * @library
  *
  * ```jsx
  * function onPan(event, info) {
  *   console.log(info.point.x, info.point.y)
  * }
  *
- * <motion.div onPan={onPan} />
+ * <Frame onPan={onPan} />
+ * ```
+ *
+ * @motion
+ *
+ * ```jsx
+ * <motion.div onPan={(event, info) => {
+ *   console.log(info.point.x, info.point.y)
+ * }} />
  * ```
  *
  * @public

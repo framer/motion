@@ -212,6 +212,18 @@ export interface MotionCallbacks {
     /**
      * Callback when animation defined in `animate` is complete.
      *
+     * @library
+     *
+     * ```jsx
+     * function onComplete() {
+     *   console.log("Animation completed")
+     * }
+     *
+     * <Frame animate={{ x: 100 }} onAnimationComplete={onComplete} />
+     * ```
+     *
+     * @motion
+     *
      * ```jsx
      * function onComplete() {
      *   console.log("Animation completed")
@@ -331,13 +343,15 @@ export interface MotionProps
     /**
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
      *
+     * @remarks
+     *
      * @library
      *
      * ```jsx
      * export function MyComponent() {
      *   const x = useMotionValue(0)
      *
-     *   return <Frame style={{ x, opacity: 1, scale: 0.5 }} />
+     *   return <Frame x={x} opacity={1} scale={0.5} />
      * }
      * ```
      *

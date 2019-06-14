@@ -291,7 +291,7 @@ export interface DraggableProps extends DragHandlers {
      * @library
      *
      * ```jsx
-     * <motion.div
+     * <Frame
      *   drag={true}
      *   dragConstraints={{ left: 0, right: 300 }}
      *   dragMomentum={false}
