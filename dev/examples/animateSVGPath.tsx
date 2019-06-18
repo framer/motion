@@ -5,7 +5,7 @@ import { motion } from "@framer"
 const style = {
     width: 100,
     height: 100,
-    background: "red",
+    background: "#f00",
 }
 
 const containerVariants = {

@@ -406,7 +406,7 @@ export type MotionStyle = MotionCSS & MotionTransform & MakeCustomValueType<Cust
 // Warning: (ae-forgotten-export) The symbol "MakeMotion" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export type MotionTransform = MakeMotion<TransformProperties>;
+export type MotionTransform = MakeMotion_2<TransformProperties>;
 
 // @public
 export class MotionValue<V = any> {
@@ -525,10 +525,10 @@ export interface Spring {
     velocity?: number;
 }
 
-// Warning: (ae-forgotten-export) The symbol "SVGAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SVGAttributesAsMotionValues" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export interface SVGMotionProps extends SVGAttributesWithoutMotionProps, MotionProps {
+export interface SVGMotionProps extends SVGAttributesAsMotionValues, MotionProps {
 }
 
 // @public (undocumented)

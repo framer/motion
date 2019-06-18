@@ -5,6 +5,7 @@ import styler, { createStylerFactory, Styler } from "stylefire"
 import { OnUpdate, MotionProps, TransformTemplate } from "../types"
 import { invariant } from "hey-listen"
 import { useConstant } from "../../utils/use-constant"
+import { isMotionValue } from "../../value/utils/is-motion-value"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
 // to fire and the `onUpdate` prop will only fire once per frame
@@ -111,13 +112,26 @@ export class MotionValuesMap {
     }
 }
 
-export const useMotionValues = ({
-    onUpdate,
-    transformTemplate,
-}: MotionProps) => {
-    const motionValues = useConstant(() => new MotionValuesMap())
-    motionValues.setOnUpdate(onUpdate)
-    motionValues.setTransformTemplate(transformTemplate)
+export const useMotionValues = (props: MotionProps) => {
+    const motionValues = useConstant(() => {
+        const map = new MotionValuesMap()
+
+        /**
+         * Loop through every prop and add any detected `MotionValue`s. This is SVG-specific
+         * code that should be extracted, perhaps considered hollistically with `useMotionStyles`.
+         *
+         * <motion.circle cx={motionValue(0)} />
+         */
+        for (const key in props) {
+            if (isMotionValue(props[key])) {
+                map.set(key, props[key])
+            }
+        }
+
+        return map
+    })
+    motionValues.setOnUpdate(props.onUpdate)
+    motionValues.setTransformTemplate(props.transformTemplate)
 
     return motionValues
 }

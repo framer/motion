@@ -13,6 +13,7 @@ import {
 import { HTMLElements, htmlElements } from "./utils/supported-elements"
 import { svgElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps } from "./types"
+import { MotionValue } from "../value"
 
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
@@ -103,11 +104,17 @@ interface SVGAttributesWithoutMotionProps
         SVGAttributes<SVGElement>,
         Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
     > {}
+
+type MakeMotion<T> = { [K in keyof T]: T[K] | MotionValue<string | number> }
+
+// Blanket-accept any SVG attribute as a `MotionValue`
+type SVGAttributesAsMotionValues = MakeMotion<SVGAttributesWithoutMotionProps>
+
 /**
  * @public
  */
 export interface SVGMotionProps
-    extends SVGAttributesWithoutMotionProps,
+    extends SVGAttributesAsMotionValues,
         MotionProps {}
 
 type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
