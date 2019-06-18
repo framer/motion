@@ -22,10 +22,6 @@ describe("SVG", () => {
         )
     })
 
-    /**
-     * TODO:
-     *  - If SVG component, scrape `props` for `MotionValue`s
-     */
     test("recognises MotionValues in attributes", () => {
         let r = motionValue(0)
         let fill = motionValue("#000")
