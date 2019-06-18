@@ -410,9 +410,12 @@ export function usePanGesture(
 
             const info = getPanInfo(lastMoveEventInfo.current)
             const panStarted = session.current.startEvent !== undefined
-            // Only start panning if the offset is larger than 1 pixel
-            if (!panStarted && distance(info.offset, { x: 0, y: 0 }) < 1) {
+            // Only start panning if the offset is larger than 3 pixels
+            const distancePastThreshold =
+                distance(info.offset, { x: 0, y: 0 }) < 3
+            if (!panStarted && distancePastThreshold) {
                 return
+            } else if (!panStarted && !distancePastThreshold) {
             }
             const { point } = info
             const { timestamp } = getFrameData()

@@ -661,7 +661,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/gestures/use-pan-gesture.d.ts:269:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
+// types/gestures/use-pan-gesture.d.ts:277:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
