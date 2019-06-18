@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.19.2] 2019-06-13
+
+### Fixed
+
+-   Detecting `originZ` as a `transform-origin` value.
+
 ## [0.19.1] 2019-06-13
 
 ### Added

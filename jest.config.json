@@ -7,7 +7,7 @@
         "!**/__tests__/**"
     ],
     "coverageDirectory": "<rootDir>/../coverage",
-    "setupTestFrameworkScriptFile": "<rootDir>/../jest.setup.ts",
+    "setupFilesAfterEnv": ["<rootDir>/../jest.setup.ts"],
     "testMatch": ["**/__tests__/**/*.test.(js|ts)?(x)"],
     "testPathIgnorePatterns": ["ssr.test.tsx"]
 }

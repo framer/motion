@@ -5,7 +5,7 @@ import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
 import { MotionStyle, CustomStyles } from "../types"
 
-const transformOriginProps = new Set(["originX", "originY"])
+const transformOriginProps = new Set(["originX", "originY", "originZ"])
 const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
 
 const isMotionValue = (value: any): value is MotionValue => {
