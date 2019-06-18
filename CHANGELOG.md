@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.20.0] 2019-06-18
+
+### Feature
+
+-   Allowing SVG `motion` components to accept `MotionValue`s via attributes.
+-   Adding SVG attribute types to `Target`.
+
 ## [0.19.2] 2019-06-13
 
 ### Fixed
