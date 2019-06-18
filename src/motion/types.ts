@@ -14,6 +14,10 @@ import { DraggableProps } from "../behaviours"
 
 export type MotionStyleProp = string | number | MotionValue
 
+/**
+ * Either a string, or array of strings, that reference variants defined via the `variants` prop.
+ * @public
+ */
 export type VariantLabels = string | string[]
 
 export interface TransformProperties {
@@ -113,37 +117,46 @@ export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels
 
     /**
-     * Object of labelled variants. Variants are visual states that can be defined externally from a `Frame` and passed in via the variants property. This allows variant labels to be used in place of values on the `animate`, `initial`, `whileTap`, and `whileHover` properties.
+     * Variants allow you to define animation states and organise them by name. They allow
+     * you to control animations throughout a component tree by switching a single `animate` prop.
+     *
+     * Using `transition` options like `delayChildren` and `staggerChildren`, you can orchestrate
+     * when children animations play relative to their parent.
      *
      * @library
+     *
+     * After passing variants to one or more `Frame`'s `variants` prop, these variants
+     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
      *
      * ```jsx
      * const variants = {
      *   active: {
-     *       backgroundColor: "#f00"
-     *    },
-     *    inactive: {
-     *       backgroundColor: "#fff",
-     *       transition: { duration: 2 }
-     *     }
+     *     backgroundColor: "#f00"
+     *   },
+     *   inactive: {
+     *     backgroundColor: "#fff",
+     *     transition: { duration: 2 }
      *   }
+     * }
      *
      * <Frame variants={variants} animate="active" />
      * ```
      *
-     *
      * @motion
+     *
+     * After passing variants to one or more `motion` component's `variants` prop, these variants
+     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
      *
      * ```jsx
      * const variants = {
      *   active: {
      *       backgroundColor: "#f00"
-     *    },
-     *    inactive: {
-     *       backgroundColor: "#fff",
-     *       transition: { duration: 2 }
-     *     }
+     *   },
+     *   inactive: {
+     *     backgroundColor: "#fff",
+     *     transition: { duration: 2 }
      *   }
+     * }
      *
      * <motion.div variants={variants} animate="active" />
      * ```

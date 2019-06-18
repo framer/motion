@@ -40,6 +40,7 @@ export {
     MotionAdvancedProps,
     MotionStyle,
     MotionTransform,
+    VariantLabels,
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./behaviours"
@@ -53,6 +54,7 @@ export {
     None,
     EasingFunction,
     TargetAndTransition,
+    Transition,
     ResolvedKeyframesTarget,
     KeyframesTarget,
     CustomValueType,

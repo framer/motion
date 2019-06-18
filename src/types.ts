@@ -1565,6 +1565,11 @@ export type TransitionMap = Orchestration & {
     [key: string]: TransitionDefinition
 }
 
+/**
+ * Transition props
+ *
+ * @public
+ */
 export type Transition =
     | (Orchestration & TransitionDefinition)
     | (Orchestration & TransitionMap)

@@ -23,10 +23,7 @@ import { SVGAttributes } from 'react';
 export class AnimationControls {
     // @internal
     mount(): void;
-    // Warning: (ae-forgotten-export) The symbol "VariantLabels" needs to be exported by the entry point index.d.ts
     set(definition: VariantLabels | TargetAndTransition): void;
-    // Warning: (ae-forgotten-export) The symbol "Transition" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
     setDefaultTransition(transition: Transition): void;
     // @internal
@@ -563,6 +560,12 @@ export function transform<T>(inputValue: number, inputRange: number[], outputRan
 // @public
 export function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (inputValue: number) => T;
 
+// Warning: (ae-forgotten-export) The symbol "TransitionDefinition" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "TransitionMap" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export type Transition = (Orchestration & TransitionDefinition) | (Orchestration & TransitionMap);
+
 // @public
 export interface Tween {
     // @internal (undocumented)
@@ -652,6 +655,9 @@ export type ValueTarget = SingleTarget | KeyframesTarget;
 // 
 // @public (undocumented)
 export type Variant = TargetAndTransition | TargetResolver;
+
+// @public
+export type VariantLabels = string | string[];
 
 // @public (undocumented)
 export type Variants = {
