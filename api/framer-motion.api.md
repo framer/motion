@@ -525,8 +525,11 @@ export interface Spring {
     velocity?: number;
 }
 
-// Warning: (ae-forgotten-export) The symbol "SVGAttributesAsMotionValues" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SVGAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
 // 
+// @public (undocumented)
+export type SVGAttributesAsMotionValues = MakeMotion<SVGAttributesWithoutMotionProps>;
+
 // @public (undocumented)
 export interface SVGMotionProps extends SVGAttributesAsMotionValues, MotionProps {
 }
