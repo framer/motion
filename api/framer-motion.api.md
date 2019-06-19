@@ -406,7 +406,7 @@ export type MotionStyle = MotionCSS & MotionTransform & MakeCustomValueType<Cust
 // Warning: (ae-forgotten-export) The symbol "MakeMotion" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export type MotionTransform = MakeMotion_2<TransformProperties>;
+export type MotionTransform = MakeMotion<TransformProperties>;
 
 // @public
 export class MotionValue<V = any> {
