@@ -104,7 +104,10 @@ interface SVGAttributesWithoutMotionProps
         Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
     > {}
 
-// Blanket-accept any SVG attribute as a `MotionValue`
+/**
+ * Blanket-accept any SVG attribute as a `MotionValue`
+ * @public
+ */
 export type SVGAttributesAsMotionValues = MakeMotion<
     SVGAttributesWithoutMotionProps
 >
