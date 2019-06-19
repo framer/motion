@@ -14,6 +14,7 @@ import { safeWindow } from "../events/utils/window"
 import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
 import { warning } from "hey-listen"
 import { secondsToMilliseconds } from "../utils/time-conversion"
+import { isTouchEvent } from "./utils/is-touch-event"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -351,10 +352,6 @@ export interface PanHandlers {
 }
 
 type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
-
-function isTouchEvent(event: MouseEvent | TouchEvent): event is TouchEvent {
-    return !!(event as TouchEvent).touches
-}
 
 /**
  *

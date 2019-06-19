@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.20.1] 2019-06-19
+
+### Fixed
+
+-   Ensure hover events only fire as a result of mouse interactions.
+
 ## [0.20.0] 2019-06-18
 
 ### Feature
