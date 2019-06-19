@@ -984,7 +984,7 @@ export interface Spring {
  *
  * This allows you to add snap-to-grid or similar functionality.
  *
- * Inertia is also the animation used for `dragMomentum`, and can be configured via that prop.
+ * Inertia is also the animation used for `dragTransition`, and can be configured via that prop.
  *
  * @public
  */
