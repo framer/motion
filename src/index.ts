@@ -4,6 +4,7 @@ export {
     createMotionComponent,
     HTMLMotionProps,
     SVGMotionProps,
+    SVGAttributesAsMotionValues,
 } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue } from "./value"

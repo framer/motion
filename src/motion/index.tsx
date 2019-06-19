@@ -105,7 +105,9 @@ interface SVGAttributesWithoutMotionProps
     > {}
 
 // Blanket-accept any SVG attribute as a `MotionValue`
-type SVGAttributesAsMotionValues = MakeMotion<SVGAttributesWithoutMotionProps>
+export type SVGAttributesAsMotionValues = MakeMotion<
+    SVGAttributesWithoutMotionProps
+>
 
 /**
  * @public
