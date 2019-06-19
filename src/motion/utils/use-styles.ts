@@ -4,13 +4,10 @@ import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
 import { MotionStyle, CustomStyles } from "../types"
+import { isMotionValue } from "../../value/utils/is-motion-value"
 
 const transformOriginProps = new Set(["originX", "originY", "originZ"])
 const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
-
-const isMotionValue = (value: any): value is MotionValue => {
-    return value instanceof MotionValue
-}
 
 export const buildStyleAttr = (
     values: MotionValuesMap,

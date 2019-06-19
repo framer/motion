@@ -1,4 +1,4 @@
-import { CSSProperties } from "react"
+import { CSSProperties, SVGAttributes } from "react"
 import { TransformProperties, CustomStyles } from "./motion/types"
 export { Point } from "./events/types"
 
@@ -1581,10 +1581,12 @@ type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
 >
 
 type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
+    SVGAttributes<SVGElement> &
     TransformProperties &
     CustomStyles & {
         pathLength?: number
         pathSpacing?: number
+        pathOffset?: number
     }
 
 export type MakeCustomValueType<T> = { [K in keyof T]: T[K] | CustomValueType }
