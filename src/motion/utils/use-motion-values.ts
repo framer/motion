@@ -66,6 +66,10 @@ export class MotionValuesMap {
         }
         const unsubscribeOnChange = value.onChange(onChange)
 
+        if (this.unsubscribers.has(key)) {
+            this.unsubscribers.get(key)!()
+        }
+
         this.unsubscribers.set(key, () => {
             unsubscribeOnRender()
             unsubscribeOnChange()
