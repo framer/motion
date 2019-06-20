@@ -3,6 +3,7 @@ import { render } from "react-testing-library"
 import * as React from "react"
 import { motion } from "../../motion"
 import { useMotionValue } from "../use-motion-value"
+import { motionValue, MotionValue } from ".."
 
 describe("useMotionValue", () => {
     test("sets initial value", async () => {
@@ -29,6 +30,21 @@ describe("useMotionValue", () => {
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(500px) translateZ(0)"
+        )
+    })
+
+    test("accepts new motion values", async () => {
+        const a = motionValue(0)
+        const b = motionValue(5)
+        const Component = ({ x }: { x: MotionValue<number> }) => {
+            return <motion.div style={{ x }} />
+        }
+
+        const { container, rerender } = render(<Component x={a} />)
+        expect(container.firstChild).toHaveStyle("transform: none")
+        rerender(<Component x={b} />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(5px) translateZ(0)"
         )
     })
 

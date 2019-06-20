@@ -853,6 +853,8 @@ export function useDraggable(
             dragMomentum,
             ...flattenConstraints(dragConstraints),
             dragTransition,
+            values.get("x"),
+            values.get("y"),
         ]
     )
 

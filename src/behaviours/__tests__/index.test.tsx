@@ -1,7 +1,8 @@
 import * as React from "react"
 import { useState } from "react"
+import "../../../jest.setup"
 import { motion } from "../../"
-import { motionValue } from "../../value"
+import { motionValue, MotionValue } from "../../value"
 import { MotionPlugins } from "../../motion/context/MotionPluginContext"
 import { render } from "react-testing-library"
 import { fireEvent } from "dom-testing-library"
@@ -758,5 +759,36 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toBe(true)
+    })
+
+    test("accepts new motion values", async () => {
+        const promise = new Promise<ChildNode | null>(resolve => {
+            const a = motionValue(0)
+            const b = motionValue(5)
+            const Component = ({ x }: { x: MotionValue<number> }) => {
+                return (
+                    <MockDrag>
+                        <motion.div drag="x" style={{ x }} />
+                    </MockDrag>
+                )
+            }
+
+            const { container, rerender } = render(<Component x={a} />)
+            rerender(<Component x={b} />)
+            rerender(<Component x={b} />)
+
+            const pointer = drag(container.firstChild).to(1, 1)
+            sync.postRender(() => {
+                pointer.to(100, 100)
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve(container.firstChild)
+                })
+            })
+        })
+
+        return expect(promise).resolves.toHaveStyle(
+            "transform: translateX(105px) translateZ(0)"
+        )
     })
 })
