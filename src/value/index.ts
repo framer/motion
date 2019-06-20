@@ -129,7 +129,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    addChild(config: Config<V>) {
+    addChild(config: Config<V> = {}) {
         const child = new MotionValue(this.current, {
             parent: this,
             ...config,
