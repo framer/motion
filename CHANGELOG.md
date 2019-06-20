@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.20.2] 2019-06-20
+
+### Fixed
+
+-   Ensuring each `MotionValue` receives one `MotionValuesMap` update subscriber.
+
 ## [0.20.1] 2019-06-20
 
 ### Fixed
