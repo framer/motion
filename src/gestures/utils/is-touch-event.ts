@@ -1,5 +1,6 @@
 export function isTouchEvent(
     event: MouseEvent | TouchEvent
 ): event is TouchEvent {
-    return !!(event as TouchEvent).touches
+    const hasTouches = !!(event as TouchEvent).touches
+    return hasTouches
 }
