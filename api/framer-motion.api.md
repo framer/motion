@@ -415,7 +415,7 @@ export class MotionValue<V = any> {
     // @internal
     constructor(init: V, { transformer, parent }?: Config<V>);
     // @internal
-    addChild(config: Config<V>): MotionValue<V>;
+    addChild(config?: Config<V>): MotionValue<V>;
     destroy(): void;
     get(): V;
     getVelocity(): number;
