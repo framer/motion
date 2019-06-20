@@ -73,7 +73,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private updateSubscribers?: Set<Subscriber<V>>
+    updateSubscribers?: Set<Subscriber<V>>
 
     /**
      * Functions to notify when the `MotionValue` updates and `render` is set to `true`.

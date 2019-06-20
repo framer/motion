@@ -420,7 +420,6 @@ export class MotionValue<V = any> {
     get(): V;
     getVelocity(): number;
     isAnimating(): boolean;
-    // Warning: (ae-forgotten-export) The symbol "Subscriber" needs to be exported by the entry point index.d.ts
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
     onRenderRequest(subscription: Subscriber<V>): () => boolean;
@@ -432,6 +431,10 @@ export class MotionValue<V = any> {
     // @internal
     start(animation: StartAnimation): Promise<void>;
     stop(): void;
+    // Warning: (ae-forgotten-export) The symbol "Subscriber" needs to be exported by the entry point index.d.ts
+    // 
+    // @internal
+    updateSubscribers?: Set<Subscriber<V>>;
     }
 
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
