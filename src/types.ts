@@ -661,6 +661,38 @@ export interface Tween {
     yoyo?: number
 
     /**
+     * When repeating an animation using `loop`, `flip`, or `yoyo`, `repeatDelay` can set the
+     * duration of the time to wait, in seconds, between each repetition.
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   yoyo: Infinity,
+     *   repeatDelay: 1
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ rotate: 180 }}
+     *   transition={{ yoyo: Infinity, repeatDelay: 1 }}
+     * />
+     * ```
+     *
+     *
+     * @public
+     */
+    repeatDelay?: number
+
+    /**
      * The value to animate from.
      * By default, this is the current state of the animating value.
      *
@@ -1478,6 +1510,11 @@ export interface Keyframes {
      * @public
      */
     yoyo?: number
+
+    /**
+     * @public
+     */
+    repeatDelay?: number
 
     /**
      * @internal
