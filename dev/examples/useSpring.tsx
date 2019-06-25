@@ -5,11 +5,6 @@ import { motion, useMotionValue, useSpring } from "@framer"
 import { distance } from "@popmotion/popcorn"
 import { spring } from "popmotion"
 
-// TODO: This example is waiting on the next Framer Beta publish
-
-// Full docs: https://www.framer.com/api
-// Download the beta: https://www.framer.com/beta
-
 //const grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
 const grid = [[0]]
 const size = 60
