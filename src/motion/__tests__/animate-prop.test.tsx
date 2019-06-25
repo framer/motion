@@ -281,4 +281,32 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toHaveStyle("z-index: 100")
     })
+
+    test("respects repeatDelay prop", async () => {
+        const promise = new Promise<number>(resolve => {
+            const x = motionValue(0)
+            x.onChange(() => {
+                setTimeout(() => resolve(x.get()), 50)
+            })
+            const Component = () => (
+                <motion.div
+                    animate={{ x: 20 }}
+                    transition={{
+                        x: {
+                            type: "tween",
+                            to: 50,
+                            duration: 0,
+                            repeatDelay: 0.1,
+                            yoyo: 1,
+                        },
+                    }}
+                    style={{ x }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe(50)
+    })
 })

@@ -156,6 +156,8 @@ export interface Keyframes {
     from?: number | string;
     // @public
     loop?: number;
+    // @public (undocumented)
+    repeatDelay?: number;
     // @public
     times?: number[];
     // (undocumented)
@@ -593,6 +595,7 @@ export interface Tween {
     flip?: number;
     from?: number | string;
     loop?: number;
+    repeatDelay?: number;
     times?: number[];
     // @internal (undocumented)
     to?: number | string | ValueTarget;

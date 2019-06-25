@@ -166,8 +166,13 @@ export const getAnimation = (
     })
 
     // Convert duration from Framer Motion's seconds into Popmotion's milliseconds
-    if (isDurationAnimation(opts) && opts.duration) {
-        opts.duration = secondsToMilliseconds(opts.duration)
+    if (isDurationAnimation(opts)) {
+        if (opts.duration) {
+            opts.duration = secondsToMilliseconds(opts.duration)
+        }
+        if (opts.repeatDelay) {
+            opts.repeatDelay = secondsToMilliseconds(opts.repeatDelay)
+        }
     }
 
     return actionFactory(opts)

@@ -5814,10 +5814,10 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-popmotion@^8.6.9:
-  version "8.6.9"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.6.9.tgz#c8d0626a3956afef6c7aab357b424cf175363396"
-  integrity sha512-GxzbiANHxuMv8i14/U2zVa5a0UBBJu5fcAWsoeMlNkJm3aTl9Z9d2JqVB6N7EnKYyah8KDfK2ScvP9G83SLFfg==
+popmotion@^8.7.0:
+  version "8.7.0"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-8.7.0.tgz#83e03a14dc1f24e73b9488c6d9d7b14e5ac0947d"
+  integrity sha512-RnJMbWN+TEBT0tgG+3WS0O1i9LAq+senXSAcKw+srGviT1c9G+iKUXrp24D2w6Og0mDd61rEfKz3pFrFCdKn5Q==
   dependencies:
     "@popmotion/easing" "^1.0.1"
     "@popmotion/popcorn" "^0.4.0"
