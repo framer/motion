@@ -5,7 +5,7 @@ import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
 
 /**
- * Creates a `MotionValue` that, when `set`, will spring to its new state.
+ * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
  *
  * @remarks
  *
@@ -13,6 +13,10 @@ import { useMotionValue } from "./use-motion-value"
  * const x = useSpring(0, { stiffness: 300 })
  * const y = useSpring(x, { damping: 10 })
  * ```
+ *
+ * @param inputValue - `MotionValue` or number. If provided a `MotionValue`, when the input `MotionValue` changes, the created `MotionValue` will spring towards that value.
+ * @param springConfig - Configuration options for the spring.
+ * @returns `MotionValue`
  */
 export function useSpring(
     source: MotionValue | number,

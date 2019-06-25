@@ -10,21 +10,13 @@ import { spring } from "popmotion"
 // Full docs: https://www.framer.com/api
 // Download the beta: https://www.framer.com/beta
 
-const grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+//const grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]
+const grid = [[0]]
 const size = 60
 const gap = 10
 const pushFactor = 0.4
 
-const Square = ({
-    active,
-    setActive,
-    colIndex,
-    rowIndex,
-    itemIndex,
-    x,
-    y,
-    z,
-}) => {
+const Square = ({ active, setActive, colIndex, rowIndex, itemIndex, x, y }) => {
     const isDragging = colIndex === active.col && rowIndex === active.row
     const diagonalIndex = (360 / 6) * (colIndex + rowIndex)
     const d = distance(
@@ -39,10 +31,6 @@ const Square = ({
         stiffness: Math.max(700 - d * 120, 0),
         damping: 20 + d * 5,
     })
-    const dz = useSpring(z, {
-        stiffness: Math.max(700 - d * 120, 0),
-        damping: 20 + d * 5,
-    })
 
     return (
         <motion.div
@@ -51,7 +39,6 @@ const Square = ({
             dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
             dragElastic={1}
             onDragStart={() => setActive({ row: rowIndex, col: colIndex })}
-            animate={isDragging ? { z: 200 } : undefined}
             transition={{ duration: 0.5, ease: "easeInOut", flip: Infinity }}
             style={{
                 background: `hsla(calc(var(--base-hue) + ${diagonalIndex}), 80%, 60%, 1)`,
@@ -63,7 +50,6 @@ const Square = ({
                 borderRadius: "50%",
                 x: isDragging ? x : dx,
                 y: isDragging ? y : dy,
-                z: isDragging ? z : dz,
                 zIndex: isDragging ? 1 : 0,
             }}
         />
@@ -72,8 +58,8 @@ const Square = ({
 
 export function App() {
     const [active, setActive] = useState({ row: 0, col: 0 })
-    const x = useMotionValue(0)
-    const y = useMotionValue(0)
+    const x = useSpring(0)
+    const y = useSpring(0)
     const z = useMotionValue(0)
 
     return (
