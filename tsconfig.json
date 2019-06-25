@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "target": "es5",
-        "module": "ESNext",
+        "module": "esnext",
         "moduleResolution": "node",
         "isolatedModules": false,
         "jsx": "react",
@@ -28,7 +28,7 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "removeComments": false,
-        "lib": ["es5", "es6", "dom"]
+        "lib": ["es2017", "dom"]
     },
     "compileOnSave": false,
     "buildOnSave": false,

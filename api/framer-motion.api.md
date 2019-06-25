@@ -17,6 +17,7 @@ import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 import { RefObject } from 'react';
+import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
 
 // @public
@@ -416,6 +417,10 @@ export class MotionValue<V = any> {
     constructor(init: V, { transformer, parent }?: Config<V>);
     // @internal
     addChild(config?: Config<V>): MotionValue<V>;
+    // Warning: (ae-forgotten-export) The symbol "PassiveEffect" needs to be exported by the entry point index.d.ts
+    // 
+    // @internal
+    attach(passiveEffect: PassiveEffect<V>): void;
     destroy(): void;
     get(): V;
     getVelocity(): number;
@@ -431,6 +436,8 @@ export class MotionValue<V = any> {
     // @internal
     start(animation: StartAnimation): Promise<void>;
     stop(): void;
+    // (undocumented)
+    updateAndNotify: (v: V, render?: boolean) => void;
     // Warning: (ae-forgotten-export) The symbol "Subscriber" needs to be exported by the entry point index.d.ts
     // 
     // @internal
@@ -629,6 +636,9 @@ export function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): u
 export function usePanGesture(handlers: PanHandlers): {
     onPointerDown: EventHandler;
 };
+
+// @public
+export function useSpring(source: MotionValue | number, config?: SpringProps): MotionValue<any>;
 
 // Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
