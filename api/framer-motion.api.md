@@ -417,8 +417,6 @@ export class MotionValue<V = any> {
     constructor(init: V, { transformer, parent }?: Config<V>);
     // @internal
     addChild(config?: Config<V>): MotionValue<V>;
-    // Warning: (ae-forgotten-export) The symbol "PassiveEffect" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
     attach(passiveEffect: PassiveEffect<V>): void;
     destroy(): void;
@@ -438,8 +436,6 @@ export class MotionValue<V = any> {
     stop(): void;
     // (undocumented)
     updateAndNotify: (v: V, render?: boolean) => void;
-    // Warning: (ae-forgotten-export) The symbol "Subscriber" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
     updateSubscribers?: Set<Subscriber<V>>;
     }
@@ -484,6 +480,9 @@ export interface PanInfo {
     point: Point;
     velocity: Point;
 }
+
+// @public (undocumented)
+export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void;
 
 // @public (undocumented)
 export interface Point {
@@ -534,6 +533,9 @@ export interface Spring {
     type: "spring";
     velocity?: number;
 }
+
+// @public (undocumented)
+export type Subscriber<T> = (v: T) => void;
 
 // Warning: (ae-forgotten-export) The symbol "SVGAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
 // 

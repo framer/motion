@@ -17,6 +17,8 @@ import { useMotionValue } from "./use-motion-value"
  * @param inputValue - `MotionValue` or number. If provided a `MotionValue`, when the input `MotionValue` changes, the created `MotionValue` will spring towards that value.
  * @param springConfig - Configuration options for the spring.
  * @returns `MotionValue`
+ *
+ * @public
  */
 export function useSpring(
     source: MotionValue | number,
