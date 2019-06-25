@@ -5,7 +5,15 @@ import { PopmotionTransitionProps } from "../types"
 
 export type Transformer<T> = (v: T) => T
 
+/**
+ * @public
+ */
 export type Subscriber<T> = (v: T) => void
+
+/**
+ * @public
+ */
+export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void
 
 export type Config<T> = {
     transformer?: Transformer<T>
@@ -81,6 +89,17 @@ export class MotionValue<V = any> {
      * @internal
      */
     private renderSubscribers?: Set<Subscriber<V>>
+
+    /**
+     * Add a passive effect to this `MotionValue`.
+     *
+     * A passive effect intercepts calls to `set`. For instance, `useSpring` adds
+     * a passive effect that attaches a `spring` to the latest
+     * set value. Hypothetically there could be a `useSmooth` that attaches an input smoothing effect.
+     *
+     * @internal
+     */
+    private passiveEffect?: PassiveEffect<V>
 
     /**
      * If defined, new values passed into `set` will be transformed through this function before being set.
@@ -250,6 +269,15 @@ export class MotionValue<V = any> {
     }
 
     /**
+     * Attaches a passive effect to the `MotionValue`.
+     *
+     * @internal
+     */
+    attach(passiveEffect: PassiveEffect<V>) {
+        this.passiveEffect = passiveEffect
+    }
+
+    /**
      * Sets the state of the `MotionValue`.
      *
      * @remarks
@@ -265,6 +293,14 @@ export class MotionValue<V = any> {
      * @public
      */
     set(v: V, render = true) {
+        if (!render || !this.passiveEffect) {
+            this.updateAndNotify(v, render)
+        } else {
+            this.passiveEffect(v, this.updateAndNotify)
+        }
+    }
+
+    updateAndNotify = (v: V, render = true) => {
         this.prev = this.current
         this.current = this.transformer ? this.transformer(v) : v
 

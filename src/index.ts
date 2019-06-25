@@ -7,9 +7,10 @@ export {
     SVGAttributesAsMotionValues,
 } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
-export { MotionValue, motionValue } from "./value"
+export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { unwrapMotionValue } from "./value/utils/unwrap-value"
 export { useTransform } from "./value/use-transform"
+export { useSpring } from "./value/use-spring"
 export { useViewportScroll } from "./value/use-viewport-scroll"
 export {
     AnimationControls,
