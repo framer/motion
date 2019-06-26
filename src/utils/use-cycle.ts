@@ -29,6 +29,8 @@ type CycleState<T> = [T, Cycle]
  *
  * @motion
  *
+ * An index value can be passed to the returned `cycle` function to cycle to a specific index.
+ *
  * ```jsx
  * import * as React from "react"
  * import { motion, useCycle } from "framer-motion"
