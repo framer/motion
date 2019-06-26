@@ -61,7 +61,9 @@ const validProps = (props: MotionProps) => {
 
 const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     const motionValueStyles: { [key: string]: any } = resolveCurrent(values)
-    const attrs = buildSVGAttrs(motionValueStyles)
+    const attrs = buildSVGAttrs(motionValueStyles as {
+        [key: string]: string | number
+    })
     attrs.style = { ...style, ...attrs.style } as any
 
     return attrs
