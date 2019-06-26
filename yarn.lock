@@ -7165,10 +7165,10 @@ stylefire@^4.1.3:
     hey-listen "^1.0.8"
     style-value-types "^3.1.4"
 
-stylefire@^5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-5.0.0.tgz#220f1da3c75c1644fd6f93a0b8440255e043e86f"
-  integrity sha512-XK2/Abn/ax+IPNqWBlvYYnj9or1AwskHzMTXM+YBUPXNdpkohfZcECLJsimhy0NfkITUPx4U3TAeASGX8CX7zg==
+stylefire@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-6.0.0.tgz#73a867cf261a38fdc412baaf85cac9db1aea38c0"
+  integrity sha512-uRrfVSlxqraILzAUMM3BL65rk4pddsJAWmW4cIYOOXRDgZPDsBmaDqHmUgq7jXtAdFnSRv2wylTo0Zflx3g59A==
   dependencies:
     "@popmotion/popcorn" "^0.4.0"
     framesync "^4.0.0"

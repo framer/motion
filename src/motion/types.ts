@@ -24,6 +24,9 @@ export interface TransformProperties {
     x?: string | number
     y?: string | number
     z?: string | number
+    translateX?: string | number
+    translateY?: string | number
+    translateZ?: string | number
     rotate?: string | number
     rotateX?: string | number
     rotateY?: string | number
