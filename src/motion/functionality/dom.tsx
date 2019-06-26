@@ -14,8 +14,10 @@ import { gestureProps, Gestures } from "./gestures"
 import { MotionComponentConfig } from "../component"
 import { Drag } from "./drag"
 import { FunctionalProps } from "./types"
-import styler from "stylefire"
+import styler, { buildSVGAttrs } from "stylefire"
 import { parseDomVariant } from "../../dom/parse-dom-variant"
+import { MotionValuesMap } from "../../motion/utils/use-motion-values"
+import { resolveCurrent } from "../../value/utils/resolve-values"
 
 type RenderProps = FunctionalProps & {
     componentProps: MotionProps
@@ -57,6 +59,14 @@ const validProps = (props: MotionProps) => {
     return valid
 }
 
+const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
+    const motionValueStyles = resolveCurrent(values)
+    const props = buildSVGAttrs(motionValueStyles)
+    props.style = { ...style, ...props.style } as any
+
+    return props
+}
+
 /**
  * Create a configuration for `motion` components that provides DOM-specific functionality.
  *
@@ -81,11 +91,14 @@ export function createDomMotionConfig<P>(
         componentProps,
     }: RenderProps) => {
         const forwardProps = isDOM ? validProps(componentProps) : componentProps
+        const staticVisualStyles = isSVG
+            ? buildSVGProps(values, style)
+            : { style: buildStyleAttr(values, style, isStatic) }
 
         return createElement<any>(Component, {
             ...forwardProps,
             ref: innerRef,
-            style: isSVG ? style : buildStyleAttr(values, style, isStatic),
+            ...staticVisualStyles,
         })
     }
 

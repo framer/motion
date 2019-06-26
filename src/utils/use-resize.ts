@@ -1,5 +1,4 @@
 import { useEffect, RefObject } from "react"
-import { safeWindow } from "../events/utils/window"
 import { isRefObject } from "./is-ref-object"
 
 type ResizeListener = () => void
@@ -19,8 +18,8 @@ export function useResize(
     useEffect(
         () => {
             if (!element || !isRefObject(element)) return
-            safeWindow.addEventListener("resize", onResize)
-            return () => safeWindow.removeEventListener("resize", onResize)
+            window.addEventListener("resize", onResize)
+            return () => window.removeEventListener("resize", onResize)
         },
         [element, onResize]
     )
