@@ -92,6 +92,8 @@ export function transform<T>(
     options?: TransformOptions<T>
 ): T
 /**
+ * @library
+ *
  * For improved performance, `transform` can pre-calculate the function that will transform a value between two ranges.
  * Returns a function.
  *
@@ -107,6 +109,32 @@ export function transform<T>(
  *
  *     // Returns 0.5
  *     return <Frame>{output}</Frame>
+ * }
+ *
+ * ```
+ *
+ * @motion
+ *
+ * Transforms numbers into other values by mapping them from an input range to an output range.
+ *
+ * Given an input range of `[0, 200]` and an output range of
+ * `[0, 1]`, this function will return a value between `0` and `1`.
+ * The input range must be a linear series of numbers. The output range
+ * can be any supported value type, such as numbers, colors, shadows, arrays, objects and more.
+ * Every value in the output range must be of the same type and in the same format.
+ *
+ * ```jsx
+ * import * as React from "react"
+ * import { Frame, transform } from "framer"
+ *
+ * export function MyComponent() {
+ *     const inputRange = [-200, -100, 100, 200]
+ *     const outputRange = [0, 1, 1, 0]
+ *     const convertRange = transform(inputRange, outputRange)
+ *     const output = convertRange(-150)
+ *
+ *     // Returns 0.5
+ *     return <div>{output}</div>
  * }
  *
  * ```
