@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0] 2019-06-26
+
+### Added
+
+-   Improved SVG support.
+
 ## [0.20.2] 2019-06-20
 
 ### Fixed
