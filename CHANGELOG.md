@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.1] 2019-06-27
+
+### Fixed
+
+-   Fixing `useSpring` unsubscriptions.
+
 ## [1.0.0] 2019-06-26
 
 ### Added

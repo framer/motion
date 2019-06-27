@@ -3,6 +3,8 @@ import { render } from "react-testing-library"
 import * as React from "react"
 import { useSpring } from "../use-spring"
 import { useMotionValue } from "../use-motion-value"
+import { motionValue, MotionValue } from ".."
+import { motion } from "../../motion"
 
 describe("useSpring", () => {
     test("can create a motion value from a number", async () => {
@@ -27,6 +29,7 @@ describe("useSpring", () => {
         expect(resolved).not.toBe(0)
         expect(resolved).not.toBe(100)
     })
+
     test("can create a MotionValue that responds to changes from another MotionValue", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {
@@ -49,5 +52,24 @@ describe("useSpring", () => {
 
         expect(resolved).not.toBe(0)
         expect(resolved).not.toBe(100)
+    })
+
+    test("unsubscribes when attached to a new value", () => {
+        const a = motionValue(0)
+        const b = motionValue(0)
+        let y: MotionValue<number>
+        const Component = ({ target }: { target: MotionValue<number> }) => {
+            y = useSpring(target)
+            return <motion.div style={{ y }} />
+        }
+
+        const { rerender } = render(<Component target={a} />)
+        rerender(<Component target={b} />)
+        rerender(<Component target={a} />)
+        rerender(<Component target={b} />)
+        rerender(<Component target={a} />)
+        rerender(<Component target={a} />)
+
+        expect(a!.updateSubscribers!.size).toBe(1)
     })
 })

@@ -1,4 +1,4 @@
-import { useRef, useMemo } from "react"
+import { useRef, useMemo, useEffect } from "react"
 import { spring, SpringProps, ColdSubscription } from "popmotion"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
@@ -45,12 +45,11 @@ export function useSpring(
     }, Object.values(config))
 
     // If the source is a `MotionValue`, bind via onChange
-    useMemo(
-        () => {
-            if (isMotionValue(source)) {
-                return source.onChange(v => value.set(parseFloat(v)))
-            }
-        },
+    useEffect(
+        () =>
+            isMotionValue(source)
+                ? source.onChange(v => value.set(parseFloat(v)))
+                : undefined,
         [source]
     )
 
