@@ -63,7 +63,6 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     const motionValueStyles = resolveCurrent(values)
     const props = buildSVGAttrs(motionValueStyles)
     props.style = { ...style, ...props.style } as any
-
     return props
 }
 

@@ -1,128 +1,179 @@
 import * as React from "react"
-import { Fragment } from "react"
-import styled from "styled-components"
-import { useViewportScroll, useTransform } from "@framer"
-import { motion } from "../../src"
+import { useEffect, useState } from "react"
+import { motion, useViewportScroll, useSpring, useTransform } from "@framer"
+import { mix } from "@popmotion/popcorn"
 
-const Container = styled.div`
-    margin: 100px auto;
-    max-width: 600px;
-    padding: 30px;
-    background-color: white;
-    color: #333;
-`
+const randomInt = (min, max) => Math.round(mix(min, max, Math.random()))
+const generateParagraphLength = () => randomInt(10, 40)
+const generateWordLength = () => randomInt(20, 100)
 
-const containerStyle: React.CSSProperties = {
-    position: "fixed",
-    top: 50,
-    left: 0,
-    right: 0,
-    height: 30,
-    zIndex: 0,
-}
+// Randomly generate some paragraphs of word lengths
+const paragraphs = Array.from(Array(40)).map(() => {
+    return Array.from(Array(generateParagraphLength())).map(generateWordLength)
+})
 
-const progressStyle = {
-    height: 30,
-    width: "100%",
-    background: "white",
-    transformOrigin: "0 0",
+const Word = ({ width }) => <div className="word" style={{ width }} />
+
+const Paragraph = ({ words }) => (
+    <div className="paragraph">
+        {words.map(width => (
+            <Word width={width} />
+        ))}
+    </div>
+)
+
+export const ContentPlaceholder = () => (
+    <div className="content-placeholder">
+        <div className="header">
+            <Word width={75} />
+            <Word width={245} />
+            <Word width={120} />
+        </div>
+        {paragraphs.map(words => (
+            <Paragraph words={words} />
+        ))}
+    </div>
+)
+
+export const Example = () => {
+    const [isComplete, setIsComplete] = useState(false)
+    const { scrollYProgress } = useViewportScroll()
+    const yRange = useTransform(scrollYProgress, [0, 0.9], [0, 1])
+    const pathLength = useSpring(yRange, { stiffness: 400, damping: 90 })
+
+    useEffect(() => yRange.onChange(v => setIsComplete(v >= 1)), [yRange])
+
+    return (
+        <>
+            <ContentPlaceholder />
+            <svg className="progress-icon" viewBox="0 0 60 60">
+                <motion.path
+                    fill="none"
+                    strokeWidth="5"
+                    stroke="white"
+                    strokeDasharray="0px 10000px"
+                    d="M 0, 20 a 20, 20 0 1,0 40,0 a 20, 20 0 1,0 -40,0"
+                    style={{
+                        pathLength,
+                        rotate: 90,
+                        translateX: 5,
+                        translateY: 5,
+                        scaleX: -1, // Reverse direction of line animation
+                    }}
+                />
+                <motion.path
+                    fill="none"
+                    strokeWidth="5"
+                    stroke="white"
+                    d="M14,26 L 22,33 L 35,16"
+                    initial={false}
+                    strokeDasharray="0px 10000px"
+                    animate={{ pathLength: isComplete ? 1 : 0 }}
+                />
+            </svg>
+        </>
+    )
 }
 
 export const App = () => {
-    const { scrollYProgress } = useViewportScroll()
-
-    scrollYProgress.onChange(console.log)
-
     return (
-        <div className="app">
-            <motion.div
-                style={{
-                    width: "100%",
-                    height: 20,
-                    background: "red",
-                    scaleX: scrollYProgress,
-                    originX: 0,
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                }}
-            />
-            <article>
-                <p>
-                    Photos taken by{" "}
-                    <a href="https://mattperry.photography">Matt Perry</a>
-                </p>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Aliquam at eros eu orci condimentum fermentum. Nam vehicula
-                    nunc et nisi pretium, sit amet commodo erat dapibus.
-                </p>
-                <p>
-                    Cras eu orci mollis, varius erat at, volutpat dolor. Proin a
-                    tortor vel tellus sodales vehicula a at dui. Nam interdum
-                    condimentum dolor, quis gravida dolor dapibus ac. Aliquam
-                    metus est, sagittis eget convallis eget, ornare a lorem.
-                </p>
-                <img
-                    style={{ width: 600, height: 400 }}
-                    alt="London nightbus"
-                    src="https://static1.squarespace.com/static/5b475b2c50a54f54f9b4e1dc/5b4a5c2d88251b376ea105c1/5b4a5c4703ce643303f960e7/1531599999503/DSCF2776.jpg?format=1000w"
-                />
-                <p>
-                    Fusce sit amet augue nec libero vestibulum fermentum vel in
-                    nunc. Cras vulputate at felis nec venenatis. Pellentesque
-                    sollicitudin id nisl ac tristique. Nam pellentesque, quam eu
-                    egestas ultricies, tellus odio iaculis felis, ut maximus
-                    ipsum ligula at purus.
-                </p>
-                <p>
-                    Nam scelerisque eget augue sed molestie. Nam et ullamcorper
-                    mauris, ac bibendum sem. Aliquam massa ante, aliquam eget
-                    velit a, sagittis fringilla magna. Suspendisse felis lacus,
-                    mattis in magna ut, porta scelerisque lacus. Nunc eget
-                    ultricies libero, eu cursus dui.
-                </p>
-                <p>
-                    Vivamus ac leo accumsan, tempor tortor quis, rutrum magna.
-                    Aliquam in nibh ex. Morbi et nibh erat. Nulla at eros vitae
-                    purus varius egestas.
-                </p>
-                <p>
-                    Vestibulum placerat porttitor posuere. Mauris auctor
-                    tristique neque, vel blandit ipsum mattis id. Morbi in ipsum
-                    et dui vehicula pellentesque.
-                </p>
-                <img
-                    style={{ width: 600, height: 400 }}
-                    alt="London skyline"
-                    src="https://static1.squarespace.com/static/5b475b2c50a54f54f9b4e1dc/5b4a5c2d88251b376ea105c1/5b4ae06b70a6ad5e776f7bcb/1531635294876/DSCF2803.jpg?format=1000w"
-                />
-                <p>
-                    Phasellus convallis ligula sit amet pulvinar sollicitudin.
-                    Ut luctus vitae quam in suscipit. Donec auctor feugiat
-                    accumsan. Phasellus mollis feugiat tincidunt. Cras
-                    ullamcorper metus et commodo lobortis.
-                </p>
-                <p>
-                    Etiam erat nulla, maximus vitae hendrerit at, accumsan vitae
-                    augue. Sed sit amet diam sit amet dui ullamcorper mattis
-                    quis et urna. Ut lectus eros, consequat at rhoncus et,
-                    ultricies at nunc.
-                </p>
-                <p>
-                    Ut ut urna ligula. Fusce lacinia efficitur enim id ultrices.
-                    Mauris sagittis orci et sapien feugiat, eget tincidunt
-                    lectus tristique. Cras leo augue, blandit sed ipsum
-                    convallis, ultricies dictum felis.
-                </p>
-                <p>
-                    Aliquam lobortis tempus lectus, at tincidunt tellus
-                    hendrerit ut. Ut pharetra, nisl vitae pretium lobortis, ante
-                    nisl pellentesque felis, at lobortis felis nunc vitae
-                    libero.
-                </p>
-            </article>
-        </div>
+        <>
+            <style>{`body {
+  background: #7700ff;
+  background-repeat: no-repeat;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.refresh {
+  padding: 10px;
+  position: absolute;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+  width: 20px;
+  height: 20px;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.content-placeholder {
+  max-width: 600px;
+  margin-top: 100px;
+  margin-bottom: 200px;
+  padding: 20px;
+}
+
+.header {
+  width: 100%;
+  margin-bottom: 50px;
+}
+
+.header .word {
+  height: 50px;
+  margin-right: 12px;
+}
+
+.word {
+  height: 18px;
+  background: white;
+  border-radius: 10px;
+  display: inline-block;
+  margin-bottom: 8px;
+  margin-right: 8px;
+  background: white;
+  border-radius: 10px;
+  display: inline-block;
+}
+
+.paragraph {
+  margin-bottom: 40px;
+}
+
+.progress-icon {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: 120px;
+  height: 120px;
+}
+
+@media (max-width: 600px) {
+  .content-placeholder {
+    padding-left: 80px;
+  }
+
+  .progress-icon {
+    width: 70px;
+    height: 70px;
+    left: 10px;
+    top: 10px;
+  }
+
+  .header .word {
+    height: 30px;
+  }
+
+  .word {
+    height: 14px;
+    margin-bottom: 5px;
+    margin-right: 5px;
+  }
+
+  .paragraph {
+    margin-bottom: 20px;
+  }
+}
+`}</style>
+            <div className="example-container">
+                <Example />
+            </div>
+        </>
     )
 }
