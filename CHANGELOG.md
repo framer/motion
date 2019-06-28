@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.2] 2019-06-28
+
+### Fixed
+
+-   Making `when` type more permissive for passing in implicitly typed, pre-defined `variants`.
+-   Not blocking default browser behaviour when dragging is initiated on draggable element's `select`, `input`, `textarea` elements.
+
 ## [1.0.1] 2019-06-27
 
 ### Fixed
