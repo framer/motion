@@ -336,6 +336,11 @@ export interface DraggableProps extends DragHandlers {
     dragTransition?: InertiaOptions
 }
 
+/**
+ * Don't block the default pointerdown behaviour of these elements.
+ */
+const allowDefaultPointerDown = new Set(["INPUT", "TEXTAREA", "SELECT"])
+
 const getBoundingBox = (
     ref: RefObject<Element>,
     transformPagePoint: MotionPlugins["transformPagePoint"]
@@ -679,7 +684,14 @@ export function useDraggable(
 
             const onPointerDown = (event: MouseEvent | TouchEvent) => {
                 // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
-                event.preventDefault()
+                if (
+                    event.target &&
+                    !allowDefaultPointerDown.has(
+                        (event.target as Element).tagName
+                    )
+                ) {
+                    event.preventDefault()
+                }
 
                 // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
                 // which has come out of the difficulty in us being able to do this once a scroll gesture
