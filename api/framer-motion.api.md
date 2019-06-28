@@ -464,7 +464,7 @@ export interface Orchestration {
     delayChildren?: number;
     staggerChildren?: number;
     staggerDirection?: 1 | -1;
-    when?: false | "beforeChildren" | "afterChildren";
+    when?: false | "beforeChildren" | "afterChildren" | string;
 }
 
 // @public (undocumented)

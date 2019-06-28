@@ -379,6 +379,7 @@ describe("animate prop as variant", () => {
                 },
                 withTransitionIndividual: {
                     transition: {
+                        when: "beforeChildren",
                         opacity: { type: "spring" },
                     },
                 },

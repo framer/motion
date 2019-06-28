@@ -177,7 +177,7 @@ export interface Orchestration {
      *
      * @public
      */
-    when?: false | "beforeChildren" | "afterChildren"
+    when?: false | "beforeChildren" | "afterChildren" | string
 
     /**
      * When using variants, children animations will start after this duration

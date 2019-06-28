@@ -9,6 +9,7 @@ import {
     TargetAndTransition,
     Variant,
     TargetWithKeyframes,
+    Orchestration,
 } from "../types"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
@@ -522,7 +523,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         variantLabel: string,
         opts?: AnimationOptions
     ) {
-        let when: false | "beforeChildren" | "afterChildren" = false
+        let when: Orchestration["when"] = false
         let delayChildren = 0
         let staggerChildren = 0
         let staggerDirection = 1
