@@ -510,6 +510,7 @@ export function useDraggable(
     values: MotionValuesMap,
     controls: ValueAnimationControls
 ) {
+    const isDragging = useRef(false)
     const point = useRef<MotionPoint>({}).current
     const origin = useRef({ x: 0, y: 0 }).current
     const { transformPagePoint } = useContext(MotionPluginContext)
@@ -525,6 +526,7 @@ export function useDraggable(
     // If `dragConstraints` is a React `ref`, we should resolve the constraints once the
     // component has rendered.
     const constraintsNeedResolution = isRefObject(dragConstraints)
+    const resolvedConstraints = useRef<Constraints | false>(false)
 
     // If `dragConstraints` is a React `ref`, we need to track changes in its
     // size and update the current draggable position relative to that.
@@ -629,9 +631,7 @@ export function useDraggable(
 
             // If `dragConstraints` is set to `false` or `Constraints`, set constraints immediately.
             // Otherwise we'll resolve on mount.
-            let resolvedDragConstraints:
-                | Constraints
-                | false = constraintsNeedResolution
+            resolvedConstraints.current = constraintsNeedResolution
                 ? false
                 : (dragConstraints as Constraints | false)
 
@@ -644,8 +644,12 @@ export function useDraggable(
             })
 
             // Apply constraints immediately, even before render, if our constraints are a plain object.
-            if (resolvedDragConstraints && !constraintsNeedResolution) {
-                applyConstraintsToPoint(resolvedDragConstraints)
+            if (
+                !isDragging.current &&
+                resolvedConstraints.current &&
+                !constraintsNeedResolution
+            ) {
+                applyConstraintsToPoint(resolvedConstraints.current)
             }
 
             // Add additional information to the `PanInfo` object before passing it to drag listeners.
@@ -675,7 +679,7 @@ export function useDraggable(
                 current = applyConstraints(
                     axis,
                     current,
-                    resolvedDragConstraints,
+                    resolvedConstraints.current,
                     dragElastic
                 )
 
@@ -714,18 +718,19 @@ export function useDraggable(
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
+                isDragging.current = true
                 hasDragged = false
 
                 // Resolve the constraints again in case anything has changed in the meantime.
                 if (constraintsNeedResolution) {
-                    resolvedDragConstraints = calculateConstraintsFromDom(
+                    resolvedConstraints.current = calculateConstraintsFromDom(
                         dragConstraints as RefObject<Element>,
                         ref,
                         point,
                         transformPagePoint
                     )
 
-                    applyConstraintsToPoint(resolvedDragConstraints)
+                    applyConstraintsToPoint(resolvedConstraints.current)
                 }
 
                 // Set point origin and stop any existing animations.
@@ -787,6 +792,7 @@ export function useDraggable(
                 info: PanInfo
             ) => {
                 unblockViewportScroll()
+                isDragging.current = false
                 const { velocity } = info
 
                 if (!dragPropagation && openGlobalLock) {
@@ -804,8 +810,8 @@ export function useDraggable(
                             return
                         }
 
-                        const transition = resolvedDragConstraints
-                            ? getConstraints(axis, resolvedDragConstraints)
+                        const transition = resolvedConstraints.current
+                            ? getConstraints(axis, resolvedConstraints.current)
                             : {}
 
                         /**
@@ -837,13 +843,13 @@ export function useDraggable(
 
                     // Run all animations and then resolve the new drag constraints.
                     Promise.all(momentumAnimations).then(() => {
-                        recordBoxInfo(resolvedDragConstraints)
+                        recordBoxInfo(resolvedConstraints.current)
                         scalePoint()
                         const { onDragTransitionEnd } = dragHandlers.current
                         onDragTransitionEnd && onDragTransitionEnd()
                     })
                 } else {
-                    recordBoxInfo(resolvedDragConstraints)
+                    recordBoxInfo(resolvedConstraints.current)
                 }
 
                 const { onDragEnd } = dragHandlers.current

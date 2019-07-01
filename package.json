@@ -31,6 +31,7 @@
         "@types/styled-components": "^4.1.0",
         "@typescript-eslint/eslint-plugin": "^1.5.0",
         "@typescript-eslint/parser": "^1.5.0",
+        "array-move": "^2.1.0",
         "cache-loader": "^1.2.5",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
         "eslint": "^5.16.0",

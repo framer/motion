@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.3] 2019-07-01
+
+### Fixed
+
+-   Moving `dragConstraints` to a ref if a component re-renders mid gesture.
+-   Only applying `dragConstraints` on render if component isn't currently dragging.
+
 ## [1.0.2] 2019-06-28
 
 ### Fixed
