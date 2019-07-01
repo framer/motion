@@ -1620,11 +1620,7 @@ type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
 type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
     SVGAttributes<SVGElement> &
     TransformProperties &
-    CustomStyles & {
-        pathLength?: number
-        pathSpacing?: number
-        pathOffset?: number
-    }
+    CustomStyles
 
 export type MakeCustomValueType<T> = { [K in keyof T]: T[K] | CustomValueType }
 

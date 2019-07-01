@@ -44,20 +44,24 @@ export interface TransformProperties {
     perspective?: string | number
 }
 
-/**
- * These types are to support custom prop names in Framer Library. We don't
- * actually support them in Framer Motion - at some point we should try and let
- * external sources augment the types here but I fear it'll be a nightmare.
- */
 export interface CustomStyles {
+    /**
+     * Framer Library custom prop types. These are not actually supported in Motion - preferably
+     * we'd have a way of external consumers injecting supported styles into this library.
+     */
     size?: string | number
     radius?: string | number
     shadow?: string
     image?: string
+
+    // SVG custom styles
+    pathLength?: number
+    pathOffset?: number
+    pathSpacing?: number
 }
 
 export type MakeMotion<T> = MakeCustomValueType<
-    { [K in keyof T]: T[K] | MotionValue<T[K]> }
+    { [K in keyof T]: T[K] | MotionValue<number> | MotionValue<string> }
 >
 
 export type MotionCSS = MakeMotion<
