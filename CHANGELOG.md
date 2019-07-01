@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.5] 2019-07-01
+
+### Fixed
+
+-   Allow `useTransform` to re-head `MotionValue`s.
+
 ## [1.0.4] 2019-07-01
 
 ### Fixed

@@ -659,10 +659,10 @@ export function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObje
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useTransform(value: MotionValue, transform: Transformer_2): MotionValue;
+export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>): MotionValue;
 
 // @public
-export function useTransform<T>(value: MotionValue<number>, from: number[], to: any[], options?: TransformOptions<T>): MotionValue;
+export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
 
 // Warning: (ae-forgotten-export) The symbol "ScrollMotionValues" needs to be exported by the entry point index.d.ts
 // 

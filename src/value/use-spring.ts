@@ -1,8 +1,9 @@
-import { useRef, useMemo, useEffect } from "react"
+import { useRef, useMemo } from "react"
 import { spring, SpringProps, ColdSubscription } from "popmotion"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
+import { useOnChange } from "./use-on-change"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -44,14 +45,7 @@ export function useSpring(
         })
     }, Object.values(config))
 
-    // If the source is a `MotionValue`, bind via onChange
-    useEffect(
-        () =>
-            isMotionValue(source)
-                ? source.onChange(v => value.set(parseFloat(v)))
-                : undefined,
-        [source]
-    )
+    useOnChange(source, v => value.set(parseFloat(v)))
 
     return value
 }

@@ -1,14 +1,16 @@
 import { MotionValue } from "../value"
-import { useCustomValue } from "./use-custom-value"
 import { transform, TransformOptions } from "../utils/transform"
+import { useRef, useMemo } from "react"
 
-type Transformer = (v: any) => any
+type Transformer<T> = (v: any) => T
 
-const isTransformer = (v: number[] | Transformer): v is Transformer => {
+const isTransformer = <T>(
+    v: number[] | Transformer<T>
+): v is Transformer<T> => {
     return typeof v === "function"
 }
 
-const noop = () => (v: any) => v
+const noop = (v: any) => v
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
@@ -45,9 +47,9 @@ const noop = () => (v: any) => v
  *
  * @public
  */
-export function useTransform(
-    value: MotionValue,
-    transform: Transformer // eslint-disable-line no-shadow
+export function useTransform<T>(
+    parent: MotionValue,
+    transform: Transformer<T>
 ): MotionValue
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
@@ -106,29 +108,32 @@ export function useTransform(
  * @public
  */
 export function useTransform<T>(
-    value: MotionValue<number>,
+    parent: MotionValue<number>,
     from: number[],
-    to: any[],
+    to: T[],
     options?: TransformOptions<T>
-): MotionValue
+): MotionValue<T>
 export function useTransform<T>(
-    value: MotionValue,
-    customTransform: Transformer | number[],
-    to?: any[],
+    parent: MotionValue,
+    customTransform: Transformer<T> | number[],
+    to?: T[],
     options?: TransformOptions<T>
-): MotionValue {
-    let comparitor: any[] = [value]
+): MotionValue<T> {
+    const value = useRef<MotionValue<T> | null>(null)
+    let comparitor: any[] = [parent]
     let transformer = noop
 
     if (isTransformer(customTransform)) {
-        transformer = () => customTransform
+        transformer = customTransform
     } else if (Array.isArray(to)) {
         const from = customTransform
-
-        transformer = () => transform(from, to, options)
-
-        comparitor = [value, from.join(","), to.join(",")]
+        transformer = transform(from, to, options)
+        comparitor = [parent, from.join(","), to.join(",")]
     }
 
-    return useCustomValue(value, transformer, comparitor)
+    return useMemo(() => {
+        if (value.current) value.current.destroy()
+        value.current = parent.addChild({ transformer })
+        return value.current
+    }, comparitor)
 }

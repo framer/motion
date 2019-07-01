@@ -4,6 +4,7 @@ import * as React from "react"
 import { motion } from "../../motion"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
+import { MotionValue, motionValue } from ".."
 
 class Custom {
     value: number = 0
@@ -81,4 +82,38 @@ describe("as input/output range", () => {
             "transform: translateX(20px) translateY(120px) translateZ(0)"
         )
     })
+})
+
+test("is correctly typed", async () => {
+    const Component = () => {
+        const x = useMotionValue(0)
+        const y = useTransform(x, [0, 1], ["0px", "1px"])
+        const z = useTransform(x, v => v * 2)
+        return <motion.div style={{ x, y, z }} />
+    }
+
+    render(<Component />)
+})
+
+test("can be re-pointed to another `MotionValue`", async () => {
+    const a = motionValue(1)
+    const b = motionValue(2)
+    let x = motionValue(0)
+
+    const Component = ({ target }: { target: MotionValue<number> }) => {
+        x = useTransform(target, [0, 1], [0, 2], { clamp: false })
+        return <motion.div style={{ x }} />
+    }
+
+    const { container, rerender } = render(<Component target={a} />)
+    rerender(<Component target={b} />)
+    expect(container.firstChild as Element).toHaveStyle(
+        "transform: translateX(4px) translateZ(0)"
+    )
+    b.set(10)
+    expect(x.get()).toBe(20)
+    rerender(<Component target={a} />)
+    expect(container.firstChild as Element).toHaveStyle(
+        "transform: translateX(2px) translateZ(0)"
+    )
 })

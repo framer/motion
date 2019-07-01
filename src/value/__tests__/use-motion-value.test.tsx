@@ -65,4 +65,16 @@ describe("useMotionValue", () => {
         expect(onChange).toHaveBeenCalled()
         expect(onRenderRequest).toHaveBeenCalled()
     })
+
+    test("is typed", async () => {
+        const Component = () => {
+            const x = useMotionValue(100)
+            return <motion.div style={{ x }} />
+        }
+
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(100px) translateZ(0)"
+        )
+    })
 })

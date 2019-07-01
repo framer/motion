@@ -61,7 +61,13 @@ export interface CustomStyles {
 }
 
 export type MakeMotion<T> = MakeCustomValueType<
-    { [K in keyof T]: T[K] | MotionValue<number> | MotionValue<string> }
+    {
+        [K in keyof T]:
+            | T[K]
+            | MotionValue<number>
+            | MotionValue<string>
+            | MotionValue<any> // A permissive type for Custom value types
+    }
 >
 
 export type MotionCSS = MakeMotion<
