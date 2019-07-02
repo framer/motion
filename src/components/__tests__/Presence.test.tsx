@@ -2,7 +2,6 @@ import "../../../jest.setup"
 import * as React from "react"
 import { render } from "react-testing-library"
 import { Presence, motion } from "../../"
-import { motionValue } from "../../value"
 
 describe("Presence", () => {
     test("Does nothing on initial render by default", async () => {
@@ -86,6 +85,37 @@ describe("Presence", () => {
 
         const child = await promise
         expect(child).toBeFalsy()
+    })
+
+    test("Can cycle through multiple components", async () => {
+        const promise = new Promise<number>(resolve => {
+            const Component = ({ i }: { i: number }) => {
+                return (
+                    <Presence>
+                        <motion.div
+                            key={i}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                        />
+                    </Presence>
+                )
+            }
+
+            const { container, rerender } = render(<Component i={0} />)
+            rerender(<Component i={0} />)
+            setTimeout(() => {
+                rerender(<Component i={1} />)
+                rerender(<Component i={1} />)
+            }, 50)
+            setTimeout(() => {
+                rerender(<Component i={2} />)
+                rerender(<Component i={2} />)
+                resolve(container.childElementCount)
+            }, 150)
+        })
+
+        return await expect(promise).resolves.toBe(3)
     })
 
     test("Exit variants are triggered with `Presence.custom`, not that of the element.", async () => {

@@ -214,7 +214,11 @@ export const Presence: FunctionComponent<PresenceProps> = ({
     // exiting list.
     const presentKeys = presentChildren.current.map(getChildKey)
     const targetKeys = filteredChildren.map(getChildKey)
+
     diff(exiting, targetKeys, presentKeys)
+
+    // TODO entering items in children aren't added to present until everything has fully left.
+    // Maybe try an approach where we replace present with previous and update those every frame
 
     // Loop through all currently exiting components and clone them to overwrite `animate`
     // with any `exit` prop they might have defined.
@@ -250,7 +254,7 @@ export const Presence: FunctionComponent<PresenceProps> = ({
         )
     })
 
-    if (!exiting.size) presentChildren.current = filteredChildren
+    presentChildren.current = childrenToRender
 
     return <>{childrenToRender}</>
 }
