@@ -400,14 +400,14 @@ export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHan
 }
 
 // Warning: (ae-forgotten-export) The symbol "MotionCSS" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "MakeMotion" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SVGPathProperties" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "MakeCustomValueType" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "CustomStyles" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export type MotionStyle = MotionCSS & MotionTransform & MakeCustomValueType<CustomStyles>;
+export type MotionStyle = MotionCSS & MotionTransform & MakeMotion<SVGPathProperties> & MakeCustomValueType<CustomStyles>;
 
-// Warning: (ae-forgotten-export) The symbol "MakeMotion" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
 export type MotionTransform = MakeMotion<TransformProperties>;
 
