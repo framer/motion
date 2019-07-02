@@ -18,6 +18,7 @@ import styler, { buildSVGAttrs } from "stylefire"
 import { parseDomVariant } from "../../dom/parse-dom-variant"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
+import { Position } from "./position"
 
 type RenderProps = FunctionalProps & {
     componentProps: MotionProps
@@ -129,6 +130,23 @@ export function createDomMotionConfig<P>(
             isStatic
         ) => {
             const activeComponents: ReactElement<P>[] = []
+
+            // TODO: Refactor the following loading strategy into something more dynamic
+            // This is also a good target for filesize reduction by making these present externally.
+            // It might be possible to code-split these out and useState to re-render children when the
+            // functionality within becomes available.
+
+            if (!isStatic && Position.shouldRender(props)) {
+                activeComponents.push(
+                    <Position.component
+                        {...props}
+                        values={values}
+                        controls={controls}
+                        innerRef={ref}
+                        key="position"
+                    />
+                )
+            }
 
             if (!isStatic && Drag.shouldRender(props)) {
                 activeComponents.push(

@@ -209,6 +209,35 @@ export interface AnimationProps {
      * ```
      */
     transition?: Transition
+
+    /**
+     * If `positionTransition` is defined, the component will automatically animate any changes to its layout.
+     *
+     * The animation will use the properties defined in `positionTransition`.
+     *
+     * @library
+     *
+     * ```jsx
+     * const spring = {
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
+     * }
+     *
+     * <Frame positionTransition={spring} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div positionTransition={{
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
+     * }} />
+     * ```
+     */
+    positionTransition?: Transition
 }
 
 /**
