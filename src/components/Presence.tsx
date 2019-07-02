@@ -10,15 +10,15 @@ import {
 } from "react"
 import * as React from "react"
 
-export interface PresenceProps {
+export interface AnimatePresenceProps {
     /**
-     * By passing `initial={false}`, `Presence` will disable any initial animations on children
+     * By passing `initial={false}`, `AnimatePresence` will disable any initial animations on children
      * that are present when the component is first rendered.
      *
      * @library
      *
      * ```jsx
-     * <Presence initial={false}>
+     * <AnimatePresence initial={false}>
      *   {isVisible && (
      *     <Frame
      *       initial={{ opacity: 0 }}
@@ -26,13 +26,13 @@ export interface PresenceProps {
      *       exit={{ opacity: 0 }}
      *     />
      *   )}
-     * </Presence>
+     * </AnimatePresence>
      * ```
      *
      * @motion
      *
      * ```jsx
-     * <Presence initial={false}>
+     * <AnimatePresence initial={false}>
      *   {isVisible && (
      *     <motion.div
      *       initial={{ opacity: 0 }}
@@ -40,7 +40,7 @@ export interface PresenceProps {
      *       exit={{ opacity: 0 }}
      *     />
      *   )}
-     * </Presence>
+     * </AnimatePresence>
      * ```
      *
      * @public
@@ -49,7 +49,7 @@ export interface PresenceProps {
 
     /**
      * When a component is removed, there's no longer a chance to update its props. So if a component's `exit`
-     * prop is defined as a dynamic variant and you want to pass a new `custom` prop, you can do so via `Presence`.
+     * prop is defined as a dynamic variant and you want to pass a new `custom` prop, you can do so via `AnimatePresence`.
      * This will ensure all leaving components animate using the latest data.
      *
      * @public
@@ -102,7 +102,7 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
 }
 
 /**
- * The `Presence` component enables the use of the `exit` prop to animate components
+ * The `AnimatePresence` component enables the use of the `exit` prop to animate components
  * when they're removed from the component tree.
  *
  * When adding/removing more than a single child component, every component
@@ -110,16 +110,16 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * @library
  *
- * The immediate children of `Presence` should be components that accept `animate`, `exit`
+ * The immediate children of `AnimatePresence` should be components that accept `animate`, `exit`
  * and `onAnimationComplete` props, like `Frame`.
  *
  * ```jsx
- * import { Frame, Presence } from 'framer'
+ * import { Frame, AnimatePresence } from 'framer'
  *
  * // As items are added and removed from `items`
  * export function Items({ items }) {
  *   return (
- *     <Presence>
+ *     <AnimatePresence>
  *       {items.map(item => (
  *         <Frame
  *           key={item.id}
@@ -128,7 +128,7 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *           exit={{ opacity: 0 }}
  *         />
  *       ))}
- *     </Presence>
+ *     </AnimatePresence>
  *   )
  * }
  * ```
@@ -137,14 +137,14 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * @motion
  *
- * The immediate children of `Presence` should be `motion` components. You can use custom components,
+ * The immediate children of `AnimatePresence` should be `motion` components. You can use custom components,
  * as long as you ensure to forward `animate` and `onAnimationComplete` to the top-level `motion` component.
  *
  * ```jsx
- * import { motion, Presence } from 'framer-motion'
+ * import { motion, AnimatePresence } from 'framer-motion'
  *
  * export const Items = ({ items }) => (
- *   <Presence>
+ *   <AnimatePresence>
  *     {items.map(item => (
  *       <motion.div
  *         key={item.id}
@@ -153,13 +153,13 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *         exit={{ opacity: 0 }}
  *       />
  *     ))}
- *   </Presence>
+ *   </AnimatePresence>
  * )
  * ```
  *
  * @public
  */
-export const Presence: FunctionComponent<PresenceProps> = ({
+export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     children,
     custom,
     initial = true,

@@ -1,4 +1,4 @@
-import { motion, Presence, useCycle } from "@framer"
+import { motion, AnimatePresence, useCycle } from "@framer"
 import * as React from "react"
 
 const style = {
@@ -19,7 +19,7 @@ export const App = () => {
     return (
         <>
             <style>{`body { overflow: hidden }`}</style>
-            <Presence initial={false}>
+            <AnimatePresence initial={false}>
                 <motion.img
                     src={image}
                     key={image}
@@ -37,7 +37,7 @@ export const App = () => {
                     style={style}
                     onClick={cycleImage}
                 />
-            </Presence>
+            </AnimatePresence>
         </>
     )
 }

@@ -1,4 +1,4 @@
-import { motion, Presence } from "@framer"
+import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 
@@ -24,7 +24,7 @@ export const App = () => {
     }, 1000)
 
     return (
-        <Presence initial={false} onRest={() => console.log("rest")}>
+        <AnimatePresence initial={false} onRest={() => console.log("rest")}>
             {isVisible && (
                 <motion.div
                     key="a"
@@ -35,6 +35,6 @@ export const App = () => {
                     style={style}
                 />
             )}
-        </Presence>
+        </AnimatePresence>
     )
 }

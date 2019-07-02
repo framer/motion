@@ -505,10 +505,10 @@ export namespace Point {
     relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
 }
 
-// Warning: (ae-forgotten-export) The symbol "PresenceProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "AnimatePresenceProps" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export const Presence: FunctionComponent<PresenceProps>;
+export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
 
 // @public (undocumented)
 export type ResolvedKeyframesTarget = [null, ...number[]] | number[] | [null, ...string[]] | string[];

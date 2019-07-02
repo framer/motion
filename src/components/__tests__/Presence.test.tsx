@@ -1,18 +1,18 @@
 import "../../../jest.setup"
 import * as React from "react"
 import { render } from "react-testing-library"
-import { Presence, motion } from "../../"
+import { AnimatePresence, motion } from "../../"
 
-describe("Presence", () => {
+describe("AnimatePresence", () => {
     test("Does nothing on initial render by default", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
             const Component = () => {
                 setTimeout(() => resolve(x.get()), 75)
                 return (
-                    <Presence>
+                    <AnimatePresence>
                         <motion.div animate={{ x: 100 }} style={{ x }} />
-                    </Presence>
+                    </AnimatePresence>
                 )
             }
 
@@ -29,9 +29,9 @@ describe("Presence", () => {
         const promise = new Promise(resolve => {
             const Component = () => {
                 return (
-                    <Presence initial={false}>
+                    <AnimatePresence initial={false}>
                         <motion.div initial={{ x: 0 }} animate={{ x: 100 }} />
-                    </Presence>
+                    </AnimatePresence>
                 )
             }
 
@@ -54,7 +54,7 @@ describe("Presence", () => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
-                    <Presence>
+                    <AnimatePresence>
                         {isVisible && (
                             <motion.div
                                 exit={{ opacity: 0 }}
@@ -62,7 +62,7 @@ describe("Presence", () => {
                                 style={{ opacity }}
                             />
                         )}
-                    </Presence>
+                    </AnimatePresence>
                 )
             }
 
@@ -91,14 +91,14 @@ describe("Presence", () => {
         const promise = new Promise<number>(resolve => {
             const Component = ({ i }: { i: number }) => {
                 return (
-                    <Presence>
+                    <AnimatePresence>
                         <motion.div
                             key={i}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.5 }}
                         />
-                    </Presence>
+                    </AnimatePresence>
                 )
             }
 
@@ -118,7 +118,7 @@ describe("Presence", () => {
         return await expect(promise).resolves.toBe(3)
     })
 
-    test("Exit variants are triggered with `Presence.custom`, not that of the element.", async () => {
+    test("Exit variants are triggered with `AnimatePresence.custom`, not that of the element.", async () => {
         const variants = {
             enter: { x: 0, transition: { type: false } },
             exit: (i: number) => ({ x: i * 100, transition: { type: false } }),
@@ -132,7 +132,10 @@ describe("Presence", () => {
                 onAnimationComplete?: () => void
             }) => {
                 return (
-                    <Presence custom={2} onExitComplete={onAnimationComplete}>
+                    <AnimatePresence
+                        custom={2}
+                        onExitComplete={onAnimationComplete}
+                    >
                         {isVisible && (
                             <motion.div
                                 custom={1}
@@ -142,7 +145,7 @@ describe("Presence", () => {
                                 exit="exit"
                             />
                         )}
-                    </Presence>
+                    </AnimatePresence>
                 )
             }
 

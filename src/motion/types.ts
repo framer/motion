@@ -137,19 +137,19 @@ export interface AnimationProps {
     /**
      * A target to animate to when this component is removed.
      *
-     * The component **must** be a direct child of the `Presence` component to enable the
+     * The component **must** be a direct child of the `AnimatePresence` component to enable the
      * `exit` animation. This is because React doesn't allow components to defer unmounting until
-     * after an animation is complete. Once this limiation is fixed, the `Presence` component
+     * after an animation is complete. Once this limiation is fixed, the `AnimatePresence` component
      * will be unnecessary.
      *
      * @motion
      *
      * ```jsx
-     * import { Presence, motion } from 'framer-motion'
+     * import { AnimatePresence, motion } from 'framer-motion'
      *
      * export const MyComponent = ({ isVisible }) => {
      *   return (
-     *     <Presence>
+     *     <AnimatePresence>
      *        {isVisible && (
      *          <motion.div
      *            initial={{ opacity: 0 }}
@@ -157,7 +157,7 @@ export interface AnimationProps {
      *            exit={{ opacity: 0 }}
      *          />
      *        )}
-     *     </Presence>
+     *     </AnimatePresence>
      *   )
      * }
      * ```
