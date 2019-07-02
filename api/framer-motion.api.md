@@ -21,6 +21,11 @@ import { RefObject } from 'react';
 import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
 
+// Warning: (ae-forgotten-export) The symbol "AnimatePresenceProps" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
+
 // @public
 export class AnimationControls {
     // @internal
@@ -504,11 +509,6 @@ export namespace Point {
     const // @beta (undocumented)
     relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
 }
-
-// Warning: (ae-forgotten-export) The symbol "AnimatePresenceProps" needs to be exported by the entry point index.d.ts
-// 
-// @public
-export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
 
 // @public (undocumented)
 export type ResolvedKeyframesTarget = [null, ...number[]] | number[] | [null, ...string[]] | string[];
