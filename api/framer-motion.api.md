@@ -9,6 +9,7 @@ import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import * as React from 'react';
 import { ReactElement } from 'react';
@@ -48,6 +49,7 @@ export const animationControls: () => AnimationControls;
 // @public (undocumented)
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
+    exit?: AnimationControls | TargetAndTransition | VariantLabels;
     positionTransition?: Transition | true;
     transition?: Transition;
     variants?: Variants;
@@ -502,6 +504,11 @@ export namespace Point {
     const // @beta (undocumented)
     relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
 }
+
+// Warning: (ae-forgotten-export) The symbol "PresenceProps" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export const Presence: FunctionComponent<PresenceProps>;
 
 // @public (undocumented)
 export type ResolvedKeyframesTarget = [null, ...number[]] | number[] | [null, ...string[]] | string[];

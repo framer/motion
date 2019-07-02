@@ -61,7 +61,6 @@ export const createMotionComponent = <P extends {}>({
             isStatic,
             props
         )
-
         // Add functionality
         const Animate = getAnimateComponent(props, context.static)
 
