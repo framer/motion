@@ -30,10 +30,16 @@ describe("ssr", () => {
 
     test("correctly renders SVG", () => {
         const cx = motionValue(100)
+        const pathLength = motionValue(100)
         const circle = renderToString(
             <motion.circle
                 cx={cx}
-                style={{ background: "#fff", x: 100, translateX: 100 }}
+                style={{
+                    background: "#fff",
+                    pathLength,
+                    x: 100,
+                    translateX: 100,
+                }}
             />
         )
 

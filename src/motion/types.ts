@@ -44,6 +44,15 @@ export interface TransformProperties {
     perspective?: string | number
 }
 
+/**
+ * @public
+ */
+export interface SVGPathProperties {
+    pathLength?: number
+    pathOffset?: number
+    pathSpacing?: number
+}
+
 export interface CustomStyles {
     /**
      * Framer Library custom prop types. These are not actually supported in Motion - preferably
@@ -53,11 +62,6 @@ export interface CustomStyles {
     radius?: string | number
     shadow?: string
     image?: string
-
-    // SVG custom styles
-    pathLength?: number
-    pathOffset?: number
-    pathSpacing?: number
 }
 
 export type MakeMotion<T> = MakeCustomValueType<
@@ -84,6 +88,7 @@ export type MotionTransform = MakeMotion<TransformProperties>
  */
 export type MotionStyle = MotionCSS &
     MotionTransform &
+    MakeMotion<SVGPathProperties> &
     MakeCustomValueType<CustomStyles>
 
 export type OnUpdate = (v: Target) => void
