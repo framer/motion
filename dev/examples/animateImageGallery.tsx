@@ -24,14 +24,7 @@ export const App = () => {
                     src={image}
                     key={image}
                     initial={{ x: 300, opacity: 0 }}
-                    animate={{
-                        x: 0,
-                        opacity: 1,
-                        transition: {
-                            x: { from: 300 },
-                            opacity: { from: 0 },
-                        },
-                    }}
+                    animate={{ x: 0, opacity: 1 }}
                     exit={{ x: -300, opacity: 0 }}
                     transition={{ duration: 0.2 }}
                     style={style}

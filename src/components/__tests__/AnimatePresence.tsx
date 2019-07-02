@@ -1,7 +1,7 @@
 import "../../../jest.setup"
 import * as React from "react"
 import { render } from "react-testing-library"
-import { AnimatePresence, motion } from "../../"
+import { AnimatePresence, motion, motionValue } from "../.."
 
 describe("AnimatePresence", () => {
     test("Does nothing on initial render by default", async () => {
