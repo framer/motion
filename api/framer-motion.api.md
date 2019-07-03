@@ -48,6 +48,7 @@ export const animationControls: () => AnimationControls;
 // @public (undocumented)
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
+    positionTransition?: Transition | true;
     transition?: Transition;
     variants?: Variants;
 }
