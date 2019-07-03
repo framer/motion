@@ -1,8 +1,7 @@
-<h1 align="center">
+<h1 align="center" style="padding-bottom: 20px;">
     <img src="http://static.framer.com/repos/api-logo.png" width="40"/>
     <br>
     Contributing
-    <br>
 </h1>
 
 ## Bug fixes
