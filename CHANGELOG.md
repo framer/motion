@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.0] 2019-07-03
+
+### Added
+
+-   `AnimatePresence` component for controlling mount/unmount animations.
+
 ## [1.0.5] 2019-07-02
 
 ### Fixed

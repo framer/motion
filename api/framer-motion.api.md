@@ -9,6 +9,7 @@ import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import * as React from 'react';
 import { ReactElement } from 'react';
@@ -19,6 +20,11 @@ import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
+
+// Warning: (ae-forgotten-export) The symbol "AnimatePresenceProps" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
 
 // @public
 export class AnimationControls {
@@ -48,6 +54,7 @@ export const animationControls: () => AnimationControls;
 // @public (undocumented)
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
+    exit?: AnimationControls | TargetAndTransition | VariantLabels;
     positionTransition?: Transition | true;
     transition?: Transition;
     variants?: Variants;

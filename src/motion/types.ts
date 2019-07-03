@@ -135,6 +135,36 @@ export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels
 
     /**
+     * A target to animate to when this component is removed.
+     *
+     * The component **must** be a direct child of the `AnimatePresence` component to enable the
+     * `exit` animation. This is because React doesn't allow components to defer unmounting until
+     * after an animation is complete. Once this limiation is fixed, the `AnimatePresence` component
+     * will be unnecessary.
+     *
+     * @motion
+     *
+     * ```jsx
+     * import { AnimatePresence, motion } from 'framer-motion'
+     *
+     * export const MyComponent = ({ isVisible }) => {
+     *   return (
+     *     <AnimatePresence>
+     *        {isVisible && (
+     *          <motion.div
+     *            initial={{ opacity: 0 }}
+     *            animate={{ opacity: 1 }}
+     *            exit={{ opacity: 0 }}
+     *          />
+     *        )}
+     *     </AnimatePresence>
+     *   )
+     * }
+     * ```
+     */
+    exit?: AnimationControls | TargetAndTransition | VariantLabels
+
+    /**
      * Variants allow you to define animation states and organise them by name. They allow
      * you to control animations throughout a component tree by switching a single `animate` prop.
      *
