@@ -30,7 +30,7 @@ const createTransition = (
     const velocity = value.getVelocity()
     const transition = baseTransition.hasOwnProperty(axis)
         ? baseTransition[axis]
-        : positionTransition
+        : baseTransition
 
     if (transition.velocity === undefined) transition.velocity = velocity
 

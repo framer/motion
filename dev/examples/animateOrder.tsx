@@ -11,7 +11,7 @@ export const App = () => {
     for (let i = 0; i < count; i++) {
         items.push(
             <motion.li
-                positionTransition={{}}
+                positionTransition
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -22,21 +22,20 @@ export const App = () => {
     }
 
     return (
-        <>
-            <motion.ul
-                positionTransition={{
-                    x: { type: false },
-                }}
-            >
-                {items}
-            </motion.ul>
+        <div>
+            <motion.ul positionTransition>{items}</motion.ul>
             <button onClick={() => setCount(count + 1)}>Add</button>
             <style>{styles}</style>
-        </>
+        </div>
     )
 }
 
 const styles = `
+div {
+    height: 400px;
+    display: flex;
+}
+
 ul,
 li {
   list-style: none;
@@ -47,7 +46,6 @@ li {
 ul {
   position: relative;
   display: flex;
-  width: 300px;
   align-items: flex-end;
   flex-wrap: wrap;
 }
@@ -58,4 +56,10 @@ li {
   margin-right: 10px;
   width: 300px;
   height: 18px;
+}
+
+button {
+    position: absolute;
+    top: 0;
+    left: 0;
 }`
