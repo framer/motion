@@ -1,5 +1,6 @@
-import { motion, AnimatePresence, useCycle } from "@framer"
+import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
+import { useState } from "react"
 
 const style = {
     position: "absolute",
@@ -14,21 +15,22 @@ const images = [
 ]
 
 export const App = () => {
-    const [image, cycleImage] = useCycle(...images)
+    const [count, setCount] = useState(0)
+    const imageIndex = count % images.length
 
     return (
         <>
             <style>{`body { overflow: hidden }`}</style>
             <AnimatePresence initial={false}>
                 <motion.img
-                    src={image}
-                    key={image}
+                    key={count}
+                    src={images[imageIndex]}
                     initial={{ x: 300, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -300, opacity: 0 }}
-                    transition={{ duration: 0.2 }}
+                    exit={{ x: -300, opacity: 0, pointerEvents: "none" }}
+                    transition={{ duration: 10 }}
                     style={style}
-                    onClick={cycleImage}
+                    onClick={() => setCount(count + 1)}
                 />
             </AnimatePresence>
         </>

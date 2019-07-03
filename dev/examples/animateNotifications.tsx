@@ -1,29 +1,47 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
+import { motion, AnimatePresence } from "@framer"
 
+const add = (arr: number[], key: number) => {
+    const newArray = [...arr]
+    newArray.push(key)
+    return newArray
+}
+
+const remove = (arr: number[], key: number): number[] => {
+    const newArray = [...arr]
+    newArray.splice(arr.indexOf(key), 1)
+    return newArray
+}
+let next = 2
 export const App = () => {
-    const [count, setCount] = useState(4)
-
-    const items = []
-
-    for (let i = 0; i < count; i++) {
-        items.push(
-            <motion.li
-                positionTransition
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                style={{ background: "red" }}
-                key={i}
-            />
-        )
-    }
+    const [items, setItems] = useState([1])
 
     return (
         <div>
-            <motion.ul positionTransition>{items}</motion.ul>
-            <button onClick={() => setCount(count + 1)}>Add</button>
+            <motion.ul positionTransition style={{ color: items.length }}>
+                <AnimatePresence initial={false}>
+                    {items.map(key => (
+                        <motion.li
+                            positionTransition
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            style={{ background: "red" }}
+                            key={key}
+                            onClick={() => setItems(remove(items, key))}
+                        />
+                    ))}
+                </AnimatePresence>
+            </motion.ul>
+            <button
+                onClick={() => {
+                    next++
+                    setItems(add(items, next))
+                }}
+            >
+                Add
+            </button>
             <style>{styles}</style>
         </div>
     )
@@ -54,6 +72,8 @@ ul {
   flex-direction: column;
   justify-content: flex-end;
   position: relative;
+  flex-wrap: none;
+  height: 100px;
 }
 
 li {
@@ -62,6 +82,7 @@ li {
   margin-right: 10px;
   width: 300px;
   height: 50px;
+  flex: 0 0 50px;
 }
 
 button {

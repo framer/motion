@@ -239,12 +239,12 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
                 onAnimationComplete: () => {
                     exiting.delete(key)
                     onAnimationComplete && onAnimationComplete()
-                    onExitComplete && onExitComplete()
 
                     // Defer re-rendering until all exiting children have indeed left
                     if (!exiting.size) {
                         presentChildren.current = filteredChildren
                         setForcedRenderCount(forcedRenderCount + 1)
+                        onExitComplete && onExitComplete()
                     }
                 },
             })
@@ -253,5 +253,11 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 
     presentChildren.current = childrenToRender
 
-    return <>{childrenToRender}</>
+    return (
+        <>
+            {exiting.size
+                ? childrenToRender
+                : childrenToRender.map(child => cloneElement(child))}
+        </>
+    )
 }

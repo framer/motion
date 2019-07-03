@@ -1,9 +1,10 @@
 import { MotionProps, AnimationProps } from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
-import { useRef, useLayoutEffect, RefObject, useEffect } from "react"
+import { useLayoutEffect, RefObject } from "react"
 import { ValueAnimationControls } from "animation/ValueAnimationControls"
 import { MotionValuesMap } from "motion/utils/use-motion-values"
+import styler from "stylefire"
 
 interface Position {
     top: number
@@ -34,7 +35,7 @@ const createTransition = (
 
     if (transition.velocity === undefined) transition.velocity = velocity
 
-    value.set(offset + value.get(), false)
+    value.set(offset + value.get())
 
     return transition
 }
@@ -45,42 +46,32 @@ function usePositionAnimation(
     controls: ValueAnimationControls,
     positionTransition: AnimationProps["positionTransition"]
 ) {
-    const previousPos = useRef<Position | null>(null)
-    const targetPos = useRef<Position>({ left: 0, top: 0 })
-
-    const updateTarget = () => {
+    const getPosition = () => {
         const element = ref.current
-        if (!isHTMLElement(element)) return
 
-        targetPos.current = {
-            top: element.offsetTop,
-            left: element.offsetLeft,
-        }
+        return isHTMLElement(element)
+            ? { top: element.offsetTop, left: element.offsetLeft }
+            : null
     }
 
-    useLayoutEffect(() => {
-        updateTarget()
-        const prev = previousPos.current
-        const target = targetPos.current
+    // Take a record of the current bounding box
+    let prev = getPosition()
 
-        if (prev !== null && hasMoved(prev, target)) {
+    useLayoutEffect(() => {
+        const target = getPosition()
+
+        if (prev && target && hasMoved(prev, target)) {
             const delta = measureDelta(prev, target)
             const transition = createTransition(values, positionTransition)
             const x = transition("x", delta.left)
             const y = transition("y", delta.top)
 
+            // Force a render now rather than waiting for the next render loop
+            styler(ref.current as HTMLElement).render()
+
             controls.start({ x: 0, y: 0, transition: { x, y } })
         }
-
-        previousPos.current = targetPos.current
     })
-
-    // On initial render, measure initial offset. We do this with a useEffect because
-    // of the specific order that `motion` components initialise.
-    useEffect(() => {
-        updateTarget()
-        previousPos.current = targetPos.current
-    }, [])
 }
 
 export const Position: FunctionalComponentDefinition = {

@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   `AnimatePresence` component for controlling mount/unmount animations.
+-   `positionTransition` prop for animating when the layout of a component changes.
 
 ## [1.0.5] 2019-07-02
 
