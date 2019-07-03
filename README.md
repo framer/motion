@@ -7,12 +7,7 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow)](http://twitter.com/framer)
 [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/framer)
 
-Motion is:
-
--   Open source
--   Production-ready
--   Designed for all creative developers
--   An excellent target for putting Framer X prototypes into production
+Motion is an open source, production-ready library that's designed for all creative developers.
 
 It looks like this:
 
