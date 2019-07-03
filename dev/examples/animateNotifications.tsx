@@ -1,10 +1,9 @@
 import * as React from "react"
-import { useEffect, useState } from "react"
-import { motion, useCycle } from "@framer"
-import { shuffle } from "lodash"
+import { useState } from "react"
+import { motion } from "@framer"
 
 export const App = () => {
-    const [count, setCount] = useState(1)
+    const [count, setCount] = useState(4)
 
     const items = []
 
@@ -32,8 +31,14 @@ export const App = () => {
 
 const styles = `
 div {
-    height: 400px;
+    width: 400px;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    top: 10px;
     display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
 }
 
 ul,
@@ -44,10 +49,11 @@ li {
 }
 
 ul {
-  position: relative;
   display: flex;
   align-items: flex-end;
-  flex-wrap: wrap;
+  flex-direction: column;
+  justify-content: flex-end;
+  position: relative;
 }
 
 li {
@@ -55,11 +61,11 @@ li {
   margin-bottom: 10px;
   margin-right: 10px;
   width: 300px;
-  height: 18px;
+  height: 50px;
 }
 
 button {
-    position: absolute;
-    top: 0;
-    left: 0;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
 }`
