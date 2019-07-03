@@ -1,4 +1,4 @@
-<h1 align="center" style="padding-bottom: 20px;">
+<h1 align="center">
     <img src="http://static.framer.com/repos/api-logo.png" width="40"/>
     <br>
     Contributing
@@ -35,5 +35,5 @@ Follow these steps to get your code PR-ready:
 3. Run `make bootstrap` in the repo root.
 4. Add your code and supporting tests.
 5. If this is a feature that requires doc changes, make as necessary.
-6. Update CHANGELOG.md.
+6. Update CHANGELOG.md. Follow the existing format.
 7. You're ready!

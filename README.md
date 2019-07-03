@@ -1,5 +1,12 @@
-<img src="https://user-images.githubusercontent.com/7850794/52070069-f7c92000-2577-11e9-9566-60d15359904b.png" alt="Framer Motion" width="500" height="245" />
+# Motion
 
-Framer Motion is a production-ready animation and gesture library.
+## An open source, production-ready animation and gesture library for React DOM.
 
-Currently, it can only be consumed via the [Framer API](https://www.framer.com/api).
+[![npm version](https://img.shields.io/npm/v/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
+[![npm downloads](https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
+[![Twitter Follow](https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow)](http://twitter.com/framer)
+[![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/framer)
+
+Motion is designed for creative developers.
+
+### [Documentation](https://framer.com/api/motion)
