@@ -5,20 +5,36 @@ import { useRef, useLayoutEffect, RefObject, useEffect } from "react"
 import { ValueAnimationControls } from "animation/ValueAnimationControls"
 import { MotionValuesMap } from "motion/utils/use-motion-values"
 
-interface BBox {
+interface Position {
     top: number
     left: number
 }
 
-const hasMoved = (a: BBox, b: BBox) => a.top !== b.top || a.left !== b.left
+const hasMoved = (a: Position, b: Position) =>
+    a.top !== b.top || a.left !== b.left
 
-const getDelta = (origin: BBox, target: BBox) => ({
+const measureDelta = (origin: Position, target: Position) => ({
     left: origin.left - target.left,
     top: origin.top - target.top,
 })
 
-function isHTMLElement(element: Element | null): element is HTMLElement {
-    return element instanceof HTMLElement
+const isHTMLElement = (element: Element | null): element is HTMLElement =>
+    element instanceof HTMLElement
+
+const createTransition = (
+    values: MotionValuesMap,
+    positionTransition: AnimationProps["positionTransition"] = {}
+) => (axis: "x" | "y", offset: number) => {
+    const value = values.get(axis, 0)
+    const velocity = value.getVelocity()
+    const transition = positionTransition.hasOwnProperty(axis)
+        ? positionTransition[axis]
+        : positionTransition
+
+    transition.velocity = velocity
+    value.set(offset + value.get(), false)
+
+    return transition
 }
 
 function usePositionAnimation(
@@ -27,8 +43,8 @@ function usePositionAnimation(
     controls: ValueAnimationControls,
     positionTransition: AnimationProps["positionTransition"]
 ) {
-    const previousPos = useRef<BBox | null>(null)
-    const targetPos = useRef<BBox>({ left: 0, top: 0 })
+    const previousPos = useRef<Position | null>(null)
+    const targetPos = useRef<Position>({ left: 0, top: 0 })
 
     const updateTarget = () => {
         const element = ref.current
@@ -46,19 +62,19 @@ function usePositionAnimation(
         const target = targetPos.current
 
         if (prev !== null && hasMoved(prev, target)) {
-            const delta = getDelta(prev, target)
-            const x = values.get("x", 0)
-            const y = values.get("y", 0)
-            // TODO: Need to reset velocity here for spring animations
-            x.set(delta.left + x.get(), false)
-            y.set(delta.top + y.get(), false)
-            controls.start({ x: 0, y: 0, transition: positionTransition })
+            const delta = measureDelta(prev, target)
+            const transition = createTransition(values, positionTransition)
+            const x = transition("x", delta.left)
+            const y = transition("y", delta.top)
+
+            controls.start({ x: 0, y: 0, transition: { x, y } })
         }
 
         previousPos.current = targetPos.current
     })
 
-    // On initial render, measure initial offset
+    // On initial render, measure initial offset. We do this with a useEffect because
+    // of the specific order that `motion` components initialise.
     useEffect(() => {
         updateTarget()
         previousPos.current = targetPos.current

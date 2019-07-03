@@ -11,12 +11,7 @@ export const App = () => {
     for (let i = 0; i < count; i++) {
         items.push(
             <motion.li
-                positionTransition={{
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 30,
-                    velocity: 0,
-                }}
+                positionTransition={{}}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
@@ -28,16 +23,7 @@ export const App = () => {
 
     return (
         <>
-            <motion.ul
-                positionTransition={{
-                    type: "spring",
-                    stiffness: 400,
-                    damping: 30,
-                    velocity: 0,
-                }}
-            >
-                {items}
-            </motion.ul>
+            <motion.ul positionTransition={{}}>{items}</motion.ul>
             <button onClick={() => setCount(count + 1)}>Add</button>
             <style>{styles}</style>
         </>
