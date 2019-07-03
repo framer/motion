@@ -32,7 +32,8 @@ const createTransition = (
         ? baseTransition[axis]
         : positionTransition
 
-    transition.velocity = velocity
+    if (transition.velocity === undefined) transition.velocity = velocity
+
     value.set(offset + value.get(), false)
 
     return transition
