@@ -2,9 +2,10 @@
     <img src="http://static.framer.com/repos/api-logo.png" width="40"/>
     <br>
     Contributing
+    <br>
 </h1>
 
-### Bug fixes
+## Bug fixes
 
 Open issues can be found on our [GitHub issues](https://github.com/framer/motion/issues?q=is%3Aopen+is%3Aissue+label%3Abug) page with a "Bug" label.
 
@@ -14,7 +15,7 @@ Once you start work on a bug, post your intent on the issue itself. This will pr
 
 If the bug you want to work on doesn't have a related issue, open one, and attach the "Bug" label.
 
-### New features
+## New features
 
 Before adding any features, open a [Feature Proposal](https://github.com/framer/motion/issues/new/choose).
 
@@ -22,11 +23,11 @@ This will let us talk through your proposal API and/or implementation before you
 
 An added caveat is that this API is ultimately consumed by the Library in Framer X, so our target audience is designers as well as developers. This can tend us towards simplicity and power over composability.
 
-### Documentation
+## Documentation
 
 If a PR introduces or changes API, it should link to a sister PR on the [API docs repo](https://github.com/framer/api-docs/blob/master/CONTRIBUTING.md).
 
-### Development
+## Development
 
 Follow these steps to get your code PR-ready:
 
