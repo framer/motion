@@ -209,6 +209,36 @@ export interface AnimationProps {
      * ```
      */
     transition?: Transition
+
+    /**
+     * If `positionTransition` is defined, the component will automatically animate any changes to its layout
+     * relative to its nearest positioned parent.
+     *
+     * If set to `true`, the animation will use the default x/y transitions.
+     *
+     * @library
+     *
+     * ```jsx
+     * const spring = {
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
+     * }
+     *
+     * <Frame positionTransition={spring} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div positionTransition={{
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
+     * }} />
+     * ```
+     */
+    positionTransition?: Transition | true
 }
 
 /**

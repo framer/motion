@@ -45,6 +45,7 @@
         "jest-dom": "^3.5.0",
         "jest-junit": "^6.4.0",
         "lint-staged": "^8.0.4",
+        "lodash": "^4.17.11",
         "prettier": "^1.15.2",
         "progress-bar-webpack-plugin": "^1.11.0",
         "react": "16.8",
