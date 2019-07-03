@@ -23,7 +23,13 @@ export const App = () => {
 
     return (
         <>
-            <motion.ul positionTransition={{}}>{items}</motion.ul>
+            <motion.ul
+                positionTransition={{
+                    x: { type: false },
+                }}
+            >
+                {items}
+            </motion.ul>
             <button onClick={() => setCount(count + 1)}>Add</button>
             <style>{styles}</style>
         </>

@@ -211,9 +211,10 @@ export interface AnimationProps {
     transition?: Transition
 
     /**
-     * If `positionTransition` is defined, the component will automatically animate any changes to its layout.
+     * If `positionTransition` is defined, the component will automatically animate any changes to its layout
+     * relative to its nearest positioned parent.
      *
-     * The animation will use the properties defined in `positionTransition`.
+     * If `true`, the animation will use the default x/y animations.
      *
      * @library
      *
@@ -237,7 +238,7 @@ export interface AnimationProps {
      * }} />
      * ```
      */
-    positionTransition?: Transition
+    positionTransition?: Transition | true
 }
 
 /**

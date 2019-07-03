@@ -25,10 +25,11 @@ const createTransition = (
     values: MotionValuesMap,
     positionTransition: AnimationProps["positionTransition"] = {}
 ) => (axis: "x" | "y", offset: number) => {
+    const baseTransition = positionTransition === true ? {} : positionTransition
     const value = values.get(axis, 0)
     const velocity = value.getVelocity()
-    const transition = positionTransition.hasOwnProperty(axis)
-        ? positionTransition[axis]
+    const transition = baseTransition.hasOwnProperty(axis)
+        ? baseTransition[axis]
         : positionTransition
 
     transition.velocity = velocity
