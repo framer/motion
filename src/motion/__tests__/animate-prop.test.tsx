@@ -309,4 +309,58 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toBe(50)
     })
+
+    test("animates previously unseen properties", () => {
+        const Component = ({ animate }: any) => (
+            <motion.div animate={animate} transition={{ type: false }} />
+        )
+        const { container, rerender } = render(
+            <Component animate={{ x: 100 }} />
+        )
+        rerender(<Component animate={{ x: 100 }} />)
+        rerender(<Component animate={{ y: 100 }} />)
+        rerender(<Component animate={{ y: 100 }} />)
+
+        return expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(100px) translateY(100px) translateZ(0)"
+        )
+    })
+
+    test("forces an animation if has been set to `null` in the interim", async () => {
+        const promise = new Promise(resolve => {
+            const complete = () => resolve(true)
+
+            const Component = ({ animate, onAnimationComplete }: any) => (
+                <motion.div
+                    animate={animate}
+                    onAnimationComplete={onAnimationComplete}
+                    transition={{ type: false }}
+                />
+            )
+            const { container, rerender } = render(
+                <Component animate={{ x: 100 }} />
+            )
+            rerender(<Component animate={{ x: null }} />)
+            rerender(<Component animate={{ x: null }} />)
+
+            expect(container.firstChild as Element).toHaveStyle(
+                "transform: translateX(100px) translateZ(0)"
+            )
+
+            rerender(
+                <Component
+                    animate={{ x: 100 }}
+                    onAnimationComplete={complete}
+                />
+            )
+            rerender(
+                <Component
+                    animate={{ x: 100 }}
+                    onAnimationComplete={complete}
+                />
+            )
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
 })

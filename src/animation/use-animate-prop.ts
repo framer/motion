@@ -64,7 +64,7 @@ export function useAnimateProp(
             const target = justTarget(targetAndTransition)
 
             // Detect which values have changed between renders
-            for (const key in prevValues.current) {
+            for (const key in target) {
                 // This value should animate on mount if this value doesn't already exist (wasn't
                 // defined in `style` or `initial`) or if it does exist and it's already changed.
                 const shouldAnimateOnMount =
@@ -73,10 +73,12 @@ export function useAnimateProp(
 
                 // If this value has updated between renders or it's we're animating this value on mount,
                 // add it to the animate target.
-                if (
-                    hasUpdated(prevValues.current[key], target[key]) ||
-                    shouldAnimateOnMount
-                ) {
+                const isValidValue = target[key] !== null
+                const valueHasUpdated = hasUpdated(
+                    prevValues.current![key],
+                    target[key]
+                )
+                if (isValidValue && (valueHasUpdated || shouldAnimateOnMount)) {
                     targetToAnimate[key] = target[key]
                 }
             }
