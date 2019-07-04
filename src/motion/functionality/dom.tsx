@@ -8,9 +8,8 @@ import {
     ReactElement,
 } from "react"
 import { buildStyleAttr } from "../utils/use-styles"
-import isPropValid from "@emotion/is-prop-valid"
 import { svgElements } from "../utils/supported-elements"
-import { gestureProps, Gestures } from "./gestures"
+import { Gestures } from "./gestures"
 import { MotionComponentConfig } from "../component"
 import { Drag } from "./drag"
 import { FunctionalProps } from "./types"
@@ -26,38 +25,48 @@ type RenderProps = FunctionalProps & {
     isStatic: boolean | undefined
 }
 
-/**
- * Maintain a list of event handlers. Emotion's `is-prop-valid` doesn't whitelist every event
- * handler, it just pattern-matches `onX`. So we can manually strip out ours.
- */
-const eventHandlers = new Set([
-    "onAnimationComplete",
-    "onUpdate",
-    "onDragStart",
-    "onDrag",
-    "onDragEnd",
-    "onDirectionLock",
-    "onDragTransitionEnd",
-    ...gestureProps,
-])
-
-/**
- * Returns an object of only valid props. We remove invalid DOM props according to
- * Emotion's `isPropValid`, and any of our own event handlers. This was necessary when
- * we passed all a component's props through to dynamic variant resolvers, but since
- * moving that logic to custom it's possible for us to ditch this and save some filesize/performance
- * by simply destructuring out the props that we use.
- */
-const validProps = (props: MotionProps) => {
-    const valid = {}
-
-    for (const key in props) {
-        if (isPropValid(key) && !eventHandlers.has(key)) {
-            valid[key] = props[key]
-        }
-    }
-
-    return valid
+// TODO: Type this in a way that ensures no `MotionProps` are remaining.
+// Oddly, `Omit<MotionProps, keyof MotionProps>` or types to that extend
+// didn't throw and error when props were actually present.
+function stripMotionProps({
+    initial,
+    animate,
+    exit,
+    style,
+    variants,
+    transition,
+    custom,
+    inherit,
+    static: s,
+    positionTransition,
+    onAnimationComplete,
+    onUpdate,
+    onDragStart,
+    onDrag,
+    onDragEnd,
+    onDirectionLock,
+    onDragTransitionEnd,
+    drag,
+    dragConstraints,
+    dragDirectionLock,
+    dragElastic,
+    dragMomentum,
+    dragPropagation,
+    dragTransition,
+    onPan,
+    onPanStart,
+    onPanEnd,
+    onPanSessionStart,
+    onTap,
+    onTapStart,
+    onTapCancel,
+    whileHover,
+    whileTap,
+    onHoverEnd,
+    onHoverStart,
+    ...props
+}: MotionProps) {
+    return props
 }
 
 const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
@@ -90,7 +99,9 @@ export function createDomMotionConfig<P>(
         isStatic,
         componentProps,
     }: RenderProps) => {
-        const forwardProps = isDOM ? validProps(componentProps) : componentProps
+        const forwardProps = isDOM
+            ? stripMotionProps(componentProps)
+            : componentProps
         const staticVisualStyles = isSVG
             ? buildSVGProps(values, style)
             : { style: buildStyleAttr(values, style, isStatic) }

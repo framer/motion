@@ -4,6 +4,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.1.1] 2019-07-04
 
+### Changed
+
+-   Moving UMD global from `FramerMotion` to `Motion`.
+-   Removed `@emotion/is-valid-prop`, saving ~1.9kb from bundle.
+
 ### Fixed
 
 -   Cancelling `drag` and `pan` gestures on component unmount.

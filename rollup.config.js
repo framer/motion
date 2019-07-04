@@ -30,7 +30,7 @@ const umd = Object.assign({}, config, {
     output: {
         file: `dist/${pkg.name}.dev.js`,
         format: "umd",
-        name: "FramerMotion",
+        name: "Motion",
         exports: "named",
         globals: { react: "React" },
     },
