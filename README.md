@@ -33,6 +33,8 @@ But does all this:
 
 Check out [our documentation](https://framer.com/api/motion) for guides and a full API reference.
 
+Or checkout [our examples](https://framer.com/motion) for inspiration.
+
 ## Contribute
 
 Want to contribute to Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
