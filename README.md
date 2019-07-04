@@ -1,10 +1,12 @@
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/7850794/60670325-ab5c7600-9e70-11e9-95dd-2a6fb9889b6b.png" width="80" height="80" />
+</p>
+
 <h1 align="center">
-    <img src="https://user-images.githubusercontent.com/7850794/60670325-ab5c7600-9e70-11e9-95dd-2a6fb9889b6b.png" width="80" height="80" />
-    <br>
-    Motion
+   Motion
 </h1>
 
-## An animation and gesture library for React DOM
+<h3 align="center">An animation and gesture library for React DOM</h3>
 
 [![npm version](https://img.shields.io/npm/v/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
 [![npm downloads](https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
