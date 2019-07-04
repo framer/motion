@@ -68,13 +68,13 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
-        "@emotion/is-prop-valid": "^0.7.3",
-        "@popmotion/popcorn": "^0.4.0",
-        "framesync": "^4.0.2",
+        "@popmotion/popcorn": "^0.4.1",
+        "framesync": "^4.0.4",
         "hey-listen": "^1.0.8",
-        "popmotion": "^8.7.0",
-        "style-value-types": "^3.1.4",
-        "stylefire": "^6.0.3"
+        "popmotion": "^9.0.0-beta.2",
+        "style-value-types": "^3.1.5",
+        "stylefire": "^6.0.4",
+        "tslib": "^1.10.0"
     },
     "husky": {
         "hooks": {

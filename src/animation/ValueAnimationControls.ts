@@ -415,7 +415,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
     }
 
-    async start(definition: AnimationDefinition, opts: AnimationOptions = {}) {
+    start(definition: AnimationDefinition, opts: AnimationOptions = {}) {
         if (opts.priority) {
             this.activeOverrides.add(opts.priority)
         }
@@ -438,7 +438,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
     }
 
-    private async animate(
+    private animate(
         animationDefinition: Variant,
         { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
     ) {
@@ -519,10 +519,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         return Promise.all(animations)
     }
 
-    private async animateVariant(
-        variantLabel: string,
-        opts?: AnimationOptions
-    ) {
+    private animateVariant(variantLabel: string, opts?: AnimationOptions) {
         let when: Orchestration["when"] = false
         let delayChildren = 0
         let staggerChildren = 0
