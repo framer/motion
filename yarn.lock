@@ -5665,10 +5665,10 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-popmotion@^9.0.0-beta.5:
-  version "9.0.0-beta.5"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-beta.5.tgz#73a874feb48ac6eb189a8fd21cc9cd23db861242"
-  integrity sha512-tYqAnZ4qkhWlWtJmCUOzc1+TyISD9YTeHLqKaTs69AuIKpe3L8XtInKagFd1epSOTl4kylfVu9ydFbmaE4Su4w==
+popmotion@^9.0.0-beta.6:
+  version "9.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-beta.6.tgz#3bd509994620a076e58fb67010744513897eb498"
+  integrity sha512-mlmcKxIXhNtZCzUsbNZObQH9AtQma55H9uYkZdnsp/LDX9+CbUYwJcOn5e3pyUe19Yzm5K5NQg4S2X3XA6x2Dw==
   dependencies:
     "@popmotion/easing" "^1.0.1"
     "@popmotion/popcorn" "^0.4.1"

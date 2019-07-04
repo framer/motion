@@ -12,7 +12,6 @@ export const App = () => {
         <motion.div
             drag
             dragConstraints={{ left: 0, right: 400 }}
-            dragMomentum={false}
             style={styleA}
         />
     )
