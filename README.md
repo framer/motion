@@ -9,10 +9,18 @@
 <h3 align="center">
   An animation and gesture library for React DOM
   <br>
-  [![npm version](https://img.shields.io/npm/v/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
-  [![npm downloads](https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
-  [![Twitter Follow](https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow)](http://twitter.com/framer)
-  [![Join the community on Spectrum](https://withspectrum.github.io/badge/badge.svg)](https://spectrum.chat/framer)
+  <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
+    <img src="https://img.shields.io/npm/v/framer-motion.svg?style=flat-squar" />
+  </a>
+  <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
+  <img src="https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square" />
+  </a>
+  <a href="http://twitter.com/framer" target="_blank">
+  <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
+  </a>
+  <a href="https://spectrum.chat/framer" target="_blank">
+  <img src="https://withspectrum.github.io/badge/badge.svg" />
+  </a>
 </h3>
 
 Motion is an open source, production-ready library that's designed for all creative developers.
