@@ -8,6 +8,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Cancelling `drag` and `pan` gestures on component unmount.
 -   Previously unseen props in `animate` animate correctly.
+-   Fixing reading SVG attributes from DOM.
 
 ## [1.1.0] 2019-07-03
 
