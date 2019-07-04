@@ -1,90 +1,66 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
-
-const style = {
-    width: 100,
-    height: 100,
-    background: "#f00",
-}
-
-const containerVariants = {
-    loading: {
-        opacity: 1,
-        transition: { duration: 0.3 },
-    },
-    loaded: {},
-}
-
-const circleVariants = {
-    loading: {
-        pathLength: 30,
-        rotate: 0,
-        transition: {
-            pathLength: {
-                duration: 0.5,
-            },
-            rotate: {
-                type: "physics",
-                velocity: 500,
-            },
-        },
-    },
-    loaded: (props, current) => {
-        return {
-            pathLength: 100,
-            rotate: current.rotate + 360,
-            transition: {
-                duration: 0.6,
-            },
-        }
-    },
-}
+import { motion, useMotionValue, useTransform } from "@framer"
 
 const tickVariants = {
-    loading: {
-        pathLength: 0,
-    },
-    loaded: {
-        pathLength: 100,
-        transition: { delay: 0.3 },
-    },
+    pressed: (isChecked: boolean) => ({ pathLength: isChecked ? 0.85 : 0.2 }),
+    checked: { pathLength: 1 },
+    unchecked: { pathLength: 0 },
+}
+
+const boxVariants = {
+    hover: { scale: 1.05, strokeWidth: 60 },
+    pressed: { scale: 0.95, strokeWidth: 35 },
+    checked: { stroke: "#FF008C" },
+    unchecked: { stroke: "#ddd" },
 }
 
 export const App = () => {
-    const [hasLoaded, setHasLoaded] = useState(false)
+    const [isChecked, setIsChecked] = useState(false)
+    const pathLength = useMotionValue(0)
+    const opacity = useTransform(pathLength, [0.1, 0.3], [0, 1])
 
     return (
-        <motion.div
-            initial={{ opacity: 0, background: "rgba(255, 255, 255, 0)" }}
-            onClick={() => setHasLoaded(true)}
-            variants={containerVariants}
-            animate={hasLoaded ? "loaded" : "loading"}
+        <motion.svg
+            initial={false}
+            animate={isChecked ? "checked" : "unchecked"}
+            whileHover="hover"
+            whileTap="pressed"
+            width="440"
+            height="440"
+            onClick={() => setIsChecked(!isChecked)}
         >
-            <svg
-                width="250"
-                height="250"
-                viewBox="0 0 32 32"
-                xmlns="http://www.w3.org/2000/svg"
-            >
-                <g
-                    strokeWidth="2"
-                    stroke="#FF1C68"
-                    fill="none"
-                    transform="translate(1, 1.2)"
-                >
-                    <motion.path
-                        d="M14 28c7.732 0 14-6.268 14-14S21.732 0 14 0 0 6.268 0 14s6.268 14 14 14z"
-                        opacity="1"
-                        variants={circleVariants}
-                    />
-                    <motion.path
-                        d="M6.173 16.252l5.722 4.228 9.22-12.69"
-                        opacity="1"
-                        variants={tickVariants}
-                    />
-                </g>
-            </svg>
-        </motion.div>
+            <motion.path
+                d="M 72 136 C 72 100.654 100.654 72 136 72 L 304 72 C 339.346 72 368 100.654 368 136 L 368 304 C 368 339.346 339.346 368 304 368 L 136 368 C 100.654 368 72 339.346 72 304 Z"
+                fill="transparent"
+                strokeWidth="50"
+                stroke="#FF008C"
+                variants={boxVariants}
+            />
+            <motion.path
+                d="M 0 128.666 L 128.658 257.373 L 341.808 0"
+                transform="translate(54.917 88.332) rotate(-4 170.904 128.687)"
+                fill="transparent"
+                strokeWidth="65"
+                stroke="hsl(0, 0%, 100%)"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                variants={tickVariants}
+                style={{ pathLength, opacity }}
+                custom={isChecked}
+            />
+            <motion.path
+                d="M 0 128.666 L 128.658 257.373 L 341.808 0"
+                transform="translate(54.917 68.947) rotate(-4 170.904 128.687)"
+                fill="transparent"
+                strokeWidth="65"
+                stroke="#7700FF"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                variants={tickVariants}
+                style={{ pathLength, opacity }}
+                custom={isChecked}
+            />
+        </motion.svg>
     )
 }

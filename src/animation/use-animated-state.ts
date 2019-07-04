@@ -5,6 +5,8 @@ import { AnimationDefinition } from "./ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
 
 /**
+ * Experimental API.
+ *
  * Makes an animated version of `useState`.
  *
  * @remarks
