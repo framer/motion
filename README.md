@@ -8,7 +8,9 @@
 
 <h3 align="center">
   An animation and gesture library for React DOM
-  <br>
+</h3>
+
+<p align="center">
   <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
     <img src="https://img.shields.io/npm/v/framer-motion.svg?style=flat-squar" />
   </a>
@@ -21,7 +23,7 @@
   <a href="https://spectrum.chat/framer" target="_blank">
   <img src="https://withspectrum.github.io/badge/badge.svg" />
   </a>
-</h3>
+</p>
 
 Motion is an open source, production-ready library that's designed for all creative developers.
 
