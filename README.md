@@ -1,6 +1,6 @@
 # Motion
 
-## An animation and gesture library for React DOM.
+## An animation and gesture library for React DOM
 
 [![npm version](https://img.shields.io/npm/v/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
 [![npm downloads](https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square)](https://www.npmjs.com/package/framer-motion)
