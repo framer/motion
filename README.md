@@ -33,7 +33,7 @@ It looks like this:
 <motion.div animate={{ x: 0 }} />
 ```
 
-But does all this:
+And does this:
 
 -   Spring physics
 -   Keyframes
