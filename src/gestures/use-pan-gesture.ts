@@ -516,10 +516,12 @@ export function usePanGesture(
         [onPointerUp, onPointerMove]
     )
 
+    // On unmount, cancel pan gesture
     useEffect(() => {
         return () => {
             stopPointerMove()
             stopPointerUp()
+            cancelSync.update(updatePoint)
         }
     }, [])
     let handlers: Partial<{ onPointerDown: EventHandler }> = { onPointerDown }

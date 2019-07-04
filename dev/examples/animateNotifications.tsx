@@ -2,91 +2,100 @@ import * as React from "react"
 import { useState } from "react"
 import { motion, AnimatePresence } from "@framer"
 
-const add = (arr: number[], key: number) => {
-    const newArray = [...arr]
-    newArray.push(key)
-    return newArray
-}
-
-const remove = (arr: number[], key: number): number[] => {
-    const newArray = [...arr]
-    newArray.splice(arr.indexOf(key), 1)
-    return newArray
-}
-let next = 2
 export const App = () => {
-    const [items, setItems] = useState([1])
+    const [notifications, setNotifications] = useState([0])
 
     return (
-        <div>
-            <motion.ul positionTransition style={{ color: items.length }}>
-                <AnimatePresence initial={false}>
-                    {items.map(key => (
+        <div className="container">
+            <ul>
+                <AnimatePresence>
+                    {notifications.map(id => (
                         <motion.li
+                            key={id}
                             positionTransition
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            style={{ background: "red" }}
-                            key={key}
-                            onClick={() => setItems(remove(items, key))}
+                            drag="x"
+                            dragConstraints={{ left: 0, right: 0 }}
+                            initial={{ opacity: 0, y: 50, scale: 0.3 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{
+                                opacity: 0,
+                                scale: 0.5,
+                                transition: { duration: 0.2 },
+                            }}
+                            onDrag={(e, { offset }) => {
+                                console.log(offset.x)
+                                offset.x > 50 &&
+                                    setNotifications(remove(notifications, id))
+                            }}
                         />
                     ))}
                 </AnimatePresence>
-            </motion.ul>
-            <button
-                onClick={() => {
-                    next++
-                    setItems(add(items, next))
-                }}
-            >
-                Add
+            </ul>
+            <button onClick={() => setNotifications(add(notifications))}>
+                +
             </button>
             <style>{styles}</style>
         </div>
     )
 }
 
+const remove = (arr: number[], item: number) => {
+    const newArr = [...arr]
+    newArr.splice(newArr.findIndex(i => i === item), 1)
+    return newArr
+}
+
+let newIndex = 0
+const add = (arr: number[]) => {
+    newIndex++
+    return [...arr, newIndex]
+}
+
 const styles = `
-div {
-    width: 400px;
+body {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(180deg, #ff008c 0%, rgb(211, 9, 225) 100%);
+    overflow: hidden;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+  
+  .container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+  }
+  
+  ul,
+  li {
+    padding: 0;
+    margin: 0;
+  }
+  
+  ul {
     position: fixed;
-    bottom: 10px;
-    right: 10px;
-    top: 10px;
+    bottom: 0;
+    right: 0;
+    top: 0;
     display: flex;
     flex-direction: column;
+    list-style: none;
     justify-content: flex-end;
-}
-
-ul,
-li {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-ul {
-  display: flex;
-  align-items: flex-end;
-  flex-direction: column;
-  justify-content: flex-end;
-  position: relative;
-  flex-wrap: none;
-  height: 100px;
-}
-
-li {
-  border-radius: 10px;
-  margin-bottom: 10px;
-  margin-right: 10px;
-  width: 300px;
-  height: 50px;
-  flex: 0 0 50px;
-}
-
-button {
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-}`
+  }
+  
+  li {
+    width: 300px;
+    background: white;
+    margin: 10px;
+    flex: 0 0 100px;
+  }
+  `

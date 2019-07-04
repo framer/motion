@@ -700,10 +700,9 @@ export function useDraggable(
                 // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
                 // which has come out of the difficulty in us being able to do this once a scroll gesture
                 // has initiated in mobile browsers. This means if there's a horizontally-scrolling carousel
-                // on a page we can let a user scroll the page itself from it. Ideally what we'd do is
+                // on a page we can't let a user scroll the page itself from it. Ideally what we'd do is
                 // trigger this once we've got a scroll direction determined. This approach sort-of worked
-                // but if the component was dragged quite far in a single frame page scrolling would initiate.
-                // Maybe if we turn the direction lock threshold down.
+                // but if the component was dragged too far in a single frame page scrolling would initiate.
                 blockViewportScroll()
 
                 // Stop any animations on both axis values immediately. This allows the user to throw and catch
@@ -787,67 +786,75 @@ export function useDraggable(
                 onDrag && onDrag(event, convertPanToDrag(info))
             }
 
+            const cancelDrag = () => {
+                unblockViewportScroll()
+                isDragging.current = false
+
+                if (!dragPropagation && openGlobalLock) {
+                    openGlobalLock()
+                }
+            }
+
+            const animateDragEnd = (velocity: Point) => {
+                const momentumAnimations = bothAxis(axis => {
+                    if (!shouldDrag(axis, drag, currentDirection)) {
+                        return
+                    }
+
+                    const transition = resolvedConstraints.current
+                        ? getConstraints(axis, resolvedConstraints.current)
+                        : {}
+
+                    /**
+                     * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
+                     * of spring animations so we should look into adding a disable spring option to `inertia`.
+                     * We could do something here where we affect the `bounceStiffness` and `bounceDamping`
+                     * using the value of `dragElastic`.
+                     */
+                    const bounceStiffness = dragElastic ? 200 : 1000000
+                    const bounceDamping = dragElastic ? 40 : 10000000
+
+                    return controls.start({
+                        [axis]: 0,
+                        // TODO: It might be possible to allow `type` animations to be set as
+                        // Popmotion animations as well as strings. Then people could define their own
+                        // and it'd open another route for us to code-split.
+                        transition: {
+                            type: "inertia",
+                            velocity: dragMomentum ? velocity[axis] : 0,
+                            bounceStiffness,
+                            bounceDamping,
+                            timeConstant: 750,
+                            restDelta: 1,
+                            ...dragTransition,
+                            ...transition,
+                        },
+                    })
+                })
+
+                // Run all animations and then resolve the new drag constraints.
+                Promise.all(momentumAnimations).then(() => {
+                    recordBoxInfo(resolvedConstraints.current)
+                    scalePoint()
+                    const { onDragTransitionEnd } = dragHandlers.current
+                    onDragTransitionEnd && onDragTransitionEnd()
+                })
+            }
+
             const onPanEnd = (
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
-                unblockViewportScroll()
-                isDragging.current = false
-                const { velocity } = info
+                cancelDrag()
 
-                if (!dragPropagation && openGlobalLock) {
-                    openGlobalLock()
-                } else if (!openGlobalLock) {
+                if (!openGlobalLock || !hasDragged) {
                     return
                 }
 
-                if (!hasDragged) return
-
                 // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axes.
                 if (dragMomentum || dragElastic) {
-                    const momentumAnimations = bothAxis(axis => {
-                        if (!shouldDrag(axis, drag, currentDirection)) {
-                            return
-                        }
-
-                        const transition = resolvedConstraints.current
-                            ? getConstraints(axis, resolvedConstraints.current)
-                            : {}
-
-                        /**
-                         * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
-                         * of spring animations so we should look into adding a disable spring option to `inertia`.
-                         * We could do something here where we affect the `bounceStiffness` and `bounceDamping`
-                         * using the value of `dragElastic`.
-                         */
-                        const bounceStiffness = dragElastic ? 200 : 1000000
-                        const bounceDamping = dragElastic ? 40 : 10000000
-
-                        return controls.start({
-                            [axis]: 0,
-                            // TODO: It might be possible to allow `type` animations to be set as
-                            // Popmotion animations as well as strings. Then people could define their own
-                            // and it'd open another route for us to code-split.
-                            transition: {
-                                type: "inertia",
-                                velocity: dragMomentum ? velocity[axis] : 0,
-                                bounceStiffness,
-                                bounceDamping,
-                                timeConstant: 750,
-                                restDelta: 1,
-                                ...dragTransition,
-                                ...transition,
-                            },
-                        })
-                    })
-
-                    // Run all animations and then resolve the new drag constraints.
-                    Promise.all(momentumAnimations).then(() => {
-                        recordBoxInfo(resolvedConstraints.current)
-                        scalePoint()
-                        const { onDragTransitionEnd } = dragHandlers.current
-                        onDragTransitionEnd && onDragTransitionEnd()
-                    })
+                    const { velocity } = info
+                    animateDragEnd(velocity)
                 } else {
                     recordBoxInfo(resolvedConstraints.current)
                 }
@@ -861,6 +868,7 @@ export function useDraggable(
                 onPan,
                 onPanEnd,
                 onPointerDown,
+                cancelDrag,
             }
         },
         [
@@ -878,6 +886,16 @@ export function useDraggable(
 
     usePanGesture(panHandlers, ref)
     usePointerEvents({ onPointerDown: panHandlers.onPointerDown }, ref)
+
+    // On unmount, cancel the drag gesture
+    useEffect(
+        () => () => {
+            if (isDragging.current && panHandlers.cancelDrag) {
+                panHandlers.cancelDrag()
+            }
+        },
+        []
+    )
 }
 
 /**
