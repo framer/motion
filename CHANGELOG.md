@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.1] 2019-07-04
+
+### Fixed
+
+-   Cancelling `drag` and `pan` gestures on component unmount.
+
 ## [1.1.0] 2019-07-03
 
 ### Added
