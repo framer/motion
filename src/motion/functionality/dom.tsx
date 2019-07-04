@@ -25,7 +25,9 @@ type RenderProps = FunctionalProps & {
     isStatic: boolean | undefined
 }
 
-// TODO: Type this in a way that ensures no `MotionProps` are remaining
+// TODO: Type this in a way that ensures no `MotionProps` are remaining.
+// Oddly, `Omit<MotionProps, keyof MotionProps>` or types to that extend
+// didn't throw and error when props were actually present.
 function stripMotionProps({
     initial,
     animate,
