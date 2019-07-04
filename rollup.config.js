@@ -23,7 +23,6 @@ const external = [
     "hey-listen",
     "popmotion",
     "style-value-types",
-    "@emotion/is-prop-valid",
 ]
 
 const umd = Object.assign({}, config, {
