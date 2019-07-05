@@ -6,6 +6,16 @@
     "types": "dist/framer-motion.d.ts",
     "author": "Framer Motion",
     "license": "MIT",
+    "keywords": [
+        "react animation",
+        "react",
+        "pose",
+        "react pose",
+        "animation",
+        "spring",
+        "popmotion",
+        "framer"
+    ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
         "test": "yarn test-client && yarn test-server",
@@ -20,8 +30,8 @@
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
     },
     "peerDependencies": {
-        "react": "^16.7",
-        "react-dom": "^16.7"
+        "react": "^16.8",
+        "react-dom": "^16.8"
     },
     "devDependencies": {
         "@microsoft/api-extractor": "^7.1.5",

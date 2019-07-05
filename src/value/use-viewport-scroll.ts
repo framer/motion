@@ -89,6 +89,11 @@ const viewportMotionValues: ScrollMotionValues = {
  * }
  * ```
  *
+ * @internalremarks
+ * This isn't technically a hook yet, but in the future it might be nice
+ * to accept refs to elements and add scroll listeners to those, which
+ * may involve the use of lifecycle.
+ *
  * @public
  */
 export function useViewportScroll() {
