@@ -1,7 +1,3 @@
-<p align="center">
-  <img src="https://user-images.githubusercontent.com/7850794/60670325-ab5c7600-9e70-11e9-95dd-2a6fb9889b6b.png" width="100" height="100" />
-</p>
-
 <h1 align="center">
    Motion
 </h1>
@@ -24,39 +20,3 @@
   <img src="https://withspectrum.github.io/badge/badge.svg" />
   </a>
 </p>
-
-Motion is an open source, production-ready library that's designed for all creative developers.
-
-It looks like this:
-
-```jsx
-<motion.div animate={{ x: 0 }} />
-```
-
-And does this:
-
--   Spring physics
--   Keyframes
--   Drag
--   SVG paths
--   Server-side rendering
--   Pose-inspired tree animations
--   CSS variables
--   Position transitions
--   Unmount transitions
-
-...and a whole lot more.
-
-## Get started
-
-Check out [our documentation](https://framer.com/api/motion) for guides and a full API reference.
-
-Or checkout [our examples](https://framer.com/motion) for inspiration.
-
-## Contribute
-
-Want to contribute to Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
-
-## License
-
-Motion is MIT licensed.
