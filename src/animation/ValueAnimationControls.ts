@@ -241,11 +241,12 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * @param target -
      */
     private checkForNewValues(target: TargetWithKeyframes) {
-        const newValueKeys = Object.keys(target).filter(
-            key => !this.values.has(key)
-        )
-        if (!newValueKeys.length) return
-        newValueKeys.forEach(key => {
+        const newValueKeys = Object.keys(target).filter(this.hasValue)
+        const numNewValues = newValueKeys.length
+        if (!numNewValues) return
+
+        for (let i = 0; i < numNewValues; i++) {
+            const key = newValueKeys[i]
             let value: string | number = this.readValueFromSource(key)
 
             if (typeof value === "string" && isNumericalString(value)) {
@@ -258,8 +259,14 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
             this.values.set(key, motionValue(value))
             this.baseTarget[key] = value
-        })
+        }
     }
+
+    /**
+     * Check if the associated `MotionValueMap` has a key with the provided string.
+     * Pre-bound to the class so we can provide directly to the `filter` in `checkForNewValues`.
+     */
+    private hasValue = (key: string) => !this.values.has(key)
 
     /**
      * Resolve a variant from its label or resolver into an actual `Target` we can animate to.
@@ -456,6 +463,8 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         if (transitionEnd) {
             transitionEnd = this.transformValues(transitionEnd as any)
         }
+
+        this.checkForNewValues(target)
 
         if (this.makeTargetAnimatable) {
             const animatable = this.makeTargetAnimatable(
