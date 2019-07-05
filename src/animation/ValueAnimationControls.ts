@@ -378,7 +378,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             }
         }
 
-        this.animate(remainingValues)
+        this.animate(remainingValues).then(() => this.onComplete())
     }
 
     /**
@@ -439,10 +439,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             animation = this.animate(definition, opts)
         }
 
-        return animation.then(() => {
-            const { onAnimationComplete } = this.props
-            onAnimationComplete && onAnimationComplete()
-        })
+        return animation.then(() => this.onComplete())
     }
 
     private animate(
@@ -601,6 +598,11 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
 
         return Promise.all(animations)
+    }
+
+    private onComplete() {
+        const { onAnimationComplete } = this.props
+        onAnimationComplete && onAnimationComplete()
     }
 
     private checkOverrideIsAnimating(priority: number) {

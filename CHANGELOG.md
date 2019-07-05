@@ -17,6 +17,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Previously unseen props in `animate` animate correctly.
 -   Fixing reading SVG attributes from DOM.
 -   Fixed unit type conversion not working with previously-undefined values.
+-   Calling `onAnimationComplete` when `while` overrides are unset.
 
 ## [1.1.0] 2019-07-03
 
