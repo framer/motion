@@ -9,7 +9,7 @@ const styleA = {
     position: "absolute",
 }
 export const App = () => {
-    const [constraint, setContraint] = React.useState(500)
+    const [constraint, setContraint] = React.useState(0)
     function onDrag(event, { point }) {
         setContraint(point.x)
     }
@@ -17,7 +17,10 @@ export const App = () => {
         <>
             <motion.div
                 drag="x"
-                dragConstraints={{ left: 0, right: constraint }}
+                dragConstraints={{
+                    left: constraint,
+                    right: constraint,
+                }}
                 dragElastic
                 dragMomentum
                 dragTransition={{ bounceStiffness: 200, bounceDamping: 40 }}
@@ -26,7 +29,6 @@ export const App = () => {
 
             <motion.div
                 drag="x"
-                dragConstraints={{ left: 0, right: 500 }}
                 dragElastic
                 dragMomentum
                 onDrag={onDrag}

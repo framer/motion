@@ -4,6 +4,7 @@ import { motion } from "@framer"
 import { clamp } from "@popmotion/popcorn"
 import move from "array-move"
 
+// TODO: Update to use positionTransition
 export const App = () => {
     const [dragging, setDragging] = useState<string | null>(null)
     const [colors, setColors] = useState(initialColors)

@@ -35,6 +35,7 @@ function stripMotionProps({
     style,
     variants,
     transition,
+    transformTemplate,
     custom,
     inherit,
     static: s,

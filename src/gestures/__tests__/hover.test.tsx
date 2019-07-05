@@ -115,23 +115,30 @@ describe("hover", () => {
                 hidden: { opacity: 0.5 },
             }
             const opacity = motionValue(1)
-            const Component = () => (
+
+            let hasMousedOut = false
+            const onComplete = () => hasMousedOut && resolve(opacity.get())
+
+            const Component = ({ onAnimationComplete }: any) => (
                 <motion.div
                     whileHover="hidden"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity }}
+                    onAnimationComplete={onAnimationComplete}
                 />
             )
 
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
+            const { container, rerender } = render(
+                <Component onAnimationComplete={onComplete} />
+            )
+            rerender(<Component onAnimationComplete={onComplete} />)
 
             mouseEnter(container.firstChild as Element)
 
             setTimeout(() => {
+                hasMousedOut = true
                 mouseLeave(container.firstChild as Element)
-                resolve(opacity.get())
             }, 10)
         })
 

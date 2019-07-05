@@ -4,6 +4,7 @@
         "module": "esnext",
         "moduleResolution": "node",
         "isolatedModules": false,
+        "importHelpers": true,
         "jsx": "react",
         "esModuleInterop": true,
         "experimentalDecorators": true,

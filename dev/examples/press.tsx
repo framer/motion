@@ -8,5 +8,11 @@ const style = {
 }
 
 export const App = () => {
-    return <motion.div initial={{ scale: 1 }} pressActive={{ scale: 2 }} style={style} />
+    return (
+        <motion.div
+            initial={{ scale: 1 }}
+            whileTap={{ scale: 2 }}
+            style={style}
+        />
+    )
 }

@@ -241,11 +241,12 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * @param target -
      */
     private checkForNewValues(target: TargetWithKeyframes) {
-        const newValueKeys = Object.keys(target).filter(
-            key => !this.values.has(key)
-        )
-        if (!newValueKeys.length) return
-        newValueKeys.forEach(key => {
+        const newValueKeys = Object.keys(target).filter(this.hasValue)
+        const numNewValues = newValueKeys.length
+        if (!numNewValues) return
+
+        for (let i = 0; i < numNewValues; i++) {
+            const key = newValueKeys[i]
             let value: string | number = this.readValueFromSource(key)
 
             if (typeof value === "string" && isNumericalString(value)) {
@@ -258,8 +259,14 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
             this.values.set(key, motionValue(value))
             this.baseTarget[key] = value
-        })
+        }
     }
+
+    /**
+     * Check if the associated `MotionValueMap` has a key with the provided string.
+     * Pre-bound to the class so we can provide directly to the `filter` in `checkForNewValues`.
+     */
+    private hasValue = (key: string) => !this.values.has(key)
 
     /**
      * Resolve a variant from its label or resolver into an actual `Target` we can animate to.
@@ -371,7 +378,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             }
         }
 
-        this.animate(remainingValues)
+        this.animate(remainingValues).then(() => this.onComplete())
     }
 
     /**
@@ -415,7 +422,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
     }
 
-    async start(definition: AnimationDefinition, opts: AnimationOptions = {}) {
+    start(definition: AnimationDefinition, opts: AnimationOptions = {}) {
         if (opts.priority) {
             this.activeOverrides.add(opts.priority)
         }
@@ -432,13 +439,10 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             animation = this.animate(definition, opts)
         }
 
-        return animation.then(() => {
-            const { onAnimationComplete } = this.props
-            onAnimationComplete && onAnimationComplete()
-        })
+        return animation.then(() => this.onComplete())
     }
 
-    private async animate(
+    private animate(
         animationDefinition: Variant,
         { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
     ) {
@@ -456,6 +460,8 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         if (transitionEnd) {
             transitionEnd = this.transformValues(transitionEnd as any)
         }
+
+        this.checkForNewValues(target)
 
         if (this.makeTargetAnimatable) {
             const animatable = this.makeTargetAnimatable(
@@ -519,10 +525,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         return Promise.all(animations)
     }
 
-    private async animateVariant(
-        variantLabel: string,
-        opts?: AnimationOptions
-    ) {
+    private animateVariant(variantLabel: string, opts?: AnimationOptions) {
         let when: Orchestration["when"] = false
         let delayChildren = 0
         let staggerChildren = 0
@@ -595,6 +598,11 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
 
         return Promise.all(animations)
+    }
+
+    private onComplete() {
+        const { onAnimationComplete } = this.props
+        onAnimationComplete && onAnimationComplete()
     }
 
     private checkOverrideIsAnimating(priority: number) {

@@ -10,12 +10,12 @@ const style = {
 }
 
 export const App = () => {
-    const [animate, cycle] = useCycle([
+    const [animate, cycle] = useCycle(
         { x: 0, opacity: 1, borderRadius: 5, scale: 1, y: 0, rotate: 0 },
         { x: -100, rotate: 45 },
         { y: -100, scale: 2 },
-        { x: 100, opacity: 1, borderRadius: 100 },
-    ])
-    console.log("attempting: ", animate)
+        { x: 100, opacity: 1, borderRadius: 100 }
+    )
+
     return <motion.div animate={animate} onTap={cycle} style={style} />
 }

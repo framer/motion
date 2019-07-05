@@ -2,18 +2,23 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.1.1] 2019-07-04
+## [1.1.1] 2019-07-08
 
 ### Changed
 
 -   Moving UMD global from `FramerMotion` to `Motion`.
 -   Removed `@emotion/is-valid-prop`, saving ~1.9kb from bundle.
+-   Using a slimmed-down version of Popmotion, saving ~3kb from bundle.
+-   Removing `async` markers, saving ~0.7kb from bundle.
 
 ### Fixed
 
 -   Cancelling `drag` and `pan` gestures on component unmount.
 -   Previously unseen props in `animate` animate correctly.
 -   Fixing reading SVG attributes from DOM.
+-   Fixed unit type conversion not working with previously-undefined values.
+-   Calling `onAnimationComplete` when `while` overrides are unset.
+-   Preventing initial animation if `animate` is a map of props and `initial={false}`. This went previously unseen as both values were equivalent, but `onAnimationComplete` would fire on mount.
 
 ## [1.1.0] 2019-07-03
 

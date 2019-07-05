@@ -17,6 +17,11 @@ export const App = () => {
     )
 
     return (
-        <motion.div animate={elevation} onTap={() => cycle()} style={style} />
+        <motion.div
+            animate={elevation}
+            transition={{ duration: 2 }}
+            onTap={() => cycle()}
+            style={style}
+        />
     )
 }

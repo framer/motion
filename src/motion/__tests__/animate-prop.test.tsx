@@ -363,4 +363,23 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.toBe(true)
     })
+
+    test("mount animation doesn't run if `initial={false}`", async () => {
+        const promise = new Promise(resolve => {
+            const onComplete = jest.fn()
+            const Component = () => (
+                <motion.div
+                    initial={false}
+                    animate={{ x: 20 }}
+                    transition={{ type: false }}
+                    onAnimationComplete={onComplete}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+            setTimeout(() => resolve(onComplete), 10)
+        })
+
+        return expect(promise).resolves.not.toBeCalled()
+    })
 })
