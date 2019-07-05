@@ -69,7 +69,7 @@ export function useAnimateProp(
                 // defined in `style` or `initial`) or if it does exist and it's already changed.
                 const shouldAnimateOnMount =
                     isInitialRender.current &&
-                    (!values.has(key) || values.get(key) !== target[key])
+                    (!values.has(key) || values.get(key)!.get() !== target[key])
 
                 // If this value has updated between renders or it's we're animating this value on mount,
                 // add it to the animate target.

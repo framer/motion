@@ -18,6 +18,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Fixing reading SVG attributes from DOM.
 -   Fixed unit type conversion not working with previously-undefined values.
 -   Calling `onAnimationComplete` when `while` overrides are unset.
+-   Preventing initial animation if `animate` is a map of props and `initial={false}`. This went previously unseen as both values were equivalent, but `onAnimationComplete` would fire on mount.
 
 ## [1.1.0] 2019-07-03
 
