@@ -16,7 +16,8 @@
         "build": "rollup -c && make api && yarn measure",
         "prepublishOnly": "yarn test && yarn build",
         "measure": "gzip -c dist/framer-motion.js | wc -c",
-        "deduplicate": "yarn-deduplicate yarn.lock"
+        "deduplicate": "yarn-deduplicate yarn.lock",
+        "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
     },
     "peerDependencies": {
         "react": "^16.7",
@@ -65,7 +66,7 @@
         "typescript": "3.3",
         "webpack": "^4.25.1",
         "webpack-cli": "^3.1.2",
-        "webpack-dev-server": "^3.1.10",
+        "webpack-dev-server": "^3.7.2",
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {

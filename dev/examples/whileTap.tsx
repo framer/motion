@@ -11,7 +11,7 @@ const style = {
 export const App = () => {
     return (
         <motion.div
-            tap={{ scale: 0.5, backgroundColor: "rgba(0, 255, 0, .5)" }}
+            whileTap={{ scale: 0.5, backgroundColor: "rgba(0, 255, 0, .5)" }}
             style={style}
         />
     )

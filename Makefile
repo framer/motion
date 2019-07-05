@@ -38,7 +38,7 @@ build: bootstrap
 	yarn build
 
 dev: bootstrap
-	webpack-dev-server --config=dev/webpack/config.js
+	npm run start-dev-server
 
 watch: bootstrap
 	if test -f coverage/lcov-report/index.html; then \
