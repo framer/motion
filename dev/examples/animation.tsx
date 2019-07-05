@@ -23,7 +23,7 @@ export const App = () => {
             animate={animation}
             initial={{ rotate: 0, opacity: 0 }}
             variants={variants}
-            transition={{ duration: 5, delay: 10 }}
+            transition={{ duration: 5 }}
             style={style}
             onMouseEnter={() => console.log("test")}
         />

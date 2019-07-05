@@ -610,7 +610,7 @@ export function useDraggable(
 
         applyConstraintsToPoint(constraints)
         recordBoxInfo(constraints)
-    })
+    }, [])
 
     // Create our handlers for the `pan` gesture.
     const panHandlers = useMemo(
