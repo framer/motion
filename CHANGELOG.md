@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.1.1] 2019-07-08
+## [1.1.2] 2019-07-08
+
+### Fixed
+
+-   Upgrade to `AnimatePresence` algo.
+
+## [1.1.1] 2019-07-05
 
 ### Changed
 
