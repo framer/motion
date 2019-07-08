@@ -238,6 +238,12 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
                 animate: exit || animate,
                 onAnimationComplete: () => {
                     exiting.delete(key)
+
+                    // Remove this child from the present children
+                    const removeIndex = presentChildren.current.findIndex(
+                        child => child.key === key
+                    )
+                    presentChildren.current.splice(removeIndex, 1)
                     onAnimationComplete && onAnimationComplete()
 
                     // Defer re-rendering until all exiting children have indeed left
