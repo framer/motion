@@ -2,6 +2,7 @@ import * as React from "react"
 import { renderToString } from "react-dom/server"
 import { motion } from "../"
 import { motionValue } from "../../value"
+import { AnimatePresence } from "../../components/AnimatePresence"
 
 describe("ssr", () => {
     test("doesn't throw", () => {
@@ -20,7 +21,13 @@ describe("ssr", () => {
     test("correctly renders HTML", () => {
         const y = motionValue(200)
         const div = renderToString(
-            <motion.div initial={{ x: 100 }} style={{ y }} />
+            <AnimatePresence>
+                <motion.div
+                    initial={{ x: 100 }}
+                    style={{ y }}
+                    positionTransition
+                />
+            </AnimatePresence>
         )
 
         expect(div).toBe(

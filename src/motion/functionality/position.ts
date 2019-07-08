@@ -20,7 +20,7 @@ const measureDelta = (origin: Position, target: Position) => ({
 })
 
 const isHTMLElement = (element: Element | null): element is HTMLElement =>
-    element instanceof HTMLElement
+    typeof HTMLElement !== "undefined" && element instanceof HTMLElement
 
 const createTransition = (
     values: MotionValuesMap,
