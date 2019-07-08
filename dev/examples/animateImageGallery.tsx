@@ -1,28 +1,27 @@
 import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
+import { wrap } from "@popmotion/popcorn"
 
 const variants = {
-    enter: (delta: number) => ({ x: delta < 0 ? 300 : -300, opacity: 0 }),
+    enter: (delta: number) => ({ x: delta < 0 ? 1000 : -1000, opacity: 0 }),
     center: { x: 0, opacity: 1 },
-    exit: (delta: number) => ({ x: delta < 0 ? 300 : -300, opacity: 0 }),
+    exit: (delta: number) => ({ x: delta < 0 ? 1000 : -1000, opacity: 0 }),
 }
 
 export const App = () => {
-    const [count, setCount] = useState(0)
-    const [delta, setDelta] = useState(0)
-    const imageIndex = count % images.length
+    const [[page, delta], setPage] = useState([0, 0])
+    const imageIndex = wrap(0, images.length, page)
 
-    const paginate = (d: number) => {
-        setCount(count + d)
-        setDelta(d)
+    const paginate = (newDelta: number) => {
+        setPage([page + newDelta, newDelta])
     }
 
     return (
         <div className="example-container">
             <AnimatePresence initial={false} custom={delta}>
                 <motion.img
-                    key={count}
+                    key={page}
                     src={images[imageIndex]}
                     custom={delta}
                     variants={variants}
@@ -37,10 +36,14 @@ export const App = () => {
                         opacity: { duration: 0.2 },
                     }}
                     onDragEnd={(e, { offset, velocity }) => {
-                        if (offset.x <= -200 || velocity.x <= -10) paginate(-1)
-                        if (offset.x >= 200 || velocity.x >= 10) paginate(1)
+                        const swipe = Math.abs(offset.x) * velocity.x
+
+                        if (swipe < -10000) {
+                            paginate(1)
+                        } else if (swipe > 10000) {
+                            paginate(-1)
+                        }
                     }}
-                    onClick={() => paginate(1)}
                 />
             </AnimatePresence>
             <motion.div className="next" onClick={() => paginate(1)}>

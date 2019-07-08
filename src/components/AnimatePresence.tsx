@@ -227,7 +227,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
         if (!child) return
 
         const { animate, exit, onAnimationComplete } = child.props
-        const props = custom ? { custom } : {}
+        const props = typeof custom !== "undefined" ? { custom } : {}
         const insertionIndex = presentKeys.indexOf(key)
 
         childrenToRender.splice(
