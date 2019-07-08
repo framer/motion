@@ -21,10 +21,15 @@ import { RefObject } from 'react';
 import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
 
-// Warning: (ae-forgotten-export) The symbol "AnimatePresenceProps" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
+
+// @public (undocumented)
+export interface AnimatePresenceProps {
+    custom?: any;
+    initial?: boolean;
+    onExitComplete?: () => void;
+}
 
 // @public
 export class AnimationControls {
