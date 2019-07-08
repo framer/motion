@@ -10,6 +10,9 @@ import {
 } from "react"
 import * as React from "react"
 
+/**
+ * @public
+ */
 export interface AnimatePresenceProps {
     /**
      * By passing `initial={false}`, `AnimatePresence` will disable any initial animations on children

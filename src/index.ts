@@ -69,4 +69,7 @@ export {
 } from "./types"
 export { EventInfo } from "./events"
 export { safeWindow } from "./events/utils/window"
-export { AnimatePresence } from "./components/AnimatePresence"
+export {
+    AnimatePresence,
+    AnimatePresenceProps,
+} from "./components/AnimatePresence"

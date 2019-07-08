@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.1.4] 2019-07-08
+
+### Updated
+
+-   Exporting `AnimatePresenceProps`.
+
 ## [1.1.3] 2019-07-08
 
 ### Fixed
