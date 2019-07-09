@@ -791,4 +791,44 @@ describe("dragging", () => {
             "transform: translateX(105px) translateZ(0)"
         )
     })
+
+    test("accepts dragOriginX and dragOriginY", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const y = motionValue(0)
+            const dragOriginX = motionValue(0)
+            const dragOriginY = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        drag
+                        dragOriginX={dragOriginX}
+                        dragOriginY={dragOriginY}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(100, 100)
+
+            sync.postRender(() => {
+                pointer.to(50, 50)
+                dragOriginX.set(-100)
+                dragOriginY.set(-100)
+                sync.postRender(() => {
+                    pointer.to(200, 200)
+
+                    sync.postRender(() => {
+                        pointer.end()
+                        resolve([x.get(), y.get()])
+                    })
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([100, 100])
+    })
 })

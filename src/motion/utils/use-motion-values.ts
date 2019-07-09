@@ -116,6 +116,8 @@ export class MotionValuesMap {
     }
 }
 
+const specialMotionValueProps = new Set(["dragOriginX", "dragOriginY"])
+
 export const useMotionValues = (props: MotionProps) => {
     const motionValues = useConstant(() => {
         const map = new MotionValuesMap()
@@ -127,7 +129,10 @@ export const useMotionValues = (props: MotionProps) => {
          * <motion.circle cx={motionValue(0)} />
          */
         for (const key in props) {
-            if (isMotionValue(props[key])) {
+            if (
+                isMotionValue(props[key]) &&
+                !specialMotionValueProps.has(key)
+            ) {
                 map.set(key, props[key])
             }
         }

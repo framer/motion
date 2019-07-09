@@ -54,6 +54,8 @@ function stripMotionProps({
     dragMomentum,
     dragPropagation,
     dragTransition,
+    dragOriginX,
+    dragOriginY,
     onPan,
     onPanStart,
     onPanEnd,

@@ -2,6 +2,17 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.0] 2019-07-09
+
+### Added
+
+-   Supporting `positionTransition` as a function that resolves when the component has moved.
+-   Adding `dragOriginX` and `dragOriginY` props.
+
+### Fixed
+
+-   Excluding `positionTransition` from SVG type.
+
 ## [1.1.4] 2019-07-08
 
 ### Updated

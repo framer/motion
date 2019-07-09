@@ -18,6 +18,7 @@ import {
     MotionPluginContext,
     MotionPlugins,
 } from "../motion/context/MotionPluginContext"
+import { useMotionValue } from "../value/use-motion-value"
 
 type DragDirection = "x" | "y"
 
@@ -334,6 +335,62 @@ export interface DraggableProps extends DragHandlers {
      * ```
      */
     dragTransition?: InertiaOptions
+
+    /**
+     * Drag position is calculated by applying the pan offset to the x/y origin
+     * measured when the drag gesture begins.
+     *
+     * By manually creating `dragOriginX` as a `MotionValue`, it can be updated
+     * while the gesture is active, for instance to visually offset any movement should
+     * the component change layout.
+     *
+     * @library
+     *
+     * ```jsx
+     * const dragOriginX = useMotionValue(0)
+     *
+     * return <Frame dragOriginX={dragOriginX} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * const dragOriginX = useMotionValue(0)
+     *
+     * return <motion.div dragOriginX={dragOriginX} />
+     * ```
+     *
+     * @public
+     */
+    dragOriginX?: MotionValue<number>
+
+    /**
+     * Drag position is calculated by applying the pan offset to the x/y origin
+     * measured when the drag gesture begins.
+     *
+     * By manually creating `dragOriginY` as a `MotionValue`, it can be updated
+     * while the gesture is active, for instance to visually offset any movement should
+     * the component change layout.
+     *
+     * @library
+     *
+     * ```jsx
+     * const dragOriginY = useMotionValue(0)
+     *
+     * return <Frame dragOriginY={dragOriginY} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * const dragOriginY = useMotionValue(0)
+     *
+     * return <motion.div dragOriginY={dragOriginY} />
+     * ```
+     *
+     * @public
+     */
+    dragOriginY?: MotionValue<number>
 }
 
 /**
@@ -503,6 +560,8 @@ export function useDraggable(
         dragConstraints = false,
         dragElastic = true,
         dragMomentum = true,
+        dragOriginX,
+        dragOriginY,
         dragTransition,
         ...handlers
     }: DraggableProps,
@@ -512,7 +571,15 @@ export function useDraggable(
 ) {
     const isDragging = useRef(false)
     const point = useRef<MotionPoint>({}).current
-    const origin = useRef({ x: 0, y: 0 }).current
+
+    // Track origin
+    const defaultOriginX = useMotionValue(0)
+    const defaultOriginY = useMotionValue(0)
+    const origin = {
+        x: dragOriginX || defaultOriginX,
+        y: dragOriginY || defaultOriginY,
+    }
+
     const { transformPagePoint } = useContext(MotionPluginContext)
 
     // By keeping a reference to the user-defined drag handlers and referring
@@ -674,7 +741,8 @@ export function useDraggable(
                 }
 
                 hasDragged = true
-                let current = origin[axis] + offset[axis]
+
+                let current = origin[axis].get() + offset[axis]
 
                 current = applyConstraints(
                     axis,
@@ -737,7 +805,7 @@ export function useDraggable(
                     const axisPoint = point[axis]
                     if (!axisPoint) return
 
-                    origin[axis] = axisPoint.get()
+                    origin[axis].set(axisPoint.get())
                     axisPoint.stop()
                 })
 
@@ -879,6 +947,8 @@ export function useDraggable(
             dragMomentum,
             ...flattenConstraints(dragConstraints),
             dragTransition,
+            dragOriginX,
+            dragOriginY,
             values.get("x"),
             values.get("y"),
         ]

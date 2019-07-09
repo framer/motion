@@ -96,6 +96,20 @@ export type OnUpdate = (v: Target) => void
 /**
  * @public
  */
+export interface RepositionInfo {
+    delta: { x: number; y: number }
+}
+
+/**
+ * @public
+ */
+export type ResolvePositionTransition = (
+    info: RepositionInfo
+) => Transition | boolean
+
+/**
+ * @public
+ */
 export interface AnimationProps {
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.
@@ -246,6 +260,10 @@ export interface AnimationProps {
      *
      * If set to `true`, the animation will use the default x/y transitions.
      *
+     * It can also be set as a function that will resolve when the component has changed layout. This function
+     * should return either a transition definition or `true`. For advanced use-cases where you want the component
+     * to visually stay in its previous position, this function can also return `false`.
+     *
      * @library
      *
      * ```jsx
@@ -268,7 +286,7 @@ export interface AnimationProps {
      * }} />
      * ```
      */
-    positionTransition?: Transition | true
+    positionTransition?: Transition | boolean | ResolvePositionTransition
 }
 
 /**

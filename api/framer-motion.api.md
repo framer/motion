@@ -60,7 +60,8 @@ export const animationControls: () => AnimationControls;
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
     exit?: AnimationControls | TargetAndTransition | VariantLabels;
-    positionTransition?: Transition | true;
+    // Warning: (ae-forgotten-export) The symbol "ResolvePositionTransition" needs to be exported by the entry point index.d.ts
+    positionTransition?: Transition | boolean | ResolvePositionTransition;
     transition?: Transition;
     variants?: Variants;
 }
@@ -91,6 +92,8 @@ export interface DraggableProps extends DragHandlers {
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
     dragMomentum?: boolean;
+    dragOriginX?: MotionValue<number>;
+    dragOriginY?: MotionValue<number>;
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
@@ -557,8 +560,10 @@ export type Subscriber<T> = (v: T) => void;
 // @public
 export type SVGAttributesAsMotionValues = MakeMotion<SVGAttributesWithoutMotionProps>;
 
+// Warning: (ae-forgotten-export) The symbol "Omit" needs to be exported by the entry point index.d.ts
+// 
 // @public (undocumented)
-export interface SVGMotionProps extends SVGAttributesAsMotionValues, MotionProps {
+export interface SVGMotionProps extends SVGAttributesAsMotionValues, Omit<MotionProps, "positionTransition"> {
 }
 
 // @public (undocumented)

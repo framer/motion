@@ -13,6 +13,7 @@ import {
 import { HTMLElements, htmlElements } from "./utils/supported-elements"
 import { svgElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps, MakeMotion } from "./types"
+import { Omit } from "../types"
 
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
@@ -117,7 +118,7 @@ export type SVGAttributesAsMotionValues = MakeMotion<
  */
 export interface SVGMotionProps
     extends SVGAttributesAsMotionValues,
-        MotionProps {}
+        Omit<MotionProps, "positionTransition"> {}
 
 type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
     PropsWithoutRef<P> & RefAttributes<T>

@@ -1,60 +1,78 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
+import { motion, useMotionValue } from "@framer"
 import { clamp } from "@popmotion/popcorn"
 import move from "array-move"
 
-// TODO: Update to use positionTransition
+const Item = ({ color, active, setActive, setColors, colors, i }) => {
+    const isDragging = color === active
+    const dragOriginY = useMotionValue(0)
+
+    return (
+        <motion.li
+            drag="y"
+            dragOriginY={dragOriginY}
+            onDragStart={() => setActive(color)}
+            onDragEnd={() => setActive(null)}
+            onDrag={(e, { point }) => {
+                const targetIndex = findIndex(i, point.y)
+                if (targetIndex === i) return
+                setColors(move(colors, i, targetIndex))
+            }}
+            dragConstraints={isDragging && { top: 0, bottom: 0 }}
+            dragElastic={1}
+            style={{ background: color }}
+            animate={isDragging ? { zIndex: 1 } : { zIndex: 0 }}
+            positionTransition={({ delta }) => {
+                if (isDragging) {
+                    dragOriginY.set(dragOriginY.get() + delta.y)
+                    return false
+                } else {
+                    return true
+                }
+            }}
+            initial={false}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 1.1 }}
+        />
+    )
+}
+
 export const App = () => {
-    const [dragging, setDragging] = useState<string | null>(null)
+    const [active, setActive] = useState<string | null>(null)
     const [colors, setColors] = useState(initialColors)
 
     return (
-        <ul style={{ height: colors.length * (height + gap) }}>
+        <>
+            <ul>
+                {colors.map((color, i) => (
+                    <Item
+                        key={color}
+                        i={i}
+                        active={active}
+                        color={color}
+                        colors={colors}
+                        setColors={setColors}
+                        setActive={setActive}
+                    />
+                ))}
+            </ul>
             <style>{styles}</style>
-            {colors.map((color, i) => (
-                <motion.li
-                    key={color}
-                    drag="y"
-                    onDragStart={() => setDragging(color)}
-                    onDragEnd={() => setDragging(null)}
-                    onDrag={(e, { point }) => {
-                        const targetIndex = yToIndex(point.y)
-
-                        if (targetIndex !== i) {
-                            setColors(move(colors, i, targetIndex))
-                        }
-                    }}
-                    dragConstraints={
-                        dragging === color && {
-                            top: calcTop(i),
-                            bottom: calcTop(i),
-                        }
-                    }
-                    dragTransition={{ transitionEnd: { zIndex: 0 } }}
-                    dragElastic={1}
-                    style={{ background: color }}
-                    animate={
-                        dragging !== color
-                            ? { y: calcTop(i) }
-                            : { zIndex: 1, y: null }
-                    }
-                    initial={false}
-                    whileHover={{ scale: 1.03 }}
-                    whileTap={{ scale: 1.1 }}
-                />
-            ))}
-        </ul>
+        </>
     )
 }
 
 const height = 80
-const gap = 10
-const totalHeight = height + gap
-const calcTop = i => i * totalHeight
-const yToIndex = y =>
-    clamp(0, initialColors.length - 1, Math.round(y / totalHeight))
-const initialColors = ["#FF008C", "#D309E1", "#9C1AFF", "#7700FF", "#4400FF"]
+const marginBottom = 10
+const totalHeight = height + marginBottom
+const findIndex = (i, y) => {
+    // Could use a ref with offsetTop
+    const baseY = totalHeight * i
+    const totalY = baseY + y
+    return clamp(0, initialColors.length - 1, Math.round(totalY / totalHeight))
+}
+
+const initialColors = ["#FF008C", "#D309E1", "#9C1AFF", "#7700FF"]
 
 const styles = `body {
   width: 100vw;
@@ -92,11 +110,9 @@ li {
   border-radius: 10px;
   margin-bottom: 10px;
   cursor: pointer;
-  position: absolute;
-  top: 0;
-  left: 0;
   width: 100%;
   height: 80px;
+  position: relative;
 }
 
 .background {

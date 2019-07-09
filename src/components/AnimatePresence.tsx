@@ -24,6 +24,7 @@ export interface AnimatePresenceProps {
      * <AnimatePresence initial={false}>
      *   {isVisible && (
      *     <Frame
+     *       key="modal"
      *       initial={{ opacity: 0 }}
      *       animate={{ opacity: 1 }}
      *       exit={{ opacity: 0 }}
@@ -38,6 +39,7 @@ export interface AnimatePresenceProps {
      * <AnimatePresence initial={false}>
      *   {isVisible && (
      *     <motion.div
+     *       key="modal"
      *       initial={{ opacity: 0 }}
      *       animate={{ opacity: 1 }}
      *       exit={{ opacity: 0 }}

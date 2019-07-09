@@ -1,22 +1,26 @@
-import { MotionProps, AnimationProps } from "../types"
+import {
+    MotionProps,
+    AnimationProps,
+    ResolvePositionTransition,
+} from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { useLayoutEffect, RefObject } from "react"
-import { ValueAnimationControls } from "animation/ValueAnimationControls"
-import { MotionValuesMap } from "motion/utils/use-motion-values"
+import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
+import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import styler from "stylefire"
+import { Transition } from "../../types"
 
 interface Position {
-    top: number
-    left: number
+    x: number
+    y: number
 }
 
-const hasMoved = (a: Position, b: Position) =>
-    a.top !== b.top || a.left !== b.left
+const hasMoved = (a: Position, b: Position) => a.x !== b.x || a.y !== b.y
 
 const measureDelta = (origin: Position, target: Position) => ({
-    left: origin.left - target.left,
-    top: origin.top - target.top,
+    x: origin.x - target.x,
+    y: origin.y - target.y,
 })
 
 const isHTMLElement = (element: Element | null): element is HTMLElement =>
@@ -24,9 +28,10 @@ const isHTMLElement = (element: Element | null): element is HTMLElement =>
 
 const createTransition = (
     values: MotionValuesMap,
-    positionTransition: AnimationProps["positionTransition"] = {}
+    positionTransition: Transition | boolean = {}
 ) => (axis: "x" | "y", offset: number) => {
-    const baseTransition = positionTransition === true ? {} : positionTransition
+    const baseTransition =
+        typeof positionTransition === "boolean" ? {} : positionTransition
     const value = values.get(axis, 0)
     const velocity = value.getVelocity()
     const transition = baseTransition.hasOwnProperty(axis)
@@ -40,6 +45,12 @@ const createTransition = (
     return transition
 }
 
+function isResolver(
+    transition: AnimationProps["positionTransition"]
+): transition is ResolvePositionTransition {
+    return typeof transition === "function"
+}
+
 function usePositionAnimation(
     ref: RefObject<Element | HTMLElement | null>,
     values: MotionValuesMap,
@@ -50,7 +61,7 @@ function usePositionAnimation(
         const element = ref.current
 
         return isHTMLElement(element)
-            ? { top: element.offsetTop, left: element.offsetLeft }
+            ? { x: element.offsetLeft, y: element.offsetTop }
             : null
     }
 
@@ -62,14 +73,21 @@ function usePositionAnimation(
 
         if (prev && target && hasMoved(prev, target)) {
             const delta = measureDelta(prev, target)
-            const transition = createTransition(values, positionTransition)
-            const x = transition("x", delta.left)
-            const y = transition("y", delta.top)
+
+            const transitionDefinition = isResolver(positionTransition)
+                ? positionTransition({ delta })
+                : positionTransition
+
+            const transition = createTransition(values, transitionDefinition)
+            const x = transition("x", delta.x)
+            const y = transition("y", delta.y)
 
             // Force a render now rather than waiting for the next render loop
             styler(ref.current as HTMLElement).render()
 
-            controls.start({ x: 0, y: 0, transition: { x, y } })
+            if (transitionDefinition) {
+                controls.start({ x: 0, y: 0, transition: { x, y } })
+            }
         }
     })
 }
