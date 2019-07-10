@@ -70,19 +70,9 @@ export interface AnimatePresenceProps {
 }
 
 type ComponentKey = string | number
-type ComponentKeys = Array<ComponentKey>
 
 function getChildKey(child: ReactElement<any>): ComponentKey {
     return child.key || ""
-}
-
-function diff(record: Set<ComponentKey>, a: ComponentKeys, b: ComponentKeys) {
-    const bLength = b.length
-
-    for (let i = 0; i < bLength; i++) {
-        const key = b[i]
-        if (a.indexOf(key) === -1) record.add(key)
-    }
 }
 
 function updateChildLookup(
@@ -220,7 +210,17 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     const presentKeys = presentChildren.current.map(getChildKey)
     const targetKeys = filteredChildren.map(getChildKey)
 
-    diff(exiting, targetKeys, presentKeys)
+    // Diff the present children with our target children and mark those that are exiting
+    const numPresent = presentKeys.length
+    for (let i = 0; i < numPresent; i++) {
+        const key = presentKeys[i]
+        if (targetKeys.indexOf(key) === -1) {
+            exiting.add(key)
+        } else {
+            // In case this key has re-entered, remove from the exiting list
+            exiting.delete(key)
+        }
+    }
 
     // Loop through all currently exiting components and clone them to overwrite `animate`
     // with any `exit` prop they might have defined.

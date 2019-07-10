@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.1] 2019-07-10
+
+### Fixed
+
+-   Removing re-entering children from exiting list in `AnimatePresence`.
+
 ## [1.2.0] 2019-07-09
 
 ### Added
