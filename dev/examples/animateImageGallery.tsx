@@ -4,9 +4,20 @@ import { useState } from "react"
 import { wrap } from "@popmotion/popcorn"
 
 const variants = {
-    enter: (delta: number) => ({ x: delta < 0 ? 1000 : -1000, opacity: 0 }),
-    center: { x: 0, opacity: 1 },
-    exit: (delta: number) => ({ x: delta < 0 ? 1000 : -1000, opacity: 0 }),
+    enter: (delta: number) => ({
+        x: delta < 0 ? 1000 : -1000,
+        opacity: 0,
+    }),
+    center: {
+        zIndex: 1,
+        x: 0,
+        opacity: 1,
+    },
+    exit: (delta: number) => ({
+        zIndex: 0,
+        x: delta < 0 ? 1000 : -1000,
+        opacity: 0,
+    }),
 }
 
 export const App = () => {
@@ -77,6 +88,7 @@ export const App = () => {
   cursor: pointer;
   font-weight: bold;
   font-size: 18px;
+  z-index: 2;
 }
 
 .next {
