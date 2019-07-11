@@ -565,7 +565,7 @@ export function useDraggable(
         dragTransition,
         ...handlers
     }: DraggableProps,
-    ref: RefObject<Element | null>,
+    ref: RefObject<Element>,
     values: MotionValuesMap,
     controls: ValueAnimationControls
 ) {

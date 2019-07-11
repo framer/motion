@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.2] 2019-07-11
+
+### Upgrade
+
+-   Typescript to `3.5`.
+
 ## [1.2.1] 2019-07-10
 
 ### Fixed

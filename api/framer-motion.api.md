@@ -230,19 +230,19 @@ export const motion: {
     linearGradient: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     marker: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     mask: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    path: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     metadata: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
+    path: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     pattern: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     polygon: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     polyline: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     radialGradient: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     rect: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    svg: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     stop: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
+    svg: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     switch: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    tspan: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     text: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     textPath: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
+    tspan: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     use: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     view: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
     animate: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
@@ -264,6 +264,7 @@ export const motion: {
     audio: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").AudioHTMLAttributes<HTMLAudioElement>, HTMLAudioElement> & MotionProps & RefAttributes<HTMLAudioElement>>;
     b: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     base: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").BaseHTMLAttributes<HTMLBaseElement>, HTMLBaseElement> & MotionProps & RefAttributes<HTMLBaseElement>>;
+    bdi: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     bdo: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     blockquote: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").BlockquoteHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     body: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLBodyElement>, HTMLBodyElement> & MotionProps & RefAttributes<HTMLBodyElement>>;
@@ -312,6 +313,7 @@ export const motion: {
     label: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement> & MotionProps & RefAttributes<HTMLLabelElement>>;
     legend: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLLegendElement>, HTMLLegendElement> & MotionProps & RefAttributes<HTMLLegendElement>>;
     li: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> & MotionProps & RefAttributes<HTMLLIElement>>;
+    main: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     map: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").MapHTMLAttributes<HTMLMapElement>, HTMLMapElement> & MotionProps & RefAttributes<HTMLMapElement>>;
     mark: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     menu: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").MenuHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
@@ -328,6 +330,7 @@ export const motion: {
     picture: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     pre: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLPreElement>, HTMLPreElement> & MotionProps & RefAttributes<HTMLPreElement>>;
     q: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").QuoteHTMLAttributes<HTMLQuoteElement>, HTMLQuoteElement> & MotionProps & RefAttributes<HTMLQuoteElement>>;
+    rp: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     rt: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     ruby: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     s: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
@@ -339,6 +342,7 @@ export const motion: {
     span: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> & MotionProps & RefAttributes<HTMLSpanElement>>;
     strong: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     style: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement> & MotionProps & RefAttributes<HTMLStyleElement>>;
+    summary: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     table: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").TableHTMLAttributes<HTMLTableElement>, HTMLTableElement> & MotionProps & RefAttributes<HTMLTableElement>>;
     tbody: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement> & MotionProps & RefAttributes<HTMLTableSectionElement>>;
     td: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement> & MotionProps & RefAttributes<HTMLTableDataCellElement>>;
@@ -355,11 +359,7 @@ export const motion: {
     video: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement> & MotionProps & RefAttributes<HTMLVideoElement>>;
     wbr: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     menuitem: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
-    bdi: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     keygen: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").KeygenHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
-    main: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
-    rp: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
-    summary: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     webview: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement> & MotionProps & RefAttributes<HTMLWebViewElement>>;
     custom: (Component: ComponentType<any>) => ForwardRefExoticComponent<MotionProps & RefAttributes<Element>>;
 };
@@ -642,7 +642,7 @@ export function useCycle<T>(...items: T[]): CycleState<T>;
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function useExternalRef<E = Element>(external?: Ref<E | null>): RefObject<E | null>;
+export function useExternalRef<E = Element>(external?: Ref<E>): RefObject<E>;
 
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;

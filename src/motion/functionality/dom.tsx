@@ -1,12 +1,7 @@
 // TODO: Move this file to `src/dom/`
 import * as React from "react"
 import { MotionProps } from "../types"
-import {
-    createElement,
-    ComponentType,
-    CSSProperties,
-    ReactElement,
-} from "react"
+import { createElement, ComponentType, CSSProperties } from "react"
 import { buildStyleAttr } from "../utils/use-styles"
 import { svgElements } from "../utils/supported-elements"
 import { Gestures } from "./gestures"
@@ -84,7 +79,7 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
  *
  * @internal
  */
-export function createDomMotionConfig<P>(
+export function createDomMotionConfig<P = MotionProps>(
     Component: string | ComponentType<P>
 ): MotionComponentConfig {
     const isDOM = typeof Component === "string"
@@ -144,7 +139,7 @@ export function createDomMotionConfig<P>(
             style,
             isStatic
         ) => {
-            const activeComponents: ReactElement<P>[] = []
+            const activeComponents: JSX.Element[] = []
 
             // TODO: Refactor the following loading strategy into something more dynamic
             // This is also a good target for filesize reduction by making these present externally.

@@ -18,5 +18,10 @@ export function useAnimationGroupSubscription(
     const unsubscribe = useMemo(() => animation.subscribe(controls), [
         animation,
     ])
-    useEffect(() => () => unsubscribe && unsubscribe(), [unsubscribe])
+    useEffect(
+        () => () => {
+            unsubscribe && unsubscribe()
+        },
+        [unsubscribe]
+    )
 }

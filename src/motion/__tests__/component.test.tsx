@@ -80,7 +80,7 @@ describe("motion component rendering and styles", () => {
 
     it("accepts createref", async () => {
         const promise = new Promise<Element>(resolve => {
-            const ref = React.createRef<null | HTMLButtonElement>()
+            const ref = React.createRef<HTMLButtonElement>()
             const Component = () => {
                 React.useEffect(() => {
                     resolve(ref.current as Element)
