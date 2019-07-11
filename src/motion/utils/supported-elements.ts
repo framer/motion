@@ -1,13 +1,9 @@
-import { ReactHTML, ReactSVG } from "react"
-// These are identity functions that help TypeScript understand the type of the provided array
-const htmlTuple = <T extends keyof ReactHTML>(args: T[]) => args
-const svgTuple = <T extends keyof ReactSVG>(args: T[]) => args
-type UnionStringArray<T extends string[]> = T[number]
+type UnionStringArray<T extends Readonly<string[]>> = T[number]
 
 /**
  * @internal
  */
-export const htmlElements = htmlTuple([
+export const htmlElements = [
     "a",
     "abbr",
     "address",
@@ -122,13 +118,13 @@ export const htmlElements = htmlTuple([
     "video",
     "wbr",
     "webview",
-])
+] as const
 export type HTMLElements = UnionStringArray<typeof htmlElements>
 
 /**
  * @internal
  */
-export const svgElements: (keyof ReactSVG)[] = svgTuple([
+export const svgElements = [
     "animate",
     "circle",
     "clipPath",
@@ -184,5 +180,5 @@ export const svgElements: (keyof ReactSVG)[] = svgTuple([
     "tspan",
     "use",
     "view",
-])
+] as const
 export type SVGElements = UnionStringArray<typeof svgElements>
