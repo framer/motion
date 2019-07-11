@@ -79,8 +79,22 @@ function updateChildLookup(
     children: ReactElement<any>[],
     allChildren: Map<ComponentKey, ReactElement<any>>
 ) {
+    const seenChildren =
+        process.env.NODE_ENV !== "production" ? new Set<ComponentKey>() : null
+
     children.forEach(child => {
         const key = getChildKey(child)
+
+        if (process.env.NODE_ENV !== "production" && seenChildren) {
+            if (seenChildren.has(key)) {
+                console.warn(
+                    `Children of AnimatePresence require unique keys. "${key}" is a duplicate.`
+                )
+            }
+
+            seenChildren.add(key)
+        }
+
         allChildren.set(key, child)
     })
 }
