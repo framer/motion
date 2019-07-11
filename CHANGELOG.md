@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [unreleased]
+
+### Fixed
+
+-   Don't attempt to run useLayoutEffect when SSRing.
+
 ## [1.2.2] 2019-07-11
 
 ### Upgrade

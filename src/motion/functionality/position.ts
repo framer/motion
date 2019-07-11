@@ -93,7 +93,8 @@ function usePositionAnimation(
 }
 
 export const Position: FunctionalComponentDefinition = {
-    shouldRender: (props: MotionProps) => !!props.positionTransition,
+    shouldRender: (props: MotionProps) =>
+        typeof window !== "undefined" && !!props.positionTransition,
     component: makeHookComponent(
         ({
             innerRef,
@@ -101,12 +102,7 @@ export const Position: FunctionalComponentDefinition = {
             values,
             positionTransition,
         }: FunctionalProps) => {
-            return usePositionAnimation(
-                innerRef,
-                values,
-                controls,
-                positionTransition
-            )
+            usePositionAnimation(innerRef, values, controls, positionTransition)
         }
     ),
 }
