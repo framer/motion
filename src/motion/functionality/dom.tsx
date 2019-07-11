@@ -144,7 +144,7 @@ export function createDomMotionConfig<P>(
             style,
             isStatic
         ) => {
-            const activeComponents: ReactElement<P>[] = []
+            const activeComponents: ReactElement<any>[] = []
 
             // TODO: Refactor the following loading strategy into something more dynamic
             // This is also a good target for filesize reduction by making these present externally.

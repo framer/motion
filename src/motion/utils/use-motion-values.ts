@@ -152,7 +152,7 @@ export const useMotionValues = (props: MotionProps) => {
  */
 const MountMotionValuesComponent = (
     { values, isStatic }: { values: MotionValuesMap; isStatic: boolean },
-    ref: React.RefObject<Element>
+    ref: React.RefObject<Element | null>
 ) => {
     useEffect(() => {
         invariant(

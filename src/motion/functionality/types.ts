@@ -6,7 +6,7 @@ import { MotionValuesMap } from "../utils/use-motion-values"
 export interface FunctionalProps extends MotionProps {
     controls: ValueAnimationControls
     values: MotionValuesMap
-    innerRef: RefObject<Element | null>
+    innerRef: RefObject<Element>
 }
 
 export interface FunctionalComponentDefinition {
@@ -18,7 +18,7 @@ export type UseFunctionalityComponents<P = {}> = (
     props: P & MotionProps,
     values: MotionValuesMap,
     controls: ValueAnimationControls<P>,
-    ref: RefObject<Element | null>,
+    ref: RefObject<Element>,
     style: CSSProperties,
     isStatic?: boolean
 ) => ReactElement<P>[]

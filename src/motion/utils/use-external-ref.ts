@@ -5,9 +5,7 @@ import { useEffect, useRef, Ref, MutableRefObject, RefObject } from "react"
  * @param external - External ref
  * @internal
  */
-export function useExternalRef<E = Element>(
-    external?: Ref<E | null>
-): RefObject<E | null> {
+export function useExternalRef<E = Element>(external?: Ref<E>): RefObject<E> {
     // We're conditionally calling `useRef` here which is sort of naughty as hooks
     // shouldn't be called conditionally. However, Framer Motion will break if this
     // condition changes anyway. It might be possible to use an invariant here to
@@ -17,7 +15,7 @@ export function useExternalRef<E = Element>(
 
     useEffect(() => {
         if (external && typeof external === "function") {
-            external((ref as MutableRefObject<E | null>).current)
+            external((ref as MutableRefObject<E>).current)
 
             return () => external(null)
         }

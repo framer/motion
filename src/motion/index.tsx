@@ -23,7 +23,10 @@ export { createMotionComponent }
 
 export const htmlMotionComponents: HTMLMotionComponents = htmlElements.reduce(
     (acc, Component) => {
-        acc[Component] = createMotionComponent(createDomMotionConfig(Component))
+        const config = createDomMotionConfig(Component)
+        // Suppress "Expression produces a union type that is too complex to represent" error
+        // @ts-ignore
+        acc[Component] = createMotionComponent(config)
         return acc
     },
     {} as HTMLMotionComponents
