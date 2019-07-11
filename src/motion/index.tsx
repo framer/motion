@@ -100,7 +100,7 @@ export type HTMLMotionProps<
  */
 export type HTMLMotionComponents = {
     [K in HTMLElements]: ForwardRefComponent<
-        UnwrapFactoryElement<JSX.IntrinsicElements[K]>,
+        UnwrapFactoryElement<ReactHTML[K]>,
         HTMLMotionProps<K>
     >
 }
