@@ -84,7 +84,7 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
  *
  * @internal
  */
-export function createDomMotionConfig<P>(
+export function createDomMotionConfig<P = MotionProps>(
     Component: string | ComponentType<P>
 ): MotionComponentConfig {
     const isDOM = typeof Component === "string"
@@ -144,7 +144,7 @@ export function createDomMotionConfig<P>(
             style,
             isStatic
         ) => {
-            const activeComponents: ReactElement<any>[] = []
+            const activeComponents: JSX.Element[] = []
 
             // TODO: Refactor the following loading strategy into something more dynamic
             // This is also a good target for filesize reduction by making these present externally.
