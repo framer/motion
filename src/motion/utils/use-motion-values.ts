@@ -1,5 +1,4 @@
-import * as React from "react"
-import { forwardRef, useEffect, memo } from "react"
+import { forwardRef, useEffect, memo, RefObject } from "react"
 import { MotionValue } from "../../value"
 import styler, { createStylerFactory, Styler } from "stylefire"
 import { OnUpdate, MotionProps, TransformTemplate } from "../types"
@@ -152,7 +151,7 @@ export const useMotionValues = (props: MotionProps) => {
  */
 const MountMotionValuesComponent = (
     { values, isStatic }: { values: MotionValuesMap; isStatic: boolean },
-    ref: React.RefObject<Element | null>
+    ref: RefObject<Element>
 ) => {
     useEffect(() => {
         invariant(
