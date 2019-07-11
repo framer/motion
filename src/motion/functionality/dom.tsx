@@ -1,12 +1,7 @@
 // TODO: Move this file to `src/dom/`
 import * as React from "react"
 import { MotionProps } from "../types"
-import {
-    createElement,
-    ComponentType,
-    CSSProperties,
-    ReactElement,
-} from "react"
+import { createElement, ComponentType, CSSProperties } from "react"
 import { buildStyleAttr } from "../utils/use-styles"
 import { svgElements } from "../utils/supported-elements"
 import { Gestures } from "./gestures"
