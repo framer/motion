@@ -50,4 +50,16 @@ describe("SVG", () => {
         expect(r.get()).toBe(100)
         expect(fill.get()).toBe("rgba(255, 0, 0, 1)")
     })
+
+    test("motion svg elements should be able to set correct type of ref", () => {
+        const Component = () => {
+            const ref = React.useRef<SVGTextElement>(null)
+            return (
+                <svg>
+                    <motion.text ref={ref}>Framer Motion</motion.text>
+                </svg>
+            )
+        }
+        render(<Component />)
+    })
 })
