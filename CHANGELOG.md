@@ -2,11 +2,18 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [unreleased]
+## Unreleased
+
+### Added
+
+-   Exporting `_validMotionProps`.
+
+## [1.2.3] 2019-07-11
 
 ### Fixed
 
--   Don't attempt to run useLayoutEffect when SSRing.
+-   Don't load `positionTransition` functionality component server-side.
+-   In development mode, ensuring all child keys are unique.
 
 ## [1.2.2] 2019-07-11
 
