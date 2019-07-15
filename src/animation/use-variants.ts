@@ -4,7 +4,8 @@ import {
     resolveVariantLabels,
     asDependencyList,
 } from "./utils/variant-resolvers"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useContext } from "react"
+import { MotionContext } from "../motion"
 
 const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
     return oldVariant.join(",") !== newVariant.join(",")
@@ -13,34 +14,38 @@ const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
 /**
  * Handle variants and the `animate` prop when its set as variant labels.
  *
- * @param targetVariant
- * @param inherit
- * @param controls
- * @param initialVariant
+ * @param initial - Initial variant(s)
+ * @param animate - Variant(s) to animate to
+ * @param inherit - `true` is inheriting animations from parent
+ * @param controls - Animation controls
  *
  * @internal
  */
 export function useVariants(
-    targetVariant: VariantLabels,
+    initial: VariantLabels,
+    animate: VariantLabels,
     inherit: boolean,
-    controls: ValueAnimationControls,
-    initialVariant: VariantLabels
+    controls: ValueAnimationControls
 ) {
-    const variantList = resolveVariantLabels(targetVariant)
+    const targetVariants = resolveVariantLabels(animate)
+    const context = useContext(MotionContext)
+    // const parentAlreadyMounted =
+    //     context.hasMounted && context.hasMounted.current
     const hasMounted = useRef(false)
 
-    // Fire animations when poses change
+    console.log(inherit, animate, context.hasMounted)
     useEffect(() => {
-        // TODO: This logic might mean we don't need to load this hook at all
-        if (inherit) return
+        let shouldAnimate = false
 
-        if (
-            hasMounted.current ||
-            hasVariantChanged(resolveVariantLabels(initialVariant), variantList)
-        ) {
-            controls.start(variantList)
+        if (inherit) {
+        } else {
+            shouldAnimate =
+                hasMounted.current ||
+                hasVariantChanged(resolveVariantLabels(initial), targetVariants)
         }
 
+        shouldAnimate && controls.start(targetVariants)
+
         hasMounted.current = true
-    }, asDependencyList(variantList))
+    }, asDependencyList(targetVariants))
 }

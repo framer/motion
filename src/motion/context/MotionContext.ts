@@ -1,14 +1,17 @@
 import * as React from "react"
+import { useMemo, useRef, useEffect, RefObject } from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
 import { useMaxTimes } from "../../utils/use-max-times"
 import { AnimationControls } from "../../animation/AnimationControls"
-import { Target } from "types"
+import { Target } from "../../types"
 
 type MotionContextProps = {
     controls?: ValueAnimationControls
     initial?: false | VariantLabels
+    animate?: VariantLabels
     static?: boolean
+    hasMounted?: RefObject<boolean>
 }
 
 /**
@@ -47,11 +50,15 @@ export const useMotionContext = (
         initialState = initial
     }
 
+    // Track mounted status so children can detect whether they were present during their
+    // parent's first render
+    const hasMounted = useRef(false)
+
     // We propagate this component's ValueAnimationControls *if* we're being provided variants,
     // if we're being used to control variants, or if we're being passed animation controls.
     // Otherwise this component should be "invisible" to variant propagation. This is a slight concession
     // to Framer X where every `Frame` is a `motion` component and it might be if we change that in the future
-    // that this restruction is remvoed.
+    // that this restriction is removed.
     const shouldPropagateControls =
         variants ||
         isVariantLabel(animate) ||
@@ -63,6 +70,12 @@ export const useMotionContext = (
     const targetInitial = isVariantLabel(initialState)
         ? initialState
         : parentContext.initial
+
+    // If this is a variant tree we need to propagate the `animate` prop in case new children are added after
+    // the tree initially animates.
+    const targetAnimate = isVariantLabel(animate)
+        ? animate
+        : parentContext.animate
 
     // Only allow `initial` to trigger context re-renders if this is a `static` component (ie we're on the Framer canvas)
     // or in another non-animation/interaction environment.
@@ -77,12 +90,14 @@ export const useMotionContext = (
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
     // unlikely to change, by making the context an object it'll be considered a new value every render.
     // So all child motion components will re-render as a result.
-    const context: MotionContextProps = React.useMemo(
+    const context: MotionContextProps = useMemo(
         () => ({
             controls: shouldPropagateControls
                 ? controls
                 : parentContext.controls,
             initial: targetInitial,
+            animate: targetAnimate,
+            hasMounted,
         }),
         [initialDependency, animateDependency]
     )
@@ -99,6 +114,10 @@ export const useMotionContext = (
         },
         isStatic ? Infinity : 1
     )
+
+    useEffect(() => {
+        hasMounted.current = true
+    }, [])
 
     return context
 }

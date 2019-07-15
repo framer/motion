@@ -30,6 +30,9 @@ export function useValueAnimationControls<P>(
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     controls.resetChildren()
+    controls.setProps(props)
+    controls.setVariants(variants)
+    controls.setDefaultTransition(transition)
 
     if (inheritVariantChanges && parentControls) {
         parentControls.addChild(controls)
@@ -39,10 +42,6 @@ export function useValueAnimationControls<P>(
         () => () => parentControls && parentControls.removeChild(controls),
         []
     )
-
-    controls.setProps(props)
-    controls.setVariants(variants)
-    controls.setDefaultTransition(transition)
 
     return controls
 }

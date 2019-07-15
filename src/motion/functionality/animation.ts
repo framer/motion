@@ -40,10 +40,10 @@ export const AnimatePropComponents = {
             initial,
         }: AnimationFunctionalProps) => {
             return useVariants(
+                initial as VariantLabels,
                 animate as VariantLabels,
                 inherit,
-                controls,
-                initial as VariantLabels
+                controls
             )
         }
     ),
