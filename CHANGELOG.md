@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   Exporting `validMotionProps`.
+-   Exporting `_validMotionProps`.
 
 ## [1.2.3] 2019-07-11
 

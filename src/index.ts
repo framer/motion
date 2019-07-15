@@ -73,4 +73,4 @@ export {
     AnimatePresence,
     AnimatePresenceProps,
 } from "./components/AnimatePresence"
-export { validMotionProps } from "./motion/functionality/dom"
+export { _validMotionProps } from "./motion/functionality/dom"

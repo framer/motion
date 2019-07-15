@@ -313,4 +313,9 @@ describe("motion component rendering and styles", () => {
             "transform: translateY(20px) translateX(10px)"
         )
     })
+
+    it("filters MotionProps from the DOM", () => {
+        const { container } = render(<motion.div initial={{ opacity: 0 }} />)
+        expect(container.firstChild).not.toHaveAttribute("initial")
+    })
 })

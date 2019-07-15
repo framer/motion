@@ -687,10 +687,8 @@ export function useTransform<T>(parent: MotionValue<number>, from: number[], to:
 // @public
 export function useViewportScroll(): ScrollMotionValues;
 
-// Warning: (ae-internal-missing-underscore) The name "validMotionProps" should be prefixed with an underscore because the declaration is marked as @internal
-// 
 // @internal
-export const validMotionProps: Set<"custom" | "inherit" | "exit" | "style" | "drag" | "initial" | "static" | "animate" | "transition" | "onDrag" | "onDragEnd" | "onDragStart" | "transformValues" | "onAnimationComplete" | "onPan" | "onPanStart" | "onPanEnd" | "onPanSessionStart" | "whileHover" | "whileTap" | "onTap" | "onTapStart" | "onTapCancel" | "onHoverStart" | "onHoverEnd" | "dragConstraints" | "dragDirectionLock" | "dragPropagation" | "dragElastic" | "dragMomentum" | "dragOriginX" | "dragOriginY" | "dragTransition" | "onDirectionLock" | "onDragTransitionEnd" | "onUpdate" | "transformTemplate" | "variants" | "positionTransition">;
+export const _validMotionProps: Set<"custom" | "inherit" | "exit" | "style" | "drag" | "initial" | "static" | "animate" | "transition" | "onDrag" | "onDragEnd" | "onDragStart" | "transformValues" | "onAnimationComplete" | "onPan" | "onPanStart" | "onPanEnd" | "onPanSessionStart" | "whileHover" | "whileTap" | "onTap" | "onTapStart" | "onTapCancel" | "onHoverStart" | "onHoverEnd" | "dragConstraints" | "dragDirectionLock" | "dragPropagation" | "dragElastic" | "dragMomentum" | "dragOriginX" | "dragOriginY" | "dragTransition" | "onDirectionLock" | "onDragTransitionEnd" | "onUpdate" | "transformTemplate" | "variants" | "positionTransition">;
 
 // @public (undocumented)
 export type ValueTarget = SingleTarget | KeyframesTarget;

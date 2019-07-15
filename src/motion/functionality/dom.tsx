@@ -28,7 +28,7 @@ type RenderProps = FunctionalProps & {
  *
  * @internal
  */
-export const validMotionProps = new Set<keyof MotionProps>([
+export const _validMotionProps = new Set<keyof MotionProps>([
     "initial",
     "animate",
     "exit",
@@ -74,7 +74,7 @@ function stripMotionProps(props: MotionProps) {
     const domProps = {}
 
     for (const key in props) {
-        if (!validMotionProps.has(key as keyof MotionProps)) {
+        if (!_validMotionProps.has(key as keyof MotionProps)) {
             domProps[key] = props[key]
         }
     }
