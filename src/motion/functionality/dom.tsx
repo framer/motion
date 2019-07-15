@@ -20,51 +20,66 @@ type RenderProps = FunctionalProps & {
     isStatic: boolean | undefined
 }
 
-// TODO: Type this in a way that ensures no `MotionProps` are remaining.
-// Oddly, `Omit<MotionProps, keyof MotionProps>` or types to that extend
-// didn't throw and error when props were actually present.
-function stripMotionProps({
-    initial,
-    animate,
-    exit,
-    style,
-    variants,
-    transition,
-    transformTemplate,
-    custom,
-    inherit,
-    static: s,
-    positionTransition,
-    onAnimationComplete,
-    onUpdate,
-    onDragStart,
-    onDrag,
-    onDragEnd,
-    onDirectionLock,
-    onDragTransitionEnd,
-    drag,
-    dragConstraints,
-    dragDirectionLock,
-    dragElastic,
-    dragMomentum,
-    dragPropagation,
-    dragTransition,
-    dragOriginX,
-    dragOriginY,
-    onPan,
-    onPanStart,
-    onPanEnd,
-    onPanSessionStart,
-    onTap,
-    onTapStart,
-    onTapCancel,
-    whileHover,
-    whileTap,
-    onHoverEnd,
-    onHoverStart,
-    ...props
-}: MotionProps) {
-    return props
+/**
+ * A list of all valid MotionProps
+ *
+ * @internalremarks
+ * This doesn't throw if a `MotionProp` name is missing - it should.
+ *
+ * @internal
+ */
+export const validMotionProps = new Set<keyof MotionProps>([
+    "initial",
+    "animate",
+    "exit",
+    "style",
+    "variants",
+    "transition",
+    "transformTemplate",
+    "transformValues",
+    "custom",
+    "inherit",
+    "static",
+    "positionTransition",
+    "onAnimationComplete",
+    "onUpdate",
+    "onDragStart",
+    "onDrag",
+    "onDragEnd",
+    "onDirectionLock",
+    "onDragTransitionEnd",
+    "drag",
+    "dragConstraints",
+    "dragDirectionLock",
+    "dragElastic",
+    "dragMomentum",
+    "dragPropagation",
+    "dragTransition",
+    "dragOriginX",
+    "dragOriginY",
+    "onPan",
+    "onPanStart",
+    "onPanEnd",
+    "onPanSessionStart",
+    "onTap",
+    "onTapStart",
+    "onTapCancel",
+    "whileHover",
+    "whileTap",
+    "onHoverEnd",
+    "onHoverStart",
+])
+
+function stripMotionProps(props: MotionProps) {
+    const domProps = {}
+
+    for (const key in props) {
+        if (!validMotionProps.has(key as keyof MotionProps)) {
+            domProps[key] = props[key]
+        }
+    }
+
+    return domProps
 }
 
 const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
