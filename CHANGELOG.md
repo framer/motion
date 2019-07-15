@@ -2,11 +2,15 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.2.4] 2019-07-15
 
 ### Added
 
 -   Exporting `_validMotionProps`.
+
+### Fixed
+
+-   Improving types for `SVGTextElement` components.
 
 ## [1.2.3] 2019-07-11
 
