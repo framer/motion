@@ -107,6 +107,27 @@ export function createDomMotionConfig<P = MotionProps>(
         ) => {
             const activeComponents: JSX.Element[] = []
 
+            // const Animate = getAnimateComponent(props, context.static)
+
+            // const handleAnimate = Animate && (
+            //     <Animate
+            //         {...props}
+            //         inherit={shouldInheritVariant}
+            //         innerRef={ref}
+            //         values={values}
+            //         controls={controls}
+            //     />
+            // )
+
+            // const handleActiveFunctionality = useFunctionalityComponents(
+            //     props,
+            //     values,
+            //     controls,
+            //     ref,
+            //     style,
+            //     context.static
+            // )
+
             // TODO: Refactor the following loading strategy into something more dynamic
             // This is also a good target for filesize reduction by making these present externally.
             // It might be possible to code-split these out and useState to re-render children when the

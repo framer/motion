@@ -15,14 +15,14 @@ import { useConstant } from "../utils/use-constant"
  * @param values
  * @param props
  * @param ref
- * @param inheritVariantChanges
+ * @param subscribeToParentControls
  *
  * @internal
  */
 export function useValueAnimationControls<P>(
     config: ValueAnimationConfig,
     props: P & MotionProps,
-    inheritVariantChanges: boolean
+    subscribeToParentControls: boolean
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
@@ -34,7 +34,7 @@ export function useValueAnimationControls<P>(
     controls.setVariants(variants)
     controls.setDefaultTransition(transition)
 
-    if (inheritVariantChanges && parentControls) {
+    if (subscribeToParentControls && parentControls) {
         parentControls.addChild(controls)
     }
 
