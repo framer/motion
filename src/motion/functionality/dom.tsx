@@ -13,6 +13,7 @@ import { parseDomVariant } from "../../dom/parse-dom-variant"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { Position } from "./position"
+import { isValidMotionProp } from "../utils/valid-prop"
 
 type RenderProps = FunctionalProps & {
     componentProps: MotionProps
@@ -20,61 +21,11 @@ type RenderProps = FunctionalProps & {
     isStatic: boolean | undefined
 }
 
-/**
- * A list of all valid MotionProps
- *
- * @internalremarks
- * This doesn't throw if a `MotionProp` name is missing - it should.
- *
- * @internal
- */
-export const _validMotionProps = new Set<keyof MotionProps>([
-    "initial",
-    "animate",
-    "exit",
-    "style",
-    "variants",
-    "transition",
-    "transformTemplate",
-    "transformValues",
-    "custom",
-    "inherit",
-    "static",
-    "positionTransition",
-    "onAnimationComplete",
-    "onUpdate",
-    "onDragStart",
-    "onDrag",
-    "onDragEnd",
-    "onDirectionLock",
-    "onDragTransitionEnd",
-    "drag",
-    "dragConstraints",
-    "dragDirectionLock",
-    "dragElastic",
-    "dragMomentum",
-    "dragPropagation",
-    "dragTransition",
-    "dragOriginX",
-    "dragOriginY",
-    "onPan",
-    "onPanStart",
-    "onPanEnd",
-    "onPanSessionStart",
-    "onTap",
-    "onTapStart",
-    "onTapCancel",
-    "whileHover",
-    "whileTap",
-    "onHoverEnd",
-    "onHoverStart",
-])
-
 function stripMotionProps(props: MotionProps) {
     const domProps = {}
 
     for (const key in props) {
-        if (!_validMotionProps.has(key as keyof MotionProps)) {
+        if (!isValidMotionProp(key)) {
             domProps[key] = props[key]
         }
     }
