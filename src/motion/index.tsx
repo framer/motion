@@ -34,6 +34,8 @@ export const htmlMotionComponents: HTMLMotionComponents = htmlElements.reduce(
 
 export const svgMotionComponents: SVGMotionComponents = svgElements.reduce(
     (acc, Component) => {
+        // Suppress "Expression produces a union type that is too complex to represent" error
+        // @ts-ignore
         acc[Component] = createMotionComponent(createDomMotionConfig(Component))
         return acc
     },
@@ -73,6 +75,7 @@ type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
 type UnwrapFactoryElement<F> = F extends DetailedHTMLFactory<any, infer P>
     ? P
     : never
+type UnwrapSVGFactoryElement<F> = F extends React.SVGProps<infer P> ? P : never
 
 type HTMLAttributesWithoutMotionProps<
     Attributes extends HTMLAttributes<Element>,
@@ -102,25 +105,25 @@ export type HTMLMotionComponents = {
     >
 }
 
-interface SVGAttributesWithoutMotionProps
+interface SVGAttributesWithoutMotionProps<T>
     extends Pick<
-        SVGAttributes<SVGElement>,
-        Exclude<keyof SVGAttributes<SVGElement>, keyof MotionProps>
+        SVGAttributes<T>,
+        Exclude<keyof SVGAttributes<T>, keyof MotionProps>
     > {}
 
 /**
  * Blanket-accept any SVG attribute as a `MotionValue`
  * @public
  */
-export type SVGAttributesAsMotionValues = MakeMotion<
-    SVGAttributesWithoutMotionProps
+export type SVGAttributesAsMotionValues<T> = MakeMotion<
+    SVGAttributesWithoutMotionProps<T>
 >
 
 /**
  * @public
  */
-export interface SVGMotionProps
-    extends SVGAttributesAsMotionValues,
+export interface SVGMotionProps<T>
+    extends SVGAttributesAsMotionValues<T>,
         Omit<MotionProps, "positionTransition"> {}
 
 type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
@@ -133,5 +136,8 @@ type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
  * @public
  */
 export type SVGMotionComponents = {
-    [K in SVGElements]: ForwardRefComponent<SVGElement, SVGMotionProps>
+    [K in SVGElements]: ForwardRefComponent<
+        UnwrapSVGFactoryElement<JSX.IntrinsicElements[K]>,
+        SVGMotionProps<UnwrapSVGFactoryElement<JSX.IntrinsicElements[K]>>
+    >
 }

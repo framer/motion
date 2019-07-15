@@ -192,61 +192,61 @@ export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueTyp
 
 // @public
 export const motion: {
-    symbol: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    circle: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    clipPath: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    defs: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    desc: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    ellipse: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feBlend: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feColorMatrix: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feComponentTransfer: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feComposite: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feConvolveMatrix: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feDiffuseLighting: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feDisplacementMap: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feDistantLight: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feFlood: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feFuncA: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feFuncB: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feFuncG: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feFuncR: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feGaussianBlur: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feImage: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feMerge: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feMergeNode: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feMorphology: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feOffset: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    fePointLight: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feSpecularLighting: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feSpotLight: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feTile: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feTurbulence: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    filter: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    foreignObject: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    g: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    image: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    line: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    linearGradient: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    marker: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    mask: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    metadata: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    path: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    pattern: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    polygon: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    polyline: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    radialGradient: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    rect: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    stop: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    svg: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    switch: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    text: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    textPath: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    tspan: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    use: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    view: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    animate: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
-    feDropShadow: ForwardRefExoticComponent<SVGMotionProps & RefAttributes<SVGElement>>;
+    symbol: ForwardRefExoticComponent<SVGMotionProps<SVGSymbolElement> & RefAttributes<SVGSymbolElement>>;
+    circle: ForwardRefExoticComponent<SVGMotionProps<SVGCircleElement> & RefAttributes<SVGCircleElement>>;
+    clipPath: ForwardRefExoticComponent<SVGMotionProps<SVGClipPathElement> & RefAttributes<SVGClipPathElement>>;
+    defs: ForwardRefExoticComponent<SVGMotionProps<SVGDefsElement> & RefAttributes<SVGDefsElement>>;
+    desc: ForwardRefExoticComponent<SVGMotionProps<SVGDescElement> & RefAttributes<SVGDescElement>>;
+    ellipse: ForwardRefExoticComponent<SVGMotionProps<SVGEllipseElement> & RefAttributes<SVGEllipseElement>>;
+    feBlend: ForwardRefExoticComponent<SVGMotionProps<SVGFEBlendElement> & RefAttributes<SVGFEBlendElement>>;
+    feColorMatrix: ForwardRefExoticComponent<SVGMotionProps<SVGFEColorMatrixElement> & RefAttributes<SVGFEColorMatrixElement>>;
+    feComponentTransfer: ForwardRefExoticComponent<SVGMotionProps<SVGFEComponentTransferElement> & RefAttributes<SVGFEComponentTransferElement>>;
+    feComposite: ForwardRefExoticComponent<SVGMotionProps<SVGFECompositeElement> & RefAttributes<SVGFECompositeElement>>;
+    feConvolveMatrix: ForwardRefExoticComponent<SVGMotionProps<SVGFEConvolveMatrixElement> & RefAttributes<SVGFEConvolveMatrixElement>>;
+    feDiffuseLighting: ForwardRefExoticComponent<SVGMotionProps<SVGFEDiffuseLightingElement> & RefAttributes<SVGFEDiffuseLightingElement>>;
+    feDisplacementMap: ForwardRefExoticComponent<SVGMotionProps<SVGFEDisplacementMapElement> & RefAttributes<SVGFEDisplacementMapElement>>;
+    feDistantLight: ForwardRefExoticComponent<SVGMotionProps<SVGFEDistantLightElement> & RefAttributes<SVGFEDistantLightElement>>;
+    feFlood: ForwardRefExoticComponent<SVGMotionProps<SVGFEFloodElement> & RefAttributes<SVGFEFloodElement>>;
+    feFuncA: ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncAElement> & RefAttributes<SVGFEFuncAElement>>;
+    feFuncB: ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncBElement> & RefAttributes<SVGFEFuncBElement>>;
+    feFuncG: ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncGElement> & RefAttributes<SVGFEFuncGElement>>;
+    feFuncR: ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncRElement> & RefAttributes<SVGFEFuncRElement>>;
+    feGaussianBlur: ForwardRefExoticComponent<SVGMotionProps<SVGFEGaussianBlurElement> & RefAttributes<SVGFEGaussianBlurElement>>;
+    feImage: ForwardRefExoticComponent<SVGMotionProps<SVGFEImageElement> & RefAttributes<SVGFEImageElement>>;
+    feMerge: ForwardRefExoticComponent<SVGMotionProps<SVGFEMergeElement> & RefAttributes<SVGFEMergeElement>>;
+    feMergeNode: ForwardRefExoticComponent<SVGMotionProps<SVGFEMergeNodeElement> & RefAttributes<SVGFEMergeNodeElement>>;
+    feMorphology: ForwardRefExoticComponent<SVGMotionProps<SVGFEMorphologyElement> & RefAttributes<SVGFEMorphologyElement>>;
+    feOffset: ForwardRefExoticComponent<SVGMotionProps<SVGFEOffsetElement> & RefAttributes<SVGFEOffsetElement>>;
+    fePointLight: ForwardRefExoticComponent<SVGMotionProps<SVGFEPointLightElement> & RefAttributes<SVGFEPointLightElement>>;
+    feSpecularLighting: ForwardRefExoticComponent<SVGMotionProps<SVGFESpecularLightingElement> & RefAttributes<SVGFESpecularLightingElement>>;
+    feSpotLight: ForwardRefExoticComponent<SVGMotionProps<SVGFESpotLightElement> & RefAttributes<SVGFESpotLightElement>>;
+    feTile: ForwardRefExoticComponent<SVGMotionProps<SVGFETileElement> & RefAttributes<SVGFETileElement>>;
+    feTurbulence: ForwardRefExoticComponent<SVGMotionProps<SVGFETurbulenceElement> & RefAttributes<SVGFETurbulenceElement>>;
+    filter: ForwardRefExoticComponent<SVGMotionProps<SVGFilterElement> & RefAttributes<SVGFilterElement>>;
+    foreignObject: ForwardRefExoticComponent<SVGMotionProps<SVGForeignObjectElement> & RefAttributes<SVGForeignObjectElement>>;
+    g: ForwardRefExoticComponent<SVGMotionProps<SVGGElement> & RefAttributes<SVGGElement>>;
+    image: ForwardRefExoticComponent<SVGMotionProps<SVGImageElement> & RefAttributes<SVGImageElement>>;
+    line: ForwardRefExoticComponent<SVGMotionProps<SVGLineElement> & RefAttributes<SVGLineElement>>;
+    linearGradient: ForwardRefExoticComponent<SVGMotionProps<SVGLinearGradientElement> & RefAttributes<SVGLinearGradientElement>>;
+    marker: ForwardRefExoticComponent<SVGMotionProps<SVGMarkerElement> & RefAttributes<SVGMarkerElement>>;
+    mask: ForwardRefExoticComponent<SVGMotionProps<SVGMaskElement> & RefAttributes<SVGMaskElement>>;
+    metadata: ForwardRefExoticComponent<SVGMotionProps<SVGMetadataElement> & RefAttributes<SVGMetadataElement>>;
+    path: ForwardRefExoticComponent<SVGMotionProps<SVGPathElement> & RefAttributes<SVGPathElement>>;
+    pattern: ForwardRefExoticComponent<SVGMotionProps<SVGPatternElement> & RefAttributes<SVGPatternElement>>;
+    polygon: ForwardRefExoticComponent<SVGMotionProps<SVGPolygonElement> & RefAttributes<SVGPolygonElement>>;
+    polyline: ForwardRefExoticComponent<SVGMotionProps<SVGPolylineElement> & RefAttributes<SVGPolylineElement>>;
+    radialGradient: ForwardRefExoticComponent<SVGMotionProps<SVGRadialGradientElement> & RefAttributes<SVGRadialGradientElement>>;
+    rect: ForwardRefExoticComponent<SVGMotionProps<SVGRectElement> & RefAttributes<SVGRectElement>>;
+    stop: ForwardRefExoticComponent<SVGMotionProps<SVGStopElement> & RefAttributes<SVGStopElement>>;
+    svg: ForwardRefExoticComponent<SVGMotionProps<SVGSVGElement> & RefAttributes<SVGSVGElement>>;
+    switch: ForwardRefExoticComponent<SVGMotionProps<SVGSwitchElement> & RefAttributes<SVGSwitchElement>>;
+    text: ForwardRefExoticComponent<SVGMotionProps<SVGTextElement> & RefAttributes<SVGTextElement>>;
+    textPath: ForwardRefExoticComponent<SVGMotionProps<SVGTextPathElement> & RefAttributes<SVGTextPathElement>>;
+    tspan: ForwardRefExoticComponent<SVGMotionProps<SVGTSpanElement> & RefAttributes<SVGTSpanElement>>;
+    use: ForwardRefExoticComponent<SVGMotionProps<SVGUseElement> & RefAttributes<SVGUseElement>>;
+    view: ForwardRefExoticComponent<SVGMotionProps<SVGViewElement> & RefAttributes<SVGViewElement>>;
+    animate: ForwardRefExoticComponent<SVGMotionProps<SVGElement> & RefAttributes<SVGElement>>;
+    feDropShadow: ForwardRefExoticComponent<SVGMotionProps<SVGFEDropShadowElement> & RefAttributes<SVGFEDropShadowElement>>;
     object: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").ObjectHTMLAttributes<HTMLObjectElement>, HTMLObjectElement> & MotionProps & RefAttributes<HTMLObjectElement>>;
     big: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     link: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").LinkHTMLAttributes<HTMLLinkElement>, HTMLLinkElement> & MotionProps & RefAttributes<HTMLLinkElement>>;
@@ -558,12 +558,12 @@ export type Subscriber<T> = (v: T) => void;
 // Warning: (ae-forgotten-export) The symbol "SVGAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export type SVGAttributesAsMotionValues = MakeMotion<SVGAttributesWithoutMotionProps>;
+export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMotionProps<T>>;
 
 // Warning: (ae-forgotten-export) The symbol "Omit" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export interface SVGMotionProps extends SVGAttributesAsMotionValues, Omit<MotionProps, "positionTransition"> {
+export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Omit<MotionProps, "positionTransition"> {
 }
 
 // @public (undocumented)
