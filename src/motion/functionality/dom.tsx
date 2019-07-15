@@ -13,7 +13,7 @@ import { parseDomVariant } from "../../dom/parse-dom-variant"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { Position } from "./position"
-import { isValidMotionProp } from "../utils/valid-props"
+import { isValidMotionProp } from "../utils/valid-prop"
 
 type RenderProps = FunctionalProps & {
     componentProps: MotionProps
