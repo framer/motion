@@ -86,8 +86,6 @@ export function createDomMotionConfig<P = MotionProps>(
          *  2) User-defined "clean props" function that removes their plugin's props before being passed to the DOM.
          */
         loadFunctionalityComponents: (
-            ref,
-            style,
             values,
             props,
             controls,
@@ -111,18 +109,6 @@ export function createDomMotionConfig<P = MotionProps>(
                     />
                 )
             }
-
-            // const Animate = getAnimateComponent(props, context.static)
-
-            // const handleAnimate = Animate && (
-            //     <Animate
-            //         {...props}
-            //         inherit={shouldInheritVariant}
-            //         innerRef={ref}
-            //         values={values}
-            //         controls={controls}
-            //     />
-            // )
 
             // const handleActiveFunctionality = useFunctionalityComponents(
             //     props,
@@ -173,18 +159,6 @@ export function createDomMotionConfig<P = MotionProps>(
             //         />
             //     )
             // }
-
-            // activeComponents.push(
-            //     <RenderComponent
-            //         componentProps={props}
-            //         values={values}
-            //         controls={controls}
-            //         innerRef={ref}
-            //         style={style}
-            //         isStatic={isStatic}
-            //         key="renderComponent"
-            //     />
-            // )
 
             return activeComponents
         },
