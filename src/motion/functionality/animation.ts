@@ -1,4 +1,4 @@
-import { ComponentType, RefObject } from "react"
+import { ComponentType } from "react"
 import { MotionProps, AnimatePropType, VariantLabels } from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { useAnimateProp } from "../../animation/use-animate-prop"
@@ -9,10 +9,13 @@ import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { TargetAndTransition } from "../../types"
 
-interface AnimationFunctionalProps extends MotionProps {
+interface AnimationFunctionalProps {
+    initial: MotionProps["initial"]
+    animate: MotionProps["animate"]
+    transition: MotionProps["transition"]
+    variants: MotionProps["variants"]
     controls: ValueAnimationControls
     values: MotionValuesMap
-    innerRef: RefObject<Element | null>
     inherit: boolean
 }
 
@@ -82,7 +85,7 @@ const animatePropTypeTests = {
     [AnimatePropType.AnimationSubscription]: isAnimationSubscription,
 }
 
-export const getAnimateComponent = (
+export const getAnimationComponent = (
     props: MotionProps,
     isStatic: boolean = false
 ): ComponentType<AnimationFunctionalProps> | undefined => {

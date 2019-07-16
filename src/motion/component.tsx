@@ -11,8 +11,8 @@ import { useValueAnimationControls } from "../animation/use-value-animation-cont
 import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
 import {
-    UseFunctionalityComponents,
-    UseRenderComponent,
+    LoadFunctionalityComponents,
+    RenderComponent,
 } from "./functionality/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
@@ -20,8 +20,8 @@ import { useConstant } from "../utils/use-constant"
 export { MotionProps }
 
 export interface MotionComponentConfig {
-    useFunctionalityComponents: UseFunctionalityComponents
-    useRenderComponent: UseRenderComponent
+    loadFunctionalityComponents: LoadFunctionalityComponents
+    renderComponent: RenderComponent
     getValueControlsConfig: (
         ref: RefObject<any>,
         values: MotionValuesMap
@@ -33,8 +33,8 @@ export interface MotionComponentConfig {
  */
 export const createMotionComponent = <P extends {}>({
     getValueControlsConfig,
-    useFunctionalityComponents,
-    useRenderComponent,
+    loadFunctionalityComponents,
+    renderComponent,
 }: MotionComponentConfig) => {
     function MotionComponent(
         props: P & MotionProps,
@@ -67,16 +67,15 @@ export const createMotionComponent = <P extends {}>({
             props
         )
 
-        const functionality = useFunctionalityComponents(
-            ref,
-            style,
+        const functionality = loadFunctionalityComponents(
             values,
             props,
             controls,
+            shouldInheritVariant,
             isStatic
         )
 
-        const renderComponent = useRenderComponent(
+        const renderedComponent = renderComponent(
             ref,
             style,
             values,
@@ -93,7 +92,7 @@ export const createMotionComponent = <P extends {}>({
                 />
                 {functionality}
                 <MotionContext.Provider value={context}>
-                    {renderComponent}
+                    {renderedComponent}
                 </MotionContext.Provider>
             </>
         )

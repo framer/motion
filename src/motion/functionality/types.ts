@@ -14,16 +14,15 @@ export interface FunctionalComponentDefinition {
     component: ComponentType<FunctionalProps>
 }
 
-export type UseFunctionalityComponents<P = {}> = (
-    ref: RefObject<Element>,
-    style: CSSProperties,
+export type LoadFunctionalityComponents<P = {}> = (
     values: MotionValuesMap,
     props: P & MotionProps,
     controls: ValueAnimationControls<P>,
+    inherit: boolean,
     isStatic?: boolean
 ) => ReactElement<FunctionalProps>[]
 
-export type UseRenderComponent<P = {}> = (
+export type RenderComponent<P = {}> = (
     ref: RefObject<Element>,
     style: CSSProperties,
     values: MotionValuesMap,

@@ -14,6 +14,7 @@ import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { Position } from "./position"
 import { isValidMotionProp } from "../utils/valid-prop"
+import { getAnimationComponent } from "./animation"
 
 type RenderProps = FunctionalProps & {
     componentProps: MotionProps
@@ -51,33 +52,20 @@ export function createDomMotionConfig<P = MotionProps>(
     const isDOM = typeof Component === "string"
     const isSVG = isDOM && svgElements.indexOf(Component as any) !== -1
 
-    /**
-     * Create a component that renders the DOM element. This step of indirection
-     * could probably be removed at this point, and `createElement` could be moved
-     * to the `activeComponents.push`.
-     */
-    const RenderComponent = ({
-        innerRef,
-        style,
-        values,
-        isStatic,
-        componentProps,
-    }: RenderProps) => {
-        const forwardProps = isDOM
-            ? stripMotionProps(componentProps)
-            : componentProps
-        const staticVisualStyles = isSVG
-            ? buildSVGProps(values, style)
-            : { style: buildStyleAttr(values, style, isStatic) }
-
-        return createElement<any>(Component, {
-            ...forwardProps,
-            ref: innerRef,
-            ...staticVisualStyles,
-        })
-    }
-
     return {
+        renderComponent: (ref, style, values, props, isStatic) => {
+            const forwardProps = isDOM ? stripMotionProps(props) : props
+            const staticVisualStyles = isSVG
+                ? buildSVGProps(values, style)
+                : { style: buildStyleAttr(values, style, isStatic) }
+
+            return createElement<any>(Component, {
+                ...forwardProps,
+                ref,
+                ...staticVisualStyles,
+            })
+        },
+
         /**
          * The useFunctionalityComponents hook gets used by the `motion` component
          *
@@ -97,15 +85,32 @@ export function createDomMotionConfig<P = MotionProps>(
          *  1) User-defined prop typing (extending `P`)
          *  2) User-defined "clean props" function that removes their plugin's props before being passed to the DOM.
          */
-        useFunctionalityComponents: (
-            props,
-            values,
-            controls,
+        loadFunctionalityComponents: (
             ref,
             style,
+            values,
+            props,
+            controls,
+            inherit,
             isStatic
         ) => {
             const activeComponents: JSX.Element[] = []
+
+            const Animation = getAnimationComponent(props, isStatic)
+
+            if (Animation) {
+                activeComponents.push(
+                    <Animation
+                        initial={props.initial}
+                        animate={props.animate}
+                        variants={props.variants}
+                        transition={props.transition}
+                        controls={controls}
+                        inherit={inherit}
+                        values={values}
+                    />
+                )
+            }
 
             // const Animate = getAnimateComponent(props, context.static)
 
@@ -133,53 +138,53 @@ export function createDomMotionConfig<P = MotionProps>(
             // It might be possible to code-split these out and useState to re-render children when the
             // functionality within becomes available, or Suspense.
 
-            if (!isStatic && Position.shouldRender(props)) {
-                activeComponents.push(
-                    <Position.component
-                        {...props}
-                        values={values}
-                        controls={controls}
-                        innerRef={ref}
-                        key="position"
-                    />
-                )
-            }
+            // if (!isStatic && Position.shouldRender(props)) {
+            //     activeComponents.push(
+            //         <Position.component
+            //             {...props}
+            //             values={values}
+            //             controls={controls}
+            //             innerRef={ref}
+            //             key="position"
+            //         />
+            //     )
+            // }
 
-            if (!isStatic && Drag.shouldRender(props)) {
-                activeComponents.push(
-                    <Drag.component
-                        {...props}
-                        values={values}
-                        controls={controls}
-                        innerRef={ref}
-                        key="drag"
-                    />
-                )
-            }
+            // if (!isStatic && Drag.shouldRender(props)) {
+            //     activeComponents.push(
+            //         <Drag.component
+            //             {...props}
+            //             values={values}
+            //             controls={controls}
+            //             innerRef={ref}
+            //             key="drag"
+            //         />
+            //     )
+            // }
 
-            if (!isStatic && Gestures.shouldRender(props)) {
-                activeComponents.push(
-                    <Gestures.component
-                        {...props}
-                        values={values}
-                        controls={controls}
-                        innerRef={ref}
-                        key="gestures"
-                    />
-                )
-            }
+            // if (!isStatic && Gestures.shouldRender(props)) {
+            //     activeComponents.push(
+            //         <Gestures.component
+            //             {...props}
+            //             values={values}
+            //             controls={controls}
+            //             innerRef={ref}
+            //             key="gestures"
+            //         />
+            //     )
+            // }
 
-            activeComponents.push(
-                <RenderComponent
-                    componentProps={props}
-                    values={values}
-                    controls={controls}
-                    innerRef={ref}
-                    style={style}
-                    isStatic={isStatic}
-                    key="renderComponent"
-                />
-            )
+            // activeComponents.push(
+            //     <RenderComponent
+            //         componentProps={props}
+            //         values={values}
+            //         controls={controls}
+            //         innerRef={ref}
+            //         style={style}
+            //         isStatic={isStatic}
+            //         key="renderComponent"
+            //     />
+            // )
 
             return activeComponents
         },
