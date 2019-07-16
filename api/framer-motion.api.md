@@ -70,7 +70,7 @@ export interface AnimationProps {
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const createMotionComponent: <P extends {}>({ useFunctionalityComponents, getValueControlsConfig, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
+export const createMotionComponent: <P extends {}>({ getValueControlsConfig, loadFunctionalityComponents, renderComponent, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
 
 // @public (undocumented)
 export interface CustomValueType {

@@ -86,8 +86,7 @@ const animatePropTypeTests = {
 }
 
 export const getAnimationComponent = (
-    props: MotionProps,
-    isStatic: boolean = false
+    props: MotionProps
 ): ComponentType<AnimationFunctionalProps> | undefined => {
     let animatePropType: AnimatePropType | undefined = undefined
 
@@ -97,7 +96,5 @@ export const getAnimationComponent = (
         }
     }
 
-    return !isStatic && animatePropType
-        ? AnimatePropComponents[animatePropType]
-        : undefined
+    return animatePropType ? AnimatePropComponents[animatePropType] : undefined
 }

@@ -67,13 +67,15 @@ export const createMotionComponent = <P extends {}>({
             props
         )
 
-        const functionality = loadFunctionalityComponents(
-            values,
-            props,
-            controls,
-            shouldInheritVariant,
-            isStatic
-        )
+        const functionality = isStatic
+            ? null
+            : loadFunctionalityComponents(
+                  ref,
+                  values,
+                  props,
+                  controls,
+                  shouldInheritVariant
+              )
 
         const renderedComponent = renderComponent(
             ref,

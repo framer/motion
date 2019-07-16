@@ -10,16 +10,17 @@ export interface FunctionalProps extends MotionProps {
 }
 
 export interface FunctionalComponentDefinition {
+    key: string
     shouldRender: (props: MotionProps) => boolean
-    component: ComponentType<FunctionalProps>
+    Component: ComponentType<FunctionalProps>
 }
 
 export type LoadFunctionalityComponents<P = {}> = (
+    ref: RefObject<Element>,
     values: MotionValuesMap,
     props: P & MotionProps,
     controls: ValueAnimationControls<P>,
-    inherit: boolean,
-    isStatic?: boolean
+    inherit: boolean
 ) => ReactElement<FunctionalProps>[]
 
 export type RenderComponent<P = {}> = (

@@ -27,17 +27,21 @@ export function useVariants(
     inherit: boolean,
     controls: ValueAnimationControls
 ) {
-    const targetVariants = resolveVariantLabels(animate)
+    let targetVariants = resolveVariantLabels(animate)
     const context = useContext(MotionContext)
-    // const parentAlreadyMounted =
-    //     context.hasMounted && context.hasMounted.current
+    const parentAlreadyMounted =
+        context.hasMounted && context.hasMounted.current
     const hasMounted = useRef(false)
 
-    console.log(inherit, animate, context.hasMounted)
     useEffect(() => {
         let shouldAnimate = false
 
         if (inherit) {
+            // If we're inheriting variant changes and the parent has already
+            // mounted when this component loads, we need to manually trigger
+            // this animation.
+            shouldAnimate = !!parentAlreadyMounted
+            targetVariants = resolveVariantLabels(context.animate)
         } else {
             shouldAnimate =
                 hasMounted.current ||
