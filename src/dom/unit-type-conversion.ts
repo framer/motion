@@ -93,8 +93,21 @@ const convertChangedValueTypes = (
     const elementStyler = styler(element)
     const originBbox = element.getBoundingClientRect()
     const elementComputedStyle = getComputedStyle(element)
-    const { top, left, bottom, right, transform } = elementComputedStyle
+    const {
+        display,
+        top,
+        left,
+        bottom,
+        right,
+        transform,
+    } = elementComputedStyle
     const originComputedStyle = { top, left, bottom, right, transform }
+
+    // If the element is currently set to display: "none", make it visible before
+    // measuring the target bounding box
+    if (display === "none") {
+        elementStyler.set("display", target.display || "block")
+    }
 
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)
     elementStyler.render()
