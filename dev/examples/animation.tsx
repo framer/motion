@@ -10,22 +10,19 @@ const style = {
 }
 
 export const App = () => {
-    const animation = useAnimation()
+    const controls = useAnimation()
     const variants = {
         visible: { opacity: 1 },
-        right: { x: 100 },
+        hidden: { opacity: 0 },
     }
 
-    animation.start("visible")
+    React.useEffect(() => {
+        controls.start("visible")
+    })
 
     return (
-        <motion.div
-            animate={animation}
-            initial={{ rotate: 0, opacity: 0 }}
-            variants={variants}
-            transition={{ duration: 5 }}
-            style={style}
-            onMouseEnter={() => console.log("test")}
-        />
+        <motion.div animate={controls} initial="hidden">
+            <motion.div variants={variants} style={style} />
+        </motion.div>
     )
 }

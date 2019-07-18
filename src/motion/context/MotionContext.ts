@@ -47,14 +47,17 @@ export const useMotionContext = (
         initialState = initial
     }
 
-    // We pass on this component's ValueAnimationControls *if* we're being provided variants,
-    // or if we're being used to control variants. Otherwise this component should be "invisible" to
-    // variant propagation.
+    // We propagate this component's ValueAnimationControls *if* we're being provided variants,
+    // if we're being used to control variants, or if we're being passed animation controls.
+    // Otherwise this component should be "invisible" to variant propagation. This is a slight concession
+    // to Framer X where every `Frame` is a `motion` component and it might be if we change that in the future
+    // that this restruction is remvoed.
     const shouldPropagateControls =
         variants ||
         isVariantLabel(animate) ||
         isVariantLabel(whileTap) ||
-        isVariantLabel(whileHover)
+        isVariantLabel(whileHover) ||
+        isAnimationControls(animate)
 
     // If this component's `initial` prop is a variant label, propagate it. Otherwise pass the parent's.
     const targetInitial = isVariantLabel(initialState)
