@@ -86,7 +86,7 @@
         "hey-listen": "^1.0.8",
         "popmotion": "^9.0.0-beta-7",
         "style-value-types": "^3.1.5",
-        "stylefire": "^6.0.5",
+        "stylefire": "^6.0.6",
         "tslib": "^1.10.0"
     },
     "husky": {
