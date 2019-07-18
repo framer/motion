@@ -7,6 +7,8 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Value type conversion for currently-hidden elements.
+-   Fixing unit type conversions when non-positional transforms are applied.
+-   Fixing variant propagation via `useAnimation()` when the parent component has no `variants` prop set.
 
 ## [1.2.4] 2019-07-15
 
