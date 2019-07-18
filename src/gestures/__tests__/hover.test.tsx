@@ -142,7 +142,7 @@ describe("hover", () => {
             }, 10)
         })
 
-        return expect(promise).resolves.toBe(0.5)
+        return expect(promise).resolves.toBe(1)
     })
 
     test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
