@@ -179,6 +179,40 @@ describe("useAnimation", () => {
         ])
     })
 
+    test("propagates variants to children even if not variants set on controlling component", async () => {
+        const promise = new Promise(resolve => {
+            const Component = () => {
+                const controls = useAnimation()
+
+                const childVariants = {
+                    foo: { backgroundColor: "#fff" },
+                }
+
+                const backgroundColor = useMotionValue("#000")
+
+                useEffect(() => {
+                    controls
+                        .start("foo")
+                        .then(() => resolve(backgroundColor.get()))
+                }, [])
+
+                return (
+                    <motion.div animate={controls}>
+                        <motion.div
+                            variants={childVariants}
+                            style={{ backgroundColor }}
+                        />
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return await expect(promise).resolves.toEqual("rgba(255, 255, 255, 1)")
+    })
+
     test("animates on mount", () => {
         const x = motionValue(0)
         const Component = () => {
