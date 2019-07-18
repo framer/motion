@@ -255,28 +255,43 @@ export interface AnimationProps {
     transition?: Transition
 
     /**
-     * If `positionTransition` is defined, the component will automatically animate any changes to its layout
-     * relative to its nearest positioned parent.
-     *
-     * If set to `true`, the animation will use the default x/y transitions.
-     *
-     * It can also be set as a function that will resolve when the component has changed layout. This function
-     * should return either a transition definition or `true`. For advanced use-cases where you want the component
-     * to visually stay in its previous position, this function can also return `false`.
-     *
      * @library
      *
-     * ```jsx
-     * const spring = {
-     *   type: "spring",
-     *   damping: 10,
-     *   stiffness: 100
-     * }
+     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
+     * difficult for to know when the layout changes and smoothly animate components to their new positions.
      *
-     * <Frame positionTransition={spring} />
+     * By adding `positionTransition` to a child `Frame`, it'll automatically animate to its new position
+     * when it moves in the `Stack`, whether the `Stack` layout has changed, or the `Frame` has changed order within it.
+     *
+     * It can either be set as a `Transition`, or just `true` to use the default `x`/`y` transitions.
+     *
+     * ```jsx
+     * function MyComponent({ distribution = "space-around" }) {
+     *   const spring = {
+     *     type: "spring",
+     *     damping: 10,
+     *     stiffness: 100
+     *   }
+     *
+     *   return (
+     *     <Stack distribution={distribution}>
+     *       <Frame positionTransition={spring} />
+     *     </Stack>
+     *   )
+     * }
      * ```
      *
      * @motion
+     *
+     * If `positionTransition` is defined, the component will automatically animate any changes to its layout
+     * relative to its nearest positioned parent (ie a component with `position` set to `absolute` or `relative`,
+     * or the document).
+     *
+     * It can either be set as a `Transition`, or just `true` to use the default `x`/`y` transitions.
+     *
+     * It can also be set as a function that will resolve when the component has changed layout. This function
+     * should return either a `Transition`, or `true`. For advanced use-cases where you want the component
+     * to visually stay in its previous position, this function can also return `false`.
      *
      * ```jsx
      * <motion.div positionTransition={{

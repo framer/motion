@@ -8,6 +8,9 @@ import { useOnChange } from "./use-on-change"
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
  *
+ * It can either work as a stand-alone `MotionValue` by initialising it with a value, or as a subscriber
+ * to another `MotionValue`.
+ *
  * @remarks
  *
  * ```jsx
