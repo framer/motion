@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.5] Unreleased
+
+### Fixed
+
+-   Value type conversion for currently-hidden elements.
+
 ## [1.2.4] 2019-07-15
 
 ### Added
