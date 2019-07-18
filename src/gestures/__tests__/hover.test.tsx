@@ -112,7 +112,7 @@ describe("hover", () => {
     test("whileHover is unapplied when hover ends", () => {
         const promise = new Promise(resolve => {
             const variant = {
-                hidden: { opacity: 0.5 },
+                hidden: { opacity: 0.5, transitionEnd: { opacity: 0.75 } },
             }
             const opacity = motionValue(1)
 
@@ -142,7 +142,7 @@ describe("hover", () => {
             }, 10)
         })
 
-        return expect(promise).resolves.toBe(1)
+        return expect(promise).resolves.toBe(0.5)
     })
 
     test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
