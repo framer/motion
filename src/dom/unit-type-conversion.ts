@@ -2,7 +2,7 @@ import { RefObject } from "react"
 import { Target, TargetWithKeyframes } from "../types"
 import { MotionValuesMap } from "../motion"
 import { MotionValue } from "../value"
-import styler from "stylefire"
+import styler, { transformProps, Styler } from "stylefire"
 import { getDimensionValueType } from "./value-types"
 import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
@@ -68,6 +68,32 @@ const getTranslateFromMatrix = (
     }
 }
 
+const transformKeys = new Set(["x", "y", "z"])
+const nonTranslationalTransformKeys = transformProps.filter(
+    key => !transformKeys.has(key)
+)
+
+type RemovedTransforms = [string, string | number][]
+function removeNonTranslationalTransform(
+    values: MotionValuesMap,
+    elementStyler: Styler
+) {
+    const removedTransforms: RemovedTransforms = []
+
+    nonTranslationalTransformKeys.forEach(key => {
+        const value: MotionValue<string | number> | undefined = values.get(key)
+        if (value !== undefined) {
+            removedTransforms.push([key, value.get()])
+            value.set(key.startsWith("scale") ? 1 : 0)
+        }
+    })
+
+    // Apply changes to element before measurement
+    if (removedTransforms.length) elementStyler.render()
+
+    return removedTransforms
+}
+
 const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
     // Dimensions
     width: ({ width }) => width,
@@ -86,11 +112,10 @@ const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
     values: MotionValuesMap,
-    ref: RefObject<Element>,
+    element: Element,
+    elementStyler: Styler,
     changedKeys: string[]
 ) => {
-    const element = ref.current as Element
-    const elementStyler = styler(element)
     const originBbox = element.getBoundingClientRect()
     const elementComputedStyle = getComputedStyle(element)
     const {
@@ -125,9 +150,6 @@ const convertChangedValueTypes = (
         target[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
 
-    // Reapply original values
-    elementStyler.render()
-
     return target
 }
 
@@ -139,7 +161,16 @@ const checkAndConvertChangedValueTypes = (
 ): { target: TargetWithKeyframes; transitionEnd: Target } => {
     target = { ...target }
     transitionEnd = { ...transitionEnd }
+
+    const element = ref.current as Element
+    const elementStyler = styler(element)
+
     const targetPositionalKeys = Object.keys(target).filter(isPositionalKey)
+
+    // We want to remove any transform values that could affect the element's bounding box before
+    // it's measured. We'll reapply these later.
+    let removedTransformValues: RemovedTransforms = []
+    let hasAttemptedToRemoveTransformValues = false
 
     const changedValueTypeKeys: string[] = targetPositionalKeys.reduce(
         (acc, key) => {
@@ -193,6 +224,16 @@ const checkAndConvertChangedValueTypes = (
                         target[key] = to.map(parseFloat)
                     }
                 } else {
+                    // If we're going to do value conversion via DOM measurements, we first
+                    // need to remove non-positional transform values that could affect the bbox measurements.
+                    if (!hasAttemptedToRemoveTransformValues) {
+                        removedTransformValues = removeNonTranslationalTransform(
+                            values,
+                            elementStyler
+                        )
+                        hasAttemptedToRemoveTransformValues = true
+                    }
+
                     acc.push(key)
                     transitionEnd[key] =
                         transitionEnd[key] !== undefined
@@ -207,17 +248,29 @@ const checkAndConvertChangedValueTypes = (
         [] as string[]
     )
 
-    return changedValueTypeKeys.length
-        ? {
-              target: convertChangedValueTypes(
-                  target,
-                  values,
-                  ref,
-                  changedValueTypeKeys
-              ),
-              transitionEnd,
-          }
-        : { target, transitionEnd }
+    if (changedValueTypeKeys.length) {
+        const convertedTarget = convertChangedValueTypes(
+            target,
+            values,
+            element,
+            elementStyler,
+            changedValueTypeKeys
+        )
+
+        // If we removed transform values, reapply them before the next render
+        if (removedTransformValues.length) {
+            removedTransformValues.forEach(([key, value]) => {
+                values.get(key)!.set(value)
+            })
+        }
+
+        // Reapply original values
+        elementStyler.render()
+
+        return { target: convertedTarget, transitionEnd }
+    } else {
+        return { target, transitionEnd }
+    }
 }
 
 /**
