@@ -255,7 +255,7 @@ export interface AnimationProps {
     transition?: Transition
 
     /**
-     * @layout
+     * @library
      *
      * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
      * difficult for to know when the layout changes and smoothly animate components to their new positions.
