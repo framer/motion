@@ -19,9 +19,10 @@ const Accordion = ({ i, expanded, setExpanded }) => {
                 initial="collapsed"
                 animate={isOpen ? "open" : "collapsed"}
                 variants={{
-                    open: { scale: 1, opacity: 1, height: "auto" },
+                    open: { scale: 1, rotate: 0, opacity: 1, height: "auto" },
                     collapsed: {
                         scale: 0.5,
+                        rotate: 45,
                         opacity: 0,
                         height: 0,
                     },
