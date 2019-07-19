@@ -27,7 +27,7 @@ type AnimationOptions = {
     transitionOverride?: Transition
 }
 
-type SetOptions = {
+type SetterOptions = {
     isActive?: Set<string>
     priority?: number
 }
@@ -202,7 +202,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      */
     private setValues(
         target: TargetWithKeyframes,
-        { isActive = new Set(), priority }: SetOptions = {}
+        { isActive = new Set(), priority }: SetterOptions = {}
     ) {
         target = this.transformValues(target as any)
 
