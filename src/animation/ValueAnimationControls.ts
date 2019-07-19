@@ -20,10 +20,16 @@ export type AnimationDefinition =
     | VariantLabels
     | TargetAndTransition
     | TargetResolver
+
 type AnimationOptions = {
     delay?: number
     priority?: number
     transitionOverride?: Transition
+}
+
+type SetterOptions = {
+    isActive?: Set<string>
+    priority?: number
 }
 
 /**
@@ -196,7 +202,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      */
     private setValues(
         target: TargetWithKeyframes,
-        isActive: Set<string> = new Set()
+        { isActive = new Set(), priority }: SetterOptions = {}
     ) {
         target = this.transformValues(target as any)
 
@@ -213,7 +219,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
                 this.values.set(key, motionValue(targetValue))
             }
 
-            this.baseTarget[key] = targetValue
+            if (!priority) this.baseTarget[key] = targetValue
         })
     }
 
@@ -398,7 +404,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * Apply variant labels without animation
      */
     private applyVariantLabels(variantLabelList: string[]) {
-        const isSetting: Set<string> = new Set()
+        const isActive: Set<string> = new Set()
         const reversedList = [...variantLabelList].reverse()
 
         reversedList.forEach(key => {
@@ -407,11 +413,11 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             )
 
             if (transitionEnd) {
-                this.setValues(transitionEnd, isSetting)
+                this.setValues(transitionEnd, { isActive })
             }
 
             if (target) {
-                this.setValues(target, isSetting)
+                this.setValues(target, { isActive })
             }
 
             if (this.children && this.children.size) {
@@ -511,7 +517,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
         return Promise.all(animations).then(() => {
             if (!transitionEnd) return
-            this.setValues(transitionEnd)
+            this.setValues(transitionEnd, { priority })
         })
     }
 
