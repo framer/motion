@@ -465,21 +465,17 @@ export interface MotionProps
     initial?: boolean | Target | VariantLabels
 
     /**
-     * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
-     *
-     * @remarks
-     *
      * @library
      *
-     * ```jsx
-     * export function MyComponent() {
-     *   const x = useMotionValue(0)
+     * The React DOM `style` prop, useful for setting CSS properties that aren't explicitly exposed by `Frame` props.
      *
-     *   return <Frame style={{ x, opacity: 1, scale: 0.5 }}  />
-     * }
+     * ```jsx
+     * <Frame style={{ mixBlendMode: "difference" }}  />
      * ```
      *
      * @motion
+     *
+     * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
      *
      * ```jsx
      * export const MyComponent = () => {
