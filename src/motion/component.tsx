@@ -10,15 +10,18 @@ import { useMotionStyles } from "./utils/use-styles"
 import { useValueAnimationControls } from "../animation/use-value-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
-import { UseFunctionalityComponents } from "./functionality/types"
+import {
+    LoadFunctionalityComponents,
+    RenderComponent,
+} from "./functionality/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
-import { getAnimateComponent } from "./functionality/animation"
 import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
 export { MotionProps }
 
 export interface MotionComponentConfig {
-    useFunctionalityComponents: UseFunctionalityComponents
+    loadFunctionalityComponents: LoadFunctionalityComponents
+    renderComponent: RenderComponent
     getValueControlsConfig: (
         ref: RefObject<any>,
         values: MotionValuesMap
@@ -29,8 +32,9 @@ export interface MotionComponentConfig {
  * @internal
  */
 export const createMotionComponent = <P extends {}>({
-    useFunctionalityComponents,
     getValueControlsConfig,
+    loadFunctionalityComponents,
+    renderComponent,
 }: MotionComponentConfig) => {
     function MotionComponent(
         props: P & MotionProps,
@@ -55,44 +59,44 @@ export const createMotionComponent = <P extends {}>({
             props,
             shouldInheritVariant
         )
+
         const context = useMotionContext(
             parentContext,
             controls,
             isStatic,
             props
         )
-        // Add functionality
-        const Animate = getAnimateComponent(props, context.static)
 
-        const handleAnimate = Animate && (
-            <Animate
-                {...props}
-                inherit={shouldInheritVariant}
-                innerRef={ref}
-                values={values}
-                controls={controls}
-            />
-        )
+        const functionality = isStatic
+            ? null
+            : loadFunctionalityComponents(
+                  ref,
+                  values,
+                  props,
+                  controls,
+                  shouldInheritVariant
+              )
 
-        const handleActiveFunctionality = useFunctionalityComponents(
-            props,
-            values,
-            controls,
+        const renderedComponent = renderComponent(
             ref,
             style,
-            context.static
+            values,
+            props,
+            isStatic
         )
 
         return (
-            <MotionContext.Provider value={context}>
+            <>
                 <MountMotionValues
                     ref={ref}
                     values={values}
                     isStatic={isStatic}
                 />
-                {handleAnimate}
-                {handleActiveFunctionality}
-            </MotionContext.Provider>
+                {functionality}
+                <MotionContext.Provider value={context}>
+                    {renderedComponent}
+                </MotionContext.Provider>
+            </>
         )
     }
 

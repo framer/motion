@@ -19,10 +19,11 @@ export const gestureProps = [
 ]
 
 export const Gestures: FunctionalComponentDefinition = {
+    key: "gestures",
     shouldRender: (props: MotionProps) => {
         return gestureProps.some(key => props.hasOwnProperty(key))
     },
-    component: makeHookComponent(({ innerRef, ...props }: FunctionalProps) => {
+    Component: makeHookComponent(({ innerRef, ...props }: FunctionalProps) => {
         useGestures(props, innerRef)
     }),
 }

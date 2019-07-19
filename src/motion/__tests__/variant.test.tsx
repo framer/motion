@@ -402,4 +402,33 @@ describe("animate prop as variant", () => {
             render(<motion.div variants={variants} />)
         }).not.toThrowError()
     })
+
+    test("new child items animate from initial to animate", () => {
+        const x = motionValue(0)
+        const Component = ({ length }: { length: number }) => {
+            const items = []
+            for (let i = 0; i < length; i++) {
+                items.push(
+                    <motion.div
+                        key={i}
+                        variants={variants}
+                        style={{ x: i === 1 ? x : 0 }}
+                    />
+                )
+            }
+
+            return (
+                <motion.div initial="hidden" animate="visible">
+                    <motion.div>{items}</motion.div>
+                </motion.div>
+            )
+        }
+
+        const { rerender } = render(<Component length={1} />)
+        rerender(<Component length={1} />)
+        rerender(<Component length={2} />)
+        rerender(<Component length={2} />)
+
+        expect(x.get()).toBe(100)
+    })
 })

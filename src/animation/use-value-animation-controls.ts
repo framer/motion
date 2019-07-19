@@ -15,14 +15,14 @@ import { useConstant } from "../utils/use-constant"
  * @param values
  * @param props
  * @param ref
- * @param inheritVariantChanges
+ * @param subscribeToParentControls
  *
  * @internal
  */
 export function useValueAnimationControls<P>(
     config: ValueAnimationConfig,
     props: P & MotionProps,
-    inheritVariantChanges: boolean
+    subscribeToParentControls: boolean
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
@@ -30,8 +30,11 @@ export function useValueAnimationControls<P>(
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     controls.resetChildren()
+    controls.setProps(props)
+    controls.setVariants(variants)
+    controls.setDefaultTransition(transition)
 
-    if (inheritVariantChanges && parentControls) {
+    if (subscribeToParentControls && parentControls) {
         parentControls.addChild(controls)
     }
 
@@ -39,10 +42,6 @@ export function useValueAnimationControls<P>(
         () => () => parentControls && parentControls.removeChild(controls),
         []
     )
-
-    controls.setProps(props)
-    controls.setVariants(variants)
-    controls.setDefaultTransition(transition)
 
     return controls
 }
