@@ -475,7 +475,7 @@ export interface MotionProps
      * export function MyComponent() {
      *   const x = useMotionValue(0)
      *
-     *   return <Frame x={x} opacity={1} scale={0.5} />
+     *   return <Frame style={{ x, opacity: 1, scale: 0.5 }}  />
      * }
      * ```
      *
