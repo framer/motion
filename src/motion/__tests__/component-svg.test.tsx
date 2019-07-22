@@ -62,4 +62,22 @@ describe("SVG", () => {
         }
         render(<Component />)
     })
+
+    // https://github.com/framer/motion/issues/216
+    test("doesn't throw if animating unencounterd value", () => {
+        const animation = {
+            strokeDasharray: ["1px, 200px", "100px, 200px", "100px, 200px"],
+            strokeDashoffset: [0, -15, -125],
+            transition: { duration: 1.4, ease: "linear" },
+        }
+
+        const Component = () => {
+            return (
+                <motion.svg animate={{ rotate: 100 }}>
+                    <motion.circle animate={animation} />
+                </motion.svg>
+            )
+        }
+        render(<Component />)
+    })
 })

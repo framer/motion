@@ -29,6 +29,8 @@ export interface AnimatePresenceProps {
     custom?: any;
     initial?: boolean;
     onExitComplete?: () => void;
+    // @beta
+    _syncLayout?: () => void;
 }
 
 // @public

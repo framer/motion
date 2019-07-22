@@ -253,14 +253,28 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
         for (let i = 0; i < numNewValues; i++) {
             const key = newValueKeys[i]
-            let value: string | number = this.readValueFromSource(key)
+            const targetValue = target[key]
+            let value: string | number | null = null
+
+            // If this is a keyframes value, we can attempt to use the first value in the
+            // array as that's going to be the first value of the animation anyway
+            if (Array.isArray(targetValue)) {
+                value = targetValue[0]
+            }
+
+            // If it isn't a keyframes or the first keyframes value was set as `null`, read the
+            // value from the DOM. It might be worth investigating whether to check props (for SVG)
+            // or props.style (for HTML) if the value exists there before attempting to read.
+            if (value === null) {
+                value = this.readValueFromSource(key)
+            }
 
             if (typeof value === "string" && isNumericalString(value)) {
                 // If this is a number read as a string, ie "0" or "200", convert it to a number
                 value = parseFloat(value)
-            } else if (!getValueType(value) && complex.test(target[key])) {
+            } else if (!getValueType(value) && complex.test(targetValue)) {
                 // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
-                value = complex.getAnimatableNone(target[key] as string)
+                value = complex.getAnimatableNone(targetValue as string)
             }
 
             this.values.set(key, motionValue(value))
