@@ -12,6 +12,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Fixing unsetting `whileHover` and `whileTap` if they contain `transitionEnd` values.
 -   Child components within variant trees now animate to `animate` as set by their parent.
 -   Checking animation props for array variants as well as strings.
+-   If unencountered value is animated, first attempt to extract an initial value from keyframes definition. Also upgrading `stylefire` to gracefully handle transform requests.
 
 ## [1.2.4] 2019-07-15
 

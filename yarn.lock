@@ -7219,10 +7219,10 @@ styled-components@^4.1.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
-stylefire@^6.0.6:
-  version "6.0.6"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-6.0.6.tgz#035efe068f1dd76914eb91de25bf1b9026db5e01"
-  integrity sha512-l0guH3eHc0b2R4BrTgvk7/h7abIHDMSf1aj+PP5ua8vTwSw4WMBkzfupRCrUOYY25RXqzeT+KpHjtSaquwbD8Q==
+stylefire@^6.0.7:
+  version "6.0.7"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-6.0.7.tgz#200289dba4d0f1bc3938ea8e9c5c5eb70c978953"
+  integrity sha512-nI9GAtxSv0nzvc6d8k+CLg/2iDDGFqHyU0NI3St4nNQi1hcPcvl42PqBmYyNgAm+9O5fXNjvjosfXYGFj0w3EA==
   dependencies:
     "@popmotion/popcorn" "^0.4.0"
     framesync "^4.0.0"
