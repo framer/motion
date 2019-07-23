@@ -787,6 +787,10 @@ export function useDraggable(
                     )
                 ) {
                     event.preventDefault()
+                    // Make sure input elements loose focus when we prevent the default.
+                    if (document.activeElement instanceof HTMLElement) {
+                        document.activeElement.blur()
+                    }
                 }
 
                 // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
