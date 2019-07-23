@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.2.6] 2019-07-23
+
+### Fixed
+
+-   Make sure `select`, `input`, `textarea` loose focus when blocking default behaviour in a draggable element.
+
 ## [1.2.5] 2019-07-23
 
 ### Fixed
