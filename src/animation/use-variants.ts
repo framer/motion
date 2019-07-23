@@ -1,11 +1,11 @@
+import { useEffect, useRef, useContext } from "react"
 import { VariantLabels } from "../motion/types"
 import { ValueAnimationControls } from "./ValueAnimationControls"
 import {
     resolveVariantLabels,
     asDependencyList,
 } from "./utils/variant-resolvers"
-import { useEffect, useRef, useContext } from "react"
-import { MotionContext } from "../motion"
+import { MotionContext } from "../motion/context/MotionContext"
 
 const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
     return oldVariant.join(",") !== newVariant.join(",")
