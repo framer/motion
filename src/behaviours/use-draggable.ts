@@ -482,10 +482,8 @@ const calculateConstraintsFromDom = (
 }
 
 const flattenConstraints = (constraints: DraggableProps["dragConstraints"]) => {
-    if (!constraints) {
+    if (!constraints || isRefObject(constraints)) {
         return [0, 0, 0, 0]
-    } else if (isRefObject(constraints)) {
-        return [constraints.current]
     } else {
         const { top, left, bottom, right } = constraints
         return [top, left, bottom, right]
@@ -977,8 +975,8 @@ export function useDraggable(
             dragTransition,
             dragOriginX,
             dragOriginY,
-            values.get("x"),
-            values.get("y"),
+            values.get("x", 0),
+            values.get("y", 0),
         ]
     )
 

@@ -788,7 +788,7 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toHaveStyle(
-            "transform: translateX(105px) translateZ(0)"
+            "transform: translateX(105px) translateY(0px) translateZ(0)"
         )
     })
 
