@@ -239,19 +239,43 @@ export interface DraggableProps extends DragHandlers {
      * @library
      *
      * ```jsx
+     * // In pixels
      * <Frame
      *   drag="x"
      *   dragConstraints={{ left: 0, right: 300 }}
      * />
+     *
+     * // As a ref to another component
+     * function MyComponent() {
+     *   const constraintsRef = useRef(null)
+     *
+     *   return (
+     *      <Frame ref={constraintsRef} width={400} height={400}>
+     *          <Frame drag dragConstraints={constraintsRef} />
+     *      </Frame>
+     *   )
+     * }
      * ```
      *
      * @motion
      *
      * ```jsx
+     * // In pixels
      * <motion.div
      *   drag="x"
      *   dragConstraints={{ left: 0, right: 300 }}
      * />
+     *
+     * // As a ref to another component
+     * const MyComponent = () => {
+     *   const constraintsRef = useRef(null)
+     *
+     *   return (
+     *      <motion.div ref={constraintsRef}>
+     *          <motion.div drag dragConstraints={constraintsRef} />
+     *      </motion.div>
+     *   )
+     * }
      * ```
      */
     dragConstraints?:
