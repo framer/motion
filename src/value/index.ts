@@ -209,7 +209,8 @@ export class MotionValue<V = any> {
      *
      *   useEffect(() => {
      *     function updateOpacity() {
-     *       const newOpacity = transform(Math.max(x.get(), y.get()), [0, 100], [1, 0])
+     *       const maxXY = Math.max(x.get(), y.get())
+     *       const newOpacity = transform(maxXY, [0, 100], [1, 0])
      *       opacity.set(newOpacity)
      *     }
      *
@@ -236,7 +237,8 @@ export class MotionValue<V = any> {
      *
      *   useEffect(() => {
      *     function updateOpacity() {
-     *       const newOpacity = transform(Math.max(x.get(), y.get()), [0, 100], [1, 0])
+     *       const maxXY = Math.max(x.get(), y.get())
+     *       const newOpacity = transform(maxXY, [0, 100], [1, 0])
      *       opacity.set(newOpacity)
      *     }
      *
