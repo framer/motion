@@ -14,3 +14,9 @@ export const Box = styled.div`
     height: 100px;
     background: #fff;
 `
+
+export const Code = styled.span`
+    font-family: "Menlo";
+    font-size: 90%;
+    color: grey;
+`

@@ -45,7 +45,8 @@
         "skins",
         "dist",
         "temp",
-        "api"
+        "api",
+        "cypress"
     ],
 
     "filesGlob": ["./src/**/*.ts"]

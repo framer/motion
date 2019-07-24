@@ -1,12 +1,12 @@
-path = require('path');
-execSync = require('child_process').execSync;
-webpack = require('webpack');
-UglifyJSPlugin = require('uglifyjs-webpack-plugin');
-ProgressBarPlugin = require('progress-bar-webpack-plugin');
-ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-convertPathsToAliases = require('convert-tsconfig-paths-to-webpack-aliases')
+const path = require('path');
+const execSync = require('child_process').execSync;
+const webpack = require('webpack');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+const convertPathsToAliases = require('convert-tsconfig-paths-to-webpack-aliases')
   .default;
-tsconfig = require('./tsconfig.json');
+const tsconfig = require('./tsconfig.json');
 
 const BUILD_TYPE = process.env.BUILD_TYPE || 'debug';
 const GIT_DESCRIBE = execSync('git describe --always --dirty')
