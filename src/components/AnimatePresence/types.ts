@@ -95,7 +95,8 @@ export interface AnimatePresenceProps {
     _syncLayout?: () => void
 
     /**
-     * If set to `true`, this prop will animate the old component out before rendering the new component.
+     * If set to `true`, `AnimatePresence` will only render one component at a time. Exiting components
+     * will finished their exit animation before the entering component is rendered.
      *
      * @library
      *
