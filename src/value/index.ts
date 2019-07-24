@@ -204,14 +204,23 @@ export class MotionValue<V = any> {
      * ```jsx
      * function MyComponent() {
      *   const x = useMotionValue(0)
+     *   const y = useMotionValue(0)
+     *   const opacity = useMotionValue(1)
      *
      *   useEffect(() => {
-     *     const unsubscribe = x.onChange((latestX) => {
-     *       // Do stuff with latest x value
-     *     })
+     *     function updateOpacity() {
+     *       const newOpacity = transform(Math.max(x.get(), y.get()), [0, 100], [1, 0])
+     *       opacity.set(newOpacity)
+     *     }
      *
-     *     return unsubscribe
-     *   })
+     *     const unsubscribeX = x.onChange(updateOpacity)
+     *     const unsubscribeY = y.onChange(updateOpacity)
+     *
+     *     return () => {
+     *       unsubscribeX()
+     *       unsubscribeY()
+     *     }
+     *   }, [])
      *
      *   return <Frame x={x} />
      * }
@@ -222,14 +231,23 @@ export class MotionValue<V = any> {
      * ```jsx
      * export const MyComponent = () => {
      *   const x = useMotionValue(0)
+     *   const y = useMotionValue(0)
+     *   const opacity = useMotionValue(1)
      *
      *   useEffect(() => {
-     *     const unsubscribe = x.onChange((latestX) => {
-     *       // Do stuff with latest x value
-     *     })
+     *     function updateOpacity() {
+     *       const newOpacity = transform(Math.max(x.get(), y.get()), [0, 100], [1, 0])
+     *       opacity.set(newOpacity)
+     *     }
      *
-     *     return unsubscribe
-     *   })
+     *     const unsubscribeX = x.onChange(updateOpacity)
+     *     const unsubscribeY = y.onChange(updateOpacity)
+     *
+     *     return () => {
+     *       unsubscribeX()
+     *       unsubscribeY()
+     *     }
+     *   }, [])
      *
      *   return <motion.div style={{ x }} />
      * }
