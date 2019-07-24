@@ -12,6 +12,7 @@ type MotionContextProps = {
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
+    exitProps?: MotionProps
 }
 
 /**

@@ -154,7 +154,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
         return (
             <>
                 {filteredChildren.map(child =>
-                    cloneElement(child, { initial: false })
+                    addExitProps(child, { initial: false })
                 )}
             </>
         )
@@ -195,39 +195,38 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
         const child = allChildren.get(key)
         if (!child) return
 
-        const { animate, exit, onAnimationComplete } = child.props
-        const props = typeof custom !== "undefined" ? { custom } : {}
         const insertionIndex = presentKeys.indexOf(key)
+
+        const onExit = () => {
+            exiting.delete(key)
+
+            // Remove this child from the present children
+            const removeIndex = presentChildren.current.findIndex(
+                child => child.key === key
+            )
+            presentChildren.current.splice(removeIndex, 1)
+
+            // Defer re-rendering until all exiting children have indeed left
+            if (!exiting.size) {
+                presentChildren.current = filteredChildren
+
+                if (_syncLayout) {
+                    _syncLayout()
+                } else {
+                    setForcedRenderCount(forcedRenderCount + 1)
+                }
+
+                onExitComplete && onExitComplete()
+            }
+        }
 
         childrenToRender.splice(
             insertionIndex,
             0,
-            cloneElement(child, {
-                ...props,
-                animate: exit || animate,
-                onAnimationComplete: () => {
-                    exiting.delete(key)
-
-                    // Remove this child from the present children
-                    const removeIndex = presentChildren.current.findIndex(
-                        child => child.key === key
-                    )
-                    presentChildren.current.splice(removeIndex, 1)
-                    onAnimationComplete && onAnimationComplete()
-
-                    // Defer re-rendering until all exiting children have indeed left
-                    if (!exiting.size) {
-                        presentChildren.current = filteredChildren
-
-                        if (_syncLayout) {
-                            _syncLayout()
-                        } else {
-                            setForcedRenderCount(forcedRenderCount + 1)
-                        }
-
-                        onExitComplete && onExitComplete()
-                    }
-                },
+            addExitProps(child, {
+                custom,
+                isExiting: true,
+                onExitComplete: onExit,
             })
         )
     })
