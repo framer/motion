@@ -271,7 +271,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
                 invariant(
                     value !== null,
-                    `No initial value for ${key} can be inferred. Ensure this value is defined on the component.`
+                    `No initial value for "${key}" can be inferred. Ensure an initial value for "${key}" is defined on the component.`
                 )
             }
 
