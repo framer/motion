@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.3.0] 2019-07-24
+
+-   Added `onAnimationStart`.
+
+### Fixed
+
 ## [1.2.6] 2019-07-23
 
 ### Fixed

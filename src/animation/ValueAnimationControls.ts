@@ -398,6 +398,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             }
         }
 
+        this.onStart()
         this.animate(remainingValues).then(() => this.onComplete())
     }
 
@@ -459,6 +460,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             animation = this.animate(definition, opts)
         }
 
+        this.onStart()
         return animation.then(() => this.onComplete())
     }
 
@@ -618,6 +620,11 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
         })
 
         return Promise.all(animations)
+    }
+
+    private onStart() {
+        const { onAnimationStart } = this.props
+        onAnimationStart && onAnimationStart()
     }
 
     private onComplete() {

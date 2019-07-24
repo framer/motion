@@ -42,6 +42,25 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(50)
     })
 
+    test("fires onAnimationStart when animation begins", async () => {
+        const promise = new Promise(resolve => {
+            const onStart = jest.fn()
+            const onComplete = () => resolve(onStart)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: 20 }}
+                    transition={{ type: false }}
+                    onAnimationStart={onStart}
+                    onAnimationComplete={onComplete}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBeCalledTimes(1)
+    })
+
     test("uses transition on subsequent renders", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)

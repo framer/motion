@@ -334,6 +334,31 @@ export interface MotionCallbacks {
     onUpdate?(latest: { [key: string]: string | number }): void
 
     /**
+     * Callback when animation defined in `animate` begins.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onStart() {
+     *   console.log("Animation completed")
+     * }
+     *
+     * <Frame animate={{ x: 100 }} onAnimationStart={onStart} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * function onStart() {
+     *   console.log("Animation completed")
+     * }
+     *
+     * <motion.div animate={{ x: 100 }} onAnimationStart={onStart} />
+     * ```
+     */
+    onAnimationStart?(): void
+
+    /**
      * Callback when animation defined in `animate` is complete.
      *
      * @library
