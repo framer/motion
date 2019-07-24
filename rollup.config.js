@@ -5,6 +5,14 @@ import { uglify } from "rollup-plugin-uglify"
 import replace from "rollup-plugin-replace"
 import pkg from "./package.json"
 
+const makeExternalPredicate = externalArr => {
+    if (externalArr.length === 0) {
+        return () => false
+    }
+    const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`)
+    return id => pattern.test(id)
+}
+
 const typescriptConfig = {
     cacheRoot: "tmp/.rpt2_cache",
     tsconfigOverride: { compilerOptions: { declaration: false } },
@@ -14,16 +22,10 @@ const config = {
     input: "src/index.ts",
 }
 
-const external = [
-    "react",
-    "@popmotion/easing",
-    "@popmotion/popcorn",
-    "framesync",
-    "stylefire",
-    "hey-listen",
-    "popmotion",
-    "style-value-types",
-]
+const external = makeExternalPredicate([
+    ...Object.keys(pkg.dependencies || {}),
+    ...Object.keys(pkg.peerDependencies || {}),
+])
 
 const umd = Object.assign({}, config, {
     output: {
