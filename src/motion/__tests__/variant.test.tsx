@@ -40,6 +40,25 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(100)
     })
 
+    test("fires onAnimationStart when animation begins", async () => {
+        const promise = new Promise(resolve => {
+            const onStart = jest.fn()
+            const onComplete = () => resolve(onStart)
+            const Component = () => (
+                <motion.div
+                    animate="visible"
+                    transition={{ type: false }}
+                    onAnimationStart={onStart}
+                    onAnimationComplete={onComplete}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBeCalledTimes(1)
+    })
+
     test("child animates to set variant", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)

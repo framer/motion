@@ -381,6 +381,7 @@ export interface MotionAdvancedProps {
 // @public (undocumented)
 export interface MotionCallbacks {
     onAnimationComplete?(): void;
+    onAnimationStart?(): void;
     onUpdate?(latest: {
         [key: string]: string | number;
     }): void;
