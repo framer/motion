@@ -5,6 +5,7 @@ import { VariantLabels, MotionProps } from "../types"
 import { useMaxTimes } from "../../utils/use-max-times"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
+import { MotionValuesMap } from "../utils/use-motion-values"
 
 export interface ExitProps {
     initial?: false | VariantLabels
@@ -15,6 +16,7 @@ export interface ExitProps {
 
 export interface MotionContextProps {
     controls?: ValueAnimationControls
+    values?: MotionValuesMap
     initial?: false | VariantLabels
     animate?: VariantLabels
     static?: boolean
@@ -47,6 +49,7 @@ const isAnimationControls = (
 export const useMotionContext = (
     parentContext: MotionContextProps,
     controls: ValueAnimationControls,
+    values: MotionValuesMap,
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover }: MotionProps
 ) => {
@@ -108,6 +111,7 @@ export const useMotionContext = (
                 : parentContext.controls,
             initial: targetInitial,
             animate: targetAnimate,
+            values,
             hasMounted,
         }),
         [initialDependency, animateDependency]

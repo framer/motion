@@ -69,6 +69,7 @@ export const createMotionComponent = <P extends {}>({
         const context = useMotionContext(
             parentContext,
             controls,
+            values,
             isStatic,
             props
         )
