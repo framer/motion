@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Fixing issue with drag constraints (ref-based) being reset, while dragging, on unrelated parent component updates.
+-   Updated rollup config to list `tslib` as an external dependency.
 
 ## [1.3.0] 2019-07-24
 
