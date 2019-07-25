@@ -7,6 +7,8 @@ const animation = {
     strokeDasharray: ["1px, 200px", "100px, 200px", "100px, 200px"],
     strokeDashoffset: [0, -15, -125],
     transition: { duration: 1.4, ease: "linear" },
+    cx: 100,
+    cy: 100,
 }
 
 export const App = () => {
@@ -36,8 +38,6 @@ export const App = () => {
             <motion.circle
                 animate={controls}
                 onAnimationComplete={handleAnimationComplete}
-                cx="44"
-                cy="44"
                 r="20.2"
                 fill="none"
                 stroke="white"

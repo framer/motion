@@ -15,6 +15,7 @@ import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 import { getValueType } from "../dom/value-types"
 import { startAnimation } from "./utils/transitions"
+import { invariant } from "hey-listen"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -267,6 +268,11 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             // or props.style (for HTML) if the value exists there before attempting to read.
             if (value === null) {
                 value = this.readValueFromSource(key)
+
+                invariant(
+                    value !== null,
+                    `No initial value for "${key}" can be inferred. Ensure an initial value for "${key}" is defined on the component.`
+                )
             }
 
             if (typeof value === "string" && isNumericalString(value)) {
