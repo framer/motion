@@ -64,6 +64,10 @@ const viewportMotionValues: ScrollMotionValues = {
  * - `scrollXProgress` — Horizontal scroll progress between `0` and `1`.
  * - `scrollYProgress` — Vertical scroll progress between `0` and `1`.
  *
+ * **Note:** If the returned scroll `MotionValue`s don't seem to be updating,
+ * double check if the `body` tag styles are set to `width: 100%; height: 100%` or
+ * similar, as this can break accurate measurement of viewport scroll.
+ *
  * @library
  *
  * ```jsx
