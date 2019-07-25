@@ -39,7 +39,15 @@ export function useValueAnimationControls<P>(
     }
 
     useEffect(
-        () => () => parentControls && parentControls.removeChild(controls),
+        () => () => {
+            // Remove reference to onAnimationComplete from controls. All the MotionValues
+            // are unsubscribed from this component separately. We let animations run out
+            // as they might be animating other components.
+            const { onAnimationComplete, ...unmountProps } = props
+            controls.setProps(unmountProps as P & MotionProps)
+
+            parentControls && parentControls.removeChild(controls)
+        },
         []
     )
 

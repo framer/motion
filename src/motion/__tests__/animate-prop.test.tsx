@@ -401,4 +401,31 @@ describe("animate prop as object", () => {
 
         return expect(promise).resolves.not.toBeCalled()
     })
+
+    test("unmount cancels active animations", async () => {
+        const promise = new Promise(resolve => {
+            const onComplete = jest.fn()
+            const Component = ({ isVisible }: any) =>
+                isVisible && (
+                    <motion.div
+                        animate={{ x: 20 }}
+                        transition={{ duration: 0.2 }}
+                        onAnimationComplete={() => onComplete()}
+                    />
+                )
+            const { rerender } = render(<Component isVisible />)
+            rerender(<Component isVisible />)
+
+            setTimeout(() => {
+                rerender(<Component isVisible={false} />)
+                rerender(<Component isVisible={false} />)
+            }, 100)
+
+            setTimeout(() => {
+                resolve(onComplete)
+            }, 300)
+        })
+
+        return expect(promise).resolves.not.toBeCalled()
+    })
 })
