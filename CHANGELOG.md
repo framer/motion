@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   `AnimatePresence.exitBeforeEnter`.
+-   Added explicit support for custom components as children of `AnimatePresence`.
 
 ### Fixed
 
