@@ -2,6 +2,9 @@ import { useContext } from "react"
 import { MotionContext } from "../motion/context/MotionContext"
 import { useTransform } from "../value/use-transform"
 
+// Keep things reasonable and avoid scale: Infinity. In practise we might need
+// to add another value, opacity, that could interpolate scaleX/Y [0,0.01] => [0,1]
+// to simply hide content at unreasonable scales.
 const maxScale = 10000
 const invertScale = (scale: number) => (scale > 0.01 ? 1 / scale : maxScale)
 
