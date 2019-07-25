@@ -7,10 +7,7 @@ export function applyExitProps<P>(
     { initial, isExiting, custom, onExitComplete }: ExitProps
 ): P & MotionProps {
     if (isExiting) {
-        invariant(
-            !!props.exit,
-            "No exit animation defined. Sort yer fuckin life out "
-        )
+        invariant(!!props.exit, "No exit animation defined.")
 
         return {
             ...props,
