@@ -20,6 +20,33 @@ const variants = {
     }),
 }
 
+const Image = ({ src, paginate, delta }) => (
+    <motion.img
+        src={src}
+        custom={delta}
+        variants={variants}
+        initial="enter"
+        animate="center"
+        exit="exit"
+        drag="x"
+        dragConstraints={{ left: 0, right: 0 }}
+        dragElastic={1}
+        transition={{
+            x: { type: "spring", stiffness: 300, damping: 200 },
+            opacity: { duration: 0.2 },
+        }}
+        onDragEnd={(e, { offset, velocity }) => {
+            const swipe = Math.abs(offset.x) * velocity.x
+
+            if (swipe < -10000) {
+                paginate(1)
+            } else if (swipe > 10000) {
+                paginate(-1)
+            }
+        }}
+    />
+)
+
 export const App = () => {
     const [[page, delta], setPage] = useState([0, 0])
     const imageIndex = wrap(0, images.length, page)
@@ -31,30 +58,11 @@ export const App = () => {
     return (
         <div className="example-container">
             <AnimatePresence initial={false} custom={delta}>
-                <motion.img
-                    key={page}
+                <Image
+                    delta={delta}
+                    paginate={paginate}
                     src={images[imageIndex]}
-                    custom={delta}
-                    variants={variants}
-                    initial="enter"
-                    animate="center"
-                    exit="exit"
-                    drag="x"
-                    dragConstraints={{ left: 0, right: 0 }}
-                    dragElastic={1}
-                    transition={{
-                        x: { type: "spring", stiffness: 300, damping: 200 },
-                        opacity: { duration: 0.2 },
-                    }}
-                    onDragEnd={(e, { offset, velocity }) => {
-                        const swipe = Math.abs(offset.x) * velocity.x
-
-                        if (swipe < -10000) {
-                            paginate(1)
-                        } else if (swipe > 10000) {
-                            paginate(-1)
-                        }
-                    }}
+                    key={page}
                 />
             </AnimatePresence>
             <motion.div className="next" onClick={() => paginate(1)}>

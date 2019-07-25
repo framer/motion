@@ -1,4 +1,5 @@
 import {
+    useContext,
     useState,
     useRef,
     isValidElement,
@@ -10,6 +11,26 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
+import { MotionContext, ExitProps } from "../../motion/context/MotionContext"
+
+interface PresenceChildProps {
+    children: ReactElement<any>
+    exitProps?: ExitProps | undefined
+}
+
+const PresenceChild = ({ children, exitProps }: PresenceChildProps) => {
+    let context = useContext(MotionContext)
+
+    if (exitProps) {
+        context = { ...context, exitProps }
+    }
+
+    return (
+        <MotionContext.Provider value={context}>
+            {children}
+        </MotionContext.Provider>
+    )
+}
 
 type ComponentKey = string | number
 
@@ -147,15 +168,16 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     if (isInitialRender.current) {
         isInitialRender.current = false
 
-        // If `initial` is `true`, return child unaltered to carry out their individually-defined behaviour.
-        if (initial) return <>{filteredChildren}</>
-
-        // Otherwise, suppress mount animations by setting `initial: false` on all children.
         return (
             <>
-                {filteredChildren.map(child =>
-                    addExitProps(child, { initial: false })
-                )}
+                {filteredChildren.map(child => (
+                    <PresenceChild
+                        key={getChildKey(child)}
+                        exitProps={initial ? undefined : { initial: false }}
+                    >
+                        {child}
+                    </PresenceChild>
+                ))}
             </>
         )
     }
@@ -220,14 +242,29 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
             }
         }
 
+        const exitProps = {
+            custom,
+            isExiting: true,
+            onExitComplete: onExit,
+        }
+
         childrenToRender.splice(
             insertionIndex,
             0,
-            addExitProps(child, {
-                custom,
-                isExiting: true,
-                onExitComplete: onExit,
-            })
+            <PresenceChild key={getChildKey(child)} exitProps={exitProps}>
+                {child}
+            </PresenceChild>
+        )
+    })
+
+    // Add `MotionContext` even to children that don't need it to ensure we're rendering
+    // the same tree between renders
+    childrenToRender = childrenToRender.map(child => {
+        const key = child.key as string | number
+        return exiting.has(key) ? (
+            child
+        ) : (
+            <PresenceChild key={getChildKey(child)}>{child}</PresenceChild>
         )
     })
 
