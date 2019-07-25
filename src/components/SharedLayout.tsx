@@ -10,6 +10,27 @@ interface SharedLayoutProps {
 export const SharedLayoutContext = createContext<SyncLayout | null>(null)
 
 /**
+ * When layout changes happen asynchronously to their instigating render (ie when exiting
+ * children of `AnimatePresence` are removed), `SharedLayout` can wrap parent and sibling
+ * components that need to animate as a result of this layout change.
+ *
+ * @motion
+ *
+ * ```jsx
+ * const MyComponent = ({ isVisible }) => {
+ *   return (
+ *     <SharedLayout>
+ *       <AnimatePresence>
+ *         {isVisible && (
+ *           <motion.div exit={{ opacity: 0 }} />
+ *         )}
+ *       </AnimatePresence>
+ *       <motion.div positionTransition />
+ *     </SharedLayout>
+ *   )
+ * }
+ * ```
+ *
  * @internalremarks
  *
  * The way this component works is by memoising a function and passing it down via context.

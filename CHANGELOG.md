@@ -27,6 +27,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   `AnimatePresence.exitBeforeEnter`.
 -   Added explicit support for custom components as children of `AnimatePresence`.
 
+### Added
+
+-   Beta: `SharedLayout` component for syncing layout components.
+
 ### Fixed
 
 -   Fixing issue with drag constraints (ref-based) being reset, while dragging, on unrelated parent component updates.
