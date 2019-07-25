@@ -199,4 +199,45 @@ describe("AnimatePresence", () => {
         const resolvedX = await promise
         expect(resolvedX).toBe(200)
     })
+
+    test("Exit propagates through variants", async () => {
+        const variants = {
+            enter: { opacity: 1 },
+            exit: { opacity: 0 },
+        }
+
+        const promise = new Promise<number>(resolve => {
+            const opacity = motionValue(1)
+            const Component = ({ isVisible }: { isVisible: boolean }) => {
+                return (
+                    <AnimatePresence>
+                        {isVisible && (
+                            <motion.div
+                                initial="exit"
+                                animate="enter"
+                                exit="exit"
+                                variants={variants}
+                            >
+                                <motion.div variants={variants}>
+                                    <motion.div
+                                        variants={variants}
+                                        style={{ opacity }}
+                                    />
+                                </motion.div>
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender } = render(<Component isVisible />)
+            rerender(<Component isVisible />)
+            rerender(<Component isVisible={false} />)
+            rerender(<Component isVisible={false} />)
+
+            resolve(opacity.get())
+        })
+
+        return await expect(promise).resolves.toBe(0)
+    })
 })
