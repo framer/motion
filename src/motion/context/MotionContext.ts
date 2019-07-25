@@ -85,7 +85,10 @@ export const useMotionContext = (
     // variant labels there's probably an optimisation to deep-compare but it might be an over-optimisation.
     // We want to do this as we rely on React's component rendering order each render cycle to determine
     // the new order of any child components for the `staggerChildren` functionality.
-    const animateDependency = isVariantLabel(animate) ? animate : null
+    const animateDependency =
+        shouldPropagateControls && isVariantLabel(targetAnimate)
+            ? targetAnimate
+            : null
 
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
     // unlikely to change, by making the context an object it'll be considered a new value every render.
