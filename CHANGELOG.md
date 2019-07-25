@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+-   Fixing issue with drag constraints (ref-based) being reset, while dragging, on unrelated parent component updates.
+
 ## [1.3.0] 2019-07-24
 
 -   Added `onAnimationStart`.
