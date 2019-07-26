@@ -115,7 +115,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     custom,
     initial = true,
     onExitComplete,
-    single,
+    enterBeforeExit,
     _syncLayout,
 }) => {
     const isInitialRender = useRef(true)
@@ -182,7 +182,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 
     // If we currently have exiting children, and we're deferring rendering incoming children
     // until after all current children have exiting, empty the childrenToRender array
-    if (single && exiting.size) {
+    if (enterBeforeExit && exiting.size) {
         childrenToRender = []
     }
 
@@ -236,11 +236,11 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 
     if (
         process.env.NODE_ENV !== "production" &&
-        single &&
+        enterBeforeExit &&
         childrenToRender.length > 1
     ) {
         console.warn(
-            `You're attempting to animate multiple children within AnimatePresence, but its single prop is set to true. This will lead to odd visual behaviour.`
+            `You're attempting to animate multiple children within AnimatePresence, but its enterBeforeExit prop is set to true. This will lead to odd visual behaviour.`
         )
     }
 

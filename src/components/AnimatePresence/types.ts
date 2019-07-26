@@ -95,15 +95,15 @@ export interface AnimatePresenceProps {
     _syncLayout?: () => void
 
     /**
-     * If set to `true`, `AnimatePresence` will only render one component at a time. Exiting components
-     * will finished their exit animation before the entering component is rendered.
+     * If set to `true`, `AnimatePresence` will only render one component at a time. The exiting component
+     * will finished its exit animation before the entering component is rendered.
      *
      * @library
      *
      * ```jsx
      * function MyComponent({ currentItem }) {
      *   return (
-     *     <AnimatePresence single>
+     *     <AnimatePresence enterBeforeExit>
      *       <Frame key={currentItem} exit={{ opacity: 0 }} />
      *     </AnimatePresence>
      *   )
@@ -114,7 +114,7 @@ export interface AnimatePresenceProps {
      *
      * ```jsx
      * const MyComponent = ({ currentItem }) => (
-     *   <AnimatePresence single>
+     *   <AnimatePresence enterBeforeExit>
      *     <motion.div key={currentItem} exit={{ opacity: 0 }} />
      *   </AnimatePresence>
      * )
@@ -122,5 +122,5 @@ export interface AnimatePresenceProps {
      *
      * @beta
      */
-    single?: boolean
+    enterBeforeExit?: boolean
 }

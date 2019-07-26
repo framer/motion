@@ -119,11 +119,11 @@ describe("AnimatePresence", () => {
         return await expect(promise).resolves.toBe(3)
     })
 
-    test("Only renders one child at a time if single={true}", async () => {
+    test("Only renders one child at a time if exitBeforeEnter={true}", async () => {
         const promise = new Promise<number>(resolve => {
             const Component = ({ i }: { i: number }) => {
                 return (
-                    <AnimatePresence single>
+                    <AnimatePresence exitBeforeEnter>
                         <motion.div
                             key={i}
                             animate={{ opacity: 1 }}
