@@ -1,5 +1,5 @@
 import * as React from "react"
-import { render } from "react-testing-library"
+import { render } from "@testing-library/react"
 import { isNodeOrChild } from "../utils/is-node-or-child"
 
 describe("isNodeOrChild", () => {
