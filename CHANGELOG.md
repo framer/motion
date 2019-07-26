@@ -10,6 +10,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Updated rollup config to list `tslib` as an external dependency.
 -   Ensuring unmounting components don't call `onAnimationComplete`.
 -   Adding error message when no initial value is set, or can be read or inferred.
+-   Ensuring color alpha is always within bounds.
 
 ## [1.3.0] 2019-07-24
 
