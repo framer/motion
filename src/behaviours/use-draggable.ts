@@ -602,10 +602,6 @@ export function useDraggable(
         y: dragOriginY || defaultOriginY,
     }
 
-    // This is a reference to the global drag gesture lock, ensuring only one component
-    // can "capture" the drag of one or both axes.
-    const openGlobalLock = useRef<Lock | null>(null)
-
     const { transformPagePoint } = useContext(MotionPluginContext)
 
     // By keeping a reference to the user-defined drag handlers and referring
@@ -715,6 +711,12 @@ export function useDraggable(
 
             // Don't start dragging until we've detected a direction.
             let currentDirection: null | DragDirection = null
+
+            // This is a reference to the global drag gesture lock, ensuring only one component
+            // can "capture" the drag of one or both axes. In some odd circumstances, a re-render
+            // has caused reference to this lock to be lost, if we see this appear again it might
+            // be safer to move this to a hook-root `ref`.
+            let openGlobalLock: null | Lock = null
 
             // If `dragConstraints` is set to `false` or `Constraints`, set constraints immediately.
             // Otherwise we'll resolve on mount.
@@ -835,10 +837,10 @@ export function useDraggable(
 
                 // Attempt to grab the global drag gesture lock.
                 if (!dragPropagation) {
-                    if (openGlobalLock.current) openGlobalLock.current()
-                    openGlobalLock.current = getGlobalLock(drag)
+                    if (openGlobalLock) openGlobalLock()
+                    openGlobalLock = getGlobalLock(drag)
 
-                    if (!openGlobalLock.current) {
+                    if (!openGlobalLock) {
                         return
                     }
                 }
@@ -852,7 +854,7 @@ export function useDraggable(
 
             const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
                 // If we didn't successfully receive the gesture lock, early return.
-                if (!dragPropagation && !openGlobalLock.current) {
+                if (!dragPropagation && !openGlobalLock) {
                     return
                 }
 
@@ -882,9 +884,8 @@ export function useDraggable(
                 unblockViewportScroll()
                 isDragging.current = false
 
-                if (!dragPropagation && openGlobalLock.current) {
-                    openGlobalLock.current()
-                    openGlobalLock.current = null
+                if (!dragPropagation && openGlobalLock) {
+                    openGlobalLock()
                 }
             }
 
@@ -938,11 +939,11 @@ export function useDraggable(
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
-                if (!openGlobalLock.current || !hasDragged) {
+                cancelDrag()
+
+                if (!openGlobalLock || !hasDragged) {
                     return
                 }
-
-                cancelDrag()
 
                 // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axes.
                 if (dragMomentum || dragElastic) {
