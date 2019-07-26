@@ -403,6 +403,54 @@ describe("dragging", () => {
         return expect(promise).resolves.toEqual([0, 20])
     })
 
+    test("block drag propagation even after parent has been dragged", async () => {
+        const promise = new Promise(resolve => {
+            const childX = motionValue(0)
+            const parentX = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        data-testid="parent"
+                        drag="x"
+                        style={{ x: parentX }}
+                    >
+                        <motion.div
+                            data-testid="child"
+                            drag
+                            style={{ x: childX }}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            let pointer = drag(getByTestId("parent")).to(10, 0)
+
+            sync.postRender(() => {
+                pointer.to(20, 0)
+
+                sync.postRender(() => {
+                    pointer.end()
+
+                    pointer = drag(getByTestId("child")).to(10, 0)
+
+                    sync.postRender(() => {
+                        pointer.to(20, 0)
+
+                        sync.postRender(() => {
+                            pointer.end()
+                            resolve([parentX.get(), childX.get()])
+                        })
+                    })
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([20, 20])
+    })
+
     test("enable drag propagation", async () => {
         const promise = new Promise(resolve => {
             const childX = motionValue(0)
