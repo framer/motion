@@ -1,6 +1,6 @@
 import { invariant } from "hey-listen"
 import { useLayoutEffect, RefObject } from "react"
-import { MotionValue } from "../value"
+import { motionValue, MotionValue } from "../value"
 import { useMotionValue } from "./use-motion-value"
 
 export interface ScrollMotionValues {
@@ -8,6 +8,29 @@ export interface ScrollMotionValues {
     scrollY: MotionValue<number>
     scrollXProgress: MotionValue<number>
     scrollYProgress: MotionValue<number>
+}
+
+const windowScrollMotionValues = {
+    scrollX: motionValue(0),
+    scrollY: motionValue(0),
+    scrollXProgress: motionValue(0),
+    scrollYProgress: motionValue(0),
+}
+
+function useScrollMotionValues(isElement: boolean) {
+    /* ok for hook to be conditional since we don't support changing between element and window */
+    /* eslint-disable react-hooks/rules-of-hooks */
+    if (isElement) {
+        return {
+            scrollX: useMotionValue(0),
+            scrollY: useMotionValue(0),
+            scrollXProgress: useMotionValue(0),
+            scrollYProgress: useMotionValue(0),
+        }
+    } else {
+        return windowScrollMotionValues
+    }
+    /* eslint-enable react-hooks/rules-of-hooks */
 }
 
 function getWindowOffsets() {
@@ -28,7 +51,7 @@ function getElementOffsets(element: HTMLElement) {
     }
 }
 
-function createWindowListeners(updateCallback) {
+function createWindowListeners(updateCallback: () => void) {
     window.addEventListener("resize", updateCallback)
     window.addEventListener("scroll", updateCallback, { passive: true })
     return () => {
@@ -37,7 +60,10 @@ function createWindowListeners(updateCallback) {
     }
 }
 
-function createElementListeners(element: HTMLElement, updateCallback) {
+function createElementListeners(
+    element: HTMLElement,
+    updateCallback: () => void
+) {
     let resizeObserver
     if (window.ResizeObserver) {
         resizeObserver = new window.ResizeObserver(updateCallback)
@@ -132,17 +158,11 @@ function setProgress(offset: number, maxOffset: number, value: MotionValue) {
  *
  * @public
  */
-export function useViewportScroll(ref: undefined | RefObject<Element>) {
-    const scrollX = useMotionValue(0)
-    const scrollY = useMotionValue(0)
-    const scrollXProgress = useMotionValue(0)
-    const scrollYProgress = useMotionValue(0)
-    const viewportMotionValues: ScrollMotionValues = {
-        scrollX,
-        scrollY,
-        scrollXProgress,
-        scrollYProgress,
-    }
+export function useViewportScroll(ref?: RefObject<Element>) {
+    const isElement = Boolean(ref)
+    const scrollMotionValues: ScrollMotionValues = useScrollMotionValues(
+        isElement
+    )
 
     invariant(
         (ref && ref.current !== null) || true,
@@ -150,19 +170,18 @@ export function useViewportScroll(ref: undefined | RefObject<Element>) {
     )
 
     useLayoutEffect(() => {
-        const isElement = Boolean(ref)
         const updateScrollValues = () => {
             const { xOffset, yOffset, xMaxOffset, yMaxOffset } = isElement
                 ? getElementOffsets(ref.current)
                 : getWindowOffsets()
 
             // Set absolute positions
-            scrollX.set(xOffset)
-            scrollY.set(yOffset)
+            scrollMotionValues.scrollX.set(xOffset)
+            scrollMotionValues.scrollY.set(yOffset)
 
             // Set 0-1 progress
-            setProgress(xOffset, xMaxOffset, scrollXProgress)
-            setProgress(yOffset, yMaxOffset, scrollYProgress)
+            setProgress(xOffset, xMaxOffset, scrollMotionValues.scrollXProgress)
+            setProgress(yOffset, yMaxOffset, scrollMotionValues.scrollYProgress)
         }
         const removeEventListeners = isElement
             ? createElementListeners(ref.current, updateScrollValues)
@@ -173,5 +192,5 @@ export function useViewportScroll(ref: undefined | RefObject<Element>) {
         return removeEventListeners
     })
 
-    return viewportMotionValues
+    return scrollMotionValues
 }
