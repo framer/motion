@@ -1,7 +1,8 @@
-import "../../../jest.setup"
+import "../../../../jest.setup"
 import * as React from "react"
 import { render } from "react-testing-library"
-import { AnimatePresence, motion, motionValue } from "../.."
+import { AnimatePresence, motion } from "../../.."
+import { motionValue } from "../../../value"
 
 describe("AnimatePresence", () => {
     test("Does nothing on initial render by default", async () => {
@@ -118,12 +119,44 @@ describe("AnimatePresence", () => {
         return await expect(promise).resolves.toBe(3)
     })
 
+    test("Only renders one child at a time if exitBeforeEnter={true}", async () => {
+        const promise = new Promise<number>(resolve => {
+            const Component = ({ i }: { i: number }) => {
+                return (
+                    <AnimatePresence exitBeforeEnter>
+                        <motion.div
+                            key={i}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.5 }}
+                        />
+                    </AnimatePresence>
+                )
+            }
+
+            const { container, rerender } = render(<Component i={0} />)
+            rerender(<Component i={0} />)
+            setTimeout(() => {
+                rerender(<Component i={1} />)
+                rerender(<Component i={1} />)
+            }, 50)
+            setTimeout(() => {
+                rerender(<Component i={2} />)
+                rerender(<Component i={2} />)
+                resolve(container.childElementCount)
+            }, 150)
+        })
+
+        return await expect(promise).resolves.toBe(1)
+    })
+
     test("Exit variants are triggered with `AnimatePresence.custom`, not that of the element.", async () => {
         const variants = {
             enter: { x: 0, transition: { type: false } },
             exit: (i: number) => ({ x: i * 100, transition: { type: false } }),
         }
         const promise = new Promise(resolve => {
+            const x = motionValue(0)
             const Component = ({
                 isVisible,
                 onAnimationComplete,
@@ -143,13 +176,14 @@ describe("AnimatePresence", () => {
                                 initial="exit"
                                 animate="enter"
                                 exit="exit"
+                                style={{ x }}
                             />
                         )}
                     </AnimatePresence>
                 )
             }
 
-            const { container, rerender } = render(<Component isVisible />)
+            const { rerender } = render(<Component isVisible />)
             rerender(<Component isVisible />)
 
             rerender(<Component isVisible={false} />)
@@ -157,16 +191,12 @@ describe("AnimatePresence", () => {
             rerender(
                 <Component
                     isVisible={false}
-                    onAnimationComplete={() =>
-                        resolve(container.firstChild as Element)
-                    }
+                    onAnimationComplete={() => resolve(x.get())}
                 />
             )
         })
 
-        const element = await promise
-        expect(element).toHaveStyle(
-            "transform: translateX(200px) translateZ(0)"
-        )
+        const resolvedX = await promise
+        expect(resolvedX).toBe(200)
     })
 })

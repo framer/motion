@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## Unreleased
 
+### Added
+
+-   `AnimatePresence.exitBeforeEnter` prop as beta.
+
 ### Fixed
 
 -   Fixing issue with drag constraints (ref-based) being reset, while dragging, on unrelated parent component updates.

@@ -27,9 +27,11 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
 // @public (undocumented)
 export interface AnimatePresenceProps {
     custom?: any;
+    // @beta
+    exitBeforeEnter?: boolean;
     initial?: boolean;
     onExitComplete?: () => void;
-    // @beta
+    // @internal
     _syncLayout?: () => void;
 }
 
