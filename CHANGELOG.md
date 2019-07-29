@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   `AnimatePresence.exitBeforeEnter` prop as beta.
+-   `AnimatePresence.exitBeforeEnter`.
 
 ### Fixed
 
@@ -15,6 +15,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Ensuring unmounting components don't call `onAnimationComplete`.
 -   Adding error message when no initial value is set, or can be read or inferred.
 -   Ensuring color alpha is always within bounds.
+-   Ensuring variants propagate on unmount.
 
 ## [1.3.0] 2019-07-24
 

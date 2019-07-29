@@ -39,6 +39,7 @@ export function Hover(): Override {
         variants: {
             hovered: {
                 scale: 0.9,
+                transition: { when: "afterChildren" },
             },
             normal: {
                 scale: 1,
