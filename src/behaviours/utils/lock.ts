@@ -16,6 +16,7 @@ export function createLock(name: string) {
 
 const globalHorizontalLock = createLock("dragHorizontal")
 const globalVerticalLock = createLock("dragVertical")
+
 export function getGlobalLock(
     drag: boolean | "x" | "y" | "lockDirection"
 ): Lock {

@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   `AnimatePresence.enterBeforeExit` prop as beta.
+-   `AnimatePresence.exitBeforeEnter` prop as beta.
 
 ### Fixed
 

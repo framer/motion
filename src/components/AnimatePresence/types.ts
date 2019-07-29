@@ -103,7 +103,7 @@ export interface AnimatePresenceProps {
      * ```jsx
      * function MyComponent({ currentItem }) {
      *   return (
-     *     <AnimatePresence enterBeforeExit>
+     *     <AnimatePresence exitBeforeEnter>
      *       <Frame key={currentItem} exit={{ opacity: 0 }} />
      *     </AnimatePresence>
      *   )
@@ -114,7 +114,7 @@ export interface AnimatePresenceProps {
      *
      * ```jsx
      * const MyComponent = ({ currentItem }) => (
-     *   <AnimatePresence enterBeforeExit>
+     *   <AnimatePresence exitBeforeEnter>
      *     <motion.div key={currentItem} exit={{ opacity: 0 }} />
      *   </AnimatePresence>
      * )
@@ -122,5 +122,5 @@ export interface AnimatePresenceProps {
      *
      * @beta
      */
-    enterBeforeExit?: boolean
+    exitBeforeEnter?: boolean
 }
