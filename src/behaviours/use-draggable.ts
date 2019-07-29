@@ -938,11 +938,9 @@ export function useDraggable(
                 event: MouseEvent | TouchEvent,
                 info: PanInfo
             ) => {
-                if (!openGlobalLock.current || !hasDragged) {
-                    return
-                }
-
                 cancelDrag()
+
+                if (!hasDragged) return
 
                 // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axes.
                 if (dragMomentum || dragElastic) {
