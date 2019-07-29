@@ -6,12 +6,20 @@ import { useMaxTimes } from "../../utils/use-max-times"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 
-type MotionContextProps = {
+export interface ExitProps {
+    initial?: false | VariantLabels
+    isExiting?: boolean
+    onExitComplete?: () => void
+    custom?: any
+}
+
+export interface MotionContextProps {
     controls?: ValueAnimationControls
     initial?: false | VariantLabels
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
+    exitProps?: ExitProps
 }
 
 /**

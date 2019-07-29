@@ -1,4 +1,5 @@
 import {
+    useContext,
     useState,
     useRef,
     isValidElement,
@@ -10,6 +11,26 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
+import { MotionContext, ExitProps } from "../../motion/context/MotionContext"
+
+interface PresenceChildProps {
+    children: ReactElement<any>
+    exitProps?: ExitProps | undefined
+}
+
+const PresenceChild = ({ children, exitProps }: PresenceChildProps) => {
+    let context = useContext(MotionContext)
+
+    if (exitProps) {
+        context = { ...context, exitProps }
+    }
+
+    return (
+        <MotionContext.Provider value={context}>
+            {children}
+        </MotionContext.Provider>
+    )
+}
 
 type ComponentKey = string | number
 
@@ -147,15 +168,16 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     if (isInitialRender.current) {
         isInitialRender.current = false
 
-        // If `initial` is `true`, return child unaltered to carry out their individually-defined behaviour.
-        if (initial) return <>{filteredChildren}</>
-
-        // Otherwise, suppress mount animations by setting `initial: false` on all children.
         return (
             <>
-                {filteredChildren.map(child =>
-                    cloneElement(child, { initial: false })
-                )}
+                {filteredChildren.map(child => (
+                    <PresenceChild
+                        key={getChildKey(child)}
+                        exitProps={initial ? undefined : { initial: false }}
+                    >
+                        {child}
+                    </PresenceChild>
+                ))}
             </>
         )
     }
@@ -195,40 +217,54 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
         const child = allChildren.get(key)
         if (!child) return
 
-        const { animate, exit, onAnimationComplete } = child.props
-        const props = typeof custom !== "undefined" ? { custom } : {}
         const insertionIndex = presentKeys.indexOf(key)
+
+        const onExit = () => {
+            exiting.delete(key)
+
+            // Remove this child from the present children
+            const removeIndex = presentChildren.current.findIndex(
+                child => child.key === key
+            )
+            presentChildren.current.splice(removeIndex, 1)
+
+            // Defer re-rendering until all exiting children have indeed left
+            if (!exiting.size) {
+                presentChildren.current = filteredChildren
+
+                if (_syncLayout) {
+                    _syncLayout()
+                } else {
+                    setForcedRenderCount(forcedRenderCount + 1)
+                }
+
+                onExitComplete && onExitComplete()
+            }
+        }
+
+        const exitProps = {
+            custom,
+            isExiting: true,
+            onExitComplete: onExit,
+        }
 
         childrenToRender.splice(
             insertionIndex,
             0,
-            cloneElement(child, {
-                ...props,
-                animate: exit || animate,
-                onAnimationComplete: () => {
-                    exiting.delete(key)
+            <PresenceChild key={getChildKey(child)} exitProps={exitProps}>
+                {child}
+            </PresenceChild>
+        )
+    })
 
-                    // Remove this child from the present children
-                    const removeIndex = presentChildren.current.findIndex(
-                        child => child.key === key
-                    )
-                    presentChildren.current.splice(removeIndex, 1)
-                    onAnimationComplete && onAnimationComplete()
-
-                    // Defer re-rendering until all exiting children have indeed left
-                    if (!exiting.size) {
-                        presentChildren.current = filteredChildren
-
-                        if (_syncLayout) {
-                            _syncLayout()
-                        } else {
-                            setForcedRenderCount(forcedRenderCount + 1)
-                        }
-
-                        onExitComplete && onExitComplete()
-                    }
-                },
-            })
+    // Add `MotionContext` even to children that don't need it to ensure we're rendering
+    // the same tree between renders
+    childrenToRender = childrenToRender.map(child => {
+        const key = child.key as string | number
+        return exiting.has(key) ? (
+            child
+        ) : (
+            <PresenceChild key={getChildKey(child)}>{child}</PresenceChild>
         )
     })
 
