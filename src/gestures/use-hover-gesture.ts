@@ -3,7 +3,7 @@ import { getGesturePriority } from "./utils/gesture-priority"
 import { TargetAndTransition } from "../types"
 import { useConditionalPointerEvents } from "../events"
 import { ControlsProp } from "./types"
-import { isTouchEvent } from "./utils/is-touch-event"
+import { isTouchEvent } from "./utils/event-type"
 
 /**
  * @public
@@ -94,7 +94,9 @@ export function useHoverGesture(
 
     const handlers = useMemo(
         () => {
-            const onPointerEnter = (event: MouseEvent | TouchEvent) => {
+            const onPointerEnter = (
+                event: MouseEvent | TouchEvent | PointerEvent
+            ) => {
                 if (isTouchEvent(event)) return
 
                 if (onHoverStart) onHoverStart(event)
@@ -104,7 +106,9 @@ export function useHoverGesture(
                 }
             }
 
-            const onPointerLeave = (event: MouseEvent | TouchEvent) => {
+            const onPointerLeave = (
+                event: MouseEvent | TouchEvent | PointerEvent
+            ) => {
                 if (isTouchEvent(event)) return
 
                 if (onHoverEnd) onHoverEnd(event)

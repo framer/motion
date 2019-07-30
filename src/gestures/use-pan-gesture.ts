@@ -14,7 +14,7 @@ import { safeWindow } from "../events/utils/window"
 import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
 import { warning } from "hey-listen"
 import { secondsToMilliseconds } from "../utils/time-conversion"
-import { isTouchEvent } from "./utils/is-touch-event"
+import { isMouseEvent, isTouchEvent } from "./utils/event-type"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -250,7 +250,7 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void
+    onPan?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when the pan gesture begins on this element.
@@ -283,7 +283,10 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
+    onPanStart?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: PanInfo
+    ): void
 
     /**
      * Callback function that fires when we begin detecting a pan gesture. This
@@ -315,7 +318,10 @@ export interface PanHandlers {
      *   - `point`: Relative to the device or page.
      */
 
-    onPanSessionStart?(event: MouseEvent | TouchEvent, info: EventInfo): void
+    onPanSessionStart?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: EventInfo
+    ): void
 
     /**
      * Callback function that fires when the pan gesture ends on this element.
@@ -348,7 +354,10 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void
+    onPanEnd?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: PanInfo
+    ): void
 }
 
 type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
@@ -372,7 +381,9 @@ export function usePanGesture(
 ) {
     const session = useRef<EventSession | null>(null)
     const pointer = useRef<MotionXY | null>(null)
-    const lastMoveEvent = useRef<MouseEvent | TouchEvent | null>(null)
+    const lastMoveEvent = useRef<MouseEvent | TouchEvent | PointerEvent | null>(
+        null
+    )
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
 
@@ -439,14 +450,16 @@ export function usePanGesture(
     )
 
     const onPointerMove = useCallback(
-        (event: MouseEvent | TouchEvent, info: EventInfo) => {
+        (event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo) => {
             lastMoveEvent.current = event
             lastMoveEventInfo.current = transformPoint(info)
+
             // because Safari doesn't trigger mouseup event when it's happening above <select> tag
-            if (event instanceof MouseEvent && event.buttons === 0) {
+            if (isMouseEvent(event) && event.buttons === 0) {
                 onPointerUp(event, info)
                 return
             }
+
             // Throttle mouse move event to once per frame
             sync.update(updatePoint, true)
         },
@@ -454,7 +467,7 @@ export function usePanGesture(
     )
 
     const onPointerUp = useCallback(
-        (event: MouseEvent | TouchEvent, info: EventInfo) => {
+        (event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo) => {
             cancelSync.update(updatePoint)
             stopPointerMove()
             stopPointerUp()
@@ -486,7 +499,7 @@ export function usePanGesture(
     )
 
     const onPointerDown = useCallback(
-        (event: MouseEvent | TouchEvent, info: EventInfo) => {
+        (event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo) => {
             // If we have more than one touch, we don't want to start detecting this gesture.
             if (isTouchEvent(event) && event.touches.length > 1) {
                 return

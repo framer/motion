@@ -55,7 +55,10 @@ export interface DragHandlers {
      * />
      * ```
      */
-    onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void
+    onDragStart?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: PanInfo
+    ): void
 
     /**
      * Callback function that fires when dragging ends.
@@ -81,7 +84,10 @@ export interface DragHandlers {
      * />
      * ```
      */
-    onDragEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void
+    onDragEnd?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: PanInfo
+    ): void
 
     /**
      * Callback function that fires when the component is dragged.
@@ -107,7 +113,7 @@ export interface DragHandlers {
      * />
      * ```
      */
-    onDrag?(event: MouseEvent | TouchEvent, info: PanInfo): void
+    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires a drag direction is determined.
@@ -774,7 +780,9 @@ export function useDraggable(
                 axisPoint.set(current)
             }
 
-            const onPointerDown = (event: MouseEvent | TouchEvent) => {
+            const onPointerDown = (
+                event: MouseEvent | TouchEvent | PointerEvent
+            ) => {
                 // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
                 if (
                     event.target &&
@@ -806,7 +814,7 @@ export function useDraggable(
             }
 
             const onPanStart = (
-                event: MouseEvent | TouchEvent,
+                event: MouseEvent | TouchEvent | PointerEvent,
                 info: PanInfo
             ) => {
                 isDragging.current = true
@@ -850,7 +858,10 @@ export function useDraggable(
                 onDragStart && onDragStart(event, convertPanToDrag(info))
             }
 
-            const onPan = (event: MouseEvent | TouchEvent, info: PanInfo) => {
+            const onPan = (
+                event: MouseEvent | TouchEvent | PointerEvent,
+                info: PanInfo
+            ) => {
                 // If we didn't successfully receive the gesture lock, early return.
                 if (!dragPropagation && !openGlobalLock.current) {
                     return
@@ -935,7 +946,7 @@ export function useDraggable(
             }
 
             const onPanEnd = (
-                event: MouseEvent | TouchEvent,
+                event: MouseEvent | TouchEvent | PointerEvent,
                 info: PanInfo
             ) => {
                 cancelDrag()

@@ -106,9 +106,9 @@ export interface DraggableProps extends DragHandlers {
 // @public (undocumented)
 export interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
-    onDrag?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onDragEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDragEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDragStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
     onDragTransitionEnd?(): void;
 }
 
@@ -493,10 +493,10 @@ export interface Orchestration {
 
 // @public (undocumented)
 export interface PanHandlers {
-    onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onPanSessionStart?(event: MouseEvent | TouchEvent, info: EventInfo): void;
-    onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onPan?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onPanEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onPanSessionStart?(event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo): void;
+    onPanStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
 }
 
 // @public
@@ -576,9 +576,9 @@ export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Omit<
 
 // @public (undocumented)
 export interface TapHandlers {
-    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
-    onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
-    onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    onTapCancel?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    onTapStart?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
     whileTap?: string | TargetAndTransition;
 }
 
