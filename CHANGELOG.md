@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.4.1] 2019-07-30
+
+### Fixed
+
+-   Pan and drag gestures with `PointerEvent`.
+
 ## [1.4.0] 2019-07-29
 
 ### Added

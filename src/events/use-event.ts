@@ -18,7 +18,6 @@ export const eventListener = (
         if (!target) {
             return
         }
-
         target.addEventListener(name, handler, options)
     }
     const stopListening = () => {

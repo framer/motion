@@ -101,7 +101,7 @@ export interface TapHandlers {
      * @param event - The originating pointer event.
      * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void
+    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture starts on this element.
@@ -129,7 +129,10 @@ export interface TapHandlers {
      * @param event - The originating pointer event.
      * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void
+    onTapStart?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: TapInfo
+    ): void
 
     /**
      * Callback when the tap gesture ends outside this element.
@@ -157,7 +160,10 @@ export interface TapHandlers {
      * @param event - The originating pointer event.
      * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void
+    onTapCancel?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: TapInfo
+    ): void
 
     /**
      * Properties or variant label to animate to while the component is pressed.
@@ -243,7 +249,7 @@ export function useTapGesture(
             }
 
             const onPointerUp = (
-                event: MouseEvent | TouchEvent,
+                event: MouseEvent | TouchEvent | PointerEvent,
                 { point }: EventInfo
             ) => {
                 stopPointerUp()
@@ -283,7 +289,7 @@ export function useTapGesture(
             }
 
             const onPointerDown = (
-                event: MouseEvent | TouchEvent,
+                event: MouseEvent | TouchEvent | PointerEvent,
                 { point }: EventInfo
             ) => {
                 startPointerUp()
