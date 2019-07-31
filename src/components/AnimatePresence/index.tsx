@@ -21,9 +21,7 @@ interface PresenceChildProps {
 const PresenceChild = ({ children, exitProps }: PresenceChildProps) => {
     let context = useContext(MotionContext)
 
-    if (exitProps) {
-        context = { ...context, exitProps }
-    }
+    context = exitProps ? { ...context, exitProps } : { ...context }
 
     return (
         <MotionContext.Provider value={context}>
