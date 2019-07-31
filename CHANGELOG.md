@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+-   `positionTransition` on exiting components within `AnimatePresence`.
+
 ## [1.4.1] 2019-07-30
 
 ### Fixed
