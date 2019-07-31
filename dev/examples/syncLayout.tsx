@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
-import { SyncLayout } from "../../src/components/SyncLayout"
+import { UnstableSyncLayout } from "../../src/components/SyncLayout"
 
 const style = {
     width: 100,
@@ -21,9 +21,10 @@ export const App = () => {
 
     return (
         <div>
-            <SyncLayout>
+            <UnstableSyncLayout>
                 <motion.div
                     style={{ padding: 20, background: "white", width: 100 }}
+                    positionTransition
                 >
                     <AnimatePresence
                         initial={false}
@@ -42,7 +43,7 @@ export const App = () => {
                     </AnimatePresence>
                 </motion.div>
                 <motion.div positionTransition style={style} />
-            </SyncLayout>
+            </UnstableSyncLayout>
         </div>
     )
 }

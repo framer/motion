@@ -39,9 +39,9 @@ export const SyncLayoutContext = createContext<SyncLayout | null>(null)
  * memoisation cache. A new function is called, performing a synced re-render of components
  * that are using the SyncLayoutContext.
  *
- * @beta
+ * @internal
  */
-export const SyncLayout = ({ children }: SyncLayoutProps) => {
+export const UnstableSyncLayout = ({ children }: SyncLayoutProps) => {
     const forceUpdate = useForceUpdate()
 
     return (

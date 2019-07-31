@@ -2,19 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-<<<<<<< HEAD
 ## [1.5.0] Unreleased
 
 ### Added
 
--   `useInvertedScale`.
-=======
-## Unreleased
-
-### Added
-
--   Beta: `SyncLayout` component for syncing layout components.
->>>>>>> Renaming SharedLayout to SyncLayout
+-   `useInvertedScale` for inverting parent scales.
 
 ## [1.4.2] 2019-07-31
 
