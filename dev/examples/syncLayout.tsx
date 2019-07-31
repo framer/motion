@@ -24,7 +24,7 @@ export const App = () => {
             <UnstableSyncLayout>
                 <motion.div
                     style={{ padding: 20, background: "white", width: 100 }}
-                    positionTransition
+                    layoutTransition
                 >
                     <AnimatePresence
                         initial={false}
@@ -42,7 +42,7 @@ export const App = () => {
                         )}
                     </AnimatePresence>
                 </motion.div>
-                <motion.div positionTransition style={style} />
+                <motion.div layoutTransition style={style} />
             </UnstableSyncLayout>
         </div>
     )

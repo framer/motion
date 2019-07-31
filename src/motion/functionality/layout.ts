@@ -7,7 +7,7 @@ import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { useLayoutEffect, RefObject, useContext } from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
-import { MotionValuesMap } from "../../motion/utils/use-motion-values"
+import { MotionValuesMap } from "../utils/use-motion-values"
 import styler from "stylefire"
 import { Transition } from "../../types"
 import { SyncLayoutContext } from "../../components/SyncLayout"
@@ -93,19 +93,27 @@ function usePositionAnimation(
     })
 }
 
-export const Position: FunctionalComponentDefinition = {
-    key: "position",
+export const Layout: FunctionalComponentDefinition = {
+    key: "layout",
     shouldRender: (props: MotionProps) =>
-        typeof window !== "undefined" && !!props.positionTransition,
+        typeof window !== "undefined" &&
+        (!!props.positionTransition || !!props.layoutTransition),
     Component: makeHookComponent(
         ({
             innerRef,
             controls,
             values,
             positionTransition,
+            layoutTransition,
         }: FunctionalProps) => {
             useContext(SyncLayoutContext)
-            usePositionAnimation(innerRef, values, controls, positionTransition)
+            usePositionAnimation(
+                innerRef,
+                values,
+                controls,
+                positionTransition || layoutTransition
+            )
+            useSizeAnimation(innerRef, values, controls, layoutTransition)
         }
     ),
 }
