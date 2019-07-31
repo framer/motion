@@ -5,11 +5,12 @@ import {
 } from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
-import { useLayoutEffect, RefObject } from "react"
+import { useLayoutEffect, RefObject, useContext } from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import styler from "stylefire"
 import { Transition } from "../../types"
+import { SyncLayoutContext } from "../../components/SyncLayout"
 
 interface Position {
     x: number
@@ -103,6 +104,7 @@ export const Position: FunctionalComponentDefinition = {
             values,
             positionTransition,
         }: FunctionalProps) => {
+            useContext(SyncLayoutContext)
             usePositionAnimation(innerRef, values, controls, positionTransition)
         }
     ),

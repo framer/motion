@@ -1,6 +1,5 @@
 import {
     useContext,
-    useState,
     useRef,
     isValidElement,
     cloneElement,
@@ -12,6 +11,8 @@ import {
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { MotionContext, ExitProps } from "../../motion/context/MotionContext"
+import { SyncLayoutContext } from "../../components/SyncLayout"
+import { useForceUpdate } from "../../utils/use-force-update"
 
 interface PresenceChildProps {
     children: ReactElement<any>
@@ -137,8 +138,12 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     initial = true,
     onExitComplete,
     exitBeforeEnter,
-    _syncLayout,
 }) => {
+    // We want to force a re-render once all exiting animations have finished. We
+    // either use a local forceUpdate function, or one from a parent context if it exists.
+    let forceUpdate = useForceUpdate()
+    forceUpdate = useContext(SyncLayoutContext) || forceUpdate
+
     const isInitialRender = useRef(true)
 
     // Filter out any children that aren't ReactElements. We can only track ReactElements with a props.key
@@ -151,12 +156,6 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     // A lookup table to quickly reference components by key
     const allChildren = useRef(new Map<ComponentKey, ReactElement<any>>())
         .current
-
-    // Use a running state counter to allow us to force a re-render once all
-    // exiting animations have settled. For performance reasons it might also be
-    // necessary to track entering animations too, but this should be good enough
-    // for the majority use-cases ie slideshows, modals etc.
-    const [forcedRenderCount, setForcedRenderCount] = useState(0)
 
     // A living record of all currently exiting components.
     const exiting = useRef(new Set<ComponentKey>()).current
@@ -231,13 +230,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
             // Defer re-rendering until all exiting children have indeed left
             if (!exiting.size) {
                 presentChildren.current = filteredChildren
-
-                if (_syncLayout) {
-                    _syncLayout()
-                } else {
-                    setForcedRenderCount(forcedRenderCount + 1)
-                }
-
+                forceUpdate()
                 onExitComplete && onExitComplete()
             }
         }

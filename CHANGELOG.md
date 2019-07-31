@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   `useInvertedScale`.
+-   `useInvertedScale` for inverting parent scales.
 
 ## [1.4.2] 2019-07-31
 
