@@ -1,6 +1,13 @@
 import { useContext } from "react"
 import { MotionContext } from "../motion/context/MotionContext"
 import { useTransform } from "../value/use-transform"
+import { MotionValue } from "./"
+import { invariant } from "hey-listen"
+
+interface ScaleMotionValues {
+    scaleX: MotionValue<number>
+    scaleY: MotionValue<number>
+}
 
 // Keep things reasonable and avoid scale: Infinity. In practise we might need
 // to add another value, opacity, that could interpolate scaleX/Y [0,0.01] => [0,1]
@@ -25,9 +32,25 @@ const invertScale = (scale: number) => (scale > 0.01 ? 1 / scale : maxScale)
  *
  * @beta
  */
-export const useInvertedScale = () => {
+export const useInvertedScale = ({
+    scaleX: parentScaleX,
+    scaleY: parentScaleY,
+}: Partial<ScaleMotionValues> = {}): ScaleMotionValues => {
     const { values } = useContext(MotionContext)
-    const scaleX = useTransform(values!.get("scaleX", 1), invertScale)
-    const scaleY = useTransform(values!.get("scaleY", 1), invertScale)
+
+    invariant(
+        !!values,
+        "useInvertedScale must be used within a child of another motion component."
+    )
+
+    const scaleX = useTransform(
+        parentScaleX || values!.get("scaleX", 1),
+        invertScale
+    )
+    const scaleY = useTransform(
+        parentScaleY || values!.get("scaleY", 1),
+        invertScale
+    )
+
     return { scaleX, scaleY }
 }
