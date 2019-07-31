@@ -1,5 +1,6 @@
 import * as React from "react"
-import { createContext, useCallback, useState } from "react"
+import { createContext } from "react"
+import { useForceRender } from "../utils/use-force-render"
 
 type SyncLayout = () => void
 
@@ -41,15 +42,10 @@ export const SyncLayoutContext = createContext<SyncLayout | null>(null)
  * @beta
  */
 export const SyncLayout = ({ children }: SyncLayoutProps) => {
-    const [forcedRenderCount, setRenderCount] = useState(0)
-
-    const contextValue = useCallback(
-        () => setRenderCount(forcedRenderCount + 1),
-        [forcedRenderCount]
-    )
+    const forceRender = useForceRender()
 
     return (
-        <SyncLayoutContext.Provider value={contextValue}>
+        <SyncLayoutContext.Provider value={forceRender}>
             {children}
         </SyncLayoutContext.Provider>
     )

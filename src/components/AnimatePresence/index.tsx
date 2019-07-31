@@ -1,6 +1,5 @@
 import {
     useContext,
-    useState,
     useRef,
     isValidElement,
     cloneElement,
@@ -13,6 +12,7 @@ import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { MotionContext, ExitProps } from "../../motion/context/MotionContext"
 import { SyncLayoutContext } from "../../components/SyncLayout"
+import { useForceRender } from "../../utils/use-force-render"
 
 interface PresenceChildProps {
     children: ReactElement<any>
@@ -139,15 +139,10 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     onExitComplete,
     exitBeforeEnter,
 }) => {
-    // Use a running state counter to allow us to force a re-render once all
-    // exiting animations have settled. For performance reasons it might also be
-    // necessary to track entering animations too, but this should be good enough
-    // for the majority use-cases ie slideshows, modals etc.
-    const [forcedRenderCount, setForcedRenderCount] = useState(0)
-    const incrementForcedRenderCount = () =>
-        setForcedRenderCount(forcedRenderCount + 1)
-    const syncLayout =
-        useContext(SyncLayoutContext) || incrementForcedRenderCount
+    // We want to force a re-render once all exiting animations have finished. We
+    // either use a local forceRender function, or one from a parent context if it exists.
+    let forceRender = useForceRender()
+    forceRender = useContext(SyncLayoutContext) || forceRender
 
     const isInitialRender = useRef(true)
 
@@ -235,7 +230,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
             // Defer re-rendering until all exiting children have indeed left
             if (!exiting.size) {
                 presentChildren.current = filteredChildren
-                syncLayout()
+                forceRender()
                 onExitComplete && onExitComplete()
             }
         }
