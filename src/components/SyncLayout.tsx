@@ -1,6 +1,6 @@
 import * as React from "react"
 import { createContext } from "react"
-import { useForceRender } from "../utils/use-force-render"
+import { useForceUpdate } from "../utils/use-force-update"
 
 type SyncLayout = () => void
 
@@ -42,10 +42,10 @@ export const SyncLayoutContext = createContext<SyncLayout | null>(null)
  * @beta
  */
 export const SyncLayout = ({ children }: SyncLayoutProps) => {
-    const forceRender = useForceRender()
+    const forceUpdate = useForceUpdate()
 
     return (
-        <SyncLayoutContext.Provider value={forceRender}>
+        <SyncLayoutContext.Provider value={forceUpdate}>
             {children}
         </SyncLayoutContext.Provider>
     )

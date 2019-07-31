@@ -69,11 +69,11 @@ export interface AnimatePresenceProps {
      *
      * ```jsx
      * const MyComponent = ({ isVisible }) => {
-     *   const forceRender = useForceRender() // Forces a set state or something
+     *   const forceUpdate = useForceUpdate() // Forces a set state or something
      *
      *   return (
      *     <motion.div positionTransition>
-     *       <AnimatePresence _syncLayout={forceRender}>
+     *       <AnimatePresence _syncLayout={forceUpdate}>
      *         <motion.div positionTransition exit={{ opacity: 0 }} />
      *       </AnimatePresence>
      *       <motion.div positionTransition />
