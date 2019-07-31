@@ -2,11 +2,19 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+<<<<<<< HEAD
 ## [1.5.0] Unreleased
 
 ### Added
 
 -   `useInvertedScale`.
+=======
+## Unreleased
+
+### Added
+
+-   Beta: `SyncLayout` component for syncing layout components.
+>>>>>>> Renaming SharedLayout to SyncLayout
 
 ## [1.4.2] 2019-07-31
 
@@ -26,10 +34,6 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `AnimatePresence.exitBeforeEnter`.
 -   Added explicit support for custom components as children of `AnimatePresence`.
-
-### Added
-
--   Beta: `SharedLayout` component for syncing layout components.
 
 ### Fixed
 

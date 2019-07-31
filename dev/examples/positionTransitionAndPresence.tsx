@@ -1,7 +1,7 @@
 import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
-import { SharedLayout } from "../../src/components/SharedLayout"
+import { SyncLayout } from "../../src/components/SyncLayout"
 
 const style = {
     width: 100,
@@ -28,7 +28,7 @@ export const App = () => {
 
     return (
         <div>
-            <SharedLayout>
+            <SyncLayout>
                 <motion.div
                     style={{ padding: 20, background: "white", width: 100 }}
                 >
@@ -49,7 +49,7 @@ export const App = () => {
                     </AnimatePresence>
                 </motion.div>
                 <motion.div positionTransition style={style} />
-            </SharedLayout>
+            </SyncLayout>
         </div>
     )
 }

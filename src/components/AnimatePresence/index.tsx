@@ -12,7 +12,7 @@ import {
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { MotionContext, ExitProps } from "../../motion/context/MotionContext"
-import { SharedLayoutContext } from "../../components/SharedLayout"
+import { SyncLayoutContext } from "../../components/SyncLayout"
 
 interface PresenceChildProps {
     children: ReactElement<any>
@@ -147,7 +147,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     const incrementForcedRenderCount = () =>
         setForcedRenderCount(forcedRenderCount + 1)
     const syncLayout =
-        useContext(SharedLayoutContext) || incrementForcedRenderCount
+        useContext(SyncLayoutContext) || incrementForcedRenderCount
 
     const isInitialRender = useRef(true)
 

@@ -10,7 +10,7 @@ import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import styler from "stylefire"
 import { Transition } from "../../types"
-import { SharedLayoutContext } from "../../components/SharedLayout"
+import { SyncLayoutContext } from "../../components/SyncLayout"
 
 interface Position {
     x: number
@@ -104,7 +104,7 @@ export const Position: FunctionalComponentDefinition = {
             values,
             positionTransition,
         }: FunctionalProps) => {
-            useContext(SharedLayoutContext)
+            useContext(SyncLayoutContext)
             usePositionAnimation(innerRef, values, controls, positionTransition)
         }
     ),
