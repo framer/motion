@@ -21,12 +21,25 @@ const invertScale = (scale: number) => (scale > 0.01 ? 1 / scale : maxScale)
  *
  * This is useful for undoing the distortion of content when scaling a parent component.
  *
+ * By default, `useInvertedScale` will automatically fetch `scaleX` and `scaleY` from the nearest parent.
+ * By passing other `MotionValue`s in as `useInvertedScale({ scaleX, scaleY })`, it will invert the output
+ * of those instead.
+ *
  * @motion
  *
  * ```jsx
  * const MyComponent = () => {
  *   const { scaleX, scaleY } = useInvertedScale()
  *   return <motion.div style={{ scaleX, scaleY }} />
+ * }
+ * ```
+ *
+ * @library
+ *
+ * ```jsx
+ * function MyComponent() {
+ *   const { scaleX, scaleY } = useInvertedScale()
+ *   return <Frame scaleX={scaleX} scaleY={scaleY} />
  * }
  * ```
  *
