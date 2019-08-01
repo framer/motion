@@ -4,7 +4,13 @@ import { invariant } from "hey-listen"
 
 export function applyExitProps<P>(
     props: P & MotionProps,
-    { initial, isExiting, custom, onExitComplete }: ExitProps
+    {
+        initial,
+        isExiting,
+        custom,
+        onExitComplete,
+        removeForLayoutMeasurement,
+    }: ExitProps
 ): P & MotionProps {
     if (isExiting) {
         invariant(!!props.exit, "No exit animation defined.")
@@ -23,6 +29,7 @@ export function applyExitProps<P>(
                 onExitComplete && onExitComplete()
                 props.onAnimationComplete && props.onAnimationComplete()
             },
+            removeForLayoutMeasurement: !!removeForLayoutMeasurement,
         }
     } else if (initial === false) {
         return { ...props, initial }

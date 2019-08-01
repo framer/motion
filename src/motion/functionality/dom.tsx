@@ -51,6 +51,7 @@ export function createDomMotionConfig<P = MotionProps>(
     return {
         renderComponent: (ref, style, values, props, isStatic) => {
             const forwardProps = isDOM ? stripMotionProps(props) : props
+
             const staticVisualStyles = isSVG
                 ? buildSVGProps(values, style)
                 : { style: buildStyleAttr(values, style, isStatic) }

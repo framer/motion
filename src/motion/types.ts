@@ -103,8 +103,24 @@ export interface RepositionInfo {
 /**
  * @public
  */
+export interface RelayoutInfo {
+    delta: {
+        top: number
+        left: number
+        width: number
+        height: number
+    }
+}
+
+/**
+ * @public
+ */
 export type ResolvePositionTransition = (
     info: RepositionInfo
+) => Transition | boolean
+
+export type ResolveLayoutTransition = (
+    info: RelayoutInfo
 ) => Transition | boolean
 
 /**
@@ -370,7 +386,7 @@ export interface AnimationProps {
      * }} />
      * ```
      */
-    layoutTransition?: Transition | boolean
+    layoutTransition?: Transition | boolean | ResolveLayoutTransition
 }
 
 /**
