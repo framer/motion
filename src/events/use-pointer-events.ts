@@ -235,7 +235,8 @@ export interface PointerEventHandlers {
 export const usePointerEvents = <Target extends TargetOrRef>(
     eventHandlers: Partial<PointerEventHandlers>,
     ref: Target,
-    options?: AddEventListenerOptions
+    options?: AddEventListenerOptions,
+    pointerOriginEvent?: TouchEvent | MouseEvent | PointerEvent | null
 ): TargetBasedReturnType<Target> => {
     const {
         onPointerDown,
@@ -275,9 +276,13 @@ export const usePointerEvents = <Target extends TargetOrRef>(
     const touch = useTouchEvents(touchEvents, ref, options)
     const mouse = useMouseEvents(mouseEvents, ref, options)
 
-    return mergeUseEventResults(pointer, touch, mouse) as TargetBasedReturnType<
-        Target
-    >
+    const events = mergeUseEventResults(
+        pointer,
+        touch,
+        mouse
+    ) as TargetBasedReturnType<Target>
+    console.log(events)
+    return events
 }
 
 /**
@@ -294,7 +299,8 @@ export const useConditionalPointerEvents = <
 >(
     eventHandlers: Handlers,
     ref?: Target,
-    options?: AddEventListenerOptions
+    options?: AddEventListenerOptions,
+    pointerOriginEvent?: TouchEvent | MouseEvent | PointerEvent | null
 ): Handlers | undefined => {
     let pointerEventsRef: Target
     let pointerEventsHandlers: Partial<PointerEventHandlers>
@@ -308,7 +314,12 @@ export const useConditionalPointerEvents = <
         pointerEventsHandlers = {}
     }
 
-    usePointerEvents(pointerEventsHandlers, pointerEventsRef, options)
+    usePointerEvents(
+        pointerEventsHandlers,
+        pointerEventsRef,
+        options,
+        pointerOriginEvent
+    )
     if (ref) {
         return undefined
     } else {

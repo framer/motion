@@ -6,6 +6,11 @@ interface EventLike {
     target: EventTarget | null
 }
 
+export type EventListenerWithPointInfo = (
+    e: MouseEvent | TouchEvent | PointerEvent,
+    info: EventInfo
+) => void
+
 const extractEventInfo = ({ pageX = 0, pageY = 0 }: EventLike): EventInfo => {
     return {
         point: { x: pageX, y: pageY },
@@ -13,7 +18,7 @@ const extractEventInfo = ({ pageX = 0, pageY = 0 }: EventLike): EventInfo => {
 }
 
 export const wrapHandler = (
-    handler?: EventHandler
+    handler?: EventListenerWithPointInfo
 ): EventListener | undefined => {
     if (!handler) {
         return undefined

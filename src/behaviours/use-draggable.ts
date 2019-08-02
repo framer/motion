@@ -388,6 +388,13 @@ export interface DraggableProps extends DragHandlers {
     _dragTransitionControls?: AnimationControls
 
     /**
+     * Externally control the dragging status of this component.
+     *
+     * @public
+     */
+    isDraggingOrigin: MouseEvent | TouchEvent | PointerEvent | false
+
+    /**
      * Drag position is calculated by applying the pan offset to the x/y origin
      * measured when the drag gesture begins.
      *
@@ -611,10 +618,11 @@ export function useDraggable(
         dragMomentum = true,
         _dragValueX,
         _dragValueY,
+        _dragTransitionControls,
+        dragOriginEvent,
         dragOriginX,
         dragOriginY,
         dragTransition,
-        _dragTransitionControls,
         ...handlers
     }: DraggableProps,
     ref: RefObject<Element>,
@@ -1016,8 +1024,13 @@ export function useDraggable(
         ]
     )
 
-    usePanGesture(panHandlers, ref)
-    usePointerEvents({ onPointerDown: panHandlers.onPointerDown }, ref)
+    usePanGesture(panHandlers, ref, dragOriginEvent)
+    usePointerEvents(
+        { onPointerDown: panHandlers.onPointerDown },
+        ref,
+        undefined,
+        dragOriginEvent
+    )
 
     // On unmount, cancel the drag gesture
     useEffect(

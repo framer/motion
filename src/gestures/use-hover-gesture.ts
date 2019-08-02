@@ -1,9 +1,9 @@
-import { useMemo, RefObject } from "react"
+import { RefObject } from "react"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { TargetAndTransition } from "../types"
-import { useConditionalPointerEvents } from "../events"
 import { ControlsProp } from "./types"
-import { isTouchEvent } from "./utils/event-type"
+import { isMouseEvent } from "./utils/event-type"
+import { useDomEvent } from "../events/use-dom-event"
 
 /**
  * @public
@@ -71,6 +71,12 @@ export interface HoverHandlers {
 
 const hoverPriority = getGesturePriority("whileHover")
 
+const filterTouch = (
+    listener: (event: MouseEvent | TouchEvent | PointerEvent) => void
+) => (event: MouseEvent | TouchEvent | PointerEvent) => {
+    if (isMouseEvent(event)) listener(event)
+}
+
 // TODO: Optimisation here is find a way to conditionally add these listeners based on
 // whether we're receiving hover or event listeners
 /**
@@ -86,42 +92,33 @@ export function useHoverGesture(
         onHoverEnd,
         controls,
     }: HoverHandlers & ControlsProp,
-    ref?: RefObject<Element>
+    ref: RefObject<Element>
 ) {
     if (whileHover && controls) {
         controls.setOverride(whileHover, hoverPriority)
     }
 
-    const handlers = useMemo(
-        () => {
-            const onPointerEnter = (
-                event: MouseEvent | TouchEvent | PointerEvent
-            ) => {
-                if (isTouchEvent(event)) return
+    useDomEvent(
+        ref,
+        "mouseenter",
+        filterTouch((event: MouseEvent | PointerEvent) => {
+            if (onHoverStart) onHoverStart(event)
 
-                if (onHoverStart) onHoverStart(event)
-
-                if (whileHover && controls) {
-                    controls.startOverride(hoverPriority)
-                }
+            if (whileHover && controls) {
+                controls.startOverride(hoverPriority)
             }
-
-            const onPointerLeave = (
-                event: MouseEvent | TouchEvent | PointerEvent
-            ) => {
-                if (isTouchEvent(event)) return
-
-                if (onHoverEnd) onHoverEnd(event)
-
-                if (whileHover && controls) {
-                    controls.clearOverride(hoverPriority)
-                }
-            }
-
-            return { onPointerEnter, onPointerLeave }
-        },
-        [whileHover, onHoverStart, onHoverEnd, controls]
+        })
     )
 
-    return useConditionalPointerEvents(handlers, ref)
+    useDomEvent(
+        ref,
+        "mouseleave",
+        filterTouch((event: MouseEvent | PointerEvent) => {
+            if (onHoverEnd) onHoverEnd(event)
+
+            if (whileHover && controls) {
+                controls.clearOverride(hoverPriority)
+            }
+        })
+    )
 }

@@ -370,14 +370,16 @@ type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
  */
 export function usePanGesture(
     handlers: PanHandlers,
-    ref: RefObject<Element>
+    ref: RefObject<Element>,
+    panOriginEvent?: MouseEvent | TouchEvent | PointerEvent
 ): undefined
 export function usePanGesture(
     handlers: PanHandlers
 ): { onPointerDown: EventHandler }
 export function usePanGesture(
     { onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers,
-    ref?: RefObject<Element>
+    ref?: RefObject<Element>,
+    panOriginEvent?: MouseEvent | TouchEvent | PointerEvent
 ) {
     const session = useRef<EventSession | null>(null)
     const pointer = useRef<MotionXY | null>(null)
@@ -542,5 +544,5 @@ export function usePanGesture(
         handlers = {}
     }
 
-    return useConditionalPointerEvents(handlers, ref)
+    return useConditionalPointerEvents(handlers, ref, undefined, panOriginEvent)
 }
