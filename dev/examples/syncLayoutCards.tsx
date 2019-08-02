@@ -1,7 +1,8 @@
-import { motion, AnimatePresence } from "@framer"
+import { motion, AnimatePresence, useInvertedScale } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 import { UnstableSyncLayout } from "../../src/components/SyncLayout"
+import { mix } from "@popmotion/popcorn"
 
 const style = {
     width: 100,
@@ -20,6 +21,8 @@ const cardContainer = {
 const card = {
     background: "white",
     cursor: "pointer",
+    position: "relative",
+    overflow: "hidden",
 }
 
 const openCard = {
@@ -29,6 +32,7 @@ const openCard = {
     left: 0,
     right: 0,
     bottom: 0,
+    zIndex: 2,
 }
 
 const closedCard = {
@@ -37,7 +41,92 @@ const closedCard = {
     height: "100%",
 }
 
+const closeButtonContainer = {
+    top: 0,
+    right: 0,
+    position: "absolute",
+    originX: 1,
+    originY: 0,
+    padding: 10,
+}
+
+const closeButton = {
+    width: 40,
+    height: 40,
+    borderRadius: "50%",
+    background: "red",
+}
+
+const textContainer = {
+    top: 0,
+    left: 0,
+    position: "absolute",
+    originX: 0,
+    originY: 0,
+    padding: 10,
+    width: 250,
+}
+
 const transition = { duration: 3 }
+
+const image = {
+    position: "absolute",
+    top: 0,
+    left: "50%",
+    transform: "translateX(-50%)",
+    originX: 0.5,
+    originY: 0,
+    height: 400,
+}
+
+const CloseButton = () => {
+    const inverted = useInvertedScale()
+    return (
+        <motion.div style={{ ...closeButtonContainer, ...inverted }}>
+            <div style={closeButton} />
+        </motion.div>
+    )
+}
+
+const Text = () => {
+    const inverted = useInvertedScale()
+
+    return (
+        <motion.div style={{ ...textContainer, ...inverted }}>
+            <HeaderPlaceholder />
+        </motion.div>
+    )
+}
+
+const BackgroundImage = () => {
+    const inverted = useInvertedScale()
+
+    return (
+        <motion.img
+            style={{ ...image, ...inverted }}
+            transformTemplate={(_, gen) => `translateX(-50%) ${gen}`}
+            src="https://images.squarespace-cdn.com/content/v1/5b475b2c50a54f54f9b4e1dc/1531633791866-D46FRSW11M4MEIZXDQY8/ke17ZwdGBToddI8pDm48kHH9S2ID7_bpupQnTdrPcoF7gQa3H78H3Y0txjaiv_0fDoOvxcdMmMKkDsyUqMSsMWxHk725yiiHCCLfrh8O1z4YTzHvnKhyp6Da-NYroOW3ZGjoBKy3azqku80C789l0nQwvinDXPV4EYh2MRzm-RRB5rUELEv7EY2n0AZOrEupxpSyqbqKSgmzcCPWV5WMiQ/DSCF2803.jpg?format=2500w"
+        />
+    )
+}
+
+const Content = () => {
+    const inverted = useInvertedScale()
+
+    return (
+        <motion.div
+            style={{
+                paddingTop: 300,
+                width: 500,
+                originX: 0.5,
+                originY: 0,
+                ...inverted,
+            }}
+        >
+            <ContentPlaceholder />
+        </motion.div>
+    )
+}
 
 const Card = () => {
     const [isOpen, setOpen] = useState(false)
@@ -46,8 +135,39 @@ const Card = () => {
         <div style={cardContainer}>
             <motion.div
                 layoutTransition={transition}
+                layoutTransitionEnd={{}}
+                animate={
+                    isOpen
+                        ? { zIndex: 2 }
+                        : {
+                              display: "block",
+                              transitionEnd: {
+                                  zIndex: 0,
+                              },
+                          }
+                }
                 style={isOpen ? openCard : closedCard}
                 onClick={() => setOpen(!isOpen)}
+            >
+                <BackgroundImage />
+                <Text />
+                <Content />
+                <CloseButton />
+            </motion.div>
+            <motion.div
+                style={{
+                    position: "fixed",
+                    top: 0,
+                    left: 0,
+                    bottom: 0,
+                    right: 0,
+                    "-webkit-backdrop-filter": "blur(10px)",
+                    pointerEvents: "none",
+                    background: "rgba(255,255,255,0.5)",
+                    opacity: isOpen ? 1 : 0,
+                    zIndex: 1,
+                    transition: "200ms opacity ease-out",
+                }}
             />
         </div>
     )
@@ -62,6 +182,120 @@ export const App = () => {
             <Card />
             <Card />
             <Card />
+            <style>{styles}</style>
+        </div>
+    )
+}
+
+const styles = `body {
+    background-repeat: no-repeat;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    }
+    
+    .example-container {
+    width: 320px;
+    padding: 20px;
+    position: fixed;
+    top: 0
+    }
+    
+    .content-placeholder {
+    padding: 20px;
+    transform-origin: top center;
+    }
+    
+    header {
+    background: #0055ff;
+    border-radius: 10px;
+    color: white;
+    cursor: pointer;
+    height: 40px;
+    margin-bottom: 20px;
+    }
+    
+    .word {
+    height: 18px;
+    border-radius: 10px;
+    display: inline-block;
+    margin-bottom: 8px;
+    margin-right: 8px;
+    background: #0055ff;
+    border-radius: 10px;
+    display: inline-block;
+    }
+    
+    .paragraph {
+    margin-bottom: 20px;
+    }
+    
+    @media (max-width: 600px) {
+    .content-placeholder {
+      padding-left: 20px;
+    }
+    
+    .header .word {
+      height: 30px;
+    }
+    
+    .word {
+      height: 14px;
+      margin-bottom: 5px;
+      margin-right: 5px;
+    }
+    
+    .paragraph {
+      margin-bottom: 20px;
+    }
+    }`
+const randomInt = (min, max) => Math.round(mix(min, max, Math.random()))
+const generateParagraphLength = () => randomInt(5, 7)
+const generateWordLength = () => randomInt(20, 100)
+
+// Randomly generate some paragraphs of word lengths
+const header = Array(1)
+    .fill(1)
+    .map(() => {
+        return Array(generateParagraphLength())
+            .fill(1)
+            .map(generateWordLength)
+    })
+const paragraphs = Array(10)
+    .fill(1)
+    .map(() => {
+        return Array(generateParagraphLength())
+            .fill(1)
+            .map(generateWordLength)
+    })
+
+export const Word = ({ width }) => <div className="word" style={{ width }} />
+
+const Paragraph = ({ words }) => (
+    <div className="paragraph">
+        {words.map(width => (
+            <Word width={width} />
+        ))}
+    </div>
+)
+
+export const HeaderPlaceholder = () => {
+    return (
+        <div className="content-placeholder">
+            {header.map(words => (
+                <Paragraph words={words} />
+            ))}
+        </div>
+    )
+}
+export const ContentPlaceholder = () => {
+    return (
+        <div className="content-placeholder">
+            {paragraphs.map(words => (
+                <Paragraph words={words} />
+            ))}
         </div>
     )
 }
