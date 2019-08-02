@@ -101,6 +101,12 @@ export interface DraggableProps extends DragHandlers {
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
+    // @internal (undocumented)
+    _dragTransitionControls?: AnimationControls;
+    // @internal (undocumented)
+    _dragValueX?: MotionValue<number>;
+    // @internal (undocumented)
+    _dragValueY?: MotionValue<number>;
 }
 
 // @public (undocumented)
@@ -630,6 +636,12 @@ export interface Tween {
     velocity?: number;
     yoyo?: number;
 }
+
+// Warning: (ae-forgotten-export) The symbol "SyncLayoutProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "UnstableSyncLayout" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export const UnstableSyncLayout: ({ children }: SyncLayoutProps) => JSX.Element;
 
 // Warning: (ae-internal-missing-underscore) The name "unwrapMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
 // 
