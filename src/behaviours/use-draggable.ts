@@ -756,8 +756,8 @@ export function useDraggable(
             // exist on this component.
             bothAxis(axis => {
                 if (!shouldDrag(axis, drag, currentDirection)) return
-                const defaultValue = axis === "x" ? _dragValueX : _dragValueY
-                point[axis] = defaultValue || values.get(axis, 0)
+                const externalValue = axis === "x" ? _dragValueX : _dragValueY
+                point[axis] = externalValue || values.get(axis, 0)
             })
 
             // Apply constraints immediately, even before render, if our constraints are a plain object.
