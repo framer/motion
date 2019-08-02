@@ -77,8 +77,6 @@ const filterTouch = (
     if (isMouseEvent(event)) listener(event)
 }
 
-// TODO: Optimisation here is find a way to conditionally add these listeners based on
-// whether we're receiving hover or event listeners
 /**
  *
  * @param props
