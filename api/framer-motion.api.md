@@ -101,10 +101,12 @@ export interface DraggableProps extends DragHandlers {
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
-    // (undocumented)
-    dragValueX?: MotionValue<number>;
-    // (undocumented)
-    dragValueY?: MotionValue<number>;
+    // @internal (undocumented)
+    _dragTransitionControls?: AnimationControls;
+    // @internal (undocumented)
+    _dragValueX?: MotionValue<number>;
+    // @internal (undocumented)
+    _dragValueY?: MotionValue<number>;
 }
 
 // @public (undocumented)

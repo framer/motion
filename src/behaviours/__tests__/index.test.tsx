@@ -263,8 +263,8 @@ describe("dragging", () => {
                 <MockDrag>
                     <motion.div
                         drag
-                        dragValueX={externalX}
-                        dragValueY={externalY}
+                        _dragValueX={externalX}
+                        _dragValueY={externalY}
                         style={{ x, y }}
                     />
                 </MockDrag>
