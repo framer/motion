@@ -19,6 +19,7 @@ import {
     MotionPlugins,
 } from "../motion/context/MotionPluginContext"
 import { useMotionValue } from "../value/use-motion-value"
+import { AnimationControls } from "../animation/AnimationControls"
 
 type DragDirection = "x" | "y"
 
@@ -367,6 +368,24 @@ export interface DraggableProps extends DragHandlers {
     dragTransition?: InertiaOptions
 
     /**
+     * @internalremarks
+     *
+     * _dragValueX, _dragValueY and _dragTransitionControls are a way of allowing this
+     * component to be a drag target for another element.
+     *
+     * @internal
+     */
+    _dragValueX?: MotionValue<number>
+    /**
+     * @internal
+     */
+    _dragValueY?: MotionValue<number>
+    /**
+     * @internal
+     */
+    _dragTransitionControls?: AnimationControls
+
+    /**
      * Drag position is calculated by applying the pan offset to the x/y origin
      * measured when the drag gesture begins.
      *
@@ -588,9 +607,12 @@ export function useDraggable(
         dragConstraints = false,
         dragElastic = true,
         dragMomentum = true,
+        _dragValueX,
+        _dragValueY,
         dragOriginX,
         dragOriginY,
         dragTransition,
+        _dragTransitionControls,
         ...handlers
     }: DraggableProps,
     ref: RefObject<Element>,
@@ -732,8 +754,8 @@ export function useDraggable(
             // exist on this component.
             bothAxis(axis => {
                 if (!shouldDrag(axis, drag, currentDirection)) return
-                const axisValue = values.get(axis, 0)
-                point[axis] = axisValue
+                const defaultValue = axis === "x" ? _dragValueX : _dragValueY
+                point[axis] = defaultValue || values.get(axis, 0)
             })
 
             // Apply constraints immediately, even before render, if our constraints are a plain object.
@@ -918,7 +940,9 @@ export function useDraggable(
                     const bounceStiffness = dragElastic ? 200 : 1000000
                     const bounceDamping = dragElastic ? 40 : 10000000
 
-                    return controls.start({
+                    const animationControls =
+                        _dragTransitionControls || controls
+                    return animationControls.start({
                         [axis]: 0,
                         // TODO: It might be possible to allow `type` animations to be set as
                         // Popmotion animations as well as strings. Then people could define their own
@@ -983,6 +1007,8 @@ export function useDraggable(
             dragTransition,
             dragOriginX,
             dragOriginY,
+            _dragValueX,
+            _dragValueY,
             values.get("x", 0),
             values.get("y", 0),
         ]

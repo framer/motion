@@ -253,6 +253,45 @@ describe("dragging", () => {
         return expect(promise).resolves.toBe(true)
     })
 
+    test("outputs to external values if provided", async () => {
+        const promise = new Promise(resolve => {
+            const externalX = motionValue(0)
+            const externalY = motionValue(0)
+            const x = motionValue(0)
+            const y = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        drag
+                        dragValueX={externalX}
+                        dragValueY={externalY}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(1, 1)
+
+            sync.postRender(() => {
+                pointer.to(50, 50)
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve([
+                        x.get(),
+                        y.get(),
+                        externalX.get(),
+                        externalY.get(),
+                    ])
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([0, 0, 50, 50])
+    })
+
     test("limit to x", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
