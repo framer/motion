@@ -1,4 +1,4 @@
-import { EventInfo, EventHandler } from "./types"
+import { EventInfo } from "./types"
 
 interface EventLike {
     pageX: number

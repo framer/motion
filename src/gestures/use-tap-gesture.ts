@@ -6,6 +6,7 @@ import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp } from "./types"
 import { getGlobalLock } from "../behaviours/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
+import { useUnmountEffect } from "../utils/use-unmount-effect"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
@@ -192,9 +193,14 @@ export function useTapGesture(
     const hasTapListeners = onTap || onTapStart || onTapCancel
     const isTapping = useRef(false)
 
-    const removePointerUpEvent = useRef<RemoveEvent | undefined | null>(null)
-    const removePointerUp = () =>
-        removePointerUpEvent.current && removePointerUpEvent.current()
+    const pointerEventSubscription = useRef<RemoveEvent | undefined | null>(
+        null
+    )
+
+    function removePointerUp() {
+        pointerEventSubscription.current && pointerEventSubscription.current()
+        pointerEventSubscription.current = null
+    }
 
     if (whileTap && controls) {
         controls.setOverride(whileTap, tapGesturePriority)
@@ -231,7 +237,7 @@ export function useTapGesture(
 
     function addDocumentPointerUp() {
         removePointerUp()
-        removePointerUpEvent.current = addPointerEvent(
+        pointerEventSubscription.current = addPointerEvent(
             document,
             "pointerup",
             onPointerUp
@@ -261,4 +267,6 @@ export function useTapGesture(
         "pointerdown",
         hasTapListeners ? onPointerDown : undefined
     )
+
+    useUnmountEffect(removePointerUp)
 }
