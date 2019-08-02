@@ -371,7 +371,9 @@ export interface DraggableProps extends DragHandlers {
      * @internalremarks
      *
      * _dragValueX, _dragValueY and _dragTransitionControls are a way of allowing this
-     * component to be a drag target for another element.
+     * component to be a drag target for controlling another element. Ideally we'll expose
+     * this API publically with something closer to `isDragging`, so a component is responsible
+     * for its own dragging but we can start and stop the behaviour manually.
      *
      * @internal
      */
