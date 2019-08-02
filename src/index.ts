@@ -68,7 +68,7 @@ export {
     Variant,
     Variants,
 } from "./types"
-export { EventInfo } from "./events"
+export { EventInfo } from "./events/types"
 export { safeWindow } from "./events/utils/window"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { AnimatePresence } from "./components/AnimatePresence"
