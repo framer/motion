@@ -17,6 +17,7 @@ interface AnimationFunctionalProps {
     controls: ValueAnimationControls
     values: MotionValuesMap
     inherit: boolean
+    custom?: any
 }
 
 export const AnimatePropComponents = {
@@ -41,12 +42,14 @@ export const AnimatePropComponents = {
             inherit = true,
             controls,
             initial,
+            custom,
         }: AnimationFunctionalProps) => {
             return useVariants(
                 initial as VariantLabels,
                 animate as VariantLabels,
                 inherit,
-                controls
+                controls,
+                custom
             )
         }
     ),

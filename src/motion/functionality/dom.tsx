@@ -102,6 +102,7 @@ export function createDomMotionConfig<P = MotionProps>(
                         variants={props.variants}
                         transition={props.transition}
                         controls={controls}
+                        custom={props.custom}
                         inherit={inherit}
                         values={values}
                     />

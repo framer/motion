@@ -28,6 +28,7 @@ export const resolveVariantLabels = (
  * When values in this array change, React re-runs the dependency. However if the array
  * contains a variable number of items, React throws an error.
  */
-export const asDependencyList = (list: VariantNameList): string[] => [
-    list.join(","),
-]
+export const asDependencyList = (
+    list: VariantNameList,
+    custom: any
+): [string, any] => [list.join(","), custom]
