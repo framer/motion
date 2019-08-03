@@ -561,6 +561,7 @@ export interface MotionProps
         GestureHandlers,
         DraggableProps,
         MotionAdvancedProps {
+    animateKey?: any
     /**
      * Properties, variant label or array of variant labels to start in.
      *

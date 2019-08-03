@@ -100,6 +100,7 @@ export function createDomMotionConfig<P = MotionProps>(
                         key="animation"
                         initial={props.initial}
                         animate={props.animate}
+                        animateKey={props.animateKey}
                         variants={props.variants}
                         transition={props.transition}
                         controls={controls}
