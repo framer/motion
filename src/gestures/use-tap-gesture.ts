@@ -1,5 +1,5 @@
 import { RefObject, useRef } from "react"
-import { EventInfo, Point } from "../events"
+import { EventInfo, Point } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { getGesturePriority } from "./utils/gesture-priority"

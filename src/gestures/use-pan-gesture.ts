@@ -7,8 +7,8 @@ import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll
 import { warning } from "hey-listen"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { isMouseEvent, isTouchEvent } from "./utils/event-type"
-import { useUnmountEffect } from "utils/use-unmount-effect"
-import { usePointerEvent, addPointerEvent } from "events/use-pointer-event"
+import { useUnmountEffect } from "../utils/use-unmount-effect"
+import { usePointerEvent, addPointerEvent } from "../events/use-pointer-event"
 
 interface TimestampedPoint extends Point {
     timestamp: number

@@ -541,12 +541,6 @@ export type ResolvedSingleTarget = string | number;
 // @public (undocumented)
 export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget;
 
-// Warning: (ae-forgotten-export) The symbol "ServerSafeWindow" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "safeWindow" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export const safeWindow: Window | ServerSafeWindow;
-
 // @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
@@ -675,29 +669,16 @@ export const useInvertedScale: ({ scaleX: parentScaleX, scaleY: parentScaleY, }?
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;
 
-// Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined;
-
-// @internal (undocumented)
-export function usePanGesture(handlers: PanHandlers): {
-    onPointerDown: EventHandler;
-};
+// @public (undocumented)
+export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
 
 // @public
 export function useSpring(source: MotionValue | number, config?: SpringProps): MotionValue<any>;
 
 // Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
 // 
-// @internal (undocumented)
-export function useTapGesture(handlers: TapHandlers & ControlsProp): {
-    onPointerDown: EventHandler;
-};
-
-// @internal (undocumented)
-export function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObject<Element>): undefined;
+// @public (undocumented)
+export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, controls, }: TapHandlers & ControlsProp, ref: RefObject<Element>): void;
 
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
 // 
@@ -728,10 +709,6 @@ export type Variants = {
     [key: string]: Variant;
 };
 
-
-// Warnings were encountered during analysis:
-// 
-// types/gestures/use-pan-gesture.d.ts:277:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

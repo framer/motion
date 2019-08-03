@@ -46,7 +46,7 @@ export {
     VariantLabels,
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
-export { DraggableProps, DragHandlers } from "./behaviours"
+export { DraggableProps, DragHandlers } from "./behaviours/types"
 export {
     Orchestration,
     Tween,
@@ -69,7 +69,6 @@ export {
     Variants,
 } from "./types"
 export { EventInfo } from "./events/types"
-export { safeWindow } from "./events/utils/window"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { UnstableSyncLayout } from "./components/SyncLayout"

@@ -1,8 +1,6 @@
-import { safeWindow } from "../../events/utils/window"
-
 let isViewportScrollBlocked = false
 
-safeWindow.addEventListener(
+window.addEventListener(
     "touchmove",
     (event: TouchEvent) => {
         if (isViewportScrollBlocked) {

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { createContext, useContext, useRef, ReactNode } from "react"
-import { Point } from "../../events"
+import { Point } from "../../events/types"
 
 export interface MotionPlugins {
     transformPagePoint: (point: Point) => Point

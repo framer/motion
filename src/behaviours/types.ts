@@ -360,13 +360,6 @@ export interface DraggableProps extends DragHandlers {
     _dragTransitionControls?: AnimationControls
 
     /**
-     * Externally control the dragging status of this component.
-     *
-     * @public
-     */
-    isDraggingOrigin: MouseEvent | TouchEvent | PointerEvent | false
-
-    /**
      * Drag position is calculated by applying the pan offset to the x/y origin
      * measured when the drag gesture begins.
      *
