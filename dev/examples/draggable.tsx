@@ -13,5 +13,5 @@ const styleB = {
 }
 
 export const App = () => {
-    return <motion.div drag style={styleA} />
+    return <motion.div drag="x" onDragEnd={console.log} style={styleA} />
 }

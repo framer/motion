@@ -19,7 +19,7 @@ import {
     MotionPlugins,
 } from "../motion/context/MotionPluginContext"
 import { useMotionValue } from "../value/use-motion-value"
-import { DraggableProps } from "./types"
+import { DraggableProps, DragHandlers } from "./types"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 
 type DragDirection = "x" | "y"
@@ -167,9 +167,7 @@ interface DragState {
     hasDragged: boolean
     currentDirection: DragDirection | null
     constraints: Constraints | false
-    handlers: {
-        onDragTransitionEnd?: DraggableProps["onDragTransitionEnd"]
-    }
+    handlers: DragHandlers
 }
 
 /**
@@ -217,6 +215,11 @@ export function useDrag(
         handlers: {},
     }).current
 
+    // TODO: Explain why we keep these in a ref
+    state.handlers.onDragStart = onDragStart
+    state.handlers.onDrag = onDrag
+    state.handlers.onDragEnd = onDragEnd
+    state.handlers.onDirectionLock = onDirectionLock
     state.handlers.onDragTransitionEnd = onDragTransitionEnd
 
     const point = useRef<MotionPoint>({}).current
@@ -358,16 +361,15 @@ export function useDrag(
             return
         }
 
-        state.hasDragged = true
-
-        let current = origin[axis].get() + offset[axis]
-
-        current = applyConstraints(
+        const axisOrigin = origin[axis].get()
+        const current = applyConstraints(
             axis,
-            current,
+            origin[axis].get() + offset[axis],
             state.constraints,
             dragElastic
         )
+
+        if (current !== axisOrigin) state.hasDragged = true
 
         axisPoint.set(current)
     }
@@ -406,7 +408,7 @@ export function useDrag(
         info: PanInfo
     ) {
         state.isDragging = true
-        state.hasDragged = true
+        state.hasDragged = false
 
         // Resolve the constraints again in case anything has changed in the meantime.
         if (constraintsNeedResolution) {
@@ -441,7 +443,7 @@ export function useDrag(
 
         state.currentDirection = null
 
-        // Alert listeners that dragging has started.
+        const { onDragStart } = state.handlers
         onDragStart && onDragStart(event, convertPanToDrag(info))
     }
 
@@ -462,6 +464,7 @@ export function useDrag(
 
             // If we've successfully set a direction, notify listener
             if (state.currentDirection !== null) {
+                const { onDirectionLock } = state.handlers
                 onDirectionLock && onDirectionLock(state.currentDirection)
             }
 
@@ -471,6 +474,7 @@ export function useDrag(
         updatePoint("x", offset)
         updatePoint("y", offset)
 
+        const { onDrag } = state.handlers
         onDrag && onDrag(event, convertPanToDrag(info))
     }
 
@@ -547,10 +551,11 @@ export function useDrag(
             recordBoxInfo(state.constraints)
         }
 
+        const { onDragEnd } = state.handlers
         onDragEnd && onDragEnd(event, convertPanToDrag(info))
     }
 
-    usePanGesture(drag ? {} : { onPan, onPanStart, onPanEnd }, ref)
+    usePanGesture(drag ? { onPan, onPanStart, onPanEnd } : {}, ref)
     usePointerEvent(ref, "pointerdown", drag ? onPointerDown : undefined)
     useUnmountEffect(() => state.isDragging && cancelDrag())
 }

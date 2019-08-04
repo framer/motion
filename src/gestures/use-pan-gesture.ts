@@ -356,6 +356,12 @@ export interface PanHandlers {
 
 type RemoveEvent = () => void
 
+/**
+ *
+ * @param handlers -
+ * @param ref -
+ * @internal
+ */
 export function usePanGesture(
     { onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers,
     ref: RefObject<Element>
@@ -501,6 +507,5 @@ export function usePanGesture(
     }
 
     usePointerEvent(ref, "pointerdown", hasPanEvents && onPointerDown)
-
     useUnmountEffect(cancelPan)
 }

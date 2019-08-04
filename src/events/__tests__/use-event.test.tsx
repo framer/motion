@@ -2,15 +2,15 @@ import "../../../jest.setup"
 import { fireEvent, render } from "@testing-library/react"
 import * as React from "react"
 import { useRef, useEffect } from "react"
-import { useEvent } from "../"
+import { useDomEvent } from "../use-dom-event"
 
-describe("useEvent", () => {
+describe("useDomEvent", () => {
     it("should handle the ref not being set correctly", () => {
         // TODO maybe show a warning too?
         const handler = jest.fn()
         const Component = () => {
             const ref = useRef(null)
-            useEvent("mousedown", ref, handler)
+            useDomEvent(ref, "mousedown", handler)
             return <div />
         }
         const { container, rerender } = render(<Component />)
@@ -22,7 +22,7 @@ describe("useEvent", () => {
         const handler = jest.fn()
         const Component = () => {
             const ref = useRef(null)
-            useEvent("mousedown", ref, handler)
+            useDomEvent(ref, "mousedown", handler)
             return <div ref={ref} />
         }
         const { container, rerender } = render(<Component />)
@@ -36,7 +36,7 @@ describe("useEvent", () => {
         const promise = new Promise(resolve => {
             const Component = () => {
                 const ref = useRef(document.body)
-                useEvent("mousedown", ref, handler)
+                useDomEvent(ref, "mousedown", handler)
                 useEffect(resolve)
                 return <div />
             }
@@ -52,7 +52,7 @@ describe("useEvent", () => {
         const promise = new Promise(resolve => {
             const Component = () => {
                 const ref = useRef(document.body)
-                useEvent("mousedown", ref, handler)
+                useDomEvent(ref, "mousedown", handler)
                 useEffect(resolve)
                 return <div />
             }
@@ -63,101 +63,5 @@ describe("useEvent", () => {
         })
         await expect(promise).resolves.toEqual(undefined)
         expect(handler).not.toHaveBeenCalled()
-    })
-
-    describe("when an element is provided", () => {
-        const target = window
-        it("should return an start and an stop function", () => {
-            const handler = jest.fn()
-            const capture: { result?: any } = {}
-            const Component = () => {
-                capture.result = useEvent("mousedown", target, handler)
-                return <div />
-            }
-            render(<Component />)
-            const [start, stop] = capture.result
-            expect(start).toBeInstanceOf(Function)
-            expect(stop).toBeInstanceOf(Function)
-        })
-        it("should should fire the event handler after the start function is called", () => {
-            const handler = jest.fn()
-            const capture: { result?: any } = {}
-            const Component = () => {
-                capture.result = useEvent("mousedown", target, handler)
-                return <div />
-            }
-            render(<Component />)
-            const [start] = capture.result
-            start()
-            fireEvent.mouseDown(document.body)
-            expect(handler).toHaveBeenCalledTimes(1)
-            fireEvent.mouseDown(document.body)
-            expect(handler).toHaveBeenCalledTimes(2)
-        })
-        it("should should not fire the event handler before the start function is called", () => {
-            const handler = jest.fn()
-            const Component = () => {
-                useEvent("mousedown", target, handler)
-                return <div />
-            }
-            render(<Component />)
-            fireEvent.mouseDown(document.body)
-            expect(handler).not.toHaveBeenCalled()
-        })
-        it("should should stop firing the event handler after the stop function is called", () => {
-            const handler = jest.fn()
-            const capture: { result?: any } = {}
-            const Component = () => {
-                capture.result = useEvent("mousedown", target, handler)
-                return <div />
-            }
-            render(<Component />)
-            const [start, stop] = capture.result
-            start()
-            fireEvent.mouseDown(document.body)
-            expect(handler).toHaveBeenCalledTimes(1)
-            stop()
-            fireEvent.mouseDown(document.body)
-            expect(handler).toHaveBeenCalledTimes(1)
-        })
-        it("should return undefined when no handler is provided", () => {
-            const capture: { result?: any } = { result: "bla" }
-            const Component = () => {
-                capture.result = useEvent("mousedown", target)
-                return <div />
-            }
-            render(<Component />)
-            expect(capture.result).toBe(undefined)
-        })
-    })
-
-    describe("in non-browser environments", () => {
-        // In server side some rendering environments window can be undefined
-        it("should return an start and an stop function when no target is provided", () => {
-            const handler = jest.fn()
-            const capture: { result?: any } = {}
-            const Component = () => {
-                capture.result = useEvent("mousedown", undefined, handler)
-                return <div />
-            }
-            render(<Component />)
-            const [start, stop] = capture.result
-            expect(start).toBeInstanceOf(Function)
-            expect(stop).toBeInstanceOf(Function)
-            expect(() => start()).not.toThrow()
-            expect(() => stop()).not.toThrow()
-        })
-        it("should return an start and an stop function when a mocked window is provided", () => {
-            const handler = jest.fn()
-            const capture: { result?: any } = {}
-            const Component = () => {
-                capture.result = useEvent("mousedown", window, handler)
-                return <div />
-            }
-            render(<Component />)
-            const [start, stop] = capture.result
-            expect(start).toBeInstanceOf(Function)
-            expect(stop).toBeInstanceOf(Function)
-        })
     })
 })

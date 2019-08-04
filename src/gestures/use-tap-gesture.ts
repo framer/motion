@@ -7,6 +7,7 @@ import { ControlsProp } from "./types"
 import { getGlobalLock } from "../behaviours/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
+import { EventListenerWithPointInfo } from "events/event-info"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
@@ -180,6 +181,10 @@ export interface TapHandlers {
 
 type RemoveEvent = () => void
 
+/**
+ * @param handlers -
+ * @internal
+ */
 export function useTapGesture(
     {
         onTap,
@@ -190,7 +195,7 @@ export function useTapGesture(
     }: TapHandlers & ControlsProp,
     ref: RefObject<Element>
 ) {
-    const hasTapListeners = onTap || onTapStart || onTapCancel
+    const hasTapListeners = onTap || onTapStart || onTapCancel || whileTap
     const isTapping = useRef(false)
 
     const pointerEventSubscription = useRef<RemoveEvent | undefined | null>(
@@ -206,16 +211,16 @@ export function useTapGesture(
         controls.setOverride(whileTap, tapGesturePriority)
     }
 
-    // TODO: Load this into a ref and call it indirectly from `addPointerEvent` () => onPointerUp.current()
-    // To stop props changing while pointerDown is active
-    function onPointerUp(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: EventInfo
-    ) {
+    // We load this event handler into a ref so we can later refer to
+    // onPointerUp.current which will always have reference to the latest props
+    const onPointerUp = useRef<EventListenerWithPointInfo | null>(null)
+    onPointerUp.current = (event, info) => {
         const element = ref.current
 
         removePointerUp()
         if (!isTapping.current || !element) return
+
+        isTapping.current = false
 
         if (controls && whileTap) {
             controls.clearOverride(tapGesturePriority)
@@ -224,7 +229,6 @@ export function useTapGesture(
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
         const openGestureLock = getGlobalLock(true)
-
         if (!openGestureLock) return
         openGestureLock()
 
@@ -240,7 +244,7 @@ export function useTapGesture(
         pointerEventSubscription.current = addPointerEvent(
             document,
             "pointerup",
-            onPointerUp
+            (event, info) => onPointerUp.current!(event, info)
         )
     }
 

@@ -669,15 +669,18 @@ export const useInvertedScale: ({ scaleX: parentScaleX, scaleY: parentScaleY, }?
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;
 
-// @public (undocumented)
+// Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
 export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
 
 // @public
 export function useSpring(source: MotionValue | number, config?: SpringProps): MotionValue<any>;
 
 // Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
 // 
-// @public (undocumented)
+// @internal (undocumented)
 export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, controls, }: TapHandlers & ControlsProp, ref: RefObject<Element>): void;
 
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
