@@ -7,7 +7,7 @@ import { MotionPlugins } from "../../motion/context/MotionPluginContext"
 import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import sync from "framesync"
-import { Constraints } from "../use-draggable"
+import { Constraints } from "../use-drag"
 
 type Point = {
     x: number
@@ -855,7 +855,7 @@ describe("dragging", () => {
             const Component = ({ x }: { x: MotionValue<number> }) => {
                 return (
                     <MockDrag>
-                        <motion.div drag="x" style={{ x }} />
+                        <motion.div drag="x" style={{ x, y: 0 }} />
                     </MockDrag>
                 )
             }

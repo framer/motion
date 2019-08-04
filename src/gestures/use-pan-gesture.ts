@@ -490,12 +490,12 @@ export function usePanGesture(
 
         removePointerEvents()
         const removeOnPointerMove = addPointerEvent(
-            document,
+            window,
             "pointermove",
             onPointerMove
         )
         const removeOnPointerUp = addPointerEvent(
-            document,
+            window,
             "pointerup",
             onPointerUp
         )

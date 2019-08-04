@@ -2,7 +2,6 @@ import { RefObject, useRef, useEffect, useContext } from "react"
 import { usePanGesture, PanInfo } from "../gestures"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
-import { usePointerEvent } from "../events/use-pointer-event"
 import { Point } from "../events/types"
 import { MotionValue } from "../value"
 import { mix } from "@popmotion/popcorn"
@@ -374,7 +373,7 @@ export function useDrag(
         axisPoint.set(current)
     }
 
-    function onPointerDown(event: MouseEvent | TouchEvent | PointerEvent) {
+    function onPanSessionStart(event: MouseEvent | TouchEvent | PointerEvent) {
         // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
         if (
             event.target &&
@@ -555,8 +554,10 @@ export function useDrag(
         onDragEnd && onDragEnd(event, convertPanToDrag(info))
     }
 
-    usePanGesture(drag ? { onPan, onPanStart, onPanEnd } : {}, ref)
-    usePointerEvent(ref, "pointerdown", drag ? onPointerDown : undefined)
+    usePanGesture(
+        drag ? { onPan, onPanStart, onPanEnd, onPanSessionStart } : {},
+        ref
+    )
     useUnmountEffect(() => state.isDragging && cancelDrag())
 }
 

@@ -242,7 +242,7 @@ export function useTapGesture(
     function addDocumentPointerUp() {
         removePointerUp()
         pointerEventSubscription.current = addPointerEvent(
-            document,
+            window,
             "pointerup",
             (event, info) => onPointerUp.current!(event, info)
         )

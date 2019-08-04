@@ -1,7 +1,7 @@
 import { useEffect, RefObject } from "react"
 
 export function addEventListener(
-    target: Element | Document,
+    target: EventTarget,
     eventName: string,
     handler?: EventListener | undefined,
     options?: AddEventListenerOptions

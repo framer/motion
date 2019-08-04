@@ -91,9 +91,7 @@ describe("tap", () => {
         expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
         unmount()
         expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
-        // When unmounting, both use-pan-gesture and use-tap-gesture remove their mouseup listener
-        // That's why this is called two times instead of one
-        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(2)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(1)
 
         expect(tap).toBeCalledTimes(0)
     })

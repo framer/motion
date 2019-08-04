@@ -49,7 +49,7 @@ function getPointerEventName(name: string): string {
 }
 
 export function addPointerEvent(
-    target: Element | Document,
+    target: EventTarget,
     eventName: string,
     handler?: EventListenerWithPointInfo | undefined,
     options?: AddEventListenerOptions
