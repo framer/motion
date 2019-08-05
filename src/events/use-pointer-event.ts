@@ -1,5 +1,5 @@
 import { RefObject } from "react"
-import { useDomEvent, addEventListener } from "./use-dom-event"
+import { useDomEvent, addDomEvent } from "./use-dom-event"
 import { wrapHandler, EventListenerWithPointInfo } from "./event-info"
 
 // We check for event support via functions in case they've been mocked by a testing suite.
@@ -55,7 +55,7 @@ export function addPointerEvent(
     handler?: EventListenerWithPointInfo | undefined,
     options?: AddEventListenerOptions
 ) {
-    return addEventListener(
+    return addDomEvent(
         target,
         getPointerEventName(eventName),
         wrapHandler(handler, eventName === "pointerdown"),

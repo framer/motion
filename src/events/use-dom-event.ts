@@ -1,6 +1,6 @@
 import { useEffect, RefObject } from "react"
 
-export function addEventListener(
+export function addDomEvent(
     target: EventTarget,
     eventName: string,
     handler?: EventListener | undefined,
@@ -23,7 +23,7 @@ export function useDomEvent(
             const element = ref.current
 
             if (handler && element) {
-                return addEventListener(element, eventName, handler, options)
+                return addDomEvent(element, eventName, handler, options)
             }
         },
         [ref, eventName, handler, options]
