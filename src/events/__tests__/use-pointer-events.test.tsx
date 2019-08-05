@@ -1,7 +1,7 @@
 import { mouseEnter, mouseLeave } from "../../../jest.setup"
-import { render, fireEvent } from "@testing-library/react"
+import { fireEvent } from "@testing-library/dom"
+import { render } from "@testing-library/react"
 import * as React from "react"
-import { useRef } from "react"
 import { usePointerEvent } from "../use-pointer-event"
 import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
@@ -9,24 +9,24 @@ import { fireCustomEvent } from "./utils/fire-event"
 function testEventsWithRef(fireFunctions: {
     [key: string]: (element: Element) => boolean
 }) {
+    const ref = React.createRef<HTMLDivElement>()
     const handlers = {}
     for (const key in fireFunctions) {
         handlers[key] = jest.fn()
     }
     const Component = () => {
-        const ref = useRef(null)
-
         for (const key in fireFunctions) {
-            usePointerEvent(ref, key, fireFunctions[key] as any)
+            usePointerEvent(ref, key, handlers[key])
         }
 
         return <div ref={ref} />
     }
-    const { container, rerender } = render(<Component />)
+    const { rerender } = render(<Component />)
     rerender(<Component />)
+
     for (const key in fireFunctions) {
         expect(handlers[key]).toHaveBeenCalledTimes(0)
-        fireFunctions[key](container.firstChild as Element)
+        fireFunctions[key](ref.current as HTMLDivElement)
         expect(handlers[key]).toHaveBeenCalledTimes(1)
     }
 }

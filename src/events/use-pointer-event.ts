@@ -2,10 +2,11 @@ import { RefObject } from "react"
 import { useDomEvent, addEventListener } from "./use-dom-event"
 import { wrapHandler, EventListenerWithPointInfo } from "./event-info"
 
+// We check for event support via functions in case they've been mocked by a testing suite.
 const isBrowser = typeof window !== "undefined"
-const supportsPointerEvents = isBrowser && window.onpointerdown === null
-const supportsTouchEvents = isBrowser && window.ontouchstart === null
-const supportsMouseEvents = isBrowser && window.onmousedown === null
+const supportsPointerEvents = () => isBrowser && window.onpointerdown === null
+const supportsTouchEvents = () => isBrowser && window.ontouchstart === null
+const supportsMouseEvents = () => isBrowser && window.onmousedown === null
 
 interface PointerNameMap {
     pointerdown: string
@@ -37,11 +38,11 @@ const touchEventNames: PointerNameMap = {
 }
 
 function getPointerEventName(name: string): string {
-    if (supportsPointerEvents) {
+    if (supportsPointerEvents()) {
         return name
-    } else if (supportsTouchEvents) {
+    } else if (supportsTouchEvents()) {
         return touchEventNames[name]
-    } else if (supportsMouseEvents) {
+    } else if (supportsMouseEvents()) {
         return mouseEventNames[name]
     }
 

@@ -1,10 +1,6 @@
 import { EventInfo } from "./types"
+import { isTouchEvent } from "../gestures/utils/event-type"
 
-interface EventLike {
-    pageX: number
-    pageY: number
-    target: EventTarget | null
-}
 /**
  * Filters out events not attached to the primary pointer (currently left mouse button)
  * @param eventHandler
@@ -29,9 +25,26 @@ export type EventListenerWithPointInfo = (
     info: EventInfo
 ) => void
 
-const extractEventInfo = ({ pageX = 0, pageY = 0 }: EventLike): EventInfo => {
+const defaultPagePoint = { pageX: 0, pageY: 0 }
+
+function pointFromTouch(e: TouchEvent) {
+    const primaryTouch = e.touches[0] || e.changedTouches[0]
+    const { pageX, pageY } = primaryTouch || defaultPagePoint
+
+    return { x: pageX, y: pageY }
+}
+
+function pointFromMouse({ pageX = 0, pageY = 0 }: MouseEvent | PointerEvent) {
+    return { x: pageX, y: pageY }
+}
+
+function extractEventInfo(
+    event: MouseEvent | TouchEvent | PointerEvent
+): EventInfo {
     return {
-        point: { x: pageX, y: pageY },
+        point: isTouchEvent(event)
+            ? pointFromTouch(event)
+            : pointFromMouse(event),
     }
 }
 
@@ -39,16 +52,9 @@ export const wrapHandler = (
     handler?: EventListenerWithPointInfo,
     shouldFilterPrimaryPointer = false
 ): EventListener | undefined => {
-    if (!handler) {
-        return undefined
-    }
+    if (!handler) return
 
-    const listener = (event: any, info?: EventInfo) => {
-        if (!info) {
-            info = extractEventInfo(event)
-        }
-        handler(event, info)
-    }
+    const listener = (event: any) => handler(event, extractEventInfo(event))
 
     return shouldFilterPrimaryPointer
         ? filterPrimaryPointer(listener)

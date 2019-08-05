@@ -6,12 +6,7 @@ const styleA = {
     height: 300,
     background: "blue",
 }
-const styleB = {
-    width: 100,
-    height: 100,
-    background: "red",
-}
 
 export const App = () => {
-    return <motion.div drag="x" onDragEnd={console.log} style={styleA} />
+    return <motion.div drag style={styleA} />
 }
