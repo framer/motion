@@ -1,179 +1,13 @@
-import {
-    MotionProps,
-    AnimationProps,
-    ResolvePositionTransition,
-} from "../types"
+import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
-import {
-    useLayoutEffect,
-    useEffect,
-    RefObject,
-    useContext,
-    useRef,
-} from "react"
+import { useLayoutEffect, RefObject, useContext } from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import styler from "stylefire"
 import { Transition, TargetAndTransition } from "../../types"
 import { SyncLayoutContext } from "../../components/SyncLayout"
-
-// interface Position {
-//     x: number
-//     y: number
-// }
-
-// const hasMoved = (a: Position, b: Position) => a.x !== b.x || a.y !== b.y
-
-// const measureDelta = (origin: Position, target: Position) => ({
-//     x: origin.x - target.x,
-//     y: origin.y - target.y,
-// })
-
-// const isHTMLElement = (element: Element | null): element is HTMLElement =>
-//     typeof HTMLElement !== "undefined" && element instanceof HTMLElement
-
-// const createTransition = (
-//     values: MotionValuesMap,
-//     positionTransition: Transition | boolean = {}
-// ) => (axis: "x" | "y", offset: number) => {
-//     const baseTransition =
-//         typeof positionTransition === "boolean" ? {} : positionTransition
-//     const value = values.get(axis, 0)
-//     const velocity = value.getVelocity()
-//     const transition = baseTransition.hasOwnProperty(axis)
-//         ? baseTransition[axis]
-//         : baseTransition
-
-//     if (transition.velocity === undefined) transition.velocity = velocity
-
-//     value.set(offset + value.get())
-
-//     return transition
-// }
-
-// const createSizeTransition = (
-//     values: MotionValuesMap,
-//     sizeTransition: Transition | boolean = {}
-// ) => (axis: "scaleX" | "scaleY", origin: number) => {
-//     const baseTransition =
-//         typeof sizeTransition === "boolean" ? {} : sizeTransition
-//     const value = values.get(axis, 1)
-//     const velocity = value.getVelocity()
-//     const transition = baseTransition.hasOwnProperty(axis)
-//         ? baseTransition[axis]
-//         : baseTransition
-
-//     if (transition.velocity === undefined) transition.velocity = velocity
-
-//     value.set(origin)
-
-//     return transition
-// }
-
-// function usePositionAnimation(
-//     ref: RefObject<Element | HTMLElement | null>,
-//     values: MotionValuesMap,
-//     controls: ValueAnimationControls,
-//     positionTransition: AnimationProps["positionTransition"]
-// ) {
-//     const getPosition = () => {
-//         const element = ref.current
-
-//         return isHTMLElement(element)
-//             ? { x: element.offsetLeft, y: element.offsetTop }
-//             : null
-//     }
-
-//     // Take a record of the current bounding box
-//     let prev = getPosition()
-
-//     useLayoutEffect(() => {
-//         const target = getPosition()
-
-//         if (!prev || !target || !hasMoved(prev, target)) return
-//         console.log(prev, target)
-//         const delta = measureDelta(prev, target)
-
-//         const transitionDefinition = isResolver(positionTransition)
-//             ? positionTransition({ delta })
-//             : positionTransition
-
-//         const transition = createTransition(values, transitionDefinition)
-//         const x = transition("x", delta.x)
-//         const y = transition("y", delta.y)
-
-//         if (transitionDefinition) {
-//             controls.start({ x: 0, y: 0, transition: { x, y } })
-//         }
-//     })
-// }
-
-// interface Size {
-//     width: number
-//     height: number
-// }
-
-// function hasResized(a: Size, b: Size) {
-//     return a.width !== b.width || a.height !== b.height
-// }
-
-// const measureSizeDelta = (origin: Size, target: Size) => ({
-//     width: origin.width - target.width,
-//     height: origin.height - target.height,
-// })
-
-// function useSizeAnimation(
-//     ref: RefObject<Element | HTMLElement | null>,
-//     values: MotionValuesMap,
-//     controls: ValueAnimationControls,
-//     sizeTransition: AnimationProps["layoutTransition"]
-// ) {
-//     const getSize = () => {
-//         const element = ref.current
-
-//         if (!isHTMLElement(element)) return null
-
-//         const { width, height } = element.getBoundingClientRect()
-
-//         return { width, height }
-//     }
-
-//     // Take a record of the current bounding box
-//     let prev = getSize()
-
-//     useLayoutEffect(() => {
-//         const element = ref.current
-//         if (!isHTMLElement(element)) return undefined
-
-//         // Undo transform when measuring target
-//         const transform = element.style.transform
-//         element.style.transform = ""
-//         const target = getSize()
-//         element.style.transform = transform
-
-//         if (!prev || !target || !hasResized(prev, target)) return
-
-//         const delta = measureSizeDelta(prev, target)
-
-//         const transitionDefinition = isResolver(sizeTransition)
-//             ? sizeTransition({ delta })
-//             : sizeTransition
-
-//         const transition = createSizeTransition(values, transitionDefinition)
-
-//         const scaleX = transition("scaleX", prev.width / target.width)
-//         const scaleY = transition("scaleY", prev.height / target.height)
-
-//         if (transitionDefinition) {
-//             controls.start({
-//                 scaleX: 1,
-//                 scaleY: 1,
-//                 transition: { scaleX, scaleY },
-//             })
-//         }
-//     })
-// }
+import { useSyncEffect } from "utils/use-sync-layout-effect"
 
 function isHTMLElement(
     element?: Element | HTMLElement | null
@@ -181,18 +15,16 @@ function isHTMLElement(
     return element instanceof HTMLElement
 }
 
-interface BoundingBox {
-    top: number
-    left: number
-    right: number
-    bottom: number
-}
-
 interface Layout {
     left: number
     top: number
     width: number
     height: number
+}
+
+interface BoundingBox extends Layout {
+    right: number
+    bottom: number
 }
 
 function findCenter({ top, left, bottom, right }: BoundingBox) {
@@ -204,17 +36,26 @@ function findCenter({ top, left, bottom, right }: BoundingBox) {
 
 function isResolver(
     transition: AnimationProps["layoutTransition"]
-): transition is ResolvePositionTransition {
+): transition is ResolveLayoutTransition {
     return typeof transition === "function"
 }
 
-function hasChanged(prev: Layout, next: Layout) {
+function hasChanged(prev: Layout | BoundingBox, next: Layout | BoundingBox) {
     return (
         prev.left !== next.left ||
         prev.top !== next.top ||
         prev.height !== next.height ||
         prev.width !== next.width
     )
+}
+
+function measureDelta(prev: Layout, next: Layout) {
+    return {
+        left: prev.left - next.left,
+        top: prev.top - next.top,
+        width: prev.width - next.width,
+        height: prev.height - next.height,
+    }
 }
 
 function measureLayout(element?: Element | HTMLElement | null): Layout | null {
@@ -231,18 +72,9 @@ function measureLayout(element?: Element | HTMLElement | null): Layout | null {
     }
 }
 
-function measureDelta(prev: Layout, next: Layout) {
-    return {
-        left: prev.left - next.left,
-        top: prev.top - next.top,
-        width: prev.width - next.width,
-        height: prev.height - next.height,
-    }
-}
-
 function measureBoundingBox(
     element?: Element | HTMLElement | null
-): Layout | null {
+): BoundingBox | null {
     if (!isHTMLElement(element)) return null
 
     const {
@@ -256,13 +88,26 @@ function measureBoundingBox(
     return { left, top, width, height, bottom, right }
 }
 
-function measureBoundingBoxWithoutTransform(element: HTMLElement): Layout {
+function measureBoundingBoxWithoutTransform(element: HTMLElement): BoundingBox {
+    // TODO: This is a source of layout thrashing
     const transform = element.style.transform
     element.style.transform = ""
-    const layout = measureBoundingBox(element) as Layout
+    const layout = measureBoundingBox(element) as BoundingBox
     element.style.transform = transform
 
     return layout
+}
+
+function measurePositionStyle(element?: Element | HTMLElement | null) {
+    if (!isHTMLElement(element)) return null
+
+    return window.getComputedStyle(element).position
+}
+
+interface VisualInfo {
+    layout: Layout | null
+    bbox: Layout | null
+    position: string | null
 }
 
 function useLayoutAnimation(
@@ -271,71 +116,112 @@ function useLayoutAnimation(
     controls: ValueAnimationControls,
     layoutTransition: AnimationProps["layoutTransition"]
 ) {
-    // Allow any parent SyncLayoutContexts to force-update this component
+    // Allow any parent SyncLayoutContext components to force-update this component
     useContext(SyncLayoutContext)
 
-    const prev = measureBoundingBox(ref.current)
+    const element = ref.current
+    const shouldMeasureLayout = isHTMLElement(element)
 
-    useLayoutEffect(() => {
-        const element = ref.current
-        if (!isHTMLElement(element) || !prev) return
+    const hasChanged = {
+        left: false,
+        top: false,
+        width: false,
+        height: false,
+    }
 
-        const next = measureBoundingBoxWithoutTransform(element)
+    const next: VisualInfo = {
+        layout: null,
+        bbox: null,
+        position: null,
+    }
 
-        if (!hasChanged(prev, next)) return
+    const prev: VisualInfo = shouldMeasureLayout
+        ? {
+              layout: measureLayout(element),
+              bbox: measureBoundingBox(element),
+              position: measurePositionStyle(element),
+          }
+        : next
 
-        const delta = measureDelta(prev, next)
+    let transform: string | null = ""
 
-        const transitionDefinition = isResolver(layoutTransition)
-            ? layoutTransition({ delta })
-            : layoutTransition
+    // We split the unsetting, read and reapplication of the `transform` style prop
+    // as multiple components might all be doing the same thing. Doing it this way
+    // will prevent layout thrashing.
+    useSyncEffect.prepare(() => {
+        if (!shouldMeasureLayout) return
 
-        const target: TargetAndTransition = {}
-        const transition: Transition = {}
+        transform = element.style.transform
+        element.style.transform = ""
+    })
 
-        function makeTransition(
-            layoutKey: keyof Layout,
-            transformKey: string,
-            defaultValue: number,
-            visualOrigin: number
-        ) {
-            // If layout hasn't changed, early return
-            if (!delta[layoutKey]) return
+    useSyncEffect.read(() => {
+        if (!shouldMeasureLayout) return
 
-            const baseTransition =
-                typeof transitionDefinition === "boolean"
-                    ? {}
-                    : transitionDefinition
+        next.layout = measureLayout(element)
+        next.bbox = measureBoundingBox(element) as BoundingBox
+        next.position = measurePositionStyle(element)
+    })
 
-            const value = values.get(transformKey, defaultValue)
-            const velocity = value.getVelocity()
-            transition[transformKey] = baseTransition.hasOwnProperty(
-                transformKey
-            )
-                ? baseTransition[transformKey]
-                : baseTransition
+    useSyncEffect.render(() => {
+        if (!shouldMeasureLayout) return
 
-            if (transition[transformKey].velocity === undefined) {
-                transition[transformKey].velocity = velocity
-            }
+        element.style.transform = transform
 
-            target[transformKey] = defaultValue
+        // if (!hasChanged(prevBbox, next)) return
 
-            value.set(visualOrigin)
-        }
+        // const delta = measureDelta(prevBbox, next)
 
-        if (transitionDefinition) {
-            const prevCenter = findCenter(prev)
-            const nextCenter = findCenter(next)
+        // const transitionDefinition = isResolver(layoutTransition)
+        //     ? layoutTransition({ delta })
+        //     : layoutTransition
 
-            makeTransition("left", "x", 0, prevCenter.x - nextCenter.x)
-            makeTransition("top", "y", 0, prevCenter.y - nextCenter.y)
-            makeTransition("width", "scaleX", 1, prev.width / next.width)
-            makeTransition("height", "scaleY", 1, prev.height / next.height)
+        // const target: TargetAndTransition = {}
+        // const transition: Transition = {}
 
-            target.transition = transition
-            controls.start(target)
-        }
+        // function makeTransition(
+        //     layoutKey: keyof Layout,
+        //     transformKey: string,
+        //     defaultValue: number,
+        //     visualOrigin: number
+        // ) {
+        //     // If layout hasn't changed, early return
+        //     if (!delta[layoutKey]) return
+
+        //     const baseTransition =
+        //         typeof transitionDefinition === "boolean"
+        //             ? {}
+        //             : transitionDefinition
+
+        //     const value = values.get(transformKey, defaultValue)
+        //     const velocity = value.getVelocity()
+        //     transition[transformKey] = baseTransition.hasOwnProperty(
+        //         transformKey
+        //     )
+        //         ? baseTransition[transformKey]
+        //         : baseTransition
+
+        //     if (transition[transformKey].velocity === undefined) {
+        //         transition[transformKey].velocity = velocity
+        //     }
+
+        //     target[transformKey] = defaultValue
+
+        //     value.set(visualOrigin)
+        // }
+
+        // if (transitionDefinition) {
+        //     const prevCenter = findCenter(prev)
+        //     const nextCenter = findCenter(next)
+
+        //     makeTransition("left", "x", 0, prevCenter.x - nextCenter.x)
+        //     makeTransition("top", "y", 0, prevCenter.y - nextCenter.y)
+        //     makeTransition("width", "scaleX", 1, prev.width / next.width)
+        //     makeTransition("height", "scaleY", 1, prev.height / next.height)
+
+        //     target.transition = transition
+        //     controls.start(target)
+        // }
 
         styler(element).render()
     })
