@@ -1,15 +1,7 @@
 import { motion, AnimatePresence, useInvertedScale } from "@framer"
 import * as React from "react"
 import { useState } from "react"
-import { UnstableSyncLayout } from "../../src/components/SyncLayout"
 import { mix } from "@popmotion/popcorn"
-
-const style = {
-    width: 100,
-    height: 100,
-    background: "red",
-    opacity: 1,
-}
 
 const container = { boxSizing: "border-box", width: 400, margin: "0 auto" }
 
@@ -65,8 +57,6 @@ const textContainer = {
     padding: 10,
     width: 250,
 }
-
-const transition = { duration: 3 }
 
 const image = {
     position: "absolute",
@@ -129,7 +119,7 @@ const Content = () => {
 
 const Card = () => {
     const [isOpen, setOpen] = useState(false)
-
+    const transition = { duration: 0.6 }
     const cardStyle = isOpen ? openCard : closedCard
     const animate = isOpen
         ? {
@@ -145,7 +135,7 @@ const Card = () => {
     return (
         <div style={cardContainer}>
             <motion.div
-                layoutTransition={transition}
+                layoutTransition
                 initial={false}
                 animate={animate}
                 style={{ ...cardStyle }}

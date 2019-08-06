@@ -31,7 +31,7 @@ export const App = () => {
                         width: 100,
                         marginTop: isVisible ? 0 : -100,
                     }}
-                    layoutTransition={transition}
+                    layoutTransition
                 >
                     <AnimatePresence
                         initial={false}
@@ -48,7 +48,7 @@ export const App = () => {
                         )}
                     </AnimatePresence>
                 </motion.div>
-                <motion.div layoutTransition={transition} style={style} />
+                <motion.div layoutTransition style={style} />
             </UnstableSyncLayout>
         </div>
     )

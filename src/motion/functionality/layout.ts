@@ -33,6 +33,11 @@ interface VisualInfo {
     boundingBox: Layout
 }
 
+const defaultLayoutTransition = {
+    duration: 0.8,
+    ease: [0.45, 0.05, 0.19, 1.01],
+}
+
 function isHTMLElement(
     element?: Element | HTMLElement | null
 ): element is HTMLElement {
@@ -169,11 +174,12 @@ function useLayoutAnimation(
             defaultValue: number,
             visualOrigin: number
         ) {
-            if (!delta[layoutKey]) return
+            const deltaKey = isSizeKey(layoutKey) ? layoutKey : transformKey
+            if (!delta[deltaKey]) return
 
             const baseTransition =
                 typeof transitionDefinition === "boolean"
-                    ? {}
+                    ? { ...defaultLayoutTransition }
                     : transitionDefinition
 
             const value = values.get(transformKey, defaultValue)

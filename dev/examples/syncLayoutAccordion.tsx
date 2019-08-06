@@ -12,11 +12,6 @@ import { UnstableSyncLayout } from "../../src/components/SyncLayout"
 import { useInvertedScale, useTransform } from "@framer"
 import { mix } from "@popmotion/popcorn"
 
-const transition = {
-    duration: 4,
-    ease: [0.04, 0.62, 0.23, 0.98],
-}
-
 const Accordion = ({ i, expanded, setExpanded }) => {
     const isOpen = i === expanded
 
@@ -28,12 +23,9 @@ const Accordion = ({ i, expanded, setExpanded }) => {
                 initial={false}
                 animate={{ backgroundColor: isOpen ? "#FF0088" : "#0055FF" }}
                 onClick={() => setExpanded(isOpen ? false : i)}
-                layoutTransition={transition}
+                layoutTransition
             />
-            <motion.section
-                layoutTransition={transition}
-                style={{ position: "relative" }}
-            >
+            <motion.section layoutTransition style={{ position: "relative" }}>
                 <AnimatePresence>
                     {isOpen && <ContentPlaceholder />}
                 </AnimatePresence>
