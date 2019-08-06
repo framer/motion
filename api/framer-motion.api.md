@@ -64,10 +64,10 @@ export const animationControls: () => AnimationControls;
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
     exit?: AnimationControls | TargetAndTransition | VariantLabels;
-    // Warning: (ae-forgotten-export) The symbol "ResolveLayoutTransition" needs to be exported by the entry point index.d.ts
+    // @beta
     layoutTransition?: Transition | boolean | ResolveLayoutTransition;
-    // Warning: (ae-forgotten-export) The symbol "ResolvePositionTransition" needs to be exported by the entry point index.d.ts
-    positionTransition?: Transition | boolean | ResolvePositionTransition;
+    // @deprecated
+    positionTransition?: Transition | boolean | ResolveLayoutTransition;
     transition?: Transition;
     variants?: Variants;
 }
@@ -542,6 +542,11 @@ export type ResolvedSingleTarget = string | number;
 
 // @public (undocumented)
 export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget;
+
+// Warning: (ae-forgotten-export) The symbol "RelayoutInfo" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boolean;
 
 // @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;

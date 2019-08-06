@@ -44,6 +44,7 @@ export {
     MotionStyle,
     MotionTransform,
     VariantLabels,
+    ResolveLayoutTransition,
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./behaviours/types"

@@ -473,7 +473,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     private animate(
         animationDefinition: Variant,
         { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
-    ) {
+    ): Promise<any> {
         let { target, transition, transitionEnd } = this.resolveVariant(
             animationDefinition
         )
