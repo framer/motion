@@ -1,8 +1,8 @@
 import * as React from "react"
 import { MotionPlugins } from "../../motion/context/MotionPluginContext"
-import { fireEvent } from "dom-testing-library"
+import { fireEvent } from "@testing-library/dom"
 
-type Point = {
+export type Point = {
     x: number
     y: number
 }
