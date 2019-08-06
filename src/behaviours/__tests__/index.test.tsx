@@ -7,7 +7,7 @@ import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import sync from "framesync"
 import { Constraints } from "../use-drag"
-import { MockDrag, drag } from "./utils"
+import { MockDrag, drag, Point } from "./utils"
 
 describe("dragging", () => {
     test("dragStart fires", async () => {
