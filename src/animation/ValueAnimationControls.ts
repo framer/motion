@@ -530,10 +530,13 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
             )
         }
 
-        return Promise.all(animations).then(() => {
-            if (!transitionEnd) return
-            this.setValues(transitionEnd, { priority })
-        })
+        const allAnimations = Promise.all(animations)
+
+        return transitionEnd
+            ? allAnimations.then(() => {
+                  this.setValues(transitionEnd!, { priority })
+              })
+            : allAnimations
     }
 
     private animateVariantLabels(
