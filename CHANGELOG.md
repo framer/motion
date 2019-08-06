@@ -2,15 +2,17 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.5.1] 2019-08-07
+## [1.6.0] 2019-08-07
 
 ## Added
 
+-   `layoutTransition`
 -   `EventInfo` now passed as second argument to `onHoverStart` and `onHoverEnd`.
 
 ## Fixed
 
 -   Simplifying event system.
+-   Applying values in `animate.transitionEnd` if not initial animation.
 
 ## [1.5.0] 2019-08-02
 

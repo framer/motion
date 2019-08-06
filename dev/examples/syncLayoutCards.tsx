@@ -146,7 +146,7 @@ const Card = () => {
         <div style={cardContainer}>
             <motion.div
                 layoutTransition={transition}
-                initial={{ zIndex: 0 }}
+                initial={false}
                 animate={animate}
                 style={{ ...cardStyle }}
                 onClick={() => setOpen(!isOpen)}

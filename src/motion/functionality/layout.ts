@@ -172,14 +172,13 @@ function useLayoutAnimation(
 
             const value = values.get(transformKey, defaultValue)
             const velocity = value.getVelocity()
-            transition[transformKey] = baseTransition.hasOwnProperty(
-                transformKey
-            )
-                ? baseTransition[transformKey]
-                : baseTransition
+
+            transition[transformKey] = baseTransition[transformKey]
+                ? { ...baseTransition[transformKey] }
+                : { ...baseTransition }
 
             if (transition[transformKey].velocity === undefined) {
-                transition[transformKey].velocity = velocity
+                transition[transformKey].velocity = velocity || 0
             }
 
             target[transformKey] = defaultValue
