@@ -32,7 +32,6 @@ const openCard = {
     left: 0,
     right: 0,
     bottom: 0,
-    zIndex: 2,
 }
 
 const closedCard = {
@@ -131,22 +130,25 @@ const Content = () => {
 const Card = () => {
     const [isOpen, setOpen] = useState(false)
 
+    const cardStyle = isOpen ? openCard : closedCard
+    const animate = isOpen
+        ? {
+              zIndex: 2,
+              transition,
+          }
+        : {
+              zIndex: 2,
+              transition,
+              transitionEnd: { zIndex: 0 },
+          }
+
     return (
         <div style={cardContainer}>
             <motion.div
                 layoutTransition={transition}
-                layoutTransitionEnd={{}}
-                animate={
-                    isOpen
-                        ? { zIndex: 2 }
-                        : {
-                              display: "block",
-                              transitionEnd: {
-                                  zIndex: 0,
-                              },
-                          }
-                }
-                style={isOpen ? openCard : closedCard}
+                initial={{ zIndex: 0 }}
+                animate={animate}
+                style={{ ...cardStyle }}
                 onClick={() => setOpen(!isOpen)}
             >
                 <BackgroundImage />
@@ -154,21 +156,6 @@ const Card = () => {
                 <Content />
                 <CloseButton />
             </motion.div>
-            <motion.div
-                style={{
-                    position: "fixed",
-                    top: 0,
-                    left: 0,
-                    bottom: 0,
-                    right: 0,
-                    "-webkit-backdrop-filter": "blur(10px)",
-                    pointerEvents: "none",
-                    background: "rgba(255,255,255,0.5)",
-                    opacity: isOpen ? 1 : 0,
-                    zIndex: 1,
-                    transition: "200ms opacity ease-out",
-                }}
-            />
         </div>
     )
 }
