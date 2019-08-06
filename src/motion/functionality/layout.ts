@@ -16,6 +16,13 @@ interface Layout {
     height: number
 }
 
+interface LayoutDelta {
+    x: number
+    y: number
+    width: number
+    height: number
+}
+
 interface CompareMode {
     measure: (element: HTMLElement) => Layout
     getLayout: (info: VisualInfo) => Layout
@@ -47,13 +54,13 @@ function findCenter({ top, left, width, height }: Layout) {
     }
 }
 
-function measureDelta(prev: Layout, next: Layout) {
+function measureDelta(prev: Layout, next: Layout): LayoutDelta {
     const prevCenter = findCenter(prev)
     const nextCenter = findCenter(next)
 
     return {
-        left: prevCenter.x - nextCenter.x,
-        top: prevCenter.y - nextCenter.y,
+        x: prevCenter.x - nextCenter.x,
+        y: prevCenter.y - nextCenter.y,
         width: prev.width - next.width,
         height: prev.height - next.height,
     }
@@ -142,8 +149,7 @@ function useLayoutAnimation(
         const prevLayout = compare.getLayout(prev)
         const nextLayout = compare.getLayout(next)
         const delta = measureDelta(prevLayout, nextLayout)
-        const hasAnyChanged =
-            delta.top || delta.left || delta.width || delta.height
+        const hasAnyChanged = delta.x || delta.y || delta.width || delta.height
 
         if (!hasAnyChanged) {
             transform && (element.style.transform = transform)
@@ -192,8 +198,8 @@ function useLayoutAnimation(
             value.set(visualOrigin + offsetToApply)
         }
 
-        makeTransition("left", "x", 0, delta.left)
-        makeTransition("top", "y", 0, delta.top)
+        makeTransition("left", "x", 0, delta.x)
+        makeTransition("top", "y", 0, delta.y)
         makeTransition(
             "width",
             "scaleX",

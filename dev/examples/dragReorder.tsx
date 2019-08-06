@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState, useRef } from "react"
+import { useState } from "react"
 import { motion, useMotionValue } from "@framer"
 import { clamp } from "@popmotion/popcorn"
 import move from "array-move"
@@ -71,7 +71,7 @@ const findIndex = (i, y) => {
     return clamp(0, initialColors.length - 1, Math.round(totalY / totalHeight))
 }
 
-const initialColors = ["#FF008C", "#D309E1"] //, "#9C1AFF", "#7700FF"]
+const initialColors = ["#FF008C", "#D309E1", "#9C1AFF", "#7700FF"]
 
 const styles = `body {
   width: 100vw;

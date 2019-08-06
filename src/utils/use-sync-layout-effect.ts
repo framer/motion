@@ -45,9 +45,7 @@ function flushAllJobs() {
 // TODO: This is incompatible with concurrent mode where multiple renders might
 // happen without a DOM update. This would result in batched jobs. Hopefully the
 // React team offer a getSnapshotBeforeUpdate hook and we can move to that.
-const createUseSyncEffect = (stepName: StepName) => (
-    callback?: Callback | undefined
-) => {
+const createUseSyncEffect = (stepName: StepName) => (callback?: Callback) => {
     if (callback) {
         jobsNeedProcessing = true
         jobs[stepName].push(callback)
