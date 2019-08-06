@@ -6,7 +6,7 @@ import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { SyncLayoutContext } from "../../components/SyncLayout"
-import { useSyncEffect } from "../../utils/use-sync-layout-effect"
+import { layoutSync, useLayoutSync } from "../../utils/use-layout-sync"
 import { TargetAndTransition, Transition } from "../../types"
 
 interface Layout {
@@ -16,6 +16,8 @@ interface Layout {
     height: number
 }
 
+// We measure the positional delta as x/y as we're actually going to figure out
+// and track the motion of the component's visual center.
 interface LayoutDelta {
     x: number
     y: number
@@ -23,7 +25,8 @@ interface LayoutDelta {
     height: number
 }
 
-interface CompareMode {
+// We use both offset and bounding box measurements, and they need to be handled slightly differently
+interface LayoutType {
     measure: (element: HTMLElement) => Layout
     getLayout: (info: VisualInfo) => Layout
 }
@@ -35,7 +38,7 @@ interface VisualInfo {
 
 const defaultLayoutTransition = {
     duration: 0.8,
-    ease: [0.45, 0.05, 0.19, 1.01],
+    ease: [0.45, 0.05, 0.19, 1.0],
 }
 
 function isHTMLElement(
@@ -50,6 +53,8 @@ function isResolver(
     return typeof transition === "function"
 }
 
+// Find the center of a Layout definition. We do this to account for potential changes
+// in the top/left etc that are actually just as a result of width/height changes.
 function findCenter({ top, left, width, height }: Layout) {
     const right = left + width
     const bottom = top + height
@@ -71,7 +76,7 @@ function measureDelta(prev: Layout, next: Layout): LayoutDelta {
     }
 }
 
-const offset: CompareMode = {
+const offset: LayoutType = {
     getLayout: ({ offset }) => offset,
     measure: element => {
         const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = element
@@ -84,7 +89,7 @@ const offset: CompareMode = {
         }
     },
 }
-const boundingBox: CompareMode = {
+const boundingBox: LayoutType = {
     getLayout: ({ boundingBox }) => boundingBox,
     measure: element => {
         const { left, top, width, height } = element.getBoundingClientRect()
@@ -96,7 +101,7 @@ function readPositionStyle(element: HTMLElement) {
     return window.getComputedStyle(element).position
 }
 
-function getCompareMode(prev: string | null, next: string | null): CompareMode {
+function getLayoutType(prev: string | null, next: string | null): LayoutType {
     return prev === next ? offset : boundingBox
 }
 
@@ -115,15 +120,17 @@ function useLayoutAnimation(
 
     const element = ref.current
 
+    // If we don't have a HTML element we can early return here. We still need to flush
+    // any layout sync jobs as it's a hook
     if (!isHTMLElement(element)) {
-        // If we don't yet have a HTML element we can early return here. These jobs
-        // won't get scheduled, but because they're hooks they do need to be called.
-        useSyncEffect.prepare()
-        useSyncEffect.read()
-        useSyncEffect.render()
+        useLayoutSync()
         return
     }
 
+    // Keep track of the position style prop. Ideally we'd compare offset as this is uneffected by
+    // the same transforms that we want to use to performantly animate the layout. But if position changes,
+    // for example between "static" and "fixed", we can no longer rely on the offset and need
+    // to use the visual bounding box.
     const prevPosition = readPositionStyle(element)
 
     const prev: VisualInfo = {
@@ -131,32 +138,43 @@ function useLayoutAnimation(
         boundingBox: boundingBox.measure(element),
     }
 
+    // Keep track of any existing transforms so we can reapply them after measuring the target bounding box.
     let transform: string | null = ""
-    let next: VisualInfo
-    let compare: CompareMode
 
-    const prepare = () => {
+    let next: VisualInfo
+    let compare: LayoutType
+
+    // We split the unsetting, read and reapplication of the `transform` style prop into
+    // different steps via useSyncEffect. Multiple components might all be doing the same
+    // thing and by splitting these jobs and flushing them in batches we prevent layout thrashing.
+    layoutSync.prepare(() => {
+        // Unset the transform of all layoutTransition components so we can accurately measure
+        // the target bounding box
         transform = element.style.transform
         element.style.transform = ""
-    }
+    })
 
-    const read = () => {
+    layoutSync.read(() => {
+        // Read the target VisualInfo of all layoutTransition components
         next = {
             offset: offset.measure(element),
             boundingBox: boundingBox.measure(element),
         }
 
         const nextPosition = readPositionStyle(element)
-        compare = getCompareMode(prevPosition, nextPosition)
-    }
+        compare = getLayoutType(prevPosition, nextPosition)
+    })
 
-    const render = () => {
+    layoutSync.render(() => {
+        // Reverse the layout delta of all newly laid-out layoutTransition components into their
+        // prev visual state and then animate them into their new one using transforms.
         const prevLayout = compare.getLayout(prev)
         const nextLayout = compare.getLayout(next)
         const delta = measureDelta(prevLayout, nextLayout)
         const hasAnyChanged = delta.x || delta.y || delta.width || delta.height
 
         if (!hasAnyChanged) {
+            // If layout hasn't changed, reapply the transform and get out of here.
             transform && (element.style.transform = transform)
             return
         }
@@ -171,9 +189,10 @@ function useLayoutAnimation(
         function makeTransition(
             layoutKey: keyof Layout,
             transformKey: string,
-            defaultValue: number,
+            targetValue: number,
             visualOrigin: number
         ) {
+            // If this dimension hasn't changed, early return
             const deltaKey = isSizeKey(layoutKey) ? layoutKey : transformKey
             if (!delta[deltaKey]) return
 
@@ -182,7 +201,7 @@ function useLayoutAnimation(
                     ? { ...defaultLayoutTransition }
                     : transitionDefinition
 
-            const value = values.get(transformKey, defaultValue)
+            const value = values.get(transformKey, targetValue)
             const velocity = value.getVelocity()
 
             transition[transformKey] = baseTransition[transformKey]
@@ -193,13 +212,12 @@ function useLayoutAnimation(
                 transition[transformKey].velocity = velocity || 0
             }
 
-            target[transformKey] = defaultValue
+            // The target value of all transforms is the default value of that prop (ie x = 0, scaleX = 1)
+            // This is because we're inverting the layout change with `transform` and then animating to `transform: none`
+            target[transformKey] = targetValue
 
-            let offsetToApply = 0
-
-            if (!isSizeKey(layoutKey) && compare === offset) {
-                offsetToApply = value.get()
-            }
+            const offsetToApply =
+                !isSizeKey(layoutKey) && compare === offset ? value.get() : 0
 
             value.set(visualOrigin + offsetToApply)
         }
@@ -221,17 +239,15 @@ function useLayoutAnimation(
 
         target.transition = transition
 
+        // Only start the transition if `transitionDefinition` isn't `false`. Otherwise we want
+        // to leave the values in their newly-inverted state and let the user cope with the rest.
         transitionDefinition && controls.start(target)
 
+        // Force a render to ensure there's no visual flickering
         styler(element).render()
-    }
+    })
 
-    // We split the unsetting, read and reapplication of the `transform` style prop into
-    // different steps via useSyncEffect. Multiple components might all be doing the same
-    // thing and by splitting these jobs and flushing them in batches we prevent layout thrashing.
-    useSyncEffect.prepare(prepare)
-    useSyncEffect.read(read)
-    useSyncEffect.render(render)
+    useLayoutSync()
 }
 
 export const Layout: FunctionalComponentDefinition = {
