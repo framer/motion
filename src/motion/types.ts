@@ -561,7 +561,6 @@ export interface MotionProps
         GestureHandlers,
         DraggableProps,
         MotionAdvancedProps {
-    animateKey?: any
     /**
      * Properties, variant label or array of variant labels to start in.
      *
@@ -674,6 +673,20 @@ export interface MotionProps
      * @internal
      */
     transformValues?<V extends any>(values: V): V
+
+    /**
+     * An optional prop that, when changed, starts a new animation. Most of the time, you will not need to use this prop as
+     * changing the `animate` prop will start new animations.
+     *
+     * This prop is useful when it is paired with the `custom` prop. The `custom` prop is a way to pass an argument into your variants, but a new animation does not
+     * begin when the value of `custom` changes. If you need to start a new animation whenever `custom` changes, then you can pass the same value into `animateKey`.
+     *
+     * ```jsx
+     * <motion.div variants={variants} animate={currentVariant} custom={position} animateKey={position} />
+     * ```
+     *
+     */
+    animateKey?: any
 }
 
 export type TransformTemplate = (
