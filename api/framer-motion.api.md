@@ -64,6 +64,8 @@ export const animationControls: () => AnimationControls;
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
     exit?: AnimationControls | TargetAndTransition | VariantLabels;
+    // Warning: (ae-forgotten-export) The symbol "ResolveLayoutTransition" needs to be exported by the entry point index.d.ts
+    layoutTransition?: Transition | boolean | ResolveLayoutTransition;
     // Warning: (ae-forgotten-export) The symbol "ResolvePositionTransition" needs to be exported by the entry point index.d.ts
     positionTransition?: Transition | boolean | ResolvePositionTransition;
     transition?: Transition;

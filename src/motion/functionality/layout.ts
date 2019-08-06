@@ -1,19 +1,13 @@
+import { RefObject, useContext } from "react"
+import styler from "stylefire"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
-import { useLayoutEffect, RefObject, useContext } from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
-import styler from "stylefire"
-import { Transition, TargetAndTransition } from "../../types"
 import { SyncLayoutContext } from "../../components/SyncLayout"
-import { useSyncEffect } from "utils/use-sync-layout-effect"
-
-function isHTMLElement(
-    element?: Element | HTMLElement | null
-): element is HTMLElement {
-    return element instanceof HTMLElement
-}
+import { useSyncEffect } from "../../utils/use-sync-layout-effect"
+import { TargetAndTransition, Transition } from "../../types"
 
 interface Layout {
     left: number
@@ -22,16 +16,20 @@ interface Layout {
     height: number
 }
 
-interface BoundingBox extends Layout {
-    right: number
-    bottom: number
+interface CompareMode {
+    measure: (element: HTMLElement) => Layout
+    getLayout: (info: VisualInfo) => Layout
 }
 
-function findCenter({ top, left, bottom, right }: BoundingBox) {
-    return {
-        x: (left + right) / 2,
-        y: (top + bottom) / 2,
-    }
+interface VisualInfo {
+    offset: Layout
+    boundingBox: Layout
+}
+
+function isHTMLElement(
+    element?: Element | HTMLElement | null
+): element is HTMLElement {
+    return element instanceof HTMLElement
 }
 
 function isResolver(
@@ -40,191 +38,189 @@ function isResolver(
     return typeof transition === "function"
 }
 
-function hasChanged(prev: Layout | BoundingBox, next: Layout | BoundingBox) {
-    return (
-        prev.left !== next.left ||
-        prev.top !== next.top ||
-        prev.height !== next.height ||
-        prev.width !== next.width
-    )
+function findCenter({ top, left, width, height }: Layout) {
+    const right = left + width
+    const bottom = top + height
+    return {
+        x: (left + right) / 2,
+        y: (top + bottom) / 2,
+    }
 }
 
 function measureDelta(prev: Layout, next: Layout) {
+    const prevCenter = findCenter(prev)
+    const nextCenter = findCenter(next)
+
     return {
-        left: prev.left - next.left,
-        top: prev.top - next.top,
+        left: prevCenter.x - nextCenter.x,
+        top: prevCenter.y - nextCenter.y,
         width: prev.width - next.width,
         height: prev.height - next.height,
     }
 }
 
-function measureLayout(element?: Element | HTMLElement | null): Layout | null {
-    if (!isHTMLElement(element)) return null
+const offset: CompareMode = {
+    getLayout: ({ offset }) => offset,
+    measure: element => {
+        const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = element
 
-    // Measure the *actual* size to check whether the element has changed layout
-    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = element
-
-    return {
-        left: offsetLeft,
-        top: offsetTop,
-        width: offsetWidth,
-        height: offsetHeight,
-    }
+        return {
+            left: offsetLeft,
+            top: offsetTop,
+            width: offsetWidth,
+            height: offsetHeight,
+        }
+    },
+}
+const boundingBox: CompareMode = {
+    getLayout: ({ boundingBox }) => boundingBox,
+    measure: element => {
+        const { left, top, width, height } = element.getBoundingClientRect()
+        return { left, top, width, height }
+    },
 }
 
-function measureBoundingBox(
-    element?: Element | HTMLElement | null
-): BoundingBox | null {
-    if (!isHTMLElement(element)) return null
-
-    const {
-        left,
-        top,
-        width,
-        height,
-        bottom,
-        right,
-    } = element.getBoundingClientRect()
-    return { left, top, width, height, bottom, right }
-}
-
-function measureBoundingBoxWithoutTransform(element: HTMLElement): BoundingBox {
-    // TODO: This is a source of layout thrashing
-    const transform = element.style.transform
-    element.style.transform = ""
-    const layout = measureBoundingBox(element) as BoundingBox
-    element.style.transform = transform
-
-    return layout
-}
-
-function measurePositionStyle(element?: Element | HTMLElement | null) {
-    if (!isHTMLElement(element)) return null
-
+function readPositionStyle(element: HTMLElement) {
     return window.getComputedStyle(element).position
 }
 
-interface VisualInfo {
-    layout: Layout | null
-    bbox: Layout | null
-    position: string | null
+function getCompareMode(prev: string | null, next: string | null): CompareMode {
+    return prev === next ? offset : boundingBox
+}
+
+function isSizeKey(key: string) {
+    return key === "width" || key === "height"
 }
 
 function useLayoutAnimation(
     ref: RefObject<Element | HTMLElement | null>,
     values: MotionValuesMap,
     controls: ValueAnimationControls,
-    layoutTransition: AnimationProps["layoutTransition"]
+    layoutTransition: boolean | Transition | ResolveLayoutTransition
 ) {
     // Allow any parent SyncLayoutContext components to force-update this component
     useContext(SyncLayoutContext)
 
     const element = ref.current
-    const shouldMeasureLayout = isHTMLElement(element)
 
-    const hasChanged = {
-        left: false,
-        top: false,
-        width: false,
-        height: false,
+    if (!isHTMLElement(element)) {
+        // If we don't yet have a HTML element we can early return here. These jobs
+        // won't get scheduled, but because they're hooks they do need to be called.
+        useSyncEffect.prepare()
+        useSyncEffect.read()
+        useSyncEffect.render()
+        return
     }
 
-    const next: VisualInfo = {
-        layout: null,
-        bbox: null,
-        position: null,
-    }
+    const prevPosition = readPositionStyle(element)
 
-    const prev: VisualInfo = shouldMeasureLayout
-        ? {
-              layout: measureLayout(element),
-              bbox: measureBoundingBox(element),
-              position: measurePositionStyle(element),
-          }
-        : next
+    const prev: VisualInfo = {
+        offset: offset.measure(element),
+        boundingBox: boundingBox.measure(element),
+    }
 
     let transform: string | null = ""
+    let next: VisualInfo
+    let compare: CompareMode
 
-    // We split the unsetting, read and reapplication of the `transform` style prop
-    // as multiple components might all be doing the same thing. Doing it this way
-    // will prevent layout thrashing.
-    useSyncEffect.prepare(() => {
-        if (!shouldMeasureLayout) return
-
+    const prepare = () => {
         transform = element.style.transform
         element.style.transform = ""
-    })
+    }
 
-    useSyncEffect.read(() => {
-        if (!shouldMeasureLayout) return
+    const read = () => {
+        next = {
+            offset: offset.measure(element),
+            boundingBox: boundingBox.measure(element),
+        }
 
-        next.layout = measureLayout(element)
-        next.bbox = measureBoundingBox(element) as BoundingBox
-        next.position = measurePositionStyle(element)
-    })
+        const nextPosition = readPositionStyle(element)
+        compare = getCompareMode(prevPosition, nextPosition)
+    }
 
-    useSyncEffect.render(() => {
-        if (!shouldMeasureLayout) return
+    const render = () => {
+        const prevLayout = compare.getLayout(prev)
+        const nextLayout = compare.getLayout(next)
+        const delta = measureDelta(prevLayout, nextLayout)
+        const hasAnyChanged =
+            delta.top || delta.left || delta.width || delta.height
 
-        element.style.transform = transform
+        if (!hasAnyChanged) {
+            transform && (element.style.transform = transform)
+            return
+        }
 
-        // if (!hasChanged(prevBbox, next)) return
+        const target: TargetAndTransition = {}
+        const transition: Transition = {}
 
-        // const delta = measureDelta(prevBbox, next)
+        const transitionDefinition = isResolver(layoutTransition)
+            ? layoutTransition({ delta })
+            : layoutTransition
 
-        // const transitionDefinition = isResolver(layoutTransition)
-        //     ? layoutTransition({ delta })
-        //     : layoutTransition
+        function makeTransition(
+            layoutKey: keyof Layout,
+            transformKey: string,
+            defaultValue: number,
+            visualOrigin: number
+        ) {
+            if (!delta[layoutKey]) return
 
-        // const target: TargetAndTransition = {}
-        // const transition: Transition = {}
+            const baseTransition =
+                typeof transitionDefinition === "boolean"
+                    ? {}
+                    : transitionDefinition
 
-        // function makeTransition(
-        //     layoutKey: keyof Layout,
-        //     transformKey: string,
-        //     defaultValue: number,
-        //     visualOrigin: number
-        // ) {
-        //     // If layout hasn't changed, early return
-        //     if (!delta[layoutKey]) return
+            const value = values.get(transformKey, defaultValue)
+            const velocity = value.getVelocity()
+            transition[transformKey] = baseTransition.hasOwnProperty(
+                transformKey
+            )
+                ? baseTransition[transformKey]
+                : baseTransition
 
-        //     const baseTransition =
-        //         typeof transitionDefinition === "boolean"
-        //             ? {}
-        //             : transitionDefinition
+            if (transition[transformKey].velocity === undefined) {
+                transition[transformKey].velocity = velocity
+            }
 
-        //     const value = values.get(transformKey, defaultValue)
-        //     const velocity = value.getVelocity()
-        //     transition[transformKey] = baseTransition.hasOwnProperty(
-        //         transformKey
-        //     )
-        //         ? baseTransition[transformKey]
-        //         : baseTransition
+            target[transformKey] = defaultValue
 
-        //     if (transition[transformKey].velocity === undefined) {
-        //         transition[transformKey].velocity = velocity
-        //     }
+            let offsetToApply = 0
 
-        //     target[transformKey] = defaultValue
+            if (!isSizeKey(layoutKey) && compare === offset) {
+                offsetToApply = value.get()
+            }
 
-        //     value.set(visualOrigin)
-        // }
+            value.set(visualOrigin + offsetToApply)
+        }
 
-        // if (transitionDefinition) {
-        //     const prevCenter = findCenter(prev)
-        //     const nextCenter = findCenter(next)
+        makeTransition("left", "x", 0, delta.left)
+        makeTransition("top", "y", 0, delta.top)
+        makeTransition(
+            "width",
+            "scaleX",
+            1,
+            prev.boundingBox.width / next.boundingBox.width
+        )
+        makeTransition(
+            "height",
+            "scaleY",
+            1,
+            prev.boundingBox.height / next.boundingBox.height
+        )
 
-        //     makeTransition("left", "x", 0, prevCenter.x - nextCenter.x)
-        //     makeTransition("top", "y", 0, prevCenter.y - nextCenter.y)
-        //     makeTransition("width", "scaleX", 1, prev.width / next.width)
-        //     makeTransition("height", "scaleY", 1, prev.height / next.height)
+        target.transition = transition
 
-        //     target.transition = transition
-        //     controls.start(target)
-        // }
+        transitionDefinition && controls.start(target)
 
         styler(element).render()
-    })
+    }
+
+    // We split the unsetting, read and reapplication of the `transform` style prop into
+    // different steps via useSyncEffect. Multiple components might all be doing the same
+    // thing and by splitting these jobs and flushing them in batches we prevent layout thrashing.
+    useSyncEffect.prepare(prepare)
+    useSyncEffect.read(read)
+    useSyncEffect.render(render)
 }
 
 export const Layout: FunctionalComponentDefinition = {
@@ -244,7 +240,7 @@ export const Layout: FunctionalComponentDefinition = {
                 innerRef,
                 values,
                 controls,
-                layoutTransition || positionTransition
+                (layoutTransition as any) || (positionTransition as any)
             )
         }
     ),

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { motion, useMotionValue } from "@framer"
 import { clamp } from "@popmotion/popcorn"
 import move from "array-move"
@@ -25,7 +25,7 @@ const Item = ({ color, active, setActive, setColors, colors, i }) => {
             animate={isDragging ? { zIndex: 1 } : { zIndex: 0 }}
             positionTransition={({ delta }) => {
                 if (isDragging) {
-                    dragOriginY.set(dragOriginY.get() + delta.y)
+                    dragOriginY.set(dragOriginY.get() + delta.top)
                     return false
                 } else {
                     return true
@@ -66,13 +66,12 @@ const height = 80
 const marginBottom = 10
 const totalHeight = height + marginBottom
 const findIndex = (i, y) => {
-    // Could use a ref with offsetTop
     const baseY = totalHeight * i
     const totalY = baseY + y
     return clamp(0, initialColors.length - 1, Math.round(totalY / totalHeight))
 }
 
-const initialColors = ["#FF008C", "#D309E1", "#9C1AFF", "#7700FF"]
+const initialColors = ["#FF008C", "#D309E1"] //, "#9C1AFF", "#7700FF"]
 
 const styles = `body {
   width: 100vw;
