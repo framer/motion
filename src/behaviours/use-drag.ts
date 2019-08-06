@@ -206,7 +206,10 @@ export function useDrag(
     // If `dragConstraints` is a React `ref`, we should resolve the constraints once the
     // component has rendered.
     const constraintsNeedResolution = isRefObject(dragConstraints)
-    const state = useRef<DragState>({
+
+    // We create a mutable state using a ref as we want to keep track of certain data, even across renders,
+    // but we don't want to re-render as a result of them.
+    const dragStatus = useRef<DragState>({
         isDragging: false,
         hasDragged: false,
         currentDirection: null,
@@ -214,12 +217,14 @@ export function useDrag(
         handlers: {},
     }).current
 
-    // TODO: Explain why we keep these in a ref
-    state.handlers.onDragStart = onDragStart
-    state.handlers.onDrag = onDrag
-    state.handlers.onDragEnd = onDragEnd
-    state.handlers.onDirectionLock = onDirectionLock
-    state.handlers.onDragTransitionEnd = onDragTransitionEnd
+    // Load the callbacks into mutable state to ensure that even if we don't create a new
+    // gesture handler every render, we still reference the latest callbacks (which are almost certain to change per render)
+    const { handlers } = dragStatus
+    handlers.onDragStart = onDragStart
+    handlers.onDrag = onDrag
+    handlers.onDragEnd = onDragEnd
+    handlers.onDirectionLock = onDirectionLock
+    handlers.onDragTransitionEnd = onDragTransitionEnd
 
     const point = useRef<MotionPoint>({}).current
 
@@ -323,21 +328,25 @@ export function useDrag(
 
     // If `dragConstraints` is set to `false` or `Constraints`, set constraints immediately.
     // Otherwise we'll resolve on mount.
-    state.constraints = constraintsNeedResolution
+    dragStatus.constraints = constraintsNeedResolution
         ? false
         : (dragConstraints as Constraints | false)
 
     // Get the `MotionValue` for both draggable axes, or create them if they don't already
     // exist on this component.
     bothAxis(axis => {
-        if (!shouldDrag(axis, drag, state.currentDirection)) return
+        if (!shouldDrag(axis, drag, dragStatus.currentDirection)) return
         const defaultValue = axis === "x" ? _dragValueX : _dragValueY
         point[axis] = defaultValue || values.get(axis, 0)
     })
 
     // Apply constraints immediately, even before render, if our constraints are a plain object.
-    if (!state.isDragging && state.constraints && !constraintsNeedResolution) {
-        applyConstraintsToPoint(state.constraints)
+    if (
+        !dragStatus.isDragging &&
+        dragStatus.constraints &&
+        !constraintsNeedResolution
+    ) {
+        applyConstraintsToPoint(dragStatus.constraints)
     }
 
     // Add additional information to the `PanInfo` object before passing it to drag listeners.
@@ -356,7 +365,10 @@ export function useDrag(
         const axisPoint = point[axis]
 
         // If we're not dragging this axis, do an early return.
-        if (!shouldDrag(axis, drag, state.currentDirection) || !axisPoint) {
+        if (
+            !shouldDrag(axis, drag, dragStatus.currentDirection) ||
+            !axisPoint
+        ) {
             return
         }
 
@@ -364,11 +376,11 @@ export function useDrag(
         const current = applyConstraints(
             axis,
             origin[axis].get() + offset[axis],
-            state.constraints,
+            dragStatus.constraints,
             dragElastic
         )
 
-        if (current !== axisOrigin) state.hasDragged = true
+        if (current !== axisOrigin) dragStatus.hasDragged = true
 
         axisPoint.set(current)
     }
@@ -406,19 +418,19 @@ export function useDrag(
         event: MouseEvent | TouchEvent | PointerEvent,
         info: PanInfo
     ) {
-        state.isDragging = true
-        state.hasDragged = false
+        dragStatus.isDragging = true
+        dragStatus.hasDragged = false
 
         // Resolve the constraints again in case anything has changed in the meantime.
         if (constraintsNeedResolution) {
-            state.constraints = calculateConstraintsFromDom(
+            dragStatus.constraints = calculateConstraintsFromDom(
                 dragConstraints as RefObject<Element>,
                 ref,
                 point,
                 transformPagePoint
             )
 
-            applyConstraintsToPoint(state.constraints)
+            applyConstraintsToPoint(dragStatus.constraints)
         }
 
         // Set point origin and stop any existing animations.
@@ -440,9 +452,9 @@ export function useDrag(
             }
         }
 
-        state.currentDirection = null
+        dragStatus.currentDirection = null
 
-        const { onDragStart } = state.handlers
+        const { onDragStart } = handlers
         onDragStart && onDragStart(event, convertPanToDrag(info))
     }
 
@@ -458,13 +470,13 @@ export function useDrag(
         const { offset } = info
 
         // Attempt to detect drag direction if directionLock is true
-        if (dragDirectionLock && state.currentDirection === null) {
-            state.currentDirection = getCurrentDirection(offset)
+        if (dragDirectionLock && dragStatus.currentDirection === null) {
+            dragStatus.currentDirection = getCurrentDirection(offset)
 
             // If we've successfully set a direction, notify listener
-            if (state.currentDirection !== null) {
-                const { onDirectionLock } = state.handlers
-                onDirectionLock && onDirectionLock(state.currentDirection)
+            if (dragStatus.currentDirection !== null) {
+                const { onDirectionLock } = handlers
+                onDirectionLock && onDirectionLock(dragStatus.currentDirection)
             }
 
             return
@@ -473,13 +485,13 @@ export function useDrag(
         updatePoint("x", offset)
         updatePoint("y", offset)
 
-        const { onDrag } = state.handlers
+        const { onDrag } = handlers
         onDrag && onDrag(event, convertPanToDrag(info))
     }
 
     function cancelDrag() {
         unblockViewportScroll()
-        state.isDragging = false
+        dragStatus.isDragging = false
 
         if (!dragPropagation && openGlobalLock.current) {
             openGlobalLock.current()
@@ -489,12 +501,12 @@ export function useDrag(
 
     function animateDragEnd(velocity: Point) {
         const momentumAnimations = bothAxis(axis => {
-            if (!shouldDrag(axis, drag, state.currentDirection)) {
+            if (!shouldDrag(axis, drag, dragStatus.currentDirection)) {
                 return
             }
 
-            const transition = state.constraints
-                ? getConstraints(axis, state.constraints)
+            const transition = dragStatus.constraints
+                ? getConstraints(axis, dragStatus.constraints)
                 : {}
 
             /**
@@ -527,9 +539,9 @@ export function useDrag(
 
         // Run all animations and then resolve the new drag constraints.
         Promise.all(momentumAnimations).then(() => {
-            recordBoxInfo(state.constraints)
+            recordBoxInfo(dragStatus.constraints)
             scalePoint()
-            const { onDragTransitionEnd } = state.handlers
+            const { onDragTransitionEnd } = handlers
             onDragTransitionEnd && onDragTransitionEnd()
         })
     }
@@ -540,17 +552,17 @@ export function useDrag(
     ) {
         cancelDrag()
 
-        if (!state.hasDragged) return
+        if (!dragStatus.hasDragged) return
 
         // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axes.
         if (dragMomentum || dragElastic) {
             const { velocity } = info
             animateDragEnd(velocity)
         } else {
-            recordBoxInfo(state.constraints)
+            recordBoxInfo(dragStatus.constraints)
         }
 
-        const { onDragEnd } = state.handlers
+        const { onDragEnd } = handlers
         onDragEnd && onDragEnd(event, convertPanToDrag(info))
     }
 
@@ -558,7 +570,7 @@ export function useDrag(
         drag ? { onPan, onPanStart, onPanEnd, onPanSessionStart } : {},
         ref
     )
-    useUnmountEffect(() => state.isDragging && cancelDrag())
+    useUnmountEffect(() => dragStatus.isDragging && cancelDrag())
 }
 
 /**

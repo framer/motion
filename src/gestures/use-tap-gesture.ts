@@ -1,13 +1,12 @@
 import { RefObject, useRef } from "react"
-import { EventInfo, Point } from "../events/types"
+import { EventInfo, Point, EventHandler } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { getGesturePriority } from "./utils/gesture-priority"
-import { ControlsProp } from "./types"
+import { ControlsProp, RemoveEvent } from "./types"
 import { getGlobalLock } from "../behaviours/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
-import { EventListenerWithPointInfo } from "events/event-info"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
@@ -179,8 +178,6 @@ export interface TapHandlers {
     whileTap?: string | TargetAndTransition
 }
 
-type RemoveEvent = () => void
-
 /**
  * @param handlers -
  * @internal
@@ -198,13 +195,14 @@ export function useTapGesture(
     const hasTapListeners = onTap || onTapStart || onTapCancel || whileTap
     const isTapping = useRef(false)
 
-    const pointerEventSubscription = useRef<RemoveEvent | undefined | null>(
+    const cancelPointerEventListener = useRef<RemoveEvent | undefined | null>(
         null
     )
 
     function removePointerUp() {
-        pointerEventSubscription.current && pointerEventSubscription.current()
-        pointerEventSubscription.current = null
+        cancelPointerEventListener.current &&
+            cancelPointerEventListener.current()
+        cancelPointerEventListener.current = null
     }
 
     if (whileTap && controls) {
@@ -213,7 +211,7 @@ export function useTapGesture(
 
     // We load this event handler into a ref so we can later refer to
     // onPointerUp.current which will always have reference to the latest props
-    const onPointerUp = useRef<EventListenerWithPointInfo | null>(null)
+    const onPointerUp = useRef<EventHandler | null>(null)
     onPointerUp.current = (event, info) => {
         const element = ref.current
 
@@ -239,20 +237,17 @@ export function useTapGesture(
         }
     }
 
-    function addDocumentPointerUp() {
-        removePointerUp()
-        pointerEventSubscription.current = addPointerEvent(
-            window,
-            "pointerup",
-            (event, info) => onPointerUp.current!(event, info)
-        )
-    }
-
     function onPointerDown(
         event: MouseEvent | TouchEvent | PointerEvent,
         info: EventInfo
     ) {
-        addDocumentPointerUp()
+        removePointerUp()
+
+        cancelPointerEventListener.current = addPointerEvent(
+            window,
+            "pointerup",
+            (event, info) => onPointerUp.current!(event, info)
+        )
 
         const element = ref.current
         if (!element || isTapping.current) return

@@ -1,6 +1,6 @@
 import { RefObject, useRef, useContext } from "react"
 import { distance } from "@popmotion/popcorn"
-import { EventInfo, Point } from "../events/types"
+import { EventInfo, Point, EventHandler } from "../events/types"
 import sync, { cancelSync, getFrameData } from "framesync"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
@@ -9,6 +9,7 @@ import { secondsToMilliseconds } from "../utils/time-conversion"
 import { isMouseEvent, isTouchEvent } from "./utils/event-type"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent, addPointerEvent } from "../events/use-pointer-event"
+import { RemoveEvent } from "./types"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -354,7 +355,7 @@ export interface PanHandlers {
     ): void
 }
 
-type RemoveEvent = () => void
+const noop = () => {}
 
 /**
  *
@@ -375,6 +376,23 @@ export function usePanGesture(
     const { transformPagePoint } = useContext(MotionPluginContext)
 
     const pointerEventSubscription = useRef<RemoveEvent | null>(null)
+
+    // Group these as a new hook to enable either an early return or one after making
+    // the pan gestures.
+    function useAttachPanListeners(
+        cancelPanHandler: RemoveEvent,
+        onPointerDownHandler?: EventHandler
+    ) {
+        usePointerEvent(ref, "pointerdown", onPointerDownHandler)
+        useUnmountEffect(cancelPanHandler)
+    }
+
+    // Early return if we have no pan events
+    // Note: No more hooks other than useAttachPanListeners permitted past here.
+    if (!hasPanEvents) {
+        useAttachPanListeners(noop)
+        return
+    }
 
     function removePointerEvents() {
         pointerEventSubscription.current && pointerEventSubscription.current()
@@ -489,6 +507,7 @@ export function usePanGesture(
         onPanSessionStart && onPanSessionStart(event, getPanInfo(initialInfo))
 
         removePointerEvents()
+
         const removeOnPointerMove = addPointerEvent(
             window,
             "pointermove",
@@ -506,6 +525,5 @@ export function usePanGesture(
         }
     }
 
-    usePointerEvent(ref, "pointerdown", hasPanEvents && onPointerDown)
-    useUnmountEffect(cancelPan)
+    useAttachPanListeners(cancelPan, onPointerDown)
 }

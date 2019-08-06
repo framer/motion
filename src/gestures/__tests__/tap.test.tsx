@@ -4,7 +4,7 @@ import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
 import { mouseEnter, mouseLeave } from "../../../jest.setup"
-import { drag, MockDrag } from "../../behaviours/__tests__/index.test"
+import { drag, MockDrag } from "../../behaviours/__tests__/utils"
 import sync from "framesync"
 
 function mockWhenFirstArgumentIs(
@@ -39,6 +39,7 @@ describe("tap", () => {
     })
 
     test("tap event listeners are cleaned up when mouse up", () => {
+        console.log("=================== mouseup")
         const [
             addEventListener,
             mockedAddMouseUpListener,
@@ -68,6 +69,7 @@ describe("tap", () => {
     })
 
     test("tap event listeners are cleaned up when unmounted", () => {
+        console.log("=================== unmounted")
         const [
             addEventListener,
             mockedAddMouseUpListener,

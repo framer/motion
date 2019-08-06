@@ -132,8 +132,8 @@ export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 
 // @public (undocumented)
 export interface HoverHandlers {
-    onHoverEnd?(event: MouseEvent): void;
-    onHoverStart?(event: MouseEvent): void;
+    onHoverEnd?(event: MouseEvent, info: EventInfo): void;
+    onHoverStart?(event: MouseEvent, info: EventInfo): void;
     whileHover?: string | TargetAndTransition;
 }
 

@@ -3,7 +3,8 @@ import { getGesturePriority } from "./utils/gesture-priority"
 import { TargetAndTransition } from "../types"
 import { ControlsProp } from "./types"
 import { isMouseEvent } from "./utils/event-type"
-import { useDomEvent } from "../events/use-dom-event"
+import { usePointerEvent } from "../events/use-pointer-event"
+import { EventInfo } from "../events/types"
 
 /**
  * @public
@@ -45,7 +46,7 @@ export interface HoverHandlers {
      * <motion.div onHoverStart={() => console.log('Hover starts')} />
      * ```
      */
-    onHoverStart?(event: MouseEvent): void
+    onHoverStart?(event: MouseEvent, info: EventInfo): void
 
     /**
      * Callback function that fires when pointer stops hovering over the component.
@@ -66,15 +67,21 @@ export interface HoverHandlers {
      * <motion.div onHoverEnd={() => console.log("Hover ends")} />
      * ```
      */
-    onHoverEnd?(event: MouseEvent): void
+    onHoverEnd?(event: MouseEvent, info: EventInfo): void
 }
 
 const hoverPriority = getGesturePriority("whileHover")
 
-const filterTouch = (
-    listener: (event: MouseEvent | TouchEvent | PointerEvent) => void
-) => (event: MouseEvent | TouchEvent | PointerEvent) => {
-    if (isMouseEvent(event)) listener(event)
+type FilteredTouchListener = (
+    event: MouseEvent | PointerEvent,
+    info: EventInfo
+) => void
+
+const filterTouch = (listener: FilteredTouchListener) => (
+    event: MouseEvent | PointerEvent,
+    info: EventInfo
+) => {
+    if (isMouseEvent(event)) listener(event, info)
 }
 
 /**
@@ -96,11 +103,11 @@ export function useHoverGesture(
         controls.setOverride(whileHover, hoverPriority)
     }
 
-    useDomEvent(
+    usePointerEvent(
         ref,
-        "mouseenter",
-        filterTouch((event: MouseEvent | PointerEvent) => {
-            if (onHoverStart) onHoverStart(event)
+        "pointerenter",
+        filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
+            if (onHoverStart) onHoverStart(event, info)
 
             if (whileHover && controls) {
                 controls.startOverride(hoverPriority)
@@ -108,11 +115,11 @@ export function useHoverGesture(
         })
     )
 
-    useDomEvent(
+    usePointerEvent(
         ref,
-        "mouseleave",
-        filterTouch((event: MouseEvent | PointerEvent) => {
-            if (onHoverEnd) onHoverEnd(event)
+        "pointerleave",
+        filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
+            if (onHoverEnd) onHoverEnd(event, info)
 
             if (whileHover && controls) {
                 controls.clearOverride(hoverPriority)
