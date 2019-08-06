@@ -1,5 +1,5 @@
 import "../../../jest.setup"
-import { fireEvent, render } from "react-testing-library"
+import { fireEvent, render } from "@testing-library/react"
 import * as React from "react"
 import { useRef, useEffect } from "react"
 import { useEvent } from "../"

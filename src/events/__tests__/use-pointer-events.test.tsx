@@ -1,12 +1,14 @@
 import { mouseEnter, mouseLeave } from "../../../jest.setup"
-import { render, fireEvent } from "react-testing-library"
+import { render, fireEvent } from "@testing-library/react"
 import * as React from "react"
 import { useRef } from "react"
 import { usePointerEvents } from "../"
 import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
 
-function testEventsWithRef(fireFunctions: { [key: string]: (element: Element) => boolean }) {
+function testEventsWithRef(fireFunctions: {
+    [key: string]: (element: Element) => boolean
+}) {
     const handlers = {}
     for (const key in fireFunctions) {
         handlers[key] = jest.fn()
@@ -25,7 +27,9 @@ function testEventsWithRef(fireFunctions: { [key: string]: (element: Element) =>
     }
 }
 
-function testEventsWithElement(fireFunctions: { [key: string]: (element: Element) => boolean }) {
+function testEventsWithElement(fireFunctions: {
+    [key: string]: (element: Element) => boolean
+}) {
     const handlers = {}
     for (const key in fireFunctions) {
         handlers[key] = jest.fn()

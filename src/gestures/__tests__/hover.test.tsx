@@ -1,7 +1,7 @@
 import { mouseEnter, mouseLeave } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
-import { render, fireEvent } from "react-testing-library"
+import { render, fireEvent } from "@testing-library/react"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"

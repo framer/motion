@@ -35,6 +35,8 @@
     },
     "devDependencies": {
         "@microsoft/api-extractor": "^7.3.4",
+        "@testing-library/dom": "^5.6.0",
+        "@testing-library/react": "^8.0.7",
         "@types/jest": "^23.3.9",
         "@types/node": "^10.12.9",
         "@types/react": "^16.8.23",
@@ -62,7 +64,6 @@
         "react": "16.8.6",
         "react-dev-utils": "^6.1.1",
         "react-dom": "16.8.6",
-        "react-testing-library": "^5.3.0",
         "rollup": "^1.16.6",
         "rollup-plugin-commonjs": "^10.0.1",
         "rollup-plugin-node-resolve": "^5.2.0",
