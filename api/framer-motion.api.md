@@ -421,6 +421,8 @@ export interface MotionPlugins {
 
 // @public
 export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
+    // (undocumented)
+    animateKey?: any;
     // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;
