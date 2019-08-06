@@ -240,7 +240,6 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
             custom,
             isExiting: true,
             onExitComplete: onExit,
-            removeForLayoutMeasurement: !!contextForceUpdate,
         }
 
         childrenToRender.splice(

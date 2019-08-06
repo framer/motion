@@ -1,3 +1,10 @@
+/**
+ * TODO: This demo shows an outstanding use-case for layout transitions where we'd like to animate children of `AnimatePresence`
+ * out by popping them out of the layout immediately, but making it look like they're in the same place
+ * visually. This might be accomplished with a `popFromLayout` prop or similar that `AnimatePresence`
+ * can apply when animating a child out.
+ */
+
 import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"

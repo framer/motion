@@ -31,7 +31,7 @@ export const App = () => {
                         width: 100,
                         marginTop: isVisible ? 0 : -100,
                     }}
-                    _layoutTransition={transition}
+                    layoutTransition={transition}
                 >
                     <AnimatePresence
                         initial={false}

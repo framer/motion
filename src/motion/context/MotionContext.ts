@@ -12,7 +12,6 @@ export interface ExitProps {
     isExiting?: boolean
     onExitComplete?: () => void
     custom?: any
-    removeForLayoutMeasurement?: boolean
 }
 
 export interface MotionContextProps {

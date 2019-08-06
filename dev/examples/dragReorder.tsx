@@ -25,7 +25,7 @@ const Item = ({ color, active, setActive, setColors, colors, i }) => {
             animate={isDragging ? { zIndex: 1 } : { zIndex: 0 }}
             positionTransition={({ delta }) => {
                 if (isDragging) {
-                    dragOriginY.set(dragOriginY.get() + delta.top)
+                    dragOriginY.set(dragOriginY.get() + delta.y)
                     return false
                 } else {
                     return true
