@@ -39,7 +39,6 @@ describe("tap", () => {
     })
 
     test("tap event listeners are cleaned up when mouse up", () => {
-        console.log("=================== mouseup")
         const [
             addEventListener,
             mockedAddMouseUpListener,
@@ -69,7 +68,6 @@ describe("tap", () => {
     })
 
     test("tap event listeners are cleaned up when unmounted", () => {
-        console.log("=================== unmounted")
         const [
             addEventListener,
             mockedAddMouseUpListener,

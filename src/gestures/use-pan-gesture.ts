@@ -377,23 +377,6 @@ export function usePanGesture(
 
     const pointerEventSubscription = useRef<RemoveEvent | null>(null)
 
-    // Group these as a new hook to enable either an early return or one after making
-    // the pan gestures.
-    function useAttachPanListeners(
-        cancelPanHandler: RemoveEvent,
-        onPointerDownHandler?: EventHandler
-    ) {
-        usePointerEvent(ref, "pointerdown", onPointerDownHandler)
-        useUnmountEffect(cancelPanHandler)
-    }
-
-    // Early return if we have no pan events
-    // Note: No more hooks other than useAttachPanListeners permitted past here.
-    if (!hasPanEvents) {
-        useAttachPanListeners(noop)
-        return
-    }
-
     function removePointerEvents() {
         pointerEventSubscription.current && pointerEventSubscription.current()
         pointerEventSubscription.current = null
@@ -525,5 +508,6 @@ export function usePanGesture(
         }
     }
 
-    useAttachPanListeners(cancelPan, onPointerDown)
+    usePointerEvent(ref, "pointerdown", onPointerDown)
+    useUnmountEffect(cancelPan)
 }
