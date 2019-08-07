@@ -3,46 +3,11 @@ import { useState } from "react"
 import "../../../jest.setup"
 import { motion } from "../../"
 import { motionValue, MotionValue } from "../../value"
-import { MotionPlugins } from "../../motion/context/MotionPluginContext"
 import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import sync from "framesync"
-import { Constraints } from "../use-draggable"
-
-type Point = {
-    x: number
-    y: number
-}
-
-const pos: Point = {
-    x: 0,
-    y: 0,
-}
-
-export const drag = (element: any) => {
-    pos.x = 0
-    pos.y = 0
-    fireEvent.mouseDown(element)
-
-    const controls = {
-        to: (x: number, y: number) => {
-            pos.x = x
-            pos.y = y
-            fireEvent.mouseMove(document.body, { buttons: 1 })
-
-            return controls
-        },
-        end: () => {
-            fireEvent.mouseUp(element)
-        },
-    }
-
-    return controls
-}
-
-export const MockDrag = ({ children }: { children: React.ReactNode }) => (
-    <MotionPlugins transformPagePoint={() => pos}>{children}</MotionPlugins>
-)
+import { Constraints } from "../use-drag"
+import { MockDrag, drag, Point } from "./utils"
 
 describe("dragging", () => {
     test("dragStart fires", async () => {
@@ -855,7 +820,7 @@ describe("dragging", () => {
             const Component = ({ x }: { x: MotionValue<number> }) => {
                 return (
                     <MockDrag>
-                        <motion.div drag="x" style={{ x }} />
+                        <motion.div drag="x" style={{ x, y: 0 }} />
                     </MockDrag>
                 )
             }

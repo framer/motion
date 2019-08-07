@@ -1,88 +1,62 @@
 import { mouseEnter, mouseLeave } from "../../../jest.setup"
-import { render, fireEvent } from "@testing-library/react"
+import { fireEvent } from "@testing-library/dom"
+import { render } from "@testing-library/react"
 import * as React from "react"
-import { useRef } from "react"
-import { usePointerEvents } from "../"
+import { usePointerEvent } from "../use-pointer-event"
 import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
 
 function testEventsWithRef(fireFunctions: {
     [key: string]: (element: Element) => boolean
 }) {
+    const ref = React.createRef<HTMLDivElement>()
     const handlers = {}
     for (const key in fireFunctions) {
         handlers[key] = jest.fn()
     }
     const Component = () => {
-        const ref = useRef(null)
-        usePointerEvents(handlers, ref)
-        return <div ref={ref} />
-    }
-    const { container, rerender } = render(<Component />)
-    rerender(<Component />)
-    for (const key in fireFunctions) {
-        expect(handlers[key]).toHaveBeenCalledTimes(0)
-        fireFunctions[key](container.firstChild as Element)
-        expect(handlers[key]).toHaveBeenCalledTimes(1)
-    }
-}
+        for (const key in fireFunctions) {
+            usePointerEvent(ref, key, handlers[key])
+        }
 
-function testEventsWithElement(fireFunctions: {
-    [key: string]: (element: Element) => boolean
-}) {
-    const handlers = {}
-    for (const key in fireFunctions) {
-        handlers[key] = jest.fn()
-    }
-    const target = document.body
-    const capture: { result?: any } = {}
-    const Component = () => {
-        capture.result = usePointerEvents(handlers, target)
-        return <div />
+        return <div ref={ref} />
     }
     const { rerender } = render(<Component />)
     rerender(<Component />)
-    const [start, stop] = capture.result
+
     for (const key in fireFunctions) {
-        fireFunctions[key](document.body)
         expect(handlers[key]).toHaveBeenCalledTimes(0)
-        start()
-        fireFunctions[key](document.body)
+        fireFunctions[key](ref.current as HTMLDivElement)
         expect(handlers[key]).toHaveBeenCalledTimes(1)
-        fireFunctions[key](document.body)
-        expect(handlers[key]).toHaveBeenCalledTimes(2)
-        stop()
-        fireFunctions[key](document.body)
-        expect(handlers[key]).toHaveBeenCalledTimes(2)
     }
 }
 
 const touchEvents = {
-    onPointerDown: fireEvent.touchStart,
-    onPointerMove: fireEvent.touchMove,
-    onPointerUp: fireEvent.touchEnd,
-    onPointerCancel: fireEvent.touchCancel,
+    pointerdown: fireEvent.touchStart,
+    pointermove: fireEvent.touchMove,
+    pointerup: fireEvent.touchEnd,
+    pointercancel: fireEvent.touchCancel,
 }
 
 const mouseEvents = {
-    onPointerDown: fireEvent.mouseDown,
-    onPointerMove: fireEvent.mouseMove,
-    onPointerUp: fireEvent.mouseUp,
-    onPointerOver: fireEvent.mouseOver,
-    onPointerOut: fireEvent.mouseOut,
-    onPointerEnter: mouseEnter,
-    onPointerLeave: mouseLeave,
+    pointerdown: fireEvent.mouseDown,
+    pointermove: fireEvent.mouseMove,
+    pointerup: fireEvent.mouseUp,
+    pointerover: fireEvent.mouseOver,
+    pointerout: fireEvent.mouseOut,
+    pointerenter: mouseEnter,
+    pointerleave: mouseLeave,
 }
 
 const pointerEvents = {
-    onPointerDown: fireCustomEvent("pointerdown"),
-    onPointerMove: fireCustomEvent("pointermove"),
-    onPointerUp: fireCustomEvent("pointerup"),
-    onPointerCancel: fireCustomEvent("pointercancel"),
-    onPointerOver: fireCustomEvent("pointerover"),
-    onPointerOut: fireCustomEvent("pointerout"),
-    onPointerEnter: fireCustomEvent("pointerenter"),
-    onPointerLeave: fireCustomEvent("pointerleave"),
+    pointerdown: fireCustomEvent("pointerdown"),
+    pointermove: fireCustomEvent("pointermove"),
+    pointerup: fireCustomEvent("pointerup"),
+    pointercancel: fireCustomEvent("pointercancel"),
+    pointerover: fireCustomEvent("pointerover"),
+    pointerout: fireCustomEvent("pointerout"),
+    pointerenter: fireCustomEvent("pointerenter"),
+    pointerleave: fireCustomEvent("pointerleave"),
 }
 
 describe("usePointerEvents", () => {
@@ -97,16 +71,10 @@ describe("usePointerEvents", () => {
         it(`should call handlers with ref`, async () => {
             testEventsWithRef(touchEvents)
         })
-        it(`should call handlers with element`, async () => {
-            testEventsWithElement(touchEvents)
-        })
     })
     describe("with mouse events", () => {
         it(`should call handlers with ref`, async () => {
             testEventsWithRef(mouseEvents)
-        })
-        it(`should call handlers with element`, async () => {
-            testEventsWithElement(mouseEvents)
         })
     })
     describe("with pointer events", () => {
@@ -119,9 +87,6 @@ describe("usePointerEvents", () => {
         })
         it(`should call handlers with ref`, async () => {
             testEventsWithRef(pointerEvents)
-        })
-        it(`should call handlers with element`, async () => {
-            testEventsWithElement(pointerEvents)
         })
     })
 })

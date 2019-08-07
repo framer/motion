@@ -1,30 +1,62 @@
-import { EventInfo, EventHandler } from "./types"
+import { EventInfo } from "./types"
+import { isTouchEvent } from "../gestures/utils/event-type"
 
-interface EventLike {
-    pageX: number
-    pageY: number
-    target: EventTarget | null
+/**
+ * Filters out events not attached to the primary pointer (currently left mouse button)
+ * @param eventHandler
+ */
+function filterPrimaryPointer(eventHandler?: EventListener) {
+    if (!eventHandler) return undefined
+
+    return (event: Event) => {
+        const isMouseEvent = event instanceof MouseEvent
+        const isPrimaryPointer =
+            !isMouseEvent ||
+            (isMouseEvent && (event as MouseEvent).button === 0)
+
+        if (isPrimaryPointer) {
+            eventHandler(event)
+        }
+    }
 }
 
-const extractEventInfo = ({ pageX = 0, pageY = 0 }: EventLike): EventInfo => {
+export type EventListenerWithPointInfo = (
+    e: MouseEvent | TouchEvent | PointerEvent,
+    info: EventInfo
+) => void
+
+const defaultPagePoint = { pageX: 0, pageY: 0 }
+
+function pointFromTouch(e: TouchEvent) {
+    const primaryTouch = e.touches[0] || e.changedTouches[0]
+    const { pageX, pageY } = primaryTouch || defaultPagePoint
+
+    return { x: pageX, y: pageY }
+}
+
+function pointFromMouse({ pageX = 0, pageY = 0 }: MouseEvent | PointerEvent) {
+    return { x: pageX, y: pageY }
+}
+
+function extractEventInfo(
+    event: MouseEvent | TouchEvent | PointerEvent
+): EventInfo {
     return {
-        point: { x: pageX, y: pageY },
+        point: isTouchEvent(event)
+            ? pointFromTouch(event)
+            : pointFromMouse(event),
     }
 }
 
 export const wrapHandler = (
-    handler?: EventHandler
+    handler?: EventListenerWithPointInfo,
+    shouldFilterPrimaryPointer = false
 ): EventListener | undefined => {
-    if (!handler) {
-        return undefined
-    }
+    if (!handler) return
 
-    const listener: EventListener = (event: any, info?: EventInfo) => {
-        if (!info) {
-            info = extractEventInfo(event)
-        }
-        handler(event, info)
-    }
+    const listener = (event: any) => handler(event, extractEventInfo(event))
 
-    return listener
+    return shouldFilterPrimaryPointer
+        ? filterPrimaryPointer(listener)
+        : listener
 }

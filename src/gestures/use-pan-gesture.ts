@@ -1,20 +1,15 @@
-import { RefObject, useCallback, useEffect, useRef, useContext } from "react"
+import { RefObject, useRef, useContext } from "react"
 import { distance } from "@popmotion/popcorn"
-import {
-    EventInfo,
-    usePointerEvents,
-    Point,
-    EventHandler,
-    useConditionalPointerEvents,
-} from "../events"
-import { motionValue, MotionValue } from "../value"
+import { EventInfo, Point } from "../events/types"
 import sync, { cancelSync, getFrameData } from "framesync"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
-import { safeWindow } from "../events/utils/window"
 import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
 import { warning } from "hey-listen"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { isMouseEvent, isTouchEvent } from "./utils/event-type"
+import { useUnmountEffect } from "../utils/use-unmount-effect"
+import { usePointerEvent, addPointerEvent } from "../events/use-pointer-event"
+import { RemoveEvent } from "./types"
 
 interface TimestampedPoint extends Point {
     timestamp: number
@@ -360,35 +355,49 @@ export interface PanHandlers {
     ): void
 }
 
-type MotionXY = { x: MotionValue<number>; y: MotionValue<number> }
-
 /**
  *
  * @param handlers -
  * @param ref -
+ *
+ * @internalremarks
+ * Currently this sets new pan gesture functions every render. The memo route has been explored
+ * in the past but ultimately we're still creating new functions every render. An optimisation
+ * to explore is creating the pan gestures and loading them into a `ref`.
+ *
  * @internal
  */
 export function usePanGesture(
-    handlers: PanHandlers,
-    ref: RefObject<Element>
-): undefined
-export function usePanGesture(
-    handlers: PanHandlers
-): { onPointerDown: EventHandler }
-export function usePanGesture(
     { onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers,
-    ref?: RefObject<Element>
+    ref: RefObject<Element>
 ) {
+    const hasPanEvents = onPan || onPanStart || onPanEnd || onPanSessionStart
     const session = useRef<EventSession | null>(null)
-    const pointer = useRef<MotionXY | null>(null)
     const lastMoveEvent = useRef<MouseEvent | TouchEvent | PointerEvent | null>(
         null
     )
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
+    const pointerEventSubscription = useRef<RemoveEvent | null>(null)
 
-    const getPanInfo = ({ point }: EventInfo): PanInfo => {
+    // Load the callbacks into mutable state to ensure that even if we don't create a new
+    // gesture handler every render, we still reference the latest callbacks (which are almost certain to change per render)
+    const handlers = useRef<PanHandlers>({}).current
+    handlers.onPanSessionStart = onPanSessionStart
+    handlers.onPanStart = onPanStart
+    handlers.onPan = onPan
+    handlers.onPanEnd = onPanEnd
+
+    function removePointerEvents() {
+        pointerEventSubscription.current && pointerEventSubscription.current()
+        pointerEventSubscription.current = null
+    }
+
+    function getPanInfo({ point }: EventInfo) {
         const currentPoint = session.current as EventSession
+
+        // TODO: A potential optimisation here that might be a breaking change would be
+        // to keep one mutable ref to a point that we update
         return {
             point,
             delta: Point.subtract(point, lastDevicePoint(currentPoint)),
@@ -397,150 +406,122 @@ export function usePanGesture(
         }
     }
 
-    const transformPoint = (info: EventInfo) => {
+    function transformPoint(info: EventInfo) {
         return { point: transformPagePoint(info.point) }
     }
 
-    const updatePoint = useCallback(
-        () => {
-            if (
-                !session.current ||
-                pointer.current === null ||
-                lastMoveEventInfo.current === null ||
-                lastMoveEvent.current === null
-            ) {
-                warning(false, "Pointer move without started session")
-                stopPointerMove()
-                stopPointerUp()
-                unblockViewportScroll()
-                return
-            }
-
-            const info = getPanInfo(lastMoveEventInfo.current)
-            const panStarted = session.current.startEvent !== undefined
-
-            // Only start panning if the offset is larger than 3 pixels. If we make it
-            // any larger than this we'll want to reset the pointer history
-            // on the first update to avoid visual snapping to the cursoe.
-            const distancePastThreshold =
-                distance(info.offset, { x: 0, y: 0 }) >= 3
-
-            if (!panStarted && !distancePastThreshold) {
-                return
-            }
-
-            const { point } = info
-            const { timestamp } = getFrameData()
-            session.current.pointHistory.push({ ...point, timestamp })
-            pointer.current.x.set(point.x)
-            pointer.current.y.set(point.y)
-
-            if (!panStarted) {
-                if (onPanStart) {
-                    onPanStart(lastMoveEvent.current, info)
-                }
-                session.current.startEvent = lastMoveEvent.current
-            }
-
-            if (onPan) {
-                onPan(lastMoveEvent.current, info)
-            }
-        },
-        [onPan, onPanStart]
-    )
-
-    const onPointerMove = useCallback(
-        (event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo) => {
-            lastMoveEvent.current = event
-            lastMoveEventInfo.current = transformPoint(info)
-
-            // because Safari doesn't trigger mouseup event when it's happening above <select> tag
-            if (isMouseEvent(event) && event.buttons === 0) {
-                onPointerUp(event, info)
-                return
-            }
-
-            // Throttle mouse move event to once per frame
-            sync.update(updatePoint, true)
-        },
-        [onPan, onPanStart]
-    )
-
-    const onPointerUp = useCallback(
-        (event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo) => {
-            cancelSync.update(updatePoint)
-            stopPointerMove()
-            stopPointerUp()
-
-            if (!session.current || pointer.current === null) {
-                warning(false, "Pointer end without started session")
-                unblockViewportScroll()
-                return
-            }
-
-            if (onPanEnd) {
-                onPanEnd(event, getPanInfo(transformPoint(info)))
-            }
-
-            session.current = null
-        },
-        [onPanEnd, onPointerMove]
-    )
-
-    const [startPointerUp, stopPointerUp] = usePointerEvents(
-        { onPointerUp },
-        safeWindow
-    )
-
-    const [startPointerMove, stopPointerMove] = usePointerEvents(
-        { onPointerMove },
-        safeWindow,
-        { capture: true }
-    )
-
-    const onPointerDown = useCallback(
-        (event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo) => {
-            // If we have more than one touch, we don't want to start detecting this gesture.
-            if (isTouchEvent(event) && event.touches.length > 1) {
-                return
-            }
-
-            const initialInfo = transformPoint(info)
-            const { point } = initialInfo
-
-            pointer.current = {
-                x: motionValue(point.x),
-                y: motionValue(point.y),
-            }
-
-            const { timestamp } = getFrameData()
-            session.current = {
-                target: event.target,
-                pointHistory: [{ ...point, timestamp }],
-            }
-
-            if (onPanSessionStart) {
-                onPanSessionStart(event, getPanInfo(initialInfo))
-            }
-
-            startPointerMove()
-            startPointerUp()
-        },
-        [onPointerUp, onPointerMove]
-    )
-
-    // On unmount, cancel pan gesture
-    useEffect(() => {
-        return () => {
-            stopPointerMove()
-            stopPointerUp()
-            cancelSync.update(updatePoint)
-        }
-    }, [])
-    let handlers: Partial<{ onPointerDown: EventHandler }> = { onPointerDown }
-    if (!(onPan || onPanStart || onPanEnd || onPanSessionStart)) {
-        handlers = {}
+    function cancelPan() {
+        removePointerEvents()
+        cancelSync.update(updatePoint)
+        unblockViewportScroll()
     }
 
-    return useConditionalPointerEvents(handlers, ref)
+    function updatePoint() {
+        if (
+            !session.current ||
+            !lastMoveEvent.current ||
+            !lastMoveEventInfo.current
+        ) {
+            warning(false, "onPointerMove fired without pointer session")
+            cancelPan()
+            return
+        }
+
+        const info = getPanInfo(lastMoveEventInfo.current)
+        const panStarted = session.current.startEvent !== undefined
+
+        // Only start panning if the offset is larger than 3 pixels. If we make it
+        // any larger than this we'll want to reset the pointer history
+        // on the first update to avoid visual snapping to the cursoe.
+        const distancePastThreshold = distance(info.offset, { x: 0, y: 0 }) >= 3
+
+        if (!panStarted && !distancePastThreshold) return
+
+        const { point } = info
+        const { timestamp } = getFrameData()
+        session.current.pointHistory.push({ ...point, timestamp })
+
+        if (!panStarted) {
+            handlers.onPanStart &&
+                handlers.onPanStart(lastMoveEvent.current, info)
+            session.current.startEvent = lastMoveEvent.current
+        }
+
+        handlers.onPan && handlers.onPan(lastMoveEvent.current, info)
+    }
+
+    function onPointerMove(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: EventInfo
+    ) {
+        lastMoveEvent.current = event
+        lastMoveEventInfo.current = transformPoint(info)
+
+        // Because Safari doesn't trigger mouseup events when it's above a `<select>`
+        if (isMouseEvent(event) && event.buttons === 0) {
+            onPointerUp(event, info)
+            return
+        }
+
+        // Throttle mouse move event to once per frame
+        sync.update(updatePoint, true)
+    }
+
+    function onPointerUp(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: EventInfo
+    ) {
+        cancelPan()
+
+        if (!session.current) {
+            warning(false, "onPointerUp fired without pointer session")
+            return
+        }
+
+        handlers.onPanEnd &&
+            handlers.onPanEnd(event, getPanInfo(transformPoint(info)))
+
+        session.current = null
+    }
+
+    function onPointerDown(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: EventInfo
+    ) {
+        // If we have more than one touch, don't start detecting this gesture
+        if (isTouchEvent(event) && event.touches.length > 1) return
+
+        const initialInfo = transformPoint(info)
+        const { point } = initialInfo
+
+        const { timestamp } = getFrameData()
+        session.current = {
+            target: event.target,
+            pointHistory: [{ ...point, timestamp }],
+        }
+
+        handlers.onPanSessionStart &&
+            handlers.onPanSessionStart(event, getPanInfo(initialInfo))
+
+        removePointerEvents()
+
+        const removeOnPointerMove = addPointerEvent(
+            window,
+            "pointermove",
+            onPointerMove
+        )
+        const removeOnPointerUp = addPointerEvent(
+            window,
+            "pointerup",
+            onPointerUp
+        )
+
+        pointerEventSubscription.current = () => {
+            removeOnPointerMove && removeOnPointerMove()
+            removeOnPointerUp && removeOnPointerUp()
+        }
+    }
+
+    usePointerEvent(ref, "pointerdown", hasPanEvents && onPointerDown)
+    useUnmountEffect(cancelPan)
 }

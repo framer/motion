@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.5.1] Unreleased
+
+## Added
+
+-   `EventInfo` now passed as second argument to `onHoverStart` and `onHoverEnd`.
+
+## Fixed
+
+-   Simplifying event system.
+
 ## [1.5.0] 2019-08-02
 
 ### Added

@@ -10,7 +10,7 @@ import {
     MakeCustomValueType,
 } from "../types"
 import { GestureHandlers } from "../gestures"
-import { DraggableProps } from "../behaviours"
+import { DraggableProps } from "../behaviours/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
