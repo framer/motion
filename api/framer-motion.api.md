@@ -535,6 +535,17 @@ export namespace Point {
 }
 
 // @public (undocumented)
+export interface RelayoutInfo {
+    // (undocumented)
+    delta: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
+}
+
+// @public (undocumented)
 export type ResolvedKeyframesTarget = [null, ...number[]] | number[] | [null, ...string[]] | string[];
 
 // @public (undocumented)
@@ -543,8 +554,6 @@ export type ResolvedSingleTarget = string | number;
 // @public (undocumented)
 export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget;
 
-// Warning: (ae-forgotten-export) The symbol "RelayoutInfo" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
 export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boolean;
 

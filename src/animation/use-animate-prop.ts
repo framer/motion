@@ -16,7 +16,7 @@ export const hasUpdated = (
     )
 }
 
-function justTarget(
+function targetWithoutTransition(
     { transition, transitionEnd, ...target }: TargetAndTransition,
     mergeTransitionEnd: boolean = false
 ): Target {
@@ -56,16 +56,19 @@ export function useAnimateProp(
     const prevValues = useRef<Target | null>(null)
 
     if (!prevValues.current) {
-        prevValues.current = justTarget(targetAndTransition, true)
+        prevValues.current = targetWithoutTransition(targetAndTransition, true)
     }
 
     useEffect(
         () => {
             const targetToAnimate: Target = {}
             // These are the values we're actually animating
-            const animatingTarget = justTarget(targetAndTransition)
+            const animatingTarget = targetWithoutTransition(targetAndTransition)
             // This is the target as it'll be once transitionEnd values are applied
-            const finalTarget = justTarget(targetAndTransition, true)
+            const finalTarget = targetWithoutTransition(
+                targetAndTransition,
+                true
+            )
 
             // Detect which values have changed between renders
             for (const key in animatingTarget) {

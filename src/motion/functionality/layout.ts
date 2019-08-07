@@ -8,6 +8,7 @@ import { MotionValuesMap } from "../utils/use-motion-values"
 import { SyncLayoutContext } from "../../components/SyncLayout"
 import { layoutSync, useLayoutSync } from "../../utils/use-layout-sync"
 import { TargetAndTransition, Transition } from "../../types"
+import { isHTMLElement } from "../../utils/is-html-element"
 
 interface Layout {
     left: number
@@ -41,12 +42,6 @@ const defaultLayoutTransition = {
     ease: [0.45, 0.05, 0.19, 1.0],
 }
 
-function isHTMLElement(
-    element?: Element | HTMLElement | null
-): element is HTMLElement {
-    return element instanceof HTMLElement
-}
-
 function isResolver(
     transition: AnimationProps["layoutTransition"]
 ): transition is ResolveLayoutTransition {
@@ -55,7 +50,7 @@ function isResolver(
 
 // Find the center of a Layout definition. We do this to account for potential changes
 // in the top/left etc that are actually just as a result of width/height changes.
-function findCenter({ top, left, width, height }: Layout) {
+function centerOf({ top, left, width, height }: Layout) {
     const right = left + width
     const bottom = top + height
     return {
@@ -64,9 +59,9 @@ function findCenter({ top, left, width, height }: Layout) {
     }
 }
 
-function measureDelta(prev: Layout, next: Layout): LayoutDelta {
-    const prevCenter = findCenter(prev)
-    const nextCenter = findCenter(next)
+function calcDelta(prev: Layout, next: Layout): LayoutDelta {
+    const prevCenter = centerOf(prev)
+    const nextCenter = centerOf(next)
 
     return {
         x: prevCenter.x - nextCenter.x,
@@ -120,12 +115,9 @@ function useLayoutAnimation(
 
     const element = ref.current
 
-    // If we don't have a HTML element we can early return here. We still need to flush
-    // any layout sync jobs as it's a hook
-    if (!isHTMLElement(element)) {
-        useLayoutSync()
-        return
-    }
+    useLayoutSync()
+    // If we don't have a HTML element we can early return here. We've already called all the hooks.
+    if (!isHTMLElement(element)) return
 
     // Keep track of the position style prop. Ideally we'd compare offset as this is uneffected by
     // the same transforms that we want to use to performantly animate the layout. But if position changes,
@@ -170,7 +162,7 @@ function useLayoutAnimation(
         // prev visual state and then animate them into their new one using transforms.
         const prevLayout = compare.getLayout(prev)
         const nextLayout = compare.getLayout(next)
-        const delta = measureDelta(prevLayout, nextLayout)
+        const delta = calcDelta(prevLayout, nextLayout)
         const hasAnyChanged = delta.x || delta.y || delta.width || delta.height
 
         if (!hasAnyChanged) {
