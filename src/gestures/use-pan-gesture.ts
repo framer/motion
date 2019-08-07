@@ -1,6 +1,6 @@
 import { RefObject, useRef, useContext } from "react"
 import { distance } from "@popmotion/popcorn"
-import { EventInfo, Point, EventHandler } from "../events/types"
+import { EventInfo, Point } from "../events/types"
 import sync, { cancelSync, getFrameData } from "framesync"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
@@ -355,12 +355,16 @@ export interface PanHandlers {
     ): void
 }
 
-const noop = () => {}
-
 /**
  *
  * @param handlers -
  * @param ref -
+ *
+ * @internalremarks
+ * Currently this sets new pan gesture functions every render. The memo route has been explored
+ * in the past but ultimately we're still creating new functions every render. An optimisation
+ * to explore is creating the pan gestures and loading them into a `ref`.
+ *
  * @internal
  */
 export function usePanGesture(
@@ -374,8 +378,15 @@ export function usePanGesture(
     )
     const lastMoveEventInfo = useRef<EventInfo | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
-
     const pointerEventSubscription = useRef<RemoveEvent | null>(null)
+
+    // Load the callbacks into mutable state to ensure that even if we don't create a new
+    // gesture handler every render, we still reference the latest callbacks (which are almost certain to change per render)
+    const handlers = useRef<PanHandlers>({}).current
+    handlers.onPanSessionStart = onPanSessionStart
+    handlers.onPanStart = onPanStart
+    handlers.onPan = onPan
+    handlers.onPanEnd = onPanEnd
 
     function removePointerEvents() {
         pointerEventSubscription.current && pointerEventSubscription.current()
@@ -431,11 +442,12 @@ export function usePanGesture(
         session.current.pointHistory.push({ ...point, timestamp })
 
         if (!panStarted) {
-            onPanStart && onPanStart(lastMoveEvent.current, info)
+            handlers.onPanStart &&
+                handlers.onPanStart(lastMoveEvent.current, info)
             session.current.startEvent = lastMoveEvent.current
         }
 
-        onPan && onPan(lastMoveEvent.current, info)
+        handlers.onPan && handlers.onPan(lastMoveEvent.current, info)
     }
 
     function onPointerMove(
@@ -466,7 +478,8 @@ export function usePanGesture(
             return
         }
 
-        onPanEnd && onPanEnd(event, getPanInfo(transformPoint(info)))
+        handlers.onPanEnd &&
+            handlers.onPanEnd(event, getPanInfo(transformPoint(info)))
 
         session.current = null
     }
@@ -487,7 +500,8 @@ export function usePanGesture(
             pointHistory: [{ ...point, timestamp }],
         }
 
-        onPanSessionStart && onPanSessionStart(event, getPanInfo(initialInfo))
+        handlers.onPanSessionStart &&
+            handlers.onPanSessionStart(event, getPanInfo(initialInfo))
 
         removePointerEvents()
 
@@ -508,6 +522,6 @@ export function usePanGesture(
         }
     }
 
-    usePointerEvent(ref, "pointerdown", onPointerDown)
+    usePointerEvent(ref, "pointerdown", hasPanEvents && onPointerDown)
     useUnmountEffect(cancelPan)
 }

@@ -13,6 +13,7 @@ export const App = () => {
     const [state, setState] = React.useState(0)
 
     const onDrag = () => {
+        console.log("yee")
         setState(state + 10)
     }
 
