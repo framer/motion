@@ -13,12 +13,8 @@ export const App = () => {
     const [state, setState] = React.useState(0)
 
     const onDrag = () => {
-        console.log("yee")
         setState(state + 10)
     }
-
-    // should be no duplicated and should steadily increase
-    console.log("state", state)
 
     return (
         <motion.div
