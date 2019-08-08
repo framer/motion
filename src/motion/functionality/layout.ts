@@ -104,8 +104,12 @@ function readPositionStyle(element: HTMLElement) {
     return window.getComputedStyle(element).position
 }
 
-function getLayoutType(prev: string | null, next: string | null): LayoutType {
-    return prev === next ? offset : boundingBox
+function getLayoutType(
+    prev: string | null,
+    next: string | null,
+    positionOnly: boolean
+): LayoutType {
+    return positionOnly && prev === next ? offset : boundingBox
 }
 
 function isSizeKey(key: string) {
@@ -163,7 +167,7 @@ function useLayoutAnimation(
         }
 
         const nextPosition = readPositionStyle(element)
-        compare = getLayoutType(prevPosition, nextPosition)
+        compare = getLayoutType(prevPosition, nextPosition, positionOnly)
     })
 
     layoutSync.render(() => {
@@ -225,18 +229,21 @@ function useLayoutAnimation(
 
         makeTransition("left", "x", 0, delta.x)
         makeTransition("top", "y", 0, delta.y)
-        makeTransition(
-            "width",
-            "scaleX",
-            1,
-            prev.boundingBox.width / next.boundingBox.width
-        )
-        makeTransition(
-            "height",
-            "scaleY",
-            1,
-            prev.boundingBox.height / next.boundingBox.height
-        )
+
+        if (!positionOnly) {
+            makeTransition(
+                "width",
+                "scaleX",
+                1,
+                prev.boundingBox.width / next.boundingBox.width
+            )
+            makeTransition(
+                "height",
+                "scaleY",
+                1,
+                prev.boundingBox.height / next.boundingBox.height
+            )
+        }
 
         target.transition = transition
 
