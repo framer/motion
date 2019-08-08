@@ -96,15 +96,20 @@ export type OnUpdate = (v: Target) => void
 /**
  * @public
  */
-export interface RepositionInfo {
-    delta: { x: number; y: number }
+export interface RelayoutInfo {
+    delta: {
+        x: number
+        y: number
+        width: number
+        height: number
+    }
 }
 
 /**
  * @public
  */
-export type ResolvePositionTransition = (
-    info: RepositionInfo
+export type ResolveLayoutTransition = (
+    info: RelayoutInfo
 ) => Transition | boolean
 
 /**
@@ -275,15 +280,23 @@ export interface AnimationProps {
     transition?: Transition
 
     /**
+     * Deprecated: Please use `layoutTransition` instead.
+     *
+     * @deprecated
+     * Use `layoutTransition` instead.
+     */
+    positionTransition?: Transition | boolean | ResolveLayoutTransition
+
+    /**
      * @library
      *
      * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
      * difficult for to know when the layout changes and smoothly animate components to their new positions.
      *
-     * By adding `positionTransition` to a child `Frame`, it'll automatically animate to its new position
+     * By adding `layoutTransition` to a child `Frame`, it'll automatically animate to its new position
      * when it moves in the `Stack`, whether the `Stack` layout has changed, or the `Frame` has changed order within it.
      *
-     * It can either be set as a `Transition`, or just `true` to use the default `x`/`y` transitions.
+     * It can either be set as a `Transition`, or just `true` to use the default layout transition.
      *
      * ```jsx
      * function MyComponent({ distribution = "space-around" }) {
@@ -295,7 +308,7 @@ export interface AnimationProps {
      *
      *   return (
      *     <Stack distribution={distribution}>
-     *       <Frame positionTransition={spring} />
+     *       <Frame layoutTransition={spring} />
      *     </Stack>
      *   )
      * }
@@ -303,25 +316,42 @@ export interface AnimationProps {
      *
      * @motion
      *
-     * If `positionTransition` is defined, the component will automatically animate any changes to its layout
-     * relative to its nearest positioned parent (ie a component with `position` set to `absolute` or `relative`,
-     * or the document).
+     * If `layoutTransition` is defined on a `motion` component, the component will automatically
+     * animate any changes to its layout.
      *
-     * It can either be set as a `Transition`, or just `true` to use the default `x`/`y` transitions.
+     * It will do so using performant transforms. So if a `motion` component changes position, it'll animate
+     * to its new position using `x` and `y`. If it changes size, it'll animate using `scaleX` and `scaleY`.
+     *
+     * Animating size with `scale` can introduce visual distortion to the component's children. If unwanted,
+     * the `useInvertedScale` function can be used to undo this distortion.
+     *
+     * `layoutTransition` can either be set as a `Transition`, or just `true` to use the default layout transition.
      *
      * It can also be set as a function that will resolve when the component has changed layout. This function
      * should return either a `Transition`, or `true`. For advanced use-cases where you want the component
-     * to visually stay in its previous position, this function can also return `false`.
+     * to visually stay in its previous position, this function can also return `false`. This function will receive
+     * the `delta` of the changed layout.
      *
      * ```jsx
-     * <motion.div positionTransition={{
+     * const spring = {
      *   type: "spring",
      *   damping: 10,
      *   stiffness: 100
-     * }} />
+     * }
+     *
+     * // This component will animate between sizes when `isVisible` is toggled.
+     * const MyComponent = ({ isVisible }) => {
+     *   return (
+     *     <motion.div layoutTransition={spring}>
+     *       {isVisible && <Content />}
+     *     </motion.div>
+     *   )
+     * }
      * ```
+     *
+     * @beta
      */
-    positionTransition?: Transition | boolean | ResolvePositionTransition
+    layoutTransition?: Transition | boolean | ResolveLayoutTransition
 }
 
 /**

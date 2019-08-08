@@ -47,7 +47,7 @@ describe("useInvertedScale", () => {
     test("Sensibly handles inverse of 0", () => {
         const Child = () => {
             const { scaleX } = useInvertedScale()
-            expect(scaleX.get()).toEqual(10000)
+            expect(scaleX.get()).toEqual(100000)
             return null
         }
 

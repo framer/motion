@@ -66,7 +66,6 @@ const height = 80
 const marginBottom = 10
 const totalHeight = height + marginBottom
 const findIndex = (i, y) => {
-    // Could use a ref with offsetTop
     const baseY = totalHeight * i
     const totalY = baseY + y
     return clamp(0, initialColors.length - 1, Math.round(totalY / totalHeight))

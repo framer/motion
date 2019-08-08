@@ -141,8 +141,9 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceUpdate function, or one from a parent context if it exists.
-    let forceUpdate = useForceUpdate()
-    forceUpdate = useContext(SyncLayoutContext) || forceUpdate
+    const localForceUpdate = useForceUpdate()
+    const contextForceUpdate = useContext(SyncLayoutContext)
+    const forceUpdate = contextForceUpdate || localForceUpdate
 
     const isInitialRender = useRef(true)
 

@@ -10,6 +10,8 @@ const style = {
     opacity: 1,
 }
 
+const transition = { duration: 1 }
+
 export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
@@ -23,8 +25,13 @@ export const App = () => {
         <div>
             <UnstableSyncLayout>
                 <motion.div
-                    style={{ padding: 20, background: "white", width: 100 }}
-                    positionTransition
+                    style={{
+                        padding: 20,
+                        background: "white",
+                        width: 100,
+                        marginTop: isVisible ? 0 : -100,
+                    }}
+                    layoutTransition
                 >
                     <AnimatePresence
                         initial={false}
@@ -32,7 +39,6 @@ export const App = () => {
                     >
                         {isVisible && (
                             <motion.div
-                                key="a"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
@@ -42,7 +48,7 @@ export const App = () => {
                         )}
                     </AnimatePresence>
                 </motion.div>
-                <motion.div positionTransition style={style} />
+                <motion.div layoutTransition style={style} />
             </UnstableSyncLayout>
         </div>
     )

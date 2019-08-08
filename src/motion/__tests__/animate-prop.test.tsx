@@ -384,22 +384,30 @@ describe("animate prop as object", () => {
     })
 
     test("mount animation doesn't run if `initial={false}`", async () => {
+        const onComplete = jest.fn()
+        const x = motionValue(0)
+        const y = motionValue(0)
+        const z = motionValue(0)
+
         const promise = new Promise(resolve => {
-            const onComplete = jest.fn()
             const Component = () => (
                 <motion.div
                     initial={false}
-                    animate={{ x: 20 }}
+                    animate={{ x: 20, y: 20, transitionEnd: { x: 10, z: 20 } }}
                     transition={{ type: false }}
+                    style={{ x, y, z }}
                     onAnimationComplete={onComplete}
                 />
             )
             const { rerender } = render(<Component />)
             rerender(<Component />)
-            setTimeout(() => resolve(onComplete), 10)
+            setTimeout(() => resolve(), 10)
         })
 
-        return expect(promise).resolves.not.toBeCalled()
+        await promise
+
+        expect(onComplete).not.toBeCalled()
+        expect([x.get(), y.get(), z.get()]).toEqual([10, 20, 20])
     })
 
     test("unmount cancels active animations", async () => {

@@ -11,7 +11,7 @@ import { Drag } from "./drag"
 import { parseDomVariant } from "../../dom/parse-dom-variant"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
-import { Position } from "./position"
+import { Layout } from "./layout"
 import { isValidMotionProp } from "../utils/valid-prop"
 import { getAnimationComponent } from "./animation"
 
@@ -34,7 +34,7 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     return props
 }
 
-const functionalityComponents = [Position, Drag, Gestures]
+const functionalityComponents = [Layout, Drag, Gestures]
 const numFunctionalityComponents = functionalityComponents.length
 
 /**
@@ -51,6 +51,7 @@ export function createDomMotionConfig<P = MotionProps>(
     return {
         renderComponent: (ref, style, values, props, isStatic) => {
             const forwardProps = isDOM ? stripMotionProps(props) : props
+
             const staticVisualStyles = isSVG
                 ? buildSVGProps(values, style)
                 : { style: buildStyleAttr(values, style, isStatic) }
