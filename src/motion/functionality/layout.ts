@@ -1,5 +1,6 @@
 import { RefObject, useContext } from "react"
 import styler from "stylefire"
+import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
@@ -9,6 +10,7 @@ import { SyncLayoutContext } from "../../components/SyncLayout"
 import { layoutSync, useLayoutSync } from "../../utils/use-layout-sync"
 import { TargetAndTransition, Transition } from "../../types"
 import { isHTMLElement } from "../../utils/is-html-element"
+import { underDampedSpring } from "../../animation/utils/default-transitions"
 
 interface Layout {
     left: number
@@ -40,6 +42,12 @@ interface VisualInfo {
 const defaultLayoutTransition = {
     duration: 0.8,
     ease: [0.45, 0.05, 0.19, 1.0],
+}
+
+const defaultPositionTransition = underDampedSpring()
+
+function getDefaultLayoutTransition(positionOnly: boolean) {
+    return positionOnly ? defaultPositionTransition : defaultLayoutTransition
 }
 
 function isResolver(
@@ -108,7 +116,8 @@ function useLayoutAnimation(
     ref: RefObject<Element | HTMLElement | null>,
     values: MotionValuesMap,
     controls: ValueAnimationControls,
-    layoutTransition: boolean | Transition | ResolveLayoutTransition
+    layoutTransition: boolean | Transition | ResolveLayoutTransition,
+    positionOnly: boolean = false
 ) {
     // Allow any parent SyncLayoutContext components to force-update this component
     useContext(SyncLayoutContext)
@@ -190,7 +199,7 @@ function useLayoutAnimation(
 
             const baseTransition =
                 typeof transitionDefinition === "boolean"
-                    ? { ...defaultLayoutTransition }
+                    ? { ...getDefaultLayoutTransition(positionOnly) }
                     : transitionDefinition
 
             const value = values.get(transformKey, targetValue)
@@ -242,9 +251,17 @@ function useLayoutAnimation(
 
 export const Layout: FunctionalComponentDefinition = {
     key: "layout",
-    shouldRender: (props: MotionProps) =>
-        typeof window !== "undefined" &&
-        (!!props.positionTransition || !!props.layoutTransition),
+    shouldRender: ({ positionTransition, layoutTransition }: MotionProps) => {
+        invariant(
+            !(positionTransition && layoutTransition),
+            `Don't set both positionTransition and layoutTransition on the same component`
+        )
+
+        return (
+            typeof window !== "undefined" &&
+            !!(positionTransition || layoutTransition)
+        )
+    },
     Component: makeHookComponent(
         ({
             innerRef,
@@ -257,7 +274,8 @@ export const Layout: FunctionalComponentDefinition = {
                 innerRef,
                 values,
                 controls,
-                (layoutTransition as any) || (positionTransition as any)
+                (layoutTransition as any) || (positionTransition as any),
+                !!positionTransition
             )
         }
     ),

@@ -280,21 +280,13 @@ export interface AnimationProps {
     transition?: Transition
 
     /**
-     * Deprecated: Please use `layoutTransition` instead.
-     *
-     * @deprecated
-     * Use `layoutTransition` instead.
-     */
-    positionTransition?: Transition | boolean | ResolveLayoutTransition
-
-    /**
      * @library
      *
-     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
-     * difficult for to know when the layout changes and smoothly animate components to their new positions.
+     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it harder
+     * for us to know when a `Frame`'s position changes within the `Stack` and make it animate to its new position.
      *
-     * By adding `layoutTransition` to a child `Frame`, it'll automatically animate to its new position
-     * when it moves in the `Stack`, whether the `Stack` layout has changed, or the `Frame` has changed order within it.
+     * By adding `positionTransition` to a `Frame`, it'll automatically animate to its new position in the `Stack`,
+     * whether the `Stack` layout has changed or the `Frame` has changed its order within it.
      *
      * It can either be set as a `Transition`, or just `true` to use the default layout transition.
      *
@@ -316,8 +308,76 @@ export interface AnimationProps {
      *
      * @motion
      *
+     * If `positionTransition` is defined on a `motion` component, it will automatically animate any changes to its layout
+     * using a performant `x`/`y` transform.
+     *
+     * `positionTransition` can either be set as a `Transition`, or just `true` to use the default position transition, which is a snappy spring.
+     *
+     * It can also be set as a function that will resolve when the component has changed layout. This function
+     * should return either a `Transition`, or `true`. For advanced use-cases where you want the component
+     * to visually stay in its previous position, this function can also return `false`. This function will receive
+     * the `delta` of the changed layout.
+     *
+     * ```jsx
+     * const spring = {
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
+     * }
+     *
+     * // This component will animate position when `isVisible` is toggled.
+     * const MyComponent = ({ isOpen }) => {
+     *   return (
+     *     <motion.div positionTransition={spring} style={{ left: isOpen ? 0 : 100 }} />
+     *   )
+     * }
+     *
+     * // This component will animate items to their new position if its place in `items` changes order.
+     * const MyComponent = ({ items }) => {
+     *   return items.map((item) => (
+     *     <motion.div key={item.id} positionTransition={spring} />
+     *   ))
+     * }
+     * ```
+     *
+     * @public
+     */
+    positionTransition?: Transition | boolean | ResolveLayoutTransition
+
+    /**
+     * @library
+     *
+     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
+     * difficult for to know when the layout changes and smoothly animate components to their new positions.
+     *
+     * By adding `layoutTransition` to a child `Frame`, it'll automatically animate to its new position
+     * when it moves in the `Stack`, whether the `Stack` layout has changed, or the `Frame` has changed order within it.
+     *
+     * It can either be set as a `Transition`, or just `true` to use the default layout transition.
+     *
+     * Animating size with `scale` can introduce visual distortion to the component's children. If unwanted,
+     * the `useInvertedScale` function can be used to undo this distortion.
+     *
+     * ```jsx
+     * function MyComponent({ distribution = "space-around" }) {
+     *   const spring = {
+     *     type: "spring",
+     *     damping: 10,
+     *     stiffness: 100
+     *   }
+     *
+     *   return (
+     *     <Stack distribution={distribution}>
+     *       <Frame layoutTransition={spring} />
+     *     </Stack>
+     *   )
+     * }
+     * ```
+     *
+     * @motion
+     *
      * If `layoutTransition` is defined on a `motion` component, the component will automatically
-     * animate any changes to its layout.
+     * animate any changes to its position **and** size.
      *
      * It will do so using performant transforms. So if a `motion` component changes position, it'll animate
      * to its new position using `x` and `y`. If it changes size, it'll animate using `scaleX` and `scaleY`.
@@ -325,7 +385,8 @@ export interface AnimationProps {
      * Animating size with `scale` can introduce visual distortion to the component's children. If unwanted,
      * the `useInvertedScale` function can be used to undo this distortion.
      *
-     * `layoutTransition` can either be set as a `Transition`, or just `true` to use the default layout transition.
+     * `layoutTransition` can either be set as a `Transition`, or just `true` to use the default layout transition,
+     * which is a smooth `0.8` second ease.
      *
      * It can also be set as a function that will resolve when the component has changed layout. This function
      * should return either a `Transition`, or `true`. For advanced use-cases where you want the component

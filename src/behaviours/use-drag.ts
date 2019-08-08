@@ -307,7 +307,9 @@ export function useDrag(
     const applyConstraintsToPoint = (constraints: Constraints) => {
         return bothAxis(axis => {
             const axisPoint = point[axis]
-            axisPoint && applyConstraints(axis, axisPoint, constraints, 0)
+            axisPoint &&
+                !axisPoint.isAnimating() &&
+                applyConstraints(axis, axisPoint, constraints, 0)
         })
     }
 
