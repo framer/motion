@@ -66,7 +66,6 @@ export interface AnimationProps {
     exit?: AnimationControls | TargetAndTransition | VariantLabels;
     // @beta
     layoutTransition?: Transition | boolean | ResolveLayoutTransition;
-    // @deprecated
     positionTransition?: Transition | boolean | ResolveLayoutTransition;
     transition?: Transition;
     variants?: Variants;
