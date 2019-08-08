@@ -238,8 +238,6 @@ function useLayoutAnimation(
         // Force a render to ensure there's no visual flickering
         styler(element).render()
     })
-
-    useLayoutSync()
 }
 
 export const Layout: FunctionalComponentDefinition = {
