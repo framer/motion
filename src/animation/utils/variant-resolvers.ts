@@ -30,5 +30,5 @@ export const resolveVariantLabels = (
  */
 export const asDependencyList = (
     list: VariantNameList,
-    animateKey: any
-): [string, any] => [list.join(","), animateKey]
+    invalidateAnimate: any
+): [string, any] => [list.join(","), invalidateAnimate]

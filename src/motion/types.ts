@@ -679,14 +679,14 @@ export interface MotionProps
      * changing the `animate` prop will start new animations.
      *
      * This prop is useful when it is paired with the `custom` prop. The `custom` prop is a way to pass an argument into your variants, but a new animation does not
-     * begin when the value of `custom` changes. If you need to start a new animation whenever `custom` changes, then you can pass the same value into `animateKey`.
+     * begin when the value of `custom` changes. If you need to start a new animation whenever `custom` changes, then you can pass the same value into `invalidateAnimate`.
      *
      * ```jsx
-     * <motion.div variants={variants} animate={currentVariant} custom={position} animateKey={position} />
+     * <motion.div variants={variants} animate={currentVariant} custom={position} invalidateAnimate={position} />
      * ```
      *
      */
-    animateKey?: any
+    invalidateAnimate?: any
 }
 
 export type TransformTemplate = (

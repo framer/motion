@@ -26,7 +26,7 @@ export function useVariants(
     animate: VariantLabels,
     inherit: boolean,
     controls: ValueAnimationControls,
-    animateKey: any
+    invalidateAnimate: any
 ) {
     let targetVariants = resolveVariantLabels(animate)
     const context = useContext(MotionContext)
@@ -52,5 +52,5 @@ export function useVariants(
         shouldAnimate && controls.start(targetVariants)
 
         hasMounted.current = true
-    }, asDependencyList(targetVariants, animateKey))
+    }, asDependencyList(targetVariants, invalidateAnimate))
 }
