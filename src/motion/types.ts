@@ -675,11 +675,20 @@ export interface MotionProps
     transformValues?<V extends any>(values: V): V
 
     /**
-     * An optional prop that, when changed, starts a new animation. Most of the time, you will not need to use this prop as
+     * An optional prop that starts a new animation each that its value changes. Most of the time, you will not need to use this prop as
      * changing the `animate` prop will start new animations.
      *
      * This prop is useful when it is paired with the `custom` prop. The `custom` prop is a way to pass an argument into your variants, but a new animation does not
-     * begin when the value of `custom` changes. If you need to start a new animation whenever `custom` changes, then you can pass the same value into `invalidateAnimate`.
+     * begin when the value of `custom` changes. If you need to start a new animation when `custom` changes, then you can pass the value into `invalidateAnimate`
+     * as well as `custom`.
+     *
+     * @library
+     *
+     * ```jsx
+     * <Frame variants={variants} animate={currentVariant} custom={position} invalidateAnimate={position} />
+     * ```
+     *
+     * @motion
      *
      * ```jsx
      * <motion.div variants={variants} animate={currentVariant} custom={position} invalidateAnimate={position} />
