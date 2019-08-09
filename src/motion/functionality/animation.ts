@@ -27,12 +27,14 @@ export const AnimatePropComponents = {
             controls,
             values,
             transition,
+            invalidateAnimate,
         }: AnimationFunctionalProps) => {
             return useAnimateProp(
                 animate as TargetAndTransition,
                 controls,
                 values,
-                transition
+                transition,
+                invalidateAnimate
             )
         }
     ),

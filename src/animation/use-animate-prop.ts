@@ -50,7 +50,8 @@ export function useAnimateProp(
     targetAndTransition: TargetAndTransition,
     controls: ValueAnimationControls,
     values: MotionValuesMap,
-    defaultTransition?: Transition
+    defaultTransition?: Transition,
+    invalidateAnimate?: any
 ) {
     const isInitialRender = useRef(true)
     const prevValues = useRef<Target | null>(null)
@@ -58,6 +59,14 @@ export function useAnimateProp(
     if (!prevValues.current) {
         prevValues.current = targetWithoutTransition(targetAndTransition, true)
     }
+
+    const currentInvalidateAnimate = useRef()
+    const prevInvalidateAnimate = useRef()
+
+    currentInvalidateAnimate.current = invalidateAnimate
+    useEffect(() => {
+        prevInvalidateAnimate.current = invalidateAnimate
+    })
 
     useEffect(
         () => {
@@ -87,7 +96,16 @@ export function useAnimateProp(
                     finalTarget[key]
                 )
 
-                if (isValidValue && (valueHasUpdated || shouldAnimateOnMount)) {
+                const isAnimateInvalid =
+                    currentInvalidateAnimate.current !==
+                    prevInvalidateAnimate.current
+
+                if (
+                    isValidValue &&
+                    (valueHasUpdated ||
+                        shouldAnimateOnMount ||
+                        isAnimateInvalid)
+                ) {
                     targetToAnimate[key] = animatingTarget[key]
                 }
             }
