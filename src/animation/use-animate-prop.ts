@@ -97,8 +97,9 @@ export function useAnimateProp(
                 )
 
                 const isAnimateInvalid =
+                    !isInitialRender.current &&
                     currentInvalidateAnimate.current !==
-                    prevInvalidateAnimate.current
+                        prevInvalidateAnimate.current
 
                 if (
                     isValidValue &&
