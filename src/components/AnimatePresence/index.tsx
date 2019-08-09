@@ -81,10 +81,13 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  * When adding/removing more than a single child component, every component
  * **must** be given a unique `key` prop.
  *
+ * You can propagate exit animations throughout a tree by using variants.
+ *
  * @library
  *
- * The immediate children of `AnimatePresence` should be components that accept `animate`, `exit`
- * and `onAnimationComplete` props, like `Frame`.
+ * You can use any component(s) within `AnimatePresence`, but the first `Frame` in each should
+ * have an `exit` property defined.
+ *
  *
  * ```jsx
  * import { Frame, AnimatePresence } from 'framer'
@@ -106,12 +109,10 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  * }
  * ```
  *
- * You can use custom components, as long as you ensure to forward `animate` and `onAnimationComplete`.
- *
  * @motion
  *
- * The immediate children of `AnimatePresence` should be `motion` components. You can use custom components,
- * as long as you ensure to forward `animate` and `onAnimationComplete` to the top-level `motion` component.
+ * You can use any component(s) within `AnimatePresence`, but the first `motion` component in each should
+ * have an `exit` property defined.
  *
  * ```jsx
  * import { motion, AnimatePresence } from 'framer-motion'
