@@ -88,7 +88,6 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  * You can use any component(s) within `AnimatePresence`, but the first `Frame` in each should
  * have an `exit` property defined.
  *
- *
  * ```jsx
  * import { Frame, AnimatePresence } from 'framer'
  *

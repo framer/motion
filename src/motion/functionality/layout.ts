@@ -1,5 +1,4 @@
 import { RefObject, useContext } from "react"
-import styler from "stylefire"
 import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { makeHookComponent } from "../utils/make-hook-component"
@@ -11,6 +10,7 @@ import { layoutSync, useLayoutSync } from "../../utils/use-layout-sync"
 import { TargetAndTransition, Transition } from "../../types"
 import { isHTMLElement } from "../../utils/is-html-element"
 import { underDampedSpring } from "../../animation/utils/default-transitions"
+import { syncRenderSession } from "../../dom/sync-render-session"
 
 interface Layout {
     left: number
@@ -184,6 +184,8 @@ function useLayoutAnimation(
             return
         }
 
+        syncRenderSession.open()
+
         const target: TargetAndTransition = {}
         const transition: Transition = {}
 
@@ -252,7 +254,7 @@ function useLayoutAnimation(
         transitionDefinition && controls.start(target)
 
         // Force a render to ensure there's no visual flickering
-        styler(element).render()
+        syncRenderSession.flush()
     })
 }
 

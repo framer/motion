@@ -5,6 +5,7 @@ import { OnUpdate, MotionProps, TransformTemplate } from "../types"
 import { invariant } from "hey-listen"
 import { useConstant } from "../../utils/use-constant"
 import { isMotionValue } from "../../value/utils/is-motion-value"
+import { syncRenderSession } from "../../dom/sync-render-session"
 
 // Creating a styler factory for the `onUpdate` prop allows all values
 // to fire and the `onUpdate` prop will only fire once per frame
@@ -164,7 +165,13 @@ const MountMotionValuesComponent = (
             enableHardwareAcceleration: !isStatic,
         })
 
-        values.mount((key, value) => domStyler.set(key, value))
+        values.mount((key, value) => {
+            domStyler.set(key, value)
+
+            if (syncRenderSession.isOpen()) {
+                syncRenderSession.push(domStyler)
+            }
+        })
 
         return () => values.unmount()
     }, [])
