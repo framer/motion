@@ -70,6 +70,7 @@ export {
     Variant,
     Variants,
 } from "./types"
+export { useDomEvent } from "./events/use-dom-event"
 export { EventInfo } from "./events/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { AnimatePresence } from "./components/AnimatePresence"

@@ -2,12 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.6.0] 2019-08-07
+## [1.6.0] Unreleased
 
 ## Added
 
 -   `layoutTransition`
 -   `EventInfo` now passed as second argument to `onHoverStart` and `onHoverEnd`.
+-   `useDomEvent` hook for attaching events directly to an `Element`.
 
 ## Fixed
 
