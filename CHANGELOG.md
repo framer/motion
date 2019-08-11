@@ -15,6 +15,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Simplifying event system.
 -   Applying values in `animate.transitionEnd` if not initial animation.
 -   Made drag constraints only apply if a value isn't animating.
+-   Don't throw error if `useInvertedScale` is provided arguments.
 
 ## [1.5.0] 2019-08-02
 

@@ -668,6 +668,9 @@ export function useAnimation(): AnimationControls;
 // @public
 export function useCycle<T>(...items: T[]): CycleState<T>;
 
+// @public
+export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
+
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
@@ -679,7 +682,7 @@ export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObj
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
 // 
 // @beta
-export const useInvertedScale: ({ scaleX: parentScaleX, scaleY: parentScaleY, }?: Partial<ScaleMotionValues>) => ScaleMotionValues;
+export const useInvertedScale: (scale?: Partial<ScaleMotionValues> | undefined) => ScaleMotionValues;
 
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;

@@ -3,6 +3,7 @@ import { MotionContext } from "../motion/context/MotionContext"
 import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
 import { invariant } from "hey-listen"
+import { useMotionValue } from "./use-motion-value"
 
 interface ScaleMotionValues {
     scaleX: MotionValue<number>
@@ -45,25 +46,28 @@ const invertScale = (scale: number) => (scale > 0.001 ? 1 / scale : maxScale)
  *
  * @beta
  */
-export const useInvertedScale = ({
-    scaleX: parentScaleX,
-    scaleY: parentScaleY,
-}: Partial<ScaleMotionValues> = {}): ScaleMotionValues => {
+export const useInvertedScale = (
+    scale?: Partial<ScaleMotionValues>
+): ScaleMotionValues => {
+    let parentScaleX = useMotionValue(1)
+    let parentScaleY = useMotionValue(1)
     const { values } = useContext(MotionContext)
 
     invariant(
-        !!values,
-        "useInvertedScale must be used within a child of another motion component."
+        !!(scale || values),
+        "If no scale values are provided, useInvertedScale must be used within a child of another motion component."
     )
 
-    const scaleX = useTransform(
-        parentScaleX || values!.get("scaleX", 1),
-        invertScale
-    )
-    const scaleY = useTransform(
-        parentScaleY || values!.get("scaleY", 1),
-        invertScale
-    )
+    if (scale) {
+        parentScaleX = scale.scaleX || parentScaleX
+        parentScaleY = scale.scaleY || parentScaleY
+    } else if (values) {
+        parentScaleX = values.get("scaleX", 1)
+        parentScaleY = values.get("scaleY", 1)
+    }
+
+    const scaleX = useTransform(parentScaleX, invertScale)
+    const scaleY = useTransform(parentScaleY, invertScale)
 
     return { scaleX, scaleY }
 }
