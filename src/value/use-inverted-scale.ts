@@ -46,9 +46,9 @@ const invertScale = (scale: number) => (scale > 0.001 ? 1 / scale : maxScale)
  *
  * @public
  */
-export const useInvertedScale = (
+export function useInvertedScale(
     scale?: Partial<ScaleMotionValues>
-): ScaleMotionValues => {
+): ScaleMotionValues {
     let parentScaleX = useMotionValue(1)
     let parentScaleY = useMotionValue(1)
     const { values } = useContext(MotionContext)
