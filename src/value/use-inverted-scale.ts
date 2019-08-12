@@ -44,7 +44,7 @@ const invertScale = (scale: number) => (scale > 0.001 ? 1 / scale : maxScale)
  * }
  * ```
  *
- * @beta
+ * @public
  */
 export const useInvertedScale = (
     scale?: Partial<ScaleMotionValues>
