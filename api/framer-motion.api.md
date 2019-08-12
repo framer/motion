@@ -681,7 +681,7 @@ export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObj
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
 // 
-// @beta
+// @public
 export const useInvertedScale: (scale?: Partial<ScaleMotionValues> | undefined) => ScaleMotionValues;
 
 // @public
