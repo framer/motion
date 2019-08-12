@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.1] 2019-08-12
+
+## Fixed
+
+-   Making `useInvertedScale` public.
+
 ## [1.6.0] 2019-08-12
 
 ## Added
