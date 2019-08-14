@@ -41,6 +41,7 @@ describe("ssr", () => {
         const circle = renderToString(
             <motion.circle
                 cx={cx}
+                initial={{ strokeWidth: 10 }}
                 style={{
                     background: "#fff",
                     pathLength,
@@ -51,7 +52,7 @@ describe("ssr", () => {
         )
 
         expect(circle).toBe(
-            '<circle cx="100" style="background:#fff;transform:translateX(100px);transform-origin:0px 0px" x="100"></circle>'
+            '<circle cx="100" style="background:#fff;transform:translateX(100px);transform-origin:0px 0px" stroke-width="10" x="100"></circle>'
         )
     })
 })

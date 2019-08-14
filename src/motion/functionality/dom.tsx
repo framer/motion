@@ -29,7 +29,14 @@ function stripMotionProps(props: MotionProps) {
 
 const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     const motionValueStyles = resolveCurrent(values)
-    const props = buildSVGAttrs(motionValueStyles)
+    const props = buildSVGAttrs(
+        motionValueStyles,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        false
+    )
     props.style = { ...style, ...props.style } as any
     return props
 }

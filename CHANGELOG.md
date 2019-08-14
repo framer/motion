@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.2] 2019-08-14
+
+## Fixed
+
+-   Invalid property in SVGs.
+
 ## [1.6.1] 2019-08-12
 
 ## Fixed

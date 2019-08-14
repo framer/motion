@@ -401,16 +401,6 @@
   resolved "https://registry.yarnpkg.com/@popmotion/easing/-/easing-1.0.2.tgz#17d925c45b4bf44189e5a38038d149df42d8c0b4"
   integrity sha512-IkdW0TNmRnWTeWI7aGQIVDbKXPWHVEYdGgd5ZR4SH/Ty/61p63jCjrPxX1XrR7IGkl08bjhJROStD7j+RKgoIw==
 
-"@popmotion/popcorn@^0.4.0":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@popmotion/popcorn/-/popcorn-0.4.1.tgz#02a3aa146dabef4e1bae0567511427fd89fc9cbf"
-  integrity sha512-vFqx+NXPGj0iXNUPgxehayiMHR1bOpTqYYF0nypay3J6ltp831hit1ml+OBJYQkk4Dcq3GSQzSokVZdLBQuC5Q==
-  dependencies:
-    "@popmotion/easing" "^1.0.1"
-    framesync "^4.0.4"
-    hey-listen "^1.0.8"
-    style-value-types "^3.1.5"
-
 "@popmotion/popcorn@^0.4.2":
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/@popmotion/popcorn/-/popcorn-0.4.2.tgz#ff9f5334e8e808ed02237b7b9c928619d1eb68ff"
@@ -7234,13 +7224,6 @@ strip-json-comments@^2.0.1, strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
-style-value-types@^3.1.4, style-value-types@^3.1.5:
-  version "3.1.5"
-  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.1.5.tgz#b3a8cac34059b0e7e0458593fb96892e2d3a9b13"
-  integrity sha512-D4ksO88QUxpqiogoyl5nKvFgOpoNZrD4pr0BbZRdS2WsPdVYetdbKUtbsBlwX5mUdfXfoMNuv2pS8h+XRey+Eg==
-  dependencies:
-    tslib "^1.10.0"
-
 style-value-types@^3.1.6:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.1.6.tgz#6b1da918214d92c74dc7fc2d074013f372b47d76"
@@ -7264,15 +7247,15 @@ styled-components@^4.1.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
-stylefire@^6.0.7:
-  version "6.0.7"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-6.0.7.tgz#200289dba4d0f1bc3938ea8e9c5c5eb70c978953"
-  integrity sha512-nI9GAtxSv0nzvc6d8k+CLg/2iDDGFqHyU0NI3St4nNQi1hcPcvl42PqBmYyNgAm+9O5fXNjvjosfXYGFj0w3EA==
+stylefire@^6.0.9:
+  version "6.0.9"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-6.0.9.tgz#4c9ab1d2a68e99a2e5a83e11333495824e494632"
+  integrity sha512-HGpTvXAtXbQplESMSvhzFsBtpLNIqMf9hZrdsfoZrJCD0RrF7wyRDc1mhYJym5EL2KQKFAEz+AH6YPOv++VxOQ==
   dependencies:
-    "@popmotion/popcorn" "^0.4.0"
+    "@popmotion/popcorn" "^0.4.2"
     framesync "^4.0.0"
     hey-listen "^1.0.8"
-    style-value-types "^3.1.4"
+    style-value-types "^3.1.6"
 
 stylis-rule-sheet@^0.0.10:
   version "0.0.10"
