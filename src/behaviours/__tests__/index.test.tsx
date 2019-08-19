@@ -3,46 +3,11 @@ import { useState } from "react"
 import "../../../jest.setup"
 import { motion } from "../../"
 import { motionValue, MotionValue } from "../../value"
-import { MotionPlugins } from "../../motion/context/MotionPluginContext"
-import { render } from "react-testing-library"
-import { fireEvent } from "dom-testing-library"
+import { render } from "@testing-library/react"
+import { fireEvent } from "@testing-library/dom"
 import sync from "framesync"
-import { Constraints } from "../use-draggable"
-
-type Point = {
-    x: number
-    y: number
-}
-
-const pos: Point = {
-    x: 0,
-    y: 0,
-}
-
-export const drag = (element: any) => {
-    pos.x = 0
-    pos.y = 0
-    fireEvent.mouseDown(element)
-
-    const controls = {
-        to: (x: number, y: number) => {
-            pos.x = x
-            pos.y = y
-            fireEvent.mouseMove(document.body, { buttons: 1 })
-
-            return controls
-        },
-        end: () => {
-            fireEvent.mouseUp(element)
-        },
-    }
-
-    return controls
-}
-
-export const MockDrag = ({ children }: { children: React.ReactNode }) => (
-    <MotionPlugins transformPagePoint={() => pos}>{children}</MotionPlugins>
-)
+import { Constraints } from "../use-drag"
+import { MockDrag, drag, Point } from "./utils"
 
 describe("dragging", () => {
     test("dragStart fires", async () => {
@@ -253,6 +218,45 @@ describe("dragging", () => {
         return expect(promise).resolves.toBe(true)
     })
 
+    test("outputs to external values if provided", async () => {
+        const promise = new Promise(resolve => {
+            const externalX = motionValue(0)
+            const externalY = motionValue(0)
+            const x = motionValue(0)
+            const y = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        drag
+                        _dragValueX={externalX}
+                        _dragValueY={externalY}
+                        style={{ x, y }}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(1, 1)
+
+            sync.postRender(() => {
+                pointer.to(50, 50)
+                sync.postRender(() => {
+                    pointer.end()
+                    resolve([
+                        x.get(),
+                        y.get(),
+                        externalX.get(),
+                        externalY.get(),
+                    ])
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([0, 0, 50, 50])
+    })
+
     test("limit to x", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
@@ -401,6 +405,54 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toEqual([0, 20])
+    })
+
+    test("block drag propagation even after parent has been dragged", async () => {
+        const promise = new Promise(resolve => {
+            const childX = motionValue(0)
+            const parentX = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        data-testid="parent"
+                        drag="x"
+                        style={{ x: parentX }}
+                    >
+                        <motion.div
+                            data-testid="child"
+                            drag
+                            style={{ x: childX }}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            let pointer = drag(getByTestId("parent")).to(10, 0)
+
+            sync.postRender(() => {
+                pointer.to(20, 0)
+
+                sync.postRender(() => {
+                    pointer.end()
+
+                    pointer = drag(getByTestId("child")).to(10, 0)
+
+                    sync.postRender(() => {
+                        pointer.to(20, 0)
+
+                        sync.postRender(() => {
+                            pointer.end()
+                            resolve([parentX.get(), childX.get()])
+                        })
+                    })
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual([20, 20])
     })
 
     test("enable drag propagation", async () => {
@@ -768,7 +820,7 @@ describe("dragging", () => {
             const Component = ({ x }: { x: MotionValue<number> }) => {
                 return (
                     <MockDrag>
-                        <motion.div drag="x" style={{ x }} />
+                        <motion.div drag="x" style={{ x, y: 0 }} />
                     </MockDrag>
                 )
             }

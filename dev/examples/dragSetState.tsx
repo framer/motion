@@ -16,9 +16,6 @@ export const App = () => {
         setState(state + 10)
     }
 
-    // should be no duplicated and should steadily increase
-    console.log("state", state)
-
     return (
         <motion.div
             drag="x"

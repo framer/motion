@@ -27,9 +27,11 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
 // @public (undocumented)
 export interface AnimatePresenceProps {
     custom?: any;
+    // @beta
+    exitBeforeEnter?: boolean;
     initial?: boolean;
     onExitComplete?: () => void;
-    // @beta
+    // @internal
     _syncLayout?: () => void;
 }
 
@@ -62,8 +64,9 @@ export const animationControls: () => AnimationControls;
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
     exit?: AnimationControls | TargetAndTransition | VariantLabels;
-    // Warning: (ae-forgotten-export) The symbol "ResolvePositionTransition" needs to be exported by the entry point index.d.ts
-    positionTransition?: Transition | boolean | ResolvePositionTransition;
+    // @beta
+    layoutTransition?: Transition | boolean | ResolveLayoutTransition;
+    positionTransition?: Transition | boolean | ResolveLayoutTransition;
     transition?: Transition;
     variants?: Variants;
 }
@@ -99,14 +102,20 @@ export interface DraggableProps extends DragHandlers {
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
+    // @internal (undocumented)
+    _dragTransitionControls?: AnimationControls;
+    // @internal (undocumented)
+    _dragValueX?: MotionValue<number>;
+    // @internal (undocumented)
+    _dragValueY?: MotionValue<number>;
 }
 
 // @public (undocumented)
 export interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
-    onDrag?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onDragEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onDragStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDragEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDragStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
     onDragTransitionEnd?(): void;
 }
 
@@ -124,8 +133,8 @@ export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 
 // @public (undocumented)
 export interface HoverHandlers {
-    onHoverEnd?(event: MouseEvent): void;
-    onHoverStart?(event: MouseEvent): void;
+    onHoverEnd?(event: MouseEvent, info: EventInfo): void;
+    onHoverStart?(event: MouseEvent, info: EventInfo): void;
     whileHover?: string | TargetAndTransition;
 }
 
@@ -491,10 +500,10 @@ export interface Orchestration {
 
 // @public (undocumented)
 export interface PanHandlers {
-    onPan?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onPanEnd?(event: MouseEvent | TouchEvent, info: PanInfo): void;
-    onPanSessionStart?(event: MouseEvent | TouchEvent, info: EventInfo): void;
-    onPanStart?(event: MouseEvent | TouchEvent, info: PanInfo): void;
+    onPan?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onPanEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onPanSessionStart?(event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo): void;
+    onPanStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
 }
 
 // @public
@@ -525,6 +534,17 @@ export namespace Point {
 }
 
 // @public (undocumented)
+export interface RelayoutInfo {
+    // (undocumented)
+    delta: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+    };
+}
+
+// @public (undocumented)
 export type ResolvedKeyframesTarget = [null, ...number[]] | number[] | [null, ...string[]] | string[];
 
 // @public (undocumented)
@@ -533,11 +553,8 @@ export type ResolvedSingleTarget = string | number;
 // @public (undocumented)
 export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget;
 
-// Warning: (ae-forgotten-export) The symbol "ServerSafeWindow" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "safeWindow" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export const safeWindow: Window | ServerSafeWindow;
+// @public (undocumented)
+export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boolean;
 
 // @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
@@ -574,9 +591,9 @@ export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Omit<
 
 // @public (undocumented)
 export interface TapHandlers {
-    onTap?(event: MouseEvent | TouchEvent, info: TapInfo): void;
-    onTapCancel?(event: MouseEvent | TouchEvent, info: TapInfo): void;
-    onTapStart?(event: MouseEvent | TouchEvent, info: TapInfo): void;
+    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    onTapCancel?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    onTapStart?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
     whileTap?: string | TargetAndTransition;
 }
 
@@ -629,6 +646,12 @@ export interface Tween {
     yoyo?: number;
 }
 
+// Warning: (ae-forgotten-export) The symbol "SyncLayoutProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "UnstableSyncLayout" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export const UnstableSyncLayout: ({ children }: SyncLayoutProps) => JSX.Element;
+
 // Warning: (ae-internal-missing-underscore) The name "unwrapMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
@@ -645,6 +668,9 @@ export function useAnimation(): AnimationControls;
 // @public
 export function useCycle<T>(...items: T[]): CycleState<T>;
 
+// @public
+export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
+
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
@@ -653,18 +679,18 @@ export function useExternalRef<E = Element>(external?: Ref<E>): RefObject<E>;
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
 
+// Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
+
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;
 
 // Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function usePanGesture(handlers: PanHandlers, ref: RefObject<Element>): undefined;
-
-// @internal (undocumented)
-export function usePanGesture(handlers: PanHandlers): {
-    onPointerDown: EventHandler;
-};
+export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
 
 // @public
 export function useSpring(source: MotionValue | number, config?: SpringProps): MotionValue<any>;
@@ -673,12 +699,7 @@ export function useSpring(source: MotionValue | number, config?: SpringProps): M
 // Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function useTapGesture(handlers: TapHandlers & ControlsProp): {
-    onPointerDown: EventHandler;
-};
-
-// @internal (undocumented)
-export function useTapGesture(handlers: TapHandlers & ControlsProp, ref: RefObject<Element>): undefined;
+export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, controls, }: TapHandlers & ControlsProp, ref: RefObject<Element>): void;
 
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
 // 
@@ -709,10 +730,6 @@ export type Variants = {
     [key: string]: Variant;
 };
 
-
-// Warnings were encountered during analysis:
-// 
-// types/gestures/use-pan-gesture.d.ts:277:5 - (ae-forgotten-export) The symbol "EventHandler" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

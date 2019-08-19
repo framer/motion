@@ -9,6 +9,7 @@ export {
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { unwrapMotionValue } from "./value/utils/unwrap-value"
+export { useInvertedScale } from "./value/use-inverted-scale"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
 export { useViewportScroll } from "./value/use-viewport-scroll"
@@ -43,9 +44,11 @@ export {
     MotionStyle,
     MotionTransform,
     VariantLabels,
+    RelayoutInfo,
+    ResolveLayoutTransition,
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
-export { DraggableProps, DragHandlers } from "./behaviours"
+export { DraggableProps, DragHandlers } from "./behaviours/types"
 export {
     Orchestration,
     Tween,
@@ -67,10 +70,9 @@ export {
     Variant,
     Variants,
 } from "./types"
-export { EventInfo } from "./events"
-export { safeWindow } from "./events/utils/window"
-export {
-    AnimatePresence,
-    AnimatePresenceProps,
-} from "./components/AnimatePresence"
+export { useDomEvent } from "./events/use-dom-event"
+export { EventInfo } from "./events/types"
+export { AnimatePresenceProps } from "./components/AnimatePresence/types"
+export { AnimatePresence } from "./components/AnimatePresence"
+export { UnstableSyncLayout } from "./components/SyncLayout"
 export { isValidMotionProp } from "./motion/utils/valid-prop"

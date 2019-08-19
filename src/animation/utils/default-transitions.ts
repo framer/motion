@@ -7,7 +7,7 @@ import {
 } from "../../types"
 import { isKeyframesTarget } from "./is-keyframes-target"
 
-const underDampedSpring = () => ({
+export const underDampedSpring = () => ({
     type: "spring",
     stiffness: 500,
     damping: 25,

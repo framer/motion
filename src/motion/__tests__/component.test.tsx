@@ -1,5 +1,5 @@
 import "../../../jest.setup"
-import { render, fireEvent } from "react-testing-library"
+import { render, fireEvent } from "@testing-library/react"
 import { motion } from "../"
 import * as React from "react"
 import styled from "styled-components"
@@ -116,9 +116,7 @@ describe("motion component rendering and styles", () => {
     })
 
     it("generates style attribute if passed initial as variant label", () => {
-        const variants = {
-            foo: { x: 10, background: "#fff" },
-        }
+        const variants = { foo: { x: 10, background: "#fff" } }
         const { container } = render(
             <motion.div initial="foo" variants={variants} />
         )
@@ -138,12 +136,8 @@ describe("motion component rendering and styles", () => {
 
     // TODO: Replace dynamic variable test when we implement `custom` attribute: https://github.com/framer/company/issues/12508
     it("generates style attribute if passed initial as variant label is function", () => {
-        const variants = {
-            foo: (i: number) => ({ x: i * 10 }),
-        }
-        const childVariants = {
-            foo: (i: number) => ({ x: i * 10 }),
-        }
+        const variants = { foo: (i: number) => ({ x: i * 10 }) }
+        const childVariants = { foo: (i: number) => ({ x: i * 10 }) }
 
         const { getByTestId } = render(
             <motion.div initial="foo" variants={variants}>
@@ -166,12 +160,8 @@ describe("motion component rendering and styles", () => {
     })
 
     it("generates style attribute for children if passed initial as variant label", () => {
-        const variants = {
-            foo: { x: 10, background: "#fff" },
-        }
-        const childVariants = {
-            foo: { opacity: 0, color: "#f00" },
-        }
+        const variants = { foo: { x: 10, background: "#fff" } }
+        const childVariants = { foo: { opacity: 0, color: "#f00" } }
 
         const { getByTestId } = render(
             <motion.div initial="foo" variants={variants}>
@@ -182,12 +172,8 @@ describe("motion component rendering and styles", () => {
     })
 
     it("generates style attribute for nested children if passed initial as variant label", () => {
-        const variants = {
-            foo: { x: 10, background: "#fff" },
-        }
-        const childVariants = {
-            foo: { opacity: 0, color: "#f00" },
-        }
+        const variants = { foo: { x: 10, background: "#fff" } }
+        const childVariants = { foo: { opacity: 0, color: "#f00" } }
 
         const { getByTestId } = render(
             <motion.div initial="foo" variants={variants}>
@@ -232,7 +218,7 @@ describe("motion component rendering and styles", () => {
     })
 
     // Skipping this test because originX and originY aren't correctly detected by
-    // react-testing-library, it returns a false positive.
+    // @testing-library/react, it returns a false positive.
     it.skip("style supports originX and originY", () => {
         const { container } = render(<motion.div style={{ originX: "25%" }} />)
         expect(container.firstChild).toHaveStyle("transform-origin: 25% 50%")

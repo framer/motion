@@ -5,13 +5,23 @@ import { VariantLabels, MotionProps } from "../types"
 import { useMaxTimes } from "../../utils/use-max-times"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
+import { MotionValuesMap } from "../utils/use-motion-values"
 
-type MotionContextProps = {
+export interface ExitProps {
+    initial?: false | VariantLabels
+    isExiting?: boolean
+    onExitComplete?: () => void
+    custom?: any
+}
+
+export interface MotionContextProps {
     controls?: ValueAnimationControls
+    values?: MotionValuesMap
     initial?: false | VariantLabels
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
+    exitProps?: ExitProps
 }
 
 /**
@@ -39,6 +49,7 @@ const isAnimationControls = (
 export const useMotionContext = (
     parentContext: MotionContextProps,
     controls: ValueAnimationControls,
+    values: MotionValuesMap,
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover }: MotionProps
 ) => {
@@ -85,7 +96,10 @@ export const useMotionContext = (
     // variant labels there's probably an optimisation to deep-compare but it might be an over-optimisation.
     // We want to do this as we rely on React's component rendering order each render cycle to determine
     // the new order of any child components for the `staggerChildren` functionality.
-    const animateDependency = isVariantLabel(animate) ? animate : null
+    const animateDependency =
+        shouldPropagateControls && isVariantLabel(targetAnimate)
+            ? targetAnimate
+            : null
 
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
     // unlikely to change, by making the context an object it'll be considered a new value every render.
@@ -97,6 +111,7 @@ export const useMotionContext = (
                 : parentContext.controls,
             initial: targetInitial,
             animate: targetAnimate,
+            values,
             hasMounted,
         }),
         [initialDependency, animateDependency]

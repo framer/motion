@@ -2,7 +2,57 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [1.6.2] 2019-08-14
+
+## Fixed
+
+-   Invalid property in SVGs.
+
+## [1.6.1] 2019-08-12
+
+## Fixed
+
+-   Making `useInvertedScale` public and changing const to function.
+
+## [1.6.0] 2019-08-12
+
+## Added
+
+-   `layoutTransition`
+-   `EventInfo` now passed as second argument to `onHoverStart` and `onHoverEnd`.
+-   `useDomEvent` hook for attaching events directly to an `Element`.
+
+## Fixed
+
+-   Simplifying event system.
+-   Applying values in `animate.transitionEnd` if not initial animation.
+-   Made drag constraints only apply if a value isn't animating.
+-   Don't throw error if `useInvertedScale` is provided arguments.
+
+## [1.5.0] 2019-08-02
+
+### Added
+
+-   `useInvertedScale` for inverting parent scales.
+
+## [1.4.2] 2019-07-31
+
+### Fixed
+
+-   `positionTransition` on exiting components within `AnimatePresence`.
+
+## [1.4.1] 2019-07-30
+
+### Fixed
+
+-   Pan and drag gestures with `PointerEvent`.
+
+## [1.4.0] 2019-07-29
+
+### Added
+
+-   `AnimatePresence.exitBeforeEnter`.
+-   Added explicit support for custom components as children of `AnimatePresence`.
 
 ### Fixed
 
@@ -10,6 +60,8 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Updated rollup config to list `tslib` as an external dependency.
 -   Ensuring unmounting components don't call `onAnimationComplete`.
 -   Adding error message when no initial value is set, or can be read or inferred.
+-   Ensuring color alpha is always within bounds.
+-   Ensuring variants propagate on unmount.
 
 ## [1.3.0] 2019-07-24
 

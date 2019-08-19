@@ -202,10 +202,10 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * @param isActive -
      */
     private setValues(
-        target: TargetWithKeyframes,
+        { transition, transitionEnd, ...target }: TargetAndTransition,
         { isActive = new Set(), priority }: SetterOptions = {}
     ) {
-        target = this.transformValues(target as any)
+        target = this.transformValues({ ...target, ...transitionEnd } as any)
 
         return Object.keys(target).forEach(key => {
             if (isActive.has(key)) return
@@ -473,7 +473,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     private animate(
         animationDefinition: Variant,
         { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
-    ) {
+    ): Promise<any> {
         let { target, transition, transitionEnd } = this.resolveVariant(
             animationDefinition
         )
@@ -506,41 +506,37 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
         this.checkForNewValues(target)
 
-        const animations = Object.keys(target).reduce(
-            (acc, key) => {
-                const value = this.values.get(key) as MotionValue<
-                    number | string
-                >
-                if (!value || !target || target[key] === undefined) return acc
+        const animations: Array<Promise<any>> = []
 
-                const valueTarget = target[key]
+        for (const key in target) {
+            const value = this.values.get(key) as MotionValue<number | string>
 
-                if (!priority) {
-                    this.baseTarget[key] = resolveFinalValueInKeyframes(
-                        valueTarget
-                    )
-                }
+            if (!value || !target || target[key] === undefined) continue
 
-                if (this.isAnimating.has(key)) return acc
+            const valueTarget = target[key]
 
-                acc.push(
-                    startAnimation(key, value, valueTarget, {
-                        delay,
-                        ...transition,
-                    })
-                )
+            if (!priority) {
+                this.baseTarget[key] = resolveFinalValueInKeyframes(valueTarget)
+            }
 
-                this.isAnimating.add(key)
+            if (this.isAnimating.has(key)) continue
+            this.isAnimating.add(key)
 
-                return acc
-            },
-            [] as Array<Promise<any>>
-        )
+            animations.push(
+                startAnimation(key, value, valueTarget, {
+                    delay,
+                    ...transition,
+                })
+            )
+        }
 
-        return Promise.all(animations).then(() => {
-            if (!transitionEnd) return
-            this.setValues(transitionEnd, { priority })
-        })
+        const allAnimations = Promise.all(animations)
+
+        return transitionEnd
+            ? allAnimations.then(() => {
+                  this.setValues(transitionEnd!, { priority })
+              })
+            : allAnimations
     }
 
     private animateVariantLabels(

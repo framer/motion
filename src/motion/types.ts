@@ -10,7 +10,7 @@ import {
     MakeCustomValueType,
 } from "../types"
 import { GestureHandlers } from "../gestures"
-import { DraggableProps } from "../behaviours"
+import { DraggableProps } from "../behaviours/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -96,15 +96,20 @@ export type OnUpdate = (v: Target) => void
 /**
  * @public
  */
-export interface RepositionInfo {
-    delta: { x: number; y: number }
+export interface RelayoutInfo {
+    delta: {
+        x: number
+        y: number
+        width: number
+        height: number
+    }
 }
 
 /**
  * @public
  */
-export type ResolvePositionTransition = (
-    info: RepositionInfo
+export type ResolveLayoutTransition = (
+    info: RelayoutInfo
 ) => Transition | boolean
 
 /**
@@ -149,12 +154,32 @@ export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels
 
     /**
-     * A target to animate to when this component is removed.
+     * A target to animate to when this component is removed from the tree.
      *
-     * The component **must** be a direct child of the `AnimatePresence` component to enable the
-     * `exit` animation. This is because React doesn't allow components to defer unmounting until
-     * after an animation is complete. Once this limiation is fixed, the `AnimatePresence` component
-     * will be unnecessary.
+     * This component **must** be the first animatable child of an `AnimatePresence` to enable this exit animation.
+     *
+     * This limitation exists because React doesn't allow components to defer unmounting until after
+     * an animation is complete. Once this limitation is fixed, the `AnimatePresence` component will be unnecessary.
+     *
+     * @library
+     *
+     * ```jsx
+     * import { Frame, AnimatePresence } from 'framer'
+     *
+     * export function MyComponent(props) {
+     *   return (
+     *     <AnimatePresence>
+     *        {props.isVisible && (
+     *          <Frame
+     *            initial={{ opacity: 0 }}
+     *            animate={{ opacity: 1 }}
+     *            exit={{ opacity: 0 }}
+     *          />
+     *        )}
+     *     </AnimatePresence>
+     *   )
+     * }
+     * ```
      *
      * @motion
      *
@@ -257,13 +282,13 @@ export interface AnimationProps {
     /**
      * @library
      *
-     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
-     * difficult for to know when the layout changes and smoothly animate components to their new positions.
+     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it harder
+     * for us to know when a `Frame`'s position changes within the `Stack` and make it animate to its new position.
      *
-     * By adding `positionTransition` to a child `Frame`, it'll automatically animate to its new position
-     * when it moves in the `Stack`, whether the `Stack` layout has changed, or the `Frame` has changed order within it.
+     * By adding `positionTransition` to a `Frame`, it'll automatically animate to its new position in the `Stack`,
+     * whether the `Stack` layout has changed or the `Frame` has changed its order within it.
      *
-     * It can either be set as a `Transition`, or just `true` to use the default `x`/`y` transitions.
+     * It can either be set as a `Transition`, or just `true` to use the default layout transition.
      *
      * ```jsx
      * function MyComponent({ distribution = "space-around" }) {
@@ -275,7 +300,7 @@ export interface AnimationProps {
      *
      *   return (
      *     <Stack distribution={distribution}>
-     *       <Frame positionTransition={spring} />
+     *       <Frame layoutTransition={spring} />
      *     </Stack>
      *   )
      * }
@@ -283,25 +308,111 @@ export interface AnimationProps {
      *
      * @motion
      *
-     * If `positionTransition` is defined, the component will automatically animate any changes to its layout
-     * relative to its nearest positioned parent (ie a component with `position` set to `absolute` or `relative`,
-     * or the document).
+     * If `positionTransition` is defined on a `motion` component, it will automatically animate any changes to its layout
+     * using a performant `x`/`y` transform.
      *
-     * It can either be set as a `Transition`, or just `true` to use the default `x`/`y` transitions.
+     * `positionTransition` can either be set as a `Transition`, or just `true` to use the default position transition, which is a snappy spring.
      *
      * It can also be set as a function that will resolve when the component has changed layout. This function
      * should return either a `Transition`, or `true`. For advanced use-cases where you want the component
-     * to visually stay in its previous position, this function can also return `false`.
+     * to visually stay in its previous position, this function can also return `false`. This function will receive
+     * the `delta` of the changed layout.
      *
      * ```jsx
-     * <motion.div positionTransition={{
+     * const spring = {
      *   type: "spring",
      *   damping: 10,
      *   stiffness: 100
-     * }} />
+     * }
+     *
+     * // This component will animate position when `isVisible` is toggled.
+     * const MyComponent = ({ isOpen }) => {
+     *   return (
+     *     <motion.div positionTransition={spring} style={{ left: isOpen ? 0 : 100 }} />
+     *   )
+     * }
+     *
+     * // This component will animate items to their new position if its place in `items` changes order.
+     * const MyComponent = ({ items }) => {
+     *   return items.map((item) => (
+     *     <motion.div key={item.id} positionTransition={spring} />
+     *   ))
+     * }
      * ```
+     *
+     * @public
      */
-    positionTransition?: Transition | boolean | ResolvePositionTransition
+    positionTransition?: Transition | boolean | ResolveLayoutTransition
+
+    /**
+     * @library
+     *
+     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
+     * difficult for to know when the layout changes and smoothly animate components to their new positions.
+     *
+     * By adding `layoutTransition` to a child `Frame`, it'll automatically animate to its new position
+     * when it moves in the `Stack`, whether the `Stack` layout has changed, or the `Frame` has changed order within it.
+     *
+     * It can either be set as a `Transition`, or just `true` to use the default layout transition.
+     *
+     * Animating size with `scale` can introduce visual distortion to the component's children. If unwanted,
+     * the `useInvertedScale` function can be used to undo this distortion.
+     *
+     * ```jsx
+     * function MyComponent({ distribution = "space-around" }) {
+     *   const spring = {
+     *     type: "spring",
+     *     damping: 10,
+     *     stiffness: 100
+     *   }
+     *
+     *   return (
+     *     <Stack distribution={distribution}>
+     *       <Frame layoutTransition={spring} />
+     *     </Stack>
+     *   )
+     * }
+     * ```
+     *
+     * @motion
+     *
+     * If `layoutTransition` is defined on a `motion` component, the component will automatically
+     * animate any changes to its position **and** size.
+     *
+     * It will do so using performant transforms. So if a `motion` component changes position, it'll animate
+     * to its new position using `x` and `y`. If it changes size, it'll animate using `scaleX` and `scaleY`.
+     *
+     * Animating size with `scale` can introduce visual distortion to the component's children. If unwanted,
+     * the `useInvertedScale` function can be used to undo this distortion.
+     *
+     * `layoutTransition` can either be set as a `Transition`, or just `true` to use the default layout transition,
+     * which is a smooth `0.8` second ease.
+     *
+     * It can also be set as a function that will resolve when the component has changed layout. This function
+     * should return either a `Transition`, or `true`. For advanced use-cases where you want the component
+     * to visually stay in its previous position, this function can also return `false`. This function will receive
+     * the `delta` of the changed layout.
+     *
+     * ```jsx
+     * const spring = {
+     *   type: "spring",
+     *   damping: 10,
+     *   stiffness: 100
+     * }
+     *
+     * // This component will animate between sizes when `isVisible` is toggled.
+     * const MyComponent = ({ isVisible }) => {
+     *   return (
+     *     <motion.div layoutTransition={spring}>
+     *       {isVisible && <Content />}
+     *     </motion.div>
+     *   )
+     * }
+     * ```
+     *
+     * @beta
+     */
+    layoutTransition?: Transition | boolean | ResolveLayoutTransition
 }
 
 /**
