@@ -16,7 +16,7 @@ export const App = () => {
             <motion.div
                 data-testid="draggable"
                 drag
-                dragElastic={false}
+                dragElastic={0}
                 dragMomentum={false}
                 style={{
                     width: 50,

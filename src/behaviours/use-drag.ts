@@ -331,7 +331,7 @@ export function useDrag(
     // If `dragConstraints` is set to `false` or `Constraints`, set constraints immediately.
     // Otherwise we'll resolve on mount.
     dragStatus.constraints = constraintsNeedResolution
-        ? false
+        ? dragStatus.constraints || false
         : (dragConstraints as Constraints | false)
 
     // Get the `MotionValue` for both draggable axes, or create them if they don't already

@@ -60,7 +60,6 @@ test: bootstrap $(API_TARGET)
 test-ci: bootstrap $(API_TARGET)
 	mkdir -p $(TEST_REPORT_PATH)
 	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test-ci --ci --reporters=jest-junit
-	yarn test-e2e-ci
 	tsc dist/framer-motion.d.ts
 
 lint: bootstrap
