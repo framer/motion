@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.3] Unreleased
+
+## Fixed
+
+-   Ensuring `onDragEnd` always fires after if `onDragStart` fired.
+
 ## [1.6.2] 2019-08-14
 
 ## Fixed
