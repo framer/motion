@@ -18,9 +18,10 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn test-client && yarn test-server",
+        "test": "yarn test-client && yarn test-server && yarn test-e2e",
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
+        "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
         "build": "rollup -c && make api && yarn measure",
@@ -34,6 +35,7 @@
         "react-dom": "^16.8"
     },
     "devDependencies": {
+        "@cypress/webpack-preprocessor": "^4.1.0",
         "@microsoft/api-extractor": "^7.3.4",
         "@testing-library/dom": "^5.6.0",
         "@testing-library/react": "^8.0.7",
@@ -47,6 +49,7 @@
         "array-move": "^2.1.0",
         "cache-loader": "^1.2.5",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
+        "cypress": "^3.4.0",
         "eslint": "^5.16.0",
         "eslint-config-prettier": "^4.1.0",
         "eslint-plugin-import": "^2.16.0",
@@ -71,6 +74,7 @@
         "rollup-plugin-typescript2": "^0.21.2",
         "rollup-plugin-uglify": "^6.0.2",
         "rollup-plugin-visualizer": "^2.4.3",
+        "start-server-and-test": "^1.9.1",
         "styled-components": "^4.1.1",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",

@@ -9,3 +9,5 @@ yarn-error.log
 /test_reports
 /temp
 /types
+/cypress/screenshots
+/cypress/videos
