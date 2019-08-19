@@ -161,9 +161,8 @@ type MotionPoint = Partial<{
     y: MotionValue<number>
 }>
 
-interface DragState {
+interface DragStatus {
     isDragging: boolean
-    hasDragged: boolean
     currentDirection: DragDirection | null
     constraints: Constraints | false
     handlers: DragHandlers
@@ -209,9 +208,8 @@ export function useDrag(
 
     // We create a mutable state using a ref as we want to keep track of certain data, even across renders,
     // but we don't want to re-render as a result of them.
-    const dragStatus = useRef<DragState>({
+    const dragStatus = useRef<DragStatus>({
         isDragging: false,
-        hasDragged: false,
         currentDirection: null,
         constraints: false,
         handlers: {},
@@ -374,15 +372,12 @@ export function useDrag(
             return
         }
 
-        const axisOrigin = origin[axis].get()
         const current = applyConstraints(
             axis,
             origin[axis].get() + offset[axis],
             dragStatus.constraints,
             dragElastic
         )
-
-        if (current !== axisOrigin) dragStatus.hasDragged = true
 
         axisPoint.set(current)
     }
@@ -421,7 +416,6 @@ export function useDrag(
         info: PanInfo
     ) {
         dragStatus.isDragging = true
-        dragStatus.hasDragged = false
 
         // Resolve the constraints again in case anything has changed in the meantime.
         if (constraintsNeedResolution) {
@@ -552,9 +546,9 @@ export function useDrag(
         event: MouseEvent | TouchEvent | PointerEvent,
         info: PanInfo
     ) {
+        const isDragging = dragStatus.isDragging
         cancelDrag()
-
-        if (!dragStatus.hasDragged) return
+        if (!isDragging) return
 
         // If we have either `dragMomentum` or `dragElastic`, initiate momentum and boundary spring animation for both axes.
         if (dragMomentum || dragElastic) {

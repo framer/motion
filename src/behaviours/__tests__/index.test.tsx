@@ -72,7 +72,7 @@ describe("dragging", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            const pointer = drag(container.firstChild).to(0, 500)
+            const pointer = drag(container.firstChild).to(0, 0)
 
             sync.postRender(() => {
                 pointer.end()
@@ -81,6 +81,41 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.not.toBeCalled()
+    })
+
+    test("dragEnd does fire even if the MotionValues were physically reset", async () => {
+        const promise = new Promise<[() => void, () => void]>(resolve => {
+            const x = motionValue(0)
+            const onDragStart = jest.fn()
+            const onDragEnd = jest.fn()
+            const Component = () => (
+                <MockDrag>
+                    <motion.div
+                        drag="x"
+                        dragDirectionLock
+                        onDrag={() => x.set(0)}
+                        onDragStart={onDragStart}
+                        onDragEnd={onDragEnd}
+                        style={{ x }}
+                    />
+                </MockDrag>
+            )
+
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(container.firstChild).to(10, 0)
+
+            sync.postRender(() => {
+                pointer.end()
+                resolve([onDragStart, onDragEnd])
+            })
+        })
+
+        const [onStart, onEnd] = await promise
+
+        expect(onStart).toBeCalledTimes(1)
+        expect(onEnd).toBeCalledTimes(1)
     })
 
     test("drag handlers aren't frozen at drag session start", async () => {
