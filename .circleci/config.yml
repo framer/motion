@@ -32,7 +32,7 @@ jobs:
                   chmod +x ./cc-test-reporter
             - run: |
                   ./cc-test-reporter before-build
-                  make test
+                  make test-ci
                   ./cc-test-reporter format-coverage coverage/lcov.info -t lcov
                   ./cc-test-reporter upload-coverage
 
