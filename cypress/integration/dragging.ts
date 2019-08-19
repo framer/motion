@@ -2,7 +2,7 @@ describe("dragging", () => {
     it("doesn't reset drag constraints (ref-based), while dragging, on unrelated parent component updates", () => {
         cy.visit("?test=dragging-ref-constraint")
             .get("[data-testid='draggable']")
-            .wait(100)
+            .wait(200)
             .trigger("pointerdown")
             .wait(100)
             .trigger("pointermove", { pageX: 5, pageY: 55 })

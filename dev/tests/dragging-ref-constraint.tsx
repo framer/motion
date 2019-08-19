@@ -5,7 +5,6 @@ import * as React from "react"
 
 export const App = () => {
     const containerRef = React.useRef(null)
-    const [dragging, setDragging] = React.useState(false)
 
     return (
         <motion.div
@@ -21,11 +20,9 @@ export const App = () => {
                 style={{
                     width: 50,
                     height: 50,
-                    background: dragging ? "yellow" : "red",
+                    background: "red",
                 }}
                 dragConstraints={containerRef}
-                onDragStart={() => setDragging(true)}
-                onDragEnd={() => setDragging(false)}
             />
         </motion.div>
     )
