@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.5] 2019-08-27
+
+## Fix
+
+-   Value-specific `delay`.
+
 ## [1.6.4] 2019-08-27
 
 ## Upgrade

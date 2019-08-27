@@ -24,6 +24,44 @@ describe("delay attr", () => {
 
         return expect(promise).resolves.toBe(0)
     })
+    test("value-specific delay on instant transition", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: 10 }}
+                    transition={{ x: { delay: 1, type: false } }}
+                    style={{ x }}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            requestAnimationFrame(() => resolve(x.get()))
+        })
+
+        return expect(promise).resolves.toBe(0)
+    })
+    test("value-specific delay on animation", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const Component = () => (
+                <motion.div
+                    animate={{ x: 10 }}
+                    transition={{ x: { delay: 1 } }}
+                    style={{ x }}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            requestAnimationFrame(() => resolve(x.get()))
+        })
+
+        return expect(promise).resolves.toBe(0)
+    })
     test("in animate.transition", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)

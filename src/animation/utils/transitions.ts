@@ -94,11 +94,13 @@ const getTransitionDefinition = (
 
     if (valueTransitionDefinition.type === false) {
         return {
-            type: "just",
-            delay,
+            delay: valueTransitionDefinition.hasOwnProperty("delay")
+                ? valueTransitionDefinition.delay
+                : delay,
             to: isKeyframesTarget(to)
                 ? (to[to.length - 1] as string | number)
                 : to,
+            type: "just",
         }
     } else if (isKeyframesTarget(to)) {
         return {
@@ -129,12 +131,12 @@ const preprocessOptions = (
         : opts
 }
 
-export const getAnimation = (
+const getAnimation = (
     key: string,
     value: MotionValue,
     target: ResolvedValueTarget,
     transition?: Transition
-) => {
+): [ActionFactory, PopmotionTransitionProps] => {
     const origin = value.get()
     const isOriginAnimatable = isAnimatable(key, origin)
     const isTargetAnimatable = isAnimatable(key, target)
@@ -175,7 +177,7 @@ export const getAnimation = (
         }
     }
 
-    return actionFactory(opts)
+    return [actionFactory, opts]
 }
 
 /**
@@ -191,10 +193,17 @@ export function startAnimation(
 ) {
     return value.start(complete => {
         let activeAnimation: ColdSubscription
+        const [
+            animationFactory,
+            { delay: valueDelay, ...options },
+        ] = getAnimation(key, value, target, transition)
+
+        if (valueDelay !== undefined) {
+            delay = valueDelay
+        }
 
         const animate = () => {
-            const animation = getAnimation(key, value, target, transition)
-
+            const animation = animationFactory(options)
             // Bind animation opts to animation
             activeAnimation = animation.start({
                 update: (v: any) => value.set(v),
