@@ -8377,10 +8377,10 @@ styled-components@^4.1.1:
     stylis-rule-sheet "^0.0.10"
     supports-color "^5.5.0"
 
-stylefire@^6.0.9:
-  version "6.0.9"
-  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-6.0.9.tgz#4c9ab1d2a68e99a2e5a83e11333495824e494632"
-  integrity sha512-HGpTvXAtXbQplESMSvhzFsBtpLNIqMf9hZrdsfoZrJCD0RrF7wyRDc1mhYJym5EL2KQKFAEz+AH6YPOv++VxOQ==
+stylefire@^6.0.10:
+  version "6.0.10"
+  resolved "https://registry.yarnpkg.com/stylefire/-/stylefire-6.0.10.tgz#1100c63cf01b922f0db92e38a46297f3f1c2663d"
+  integrity sha512-SAJnUk4L9EKt/WSliztk1iZCzcNOJDR69xO8gblRjQwjybgMWONsY7KpcMBt65xU1UZaiyPDK5CoLf9wXLJldQ==
   dependencies:
     "@popmotion/popcorn" "^0.4.2"
     framesync "^4.0.0"
