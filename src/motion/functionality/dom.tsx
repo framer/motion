@@ -41,7 +41,9 @@ try {
             return emotionIsPropValid(key)
         }
     }
-} catch {}
+} catch {
+    // We don't need to actually do anything here - the fallback is the existing `isPropValid`.
+}
 
 function filterValidProps(props: MotionProps) {
     const domProps = {}
