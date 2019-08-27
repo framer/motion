@@ -72,7 +72,7 @@ const getTransitionDefinition = (
     to: ValueTarget,
     transitionDefinition?: Transition
 ): PopmotionTransitionProps => {
-    let delay = transitionDefinition ? transitionDefinition.delay : 0
+    const delay = transitionDefinition ? transitionDefinition.delay : 0
 
     // If no object, return default transition
     // A better way to handle this would be to deconstruct out all the shared Orchestration props
@@ -94,8 +94,9 @@ const getTransitionDefinition = (
 
     if (valueTransitionDefinition.type === false) {
         return {
-            delay,
-            ...(valueTransitionDefinition as any),
+            delay: valueTransitionDefinition.hasOwnProperty("delay")
+                ? valueTransitionDefinition.delay
+                : delay,
             to: isKeyframesTarget(to)
                 ? (to[to.length - 1] as string | number)
                 : to,
