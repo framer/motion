@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.4] 2019-08-27
+
+## Upgrade
+
+-   `stylefire@6.0.10`
+
 ## [1.6.3] 2019-08-19
 
 ## Fixed
