@@ -7,32 +7,24 @@ assignees: ''
 
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+**1. Describe the bug**
+Give a clear and concise description of what the bug is.
 
-**To Reproduce**
+**2. Provide a CodeSandbox reproduction of the bug**
+This allows us to quickly follow the reproduction steps.
+
+**3. Steps to reproduce**
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
 4. See error
 
-**Expected behavior**
+**4. Expected behavior**
 A clear and concise description of what you expected to happen.
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+**5. Video or screenshots**
+If applicable, add a video or screenshots to help explain the bug.
 
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
-
-**Smartphone (please complete the following information):**
- - Device: [e.g. iPhone6]
- - OS: [e.g. iOS8.1]
- - Browser [e.g. stock browser, safari]
- - Version [e.g. 22]
-
-**Additional context**
-Add any other context about the problem here.
+**6. Environment details**
+If applicable, let us know which OS, browser, browser version etc you're using.
