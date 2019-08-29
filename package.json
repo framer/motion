@@ -96,6 +96,9 @@
         "stylefire": "^6.0.10",
         "tslib": "^1.10.0"
     },
+    "optionalDependencies": {
+        "@emotion/is-prop-valid": "^0.8.2"
+    },
     "husky": {
         "hooks": {
             "pre-commit": "lint-staged"
