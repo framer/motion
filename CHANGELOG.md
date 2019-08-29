@@ -2,12 +2,17 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.6] 2019-08-29
+
+## Fix
+
+-   Adding `@emotion/is-prop-valid` as an optional dependency to ensure we filter out arbitrary props passed along by Emotion and Styled Components.
+
 ## [1.6.5] 2019-08-27
 
 ## Fix
 
 -   Value-specific `delay`.
--   Adding `@emotion/is-prop-valid` as an optional dependency to ensure we filter out arbitrary props passed along by Emotion and Styled Components.
 
 ## [1.6.4] 2019-08-27
 
