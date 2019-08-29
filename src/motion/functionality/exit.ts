@@ -6,7 +6,6 @@ import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 export const Exit: FunctionalComponentDefinition = {
     key: "exit",
     shouldRender: (_props, { exitProps }) => {
-        console.log("should render: ", !!(exitProps && exitProps.isExiting))
         return !!(exitProps && exitProps.isExiting)
     },
     Component: makeHookComponent((props: FunctionalProps) => {
@@ -21,9 +20,13 @@ export const Exit: FunctionalComponentDefinition = {
             if (!shouldPlayExitAnimation.current || !exitProps || !exit) return
 
             isPlayingExitAnimation.current = true
-            const { onExitComplete } = exitProps
+            const { custom, onExitComplete } = exitProps
 
-            controls.setProps(props)
+            controls.setProps({
+                ...props,
+                custom: custom !== undefined ? custom : props.custom,
+            })
+
             controls.start(exit).then(onExitComplete)
         })
 

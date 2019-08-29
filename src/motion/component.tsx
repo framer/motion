@@ -52,6 +52,7 @@ export const createMotionComponent = <P extends {}>({
             props.transformValues
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
+
         const controlsConfig = useConstant(() => {
             return getValueControlsConfig(ref, values)
         })
