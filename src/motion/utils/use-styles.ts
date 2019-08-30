@@ -3,7 +3,7 @@ import { buildStyleProperty, isTransformProp } from "stylefire"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
-import { MotionStyle, CustomStyles } from "../types"
+import { MotionStyle } from "../types"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
 const transformOriginProps = new Set(["originX", "originY", "originZ"])
@@ -34,12 +34,10 @@ export const useMotionStyles = <V extends {} = {}>(
     isStatic: boolean,
     transformValues?: (values: V) => V
 ): CSSProperties => {
-    const style = useRef<CSSProperties & CustomStyles>({}).current
+    const style = {}
     const prevMotionStyles = useRef({}).current
-    const currentStyleKeys = new Set(Object.keys(style))
 
     for (const key in styleProp) {
-        currentStyleKeys.delete(key)
         const thisStyle = styleProp[key]
 
         if (isMotionValue(thisStyle)) {
@@ -72,8 +70,6 @@ export const useMotionStyles = <V extends {} = {}>(
             style[key] = thisStyle
         }
     }
-
-    currentStyleKeys.forEach(key => delete style[key])
 
     return transformValues ? transformValues(style as any) : style
 }
