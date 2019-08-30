@@ -3,7 +3,7 @@ import { buildStyleProperty, isTransformProp } from "stylefire"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
-import { MotionStyle, CustomStyles } from "../types"
+import { MotionStyle } from "../types"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
 const transformOriginProps = new Set(["originX", "originY", "originZ"])
@@ -25,31 +25,35 @@ export const buildStyleAttr = (
             : transformTemplate
     }
 
-    return {
-        ...styleProp,
-        ...buildStyleProperty(motionValueStyles, !isStatic),
-    }
+    return buildStyleProperty({ ...styleProp, ...motionValueStyles }, !isStatic)
 }
 
 export const useMotionStyles = <V extends {} = {}>(
     values: MotionValuesMap,
     styleProp: MotionStyle = {},
+    isStatic: boolean,
     transformValues?: (values: V) => V
 ): CSSProperties => {
-    const style = useRef<CSSProperties & CustomStyles>({}).current
+    const style = {}
     const prevMotionStyles = useRef({}).current
-    const currentStyleKeys = new Set(Object.keys(style))
 
     for (const key in styleProp) {
-        currentStyleKeys.delete(key)
         const thisStyle = styleProp[key]
 
         if (isMotionValue(thisStyle)) {
             // If this is a motion value, add it to our MotionValuesMap
             values.set(key, thisStyle)
-        } else if (isTransformProp(key) || isTransformOriginProp(key)) {
+        } else if (
+            !isStatic &&
+            (isTransformProp(key) || isTransformOriginProp(key))
+        ) {
             // Or if it's a transform prop, create a motion value (or update an existing one)
             // to ensure Stylefire can reconcile all the transform values together.
+            // A further iteration on this would be to create a single styler per component that gets
+            // used in the DOM renderer's buildStyleAttr *and* animations, then we would only
+            // have to convert animating values to `MotionValues` (we could probably remove this entire function).
+            // The only architectural consideration is to allow Stylefire to have elements mounted after
+            // a styler is created.
             if (!values.has(key)) {
                 // If it doesn't exist as a motion value, create it
                 values.set(key, motionValue(thisStyle))
@@ -66,8 +70,6 @@ export const useMotionStyles = <V extends {} = {}>(
             style[key] = thisStyle
         }
     }
-
-    currentStyleKeys.forEach(key => delete style[key])
 
     return transformValues ? transformValues(style as any) : style
 }

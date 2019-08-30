@@ -53,6 +53,7 @@ export const createMotionComponent = <P extends {}>({
         const style = useMotionStyles(
             values,
             props.style,
+            isStatic,
             props.transformValues
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
