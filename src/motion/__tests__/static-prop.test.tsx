@@ -37,6 +37,22 @@ describe("static prop", () => {
         )
     })
 
+    test("it removes unused styles", () => {
+        const { container, rerender } = render(
+            <motion.div static style={{ z: 100 }} />
+        )
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateZ(100px)"
+        )
+
+        rerender(<motion.div static style={{}} />)
+
+        expect(container.firstChild as Element).not.toHaveStyle(
+            "transform: translateZ(100px)"
+        )
+    })
+
     test("it doesn't respond to updates in `initial`", () => {
         const { container, rerender } = render(
             <motion.div initial={{ x: 100 }} />

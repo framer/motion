@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.7] 2019-08-30
+
+## Fix
+
+-   Restoring React-style behaviour for transform `style` properties when a component `isStatic`.
+
 ## [1.6.6] 2019-08-29
 
 ## Fix
