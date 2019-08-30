@@ -201,7 +201,7 @@ export interface AnimationProps {
      * }
      * ```
      */
-    exit?: AnimationControls | TargetAndTransition | VariantLabels
+    exit?: TargetAndTransition | VariantLabels
 
     /**
      * Variants allow you to define animation states and organise them by name. They allow

@@ -186,7 +186,12 @@ describe("AnimatePresence", () => {
             const { rerender } = render(<Component isVisible />)
             rerender(<Component isVisible />)
 
-            rerender(<Component isVisible={false} />)
+            rerender(
+                <Component
+                    isVisible={false}
+                    onAnimationComplete={() => resolve(x.get())}
+                />
+            )
 
             rerender(
                 <Component
@@ -411,7 +416,12 @@ describe("AnimatePresence with custom components", () => {
             const { rerender } = render(<Component isVisible />)
             rerender(<Component isVisible />)
 
-            rerender(<Component isVisible={false} />)
+            rerender(
+                <Component
+                    isVisible={false}
+                    onAnimationComplete={() => resolve(x.get())}
+                />
+            )
 
             rerender(
                 <Component

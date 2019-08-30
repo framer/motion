@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.8] 2019-08-30
+
+## Fix
+
+-   Fixed exit animation when `animate={useAnimation()}`.
+-   Fixed exit animations when another animation is playing concurrently and finishes first.
+
 ## [1.6.7] 2019-08-30
 
 ## Fix
