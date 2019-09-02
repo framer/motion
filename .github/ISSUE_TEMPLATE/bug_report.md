@@ -42,7 +42,9 @@ Have all of its immediate children got a unique `key` prop that **remains the sa
 <AnimatePresence>
   {items.map((item, index) => <Component key={index} />))}
 </AnimatePresence>
- 
+```
+
+```jsx 
 // Good: The item ID is unique to each component
 <AnimatePresence>
   {items.map((item, index) => <Component key={item.id} />)}
@@ -58,7 +60,9 @@ Is the `AnimatePresence` correctly outside of the controlling conditional? `Anim
     <Component />
   </AnimatePresence>
 )}
+```
 
+```jsx
 // Good: Only the children are unmounted - exit animations will run
 <AnimatePresence>
   {isVisible && <Component />}
