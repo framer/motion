@@ -40,7 +40,7 @@ Have all of its immediate children got a unique `key` prop that **remains the sa
 ```jsx
 // Bad: The index could be given to a different component if the order of items changes
 <AnimatePresence>
-  {items.map((item, index) => <Component key={index} />)}
+  {items.map((item, index) => <Component key={index} />))}
 </AnimatePresence>
  
 // Good: The item ID is unique to each component
