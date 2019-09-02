@@ -39,20 +39,16 @@ Have all of its immediate children got a unique `key` prop that **remains the sa
 
 ```jsx
 // Bad: The index could be given to a different component if the order of items changes
-return (
-  <AnimatePresence>
-    {items.map((item, index) => <Component key={index} />)}
-  </AnimatePresence>
-)
+<AnimatePresence>
+  {items.map((item, index) => <Component key={index} />)}
+</AnimatePresence>
 ```
 
 ```jsx 
 // Good: The item ID is unique to each component
-return (
-  <AnimatePresence>
-    {items.map((item, index) => <Component key={item.id} />)}
-  </AnimatePresence>
-)
+<AnimatePresence>
+  {items.map((item, index) => <Component key={item.id} />)}
+</AnimatePresence>
 ```
 
 Is the `AnimatePresence` correctly outside of the controlling conditional? `AnimatePresence` must be rendered whenever you expect an `exit` animation to run - it can't do so if it's unmounted!
