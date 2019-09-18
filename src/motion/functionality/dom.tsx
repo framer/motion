@@ -14,6 +14,7 @@ import { resolveCurrent } from "../../value/utils/resolve-values"
 import { Layout } from "./layout"
 import { isValidMotionProp } from "../utils/valid-prop"
 import { getAnimationComponent } from "./animation"
+import { Exit } from "./exit"
 
 let isPropValid = (key: string) => !isValidMotionProp(key)
 
@@ -71,7 +72,7 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     return props
 }
 
-const functionalityComponents = [Layout, Drag, Gestures]
+const functionalityComponents = [Layout, Drag, Gestures, Exit]
 const numFunctionalityComponents = functionalityComponents.length
 
 /**
@@ -123,6 +124,7 @@ export function createDomMotionConfig<P = MotionProps>(
             ref,
             values,
             props,
+            context,
             controls,
             inherit
         ) => {
@@ -153,11 +155,12 @@ export function createDomMotionConfig<P = MotionProps>(
                     Component,
                 } = functionalityComponents[i]
 
-                if (shouldRender(props)) {
+                if (shouldRender(props, context)) {
                     activeComponents.push(
                         <Component
                             key={key}
                             {...props}
+                            parentContext={context}
                             values={values}
                             controls={controls}
                             innerRef={ref}

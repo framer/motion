@@ -14,7 +14,6 @@ import {
     LoadFunctionalityComponents,
     RenderComponent,
 } from "./functionality/types"
-import { applyExitProps } from "./utils/apply-exit-props"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
@@ -42,11 +41,7 @@ export const createMotionComponent = <P extends {}>({
         externalRef?: Ref<Element>
     ) {
         const ref = useExternalRef(externalRef)
-        const { exitProps, ...parentContext } = useContext(MotionContext)
-
-        if (exitProps) {
-            props = applyExitProps(props, exitProps)
-        }
+        const parentContext = useContext(MotionContext)
 
         const isStatic = parentContext.static || props.static || false
         const values = useMotionValues(props)
@@ -81,6 +76,7 @@ export const createMotionComponent = <P extends {}>({
                   ref,
                   values,
                   props,
+                  parentContext,
                   controls,
                   shouldInheritVariant
               )

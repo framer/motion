@@ -53,6 +53,14 @@ export const useMotionContext = (
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover }: MotionProps
 ) => {
+    // Override initial with that from a parent context, if defined
+    if (
+        parentContext.exitProps &&
+        parentContext.exitProps.initial !== undefined
+    ) {
+        initial = parentContext.exitProps.initial
+    }
+
     let initialState: Target | VariantLabels | undefined
 
     if (initial === false && !isAnimationControls(animate)) {

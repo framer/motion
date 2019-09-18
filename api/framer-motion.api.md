@@ -63,7 +63,7 @@ export const animationControls: () => AnimationControls;
 // @public (undocumented)
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
-    exit?: AnimationControls | TargetAndTransition | VariantLabels;
+    exit?: TargetAndTransition | VariantLabels;
     // @beta
     layoutTransition?: Transition | boolean | ResolveLayoutTransition;
     positionTransition?: Transition | boolean | ResolveLayoutTransition;
