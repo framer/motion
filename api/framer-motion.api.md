@@ -11,6 +11,7 @@ import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
 import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { PropsWithoutRef } from 'react';
 import * as React from 'react';
 import { ReactElement } from 'react';
 import { ReactHTML } from 'react';
@@ -375,7 +376,7 @@ export const motion: {
     menuitem: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     keygen: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").KeygenHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     webview: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement> & MotionProps & RefAttributes<HTMLWebViewElement>>;
-    custom: (Component: ComponentType<any>) => ForwardRefExoticComponent<MotionProps & RefAttributes<Element>>;
+    custom: typeof custom;
 };
 
 // @public (undocumented)
@@ -730,6 +731,10 @@ export type Variants = {
     [key: string]: Variant;
 };
 
+
+// Warnings were encountered during analysis:
+// 
+// types/motion/index.d.ts:217:5 - (ae-forgotten-export) The symbol "custom" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
