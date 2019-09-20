@@ -62,8 +62,21 @@ export const svgMotionComponents: SVGMotionComponents = svgElements.reduce(
  * @public
  */
 export const motion = {
-    custom: (Component: ComponentType<any>) => {
-        return createMotionComponent(createDomMotionConfig(Component))
+    /**
+     * Convert a custom React component into a `motion` component.
+     *
+     * ```jsx
+     * const Component = React.forwardRef((props: Props, ref) => {
+     *   return <div ref={ref} />
+     * })
+     *
+     * const MotionComponent = motion.custom<Props>(Component)
+     * ```
+     *
+     * @param Component
+     */
+    custom: function custom<Props>(Component: ComponentType<Props>) {
+        return createMotionComponent<Props>(createDomMotionConfig(Component))
     },
     ...htmlMotionComponents,
     ...svgMotionComponents,
