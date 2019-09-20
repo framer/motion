@@ -11,6 +11,7 @@ import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
 import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { PropsWithoutRef } from 'react';
 import * as React from 'react';
 import { ReactElement } from 'react';
 import { ReactHTML } from 'react';
@@ -375,7 +376,7 @@ export const motion: {
     menuitem: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     keygen: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").KeygenHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     webview: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement> & MotionProps & RefAttributes<HTMLWebViewElement>>;
-    custom: (Component: ComponentType<any>) => ForwardRefExoticComponent<MotionProps & RefAttributes<Element>>;
+    custom: <Props>(Component: ComponentType<Props>) => ForwardRefExoticComponent<PropsWithoutRef<Props & MotionProps> & RefAttributes<Element>>;
 };
 
 // @public (undocumented)
