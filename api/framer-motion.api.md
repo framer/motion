@@ -376,7 +376,7 @@ export const motion: {
     menuitem: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     keygen: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").KeygenHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     webview: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement> & MotionProps & RefAttributes<HTMLWebViewElement>>;
-    custom: typeof custom;
+    custom: <Props>(Component: ComponentType<Props>) => ForwardRefExoticComponent<PropsWithoutRef<Props & MotionProps> & RefAttributes<Element>>;
 };
 
 // @public (undocumented)
@@ -731,10 +731,6 @@ export type Variants = {
     [key: string]: Variant;
 };
 
-
-// Warnings were encountered during analysis:
-// 
-// types/motion/index.d.ts:217:5 - (ae-forgotten-export) The symbol "custom" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

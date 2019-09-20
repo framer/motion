@@ -43,23 +43,6 @@ export const svgMotionComponents: SVGMotionComponents = svgElements.reduce(
 )
 
 /**
- * Convert a custom React component into a `motion` component.
- *
- * ```jsx
- * const Component = React.forwardRef((props: Props, ref) => {
- *   return <div ref={ref} />
- * })
- *
- * const MotionComponent = motion.custom<Props>(Component)
- * ```
- *
- * @param Component
- */
-function custom<Props>(Component: ComponentType<Props>) {
-    return createMotionComponent<Props>(createDomMotionConfig(Component))
-}
-
-/**
  * HTML & SVG components, optimised for use with gestures and animation. These can be used as
  * drop-in replacements for any HTML & SVG component, all CSS & SVG properties are supported.
  *
@@ -79,7 +62,22 @@ function custom<Props>(Component: ComponentType<Props>) {
  * @public
  */
 export const motion = {
-    custom,
+    /**
+     * Convert a custom React component into a `motion` component.
+     *
+     * ```jsx
+     * const Component = React.forwardRef((props: Props, ref) => {
+     *   return <div ref={ref} />
+     * })
+     *
+     * const MotionComponent = motion.custom<Props>(Component)
+     * ```
+     *
+     * @param Component
+     */
+    custom: function custom<Props>(Component: ComponentType<Props>) {
+        return createMotionComponent<Props>(createDomMotionConfig(Component))
+    },
     ...htmlMotionComponents,
     ...svgMotionComponents,
 }
