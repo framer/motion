@@ -20,7 +20,7 @@ import {
 import { useMotionValue } from "../value/use-motion-value"
 import { DraggableProps, DragHandlers } from "./types"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
-import { supportsTouchEvents } from "../events/use-pointer-event"
+import { supportsTouchEvents } from "../events/utils"
 
 type DragDirection = "x" | "y"
 
@@ -388,6 +388,8 @@ export function useDrag(
             event.target &&
             !allowDefaultPointerDown.has((event.target as Element).tagName)
         ) {
+            // On iOS it's important to not `preventDefault` the `touchstart`
+            // event, as otherwise clicks won't fire inside the draggable element.
             if (!supportsTouchEvents()) {
                 // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
                 event.preventDefault()
