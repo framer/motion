@@ -2,11 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.6.9] 2019-09-18
+## [1.6.9] Unreleased
 
 ## Fix
 
 -   Allow `motion.custom` to accept custom prop types.
+-   Support clicks within draggable components on iOS Safari.
 
 ## [1.6.8] 2019-08-30
 
