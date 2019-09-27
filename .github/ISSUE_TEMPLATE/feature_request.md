@@ -18,3 +18,8 @@ A clear and concise description of any alternative solutions or features you've 
 
 **Additional context**
 Add any other context or screenshots about the feature request here.
+
+## FAQs
+
+### Does Framer Motion support Preact?
+It might work with Preact, but we don't explicitly support it, so if it does currently work you'd be using it at your own risk.
