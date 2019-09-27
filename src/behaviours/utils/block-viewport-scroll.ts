@@ -2,7 +2,7 @@ let isViewportScrollBlocked = false
 const isBrowser = typeof window !== "undefined"
 
 if (isBrowser) {
-    window.addEventListener(
+    document.addEventListener(
         "touchmove",
         (event: TouchEvent) => {
             if (isViewportScrollBlocked) {

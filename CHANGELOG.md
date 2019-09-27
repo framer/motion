@@ -7,6 +7,8 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ## Fix
 
 -   Upgrade `stylefire@6.0.11` to fix `clipPath` in Webkit.
+-   Allow `motion.custom` to accept custom prop types.
+-   Support clicks within draggable components on iOS Safari.
 
 ## [1.6.8] 2019-08-30
 
