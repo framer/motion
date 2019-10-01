@@ -312,16 +312,14 @@ describe("motion component rendering and styles", () => {
                 <React.StrictMode>
                     <motion.div
                         animate="visible"
-                        exit="hidden"
                         initial="hidden"
                         variants={{
                             visible: { y: 0 },
                             hidden: { y: 5 },
                         }}
                     >
-                        <motion.div
+                        <motion.span
                             animate={useAnimation()}
-                            exit="hidden"
                             initial="hidden"
                             variants={{
                                 visible: { y: 0 },
