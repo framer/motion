@@ -382,7 +382,6 @@ export const motion: {
 // @public (undocumented)
 export interface MotionAdvancedProps {
     custom?: any;
-    // @internal
     inherit?: boolean;
     // @internal
     static?: boolean;
