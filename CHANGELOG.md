@@ -4,7 +4,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.6.9] 2019-10-02
 
-## Fix
+### Fix
 
 -   Fixed exit animation when `animate={useAnimation()}`.
 -   Fixed exit animations when another animation is playing concurrently and finishes first.
@@ -15,55 +15,55 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [1.6.7] 2019-08-30
 
-## Fix
+### Fix
 
 -   Restoring React-style behaviour for transform `style` properties when a component `isStatic`.
 
 ## [1.6.6] 2019-08-29
 
-## Fix
+### Fix
 
 -   Adding `@emotion/is-prop-valid` as an optional dependency to ensure we filter out arbitrary props passed along by Emotion and Styled Components.
 
 ## [1.6.5] 2019-08-27
 
-## Fix
+### Fix
 
 -   Value-specific `delay`.
 
 ## [1.6.4] 2019-08-27
 
-## Upgrade
+### Upgrade
 
 -   `stylefire@6.0.10`
 
 ## [1.6.3] 2019-08-19
 
-## Fixed
+### Fixed
 
 -   Ensuring `onDragEnd` always fires after if `onDragStart` fired.
 
 ## [1.6.2] 2019-08-14
 
-## Fixed
+### Fixed
 
 -   Invalid property in SVGs.
 
 ## [1.6.1] 2019-08-12
 
-## Fixed
+### Fixed
 
 -   Making `useInvertedScale` public and changing const to function.
 
 ## [1.6.0] 2019-08-12
 
-## Added
+### Added
 
 -   `layoutTransition`
 -   `EventInfo` now passed as second argument to `onHoverStart` and `onHoverEnd`.
 -   `useDomEvent` hook for attaching events directly to an `Element`.
 
-## Fixed
+### Fixed
 
 -   Simplifying event system.
 -   Applying values in `animate.transitionEnd` if not initial animation.
