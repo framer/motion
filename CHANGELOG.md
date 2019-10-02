@@ -6,17 +6,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## Fix
 
+-   Fixed exit animation when `animate={useAnimation()}`.
+-   Fixed exit animations when another animation is playing concurrently and finishes first.
 -   Upgrade `stylefire@6.0.11` to fix `clipPath` in Webkit.
 -   Allow `motion.custom` to accept custom prop types.
 -   Support clicks within draggable components on iOS Safari.
 -   Making `inherit` public API.
-
-## [1.6.8] 2019-08-30
-
-## Fix
-
--   Fixed exit animation when `animate={useAnimation()}`.
--   Fixed exit animations when another animation is playing concurrently and finishes first.
 
 ## [1.6.7] 2019-08-30
 
