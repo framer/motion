@@ -207,8 +207,8 @@ describe("AnimatePresence", () => {
 
     test("Exit propagates through variants", async () => {
         const variants = {
-            enter: { opacity: 1 },
-            exit: { opacity: 0 },
+            enter: { opacity: 1, transition: { type: false } },
+            exit: { opacity: 0, transition: { type: false } },
         }
 
         const promise = new Promise<number>(resolve => {
@@ -218,7 +218,7 @@ describe("AnimatePresence", () => {
                     <AnimatePresence>
                         {isVisible && (
                             <motion.div
-                                initial="exit"
+                                initial="enter"
                                 animate="enter"
                                 exit="exit"
                                 variants={variants}
