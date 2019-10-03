@@ -26,7 +26,6 @@ export const Exit: FunctionalComponentDefinition = {
                 ...props,
                 custom: custom !== undefined ? custom : props.custom,
             })
-
             controls.start(exit).then(onExitComplete)
         })
 

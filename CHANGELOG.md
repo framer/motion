@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.9] Unreleased
+
+### Fix
+
+-   Exit variant propagation.
+
 ## [1.6.8] 2019-10-02
 
 ### Fix
