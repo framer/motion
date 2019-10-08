@@ -1,35 +1,58 @@
 import { useRef, useEffect } from "react"
 import { invariant } from "hey-listen"
-import { makeHookComponent } from "../utils/make-hook-component"
+import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
+import { AnimationControls } from "../../animation/AnimationControls"
 
 export const Exit: FunctionalComponentDefinition = {
     key: "exit",
-    shouldRender: (_props, { exitProps }) => {
-        return !!(exitProps && exitProps.isExiting)
+    shouldRender: ({ exit }, { exitProps }) => {
+        const hasExitProps = !!exitProps
+        const hasExitAnimation = !!exit
+
+        invariant(
+            !hasExitProps || (hasExitProps && hasExitAnimation),
+            "No exit prop defined on a child of AnimatePresence."
+        )
+
+        return hasExitProps && hasExitAnimation
     },
-    Component: makeHookComponent((props: FunctionalProps) => {
-        const { controls, parentContext, exit } = props
-
+    Component: makeRenderlessComponent((props: FunctionalProps) => {
+        const { animate, controls, parentContext, exit } = props
+        const { exitProps } = parentContext
         const isPlayingExitAnimation = useRef(false)
-        const shouldPlayExitAnimation = useRef(false)
 
-        useEffect(() => {
-            invariant(!!exit, "No exit animation defined.")
-            const { exitProps } = parentContext
-            if (!shouldPlayExitAnimation.current || !exitProps || !exit) return
+        // This early return is more for types - it won't actually run because of the `shouldRender` above.
+        if (!exitProps || !exit) return
 
-            isPlayingExitAnimation.current = true
-            const { custom, onExitComplete } = exitProps
+        const { isExiting, custom, onExitComplete } = exitProps
 
-            controls.setProps({
-                ...props,
-                custom: custom !== undefined ? custom : props.custom,
-            })
-            controls.start(exit).then(onExitComplete)
-        })
+        useEffect(
+            () => {
+                if (isExiting) {
+                    if (!isPlayingExitAnimation.current && exit) {
+                        controls.setProps({
+                            ...props,
+                            custom:
+                                custom !== undefined ? custom : props.custom,
+                        })
+                        controls.start(exit).then(onExitComplete)
+                    }
 
-        // We only want to initiate the exit animation once, when the component first exits.
-        shouldPlayExitAnimation.current = !isPlayingExitAnimation.current
+                    isPlayingExitAnimation.current = true
+                } else if (
+                    isPlayingExitAnimation.current &&
+                    animate &&
+                    !(animate instanceof AnimationControls)
+                ) {
+                    controls.start(animate)
+                }
+
+                if (!isExiting) {
+                    isPlayingExitAnimation.current = false
+                }
+            },
+            [isExiting]
+        )
     }),
 }

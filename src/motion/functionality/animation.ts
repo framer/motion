@@ -1,6 +1,6 @@
 import { ComponentType } from "react"
 import { MotionProps, AnimatePropType, VariantLabels } from "../types"
-import { makeHookComponent } from "../utils/make-hook-component"
+import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { useAnimateProp } from "../../animation/use-animate-prop"
 import { useVariants } from "../../animation/use-variants"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
@@ -20,7 +20,7 @@ interface AnimationFunctionalProps {
 }
 
 export const AnimatePropComponents = {
-    [AnimatePropType.Target]: makeHookComponent<AnimationFunctionalProps>(
+    [AnimatePropType.Target]: makeRenderlessComponent<AnimationFunctionalProps>(
         ({
             animate,
             controls,
@@ -35,7 +35,9 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.VariantLabel]: makeHookComponent<AnimationFunctionalProps>(
+    [AnimatePropType.VariantLabel]: makeRenderlessComponent<
+        AnimationFunctionalProps
+    >(
         ({
             animate,
             inherit = true,
@@ -50,7 +52,7 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.AnimationSubscription]: makeHookComponent<
+    [AnimatePropType.AnimationSubscription]: makeRenderlessComponent<
         AnimationFunctionalProps
     >(({ animate, controls }: AnimationFunctionalProps) => {
         return useAnimationGroupSubscription(

@@ -24,7 +24,9 @@ describe("ssr", () => {
             <AnimatePresence>
                 <motion.div
                     initial={{ x: 100 }}
+                    animate={{ x: 50 }}
                     style={{ y }}
+                    exit={{ x: 0 }}
                     positionTransition
                 />
             </AnimatePresence>
