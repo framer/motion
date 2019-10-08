@@ -93,7 +93,7 @@
         "hey-listen": "^1.0.8",
         "popmotion": "9.0.0-beta-8",
         "style-value-types": "^3.1.6",
-        "stylefire": "^6.0.10",
+        "stylefire": "^7.0.0",
         "tslib": "^1.10.0"
     },
     "optionalDependencies": {

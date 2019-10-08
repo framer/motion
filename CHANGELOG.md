@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.11] 2019-10-09
+
+### Fix
+
+-   Inconsistency in handling `x`/`y` between SVG and HTML. Now always a shorthand for `translateX` and `translateY`.
+
 ## [1.6.10] 2019-10-09
 
 ### Fix
