@@ -24,7 +24,7 @@ const PresenceChild = ({ children, exitProps }: PresenceChildProps) => {
 
     // Create a new `value` in all instances to ensure `motion` children re-render
     // and detect any layout changes that might have occurred.
-    context = exitProps ? { ...context, exitProps } : { ...context }
+    context = { ...context, exitProps: exitProps || {} }
 
     return (
         <MotionContext.Provider value={context}>
