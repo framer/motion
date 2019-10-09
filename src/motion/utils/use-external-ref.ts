@@ -1,25 +1,39 @@
-import { useEffect, useRef, Ref, MutableRefObject, RefObject } from "react"
+import { useEffect, Ref, RefObject, MutableRefObject } from "react"
+import { isRefObject } from "../../utils/is-ref-object"
 
 /**
  * Uses the ref that is passed in, or creates a new one
  * @param external - External ref
  * @internal
  */
-export function useExternalRef<E = Element>(external?: Ref<E>): RefObject<E> {
-    // We're conditionally calling `useRef` here which is sort of naughty as hooks
-    // shouldn't be called conditionally. However, Framer Motion will break if this
-    // condition changes anyway. It might be possible to use an invariant here to
-    // make it explicit, but I expect changing `ref` is not normal behaviour.
-    const ref =
-        !external || typeof external === "function" ? useRef(null) : external
-
+export function useExternalRef<E = Element>(
+    internalRef: RefObject<E>,
+    externalRef?: Ref<E>
+): void {
     useEffect(() => {
-        if (external && typeof external === "function") {
-            external((ref as MutableRefObject<E>).current)
+        // If there's no external ref, we don't need to handle it in a special way
+        if (!externalRef) return
 
-            return () => external(null)
+        if (typeof externalRef === "function") {
+            externalRef(internalRef.current)
+
+            return () => externalRef(null)
+        } else if (isRefObject(externalRef)) {
+            const mutableExternal = externalRef as MutableRefObject<E | null>
+
+            // If we've been provided a RefObject, we need to assign its current with our
+            // current on mount
+            mutableExternal.current = internalRef.current
+
+            return () => {
+                // We only set our external ref value to null on unmount if it still contains the
+                // same element as our internal ref. This is because the component might be a child
+                // of `AnimatePresence` where we might be in a situation where a user is providing
+                // the same ref to multiple components.
+                if (externalRef.current === internalRef.current) {
+                    mutableExternal.current = null
+                }
+            }
         }
     }, [])
-
-    return ref
 }

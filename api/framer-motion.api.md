@@ -674,7 +674,7 @@ export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function useExternalRef<E = Element>(external?: Ref<E>): RefObject<E>;
+export function useExternalRef<E = Element>(internalRef: RefObject<E>, externalRef?: Ref<E>): void;
 
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;

@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.10] Unreleased
+
+### Fix
+
+-   Fixing the use of externally-provided `ref`s with single-child `AnimatePresence` components.
+
 ## [1.6.9] 2019-10-08
 
 ### Fix
