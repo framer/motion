@@ -1,4 +1,5 @@
-import { useEffect, useRef, Ref, MutableRefObject, RefObject } from "react"
+import { useEffect, useRef, Ref, RefObject, MutableRefObject } from "react"
+import { isRefObject } from "../../utils/is-ref-object"
 
 /**
  * Uses the ref that is passed in, or creates a new one
@@ -6,18 +7,32 @@ import { useEffect, useRef, Ref, MutableRefObject, RefObject } from "react"
  * @internal
  */
 export function useExternalRef<E = Element>(external?: Ref<E>): RefObject<E> {
-    // We're conditionally calling `useRef` here which is sort of naughty as hooks
-    // shouldn't be called conditionally. However, Framer Motion will break if this
-    // condition changes anyway. It might be possible to use an invariant here to
-    // make it explicit, but I expect changing `ref` is not normal behaviour.
-    const ref =
-        !external || typeof external === "function" ? useRef(null) : external
+    const ref = useRef<E>(null)
 
     useEffect(() => {
-        if (external && typeof external === "function") {
-            external((ref as MutableRefObject<E>).current)
+        // If there's no external ref, we don't need to handle it in a special way
+        if (!external) return
+
+        if (typeof external === "function") {
+            external(ref.current)
 
             return () => external(null)
+        } else if (isRefObject(external)) {
+            const mutableExternal = external as MutableRefObject<E | null>
+
+            // If we've been provided a RefObject, we need to assign its current with our
+            // current on mount
+            mutableExternal.current = ref.current
+
+            return () => {
+                // We only set our external ref value to null on unmount if it still contains the
+                // same element as our internal ref. This is because the component might be a child
+                // of `AnimatePresence` where we might be in a situation where a user is providing
+                // the same ref to multiple components.
+                if (external.current === ref.current) {
+                    mutableExternal.current = null
+                }
+            }
         }
     }, [])
 
