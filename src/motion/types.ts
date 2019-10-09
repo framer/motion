@@ -537,7 +537,7 @@ export interface MotionAdvancedProps {
     custom?: any
 
     /**
-     * @internal
+     * @public
      * Set to `false` to prevent inheriting variant changes from its parent.
      */
     inherit?: boolean

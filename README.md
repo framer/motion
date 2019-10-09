@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
-    <img src="https://img.shields.io/npm/v/framer-motion.svg?style=flat-squar" />
+    <img src="https://img.shields.io/npm/v/framer-motion.svg?style=flat-square" />
   </a>
   <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
   <img src="https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square" />

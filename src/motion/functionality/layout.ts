@@ -1,7 +1,7 @@
 import { RefObject, useContext } from "react"
 import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
-import { makeHookComponent } from "../utils/make-hook-component"
+import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
@@ -271,7 +271,7 @@ export const Layout: FunctionalComponentDefinition = {
             !!(positionTransition || layoutTransition)
         )
     },
-    Component: makeHookComponent(
+    Component: makeRenderlessComponent(
         ({
             innerRef,
             controls,

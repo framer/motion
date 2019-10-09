@@ -4,7 +4,10 @@ import {
 } from "./ValueAnimationControls"
 import { useContext, useEffect } from "react"
 import { MotionProps } from "../motion/types"
-import { MotionContext } from "../motion/context/MotionContext"
+import {
+    MotionContext,
+    MotionContextProps,
+} from "../motion/context/MotionContext"
 import { useConstant } from "../utils/use-constant"
 
 /**
@@ -22,20 +25,27 @@ import { useConstant } from "../utils/use-constant"
 export function useValueAnimationControls<P>(
     config: ValueAnimationConfig,
     props: P & MotionProps,
-    subscribeToParentControls: boolean
+    subscribeToParentControls: boolean,
+    parentContext?: MotionContextProps
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
     const controls = useConstant(() => new ValueAnimationControls<P>(config))
 
     // Reset and resubscribe children every render to ensure stagger order is correct
-    controls.resetChildren()
-    controls.setProps(props)
-    controls.setVariants(variants)
-    controls.setDefaultTransition(transition)
+    if (
+        !parentContext ||
+        !parentContext.exitProps ||
+        !parentContext.exitProps.isExiting
+    ) {
+        controls.resetChildren()
+        controls.setProps(props)
+        controls.setVariants(variants)
+        controls.setDefaultTransition(transition)
 
-    if (subscribeToParentControls && parentControls) {
-        parentControls.addChild(controls)
+        if (subscribeToParentControls && parentControls) {
+            parentControls.addChild(controls)
+        }
     }
 
     useEffect(

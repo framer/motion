@@ -10,12 +10,15 @@ assignees: ''
 **1. Read the [FAQs](#faqs) 👇**
 
 **2. Describe the bug**
+
 Give a clear and concise description of what the bug is.
 
-**3. Provide a CodeSandbox reproduction of the bug**
-This allows us to quickly follow the reproduction steps.
+**3. IMPORTANT: Provide a CodeSandbox reproduction of the bug**
+
+A CodeSandbox minimal reproduction will allow us to quickly follow the reproduction steps. **Without one, this bug report won't be accepted.**
 
 **4. Steps to reproduce**
+
 Steps to reproduce the behavior:
 1. Go to '...'
 2. Click on '....'
@@ -23,12 +26,15 @@ Steps to reproduce the behavior:
 4. See error
 
 **5. Expected behavior**
+
 A clear and concise description of what you expected to happen.
 
 **6. Video or screenshots**
+
 If applicable, add a video or screenshots to help explain the bug.
 
 **7. Environment details**
+
 If applicable, let us know which OS, browser, browser version etc you're using.
 
 ## FAQs
