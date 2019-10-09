@@ -333,6 +333,41 @@ describe("AnimatePresence", () => {
 
         return await expect(promise).resolves.toBe(0)
     })
+
+    test("Handles external refs on a single child", async () => {
+        const promise = new Promise(resolve => {
+            const ref = React.createRef<HTMLDivElement>()
+            const Component = ({ id }: { id: number }) => {
+                return (
+                    <AnimatePresence initial={false}>
+                        <motion.div
+                            data-id={id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            key={id}
+                            ref={ref}
+                        />
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender } = render(<Component id={0} />)
+            rerender(<Component id={0} />)
+
+            setTimeout(() => {
+                rerender(<Component id={1} />)
+                rerender(<Component id={1} />)
+                rerender(<Component id={2} />)
+                rerender(<Component id={2} />)
+
+                resolve(ref.current)
+            }, 30)
+        })
+
+        const result = await promise
+        return expect(result).toHaveAttribute("data-id", "2")
+    })
 })
 
 describe("AnimatePresence with custom components", () => {

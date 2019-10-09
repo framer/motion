@@ -1,11 +1,7 @@
 import * as React from "react"
-import { useContext, forwardRef, Ref, RefObject } from "react"
-import { useExternalRef } from "./utils/use-external-ref"
-import {
-    useMotionValues,
-    MountMotionValues,
-    MotionValuesMap,
-} from "./utils/use-motion-values"
+import { useContext, forwardRef, useRef, Ref, RefObject } from "react"
+import { useMotionValues, MotionValuesMap } from "./utils/use-motion-values"
+import { MountRef } from "./utils/MountRef"
 import { useMotionStyles } from "./utils/use-styles"
 import { useValueAnimationControls } from "../animation/use-value-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
@@ -40,7 +36,7 @@ export const createMotionComponent = <P extends {}>({
         props: P & MotionProps,
         externalRef?: Ref<Element>
     ) {
-        const ref = useExternalRef(externalRef)
+        const ref = useRef(null)
         const parentContext = useContext(MotionContext)
 
         const isStatic = parentContext.static || props.static || false
@@ -92,8 +88,9 @@ export const createMotionComponent = <P extends {}>({
 
         return (
             <>
-                <MountMotionValues
+                <MountRef
                     ref={ref}
+                    externalRef={externalRef}
                     values={values}
                     isStatic={isStatic}
                 />

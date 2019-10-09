@@ -1,4 +1,4 @@
-import { useEffect, useRef, Ref, RefObject, MutableRefObject } from "react"
+import { useEffect, Ref, RefObject, MutableRefObject } from "react"
 import { isRefObject } from "../../utils/is-ref-object"
 
 /**
@@ -6,35 +6,34 @@ import { isRefObject } from "../../utils/is-ref-object"
  * @param external - External ref
  * @internal
  */
-export function useExternalRef<E = Element>(external?: Ref<E>): RefObject<E> {
-    const ref = useRef<E>(null)
-
+export function useExternalRef<E = Element>(
+    internalRef: RefObject<E>,
+    externalRef?: Ref<E>
+): void {
     useEffect(() => {
         // If there's no external ref, we don't need to handle it in a special way
-        if (!external) return
+        if (!externalRef) return
 
-        if (typeof external === "function") {
-            external(ref.current)
+        if (typeof externalRef === "function") {
+            externalRef(internalRef.current)
 
-            return () => external(null)
-        } else if (isRefObject(external)) {
-            const mutableExternal = external as MutableRefObject<E | null>
+            return () => externalRef(null)
+        } else if (isRefObject(externalRef)) {
+            const mutableExternal = externalRef as MutableRefObject<E | null>
 
             // If we've been provided a RefObject, we need to assign its current with our
             // current on mount
-            mutableExternal.current = ref.current
+            mutableExternal.current = internalRef.current
 
             return () => {
                 // We only set our external ref value to null on unmount if it still contains the
                 // same element as our internal ref. This is because the component might be a child
                 // of `AnimatePresence` where we might be in a situation where a user is providing
                 // the same ref to multiple components.
-                if (external.current === ref.current) {
+                if (externalRef.current === internalRef.current) {
                     mutableExternal.current = null
                 }
             }
         }
     }, [])
-
-    return ref
 }
