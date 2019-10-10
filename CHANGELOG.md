@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.12] 2019-10-10
+
+### Fix
+
+-   Support strings in `motion.custom` for Web Component support.
+
 ## [1.6.11] 2019-10-09
 
 ### Fix
