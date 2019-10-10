@@ -4,7 +4,6 @@
 
 ```ts
 
-import { ComponentType } from 'react';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
@@ -376,7 +375,7 @@ export const motion: {
     menuitem: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     keygen: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").KeygenHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & RefAttributes<HTMLElement>>;
     webview: ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<import("react").WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement> & MotionProps & RefAttributes<HTMLWebViewElement>>;
-    custom: <Props>(Component: ComponentType<Props>) => ForwardRefExoticComponent<PropsWithoutRef<Props & MotionProps> & RefAttributes<Element>>;
+    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>) => ForwardRefExoticComponent<PropsWithoutRef<Props & MotionProps> & RefAttributes<Element>>;
 };
 
 // @public (undocumented)

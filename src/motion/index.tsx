@@ -65,6 +65,8 @@ export const motion = {
     /**
      * Convert a custom React component into a `motion` component.
      *
+     * It can also accept a string, to create [custom DOM elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
+     *
      * ```jsx
      * const Component = React.forwardRef((props: Props, ref) => {
      *   return <div ref={ref} />
