@@ -75,7 +75,7 @@ export const motion = {
      *
      * @param Component
      */
-    custom: function custom<Props>(Component: ComponentType<Props>) {
+    custom: function custom<Props>(Component: ComponentType<Props> | string) {
         return createMotionComponent<Props>(createDomMotionConfig(Component))
     },
     ...htmlMotionComponents,

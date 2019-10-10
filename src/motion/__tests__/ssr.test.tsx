@@ -37,6 +37,26 @@ describe("ssr", () => {
         )
     })
 
+    test("correctly renders custom HTML tag", () => {
+        const y = motionValue(200)
+        const CustomComponent = motion.custom("element-test")
+        const customElement = renderToString(
+            <AnimatePresence>
+                <CustomComponent
+                    initial={{ x: 100 }}
+                    animate={{ x: 50 }}
+                    style={{ y }}
+                    exit={{ x: 0 }}
+                    positionTransition
+                />
+            </AnimatePresence>
+        )
+
+        expect(customElement).toBe(
+            '<element-test style="transform:translateX(100px) translateY(200px) translateZ(0)"></element-test>'
+        )
+    })
+
     test("correctly renders SVG", () => {
         const cx = motionValue(100)
         const pathLength = motionValue(100)
