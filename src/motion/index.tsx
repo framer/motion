@@ -1,7 +1,7 @@
 import { createMotionComponent } from "./component"
 import { createDomMotionConfig } from "./functionality/dom"
+import * as React from "react"
 import {
-    ComponentType,
     ReactHTML,
     DetailedHTMLFactory,
     HTMLAttributes,
@@ -65,6 +65,8 @@ export const motion = {
     /**
      * Convert a custom React component into a `motion` component.
      *
+     * It can also accept a string, to create [custom DOM elements](https://developer.mozilla.org/en-US/docs/Web/Web_Components/Using_custom_elements).
+     *
      * ```jsx
      * const Component = React.forwardRef((props: Props, ref) => {
      *   return <div ref={ref} />
@@ -75,7 +77,9 @@ export const motion = {
      *
      * @param Component
      */
-    custom: function custom<Props>(Component: ComponentType<Props>) {
+    custom: function custom<Props>(
+        Component: string | React.ComponentType<Props>
+    ) {
         return createMotionComponent<Props>(createDomMotionConfig(Component))
     },
     ...htmlMotionComponents,
