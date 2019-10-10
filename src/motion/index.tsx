@@ -1,7 +1,7 @@
 import { createMotionComponent } from "./component"
 import { createDomMotionConfig } from "./functionality/dom"
+import * as React from "react"
 import {
-    ComponentType,
     ReactHTML,
     DetailedHTMLFactory,
     HTMLAttributes,
@@ -77,7 +77,9 @@ export const motion = {
      *
      * @param Component
      */
-    custom: function custom<Props>(Component: ComponentType<Props> | string) {
+    custom: function custom<Props>(
+        Component: string | React.ComponentType<Props>
+    ) {
         return createMotionComponent<Props>(createDomMotionConfig(Component))
     },
     ...htmlMotionComponents,
