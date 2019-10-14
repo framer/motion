@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.13] 2019-10-14
+
+### Fix
+
+-   Fixing undefined `this.props` error for `AnimatePresence.exitBeforeEnter`.
+
 ## [1.6.12] 2019-10-10
 
 ### Fix

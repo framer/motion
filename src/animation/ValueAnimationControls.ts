@@ -99,7 +99,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      * favour to a reference to the `custom` prop now we don't send all props through
      * to target resolvers.
      */
-    private props: P & MotionProps
+    private props: P & MotionProps = {} as P
 
     /**
      * A reference to the component's motion values
