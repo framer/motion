@@ -198,29 +198,29 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     /**
      * Set motion values without animation.
      *
-     * @param target -
+     * @param definition
      * @param isActive -
      */
     private setValues(
-        { transition, transitionEnd, ...target }: TargetAndTransition,
+        definition: Variant,
         { isActive = new Set(), priority }: SetterOptions = {}
     ) {
+        let { target, transitionEnd } = this.resolveVariant(definition)
         target = this.transformValues({ ...target, ...transitionEnd } as any)
-
         return Object.keys(target).forEach(key => {
             if (isActive.has(key)) return
-
             isActive.add(key)
-            const targetValue = resolveFinalValueInKeyframes(target[key])
+            if (target) {
+                const targetValue = resolveFinalValueInKeyframes(target[key])
+                if (this.values.has(key)) {
+                    const value = this.values.get(key)
+                    value && value.set(targetValue)
+                } else {
+                    this.values.set(key, motionValue(targetValue))
+                }
 
-            if (this.values.has(key)) {
-                const value = this.values.get(key)
-                value && value.set(targetValue)
-            } else {
-                this.values.set(key, motionValue(targetValue))
+                if (!priority) this.baseTarget[key] = targetValue
             }
-
-            if (!priority) this.baseTarget[key] = targetValue
         })
     }
 
@@ -411,7 +411,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     /**
      * Apply a target/variant without any animation
      */
-    apply(definition: VariantLabels | TargetAndTransition) {
+    apply(definition: AnimationDefinition) {
         if (Array.isArray(definition)) {
             return this.applyVariantLabels(definition)
         } else if (typeof definition === "string") {
