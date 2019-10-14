@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.14] 2019-10-14
+
+### Fix
+
+-   Measuring position from the top left of an element when in `positionOnly` mode to prevent position transitions when only width/height have changed.
+
 ## [1.6.13] 2019-10-14
 
 ### Fix

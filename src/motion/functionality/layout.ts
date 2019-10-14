@@ -32,6 +32,7 @@ interface LayoutDelta {
 interface LayoutType {
     measure: (element: HTMLElement) => Layout
     getLayout: (info: VisualInfo) => Layout
+    calcDelta: (prev: Layout, next: Layout) => LayoutDelta
 }
 
 interface VisualInfo {
@@ -67,13 +68,8 @@ function centerOf({ top, left, width, height }: Layout) {
     }
 }
 
-function calcDelta(prev: Layout, next: Layout): LayoutDelta {
-    const prevCenter = centerOf(prev)
-    const nextCenter = centerOf(next)
-
+function calcSizeDelta(prev: Layout, next: Layout) {
     return {
-        x: prevCenter.x - nextCenter.x,
-        y: prevCenter.y - nextCenter.y,
         width: prev.width - next.width,
         height: prev.height - next.height,
     }
@@ -91,12 +87,32 @@ const offset: LayoutType = {
             height: offsetHeight,
         }
     },
+    calcDelta: (prev, next) => ({
+        x: prev.left - next.left,
+        y: prev.top - next.top,
+        ...calcSizeDelta(prev, next),
+    }),
 }
 const boundingBox: LayoutType = {
     getLayout: ({ boundingBox }) => boundingBox,
     measure: element => {
         const { left, top, width, height } = element.getBoundingClientRect()
         return { left, top, width, height }
+    },
+    calcDelta: (prev, next) => {
+        // When we're measuring the difference using its bounding box we're also checking to
+        // see if the element has changed size. Imagine an element full size in the center of the screen.
+        // It enlarges 2x. Its center point hasn't moved, visually its only changed size. So we want
+        // to measure its x/y delta as zero. Whereas if we measured the delta from its top left point
+        // it will have changed as a result of this resize.
+        const prevCenter = centerOf(prev)
+        const nextCenter = centerOf(next)
+
+        return {
+            x: prevCenter.x - nextCenter.x,
+            y: prevCenter.y - nextCenter.y,
+            ...calcSizeDelta(prev, next),
+        }
     },
 }
 
@@ -175,7 +191,7 @@ function useLayoutAnimation(
         // prev visual state and then animate them into their new one using transforms.
         const prevLayout = compare.getLayout(prev)
         const nextLayout = compare.getLayout(next)
-        const delta = calcDelta(prevLayout, nextLayout)
+        const delta = compare.calcDelta(prevLayout, nextLayout)
         const hasAnyChanged = delta.x || delta.y || delta.width || delta.height
 
         if (!hasAnyChanged) {
