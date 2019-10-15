@@ -11,22 +11,32 @@ import { TargetAndTransition, Transition } from "../../types"
 import { isHTMLElement } from "../../utils/is-html-element"
 import { underDampedSpring } from "../../animation/utils/default-transitions"
 import { syncRenderSession } from "../../dom/sync-render-session"
+import styler from "stylefire"
 
 interface Layout {
-    left: number
     top: number
+    left: number
+    right: number
+    bottom: number
     width: number
+    height: number
+}
+
+interface XDelta {
+    x: number
+    originX: number
+    width: number
+}
+
+interface YDelta {
+    y: number
+    originY: number
     height: number
 }
 
 // We measure the positional delta as x/y as we're actually going to figure out
 // and track the motion of the component's visual center.
-interface LayoutDelta {
-    x: number
-    y: number
-    width: number
-    height: number
-}
+interface LayoutDelta extends XDelta, YDelta {}
 
 // We use both offset and bounding box measurements, and they need to be handled slightly differently
 interface LayoutType {
@@ -56,27 +66,85 @@ function isResolver(
     return typeof transition === "function"
 }
 
-// Find the center of a Layout definition. We do this to account for potential changes
-// in the top/left etc that are actually just as a result of width/height changes.
-function centerOf({ top, left, width, height }: Layout) {
-    const right = left + width
-    const bottom = top + height
-    return {
-        x: (left + right) / 2,
-        y: (top + bottom) / 2,
+interface XLabels {
+    id: "x"
+    size: "width"
+    min: "left"
+    max: "right"
+    origin: "originX"
+}
+
+interface YLabels {
+    id: "y"
+    size: "height"
+    min: "top"
+    max: "bottom"
+    origin: "originY"
+}
+
+const axisLabels: { x: XLabels; y: YLabels } = {
+    x: {
+        id: "x",
+        size: "width",
+        min: "left",
+        max: "right",
+        origin: "originX",
+    },
+    y: {
+        id: "y",
+        size: "height",
+        min: "top",
+        max: "bottom",
+        origin: "originY",
+    },
+}
+
+function centerOf(min: number, max: number) {
+    return (min + max) / 2
+}
+
+function calcAxisDelta(prev: Layout, next: Layout, names: XLabels): XDelta
+function calcAxisDelta(prev: Layout, next: Layout, names: YLabels): YDelta
+function calcAxisDelta(
+    prev: Layout,
+    next: Layout,
+    names: XLabels | YLabels
+): XDelta | YDelta {
+    const sizeDelta = prev[names.size] - next[names.size]
+    let origin = 0.5
+
+    // If the element has changed size we want to check whether either side is in
+    // the same position before/after the layout transition. If so, we can anchor
+    // the element to that position and only animate its size.
+    if (sizeDelta) {
+        if (prev[names.min] === next[names.min]) {
+            origin = 0
+        } else if (prev[names.max] === next[names.max]) {
+            origin = 1
+        }
     }
+
+    const delta = {
+        [names.size]: sizeDelta,
+        [names.origin]: origin,
+        [names.id]:
+            // Only measure a position delta if we haven't anchored to one side
+            origin === 0.5
+                ? centerOf(prev[names.min], prev[names.max]) -
+                  centerOf(next[names.min], next[names.max])
+                : 0,
+    }
+
+    return delta as any
 }
 
 function calcDelta(prev: Layout, next: Layout): LayoutDelta {
-    const prevCenter = centerOf(prev)
-    const nextCenter = centerOf(next)
-
-    return {
-        x: prevCenter.x - nextCenter.x,
-        y: prevCenter.y - nextCenter.y,
-        width: prev.width - next.width,
-        height: prev.height - next.height,
+    const delta = {
+        ...calcAxisDelta(prev, next, axisLabels.x),
+        ...calcAxisDelta(prev, next, axisLabels.y),
     }
+
+    return delta as LayoutDelta
 }
 
 const offset: LayoutType = {
@@ -87,6 +155,8 @@ const offset: LayoutType = {
         return {
             left: offsetLeft,
             top: offsetTop,
+            right: offsetLeft + offsetWidth,
+            bottom: offsetTop + offsetHeight,
             width: offsetWidth,
             height: offsetHeight,
         }
@@ -95,8 +165,15 @@ const offset: LayoutType = {
 const boundingBox: LayoutType = {
     getLayout: ({ boundingBox }) => boundingBox,
     measure: element => {
-        const { left, top, width, height } = element.getBoundingClientRect()
-        return { left, top, width, height }
+        const {
+            left,
+            top,
+            width,
+            height,
+            right,
+            bottom,
+        } = element.getBoundingClientRect()
+        return { left, top, width, height, right, bottom }
     },
 }
 
@@ -129,6 +206,7 @@ function useLayoutAnimation(
     const element = ref.current
 
     useLayoutSync()
+
     // If we don't have a HTML element we can early return here. We've already called all the hooks.
     if (!isHTMLElement(element)) return
 
@@ -184,6 +262,7 @@ function useLayoutAnimation(
             return
         }
 
+        styler(element).set({ originX: delta.originX, originY: delta.originY })
         syncRenderSession.open()
 
         const target: TargetAndTransition = {}

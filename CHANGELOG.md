@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.14] 2019-10-14
+
+### Fix
+
+-   Making position change detection more intelligent.
+
 ## [1.6.13] 2019-10-14
 
 ### Fix
