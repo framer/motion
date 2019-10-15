@@ -1,4 +1,4 @@
-import { RefObject, useContext, memo } from "react"
+import { RefObject, useContext } from "react"
 import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
@@ -22,16 +22,21 @@ interface Layout {
     height: number
 }
 
-// We measure the positional delta as x/y as we're actually going to figure out
-// and track the motion of the component's visual center.
-interface LayoutDelta {
+interface XDelta {
     x: number
-    y: number
     originX: number
-    originY: number
     width: number
+}
+
+interface YDelta {
+    y: number
+    originY: number
     height: number
 }
+
+// We measure the positional delta as x/y as we're actually going to figure out
+// and track the motion of the component's visual center.
+interface LayoutDelta extends XDelta, YDelta {}
 
 // We use both offset and bounding box measurements, and they need to be handled slightly differently
 interface LayoutType {
@@ -61,17 +66,6 @@ function isResolver(
     return typeof transition === "function"
 }
 
-// Find the center of a Layout definition. We do this to account for potential changes
-// in the top/left etc that are actually just as a result of width/height changes.
-// function centerOf({ top, left, width, height }: Layout) {
-//     const right = left + width
-//     const bottom = top + height
-//     return {
-//         x: (left + right) / 2,
-//         y: (top + bottom) / 2,
-//     }
-// }
-
 const dimensionLabels = {
     x: {
         id: "x",
@@ -93,6 +87,16 @@ function centerOf(min: number, max: number) {
     return (min + max) / 2
 }
 
+function calcDimensionDelta(
+    prev: Layout,
+    next: Layout,
+    names: typeof dimensionLabels.x
+): XDelta
+function calcDimensionDelta(
+    prev: Layout,
+    next: Layout,
+    names: typeof dimensionLabels.y
+): YDelta
 function calcDimensionDelta(
     prev: Layout,
     next: Layout,
@@ -123,26 +127,12 @@ function calcDimensionDelta(
 }
 
 function calcDelta(prev: Layout, next: Layout): LayoutDelta {
-    const delta: LayoutDelta = {
+    const delta = {
         ...calcDimensionDelta(prev, next, dimensionLabels.x),
         ...calcDimensionDelta(prev, next, dimensionLabels.y),
     }
 
     return delta as LayoutDelta
-
-    // When we're measuring the difference using its bounding box we're also checking to
-    // see if the element has changed size. Imagine an element full size in the center of the screen.
-    // It enlarges 2x. Its center point hasn't moved, visually its only changed size. So we want
-    // to measure its x/y delta as zero. Whereas if we measured the delta from its top left point
-    // it will have changed as a result of this resize.
-    // const prevCenter = centerOf(prev)
-    // const nextCenter = centerOf(next)
-
-    // return {
-    //     x: prevCenter.x - nextCenter.x,
-    //     y: prevCenter.y - nextCenter.y,
-    //     ...calcSizeDelta(prev, next),
-    // }
 }
 
 const offset: LayoutType = {
