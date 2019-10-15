@@ -82,7 +82,7 @@ interface YLabels {
     origin: "originY"
 }
 
-const dimensionLabels: { x: XLabels; y: YLabels } = {
+const axisLabels: { x: XLabels; y: YLabels } = {
     x: {
         id: "x",
         size: "width",
@@ -103,9 +103,9 @@ function centerOf(min: number, max: number) {
     return (min + max) / 2
 }
 
-function calcDimensionDelta(prev: Layout, next: Layout, names: XLabels): XDelta
-function calcDimensionDelta(prev: Layout, next: Layout, names: YLabels): YDelta
-function calcDimensionDelta(
+function calcAxisDelta(prev: Layout, next: Layout, names: XLabels): XDelta
+function calcAxisDelta(prev: Layout, next: Layout, names: YLabels): YDelta
+function calcAxisDelta(
     prev: Layout,
     next: Layout,
     names: XLabels | YLabels
@@ -113,6 +113,9 @@ function calcDimensionDelta(
     const sizeDelta = prev[names.size] - next[names.size]
     let origin = 0.5
 
+    // If the element has changed size we want to check whether either side is in
+    // the same position before/after the layout transition. If so, we can anchor
+    // the element to that position and only animate its size.
     if (sizeDelta) {
         if (prev[names.min] === next[names.min]) {
             origin = 0
@@ -125,6 +128,7 @@ function calcDimensionDelta(
         [names.size]: sizeDelta,
         [names.origin]: origin,
         [names.id]:
+            // Only measure a position delta if we haven't anchored to one side
             origin === 0.5
                 ? centerOf(prev[names.min], prev[names.max]) -
                   centerOf(next[names.min], next[names.max])
@@ -136,8 +140,8 @@ function calcDimensionDelta(
 
 function calcDelta(prev: Layout, next: Layout): LayoutDelta {
     const delta = {
-        ...calcDimensionDelta(prev, next, dimensionLabels.x),
-        ...calcDimensionDelta(prev, next, dimensionLabels.y),
+        ...calcAxisDelta(prev, next, axisLabels.x),
+        ...calcAxisDelta(prev, next, axisLabels.y),
     }
 
     return delta as LayoutDelta
