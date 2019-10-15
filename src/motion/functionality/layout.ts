@@ -114,7 +114,7 @@ function calcDimensionDelta(
     let origin = 0.5
 
     if (sizeDelta) {
-        if (prev[names.min] === next[names.max]) {
+        if (prev[names.min] === next[names.min]) {
             origin = 0
         } else if (prev[names.max] === next[names.max]) {
             origin = 1
