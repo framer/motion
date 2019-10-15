@@ -66,7 +66,23 @@ function isResolver(
     return typeof transition === "function"
 }
 
-const dimensionLabels = {
+interface XLabels {
+    id: "x"
+    size: "width"
+    min: "left"
+    max: "right"
+    origin: "originX"
+}
+
+interface YLabels {
+    id: "y"
+    size: "height"
+    min: "top"
+    max: "bottom"
+    origin: "originY"
+}
+
+const dimensionLabels: { x: XLabels; y: YLabels } = {
     x: {
         id: "x",
         size: "width",
@@ -87,21 +103,13 @@ function centerOf(min: number, max: number) {
     return (min + max) / 2
 }
 
+function calcDimensionDelta(prev: Layout, next: Layout, names: XLabels): XDelta
+function calcDimensionDelta(prev: Layout, next: Layout, names: YLabels): YDelta
 function calcDimensionDelta(
     prev: Layout,
     next: Layout,
-    names: typeof dimensionLabels.x
-): XDelta
-function calcDimensionDelta(
-    prev: Layout,
-    next: Layout,
-    names: typeof dimensionLabels.y
-): YDelta
-function calcDimensionDelta(
-    prev: Layout,
-    next: Layout,
-    names: typeof dimensionLabels.x | typeof dimensionLabels.y
-) {
+    names: XLabels | YLabels
+): XDelta | YDelta {
     const sizeDelta = prev[names.size] - next[names.size]
     let origin = 0.5
 
@@ -123,7 +131,7 @@ function calcDimensionDelta(
                 : 0,
     }
 
-    return delta
+    return delta as any
 }
 
 function calcDelta(prev: Layout, next: Layout): LayoutDelta {
