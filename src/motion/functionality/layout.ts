@@ -1,4 +1,4 @@
-import { RefObject, useContext } from "react"
+import { RefObject, useContext, memo } from "react"
 import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
@@ -11,10 +11,13 @@ import { TargetAndTransition, Transition } from "../../types"
 import { isHTMLElement } from "../../utils/is-html-element"
 import { underDampedSpring } from "../../animation/utils/default-transitions"
 import { syncRenderSession } from "../../dom/sync-render-session"
+import styler from "stylefire"
 
 interface Layout {
-    left: number
     top: number
+    left: number
+    right: number
+    bottom: number
     width: number
     height: number
 }
@@ -24,6 +27,8 @@ interface Layout {
 interface LayoutDelta {
     x: number
     y: number
+    originX: number
+    originY: number
     width: number
     height: number
 }
@@ -32,7 +37,6 @@ interface LayoutDelta {
 interface LayoutType {
     measure: (element: HTMLElement) => Layout
     getLayout: (info: VisualInfo) => Layout
-    calcDelta: (prev: Layout, next: Layout) => LayoutDelta
 }
 
 interface VisualInfo {
@@ -59,20 +63,86 @@ function isResolver(
 
 // Find the center of a Layout definition. We do this to account for potential changes
 // in the top/left etc that are actually just as a result of width/height changes.
-function centerOf({ top, left, width, height }: Layout) {
-    const right = left + width
-    const bottom = top + height
-    return {
-        x: (left + right) / 2,
-        y: (top + bottom) / 2,
-    }
+// function centerOf({ top, left, width, height }: Layout) {
+//     const right = left + width
+//     const bottom = top + height
+//     return {
+//         x: (left + right) / 2,
+//         y: (top + bottom) / 2,
+//     }
+// }
+
+const dimensionLabels = {
+    x: {
+        id: "x",
+        size: "width",
+        min: "left",
+        max: "right",
+        origin: "originX",
+    },
+    y: {
+        id: "y",
+        size: "height",
+        min: "top",
+        max: "bottom",
+        origin: "originY",
+    },
 }
 
-function calcSizeDelta(prev: Layout, next: Layout) {
-    return {
-        width: prev.width - next.width,
-        height: prev.height - next.height,
+function centerOf(min: number, max: number) {
+    return (min + max) / 2
+}
+
+function calcDimensionDelta(
+    prev: Layout,
+    next: Layout,
+    names: typeof dimensionLabels.x | typeof dimensionLabels.y
+) {
+    const sizeDelta = prev[names.size] - next[names.size]
+    let origin = 0.5
+
+    if (sizeDelta) {
+        if (prev[names.min] === next[names.max]) {
+            origin = 0
+        } else if (prev[names.max] === next[names.max]) {
+            origin = 1
+        }
     }
+
+    const delta = {
+        [names.size]: sizeDelta,
+        [names.origin]: origin,
+        [names.id]:
+            origin === 0.5
+                ? centerOf(prev[names.min], prev[names.max]) -
+                  centerOf(next[names.min], next[names.max])
+                : 0,
+    }
+
+    return delta
+}
+
+function calcDelta(prev: Layout, next: Layout): LayoutDelta {
+    const delta: LayoutDelta = {
+        ...calcDimensionDelta(prev, next, dimensionLabels.x),
+        ...calcDimensionDelta(prev, next, dimensionLabels.y),
+    }
+
+    return delta as LayoutDelta
+
+    // When we're measuring the difference using its bounding box we're also checking to
+    // see if the element has changed size. Imagine an element full size in the center of the screen.
+    // It enlarges 2x. Its center point hasn't moved, visually its only changed size. So we want
+    // to measure its x/y delta as zero. Whereas if we measured the delta from its top left point
+    // it will have changed as a result of this resize.
+    // const prevCenter = centerOf(prev)
+    // const nextCenter = centerOf(next)
+
+    // return {
+    //     x: prevCenter.x - nextCenter.x,
+    //     y: prevCenter.y - nextCenter.y,
+    //     ...calcSizeDelta(prev, next),
+    // }
 }
 
 const offset: LayoutType = {
@@ -83,36 +153,25 @@ const offset: LayoutType = {
         return {
             left: offsetLeft,
             top: offsetTop,
+            right: offsetLeft + offsetWidth,
+            bottom: offsetTop + offsetHeight,
             width: offsetWidth,
             height: offsetHeight,
         }
     },
-    calcDelta: (prev, next) => ({
-        x: prev.left - next.left,
-        y: prev.top - next.top,
-        ...calcSizeDelta(prev, next),
-    }),
 }
 const boundingBox: LayoutType = {
     getLayout: ({ boundingBox }) => boundingBox,
     measure: element => {
-        const { left, top, width, height } = element.getBoundingClientRect()
-        return { left, top, width, height }
-    },
-    calcDelta: (prev, next) => {
-        // When we're measuring the difference using its bounding box we're also checking to
-        // see if the element has changed size. Imagine an element full size in the center of the screen.
-        // It enlarges 2x. Its center point hasn't moved, visually its only changed size. So we want
-        // to measure its x/y delta as zero. Whereas if we measured the delta from its top left point
-        // it will have changed as a result of this resize.
-        const prevCenter = centerOf(prev)
-        const nextCenter = centerOf(next)
-
-        return {
-            x: prevCenter.x - nextCenter.x,
-            y: prevCenter.y - nextCenter.y,
-            ...calcSizeDelta(prev, next),
-        }
+        const {
+            left,
+            top,
+            width,
+            height,
+            right,
+            bottom,
+        } = element.getBoundingClientRect()
+        return { left, top, width, height, right, bottom }
     },
 }
 
@@ -145,6 +204,7 @@ function useLayoutAnimation(
     const element = ref.current
 
     useLayoutSync()
+
     // If we don't have a HTML element we can early return here. We've already called all the hooks.
     if (!isHTMLElement(element)) return
 
@@ -191,7 +251,7 @@ function useLayoutAnimation(
         // prev visual state and then animate them into their new one using transforms.
         const prevLayout = compare.getLayout(prev)
         const nextLayout = compare.getLayout(next)
-        const delta = compare.calcDelta(prevLayout, nextLayout)
+        const delta = calcDelta(prevLayout, nextLayout)
         const hasAnyChanged = delta.x || delta.y || delta.width || delta.height
 
         if (!hasAnyChanged) {
@@ -200,6 +260,7 @@ function useLayoutAnimation(
             return
         }
 
+        styler(element).set({ originX: delta.originX, originY: delta.originY })
         syncRenderSession.open()
 
         const target: TargetAndTransition = {}
