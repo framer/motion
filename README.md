@@ -49,6 +49,22 @@ And does this:
 
 ## Get started
 
+### Quick start
+
+```
+npm install framer-motion
+```
+
+```jsx
+import { motion } from "framer-motion"
+
+export const MyComponent = ({ isVisible }) => (
+  <motion.div animate={{ opacity: isVisible ? 1 : 0 }}>
+)
+```
+
+### Docs
+
 Check out [our documentation](https://framer.com/api/motion) for guides and a full API reference.
 
 Or checkout [our examples](https://framer.com/motion) for inspiration.

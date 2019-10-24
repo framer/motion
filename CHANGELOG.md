@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.15] 2019-10-24
+
+### Added
+
+-   Quick start section to README.
+
 ## [1.6.14] 2019-10-14
 
 ### Fix
