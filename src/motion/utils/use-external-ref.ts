@@ -1,5 +1,4 @@
-import { useEffect, Ref, RefObject, MutableRefObject } from "react"
-import { isRefObject } from "../../utils/is-ref-object"
+import { useEffect, useRef, Ref, RefObject } from "react"
 
 /**
  * Uses the ref that is passed in, or creates a new one
@@ -7,33 +6,28 @@ import { isRefObject } from "../../utils/is-ref-object"
  * @internal
  */
 export function useExternalRef<E = Element>(
-    internalRef: RefObject<E>,
     externalRef?: Ref<E>
-): void {
-    useEffect(() => {
-        // If there's no external ref, we don't need to handle it in a special way
-        if (!externalRef) return
+): RefObject<E> {
+    // We're conditionally calling `useRef` here which is sort of naughty as hooks
+    // shouldn't be called conditionally. However, Framer Motion will break if this
+    // condition changes anyway. It might be possible to use an invariant here to
+    // make it explicit, but I expect changing `ref` is not normal behaviour.
+    const ref =
+        !externalRef || typeof externalRef === "function"
+            ? useRef(null)
+            : externalRef
 
-        if (typeof externalRef === "function") {
-            externalRef(internalRef.current)
-
+    // Handle `ref` functions. Again, calling the hook conditionally is kind of naughty
+    // but `ref` types changing between renders would break Motion anyway. If we receive
+    // bug reports about this, we should track the provided ref and throw an invariant
+    // rather than move the conditional to inside the useEffect as this will be fired
+    // for every Frame component within Framer.
+    if (externalRef && typeof externalRef === "function") {
+        useEffect(() => {
+            externalRef(ref.current)
             return () => externalRef(null)
-        } else if (isRefObject(externalRef)) {
-            const mutableExternal = externalRef as MutableRefObject<E | null>
+        }, [])
+    }
 
-            // If we've been provided a RefObject, we need to assign its current with our
-            // current on mount
-            mutableExternal.current = internalRef.current
-
-            return () => {
-                // We only set our external ref value to null on unmount if it still contains the
-                // same element as our internal ref. This is because the component might be a child
-                // of `AnimatePresence` where we might be in a situation where a user is providing
-                // the same ref to multiple components.
-                if (externalRef.current === internalRef.current) {
-                    mutableExternal.current = null
-                }
-            }
-        }
-    }, [])
+    return ref
 }

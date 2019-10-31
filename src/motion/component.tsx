@@ -1,7 +1,7 @@
 import * as React from "react"
-import { useContext, forwardRef, useRef, Ref, RefObject } from "react"
+import { useContext, forwardRef, Ref, RefObject } from "react"
 import { useMotionValues, MotionValuesMap } from "./utils/use-motion-values"
-import { MountRef } from "./utils/MountRef"
+import { Mount } from "./utils/Mount"
 import { useMotionStyles } from "./utils/use-styles"
 import { useValueAnimationControls } from "../animation/use-value-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
@@ -13,6 +13,7 @@ import {
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
+import { useExternalRef } from "./utils/use-external-ref"
 export { MotionProps }
 
 export interface MotionComponentConfig {
@@ -36,7 +37,7 @@ export const createMotionComponent = <P extends {}>({
         props: P & MotionProps,
         externalRef?: Ref<Element>
     ) {
-        const ref = useRef(null)
+        const ref = useExternalRef(externalRef)
         const parentContext = useContext(MotionContext)
 
         const isStatic = parentContext.static || props.static || false
@@ -88,12 +89,7 @@ export const createMotionComponent = <P extends {}>({
 
         return (
             <>
-                <MountRef
-                    ref={ref}
-                    externalRef={externalRef}
-                    values={values}
-                    isStatic={isStatic}
-                />
+                <Mount innerRef={ref} values={values} isStatic={isStatic} />
                 {functionality}
                 <MotionContext.Provider value={context}>
                     {renderedComponent}
