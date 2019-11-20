@@ -34,6 +34,32 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toBeTruthy()
     })
 
+    it("hydrates a provided ref by the time useLayoutEffect has fired", () => {
+        let hasVanillaRef = false
+        let hasMotionRef = false
+
+        const Component = () => {
+            const vanillaRef = React.useRef<HTMLDivElement>(null)
+            const motionRef = React.useRef<HTMLDivElement>(null)
+
+            React.useLayoutEffect(() => {
+                if (vanillaRef.current !== null) hasVanillaRef = true
+                if (motionRef.current !== null) hasMotionRef = true
+            })
+
+            return (
+                <>
+                    <div ref={vanillaRef} />
+                    <motion.div ref={motionRef} />
+                </>
+            )
+        }
+
+        render(<Component />)
+        expect(hasVanillaRef).toBe(true)
+        expect(hasMotionRef).toBe(true)
+    })
+
     it("renders child", () => {
         const { getByTestId } = render(
             <motion.div>

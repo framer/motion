@@ -1,27 +1,21 @@
 import { MotionValuesMap } from "./use-motion-values"
 import { syncRenderSession } from "../../dom/sync-render-session"
-import { useExternalRef } from "./use-external-ref"
-import { RefObject, Ref, useEffect, forwardRef, memo } from "react"
+import { RefObject, useEffect, memo } from "react"
 import { invariant } from "hey-listen"
 import styler from "stylefire"
+
+interface MountProps {
+    innerRef: RefObject<Element>
+    values: MotionValuesMap
+    isStatic: boolean
+}
 
 /**
  * `useEffect` gets resolved bottom-up. We defer some optional functionality to child
  * components, so to ensure everything runs correctly we export the ref-binding logic
  * to a new component rather than in `useMotionValues`.
  */
-const MountRefComponent = (
-    {
-        values,
-        isStatic,
-        externalRef,
-    }: {
-        values: MotionValuesMap
-        isStatic: boolean
-        externalRef?: Ref<Element>
-    },
-    ref: RefObject<Element>
-) => {
+const MountComponent = ({ innerRef: ref, values, isStatic }: MountProps) => {
     useEffect(() => {
         invariant(
             ref.current instanceof Element,
@@ -44,9 +38,7 @@ const MountRefComponent = (
         return () => values.unmount()
     }, [])
 
-    useExternalRef(ref, externalRef)
-
     return null
 }
 
-export const MountRef = memo(forwardRef(MountRefComponent))
+export const Mount = memo(MountComponent)

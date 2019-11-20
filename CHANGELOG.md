@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.16] 2019-10-31
+
+### Fixes
+
+-   Fixing `ref` hydration in `useLayoutEffect`. (Note: This release effectively reverts `1.6.10`. Each child of `AnimatePresence` with a unique `key` should be given a unique `ref`).
+
 ## [1.6.15] 2019-10-24
 
 ### Added
