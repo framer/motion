@@ -287,7 +287,7 @@ export const motion: {
     code: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
     col: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ColHTMLAttributes<HTMLTableColElement>, HTMLTableColElement> & MotionProps & React.RefAttributes<HTMLTableColElement>>;
     colgroup: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ColgroupHTMLAttributes<HTMLTableColElement>, HTMLTableColElement> & MotionProps & React.RefAttributes<HTMLTableColElement>>;
-    data: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
+    data: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.DataHTMLAttributes<HTMLDataElement>, HTMLDataElement> & MotionProps & React.RefAttributes<HTMLDataElement>>;
     datalist: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLDataListElement>, HTMLDataListElement> & MotionProps & React.RefAttributes<HTMLDataListElement>>;
     dd: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
     del: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.DelHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
@@ -670,7 +670,7 @@ export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function useExternalRef<E = Element>(internalRef: RefObject<E>, externalRef?: Ref<E>): void;
+export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;

@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.17] 2019-11-21
+
+### Added
+
+-   `controls.set` can now accept a function that will resolve once for each child.
+
 ## [1.6.16] 2019-11-21
 
 ### Fixes
