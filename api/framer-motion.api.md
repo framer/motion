@@ -36,7 +36,7 @@ export interface AnimatePresenceProps {
 export class AnimationControls {
     // @internal
     mount(): void;
-    set(definition: VariantLabels | TargetAndTransition): void;
+    set(definition: AnimationDefinition): void;
     // @internal
     setDefaultTransition(transition: Transition): void;
     // @internal

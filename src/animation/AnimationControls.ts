@@ -1,9 +1,8 @@
-import { Variants, Transition, TargetAndTransition } from "../types"
+import { Variants, Transition } from "../types"
 import {
     ValueAnimationControls,
     AnimationDefinition,
 } from "./ValueAnimationControls"
-import { VariantLabels } from "../motion/types"
 import { invariant } from "hey-listen"
 
 type PendingAnimations = {
@@ -160,7 +159,7 @@ export class AnimationControls {
      *
      * @public
      */
-    set(definition: VariantLabels | TargetAndTransition) {
+    set(definition: AnimationDefinition) {
         invariant(
             this.hasMounted,
             "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."
