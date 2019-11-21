@@ -1,6 +1,7 @@
 import "../../../jest.setup"
 import { render, fireEvent } from "@testing-library/react"
 import { motion } from "../"
+import { useAnimation } from "../../animation/use-animation"
 import * as React from "react"
 import styled from "styled-components"
 
@@ -329,5 +330,34 @@ describe("motion component rendering and styles", () => {
     it("filters MotionProps from the DOM", () => {
         const { container } = render(<motion.div initial={{ opacity: 0 }} />)
         expect(container.firstChild).not.toHaveAttribute("initial")
+    })
+
+    fit("it can render nested components inside <StrictMode />", () => {
+        function Test() {
+            return (
+                <React.StrictMode>
+                    <motion.div
+                        animate="visible"
+                        initial="hidden"
+                        variants={{
+                            visible: { y: 0 },
+                            hidden: { y: 5 },
+                        }}
+                    >
+                        <motion.span
+                            animate={useAnimation()}
+                            initial="hidden"
+                            variants={{
+                                visible: { y: 0 },
+                                hidden: { y: 5 },
+                            }}
+                        />
+                    </motion.div>
+                </React.StrictMode>
+            )
+        }
+
+        const { container } = render(<Test />)
+        expect(container.firstChild).toBeTruthy()
     })
 })
