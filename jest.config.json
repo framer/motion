@@ -9,5 +9,9 @@
     "coverageDirectory": "<rootDir>/../coverage",
     "setupFilesAfterEnv": ["<rootDir>/../jest.setup.ts"],
     "testMatch": ["**/__tests__/**/*.test.(js|ts)?(x)"],
-    "testPathIgnorePatterns": ["ssr.test.tsx"]
+    "testPathIgnorePatterns": ["ssr.test.tsx"],
+    "watchPlugins": [
+        "jest-watch-typeahead/filename",
+        "jest-watch-typeahead/testname"
+    ]
 }

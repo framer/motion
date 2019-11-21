@@ -7,6 +7,7 @@ import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll
 import { warning } from "hey-listen"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { isMouseEvent, isTouchEvent } from "./utils/event-type"
+import { useLatest } from "../utils/use-latest"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent, addPointerEvent } from "../events/use-pointer-event"
 import { RemoveEvent } from "./types"
@@ -382,11 +383,12 @@ export function usePanGesture(
 
     // Load the callbacks into mutable state to ensure that even if we don't create a new
     // gesture handler every render, we still reference the latest callbacks (which are almost certain to change per render)
-    const handlers = useRef<PanHandlers>({}).current
-    handlers.onPanSessionStart = onPanSessionStart
-    handlers.onPanStart = onPanStart
-    handlers.onPan = onPan
-    handlers.onPanEnd = onPanEnd
+    const handlersRef = useLatest<PanHandlers>({
+        onPanSessionStart,
+        onPanStart,
+        onPan,
+        onPanEnd,
+    })
 
     function removePointerEvents() {
         pointerEventSubscription.current && pointerEventSubscription.current()
@@ -441,13 +443,14 @@ export function usePanGesture(
         const { timestamp } = getFrameData()
         session.current.pointHistory.push({ ...point, timestamp })
 
+        const { onPanStart, onPan } = handlersRef.current
+
         if (!panStarted) {
-            handlers.onPanStart &&
-                handlers.onPanStart(lastMoveEvent.current, info)
+            onPanStart && onPanStart(lastMoveEvent.current, info)
             session.current.startEvent = lastMoveEvent.current
         }
 
-        handlers.onPan && handlers.onPan(lastMoveEvent.current, info)
+        onPan && onPan(lastMoveEvent.current, info)
     }
 
     function onPointerMove(
@@ -478,8 +481,9 @@ export function usePanGesture(
             return
         }
 
-        handlers.onPanEnd &&
-            handlers.onPanEnd(event, getPanInfo(transformPoint(info)))
+        const { onPanEnd } = handlersRef.current
+
+        onPanEnd && onPanEnd(event, getPanInfo(transformPoint(info)))
 
         session.current = null
     }
@@ -500,8 +504,9 @@ export function usePanGesture(
             pointHistory: [{ ...point, timestamp }],
         }
 
-        handlers.onPanSessionStart &&
-            handlers.onPanSessionStart(event, getPanInfo(initialInfo))
+        const { onPanSessionStart } = handlersRef.current
+
+        onPanSessionStart && onPanSessionStart(event, getPanInfo(initialInfo))
 
         removePointerEvents()
 

@@ -7,7 +7,7 @@ import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import sync from "framesync"
 import { Constraints } from "../use-drag"
-import { MockDrag, drag, Point } from "./utils"
+import { MockDrag, drag, Point, asyncDrag } from "./utils"
 
 describe("dragging", () => {
     test("dragStart fires", async () => {
@@ -119,7 +119,7 @@ describe("dragging", () => {
     })
 
     test("drag handlers aren't frozen at drag session start", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise(async resolve => {
             let count = 0
             const Component = () => {
                 const [increment, setIncrement] = useState(1)
@@ -144,17 +144,17 @@ describe("dragging", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 
-            const pointer = drag(container.firstChild).to(100, 100)
+            const pointer = await asyncDrag(container.firstChild).to(100, 100)
 
-            sync.postRender(() => {
-                pointer.to(50, 50)
+            sync.postRender(async () => {
+                await pointer.to(50, 50)
                 sync.postRender(() => {
                     pointer.end()
                 })
             })
         })
 
-        return expect(promise).resolves.toBe(7)
+        return expect(promise).resolves.toBe(10)
     })
 
     test("dragEnd returns transformed pointer", async () => {

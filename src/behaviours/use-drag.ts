@@ -19,6 +19,7 @@ import {
 } from "../motion/context/MotionPluginContext"
 import { useMotionValue } from "../value/use-motion-value"
 import { DraggableProps, DragHandlers } from "./types"
+import { useLatest } from "../utils/use-latest"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { supportsTouchEvents } from "../events/utils"
 
@@ -166,7 +167,6 @@ interface DragStatus {
     isDragging: boolean
     currentDirection: DragDirection | null
     constraints: Constraints | false
-    handlers: DragHandlers
 }
 
 /**
@@ -213,17 +213,17 @@ export function useDrag(
         isDragging: false,
         currentDirection: null,
         constraints: false,
-        handlers: {},
     }).current
 
     // Load the callbacks into mutable state to ensure that even if we don't create a new
     // gesture handler every render, we still reference the latest callbacks (which are almost certain to change per render)
-    const { handlers } = dragStatus
-    handlers.onDragStart = onDragStart
-    handlers.onDrag = onDrag
-    handlers.onDragEnd = onDragEnd
-    handlers.onDirectionLock = onDirectionLock
-    handlers.onDragTransitionEnd = onDragTransitionEnd
+    const handlersRef = useLatest<DragHandlers>({
+        onDragStart,
+        onDrag,
+        onDragEnd,
+        onDirectionLock,
+        onDragTransitionEnd,
+    })
 
     const point = useRef<MotionPoint>({}).current
 
@@ -456,7 +456,7 @@ export function useDrag(
 
         dragStatus.currentDirection = null
 
-        const { onDragStart } = handlers
+        const { onDragStart } = handlersRef.current
         onDragStart && onDragStart(event, convertPanToDrag(info))
     }
 
@@ -477,7 +477,7 @@ export function useDrag(
 
             // If we've successfully set a direction, notify listener
             if (dragStatus.currentDirection !== null) {
-                const { onDirectionLock } = handlers
+                const { onDirectionLock } = handlersRef.current
                 onDirectionLock && onDirectionLock(dragStatus.currentDirection)
             }
 
@@ -487,7 +487,7 @@ export function useDrag(
         updatePoint("x", offset)
         updatePoint("y", offset)
 
-        const { onDrag } = handlers
+        const { onDrag } = handlersRef.current
         onDrag && onDrag(event, convertPanToDrag(info))
     }
 
@@ -543,7 +543,7 @@ export function useDrag(
         Promise.all(momentumAnimations).then(() => {
             recordBoxInfo(dragStatus.constraints)
             scalePoint()
-            const { onDragTransitionEnd } = handlers
+            const { onDragTransitionEnd } = handlersRef.current
             onDragTransitionEnd && onDragTransitionEnd()
         })
     }
@@ -564,7 +564,7 @@ export function useDrag(
             recordBoxInfo(dragStatus.constraints)
         }
 
-        const { onDragEnd } = handlers
+        const { onDragEnd } = handlersRef.current
         onDragEnd && onDragEnd(event, convertPanToDrag(info))
     }
 
