@@ -14,28 +14,24 @@ const pos: Point = {
     y: 0,
 }
 
-export const drag = (element: any) => {
-    pos.x = 0
-    pos.y = 0
-    fireEvent.mouseDown(element)
-
-    const controls = {
-        to: (x: number, y: number) => {
-            pos.x = x
-            pos.y = y
-            fireEvent.mouseMove(document.body, { buttons: 1 })
-
-            return controls
-        },
-        end: () => {
-            fireEvent.mouseUp(element)
-        },
-    }
-
-    return controls
+export const frame = {
+    postRender: () => new Promise(resolve => sync.postRender(resolve)),
 }
 
-export const asyncDrag = (element: any) => {
+type Deferred<T> = {
+    promise: Promise<T>
+    resolve: unknown extends T ? () => void : (value: T) => void
+}
+
+export function deferred<T>(): Deferred<T> {
+    const def = {} as Deferred<T>
+    def.promise = new Promise(resolve => {
+        def.resolve = resolve as any
+    })
+    return def
+}
+
+export const drag = (element: any) => {
     pos.x = 0
     pos.y = 0
     fireEvent.mouseDown(element)
@@ -47,7 +43,7 @@ export const asyncDrag = (element: any) => {
 
             await act(async () => {
                 fireEvent.mouseMove(document.body, { buttons: 1 })
-                await new Promise(resolve => sync.update(resolve))
+                await frame.postRender()
             })
 
             return controls
@@ -59,6 +55,9 @@ export const asyncDrag = (element: any) => {
 
     return controls
 }
+
+export const sleep = (ms: number) =>
+    new Promise(resolve => setTimeout(resolve, ms))
 
 export const MockDrag = ({ children }: { children: React.ReactNode }) => (
     <MotionPlugins transformPagePoint={() => pos}>{children}</MotionPlugins>
