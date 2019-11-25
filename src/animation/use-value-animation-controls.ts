@@ -42,14 +42,14 @@ export function useValueAnimationControls<P>(
         controls.setProps(props)
         controls.setVariants(variants)
         controls.setDefaultTransition(transition)
+    }
 
+    useEffect(() => {
+        // todo ensure this fires before variant
         if (subscribeToParentControls && parentControls) {
             parentControls.addChild(controls)
         }
-    }
-
-    useEffect(
-        () => () => {
+        return () => {
             // Remove reference to onAnimationComplete from controls. All the MotionValues
             // are unsubscribed from this component separately. We let animations run out
             // as they might be animating other components.
@@ -57,9 +57,8 @@ export function useValueAnimationControls<P>(
             controls.setProps(unmountProps as P & MotionProps)
 
             parentControls && parentControls.removeChild(controls)
-        },
-        []
-    )
+        }
+    }, [])
 
     return controls
 }

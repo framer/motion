@@ -5,6 +5,7 @@ import { render, fireEvent } from "@testing-library/react"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"
+import { act } from "react-dom/test-utils"
 
 describe("hover", () => {
     test("hover event listeners fire", () => {
@@ -99,11 +100,16 @@ describe("hover", () => {
                 </motion.div>
             )
 
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
+            let container: any
+            act(() => {
+                const { container: componentContainer } = render(<Component />)
+                container = componentContainer
+            })
 
-            mouseEnter(container.firstChild as Element)
-            resolve(opacity.get())
+            act(() => {
+                mouseEnter(container.firstChild as Element)
+                resolve(opacity.get())
+            })
         })
 
         return expect(promise).resolves.toBe(target)
@@ -129,17 +135,21 @@ describe("hover", () => {
                 />
             )
 
-            const { container, rerender } = render(
-                <Component onAnimationComplete={onComplete} />
-            )
-            rerender(<Component onAnimationComplete={onComplete} />)
+            let container: any
+            act(() => {
+                const { container: componentContainer } = render(
+                    <Component onAnimationComplete={onComplete} />
+                )
+                container = componentContainer
+            })
 
-            mouseEnter(container.firstChild as Element)
-
-            setTimeout(() => {
-                hasMousedOut = true
-                mouseLeave(container.firstChild as Element)
-            }, 10)
+            act(() => {
+                mouseEnter(container.firstChild as Element)
+                setTimeout(() => {
+                    hasMousedOut = true
+                    mouseLeave(container.firstChild as Element)
+                }, 10)
+            })
         })
 
         return expect(promise).resolves.toBe(1)
