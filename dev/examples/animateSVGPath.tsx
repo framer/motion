@@ -19,7 +19,7 @@ export const App = () => {
     const [isChecked, setIsChecked] = useState(false)
     const pathLength = useMotionValue(0)
     const opacity = useTransform(pathLength, [0.1, 0.3], [0, 1])
-
+    console.log(isChecked)
     return (
         <motion.svg
             initial={false}
@@ -28,7 +28,9 @@ export const App = () => {
             whileTap="pressed"
             width="440"
             height="440"
-            onClick={() => setIsChecked(!isChecked)}
+            onClick={() => {
+                setIsChecked(!isChecked)
+            }}
         >
             <motion.path
                 d="M 72 136 C 72 100.654 100.654 72 136 72 L 304 72 C 339.346 72 368 100.654 368 136 L 368 304 C 368 339.346 339.346 368 304 368 L 136 368 C 100.654 368 72 339.346 72 304 Z"
