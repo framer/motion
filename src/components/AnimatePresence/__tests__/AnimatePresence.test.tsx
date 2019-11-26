@@ -12,13 +12,15 @@ describe("AnimatePresence", () => {
             const Component = () => {
                 setTimeout(() => resolve(x.get()), 75)
                 return (
-                    <AnimatePresence>
-                        <motion.div
-                            animate={{ x: 100 }}
-                            style={{ x }}
-                            exit={{ x: 0 }}
-                        />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            <motion.div
+                                animate={{ x: 100 }}
+                                style={{ x }}
+                                exit={{ x: 0 }}
+                            />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -35,13 +37,15 @@ describe("AnimatePresence", () => {
         const promise = new Promise(resolve => {
             const Component = () => {
                 return (
-                    <AnimatePresence initial={false}>
-                        <motion.div
-                            initial={{ x: 0 }}
-                            animate={{ x: 100 }}
-                            exit={{ opacity: 0 }}
-                        />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence initial={false}>
+                            <motion.div
+                                initial={{ x: 0 }}
+                                animate={{ x: 100 }}
+                                exit={{ opacity: 0 }}
+                            />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -64,15 +68,17 @@ describe("AnimatePresence", () => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
-                    <AnimatePresence>
-                        {isVisible && (
-                            <motion.div
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.1 }}
-                                style={{ opacity }}
-                            />
-                        )}
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            {isVisible && (
+                                <motion.div
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.1 }}
+                                    style={{ opacity }}
+                                />
+                            )}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -101,15 +107,17 @@ describe("AnimatePresence", () => {
         const promise = new Promise<Element | null>(resolve => {
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
-                    <AnimatePresence>
-                        {isVisible && (
-                            <motion.div
-                                animate={{ opacity: 1 }}
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.1 }}
-                            />
-                        )}
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            {isVisible && (
+                                <motion.div
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.1 }}
+                                />
+                            )}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -140,15 +148,17 @@ describe("AnimatePresence", () => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
-                    <AnimatePresence>
-                        {isVisible && (
-                            <motion.div
-                                exit={{ opacity: 0 }}
-                                transition={{ duration: 0.1 }}
-                                style={{ opacity }}
-                            />
-                        )}
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            {isVisible && (
+                                <motion.div
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.1 }}
+                                    style={{ opacity }}
+                                />
+                            )}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -181,14 +191,16 @@ describe("AnimatePresence", () => {
         const promise = new Promise<number>(resolve => {
             const Component = ({ i }: { i: number }) => {
                 return (
-                    <AnimatePresence>
-                        <motion.div
-                            key={i}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
-                        />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            <motion.div
+                                key={i}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5 }}
+                            />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -212,14 +224,16 @@ describe("AnimatePresence", () => {
         const promise = new Promise<number>(resolve => {
             const Component = ({ i }: { i: number }) => {
                 return (
-                    <AnimatePresence exitBeforeEnter>
-                        <motion.div
-                            key={i}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            transition={{ duration: 0.5 }}
-                        />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence exitBeforeEnter>
+                            <motion.div
+                                key={i}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                transition={{ duration: 0.5 }}
+                            />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -254,21 +268,23 @@ describe("AnimatePresence", () => {
                 onAnimationComplete?: () => void
             }) => {
                 return (
-                    <AnimatePresence
-                        custom={2}
-                        onExitComplete={onAnimationComplete}
-                    >
-                        {isVisible && (
-                            <motion.div
-                                custom={1}
-                                variants={variants}
-                                initial="exit"
-                                animate="enter"
-                                exit="exit"
-                                style={{ x }}
-                            />
-                        )}
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence
+                            custom={2}
+                            onExitComplete={onAnimationComplete}
+                        >
+                            {isVisible && (
+                                <motion.div
+                                    custom={1}
+                                    variants={variants}
+                                    initial="exit"
+                                    animate="enter"
+                                    exit="exit"
+                                    style={{ x }}
+                                />
+                            )}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -304,23 +320,25 @@ describe("AnimatePresence", () => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
-                    <AnimatePresence>
-                        {isVisible && (
-                            <motion.div
-                                initial="enter"
-                                animate="enter"
-                                exit="exit"
-                                variants={variants}
-                            >
-                                <motion.div variants={variants}>
-                                    <motion.div
-                                        variants={variants}
-                                        style={{ opacity }}
-                                    />
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            {isVisible && (
+                                <motion.div
+                                    initial="enter"
+                                    animate="enter"
+                                    exit="exit"
+                                    variants={variants}
+                                >
+                                    <motion.div variants={variants}>
+                                        <motion.div
+                                            variants={variants}
+                                            style={{ opacity }}
+                                        />
+                                    </motion.div>
                                 </motion.div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                            )}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -345,16 +363,18 @@ describe("AnimatePresence", () => {
             const ref = React.createRef<HTMLDivElement>()
             const Component = ({ id }: { id: number }) => {
                 return (
-                    <AnimatePresence initial={false}>
-                        <motion.div
-                            data-id={id}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            key={id}
-                            ref={ref}
-                        />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence initial={false}>
+                            <motion.div
+                                data-id={id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                key={id}
+                                ref={ref}
+                            />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -392,9 +412,11 @@ describe("AnimatePresence with custom components", () => {
             const Component = () => {
                 setTimeout(() => resolve(x.get()), 75)
                 return (
-                    <AnimatePresence>
-                        <CustomComponent />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            <CustomComponent />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -419,9 +441,11 @@ describe("AnimatePresence with custom components", () => {
 
             const Component = () => {
                 return (
-                    <AnimatePresence initial={false}>
-                        <CustomComponent />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence initial={false}>
+                            <CustomComponent />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -452,9 +476,11 @@ describe("AnimatePresence with custom components", () => {
             )
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
-                    <AnimatePresence>
-                        {isVisible && <CustomComponent />}
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            {isVisible && <CustomComponent />}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -491,9 +517,11 @@ describe("AnimatePresence with custom components", () => {
             )
             const Component = ({ i }: { i: number }) => {
                 return (
-                    <AnimatePresence>
-                        <CustomComponent key={i} i={i} />
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            <CustomComponent key={i} i={i} />
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -541,12 +569,14 @@ describe("AnimatePresence with custom components", () => {
                 onAnimationComplete?: () => void
             }) => {
                 return (
-                    <AnimatePresence
-                        custom={2}
-                        onExitComplete={onAnimationComplete}
-                    >
-                        {isVisible && <CustomComponent />}
-                    </AnimatePresence>
+                    <React.StrictMode>
+                        <AnimatePresence
+                            custom={2}
+                            onExitComplete={onAnimationComplete}
+                        >
+                            {isVisible && <CustomComponent />}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -582,23 +612,25 @@ describe("AnimatePresence with custom components", () => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
-                    <AnimatePresence>
-                        {isVisible && (
-                            <motion.div
-                                initial="exit"
-                                animate="enter"
-                                exit="exit"
-                                variants={variants}
-                            >
-                                <motion.div variants={variants}>
-                                    <motion.div
-                                        variants={variants}
-                                        style={{ opacity }}
-                                    />
+                    <React.StrictMode>
+                        <AnimatePresence>
+                            {isVisible && (
+                                <motion.div
+                                    initial="exit"
+                                    animate="enter"
+                                    exit="exit"
+                                    variants={variants}
+                                >
+                                    <motion.div variants={variants}>
+                                        <motion.div
+                                            variants={variants}
+                                            style={{ opacity }}
+                                        />
+                                    </motion.div>
                                 </motion.div>
-                            </motion.div>
-                        )}
-                    </AnimatePresence>
+                            )}
+                        </AnimatePresence>
+                    </React.StrictMode>
                 )
             }
 
@@ -608,6 +640,87 @@ describe("AnimatePresence with custom components", () => {
             rerender(<Component isVisible={false} />)
 
             resolve(opacity.get())
+        })
+
+        return await expect(promise).resolves.toBe(0)
+    })
+
+    test("In Strict Mode, enter animation prop correctly fires", async () => {
+        const promise = new Promise<number>(resolve => {
+            const opacity = motionValue(0)
+            const Component = ({ id }: { id: string }) => {
+                return (
+                    <React.StrictMode>
+                        <AnimatePresence initial={false}>
+                            <motion.div
+                                key={id}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                                style={{
+                                    opacity: id === "a" ? undefined : opacity,
+                                }}
+                                transition={{ duration: 1 }}
+                            />
+                        </AnimatePresence>
+                    </React.StrictMode>
+                )
+            }
+
+            let rerender: any
+
+            act(() => {
+                rerender = render(<Component id="a" />).rerender
+            })
+
+            act(() => {
+                rerender(<Component id="b" />)
+            })
+
+            setTimeout(() => resolve(opacity.get()), 200)
+        })
+
+        return await expect(promise).resolves.toBe(0)
+    })
+
+    test("In Strict Mode, enter animation prop variants correctly fires", async () => {
+        const promise = new Promise<number>(resolve => {
+            const opacity = motionValue(0)
+            const variants = {
+                hidden: { opacity: 0 },
+                visible: { opacity: 1 },
+            }
+            const Component = ({ id }: { id: string }) => {
+                return (
+                    <React.StrictMode>
+                        <AnimatePresence initial={false}>
+                            <motion.div
+                                key={id}
+                                initial="hidden"
+                                animate="visible"
+                                exit="hidden"
+                                variants={variants}
+                                style={{
+                                    opacity: id === "a" ? undefined : opacity,
+                                }}
+                                transition={{ duration: 1 }}
+                            />
+                        </AnimatePresence>
+                    </React.StrictMode>
+                )
+            }
+
+            let rerender: any
+
+            act(() => {
+                rerender = render(<Component id="a" />).rerender
+            })
+
+            act(() => {
+                rerender(<Component id="b" />)
+            })
+
+            setTimeout(() => resolve(opacity.get()), 200)
         })
 
         return await expect(promise).resolves.toBe(0)

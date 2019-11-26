@@ -9,19 +9,14 @@ const style = {
     opacity: 1,
 }
 
-const styleB = {
-    width: 100,
-    height: 100,
-    background: "green",
-    opacity: 1,
-}
-
 export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
-    setTimeout(() => {
-        setVisible(!isVisible)
-    }, 1500)
+    React.useEffect(() => {
+        setTimeout(() => {
+            setVisible(!isVisible)
+        }, 1500)
+    })
 
     return (
         <AnimatePresence initial={false} onRest={() => console.log("rest")}>

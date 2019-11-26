@@ -4,20 +4,24 @@ import { useState } from "react"
 import { wrap } from "@popmotion/popcorn"
 
 const variants = {
-    enter: (delta: number) => ({
-        x: delta < 0 ? 1000 : -1000,
-        opacity: 0,
-    }),
+    enter: (delta: number) => {
+        return {
+            x: delta > 0 ? 1000 : -1000,
+            opacity: 0,
+        }
+    },
     center: {
         zIndex: 1,
         x: 0,
         opacity: 1,
     },
-    exit: (delta: number) => ({
-        zIndex: 0,
-        x: delta < 0 ? 1000 : -1000,
-        opacity: 0,
-    }),
+    exit: (delta: number) => {
+        return {
+            zIndex: 0,
+            x: delta < 0 ? 1000 : -1000,
+            opacity: 0,
+        }
+    },
 }
 
 const Image = ({ src, paginate, delta }) => (
@@ -32,8 +36,7 @@ const Image = ({ src, paginate, delta }) => (
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={1}
         transition={{
-            x: { type: "spring", stiffness: 300, damping: 200 },
-            opacity: { duration: 0.2 },
+            duration: 2,
         }}
         onDragEnd={(e, { offset, velocity }) => {
             const swipe = Math.abs(offset.x) * velocity.x
@@ -57,7 +60,7 @@ export const App = () => {
 
     return (
         <div className="example-container">
-            <AnimatePresence initial={false} custom={delta}>
+            <AnimatePresence custom={delta}>
                 <Image
                     delta={delta}
                     paginate={paginate}
@@ -65,12 +68,12 @@ export const App = () => {
                     key={page}
                 />
             </AnimatePresence>
-            <motion.div className="next" onClick={() => paginate(1)}>
+            <div className="next" onClick={() => paginate(1)}>
                 {">"}
-            </motion.div>
-            <motion.div className="prev" onClick={() => paginate(-1)}>
+            </div>
+            <div className="prev" onClick={() => paginate(-1)}>
                 {"<"}
-            </motion.div>
+            </div>
             <style>{`
 .example-container {
   width: 100vw;
