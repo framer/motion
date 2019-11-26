@@ -12,12 +12,15 @@ describe("hover", () => {
         const hoverIn = jest.fn()
         const hoverOut = jest.fn()
         const Component = () => (
-            <motion.div onHoverStart={hoverIn} onHoverEnd={hoverOut} />
+            <React.StrictMode>
+                <motion.div onHoverStart={hoverIn} onHoverEnd={hoverOut} />
+            </React.StrictMode>
         )
 
-        const { container, rerender } = render(<Component />)
-        rerender(<Component />)
-
+        let container: any
+        act(() => {
+            container = render(<Component />).container
+        })
         mouseEnter(container.firstChild as Element)
         mouseLeave(container.firstChild as Element)
 
@@ -29,11 +32,13 @@ describe("hover", () => {
         const promise = new Promise(resolve => {
             const opacity = motionValue(1)
             const Component = () => (
-                <motion.div
-                    whileHover={{ opacity: 0 }}
-                    transition={{ type: false }}
-                    style={{ opacity }}
-                />
+                <React.StrictMode>
+                    <motion.div
+                        whileHover={{ opacity: 0 }}
+                        transition={{ type: false }}
+                        style={{ opacity }}
+                    />
+                </React.StrictMode>
             )
 
             const { container, rerender } = render(<Component />)
@@ -55,12 +60,14 @@ describe("hover", () => {
             }
             const opacity = motionValue(1)
             const Component = () => (
-                <motion.div
-                    whileHover="hidden"
-                    variants={variant}
-                    transition={{ type: false }}
-                    style={{ opacity }}
-                />
+                <React.StrictMode>
+                    <motion.div
+                        whileHover="hidden"
+                        variants={variant}
+                        transition={{ type: false }}
+                        style={{ opacity }}
+                    />
+                </React.StrictMode>
             )
 
             const { container, rerender } = render(<Component />)
@@ -85,19 +92,21 @@ describe("hover", () => {
             }
             const opacity = motionValue(1)
             const Component = () => (
-                <motion.div
-                    whileHover="hidden"
-                    variants={parent}
-                    transition={{ type: false }}
-                    data-id="hoverparent"
-                >
+                <React.StrictMode>
                     <motion.div
-                        variants={child}
-                        style={{ opacity }}
+                        whileHover="hidden"
+                        variants={parent}
                         transition={{ type: false }}
-                        data-id="hoverchild"
-                    />
-                </motion.div>
+                        data-id="hoverparent"
+                    >
+                        <motion.div
+                            variants={child}
+                            style={{ opacity }}
+                            transition={{ type: false }}
+                            data-id="hoverchild"
+                        />
+                    </motion.div>
+                </React.StrictMode>
             )
 
             let container: any
@@ -126,13 +135,15 @@ describe("hover", () => {
             const onComplete = () => hasMousedOut && resolve(opacity.get())
 
             const Component = ({ onAnimationComplete }: any) => (
-                <motion.div
-                    whileHover="hidden"
-                    variants={variant}
-                    transition={{ type: false }}
-                    style={{ opacity }}
-                    onAnimationComplete={onAnimationComplete}
-                />
+                <React.StrictMode>
+                    <motion.div
+                        whileHover="hidden"
+                        variants={variant}
+                        transition={{ type: false }}
+                        style={{ opacity }}
+                        onAnimationComplete={onAnimationComplete}
+                    />
+                </React.StrictMode>
             )
 
             let container: any
@@ -164,13 +175,15 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const scale = motionValue(1)
             const Component = () => (
-                <motion.div
-                    whileHover="hovering"
-                    whileTap="tapping"
-                    variants={variant}
-                    transition={{ type: false }}
-                    style={{ opacity, scale }}
-                />
+                <React.StrictMode>
+                    <motion.div
+                        whileHover="hovering"
+                        whileTap="tapping"
+                        variants={variant}
+                        transition={{ type: false }}
+                        style={{ opacity, scale }}
+                    />
+                </React.StrictMode>
             )
 
             const { container, rerender } = render(<Component />)
@@ -191,13 +204,15 @@ describe("hover", () => {
                 hidden: { size: 50 },
             }
             const Component = () => (
-                <motion.div
-                    transformValues={transformValues}
-                    whileHover="hidden"
-                    variants={variant}
-                    transition={{ type: false }}
-                    style={{ size: 100 }}
-                />
+                <React.StrictMode>
+                    <motion.div
+                        transformValues={transformValues}
+                        whileHover="hidden"
+                        variants={variant}
+                        transition={{ type: false }}
+                        style={{ size: 100 }}
+                    />
+                </React.StrictMode>
             )
 
             const { container, rerender } = render(<Component />)

@@ -19,7 +19,7 @@ export const App = () => {
     const [isChecked, setIsChecked] = useState(false)
     const pathLength = useMotionValue(0)
     const opacity = useTransform(pathLength, [0.1, 0.3], [0, 1])
-    console.log(isChecked)
+
     return (
         <motion.svg
             initial={false}
