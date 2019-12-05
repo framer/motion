@@ -1,7 +1,7 @@
-import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
-import { render, fireEvent } from "@testing-library/react"
+import { fireEvent } from "@testing-library/react"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"
@@ -12,9 +12,7 @@ describe("hover", () => {
         const hoverIn = jest.fn()
         const hoverOut = jest.fn()
         const Component = () => (
-            <React.StrictMode>
-                <motion.div onHoverStart={hoverIn} onHoverEnd={hoverOut} />
-            </React.StrictMode>
+            <motion.div onHoverStart={hoverIn} onHoverEnd={hoverOut} />
         )
 
         let container: any
@@ -32,13 +30,11 @@ describe("hover", () => {
         const promise = new Promise(resolve => {
             const opacity = motionValue(1)
             const Component = () => (
-                <React.StrictMode>
-                    <motion.div
-                        whileHover={{ opacity: 0 }}
-                        transition={{ type: false }}
-                        style={{ opacity }}
-                    />
-                </React.StrictMode>
+                <motion.div
+                    whileHover={{ opacity: 0 }}
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                />
             )
 
             const { container, rerender } = render(<Component />)
@@ -60,14 +56,12 @@ describe("hover", () => {
             }
             const opacity = motionValue(1)
             const Component = () => (
-                <React.StrictMode>
-                    <motion.div
-                        whileHover="hidden"
-                        variants={variant}
-                        transition={{ type: false }}
-                        style={{ opacity }}
-                    />
-                </React.StrictMode>
+                <motion.div
+                    whileHover="hidden"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                />
             )
 
             const { container, rerender } = render(<Component />)
@@ -92,21 +86,19 @@ describe("hover", () => {
             }
             const opacity = motionValue(1)
             const Component = () => (
-                <React.StrictMode>
+                <motion.div
+                    whileHover="hidden"
+                    variants={parent}
+                    transition={{ type: false }}
+                    data-id="hoverparent"
+                >
                     <motion.div
-                        whileHover="hidden"
-                        variants={parent}
+                        variants={child}
+                        style={{ opacity }}
                         transition={{ type: false }}
-                        data-id="hoverparent"
-                    >
-                        <motion.div
-                            variants={child}
-                            style={{ opacity }}
-                            transition={{ type: false }}
-                            data-id="hoverchild"
-                        />
-                    </motion.div>
-                </React.StrictMode>
+                        data-id="hoverchild"
+                    />
+                </motion.div>
             )
 
             let container: any
@@ -135,15 +127,13 @@ describe("hover", () => {
             const onComplete = () => hasMousedOut && resolve(opacity.get())
 
             const Component = ({ onAnimationComplete }: any) => (
-                <React.StrictMode>
-                    <motion.div
-                        whileHover="hidden"
-                        variants={variant}
-                        transition={{ type: false }}
-                        style={{ opacity }}
-                        onAnimationComplete={onAnimationComplete}
-                    />
-                </React.StrictMode>
+                <motion.div
+                    whileHover="hidden"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                    onAnimationComplete={onAnimationComplete}
+                />
             )
 
             let container: any
@@ -175,15 +165,13 @@ describe("hover", () => {
             const opacity = motionValue(1)
             const scale = motionValue(1)
             const Component = () => (
-                <React.StrictMode>
-                    <motion.div
-                        whileHover="hovering"
-                        whileTap="tapping"
-                        variants={variant}
-                        transition={{ type: false }}
-                        style={{ opacity, scale }}
-                    />
-                </React.StrictMode>
+                <motion.div
+                    whileHover="hovering"
+                    whileTap="tapping"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ opacity, scale }}
+                />
             )
 
             const { container, rerender } = render(<Component />)
@@ -204,15 +192,13 @@ describe("hover", () => {
                 hidden: { size: 50 },
             }
             const Component = () => (
-                <React.StrictMode>
-                    <motion.div
-                        transformValues={transformValues}
-                        whileHover="hidden"
-                        variants={variant}
-                        transition={{ type: false }}
-                        style={{ size: 100 }}
-                    />
-                </React.StrictMode>
+                <motion.div
+                    transformValues={transformValues}
+                    whileHover="hidden"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ size: 100 }}
+                />
             )
 
             const { container, rerender } = render(<Component />)

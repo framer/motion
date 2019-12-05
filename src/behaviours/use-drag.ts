@@ -416,8 +416,6 @@ export function useDrag(
         event: MouseEvent | TouchEvent | PointerEvent,
         info: PanInfo
     ) {
-        dragStatus.isDragging = true
-
         // Resolve the constraints again in case anything has changed in the meantime.
         if (constraintsNeedResolution) {
             dragStatus.constraints = calculateConstraintsFromDom(
@@ -449,6 +447,7 @@ export function useDrag(
             }
         }
 
+        dragStatus.isDragging = true
         dragStatus.currentDirection = null
 
         const { onDragStart } = handlersRef.current

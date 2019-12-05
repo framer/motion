@@ -1,9 +1,8 @@
 import * as React from "react"
 import { motion } from "../../"
-import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
-import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
 import { drag, MockDrag } from "../../behaviours/__tests__/utils"
 import sync from "framesync"
 import { act } from "react-dom/test-utils"
@@ -28,11 +27,7 @@ function mockWhenFirstArgumentIs(
 describe("tap", () => {
     test("tap event listeners fire", () => {
         const tap = jest.fn()
-        const Component = () => (
-            <React.StrictMode>
-                <motion.div onTap={() => tap()} />
-            </React.StrictMode>
-        )
+        const Component = () => <motion.div onTap={() => tap()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -56,11 +51,7 @@ describe("tap", () => {
         window.removeEventListener = removeEventListener
 
         const tap = jest.fn()
-        const Component = () => (
-            <React.StrictMode>
-                <motion.div onTap={() => tap()} />
-            </React.StrictMode>
-        )
+        const Component = () => <motion.div onTap={() => tap()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -89,11 +80,7 @@ describe("tap", () => {
         window.removeEventListener = removeEventListener
 
         const tap = jest.fn()
-        const Component = () => (
-            <React.StrictMode>
-                <motion.div onTap={() => tap()} />
-            </React.StrictMode>
-        )
+        const Component = () => <motion.div onTap={() => tap()} />
 
         const { container, rerender, unmount } = render(<Component />)
         rerender(<Component />)
@@ -183,16 +170,14 @@ describe("tap", () => {
         const tap = jest.fn()
         const promise = new Promise(resolve => {
             const Component = () => (
-                <React.StrictMode>
-                    <MockDrag>
-                        <motion.div drag>
-                            <motion.div
-                                data-testid="tapTarget"
-                                onTap={() => tap()}
-                            />
-                        </motion.div>
-                    </MockDrag>
-                </React.StrictMode>
+                <MockDrag>
+                    <motion.div drag>
+                        <motion.div
+                            data-testid="tapTarget"
+                            onTap={() => tap()}
+                        />
+                    </motion.div>
+                </MockDrag>
             )
 
             const { rerender, getByTestId } = render(<Component />)
@@ -215,16 +200,14 @@ describe("tap", () => {
         const tap = jest.fn()
         const promise = new Promise(resolve => {
             const Component = () => (
-                <React.StrictMode>
-                    <MockDrag>
-                        <motion.div drag>
-                            <motion.div
-                                data-testid="tapTarget"
-                                onTap={() => tap()}
-                            />
-                        </motion.div>
-                    </MockDrag>
-                </React.StrictMode>
+                <MockDrag>
+                    <motion.div drag>
+                        <motion.div
+                            data-testid="tapTarget"
+                            onTap={() => tap()}
+                        />
+                    </motion.div>
+                </MockDrag>
             )
 
             const { rerender, getByTestId } = render(<Component />)
@@ -245,11 +228,7 @@ describe("tap", () => {
 
     test("tap event listeners unset", () => {
         const tap = jest.fn()
-        const Component = () => (
-            <React.StrictMode>
-                <motion.div onTap={() => tap()} />
-            </React.StrictMode>
-        )
+        const Component = () => <motion.div onTap={() => tap()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -276,14 +255,12 @@ describe("tap", () => {
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
             const Component = () => (
-                <React.StrictMode>
-                    <motion.div
-                        initial={{ opacity: 0.5 }}
-                        transition={{ type: false }}
-                        whileTap={{ opacity: 1 }}
-                        style={{ opacity }}
-                    />
-                </React.StrictMode>
+                <motion.div
+                    initial={{ opacity: 0.5 }}
+                    transition={{ type: false }}
+                    whileTap={{ opacity: 1 }}
+                    style={{ opacity }}
+                />
             )
 
             let container: any
@@ -318,16 +295,14 @@ describe("tap", () => {
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
             const Component = () => (
-                <React.StrictMode>
-                    <motion.div whileTap="pressed">
-                        <motion.div
-                            data-testid="child"
-                            variants={{ pressed: { opacity: 1 } }}
-                            style={{ opacity }}
-                            transition={{ type: false }}
-                        />
-                    </motion.div>
-                </React.StrictMode>
+                <motion.div whileTap="pressed">
+                    <motion.div
+                        data-testid="child"
+                        variants={{ pressed: { opacity: 1 } }}
+                        style={{ opacity }}
+                        transition={{ type: false }}
+                    />
+                </motion.div>
             )
 
             let getByTestId: any
@@ -410,15 +385,13 @@ describe("tap", () => {
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
             const Component = () => (
-                <React.StrictMode>
-                    <motion.div
-                        initial={{ opacity: 0.5 }}
-                        transition={{ type: false }}
-                        whileHover={{ opacity: 0.75 }}
-                        whileTap={{ opacity: 1 }}
-                        style={{ opacity }}
-                    />
-                </React.StrictMode>
+                <motion.div
+                    initial={{ opacity: 0.5 }}
+                    transition={{ type: false }}
+                    whileHover={{ opacity: 0.75 }}
+                    whileTap={{ opacity: 1 }}
+                    style={{ opacity }}
+                />
             )
 
             const { container, rerender } = render(<Component />)
@@ -481,16 +454,14 @@ describe("tap", () => {
             const logOpacity = () => opacityHistory.push(opacity.get())
             const Component = ({ isActive }: { isActive: boolean }) => {
                 return (
-                    <React.StrictMode>
-                        <motion.div
-                            initial={{ opacity: isActive ? 1 : 0.5 }}
-                            animate={{ opacity: isActive ? 1 : 0.5 }}
-                            whileHover={{ opacity: isActive ? 1 : 0.75 }}
-                            whileTap={{ opacity: 1 }}
-                            transition={{ type: false }}
-                            style={{ opacity }}
-                        />
-                    </React.StrictMode>
+                    <motion.div
+                        initial={{ opacity: isActive ? 1 : 0.5 }}
+                        animate={{ opacity: isActive ? 1 : 0.5 }}
+                        whileHover={{ opacity: isActive ? 1 : 0.75 }}
+                        whileTap={{ opacity: 1 }}
+                        transition={{ type: false }}
+                        style={{ opacity }}
+                    />
                 )
             }
 

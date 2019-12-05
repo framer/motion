@@ -1,5 +1,4 @@
-import "../../../jest.setup"
-import { render } from "@testing-library/react"
+import { render } from "../../../jest.setup"
 import * as React from "react"
 import { useMaxTimes } from "../use-max-times"
 

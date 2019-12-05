@@ -1,5 +1,5 @@
-import "../../../jest.setup"
-import { render, act } from "@testing-library/react"
+import { render } from "../../../jest.setup"
+import { act } from "@testing-library/react"
 import { motion } from "../"
 import * as React from "react"
 import { Variants } from "../../types"
@@ -246,20 +246,18 @@ describe("animate prop as variant", () => {
 
             act(() => {
                 render(
-                    <React.StrictMode>
-                        <motion.div
-                            variants={variants}
-                            initial="hidden"
-                            animate="visible"
-                        >
-                            <motion.div>
-                                <motion.div
-                                    variants={variants}
-                                    style={{ opacity }}
-                                />
-                            </motion.div>
+                    <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <motion.div>
+                            <motion.div
+                                variants={variants}
+                                style={{ opacity }}
+                            />
                         </motion.div>
-                    </React.StrictMode>
+                    </motion.div>
                 )
             })
 
@@ -280,22 +278,20 @@ describe("animate prop as variant", () => {
 
             act(() => {
                 render(
-                    <React.StrictMode>
-                        <motion.div
-                            variants={variants}
-                            initial="hidden"
-                            animate="visible"
-                            transition={{ duration: 1, when: "afterChildren" }}
-                            style={{ opacity }}
-                        >
-                            <motion.div>
-                                <motion.div
-                                    variants={variants}
-                                    transition={{ duration: 1 }}
-                                />
-                            </motion.div>
+                    <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 1, when: "afterChildren" }}
+                        style={{ opacity }}
+                    >
+                        <motion.div>
+                            <motion.div
+                                variants={variants}
+                                transition={{ duration: 1 }}
+                            />
                         </motion.div>
-                    </React.StrictMode>
+                    </motion.div>
                 )
             })
 

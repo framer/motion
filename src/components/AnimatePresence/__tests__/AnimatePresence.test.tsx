@@ -1,6 +1,5 @@
-import "../../../../jest.setup"
+import { render } from "../../../../jest.setup"
 import * as React from "react"
-import { render } from "@testing-library/react"
 import { AnimatePresence, motion } from "../../.."
 import { motionValue } from "../../../value"
 import { act } from "react-dom/test-utils"

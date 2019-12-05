@@ -1,5 +1,5 @@
-import "../../../jest.setup"
-import { render, fireEvent } from "@testing-library/react"
+import { render } from "../../../jest.setup"
+import { fireEvent } from "@testing-library/react"
 import { motion } from "../"
 import * as React from "react"
 import styled from "styled-components"
@@ -333,11 +333,7 @@ describe("motion component rendering and styles", () => {
 
     it("it can render inside <StrictMode />", () => {
         function Test() {
-            return (
-                <React.StrictMode>
-                    <motion.div animate={{ x: 100 }} initial={{ x: 0 }} />
-                </React.StrictMode>
-            )
+            return <motion.div animate={{ x: 100 }} initial={{ x: 0 }} />
         }
 
         const { container, rerender } = render(<Test />)
@@ -348,26 +344,24 @@ describe("motion component rendering and styles", () => {
     it("it can render nested components inside <StrictMode />", () => {
         function Test() {
             return (
-                <React.StrictMode>
-                    <motion.div
-                        animate="visible"
-                        initial="parent"
+                <motion.div
+                    animate="visible"
+                    initial="parent"
+                    variants={{
+                        visible: { y: 0 },
+                        hidden: { y: 5 },
+                    }}
+                >
+                    <motion.span
+                        //animate={useAnimation()}
+                        //initial="hidden"
+                        initial="child"
                         variants={{
                             visible: { y: 0 },
                             hidden: { y: 5 },
                         }}
-                    >
-                        <motion.span
-                            //animate={useAnimation()}
-                            //initial="hidden"
-                            initial="child"
-                            variants={{
-                                visible: { y: 0 },
-                                hidden: { y: 5 },
-                            }}
-                        />
-                    </motion.div>
-                </React.StrictMode>
+                    />
+                </motion.div>
             )
         }
 
