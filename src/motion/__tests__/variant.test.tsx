@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { act } from "@testing-library/react"
+import { act } from "react-dom/test-utils"
 import { motion } from "../"
 import * as React from "react"
 import { Variants } from "../../types"

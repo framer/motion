@@ -1,7 +1,7 @@
 import * as React from "react"
 import sync from "framesync"
 import { MotionPlugins } from "../../motion/context/MotionPluginContext"
-import { act } from "@testing-library/react"
+import { act } from "react-dom/test-utils"
 import { fireEvent } from "@testing-library/dom"
 
 export type Point = {

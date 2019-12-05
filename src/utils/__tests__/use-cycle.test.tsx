@@ -1,5 +1,6 @@
 import { render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
+import { act } from "react-dom/test-utils"
 import * as React from "react"
 import { useCycle } from "../use-cycle"
 
@@ -9,15 +10,30 @@ describe("useCycle", () => {
 
         const Component = () => {
             const [latest, cycle] = useCycle(1, 2, 3, 4)
-            results.push(latest)
+            React.useEffect(
+                () => {
+                    results.push(latest)
+                },
+                [latest]
+            )
+
             return <div onClick={() => cycle()} />
         }
 
         const { container } = render(<Component />)
-        fireEvent.click(container.firstChild as Element)
-        fireEvent.click(container.firstChild as Element)
-        fireEvent.click(container.firstChild as Element)
-        fireEvent.click(container.firstChild as Element)
+
+        act(() => {
+            fireEvent.click(container.firstChild as Element)
+        })
+        act(() => {
+            fireEvent.click(container.firstChild as Element)
+        })
+        act(() => {
+            fireEvent.click(container.firstChild as Element)
+        })
+        act(() => {
+            fireEvent.click(container.firstChild as Element)
+        })
 
         expect(results).toEqual([1, 2, 3, 4, 1])
     })
