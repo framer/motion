@@ -2,7 +2,7 @@ import { useRef, useEffect } from "react"
 import { Target, Transition, TargetAndTransition } from "../types"
 import { ValueAnimationControls } from "./ValueAnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
-import { shallowCompare } from "../utils/use-inline"
+import { shallowCompare } from "../utils/shallow-compare"
 
 export const hasUpdated = (
     prev: string | number | any[],
