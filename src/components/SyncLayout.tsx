@@ -2,7 +2,7 @@ import * as React from "react"
 import { createContext } from "react"
 import { useForceUpdate } from "../utils/use-force-update"
 
-export type SyncLayout = () => void
+type SyncLayout = () => void
 
 interface SyncLayoutProps {
     children: React.ReactNode
