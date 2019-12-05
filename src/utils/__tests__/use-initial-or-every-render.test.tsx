@@ -43,35 +43,35 @@ describe("useInitialOrEveryRender", () => {
         expect(callbackHistory).toEqual([true, false, false])
     })
 
-    // test("to run callback on every render if isInitialOnly is falsy", () => {
-    //     let callbackHistory: boolean[] = []
+    test("to run callback on every render if isInitialOnly is falsy", () => {
+        let callbackHistory: boolean[] = []
 
-    //     const Component = () => {
-    //         const callbackRan = React.useRef(false)
-    //         useInitialOrEveryRender(() => (callbackRan.current = true))
+        const Component = () => {
+            const callbackRan = React.useRef(false)
+            useInitialOrEveryRender(() => (callbackRan.current = true))
 
-    //         React.useEffect(() => {
-    //             callbackHistory.push(callbackRan.current)
-    //             callbackRan.current = false
-    //         })
+            React.useEffect(() => {
+                callbackHistory.push(callbackRan.current)
+                callbackRan.current = false
+            })
 
-    //         return null
-    //     }
+            return null
+        }
 
-    //     let rerender: any
+        let rerender: any
 
-    //     act(() => {
-    //         rerender = render(<Component />).rerender
-    //     })
+        act(() => {
+            rerender = render(<Component />).rerender
+        })
 
-    //     act(() => {
-    //         rerender(<Component />)
-    //     })
+        act(() => {
+            rerender(<Component />)
+        })
 
-    //     act(() => {
-    //         rerender(<Component />)
-    //     })
+        act(() => {
+            rerender(<Component />)
+        })
 
-    //     expect(callbackHistory).toEqual([true, true, true])
-    // })
+        expect(callbackHistory).toEqual([true, true, true])
+    })
 })
