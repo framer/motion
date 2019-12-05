@@ -4,24 +4,20 @@ import { useState } from "react"
 import { wrap } from "@popmotion/popcorn"
 
 const variants = {
-    enter: (delta: number) => {
-        return {
-            x: delta > 0 ? 1000 : -1000,
-            opacity: 0,
-        }
-    },
+    enter: (delta: number) => ({
+        x: delta > 0 ? 1000 : -1000,
+        opacity: 0,
+    }),
     center: {
         zIndex: 1,
         x: 0,
         opacity: 1,
     },
-    exit: (delta: number) => {
-        return {
-            zIndex: 0,
-            x: delta < 0 ? 1000 : -1000,
-            opacity: 0,
-        }
-    },
+    exit: (delta: number) => ({
+        zIndex: 0,
+        x: delta < 0 ? 1000 : -1000,
+        opacity: 0,
+    }),
 }
 
 const Image = ({ src, paginate, delta }) => (
@@ -60,7 +56,7 @@ export const App = () => {
 
     return (
         <div className="example-container">
-            <AnimatePresence custom={delta}>
+            <AnimatePresence initial={false} custom={delta}>
                 <Image
                     delta={delta}
                     paginate={paginate}
