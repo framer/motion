@@ -1,9 +1,8 @@
 import * as React from "react"
 import { useState } from "react"
-import "../../../jest.setup"
+import { render } from "../../../jest.setup"
 import { motion } from "../../"
 import { motionValue, MotionValue } from "../../value"
-import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import sync from "framesync"
 import { Constraints } from "../use-drag"
@@ -440,6 +439,43 @@ describe("dragging", () => {
         })
 
         return expect(promise).resolves.toEqual([0, 20])
+    })
+
+    test("block drag propagation release velocity", async () => {
+        const promise = new Promise(resolve => {
+            const childX = motionValue(0)
+            const parentX = motionValue(0)
+            const Component = () => (
+                <MockDrag>
+                    <motion.div drag="x" style={{ x: parentX }}>
+                        <motion.div
+                            data-testid="child"
+                            drag
+                            style={{ x: childX }}
+                        />
+                    </motion.div>
+                </MockDrag>
+            )
+
+            const { getByTestId, rerender } = render(<Component />)
+            rerender(<Component />)
+
+            const pointer = drag(getByTestId("child")).to(10, 0)
+
+            sync.postRender(() => {
+                pointer.to(20, 0)
+
+                sync.postRender(() => {
+                    pointer.end()
+
+                    setTimeout(() => {
+                        resolve(parentX.get())
+                    }, 50)
+                })
+            })
+        })
+
+        return expect(promise).resolves.toEqual(0)
     })
 
     test("block drag propagation even after parent has been dragged", async () => {

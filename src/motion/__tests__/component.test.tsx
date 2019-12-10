@@ -1,9 +1,9 @@
-import "../../../jest.setup"
-import { render, fireEvent } from "@testing-library/react"
+import { render } from "../../../jest.setup"
+import { fireEvent } from "@testing-library/react"
 import { motion } from "../"
-import { useAnimation } from "../../animation/use-animation"
 import * as React from "react"
 import styled from "styled-components"
+import { act } from "react-dom/test-utils"
 
 describe("motion component rendering and styles", () => {
     it("renders", () => {
@@ -332,28 +332,46 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).not.toHaveAttribute("initial")
     })
 
-    fit("it can render nested components inside <StrictMode />", () => {
+    it("it can render inside <StrictMode />", () => {
+        function Test() {
+            return <motion.div animate={{ x: 100 }} initial={{ x: 0 }} />
+        }
+
+        let container: any
+        let rerender: any
+
+        act(() => {
+            const result = render(<Test />)
+            container = result.container
+            rerender = result.rerender
+        })
+
+        act(() => {
+            rerender(<Test />)
+        })
+
+        expect(container.firstChild).toBeTruthy()
+    })
+
+    it("it can render nested components inside <StrictMode />", () => {
         function Test() {
             return (
-                <React.StrictMode>
-                    <motion.div
-                        animate="visible"
-                        initial="hidden"
+                <motion.div
+                    animate="visible"
+                    initial="parent"
+                    variants={{
+                        visible: { y: 0 },
+                        hidden: { y: 5 },
+                    }}
+                >
+                    <motion.span
+                        initial="child"
                         variants={{
                             visible: { y: 0 },
                             hidden: { y: 5 },
                         }}
-                    >
-                        <motion.span
-                            animate={useAnimation()}
-                            initial="hidden"
-                            variants={{
-                                visible: { y: 0 },
-                                hidden: { y: 5 },
-                            }}
-                        />
-                    </motion.div>
-                </React.StrictMode>
+                    />
+                </motion.div>
             )
         }
 

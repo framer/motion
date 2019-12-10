@@ -57,11 +57,15 @@ export const layoutSync = {
     [StepName.Prepare]: createUseSyncEffect(StepName.Prepare),
     [StepName.Read]: createUseSyncEffect(StepName.Read),
     [StepName.Render]: createUseSyncEffect(StepName.Render),
+    flush: flushAllJobs,
 }
 
 // TODO: If we ever make this a public hook, add a check within `createUseSyncEffect` that, in development mode,
 // adds a useEffect to check if there's any remaining jobs and throw an error that we must add the `useLayoutSync`
 // hook to every component that schedules a job.
+// TODO: This can be made concurrent-safe by enforcing this hook returns the layoutSync API with a component-specific ID or instance.
+// Then whenever layout sync methods are called, if they are called more than once before an update we can overwrite any previously
+// unflushed callbacks rather than adding them to the queue. Currently we call this in `getSnapshotBeforeUpdate` so is unneccessary.
 export function useLayoutSync() {
     return useLayoutEffect(flushAllJobs)
 }

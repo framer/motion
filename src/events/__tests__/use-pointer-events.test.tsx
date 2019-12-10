@@ -1,6 +1,5 @@
-import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/dom"
-import { render } from "@testing-library/react"
 import * as React from "react"
 import { usePointerEvent } from "../use-pointer-event"
 import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"

@@ -2,7 +2,7 @@ import * as React from "react"
 import { useMemo, useRef, useEffect, RefObject } from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
-import { useMaxTimes } from "../../utils/use-max-times"
+import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
@@ -130,13 +130,10 @@ export const useMotionContext = (
 
     // Set initial state. If this is a static component (ie in Framer canvas), respond to updates
     // in `initial`.
-    useMaxTimes(
-        () => {
-            const initialToApply = initialState || parentContext.initial
-            initialToApply && controls.apply(initialToApply)
-        },
-        isStatic ? Infinity : 1
-    )
+    useInitialOrEveryRender(() => {
+        const initialToApply = initialState || parentContext.initial
+        initialToApply && controls.apply(initialToApply)
+    }, !isStatic)
 
     useEffect(() => {
         hasMounted.current = true

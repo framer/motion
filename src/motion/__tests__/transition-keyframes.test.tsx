@@ -1,5 +1,4 @@
-import "../../../jest.setup"
-import { render } from "@testing-library/react"
+import { render } from "../../../jest.setup"
 import { motion } from ".."
 import { hasUpdated } from "../../animation/use-animate-prop"
 import * as React from "react"

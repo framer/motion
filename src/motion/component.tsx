@@ -89,11 +89,13 @@ export const createMotionComponent = <P extends {}>({
 
         return (
             <>
-                <Mount innerRef={ref} values={values} isStatic={isStatic} />
-                {functionality}
                 <MotionContext.Provider value={context}>
                     {renderedComponent}
                 </MotionContext.Provider>
+                <>
+                    <Mount innerRef={ref} values={values} isStatic={isStatic} />
+                    {functionality}
+                </>
             </>
         )
     }

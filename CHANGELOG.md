@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.6.18] Unreleased
+
+### Fixed
+
+-   Various `StrictMode`-related bugs including `layoutTransition` origin calculation.
+-   Only applying drag constraints during a `useEffect` to allow render-triggered animations a chance to start (thereby blocking the application of constraints).
+
 ## [1.6.17] 2019-11-21
 
 ### Added

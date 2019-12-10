@@ -1,11 +1,11 @@
 import * as React from "react"
 import { motion } from "../../"
-import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
-import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
 import { drag, MockDrag } from "../../behaviours/__tests__/utils"
 import sync from "framesync"
+import { act } from "react-dom/test-utils"
 
 function mockWhenFirstArgumentIs(
     original: (...args: any[]) => any,
@@ -263,17 +263,24 @@ describe("tap", () => {
                 />
             )
 
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
+            let container: any
+            act(() => {
+                const { container: componentContainer } = render(<Component />)
+                container = componentContainer
+            })
 
             logOpacity() // 0.5
 
-            // Trigger mouse down
-            fireEvent.mouseDown(container.firstChild as Element)
+            act(() => {
+                // Trigger mouse down
+                fireEvent.mouseDown(container.firstChild as Element)
+            })
             logOpacity() // 1
 
-            // Trigger mouse up
-            fireEvent.mouseUp(container.firstChild as Element)
+            act(() => {
+                // Trigger mouse up
+                fireEvent.mouseUp(container.firstChild as Element)
+            })
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -298,17 +305,26 @@ describe("tap", () => {
                 </motion.div>
             )
 
-            const { getByTestId, rerender } = render(<Component />)
-            rerender(<Component />)
+            let getByTestId: any
+
+            act(() => {
+                const { getByTestId: byId } = render(<Component />)
+                getByTestId = byId
+            })
 
             logOpacity() // 0.5
 
-            // Trigger mouse down
-            fireEvent.mouseDown(getByTestId("child") as Element)
+            act(() => {
+                // Trigger mouse down
+                fireEvent.mouseDown(getByTestId("child") as Element)
+            })
+
             logOpacity() // 1
 
-            // Trigger mouse up
-            fireEvent.mouseUp(getByTestId("child") as Element)
+            act(() => {
+                // Trigger mouse up
+                fireEvent.mouseUp(getByTestId("child") as Element)
+            })
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -328,7 +344,7 @@ describe("tap", () => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
-            console.log("===================== tap gesture")
+
             const Component = () => (
                 <motion.div whileTap="pressed">
                     <motion.div

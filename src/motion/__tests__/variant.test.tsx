@@ -1,5 +1,5 @@
-import "../../../jest.setup"
-import { render } from "@testing-library/react"
+import { render } from "../../../jest.setup"
+import { act } from "react-dom/test-utils"
 import { motion } from "../"
 import * as React from "react"
 import { Variants } from "../../types"
@@ -232,6 +232,73 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toBe(1)
+    })
+
+    test("when: beforeChildren works correctly", async () => {
+        const promise = new Promise(resolve => {
+            const opacity = motionValue(0.1)
+            const variants: Variants = {
+                visible: {
+                    opacity: 1,
+                    transition: { duration: 1, when: "beforeChildren" },
+                },
+            }
+
+            act(() => {
+                render(
+                    <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <motion.div>
+                            <motion.div
+                                variants={variants}
+                                style={{ opacity }}
+                            />
+                        </motion.div>
+                    </motion.div>
+                )
+            })
+
+            setTimeout(() => resolve(opacity.get()), 200)
+        })
+
+        return expect(promise).resolves.toBe(0.1)
+    })
+
+    test("when: afterChildren works correctly", async () => {
+        const promise = new Promise(resolve => {
+            const opacity = motionValue(0.1)
+            const variants: Variants = {
+                visible: {
+                    opacity: 1,
+                },
+            }
+
+            act(() => {
+                render(
+                    <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ duration: 1, when: "afterChildren" }}
+                        style={{ opacity }}
+                    >
+                        <motion.div>
+                            <motion.div
+                                variants={variants}
+                                transition={{ duration: 1 }}
+                            />
+                        </motion.div>
+                    </motion.div>
+                )
+            })
+
+            setTimeout(() => resolve(opacity.get()), 200)
+        })
+
+        return expect(promise).resolves.toBe(0.1)
     })
 
     test("components without variants are transparent to stagger order", async () => {

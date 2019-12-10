@@ -1,6 +1,6 @@
 import * as React from "react"
 import { motion } from "../../"
-import { render } from "@testing-library/react"
+import { render } from "../../../jest.setup"
 import { MockDrag, asyncDrag } from "../../behaviours/__tests__/utils"
 import sync from "framesync"
 
