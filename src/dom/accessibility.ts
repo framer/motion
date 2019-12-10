@@ -4,11 +4,16 @@ import { motionValue } from "../value"
 export const prefersReducedMotion = motionValue<boolean | null>(null)
 
 if (typeof window !== "undefined") {
-    const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)")
+    if (window.matchMedia) {
+        const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)")
 
-    const setReducedMotionPreferences = () =>
-        prefersReducedMotion.set(motionMediaQuery.matches)
+        const setReducedMotionPreferences = () =>
+            prefersReducedMotion.set(motionMediaQuery.matches)
 
-    motionMediaQuery.addListener(setReducedMotionPreferences)
-    setReducedMotionPreferences()
+        motionMediaQuery.addListener(setReducedMotionPreferences)
+
+        setReducedMotionPreferences()
+    } else {
+        prefersReducedMotion.set(false)
+    }
 }
