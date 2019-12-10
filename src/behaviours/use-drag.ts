@@ -522,6 +522,7 @@ export function useDrag(
                 // and it'd open another route for us to code-split.
                 transition: {
                     type: "inertia",
+                    forceMotion: true,
                     velocity: dragMomentum ? velocity[axis] : 0,
                     bounceStiffness,
                     bounceDamping,

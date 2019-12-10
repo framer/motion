@@ -2,6 +2,14 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.0] Unreleased
+
+### Added
+
+-   Support for `prefers-reduced-motion`.
+
+### Added
+
 ## [1.6.18] 2019-12-10
 
 ### Fixed

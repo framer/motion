@@ -392,6 +392,13 @@ export interface Orchestration {
      * @public
      */
     staggerDirection?: 1 | -1
+
+    /**
+     * Force motion on this animation. This will override any contextual accessibility settings.
+     *
+     * @internal
+     */
+    forceMotion?: boolean
 }
 
 /**

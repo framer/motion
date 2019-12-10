@@ -9,6 +9,7 @@ import {
     MotionContextProps,
 } from "../motion/context/MotionContext"
 import { useConstant } from "../utils/use-constant"
+import { useReducedMotion } from "../utils/use-reduced-motion"
 
 /**
  * Creates an imperative set of controls to trigger animations.
@@ -31,6 +32,9 @@ export function useValueAnimationControls<P>(
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
     const controls = useConstant(() => new ValueAnimationControls<P>(config))
+    const isReducedMotion = useReducedMotion()
+
+    controls.setReducedMotion(isReducedMotion)
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     if (
