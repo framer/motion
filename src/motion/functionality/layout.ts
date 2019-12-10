@@ -204,6 +204,8 @@ export class LayoutAnimation extends React.Component<
 > {
     static contextType = SyncLayoutContext
 
+    // Measure the current state of the DOM before it's updated, and schedule checks to see
+    // if it's changed as a result of a React render.
     getSnapshotBeforeUpdate() {
         const { innerRef, positionTransition, values, controls } = this.props
         const element = innerRef.current
