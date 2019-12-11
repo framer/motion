@@ -4,6 +4,11 @@ import { MotionContext } from "../motion/context/MotionContext"
 
 interface Props {
     children?: any
+
+    /**
+     * Can be used to explicitly set whether we're in reduced motion mode. Set
+     * as undefined to resume device detection.
+     */
     enabled?: boolean | undefined
 }
 
