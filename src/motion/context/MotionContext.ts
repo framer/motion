@@ -22,7 +22,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
-    isReducedMotion: boolean | undefined
+    isReducedMotion?: boolean | undefined
 }
 
 /**
