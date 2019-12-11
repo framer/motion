@@ -1,5 +1,8 @@
 import { useEffect, useState, useContext } from "react"
-import { prefersReducedMotion, shouldReduceMotion } from "../dom/accessibility"
+import {
+    prefersReducedMotion,
+    determineShouldReduceMotion,
+} from "../dom/accessibility"
 import { MotionContext } from "../motion/context/MotionContext"
 
 /**
@@ -12,9 +15,9 @@ import { MotionContext } from "../motion/context/MotionContext"
  *
  * ```jsx
  * export function MyComponent() {
- *   const isReducedMotion = useReducedMotion()
+ *   const shouldReduceMotion = useReducedMotion()
  *
- *   return <video autoplay={!isReducedMotion} />
+ *   return <video autoplay={!shouldReduceMotion} />
  * }
  * ```
  *
@@ -22,23 +25,23 @@ import { MotionContext } from "../motion/context/MotionContext"
  */
 export function useReducedMotion() {
     const { reducedMotion } = useContext(MotionContext)
-    const [isReducedMotion, setIsReducedMotion] = useState(
-        shouldReduceMotion(prefersReducedMotion.get(), reducedMotion)
+    const [shouldReduceMotion, setShouldReduceMotion] = useState(
+        determineShouldReduceMotion(prefersReducedMotion.get(), reducedMotion)
     )
 
     useEffect(
         () => {
             return prefersReducedMotion.onChange(() => {
-                setIsReducedMotion(
-                    shouldReduceMotion(
+                setShouldReduceMotion(
+                    determineShouldReduceMotion(
                         prefersReducedMotion.get(),
                         reducedMotion
                     )
                 )
             })
         },
-        [setIsReducedMotion, reducedMotion.force, reducedMotion.detect]
+        [setShouldReduceMotion, reducedMotion.force, reducedMotion.detect]
     )
 
-    return isReducedMotion
+    return shouldReduceMotion
 }

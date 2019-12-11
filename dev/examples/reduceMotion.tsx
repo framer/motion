@@ -10,8 +10,8 @@ const style = {
 
 export const App = () => {
     const [isVisible, setIsVisible] = React.useState(false)
-    const isReducedMotion = useReducedMotion()
-    const transition = isReducedMotion ? { type: false } : { duration: 1 }
+    const shouldReduceMotion = useReducedMotion()
+    const transition = shouldReduceMotion ? { type: false } : { duration: 1 }
     const variants = {
         visible: { opacity: 1, transition },
         hidden: { opacity: 0, transition },

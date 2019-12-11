@@ -32,7 +32,7 @@ if (typeof window !== "undefined") {
     }
 }
 
-export function shouldReduceMotion(
+export function determineShouldReduceMotion(
     prefersReduced: boolean | null,
     { detect, force }: ReducedMotionOptions
 ): boolean {
