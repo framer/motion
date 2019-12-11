@@ -34,7 +34,9 @@ if (typeof window !== "undefined") {
 
 export function determineShouldReduceMotion(
     prefersReduced: boolean | null,
-    { detect, force }: ReducedMotionOptions
+    isReducedMotion: boolean | undefined
 ): boolean {
-    return force ? true : detect && Boolean(prefersReduced)
+    return isReducedMotion !== undefined
+        ? isReducedMotion
+        : Boolean(prefersReduced)
 }

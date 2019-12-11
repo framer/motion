@@ -22,7 +22,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
-    reducedMotion: { force: boolean; detect: boolean }
+    isReducedMotion: boolean | undefined
 }
 
 /**
@@ -30,7 +30,6 @@ export interface MotionContextProps {
  */
 export const MotionContext = React.createContext<MotionContextProps>({
     static: false,
-    reducedMotion: { force: false, detect: true },
 })
 
 const isVariantLabel = (v?: MotionProps["animate"]): v is string | string[] => {
@@ -123,7 +122,7 @@ export const useMotionContext = (
             animate: targetAnimate,
             values,
             hasMounted,
-            reducedMotion: parentContext.reducedMotion,
+            isReducedMotion: parentContext.isReducedMotion,
         }),
         [initialDependency, animateDependency]
     )

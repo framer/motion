@@ -4,8 +4,7 @@ import { MotionContext } from "../motion/context/MotionContext"
 
 interface Props {
     children?: any
-    detect?: boolean
-    force?: boolean
+    enabled?: boolean | undefined
 }
 
 /**
@@ -14,16 +13,12 @@ interface Props {
  *
  * @internal
  */
-export function ReducedMotion({
-    children,
-    force = false,
-    detect = true,
-}: Props) {
+export function ReducedMotion({ children, enabled }: Props) {
     let context = useContext(MotionContext)
 
     context = {
         ...context,
-        reducedMotion: { force, detect },
+        isReducedMotion: enabled,
     }
 
     return (

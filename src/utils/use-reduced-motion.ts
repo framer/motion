@@ -30,9 +30,9 @@ import { MotionContext } from "../motion/context/MotionContext"
  * @return boolean
  */
 export function useReducedMotion() {
-    const { reducedMotion } = useContext(MotionContext)
+    const { isReducedMotion } = useContext(MotionContext)
     const [shouldReduceMotion, setShouldReduceMotion] = useState(
-        determineShouldReduceMotion(prefersReducedMotion.get(), reducedMotion)
+        determineShouldReduceMotion(prefersReducedMotion.get(), isReducedMotion)
     )
 
     useEffect(
@@ -41,12 +41,12 @@ export function useReducedMotion() {
                 setShouldReduceMotion(
                     determineShouldReduceMotion(
                         prefersReducedMotion.get(),
-                        reducedMotion
+                        isReducedMotion
                     )
                 )
             })
         },
-        [setShouldReduceMotion, reducedMotion.force, reducedMotion.detect]
+        [setShouldReduceMotion, isReducedMotion]
     )
 
     return shouldReduceMotion
