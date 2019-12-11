@@ -8,6 +8,12 @@ interface Props {
     force?: boolean
 }
 
+/**
+ * Define accessibility options for a tree. Can be used to force the tree into Reduced Motion mode,
+ * or disable device detection.
+ *
+ * @internal
+ */
 export function ReducedMotion({
     children,
     force = false,

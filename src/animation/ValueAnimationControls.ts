@@ -152,8 +152,6 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      */
     private readValueFromSource: ReadValueFromSource
 
-    private isReducedMotion: boolean
-
     /**
      * A chance
      */
@@ -195,14 +193,6 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
      */
     setDefaultTransition(transition?: Transition) {
         if (transition) this.defaultTransition = transition
-    }
-
-    /**
-     * Set whether to use reduced motion
-     * @param isReducedMotion - `true` to set reduced motion
-     */
-    setReducedMotion(isReducedMotion = false) {
-        this.isReducedMotion = isReducedMotion
     }
 
     /**
@@ -531,14 +521,6 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
             if (this.isAnimating.has(key)) continue
             this.isAnimating.add(key)
-
-            // Make transition instant if we're in reduced transition mode.
-            if (
-                this.isReducedMotion &&
-                (transition && transition.forceMotion !== true)
-            ) {
-                transition = { type: false }
-            }
 
             animations.push(
                 startAnimation(key, value, valueTarget, {
