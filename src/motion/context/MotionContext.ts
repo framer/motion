@@ -6,17 +6,12 @@ import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
-import { ReducedMotionOptions } from "dom/accessibility"
 
 export interface ExitProps {
     initial?: false | VariantLabels
     isExiting?: boolean
     onExitComplete?: () => void
     custom?: any
-}
-
-export interface ReducedMotionContext extends ReducedMotionOptions {
-    automaticallyDisableAnimations?: boolean
 }
 
 export interface MotionContextProps {
@@ -27,7 +22,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
-    reducedMotion: ReducedMotionContext
+    reducedMotion: { force: boolean; detect: boolean }
 }
 
 /**
