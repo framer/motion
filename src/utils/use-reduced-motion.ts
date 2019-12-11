@@ -14,10 +14,16 @@ import { MotionContext } from "../motion/context/MotionContext"
  * It will actively respond to changes and re-render your components with the latest setting.
  *
  * ```jsx
- * export function MyComponent() {
+ * export function Sidebar({ isOpem }) {
  *   const shouldReduceMotion = useReducedMotion()
+ *   const closedX = shouldReduceMotion ? 0 : "-100%"
  *
- *   return <video autoplay={!shouldReduceMotion} />
+ *   return (
+ *     <motion.div animate={{
+ *       opacity: isOpen ? 1 : 0,
+ *       x: isOpen ? 0 : closedX
+ *     }} />
+ *   )
  * }
  * ```
  *

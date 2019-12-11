@@ -17,9 +17,12 @@ export const App = () => {
         hidden: { opacity: 0, transition },
     }
 
-    React.useEffect(() => {
-        setTimeout(() => setIsVisible(!isVisible), 1500)
-    })
+    React.useEffect(
+        () => {
+            setTimeout(() => setIsVisible(!isVisible), 1500)
+        },
+        [isVisible]
+    )
 
     return (
         <motion.div animate={isVisible ? "visible" : "hidden"} initial={false}>
