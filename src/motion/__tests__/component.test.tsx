@@ -3,7 +3,6 @@ import { fireEvent } from "@testing-library/react"
 import { motion } from "../"
 import * as React from "react"
 import styled from "styled-components"
-import { act } from "react-dom/test-utils"
 
 describe("motion component rendering and styles", () => {
     it("renders", () => {
@@ -337,18 +336,9 @@ describe("motion component rendering and styles", () => {
             return <motion.div animate={{ x: 100 }} initial={{ x: 0 }} />
         }
 
-        let container: any
-        let rerender: any
+        const { container, rerender } = render(<Test />)
 
-        act(() => {
-            const result = render(<Test />)
-            container = result.container
-            rerender = result.rerender
-        })
-
-        act(() => {
-            rerender(<Test />)
-        })
+        rerender(<Test />)
 
         expect(container.firstChild).toBeTruthy()
     })

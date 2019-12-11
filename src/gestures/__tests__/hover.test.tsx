@@ -5,7 +5,6 @@ import { fireEvent } from "@testing-library/react"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"
-import { act } from "react-dom/test-utils"
 
 describe("hover", () => {
     test("hover event listeners fire", () => {
@@ -15,10 +14,7 @@ describe("hover", () => {
             <motion.div onHoverStart={hoverIn} onHoverEnd={hoverOut} />
         )
 
-        let container: any
-        act(() => {
-            container = render(<Component />).container
-        })
+        const { container } = render(<Component />)
         mouseEnter(container.firstChild as Element)
         mouseLeave(container.firstChild as Element)
 
@@ -101,16 +97,10 @@ describe("hover", () => {
                 </motion.div>
             )
 
-            let container: any
-            act(() => {
-                const { container: componentContainer } = render(<Component />)
-                container = componentContainer
-            })
+            const { container } = render(<Component />)
 
-            act(() => {
-                mouseEnter(container.firstChild as Element)
-                resolve(opacity.get())
-            })
+            mouseEnter(container.firstChild as Element)
+            resolve(opacity.get())
         })
 
         return expect(promise).resolves.toBe(target)
@@ -136,21 +126,15 @@ describe("hover", () => {
                 />
             )
 
-            let container: any
-            act(() => {
-                const { container: componentContainer } = render(
-                    <Component onAnimationComplete={onComplete} />
-                )
-                container = componentContainer
-            })
+            const { container } = render(
+                <Component onAnimationComplete={onComplete} />
+            )
 
-            act(() => {
-                mouseEnter(container.firstChild as Element)
-                setTimeout(() => {
-                    hasMousedOut = true
-                    mouseLeave(container.firstChild as Element)
-                }, 10)
-            })
+            mouseEnter(container.firstChild as Element)
+            setTimeout(() => {
+                hasMousedOut = true
+                mouseLeave(container.firstChild as Element)
+            }, 10)
         })
 
         return expect(promise).resolves.toBe(1)

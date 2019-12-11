@@ -2,7 +2,6 @@ import { render } from "../../../../jest.setup"
 import * as React from "react"
 import { AnimatePresence, motion } from "../../.."
 import { motionValue } from "../../../value"
-import { act } from "react-dom/test-utils"
 
 describe("AnimatePresence", () => {
     test("Does nothing on initial render by default", async () => {
@@ -323,15 +322,9 @@ describe("AnimatePresence", () => {
                 )
             }
 
-            let rerender: any
+            const { rerender } = render(<Component isVisible />)
 
-            act(() => {
-                rerender = render(<Component isVisible />).rerender
-            })
-
-            act(() => {
-                rerender(<Component isVisible={false} />)
-            })
+            rerender(<Component isVisible={false} />)
 
             resolve(opacity.get())
         })
