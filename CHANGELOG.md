@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.0] 2019-12-12
+
+### Added
+
+-   Support for `prefers-reduced-motion` via the `useReducedMotion` hook.
+
 ## [1.6.18] 2019-12-10
 
 ### Fixed

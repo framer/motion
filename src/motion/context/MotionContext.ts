@@ -22,6 +22,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
+    isReducedMotion?: boolean | undefined
 }
 
 /**
@@ -121,8 +122,9 @@ export const useMotionContext = (
             animate: targetAnimate,
             values,
             hasMounted,
+            isReducedMotion: parentContext.isReducedMotion,
         }),
-        [initialDependency, animateDependency]
+        [initialDependency, animateDependency, parentContext.isReducedMotion]
     )
 
     // Update the `static` property every render. This is unlikely to change but also essentially free.
