@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useContext } from "react"
+import { useContext, useMemo } from "react"
 import { MotionContext } from "../motion/context/MotionContext"
 
 interface Props {
@@ -21,10 +21,13 @@ interface Props {
 export function ReducedMotion({ children, enabled }: Props) {
     let context = useContext(MotionContext)
 
-    context = {
-        ...context,
-        isReducedMotion: enabled,
-    }
+    context = useMemo(
+        () => ({
+            ...context,
+            isReducedMotion: enabled,
+        }),
+        [enabled]
+    )
 
     return (
         <MotionContext.Provider value={context}>

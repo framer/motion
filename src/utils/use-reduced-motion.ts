@@ -37,12 +37,9 @@ export function useReducedMotion() {
 
     useEffect(
         () => {
-            return prefersReducedMotion.onChange(() => {
+            return prefersReducedMotion.onChange(v => {
                 setShouldReduceMotion(
-                    determineShouldReduceMotion(
-                        prefersReducedMotion.get(),
-                        isReducedMotion
-                    )
+                    determineShouldReduceMotion(v, isReducedMotion)
                 )
             })
         },
