@@ -22,7 +22,7 @@ export function determineShouldReduceMotion(
     prefersReduced: boolean | null,
     isReducedMotion: boolean | undefined
 ): boolean {
-    return isReducedMotion !== undefined
+    return typeof isReducedMotion === "boolean"
         ? isReducedMotion
         : Boolean(prefersReduced)
 }
