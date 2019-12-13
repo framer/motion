@@ -6,7 +6,7 @@ import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
 
 function testEventsWithRef(fireFunctions: {
-    [key: string]: (element: Element) => boolean
+    [key: string]: (element: Element) => void
 }) {
     const ref = React.createRef<HTMLDivElement>()
     const handlers = {}

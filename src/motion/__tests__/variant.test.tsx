@@ -1,5 +1,4 @@
 import { render } from "../../../jest.setup"
-import { act } from "react-dom/test-utils"
 import { motion } from "../"
 import * as React from "react"
 import { Variants } from "../../types"
@@ -244,22 +243,17 @@ describe("animate prop as variant", () => {
                 },
             }
 
-            act(() => {
-                render(
-                    <motion.div
-                        variants={variants}
-                        initial="hidden"
-                        animate="visible"
-                    >
-                        <motion.div>
-                            <motion.div
-                                variants={variants}
-                                style={{ opacity }}
-                            />
-                        </motion.div>
+            render(
+                <motion.div
+                    variants={variants}
+                    initial="hidden"
+                    animate="visible"
+                >
+                    <motion.div>
+                        <motion.div variants={variants} style={{ opacity }} />
                     </motion.div>
-                )
-            })
+                </motion.div>
+            )
 
             setTimeout(() => resolve(opacity.get()), 200)
         })
@@ -276,24 +270,22 @@ describe("animate prop as variant", () => {
                 },
             }
 
-            act(() => {
-                render(
-                    <motion.div
-                        variants={variants}
-                        initial="hidden"
-                        animate="visible"
-                        transition={{ duration: 1, when: "afterChildren" }}
-                        style={{ opacity }}
-                    >
-                        <motion.div>
-                            <motion.div
-                                variants={variants}
-                                transition={{ duration: 1 }}
-                            />
-                        </motion.div>
+            render(
+                <motion.div
+                    variants={variants}
+                    initial="hidden"
+                    animate="visible"
+                    transition={{ duration: 1, when: "afterChildren" }}
+                    style={{ opacity }}
+                >
+                    <motion.div>
+                        <motion.div
+                            variants={variants}
+                            transition={{ duration: 1 }}
+                        />
                     </motion.div>
-                )
-            })
+                </motion.div>
+            )
 
             setTimeout(() => resolve(opacity.get()), 200)
         })

@@ -1,7 +1,6 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
 import { useInitialOrEveryRender } from "../use-initial-or-every-render"
-import { act } from "@testing-library/react"
 
 describe("useInitialOrEveryRender", () => {
     test("to only run callback on initial render if isInitialOnly is true", () => {
@@ -26,19 +25,11 @@ describe("useInitialOrEveryRender", () => {
             return null
         }
 
-        let rerender: any
+        const { rerender } = render(<Component />)
 
-        act(() => {
-            rerender = render(<Component />).rerender
-        })
+        rerender(<Component />)
 
-        act(() => {
-            rerender(<Component />)
-        })
-
-        act(() => {
-            rerender(<Component />)
-        })
+        rerender(<Component />)
 
         expect(callbackHistory).toEqual([true, false, false])
     })
@@ -58,19 +49,11 @@ describe("useInitialOrEveryRender", () => {
             return null
         }
 
-        let rerender: any
+        const { rerender } = render(<Component />)
 
-        act(() => {
-            rerender = render(<Component />).rerender
-        })
+        rerender(<Component />)
 
-        act(() => {
-            rerender(<Component />)
-        })
-
-        act(() => {
-            rerender(<Component />)
-        })
+        rerender(<Component />)
 
         expect(callbackHistory).toEqual([true, true, true])
     })
