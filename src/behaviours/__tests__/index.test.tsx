@@ -375,40 +375,28 @@ describe("dragging", () => {
     })
 
     test("block drag propagation release velocity", async () => {
-        const promise = new Promise(resolve => {
-            const childX = motionValue(0)
-            const parentX = motionValue(0)
-            const Component = () => (
-                <MockDrag>
-                    <motion.div drag="x" style={{ x: parentX }}>
-                        <motion.div
-                            data-testid="child"
-                            drag
-                            style={{ x: childX }}
-                        />
-                    </motion.div>
-                </MockDrag>
-            )
+        const childX = motionValue(0)
+        const parentX = motionValue(0)
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag="x" style={{ x: parentX }}>
+                    <motion.div
+                        data-testid="child"
+                        drag
+                        style={{ x: childX }}
+                    />
+                </motion.div>
+            </MockDrag>
+        )
 
-            const { getByTestId, rerender } = render(<Component />)
-            rerender(<Component />)
+        const { getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
 
-            const pointer = drag(getByTestId("child")).to(10, 0)
+        const pointer = await drag(getByTestId("child")).to(10, 0)
+        await pointer.to(20, 0)
+        pointer.end()
 
-            sync.postRender(() => {
-                pointer.to(20, 0)
-
-                sync.postRender(() => {
-                    pointer.end()
-
-                    setTimeout(() => {
-                        resolve(parentX.get())
-                    }, 50)
-                })
-            })
-        })
-
-        return expect(promise).resolves.toEqual(0)
+        expect(parentX.get()).toEqual(0)
     })
 
     test("block drag propagation even after parent has been dragged", async () => {

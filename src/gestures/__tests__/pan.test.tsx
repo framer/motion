@@ -7,7 +7,6 @@ import {
     frame,
     deferred,
 } from "../../behaviours/__tests__/utils"
-import sync from "framesync"
 
 describe("pan", () => {
     test("pan handlers aren't frozen at pan session start", async () => {
