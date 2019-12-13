@@ -1,9 +1,14 @@
 import * as React from "react"
 import { motion } from "../../"
-import { render } from "@testing-library/react"
 import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
-import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import {
+    mouseEnter,
+    mouseLeave,
+    mouseDown,
+    mouseUp,
+    render,
+} from "../../../jest.setup"
 import { drag, MockDrag } from "../../behaviours/__tests__/utils"
 
 function mockWhenFirstArgumentIs(
@@ -241,17 +246,17 @@ describe("tap", () => {
                 />
             )
 
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
+            const { container } = render(<Component />)
 
             logOpacity() // 0.5
 
             // Trigger mouse down
-            fireEvent.mouseDown(container.firstChild as Element)
+            mouseDown(container.firstChild as Element)
+
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.mouseUp(container.firstChild as Element)
+            mouseUp(container.firstChild as Element)
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -276,17 +281,17 @@ describe("tap", () => {
                 </motion.div>
             )
 
-            const { getByTestId, rerender } = render(<Component />)
-            rerender(<Component />)
+            const { getByTestId } = render(<Component />)
 
             logOpacity() // 0.5
 
             // Trigger mouse down
-            fireEvent.mouseDown(getByTestId("child") as Element)
+            mouseDown(getByTestId("child") as Element)
+
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.mouseUp(getByTestId("child") as Element)
+            mouseUp(getByTestId("child") as Element)
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -306,7 +311,7 @@ describe("tap", () => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
-            console.log("===================== tap gesture")
+
             const Component = () => (
                 <motion.div whileTap="pressed">
                     <motion.div

@@ -22,10 +22,11 @@ const itemVariants = {
 
 const listVariants = {
     open: {
-        transition: { staggerChildren: 0.07, delayChildren: 0.2 },
+        transition: { staggerChildren: 0.07, when: "beforeChildren" },
     },
     closed: {
         transition: {
+            when: "afterChildren",
             staggerChildren: 0.3,
             staggerDirection: -1,
         },
@@ -35,9 +36,11 @@ const listVariants = {
 export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
-    setTimeout(() => {
-        setVisible(!isVisible)
-    }, 2000)
+    React.useEffect(() => {
+        setTimeout(() => {
+            setVisible(!isVisible)
+        }, 3000)
+    })
 
     return (
         <AnimatePresence initial={false} onRest={() => console.log("rest")}>

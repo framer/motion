@@ -1,7 +1,7 @@
-import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
-import { render, fireEvent } from "@testing-library/react"
+import { fireEvent } from "@testing-library/react"
 import { motionValue } from "../../value"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"
@@ -14,9 +14,7 @@ describe("hover", () => {
             <motion.div onHoverStart={hoverIn} onHoverEnd={hoverOut} />
         )
 
-        const { container, rerender } = render(<Component />)
-        rerender(<Component />)
-
+        const { container } = render(<Component />)
         mouseEnter(container.firstChild as Element)
         mouseLeave(container.firstChild as Element)
 
@@ -99,8 +97,7 @@ describe("hover", () => {
                 </motion.div>
             )
 
-            const { container, rerender } = render(<Component />)
-            rerender(<Component />)
+            const { container } = render(<Component />)
 
             mouseEnter(container.firstChild as Element)
             resolve(opacity.get())
@@ -129,13 +126,11 @@ describe("hover", () => {
                 />
             )
 
-            const { container, rerender } = render(
+            const { container } = render(
                 <Component onAnimationComplete={onComplete} />
             )
-            rerender(<Component onAnimationComplete={onComplete} />)
 
             mouseEnter(container.firstChild as Element)
-
             setTimeout(() => {
                 hasMousedOut = true
                 mouseLeave(container.firstChild as Element)

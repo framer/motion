@@ -23,7 +23,6 @@ export const App = () => {
                                 transition: { duration: 0.2 },
                             }}
                             onDrag={(e, { offset }) => {
-                                console.log(offset.x)
                                 offset.x > 50 &&
                                     setNotifications(remove(notifications, id))
                             }}

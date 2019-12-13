@@ -5,7 +5,7 @@ import { wrap } from "@popmotion/popcorn"
 
 const variants = {
     enter: (delta: number) => ({
-        x: delta < 0 ? 1000 : -1000,
+        x: delta > 0 ? 1000 : -1000,
         opacity: 0,
     }),
     center: {
@@ -32,8 +32,7 @@ const Image = ({ src, paginate, delta }) => (
         dragConstraints={{ left: 0, right: 0 }}
         dragElastic={1}
         transition={{
-            x: { type: "spring", stiffness: 300, damping: 200 },
-            opacity: { duration: 0.2 },
+            duration: 2,
         }}
         onDragEnd={(e, { offset, velocity }) => {
             const swipe = Math.abs(offset.x) * velocity.x
@@ -65,12 +64,12 @@ export const App = () => {
                     key={page}
                 />
             </AnimatePresence>
-            <motion.div className="next" onClick={() => paginate(1)}>
+            <div className="next" onClick={() => paginate(1)}>
                 {">"}
-            </motion.div>
-            <motion.div className="prev" onClick={() => paginate(-1)}>
+            </div>
+            <div className="prev" onClick={() => paginate(-1)}>
                 {"<"}
-            </motion.div>
+            </div>
             <style>{`
 .example-container {
   width: 100vw;

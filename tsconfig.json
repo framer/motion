@@ -37,7 +37,7 @@
         "node_modules",
         "build",
         "**/__tests__/*",
-        "jest.setup.ts",
+        "jest.setup.tsx",
         "dev",
         "types",
         "dev/examples.framer",

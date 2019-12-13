@@ -2,6 +2,19 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.0] 2019-12-12
+
+### Added
+
+-   Support for `prefers-reduced-motion` via the `useReducedMotion` hook.
+
+## [1.6.18] 2019-12-10
+
+### Fixed
+
+-   Various `StrictMode`-related bugs including `layoutTransition` origin calculation.
+-   Only applying drag constraints during a `useEffect` to allow render-triggered animations a chance to start (thereby blocking the application of constraints).
+
 ## [1.6.17] 2019-11-21
 
 ### Added

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { render } from "@testing-library/react"
+import { render } from "../../../jest.setup"
 import { isNodeOrChild } from "../utils/is-node-or-child"
 
 describe("isNodeOrChild", () => {

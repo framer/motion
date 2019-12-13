@@ -1,17 +1,14 @@
-import { RefObject, useContext } from "react"
 import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
-import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
-import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
-import { MotionValuesMap } from "../utils/use-motion-values"
 import { SyncLayoutContext } from "../../components/SyncLayout"
-import { layoutSync, useLayoutSync } from "../../utils/use-layout-sync"
+import { layoutSync } from "../../utils/use-layout-sync"
 import { TargetAndTransition, Transition } from "../../types"
 import { isHTMLElement } from "../../utils/is-html-element"
 import { underDampedSpring } from "../../animation/utils/default-transitions"
 import { syncRenderSession } from "../../dom/sync-render-session"
 import styler from "stylefire"
+import React from "react"
 
 interface Layout {
     top: number
@@ -56,8 +53,8 @@ const defaultLayoutTransition = {
 
 const defaultPositionTransition = underDampedSpring()
 
-function getDefaultLayoutTransition(positionOnly: boolean) {
-    return positionOnly ? defaultPositionTransition : defaultLayoutTransition
+function getDefaultLayoutTransition(isPositionOnly: boolean) {
+    return isPositionOnly ? defaultPositionTransition : defaultLayoutTransition
 }
 
 function isResolver(
@@ -184,157 +181,175 @@ function readPositionStyle(element: HTMLElement) {
 function getLayoutType(
     prev: string | null,
     next: string | null,
-    positionOnly: boolean
+    isPositionOnly: boolean
 ): LayoutType {
-    return positionOnly && prev === next ? offset : boundingBox
+    return isPositionOnly && prev === next ? offset : boundingBox
 }
 
 function isSizeKey(key: string) {
     return key === "width" || key === "height"
 }
 
-function useLayoutAnimation(
-    ref: RefObject<Element | HTMLElement | null>,
-    values: MotionValuesMap,
-    controls: ValueAnimationControls,
-    layoutTransition: boolean | Transition | ResolveLayoutTransition,
-    positionOnly: boolean = false
-) {
-    // Allow any parent SyncLayoutContext components to force-update this component
-    useContext(SyncLayoutContext)
+interface LayoutProps {
+    positionTransition?: boolean
+    layoutTransition?: boolean
+}
 
-    const element = ref.current
+function getTransition({ layoutTransition, positionTransition }: LayoutProps) {
+    return layoutTransition || positionTransition
+}
 
-    useLayoutSync()
+export class LayoutAnimation extends React.Component<
+    FunctionalProps & LayoutProps
+> {
+    static contextType = SyncLayoutContext
 
-    // If we don't have a HTML element we can early return here. We've already called all the hooks.
-    if (!isHTMLElement(element)) return
+    // Measure the current state of the DOM before it's updated, and schedule checks to see
+    // if it's changed as a result of a React render.
+    getSnapshotBeforeUpdate() {
+        const { innerRef, positionTransition, values, controls } = this.props
+        const element = innerRef.current
 
-    // Keep track of the position style prop. Ideally we'd compare offset as this is uneffected by
-    // the same transforms that we want to use to performantly animate the layout. But if position changes,
-    // for example between "static" and "fixed", we can no longer rely on the offset and need
-    // to use the visual bounding box.
-    const prevPosition = readPositionStyle(element)
+        if (!isHTMLElement(element)) return
 
-    const prev: VisualInfo = {
-        offset: offset.measure(element),
-        boundingBox: boundingBox.measure(element),
-    }
+        const layoutTransition = getTransition(this.props) as boolean
+        const isPositionOnly = !!positionTransition
 
-    // Keep track of any existing transforms so we can reapply them after measuring the target bounding box.
-    let transform: string | null = ""
-
-    let next: VisualInfo
-    let compare: LayoutType
-
-    // We split the unsetting, read and reapplication of the `transform` style prop into
-    // different steps via useSyncEffect. Multiple components might all be doing the same
-    // thing and by splitting these jobs and flushing them in batches we prevent layout thrashing.
-    layoutSync.prepare(() => {
-        // Unset the transform of all layoutTransition components so we can accurately measure
-        // the target bounding box
-        transform = element.style.transform
-        element.style.transform = ""
-    })
-
-    layoutSync.read(() => {
-        // Read the target VisualInfo of all layoutTransition components
-        next = {
+        const positionStyle = readPositionStyle(element)
+        const prev: VisualInfo = {
             offset: offset.measure(element),
             boundingBox: boundingBox.measure(element),
         }
 
-        const nextPosition = readPositionStyle(element)
-        compare = getLayoutType(prevPosition, nextPosition, positionOnly)
-    })
+        let transform: string | null
+        let next: VisualInfo
+        let compare: LayoutType
 
-    layoutSync.render(() => {
-        // Reverse the layout delta of all newly laid-out layoutTransition components into their
-        // prev visual state and then animate them into their new one using transforms.
-        const prevLayout = compare.getLayout(prev)
-        const nextLayout = compare.getLayout(next)
-        const delta = calcDelta(prevLayout, nextLayout)
-        const hasAnyChanged = delta.x || delta.y || delta.width || delta.height
+        // We split the unsetting, read and reapplication of the `transform` style prop into
+        // different steps via useSyncEffect. Multiple components might all be doing the same
+        // thing and by splitting these jobs and flushing them in batches we prevent layout thrashing.
+        layoutSync.prepare(() => {
+            // Unset the transform of all layoutTransition components so we can accurately measure
+            // the target bounding box
+            transform = element.style.transform
+            element.style.transform = ""
+        })
 
-        if (!hasAnyChanged) {
-            // If layout hasn't changed, reapply the transform and get out of here.
-            transform && (element.style.transform = transform)
-            return
-        }
-
-        styler(element).set({ originX: delta.originX, originY: delta.originY })
-        syncRenderSession.open()
-
-        const target: TargetAndTransition = {}
-        const transition: Transition = {}
-
-        const transitionDefinition = isResolver(layoutTransition)
-            ? layoutTransition({ delta })
-            : layoutTransition
-
-        function makeTransition(
-            layoutKey: keyof Layout,
-            transformKey: string,
-            targetValue: number,
-            visualOrigin: number
-        ) {
-            // If this dimension hasn't changed, early return
-            const deltaKey = isSizeKey(layoutKey) ? layoutKey : transformKey
-            if (!delta[deltaKey]) return
-
-            const baseTransition =
-                typeof transitionDefinition === "boolean"
-                    ? { ...getDefaultLayoutTransition(positionOnly) }
-                    : transitionDefinition
-
-            const value = values.get(transformKey, targetValue)
-            const velocity = value.getVelocity()
-
-            transition[transformKey] = baseTransition[transformKey]
-                ? { ...baseTransition[transformKey] }
-                : { ...baseTransition }
-
-            if (transition[transformKey].velocity === undefined) {
-                transition[transformKey].velocity = velocity || 0
+        layoutSync.read(() => {
+            // Read the target VisualInfo of all layoutTransition components
+            next = {
+                offset: offset.measure(element),
+                boundingBox: boundingBox.measure(element),
             }
 
-            // The target value of all transforms is the default value of that prop (ie x = 0, scaleX = 1)
-            // This is because we're inverting the layout change with `transform` and then animating to `transform: none`
-            target[transformKey] = targetValue
+            const nextPosition = readPositionStyle(element)
+            compare = getLayoutType(positionStyle, nextPosition, isPositionOnly)
+        })
 
-            const offsetToApply =
-                !isSizeKey(layoutKey) && compare === offset ? value.get() : 0
+        layoutSync.render(() => {
+            // Reverse the layout delta of all newly laid-out layoutTransition components into their
+            // prev visual state and then animate them into their new one using transforms.
+            const prevLayout = compare.getLayout(prev)
+            const nextLayout = compare.getLayout(next)
+            const delta = calcDelta(prevLayout, nextLayout)
+            const hasAnyChanged =
+                delta.x || delta.y || delta.width || delta.height
 
-            value.set(visualOrigin + offsetToApply)
-        }
+            if (!hasAnyChanged) {
+                // If layout hasn't changed, reapply the transform and get out of here.
+                transform && (element.style.transform = transform)
+                return
+            }
 
-        makeTransition("left", "x", 0, delta.x)
-        makeTransition("top", "y", 0, delta.y)
+            styler(element).set({
+                originX: delta.originX,
+                originY: delta.originY,
+            })
+            syncRenderSession.open()
 
-        if (!positionOnly) {
-            makeTransition(
-                "width",
-                "scaleX",
-                1,
-                prev.boundingBox.width / next.boundingBox.width
-            )
-            makeTransition(
-                "height",
-                "scaleY",
-                1,
-                prev.boundingBox.height / next.boundingBox.height
-            )
-        }
+            const target: TargetAndTransition = {}
+            const transition: Transition = {}
 
-        target.transition = transition
+            const transitionDefinition = isResolver(layoutTransition)
+                ? layoutTransition({ delta })
+                : layoutTransition
 
-        // Only start the transition if `transitionDefinition` isn't `false`. Otherwise we want
-        // to leave the values in their newly-inverted state and let the user cope with the rest.
-        transitionDefinition && controls.start(target)
+            function makeTransition(
+                layoutKey: keyof Layout,
+                transformKey: string,
+                targetValue: number,
+                visualOrigin: number
+            ) {
+                // If this dimension hasn't changed, early return
+                const deltaKey = isSizeKey(layoutKey) ? layoutKey : transformKey
+                if (!delta[deltaKey]) return
 
-        // Force a render to ensure there's no visual flickering
-        syncRenderSession.flush()
-    })
+                const baseTransition =
+                    typeof transitionDefinition === "boolean"
+                        ? { ...getDefaultLayoutTransition(isPositionOnly) }
+                        : transitionDefinition
+
+                const value = values.get(transformKey, targetValue)
+                const velocity = value.getVelocity()
+
+                transition[transformKey] = baseTransition[transformKey]
+                    ? { ...baseTransition[transformKey] }
+                    : { ...baseTransition }
+
+                if (transition[transformKey].velocity === undefined) {
+                    transition[transformKey].velocity = velocity || 0
+                }
+
+                // The target value of all transforms is the default value of that prop (ie x = 0, scaleX = 1)
+                // This is because we're inverting the layout change with `transform` and then animating to `transform: none`
+                target[transformKey] = targetValue
+
+                const offsetToApply =
+                    !isSizeKey(layoutKey) && compare === offset
+                        ? value.get()
+                        : 0
+
+                value.set(visualOrigin + offsetToApply)
+            }
+
+            makeTransition("left", "x", 0, delta.x)
+            makeTransition("top", "y", 0, delta.y)
+
+            if (!isPositionOnly) {
+                makeTransition(
+                    "width",
+                    "scaleX",
+                    1,
+                    prev.boundingBox.width / next.boundingBox.width
+                )
+                makeTransition(
+                    "height",
+                    "scaleY",
+                    1,
+                    prev.boundingBox.height / next.boundingBox.height
+                )
+            }
+
+            target.transition = transition
+
+            // Only start the transition if `transitionDefinition` isn't `false`. Otherwise we want
+            // to leave the values in their newly-inverted state and let the user cope with the rest.
+            transitionDefinition && controls.start(target)
+
+            // Force a render to ensure there's no visual flickering
+            syncRenderSession.flush()
+        })
+
+        return null
+    }
+
+    componentDidUpdate() {
+        layoutSync.flush()
+    }
+
+    render() {
+        return null
+    }
 }
 
 export const Layout: FunctionalComponentDefinition = {
@@ -350,21 +365,5 @@ export const Layout: FunctionalComponentDefinition = {
             !!(positionTransition || layoutTransition)
         )
     },
-    Component: makeRenderlessComponent(
-        ({
-            innerRef,
-            controls,
-            values,
-            positionTransition,
-            layoutTransition,
-        }: FunctionalProps) => {
-            useLayoutAnimation(
-                innerRef,
-                values,
-                controls,
-                (layoutTransition as any) || (positionTransition as any),
-                !!positionTransition
-            )
-        }
-    ),
+    Component: LayoutAnimation,
 }

@@ -1,13 +1,12 @@
-import { mouseEnter, mouseLeave } from "../../../jest.setup"
+import { mouseEnter, mouseLeave, render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/dom"
-import { render } from "@testing-library/react"
 import * as React from "react"
 import { usePointerEvent } from "../use-pointer-event"
 import { enableTouchEvents, enablePointerEvents } from "./utils/event-helpers"
 import { fireCustomEvent } from "./utils/fire-event"
 
 function testEventsWithRef(fireFunctions: {
-    [key: string]: (element: Element) => boolean
+    [key: string]: (element: Element) => void
 }) {
     const ref = React.createRef<HTMLDivElement>()
     const handlers = {}

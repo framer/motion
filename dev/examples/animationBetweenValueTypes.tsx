@@ -1,6 +1,5 @@
 import * as React from "react"
-import { useEffect, useState } from "react"
-import { motion, useAnimation } from "@framer"
+import { motion } from "@framer"
 
 const style = {
     width: 100,

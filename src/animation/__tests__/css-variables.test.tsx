@@ -1,5 +1,4 @@
-import "../../../jest.setup"
-import { render } from "@testing-library/react"
+import { render } from "../../../jest.setup"
 import { motion } from "../../motion"
 import { parseCSSVariable } from "../../dom/css-variables-conversion"
 import * as React from "react"

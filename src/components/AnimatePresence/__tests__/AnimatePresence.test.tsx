@@ -1,6 +1,5 @@
-import "../../../../jest.setup"
+import { render } from "../../../../jest.setup"
 import * as React from "react"
-import { render } from "@testing-library/react"
 import { AnimatePresence, motion } from "../../.."
 import { motionValue } from "../../../value"
 
@@ -324,8 +323,7 @@ describe("AnimatePresence", () => {
             }
 
             const { rerender } = render(<Component isVisible />)
-            rerender(<Component isVisible />)
-            rerender(<Component isVisible={false} />)
+
             rerender(<Component isVisible={false} />)
 
             resolve(opacity.get())

@@ -306,6 +306,7 @@ export function useDrag(
     const applyConstraintsToPoint = (constraints: Constraints) => {
         return bothAxis(axis => {
             const axisPoint = point[axis]
+
             axisPoint &&
                 !axisPoint.isAnimating() &&
                 applyConstraints(axis, axisPoint, constraints, 0)
@@ -315,16 +316,19 @@ export function useDrag(
     // On mount, if our bounding box is a ref, we need to resolve the constraints
     // and immediately apply them to our point.
     useEffect(() => {
-        if (!constraintsNeedResolution) return
-        const constraints = calculateConstraintsFromDom(
-            dragConstraints as RefObject<Element>,
-            ref,
-            point,
-            transformPagePoint
-        )
+        if (constraintsNeedResolution) {
+            const constraints = calculateConstraintsFromDom(
+                dragConstraints as RefObject<Element>,
+                ref,
+                point,
+                transformPagePoint
+            )
 
-        applyConstraintsToPoint(constraints)
-        recordBoxInfo(constraints)
+            applyConstraintsToPoint(constraints)
+            recordBoxInfo(constraints)
+        } else if (!dragStatus.isDragging && dragStatus.constraints) {
+            applyConstraintsToPoint(dragStatus.constraints)
+        }
     }, [])
 
     // If `dragConstraints` is set to `false` or `Constraints`, set constraints immediately.
@@ -340,15 +344,6 @@ export function useDrag(
         const defaultValue = axis === "x" ? _dragValueX : _dragValueY
         point[axis] = defaultValue || values.get(axis, 0)
     })
-
-    // Apply constraints immediately, even before render, if our constraints are a plain object.
-    if (
-        !dragStatus.isDragging &&
-        dragStatus.constraints &&
-        !constraintsNeedResolution
-    ) {
-        applyConstraintsToPoint(dragStatus.constraints)
-    }
 
     // Add additional information to the `PanInfo` object before passing it to drag listeners.
     function convertPanToDrag(info: PanInfo) {
@@ -421,8 +416,6 @@ export function useDrag(
         event: MouseEvent | TouchEvent | PointerEvent,
         info: PanInfo
     ) {
-        dragStatus.isDragging = true
-
         // Resolve the constraints again in case anything has changed in the meantime.
         if (constraintsNeedResolution) {
             dragStatus.constraints = calculateConstraintsFromDom(
@@ -454,6 +447,7 @@ export function useDrag(
             }
         }
 
+        dragStatus.isDragging = true
         dragStatus.currentDirection = null
 
         const { onDragStart } = handlersRef.current

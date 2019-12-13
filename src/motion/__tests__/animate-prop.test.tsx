@@ -1,5 +1,4 @@
-import "../../../jest.setup"
-import { render } from "@testing-library/react"
+import { render } from "../../../jest.setup"
 import { motion } from "../"
 import * as React from "react"
 import { motionValue } from "../../value"
@@ -393,7 +392,11 @@ describe("animate prop as object", () => {
             const Component = () => (
                 <motion.div
                     initial={false}
-                    animate={{ x: 20, y: 20, transitionEnd: { x: 10, z: 20 } }}
+                    animate={{
+                        x: 20,
+                        y: 20,
+                        transitionEnd: { x: 10, z: 20 },
+                    }}
                     transition={{ type: false }}
                     style={{ x, y, z }}
                     onAnimationComplete={onComplete}
