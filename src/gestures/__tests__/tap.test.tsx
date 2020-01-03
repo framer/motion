@@ -10,7 +10,6 @@ import {
     render,
 } from "../../../jest.setup"
 import { drag, MockDrag } from "../../behaviours/__tests__/utils"
-import sync from "framesync"
 
 function mockWhenFirstArgumentIs(
     original: (...args: any[]) => any,
@@ -173,62 +172,41 @@ describe("tap", () => {
 
     test("tap event listeners doesn't fire if parent is being dragged", async () => {
         const tap = jest.fn()
-        const promise = new Promise(resolve => {
-            const Component = () => (
-                <MockDrag>
-                    <motion.div drag>
-                        <motion.div
-                            data-testid="tapTarget"
-                            onTap={() => tap()}
-                        />
-                    </motion.div>
-                </MockDrag>
-            )
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag>
+                    <motion.div data-testid="tapTarget" onTap={() => tap()} />
+                </motion.div>
+            </MockDrag>
+        )
 
-            const { rerender, getByTestId } = render(<Component />)
-            rerender(<Component />)
+        const { rerender, getByTestId } = render(<Component />)
+        rerender(<Component />)
 
-            const pointer = drag(getByTestId("tapTarget")).to(1, 1)
-            sync.postRender(() => {
-                pointer.to(10, 10)
-                sync.postRender(() => {
-                    pointer.end()
-                    resolve(tap)
-                })
-            })
-        })
+        const pointer = await drag(getByTestId("tapTarget")).to(1, 1)
+        await pointer.to(10, 10)
+        pointer.end()
 
-        return expect(promise).resolves.toBeCalledTimes(0)
+        expect(tap).toBeCalledTimes(0)
     })
 
     test("tap event listeners do fire if parent is being dragged only a little bit", async () => {
         const tap = jest.fn()
-        const promise = new Promise(resolve => {
-            const Component = () => (
-                <MockDrag>
-                    <motion.div drag>
-                        <motion.div
-                            data-testid="tapTarget"
-                            onTap={() => tap()}
-                        />
-                    </motion.div>
-                </MockDrag>
-            )
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag>
+                    <motion.div data-testid="tapTarget" onTap={() => tap()} />
+                </motion.div>
+            </MockDrag>
+        )
 
-            const { rerender, getByTestId } = render(<Component />)
-            rerender(<Component />)
+        const { rerender, getByTestId } = render(<Component />)
+        rerender(<Component />)
 
-            const pointer = drag(getByTestId("tapTarget"))
-            sync.postRender(() => {
-                pointer.to(0.5, 0.5)
-                sync.postRender(() => {
-                    pointer.end()
-                    resolve(tap)
-                })
-            })
-        })
+        const pointer = await drag(getByTestId("tapTarget")).to(0.5, 0.5)
+        pointer.end()
 
-        return expect(promise).resolves.toBeCalledTimes(1)
+        expect(tap).toBeCalledTimes(1)
     })
 
     test("tap event listeners unset", () => {
