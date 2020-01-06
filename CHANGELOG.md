@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.1] 2020-01-Unreleased
+
+### Added
+
+-   Added support for `TargetResolver` in `exit` types.
+
 ## [1.7.0] 2019-12-12
 
 ### Added
