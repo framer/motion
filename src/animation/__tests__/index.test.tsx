@@ -180,16 +180,16 @@ describe("useAnimation", () => {
 
     it("respects initial even if passed controls", () => {
         const Component = () => {
-            const animation = useAnimation()
+            const controls = useAnimation()
             return (
                 <motion.div
-                    controls={animation}
+                    animate={controls}
                     initial={{ x: 10, background: "#fff" }}
                 />
             )
         }
         const { container } = render(<Component />)
-        expect(container.firstChild).toHaveStyle(
+        expect(container.firstChild as HTMLElement).toHaveStyle(
             "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
         )
     })
