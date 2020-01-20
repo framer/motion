@@ -178,6 +178,22 @@ describe("useAnimation", () => {
         ])
     })
 
+    it("respects initial even if passed controls", () => {
+        const Component = () => {
+            const animation = useAnimation()
+            return (
+                <motion.div
+                    controls={animation}
+                    initial={{ x: 10, background: "#fff" }}
+                />
+            )
+        }
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(10px) translateZ(0); background: rgb(255, 255, 255)"
+        )
+    })
+
     test("propagates variants to children even if not variants set on controlling component", async () => {
         const promise = new Promise(resolve => {
             const Component = () => {

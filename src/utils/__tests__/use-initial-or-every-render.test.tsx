@@ -12,15 +12,10 @@ describe("useInitialOrEveryRender", () => {
             useInitialOrEveryRender(() => (callbackRan.current = true), true)
 
             React.useEffect(() => {
-                console.log("run component effect", hasMounted.current)
                 callbackHistory.push(callbackRan.current)
                 callbackRan.current = false
                 hasMounted.current = true
             })
-
-            React.useEffect(() => {
-                console.log("initial render")
-            }, [])
 
             return null
         }
