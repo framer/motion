@@ -55,12 +55,12 @@ publish: clean bootstrap
 
 test: bootstrap $(API_TARGET)
 	yarn test
-	tsc dist/framer-motion.d.ts
+	yarn tsc dist/framer-motion.d.ts
 
 test-ci: bootstrap $(API_TARGET)
 	mkdir -p $(TEST_REPORT_PATH)
 	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test-ci --ci --reporters=jest-junit
-	tsc dist/framer-motion.d.ts
+	yarn tsc dist/framer-motion.d.ts
 
 lint: bootstrap
 	yarn lint
@@ -69,10 +69,10 @@ pretty: bootstrap
 	prettier --write */**/*.tsx */**/*.ts
 
 $(DECLARATION_TARGET): $(SOURCE_FILES)
-	tsc -p . --emitDeclarationOnly --removeComments false
+	yarn tsc -p . --emitDeclarationOnly --removeComments false
 
 $(API_TARGET) $(API_REVIEW_FILE): api-extractor.json $(DECLARATION_TARGET)
-	api-extractor run -l
+	yarn api-extractor run -l
 
 api: bootstrap $(API_TARGET)
 
