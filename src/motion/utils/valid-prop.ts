@@ -20,6 +20,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "static",
     "positionTransition",
     "layoutTransition",
+    "onAnimationStart",
     "onAnimationComplete",
     "onUpdate",
     "onDragStart",
