@@ -2,11 +2,15 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.7.1] 2020-01-Unreleased
+## [1.7.1] 2020-01-20
 
 ### Added
 
 -   Added support for `TargetResolver` in `exit` types.
+
+### Fixed
+
+-   Filtering `onAnimationStart` from forwarded props.
 
 ## [1.7.0] 2019-12-12
 
