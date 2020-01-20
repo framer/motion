@@ -120,4 +120,21 @@ describe("static prop", () => {
 
         return expect(promise).resolves.toBe(0)
     })
+
+    it("accepts externally-defined transition", () => {
+        const transition = {
+            staggerChildren: 10,
+            when: "beforeChildren",
+            staggerDirection: 1,
+        }
+        function Test() {
+            return <motion.div transition={transition} />
+        }
+
+        const { container, rerender } = render(<Test />)
+
+        rerender(<Test />)
+
+        expect(container.firstChild).toBeTruthy()
+    })
 })

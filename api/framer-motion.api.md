@@ -60,7 +60,8 @@ export const animationControls: () => AnimationControls;
 // @public (undocumented)
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
-    exit?: TargetAndTransition | VariantLabels;
+    // Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
+    exit?: TargetAndTransition | VariantLabels | TargetResolver;
     // @beta
     layoutTransition?: Transition | boolean | ResolveLayoutTransition;
     positionTransition?: Transition | boolean | ResolveLayoutTransition;
@@ -490,7 +491,7 @@ export interface Orchestration {
     delay?: number;
     delayChildren?: number;
     staggerChildren?: number;
-    staggerDirection?: 1 | -1;
+    staggerDirection?: number;
     when?: false | "beforeChildren" | "afterChildren" | string;
 }
 
@@ -528,6 +529,12 @@ export namespace Point {
     const // @beta (undocumented)
     relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
 }
+
+// Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "ReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export function ReducedMotion({ children, enabled }: Props): JSX.Element;
 
 // @public (undocumented)
 export interface RelayoutInfo {
@@ -689,6 +696,9 @@ export function useMotionValue<T>(initial: T): MotionValue<T>;
 export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
 
 // @public
+export function useReducedMotion(): boolean;
+
+// @public
 export function useSpring(source: MotionValue | number, config?: SpringProps): MotionValue<any>;
 
 // Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
@@ -713,8 +723,6 @@ export function useViewportScroll(): ScrollMotionValues;
 // @public (undocumented)
 export type ValueTarget = SingleTarget | KeyframesTarget;
 
-// Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
 export type Variant = TargetAndTransition | TargetResolver;
 

@@ -391,7 +391,7 @@ export interface Orchestration {
      *
      * @public
      */
-    staggerDirection?: 1 | -1
+    staggerDirection?: number
 }
 
 /**

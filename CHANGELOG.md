@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.2] 2020-01-20
+
+### Fixed
+
+-   Changed definition of `staggerDirection` from `1 | -1` to `number` to reduce the need for casting externally-defined types.
+
 ## [1.7.1] 2020-01-20
 
 ### Added
