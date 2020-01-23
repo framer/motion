@@ -38,7 +38,7 @@ function pointFromMouse({ pageX = 0, pageY = 0 }: MouseEvent | PointerEvent) {
     return { x: pageX, y: pageY }
 }
 
-function extractEventInfo(
+export function extractEventInfo(
     event: MouseEvent | TouchEvent | PointerEvent
 ): EventInfo {
     return {

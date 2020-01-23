@@ -4,7 +4,7 @@ import { render } from "../../../jest.setup"
 import { motion } from "../../"
 import { motionValue, MotionValue } from "../../value"
 import { fireEvent } from "@testing-library/dom"
-import { Constraints } from "../use-drag"
+import { Constraints } from "../DragControls"
 import { MockDrag, Point, drag, frame, deferred, sleep } from "./utils"
 
 describe("dragging", () => {
