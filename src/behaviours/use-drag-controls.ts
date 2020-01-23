@@ -1,5 +1,5 @@
 import { useConstant } from "../utils/use-constant"
-import { DragControls } from "./DragControls"
+import { DragControls, DragControlOptions } from "./DragControls"
 
 export class GroupDragControls {
     private componentControls = new Set<DragControls>()
@@ -10,9 +10,23 @@ export class GroupDragControls {
         return () => this.componentControls.delete(controls)
     }
 
-    start(event: MouseEvent | TouchEvent | PointerEvent) {
+    start(
+        event:
+            | React.MouseEvent
+            | React.TouchEvent
+            | React.PointerEvent
+            | MouseEvent
+            | TouchEvent
+            | PointerEvent,
+        options?: DragControlOptions
+    ) {
         // TODO: Add drag options
-        this.componentControls.forEach(controls => controls.start(event))
+        this.componentControls.forEach(controls =>
+            controls.start(
+                (event as React.MouseEvent).nativeEvent || event,
+                options
+            )
+        )
     }
 }
 

@@ -12,10 +12,11 @@ import { supportsTouchEvents } from "../events/utils"
 import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
-import { MotionPlugins } from "motion/context/MotionPluginContext"
+import { MotionPlugins } from "../motion/context/MotionPluginContext"
 import { invariant } from "hey-listen"
 import { mix } from "@popmotion/popcorn"
-import { addDomEvent } from "events/use-dom-event"
+import { addDomEvent } from "../events/use-dom-event"
+import { extractEventInfo } from "../events/event-info"
 
 const noop = (v: any) => v
 
@@ -170,7 +171,12 @@ export class DragControls {
      *
      * @public
      */
-    start(originEvent: AnyPointerEvent) {
+    start(
+        originEvent: AnyPointerEvent,
+        { snapToCursor }: DragControlOptions = {}
+    ) {
+        snapToCursor && this.snapToCursor(originEvent)
+
         const onSessionStart = (event: AnyPointerEvent) => {
             // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
             if (
@@ -223,7 +229,6 @@ export class DragControls {
                 const axisPoint = this.point[axis]
                 if (!axisPoint) return
                 this.origin[axis].set(axisPoint.get())
-                axisPoint.stop()
             })
 
             // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
@@ -317,6 +322,28 @@ export class DragControls {
         if (this.point.y) this.prevConstraintsBox.y = this.point.y.get()
     }
 
+    snapToCursor(event: AnyPointerEvent) {
+        const { transformPagePoint } = this.props
+        const { point } = extractEventInfo(event)
+        const boundingBox = getBoundingBox(this.ref, transformPagePoint)
+        const center = {
+            x: boundingBox.width / 2 + boundingBox.left + window.scrollX,
+            y: boundingBox.height / 2 + boundingBox.top + window.scrollY,
+        }
+        const offset = {
+            x: point.x - center.x,
+            y: point.y - center.y,
+        }
+
+        bothAxis(axis => {
+            const point = this.point[axis]
+            point && this.origin[axis].set(point.get())
+        })
+
+        this.updatePoint("x", offset)
+        this.updatePoint("y", offset)
+    }
+
     setPoint(axis: DragDirection, value: MotionValue<number>) {
         this.point[axis] = value
     }
@@ -334,7 +361,6 @@ export class DragControls {
             this.constraints,
             dragElastic
         )
-
         axisPoint.set(current)
     }
 
