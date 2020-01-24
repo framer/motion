@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.7.3] 2020-01-24
+
+### Fixed
+
+-   Updated `transformTemplate` to provide an empty string if all transform values are default.
+
 ## [1.7.2] 2020-01-20
 
 ### Fixed
