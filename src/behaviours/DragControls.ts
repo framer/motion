@@ -167,13 +167,13 @@ export class DragControls {
      * Start dragging the host component.
      *
      * @param event - The originating pointer event.
-     * @param options - TODO: Allow snapToPointer
+     * @param options -
      *
      * @public
      */
     start(
         originEvent: AnyPointerEvent,
-        { snapToCursor }: DragControlOptions = {}
+        { snapToCursor = false }: DragControlOptions = {}
     ) {
         snapToCursor && this.snapToCursor(originEvent)
 

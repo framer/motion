@@ -8,7 +8,9 @@ export const App = () => {
         <div style={container}>
             <div
                 style={scrubber}
-                onMouseDown={e => dragControls.start(e, { snapToCursor: true })}
+                onMouseDown={e => {
+                    dragControls.start(e, { snapToCursor: true })
+                }}
             />
             <motion.div
                 drag="x"
