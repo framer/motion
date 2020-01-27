@@ -26,6 +26,7 @@ const container: React.CSSProperties = {
     width: 200,
     height: 30,
     position: "relative",
+    background: "rgba(0,0,0,0)",
 }
 
 const scrubber: React.CSSProperties = {
