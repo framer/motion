@@ -143,7 +143,10 @@ export interface SVGMotionProps<T>
     extends SVGAttributesAsMotionValues<T>,
         Omit<MotionProps, "positionTransition"> {}
 
-type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
+/**
+ * @public
+ */
+export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
     PropsWithoutRef<P> & RefAttributes<T>
 >
 

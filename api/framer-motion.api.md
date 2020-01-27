@@ -95,7 +95,6 @@ export interface DraggableProps extends DragHandlers {
         bottom?: number;
         left?: number;
     } | RefObject<Element>;
-    // Warning: (ae-forgotten-export) The symbol "GroupDragControls" needs to be exported by the entry point index.d.ts
     dragControls?: GroupDragControls;
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
@@ -132,7 +131,22 @@ export interface EventInfo {
 }
 
 // @public (undocumented)
+export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
+
+// @public (undocumented)
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
+
+// @public (undocumented)
+export class GroupDragControls {
+    // Warning: (ae-forgotten-export) The symbol "DragControlOptions" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    start(event: React.MouseEvent | React.TouchEvent | React.PointerEvent | MouseEvent | TouchEvent | PointerEvent, options?: DragControlOptions): void;
+    // Warning: (ae-forgotten-export) The symbol "DragControls" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    subscribe(controls: DragControls): () => void;
+}
 
 // @public (undocumented)
 export interface HoverHandlers {
@@ -737,10 +751,6 @@ export type Variants = {
     [key: string]: Variant;
 };
 
-
-// Warnings were encountered during analysis:
-//
-// types/motion/index.d.ts:35:5 - (ae-forgotten-export) The symbol "ForwardRefComponent" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
