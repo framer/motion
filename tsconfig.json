@@ -29,7 +29,8 @@
         "noUnusedLocals": true,
         "noUnusedParameters": true,
         "removeComments": false,
-        "lib": ["es2017", "dom"]
+        "lib": ["es2017", "dom"],
+        "skipLibCheck": true
     },
     "compileOnSave": false,
     "buildOnSave": false,

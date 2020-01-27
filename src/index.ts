@@ -5,6 +5,7 @@ export {
     HTMLMotionProps,
     SVGMotionProps,
     SVGAttributesAsMotionValues,
+    ForwardRefComponent,
 } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
@@ -49,6 +50,10 @@ export {
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./behaviours/types"
+export {
+    useDragControls,
+    GroupDragControls,
+} from "./behaviours/use-drag-controls"
 export {
     Orchestration,
     Tween,

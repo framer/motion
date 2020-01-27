@@ -4,7 +4,6 @@ import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 
 export const gestureProps = [
-    "drag",
     "onPan",
     "onPanStart",
     "onPanEnd",

@@ -3,6 +3,7 @@ import { PanInfo } from "../gestures"
 import { MotionValue } from "../value"
 import { Omit, Inertia } from "../types"
 import { AnimationControls } from "../animation/AnimationControls"
+import { GroupDragControls } from "./use-drag-controls"
 
 /** @public */
 export interface DragHandlers {
@@ -414,4 +415,41 @@ export interface DraggableProps extends DragHandlers {
      * @public
      */
     dragOriginY?: MotionValue<number>
+
+    /**
+     * Usually, dragging is initiated by pressing down on a component and moving it. For some
+     * use-cases, for instance clicking at an arbitrary point on a video scrubber, we
+     * might want to initiate dragging from a different component than the draggable one.
+     *
+     * By creating a `dragControls` using the `useDragControls` hook, we can pass this into
+     * the draggable component's `dragControls` prop. It exposes a `start` method
+     * that can start dragging from pointer events on other components.
+     *
+     * @library
+     *
+     * ```jsx
+     * const dragControls = useDragControls()
+     *
+     * return (
+     *   <>
+     *     <Frame onTapStart={(event) => dragControls.start(event, { snapToCursor: true })} />
+     *     <Frame drag="x" dragControls={dragControls} />
+     *   </>
+     * )
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * const dragControls = useDragControls()
+     *
+     * return (
+     *   <>
+     *     <div onMouseDown={(event) => dragControls.start(event, { snapToCursor: true })} />
+     *     <motion.div drag="x" dragControls={dragControls} />
+     *   </>
+     * )
+     * ```
+     */
+    dragControls?: GroupDragControls
 }

@@ -1,3 +1,5 @@
+import * as React from "react"
+import styler from "stylefire"
 import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
@@ -7,8 +9,6 @@ import { TargetAndTransition, Transition } from "../../types"
 import { isHTMLElement } from "../../utils/is-html-element"
 import { underDampedSpring } from "../../animation/utils/default-transitions"
 import { syncRenderSession } from "../../dom/sync-render-session"
-import styler from "stylefire"
-import React from "react"
 
 interface Layout {
     top: number

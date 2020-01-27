@@ -75,7 +75,7 @@ export const motion = {
      * const MotionComponent = motion.custom<Props>(Component)
      * ```
      *
-     * @param Component
+     * @param Component -
      */
     custom: function custom<Props>(
         Component: string | React.ComponentType<Props>
@@ -143,7 +143,10 @@ export interface SVGMotionProps<T>
     extends SVGAttributesAsMotionValues<T>,
         Omit<MotionProps, "positionTransition"> {}
 
-type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
+/**
+ * @public
+ */
+export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
     PropsWithoutRef<P> & RefAttributes<T>
 >
 

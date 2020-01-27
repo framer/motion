@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.0] 2020-01-27
+
+### Added
+
+-   `useDragControls` allows imperative initiation of a drag gesture.
+
 ## [1.7.3] 2020-01-24
 
 ### Fixed

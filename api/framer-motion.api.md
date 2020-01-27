@@ -7,13 +7,16 @@
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
+import { ForwardRefExoticComponent } from 'react';
 import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { PropsWithoutRef } from 'react';
 import * as React from 'react';
 import { ReactElement } from 'react';
 import { ReactHTML } from 'react';
 import { ReactNode } from 'react';
 import { Ref } from 'react';
+import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
@@ -45,7 +48,7 @@ export class AnimationControls {
     start(definition: AnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // Warning: (ae-forgotten-export) The symbol "ValueAnimationControls" needs to be exported by the entry point index.d.ts
-    // 
+    //
     // @internal
     subscribe(controls: ValueAnimationControls): () => boolean;
     // @internal
@@ -53,7 +56,7 @@ export class AnimationControls {
     }
 
 // Warning: (ae-internal-missing-underscore) The name "animationControls" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
 export const animationControls: () => AnimationControls;
 
@@ -71,7 +74,7 @@ export interface AnimationProps {
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
 export const createMotionComponent: <P extends {}>({ getValueControlsConfig, loadFunctionalityComponents, renderComponent, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
 
@@ -92,6 +95,7 @@ export interface DraggableProps extends DragHandlers {
         bottom?: number;
         left?: number;
     } | RefObject<Element>;
+    dragControls?: GroupDragControls;
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
     dragMomentum?: boolean;
@@ -127,7 +131,22 @@ export interface EventInfo {
 }
 
 // @public (undocumented)
+export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
+
+// @public (undocumented)
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
+
+// @public (undocumented)
+export class GroupDragControls {
+    // Warning: (ae-forgotten-export) The symbol "DragControlOptions" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    start(event: React.MouseEvent | React.TouchEvent | React.PointerEvent | MouseEvent | TouchEvent | PointerEvent, options?: DragControlOptions): void;
+    // Warning: (ae-forgotten-export) The symbol "DragControls" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    subscribe(controls: DragControls): () => void;
+}
 
 // @public (undocumented)
 export interface HoverHandlers {
@@ -139,7 +158,7 @@ export interface HoverHandlers {
 // Warning: (ae-forgotten-export) The symbol "HTMLAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "UnwrapFactoryAttributes" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "UnwrapFactoryElement" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public (undocumented)
 export type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWithoutMotionProps<UnwrapFactoryAttributes<ReactHTML[TagName]>, UnwrapFactoryElement<ReactHTML[TagName]>> & MotionProps;
 
@@ -164,7 +183,7 @@ export interface Inertia {
 export function isValidMotionProp(key: string): boolean;
 
 // Warning: (ae-internal-missing-underscore) The name "Keyframes" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal
 export interface Keyframes {
     // (undocumented)
@@ -172,7 +191,7 @@ export interface Keyframes {
     // @public
     duration?: number;
     // Warning: (ae-forgotten-export) The symbol "Easing" needs to be exported by the entry point index.d.ts
-    // 
+    //
     // @public
     ease?: Easing | Easing[];
     easings?: Easing | Easing[];
@@ -204,175 +223,175 @@ export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueTyp
 
 // @public
 export const motion: {
-    symbol: React.ForwardRefExoticComponent<SVGMotionProps<SVGSymbolElement> & React.RefAttributes<SVGSymbolElement>>;
-    circle: React.ForwardRefExoticComponent<SVGMotionProps<SVGCircleElement> & React.RefAttributes<SVGCircleElement>>;
-    clipPath: React.ForwardRefExoticComponent<SVGMotionProps<SVGClipPathElement> & React.RefAttributes<SVGClipPathElement>>;
-    defs: React.ForwardRefExoticComponent<SVGMotionProps<SVGDefsElement> & React.RefAttributes<SVGDefsElement>>;
-    desc: React.ForwardRefExoticComponent<SVGMotionProps<SVGDescElement> & React.RefAttributes<SVGDescElement>>;
-    ellipse: React.ForwardRefExoticComponent<SVGMotionProps<SVGEllipseElement> & React.RefAttributes<SVGEllipseElement>>;
-    feBlend: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEBlendElement> & React.RefAttributes<SVGFEBlendElement>>;
-    feColorMatrix: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEColorMatrixElement> & React.RefAttributes<SVGFEColorMatrixElement>>;
-    feComponentTransfer: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEComponentTransferElement> & React.RefAttributes<SVGFEComponentTransferElement>>;
-    feComposite: React.ForwardRefExoticComponent<SVGMotionProps<SVGFECompositeElement> & React.RefAttributes<SVGFECompositeElement>>;
-    feConvolveMatrix: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEConvolveMatrixElement> & React.RefAttributes<SVGFEConvolveMatrixElement>>;
-    feDiffuseLighting: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEDiffuseLightingElement> & React.RefAttributes<SVGFEDiffuseLightingElement>>;
-    feDisplacementMap: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEDisplacementMapElement> & React.RefAttributes<SVGFEDisplacementMapElement>>;
-    feDistantLight: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEDistantLightElement> & React.RefAttributes<SVGFEDistantLightElement>>;
-    feFlood: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEFloodElement> & React.RefAttributes<SVGFEFloodElement>>;
-    feFuncA: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncAElement> & React.RefAttributes<SVGFEFuncAElement>>;
-    feFuncB: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncBElement> & React.RefAttributes<SVGFEFuncBElement>>;
-    feFuncG: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncGElement> & React.RefAttributes<SVGFEFuncGElement>>;
-    feFuncR: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEFuncRElement> & React.RefAttributes<SVGFEFuncRElement>>;
-    feGaussianBlur: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEGaussianBlurElement> & React.RefAttributes<SVGFEGaussianBlurElement>>;
-    feImage: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEImageElement> & React.RefAttributes<SVGFEImageElement>>;
-    feMerge: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEMergeElement> & React.RefAttributes<SVGFEMergeElement>>;
-    feMergeNode: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEMergeNodeElement> & React.RefAttributes<SVGFEMergeNodeElement>>;
-    feMorphology: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEMorphologyElement> & React.RefAttributes<SVGFEMorphologyElement>>;
-    feOffset: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEOffsetElement> & React.RefAttributes<SVGFEOffsetElement>>;
-    fePointLight: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEPointLightElement> & React.RefAttributes<SVGFEPointLightElement>>;
-    feSpecularLighting: React.ForwardRefExoticComponent<SVGMotionProps<SVGFESpecularLightingElement> & React.RefAttributes<SVGFESpecularLightingElement>>;
-    feSpotLight: React.ForwardRefExoticComponent<SVGMotionProps<SVGFESpotLightElement> & React.RefAttributes<SVGFESpotLightElement>>;
-    feTile: React.ForwardRefExoticComponent<SVGMotionProps<SVGFETileElement> & React.RefAttributes<SVGFETileElement>>;
-    feTurbulence: React.ForwardRefExoticComponent<SVGMotionProps<SVGFETurbulenceElement> & React.RefAttributes<SVGFETurbulenceElement>>;
-    filter: React.ForwardRefExoticComponent<SVGMotionProps<SVGFilterElement> & React.RefAttributes<SVGFilterElement>>;
-    foreignObject: React.ForwardRefExoticComponent<SVGMotionProps<SVGForeignObjectElement> & React.RefAttributes<SVGForeignObjectElement>>;
-    g: React.ForwardRefExoticComponent<SVGMotionProps<SVGGElement> & React.RefAttributes<SVGGElement>>;
-    image: React.ForwardRefExoticComponent<SVGMotionProps<SVGImageElement> & React.RefAttributes<SVGImageElement>>;
-    line: React.ForwardRefExoticComponent<SVGMotionProps<SVGLineElement> & React.RefAttributes<SVGLineElement>>;
-    linearGradient: React.ForwardRefExoticComponent<SVGMotionProps<SVGLinearGradientElement> & React.RefAttributes<SVGLinearGradientElement>>;
-    marker: React.ForwardRefExoticComponent<SVGMotionProps<SVGMarkerElement> & React.RefAttributes<SVGMarkerElement>>;
-    mask: React.ForwardRefExoticComponent<SVGMotionProps<SVGMaskElement> & React.RefAttributes<SVGMaskElement>>;
-    metadata: React.ForwardRefExoticComponent<SVGMotionProps<SVGMetadataElement> & React.RefAttributes<SVGMetadataElement>>;
-    path: React.ForwardRefExoticComponent<SVGMotionProps<SVGPathElement> & React.RefAttributes<SVGPathElement>>;
-    pattern: React.ForwardRefExoticComponent<SVGMotionProps<SVGPatternElement> & React.RefAttributes<SVGPatternElement>>;
-    polygon: React.ForwardRefExoticComponent<SVGMotionProps<SVGPolygonElement> & React.RefAttributes<SVGPolygonElement>>;
-    polyline: React.ForwardRefExoticComponent<SVGMotionProps<SVGPolylineElement> & React.RefAttributes<SVGPolylineElement>>;
-    radialGradient: React.ForwardRefExoticComponent<SVGMotionProps<SVGRadialGradientElement> & React.RefAttributes<SVGRadialGradientElement>>;
-    rect: React.ForwardRefExoticComponent<SVGMotionProps<SVGRectElement> & React.RefAttributes<SVGRectElement>>;
-    stop: React.ForwardRefExoticComponent<SVGMotionProps<SVGStopElement> & React.RefAttributes<SVGStopElement>>;
-    svg: React.ForwardRefExoticComponent<SVGMotionProps<SVGSVGElement> & React.RefAttributes<SVGSVGElement>>;
-    switch: React.ForwardRefExoticComponent<SVGMotionProps<SVGSwitchElement> & React.RefAttributes<SVGSwitchElement>>;
-    text: React.ForwardRefExoticComponent<SVGMotionProps<SVGTextElement> & React.RefAttributes<SVGTextElement>>;
-    textPath: React.ForwardRefExoticComponent<SVGMotionProps<SVGTextPathElement> & React.RefAttributes<SVGTextPathElement>>;
-    tspan: React.ForwardRefExoticComponent<SVGMotionProps<SVGTSpanElement> & React.RefAttributes<SVGTSpanElement>>;
-    use: React.ForwardRefExoticComponent<SVGMotionProps<SVGUseElement> & React.RefAttributes<SVGUseElement>>;
-    view: React.ForwardRefExoticComponent<SVGMotionProps<SVGViewElement> & React.RefAttributes<SVGViewElement>>;
-    animate: React.ForwardRefExoticComponent<SVGMotionProps<SVGElement> & React.RefAttributes<SVGElement>>;
-    feDropShadow: React.ForwardRefExoticComponent<SVGMotionProps<SVGFEDropShadowElement> & React.RefAttributes<SVGFEDropShadowElement>>;
-    object: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ObjectHTMLAttributes<HTMLObjectElement>, HTMLObjectElement> & MotionProps & React.RefAttributes<HTMLObjectElement>>;
-    big: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    link: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.LinkHTMLAttributes<HTMLLinkElement>, HTMLLinkElement> & MotionProps & React.RefAttributes<HTMLLinkElement>>;
-    small: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    sub: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    sup: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    track: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.TrackHTMLAttributes<HTMLTrackElement>, HTMLTrackElement> & MotionProps & React.RefAttributes<HTMLTrackElement>>;
-    progress: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ProgressHTMLAttributes<HTMLProgressElement>, HTMLProgressElement> & MotionProps & React.RefAttributes<HTMLProgressElement>>;
-    a: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> & MotionProps & React.RefAttributes<HTMLAnchorElement>>;
-    abbr: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    address: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    area: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.AreaHTMLAttributes<HTMLAreaElement>, HTMLAreaElement> & MotionProps & React.RefAttributes<HTMLAreaElement>>;
-    article: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    aside: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    audio: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.AudioHTMLAttributes<HTMLAudioElement>, HTMLAudioElement> & MotionProps & React.RefAttributes<HTMLAudioElement>>;
-    b: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    base: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.BaseHTMLAttributes<HTMLBaseElement>, HTMLBaseElement> & MotionProps & React.RefAttributes<HTMLBaseElement>>;
-    bdi: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    bdo: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    blockquote: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.BlockquoteHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    body: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLBodyElement>, HTMLBodyElement> & MotionProps & React.RefAttributes<HTMLBodyElement>>;
-    br: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLBRElement>, HTMLBRElement> & MotionProps & React.RefAttributes<HTMLBRElement>>;
-    button: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> & MotionProps & React.RefAttributes<HTMLButtonElement>>;
-    canvas: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.CanvasHTMLAttributes<HTMLCanvasElement>, HTMLCanvasElement> & MotionProps & React.RefAttributes<HTMLCanvasElement>>;
-    caption: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    cite: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    code: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    col: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ColHTMLAttributes<HTMLTableColElement>, HTMLTableColElement> & MotionProps & React.RefAttributes<HTMLTableColElement>>;
-    colgroup: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ColgroupHTMLAttributes<HTMLTableColElement>, HTMLTableColElement> & MotionProps & React.RefAttributes<HTMLTableColElement>>;
-    data: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.DataHTMLAttributes<HTMLDataElement>, HTMLDataElement> & MotionProps & React.RefAttributes<HTMLDataElement>>;
-    datalist: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLDataListElement>, HTMLDataListElement> & MotionProps & React.RefAttributes<HTMLDataListElement>>;
-    dd: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    del: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.DelHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    details: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.DetailsHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    dfn: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    dialog: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.DialogHTMLAttributes<HTMLDialogElement>, HTMLDialogElement> & MotionProps & React.RefAttributes<HTMLDialogElement>>;
-    div: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & MotionProps & React.RefAttributes<HTMLDivElement>>;
-    dl: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLDListElement>, HTMLDListElement> & MotionProps & React.RefAttributes<HTMLDListElement>>;
-    dt: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    em: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    embed: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.EmbedHTMLAttributes<HTMLEmbedElement>, HTMLEmbedElement> & MotionProps & React.RefAttributes<HTMLEmbedElement>>;
-    fieldset: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.FieldsetHTMLAttributes<HTMLFieldSetElement>, HTMLFieldSetElement> & MotionProps & React.RefAttributes<HTMLFieldSetElement>>;
-    figcaption: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    figure: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    footer: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    form: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement> & MotionProps & React.RefAttributes<HTMLFormElement>>;
-    h1: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> & MotionProps & React.RefAttributes<HTMLHeadingElement>>;
-    h2: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> & MotionProps & React.RefAttributes<HTMLHeadingElement>>;
-    h3: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> & MotionProps & React.RefAttributes<HTMLHeadingElement>>;
-    h4: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> & MotionProps & React.RefAttributes<HTMLHeadingElement>>;
-    h5: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> & MotionProps & React.RefAttributes<HTMLHeadingElement>>;
-    h6: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement> & MotionProps & React.RefAttributes<HTMLHeadingElement>>;
-    head: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLHeadElement> & MotionProps & React.RefAttributes<HTMLHeadElement>>;
-    header: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    hgroup: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    hr: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLHRElement>, HTMLHRElement> & MotionProps & React.RefAttributes<HTMLHRElement>>;
-    html: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HtmlHTMLAttributes<HTMLHtmlElement>, HTMLHtmlElement> & MotionProps & React.RefAttributes<HTMLHtmlElement>>;
-    i: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    iframe: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.IframeHTMLAttributes<HTMLIFrameElement>, HTMLIFrameElement> & MotionProps & React.RefAttributes<HTMLIFrameElement>>;
-    img: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement> & MotionProps & React.RefAttributes<HTMLImageElement>>;
-    input: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> & MotionProps & React.RefAttributes<HTMLInputElement>>;
-    ins: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.InsHTMLAttributes<HTMLModElement>, HTMLModElement> & MotionProps & React.RefAttributes<HTMLModElement>>;
-    kbd: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    label: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.LabelHTMLAttributes<HTMLLabelElement>, HTMLLabelElement> & MotionProps & React.RefAttributes<HTMLLabelElement>>;
-    legend: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLLegendElement>, HTMLLegendElement> & MotionProps & React.RefAttributes<HTMLLegendElement>>;
-    li: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.LiHTMLAttributes<HTMLLIElement>, HTMLLIElement> & MotionProps & React.RefAttributes<HTMLLIElement>>;
-    main: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    map: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.MapHTMLAttributes<HTMLMapElement>, HTMLMapElement> & MotionProps & React.RefAttributes<HTMLMapElement>>;
-    mark: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    menu: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.MenuHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    meta: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.MetaHTMLAttributes<HTMLMetaElement>, HTMLMetaElement> & MotionProps & React.RefAttributes<HTMLMetaElement>>;
-    meter: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.MeterHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    nav: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    noscript: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    ol: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.OlHTMLAttributes<HTMLOListElement>, HTMLOListElement> & MotionProps & React.RefAttributes<HTMLOListElement>>;
-    optgroup: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.OptgroupHTMLAttributes<HTMLOptGroupElement>, HTMLOptGroupElement> & MotionProps & React.RefAttributes<HTMLOptGroupElement>>;
-    option: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.OptionHTMLAttributes<HTMLOptionElement>, HTMLOptionElement> & MotionProps & React.RefAttributes<HTMLOptionElement>>;
-    output: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.OutputHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    p: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLParagraphElement>, HTMLParagraphElement> & MotionProps & React.RefAttributes<HTMLParagraphElement>>;
-    param: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ParamHTMLAttributes<HTMLParamElement>, HTMLParamElement> & MotionProps & React.RefAttributes<HTMLParamElement>>;
-    picture: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    pre: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLPreElement>, HTMLPreElement> & MotionProps & React.RefAttributes<HTMLPreElement>>;
-    q: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.QuoteHTMLAttributes<HTMLQuoteElement>, HTMLQuoteElement> & MotionProps & React.RefAttributes<HTMLQuoteElement>>;
-    rp: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    rt: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    ruby: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    s: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    samp: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    script: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ScriptHTMLAttributes<HTMLScriptElement>, HTMLScriptElement> & MotionProps & React.RefAttributes<HTMLScriptElement>>;
-    section: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    select: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.SelectHTMLAttributes<HTMLSelectElement>, HTMLSelectElement> & MotionProps & React.RefAttributes<HTMLSelectElement>>;
-    source: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.SourceHTMLAttributes<HTMLSourceElement>, HTMLSourceElement> & MotionProps & React.RefAttributes<HTMLSourceElement>>;
-    span: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLSpanElement>, HTMLSpanElement> & MotionProps & React.RefAttributes<HTMLSpanElement>>;
-    strong: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    style: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.StyleHTMLAttributes<HTMLStyleElement>, HTMLStyleElement> & MotionProps & React.RefAttributes<HTMLStyleElement>>;
-    summary: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    table: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.TableHTMLAttributes<HTMLTableElement>, HTMLTableElement> & MotionProps & React.RefAttributes<HTMLTableElement>>;
-    tbody: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement> & MotionProps & React.RefAttributes<HTMLTableSectionElement>>;
-    td: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.TdHTMLAttributes<HTMLTableDataCellElement>, HTMLTableDataCellElement> & MotionProps & React.RefAttributes<HTMLTableDataCellElement>>;
-    textarea: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.TextareaHTMLAttributes<HTMLTextAreaElement>, HTMLTextAreaElement> & MotionProps & React.RefAttributes<HTMLTextAreaElement>>;
-    tfoot: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement> & MotionProps & React.RefAttributes<HTMLTableSectionElement>>;
-    th: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.ThHTMLAttributes<HTMLTableHeaderCellElement>, HTMLTableHeaderCellElement> & MotionProps & React.RefAttributes<HTMLTableHeaderCellElement>>;
-    thead: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLTableSectionElement>, HTMLTableSectionElement> & MotionProps & React.RefAttributes<HTMLTableSectionElement>>;
-    time: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.TimeHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    title: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLTitleElement>, HTMLTitleElement> & MotionProps & React.RefAttributes<HTMLTitleElement>>;
-    tr: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLTableRowElement>, HTMLTableRowElement> & MotionProps & React.RefAttributes<HTMLTableRowElement>>;
-    u: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    ul: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLUListElement>, HTMLUListElement> & MotionProps & React.RefAttributes<HTMLUListElement>>;
-    var: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    video: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.VideoHTMLAttributes<HTMLVideoElement>, HTMLVideoElement> & MotionProps & React.RefAttributes<HTMLVideoElement>>;
-    wbr: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    menuitem: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    keygen: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.KeygenHTMLAttributes<HTMLElement>, HTMLElement> & MotionProps & React.RefAttributes<HTMLElement>>;
-    webview: React.ForwardRefExoticComponent<HTMLAttributesWithoutMotionProps<React.WebViewHTMLAttributes<HTMLWebViewElement>, HTMLWebViewElement> & MotionProps & React.RefAttributes<HTMLWebViewElement>>;
+    symbol: ForwardRefComponent<SVGSymbolElement, SVGMotionProps<SVGSymbolElement>>;
+    clipPath: ForwardRefComponent<SVGClipPathElement, SVGMotionProps<SVGClipPathElement>>;
+    filter: ForwardRefComponent<SVGFilterElement, SVGMotionProps<SVGFilterElement>>;
+    mask: ForwardRefComponent<SVGMaskElement, SVGMotionProps<SVGMaskElement>>;
+    marker: ForwardRefComponent<SVGMarkerElement, SVGMotionProps<SVGMarkerElement>>;
+    image: ForwardRefComponent<SVGImageElement, SVGMotionProps<SVGImageElement>>;
+    text: ForwardRefComponent<SVGTextElement, SVGMotionProps<SVGTextElement>>;
+    circle: ForwardRefComponent<SVGCircleElement, SVGMotionProps<SVGCircleElement>>;
+    svg: ForwardRefComponent<SVGSVGElement, SVGMotionProps<SVGSVGElement>>;
+    animate: ForwardRefComponent<SVGElement, SVGMotionProps<SVGElement>>;
+    defs: ForwardRefComponent<SVGDefsElement, SVGMotionProps<SVGDefsElement>>;
+    desc: ForwardRefComponent<SVGDescElement, SVGMotionProps<SVGDescElement>>;
+    ellipse: ForwardRefComponent<SVGEllipseElement, SVGMotionProps<SVGEllipseElement>>;
+    feBlend: ForwardRefComponent<SVGFEBlendElement, SVGMotionProps<SVGFEBlendElement>>;
+    feColorMatrix: ForwardRefComponent<SVGFEColorMatrixElement, SVGMotionProps<SVGFEColorMatrixElement>>;
+    feComponentTransfer: ForwardRefComponent<SVGFEComponentTransferElement, SVGMotionProps<SVGFEComponentTransferElement>>;
+    feComposite: ForwardRefComponent<SVGFECompositeElement, SVGMotionProps<SVGFECompositeElement>>;
+    feConvolveMatrix: ForwardRefComponent<SVGFEConvolveMatrixElement, SVGMotionProps<SVGFEConvolveMatrixElement>>;
+    feDiffuseLighting: ForwardRefComponent<SVGFEDiffuseLightingElement, SVGMotionProps<SVGFEDiffuseLightingElement>>;
+    feDisplacementMap: ForwardRefComponent<SVGFEDisplacementMapElement, SVGMotionProps<SVGFEDisplacementMapElement>>;
+    feDistantLight: ForwardRefComponent<SVGFEDistantLightElement, SVGMotionProps<SVGFEDistantLightElement>>;
+    feDropShadow: ForwardRefComponent<SVGFEDropShadowElement, SVGMotionProps<SVGFEDropShadowElement>>;
+    feFlood: ForwardRefComponent<SVGFEFloodElement, SVGMotionProps<SVGFEFloodElement>>;
+    feFuncA: ForwardRefComponent<SVGFEFuncAElement, SVGMotionProps<SVGFEFuncAElement>>;
+    feFuncB: ForwardRefComponent<SVGFEFuncBElement, SVGMotionProps<SVGFEFuncBElement>>;
+    feFuncG: ForwardRefComponent<SVGFEFuncGElement, SVGMotionProps<SVGFEFuncGElement>>;
+    feFuncR: ForwardRefComponent<SVGFEFuncRElement, SVGMotionProps<SVGFEFuncRElement>>;
+    feGaussianBlur: ForwardRefComponent<SVGFEGaussianBlurElement, SVGMotionProps<SVGFEGaussianBlurElement>>;
+    feImage: ForwardRefComponent<SVGFEImageElement, SVGMotionProps<SVGFEImageElement>>;
+    feMerge: ForwardRefComponent<SVGFEMergeElement, SVGMotionProps<SVGFEMergeElement>>;
+    feMergeNode: ForwardRefComponent<SVGFEMergeNodeElement, SVGMotionProps<SVGFEMergeNodeElement>>;
+    feMorphology: ForwardRefComponent<SVGFEMorphologyElement, SVGMotionProps<SVGFEMorphologyElement>>;
+    feOffset: ForwardRefComponent<SVGFEOffsetElement, SVGMotionProps<SVGFEOffsetElement>>;
+    fePointLight: ForwardRefComponent<SVGFEPointLightElement, SVGMotionProps<SVGFEPointLightElement>>;
+    feSpecularLighting: ForwardRefComponent<SVGFESpecularLightingElement, SVGMotionProps<SVGFESpecularLightingElement>>;
+    feSpotLight: ForwardRefComponent<SVGFESpotLightElement, SVGMotionProps<SVGFESpotLightElement>>;
+    feTile: ForwardRefComponent<SVGFETileElement, SVGMotionProps<SVGFETileElement>>;
+    feTurbulence: ForwardRefComponent<SVGFETurbulenceElement, SVGMotionProps<SVGFETurbulenceElement>>;
+    foreignObject: ForwardRefComponent<SVGForeignObjectElement, SVGMotionProps<SVGForeignObjectElement>>;
+    g: ForwardRefComponent<SVGGElement, SVGMotionProps<SVGGElement>>;
+    line: ForwardRefComponent<SVGLineElement, SVGMotionProps<SVGLineElement>>;
+    linearGradient: ForwardRefComponent<SVGLinearGradientElement, SVGMotionProps<SVGLinearGradientElement>>;
+    metadata: ForwardRefComponent<SVGMetadataElement, SVGMotionProps<SVGMetadataElement>>;
+    path: ForwardRefComponent<SVGPathElement, SVGMotionProps<SVGPathElement>>;
+    pattern: ForwardRefComponent<SVGPatternElement, SVGMotionProps<SVGPatternElement>>;
+    polygon: ForwardRefComponent<SVGPolygonElement, SVGMotionProps<SVGPolygonElement>>;
+    polyline: ForwardRefComponent<SVGPolylineElement, SVGMotionProps<SVGPolylineElement>>;
+    radialGradient: ForwardRefComponent<SVGRadialGradientElement, SVGMotionProps<SVGRadialGradientElement>>;
+    rect: ForwardRefComponent<SVGRectElement, SVGMotionProps<SVGRectElement>>;
+    stop: ForwardRefComponent<SVGStopElement, SVGMotionProps<SVGStopElement>>;
+    switch: ForwardRefComponent<SVGSwitchElement, SVGMotionProps<SVGSwitchElement>>;
+    textPath: ForwardRefComponent<SVGTextPathElement, SVGMotionProps<SVGTextPathElement>>;
+    tspan: ForwardRefComponent<SVGTSpanElement, SVGMotionProps<SVGTSpanElement>>;
+    use: ForwardRefComponent<SVGUseElement, SVGMotionProps<SVGUseElement>>;
+    view: ForwardRefComponent<SVGViewElement, SVGMotionProps<SVGViewElement>>;
+    object: ForwardRefComponent<HTMLObjectElement, HTMLMotionProps<"object">>;
+    style: ForwardRefComponent<HTMLStyleElement, HTMLMotionProps<"style">>;
+    progress: ForwardRefComponent<HTMLProgressElement, HTMLMotionProps<"progress">>;
+    ruby: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    table: ForwardRefComponent<HTMLTableElement, HTMLMotionProps<"table">>;
+    small: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    sub: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    embed: ForwardRefComponent<HTMLEmbedElement, HTMLMotionProps<"embed">>;
+    pre: ForwardRefComponent<HTMLPreElement, HTMLMotionProps<"pre">>;
+    caption: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    menu: ForwardRefComponent<HTMLElement, HTMLMotionProps<"menu">>;
+    button: ForwardRefComponent<HTMLButtonElement, HTMLMotionProps<"button">>;
+    menuitem: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    meter: ForwardRefComponent<HTMLElement, HTMLMotionProps<"meter">>;
+    textarea: ForwardRefComponent<HTMLTextAreaElement, HTMLMotionProps<"textarea">>;
+    time: ForwardRefComponent<HTMLElement, HTMLMotionProps<"time">>;
+    link: ForwardRefComponent<HTMLLinkElement, HTMLMotionProps<"link">>;
+    dialog: ForwardRefComponent<HTMLDialogElement, HTMLMotionProps<"dialog">>;
+    a: ForwardRefComponent<HTMLAnchorElement, HTMLMotionProps<"a">>;
+    abbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    address: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    area: ForwardRefComponent<HTMLAreaElement, HTMLMotionProps<"area">>;
+    article: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    aside: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    audio: ForwardRefComponent<HTMLAudioElement, HTMLMotionProps<"audio">>;
+    b: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    base: ForwardRefComponent<HTMLBaseElement, HTMLMotionProps<"base">>;
+    bdi: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    bdo: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    big: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    blockquote: ForwardRefComponent<HTMLElement, HTMLMotionProps<"blockquote">>;
+    body: ForwardRefComponent<HTMLBodyElement, HTMLMotionProps<"body">>;
+    br: ForwardRefComponent<HTMLBRElement, HTMLMotionProps<"br">>;
+    canvas: ForwardRefComponent<HTMLCanvasElement, HTMLMotionProps<"canvas">>;
+    cite: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    code: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    col: ForwardRefComponent<HTMLTableColElement, HTMLMotionProps<"col">>;
+    colgroup: ForwardRefComponent<HTMLTableColElement, HTMLMotionProps<"colgroup">>;
+    data: ForwardRefComponent<HTMLDataElement, HTMLMotionProps<"data">>;
+    datalist: ForwardRefComponent<HTMLDataListElement, HTMLMotionProps<"datalist">>;
+    dd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    del: ForwardRefComponent<HTMLElement, HTMLMotionProps<"del">>;
+    details: ForwardRefComponent<HTMLElement, HTMLMotionProps<"details">>;
+    dfn: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    div: ForwardRefComponent<HTMLDivElement, HTMLMotionProps<"div">>;
+    dl: ForwardRefComponent<HTMLDListElement, HTMLMotionProps<"dl">>;
+    dt: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    em: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    fieldset: ForwardRefComponent<HTMLFieldSetElement, HTMLMotionProps<"fieldset">>;
+    figcaption: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    figure: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    footer: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    form: ForwardRefComponent<HTMLFormElement, HTMLMotionProps<"form">>;
+    h1: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
+    h2: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
+    h3: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
+    h4: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
+    h5: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
+    h6: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
+    head: ForwardRefComponent<HTMLHeadElement, HTMLMotionProps<"head">>;
+    header: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    hgroup: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    hr: ForwardRefComponent<HTMLHRElement, HTMLMotionProps<"hr">>;
+    html: ForwardRefComponent<HTMLHtmlElement, HTMLMotionProps<"html">>;
+    i: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    iframe: ForwardRefComponent<HTMLIFrameElement, HTMLMotionProps<"iframe">>;
+    img: ForwardRefComponent<HTMLImageElement, HTMLMotionProps<"img">>;
+    input: ForwardRefComponent<HTMLInputElement, HTMLMotionProps<"input">>;
+    ins: ForwardRefComponent<HTMLModElement, HTMLMotionProps<"ins">>;
+    kbd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    keygen: ForwardRefComponent<HTMLElement, HTMLMotionProps<"keygen">>;
+    label: ForwardRefComponent<HTMLLabelElement, HTMLMotionProps<"label">>;
+    legend: ForwardRefComponent<HTMLLegendElement, HTMLMotionProps<"legend">>;
+    li: ForwardRefComponent<HTMLLIElement, HTMLMotionProps<"li">>;
+    main: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    map: ForwardRefComponent<HTMLMapElement, HTMLMotionProps<"map">>;
+    mark: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    meta: ForwardRefComponent<HTMLMetaElement, HTMLMotionProps<"meta">>;
+    nav: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    noscript: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    ol: ForwardRefComponent<HTMLOListElement, HTMLMotionProps<"ol">>;
+    optgroup: ForwardRefComponent<HTMLOptGroupElement, HTMLMotionProps<"optgroup">>;
+    option: ForwardRefComponent<HTMLOptionElement, HTMLMotionProps<"option">>;
+    output: ForwardRefComponent<HTMLElement, HTMLMotionProps<"output">>;
+    p: ForwardRefComponent<HTMLParagraphElement, HTMLMotionProps<"p">>;
+    param: ForwardRefComponent<HTMLParamElement, HTMLMotionProps<"param">>;
+    picture: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    q: ForwardRefComponent<HTMLQuoteElement, HTMLMotionProps<"q">>;
+    rp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    rt: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    s: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    samp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    script: ForwardRefComponent<HTMLScriptElement, HTMLMotionProps<"script">>;
+    section: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    select: ForwardRefComponent<HTMLSelectElement, HTMLMotionProps<"select">>;
+    source: ForwardRefComponent<HTMLSourceElement, HTMLMotionProps<"source">>;
+    span: ForwardRefComponent<HTMLSpanElement, HTMLMotionProps<"span">>;
+    strong: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    summary: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    sup: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    tbody: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
+    td: ForwardRefComponent<HTMLTableDataCellElement, HTMLMotionProps<"td">>;
+    tfoot: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
+    th: ForwardRefComponent<HTMLTableHeaderCellElement, HTMLMotionProps<"th">>;
+    thead: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
+    title: ForwardRefComponent<HTMLTitleElement, HTMLMotionProps<"title">>;
+    tr: ForwardRefComponent<HTMLTableRowElement, HTMLMotionProps<"tr">>;
+    track: ForwardRefComponent<HTMLTrackElement, HTMLMotionProps<"track">>;
+    u: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    ul: ForwardRefComponent<HTMLUListElement, HTMLMotionProps<"ul">>;
+    var: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    video: ForwardRefComponent<HTMLVideoElement, HTMLMotionProps<"video">>;
+    wbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
+    webview: ForwardRefComponent<HTMLWebViewElement, HTMLMotionProps<"webview">>;
     custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<Element>>;
 };
 
@@ -395,26 +414,21 @@ export interface MotionCallbacks {
 
 // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionContext" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
 export const MotionContext: React.Context<MotionContextProps>;
 
+// Warning: (ae-forgotten-export) The symbol "MotionPluginsContext" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionPluginContext" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
-export const MotionPluginContext: React.Context<MotionPlugins>;
+export const MotionPluginContext: React.Context<MotionPluginsContext>;
 
 // Warning: (ae-forgotten-export) The symbol "MotionPluginProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionPlugins" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
-
-// @internal (undocumented)
-export interface MotionPlugins {
-    // (undocumented)
-    transformPagePoint: (point: Point) => Point;
-}
 
 // @public
 export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
@@ -432,7 +446,7 @@ export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHan
 // Warning: (ae-forgotten-export) The symbol "SVGPathProperties" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "MakeCustomValueType" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "CustomStyles" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public (undocumented)
 export type MotionStyle = MotionCSS & MotionTransform & MakeMotion<SVGPathProperties> & MakeCustomValueType<CustomStyles>;
 
@@ -442,7 +456,7 @@ export type MotionTransform = MakeMotion<TransformProperties>;
 // @public
 export class MotionValue<V = any> {
     // Warning: (ae-forgotten-export) The symbol "Config" needs to be exported by the entry point index.d.ts
-    // 
+    //
     // @internal
     constructor(init: V, { transformer, parent }?: Config<V>);
     // @internal
@@ -460,7 +474,7 @@ export class MotionValue<V = any> {
     removeChild(child: MotionValue): void;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
-    // 
+    //
     // @internal
     start(animation: StartAnimation): Promise<void>;
     stop(): void;
@@ -471,7 +485,7 @@ export class MotionValue<V = any> {
     }
 
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
 export function motionValue<V>(init: V, opts?: Config<V>): MotionValue<V>;
 
@@ -532,7 +546,7 @@ export namespace Point {
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "ReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal
 export function ReducedMotion({ children, enabled }: Props): JSX.Element;
 
@@ -582,12 +596,12 @@ export interface Spring {
 export type Subscriber<T> = (v: T) => void;
 
 // Warning: (ae-forgotten-export) The symbol "SVGAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMotionProps<T>>;
 
 // Warning: (ae-forgotten-export) The symbol "Omit" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public (undocumented)
 export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Omit<MotionProps, "positionTransition"> {
 }
@@ -606,7 +620,7 @@ export interface TapInfo {
 }
 
 // Warning: (ae-forgotten-export) The symbol "TargetWithKeyframes" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export type TargetAndTransition = TargetWithKeyframes & {
     transition?: Transition;
@@ -614,7 +628,7 @@ export type TargetAndTransition = TargetWithKeyframes & {
 };
 
 // Warning: (ae-forgotten-export) The symbol "TransformOptions" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export function transform<T>(inputValue: number, inputRange: number[], outputRange: T[], options?: TransformOptions<T>): T;
 
@@ -623,7 +637,7 @@ export function transform<T>(inputRange: number[], outputRange: T[], options?: T
 
 // Warning: (ae-forgotten-export) The symbol "TransitionDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TransitionMap" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export type Transition = (Orchestration & TransitionDefinition) | (Orchestration & TransitionMap);
 
@@ -651,12 +665,12 @@ export interface Tween {
 
 // Warning: (ae-forgotten-export) The symbol "SyncLayoutProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "UnstableSyncLayout" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal
 export const UnstableSyncLayout: ({ children }: SyncLayoutProps) => JSX.Element;
 
 // Warning: (ae-internal-missing-underscore) The name "unwrapMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal
 export function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
@@ -667,15 +681,18 @@ export function useAnimatedState(initialState: any): any[];
 export function useAnimation(): AnimationControls;
 
 // Warning: (ae-forgotten-export) The symbol "CycleState" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export function useCycle<T>(...items: T[]): CycleState<T>;
 
 // @public
 export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
 
+// @public (undocumented)
+export function useDragControls(): GroupDragControls;
+
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
@@ -683,7 +700,7 @@ export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
@@ -691,7 +708,7 @@ export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotio
 export function useMotionValue<T>(initial: T): MotionValue<T>;
 
 // Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
 export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
 
@@ -703,12 +720,12 @@ export function useSpring(source: MotionValue | number, config?: SpringProps): M
 
 // Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
+//
 // @internal (undocumented)
 export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, controls, }: TapHandlers & ControlsProp, ref: RefObject<Element>): void;
 
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>): MotionValue;
 
@@ -716,7 +733,7 @@ export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>
 export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
 
 // Warning: (ae-forgotten-export) The symbol "ScrollMotionValues" needs to be exported by the entry point index.d.ts
-// 
+//
 // @public
 export function useViewportScroll(): ScrollMotionValues;
 
