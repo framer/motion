@@ -258,6 +258,7 @@ export class PanSession {
         this.history.push({ ...point, timestamp })
 
         const { onStart, onMove } = this.handlers
+
         if (!isPanStarted) {
             onStart && onStart(this.lastMoveEvent, info)
             this.startEvent = this.lastMoveEvent

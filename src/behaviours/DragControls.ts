@@ -248,6 +248,7 @@ export class DragControls {
 
         const onMove = (event: AnyPointerEvent, info: PanInfo) => {
             const { dragPropagation, dragDirectionLock } = this.props
+
             // If we didn't successfully receive the gesture lock, early return.
             if (!dragPropagation && !this.openGlobalLock) return
 
@@ -272,12 +273,17 @@ export class DragControls {
             this.stop(event, info)
         }
 
-        this.panSession = new PanSession(originEvent, {
-            onSessionStart,
-            onStart,
-            onMove,
-            onEnd,
-        })
+        const { transformPagePoint } = this.props
+        this.panSession = new PanSession(
+            originEvent,
+            {
+                onSessionStart,
+                onStart,
+                onMove,
+                onEnd,
+            },
+            { transformPagePoint }
+        )
     }
 
     cancelDrag() {
@@ -337,7 +343,9 @@ export class DragControls {
 
         bothAxis(axis => {
             const point = this.point[axis]
-            point && this.origin[axis].set(point.get())
+
+            if (!point) return
+            this.origin[axis].set(point.get())
         })
 
         this.updatePoint("x", offset)

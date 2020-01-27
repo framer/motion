@@ -3,7 +3,7 @@ import { EventInfo } from "../events/types"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"
-import { PanSession, PanInfo } from "./PanSession"
+import { PanSession, PanInfo, AnyPointerEvent } from "./PanSession"
 
 export type PanHandler = (event: Event, info: PanInfo) => void
 
@@ -168,6 +168,7 @@ export function usePanGesture(
     { onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers,
     ref: RefObject<Element>
 ) {
+    const hasPanEvents = onPan || onPanStart || onPanEnd || onPanSessionStart
     const panSession = useRef<PanSession | null>(null)
     const { transformPagePoint } = useContext(MotionPluginContext)
 
@@ -188,11 +189,13 @@ export function usePanGesture(
         panSession.current.updateHandlers(handlers)
     }
 
-    usePointerEvent(ref, "pointerdown", event => {
+    function onPointerDown(event: AnyPointerEvent) {
         panSession.current = new PanSession(event, handlers, {
-            transformPagePoint, // TODO This might need to be updated every render?
+            transformPagePoint,
         })
-    })
+    }
+
+    usePointerEvent(ref, "pointerdown", hasPanEvents && onPointerDown)
 
     useUnmountEffect(() => panSession.current && panSession.current.end())
 }

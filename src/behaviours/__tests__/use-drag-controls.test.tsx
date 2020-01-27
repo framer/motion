@@ -10,7 +10,10 @@ describe("useDragControls", () => {
             const dragControls = useDragControls()
             return (
                 <MockDrag>
-                    <div onMouseDown={e => dragControls.start(e)} />
+                    <div
+                        onMouseDown={e => dragControls.start(e)}
+                        data-testid="drag-handle"
+                    />
                     <motion.div
                         drag
                         onDragStart={onDragStart}
@@ -24,7 +27,10 @@ describe("useDragControls", () => {
         const { rerender, getByTestId } = render(<Component />)
         rerender(<Component />)
 
-        const pointer = await drag(getByTestId("draggable")).to(100, 100)
+        const pointer = await drag(
+            getByTestId("draggable"),
+            getByTestId("drag-handle")
+        ).to(100, 100)
 
         pointer.end()
 

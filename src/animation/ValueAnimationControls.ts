@@ -91,6 +91,7 @@ export interface ValueAnimationConfig {
 
 /**
  * Control animations for a single component
+ *
  * @internal
  */
 export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {

@@ -30,13 +30,10 @@ export function useDrag(
     )
     dragControls.updateProps({ ...props, transformPagePoint })
 
-    useEffect(() => {
-        if (groupDragControls) {
-            return groupDragControls.subscribe(dragControls)
-        }
-    }, [dragControls])
+    useEffect(
+        () => groupDragControls && groupDragControls.subscribe(dragControls),
+        [dragControls]
+    )
 
-    useEffect(() => {
-        return dragControls.mount(ref.current as Element)
-    }, [])
+    useEffect(() => dragControls.mount(ref.current as Element), [])
 }

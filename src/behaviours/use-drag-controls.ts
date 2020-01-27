@@ -7,7 +7,6 @@ export class GroupDragControls {
 
     subscribe(controls: DragControls): () => void {
         this.componentControls.add(controls)
-
         return () => this.componentControls.delete(controls)
     }
 
@@ -21,18 +20,20 @@ export class GroupDragControls {
             | PointerEvent,
         options?: DragControlOptions
     ) {
-        // TODO: Add drag options
-        this.componentControls.forEach(controls =>
+        this.componentControls.forEach(controls => {
             controls.start(
                 (event as React.MouseEvent).nativeEvent || event,
                 options
             )
-        )
+        })
     }
 }
 
 const createDragControls = () => new GroupDragControls()
 
+/**
+ * @public
+ */
 export function useDragControls() {
     return useConstant(createDragControls)
 }
