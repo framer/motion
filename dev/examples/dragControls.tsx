@@ -5,13 +5,13 @@ export const App = () => {
     const dragControls = useDragControls()
 
     return (
-        <div style={container}>
-            <div
-                style={scrubber}
-                onMouseDown={e => {
-                    dragControls.start(e, { snapToCursor: true })
-                }}
-            />
+        <div
+            style={container}
+            onMouseDown={e => {
+                dragControls.start(e, { snapToCursor: true })
+            }}
+        >
+            <div style={scrubber} />
             <motion.div
                 drag="x"
                 dragConstraints={{ left: 0, right: 170 }}
