@@ -12,7 +12,7 @@ import { supportsTouchEvents } from "../events/utils"
 import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
-import { MotionPlugins } from "../motion/context/MotionPluginContext"
+import { MotionPluginsContext } from "../motion/context/MotionPluginContext"
 import { invariant } from "hey-listen"
 import { mix } from "@popmotion/popcorn"
 import { addDomEvent } from "../events/use-dom-event"
@@ -623,7 +623,7 @@ function calculateConstraintsFromDom(
     constraintsRef: RefObject<Element>,
     draggableRef: RefObject<Element>,
     point: Partial<MotionPoint>,
-    transformPagePoint: MotionPlugins["transformPagePoint"]
+    transformPagePoint: MotionPluginsContext["transformPagePoint"]
 ) {
     invariant(
         constraintsRef.current !== null && draggableRef.current !== null,
@@ -654,7 +654,7 @@ function calculateConstraintsFromDom(
 
 function getBoundingBox(
     ref: RefObject<Element>,
-    transformPagePoint: MotionPlugins["transformPagePoint"]
+    transformPagePoint: MotionPluginsContext["transformPagePoint"]
 ) {
     const rect = (ref.current as Element).getBoundingClientRect()
 

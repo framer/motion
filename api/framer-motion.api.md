@@ -404,22 +404,17 @@ export interface MotionCallbacks {
 // @internal (undocumented)
 export const MotionContext: React.Context<MotionContextProps>;
 
+// Warning: (ae-forgotten-export) The symbol "MotionPluginsContext" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionPluginContext" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
-export const MotionPluginContext: React.Context<MotionPlugins>;
+export const MotionPluginContext: React.Context<MotionPluginsContext>;
 
 // Warning: (ae-forgotten-export) The symbol "MotionPluginProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-mixed-release-tag) Mixed release tags are not allowed for "MotionPlugins" because one of its declarations is marked as @internal
+// Warning: (ae-internal-missing-underscore) The name "MotionPlugins" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
-
-// @public (undocumented)
-export interface MotionPlugins {
-    // (undocumented)
-    transformPagePoint: (point: Point) => Point;
-}
 
 // @public
 export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {

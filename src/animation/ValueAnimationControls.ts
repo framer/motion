@@ -199,7 +199,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     /**
      * Set motion values without animation.
      *
-     * @param definition
+     * @param definition -
      * @param isActive -
      */
     private setValues(

@@ -75,7 +75,7 @@ export const motion = {
      * const MotionComponent = motion.custom<Props>(Component)
      * ```
      *
-     * @param Component
+     * @param Component -
      */
     custom: function custom<Props>(
         Component: string | React.ComponentType<Props>

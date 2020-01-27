@@ -9,7 +9,7 @@ import { MotionContext } from "../motion/context/MotionContext"
  * A hook that returns `true` if we should be using reduced motion based on the current device's Reduced Motion setting.
  *
  * This can be used to implement changes to your UI based on Reduced Motion. For instance, replacing motion-sickness inducing
- * `x`/`y` animations with `opacity, disabling the autoplay of background videos, or turning off parallax motion.
+ * `x`/`y` animations with `opacity`, disabling the autoplay of background videos, or turning off parallax motion.
  *
  * It will actively respond to changes and re-render your components with the latest setting.
  *
@@ -28,6 +28,8 @@ import { MotionContext } from "../motion/context/MotionContext"
  * ```
  *
  * @return boolean
+ *
+ * @public
  */
 export function useReducedMotion() {
     const { isReducedMotion } = useContext(MotionContext)
@@ -35,16 +37,13 @@ export function useReducedMotion() {
         determineShouldReduceMotion(prefersReducedMotion.get(), isReducedMotion)
     )
 
-    useEffect(
-        () => {
-            return prefersReducedMotion.onChange(v => {
-                setShouldReduceMotion(
-                    determineShouldReduceMotion(v, isReducedMotion)
-                )
-            })
-        },
-        [setShouldReduceMotion, isReducedMotion]
-    )
+    useEffect(() => {
+        return prefersReducedMotion.onChange(v => {
+            setShouldReduceMotion(
+                determineShouldReduceMotion(v, isReducedMotion)
+            )
+        })
+    }, [setShouldReduceMotion, isReducedMotion])
 
     return shouldReduceMotion
 }

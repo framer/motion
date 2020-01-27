@@ -179,7 +179,7 @@ export interface TapHandlers {
 }
 
 /**
- * @param handlers
+ * @param handlers -
  * @internal
  */
 export function useTapGesture(
