@@ -104,7 +104,7 @@ describe("dragging", () => {
                         }}
                         onDrag={() => (count += increment)}
                         onDragEnd={() => {
-                            count += increment
+                            count += increment + 1
                             onDragEnd.resolve()
                         }}
                     />
@@ -115,14 +115,14 @@ describe("dragging", () => {
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
 
-        const pointer = await drag(container.firstChild).to(100, 100)
-        await frame.postRender()
-        await pointer.to(50, 50)
-        await frame.postRender()
-        pointer.end()
+        const pointer = await drag(container.firstChild).to(100, 100) // + 1 + 2 = 3
+        await frame.postRender() // + 2 = 5
+        await pointer.to(50, 50) // + 2 = 7
+        await frame.postRender() // + 2 = 9
+        pointer.end() // + 3 = 12
         await onDragEnd.promise
 
-        expect(count).toBe(10)
+        expect(count).toBe(12)
     })
 
     test("dragEnd returns transformed pointer", async () => {
