@@ -1,3 +1,4 @@
+import * as React from "react"
 import { useConstant } from "../utils/use-constant"
 import { DragControls, DragControlOptions } from "./DragControls"
 

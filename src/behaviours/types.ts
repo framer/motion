@@ -422,8 +422,8 @@ export interface DraggableProps extends DragHandlers {
      * might want to initiate dragging from a different component than the draggable one.
      *
      * By creating a `dragControls` using the `useDragControls` hook, we can pass this into
-     * the draggable component's `dragControls` prop. It exposes `start` and `stop` methods
-     * that can start and stop dragging from pointer events on other components.
+     * the draggable component's `dragControls` prop. It exposes a `start` method
+     * that can start dragging from pointer events on other components.
      *
      * @library
      *
@@ -433,7 +433,7 @@ export interface DraggableProps extends DragHandlers {
      * return (
      *   <>
      *     <Frame onTapStart={(event) => dragControls.start(event, { snapToCursor: true })} />
-     *     <Frame dragControls={dragControls} />
+     *     <Frame drag="x" dragControls={dragControls} />
      *   </>
      * )
      * ```
@@ -446,7 +446,7 @@ export interface DraggableProps extends DragHandlers {
      * return (
      *   <>
      *     <div onMouseDown={(event) => dragControls.start(event, { snapToCursor: true })} />
-     *     <motion.div dragControls={dragControls} />
+     *     <motion.div drag="x" dragControls={dragControls} />
      *   </>
      * )
      * ```

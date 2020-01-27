@@ -49,7 +49,7 @@ export {
 } from "./motion/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./behaviours/types"
-export { useDragControls } from "./behaviours/use-drag-controls"
+//export { useDragControls } from "./behaviours/use-drag-controls"
 export {
     Orchestration,
     Tween,
