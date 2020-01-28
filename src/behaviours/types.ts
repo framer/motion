@@ -442,9 +442,13 @@ export interface DraggableProps extends DragHandlers {
      * ```jsx
      * const dragControls = useDragControls()
      *
+     * function startDrag(event) {
+     *   dragControls.start(event, { snapToCursor: true })
+     * }
+     *
      * return (
      *   <>
-     *     <Frame onTapStart={(event) => dragControls.start(event, { snapToCursor: true })} />
+     *     <Frame onTapStart={startDrag} />
      *     <Frame drag="x" dragControls={dragControls} />
      *   </>
      * )
@@ -455,9 +459,13 @@ export interface DraggableProps extends DragHandlers {
      * ```jsx
      * const dragControls = useDragControls()
      *
+     * function startDrag(event) {
+     *   dragControls.start(event, { snapToCursor: true })
+     * }
+     *
      * return (
      *   <>
-     *     <div onMouseDown={(event) => dragControls.start(event, { snapToCursor: true })} />
+     *     <div onMouseDown={startDrag} />
      *     <motion.div drag="x" dragControls={dragControls} />
      *   </>
      * )
