@@ -48,7 +48,7 @@ export class AnimationControls {
     start(definition: AnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // Warning: (ae-forgotten-export) The symbol "ValueAnimationControls" needs to be exported by the entry point index.d.ts
-    //
+    // 
     // @internal
     subscribe(controls: ValueAnimationControls): () => boolean;
     // @internal
@@ -56,7 +56,7 @@ export class AnimationControls {
     }
 
 // Warning: (ae-internal-missing-underscore) The name "animationControls" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export const animationControls: () => AnimationControls;
 
@@ -74,7 +74,7 @@ export interface AnimationProps {
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export const createMotionComponent: <P extends {}>({ getValueControlsConfig, loadFunctionalityComponents, renderComponent, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
 
@@ -89,12 +89,10 @@ export interface CustomValueType {
 // @public
 export class DragControls {
     // Warning: (ae-forgotten-export) The symbol "DragControlOptions" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
     start(event: React.MouseEvent | React.TouchEvent | React.PointerEvent | MouseEvent | TouchEvent | PointerEvent, options?: DragControlOptions): void;
     // Warning: (ae-forgotten-export) The symbol "ComponentDragControls" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
+    // 
+    // @internal
     subscribe(controls: ComponentDragControls): () => void;
 }
 
@@ -158,7 +156,7 @@ export interface HoverHandlers {
 // Warning: (ae-forgotten-export) The symbol "HTMLAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "UnwrapFactoryAttributes" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "UnwrapFactoryElement" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public (undocumented)
 export type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWithoutMotionProps<UnwrapFactoryAttributes<ReactHTML[TagName]>, UnwrapFactoryElement<ReactHTML[TagName]>> & MotionProps;
 
@@ -183,7 +181,7 @@ export interface Inertia {
 export function isValidMotionProp(key: string): boolean;
 
 // Warning: (ae-internal-missing-underscore) The name "Keyframes" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal
 export interface Keyframes {
     // (undocumented)
@@ -191,7 +189,7 @@ export interface Keyframes {
     // @public
     duration?: number;
     // Warning: (ae-forgotten-export) The symbol "Easing" needs to be exported by the entry point index.d.ts
-    //
+    // 
     // @public
     ease?: Easing | Easing[];
     easings?: Easing | Easing[];
@@ -414,19 +412,19 @@ export interface MotionCallbacks {
 
 // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionContext" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export const MotionContext: React.Context<MotionContextProps>;
 
 // Warning: (ae-forgotten-export) The symbol "MotionPluginsContext" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionPluginContext" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export const MotionPluginContext: React.Context<MotionPluginsContext>;
 
 // Warning: (ae-forgotten-export) The symbol "MotionPluginProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionPlugins" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
@@ -446,7 +444,7 @@ export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHan
 // Warning: (ae-forgotten-export) The symbol "SVGPathProperties" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "MakeCustomValueType" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "CustomStyles" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public (undocumented)
 export type MotionStyle = MotionCSS & MotionTransform & MakeMotion<SVGPathProperties> & MakeCustomValueType<CustomStyles>;
 
@@ -456,7 +454,7 @@ export type MotionTransform = MakeMotion<TransformProperties>;
 // @public
 export class MotionValue<V = any> {
     // Warning: (ae-forgotten-export) The symbol "Config" needs to be exported by the entry point index.d.ts
-    //
+    // 
     // @internal
     constructor(init: V, { transformer, parent }?: Config<V>);
     // @internal
@@ -474,7 +472,7 @@ export class MotionValue<V = any> {
     removeChild(child: MotionValue): void;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
-    //
+    // 
     // @internal
     start(animation: StartAnimation): Promise<void>;
     stop(): void;
@@ -485,7 +483,7 @@ export class MotionValue<V = any> {
     }
 
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export function motionValue<V>(init: V, opts?: Config<V>): MotionValue<V>;
 
@@ -546,7 +544,7 @@ export namespace Point {
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "ReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal
 export function ReducedMotion({ children, enabled }: Props): JSX.Element;
 
@@ -596,12 +594,12 @@ export interface Spring {
 export type Subscriber<T> = (v: T) => void;
 
 // Warning: (ae-forgotten-export) The symbol "SVGAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMotionProps<T>>;
 
 // Warning: (ae-forgotten-export) The symbol "Omit" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public (undocumented)
 export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Omit<MotionProps, "positionTransition"> {
 }
@@ -620,7 +618,7 @@ export interface TapInfo {
 }
 
 // Warning: (ae-forgotten-export) The symbol "TargetWithKeyframes" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export type TargetAndTransition = TargetWithKeyframes & {
     transition?: Transition;
@@ -628,7 +626,7 @@ export type TargetAndTransition = TargetWithKeyframes & {
 };
 
 // Warning: (ae-forgotten-export) The symbol "TransformOptions" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export function transform<T>(inputValue: number, inputRange: number[], outputRange: T[], options?: TransformOptions<T>): T;
 
@@ -637,7 +635,7 @@ export function transform<T>(inputRange: number[], outputRange: T[], options?: T
 
 // Warning: (ae-forgotten-export) The symbol "TransitionDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TransitionMap" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export type Transition = (Orchestration & TransitionDefinition) | (Orchestration & TransitionMap);
 
@@ -665,12 +663,12 @@ export interface Tween {
 
 // Warning: (ae-forgotten-export) The symbol "SyncLayoutProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "UnstableSyncLayout" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal
 export const UnstableSyncLayout: ({ children }: SyncLayoutProps) => JSX.Element;
 
 // Warning: (ae-internal-missing-underscore) The name "unwrapMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal
 export function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
@@ -681,18 +679,18 @@ export function useAnimatedState(initialState: any): any[];
 export function useAnimation(): AnimationControls;
 
 // Warning: (ae-forgotten-export) The symbol "CycleState" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export function useCycle<T>(...items: T[]): CycleState<T>;
 
 // @public
 export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
 
-// @public (undocumented)
+// @public
 export function useDragControls(): DragControls;
 
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
@@ -700,7 +698,7 @@ export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
@@ -708,7 +706,7 @@ export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotio
 export function useMotionValue<T>(initial: T): MotionValue<T>;
 
 // Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
 
@@ -720,12 +718,12 @@ export function useSpring(source: MotionValue | number, config?: SpringProps): M
 
 // Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
-//
+// 
 // @internal (undocumented)
 export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, controls, }: TapHandlers & ControlsProp, ref: RefObject<Element>): void;
 
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>): MotionValue;
 
@@ -733,7 +731,7 @@ export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>
 export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
 
 // Warning: (ae-forgotten-export) The symbol "ScrollMotionValues" needs to be exported by the entry point index.d.ts
-//
+// 
 // @public
 export function useViewportScroll(): ScrollMotionValues;
 
