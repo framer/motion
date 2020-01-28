@@ -3,7 +3,7 @@ import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { ValueAnimationControls } from "../animation/ValueAnimationControls"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { DraggableProps } from "./types"
-import { DragControls } from "./DragControls"
+import { ComponentDragControls } from "./ComponentDragControls"
 import { useConstant } from "../utils/use-constant"
 
 /**
@@ -26,7 +26,7 @@ export function useDrag(
     const { transformPagePoint } = useContext(MotionPluginContext)
 
     const dragControls = useConstant(
-        () => new DragControls({ ref, values, controls })
+        () => new ComponentDragControls({ ref, values, controls })
     )
     dragControls.updateProps({ ...props, transformPagePoint })
 

@@ -60,7 +60,7 @@ interface BBox {
  */
 const allowDefaultPointerDown = new Set(["INPUT", "TEXTAREA", "SELECT"])
 
-export class DragControls {
+export class ComponentDragControls {
     /**
      * Track whether we're currently dragging.
      *

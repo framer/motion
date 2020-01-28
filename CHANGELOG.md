@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.1] 2020-01-28
+
+### Added
+
+-   Updated documentation for `useDragControls`.
+
 ## [1.8.0] 2020-01-27
 
 ### Added

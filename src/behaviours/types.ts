@@ -3,9 +3,11 @@ import { PanInfo } from "../gestures"
 import { MotionValue } from "../value"
 import { Omit, Inertia } from "../types"
 import { AnimationControls } from "../animation/AnimationControls"
-import { GroupDragControls } from "./use-drag-controls"
+import { DragControls } from "./use-drag-controls"
 
-/** @public */
+/**
+ * @public
+ */
 export interface DragHandlers {
     /**
      * Callback function that fires when dragging starts.
@@ -30,6 +32,8 @@ export interface DragHandlers {
      *   }
      * />
      * ```
+     *
+     * @public
      */
     onDragStart?(
         event: MouseEvent | TouchEvent | PointerEvent,
@@ -59,6 +63,8 @@ export interface DragHandlers {
      *   }
      * />
      * ```
+     *
+     * @public
      */
     onDragEnd?(
         event: MouseEvent | TouchEvent | PointerEvent,
@@ -88,6 +94,8 @@ export interface DragHandlers {
      *   }
      * />
      * ```
+     *
+     * @public
      */
     onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void
 
@@ -117,6 +125,8 @@ export interface DragHandlers {
      *   onDirectionLock={axis => console.log(axis)}
      * />
      * ```
+     *
+     * @public
      */
     onDirectionLock?(axis: "x" | "y"): void
 
@@ -144,6 +154,8 @@ export interface DragHandlers {
      *   onDragTransitionEnd={() => console.log('Drag transition complete')}
      * />
      * ```
+     *
+     * @public
      */
     onDragTransitionEnd?(): void
 }
@@ -451,5 +463,5 @@ export interface DraggableProps extends DragHandlers {
      * )
      * ```
      */
-    dragControls?: GroupDragControls
+    dragControls?: DragControls
 }
