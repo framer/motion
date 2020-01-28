@@ -6,6 +6,94 @@ import {
 } from "./ComponentDragControls"
 
 /**
+ * Can manually trigger a drag gesture on one or more `drag`-enabled `motion` components.
+ *
+ * @library
+ *
+ * ```jsx
+ * const dragControls = useDragControls()
+ *
+ * function startDrag(event) {
+ *   dragControls.start(event, { snapToCursor: true })
+ * }
+ *
+ * return (
+ *   <>
+ *     <Frame onTapStart={startDrag} />
+ *     <Frame drag="x" dragControls={dragControls} />
+ *   </>
+ * )
+ * ```
+ *
+ * @motion
+ *
+ * ```jsx
+ * const dragControls = useDragControls()
+ *
+ * function startDrag(event) {
+ *   dragControls.start(event, { snapToCursor: true })
+ * }
+ *
+ * return (
+ *   <>
+ *     <div onMouseDown={startDrag} />
+ *     <motion.div drag="x" dragControls={dragControls} />
+ *   </>
+ * )
+ * ```
+ *
+ * @public
+ */
+export class DragControls {
+    private componentControls = new Set<ComponentDragControls>()
+
+    /**
+     * Subscribe a component's internal `ComponentDragControls` to the user-facing API.
+     *
+     * @internal
+     */
+    subscribe(controls: ComponentDragControls): () => void {
+        this.componentControls.add(controls)
+        return () => this.componentControls.delete(controls)
+    }
+
+    /**
+     * Start a drag gesture on every `motion` component that has this set of drag controls
+     * passed into it via the `dragControls` prop.
+     *
+     * ```jsx
+     * dragControls.start(e, {
+     *   snapToCursor: true
+     * })
+     * ```
+     *
+     * @param event - A mouse/touch/pointer event.
+     * @param options - Options
+     *
+     * @public
+     */
+    start(
+        event:
+            | React.MouseEvent
+            | React.TouchEvent
+            | React.PointerEvent
+            | MouseEvent
+            | TouchEvent
+            | PointerEvent,
+        options?: DragControlOptions
+    ) {
+        this.componentControls.forEach(controls => {
+            controls.start(
+                (event as React.MouseEvent).nativeEvent || event,
+                options
+            )
+        })
+    }
+}
+
+const createDragControls = () => new DragControls()
+
+/**
  * Usually, dragging is initiated by pressing down on a `motion` component with a `drag` prop
  * and moving it. For some use-cases, for instance clicking at an arbitrary point on a video scrubber, we
  * might want to initiate that dragging from a different component than the draggable one.
@@ -47,40 +135,6 @@ import {
  *   </>
  * )
  * ```
- *
- * @public
- */
-export class DragControls {
-    private componentControls = new Set<ComponentDragControls>()
-
-    subscribe(controls: ComponentDragControls): () => void {
-        this.componentControls.add(controls)
-        return () => this.componentControls.delete(controls)
-    }
-
-    start(
-        event:
-            | React.MouseEvent
-            | React.TouchEvent
-            | React.PointerEvent
-            | MouseEvent
-            | TouchEvent
-            | PointerEvent,
-        options?: DragControlOptions
-    ) {
-        this.componentControls.forEach(controls => {
-            controls.start(
-                (event as React.MouseEvent).nativeEvent || event,
-                options
-            )
-        })
-    }
-}
-
-const createDragControls = () => new DragControls()
-
-/**
- *
  *
  * @public
  */
