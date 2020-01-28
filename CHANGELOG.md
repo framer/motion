@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.2] 2020-01-28
+
+### Downgrade
+
+-   Downgraded `api-extractor` to `@7.3` as `7.7.7` broke `Method` name indexing.
+
 ## [1.8.1] 2020-01-28
 
 ### Added
