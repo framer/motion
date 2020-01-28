@@ -86,6 +86,18 @@ export interface CustomValueType {
     toValue: () => number | string;
 }
 
+// @public
+export class DragControls {
+    // Warning: (ae-forgotten-export) The symbol "DragControlOptions" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    start(event: React.MouseEvent | React.TouchEvent | React.PointerEvent | MouseEvent | TouchEvent | PointerEvent, options?: DragControlOptions): void;
+    // Warning: (ae-forgotten-export) The symbol "ComponentDragControls" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    subscribe(controls: ComponentDragControls): () => void;
+}
+
 // @public (undocumented)
 export interface DraggableProps extends DragHandlers {
     drag?: boolean | "x" | "y";
@@ -95,7 +107,7 @@ export interface DraggableProps extends DragHandlers {
         bottom?: number;
         left?: number;
     } | RefObject<Element>;
-    dragControls?: GroupDragControls;
+    dragControls?: DragControls;
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
     dragMomentum?: boolean;
@@ -135,18 +147,6 @@ export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRe
 
 // @public (undocumented)
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
-
-// @public (undocumented)
-export class GroupDragControls {
-    // Warning: (ae-forgotten-export) The symbol "DragControlOptions" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    start(event: React.MouseEvent | React.TouchEvent | React.PointerEvent | MouseEvent | TouchEvent | PointerEvent, options?: DragControlOptions): void;
-    // Warning: (ae-forgotten-export) The symbol "DragControls" needs to be exported by the entry point index.d.ts
-    //
-    // (undocumented)
-    subscribe(controls: DragControls): () => void;
-}
 
 // @public (undocumented)
 export interface HoverHandlers {
@@ -689,7 +689,7 @@ export function useCycle<T>(...items: T[]): CycleState<T>;
 export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
 
 // @public (undocumented)
-export function useDragControls(): GroupDragControls;
+export function useDragControls(): DragControls;
 
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 //
