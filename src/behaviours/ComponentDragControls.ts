@@ -524,7 +524,10 @@ export class ComponentDragControls {
         const stopPointerListener = addPointerEvent(
             element,
             "pointerdown",
-            event => this.props.drag && this.start(event)
+            event => {
+                const { drag, dragListener = true } = this.props
+                drag && dragListener && this.start(event)
+            }
         )
 
         const stopResizeListener = addDomEvent(window, "resize", () =>
