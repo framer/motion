@@ -472,4 +472,54 @@ export interface DraggableProps extends DragHandlers {
      * ```
      */
     dragControls?: DragControls
+
+    /**
+     * By default, if `drag` is defined on a component then an event listener will be attached
+     * to automatically initiate dragging when a user presses down on it.
+     *
+     * By setting `dragListener` to `false`, this event listener will not be created.
+     *
+     * @library
+     *
+     * ```jsx
+     * const dragControls = useDragControls()
+     *
+     * function startDrag(event) {
+     *   dragControls.start(event, { snapToCursor: true })
+     * }
+     *
+     * return (
+     *   <>
+     *     <Frame onTapStart={startDrag} />
+     *     <Frame
+     *       drag="x"
+     *       dragControls={dragControls}
+     *       dragListener={false}
+     *     />
+     *   </>
+     * )
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * const dragControls = useDragControls()
+     *
+     * function startDrag(event) {
+     *   dragControls.start(event, { snapToCursor: true })
+     * }
+     *
+     * return (
+     *   <>
+     *     <div onMouseDown={startDrag} />
+     *     <motion.div
+     *       drag="x"
+     *       dragControls={dragControls}
+     *       dragListener={false}
+     *     />
+     *   </>
+     * )
+     * ```
+     */
+    dragListener?: boolean
 }

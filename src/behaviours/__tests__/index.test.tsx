@@ -26,6 +26,28 @@ describe("dragging", () => {
         expect(onDragStart).toBeCalledTimes(1)
     })
 
+    test("dragStart doesn't fire if dragListener === false", async () => {
+        const onDragStart = jest.fn()
+        const Component = () => (
+            <MockDrag>
+                <motion.div
+                    drag
+                    dragListener={false}
+                    onDragStart={onDragStart}
+                />
+            </MockDrag>
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(container.firstChild).to(100, 100)
+
+        pointer.end()
+
+        expect(onDragStart).toBeCalledTimes(0)
+    })
+
     test("dragEnd fires", async () => {
         const onDragEnd = jest.fn()
         const Component = () => (

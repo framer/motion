@@ -29,6 +29,8 @@ const validMotionProps = new Set<keyof MotionProps>([
     "onDirectionLock",
     "onDragTransitionEnd",
     "drag",
+    "dragControls",
+    "dragListener",
     "dragConstraints",
     "dragDirectionLock",
     "dragElastic",

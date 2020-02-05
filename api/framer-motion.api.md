@@ -108,6 +108,7 @@ export interface DraggableProps extends DragHandlers {
     dragControls?: DragControls;
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
+    dragListener?: boolean;
     dragMomentum?: boolean;
     dragOriginX?: MotionValue<number>;
     dragOriginY?: MotionValue<number>;
