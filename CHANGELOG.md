@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.8.4] 2020-02-05
+
+### Added
+
+-   `dragListener` prop to disable drag event listeners.
+
 ## [1.8.3] 2020-01-28
 
 ### Added
