@@ -1,7 +1,7 @@
-import { RefObject } from "react"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { Target, TargetWithKeyframes } from "../types"
 import { invariant } from "hey-listen"
+import { NativeElement } from "../motion/utils/use-native-element"
 
 function isCSSVariable(value: any): value is string {
     return typeof value === "string" && value.startsWith("var(--")
@@ -61,11 +61,11 @@ function getVariableValue(
  */
 export function resolveCSSVariables(
     values: MotionValuesMap,
-    ref: RefObject<Element>,
+    nativeElement: NativeElement<Element>,
     { ...target }: TargetWithKeyframes,
     transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
-    const { current: element } = ref
+    const element = nativeElement.getInstance()
     if (!(element instanceof HTMLElement)) return { target, transitionEnd }
 
     // If `transitionEnd` isn't `undefined`, clone it. We could clone `target` and `transitionEnd`

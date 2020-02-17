@@ -1,7 +1,7 @@
 // TODO: Move this file to `src/dom/`
 import * as React from "react"
 import { createElement, ComponentType, CSSProperties } from "react"
-import styler, { buildSVGAttrs } from "stylefire"
+import { buildSVGAttrs } from "stylefire"
 import { MotionProps } from "../types"
 import { buildStyleAttr } from "../utils/use-styles"
 import { svgElements } from "../utils/supported-elements"
@@ -87,7 +87,7 @@ export function createDomMotionConfig<P = MotionProps>(
     const isSVG = isDOM && svgElements.indexOf(Component as any) !== -1
 
     return {
-        renderComponent: (ref, style, values, props, isStatic) => {
+        renderComponent: (nativeElement, style, values, props, isStatic) => {
             const forwardedProps = isDOM ? filterValidProps(props) : props
 
             const staticVisualStyles = isSVG
@@ -96,7 +96,7 @@ export function createDomMotionConfig<P = MotionProps>(
 
             return createElement<any>(Component, {
                 ...forwardedProps,
-                ref,
+                ref: nativeElement.ref,
                 ...staticVisualStyles,
             })
         },
@@ -121,7 +121,7 @@ export function createDomMotionConfig<P = MotionProps>(
          *  2) User-defined "clean props" function that removes their plugin's props before being passed to the DOM.
          */
         loadFunctionalityComponents: (
-            ref,
+            nativeElement,
             values,
             props,
             context,
@@ -163,7 +163,7 @@ export function createDomMotionConfig<P = MotionProps>(
                             parentContext={context}
                             values={values}
                             controls={controls}
-                            innerRef={ref}
+                            nativeElement={nativeElement}
                         />
                     )
                 }
@@ -171,15 +171,14 @@ export function createDomMotionConfig<P = MotionProps>(
 
             return activeComponents
         },
-        getValueControlsConfig(ref, values) {
+        getValueControlsConfig(nativeElement, values) {
             return {
                 values,
-                readValueFromSource: key =>
-                    styler(ref.current as Element).get(key),
+                readValueFromSource: key => nativeElement.getStyle(key),
                 // TODO: This is a good second source of plugins. This function contains the CSS variable
                 // and unit conversion support. These functions share a common signature. We could make another
                 // API for adding these.
-                makeTargetAnimatable: parseDomVariant(values, ref),
+                makeTargetAnimatable: parseDomVariant(values, nativeElement),
             }
         },
     }

@@ -7,8 +7,8 @@ export const Drag: FunctionalComponentDefinition = {
     key: "drag",
     shouldRender: (props: MotionProps) => !!props.drag,
     Component: makeRenderlessComponent(
-        ({ innerRef, values, controls, ...props }: FunctionalProps) => {
-            return useDrag(props, innerRef, values, controls)
+        ({ nativeElement, values, controls, ...props }: FunctionalProps) => {
+            return useDrag(props, nativeElement, values, controls)
         }
     ),
 }
