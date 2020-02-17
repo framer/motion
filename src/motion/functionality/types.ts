@@ -1,13 +1,14 @@
-import { RefObject, ComponentType, CSSProperties, ReactElement } from "react"
+import { ComponentType, CSSProperties, ReactElement } from "react"
 import { MotionProps } from "../types"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { MotionContextProps } from "../../motion/context/MotionContext"
+import { NativeElement } from "motion/utils/use-native-element"
 
 export interface FunctionalProps extends MotionProps {
     controls: ValueAnimationControls
     values: MotionValuesMap
-    innerRef: RefObject<Element>
+    nativeElement: NativeElement
     parentContext: MotionContextProps
 }
 
@@ -21,7 +22,7 @@ export interface FunctionalComponentDefinition {
 }
 
 export type LoadFunctionalityComponents<P = {}> = (
-    ref: RefObject<Element>,
+    nativeElement: NativeElement,
     values: MotionValuesMap,
     props: P & MotionProps,
     parentContext: MotionContextProps,
@@ -30,7 +31,7 @@ export type LoadFunctionalityComponents<P = {}> = (
 ) => ReactElement<FunctionalProps>[]
 
 export type RenderComponent<P = {}> = (
-    ref: RefObject<Element>,
+    nativeElement: NativeElement,
     style: CSSProperties,
     values: MotionValuesMap,
     props: P,

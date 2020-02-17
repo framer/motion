@@ -1,7 +1,6 @@
 import * as React from "react"
-import { useContext, forwardRef, Ref, RefObject } from "react"
+import { useContext, forwardRef, Ref } from "react"
 import { useMotionValues, MotionValuesMap } from "./utils/use-motion-values"
-import { Mount } from "./utils/Mount"
 import { useMotionStyles } from "./utils/use-styles"
 import { useValueAnimationControls } from "../animation/use-value-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
@@ -13,14 +12,14 @@ import {
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
-import { useExternalRef } from "./utils/use-external-ref"
+import { useNativeElement, NativeElement } from "./utils/use-native-element"
 export { MotionProps }
 
 export interface MotionComponentConfig {
     loadFunctionalityComponents: LoadFunctionalityComponents
     renderComponent: RenderComponent
     getValueControlsConfig: (
-        ref: RefObject<any>,
+        nativeElement: NativeElement,
         values: MotionValuesMap
     ) => ValueAnimationConfig
 }
@@ -37,9 +36,7 @@ export const createMotionComponent = <P extends {}>({
         props: P & MotionProps,
         externalRef?: Ref<Element>
     ) {
-        const ref = useExternalRef(externalRef)
         const parentContext = useContext(MotionContext)
-
         const isStatic = parentContext.static || props.static || false
         const values = useMotionValues(props)
         const style = useMotionStyles(
@@ -50,8 +47,10 @@ export const createMotionComponent = <P extends {}>({
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
 
+        const nativeElement = useNativeElement(values, !isStatic, externalRef)
+
         const controlsConfig = useConstant(() => {
-            return getValueControlsConfig(ref, values)
+            return getValueControlsConfig(nativeElement, values)
         })
         const controls = useValueAnimationControls(
             controlsConfig,
@@ -71,7 +70,7 @@ export const createMotionComponent = <P extends {}>({
         const functionality = isStatic
             ? null
             : loadFunctionalityComponents(
-                  ref,
+                  nativeElement,
                   values,
                   props,
                   parentContext,
@@ -80,22 +79,21 @@ export const createMotionComponent = <P extends {}>({
               )
 
         const renderedComponent = renderComponent(
-            ref,
+            nativeElement,
             style,
             values,
             props,
             isStatic
         )
 
+        // The mount order and hierarchy is specific to ensure our element ref is hydrated by the time
+        // all plugins and functionality has to execute.
         return (
             <>
                 <MotionContext.Provider value={context}>
                     {renderedComponent}
                 </MotionContext.Provider>
-                <>
-                    <Mount innerRef={ref} values={values} isStatic={isStatic} />
-                    {functionality}
-                </>
+                <>{functionality}</>
             </>
         )
     }
