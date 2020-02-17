@@ -1,5 +1,4 @@
 import * as React from "react"
-import styler from "stylefire"
 import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
@@ -9,6 +8,8 @@ import { TargetAndTransition, Transition } from "../../types"
 import { isHTMLElement } from "../../utils/is-html-element"
 import { underDampedSpring } from "../../animation/utils/default-transitions"
 import { syncRenderSession } from "../../dom/sync-render-session"
+
+// TODO: Make this work on mount inefficiently and then get someone from React to help
 
 interface Layout {
     top: number
@@ -30,6 +31,9 @@ interface YDelta {
     originY: number
     height: number
 }
+
+// Would there be any benefits of moving this to context?
+const layoutContinuity = new Map<string, Layout>()
 
 // We measure the positional delta as x/y as we're actually going to figure out
 // and track the motion of the component's visual center.
@@ -159,7 +163,7 @@ const offset: LayoutType = {
         }
     },
 }
-const boundingBox: LayoutType = {
+export const boundingBox: LayoutType = {
     getLayout: ({ boundingBox }) => boundingBox,
     measure: element => {
         const {
@@ -193,6 +197,7 @@ function isSizeKey(key: string) {
 interface LayoutProps {
     positionTransition?: boolean
     layoutTransition?: boolean
+    layoutId?: string
 }
 
 function getTransition({ layoutTransition, positionTransition }: LayoutProps) {
@@ -207,9 +212,14 @@ export class LayoutAnimation extends React.Component<
     // Measure the current state of the DOM before it's updated, and schedule checks to see
     // if it's changed as a result of a React render.
     getSnapshotBeforeUpdate() {
-        const { innerRef, positionTransition, values, controls } = this.props
-        const element = innerRef.current
+        const {
+            nativeElement,
+            positionTransition,
+            values,
+            controls,
+        } = this.props
 
+        const element = nativeElement.getInstance()
         if (!isHTMLElement(element)) return
 
         const layoutTransition = getTransition(this.props) as boolean
@@ -225,6 +235,8 @@ export class LayoutAnimation extends React.Component<
         let next: VisualInfo
         let compare: LayoutType
 
+        // TODO: Replace these steps with read/write that add to infinite ping/pong stacks
+
         // We split the unsetting, read and reapplication of the `transform` style prop into
         // different steps via useSyncEffect. Multiple components might all be doing the same
         // thing and by splitting these jobs and flushing them in batches we prevent layout thrashing.
@@ -232,6 +244,7 @@ export class LayoutAnimation extends React.Component<
             // Unset the transform of all layoutTransition components so we can accurately measure
             // the target bounding box
             transform = element.style.transform
+            // TODO This counts as a read/write cycle so split into different cycles
             element.style.transform = ""
         })
 
@@ -261,10 +274,11 @@ export class LayoutAnimation extends React.Component<
                 return
             }
 
-            styler(element).set({
+            nativeElement.setStyle({
                 originX: delta.originX,
                 originY: delta.originY,
             })
+
             syncRenderSession.open()
 
             const target: TargetAndTransition = {}
@@ -343,8 +357,50 @@ export class LayoutAnimation extends React.Component<
         return null
     }
 
+    componentWillUnmount() {
+        this.saveLayoutContinuity()
+
+        console.log("layout hook unmount")
+    }
+
+    componentDidMount() {
+        this.retrieveLayoutContinuity()
+
+        console.log("layout hook mount")
+        // TODO: We want to perform all the correct steps here to set the component into its initial animation
+        // state.
+        // Crucially we want to do so without visual flickering or layout thrashing.
+        // But possible first step is to do it without visual flickering
+        // mount will run bottom up,
+    }
+
     componentDidUpdate() {
         layoutSync.flush()
+    }
+
+    saveLayoutContinuity() {
+        const { nativeElement, layoutId, layoutTransition } = this.props
+        const element = nativeElement.getInstance()
+        console.log(element)
+        if (!(layoutId && layoutTransition && isHTMLElement(element))) return
+        console.log("what")
+        layoutContinuity.set(layoutId, boundingBox.measure(element))
+    }
+
+    retrieveLayoutContinuity() {
+        const { nativeElement, layoutId, layoutTransition } = this.props
+        const element = nativeElement.getInstance()
+
+        if (!(layoutId && layoutTransition && isHTMLElement(element))) return
+
+        const prev = layoutContinuity.get(layoutId)
+        if (!prev) return
+
+        // TODO: Questionable whether we should do this. Probably makes more sense to have this in
+        // context and flush at the end of a render cycle
+        layoutContinuity.delete(layoutId)
+
+        console.log(prev)
     }
 
     render() {
