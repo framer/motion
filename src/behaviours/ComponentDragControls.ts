@@ -18,11 +18,12 @@ import { mix } from "@popmotion/popcorn"
 import { addDomEvent } from "../events/use-dom-event"
 import { extractEventInfo } from "../events/event-info"
 import { startAnimation } from "../animation/utils/transitions"
+import { NativeElement } from "../motion/utils/use-native-element"
 
 const noop = (v: any) => v
 
 interface DragControlConfig {
-    ref: RefObject<Element>
+    nativeElement: NativeElement
     values: MotionValuesMap
     controls: ValueAnimationControls
 }
@@ -103,7 +104,7 @@ export class ComponentDragControls {
     /**
      * @internal
      */
-    private ref: RefObject<Element>
+    private nativeElement: NativeElement<Element>
 
     /**
      * A reference to the host component's animation controls.
@@ -158,8 +159,8 @@ export class ComponentDragControls {
         y: 0,
     }
 
-    constructor({ ref, values, controls }: DragControlConfig) {
-        this.ref = ref
+    constructor({ nativeElement, values, controls }: DragControlConfig) {
+        this.nativeElement = nativeElement
         this.values = values
         this.controls = controls
     }
@@ -217,8 +218,8 @@ export class ComponentDragControls {
             if (this.constraintsNeedResolution) {
                 const { dragConstraints, transformPagePoint } = this.props
                 this.constraints = calculateConstraintsFromDom(
-                    dragConstraints as RefObject<Element>,
-                    this.ref,
+                    (dragConstraints as RefObject<Element>).current as Element,
+                    this.nativeElement.getInstance(),
                     this.point,
                     transformPagePoint
                 )
@@ -332,7 +333,10 @@ export class ComponentDragControls {
     snapToCursor(event: AnyPointerEvent) {
         const { transformPagePoint } = this.props
         const { point } = extractEventInfo(event)
-        const boundingBox = getBoundingBox(this.ref, transformPagePoint)
+        const boundingBox = getBoundingBox(
+            this.nativeElement.getInstance(),
+            transformPagePoint
+        )
         const center = {
             x: boundingBox.width / 2 + boundingBox.left + window.scrollX,
             y: boundingBox.height / 2 + boundingBox.top + window.scrollY,
@@ -497,10 +501,13 @@ export class ComponentDragControls {
         if (!isRefObject(dragConstraints)) return
 
         const constraintsBox = getBoundingBox(
-            dragConstraints,
+            dragConstraints.current as Element,
             transformPagePoint
         )
-        const draggableBox = getBoundingBox(this.ref, transformPagePoint)
+        const draggableBox = getBoundingBox(
+            this.nativeElement.getInstance(),
+            transformPagePoint
+        )
 
         // Scale a point relative to the transformation of a constraints-providing element.
         const scaleAxisPoint = (
@@ -548,8 +555,8 @@ export class ComponentDragControls {
         if (this.constraintsNeedResolution) {
             const { dragConstraints, transformPagePoint } = this.props
             const constraints = calculateConstraintsFromDom(
-                dragConstraints as RefObject<Element>,
-                this.ref,
+                (dragConstraints as RefObject<Element>).current as Element,
+                this.nativeElement.getInstance(),
                 this.point,
                 transformPagePoint
             )
@@ -634,19 +641,22 @@ function getCurrentDirection(
  * @param draggableRef
  */
 function calculateConstraintsFromDom(
-    constraintsRef: RefObject<Element>,
-    draggableRef: RefObject<Element>,
+    constraintsElement: Element,
+    draggableElement: Element,
     point: Partial<MotionPoint>,
     transformPagePoint: MotionPluginsContext["transformPagePoint"]
 ) {
     invariant(
-        constraintsRef.current !== null && draggableRef.current !== null,
+        constraintsElement !== null && draggableElement !== null,
         "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
     )
 
-    const parentBoundingBox = getBoundingBox(constraintsRef, transformPagePoint)
+    const parentBoundingBox = getBoundingBox(
+        constraintsElement,
+        transformPagePoint
+    )
     const draggableBoundingBox = getBoundingBox(
-        draggableRef,
+        draggableElement,
         transformPagePoint
     )
 
@@ -667,10 +677,10 @@ function calculateConstraintsFromDom(
 }
 
 function getBoundingBox(
-    ref: RefObject<Element>,
+    element: Element,
     transformPagePoint: MotionPluginsContext["transformPagePoint"]
 ) {
-    const rect = (ref.current as Element).getBoundingClientRect()
+    const rect = element.getBoundingClientRect()
 
     const { x: left, y: top } = transformPagePoint({
         x: rect.left,
