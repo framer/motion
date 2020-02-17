@@ -1,7 +1,7 @@
 import { invariant } from "hey-listen"
-import { Styler } from "stylefire"
+import { NativeElement } from "../motion/utils/use-native-element"
 
-let session: Styler[] | null = null
+let session: NativeElement[] | null = null
 
 export const syncRenderSession = {
     isOpen: () => session !== null,
@@ -11,11 +11,11 @@ export const syncRenderSession = {
     },
     flush: () => {
         invariant(session !== null, "No sync render session found")
-        session && session.forEach(styler => styler.render())
+        session && session.forEach(nativeElement => nativeElement.render())
         session = null
     },
-    push: (styler: Styler) => {
+    push: (nativeElement: NativeElement) => {
         invariant(session !== null, "No sync render session found")
-        session && session.push(styler)
+        session && session.push(nativeElement)
     },
 }
