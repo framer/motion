@@ -1,10 +1,11 @@
-import { RefObject, useEffect, useContext } from "react"
+import { useEffect, useContext } from "react"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { ValueAnimationControls } from "../animation/ValueAnimationControls"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { DraggableProps } from "./types"
 import { ComponentDragControls } from "./ComponentDragControls"
 import { useConstant } from "../utils/use-constant"
+import { NativeElement } from "../motion/utils/use-native-element"
 
 /**
  * A hook that allows an element to be dragged.
@@ -18,7 +19,7 @@ import { useConstant } from "../utils/use-constant"
  */
 export function useDrag(
     props: DraggableProps,
-    ref: RefObject<Element>,
+    nativeElement: NativeElement<Element>,
     values: MotionValuesMap,
     controls: ValueAnimationControls
 ) {
@@ -26,7 +27,7 @@ export function useDrag(
     const { transformPagePoint } = useContext(MotionPluginContext)
 
     const dragControls = useConstant(
-        () => new ComponentDragControls({ ref, values, controls })
+        () => new ComponentDragControls({ nativeElement, values, controls })
     )
     dragControls.updateProps({ ...props, transformPagePoint })
 
@@ -35,5 +36,5 @@ export function useDrag(
         [dragControls]
     )
 
-    useEffect(() => dragControls.mount(ref.current as Element), [])
+    useEffect(() => dragControls.mount(nativeElement.getInstance()), [])
 }
