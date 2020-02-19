@@ -411,9 +411,14 @@ export interface AnimationProps {
      * }
      * ```
      *
-     * @beta
+     * @deprecated
      */
     layoutTransition?: Transition | boolean | ResolveLayoutTransition
+
+    /**
+     * @beta
+     */
+    auto?: boolean
 }
 
 /**

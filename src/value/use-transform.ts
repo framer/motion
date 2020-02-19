@@ -1,6 +1,7 @@
 import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
-import { useRef, useMemo } from "react"
+import { useRef, useMemo, useEffect } from "react"
+import { useMotionValue } from "./use-motion-value"
 
 type Transformer<T> = (v: any) => T
 
@@ -119,21 +120,22 @@ export function useTransform<T>(
     to?: T[],
     options?: TransformOptions<T>
 ): MotionValue<T> {
-    const value = useRef<MotionValue<T> | null>(null)
-    let comparitor: any[] = [parent]
-    let transformer = noop
+    const comparitor = isTransformer(customTransform)
+        ? [parent]
+        : [parent, customTransform.join(","), to?.join(",")]
 
-    if (isTransformer(customTransform)) {
-        transformer = customTransform
-    } else if (Array.isArray(to)) {
-        const from = customTransform
-        transformer = transform(from, to, options)
-        comparitor = [parent, from.join(","), to.join(",")]
-    }
-
-    return useMemo(() => {
-        if (value.current) value.current.destroy()
-        value.current = parent.addChild({ transformer })
-        return value.current
+    const transformer = useMemo(() => {
+        return isTransformer(customTransform)
+            ? customTransform
+            : transform(customTransform, to as T[], options)
     }, comparitor)
+
+    const initialValue = transformer(parent.get())
+    const value = useMotionValue(initialValue)
+
+    useEffect(() => {
+        return parent.onChange(v => value.set(transformer(v)))
+    }, [parent, value, transformer])
+
+    return value
 }
