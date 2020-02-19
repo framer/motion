@@ -10,7 +10,6 @@ import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
 import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
-import { NativeElement as NativeElement_2 } from 'motion/utils/use-native-element';
 import { PropsWithoutRef } from 'react';
 import * as React from 'react';
 import { ReactElement } from 'react';
@@ -697,8 +696,10 @@ export function useDragControls(): DragControls;
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
+// Warning: (ae-forgotten-export) The symbol "NativeElement" needs to be exported by the entry point index.d.ts
+// 
 // @public
-export function useGestures<GestureHandlers>(props: GestureHandlers, ref: NativeElement_2): void;
+export function useGestures<GestureHandlers>(props: GestureHandlers, ref: NativeElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
 // 
@@ -711,7 +712,7 @@ export function useMotionValue<T>(initial: T): MotionValue<T>;
 // Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element> | NativeElement_2): void;
+export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element> | NativeElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "Present" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "NotPresent" needs to be exported by the entry point index.d.ts

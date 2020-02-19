@@ -4,7 +4,7 @@ import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { PanSession, PanInfo, AnyPointerEvent } from "./PanSession"
-import { NativeElement } from "motion/utils/use-native-element"
+import { NativeElement } from "../motion/utils/use-native-element"
 
 export type PanHandler = (event: Event, info: PanInfo) => void
 
