@@ -16,6 +16,7 @@ import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
 import { getValueType } from "../dom/value-types"
 import { startAnimation } from "./utils/transitions"
 import { invariant } from "hey-listen"
+import { isNumericalString } from "../utils/is-numerical-string"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -67,11 +68,6 @@ const isTargetResolver = (p: any): p is TargetResolver => {
  * @param v -
  */
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
-
-/**
- * Check if value is a numerical string, ie "100" or "100px"
- */
-const isNumericalString = (v: string) => /^\d*\.?\d+$/.test(v)
 
 export type ReadValueFromSource = (key: string) => number | string
 
