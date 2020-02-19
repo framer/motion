@@ -14,7 +14,8 @@ interface ScaleMotionValues {
 // to add another value, opacity, that could interpolate scaleX/Y [0,0.01] => [0,1]
 // to simply hide content at unreasonable scales.
 const maxScale = 100000
-const invertScale = (scale: number) => (scale > 0.001 ? 1 / scale : maxScale)
+export const invertScale = (scale: number) =>
+    scale > 0.001 ? 1 / scale : maxScale
 
 /**
  * Returns a `MotionValue` each for `scaleX` and `scaleY` that update with the inverse
