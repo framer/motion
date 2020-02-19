@@ -3,12 +3,13 @@ import { MotionProps } from "../types"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { MotionContextProps } from "../../motion/context/MotionContext"
-import { NativeElement } from "motion/utils/use-native-element"
+import { NativeElement } from "../../motion/utils/use-native-element"
 
 export interface FunctionalProps extends MotionProps {
     controls: ValueAnimationControls
     values: MotionValuesMap
     nativeElement: NativeElement
+    localContext: MotionContextProps
     parentContext: MotionContextProps
 }
 
@@ -25,6 +26,7 @@ export type LoadFunctionalityComponents<P = {}> = (
     nativeElement: NativeElement,
     values: MotionValuesMap,
     props: P & MotionProps,
+    context: MotionContextProps,
     parentContext: MotionContextProps,
     controls: ValueAnimationControls<P>,
     inherit: boolean

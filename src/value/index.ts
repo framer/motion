@@ -15,11 +15,6 @@ export type Subscriber<T> = (v: T) => void
  */
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void
 
-export type Config<T> = {
-    transformer?: Transformer<T>
-    parent?: MotionValue<T>
-}
-
 export type ActionFactory = (actionConfig: PopmotionTransitionProps) => Action
 
 export type StartAnimation = (complete: () => void) => () => void
@@ -63,13 +58,6 @@ export class MotionValue<V = any> {
     private lastUpdated: number = 0
 
     /**
-     * Collection of children `MotionValue`s to notify of updates.
-     *
-     * @internal
-     */
-    private children?: Set<MotionValue>
-
-    /**
      * A reference to this `MotionValue`'s parent.
      *
      * @internal
@@ -102,13 +90,6 @@ export class MotionValue<V = any> {
     private passiveEffect?: PassiveEffect<V>
 
     /**
-     * If defined, new values passed into `set` will be transformed through this function before being set.
-     *
-     * @internal
-     */
-    private transformer?: Transformer<V>
-
-    /**
      * A reference to the currently-controlling Popmotion animation
      *
      * @internal
@@ -132,47 +113,9 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    constructor(init: V, { transformer, parent }: Config<V> = {}) {
-        this.parent = parent
-        this.transformer = transformer
+    constructor(init: V) {
         this.set(init, false)
         this.canTrackVelocity = isFloat(this.current)
-    }
-
-    /**
-     * Creates a new `MotionValue` that's subscribed to the output of this one.
-     *
-     * @param config - Optional configuration options
-     *
-     * -  `transformer`: A function to transform incoming values with.
-     *
-     * @internal
-     */
-    addChild(config: Config<V> = {}) {
-        const child = new MotionValue(this.current, {
-            parent: this,
-            ...config,
-        })
-
-        if (!this.children) this.children = new Set()
-
-        this.children.add(child)
-
-        return child
-    }
-
-    /**
-     * Stops a `MotionValue` from being subscribed to this one.
-     *
-     * @param child - The subscribed `MotionValue`
-     *
-     * @internal
-     */
-    removeChild(child: MotionValue) {
-        if (!this.children) {
-            return
-        }
-        this.children.delete(child)
     }
 
     /**
@@ -322,14 +265,10 @@ export class MotionValue<V = any> {
 
     updateAndNotify = (v: V, render = true) => {
         this.prev = this.current
-        this.current = this.transformer ? this.transformer(v) : v
+        this.current = v
 
         if (this.updateSubscribers && this.prev !== this.current) {
             this.updateSubscribers.forEach(this.notifySubscriber)
-        }
-
-        if (this.children) {
-            this.children.forEach(this.setChild)
         }
 
         if (render && this.renderSubscribers) {
@@ -416,15 +355,6 @@ export class MotionValue<V = any> {
     }
 
     /**
-     * Updates child `MotionValue`.
-     *
-     * @param child - Child `MotionValue`.
-     *
-     * @internal
-     */
-    private setChild = (child: MotionValue) => child.set(this.current)
-
-    /**
      * Registers a new animation to control this `MotionValue`. Only one
      * animation can drive a `MotionValue` at one time.
      *
@@ -479,7 +409,6 @@ export class MotionValue<V = any> {
     destroy() {
         this.updateSubscribers && this.updateSubscribers.clear()
         this.renderSubscribers && this.renderSubscribers.clear()
-        this.parent && this.parent.removeChild(this)
         this.stop()
     }
 }
@@ -487,6 +416,6 @@ export class MotionValue<V = any> {
 /**
  * @internal
  */
-export function motionValue<V>(init: V, opts?: Config<V>) {
-    return new MotionValue<V>(init, opts)
+export function motionValue<V>(init: V) {
+    return new MotionValue<V>(init)
 }

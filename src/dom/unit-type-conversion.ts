@@ -6,7 +6,7 @@ import { getDimensionValueType } from "./value-types"
 import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { number, px, ValueType } from "style-value-types"
-import { NativeElement } from "motion/utils/use-native-element"
+import { NativeElement } from "../motion/utils/use-native-element"
 
 const positionalKeys = new Set([
     "width",
