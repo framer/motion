@@ -73,6 +73,7 @@ export const createMotionComponent = <P extends {}>({
                   nativeElement,
                   values,
                   props,
+                  context,
                   parentContext,
                   controls,
                   shouldInheritVariant
@@ -93,7 +94,7 @@ export const createMotionComponent = <P extends {}>({
                 <MotionContext.Provider value={context}>
                     {renderedComponent}
                 </MotionContext.Provider>
-                <>{functionality}</>
+                {functionality}
             </>
         )
     }
