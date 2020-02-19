@@ -6,11 +6,18 @@ import { isRefObject } from "../../utils/is-ref-object"
 import { MotionValuesMap } from "./use-motion-values"
 import { syncRenderSession } from "../../dom/sync-render-session"
 
-type Subscription<E extends Element = Element> = (element?: E) => void
+type Subscription<E extends Element = Element> = (
+    nativeElement: NativeElement<E>
+) => void
 
-function subscribe(set: Set<Subscription>, sub: Subscription) {
-    set.add(sub)
-    return () => set.delete(sub)
+// Subscriptions need to be added with unique identifiers to make them concurrent-safe
+function subscribe(
+    id: Symbol,
+    subscribers: Map<Symbol, Subscription>,
+    sub: Subscription
+) {
+    subscribers.set(id, sub)
+    return () => subscribers.delete(id)
 }
 
 export class NativeElement<E extends Element = Element> {
@@ -20,8 +27,8 @@ export class NativeElement<E extends Element = Element> {
     current: E
     styler: Styler
 
-    mountSubscriptions: Set<Subscription> = new Set()
-    unmountSubscriptions: Set<Subscription> = new Set()
+    mountSubscriptions: Map<Symbol, Subscription> = new Map()
+    unmountSubscriptions: Map<Symbol, Subscription> = new Map()
 
     constructor(externalRef?: Ref<E>) {
         this.externalRef = externalRef
@@ -31,7 +38,7 @@ export class NativeElement<E extends Element = Element> {
         this.hasMounted = true
         this.current = element
         this.styler = styler(element)
-        this.mountSubscriptions.forEach(sub => sub(element))
+        this.mountSubscriptions.forEach(sub => sub(this))
         this.mountSubscriptions.clear()
 
         if (!this.externalRef) return
@@ -44,11 +51,11 @@ export class NativeElement<E extends Element = Element> {
     }
 
     unmount() {
+        this.unmountSubscriptions.forEach(sub => sub(this))
+        this.unmountSubscriptions.clear()
+
         delete this.current
         delete this.styler
-
-        this.unmountSubscriptions.forEach(sub => sub())
-        this.unmountSubscriptions.clear()
 
         if (!this.externalRef) return
 
@@ -59,12 +66,12 @@ export class NativeElement<E extends Element = Element> {
         }
     }
 
-    onMount(sub: Subscription) {
-        return subscribe(this.mountSubscriptions, sub)
+    onMount(id: Symbol, sub: Subscription) {
+        return subscribe(id, this.mountSubscriptions, sub)
     }
 
-    onUnmount(sub: Subscription) {
-        return subscribe(this.unmountSubscriptions, sub)
+    onUnmount(id: Symbol, sub: Subscription) {
+        return subscribe(id, this.unmountSubscriptions, sub)
     }
 
     ref = (element: E | null) => {
@@ -104,6 +111,8 @@ export class NativeElement<E extends Element = Element> {
     }
 }
 
+const subscriberSymbol = Symbol("self")
+
 export function useNativeElement<E extends Element = Element>(
     values: MotionValuesMap,
     enableHardwareAcceleration: boolean,
@@ -112,7 +121,9 @@ export function useNativeElement<E extends Element = Element>(
     return useConstant(() => {
         const nativeElement = new NativeElement(externalRef)
 
-        nativeElement.onMount((element: Element) => {
+        nativeElement.onMount(subscriberSymbol, () => {
+            const element = nativeElement.getInstance()
+
             invariant(
                 element instanceof Element,
                 "No ref found. Ensure components created with motion.custom forward refs using React.forwardRef"
@@ -132,7 +143,7 @@ export function useNativeElement<E extends Element = Element>(
             })
         })
 
-        nativeElement.onUnmount(() => values.unmount())
+        nativeElement.onUnmount(subscriberSymbol, () => values.unmount())
 
         return nativeElement
     })
