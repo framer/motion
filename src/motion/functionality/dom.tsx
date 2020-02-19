@@ -11,7 +11,7 @@ import { Drag } from "./drag"
 import { parseDomVariant } from "../../dom/parse-dom-variant"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
-import { Layout } from "./layout"
+import { Auto } from "./auto"
 import { isValidMotionProp } from "../utils/valid-prop"
 import { getAnimationComponent } from "./animation"
 import { Exit } from "./exit"
@@ -72,7 +72,7 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     return props
 }
 
-const functionalityComponents = [Layout, Drag, Gestures, Exit]
+const functionalityComponents = [Auto, Drag, Gestures, Exit]
 const numFunctionalityComponents = functionalityComponents.length
 
 /**
@@ -125,6 +125,7 @@ export function createDomMotionConfig<P = MotionProps>(
             values,
             props,
             context,
+            parentContext,
             controls,
             inherit
         ) => {
@@ -155,12 +156,13 @@ export function createDomMotionConfig<P = MotionProps>(
                     Component,
                 } = functionalityComponents[i]
 
-                if (shouldRender(props, context)) {
+                if (shouldRender(props, parentContext)) {
                     activeComponents.push(
                         <Component
                             key={key}
                             {...props}
-                            parentContext={context}
+                            localContext={context}
+                            parentContext={parentContext}
                             values={values}
                             controls={controls}
                             nativeElement={nativeElement}

@@ -1,7 +1,7 @@
 import { PanHandlers, usePanGesture } from "./use-pan-gesture"
 import { TapHandlers, useTapGesture } from "./use-tap-gesture"
 import { HoverHandlers, useHoverGesture } from "./use-hover-gesture"
-import { NativeElement } from "motion/utils/use-native-element"
+import { NativeElement } from "../motion/utils/use-native-element"
 
 /**
  * @public

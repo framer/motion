@@ -1,12 +1,12 @@
 import * as React from "react"
 import { motion, useCycle } from "@framer"
+import { wrap } from "@popmotion/popcorn"
 
 const styles = [
     {
         width: 100,
         height: 100,
         background: "#f00",
-        opacity: 1,
         top: 100,
     },
     {
@@ -40,13 +40,26 @@ const styles = [
 
 export const App = () => {
     const [count, cycleCount] = useCycle(0, 1, 2, 3)
+
     return (
-        <motion.div
-            style={{ ...styles[count], position: "absolute" }}
-            layoutTransition
-            onClick={() => cycleCount()}
-            layoutId="test"
-            key={count}
-        />
+        <>
+            <motion.div
+                style={{ ...styles[count], position: "absolute" }}
+                layoutTransition
+                onClick={() => cycleCount()}
+                layoutId="test"
+                key={"a" + count}
+            />
+            {/* <motion.div
+                style={{
+                    ...styles[wrap(0, 4, count + 2)],
+                    position: "absolute",
+                }}
+                layoutTransition
+                onClick={() => cycleCount()}
+                layoutId="test2"
+                key={"1" + wrap(0, 4, count + 2)}
+            /> */}
+        </>
     )
 }
