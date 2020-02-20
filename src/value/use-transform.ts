@@ -1,6 +1,6 @@
 import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
-import { useRef, useMemo, useEffect } from "react"
+import { useMemo, useEffect } from "react"
 import { useMotionValue } from "./use-motion-value"
 
 type Transformer<T> = (v: any) => T
@@ -10,8 +10,6 @@ const isTransformer = <T>(
 ): v is Transformer<T> => {
     return typeof v === "function"
 }
-
-const noop = (v: any) => v
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
