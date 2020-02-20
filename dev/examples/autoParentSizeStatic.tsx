@@ -4,10 +4,10 @@ import { motion, useCycle } from "@framer"
 /**
  * This example demonstrates that nested components automatically factor in parent size deltas
  */
-const transition = { duration: 3, ease: "linear" }
+const transition = { duration: 3, ease: "circIn" }
 
 export const App = () => {
-    const [isOpen, toggleIsOpen] = useCycle(false, true)
+    const [isOpen, toggleIsOpen] = useCycle(true, false)
     const childStyles = isOpen ? openChild : closedChild
     return (
         <motion.div
@@ -22,7 +22,7 @@ export const App = () => {
                 id="child"
             >
                 <motion.div
-                    layoutTransition
+                    layoutTransition={transition}
                     style={{
                         ...childStyles,
                         height: "30%",
