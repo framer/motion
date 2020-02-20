@@ -1,5 +1,5 @@
 import * as React from "react"
-import { invariant, warning } from "hey-listen"
+import { invariant } from "hey-listen"
 import { MotionProps, AnimationProps, ResolveLayoutTransition } from "../types"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { SyncLayoutContext } from "../../components/SyncLayout"
@@ -9,8 +9,9 @@ import { isHTMLElement } from "../../utils/is-html-element"
 import { underDampedSpring } from "../../animation/utils/default-transitions"
 import { syncRenderSession } from "../../dom/sync-render-session"
 import { NativeElement } from "../utils/use-native-element"
-import { motionValue } from "value"
-import { MotionValuesMap } from "motion/utils/use-motion-values"
+import { MotionValuesMap } from "../../motion/utils/use-motion-values"
+import { invertScale } from "../../value/use-inverted-scale"
+import { MotionValue, motionValue } from "../../value"
 
 /**
  * TODO:
@@ -20,6 +21,9 @@ import { MotionValuesMap } from "motion/utils/use-motion-values"
  * Handle individual border radius
  * Account for parent transform
  * Apply transition to styles
+ * Split this into a folder
+ * Ensure invertedScale updates even if child component is static
+ * Take into consideration transformPagePoint
  */
 
 interface Layout {
@@ -138,37 +142,86 @@ function centerOf(min: number, max: number) {
     return (min + max) / 2
 }
 
+function applyAxisDelta(
+    layout: Layout,
+    delta: LayoutDelta,
+    names: XLabels
+): void
+function applyAxisDelta(
+    layout: Layout,
+    delta: LayoutDelta,
+    names: YLabels
+): void
+function applyAxisDelta(
+    layout: Layout,
+    delta: LayoutDelta,
+    { min, max, id, scale, size, origin }: XLabels | YLabels
+): void {
+    // Apply translate
+    layout[min] = layout[min] + delta[id]
+    layout[max] = layout[max] + delta[id]
+
+    // Apply scale
+    const originPoint = layout[min] + layout[size] * delta[origin]
+
+    if (id === "x") {
+        console.log(layout[min], layout[size], delta[origin])
+    }
+    layout[size] = layout[size] * delta[scale]
+
+    const minDistanceFromOrigin = layout[min] - originPoint
+    const scaledMinDistanceFromOrigin = minDistanceFromOrigin * delta[origin]
+    layout[min] = originPoint + scaledMinDistanceFromOrigin
+    layout[max] = layout[min] + layout[size]
+}
+
+function applyDeltas(layout: Layout, deltas: LayoutDelta[]): Layout {
+    layout = { ...layout }
+    const numDeltas = deltas.length
+    for (let i = 0; i < numDeltas; i++) {
+        const delta = deltas[i]
+
+        applyAxisDelta(layout, delta, axisLabels.x)
+        applyAxisDelta(layout, delta, axisLabels.y)
+    }
+
+    return layout
+}
+
 function calcAxisDelta(prev: Layout, next: Layout, names: XLabels): XDelta
 function calcAxisDelta(prev: Layout, next: Layout, names: YLabels): YDelta
 function calcAxisDelta(
     prev: Layout,
     next: Layout,
-    names: XLabels | YLabels
+    { size, min, max, origin, id, scale }: XLabels | YLabels
 ): XDelta | YDelta {
-    const sizeDelta = prev[names.size] - next[names.size]
-    let origin = 0.5
+    const sizeDelta = prev[size] - next[size]
+    let relativeOrigin = 0.5
 
     // If the element has changed size we want to check whether either side is in
     // the same position before/after the layout transition. If so, we can anchor
     // the element to that position and only animate its size.
     if (sizeDelta) {
-        if (prev[names.min] === next[names.min]) {
-            origin = 0
-        } else if (prev[names.max] === next[names.max]) {
-            origin = 1
+        if (prev[min] === next[min]) {
+            relativeOrigin = 0
+        } else if (prev[max] === next[max]) {
+            relativeOrigin = 1
         }
     }
 
+    let translate = 0
+    // // Only measure a position delta if we haven't anchored to one side
+    const nextCenter = centerOf(next[min], next[max])
+    if (relativeOrigin === 0.5) {
+        const prevCenter = centerOf(prev[min], prev[max])
+        translate = prevCenter - nextCenter
+    }
+    const scaleDelta = prev[size] / next[size]
     const delta = {
-        [names.size]: sizeDelta,
-        [names.origin]: origin,
-        [names.id]:
-            // Only measure a position delta if we haven't anchored to one side
-            origin === 0.5
-                ? centerOf(prev[names.min], prev[names.max]) -
-                  centerOf(next[names.min], next[names.max])
-                : 0,
-        [names.scale]: prev[names.size] / next[names.size],
+        [size]: Math.round(sizeDelta),
+        [origin]: relativeOrigin,
+        [id]: Math.round(translate),
+        [scale]: scaleDelta,
     }
 
     return delta as any
@@ -223,12 +276,12 @@ function readVisualInfo(nativeElement: NativeElement<HTMLElement>): VisualInfo {
         borderRadius,
     } = nativeElement.getComputedStyle()
     const element = nativeElement.getInstance()
-
+    // TODO: Fix cohersion
     return {
         style: {
             position,
-            opacity: parseFloat(opacity),
-            color,
+            opacity: parseFloat(opacity as string),
+            color: color as string,
             backgroundColor,
             borderRadius: parseFloat(borderRadius),
         },
@@ -262,6 +315,10 @@ export class AutoAnimation extends React.Component<
 
     prev: VisualInfo
 
+    invertScaleX: MotionValue<number>
+    invertScaleY: MotionValue<number>
+    detachInvertScale: () => void
+
     constructor(props: FunctionalProps & AutoProps) {
         super(props)
 
@@ -281,7 +338,9 @@ export class AutoAnimation extends React.Component<
     // Measure the current state of the DOM before it's updated, and schedule checks to see
     // if it's changed as a result of a React render.
     getSnapshotBeforeUpdate() {
-        this.prev = readVisualInfo(this.props.nativeElement)
+        this.prev = readVisualInfo(
+            this.props.nativeElement as NativeElement<HTMLElement>
+        )
         this.prepareLayoutTransition()
 
         return null
@@ -308,15 +367,17 @@ export class AutoAnimation extends React.Component<
         let compareLayout: LayoutType
         let layoutDelta: LayoutDelta
 
-        sync(autoKey, (read, write) => {
-            read(() => (transform = element.style.transform))
+        sync(autoKey, (up, down) => {
+            up(() => (transform = element.style.transform))
 
-            write(() => (element.style.transform = ""))
+            up(() => (element.style.transform = ""))
 
-            read(() => {
+            down(() => {
                 //console.log("read", this.props.layoutId)
                 // Read the target VisualInfo of all layoutTransition components
-                next = readVisualInfo(nativeElement)
+                next = readVisualInfo(
+                    nativeElement as NativeElement<HTMLElement>
+                )
                 compareLayout = getLayoutType(
                     this.prev.style.position,
                     next.style.position,
@@ -324,12 +385,21 @@ export class AutoAnimation extends React.Component<
                 )
 
                 const prevLayout = compareLayout.getLayout(this.prev)
-                const nextLayout = compareLayout.getLayout(next)
+                let nextLayout = compareLayout.getLayout(next)
+                const parentTransforms = parentContext.layoutTransforms
+
+                if (parentTransforms) {
+                    nextLayout = applyDeltas(nextLayout, parentTransforms)
+                }
+
                 layoutDelta = calcDelta(prevLayout, nextLayout)
-                localContext.layoutDelta = layoutDelta
+
+                localContext.layoutTransforms = parentTransforms
+                    ? [...parentTransforms, layoutDelta]
+                    : [layoutDelta]
             })
 
-            write(() => {
+            up(() => {
                 syncRenderSession.open()
 
                 /**
@@ -341,19 +411,43 @@ export class AutoAnimation extends React.Component<
                 // Reverse the layout delta of all newly laid-out auto components into their
                 // prev visual state and then animate them into their new one using transforms.
 
-                const parentLayoutDelta = parentContext.layoutDelta
-                const parentValues = parentContext.values
-                if (parentLayoutDelta && parentValues) {
-                    const { values } = this.props
+                // const parentLayoutDelta = parentContext.layoutDelta
+                // const parentValues = parentContext.values
+                // const parentHasResized =
+                //     parentLayoutDelta &&
+                //     (parentLayoutDelta.width || parentLayoutDelta.height)
 
-                    if (parentLayoutDelta.width) {
-                        invertScale(values, parentValues, "scaleX")
-                    }
+                this.detachInvertScale && this.detachInvertScale()
 
-                    if (parentLayoutDelta.height) {
-                        invertScale(values, parentValues, "scaleY")
-                    }
-                }
+                // if (parentValues && parentHasResized) {
+                //     // const { values } = this.props
+                //     const parentScaleX = parentValues.get("scaleX", 1)
+                //     const parentScaleY = parentValues.get("scaleY", 1)
+                //     this.invertScaleX = this.invertScaleX || motionValue(1)
+                //     this.invertScaleY = this.invertScaleY || motionValue(1)
+
+                //     const detachInvertScaleX = parentScaleX.onChange(v =>
+                //         this.invertScaleX.set(invertScale(v))
+                //     )
+                //     const detachInvertScaleY = parentScaleY.onChange(v =>
+                //         this.invertScaleY.set(invertScale(v))
+                //     )
+
+                //     this.detachInvertScale = () => {
+                //         detachInvertScaleX()
+                //         detachInvertScaleY()
+                //     }
+
+                //     // TODO Explain why we have to first move from inverted coordinate space
+                //     // values.setTransformTemplate((_, generated) => {
+                //     //     const latestInvertScaleX = this.invertScaleX.get()
+                //     //     const latestInvertScaleY = this.invertScaleY.get()
+                //     //     // console.log(
+                //     //     //     `scaleX(${latestInvertScaleX}) scaleY(${latestInvertScaleY}) ${generated}`
+                //     //     // )
+                //     //     return `scaleX(${latestInvertScaleX}) scaleY(${latestInvertScaleY}) ${generated}`
+                //     // })
+                // }
 
                 let shouldTransitionLayout = !!(
                     layoutDelta.x ||
@@ -365,13 +459,6 @@ export class AutoAnimation extends React.Component<
                 if (shouldTransitionLayout) {
                     const target: TargetAndTransition = {}
                     const transition: Transition = {}
-
-                    if (parentLayoutDelta) {
-                        layoutDelta = applyParentDelta(
-                            layoutDelta,
-                            parentLayoutDelta
-                        )
-                    }
 
                     nativeElement.setStyle({
                         originX: layoutDelta.originX,
@@ -441,7 +528,7 @@ export class AutoAnimation extends React.Component<
                     }
 
                     target.transition = transition
-                    shouldTransitionLayout && controls.start(target)
+                    // shouldTransitionLayout && controls.start(target)
                 } else if (transform) {
                     element.style.transform = transform
                 }
@@ -474,6 +561,7 @@ export class AutoAnimation extends React.Component<
                 styleTarget.transition = styleTransition
                 shouldTransitionStyle && controls.start(styleTarget)
 
+                parentContext.layoutTransforms = undefined
                 syncRenderSession.flush()
             })
         })
@@ -495,7 +583,10 @@ export class AutoAnimation extends React.Component<
         const { layoutId } = this.props
         if (!this.hasLayoutContinuity(nativeElement)) return
 
-        layoutContinuity.set(layoutId as string, readVisualInfo(nativeElement))
+        layoutContinuity.set(
+            layoutId as string,
+            readVisualInfo(nativeElement as NativeElement<HTMLElement>)
+        )
     }
 
     retrieveLayoutContinuity() {
@@ -524,37 +615,6 @@ export class AutoAnimation extends React.Component<
     render() {
         return null
     }
-}
-
-function applyParentDelta(
-    delta: LayoutDelta,
-    parentDelta: LayoutDelta
-): LayoutDelta {
-    delta.x = delta.x - parentDelta.x
-    delta.y = delta.y - parentDelta.y
-
-    // TODO: Do we actually have to apply parent delta? I think this is just covered with scale
-    // delta.width = delta.width - parentDelta.width
-    // delta.height = delta.height - parentDelta.height
-
-    return delta
-}
-
-function invertScale(
-    values: MotionValuesMap,
-    parentValues: MotionValuesMap,
-    key: string
-) {
-    const parentScale = parentValues.get(key, 1)
-    // const scale = values.get(key)
-
-    // if (scale) {
-
-    // }
-    // parentScale.addChild()
-    // const scale = motionValue(1, { transformer: invertScale })
-    // parentScale.children?.add(scale)
-    // values.set(key, scale)
 }
 
 export const Auto: FunctionalComponentDefinition = {
