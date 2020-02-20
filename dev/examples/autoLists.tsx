@@ -8,7 +8,7 @@ import { motion } from "@framer"
  * - Animating between borderRadius value type
  */
 
-const transition = { duration: 3, ease: "circIn" }
+const transition = { duration: 3, ease: "linear" }
 
 interface ListProps {
     list: number[]
