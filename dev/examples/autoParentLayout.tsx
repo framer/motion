@@ -11,7 +11,7 @@ const transition = { duration: 3, ease: "circIn" }
 
 export const App = () => {
     const [{ top, alignItems }, cycleTop] = useCycle(
-        { top: "50%", alignItems: "flex-start" },
+        { top: "20%", alignItems: "flex-start" },
         { top: 10, alignItems: "flex-end" }
     )
 
@@ -37,9 +37,9 @@ export const App = () => {
 const styles = {
     parent: {
         position: "absolute",
-        left: "50%",
+        left: "calc(50% - 60px)",
         width: 120,
-        height: 120,
+        height: 500,
         backgroundColor: "white",
         padding: 10,
         display: "flex",

@@ -23,7 +23,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
-    layoutDelta?: LayoutDelta
+    layoutDelta?: LayoutDelta[]
     isReducedMotion?: boolean | undefined
 }
 
