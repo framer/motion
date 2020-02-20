@@ -1,13 +1,6 @@
-import { invariant } from "hey-listen"
-
 type Job = () => void
 type Queue = Job[][]
 type QueueLookup = Map<string, Queue>
-
-enum JobType {
-    Read,
-    Write,
-}
 
 type Schedule = (job: Job) => void
 type Session = (read: Schedule, write: Schedule) => void
@@ -25,30 +18,22 @@ export function sync(id: string, session: Session) {
     if (!queue) return
 
     let queueIndex = 0
-    let expectedType: JobType = JobType.Read
 
-    const schedule = (job: Job, type: JobType) => {
-        invariant(
-            expectedType === type,
-            "read/write must be called alternately"
-        )
-
+    const schedule = (job: Job, direction: 1 | -1) => {
         // Make job list if none created
-        if (!queue[queueIndex]) {
-            queue[queueIndex] = []
-        }
+        if (!queue[queueIndex]) queue[queueIndex] = []
 
         const jobs = queue[queueIndex]
-        jobs.push(job)
 
-        expectedType = type === JobType.Read ? JobType.Write : JobType.Read
+        direction === 1 ? jobs.push(job) : jobs.unshift(job)
+
         queueIndex++
     }
 
-    const read = (job: Job) => schedule(job, JobType.Read)
-    const write = (job: Job) => schedule(job, JobType.Write)
-
-    session(read, write)
+    session(
+        job => schedule(job, 1),
+        job => schedule(job, -1)
+    )
 }
 
 const runJob = (job: Job) => job()

@@ -4,22 +4,32 @@ import { motion, useCycle } from "@framer"
 /**
  * This example demonstrates that nested components automatically factor in parent size deltas
  */
-const transition = { duration: 3, ease: "circIn" }
+const transition = { duration: 3, ease: "linear" }
 
 export const App = () => {
     const [isOpen, toggleIsOpen] = useCycle(false, true)
-
+    const childStyles = isOpen ? openChild : closedChild
     return (
         <motion.div
             layoutTransition={transition}
             style={isOpen ? openParent : closedParent}
             onClick={() => toggleIsOpen()}
+            id="parent"
         >
-            <motion.div layoutTransition={transition} style={child}>
-                {/* <motion.div
+            <motion.div
+                layoutTransition={transition}
+                style={childStyles}
+                id="child"
+            >
+                <motion.div
                     layoutTransition
-                    style={{ ...styles.child, height: "30%" }}
-                /> */}
+                    style={{
+                        ...childStyles,
+                        height: "30%",
+                        backgroundColor: "red",
+                        width: isOpen ? "50%" : "100%",
+                    }}
+                />
             </motion.div>
         </motion.div>
     )
@@ -35,45 +45,39 @@ const parent = {
 
 const openParent = {
     ...parent,
-    width: 600,
-    height: 600,
-    left: "calc(50% - 300px)",
-    top: "calc(50% - 300px)",
+    width: 400,
+    height: 400,
+    left: 400,
+    top: 0,
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
 }
 
 const closedParent = {
     ...parent,
     width: 200,
     height: 200,
-    left: "calc(50% - 100px)",
-    top: "calc(50% - 100px)",
+    left: 0,
+    top: 0,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
 }
 
 const child = {
     width: 150,
     height: 150,
     backgroundColor: "blue",
+    display: "flex",
 }
 
-const styles = {
-    parent: {
-        position: "absolute",
-        left: "50%",
-        width: 120,
-        height: 120,
-        backgroundColor: "white",
-        padding: 10,
-        display: "flex",
-        justifyContent: "stretch",
-        alignItems: "stretch",
-    },
-    child: {
-        backgroundColor: "red",
-        flex: 1,
-        padding: 10,
-        display: "flex",
-        justifyContent: "stretch",
-        alignItems: "stretch",
-        height: "50%",
-    },
+const openChild = {
+    ...child,
+    alignItems: "center",
+    justifyContent: "center",
+}
+
+const closedChild = {
+    ...child,
+    alignItems: "flex-start",
+    justifyContent: "flex-start",
 }
