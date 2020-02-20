@@ -16,7 +16,7 @@ export interface MotionContextProps {
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
-    layoutDelta?: LayoutDelta
+    layoutDelta?: LayoutDelta[]
     isReducedMotion?: boolean | undefined
 }
 

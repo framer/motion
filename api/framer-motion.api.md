@@ -64,9 +64,11 @@ export const animationControls: () => AnimationControls;
 // @public (undocumented)
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
+    // @beta (undocumented)
+    auto?: boolean;
     // Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
     exit?: TargetAndTransition | VariantLabels | TargetResolver;
-    // @beta
+    // @deprecated
     layoutTransition?: Transition | boolean | ResolveLayoutTransition;
     positionTransition?: Transition | boolean | ResolveLayoutTransition;
     transition?: Transition;
@@ -455,12 +457,8 @@ export type MotionTransform = MakeMotion<TransformProperties>;
 
 // @public
 export class MotionValue<V = any> {
-    // Warning: (ae-forgotten-export) The symbol "Config" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
-    constructor(init: V, { transformer, parent }?: Config<V>);
-    // @internal
-    addChild(config?: Config<V>): MotionValue<V>;
+    constructor(init: V);
     // @internal
     attach(passiveEffect: PassiveEffect<V>): void;
     destroy(): void;
@@ -470,8 +468,6 @@ export class MotionValue<V = any> {
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
     onRenderRequest(subscription: Subscriber<V>): () => boolean;
-    // @internal
-    removeChild(child: MotionValue): void;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
     // 
@@ -487,7 +483,7 @@ export class MotionValue<V = any> {
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function motionValue<V>(init: V, opts?: Config<V>): MotionValue<V>;
+export function motionValue<V>(init: V): MotionValue<V>;
 
 // @public (undocumented)
 export interface None {
@@ -750,7 +746,7 @@ export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, contro
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>): MotionValue;
+export function useTransform<T>(parent: MotionValue, transform: Transformer<T>): MotionValue;
 
 // @public
 export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
