@@ -58,13 +58,6 @@ export class MotionValue<V = any> {
     private lastUpdated: number = 0
 
     /**
-     * A reference to this `MotionValue`'s parent.
-     *
-     * @internal
-     */
-    private parent?: MotionValue
-
-    /**
      * Functions to notify when the `MotionValue` updates.
      *
      * @internal
