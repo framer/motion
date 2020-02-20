@@ -124,6 +124,7 @@ const axisLabels: { x: XLabels; y: YLabels } = {
         min: "left",
         max: "right",
         origin: "originX",
+        originPoint: "originPointX",
         scale: "scaleX",
     },
     y: {
@@ -132,6 +133,7 @@ const axisLabels: { x: XLabels; y: YLabels } = {
         min: "top",
         max: "bottom",
         origin: "originY",
+        originPoint: "originPointY",
         scale: "scaleY",
     },
 }
@@ -155,23 +157,21 @@ function applyAxisDelta(
 function applyAxisDelta(
     layout: Layout,
     delta: LayoutDelta,
-    { min, max, id, scale, size, origin }: XLabels | YLabels
+    { min, max, id, scale, size, origin, originPoint }: XLabels | YLabels
 ): void {
     // Apply translate
     layout[min] = layout[min] + delta[id]
     layout[max] = layout[max] + delta[id]
 
     // Apply scale
-    const originPoint = layout[min] + layout[size] * delta[origin]
-
-    if (id === "x") {
-        console.log(layout[min], layout[size], delta[origin])
-    }
     layout[size] = layout[size] * delta[scale]
 
-    const minDistanceFromOrigin = layout[min] - originPoint
-    const scaledMinDistanceFromOrigin = minDistanceFromOrigin * delta[origin]
-    layout[min] = originPoint + scaledMinDistanceFromOrigin
+    const originPointDelta = delta[originPoint] + delta[id]
+    const minDistanceFromOrigin = layout[min] - originPointDelta
+
+    const scaledMinDistanceFromOrigin = minDistanceFromOrigin * delta[scale]
+    if (id === "x") console.log(scaledMinDistanceFromOrigin)
+    layout[min] = originPointDelta + scaledMinDistanceFromOrigin
     layout[max] = layout[min] + layout[size]
 }
 
@@ -193,7 +193,7 @@ function calcAxisDelta(prev: Layout, next: Layout, names: YLabels): YDelta
 function calcAxisDelta(
     prev: Layout,
     next: Layout,
-    { size, min, max, origin, id, scale }: XLabels | YLabels
+    { size, min, max, origin, originPoint, id, scale }: XLabels | YLabels
 ): XDelta | YDelta {
     const sizeDelta = prev[size] - next[size]
     let relativeOrigin = 0.5
@@ -216,11 +216,16 @@ function calcAxisDelta(
         const prevCenter = centerOf(prev[min], prev[max])
         translate = prevCenter - nextCenter
     }
+    translate = Math.round(translate)
     const scaleDelta = prev[size] / next[size]
+
+    let originPointDelta = next[min] + relativeOrigin * next[size]
+
     const delta = {
         [size]: Math.round(sizeDelta),
         [origin]: relativeOrigin,
-        [id]: Math.round(translate),
+        [originPoint]: originPointDelta,
+        [id]: translate,
         [scale]: scaleDelta,
     }
 
@@ -402,53 +407,6 @@ export class AutoAnimation extends React.Component<
             up(() => {
                 syncRenderSession.open()
 
-                /**
-                 * ===============================================
-                 * Auto layout transition
-                 * ===============================================
-                 * TODO: Refactor into its own function after figuring out context stuff
-                 */
-                // Reverse the layout delta of all newly laid-out auto components into their
-                // prev visual state and then animate them into their new one using transforms.
-
-                // const parentLayoutDelta = parentContext.layoutDelta
-                // const parentValues = parentContext.values
-                // const parentHasResized =
-                //     parentLayoutDelta &&
-                //     (parentLayoutDelta.width || parentLayoutDelta.height)
-
-                this.detachInvertScale && this.detachInvertScale()
-
-                // if (parentValues && parentHasResized) {
-                //     // const { values } = this.props
-                //     const parentScaleX = parentValues.get("scaleX", 1)
-                //     const parentScaleY = parentValues.get("scaleY", 1)
-                //     this.invertScaleX = this.invertScaleX || motionValue(1)
-                //     this.invertScaleY = this.invertScaleY || motionValue(1)
-
-                //     const detachInvertScaleX = parentScaleX.onChange(v =>
-                //         this.invertScaleX.set(invertScale(v))
-                //     )
-                //     const detachInvertScaleY = parentScaleY.onChange(v =>
-                //         this.invertScaleY.set(invertScale(v))
-                //     )
-
-                //     this.detachInvertScale = () => {
-                //         detachInvertScaleX()
-                //         detachInvertScaleY()
-                //     }
-
-                //     // TODO Explain why we have to first move from inverted coordinate space
-                //     // values.setTransformTemplate((_, generated) => {
-                //     //     const latestInvertScaleX = this.invertScaleX.get()
-                //     //     const latestInvertScaleY = this.invertScaleY.get()
-                //     //     // console.log(
-                //     //     //     `scaleX(${latestInvertScaleX}) scaleY(${latestInvertScaleY}) ${generated}`
-                //     //     // )
-                //     //     return `scaleX(${latestInvertScaleX}) scaleY(${latestInvertScaleY}) ${generated}`
-                //     // })
-                // }
-
                 let shouldTransitionLayout = !!(
                     layoutDelta.x ||
                     layoutDelta.y ||
@@ -528,7 +486,7 @@ export class AutoAnimation extends React.Component<
                     }
 
                     target.transition = transition
-                    // shouldTransitionLayout && controls.start(target)
+                    shouldTransitionLayout && controls.start(target)
                 } else if (transform) {
                     element.style.transform = transform
                 }
