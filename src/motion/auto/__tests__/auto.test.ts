@@ -1,16 +1,14 @@
-import { clamp, progress, mix } from "@popmotion/popcorn"
-
-interface Axis {
-    min: number
-    max: number
-}
-
-interface Delta {
-    translate: number
-    scale: number
-    origin: number
-    originPoint: number
-}
+import { Axis } from "../types"
+import {
+    scaledPoint,
+    calcOrigin,
+    calcTranslate,
+    calcDelta,
+    applyDelta,
+    applyTreeDeltas,
+    calcBoxDelta,
+    applyBoxDelta,
+} from "../utils"
 
 const aBefore: Axis = {
     min: 100,
@@ -40,56 +38,6 @@ const cBefore: Axis = {
 const cAfter: Axis = {
     min: 350,
     max: 450,
-}
-
-const clampProgress = clamp(0, 1)
-
-function calcOrigin(before: Axis, after: Axis): number {
-    let origin = 0.5
-    const beforeSize = before.max - before.min
-    const afterSize = after.max - after.min
-
-    if (beforeSize > afterSize) {
-        origin = progress(before.min, before.max - afterSize, after.min)
-    } else {
-        origin = progress(after.min, after.max - beforeSize, before.min)
-    }
-
-    return clampProgress(origin)
-}
-
-function calcTranslate(before: Axis, after: Axis, origin: number): number {
-    const beforePoint = mix(before.min, before.max, origin)
-    const afterPoint = mix(after.min, after.max, origin)
-    return beforePoint - afterPoint
-}
-
-function calcDelta(before: Axis, after: Axis): Delta {
-    const beforeSize = before.max - before.min
-    const afterSize = after.max - after.min
-
-    const scale = beforeSize / afterSize
-    const origin = calcOrigin(before, after)
-    const originPoint = after.min + origin * afterSize
-    const translate = calcTranslate(before, after, origin)
-
-    return { scale, translate, origin, originPoint }
-}
-
-function scaledPoint({ scale, originPoint }: Delta, point: number) {
-    const distanceFromOrigin = point - originPoint
-    const scaled = scale * distanceFromOrigin
-    return originPoint + scaled
-}
-
-function applyDelta(delta: Delta, axis: Axis) {
-    let min = axis.min
-    let max = axis.max
-
-    min = scaledPoint(delta, axis.min) + delta.translate
-    max = scaledPoint(delta, axis.max) + delta.translate
-
-    return { min, max }
 }
 
 test("scaledPoint", () => {
@@ -198,4 +146,35 @@ test("applyDelta nested", () => {
     const innerAfterNested = applyDelta(outerDelta, innerAfter)
     const innerNestedDelta = calcDelta(innerBefore, innerAfterNested)
     expect(applyDelta(innerNestedDelta, innerAfterNested)).toEqual(innerBefore)
+})
+
+test("applyTreeDeltas", () => {
+    const outerBefore = { x: { min: 0, max: 300 }, y: { min: 0, max: 300 } }
+    const innerBefore = { x: { min: 100, max: 200 }, y: { min: 100, max: 200 } }
+    const outerAfter = {
+        x: { min: 400, max: 1000 },
+        y: { min: 400, max: 1000 },
+    }
+    const innerAfter = { x: { min: 650, max: 750 }, y: { min: 650, max: 750 } }
+
+    const outerDelta = calcBoxDelta(outerBefore, outerAfter)
+
+    expect(applyBoxDelta(outerDelta, outerAfter)).toEqual(outerBefore)
+
+    const innerAfterNested = applyBoxDelta(outerDelta, innerAfter)
+    const innerNestedDelta = calcBoxDelta(innerBefore, innerAfterNested)
+    expect(applyBoxDelta(innerNestedDelta, innerAfterNested)).toEqual(
+        innerBefore
+    )
+
+    const treeBefore = { x: { min: 50, max: 100 }, y: { min: 50, max: 100 } }
+    const treeAfter = { x: { min: 100, max: 200 }, y: { min: 100, max: 200 } }
+
+    const treeNested = applyTreeDeltas(
+        [outerDelta, innerNestedDelta],
+        treeAfter
+    )
+    const treeNestedDelta = calcBoxDelta(treeBefore, treeNested)
+
+    expect(applyBoxDelta(treeNestedDelta, treeNested)).toEqual(treeBefore)
 })
