@@ -20,8 +20,8 @@ export function snapshot(element: NativeElement): Snapshot {
         },
         style: {
             backgroundColor,
-            borderRadius,
-            color,
+            borderRadius: borderRadius ? parseFloat(borderRadius) : 0,
+            color: color || "",
             opacity: opacity ? parseFloat(opacity) : 0,
         },
     }
