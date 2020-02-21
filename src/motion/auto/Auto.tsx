@@ -3,7 +3,14 @@ import { SyncLayoutContext } from "../../components/SyncLayout"
 import { FunctionalProps } from "../functionality/types"
 import { Snapshot, BoxDelta, Style, AxisDelta } from "./types"
 import { flushTree, syncTree } from "../../utils/tree-sync"
-import { snapshot, calcBoxDelta, applyTreeDeltas } from "./utils"
+import {
+    snapshot,
+    calcBoxDelta,
+    applyTreeDeltas,
+    resetStyles,
+    numAnimatableStyles,
+    animatableStyles,
+} from "./utils"
 import { NativeElement } from "../utils/use-native-element"
 import { syncRenderSession } from "../../dom/sync-render-session"
 import { TargetAndTransition, Transition } from "../../types"
@@ -70,23 +77,19 @@ export class Auto extends React.Component<FunctionalProps> {
     }
 
     scheduleTransition() {
-        const { nativeElement, parentContext, localContext } = this.props
-
-        const element = nativeElement.getInstance()
+        const { nativeElement, parentContext, localContext, style } = this.props
 
         let transform: string | null
         let next: Snapshot
         let layoutDelta: BoxDelta
 
         syncTree(autoKey, (up, down) => {
-            // Read: Store any existing `transform` style so we can re-apply it if
-            // we're not doing any layout transition.
-            // TODO: We might need to do this for styles as the `style` prop is overriding
-            // anything from React props or other CSS
-            up(() => (transform = (element as HTMLElement).style.transform))
-
-            // Write: Remove the `transform` prop so we can correctly read its new layout position
-            up(() => ((element as HTMLElement).style.transform = ""))
+            // Write: Remove the `transform` prop so we can correctly read its new layout position,
+            // and reset any styles present
+            up(() => {
+                nativeElement.setStyle(resetStyles(style))
+                nativeElement.render()
+            })
 
             // Read: Take a new snapshot and diff with the previous one
             down(() => {
@@ -168,7 +171,8 @@ export class Auto extends React.Component<FunctionalProps> {
         const { controls, values } = this.props
         const prev = this.prev.style
 
-        for (const key in prev) {
+        for (let i = 0; i < numAnimatableStyles; i++) {
+            const key = animatableStyles[i]
             const prevStyle = prev[key]
             const nextStyle = next[key]
 
