@@ -25,6 +25,7 @@ export interface Style {
     color: string
     backgroundColor: string
     borderRadius: number
+    transform: string
 }
 
 export interface Snapshot {
