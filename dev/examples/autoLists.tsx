@@ -18,13 +18,13 @@ interface ListProps {
 
 const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul layoutTransition={transition} style={styles.list}>
+        <motion.ul auto style={styles.list}>
             {list.map(id => (
                 <motion.li
-                    layoutTransition={transition}
+                    auto
                     style={{ ...styles.item, backgroundColor }}
                     key={id}
-                    layoutId={id}
+                    autoId={id}
                     onClick={() => onItemClick(id)}
                 />
             ))}

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { SyncLayoutContext } from "../../components/SyncLayout"
 import { FunctionalProps } from "../functionality/types"
-import { Snapshot, BoxDelta, Box, Style, AxisDelta } from "./types"
+import { Snapshot, BoxDelta, Style, AxisDelta } from "./types"
 import { flushTree, syncTree } from "../../utils/tree-sync"
 import { snapshot, calcBoxDelta, applyTreeDeltas } from "./utils"
 import { NativeElement } from "../utils/use-native-element"
@@ -83,10 +83,10 @@ export class Auto extends React.Component<FunctionalProps> {
             // we're not doing any layout transition.
             // TODO: We might need to do this for styles as the `style` prop is overriding
             // anything from React props or other CSS
-            up(() => (transform = element.style.transform))
+            up(() => (transform = (element as HTMLElement).style.transform))
 
             // Write: Remove the `transform` prop so we can correctly read its new layout position
-            up(() => (element.style.transform = ""))
+            up(() => ((element as HTMLElement).style.transform = ""))
 
             // Read: Take a new snapshot and diff with the previous one
             down(() => {
@@ -95,6 +95,15 @@ export class Auto extends React.Component<FunctionalProps> {
                 next.layout = applyTreeDeltas(treeDeltas, next.layout)
                 layoutDelta = calcBoxDelta(this.prev.layout, next.layout)
                 localContext.deltas = [...treeDeltas, layoutDelta]
+
+                // TODO: Temporary hack
+                if (treeDeltas.length !== 0) {
+                    nativeElement.setStyle(
+                        "transform",
+                        ({ scaleX = 1, scaleY = 1, x = 0, y = 0 }: any) =>
+                            `scaleX(${scaleX}) scaleY(${scaleY}) translate(${x}, ${y}) translateZ(0)`
+                    )
+                }
             })
 
             // Write: Apply deltas and animate
@@ -109,7 +118,7 @@ export class Auto extends React.Component<FunctionalProps> {
         })
     }
 
-    transitionLayout(delta: BoxDelta, fallbackTransform: string | null) {
+    transitionLayout(delta: BoxDelta, _fallbackTransform: string | null) {
         let shouldTransitionLayout = false
         const target: TargetAndTransition = {}
         const transition: Transition = {}
@@ -128,6 +137,8 @@ export class Auto extends React.Component<FunctionalProps> {
             // TODO Set transition
             const value = values.get(key, to)
             const velocity = value.getVelocity()
+
+            transition[key] = { velocity }
 
             target[key] = to
             value.set(from)
