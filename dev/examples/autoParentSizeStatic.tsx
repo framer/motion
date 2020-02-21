@@ -11,22 +11,18 @@ export const App = () => {
     const childStyles = isOpen ? openChild : closedChild
     return (
         <motion.div
-            layoutTransition={transition}
+            auto
             style={isOpen ? openParent : closedParent}
             onClick={() => toggleIsOpen()}
             id="parent"
         >
-            <motion.div
-                layoutTransition={transition}
-                style={childStyles}
-                id="child"
-            >
+            <motion.div auto style={childStyles} id="child">
                 <motion.div
-                    layoutTransition={transition}
+                    auto
                     style={{
                         ...childStyles,
                         height: "30%",
-                        backgroundColor: "red",
+                        backgroundColor: isOpen ? "yellow" : "red",
                         width: isOpen ? "50%" : "100%",
                     }}
                 />

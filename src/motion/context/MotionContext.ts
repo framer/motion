@@ -6,7 +6,7 @@ import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
-import { LayoutDelta } from "../../motion/functionality/auto"
+import { BoxDelta } from "../../motion/auto/types"
 
 export interface ExitProps {
     initial?: false | VariantLabels
@@ -23,7 +23,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
-    layoutDelta?: LayoutDelta[]
+    deltas?: BoxDelta[]
     isReducedMotion?: boolean | undefined
 }
 
