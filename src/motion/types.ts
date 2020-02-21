@@ -419,6 +419,10 @@ export interface AnimationProps {
      * @beta
      */
     auto?: boolean
+    /**
+     * @beta
+     */
+    autoId?: string
 }
 
 /**
