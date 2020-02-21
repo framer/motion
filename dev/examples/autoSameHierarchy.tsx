@@ -10,11 +10,8 @@ const Container = styled(motion.div)<Props>`
     box-sizing: border-box;
     width: 170px;
     height: 100px;
-    background-color: #bbb;
     border-radius: 100px;
     padding: 10px;
-
-    ${({ isOn }) => isOn && `background-color: #09f`}
 
     div {
         width: 80px;
@@ -34,9 +31,9 @@ export const App = () => {
         <Container
             isOn={isOn}
             autoId="switch"
-            key={isOn}
             onClick={() => toggleOn()}
             auto
+            style={{ backgroundColor: isOn ? "#09f" : "#bbb" }}
         >
             <motion.div auto autoId="handle" />
         </Container>
