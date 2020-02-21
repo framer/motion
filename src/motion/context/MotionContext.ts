@@ -7,7 +7,7 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { LayoutDelta } from "../../motion/functionality/auto"
+import { BoxDelta } from "../../motion/auto/types"
 
 export interface MotionContextProps {
     controls?: ValueAnimationControls
@@ -16,7 +16,7 @@ export interface MotionContextProps {
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
-    layoutDelta?: LayoutDelta[]
+    deltas?: BoxDelta[]
     isReducedMotion?: boolean | undefined
 }
 

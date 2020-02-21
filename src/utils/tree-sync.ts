@@ -11,7 +11,7 @@ function createQueue(id: string) {
     queues.set(id, [])
 }
 
-export function sync(id: string, session: Session) {
+export function syncTree(id: string, session: Session) {
     if (!queues.has(id)) createQueue(id)
 
     const queue = queues.get(id)
@@ -38,7 +38,7 @@ export function sync(id: string, session: Session) {
 
 const runJob = (job: Job) => job()
 
-export function flush(id: string) {
+export function flushTree(id: string) {
     const queue = queues.get(id)
 
     if (!queue) return
