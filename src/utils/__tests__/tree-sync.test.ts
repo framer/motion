@@ -1,25 +1,25 @@
-import { sync, flush } from "../layout-sync"
+import { syncTree, flushTree } from "../tree-sync"
 
 describe("layoutSync", () => {
     test("correctly schedules jobs read -> write", () => {
         let syncId = "test"
         const callOrder: number[] = []
 
-        sync(syncId, (read, write) => {
+        syncTree(syncId, (read, write) => {
             read(() => callOrder.push(0))
             write(() => callOrder.push(1))
             read(() => callOrder.push(2))
             write(() => callOrder.push(3))
         })
 
-        sync(syncId, (read, write) => {
+        syncTree(syncId, (read, write) => {
             read(() => callOrder.push(4))
             write(() => callOrder.push(5))
             read(() => callOrder.push(6))
             write(() => callOrder.push(7))
         })
 
-        flush(syncId)
+        flushTree(syncId)
 
         expect(callOrder).toEqual([0, 4, 1, 5, 2, 6, 3, 7])
     })
@@ -28,33 +28,33 @@ describe("layoutSync", () => {
         let syncId = "test"
         let callOrder: number[] = []
 
-        sync(syncId, read => {
+        syncTree(syncId, read => {
             read(() => callOrder.push(0))
         })
 
-        sync(syncId, read => {
+        syncTree(syncId, read => {
             read(() => callOrder.push(4))
         })
 
-        flush(syncId)
+        flushTree(syncId)
 
         callOrder = []
 
-        sync(syncId, (read, write) => {
+        syncTree(syncId, (read, write) => {
             read(() => callOrder.push(0))
             write(() => callOrder.push(1))
             read(() => callOrder.push(2))
             write(() => callOrder.push(3))
         })
 
-        sync(syncId, (read, write) => {
+        syncTree(syncId, (read, write) => {
             read(() => callOrder.push(4))
             write(() => callOrder.push(5))
             read(() => callOrder.push(6))
             write(() => callOrder.push(7))
         })
 
-        flush(syncId)
+        flushTree(syncId)
 
         expect(callOrder).toEqual([0, 4, 1, 5, 2, 6, 3, 7])
     })
@@ -64,11 +64,11 @@ describe("layoutSync", () => {
             let syncId = "test"
             const callOrder: number[] = []
 
-            sync(syncId, (_read, write) => {
+            syncTree(syncId, (_read, write) => {
                 write(() => callOrder.push(0))
             })
 
-            flush(syncId)
+            flushTree(syncId)
         }).toThrow()
     })
 
@@ -77,12 +77,12 @@ describe("layoutSync", () => {
             let syncId = "test"
             const callOrder: number[] = []
 
-            sync(syncId, read => {
+            syncTree(syncId, read => {
                 read(() => callOrder.push(0))
                 read(() => callOrder.push(0))
             })
 
-            flush(syncId)
+            flushTree(syncId)
         }).toThrow()
     })
 })
