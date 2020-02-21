@@ -1,6 +1,8 @@
 import { clamp, mix, progress } from "@popmotion/popcorn"
 import { Axis, AxisDelta, Snapshot, BoxDelta, Box } from "./types"
 import { NativeElement } from "../utils/use-native-element"
+import { MotionStyle } from "../../motion/types"
+import { isMotionValue } from "../../value/utils/is-motion-value"
 
 const clampProgress = clamp(0, 1)
 
@@ -11,6 +13,7 @@ export function snapshot(element: NativeElement): Snapshot {
         borderRadius,
         color,
         opacity,
+        transform,
     } = element.getComputedStyle()
 
     return {
@@ -23,6 +26,7 @@ export function snapshot(element: NativeElement): Snapshot {
             borderRadius: borderRadius ? parseFloat(borderRadius) : 0,
             color: color || "",
             opacity: opacity ? parseFloat(opacity) : 0,
+            transform,
         },
     }
 }
@@ -118,4 +122,37 @@ export function applyTreeDeltas(deltas: BoxDelta[], box: Box): Box {
     }
 
     return box
+}
+
+export const animatableStyles = [
+    "opacity",
+    "backgroundColor",
+    "borderRadius",
+    "color",
+]
+export const numAnimatableStyles = animatableStyles.length
+
+/**
+ * Reset `element.style` to ensure we're not reading styles that have previously been animated.
+ * If anything is set in the incoming style prop, use that, otherwise unset to ensure the
+ * underlying CSS is read.
+ *
+ * @param styleProp
+ */
+export function resetStyles(styleProp: MotionStyle = {}) {
+    const styles = { transform: "" }
+
+    for (let i = 0; i < numAnimatableStyles; i++) {
+        const key = animatableStyles[i]
+
+        if (styleProp[key]) {
+            styles[key] = isMotionValue(styleProp[key])
+                ? styleProp[key].get()
+                : styleProp[key]
+        } else {
+            styles[key] = ""
+        }
+    }
+
+    return styles
 }
