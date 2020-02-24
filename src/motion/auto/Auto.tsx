@@ -32,7 +32,10 @@ export class Auto extends React.Component<FunctionalProps> {
         if (props.autoId === undefined) return
 
         // If we have an `autoId` prop, bind component continuity events to element lifecycle
-        props.nativeElement.onMount(subId, () => this.resume())
+        props.nativeElement.onMount(subId, () => {
+            this.resume()
+            console.log("mount")
+        })
         props.nativeElement.onUnmount(subId, element => this.save(element))
     }
 
@@ -49,11 +52,11 @@ export class Auto extends React.Component<FunctionalProps> {
     }
 
     componentDidUpdate() {
-        flushTree(autoKey)
+        this.context === null && flushTree(autoKey)
     }
 
     componentDidMount() {
-        flushTree(autoKey)
+        this.context === null && flushTree(autoKey)
     }
 
     save(nativeElement: NativeElement) {
@@ -83,7 +86,12 @@ export class Auto extends React.Component<FunctionalProps> {
         let next: Snapshot
         let layoutDelta: BoxDelta
 
-        syncTree(autoKey, (up, down) => {
+        const sync =
+            this.context !== null
+                ? (this.context.syncTree as typeof syncTree)
+                : syncTree
+
+        sync(autoKey, (up, down) => {
             // Write: Remove the `transform` prop so we can correctly read its new layout position,
             // and reset any styles present
             up(() => {
@@ -97,8 +105,8 @@ export class Auto extends React.Component<FunctionalProps> {
                 const treeDeltas = parentContext.deltas || []
                 next.layout = applyTreeDeltas(treeDeltas, next.layout)
                 layoutDelta = calcBoxDelta(this.prev.layout, next.layout)
+                console.log(treeDeltas)
                 localContext.deltas = [...treeDeltas, layoutDelta]
-
                 // TODO: Temporary hack
                 if (treeDeltas.length !== 0) {
                     nativeElement.setStyle(
