@@ -8,18 +8,34 @@ import styled from "styled-components"
  */
 
 const Container = styled.div<{ isOn: boolean }>`
-    display: block;
-    height: 350px;
-    width: 350px;
     position: relative;
+    width: 200px;
+    height: 420px;
     background: white;
+    overflow: hidden;
+    border-radius: 10px;
 
     div {
         position: absolute;
-        inset: 0px;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
 
-        border: ${({ isOn }) =>
-            isOn ? `30px solid #8855FF` : `10px solid #09f`};
+    .background {
+        background: #0099ff;
+        opacity: 0.3;
+    }
+
+    .clipping {
+        height: ${({ isOn }) => (isOn ? "100%" : "20%")};
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 420px;
+        background: linear-gradient(180deg, #0099ff 0%, rgb(0, 52, 87) 100%);
     }
 `
 export const App = () => {
@@ -27,7 +43,10 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()} isOn={isOn}>
-            <motion.div auto />
+            <div className="background" />
+            <motion.div auto className="clipping">
+                <motion.div auto className="progress" />
+            </motion.div>
         </Container>
     )
 }
