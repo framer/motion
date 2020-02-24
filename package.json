@@ -6,6 +6,7 @@
     "types": "dist/framer-motion.d.ts",
     "author": "Framer Motion",
     "license": "MIT",
+    "repository": "https://github.com/framer/motion/",
     "keywords": [
         "react animation",
         "react",
