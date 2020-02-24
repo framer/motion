@@ -17,9 +17,13 @@ import { TargetAndTransition, Transition } from "../../types"
 
 const autoKey = "auto"
 const subId = Symbol(autoKey)
-
-// TODO: Look into moving this to a context
 const continuity = new Map<string, Snapshot>()
+
+/**
+ * TODO:
+ * Border radius inversion (see: autoSiblingToChild)
+ * Scale inversion (rather than animating concurrently) (see: autoSiblingToChild)
+ */
 
 export class Auto extends React.Component<FunctionalProps> {
     static contextType = SyncLayoutContext
@@ -105,15 +109,18 @@ export class Auto extends React.Component<FunctionalProps> {
                 const treeDeltas = parentContext.deltas || []
                 next.layout = applyTreeDeltas(treeDeltas, next.layout)
                 layoutDelta = calcBoxDelta(this.prev.layout, next.layout)
-                console.log(treeDeltas)
                 localContext.deltas = [...treeDeltas, layoutDelta]
+
                 // TODO: Temporary hack
+                // We want to move children through transformed space
                 if (treeDeltas.length !== 0) {
                     nativeElement.setStyle(
                         "transform",
                         ({ scaleX = 1, scaleY = 1, x = 0, y = 0 }: any) =>
                             `scaleX(${scaleX}) scaleY(${scaleY}) translate(${x}, ${y}) translateZ(0)`
                     )
+                } else {
+                    nativeElement.setStyle("transform", undefined)
                 }
             })
 
