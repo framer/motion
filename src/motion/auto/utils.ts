@@ -10,6 +10,7 @@ export function snapshot(element: NativeElement): Snapshot {
     const { top, left, right, bottom } = element.getBoundingBox()
     const {
         backgroundColor,
+        border,
         borderRadius,
         color,
         opacity,
@@ -23,6 +24,7 @@ export function snapshot(element: NativeElement): Snapshot {
         },
         style: {
             backgroundColor,
+            border,
             borderRadius: borderRadius ? parseFloat(borderRadius) : 0,
             color: color || "",
             opacity: opacity ? parseFloat(opacity) : 0,
@@ -127,6 +129,7 @@ export function applyTreeDeltas(deltas: BoxDelta[], box: Box): Box {
 export const animatableStyles = [
     "opacity",
     "backgroundColor",
+    "border",
     "borderRadius",
     "color",
 ]
