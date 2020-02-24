@@ -21,10 +21,11 @@ export interface BoxDelta {
 }
 
 export interface Style {
-    opacity: number
-    color: string
     backgroundColor: string
+    border: string
     borderRadius: number
+    color: string
+    opacity: number
     transform: string
 }
 
