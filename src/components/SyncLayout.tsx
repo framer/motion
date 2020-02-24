@@ -1,14 +1,33 @@
 import * as React from "react"
-import { createContext } from "react"
+import { createContext, useMemo, useEffect, useLayoutEffect } from "react"
 import { useForceUpdate } from "../utils/use-force-update"
+import { syncTree, flushTree } from "../utils/tree-sync"
+import { useConstant } from "../utils/use-constant"
 
-type SyncLayout = () => void
+export interface SyncLayoutUtils {
+    syncTree: typeof syncTree
+    forceRerender: () => void
+}
 
-interface SyncLayoutProps {
+interface Props {
     children: React.ReactNode
 }
 
-export const SyncLayoutContext = createContext<SyncLayout | null>(null)
+/**
+ * In server environments, running useLayoutEffect throws a React warning. `SyncLayout` is
+ * used for syncing *changes* in layout - running synchronously to remove visual flickering. It
+ * isn't used in any instances where this will deviate from the server's rendered state,
+ * making this hack safe.
+ * Taken from https://github.com/alloc/react-layout-effect
+ */
+const useIsomorphicLayoutEffect =
+    typeof window !== "undefined" &&
+    window.document &&
+    window.document.createElement
+        ? useLayoutEffect
+        : useEffect
+
+export const SyncLayoutContext = createContext<SyncLayoutUtils | null>(null)
 
 /**
  * When layout changes happen asynchronously to their instigating render (ie when exiting
@@ -41,12 +60,34 @@ export const SyncLayoutContext = createContext<SyncLayout | null>(null)
  *
  * @internal
  */
-export const UnstableSyncLayout = ({ children }: SyncLayoutProps) => {
+export const SyncLayout = ({ children }: Props) => {
+    const toFlush = useConstant(createSet)
     const forceUpdate = useForceUpdate()
+    const forceRerender = useForceUpdate()
+
+    const context = useMemo((): SyncLayoutUtils => {
+        return {
+            syncTree: (id, callback) => {
+                const alreadyScheduled = toFlush.has(id)
+                toFlush.add(id)
+                syncTree(id, callback)
+                !alreadyScheduled && forceUpdate()
+            },
+            forceRerender,
+        }
+    }, [forceRerender])
+
+    useIsomorphicLayoutEffect(() => {
+        toFlush.forEach(flushTree)
+    })
 
     return (
-        <SyncLayoutContext.Provider value={forceUpdate}>
+        <SyncLayoutContext.Provider value={context}>
             {children}
         </SyncLayoutContext.Provider>
     )
+}
+
+function createSet() {
+    return new Set<string>()
 }
