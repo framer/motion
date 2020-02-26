@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
+import { motion, SyncLayout } from "@framer"
 
 /**
  * Issues:
@@ -16,16 +16,18 @@ interface ListProps {
     backgroundColor: string
 }
 
-const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
+const List = ({ id, list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul auto style={styles.list}>
+        <motion.ul auto autoId={id} style={styles.list}>
             {list.map(id => (
                 <motion.li
                     auto
                     style={{ ...styles.item, backgroundColor }}
                     key={id}
                     autoId={id}
+                    id={"list-" + id}
                     onClick={() => onItemClick(id)}
+                    drag
                 />
             ))}
         </motion.ul>
@@ -33,28 +35,28 @@ const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
 }
 
 export const App = () => {
-    const [listA, setListA] = useState([0, 1, 2, 3, 4, 5, 6])
-    const [listB, setListB] = useState([7, 8, 9, 10, 11, 12])
-    // const [listA, setListA] = useState([0])
-    // const [listB, setListB] = useState([1])
+    // const [listA, setListA] = useState([0, 1, 2, 3, 4, 5, 6])
+    // const [listB, setListB] = useState([7, 8, 9, 10, 11, 12])
+
+    const [lists, setLists] = useState([[0], [1]])
 
     return (
-        <div style={styles.container}>
-            <List
-                list={listA}
-                onItemClick={id =>
-                    swapRandomly(id, listA, setListA, listB, setListB)
-                }
-                backgroundColor="red"
-            />
-            <List
-                list={listB}
-                onItemClick={id =>
-                    swapRandomly(id, listB, setListB, listA, setListA)
-                }
-                backgroundColor="blue"
-            />
-        </div>
+        <SyncLayout>
+            <div style={styles.container}>
+                <List
+                    list={lists[0]}
+                    onItemClick={id => moveItem(id, 1, lists, setLists)}
+                    backgroundColor="red"
+                    id="listA"
+                />
+                <List
+                    list={lists[1]}
+                    onItemClick={id => moveItem(id, 0, lists, setLists)}
+                    backgroundColor="blue"
+                    id="listB"
+                />
+            </div>
+        </SyncLayout>
     )
 }
 
@@ -69,7 +71,7 @@ const styles = {
         width: 350,
         borderRadius: 10,
         padding: 10,
-        background: "white",
+        backgroundColor: "white",
         display: "flex",
         listStyle: "none",
         flexDirection: "column",
@@ -82,19 +84,25 @@ const styles = {
     },
 }
 
-function swapRandomly(
+function moveItem(
     id: number,
-    listOrigin: number[],
-    setListOrigin: (list: number[]) => void,
-    listTarget: number[],
-    setListTarget: (list: number[]) => void
+    targetListId: number,
+    [a, b]: number[][],
+    setLists: (lists: number[][]) => void
 ): void {
-    const newOriginList = [...listOrigin]
+    const targetList = targetListId === 0 ? a : b
+    const originList = targetListId === 0 ? b : a
+
+    const newOriginList = [...originList]
     const originIndex = newOriginList.indexOf(id)
     newOriginList.splice(originIndex, 1)
-    setListOrigin(newOriginList)
 
-    const newTargetList = [...listTarget]
+    const newTargetList = [...targetList]
     newTargetList.splice(0, 0, id)
-    setListTarget(newTargetList)
+
+    setLists(
+        targetListId === 0
+            ? [newTargetList, newOriginList]
+            : [newOriginList, newTargetList]
+    )
 }
