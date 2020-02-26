@@ -27,32 +27,28 @@ export const Exit: FunctionalComponentDefinition = {
 
         const { isExiting, custom, onExitComplete } = exitProps
 
-        useEffect(
-            () => {
-                if (isExiting) {
-                    if (!isPlayingExitAnimation.current && exit) {
-                        controls.setProps({
-                            ...props,
-                            custom:
-                                custom !== undefined ? custom : props.custom,
-                        })
-                        controls.start(exit).then(onExitComplete)
-                    }
-
-                    isPlayingExitAnimation.current = true
-                } else if (
-                    isPlayingExitAnimation.current &&
-                    animate &&
-                    !(animate instanceof AnimationControls)
-                ) {
-                    controls.start(animate)
+        useEffect(() => {
+            if (isExiting) {
+                if (!isPlayingExitAnimation.current && exit) {
+                    controls.setProps({
+                        ...props,
+                        custom: custom !== undefined ? custom : props.custom,
+                    })
+                    controls.start(exit).then(onExitComplete)
                 }
 
-                if (!isExiting) {
-                    isPlayingExitAnimation.current = false
-                }
-            },
-            [isExiting]
-        )
+                isPlayingExitAnimation.current = true
+            } else if (
+                isPlayingExitAnimation.current &&
+                animate &&
+                !(animate instanceof AnimationControls)
+            ) {
+                controls.start(animate)
+            }
+
+            if (!isExiting) {
+                isPlayingExitAnimation.current = false
+            }
+        }, [isExiting])
     }),
 }

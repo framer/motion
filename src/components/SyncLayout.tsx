@@ -1,35 +1,30 @@
 import * as React from "react"
-import { createContext, useMemo, useEffect, useLayoutEffect } from "react"
-import { useForceUpdate } from "../utils/use-force-update"
+import { createContext } from "react"
 import { syncTree, flushTree } from "../utils/tree-sync"
-import { useConstant } from "../utils/use-constant"
+import { Snapshot } from "../motion/auto/types"
 
 export interface SyncLayoutUtils {
     syncTree: typeof syncTree
-    forceRerender: () => void
+    forceRender: () => void
+    register: (child: SyncLayoutChild) => () => void
+}
+
+export interface SyncLayoutChild {
+    id?: string
+    snapshot: () => Snapshot
+    resume?: (prev: Snapshot) => void
 }
 
 interface Props {
     children: React.ReactNode
 }
 
-/**
- * In server environments, running useLayoutEffect throws a React warning. `SyncLayout` is
- * used for syncing *changes* in layout - running synchronously to remove visual flickering. It
- * isn't used in any instances where this will deviate from the server's rendered state,
- * making this hack safe.
- * Taken from https://github.com/alloc/react-layout-effect
- */
-const useIsomorphicLayoutEffect =
-    typeof window !== "undefined" &&
-    window.document &&
-    window.document.createElement
-        ? useLayoutEffect
-        : useEffect
+const continuity = new Map<string, Snapshot>()
 
 export const SyncLayoutContext = createContext<SyncLayoutUtils | null>(null)
 
 /**
+ * TODO: Update the documentation for this component
  * When layout changes happen asynchronously to their instigating render (ie when exiting
  * children of `AnimatePresence` are removed), `SyncLayout` can wrap parent and sibling
  * components that need to animate as a result of this layout change.
@@ -60,34 +55,72 @@ export const SyncLayoutContext = createContext<SyncLayoutUtils | null>(null)
  *
  * @internal
  */
-export const SyncLayout = ({ children }: Props) => {
-    const toFlush = useConstant(createSet)
-    const forceUpdate = useForceUpdate()
-    const forceRerender = useForceUpdate()
+export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
+    children = new Set<SyncLayoutChild>()
+    queue = new Set<string>()
 
-    const context = useMemo((): SyncLayoutUtils => {
-        return {
-            syncTree: (id, callback) => {
-                const alreadyScheduled = toFlush.has(id)
-                toFlush.add(id)
-                syncTree(id, callback)
-                !alreadyScheduled && forceUpdate()
-            },
-            forceRerender,
+    state: SyncLayoutUtils = {
+        register: child => this.register(child),
+        forceRender: () => this.forceRender(),
+        syncTree: (id, callback) => {
+            this.queue.add(id)
+            syncTree(id, callback)
+        },
+    }
+
+    register(child: SyncLayoutChild) {
+        this.children.add(child)
+
+        if (child.resume) {
+            const id = child.id as string
+            const prev = continuity.get(id)
+
+            if (prev) {
+                child.resume(prev)
+                continuity.delete(id)
+            }
         }
-    }, [forceRerender])
 
-    useIsomorphicLayoutEffect(() => {
-        toFlush.forEach(flushTree)
-    })
+        return () => this.children.delete(child)
+    }
 
-    return (
-        <SyncLayoutContext.Provider value={context}>
-            {children}
-        </SyncLayoutContext.Provider>
-    )
+    getSnapshotBeforeUpdate() {
+        this.children.forEach(snapshotChild)
+        return null
+    }
+
+    componentDidMount() {
+        this.flush()
+    }
+
+    componentDidUpdate() {
+        this.flush()
+    }
+
+    flush() {
+        this.queue.forEach(flushTree)
+    }
+
+    forceRender() {
+        this.setState({ ...this.state })
+    }
+
+    forceUpdate() {
+        this.setState(this.state)
+    }
+
+    render() {
+        const { children } = this.props
+
+        return (
+            <SyncLayoutContext.Provider value={this.state}>
+                {children}
+            </SyncLayoutContext.Provider>
+        )
+    }
 }
 
-function createSet() {
-    return new Set<string>()
+function snapshotChild({ id, snapshot }: SyncLayoutChild) {
+    const prev = snapshot()
+    if (id !== undefined) continuity.set(id, prev)
 }
