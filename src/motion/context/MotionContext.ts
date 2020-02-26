@@ -8,6 +8,7 @@ import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { BoxDelta } from "../../motion/auto/types"
+import { MotionValue } from "../../value"
 
 export interface MotionContextProps {
     controls?: ValueAnimationControls
@@ -17,6 +18,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     deltas?: BoxDelta[]
+    autoParentProgress?: MotionValue<number>
     isReducedMotion?: boolean | undefined
 }
 
