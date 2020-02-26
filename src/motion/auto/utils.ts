@@ -83,10 +83,17 @@ export function scaledPoint({ scale, originPoint }: AxisDelta, point: number) {
 export function calcDelta(before: Axis, after: Axis): AxisDelta {
     const beforeSize = before.max - before.min
     const afterSize = after.max - after.min
-
     const scale = beforeSize / afterSize
     const origin = calcOrigin(before, after)
     const originPoint = after.min + origin * afterSize
+    // console.log(after)
+    // after = {
+    //     min: scaledPoint({ scale, originPoint }, after.min),
+    //     max: scaledPoint({ scale, originPoint }, after.max),
+    // }
+    // console.log(after)
+    // console.log(before.min)
+    // TODO: Divide this by parent scale
     const translate = calcTranslate(before, after, origin)
 
     return { scale, translate, origin, originPoint }
@@ -129,8 +136,8 @@ export function applyTreeDeltas(deltas: BoxDelta[], box: Box): Box {
 export const animatableStyles = [
     "opacity",
     "backgroundColor",
+    "backgroundImage",
     "border",
-    "borderRadius",
     "color",
 ]
 export const numAnimatableStyles = animatableStyles.length
