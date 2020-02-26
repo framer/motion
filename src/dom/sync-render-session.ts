@@ -1,7 +1,10 @@
 import { invariant } from "hey-listen"
-import { NativeElement } from "../motion/utils/use-native-element"
 
-let session: NativeElement[] | null = null
+interface View {
+    render: () => void
+}
+
+let session: View[] | null = null
 
 export const syncRenderSession = {
     isOpen: () => session !== null,
@@ -11,11 +14,11 @@ export const syncRenderSession = {
     },
     flush: () => {
         invariant(session !== null, "No sync render session found")
-        session && session.forEach(nativeElement => nativeElement.render())
+        session && session.forEach(view => view.render())
         session = null
     },
-    push: (nativeElement: NativeElement) => {
+    push: (view: View) => {
         invariant(session !== null, "No sync render session found")
-        session && session.push(nativeElement)
+        session && session.push(view)
     },
 }
