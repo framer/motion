@@ -125,10 +125,13 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     exitBeforeEnter,
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
-    // either use a local forceUpdate function, or one from a parent context if it exists.
-    const localForceUpdate = useForceUpdate()
-    const contextForceUpdate = useContext(SyncLayoutContext)
-    const forceUpdate = contextForceUpdate || localForceUpdate
+    // either use a local forceRender function, or one from a parent context if it exists.
+    const localForceRender = useForceUpdate()
+    const syncLayoutContext = useContext(SyncLayoutContext)
+    const contextForceRender = syncLayoutContext
+        ? syncLayoutContext.forceRender
+        : localForceRender
+    const forceRender = contextForceRender || localForceRender
 
     const isInitialRender = useRef(true)
 
@@ -217,7 +220,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
             // Defer re-rendering until all exiting children have indeed left
             if (!exiting.size) {
                 presentChildren.current = filteredChildren
-                forceUpdate()
+                forceRender()
                 onExitComplete && onExitComplete()
             }
         }
