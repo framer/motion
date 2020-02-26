@@ -1,7 +1,8 @@
 import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
-import { useMemo, useEffect } from "react"
+import { useMemo, useRef } from "react"
 import { useMotionValue } from "./use-motion-value"
+import { useUnmountEffect } from "../utils/use-unmount-effect"
 
 type Transformer<T> = (v: any) => T
 
@@ -131,9 +132,16 @@ export function useTransform<T>(
     const initialValue = transformer(parent.get())
     const value = useMotionValue(initialValue)
 
-    useEffect(() => {
-        return parent.onChange(v => value.set(transformer(v)))
+    // Handle subscription to parent
+    const unsubscribe = useRef<() => void>()
+    useMemo(() => {
+        unsubscribe.current && unsubscribe.current()
+        unsubscribe.current = parent.onChange(v => value.set(transformer(v)))
+
+        // Manually set with the latest parent value in case we've re-parented
+        value.set(initialValue)
     }, [parent, value, transformer])
+    useUnmountEffect(() => unsubscribe.current && unsubscribe.current())
 
     return value
 }

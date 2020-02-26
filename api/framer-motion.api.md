@@ -66,6 +66,8 @@ export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
     // @beta (undocumented)
     auto?: boolean;
+    // @beta (undocumented)
+    autoId?: string;
     // Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
     exit?: TargetAndTransition | VariantLabels | TargetResolver;
     // @deprecated
@@ -544,7 +546,7 @@ export namespace Point {
 // Warning: (ae-internal-missing-underscore) The name "ReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function ReducedMotion({ children, enabled }: Props): JSX.Element;
+export function ReducedMotion({ children, enabled }: Props_2): JSX.Element;
 
 // @public (undocumented)
 export interface RelayoutInfo {
@@ -602,6 +604,41 @@ export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMoti
 export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Omit<MotionProps, "positionTransition"> {
 }
 
+// Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SyncLayoutUtils" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "SyncLayout" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
+    // Warning: (ae-forgotten-export) The symbol "SyncLayoutChild" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    children: Set<SyncLayoutChild>;
+    // (undocumented)
+    componentDidMount(): void;
+    // (undocumented)
+    componentDidUpdate(): void;
+    // (undocumented)
+    flush(): void;
+    // (undocumented)
+    forceRender(): void;
+    // (undocumented)
+    forceUpdate(): void;
+    // (undocumented)
+    getSnapshotBeforeUpdate(): null;
+    // (undocumented)
+    queue: Set<string>;
+    // (undocumented)
+    register(child: SyncLayoutChild): () => boolean;
+    // (undocumented)
+    render(): JSX.Element;
+    // (undocumented)
+    state: SyncLayoutUtils;
+}
+
+// @public (undocumented)
+export const SyncLayoutContext: React.Context<SyncLayoutUtils | null>;
+
 // @public (undocumented)
 export interface TapHandlers {
     onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
@@ -658,12 +695,6 @@ export interface Tween {
     velocity?: number;
     yoyo?: number;
 }
-
-// Warning: (ae-forgotten-export) The symbol "SyncLayoutProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "UnstableSyncLayout" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export const UnstableSyncLayout: ({ children }: SyncLayoutProps) => JSX.Element;
 
 // Warning: (ae-internal-missing-underscore) The name "unwrapMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
 // 
