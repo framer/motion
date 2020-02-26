@@ -7,6 +7,7 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { BoxDelta } from "../../motion/auto/types"
+import { MotionValue } from "../../value"
 
 export interface ExitProps {
     initial?: false | VariantLabels
@@ -24,6 +25,7 @@ export interface MotionContextProps {
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
     deltas?: BoxDelta[]
+    autoParentProgress?: MotionValue<number>
     isReducedMotion?: boolean | undefined
 }
 
