@@ -99,6 +99,7 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
 
     flush() {
         this.queue.forEach(flushTree)
+        this.queue.clear()
     }
 
     forceRender() {
