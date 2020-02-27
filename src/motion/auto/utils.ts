@@ -16,7 +16,6 @@ export function snapshot(element: NativeElement): Snapshot {
         opacity,
         transform,
     } = element.getComputedStyle()
-
     return {
         layout: {
             x: { min: left, max: right },
@@ -150,7 +149,14 @@ export const numAnimatableStyles = animatableStyles.length
  * @param styleProp
  */
 export function resetStyles(styleProp: MotionStyle = {}) {
-    const styles = { transform: "" }
+    const styles = {
+        x: 0,
+        y: 0,
+        scale: 1,
+        scaleX: 1,
+        scaleY: 1,
+        rotate: 0,
+    }
 
     for (let i = 0; i < numAnimatableStyles; i++) {
         const key = animatableStyles[i]

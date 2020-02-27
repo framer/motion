@@ -95,7 +95,6 @@ export class Auto extends React.Component<FunctionalProps> {
     snapshot() {
         const { nativeElement } = this.props
         this.prev = snapshot(nativeElement)
-
         return this.prev
     }
 
@@ -210,6 +209,7 @@ export class Auto extends React.Component<FunctionalProps> {
                 originX: delta.x.origin,
                 originY: delta.y.origin,
             })
+
             const parentDelta = parentDeltas[parentDeltas.length - 1]
             const parentScaleX = parentDelta ? parentDelta.x.scale : 1
             const parentScaleY = parentDelta ? parentDelta.y.scale : 1
@@ -234,6 +234,7 @@ export class Auto extends React.Component<FunctionalProps> {
         }
 
         // TODO: Resolve transition from  `autoTransition` > `transition` > `SyncLayoutContext.transition`
+        this.progress.set(0)
         startAnimation("progress", this.progress, 1, {
             duration: 2,
             ease: "circIn",
