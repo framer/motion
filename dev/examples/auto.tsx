@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle } from "@framer"
+import { motion, useCycle, SyncLayout } from "@framer"
 
 const styles = [
     {
@@ -41,10 +41,12 @@ export const App = () => {
     const [count, cycleCount] = useCycle(0, 1, 2, 3)
 
     return (
-        <motion.div
-            style={{ ...styles[count], position: "absolute" }}
-            auto
-            onClick={() => cycleCount()}
-        />
+        <SyncLayout>
+            <motion.div
+                style={{ ...styles[count], position: "absolute" }}
+                auto
+                onClick={() => cycleCount()}
+            />
+        </SyncLayout>
     )
 }
