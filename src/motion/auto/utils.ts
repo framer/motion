@@ -57,6 +57,18 @@ export function calcOrigin(before: Axis, after: Axis): number {
     return clampProgress(origin)
 }
 
+export function calcTreeScale(deltas: BoxDelta[]): { x: number; y: number } {
+    const numDeltas = deltas.length
+    const scale = { x: 1, y: 1 }
+    for (let i = 0; i < numDeltas; i++) {
+        const delta = deltas[i]
+        scale.x *= delta.x.scale
+        scale.y *= delta.y.scale
+    }
+
+    return scale
+}
+
 /**
  *
  * @param before
@@ -85,14 +97,6 @@ export function calcDelta(before: Axis, after: Axis): AxisDelta {
     const scale = beforeSize / afterSize
     const origin = calcOrigin(before, after)
     const originPoint = after.min + origin * afterSize
-    // console.log(after)
-    // after = {
-    //     min: scaledPoint({ scale, originPoint }, after.min),
-    //     max: scaledPoint({ scale, originPoint }, after.max),
-    // }
-    // console.log(after)
-    // console.log(before.min)
-    // TODO: Divide this by parent scale
     const translate = calcTranslate(before, after, origin)
 
     return { scale, translate, origin, originPoint }
