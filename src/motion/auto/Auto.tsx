@@ -12,7 +12,7 @@ import {
     animatableStyles,
 } from "./utils"
 import { syncRenderSession } from "../../dom/sync-render-session"
-import { TargetAndTransition, Transition } from "../../types"
+import { TargetAndTransition } from "../../types"
 import { motionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { mix } from "@popmotion/popcorn"
@@ -157,7 +157,7 @@ export class Auto extends React.Component<FunctionalProps> {
     }
 
     transitionLayout() {
-        const { nativeElement, values, parentContext } = this.props
+        const { nativeElement, values, parentContext, transition } = this.props
 
         this.detachLayout && this.detachLayout()
 
@@ -240,10 +240,8 @@ export class Auto extends React.Component<FunctionalProps> {
 
         // TODO: Resolve transition from  `autoTransition` > `transition` > `SyncLayoutContext.transition`
         this.progress.set(0)
-        startAnimation("progress", this.progress, 1, {
-            duration: 2,
-            ease: "circIn",
-        })
+        this.progress.set(0) // Set twice to hard-reset velocity
+        startAnimation("progress", this.progress, 1, transition || {})
 
         // TODO we might need a deeper solution than one parent deep
         const unsubscribeProgress = this.progress.onChange(() =>
@@ -268,8 +266,7 @@ export class Auto extends React.Component<FunctionalProps> {
     transitionStyle(prev: Style, next: Style) {
         let shouldTransitionStyle = false
         const target: TargetAndTransition = {}
-        const transition: Transition = {}
-        const { controls, values } = this.props
+        const { controls, values, transition = {} } = this.props
 
         for (let i = 0; i < numAnimatableStyles; i++) {
             const key = animatableStyles[i]
