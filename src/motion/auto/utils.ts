@@ -160,6 +160,12 @@ export function resetStyles(styleProp: MotionStyle = {}) {
         scaleX: 1,
         scaleY: 1,
         rotate: 0,
+        // TODO: Make this not shit
+        borderRadius: styleProp["borderRadius"]
+            ? isMotionValue(styleProp["borderRadius"])
+                ? styleProp["borderRadius"].get()
+                : styleProp["borderRadius"]
+            : 0,
     }
 
     for (let i = 0; i < numAnimatableStyles; i++) {
