@@ -179,7 +179,7 @@ export class Auto extends React.Component<FunctionalProps> {
             // TODO: Clean this up
             // Use the current progress value to interpolate between the previous and next
             // bounding box before applying and calculating deltas.
-            const p = this.progress.get()
+            const p = this.progress.get() / 100
             const easedNext = {
                 x: { min: 0, max: 0 },
                 y: { min: 0, max: 0 },
@@ -238,21 +238,24 @@ export class Auto extends React.Component<FunctionalProps> {
             values.get("y", 1).set(this.delta.y.translate / treeScale.y)
 
             // TODO: Only do this if we're animating border radius or border radius doesnt equal 0
-            const borderRadiusX =
-                this.next.style.borderRadius / deltaXScale / treeScale.x
-            const borderRadiusY =
-                this.next.style.borderRadius / deltaYScale / treeScale.y
-            const borderRadius = `${borderRadiusX}px ${borderRadiusY}px`
-            values.get("borderBottomLeftRadius", "").set(borderRadius)
-            values.get("borderBottomRightRadius", "").set(borderRadius)
-            values.get("borderTopLeftRadius", "").set(borderRadius)
-            values.get("borderTopRightRadius", "").set(borderRadius)
+            const easedBorderRadius = mix(
+                this.prev.style.borderRadius,
+                this.next.style.borderRadius,
+                p
+            )
+            const borderRadiusX = easedBorderRadius / deltaXScale / treeScale.x
+            const borderRadiusY = easedBorderRadius / deltaYScale / treeScale.y
+            const borderRadius = `${borderRadiusX}px / ${borderRadiusY}px`
+            values.get("borderRadius", "").set(borderRadius)
+            // values.get("borderBottomRightRadius", "").set(borderRadius)
+            // values.get("borderTopLeftRadius", "").set(borderRadius)
+            // values.get("borderTopRightRadius", "").set(borderRadius)
         }
 
         // TODO: Resolve transition from  `autoTransition` > `transition` > `SyncLayoutContext.transition`
         this.progress.set(0)
         this.progress.set(0) // Set twice to hard-reset velocity
-        startAnimation("progress", this.progress, 1, transition || {})
+        startAnimation("progress", this.progress, 100, transition || {})
 
         // TODO we might need a deeper solution than one parent deep
         const unsubscribeProgress = this.progress.onChange(() =>
