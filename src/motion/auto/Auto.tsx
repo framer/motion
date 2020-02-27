@@ -37,6 +37,9 @@ const autoKey = "auto"
 export class Auto extends React.Component<FunctionalProps> {
     static contextType = SyncLayoutContext
 
+    // TODO: Remove this in favour of being able to cancel a treeSync callback
+    _isMounted: boolean
+
     prev: Snapshot
     next: Snapshot
 
@@ -52,6 +55,7 @@ export class Auto extends React.Component<FunctionalProps> {
     removeFromSyncedTree?: () => void
 
     componentDidMount() {
+        this._isMounted = true
         if (!this.isSyncedTree()) return
 
         const { autoId } = this.props
@@ -94,6 +98,7 @@ export class Auto extends React.Component<FunctionalProps> {
     }
 
     componentWillUnmount() {
+        this._isMounted = false
         this.removeFromSyncedTree && this.removeFromSyncedTree()
     }
 
@@ -119,6 +124,7 @@ export class Auto extends React.Component<FunctionalProps> {
 
         sync(autoKey, (up, down) => {
             up(() => {
+                if (!this._isMounted) return
                 // Write: Remove the `transform` prop so we can correctly read its new layout position,
                 // and reset any styles present
                 nativeElement.setStyle(resetStyles(style))
@@ -126,6 +132,7 @@ export class Auto extends React.Component<FunctionalProps> {
             })
 
             down(() => {
+                if (!this._isMounted) return
                 // Read: Take a new snapshot
                 this.next = snapshot(nativeElement)
 
@@ -146,6 +153,7 @@ export class Auto extends React.Component<FunctionalProps> {
 
             // Write: Apply deltas and animate
             down(() => {
+                if (!this._isMounted) return
                 syncRenderSession.open()
 
                 this.transitionLayout()
