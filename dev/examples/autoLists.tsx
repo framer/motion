@@ -2,14 +2,6 @@ import * as React from "react"
 import { useState } from "react"
 import { motion, SyncLayout } from "@framer"
 
-/**
- * Issues:
- * - Nested stuff
- * - Animating between borderRadius value type
- */
-
-const transition = { duration: 3, ease: "linear" }
-
 interface ListProps {
     list: number[]
     onItemClick: (id: number) => void
@@ -18,16 +10,22 @@ interface ListProps {
 
 const List = ({ id, list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul auto autoId={id} style={styles.list}>
+        <motion.ul
+            auto
+            autoId={id}
+            style={styles.list}
+            transition={{ duration: 1 }}
+        >
             {list.map(id => (
                 <motion.li
                     auto
-                    style={{ ...styles.item, backgroundColor }}
+                    style={{ ...styles.item, backgroundColor, z: 2 }}
                     key={id}
                     autoId={id}
                     id={"list-" + id}
                     onClick={() => onItemClick(id)}
                     drag
+                    transition={{ duration: 1 }}
                 />
             ))}
         </motion.ul>
@@ -38,7 +36,11 @@ export const App = () => {
     // const [listA, setListA] = useState([0, 1, 2, 3, 4, 5, 6])
     // const [listB, setListB] = useState([7, 8, 9, 10, 11, 12])
 
-    const [lists, setLists] = useState([[0], [1]])
+    //const [lists, setLists] = useState([[0], [1]])
+    const [lists, setLists] = useState([
+        [0, 1, 2, 3, 4, 5, 6],
+        [7, 8, 9, 10, 11, 12],
+    ])
 
     return (
         <SyncLayout>
@@ -75,12 +77,19 @@ const styles = {
         display: "flex",
         listStyle: "none",
         flexDirection: "column",
+        zIndex: 0,
+        z: 0,
+        position: "relative",
     },
+
     item: {
         height: 50,
         width: 330,
         borderRadius: 5,
         margin: 10,
+        zIndex: 1,
+        z: 1,
+        position: "relative",
     },
 }
 
