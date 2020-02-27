@@ -58,7 +58,12 @@ export class Auto extends React.Component<FunctionalProps> {
         const { register } = this.context
 
         let syncLayoutChild: SyncLayoutChild = {
-            snapshot: () => this.snapshot(),
+            snapshot: () => {
+                // TODO This could be consolidated with getSnapshot
+                const prev = this.snapshot()
+                this.scheduleTransition(prev)
+                return prev
+            },
         }
 
         if (autoId !== undefined) {
