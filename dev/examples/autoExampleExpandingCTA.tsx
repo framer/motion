@@ -51,16 +51,20 @@ const Detail = styled(motion.div)`
     border-radius: 10px;
     background: red;
 `
-
+const transition = { duration: 10, ease: "circIn" }
 export const App = () => {
     const [isOpen, setIsOpen] = useState(true)
 
     return (
         <Container>
             <SyncLayout>
-                <Popup auto onClick={() => setIsOpen(!isOpen)}>
-                    <Icon isOpen={isOpen} auto>
-                        <Detail auto />
+                <Popup
+                    auto
+                    onClick={() => setIsOpen(!isOpen)}
+                    transition={transition}
+                >
+                    <Icon isOpen={isOpen} auto transition={transition}>
+                        <Detail auto transition={transition} />
                     </Icon>
                     {/* <AnimatePresence>
                         {isOpen && (
