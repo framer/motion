@@ -10,6 +10,7 @@ import {
     resetStyles,
     numAnimatableStyles,
     animatableStyles,
+    calcTreeScale,
 } from "./utils"
 import { syncRenderSession } from "../../dom/sync-render-session"
 import { TargetAndTransition } from "../../types"
@@ -207,6 +208,9 @@ export class Auto extends React.Component<FunctionalProps> {
             const appliedNext = applyTreeDeltas(parentDeltas, easedNext)
             const delta = calcBoxDelta(this.prev.layout, appliedNext)
 
+            // TODO: Look into combining this into a single loop with applyTreeDeltas
+            const treeScale = calcTreeScale(parentDeltas)
+
             // Update localDelta for children
             // TODO neaten this shit up
             this.delta.x.translate = delta.x.translate
@@ -223,23 +227,22 @@ export class Auto extends React.Component<FunctionalProps> {
                 originY: delta.y.origin,
             })
 
-            const parentDelta = parentDeltas[parentDeltas.length - 1]
-            const parentScaleX = parentDelta ? parentDelta.x.scale : 1
-            const parentScaleY = parentDelta ? parentDelta.y.scale : 1
-            values.get("scaleX", 1).set(this.delta.x.scale)
-            values.get("scaleY", 1).set(this.delta.y.scale)
+            const deltaXScale = delta.x.scale
+            const deltaYScale = delta.y.scale
+
+            values.get("scaleX", 1).set(deltaXScale)
+            values.get("scaleY", 1).set(deltaYScale)
 
             // TODO We need to apply the whole stack of scales in the same way as border radius
-            values.get("x", 1).set(this.delta.x.translate / parentScaleX)
-            values.get("y", 1).set(this.delta.y.translate / parentScaleY)
+            values.get("x", 1).set(this.delta.x.translate / treeScale.x)
+            values.get("y", 1).set(this.delta.y.translate / treeScale.y)
 
-            // TODO: Replace this with a solution that uses applyBoxDelta to transform
-            // all border radius throughout the tree
-            const borderRadius = `${this.next.style.borderRadius /
-                this.delta.x.scale /
-                parentScaleX}px ${this.next.style.borderRadius /
-                this.delta.y.scale /
-                parentScaleY}px`
+            // TODO: Only do this if we're animating border radius or border radius doesnt equal 0
+            const borderRadiusX =
+                this.next.style.borderRadius / deltaXScale / treeScale.x
+            const borderRadiusY =
+                this.next.style.borderRadius / deltaYScale / treeScale.y
+            const borderRadius = `${borderRadiusX}px ${borderRadiusY}px`
             values.get("borderBottomLeftRadius", "").set(borderRadius)
             values.get("borderBottomRightRadius", "").set(borderRadius)
             values.get("borderTopLeftRadius", "").set(borderRadius)
