@@ -7,7 +7,7 @@ import {
     ResolvedKeyframesTarget,
 } from "../../types"
 
-const resolveSingleValue = (
+export const resolveSingleValue = (
     v: string | number | CustomValueType
 ): string | number => {
     if (v && typeof v === "object") {

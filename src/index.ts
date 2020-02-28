@@ -9,7 +9,7 @@ export {
 } from "./motion"
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
-export { unwrapMotionValue } from "./value/utils/unwrap-value"
+export { resolveMotionValue } from "./value/utils/resolve-motion-value"
 export { useInvertedScale } from "./value/use-inverted-scale"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
