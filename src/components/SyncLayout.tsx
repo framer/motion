@@ -64,7 +64,7 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
         forceRender: () => this.forceRender(),
         syncTree: (id, callback) => {
             this.queue.add(id)
-            syncTree(id, callback)
+            return syncTree(id, callback)
         },
     }
 
