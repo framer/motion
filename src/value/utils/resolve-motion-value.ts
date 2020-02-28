@@ -1,4 +1,4 @@
-import { MotionValue } from "../"
+import { MotionValue } from ".."
 import { isCustomValue } from "../../utils/resolve-value"
 import { CustomValueType } from "../../types"
 
@@ -9,7 +9,7 @@ import { CustomValueType } from "../../types"
  *
  * @internal
  */
-export function unwrapMotionValue(
+export function resolveMotionValue(
     value?: string | number | CustomValueType | MotionValue
 ): string | number {
     const unwrappedValue = value instanceof MotionValue ? value.get() : value
