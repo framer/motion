@@ -172,12 +172,12 @@ export function resetStyles(styleProp: MotionStyle = {}) {
         scaleX: 1,
         scaleY: 1,
         rotate: 0,
-        borderRadius: resolve(0, styleProp.borderRadius),
+        borderRadius: resolve(undefined, styleProp.borderRadius),
     }
 
     for (let i = 0; i < numAnimatableStyles; i++) {
         const key = animatableStyles[i]
-        styles[key] = resolve("", styleProp[key])
+        styles[key] = resolve(undefined, styleProp[key])
     }
 
     return styles
