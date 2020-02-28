@@ -290,6 +290,13 @@ export class MotionValue<V = any> {
     }
 
     /**
+     * @public
+     */
+    getPrevious() {
+        return this.prev
+    }
+
+    /**
      * Returns the latest velocity of `MotionValue`
      *
      * @returns - The latest velocity of `MotionValue`. Returns `0` if the state is non-numerical.

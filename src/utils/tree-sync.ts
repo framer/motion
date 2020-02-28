@@ -3,7 +3,7 @@ type Queue = Job[][]
 type QueueLookup = Map<string, Queue>
 
 type Schedule = (job: Job) => void
-type Session = (read: Schedule, write: Schedule) => void
+export type Session = (schedule: Schedule) => void
 
 const queues: QueueLookup = new Map()
 
@@ -11,36 +11,38 @@ function createQueue(id: string) {
     queues.set(id, [])
 }
 
-export function syncTree(id: string, session: Session) {
-    if (!queues.has(id)) createQueue(id)
+export function syncTree(queueId: string, session: Session) {
+    if (!queues.has(queueId)) createQueue(queueId)
+    const queue = queues.get(queueId) as Queue
 
-    const queue = queues.get(id)
-    if (!queue) return
+    const status = { isActive: true }
+    let jobsIndex = 0
 
-    let queueIndex = 0
-
-    const schedule = (job: Job, direction: 1 | -1) => {
+    const schedule = (job: Job) => {
         // Make job list if none created
-        if (!queue[queueIndex]) queue[queueIndex] = []
+        if (!queue[jobsIndex]) queue[jobsIndex] = []
 
-        const jobs = queue[queueIndex]
+        const jobs = queue[jobsIndex]
 
-        direction === 1 ? jobs.push(job) : jobs.unshift(job)
+        // We unshift into the jobs array because `syncTree` is going to be called by
+        // child components first but we want to execute from parents down
+        jobs.unshift(() => status.isActive && job())
 
-        queueIndex++
+        jobsIndex++
     }
 
-    session(
-        job => schedule(job, 1),
-        job => schedule(job, -1)
-    )
+    session(schedule)
+
+    // Our unsubscribe function is basically just setting this mutative state due to the complexities
+    // of going through and taking each job out of its respective queue. It will get flushed shortly
+    // so there's low risk of memory leaks.
+    return () => (status.isActive = false)
 }
 
 const runJob = (job: Job) => job()
 
 export function flushTree(id: string) {
     const queue = queues.get(id)
-
     if (!queue) return
 
     const numSteps = queue.length
