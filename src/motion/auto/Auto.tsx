@@ -61,11 +61,7 @@ export class Auto extends React.Component<FunctionalProps> {
         const { register } = this.context
 
         let syncLayoutChild: SyncLayoutChild = {
-            snapshot: () => {
-                const prev = this.snapshot()
-                this.scheduleTransition(prev)
-                return prev
-            },
+            snapshot: saveSnapshot => this.scheduleSnapshot(saveSnapshot),
         }
 
         if (autoId !== undefined) {
@@ -84,22 +80,7 @@ export class Auto extends React.Component<FunctionalProps> {
     }
 
     shouldComponentUpdate() {
-        const { nativeElement } = this.props
-
-        // Maybe only do this if it isnt a synced tree
-        this.cancelSnapshot = this.sync("snapshot", schedule => {
-            schedule(() => {
-                if (nativeElement.getStyle("rotate")) {
-                    nativeElement.setStyle({ rotate: 0 })
-                    nativeElement.render()
-                }
-            })
-            schedule(() => {
-                this.snapshot()
-                this.scheduleTransition()
-            })
-        })
-
+        !this.isSyncedTree() && this.scheduleSnapshot()
         return true
     }
 
@@ -124,9 +105,9 @@ export class Auto extends React.Component<FunctionalProps> {
         this.prev = snapshot(nativeElement)
 
         const rotate = values.get("rotate")
-        if (rotate) {
-            this.prev.style.rotate = rotate.getPrevious() as number
-        }
+        this.prev.style.rotate = rotate
+            ? (rotate.getPrevious() as number) || 0
+            : 0
 
         return this.prev
     }
@@ -143,14 +124,36 @@ export class Auto extends React.Component<FunctionalProps> {
         return sync(id, session)
     }
 
+    scheduleSnapshot(saveSnapshot?: (snapshot: Snapshot) => void) {
+        const { nativeElement, values } = this.props
+
+        console.log(this.props.id, "schedule snapshot")
+        // Maybe only do this if it isnt a synced tree
+        this.cancelSnapshot = this.sync("snapshot", schedule => {
+            schedule(() => {
+                if (values.get("rotate")?.getPrevious()) {
+                    nativeElement.setStyle({ rotate: 0 })
+                    nativeElement.render()
+                }
+            })
+            schedule(() => {
+                const prev = this.snapshot()
+                if (saveSnapshot) saveSnapshot(prev)
+                this.scheduleTransition()
+            })
+        })
+    }
+
     scheduleTransition(prev = this.prev) {
         // Assign incoming prev to this.prev in case it's being provided by SyncLayout's continuity
         this.prev = prev
 
+        console.log(this.props.id, "schedule transition")
         const { nativeElement, parentContext, localContext, style } = this.props
 
         this.cancelTransition = this.sync("transition", schedule => {
             schedule(() => {
+                console.log(this.props.id, 1)
                 // Write: Remove the `transform` prop so we can correctly read its new layout position,
                 // and reset any styles present
                 nativeElement.setStyle(resetStyles(style))
@@ -169,6 +172,7 @@ export class Auto extends React.Component<FunctionalProps> {
                 // or maybe split subscriptions and recalculations per axis
                 localContext.autoParentProgress = this.progress
 
+                console.log(this.props.id, 2)
                 // Create a delta stack for children to incorporate into their
                 // own transform calculations
                 localContext.deltas = [
@@ -199,7 +203,6 @@ export class Auto extends React.Component<FunctionalProps> {
         const updateBoundingBoxes = () => {
             // TODO: DON'T BE WASTEFUL HERE - eliminate object creation as this function
             // can potentially run multiple times per frame.
-
             const parentDeltas = parentContext.deltas || []
 
             // TODO: Clean this up
@@ -264,9 +267,11 @@ export class Auto extends React.Component<FunctionalProps> {
             values.get("scaleY", 1).set(deltaYScale)
 
             // TODO We need to apply the whole stack of scales in the same way as border radius
-            values.get("x", 1).set(this.delta.x.translate / treeScale.x)
-            values.get("y", 1).set(this.delta.y.translate / treeScale.y)
-
+            values.get("x", 1).set(delta.x.translate / treeScale.x)
+            values.get("y", 1).set(delta.y.translate / treeScale.y)
+            if (parentDeltas.length === 2) {
+                console.log(deltaXScale)
+            }
             // TODO: Only do if we are animating rotate
             if (isRotationAnimating) {
                 values
@@ -279,6 +284,7 @@ export class Auto extends React.Component<FunctionalProps> {
                         )
                     )
             }
+
             // TODO: Only do this if we're animating border radius or border radius doesnt equal 0
             const easedBorderRadius = mix(
                 this.prev.style.borderRadius,
