@@ -2,7 +2,9 @@ import { clamp, mix, progress } from "@popmotion/popcorn"
 import { Axis, AxisDelta, Snapshot, BoxDelta, Box } from "./types"
 import { NativeElement } from "../utils/use-native-element"
 import { MotionStyle } from "../../motion/types"
-import { isMotionValue } from "../../value/utils/is-motion-value"
+import { MotionValue } from "../../value"
+import { CustomValueType } from "../../types"
+import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 
 const clampProgress = clamp(0, 1)
 
@@ -14,8 +16,8 @@ export function snapshot(element: NativeElement): Snapshot {
         borderRadius,
         color,
         opacity,
-        transform,
     } = element.getComputedStyle()
+
     return {
         layout: {
             x: { min: left, max: right },
@@ -26,8 +28,7 @@ export function snapshot(element: NativeElement): Snapshot {
             border,
             borderRadius: borderRadius ? parseFloat(borderRadius) : 0,
             color: color || "",
-            opacity: opacity ? parseFloat(opacity) : 0,
-            transform,
+            opacity: opacity !== null ? parseFloat(opacity) : 0,
         },
     }
 }
@@ -91,21 +92,25 @@ export function scaledPoint({ scale, originPoint }: AxisDelta, point: number) {
     return originPoint + scaled
 }
 
-export function calcDelta(before: Axis, after: Axis): AxisDelta {
+export function calcDelta(
+    before: Axis,
+    after: Axis,
+    origin?: number
+): AxisDelta {
     const beforeSize = before.max - before.min
     const afterSize = after.max - after.min
     const scale = beforeSize / afterSize
-    const origin = calcOrigin(before, after)
+    origin = origin !== undefined ? origin : calcOrigin(before, after)
     const originPoint = after.min + origin * afterSize
     const translate = calcTranslate(before, after, origin)
 
     return { scale, translate, origin, originPoint }
 }
 
-export function calcBoxDelta(before: Box, after: Box) {
+export function calcBoxDelta(before: Box, after: Box, origin?: number) {
     return {
-        x: calcDelta(before.x, after.x),
-        y: calcDelta(before.y, after.y),
+        x: calcDelta(before.x, after.x, origin),
+        y: calcDelta(before.y, after.y, origin),
     }
 }
 
@@ -145,6 +150,13 @@ export const animatableStyles = [
 ]
 export const numAnimatableStyles = animatableStyles.length
 
+export function resolve<T extends unknown>(
+    defaultValue: T,
+    value?: MotionValue | string | number | CustomValueType
+): T {
+    return value === undefined ? defaultValue : (resolveMotionValue(value) as T)
+}
+
 /**
  * Reset `element.style` to ensure we're not reading styles that have previously been animated.
  * If anything is set in the incoming style prop, use that, otherwise unset to ensure the
@@ -160,24 +172,12 @@ export function resetStyles(styleProp: MotionStyle = {}) {
         scaleX: 1,
         scaleY: 1,
         rotate: 0,
-        // TODO: Make this not shit
-        borderRadius: styleProp["borderRadius"]
-            ? isMotionValue(styleProp["borderRadius"])
-                ? styleProp["borderRadius"].get()
-                : styleProp["borderRadius"]
-            : 0,
+        borderRadius: resolve(0, styleProp.borderRadius),
     }
 
     for (let i = 0; i < numAnimatableStyles; i++) {
         const key = animatableStyles[i]
-
-        if (styleProp[key]) {
-            styles[key] = isMotionValue(styleProp[key])
-                ? styleProp[key].get()
-                : styleProp[key]
-        } else {
-            styles[key] = ""
-        }
+        styles[key] = resolve("", styleProp[key])
     }
 
     return styles

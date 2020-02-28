@@ -26,7 +26,7 @@ export interface Style {
     borderRadius: number
     color: string
     opacity: number
-    transform: string
+    rotate?: number
 }
 
 export interface Snapshot {

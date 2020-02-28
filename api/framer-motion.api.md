@@ -465,6 +465,8 @@ export class MotionValue<V = any> {
     attach(passiveEffect: PassiveEffect<V>): void;
     destroy(): void;
     get(): V;
+    // (undocumented)
+    getPrevious(): V;
     getVelocity(): number;
     isAnimating(): boolean;
     onChange(subscription: Subscriber<V>): () => void;
@@ -570,6 +572,11 @@ export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
 
 // @public (undocumented)
 export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boolean;
+
+// Warning: (ae-internal-missing-underscore) The name "resolveMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export function resolveMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
 // @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
@@ -695,11 +702,6 @@ export interface Tween {
     velocity?: number;
     yoyo?: number;
 }
-
-// Warning: (ae-internal-missing-underscore) The name "unwrapMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
 // @beta
 export function useAnimatedState(initialState: any): any[];
