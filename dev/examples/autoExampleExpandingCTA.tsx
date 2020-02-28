@@ -57,16 +57,16 @@ export const App = () => {
 
     return (
         <Container>
-            <SyncLayout>
-                <Popup
-                    auto
-                    onClick={() => setIsOpen(!isOpen)}
-                    transition={transition}
-                >
-                    <Icon isOpen={isOpen} auto transition={transition}>
-                        <Detail auto transition={transition} />
-                    </Icon>
-                    {/* <AnimatePresence>
+            <Popup
+                auto
+                onClick={() => setIsOpen(!isOpen)}
+                transition={transition}
+                id="popup"
+            >
+                <Icon id="icon" isOpen={isOpen} auto transition={transition}>
+                    <Detail auto id="detail" transition={transition} />
+                </Icon>
+                {/* <AnimatePresence>
                         {isOpen && (
                             <ContentRow
                                 auto
@@ -76,8 +76,7 @@ export const App = () => {
                             />
                         )}
                     </AnimatePresence> */}
-                </Popup>
-            </SyncLayout>
+            </Popup>
         </Container>
     )
 }
