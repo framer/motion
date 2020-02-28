@@ -1,4 +1,4 @@
-import { unwrapMotionValue } from "../utils/unwrap-value"
+import { resolveMotionValue } from "../utils/resolve-motion-value"
 import { MotionValue } from "../"
 
 class Test {
@@ -10,21 +10,21 @@ class Test {
     }
 }
 
-describe("unwrapMotionValue", () => {
+describe("resolveMotionValue", () => {
     it("should leave non-motion values alone", () => {
         let value: any = { test: "foo" }
-        expect(unwrapMotionValue(value)).toBe(value)
+        expect(resolveMotionValue(value)).toBe(value)
         value = 4
-        expect(unwrapMotionValue(value)).toBe(4)
+        expect(resolveMotionValue(value)).toBe(4)
     })
     it("should should unwrap a motion value", () => {
         let motionValue: MotionValue<any> = new MotionValue(3)
-        expect(unwrapMotionValue(motionValue)).toBe(3)
+        expect(resolveMotionValue(motionValue)).toBe(3)
         const value = { test: "bar" }
         motionValue = new MotionValue(value)
-        expect(unwrapMotionValue(motionValue)).toBe(value)
+        expect(resolveMotionValue(motionValue)).toBe(value)
     })
     it("should should unwrap a custom value", () => {
-        expect(unwrapMotionValue(new Test())).toEqual(5)
+        expect(resolveMotionValue(new Test())).toEqual(5)
     })
 })
