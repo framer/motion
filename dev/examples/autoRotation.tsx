@@ -1,23 +1,25 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
+import { motion, SyncLayout } from "@framer"
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <motion.div
-            auto
-            transition={{ duration: 10, ease: "linear" }}
-            style={isOn ? bigParent : smallParent}
-            onClick={() => setIsOn(!isOn)}
-        >
+        <SyncLayout>
             <motion.div
                 auto
-                transition={{ duration: 10, ease: "linear" }}
-                style={isOn ? bigChild : smallChild}
-            />
-        </motion.div>
+                transition={{ duration: 1 }}
+                style={isOn ? bigParent : smallParent}
+                onClick={() => setIsOn(!isOn)}
+            >
+                <motion.div
+                    auto
+                    transition={{ duration: 1 }}
+                    style={isOn ? bigChild : smallChild}
+                />
+            </motion.div>
+        </SyncLayout>
     )
 }
 

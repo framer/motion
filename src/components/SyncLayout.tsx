@@ -11,7 +11,7 @@ export interface SyncLayoutUtils {
 
 export interface SyncLayoutChild {
     id?: string
-    snapshot: () => Snapshot
+    snapshot: (callback?: (snapshot: Snapshot) => void) => void
     resume?: (prev: Snapshot) => void
 }
 
@@ -57,6 +57,8 @@ export const SyncLayoutContext = createContext<SyncLayoutUtils | null>(null)
  */
 export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
     children = new Set<SyncLayoutChild>()
+
+    // TODO: Revisit if we need this
     queue = new Set<string>()
 
     state: SyncLayoutUtils = {
@@ -84,17 +86,22 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
         return () => this.children.delete(child)
     }
 
-    getSnapshotBeforeUpdate() {
+    shouldComponentUpdate() {
         this.children.forEach(snapshotChild)
+        return true
+    }
+
+    getSnapshotBeforeUpdate() {
+        flushTree("snapshot")
         return null
     }
 
     componentDidMount() {
-        this.flush()
+        flushTree("transition")
     }
 
     componentDidUpdate() {
-        this.flush()
+        flushTree("transition")
     }
 
     flush() {
@@ -122,6 +129,9 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
 }
 
 function snapshotChild({ id, snapshot }: SyncLayoutChild) {
-    const prev = snapshot()
-    if (id !== undefined) continuity.set(id, prev)
+    const saveSnapshot =
+        id !== undefined
+            ? (prev: Snapshot) => continuity.set(id, prev)
+            : undefined
+    snapshot(saveSnapshot)
 }
