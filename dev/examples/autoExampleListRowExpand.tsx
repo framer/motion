@@ -50,6 +50,7 @@ function Item({ isOpen, onClick }: ItemProps) {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
+                        auto
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
