@@ -711,6 +711,12 @@ export function useMotionValue<T>(initial: T): MotionValue<T>;
 // @internal (undocumented)
 export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
 
+// Warning: (ae-forgotten-export) The symbol "Present" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "NotPresent" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export function usePresence(): Present | NotPresent;
+
 // @public
 export function useReducedMotion(): boolean;
 
