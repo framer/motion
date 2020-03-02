@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SyncLayout } from "@framer"
+import { motion, SyncLayout, AnimatePresence } from "@framer"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -30,16 +30,15 @@ const Icon = styled(motion.div)`
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-right: 0px;
 
     ${({ isOpen }) =>
         isOpen
             ? `
-        margin-right: 300px;
         width: 200px;
         justify-content: center;
     `
             : `
-        margin-right: 0px;
         justify-content: flex-end;
     `}
 `
@@ -51,22 +50,26 @@ const Detail = styled(motion.div)`
     border-radius: 10px;
     background: red;
 `
-const transition = { duration: 10, ease: "circIn" }
+
+const ContentRow = styled(motion.div)`
+    width: 200px;
+    height: 8px;
+    background-color: #999;
+    border-radius: 10px;
+    margin-top: 12px;
+`
+
 export const App = () => {
-    const [isOpen, setIsOpen] = useState(true)
+    const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <Container>
-            <Popup
-                auto
-                onClick={() => setIsOpen(!isOpen)}
-                transition={transition}
-                id="popup"
-            >
-                <Icon id="icon" isOpen={isOpen} auto transition={transition}>
-                    <Detail auto id="detail" transition={transition} />
-                </Icon>
-                {/* <AnimatePresence>
+        <SyncLayout>
+            <Container>
+                <Popup auto onClick={() => setIsOpen(!isOpen)} id="popup">
+                    <Icon id="icon" isOpen={isOpen} auto>
+                        <Detail auto id="detail" />
+                    </Icon>
+                    <AnimatePresence>
                         {isOpen && (
                             <ContentRow
                                 auto
@@ -75,8 +78,9 @@ export const App = () => {
                                 exit={{ opacity: 0 }}
                             />
                         )}
-                    </AnimatePresence> */}
-            </Popup>
-        </Container>
+                    </AnimatePresence>
+                </Popup>
+            </Container>
+        </SyncLayout>
     )
 }
