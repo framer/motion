@@ -98,11 +98,11 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
     }
 
     componentDidMount() {
-        flushTree("transition")
+        this.flush()
     }
 
     componentDidUpdate() {
-        flushTree("transition")
+        this.flush()
     }
 
     flush() {
