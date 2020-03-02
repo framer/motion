@@ -5,10 +5,12 @@ import { act } from "react-dom/test-utils"
 import { AnimatePresence } from ".."
 import { usePresence } from "../use-presence"
 
+type CB = () => void
+
 describe("usePresence", () => {
     test("Can defer unmounting", async () => {
         const promise = new Promise(resolve => {
-            let remove: () => void | undefined = undefined
+            let remove: undefined | CB = undefined
 
             const Child = () => {
                 const [isPresent, safeToRemove] = usePresence()
@@ -29,9 +31,7 @@ describe("usePresence", () => {
 
             expect(container.firstChild).toBeTruthy()
 
-            if (remove) {
-                act(() => remove())
-            }
+            act(() => remove && remove())
 
             expect(container.firstChild).toBeFalsy()
 
