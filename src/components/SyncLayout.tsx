@@ -11,7 +11,8 @@ export interface SyncLayoutUtils {
 
 export interface SyncLayoutChild {
     id?: string
-    snapshot: (callback?: (snapshot: Snapshot) => void) => void
+    snapshot: () => Snapshot
+    resetRotation: () => void
     resume?: (prev: Snapshot) => void
 }
 
@@ -87,12 +88,12 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
     }
 
     shouldComponentUpdate() {
-        this.children.forEach(snapshotChild)
+        this.children.forEach(resetRotation)
         return true
     }
 
     getSnapshotBeforeUpdate() {
-        flushTree("snapshot")
+        this.children.forEach(snapshotChild)
         return null
     }
 
@@ -129,9 +130,10 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
 }
 
 function snapshotChild({ id, snapshot }: SyncLayoutChild) {
-    const saveSnapshot =
-        id !== undefined
-            ? (prev: Snapshot) => continuity.set(id, prev)
-            : undefined
-    snapshot(saveSnapshot)
+    const prev = snapshot()
+    id !== undefined && continuity.set(id, prev)
+}
+
+function resetRotation({ resetRotation }: SyncLayoutChild) {
+    resetRotation()
 }
