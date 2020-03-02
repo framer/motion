@@ -11,7 +11,11 @@ type NotPresent = [false, () => void]
  * used to access that data and perform operations before the component can be considered
  * safe to remove.
  *
- * When `isPresent` is `true`, the `safeToRemove` callback is `undefined`.
+ * It returns two values. `isPresent` is a boolean that is `true` when the component
+ * is present within the React tree. It is `false` when it's been removed, but still visible.
+ *
+ * When `isPresent` is `false`, the `safeToRemove` callback can be used to tell `AnimatePresence`
+ * that it's safe to remove the component from the DOM, for instance after a animation has completed.
  *
  * ```jsx
  * const [isPresent, safeToRemove] = usePresence()
