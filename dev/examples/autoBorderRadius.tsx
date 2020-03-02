@@ -8,15 +8,10 @@ export const App = () => {
     return (
         <motion.div
             auto
-            transition={{ duration: 20 }}
             style={isOn ? bigParent : smallParent}
             onClick={() => setIsOn(!isOn)}
         >
-            <motion.div
-                auto
-                transition={{ duration: 20 }}
-                style={isOn ? bigChild : smallChild}
-            />
+            <motion.div auto style={isOn ? bigChild : smallChild} />
         </motion.div>
     )
 }
