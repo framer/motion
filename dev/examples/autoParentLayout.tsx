@@ -17,18 +17,15 @@ export const App = () => {
 
     return (
         <motion.div
-            layoutTransition
+            auto
             style={{ ...styles.parent, alignItems, top }}
             onClick={() => cycleTop()}
         >
             <motion.div
-                layoutTransition
+                auto
                 style={{ ...styles.child, backgroundColor: "blue", alignItems }}
             >
-                <motion.div
-                    layoutTransition
-                    style={{ ...styles.child, height: "30%" }}
-                />
+                <motion.div auto style={{ ...styles.child, height: "30%" }} />
             </motion.div>
         </motion.div>
     )

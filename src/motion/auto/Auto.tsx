@@ -107,7 +107,7 @@ export class Auto extends React.Component<FunctionalProps> {
 
         if (!rotate) return
 
-        this.prevRotate = rotate.getPrevious() as number
+        this.prevRotate = (rotate.getPrevious() as number) || 0
 
         if (this.prevRotate) {
             nativeElement.setStyle("rotate", 0)
