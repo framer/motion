@@ -21,15 +21,12 @@ import { mix } from "@popmotion/popcorn"
 
 /**
  * TODO:
- * - Full-tree border radius inversion
- * - Border radius animation (inc resetting any borderRadius set)
  * - Individual border radius
  * - Popping children from flow on exit via `AnimatePresence`
  * - Fix `AnimatePresence` children scale calculation (see: autoExampleExpandingCTA)
  * - Box shadows
  * - Integrate with `AnimatePresence` so we can do container-style transitions
  * - Allow `auto` to === `false`?
- * - Don't render if static === true
  * - Documentation
  */
 
@@ -38,6 +35,9 @@ export class Auto extends React.Component<FunctionalProps> {
 
     prev: Snapshot
     next: Snapshot
+
+    prevRotate = 0
+    prevBorderRadius: number
 
     // TODO: Consider replacing this with individual progress values for each transform. We aren't
     // animating these directly because they're being calculated every frame
@@ -51,7 +51,6 @@ export class Auto extends React.Component<FunctionalProps> {
 
     detachFromParentLayout?: () => void
     detachFromSyncLayout?: () => void
-    cancelSnapshot?: () => void
     cancelTransition?: () => void
 
     componentDidMount() {
@@ -61,7 +60,12 @@ export class Auto extends React.Component<FunctionalProps> {
         const { register } = this.context
 
         let syncLayoutChild: SyncLayoutChild = {
-            snapshot: saveSnapshot => this.scheduleSnapshot(saveSnapshot),
+            snapshot: () => {
+                const prev = this.snapshot()
+                this.scheduleTransition()
+                return prev
+            },
+            resetRotation: () => this.resetRotation(),
         }
 
         if (autoId !== undefined) {
@@ -79,35 +83,46 @@ export class Auto extends React.Component<FunctionalProps> {
         !this.isSyncedTree() && flushTree("transition")
     }
 
-    shouldComponentUpdate() {
-        !this.isSyncedTree() && this.scheduleSnapshot()
-        return true
-    }
-
     /**
      * Measure the current state of the DOM before it's updated, and schedule transition checks.
      * The lack of this specific lifecycle event in hooks is why this component is a class.
      */
     getSnapshotBeforeUpdate() {
-        !this.isSyncedTree() && flushTree("snapshot")
+        if (!this.isSyncedTree()) {
+            this.snapshot()
+            this.scheduleTransition()
+        }
         return null
     }
 
     componentWillUnmount() {
-        this.cancelSnapshot && this.cancelSnapshot()
         this.cancelTransition && this.cancelTransition()
         this.detachFromSyncLayout && this.detachFromSyncLayout()
+        this.detachFromParentLayout && this.detachFromParentLayout()
+    }
+
+    resetRotation() {
+        const { values, nativeElement } = this.props
+        const rotate = values.get("rotate")
+
+        if (!rotate) return
+
+        this.prevRotate = rotate.getPrevious() as number
+
+        if (this.prevRotate) {
+            nativeElement.setStyle("rotate", 0)
+            nativeElement.render()
+        }
     }
 
     snapshot() {
-        const { nativeElement, values } = this.props
+        const { nativeElement } = this.props
 
         this.prev = snapshot(nativeElement)
-
-        const rotate = values.get("rotate")
-        this.prev.style.rotate = rotate
-            ? (rotate.getPrevious() as number) || 0
-            : 0
+        this.prev.style.rotate = this.prevRotate
+        if (this.prevBorderRadius !== undefined) {
+            this.prev.style.borderRadius = this.prevBorderRadius
+        }
 
         return this.prev
     }
@@ -124,36 +139,14 @@ export class Auto extends React.Component<FunctionalProps> {
         return sync(id, session)
     }
 
-    scheduleSnapshot(saveSnapshot?: (snapshot: Snapshot) => void) {
-        const { nativeElement, values } = this.props
-
-        console.log(this.props.id, "schedule snapshot")
-        // Maybe only do this if it isnt a synced tree
-        this.cancelSnapshot = this.sync("snapshot", schedule => {
-            schedule(() => {
-                if (values.get("rotate")?.getPrevious()) {
-                    nativeElement.setStyle({ rotate: 0 })
-                    nativeElement.render()
-                }
-            })
-            schedule(() => {
-                const prev = this.snapshot()
-                if (saveSnapshot) saveSnapshot(prev)
-                this.scheduleTransition()
-            })
-        })
-    }
-
     scheduleTransition(prev = this.prev) {
         // Assign incoming prev to this.prev in case it's being provided by SyncLayout's continuity
         this.prev = prev
 
-        console.log(this.props.id, "schedule transition")
         const { nativeElement, parentContext, localContext, style } = this.props
 
         this.cancelTransition = this.sync("transition", schedule => {
             schedule(() => {
-                console.log(this.props.id, 1)
                 // Write: Remove the `transform` prop so we can correctly read its new layout position,
                 // and reset any styles present
                 nativeElement.setStyle(resetStyles(style))
@@ -172,7 +165,6 @@ export class Auto extends React.Component<FunctionalProps> {
                 // or maybe split subscriptions and recalculations per axis
                 localContext.autoParentProgress = this.progress
 
-                console.log(this.props.id, 2)
                 // Create a delta stack for children to incorporate into their
                 // own transform calculations
                 localContext.deltas = [
@@ -208,7 +200,7 @@ export class Auto extends React.Component<FunctionalProps> {
             // TODO: Clean this up
             // Use the current progress value to interpolate between the previous and next
             // bounding box before applying and calculating deltas.
-            const p = this.progress.get() / 100
+            const p = this.progress.get() / 1000
             const easedNext = {
                 x: { min: 0, max: 0 },
                 y: { min: 0, max: 0 },
@@ -269,9 +261,7 @@ export class Auto extends React.Component<FunctionalProps> {
             // TODO We need to apply the whole stack of scales in the same way as border radius
             values.get("x", 1).set(delta.x.translate / treeScale.x)
             values.get("y", 1).set(delta.y.translate / treeScale.y)
-            if (parentDeltas.length === 2) {
-                console.log(deltaXScale)
-            }
+
             // TODO: Only do if we are animating rotate
             if (isRotationAnimating) {
                 values
@@ -286,13 +276,15 @@ export class Auto extends React.Component<FunctionalProps> {
             }
 
             // TODO: Only do this if we're animating border radius or border radius doesnt equal 0
-            const easedBorderRadius = mix(
+            this.prevBorderRadius = mix(
                 this.prev.style.borderRadius,
                 this.next.style.borderRadius,
                 p
             )
-            const borderRadiusX = easedBorderRadius / deltaXScale / treeScale.x
-            const borderRadiusY = easedBorderRadius / deltaYScale / treeScale.y
+            const borderRadiusX =
+                this.prevBorderRadius / deltaXScale / treeScale.x
+            const borderRadiusY =
+                this.prevBorderRadius / deltaYScale / treeScale.y
             const borderRadius = `${borderRadiusX}px / ${borderRadiusY}px`
             values.get("borderRadius", "").set(borderRadius)
             // values.get("borderBottomRightRadius", "").set(borderRadius)
@@ -303,7 +295,7 @@ export class Auto extends React.Component<FunctionalProps> {
         // TODO: Resolve transition from  `autoTransition` > `transition` > `SyncLayoutContext.transition`
         this.progress.set(0)
         this.progress.set(0) // Set twice to hard-reset velocity
-        startAnimation("progress", this.progress, 100, transition || {})
+        startAnimation("progress", this.progress, 1000, transition || {})
 
         // TODO we might need a deeper solution than one parent deep
         const unsubscribeProgress = this.progress.onChange(() =>
