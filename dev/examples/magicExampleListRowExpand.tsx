@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, SyncLayout } from "@framer"
+import { motion, AnimatePresence, MagicMotion } from "@framer"
 import styled from "styled-components"
 
 interface ItemProps {
@@ -71,7 +71,7 @@ export const App = () => {
     const [open, setIsOpen] = useState<false | number>(false)
 
     return (
-        <SyncLayout>
+        <MagicMotion>
             <List magic>
                 {items.map(id => (
                     <Item
@@ -81,6 +81,6 @@ export const App = () => {
                     />
                 ))}
             </List>
-        </SyncLayout>
+        </MagicMotion>
     )
 }

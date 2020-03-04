@@ -1,4 +1,4 @@
-type Job = () => {}
+type Job = () => void
 type JobDescription = { depth: number; callback: Job }
 type Queue = JobDescription[][]
 type QueueLookup = Map<string, Queue>

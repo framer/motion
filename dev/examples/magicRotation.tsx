@@ -1,14 +1,12 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SyncLayout } from "@framer"
-
-// TODO: This doesnt test performance yet - we need a complicated example to put here
+import { motion, MagicMotion } from "@framer"
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <SyncLayout>
+        <MagicMotion>
             <motion.div
                 magic
                 transition={{ duration: 1 }}
@@ -21,7 +19,7 @@ export const App = () => {
                     style={isOn ? bigChild : smallChild}
                 />
             </motion.div>
-        </SyncLayout>
+        </MagicMotion>
     )
 }
 
