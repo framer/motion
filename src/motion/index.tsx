@@ -138,7 +138,9 @@ export type SVGAttributesAsMotionValues<T> = MakeMotion<
 /**
  * @public
  */
-export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T> {}
+export interface SVGMotionProps<T>
+    extends SVGAttributesAsMotionValues<T>,
+        MotionProps {}
 
 /**
  * @public
