@@ -56,9 +56,9 @@ export const App = () => {
     const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <Container auto isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
-            <Icon isOpen={isOpen} auto />
-            <Content auto isOpen={isOpen}>
+        <Container magic isOpen={isOpen} onClick={() => setIsOpen(!isOpen)}>
+            <Icon isOpen={isOpen} magic />
+            <Content magic isOpen={isOpen}>
                 <ContentRow />
                 <ContentRow />
                 <ContentRow />

@@ -1,5 +1,6 @@
-type Job = () => void
-type Queue = Job[][]
+type Job = () => {}
+type JobDescription = { depth: number; callback: Job }
+type Queue = JobDescription[][]
 type QueueLookup = Map<string, Queue>
 
 type Schedule = (job: Job) => void
@@ -11,7 +12,7 @@ function createQueue(id: string) {
     queues.set(id, [])
 }
 
-export function syncTree(queueId: string, session: Session) {
+export function syncTree(queueId: string, depth: number, session: Session) {
     if (!queues.has(queueId)) createQueue(queueId)
     const queue = queues.get(queueId) as Queue
 
@@ -26,7 +27,7 @@ export function syncTree(queueId: string, session: Session) {
 
         // We unshift into the jobs array because `syncTree` is going to be called by
         // child components first but we want to execute from parents down
-        jobs.unshift(() => status.isActive && job())
+        jobs.push({ depth, callback: () => status.isActive && job() })
 
         jobsIndex++
     }
@@ -39,7 +40,8 @@ export function syncTree(queueId: string, session: Session) {
     return () => (status.isActive = false)
 }
 
-const runJob = (job: Job) => job()
+const runJob = ({ callback }: JobDescription) => callback()
+const sortJobs = (a: JobDescription, b: JobDescription) => a.depth - b.depth
 
 export function flushTree(id: string) {
     const queue = queues.get(id)
@@ -48,6 +50,7 @@ export function flushTree(id: string) {
     const numSteps = queue.length
     for (let stepIndex = 0; stepIndex < numSteps; stepIndex++) {
         const jobs = queue[stepIndex]
+        jobs.sort(sortJobs)
         jobs && jobs.forEach(runJob)
     }
 

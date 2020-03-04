@@ -44,8 +44,8 @@ export const App = () => {
     return (
         <Container onClick={() => toggleOn()} isOn={isOn}>
             <div className="background" />
-            <motion.div auto className="clipping">
-                <motion.div auto className="progress" />
+            <motion.div magic className="clipping">
+                <motion.div magic className="progress" />
             </motion.div>
         </Container>
     )

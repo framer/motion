@@ -55,8 +55,8 @@ const Big = styled(motion.div)`
 
 const Child = () => {
     return (
-        <Big auto autoId="big">
-            <Small auto autoId="small" />
+        <Big magic magicId="big">
+            <Small magic magicId="small" />
         </Big>
     )
 }
@@ -64,8 +64,8 @@ const Child = () => {
 const Sibling = () => {
     return (
         <>
-            <Big auto autoId="big" purple />
-            <Small auto autoId="small" purple />
+            <Big magic magicId="big" purple />
+            <Small magic magicId="small" purple />
         </>
     )
 }

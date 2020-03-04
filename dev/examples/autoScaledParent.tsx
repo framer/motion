@@ -38,8 +38,8 @@ export const App = () => {
 
     return (
         <Device>
-            <SwitchContainer isOn={isOn} onClick={() => setIsOn(!isOn)} auto>
-                <Switch isOn={isOn} auto />
+            <SwitchContainer isOn={isOn} onClick={() => setIsOn(!isOn)} magic>
+                <Switch isOn={isOn} magic />
             </SwitchContainer>
         </Device>
     )

@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] Unreleased
+
+### Added
+
+-   Magic Motion
+
+### Removed
+
+-   `positionTransition` and `layoutTransition` props (use `magic` instead).
+
 ## [1.11.1] 2020-06-16
 
 ### Fixed
