@@ -5,11 +5,15 @@
  * can apply when animating a child out.
  */
 
-import { motion, AnimatePresence } from "@framer"
+import {
+    motion,
+    AnimatePresence,
+    MagicMotion,
+    useInvertedScale,
+    useTransform,
+} from "@framer"
 import * as React from "react"
 import { useState } from "react"
-import { UnstableSyncLayout } from "../../src/components/SyncLayout"
-import { useInvertedScale, useTransform } from "@framer"
 import { mix } from "@popmotion/popcorn"
 
 const Accordion = ({ i, expanded, setExpanded }) => {
@@ -41,7 +45,7 @@ export const App = () => {
 
     return (
         <div className="example-container">
-            <UnstableSyncLayout>
+            <MagicMotion>
                 {[0, 1, 2, 3].map(i => (
                     <Accordion
                         i={i}
@@ -49,7 +53,7 @@ export const App = () => {
                         setExpanded={setExpanded}
                     />
                 ))}
-            </UnstableSyncLayout>
+            </MagicMotion>
             <style>{styles}</style>
         </div>
     )
