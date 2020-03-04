@@ -1,15 +1,15 @@
 import * as React from "react"
 import { createContext } from "react"
-import { syncTree, flushTree } from "../utils/tree-sync"
-import { Snapshot } from "../motion/magic/types"
+import { syncTree, flushTree } from "../../utils/tree-sync"
+import { Snapshot } from "./types"
 
-export interface SyncLayoutUtils {
+export interface MagicMotionUtils {
     syncTree: typeof syncTree
     forceRender: () => void
-    register: (child: SyncLayoutChild) => () => void
+    register: (child: MagicMotionChild) => () => void
 }
 
-export interface SyncLayoutChild {
+export interface MagicMotionChild {
     id?: string
     snapshot: () => Snapshot
     resetRotation: () => void
@@ -22,12 +22,12 @@ interface Props {
 
 const continuity = new Map<string, Snapshot>()
 
-export const SyncLayoutContext = createContext<SyncLayoutUtils | null>(null)
+export const MagicMotionContext = createContext<MagicMotionUtils | null>(null)
 
 /**
  * TODO: Update the documentation for this component
  * When layout changes happen asynchronously to their instigating render (ie when exiting
- * children of `AnimatePresence` are removed), `SyncLayout` can wrap parent and sibling
+ * children of `AnimatePresence` are removed), `MagicMotion` can wrap parent and sibling
  * components that need to animate as a result of this layout change.
  *
  * @motion
@@ -35,14 +35,14 @@ export const SyncLayoutContext = createContext<SyncLayoutUtils | null>(null)
  * ```jsx
  * const MyComponent = ({ isVisible }) => {
  *   return (
- *     <SyncLayout>
+ *     <MagicMotion>
  *       <AnimatePresence>
  *         {isVisible && (
  *           <motion.div exit={{ opacity: 0 }} />
  *         )}
  *       </AnimatePresence>
  *       <motion.div positionTransition />
- *     </SyncLayout>
+ *     </MagicMotion>
  *   )
  * }
  * ```
@@ -52,17 +52,17 @@ export const SyncLayoutContext = createContext<SyncLayoutUtils | null>(null)
  * The way this component works is by memoising a function and passing it down via context.
  * The function, when called, updates the local state, which is used to invalidate the
  * memoisation cache. A new function is called, performing a synced re-render of components
- * that are using the SyncLayoutContext.
+ * that are using the MagicMotionContext.
  *
  * @internal
  */
-export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
-    children = new Set<SyncLayoutChild>()
+export class MagicMotion extends React.Component<Props, MagicMotionUtils> {
+    children = new Set<MagicMotionChild>()
 
     // TODO: Revisit if we need this
     queue = new Set<string>()
 
-    state: SyncLayoutUtils = {
+    state: MagicMotionUtils = {
         register: child => this.register(child),
         forceRender: () => this.forceRender(),
         syncTree: (id, depth, callback) => {
@@ -71,7 +71,7 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
         },
     }
 
-    register(child: SyncLayoutChild) {
+    register(child: MagicMotionChild) {
         this.children.add(child)
 
         if (child.resume) {
@@ -120,18 +120,18 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
         const { children } = this.props
 
         return (
-            <SyncLayoutContext.Provider value={this.state}>
+            <MagicMotionContext.Provider value={this.state}>
                 {children}
-            </SyncLayoutContext.Provider>
+            </MagicMotionContext.Provider>
         )
     }
 }
 
-function snapshotChild({ id, snapshot }: SyncLayoutChild) {
+function snapshotChild({ id, snapshot }: MagicMotionChild) {
     const prev = snapshot()
     id !== undefined && continuity.set(id, prev)
 }
 
-function resetRotation({ resetRotation }: SyncLayoutChild) {
+function resetRotation({ resetRotation }: MagicMotionChild) {
     resetRotation()
 }

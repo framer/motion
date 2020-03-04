@@ -1,7 +1,6 @@
-import { motion, AnimatePresence } from "@framer"
+import { motion, AnimatePresence, MagicMotion } from "@framer"
 import * as React from "react"
 import { useState } from "react"
-import { UnstableSyncLayout } from "../../src/components/SyncLayout"
 
 const style = {
     width: 100,
@@ -23,7 +22,7 @@ export const App = () => {
 
     return (
         <div>
-            <UnstableSyncLayout>
+            <MagicMotion>
                 <motion.div
                     style={{
                         padding: 20,
@@ -49,7 +48,7 @@ export const App = () => {
                     </AnimatePresence>
                 </motion.div>
                 <motion.div layoutTransition style={style} />
-            </UnstableSyncLayout>
+            </MagicMotion>
         </div>
     )
 }
