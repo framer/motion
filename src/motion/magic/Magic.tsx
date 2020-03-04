@@ -22,15 +22,19 @@ import { mix } from "@popmotion/popcorn"
 /**
  * TODO:
  * - Individual border radius
- * - Popping children from flow on exit via `AnimatePresence`
  * - Fix `AnimatePresence` children scale calculation (see: autoExampleExpandingCTA)
  * - Box shadows
  * - Integrate with `AnimatePresence` so we can do container-style transitions
- * - Allow `auto` to === `false`?
+ * - Allow `magic` to === `false`? Either as a callback or a prop
  * - Documentation
+ * - Flickering when entering component animates with opacity
+ * - When a component isExiting, `next` should probably just be `prev` or zero delta
+ * - Currently changes to the parent bounding box translation don't affect children.
+ *      The children should move relative to the parent (see: autoParentLayout)
+ * - Allow magic === "layout" || "style" || true
  */
 
-export class Auto extends React.Component<FunctionalProps> {
+export class Magic extends React.Component<FunctionalProps> {
     static contextType = SyncLayoutContext
 
     prev: Snapshot
@@ -56,7 +60,7 @@ export class Auto extends React.Component<FunctionalProps> {
     componentDidMount() {
         if (!this.isSyncedTree()) return
 
-        const { autoId } = this.props
+        const { magicId } = this.props
         const { register } = this.context
 
         let syncLayoutChild: SyncLayoutChild = {
@@ -66,14 +70,8 @@ export class Auto extends React.Component<FunctionalProps> {
                 return prev
             },
             resetRotation: () => this.resetRotation(),
-        }
-
-        if (autoId !== undefined) {
-            syncLayoutChild = {
-                ...syncLayoutChild,
-                id: autoId,
-                resume: (prev: Snapshot) => this.scheduleTransition(prev),
-            }
+            id: magicId,
+            resume: (prev?: Snapshot) => this.scheduleTransition(prev),
         }
 
         this.detachFromSyncLayout = register(syncLayoutChild)
@@ -131,12 +129,12 @@ export class Auto extends React.Component<FunctionalProps> {
         return this.context !== null && this.context !== undefined
     }
 
-    sync(id: string, session: Session) {
+    sync(id: string, depth: number, session: Session) {
         const sync = this.isSyncedTree()
             ? (this.context.syncTree as typeof syncTree)
             : syncTree
 
-        return sync(id, session)
+        return sync(id, depth, session)
     }
 
     scheduleTransition(prev = this.prev) {
@@ -144,52 +142,63 @@ export class Auto extends React.Component<FunctionalProps> {
         this.prev = prev
 
         const { nativeElement, parentContext, localContext, style } = this.props
+        const isExiting = parentContext.exitProps?.isExiting
 
-        this.cancelTransition = this.sync("transition", schedule => {
-            schedule(() => {
-                // Write: Remove the `transform` prop so we can correctly read its new layout position,
-                // and reset any styles present
-                nativeElement.setStyle(resetStyles(style))
-                nativeElement.render()
-            })
+        this.cancelTransition = this.sync(
+            "transition",
+            localContext.depth,
+            schedule => {
+                schedule(() => {
+                    // Write: Remove the `transform` prop so we can correctly read its new layout position,
+                    // and reset any styles present
+                    // TODO: Don't animate values that are animating
+                    nativeElement.setStyle(resetStyles(style, isExiting))
+                    nativeElement.render()
+                })
 
-            schedule(() => {
-                // Read: Take a new snapshot
-                this.next = snapshot(nativeElement)
-                this.next.style.rotate = resolve(0, style && style.rotate)
+                schedule(() => {
+                    // Read: Take a new snapshot
+                    this.next = snapshot(nativeElement)
+                    if (isExiting) {
+                        console.log(this.next.layout.y, this.prev.layout.y)
+                        this.next.layout = this.prev.layout
+                    }
+                    this.next.style.rotate = resolve(0, style && style.rotate)
 
-                // Load our layout animation progress into context so children can subscribe
-                // and update their layout accordingly.
-                // TODO: We might want to split progress into x/y and it would be better to
-                // find another way of scheduling this so we don't have to recalculate for every change,
-                // or maybe split subscriptions and recalculations per axis
-                localContext.autoParentProgress = this.progress
+                    if (!this.prev) this.prev = this.next
 
-                // Create a delta stack for children to incorporate into their
-                // own transform calculations
-                localContext.deltas = [
-                    ...(parentContext.deltas || []),
-                    this.delta,
-                ]
-            })
+                    // Load our layout animation progress into context so children can subscribe
+                    // and update their layout accordingly.
+                    // TODO: We might want to split progress into x/y and it would be better to
+                    // find another way of scheduling this so we don't have to recalculate for every change,
+                    // or maybe split subscriptions and recalculations per axis
+                    localContext.autoParentProgress = this.progress
 
-            // Write: Apply deltas and animate
-            schedule(() => {
-                syncRenderSession.open()
+                    // Create a delta stack for children to incorporate into their
+                    // own transform calculations
+                    localContext.deltas = [
+                        ...(parentContext.deltas || []),
+                        this.delta,
+                    ]
+                })
 
-                this.transitionLayout()
-                this.transitionStyle(prev.style, this.next.style)
+                // Write: Apply deltas and animate
+                schedule(() => {
+                    syncRenderSession.open()
 
-                syncRenderSession.flush()
-            })
-        })
+                    this.transitionLayout()
+                    this.transitionStyle(this.prev.style, this.next.style)
+
+                    syncRenderSession.flush()
+                })
+            }
+        )
     }
 
     transitionLayout() {
         const { nativeElement, values, parentContext, transition } = this.props
         const isRotationAnimating =
             this.prev.style.rotate !== this.next.style.rotate
-
         this.detachFromParentLayout && this.detachFromParentLayout()
 
         const updateBoundingBoxes = () => {

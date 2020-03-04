@@ -44,7 +44,7 @@ export const App = () => {
         <SyncLayout>
             <motion.div
                 style={{ ...styles[count], position: "absolute" }}
-                auto
+                magic
                 onClick={() => cycleCount()}
             />
         </SyncLayout>
