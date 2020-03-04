@@ -342,7 +342,7 @@ export class Magic extends React.Component<FunctionalProps> {
                 value.set(prevStyle)
 
                 // TODO: Get from `transition` or `autoTransition` prop
-                transition[key] = {}
+                //transition[key] = {}
                 target[key] = nextStyle
             }
         }
