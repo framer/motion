@@ -27,7 +27,7 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()} isOn={isOn}>
-            <motion.div auto />
+            <motion.div magic />
         </Container>
     )
 }

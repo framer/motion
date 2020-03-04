@@ -65,14 +65,14 @@ export const App = () => {
     return (
         <SyncLayout>
             <Container>
-                <Popup auto onClick={() => setIsOpen(!isOpen)} id="popup">
-                    <Icon id="icon" isOpen={isOpen} auto>
-                        <Detail auto id="detail" />
+                <Popup magic onClick={() => setIsOpen(!isOpen)} id="popup">
+                    <Icon id="icon" isOpen={isOpen} magic>
+                        <Detail magic id="detail" />
                     </Icon>
                     <AnimatePresence>
                         {isOpen && (
                             <ContentRow
-                                auto
+                                magic
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}

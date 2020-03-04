@@ -14,6 +14,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Added a `useElementScroll` hook that allows the creation of scroll motion values for HTML elements. ([@souporserious](https://github.com/souporserious) in [#195](https://github.com/framer/motion/pull/195))
 
+## [2.0.0] Unreleased
+
+### Added
+
+-   Magic Motion
+
+### Removed
+
+-   `positionTransition` and `layoutTransition` props (use `magic` instead).
+
 ## [1.10.3] 2020-03-23
 
 ### Fix
