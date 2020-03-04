@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SyncLayout } from "@framer"
+import { motion, MagicMotion } from "@framer"
 
 interface ListProps {
     list: number[]
@@ -43,7 +43,7 @@ export const App = () => {
     ])
 
     return (
-        <SyncLayout>
+        <MagicMotion>
             <div style={styles.container}>
                 <List
                     list={lists[0]}
@@ -58,7 +58,7 @@ export const App = () => {
                     id="listB"
                 />
             </div>
-        </SyncLayout>
+        </MagicMotion>
     )
 }
 

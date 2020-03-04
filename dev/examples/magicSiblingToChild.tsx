@@ -1,7 +1,6 @@
 import * as React from "react"
-import { motion, useCycle } from "@framer"
+import { motion, useCycle, MagicMotion } from "@framer"
 import styled from "styled-components"
-import { SyncLayout } from "../../src/components/SyncLayout"
 
 const Container = styled.div`
     width: 200px;
@@ -78,7 +77,7 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <SyncLayout>{isOn ? <Child /> : <Sibling />}</SyncLayout>
+            <MagicMotion>{isOn ? <Child /> : <Sibling />}</MagicMotion>
         </Container>
     )
 }

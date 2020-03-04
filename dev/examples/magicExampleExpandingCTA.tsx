@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SyncLayout, AnimatePresence } from "@framer"
+import { motion, MagicMotion, AnimatePresence } from "@framer"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -63,7 +63,7 @@ export const App = () => {
     const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <SyncLayout>
+        <MagicMotion>
             <Container>
                 <Popup magic onClick={() => setIsOpen(!isOpen)} id="popup">
                     <Icon id="icon" isOpen={isOpen} magic>
@@ -81,6 +81,6 @@ export const App = () => {
                     </AnimatePresence>
                 </Popup>
             </Container>
-        </SyncLayout>
+        </MagicMotion>
     )
 }
