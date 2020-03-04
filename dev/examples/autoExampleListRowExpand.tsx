@@ -22,6 +22,7 @@ const Container = styled(motion.div)`
     border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
+    overflow: hidden;
 
     &:last-child {
         margin-bottom: 0px;
@@ -45,12 +46,12 @@ const ContentRow = styled(motion.div)`
 
 function Item({ isOpen, onClick }: ItemProps) {
     return (
-        <Container auto onClick={onClick}>
-            <Image auto />
+        <Container magic onClick={onClick} transition={{ duration: 2 }}>
+            <Image magic transition={{ duration: 2 }} />
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
-                        auto
+                        magic
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -71,7 +72,7 @@ export const App = () => {
 
     return (
         <SyncLayout>
-            <List auto>
+            <List magic>
                 {items.map(id => (
                     <Item
                         key={id}

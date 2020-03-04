@@ -1,7 +1,7 @@
 import { clamp, mix, progress } from "@popmotion/popcorn"
 import { Axis, AxisDelta, Snapshot, BoxDelta, Box } from "./types"
 import { NativeElement } from "../utils/use-native-element"
-import { MotionStyle } from "../../motion/types"
+import { MotionStyle } from "../types"
 import { MotionValue } from "../../value"
 import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
@@ -164,7 +164,7 @@ export function resolve<T extends unknown>(
  *
  * @param styleProp
  */
-export function resetStyles(styleProp: MotionStyle = {}) {
+export function resetStyles(styleProp: MotionStyle = {}, isExiting = false) {
     const styles = {
         x: 0,
         y: 0,
@@ -173,6 +173,7 @@ export function resetStyles(styleProp: MotionStyle = {}) {
         scaleY: 1,
         rotate: 0,
         borderRadius: resolve("", styleProp.borderRadius),
+        position: isExiting ? "absolute" : resolve("", styleProp.position),
     }
 
     for (let i = 0; i < numAnimatableStyles; i++) {

@@ -57,44 +57,6 @@ export interface AnimatePresenceProps {
     onExitComplete?: () => void
 
     /**
-     * `AnimatePresence` locally re-renders its children once exit animations are
-     * complete. This means that if surrounding or parent components are also set to `positionTransition`,
-     * they aren't informed of updates to the layout when they happen asynchronous to a render.
-     *
-     * This prop allows `AnimatePresence` to trigger re-renders at a higher level, so more
-     * components can be made aware of the layout change and animate accordingly.
-     *
-     * In this example, the both the parent and sibling will animate to their new layout
-     * once the div within `AnimatePresence` has finished animating:
-     *
-     * ```jsx
-     * const MyComponent = ({ isVisible }) => {
-     *   const forceUpdate = useForceUpdate() // Forces a set state or something
-     *
-     *   return (
-     *     <motion.div positionTransition>
-     *       <AnimatePresence _syncLayout={forceUpdate}>
-     *         <motion.div positionTransition exit={{ opacity: 0 }} />
-     *       </AnimatePresence>
-     *       <motion.div positionTransition />
-     *     </motion.div>
-     *   )
-     * }
-     * ```
-     *
-     * In the final implementation `syncLayout` might be better as a component
-     * that provides this function to children via context, or some other method
-     * that obfuscates
-     *
-     * This isn't generally a problem for most use-cases but this capability will be useful
-     * for advanced uses but also more so for phase 2 of `sizeTransition`, as we'd gain the power
-     * to declaratively relayout entire parts of the page using only performant transforms.
-     *
-     * @internal
-     */
-    _syncLayout?: () => void
-
-    /**
      * If set to `true`, `AnimatePresence` will only render one component at a time. The exiting component
      * will finished its exit animation before the entering component is rendered.
      *

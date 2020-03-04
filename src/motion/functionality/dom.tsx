@@ -11,7 +11,7 @@ import { Drag } from "./drag"
 import { parseDomVariant } from "../../dom/parse-dom-variant"
 import { MotionValuesMap } from "../../motion/utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
-import { auto } from "../auto"
+import { magic } from "../magic"
 import { isValidMotionProp } from "../utils/valid-prop"
 import { getAnimationComponent } from "./animation"
 import { Exit } from "./exit"
@@ -94,7 +94,7 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     return props
 }
 
-const functionalityComponents = [auto, Drag, Gestures, Exit]
+const functionalityComponents = [magic, Drag, Gestures, Exit]
 const numFunctionalityComponents = functionalityComponents.length
 
 /**

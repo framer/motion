@@ -1,7 +1,7 @@
 import * as React from "react"
 import { createContext } from "react"
 import { syncTree, flushTree } from "../utils/tree-sync"
-import { Snapshot } from "../motion/auto/types"
+import { Snapshot } from "../motion/magic/types"
 
 export interface SyncLayoutUtils {
     syncTree: typeof syncTree
@@ -13,7 +13,7 @@ export interface SyncLayoutChild {
     id?: string
     snapshot: () => Snapshot
     resetRotation: () => void
-    resume?: (prev: Snapshot) => void
+    resume?: (prev?: Snapshot) => void
 }
 
 interface Props {
@@ -65,9 +65,9 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
     state: SyncLayoutUtils = {
         register: child => this.register(child),
         forceRender: () => this.forceRender(),
-        syncTree: (id, callback) => {
+        syncTree: (id, depth, callback) => {
             this.queue.add(id)
-            return syncTree(id, callback)
+            return syncTree(id, depth, callback)
         },
     }
 
@@ -75,13 +75,11 @@ export class SyncLayout extends React.Component<Props, SyncLayoutUtils> {
         this.children.add(child)
 
         if (child.resume) {
+            // TODO: Only do this on subsequent renders
             const id = child.id as string
             const prev = continuity.get(id)
-
-            if (prev) {
-                child.resume(prev)
-                continuity.delete(id)
-            }
+            child.resume(prev)
+            continuity.delete(id)
         }
 
         return () => this.children.delete(child)
