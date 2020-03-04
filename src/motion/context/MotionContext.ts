@@ -7,7 +7,7 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { BoxDelta } from "../../motion/auto/types"
+import { BoxDelta } from "../../motion/magic/types"
 import { MotionValue } from "../../value"
 
 export interface MotionContextProps {
@@ -20,6 +20,7 @@ export interface MotionContextProps {
     deltas?: BoxDelta[]
     autoParentProgress?: MotionValue<number>
     isReducedMotion?: boolean | undefined
+    depth: number
 }
 
 /**
@@ -27,6 +28,7 @@ export interface MotionContextProps {
  */
 export const MotionContext = React.createContext<MotionContextProps>({
     static: false,
+    depth: -1,
 })
 
 const isVariantLabel = (v?: MotionProps["animate"]): v is string | string[] => {
@@ -118,6 +120,7 @@ export const useMotionContext = (
             values,
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
+            depth: parentContext.depth + 1,
         }),
         [initialDependency, animateDependency, parentContext.isReducedMotion]
     )
