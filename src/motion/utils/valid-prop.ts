@@ -18,10 +18,8 @@ const validMotionProps = new Set<keyof MotionProps>([
     "custom",
     "inherit",
     "static",
-    "positionTransition", // TODO: Remove if 2.0
-    "layoutTransition", // TODO: Remove if 2.0
-    "auto",
-    "autoId",
+    "magic",
+    "magicId",
     "onAnimationStart",
     "onAnimationComplete",
     "onUpdate",

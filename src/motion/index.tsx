@@ -13,7 +13,6 @@ import {
 import { HTMLElements, htmlElements } from "./utils/supported-elements"
 import { svgElements, SVGElements } from "./utils/supported-elements"
 import { MotionProps, MakeMotion } from "./types"
-import { Omit } from "../types"
 
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
@@ -139,9 +138,7 @@ export type SVGAttributesAsMotionValues<T> = MakeMotion<
 /**
  * @public
  */
-export interface SVGMotionProps<T>
-    extends SVGAttributesAsMotionValues<T>,
-        Omit<MotionProps, "positionTransition"> {}
+export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T> {}
 
 /**
  * @public

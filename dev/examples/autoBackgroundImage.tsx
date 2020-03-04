@@ -21,5 +21,5 @@ const Container = styled(motion.div)<{ isOn: boolean }>`
 export const App = () => {
     const [isOn, toggleOn] = useCycle(false, true)
 
-    return <Container onClick={() => toggleOn()} isOn={isOn} auto />
+    return <Container onClick={() => toggleOn()} isOn={isOn} magic />
 }
