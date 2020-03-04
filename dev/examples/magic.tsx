@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, SyncLayout } from "@framer"
+import { motion, useCycle, MagicMotion } from "@framer"
 
 const styles = [
     {
@@ -41,12 +41,12 @@ export const App = () => {
     const [count, cycleCount] = useCycle(0, 1, 2, 3)
 
     return (
-        <SyncLayout>
+        <MagicMotion>
             <motion.div
                 style={{ ...styles[count], position: "absolute" }}
                 magic
                 onClick={() => cycleCount()}
             />
-        </SyncLayout>
+        </MagicMotion>
     )
 }

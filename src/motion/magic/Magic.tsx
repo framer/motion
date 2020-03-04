@@ -1,5 +1,5 @@
 import * as React from "react"
-import { SyncLayoutContext, SyncLayoutChild } from "../../components/SyncLayout"
+import { MagicMotionContext, MagicMotionChild } from "./MagicMotion"
 import { FunctionalProps } from "../functionality/types"
 import { Snapshot, BoxDelta, Style, AxisDelta } from "./types"
 import { syncTree, flushTree, Session } from "../../utils/tree-sync"
@@ -35,7 +35,7 @@ import { mix } from "@popmotion/popcorn"
  */
 
 export class Magic extends React.Component<FunctionalProps> {
-    static contextType = SyncLayoutContext
+    static contextType = MagicMotionContext
 
     prev: Snapshot
     next: Snapshot
@@ -54,7 +54,7 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     detachFromParentLayout?: () => void
-    detachFromSyncLayout?: () => void
+    detachFromMagicMotion?: () => void
     cancelTransition?: () => void
 
     componentDidMount() {
@@ -63,7 +63,7 @@ export class Magic extends React.Component<FunctionalProps> {
         const { magicId } = this.props
         const { register } = this.context
 
-        let syncLayoutChild: SyncLayoutChild = {
+        let syncLayoutChild: MagicMotionChild = {
             snapshot: () => {
                 const prev = this.snapshot()
                 this.scheduleTransition()
@@ -74,7 +74,7 @@ export class Magic extends React.Component<FunctionalProps> {
             resume: (prev?: Snapshot) => this.scheduleTransition(prev),
         }
 
-        this.detachFromSyncLayout = register(syncLayoutChild)
+        this.detachFromMagicMotion = register(syncLayoutChild)
     }
 
     componentDidUpdate() {
@@ -95,7 +95,7 @@ export class Magic extends React.Component<FunctionalProps> {
 
     componentWillUnmount() {
         this.cancelTransition && this.cancelTransition()
-        this.detachFromSyncLayout && this.detachFromSyncLayout()
+        this.detachFromMagicMotion && this.detachFromMagicMotion()
         this.detachFromParentLayout && this.detachFromParentLayout()
     }
 
@@ -138,7 +138,7 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     scheduleTransition(prev = this.prev) {
-        // Assign incoming prev to this.prev in case it's being provided by SyncLayout's continuity
+        // Assign incoming prev to this.prev in case it's being provided by MagicMotion's continuity
         this.prev = prev
 
         const { nativeElement, parentContext, localContext, style } = this.props
@@ -301,7 +301,7 @@ export class Magic extends React.Component<FunctionalProps> {
             // values.get("borderTopRightRadius", "").set(borderRadius)
         }
 
-        // TODO: Resolve transition from  `autoTransition` > `transition` > `SyncLayoutContext.transition`
+        // TODO: Resolve transition from  `autoTransition` > `transition` > `MagicMotionContext.transition`
         this.progress.set(0)
         this.progress.set(0) // Set twice to hard-reset velocity
         startAnimation("progress", this.progress, 1000, transition || {})
