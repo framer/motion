@@ -11,17 +11,17 @@ interface ListProps {
 const List = ({ id, list, onItemClick, backgroundColor }: ListProps) => {
     return (
         <motion.ul
-            auto
-            autoId={id}
+            magic
+            magicId={id}
             style={styles.list}
             transition={{ duration: 1 }}
         >
             {list.map(id => (
                 <motion.li
-                    auto
+                    magic
                     style={{ ...styles.item, backgroundColor, z: 2 }}
                     key={id}
-                    autoId={id}
+                    magicId={id}
                     id={"list-" + id}
                     onClick={() => onItemClick(id)}
                     drag
@@ -38,8 +38,8 @@ export const App = () => {
 
     //const [lists, setLists] = useState([[0], [1]])
     const [lists, setLists] = useState([
-        [0, 1, 2, 3, 4, 5, 6],
-        [7, 8, 9, 10, 11, 12],
+        [0, 1, 2],
+        [7, 8, 9],
     ])
 
     return (
@@ -77,9 +77,6 @@ const styles = {
         display: "flex",
         listStyle: "none",
         flexDirection: "column",
-        zIndex: 0,
-        z: 0,
-        position: "relative",
     },
 
     item: {

@@ -35,9 +35,9 @@ export const App = () => {
             transformTemplate={(_, generated) =>
                 `translate(-50%, -50%) ${generated}`
             }
-            auto
+            magic
         >
-            <Switch isOn={isOn} auto />
+            <Switch isOn={isOn} magic />
         </SwitchContainer>
     )
 }

@@ -7,11 +7,11 @@ export const App = () => {
 
     return (
         <motion.div
-            auto
+            magic
             style={isOn ? bigParent : smallParent}
             onClick={() => setIsOn(!isOn)}
         >
-            <motion.div auto style={isOn ? bigChild : smallChild} />
+            <motion.div magic style={isOn ? bigChild : smallChild} />
         </motion.div>
     )
 }

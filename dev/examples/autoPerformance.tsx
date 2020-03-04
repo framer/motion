@@ -10,13 +10,13 @@ export const App = () => {
     return (
         <SyncLayout>
             <motion.div
-                auto
+                magic
                 transition={{ duration: 1 }}
                 style={isOn ? bigParent : smallParent}
                 onClick={() => setIsOn(!isOn)}
             >
                 <motion.div
-                    auto
+                    magic
                     transition={{ duration: 1 }}
                     style={isOn ? bigChild : smallChild}
                 />
