@@ -1,7 +1,12 @@
-import { motion, AnimatePresence, useCycle, useInvertedScale } from "@framer"
+import {
+    motion,
+    AnimatePresence,
+    useCycle,
+    useInvertedScale,
+    MagicMotion,
+} from "@framer"
 import * as React from "react"
 import { useState } from "react"
-import { UnstableSyncLayout } from "../../src/components/SyncLayout"
 
 const modal = {
     borderRadius: 50,
@@ -54,7 +59,7 @@ export const App = () => {
 
     return (
         <div>
-            <UnstableSyncLayout>
+            <MagicMotion>
                 <motion.div
                     style={modal}
                     layoutTransition
@@ -64,7 +69,7 @@ export const App = () => {
                         <Content key={page} page={page} />
                     </AnimatePresence>
                 </motion.div>
-            </UnstableSyncLayout>
+            </MagicMotion>
         </div>
     )
 }
