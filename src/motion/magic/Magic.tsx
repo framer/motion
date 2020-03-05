@@ -32,6 +32,7 @@ import { mix } from "@popmotion/popcorn"
  * - Currently changes to the parent bounding box translation don't affect children.
  *      The children should move relative to the parent (see: autoParentLayout)
  * - Allow magic === "layout" || "style" || true
+ * - Wire up onAnimationComplete
  */
 
 export class Magic extends React.Component<FunctionalProps> {
@@ -71,7 +72,7 @@ export class Magic extends React.Component<FunctionalProps> {
             },
             resetRotation: () => this.resetRotation(),
             id: magicId,
-            resume: (prev?: Snapshot) => this.scheduleTransition(prev),
+            resume: (prev?: Snapshot) => prev && this.scheduleTransition(prev),
         }
 
         this.detachFromMagicMotion = register(syncLayoutChild)
@@ -151,7 +152,6 @@ export class Magic extends React.Component<FunctionalProps> {
                 schedule(() => {
                     // Write: Remove the `transform` prop so we can correctly read its new layout position,
                     // and reset any styles present
-                    // TODO: Don't animate values that are animating
                     nativeElement.setStyle(resetStyles(style, isExiting))
                     nativeElement.render()
                 })
@@ -159,8 +159,8 @@ export class Magic extends React.Component<FunctionalProps> {
                 schedule(() => {
                     // Read: Take a new snapshot
                     this.next = snapshot(nativeElement)
+
                     if (isExiting) {
-                        console.log(this.next.layout.y, this.prev.layout.y)
                         this.next.layout = this.prev.layout
                     }
                     this.next.style.rotate = resolve(0, style && style.rotate)
