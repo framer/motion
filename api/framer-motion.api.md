@@ -658,7 +658,7 @@ export type Subscriber<T> = (v: T) => void;
 export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMotionProps<T>>;
 
 // @public (undocumented)
-export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T> {
+export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, MotionProps {
 }
 
 // @public (undocumented)
