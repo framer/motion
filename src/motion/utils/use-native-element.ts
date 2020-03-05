@@ -27,6 +27,7 @@ export class NativeElement<E extends Element = Element> {
     current: E
     styler: Styler
 
+    // TODO: We might be able to downsize this as we only have one mount/unmount subscription
     mountSubscriptions: Map<Symbol, Subscription> = new Map()
     unmountSubscriptions: Map<Symbol, Subscription> = new Map()
 
