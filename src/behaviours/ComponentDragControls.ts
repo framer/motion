@@ -17,6 +17,7 @@ import { invariant } from "hey-listen"
 import { mix } from "@popmotion/popcorn"
 import { addDomEvent } from "../events/use-dom-event"
 import { extractEventInfo } from "../events/event-info"
+import { startAnimation } from "../animation/utils/transitions"
 
 const noop = (v: any) => v
 
@@ -431,6 +432,8 @@ export class ComponentDragControls {
             dragMomentum,
             dragElastic,
             dragTransition,
+            _dragValueX,
+            _dragValueY,
             _dragTransitionControls,
         } = this.props
 
@@ -453,22 +456,30 @@ export class ComponentDragControls {
             const bounceDamping = dragElastic ? 40 : 10000000
 
             const animationControls = _dragTransitionControls || this.controls
-            return animationControls.start({
-                [axis]: 0,
-                // TODO: It might be possible to allow `type` animations to be set as
-                // Popmotion animations as well as strings. Then people could define their own
-                // and it'd open another route for us to code-split.
-                transition: {
-                    type: "inertia",
-                    velocity: dragMomentum ? velocity[axis] : 0,
-                    bounceStiffness,
-                    bounceDamping,
-                    timeConstant: 750,
-                    restDelta: 1,
-                    ...dragTransition,
-                    ...transition,
-                },
-            })
+
+            const inertia = {
+                type: "inertia",
+                velocity: dragMomentum ? velocity[axis] : 0,
+                bounceStiffness,
+                bounceDamping,
+                timeConstant: 750,
+                restDelta: 1,
+                ...dragTransition,
+                ...transition,
+            }
+
+            const externalAxisMotionValue =
+                axis === "x" ? _dragValueX : _dragValueY
+
+            // If we're not animating on an externally-provided `MotionValue` we can use the
+            // component's animation controls which will handle interactions with whileHover (etc),
+            // otherwise we just have to animate the `MotionValue` itself.
+            return externalAxisMotionValue
+                ? startAnimation(axis, externalAxisMotionValue, 0, inertia)
+                : animationControls.start({
+                      [axis]: 0,
+                      transition: inertia,
+                  })
         })
 
         // Run all animations and then resolve the new drag constraints.

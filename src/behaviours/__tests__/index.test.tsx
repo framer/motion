@@ -227,6 +227,28 @@ describe("dragging", () => {
         expect(onDragTransitionEnd.promise).resolves.toBe(true)
     })
 
+    test("drag momentum is applied", async () => {
+        const x = motionValue(0)
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag="x" style={{ x }} />
+            </MockDrag>
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(container.firstChild).to(1, 1)
+        await pointer.to(50, 50)
+        pointer.end()
+
+        const checkPointer = new Promise(resolve => {
+            setTimeout(() => resolve(x.get()), 40)
+        })
+
+        return await expect(checkPointer).resolves.toBeGreaterThan(50)
+    })
+
     test("outputs to external values if provided", async () => {
         const externalX = motionValue(0)
         const externalY = motionValue(0)
@@ -261,6 +283,33 @@ describe("dragging", () => {
             externalX: 50,
             externalY: 50,
         })
+    })
+
+    test("drag momentum is applied to external values", async () => {
+        const x = motionValue(0)
+        const dragX = motionValue(0)
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag="x" _dragValueX={dragX} style={{ x }} />
+            </MockDrag>
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(container.firstChild).to(1, 1)
+        await pointer.to(50, 50)
+        pointer.end()
+
+        const checkPointer = new Promise(resolve => {
+            setTimeout(() => {
+                expect(dragX.get()).toBeGreaterThan(50)
+                expect(x.get()).toBe(0)
+                resolve()
+            }, 40)
+        })
+
+        return checkPointer
     })
 
     test("limit to x", async () => {
