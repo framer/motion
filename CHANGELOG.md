@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.9.0] Unreleased
+## [1.9.1] 2020-03-06
+
+### Fixed
+
+-   Ensuring drag momentum animations happen on `_dragValueX` and `_dragValueY` if provided. ([@inventingwithmonster](https://github.com/inventingwithmonster) in [#473](https://github.com/framer/motion/pull/473))
+
+## [1.9.0] 2020-03-02
 
 ### Added
 
