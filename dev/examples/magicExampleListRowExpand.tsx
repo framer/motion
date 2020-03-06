@@ -68,7 +68,7 @@ function Item({ isOpen, onClick, i }: ItemProps) {
     )
 }
 
-const items = [0, 1, 2]
+const items = [0] //, 1, 2]
 export const App = () => {
     const [open, setIsOpen] = useState<false | number>(false)
 
