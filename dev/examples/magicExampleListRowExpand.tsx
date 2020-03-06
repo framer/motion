@@ -6,6 +6,7 @@ import styled from "styled-components"
 interface ItemProps {
     isOpen: boolean
     onClick: () => void
+    i: number
 }
 
 const List = styled(motion.div)`
@@ -44,7 +45,7 @@ const ContentRow = styled(motion.div)`
     margin-top: 12px;
 `
 
-function Item({ isOpen, onClick }: ItemProps) {
+function Item({ isOpen, onClick, i }: ItemProps) {
     return (
         <Container magic onClick={onClick} transition={{ duration: 2 }}>
             <Image magic transition={{ duration: 2 }} />
@@ -55,6 +56,7 @@ function Item({ isOpen, onClick }: ItemProps) {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        id={`content-${i}`}
                     >
                         <ContentRow />
                         <ContentRow />
@@ -78,6 +80,7 @@ export const App = () => {
                         key={id}
                         isOpen={open === id}
                         onClick={() => setIsOpen(open === id ? false : id)}
+                        i={id}
                     />
                 ))}
             </List>
