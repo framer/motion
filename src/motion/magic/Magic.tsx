@@ -67,12 +67,12 @@ export class Magic extends React.Component<FunctionalProps> {
         let syncLayoutChild: MagicMotionChild = {
             snapshot: () => {
                 const prev = this.snapshot()
-                this.scheduleTransition()
+                this.scheduleTransition(this.prev)
                 return prev
             },
             resetRotation: () => this.resetRotation(),
             id: magicId,
-            resume: (prev?: Snapshot) => prev && this.scheduleTransition(prev),
+            resume: (prev?: Snapshot) => this.scheduleTransition(prev),
         }
 
         this.detachFromMagicMotion = register(syncLayoutChild)
@@ -89,7 +89,7 @@ export class Magic extends React.Component<FunctionalProps> {
     getSnapshotBeforeUpdate() {
         if (!this.isSyncedTree()) {
             this.snapshot()
-            this.scheduleTransition()
+            this.scheduleTransition(this.prev)
         }
         return null
     }
@@ -138,10 +138,12 @@ export class Magic extends React.Component<FunctionalProps> {
         return sync(id, depth, session)
     }
 
-    scheduleTransition(prev = this.prev) {
+    scheduleTransition(prev?: Snapshot) {
         // Assign incoming prev to this.prev in case it's being provided by MagicMotion's continuity
-        this.prev = prev
-
+        if (prev) {
+            this.prev = prev
+        }
+        console.trace()
         const { nativeElement, parentContext, localContext, style } = this.props
         const isExiting = parentContext.exitProps?.isExiting
 
@@ -150,6 +152,9 @@ export class Magic extends React.Component<FunctionalProps> {
             localContext.depth,
             schedule => {
                 schedule(() => {
+                    // If we're not coming from anywhere we don't need to reset any styles
+                    if (!prev) return
+
                     // Write: Remove the `transform` prop so we can correctly read its new layout position,
                     // and reset any styles present
                     nativeElement.setStyle(resetStyles(style, isExiting))
@@ -186,8 +191,11 @@ export class Magic extends React.Component<FunctionalProps> {
                 schedule(() => {
                     syncRenderSession.open()
 
-                    this.transitionLayout()
-                    this.transitionStyle(this.prev.style, this.next.style)
+                    this.transitionLayout(!!prev && !isExiting)
+
+                    if (prev) {
+                        this.transitionStyle(this.prev.style, this.next.style)
+                    }
 
                     syncRenderSession.flush()
                 })
@@ -195,12 +203,16 @@ export class Magic extends React.Component<FunctionalProps> {
         )
     }
 
-    transitionLayout() {
+    transitionLayout(isTransition: boolean = true) {
         const { nativeElement, values, parentContext, transition } = this.props
         const isRotationAnimating =
             this.prev.style.rotate !== this.next.style.rotate
         this.detachFromParentLayout && this.detachFromParentLayout()
 
+        if (this.props.id === "content-2") {
+            console.log(this.prev.layout.y, this.next.layout.y)
+            console.log(nativeElement.getBoundingBox())
+        }
         const updateBoundingBoxes = () => {
             // TODO: DON'T BE WASTEFUL HERE - eliminate object creation as this function
             // can potentially run multiple times per frame.
@@ -304,7 +316,13 @@ export class Magic extends React.Component<FunctionalProps> {
         // TODO: Resolve transition from  `autoTransition` > `transition` > `MagicMotionContext.transition`
         this.progress.set(0)
         this.progress.set(0) // Set twice to hard-reset velocity
-        startAnimation("progress", this.progress, 1000, transition || {})
+
+        if (this.props.id === "content-1") {
+            console.log(isTransition)
+        }
+        if (isTransition) {
+            startAnimation("progress", this.progress, 1000, transition || {})
+        }
 
         // TODO we might need a deeper solution than one parent deep
         const unsubscribeProgress = this.progress.onChange(() =>
