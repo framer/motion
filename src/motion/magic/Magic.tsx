@@ -1,23 +1,24 @@
 import * as React from "react"
 import { MagicMotionContext, MagicMotionChild } from "./MagicMotion"
 import { FunctionalProps } from "../functionality/types"
-import { Snapshot, BoxDelta, Style, AxisDelta } from "./types"
+import { Snapshot, BoxDelta, Style, AxisDelta, BoxShadow, Box } from "./types"
 import { syncTree, flushTree, Session } from "../../utils/tree-sync"
 import {
     snapshot,
-    calcBoxDelta,
     applyTreeDeltas,
     resetStyles,
     numAnimatableStyles,
     animatableStyles,
     calcTreeScale,
     resolve,
+    calcBoxDelta,
 } from "./utils"
 import { syncRenderSession } from "../../dom/sync-render-session"
 import { TargetAndTransition } from "../../types"
 import { motionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
-import { mix } from "@popmotion/popcorn"
+import { mix, mixColor } from "@popmotion/popcorn"
+import { complex } from "style-value-types"
 
 /**
  * TODO:
@@ -41,8 +42,10 @@ export class Magic extends React.Component<FunctionalProps> {
     prev: Snapshot
     next: Snapshot
 
+    // Some values we need to keep track of separately from snapshots TODO: Why
     prevRotate = 0
     prevBorderRadius: number
+    prevBoxShadow: string
 
     // TODO: Consider replacing this with individual progress values for each transform. We aren't
     // animating these directly because they're being calculated every frame
@@ -119,8 +122,13 @@ export class Magic extends React.Component<FunctionalProps> {
 
         this.prev = snapshot(nativeElement)
         this.prev.style.rotate = this.prevRotate
+
+        // We don't want to animate from the measured border radius, but from the currently animated one
         if (this.prevBorderRadius !== undefined) {
             this.prev.style.borderRadius = this.prevBorderRadius
+        }
+        if (this.prevBoxShadow !== undefined) {
+            this.prev.style.boxShadow = this.prevBoxShadow
         }
 
         return this.prev
@@ -139,11 +147,8 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     scheduleTransition(prev?: Snapshot) {
-        // Assign incoming prev to this.prev in case it's being provided by MagicMotion's continuity
-        if (prev) {
-            this.prev = prev
-        }
-        console.trace()
+        if (prev) this.prev = prev
+
         const { nativeElement, parentContext, localContext, style } = this.props
         const isExiting = parentContext.exitProps?.isExiting
 
@@ -165,9 +170,11 @@ export class Magic extends React.Component<FunctionalProps> {
                     // Read: Take a new snapshot
                     this.next = snapshot(nativeElement)
 
+                    // TODO: This probably isn't robust behaviour for handling exiting components
                     if (isExiting) {
                         this.next.layout = this.prev.layout
                     }
+
                     this.next.style.rotate = resolve(0, style && style.rotate)
 
                     if (!this.prev) this.prev = this.next
@@ -204,15 +211,55 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     transitionLayout(isTransition: boolean = true) {
-        const { nativeElement, values, parentContext, transition } = this.props
-        const isRotationAnimating =
-            this.prev.style.rotate !== this.next.style.rotate
         this.detachFromParentLayout && this.detachFromParentLayout()
 
-        if (this.props.id === "content-2") {
-            console.log(this.prev.layout.y, this.next.layout.y)
-            console.log(nativeElement.getBoundingBox())
+        const { nativeElement, values, parentContext, transition } = this.props
+        const prevStyle = this.prev.style
+        const nextStyle = this.next.style
+
+        const isAnimatingRotate = prevStyle.rotate !== nextStyle.rotate
+        const hasBorderRadius = prevStyle.borderRadius || nextStyle.borderRadius
+        const hasBoxShadow =
+            prevStyle.boxShadow !== "none" || nextStyle.boxShadow !== "none"
+
+        const target: Box = {
+            x: { min: 0, max: 0 },
+            y: { min: 0, max: 0 },
         }
+
+        const x = values.get("x", 0)
+        const y = values.get("y", 0)
+        const scaleX = values.get("scaleX", 1)
+        const scaleY = values.get("scaleY", 1)
+        const borderRadius = values.get("borderRadius", "")
+        const boxShadow = values.get("boxShadow", "")
+
+        let prevShadow: BoxShadow
+        let nextShadow: BoxShadow
+        let targetShadow: BoxShadow
+        let mixShadowColor: (p: number) => string
+        let shadowTemplate: (shadow: BoxShadow) => string
+
+        if (hasBoxShadow) {
+            prevShadow = getAnimatableShadow(
+                prevStyle.boxShadow,
+                nextStyle.boxShadow
+            )
+            nextShadow = getAnimatableShadow(
+                nextStyle.boxShadow,
+                prevStyle.boxShadow
+            )
+
+            targetShadow = [...prevShadow] as BoxShadow
+
+            mixShadowColor = mixColor(prevShadow[0], nextShadow[0])
+            shadowTemplate = complex.createTransformer(
+                nextStyle.boxShadow !== "none"
+                    ? nextStyle.boxShadow
+                    : prevStyle.boxShadow
+            ) as (shadow: BoxShadow) => string
+        }
+
         const updateBoundingBoxes = () => {
             // TODO: DON'T BE WASTEFUL HERE - eliminate object creation as this function
             // can potentially run multiple times per frame.
@@ -222,104 +269,84 @@ export class Magic extends React.Component<FunctionalProps> {
             // Use the current progress value to interpolate between the previous and next
             // bounding box before applying and calculating deltas.
             const p = this.progress.get() / 1000
-            const easedNext = {
-                x: { min: 0, max: 0 },
-                y: { min: 0, max: 0 },
-            }
-            easedNext.x.min = mix(
-                this.next.layout.x.min,
-                this.prev.layout.x.min,
-                p
-            )
-            easedNext.x.max = mix(
-                this.next.layout.x.max,
-                this.prev.layout.x.max,
-                p
-            )
-            easedNext.y.min = mix(
-                this.next.layout.y.min,
-                this.prev.layout.y.min,
-                p
-            )
-            easedNext.y.max = mix(
-                this.next.layout.y.max,
-                this.prev.layout.y.max,
-                p
-            )
 
-            const appliedNext = applyTreeDeltas(parentDeltas, easedNext)
-            const delta = calcBoxDelta(
+            easeBox(target, this.prev, this.next, p)
+            applyTreeDeltas(target, parentDeltas)
+
+            calcBoxDelta(
+                this.delta,
                 this.prev.layout,
-                appliedNext,
-                isRotationAnimating ? 0.5 : undefined
+                target,
+                isAnimatingRotate ? 0.5 : undefined
             )
 
             // TODO: Look into combining this into a single loop with applyTreeDeltas
             const treeScale = calcTreeScale(parentDeltas)
 
-            // Update localDelta for children
-            // TODO neaten this shit up
-            this.delta.x.translate = delta.x.translate
-            this.delta.x.scale = delta.x.scale
-            this.delta.x.origin = delta.x.origin
-            this.delta.x.originPoint = delta.x.originPoint
-            this.delta.y.translate = delta.y.translate
-            this.delta.y.scale = delta.y.scale
-            this.delta.y.origin = delta.y.origin
-            this.delta.y.originPoint = delta.y.originPoint
+            nativeElement.setStyle("originX", this.delta.x.origin)
+            nativeElement.setStyle("originY", this.delta.y.origin)
 
-            nativeElement.setStyle({
-                originX: delta.x.origin,
-                originY: delta.y.origin,
-            })
+            const deltaXScale = this.delta.x.scale
+            const deltaYScale = this.delta.y.scale
 
-            const deltaXScale = delta.x.scale
-            const deltaYScale = delta.y.scale
+            scaleX.set(deltaXScale)
+            scaleY.set(deltaYScale)
 
-            values.get("scaleX", 1).set(deltaXScale)
-            values.get("scaleY", 1).set(deltaYScale)
+            x.set(this.delta.x.translate / treeScale.x)
+            y.set(this.delta.y.translate / treeScale.y)
 
-            // TODO We need to apply the whole stack of scales in the same way as border radius
-            values.get("x", 1).set(delta.x.translate / treeScale.x)
-            values.get("y", 1).set(delta.y.translate / treeScale.y)
-
-            // TODO: Only do if we are animating rotate
-            if (isRotationAnimating) {
-                values
-                    .get("rotate", 0)
-                    .set(
-                        mix(
-                            this.prev.style.rotate as number,
-                            this.next.style.rotate as number,
-                            p
-                        )
-                    )
+            if (isAnimatingRotate) {
+                const rotate = mix(
+                    prevStyle.rotate as number,
+                    nextStyle.rotate as number,
+                    p
+                )
+                values.get("rotate", 0).set(rotate)
             }
 
-            // TODO: Only do this if we're animating border radius or border radius doesnt equal 0
-            this.prevBorderRadius = mix(
-                this.prev.style.borderRadius,
-                this.next.style.borderRadius,
-                p
-            )
-            const borderRadiusX =
-                this.prevBorderRadius / deltaXScale / treeScale.x
-            const borderRadiusY =
-                this.prevBorderRadius / deltaYScale / treeScale.y
-            const borderRadius = `${borderRadiusX}px / ${borderRadiusY}px`
-            values.get("borderRadius", "").set(borderRadius)
-            // values.get("borderBottomRightRadius", "").set(borderRadius)
-            // values.get("borderTopLeftRadius", "").set(borderRadius)
-            // values.get("borderTopRightRadius", "").set(borderRadius)
+            if (hasBorderRadius) {
+                this.prevBorderRadius = mix(
+                    prevStyle.borderRadius,
+                    nextStyle.borderRadius,
+                    p
+                )
+                const borderRadiusX =
+                    this.prevBorderRadius / deltaXScale / treeScale.x
+                const borderRadiusY =
+                    this.prevBorderRadius / deltaYScale / treeScale.y
+                borderRadius.set(`${borderRadiusX}px / ${borderRadiusY}px`)
+            }
+
+            if (hasBoxShadow) {
+                // Update box shadow
+                targetShadow[0] = mixShadowColor(p) // color
+                targetShadow[1] = mix(prevShadow[1], nextShadow[1], p) // x
+                targetShadow[2] = mix(prevShadow[2], nextShadow[2], p) // y
+                targetShadow[3] = mix(prevShadow[3], nextShadow[3], p) // blur
+                targetShadow[4] = mix(prevShadow[4], nextShadow[4], p) // spread
+
+                // Update prev box shadow before FLIPPing
+                this.prevBoxShadow = shadowTemplate(targetShadow)
+
+                // Apply FLIP inversion to physical dimensions. We need to take an average scale for XY to apply
+                // to blur and spread, which affect both axis equally.
+                targetShadow[1] = targetShadow[1] / deltaXScale / treeScale.x // x
+                targetShadow[2] = targetShadow[2] / deltaYScale / treeScale.y // y
+
+                const averageXYScale = mix(deltaXScale, deltaYScale, 0.5)
+                const averageTreeXTScale = mix(treeScale.x, treeScale.y, 0.5)
+                targetShadow[3] =
+                    targetShadow[3] / averageXYScale / averageTreeXTScale // blur
+                targetShadow[4] =
+                    targetShadow[4] / averageXYScale / averageTreeXTScale // spread
+
+                boxShadow.set(shadowTemplate(targetShadow))
+            }
         }
 
-        // TODO: Resolve transition from  `autoTransition` > `transition` > `MagicMotionContext.transition`
         this.progress.set(0)
         this.progress.set(0) // Set twice to hard-reset velocity
 
-        if (this.props.id === "content-1") {
-            console.log(isTransition)
-        }
         if (isTransition) {
             startAnimation("progress", this.progress, 1000, transition || {})
         }
@@ -379,4 +406,28 @@ const zeroDelta: AxisDelta = {
     scale: 1,
     origin: 0,
     originPoint: 0,
+}
+
+function easeAxis(
+    axis: "x" | "y",
+    target: Box,
+    prev: Snapshot,
+    next: Snapshot,
+    p: number
+) {
+    target[axis].min = mix(next.layout[axis].min, prev.layout[axis].min, p)
+    target[axis].max = mix(next.layout[axis].max, prev.layout[axis].max, p)
+}
+
+function easeBox(target: Box, prev: Snapshot, next: Snapshot, p: number) {
+    easeAxis("x", target, prev, next, p)
+    easeAxis("y", target, prev, next, p)
+}
+
+function getAnimatableShadow(shadow: string, fallback: string) {
+    if (shadow === "none") {
+        shadow = complex.getAnimatableNone(fallback)
+    }
+
+    return complex.parse(shadow) as BoxShadow
 }
