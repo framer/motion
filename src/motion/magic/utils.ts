@@ -14,6 +14,7 @@ export function snapshot(element: NativeElement): Snapshot {
         backgroundColor,
         border,
         borderRadius,
+        boxShadow,
         color,
         opacity,
     } = element.getComputedStyle()
@@ -27,6 +28,7 @@ export function snapshot(element: NativeElement): Snapshot {
             backgroundColor,
             border,
             borderRadius: borderRadius ? parseFloat(borderRadius) : 0,
+            boxShadow,
             color: color || "",
             opacity: opacity !== null ? parseFloat(opacity) : 0,
         },
@@ -93,52 +95,45 @@ export function scaledPoint({ scale, originPoint }: AxisDelta, point: number) {
 }
 
 export function calcDelta(
+    delta: AxisDelta,
     before: Axis,
     after: Axis,
     origin?: number
-): AxisDelta {
+): void {
     const beforeSize = before.max - before.min
     const afterSize = after.max - after.min
-    const scale = beforeSize / afterSize
-    origin = origin !== undefined ? origin : calcOrigin(before, after)
-    const originPoint = after.min + origin * afterSize
-    const translate = calcTranslate(before, after, origin)
-
-    return { scale, translate, origin, originPoint }
+    delta.scale = beforeSize / afterSize
+    delta.origin = origin !== undefined ? origin : calcOrigin(before, after)
+    delta.originPoint = after.min + delta.origin * afterSize
+    delta.translate = calcTranslate(before, after, delta.origin)
 }
 
-export function calcBoxDelta(before: Box, after: Box, origin?: number) {
-    return {
-        x: calcDelta(before.x, after.x, origin),
-        y: calcDelta(before.y, after.y, origin),
-    }
+export function calcBoxDelta(
+    delta: BoxDelta,
+    before: Box,
+    after: Box,
+    origin?: number
+): void {
+    calcDelta(delta.x, before.x, after.x, origin)
+    calcDelta(delta.y, before.y, after.y, origin)
 }
 
-export function applyDelta(delta: AxisDelta, axis: Axis) {
-    let min = axis.min
-    let max = axis.max
-
-    min = scaledPoint(delta, axis.min) + delta.translate
-    max = scaledPoint(delta, axis.max) + delta.translate
-
-    return { min, max }
+export function applyDelta(axis: Axis, delta: AxisDelta): void {
+    axis.min = scaledPoint(delta, axis.min) + delta.translate
+    axis.max = scaledPoint(delta, axis.max) + delta.translate
 }
 
-export function applyBoxDelta(delta: BoxDelta, box: Box) {
-    return {
-        x: applyDelta(delta.x, box.x),
-        y: applyDelta(delta.y, box.y),
-    }
+export function applyBoxDelta(box: Box, delta: BoxDelta): void {
+    applyDelta(box.x, delta.x)
+    applyDelta(box.y, delta.y)
 }
 
-export function applyTreeDeltas(deltas: BoxDelta[], box: Box): Box {
+export function applyTreeDeltas(box: Box, deltas: BoxDelta[]): void {
     const numDeltas = deltas.length
 
     for (let i = 0; i < numDeltas; i++) {
-        box = applyBoxDelta(deltas[i], box)
+        applyBoxDelta(box, deltas[i])
     }
-
-    return box
 }
 
 export const animatableStyles = [
@@ -172,6 +167,7 @@ export function resetStyles(styleProp: MotionStyle = {}, isExiting = false) {
         scaleX: 1,
         scaleY: 1,
         rotate: 0,
+        boxShadow: resolve("", styleProp.boxShadow),
         borderRadius: resolve("", styleProp.borderRadius),
         position: isExiting ? "absolute" : resolve("", styleProp.position),
     }
