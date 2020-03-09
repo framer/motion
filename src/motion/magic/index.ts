@@ -4,7 +4,9 @@ import { MotionProps } from "../types"
 
 export const magic: FunctionalComponentDefinition = {
     key: "magic",
-    shouldRender: ({ magic }: MotionProps) =>
-        !!magic && typeof window !== "undefined",
+    shouldRender: ({ magic, magicId }: MotionProps) => {
+        const hasMagicProps = !!magic || magicId !== undefined
+        return hasMagicProps && typeof window !== "undefined"
+    },
     Component: Magic,
 }
