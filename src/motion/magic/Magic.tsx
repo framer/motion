@@ -106,10 +106,9 @@ export class Magic extends React.Component<FunctionalProps> {
     resetRotation() {
         const { values, nativeElement } = this.props
         const rotate = values.get("rotate")
-
         if (!rotate) return
 
-        this.prevRotate = (rotate.getPrevious() as number) || 0
+        this.prevRotate = (rotate.get() as number) || 0
 
         if (this.prevRotate) {
             nativeElement.setStyle("rotate", 0)
@@ -231,6 +230,7 @@ export class Magic extends React.Component<FunctionalProps> {
         const y = values.get("y", 0)
         const scaleX = values.get("scaleX", 1)
         const scaleY = values.get("scaleY", 1)
+        const rotate = values.get("rotate", 0)
         const borderRadius = values.get("borderRadius", "")
         const boxShadow = values.get("boxShadow", "")
 
@@ -277,7 +277,7 @@ export class Magic extends React.Component<FunctionalProps> {
                 this.delta,
                 this.prev.layout,
                 target,
-                isAnimatingRotate ? 0.5 : undefined
+                prevStyle.rotate || nextStyle.rotate ? 0.5 : undefined
             )
 
             // TODO: Look into combining this into a single loop with applyTreeDeltas
@@ -296,12 +296,13 @@ export class Magic extends React.Component<FunctionalProps> {
             y.set(this.delta.y.translate / treeScale.y)
 
             if (isAnimatingRotate) {
-                const rotate = mix(
+                const targetRotate = mix(
                     prevStyle.rotate as number,
                     nextStyle.rotate as number,
                     p
                 )
-                values.get("rotate", 0).set(rotate)
+
+                rotate.set(targetRotate)
             }
 
             if (hasBorderRadius) {
