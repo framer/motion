@@ -1,137 +1,112 @@
 import * as React from "react"
-import { createContext } from "react"
-import { syncTree, flushTree } from "../../utils/tree-sync"
-import { Snapshot } from "./types"
-
-export interface MagicMotionUtils {
-    syncTree: typeof syncTree
-    forceRender: () => void
-    register: (child: MagicMotionChild) => () => void
-}
-
-export interface MagicMotionChild {
-    id?: string
-    snapshot: () => Snapshot
-    resetRotation: () => void
-    resume?: (prev?: Snapshot) => void
-}
+import { MagicContextUtils } from "./types"
+import { MagicContext } from "./MagicContext"
+import { Magic } from "./Magic"
 
 interface Props {
     children: React.ReactNode
 }
 
-const continuity = new Map<string, Snapshot>()
+type Stack = Magic[]
 
-export const MagicMotionContext = createContext<MagicMotionUtils | null>(null)
+export class MagicMotion extends React.Component<Props, MagicContextUtils> {
+    private hasMounted = false
 
-/**
- * TODO: Update the documentation for this component
- * When layout changes happen asynchronously to their instigating render (ie when exiting
- * children of `AnimatePresence` are removed), `MagicMotion` can wrap parent and sibling
- * components that need to animate as a result of this layout change.
- *
- * @motion
- *
- * ```jsx
- * const MyComponent = ({ isVisible }) => {
- *   return (
- *     <MagicMotion>
- *       <AnimatePresence>
- *         {isVisible && (
- *           <motion.div exit={{ opacity: 0 }} />
- *         )}
- *       </AnimatePresence>
- *       <motion.div positionTransition />
- *     </MagicMotion>
- *   )
- * }
- * ```
- *
- * @internalremarks
- *
- * The way this component works is by memoising a function and passing it down via context.
- * The function, when called, updates the local state, which is used to invalidate the
- * memoisation cache. A new function is called, performing a synced re-render of components
- * that are using the MagicMotionContext.
- *
- * @internal
- */
-export class MagicMotion extends React.Component<Props, MagicMotionUtils> {
-    children = new Set<MagicMotionChild>()
+    private children = new Set<Magic>()
 
-    // TODO: Revisit if we need this
-    queue = new Set<string>()
+    private stacks = new Map<string, Stack>()
 
-    state: MagicMotionUtils = {
-        register: child => this.register(child),
-        forceRender: () => this.forceRender(),
-        syncTree: (id, depth, callback) => {
-            this.queue.add(id)
-            return syncTree(id, depth, callback)
-        },
-    }
+    private snapshots = new Map<string, number>()
 
-    register(child: MagicMotionChild) {
-        this.children.add(child)
-
-        if (child.resume) {
-            // TODO: Only do this on subsequent renders
-            const id = child.id as string
-            const prev = continuity.get(id)
-            child.resume(prev)
-            continuity.delete(id)
-        }
-
-        return () => this.children.delete(child)
+    state = {
+        forceRender: (): void => this.setState({ ...this.state }),
+        register: (child: Magic) => this.register(child),
     }
 
     shouldComponentUpdate() {
-        this.children.forEach(resetRotation)
+        this.children.forEach(child => child.resetRotation())
+
+        // TODO: `magicKey` performance enhancememnt
         return true
     }
 
     getSnapshotBeforeUpdate() {
-        this.children.forEach(snapshotChild)
+        this.children.forEach(child => child.snapshot())
+
+        this.stacks.forEach((stack, id) => {
+            const latestChild = stack[stack.length - 1]
+            if (latestChild) {
+                this.snapshots.set(id, latestChild.prev)
+            }
+        })
+
         return null
     }
 
     componentDidMount() {
-        this.flush()
+        this.hasMounted = true
     }
 
     componentDidUpdate() {
-        this.flush()
+        const depthOrdered = Array.from(this.children).sort(sortByDepth)
+
+        depthOrdered.forEach(child => child.resetStyles())
+        depthOrdered.forEach(child => !child.isHidden && child.snapshotNext())
+        depthOrdered.forEach(child => !child.isHidden && child.startAnimation())
     }
 
-    flush() {
-        this.queue.forEach(flushTree)
-        this.queue.clear()
+    register(child: Magic) {
+        this.children.add(child)
+
+        const { magicId } = child.props
+
+        if (magicId) {
+            const stack = this.getStack(magicId)
+            stack.push(child)
+            this.hasMounted && this.resumeSharedElement(magicId, child, stack)
+        }
+
+        return () => {
+            this.children.delete(child)
+
+            if (!magicId) return
+
+            const stack = this.getStack(magicId)
+            const index = stack.findIndex(
+                ({ props }) => props.magicId === magicId
+            )
+
+            // Unhide previous in stack here
+
+            index !== 1 && stack.splice(index, 1)
+        }
     }
 
-    forceRender() {
-        this.setState({ ...this.state })
+    resumeSharedElement(id: string, child: Magic, stack: Stack) {
+        const snapshot = this.snapshots.get(id)
+
+        if (!snapshot) return
+
+        child.prev = snapshot
+        const previousChild = stack[stack.length - 2]
+        previousChild.isHidden = true
     }
 
-    forceUpdate() {
-        this.setState(this.state)
+    getStack(id: string) {
+        if (!this.stacks.has(id)) {
+            this.stacks.set(id, [])
+        }
+
+        return this.stacks.get(id) as Stack
     }
 
     render() {
-        const { children } = this.props
-
         return (
-            <MagicMotionContext.Provider value={this.state}>
-                {children}
-            </MagicMotionContext.Provider>
+            <MagicContext.Provider value={this.state}>
+                {this.props.children}
+            </MagicContext.Provider>
         )
     }
 }
 
-function snapshotChild({ id, snapshot }: MagicMotionChild) {
-    const prev = snapshot()
-    id !== undefined && continuity.set(id, prev)
-}
-
-function resetRotation({ resetRotation }: MagicMotionChild) {
-    resetRotation()
-}
+const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth
