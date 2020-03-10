@@ -10,7 +10,7 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
-import { MagicMotionContext } from "../../motion/magic/MagicMotion"
+import { MagicContext } from "../../motion/magic/MagicContext"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
 
@@ -127,7 +127,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
     const localForceRender = useForceUpdate()
-    const syncLayoutContext = useContext(MagicMotionContext)
+    const syncLayoutContext = useContext(MagicContext)
     const contextForceRender = syncLayoutContext
         ? syncLayoutContext.forceRender
         : localForceRender

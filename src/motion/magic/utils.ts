@@ -159,7 +159,7 @@ export function resolve<T extends unknown>(
  *
  * @param styleProp
  */
-export function resetStyles(styleProp: MotionStyle = {}, isExiting = false) {
+export function resetStyles(styleProp: MotionStyle = {}, layout?: Box) {
     const styles = {
         x: 0,
         y: 0,
@@ -169,7 +169,15 @@ export function resetStyles(styleProp: MotionStyle = {}, isExiting = false) {
         rotate: 0,
         boxShadow: resolve("", styleProp.boxShadow),
         borderRadius: resolve("", styleProp.borderRadius),
-        position: isExiting ? "absolute" : resolve("", styleProp.position),
+        position: resolve("", styleProp.position),
+        width: resolve("", styleProp.width),
+        height: resolve("", styleProp.height),
+    }
+
+    if (layout) {
+        styles.position = "absolute"
+        styles.width = layout.x.max - layout.x.min
+        styles.height = layout.y.max - layout.y.min
     }
 
     for (let i = 0; i < numAnimatableStyles; i++) {
