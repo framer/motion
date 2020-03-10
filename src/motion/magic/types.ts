@@ -1,3 +1,5 @@
+import { Magic } from "./Magic"
+
 export interface Axis {
     min: number
     max: number
@@ -35,4 +37,9 @@ export interface Style {
 export interface Snapshot {
     layout: Box
     style: Style
+}
+
+export interface MagicContextUtils {
+    forceRender: () => void
+    register: (child: Magic) => () => void
 }
