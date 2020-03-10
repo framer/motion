@@ -6,12 +6,15 @@ import { AnimationControls } from "../../animation/AnimationControls"
 
 export const Exit: FunctionalComponentDefinition = {
     key: "exit",
-    shouldRender: ({ exit }, { exitProps }) => {
+    shouldRender: ({ exit, magic, magicId }, { exitProps }) => {
         const hasExitProps = !!exitProps
         const hasExitAnimation = !!exit
 
         invariant(
-            !hasExitProps || (hasExitProps && hasExitAnimation),
+            !hasExitProps ||
+                (hasExitProps && hasExitAnimation) ||
+                magic ||
+                magicId !== undefined,
             "No exit prop defined on a child of AnimatePresence."
         )
 
