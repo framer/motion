@@ -1,18 +1,60 @@
 import * as React from "react"
 import { FunctionalProps } from "../functionality/types"
 import { MagicContext } from "./MagicContext"
-import { resetStyles } from "./utils"
+import {
+    resetStyles,
+    snapshot,
+    applyCurrent,
+    resolve,
+    zeroDelta,
+    numAnimatableStyles,
+    animatableStyles,
+    easeBox,
+    applyTreeDeltas,
+    calcBoxDelta,
+    calcTreeScale,
+} from "./utils"
+import { Snapshot, Style, BoxDelta, Box, BoxShadow } from "./types"
+import { motionValue, MotionValue } from "../../value"
+import { syncRenderSession } from "../../dom/sync-render-session"
+import { TargetAndTransition } from "types"
+import { startAnimation } from "../../animation/utils/transitions"
+import { mix, mixColor } from "@popmotion/popcorn"
+import { complex } from "style-value-types"
 
 export class Magic extends React.Component<FunctionalProps> {
     static contextType = MagicContext
 
     private unregisterFromMagicContext?: () => void
+    private stopLayoutAnimation?: () => void
 
     depth: number
 
     isHidden = false
 
-    prev: number = 0
+    prev: Snapshot
+    next: Snapshot
+
+    // TODO: Add comment to make sure its clear that this is mutative
+    delta: BoxDelta = {
+        x: { ...zeroDelta },
+        y: { ...zeroDelta },
+    }
+
+    target: Box
+
+    treeScale: {
+        x: number
+        y: number
+    }
+
+    progress = motionValue(0)
+
+    current: Partial<Style> = {
+        rotate: 0,
+    }
+
+    prevRotate = 0
 
     constructor(props: FunctionalProps) {
         super(props)
@@ -20,48 +62,343 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     componentDidMount() {
-        if (!this.context) return
+        if (this.context.register) {
+            this.unregisterFromMagicContext = this.context.register(this)
+        } else {
+            this.getSnapshotBeforeUpdate = () => {
+                this.snapshot()
+                this.context.add(this)
+                return null
+            }
 
-        this.unregisterFromMagicContext = this.context.register(this)
+            this.componentDidUpdate = () => this.context.flush()
+        }
+
+        if (!this.context.register) return
     }
 
     componentWillUnmount() {
         this.unregisterFromMagicContext && this.unregisterFromMagicContext()
+        this.stopLayoutAnimation && this.stopLayoutAnimation()
     }
 
     resetRotation() {
-        console.log("resetting rotation", this.props.id)
+        const { nativeElement, values } = this.props
+        const rotate = values.get("rotate")
+        this.current.rotate = rotate ? (rotate.get() as number) : 0
+
+        if (!this.current.rotate) return
+
+        nativeElement.setStyle("rotate", 0)
+        nativeElement.render()
     }
 
     resetStyles() {
-        const { values, nativeElement, style } = this.props
+        const { nativeElement, style } = this.props
+
+        const reset = resetStyles(style)
 
         if (this.isHidden) {
-            values.get("opacity", 0).set(0)
-        } else {
-            nativeElement.setStyle(resetStyles(style))
-            // TODO: When exiting calculate size for new element
-            nativeElement.render()
+            reset.opacity = 0
         }
+
+        nativeElement.setStyle(reset)
+        // TODO: When exiting calculate size for new element
+        nativeElement.render()
     }
 
     snapshot() {
-        console.log("snapshotting", this.props.id)
+        const { nativeElement } = this.props
+        const prev = snapshot(nativeElement)
+        applyCurrent(prev.style, this.current)
 
-        this.prev = this.prev + 1
+        if (this.isHidden) prev.style.opacity = 1
+        this.prev = prev
     }
 
     snapshotNext() {
-        console.log("snapshotting target", this.props.id)
+        const { nativeElement, style } = this.props
+
+        const next = snapshot(nativeElement)
+        next.style.rotate = resolve(0, style && style.rotate)
+        this.next = next
+
+        this.linkTree()
+    }
+
+    // TODO: Could this be established in the constructor? Or elsewhere?
+    linkTree() {
+        const { localContext, parentContext } = this.props
+
+        localContext.magicProgress = this.progress
+
+        const parentDeltas = parentContext.magicDeltas || []
+        localContext.magicDeltas = [...parentDeltas, this.delta]
+    }
+
+    hide() {
+        this.isHidden = true
+    }
+
+    show() {
+        this.isHidden = false
     }
 
     startAnimation() {
-        console.log("animating", this.props.id)
+        syncRenderSession.open()
+
+        const animations = [
+            this.startLayoutAnimation(),
+            this.startStyleAnimation(),
+        ]
+
+        Promise.all(animations.filter(Boolean)).then(() => {
+            const { onMagicComplete } = this.props
+            onMagicComplete && onMagicComplete()
+
+            this.isExiting() && this.safeToRemove()
+        })
+
+        syncRenderSession.flush()
+    }
+
+    /**
+     * This uses the FLIP animation technique to animate physical dimensions
+     * and correct distortion on related styles (ie borderRadius etc)
+     */
+    startLayoutAnimation() {
+        let animation
+
+        this.stopLayoutAnimation && this.stopLayoutAnimation()
+
+        const prevStyle = this.prev.style
+        const nextStyle = this.next.style
+        const isAnimatingRotate = prevStyle.rotate !== nextStyle.rotate
+        const hasBorderRadius = prevStyle.borderRadius || nextStyle.borderRadius
+        const hasBoxShadow =
+            prevStyle.boxShadow !== "none" || nextStyle.boxShadow !== "none"
+        const updateBoxShadow =
+            hasBoxShadow &&
+            this.createUpdateBoxShadow(prevStyle.boxShadow, nextStyle.boxShadow)
+
+        this.target = {
+            x: { min: 0, max: 0 },
+            y: { min: 0, max: 0 },
+        }
+
+        const { values } = this.props
+        const x = values.get("x", 0)
+        const y = values.get("y", 0)
+        const scaleX = values.get("scaleX", 1)
+        const scaleY = values.get("scaleY", 1)
+        const rotate = values.get("rotate", 0)
+        const borderRadius = values.get("borderRadius", "")
+
+        const frame = () => {
+            // TODO: Break up each of these so we can animate seperately
+            const p = this.progress.get() / 1000
+            this.updateBoundingBox(p, isAnimatingRotate ? 0.5 : undefined)
+            this.updateTransform(x, y, scaleX, scaleY)
+
+            isAnimatingRotate && this.updateRotate(p, rotate)
+            hasBorderRadius && this.updateBorderRadius(p, borderRadius)
+            updateBoxShadow && updateBoxShadow(p)
+        }
+
+        const progressOrigin = 0
+        const progressTarget = 1000
+
+        this.progress.set(progressOrigin)
+        this.progress.set(progressOrigin) // Set twice to hard-reset velocity
+
+        const { magicTransition, transition } = this.props
+        animation = startAnimation(
+            "progress",
+            this.progress,
+            progressTarget,
+            magicTransition || transition
+        )
+
+        // TODO: We're currently chaining just the parent and child deep, and if both
+        // update then `frame` fires twice in a frame. This only leads to one render
+        // but it'd be cooler if it batched updates
+        const { parentContext } = this.props
+        const { magicProgress } = parentContext
+        const unsubscribeProgress = this.progress.onChange(frame)
+        let unsubscribeParentProgress: () => void
+        if (magicProgress) {
+            unsubscribeParentProgress = magicProgress.onChange(frame)
+        }
+
+        this.stopLayoutAnimation = () => {
+            this.progress.stop()
+            unsubscribeProgress()
+            unsubscribeParentProgress && unsubscribeParentProgress()
+        }
+
+        frame()
+
+        return animation
+    }
+
+    /**
+     * This is a straight animation between prev/next styles. This animates
+     * styles that don't need scale inversion correction.
+     */
+    startStyleAnimation() {
+        let shouldTransitionStyle = false
+        const target: TargetAndTransition = {}
+        const { values } = this.props
+
+        for (let i = 0; i < numAnimatableStyles; i++) {
+            const key = animatableStyles[i]
+            const prevStyle = this.prev.style[key]
+            const nextStyle = this.next.style[key]
+
+            if (!prevStyle !== nextStyle) {
+                shouldTransitionStyle = true
+                const value = values.get(key, prevStyle)
+                value.set(prevStyle)
+                target[key] = nextStyle
+            }
+        }
+
+        const { magicTransition, transition, controls } = this.props
+        target.transition = magicTransition || transition || {}
+
+        if (shouldTransitionStyle) {
+            return controls.start(target)
+        }
+    }
+
+    updateBoundingBox(p: number, origin?: number) {
+        const { parentContext } = this.props
+        const parentDeltas = parentContext.magicDeltas || []
+
+        easeBox(this.target, this.prev, this.next, p)
+        applyTreeDeltas(this.target, parentDeltas)
+
+        calcBoxDelta(this.delta, this.prev.layout, this.target, origin)
+
+        // TODO: If we could return this from applyTreeDeltas
+        // it'd save a second loop
+        this.treeScale = calcTreeScale(parentDeltas)
+    }
+
+    updateTransform(
+        x: MotionValue<number>,
+        y: MotionValue<number>,
+        scaleX: MotionValue<number>,
+        scaleY: MotionValue<number>
+    ) {
+        const { nativeElement } = this.props
+        const dx = this.delta.x
+        const dy = this.delta.y
+
+        nativeElement.setStyle("originX", dx.origin)
+        nativeElement.setStyle("originY", dy.origin)
+
+        x.set(dx.translate / this.treeScale.x)
+        y.set(dy.translate / this.treeScale.y)
+        scaleX.set(dx.scale)
+        scaleY.set(dy.scale)
+    }
+
+    updateRotate(p: number, rotate: MotionValue<number>) {
+        const target = mix(
+            this.prev.style.rotate as number,
+            this.next.style.rotate as number,
+            p
+        )
+        rotate.set(target)
+    }
+
+    updateBorderRadius(p: number, borderRadius: MotionValue<string>) {
+        const target = mix(
+            this.prev.style.borderRadius,
+            this.next.style.borderRadius,
+            p
+        )
+        this.current.borderRadius = target
+
+        const targetX = target / this.delta.x.scale / this.treeScale.x
+        const targetY = target / this.delta.y.scale / this.treeScale.y
+
+        borderRadius.set(`${targetX}px / ${targetY}px`)
+    }
+
+    createUpdateBoxShadow(prev: string, next: string) {
+        const prevShadow = getAnimatableShadow(prev, next)
+        const nextShadow = getAnimatableShadow(next, prev)
+
+        const targetShadow = [...prevShadow] as BoxShadow
+        const mixShadowColor = mixColor(prevShadow[0], nextShadow[0])
+
+        const shadowTemplate = complex.createTransformer(
+            next !== "none" ? next : prev
+        ) as (shadow: BoxShadow) => string
+
+        const dx = this.delta.x
+        const dy = this.delta.y
+
+        const { values } = this.props
+        const boxShadow = values.get("boxShadow", "")
+
+        return (p: number) => {
+            // Update box shadow
+            targetShadow[0] = mixShadowColor(p) // color
+            targetShadow[1] = mix(prevShadow[1], nextShadow[1], p) // x
+            targetShadow[2] = mix(prevShadow[2], nextShadow[2], p) // y
+            targetShadow[3] = mix(prevShadow[3], nextShadow[3], p) // blur
+            targetShadow[4] = mix(prevShadow[4], nextShadow[4], p) // spread
+
+            // Update prev box shadow before FLIPPing
+            this.current.boxShadow = shadowTemplate(targetShadow)
+
+            // Apply FLIP inversion to physical dimensions. We need to take an average scale for XY to apply
+            // to blur and spread, which affect both axis equally.
+            targetShadow[1] = targetShadow[1] / dx.scale / this.treeScale.x
+            targetShadow[2] = targetShadow[2] / dy.scale / this.treeScale.y
+
+            const averageXYScale = mix(dx.scale, dy.scale, 0.5)
+            const averageTreeXTScale = mix(
+                this.treeScale.x,
+                this.treeScale.y,
+                0.5
+            )
+            targetShadow[3] =
+                targetShadow[3] / averageXYScale / averageTreeXTScale // blur
+            targetShadow[4] =
+                targetShadow[4] / averageXYScale / averageTreeXTScale // spread
+
+            boxShadow.set(shadowTemplate(targetShadow))
+        }
+    }
+
+    isExiting() {
+        const { parentContext } = this.props
+        return !!parentContext.exitProps?.isExiting
+    }
+
+    safeToRemove() {
+        const { parentContext } = this.props
+
+        if (parentContext.exitProps?.onExitComplete) {
+            parentContext.exitProps.onExitComplete()
+        }
     }
 
     render() {
         return null
     }
+}
+
+function getAnimatableShadow(shadow: string, fallback: string) {
+    if (shadow === "none") {
+        shadow = complex.getAnimatableNone(fallback)
+    }
+
+    return complex.parse(shadow) as BoxShadow
 }
 
 //
@@ -101,12 +438,6 @@ export class Magic extends React.Component<FunctionalProps> {
 //     // TODO: Consider replacing this with individual progress values for each transform. We aren't
 //     // animating these directly because they're being calculated every frame
 //     progress = motionValue(0)
-
-//     // TODO: Add comment to make sure its clear that this is mutative
-//     delta: BoxDelta = {
-//         x: { ...zeroDelta },
-//         y: { ...zeroDelta },
-//     }
 
 //     detachFromParentLayout?: () => void
 //     detachFromMagicMotion?: () => void
@@ -305,11 +636,6 @@ export class Magic extends React.Component<FunctionalProps> {
 //         const hasBoxShadow =
 //             prevStyle.boxShadow !== "none" || nextStyle.boxShadow !== "none"
 
-//         const target: Box = {
-//             x: { min: 0, max: 0 },
-//             y: { min: 0, max: 0 },
-//         }
-
 //         const x = values.get("x", 0)
 //         const y = values.get("y", 0)
 //         const scaleX = values.get("scaleX", 1)
@@ -361,7 +687,7 @@ export class Magic extends React.Component<FunctionalProps> {
 //                 this.delta,
 //                 this.prev.layout,
 //                 target,
-//                 prevStyle.rotate || nextStyle.rotate ? 0.5 : undefined
+//
 //             )
 
 //             // TODO: Look into combining this into a single loop with applyTreeDeltas
@@ -500,33 +826,4 @@ export class Magic extends React.Component<FunctionalProps> {
 //     }
 // }
 
-// const zeroDelta: AxisDelta = {
-//     translate: 0,
-//     scale: 1,
-//     origin: 0,
-//     originPoint: 0,
-// }
-
-// function easeAxis(
-//     axis: "x" | "y",
-//     target: Box,
-//     prev: Snapshot,
-//     next: Snapshot,
-//     p: number
-// ) {
-//     target[axis].min = mix(next.layout[axis].min, prev.layout[axis].min, p)
-//     target[axis].max = mix(next.layout[axis].max, prev.layout[axis].max, p)
-// }
-
-// function easeBox(target: Box, prev: Snapshot, next: Snapshot, p: number) {
-//     easeAxis("x", target, prev, next, p)
-//     easeAxis("y", target, prev, next, p)
-// }
-
-// function getAnimatableShadow(shadow: string, fallback: string) {
-//     if (shadow === "none") {
-//         shadow = complex.getAnimatableNone(fallback)
-//     }
-
-//     return complex.parse(shadow) as BoxShadow
-// }
+//
