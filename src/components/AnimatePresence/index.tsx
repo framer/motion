@@ -11,9 +11,9 @@ import {
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { MagicContext } from "../../motion/magic/MagicContext"
+import { MagicContextUtils, BatchUpdate } from "../../motion/magic/types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
-
 type ComponentKey = string | number
 
 function getChildKey(child: ReactElement<any>): ComponentKey {
@@ -126,12 +126,12 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
-    const localForceRender = useForceUpdate()
-    const syncLayoutContext = useContext(MagicContext)
-    const contextForceRender = syncLayoutContext
-        ? syncLayoutContext.forceRender
-        : localForceRender
-    const forceRender = contextForceRender || localForceRender
+    let forceRender = useForceUpdate()
+    const magicContext = useContext(MagicContext)
+
+    if (isControlledMagicContext(magicContext)) {
+        forceRender = magicContext.forceRender
+    }
 
     const isInitialRender = useRef(true)
 
@@ -271,4 +271,10 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
                 : childrenToRender.map(child => cloneElement(child))}
         </>
     )
+}
+
+function isControlledMagicContext(
+    context: MagicContextUtils | BatchUpdate
+): context is MagicContextUtils {
+    return !!(context as any).forceRender
 }

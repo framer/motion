@@ -1,7 +1,14 @@
 import * as React from "react"
-import { MagicContextUtils } from "./types"
+import { MagicContextUtils, Snapshot } from "./types"
 import { MagicContext } from "./MagicContext"
 import { Magic } from "./Magic"
+import { batchUpdate } from "./utils"
+
+/**
+ * TODO:
+ * - Reimplement exit animation (reverse FLIP)
+ * - Make work without MagicMotion wrapper
+ */
 
 interface Props {
     children: React.ReactNode
@@ -9,6 +16,9 @@ interface Props {
 
 type Stack = Magic[]
 
+/**
+ * @public
+ */
 export class MagicMotion extends React.Component<Props, MagicContextUtils> {
     private hasMounted = false
 
@@ -16,21 +26,17 @@ export class MagicMotion extends React.Component<Props, MagicContextUtils> {
 
     private stacks = new Map<string, Stack>()
 
-    private snapshots = new Map<string, number>()
+    private snapshots = new Map<string, Snapshot>()
+
+    private update = batchUpdate()
 
     state = {
         forceRender: (): void => this.setState({ ...this.state }),
         register: (child: Magic) => this.register(child),
     }
 
-    shouldComponentUpdate() {
-        this.children.forEach(child => child.resetRotation())
-
-        // TODO: `magicKey` performance enhancememnt
-        return true
-    }
-
     getSnapshotBeforeUpdate() {
+        this.children.forEach(child => child.resetRotation())
         this.children.forEach(child => child.snapshot())
 
         this.stacks.forEach((stack, id) => {
@@ -48,11 +54,8 @@ export class MagicMotion extends React.Component<Props, MagicContextUtils> {
     }
 
     componentDidUpdate() {
-        const depthOrdered = Array.from(this.children).sort(sortByDepth)
-
-        depthOrdered.forEach(child => child.resetStyles())
-        depthOrdered.forEach(child => !child.isHidden && child.snapshotNext())
-        depthOrdered.forEach(child => !child.isHidden && child.startAnimation())
+        this.children.forEach(child => this.update.add(child))
+        this.update.flush()
     }
 
     register(child: Magic) {
@@ -66,30 +69,38 @@ export class MagicMotion extends React.Component<Props, MagicContextUtils> {
             this.hasMounted && this.resumeSharedElement(magicId, child, stack)
         }
 
-        return () => {
-            this.children.delete(child)
+        return () => this.removeChild(child)
+    }
 
-            if (!magicId) return
+    removeChild(child: Magic) {
+        this.children.delete(child)
 
-            const stack = this.getStack(magicId)
-            const index = stack.findIndex(
-                ({ props }) => props.magicId === magicId
-            )
+        // TODO: This might have changed between renders
+        const { magicId } = child.props
+        if (!magicId) return
 
-            // Unhide previous in stack here
+        const stack = this.getStack(magicId)
+        const index = stack.findIndex(stackChild => child === stackChild)
+        if (index === -1) return
+        stack.splice(index, 1)
 
-            index !== 1 && stack.splice(index, 1)
-        }
+        const previousChild = stack[index - 1]
+        if (previousChild) previousChild.show()
     }
 
     resumeSharedElement(id: string, child: Magic, stack: Stack) {
         const snapshot = this.snapshots.get(id)
-
         if (!snapshot) return
 
         child.prev = snapshot
-        const previousChild = stack[stack.length - 2]
-        previousChild.isHidden = true
+
+        // If we have more than one child in this stack, hide the
+        // previous child
+        const stackLength = stack.length
+        if (stackLength > 1) {
+            const previousChild = stack[stackLength - 2]
+            previousChild.hide()
+        }
     }
 
     getStack(id: string) {
@@ -108,5 +119,3 @@ export class MagicMotion extends React.Component<Props, MagicContextUtils> {
         )
     }
 }
-
-const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth
