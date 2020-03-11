@@ -189,7 +189,7 @@ export function startAnimation(
     key: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    { delay = 0, ...transition }: Transition
+    { delay = 0, ...transition }: Transition = {}
 ) {
     return value.start(complete => {
         let activeAnimation: ColdSubscription
