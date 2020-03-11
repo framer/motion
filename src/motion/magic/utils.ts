@@ -1,10 +1,19 @@
 import { clamp, mix, progress } from "@popmotion/popcorn"
-import { Axis, AxisDelta, Snapshot, BoxDelta, Box } from "./types"
+import {
+    Axis,
+    AxisDelta,
+    Snapshot,
+    BoxDelta,
+    Box,
+    Style,
+    BatchUpdate,
+} from "./types"
 import { NativeElement } from "../utils/use-native-element"
 import { MotionStyle } from "../types"
 import { MotionValue } from "../../value"
 import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
+import { Magic } from "./Magic"
 
 const clampProgress = clamp(0, 1)
 
@@ -139,7 +148,6 @@ export function applyTreeDeltas(box: Box, deltas: BoxDelta[]): void {
 export const animatableStyles = [
     "opacity",
     "backgroundColor",
-    "backgroundImage",
     "border",
     "color",
 ]
@@ -159,8 +167,11 @@ export function resolve<T extends unknown>(
  *
  * @param styleProp
  */
-export function resetStyles(styleProp: MotionStyle = {}, layout?: Box) {
-    const styles = {
+export function resetStyles(
+    styleProp: MotionStyle = {},
+    layout?: Box
+): MotionStyle {
+    const styles: MotionStyle = {
         x: 0,
         y: 0,
         scale: 1,
@@ -169,7 +180,7 @@ export function resetStyles(styleProp: MotionStyle = {}, layout?: Box) {
         rotate: 0,
         boxShadow: resolve("", styleProp.boxShadow),
         borderRadius: resolve("", styleProp.borderRadius),
-        position: resolve("", styleProp.position),
+        position: resolve("", styleProp.position) as any,
         width: resolve("", styleProp.width),
         height: resolve("", styleProp.height),
     }
@@ -187,3 +198,86 @@ export function resetStyles(styleProp: MotionStyle = {}, layout?: Box) {
 
     return styles
 }
+
+export function applyCurrent(style: Style, current: Partial<Style>) {
+    for (const key in current) {
+        style[key] = current[key]
+    }
+}
+
+export const zeroDelta: AxisDelta = {
+    translate: 0,
+    scale: 1,
+    origin: 0,
+    originPoint: 0,
+}
+
+function easeAxis(
+    axis: "x" | "y",
+    target: Box,
+    prev: Snapshot,
+    next: Snapshot,
+    p: number
+) {
+    target[axis].min = mix(next.layout[axis].min, prev.layout[axis].min, p)
+    target[axis].max = mix(next.layout[axis].max, prev.layout[axis].max, p)
+}
+
+export function easeBox(
+    target: Box,
+    prev: Snapshot,
+    next: Snapshot,
+    p: number
+) {
+    easeAxis("x", target, prev, next, p)
+    easeAxis("y", target, prev, next, p)
+}
+
+export const batchUpdate = (): BatchUpdate => {
+    const queue = new Set<Magic>()
+
+    const add = (child: Magic) => queue.add(child)
+
+    const flush = () => {
+        if (!queue.size) return
+
+        const order = Array.from(queue).sort(sortByDepth)
+
+        order.forEach(child => child.resetStyles())
+        order.forEach(child => !child.isHidden && child.snapshotNext())
+
+        order.forEach(child => {
+            if (child.isHidden) return
+
+            child.startAnimation()
+        })
+
+        // TODO: Restore isExiting logic
+        //   depthOrdered.forEach(child => {
+        //     if (child.isHidden) return
+
+        //     const { magicId } = child.props
+        //     if (child.isExiting() && magicId) {
+        //         // TODO Can we generalise this
+        //         const stack = this.getStack(magicId)
+        //         const index = stack.findIndex(
+        //             stackChild => child === stackChild
+        //         )
+        //         if (index === -1) return
+        //         const previousChild = stack[index - 1]
+        //         if (previousChild) {
+        //             child.prev = child.next
+        //             child.next = previousChild.prev
+        //         }
+        //     }
+
+        //     child.startAnimation()
+        // })
+
+        queue.clear()
+    }
+
+    return { add, flush }
+}
+
+const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth
