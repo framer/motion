@@ -43,3 +43,8 @@ export interface MagicContextUtils {
     forceRender: () => void
     register: (child: Magic) => () => void
 }
+
+export interface BatchUpdate {
+    add: (child: Magic) => void
+    flush: () => void
+}

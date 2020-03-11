@@ -1,4 +1,10 @@
 import { createContext } from "react"
-import { MagicContextUtils } from "./types"
+import { MagicContextUtils, BatchUpdate } from "./types"
+import { batchUpdate } from "./utils"
 
-export const MagicContext = createContext<MagicContextUtils | null>(null)
+/**
+ * @internal
+ */
+export const MagicContext = createContext<MagicContextUtils | BatchUpdate>(
+    batchUpdate()
+)
