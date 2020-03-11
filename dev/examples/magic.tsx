@@ -41,14 +41,11 @@ export const App = () => {
     const [count, cycleCount] = useCycle(0, 1, 2, 3)
 
     return (
-        <MagicMotion>
-            <motion.div
-                style={{ ...styles[count], position: "absolute" }}
-                magicId="test"
-                key={count}
-                id={`shape-${count}`}
-                onClick={() => cycleCount()}
-            />
-        </MagicMotion>
+        <motion.div
+            style={{ ...styles[count], position: "absolute" }}
+            magic
+            id={`shape-${count}`}
+            onClick={() => cycleCount()}
+        />
     )
 }

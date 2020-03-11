@@ -17,8 +17,9 @@ export interface MotionContextProps {
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
-    deltas?: BoxDelta[]
-    autoParentProgress?: MotionValue<number>
+    magicDeltas?: BoxDelta[]
+    // TODO: Replace this with an onUpdate on parentValues
+    magicProgress?: MotionValue<number>
     isReducedMotion?: boolean | undefined
     depth: number
 }

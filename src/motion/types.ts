@@ -288,6 +288,10 @@ export interface AnimationProps {
      * @beta
      */
     magicId?: string
+
+    onMagicComplete?: () => void
+
+    magicTransition?: Transition
 }
 
 /**

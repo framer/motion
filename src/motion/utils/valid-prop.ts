@@ -20,6 +20,8 @@ const validMotionProps = new Set<keyof MotionProps>([
     "static",
     "magic",
     "magicId",
+    "onMagicComplete",
+    "magicTransition",
     "onAnimationStart",
     "onAnimationComplete",
     "onUpdate",
