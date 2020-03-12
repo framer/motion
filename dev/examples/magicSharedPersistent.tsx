@@ -20,13 +20,19 @@ export const App = () => {
                     <motion.div magicId="box" id="source-box" style={box} />
                 </div>
 
-                <div style={outline}>
+                <div style={{ ...outline, width: 400, height: 400 }}>
                     <AnimatePresence>
                         {isOn && (
                             <motion.div
                                 magicId="box"
                                 id="target-box"
-                                style={box}
+                                style={{
+                                    ...box,
+                                    backgroundColor: "#ff0076",
+                                    width: 400,
+                                    height: 400,
+                                }}
+                                magicTransition={{ duration: 3 }}
                             />
                         )}
                     </AnimatePresence>
