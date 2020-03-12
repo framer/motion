@@ -13,7 +13,7 @@ import { AnimatePresenceProps } from "./types"
 import { MotionContext, ExitProps } from "../../motion/context/MotionContext"
 import { MagicContext } from "../../motion/magic/MagicContext"
 import { useForceUpdate } from "../../utils/use-force-update"
-import { MagicContextUtils, BatchUpdate } from "motion/magic/types"
+import { MagicControlledTree, MagicBatchTree } from "motion/magic/types"
 
 interface PresenceChildProps {
     children: ReactElement<any>
@@ -288,7 +288,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 }
 
 function isControlledMagicContext(
-    context: MagicContextUtils | BatchUpdate
-): context is MagicContextUtils {
+    context: MagicControlledTree | MagicBatchTree
+): context is MagicControlledTree {
     return !!(context as any).forceRender
 }
