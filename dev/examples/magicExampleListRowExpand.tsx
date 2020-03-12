@@ -47,8 +47,13 @@ const ContentRow = styled(motion.div)`
 
 function Item({ isOpen, onClick, i }: ItemProps) {
     return (
-        <Container magic onClick={onClick} transition={{ duration: 2 }}>
-            <Image magic transition={{ duration: 2 }} />
+        <Container
+            magic
+            onClick={onClick}
+            transition={{ duration: 2 }}
+            id="container"
+        >
+            <Image id="image" magic transition={{ duration: 2 }} />
             <AnimatePresence>
                 {isOpen && (
                     <motion.div

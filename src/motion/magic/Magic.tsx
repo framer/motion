@@ -15,7 +15,7 @@ import {
     calcTreeScale,
 } from "./utils"
 import { Snapshot, Style, BoxDelta, Box, BoxShadow } from "./types"
-import { motionValue, MotionValue } from "../../value"
+import { MotionValue } from "../../value"
 import { syncRenderSession } from "../../dom/sync-render-session"
 import { TargetAndTransition } from "types"
 import { startAnimation } from "../../animation/utils/transitions"
@@ -35,6 +35,8 @@ export class Magic extends React.Component<FunctionalProps> {
     prev: Snapshot
     next: Snapshot
 
+    progress: MotionValue<number>
+
     // TODO: Add comment to make sure its clear that this is mutative
     delta: BoxDelta = {
         x: { ...zeroDelta },
@@ -48,8 +50,6 @@ export class Magic extends React.Component<FunctionalProps> {
         y: number
     }
 
-    progress = motionValue(0)
-
     current: Partial<Style> = {
         rotate: 0,
     }
@@ -59,6 +59,7 @@ export class Magic extends React.Component<FunctionalProps> {
     constructor(props: FunctionalProps) {
         super(props)
         this.depth = props.localContext.depth
+        this.progress = props.localContext.magicProgress as MotionValue<number>
     }
 
     componentDidMount() {
@@ -126,14 +127,14 @@ export class Magic extends React.Component<FunctionalProps> {
         this.linkTree()
     }
 
-    // TODO: Could this be established in the constructor? Or elsewhere?
     linkTree() {
         const { localContext, parentContext } = this.props
-
-        localContext.magicProgress = this.progress
-
         const parentDeltas = parentContext.magicDeltas || []
-        localContext.magicDeltas = [...parentDeltas, this.delta]
+
+        if (localContext.magicDeltas) {
+            localContext.magicDeltas.length = 0
+            localContext.magicDeltas.push(...parentDeltas, this.delta)
+        }
     }
 
     hide() {
@@ -147,6 +148,7 @@ export class Magic extends React.Component<FunctionalProps> {
     startAnimation(target?: Snapshot) {
         syncRenderSession.open()
 
+        if (!this.prev) this.prev = this.next
         // If we're animating to an external target, copy its styles
         // straight to the `next` target
         if (target) this.next.style = target.style
