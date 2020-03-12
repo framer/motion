@@ -39,12 +39,16 @@ export interface Snapshot {
     style: Style
 }
 
-export interface MagicContextUtils {
+export interface MagicControlledTree {
     forceRender: () => void
     register: (child: Magic) => () => void
 }
 
-export interface BatchUpdate {
+export type GetVisualTarget = (child: Magic) => Snapshot | undefined
+
+export type FlushMagicChildren = (getVisualTarget?: GetVisualTarget) => void
+
+export interface MagicBatchTree {
     add: (child: Magic) => void
-    flush: () => void
+    flush: FlushMagicChildren
 }

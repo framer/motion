@@ -1,10 +1,10 @@
 import { createContext } from "react"
-import { MagicContextUtils, BatchUpdate } from "./types"
+import { MagicControlledTree, MagicBatchTree } from "./types"
 import { batchUpdate } from "./utils"
 
 /**
  * @internal
  */
-export const MagicContext = createContext<MagicContextUtils | BatchUpdate>(
+export const MagicContext = createContext<MagicControlledTree | MagicBatchTree>(
     batchUpdate()
 )
