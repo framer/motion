@@ -6,7 +6,7 @@ import {
     BoxDelta,
     Box,
     Style,
-    BatchUpdate,
+    MagicBatchTree,
 } from "./types"
 import { NativeElement } from "../utils/use-native-element"
 import { MotionStyle } from "../types"
@@ -233,12 +233,14 @@ export function easeBox(
     easeAxis("y", target, prev, next, p)
 }
 
-export const batchUpdate = (): BatchUpdate => {
+export const batchUpdate = (): MagicBatchTree => {
     const queue = new Set<Magic>()
 
     const add = (child: Magic) => queue.add(child)
 
-    const flush = () => {
+    const flush = (
+        getVisualTarget?: (child: Magic) => Snapshot | undefined
+    ) => {
         if (!queue.size) return
 
         const order = Array.from(queue).sort(sortByDepth)
@@ -249,30 +251,12 @@ export const batchUpdate = (): BatchUpdate => {
         order.forEach(child => {
             if (child.isHidden) return
 
-            child.startAnimation()
+            const visualTarget = getVisualTarget
+                ? getVisualTarget(child)
+                : undefined
+
+            child.startAnimation(visualTarget)
         })
-
-        // TODO: Restore isExiting logic
-        //   depthOrdered.forEach(child => {
-        //     if (child.isHidden) return
-
-        //     const { magicId } = child.props
-        //     if (child.isExiting() && magicId) {
-        //         // TODO Can we generalise this
-        //         const stack = this.getStack(magicId)
-        //         const index = stack.findIndex(
-        //             stackChild => child === stackChild
-        //         )
-        //         if (index === -1) return
-        //         const previousChild = stack[index - 1]
-        //         if (previousChild) {
-        //             child.prev = child.next
-        //             child.next = previousChild.prev
-        //         }
-        //     }
-
-        //     child.startAnimation()
-        // })
 
         queue.clear()
     }

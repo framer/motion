@@ -73,8 +73,6 @@ export class Magic extends React.Component<FunctionalProps> {
 
             this.componentDidUpdate = () => this.context.flush()
         }
-
-        if (!this.context.register) return
     }
 
     componentWillUnmount() {
@@ -94,12 +92,13 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     resetStyles() {
-        const { nativeElement, style } = this.props
+        const { nativeElement, style, values } = this.props
 
         const reset = resetStyles(style)
 
         if (this.isHidden) {
             reset.opacity = 0
+            values.get("opacity")?.set(0)
         }
 
         nativeElement.setStyle(reset)
@@ -113,6 +112,7 @@ export class Magic extends React.Component<FunctionalProps> {
         applyCurrent(prev.style, this.current)
 
         if (this.isHidden) prev.style.opacity = 1
+
         this.prev = prev
     }
 
@@ -144,11 +144,15 @@ export class Magic extends React.Component<FunctionalProps> {
         this.isHidden = false
     }
 
-    startAnimation() {
+    startAnimation(target?: Snapshot) {
         syncRenderSession.open()
 
+        // If we're animating to an external target, copy its styles
+        // straight to the `next` target
+        if (target) this.next.style = target.style
+
         const animations = [
-            this.startLayoutAnimation(),
+            this.startLayoutAnimation(target),
             this.startStyleAnimation(),
         ]
 
@@ -166,7 +170,7 @@ export class Magic extends React.Component<FunctionalProps> {
      * This uses the FLIP animation technique to animate physical dimensions
      * and correct distortion on related styles (ie borderRadius etc)
      */
-    startLayoutAnimation() {
+    startLayoutAnimation(visualTarget?: Snapshot) {
         let animation
 
         this.stopLayoutAnimation && this.stopLayoutAnimation()
@@ -195,9 +199,13 @@ export class Magic extends React.Component<FunctionalProps> {
         const borderRadius = values.get("borderRadius", "")
 
         const frame = () => {
-            // TODO: Break up each of these so we can animate seperately
+            // TODO: Break up each of these so we can animate separately
             const p = this.progress.get() / 1000
-            this.updateBoundingBox(p, isAnimatingRotate ? 0.5 : undefined)
+            this.updateBoundingBox(
+                p,
+                visualTarget,
+                isAnimatingRotate ? 0.5 : undefined
+            )
             this.updateTransform(x, y, scaleX, scaleY)
 
             isAnimatingRotate && this.updateRotate(p, rotate)
@@ -271,14 +279,19 @@ export class Magic extends React.Component<FunctionalProps> {
         }
     }
 
-    updateBoundingBox(p: number, origin?: number) {
+    updateBoundingBox(p: number, visualTarget?: Snapshot, origin?: number) {
         const { parentContext } = this.props
         const parentDeltas = parentContext.magicDeltas || []
 
-        easeBox(this.target, this.prev, this.next, p)
-        applyTreeDeltas(this.target, parentDeltas)
-
-        calcBoxDelta(this.delta, this.prev.layout, this.target, origin)
+        if (visualTarget) {
+            easeBox(this.target, this.prev, visualTarget, 1 - p)
+            applyTreeDeltas(this.target, parentDeltas)
+            calcBoxDelta(this.delta, this.target, this.next.layout, origin)
+        } else {
+            easeBox(this.target, this.prev, this.next, p)
+            applyTreeDeltas(this.target, parentDeltas)
+            calcBoxDelta(this.delta, this.prev.layout, this.target, origin)
+        }
 
         // TODO: If we could return this from applyTreeDeltas
         // it'd save a second loop

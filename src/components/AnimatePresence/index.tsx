@@ -11,7 +11,7 @@ import {
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { MagicContext } from "../../motion/magic/MagicContext"
-import { MagicContextUtils, BatchUpdate } from "../../motion/magic/types"
+import { MagicControlledTree, MagicBatchTree } from "../../motion/magic/types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
 type ComponentKey = string | number
@@ -274,7 +274,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 }
 
 function isControlledMagicContext(
-    context: MagicContextUtils | BatchUpdate
-): context is MagicContextUtils {
+    context: MagicControlledTree | MagicBatchTree
+): context is MagicControlledTree {
     return !!(context as any).forceRender
 }
