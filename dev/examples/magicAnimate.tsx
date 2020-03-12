@@ -18,16 +18,14 @@ export const App = () => {
 
     return (
         <Container onClick={() => setIsOn(!isOn)}>
-            <MagicMotion>
-                {isOn && (
-                    <Box
-                        magic
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ duration: 3 }}
-                    />
-                )}
-            </MagicMotion>
+            {isOn && (
+                <Box
+                    magic
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 3 }}
+                />
+            )}
         </Container>
     )
 }
