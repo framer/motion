@@ -8,6 +8,7 @@ import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { BoxDelta } from "../../motion/magic/types"
 import { MotionValue } from "../../value"
+import { useMotionValue } from "../../value/use-motion-value"
 
 export interface ExitProps {
     initial?: false | VariantLabels
@@ -117,6 +118,10 @@ export const useMotionContext = (
             ? targetAnimate
             : null
 
+    // TODO it'd be better to do this differently
+    const magicDeltas = useRef<BoxDelta[]>([])
+    const magicProgress = useMotionValue(0)
+
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
     // unlikely to change, by making the context an object it'll be considered a new value every render.
     // So all child motion components will re-render as a result.
@@ -131,6 +136,8 @@ export const useMotionContext = (
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
             depth: parentContext.depth + 1,
+            magicDeltas: magicDeltas.current,
+            magicProgress,
         }),
         [initialDependency, animateDependency, parentContext.isReducedMotion]
     )
