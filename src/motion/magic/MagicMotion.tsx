@@ -35,8 +35,12 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
         register: (child: Magic) => this.register(child),
     }
 
-    getSnapshotBeforeUpdate() {
+    shouldComponentUpdate() {
         this.children.forEach(child => child.resetRotation())
+        return true
+    }
+
+    getSnapshotBeforeUpdate() {
         this.children.forEach(child => child.snapshot())
 
         this.stacks.forEach((stack, id) => {
