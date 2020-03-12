@@ -14,13 +14,22 @@ import {
     calcBoxDelta,
     calcTreeScale,
 } from "./utils"
-import { Snapshot, Style, BoxDelta, Box, BoxShadow } from "./types"
+import {
+    Snapshot,
+    Style,
+    BoxDelta,
+    Box,
+    BoxShadow,
+    MagicControlledTree,
+    MagicBatchTree,
+} from "./types"
 import { MotionValue } from "../../value"
 import { syncRenderSession } from "../../dom/sync-render-session"
-import { TargetAndTransition } from "types"
+import { TargetAndTransition } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
 import { mix, mixColor } from "@popmotion/popcorn"
 import { complex } from "style-value-types"
+export { MagicControlledTree, MagicBatchTree }
 
 export class Magic extends React.Component<FunctionalProps> {
     static contextType = MagicContext
