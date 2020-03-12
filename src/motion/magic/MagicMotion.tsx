@@ -1,5 +1,5 @@
 import * as React from "react"
-import { MagicContextUtils, Snapshot } from "./types"
+import { MagicControlledTree, Snapshot } from "./types"
 import { MagicContext } from "./MagicContext"
 import { Magic } from "./Magic"
 import { batchUpdate } from "./utils"
@@ -19,7 +19,7 @@ type Stack = Magic[]
 /**
  * @public
  */
-export class MagicMotion extends React.Component<Props, MagicContextUtils> {
+export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     private hasMounted = false
 
     private children = new Set<Magic>()
@@ -55,7 +55,7 @@ export class MagicMotion extends React.Component<Props, MagicContextUtils> {
 
     componentDidUpdate() {
         this.children.forEach(child => this.update.add(child))
-        this.update.flush()
+        this.update.flush(child => this.getVisualTarget(child))
     }
 
     register(child: Magic) {
@@ -100,6 +100,21 @@ export class MagicMotion extends React.Component<Props, MagicContextUtils> {
         if (stackLength > 1) {
             const previousChild = stack[stackLength - 2]
             previousChild.hide()
+        }
+    }
+
+    getVisualTarget(child: Magic) {
+        const { magicId } = child.props
+
+        if (magicId !== undefined && child.isExiting()) {
+            const stack = this.getStack(magicId)
+            const index = stack.findIndex(stackChild => child === stackChild)
+
+            if (index === -1) return
+
+            const previousChild = stack[index - 1]
+
+            if (previousChild) return previousChild.prev
         }
     }
 
