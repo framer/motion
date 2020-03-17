@@ -1,12 +1,12 @@
 import { Target, TargetWithKeyframes } from "../types"
 import { MotionValuesMap } from "../motion"
 import { MotionValue } from "../value"
-import { transformProps } from "stylefire"
-import { getDimensionValueType } from "./value-types"
+import { transformOrder } from "../dom/VisualElement/utils/transform"
+import { detectDimensionValueType } from "./value-types"
 import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { number, px, ValueType } from "style-value-types"
-import { NativeElement } from "../motion/utils/use-native-element"
+import { VisualElement } from "../dom/VisualElement"
 
 const positionalKeys = new Set([
     "width",
@@ -68,15 +68,15 @@ const getTranslateFromMatrix = (
     }
 }
 
-const transformKeys = new Set(["x", "y", "z"])
-const nonTranslationalTransformKeys = transformProps.filter(
-    key => !transformKeys.has(key)
+const translateKeys = new Set(["x", "y", "z"])
+const nonTranslationalTransformKeys = transformOrder.filter(
+    key => !translateKeys.has(key)
 )
 
 type RemovedTransforms = [string, string | number][]
 function removeNonTranslationalTransform(
     values: MotionValuesMap,
-    nativeElement: NativeElement<Element>
+    visualElement: VisualElement
 ) {
     const removedTransforms: RemovedTransforms = []
 
@@ -89,7 +89,7 @@ function removeNonTranslationalTransform(
     })
 
     // Apply changes to element before measurement
-    if (removedTransforms.length) nativeElement.render()
+    if (removedTransforms.length) visualElement.render()
 
     return removedTransforms
 }
@@ -112,11 +112,11 @@ const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
     values: MotionValuesMap,
-    nativeElement: NativeElement<Element>,
+    visualElement: VisualElement,
     changedKeys: string[]
 ) => {
-    const originBbox = nativeElement.getBoundingBox()
-    const elementComputedStyle = nativeElement.getComputedStyle()
+    const originBbox = visualElement.getBoundingBox()
+    const elementComputedStyle = visualElement.getComputedStyle()
     const {
         display,
         top,
@@ -130,13 +130,16 @@ const convertChangedValueTypes = (
     // If the element is currently set to display: "none", make it visible before
     // measuring the target bounding box
     if (display === "none") {
-        nativeElement.setStyle("display", target.display || "block")
+        visualElement.setStyle(
+            "display",
+            (target.display as string | number) || "block"
+        )
     }
 
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)
-    nativeElement.render()
+    visualElement.render()
 
-    const targetBbox = nativeElement.getBoundingBox()
+    const targetBbox = visualElement.getBoundingBox()
 
     changedKeys.forEach(key => {
         // Restore styles to their **calculated computed style**, not their actual
@@ -154,7 +157,7 @@ const convertChangedValueTypes = (
 
 const checkAndConvertChangedValueTypes = (
     values: MotionValuesMap,
-    nativeElement: NativeElement<Element>,
+    visualElement: VisualElement,
     target: TargetWithKeyframes,
     transitionEnd: Target = {}
 ): { target: TargetWithKeyframes; transitionEnd: Target } => {
@@ -175,7 +178,7 @@ const checkAndConvertChangedValueTypes = (
 
             const from = value.get()
             const to = target[key]
-            const fromType = getDimensionValueType(from)
+            const fromType = detectDimensionValueType(from)
             let toType
 
             // TODO: The current implementation of this basically throws an error
@@ -187,7 +190,7 @@ const checkAndConvertChangedValueTypes = (
 
                 for (let i = to[0] === null ? 1 : 0; i < numKeyframes; i++) {
                     if (!toType) {
-                        toType = getDimensionValueType(to[i])
+                        toType = detectDimensionValueType(to[i])
 
                         invariant(
                             toType === fromType ||
@@ -197,13 +200,13 @@ const checkAndConvertChangedValueTypes = (
                         )
                     } else {
                         invariant(
-                            getDimensionValueType(to[i]) === toType,
+                            detectDimensionValueType(to[i]) === toType,
                             "All keyframes must be of the same type"
                         )
                     }
                 }
             } else {
-                toType = getDimensionValueType(to)
+                toType = detectDimensionValueType(to)
             }
 
             if (fromType !== toType) {
@@ -225,7 +228,7 @@ const checkAndConvertChangedValueTypes = (
                     if (!hasAttemptedToRemoveTransformValues) {
                         removedTransformValues = removeNonTranslationalTransform(
                             values,
-                            nativeElement
+                            visualElement
                         )
                         hasAttemptedToRemoveTransformValues = true
                     }
@@ -248,7 +251,7 @@ const checkAndConvertChangedValueTypes = (
         const convertedTarget = convertChangedValueTypes(
             target,
             values,
-            nativeElement,
+            visualElement,
             changedValueTypeKeys
         )
 
@@ -260,7 +263,7 @@ const checkAndConvertChangedValueTypes = (
         }
 
         // Reapply original values
-        nativeElement.render()
+        visualElement.render()
 
         return { target: convertedTarget, transitionEnd }
     } else {
@@ -274,21 +277,21 @@ const checkAndConvertChangedValueTypes = (
  * Allows animation between `'auto'` -> `'100%'` or `0` -> `'calc(50% - 10vw)'`
  *
  * @param values
- * @param nativeElement
+ * @param visualElement
  * @param target
  * @param transitionEnd
  * @internal
  */
 export function unitConversion(
     values: MotionValuesMap,
-    nativeElement: NativeElement<Element>,
+    visualElement: VisualElement,
     target: TargetWithKeyframes,
     transitionEnd?: Target
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     return hasPositionalKey(target)
         ? checkAndConvertChangedValueTypes(
               values,
-              nativeElement,
+              visualElement,
               target,
               transitionEnd
           )

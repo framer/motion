@@ -91,18 +91,18 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     resetRotation() {
-        const { nativeElement, values } = this.props
+        const { visualElement, values } = this.props
         const rotate = values.get("rotate")
         this.current.rotate = rotate ? (rotate.get() as number) : 0
 
         if (!this.current.rotate) return
 
-        nativeElement.setStyle("rotate", 0)
-        nativeElement.render()
+        visualElement.setStyle("rotate", 0)
+        visualElement.render()
     }
 
     resetStyles() {
-        const { nativeElement, style, values } = this.props
+        const { visualElement, style, values } = this.props
 
         const reset = resetStyles(style)
 
@@ -111,14 +111,14 @@ export class Magic extends React.Component<FunctionalProps> {
             values.get("opacity")?.set(0)
         }
 
-        nativeElement.setStyle(reset)
+        visualElement.setStyle(reset)
         // TODO: When exiting calculate size for new element
-        nativeElement.render()
+        visualElement.render()
     }
 
     snapshot() {
-        const { nativeElement } = this.props
-        const prev = snapshot(nativeElement)
+        const { visualElement } = this.props
+        const prev = snapshot(visualElement)
         applyCurrent(prev.style, this.current)
 
         if (this.isHidden) prev.style.opacity = 1
@@ -127,9 +127,9 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     snapshotNext() {
-        const { nativeElement, style } = this.props
+        const { visualElement, style } = this.props
 
-        const next = snapshot(nativeElement)
+        const next = snapshot(visualElement)
         next.style.rotate = resolve(0, style && style.rotate)
         this.next = next
 
@@ -315,12 +315,12 @@ export class Magic extends React.Component<FunctionalProps> {
         scaleX: MotionValue<number>,
         scaleY: MotionValue<number>
     ) {
-        const { nativeElement } = this.props
+        const { visualElement } = this.props
         const dx = this.delta.x
         const dy = this.delta.y
 
-        nativeElement.setStyle("originX", dx.origin)
-        nativeElement.setStyle("originY", dy.origin)
+        visualElement.setStyle("originX", dx.origin)
+        visualElement.setStyle("originY", dy.origin)
 
         x.set(dx.translate / this.treeScale.x)
         y.set(dy.translate / this.treeScale.y)
@@ -495,22 +495,22 @@ function getAnimatableShadow(shadow: string, fallback: string) {
 //     }
 
 //     resetRotation() {
-//         const { values, nativeElement } = this.props
+//         const { values, visualElement } = this.props
 //         const rotate = values.get("rotate")
 //         if (!rotate) return
 
 //         this.prevRotate = (rotate.get() as number) || 0
 
 //         if (this.prevRotate) {
-//             nativeElement.setStyle("rotate", 0)
-//             nativeElement.render()
+//             visualElement.setStyle("rotate", 0)
+//             visualElement.render()
 //         }
 //     }
 
 //     snapshot() {
-//         const { nativeElement } = this.props
+//         const { visualElement } = this.props
 
-//         this.prev = snapshot(nativeElement)
+//         this.prev = snapshot(visualElement)
 //         this.prev.style.rotate = this.prevRotate
 
 //         // We don't want to animate from the measured border radius, but from the currently animated one
@@ -539,7 +539,7 @@ function getAnimatableShadow(shadow: string, fallback: string) {
 //     scheduleTransition(prev?: Snapshot) {
 //         if (prev) this.prev = prev
 
-//         const { nativeElement, parentContext, localContext, style } = this.props
+//         const { visualElement, parentContext, localContext, style } = this.props
 //         const isExiting = parentContext.exitProps?.isExiting
 //         let animationDirection = 1
 
@@ -551,7 +551,7 @@ function getAnimatableShadow(shadow: string, fallback: string) {
 //                     // TODO: Look into lifecycle order to see if its possible to outright stop transition from firing
 //                     // or being scheduled if this.hidden
 //                     if (this.hidden) {
-//                         nativeElement.setStyle({ opacity: 0 })
+//                         visualElement.setStyle({ opacity: 0 })
 //                         return
 //                     }
 //                     // If we're not coming from anywhere we don't need to reset any styles
@@ -559,10 +559,10 @@ function getAnimatableShadow(shadow: string, fallback: string) {
 
 //                     // Write: Remove the `transform` prop so we can correctly read its new layout position,
 //                     // and reset any styles present
-//                     nativeElement.setStyle(
+//                     visualElement.setStyle(
 //                         resetStyles(style, isExiting && this.prev.layout)
 //                     )
-//                     nativeElement.render()
+//                     visualElement.render()
 //                 })
 
 //                 schedule(() => {
@@ -591,7 +591,7 @@ function getAnimatableShadow(shadow: string, fallback: string) {
 //                         //this.next.layout = this.prev.layout
 //                     } else {
 //                         // Read: Take a new snapshot
-//                         this.next = snapshot(nativeElement)
+//                         this.next = snapshot(visualElement)
 //                     }
 
 //                     this.next.style.rotate = resolve(0, style && style.rotate)
@@ -651,7 +651,7 @@ function getAnimatableShadow(shadow: string, fallback: string) {
 //         let animation
 //         this.detachFromParentLayout && this.detachFromParentLayout()
 
-//         const { nativeElement, values, parentContext } = this.props
+//         const { visualElement, values, parentContext } = this.props
 //         const prevStyle = this.prev.style
 //         const nextStyle = this.next.style
 
@@ -717,8 +717,8 @@ function getAnimatableShadow(shadow: string, fallback: string) {
 //             // TODO: Look into combining this into a single loop with applyTreeDeltas
 //             const treeScale = calcTreeScale(parentDeltas)
 
-//             nativeElement.setStyle("originX", this.delta.x.origin)
-//             nativeElement.setStyle("originY", this.delta.y.origin)
+//             visualElement.setStyle("originX", this.delta.x.origin)
+//             visualElement.setStyle("originY", this.delta.y.origin)
 
 //             const deltaXScale = this.delta.x.scale
 //             const deltaYScale = this.delta.y.scale

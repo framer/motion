@@ -23,8 +23,8 @@ export const Gestures: FunctionalComponentDefinition = {
         return gestureProps.some(key => props.hasOwnProperty(key))
     },
     Component: makeRenderlessComponent(
-        ({ nativeElement, ...props }: FunctionalProps) => {
-            useGestures(props, nativeElement)
+        ({ visualElement, ...props }: FunctionalProps) => {
+            useGestures(props, visualElement)
         }
     ),
 }

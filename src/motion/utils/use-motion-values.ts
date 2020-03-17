@@ -1,25 +1,14 @@
 import { MotionValue } from "../../value"
-import { createStylerFactory, Styler } from "stylefire"
-import { OnUpdate, MotionProps, TransformTemplate } from "../types"
+import { OnUpdate, MotionProps } from "../types"
 import { useConstant } from "../../utils/use-constant"
 import { isMotionValue } from "../../value/utils/is-motion-value"
+import sync from "framesync"
 
-// Creating a styler factory for the `onUpdate` prop allows all values
-// to fire and the `onUpdate` prop will only fire once per frame
-const updateStyler = createStylerFactory({
-    onRead: () => null,
-    onRender: (state, { onUpdate }) => onUpdate(state),
-})
-
-type Output = (
-    key: string,
-    value: string | number | TransformTemplate | undefined
-) => void
+type Output = (key: string, value: string | number | undefined) => void
 
 export class MotionValuesMap {
     private hasMounted = false
-    private transformTemplate: TransformTemplate | undefined
-    private onUpdate?: Styler
+    private onUpdate?: (key: string, value: string | number) => void
     private values = new Map<string, MotionValue>()
     private unsubscribers = new Map<string, () => void>()
     private output: Output
@@ -59,7 +48,7 @@ export class MotionValuesMap {
         const unsubscribeOnRender = value.onRenderRequest(onRender)
 
         const onChange = (v: any) => {
-            this.onUpdate && this.onUpdate.set(key, v)
+            this.onUpdate && this.onUpdate(key, v)
         }
         const unsubscribeOnChange = value.onChange(onChange)
 
@@ -76,24 +65,7 @@ export class MotionValuesMap {
     setOnUpdate(onUpdate?: OnUpdate) {
         this.onUpdate = undefined
         if (onUpdate) {
-            this.onUpdate = updateStyler({ onUpdate })
-        }
-    }
-
-    setTransformTemplate(transformTemplate?: TransformTemplate | undefined) {
-        if (this.transformTemplate !== transformTemplate) {
-            this.transformTemplate = transformTemplate
-            this.updateTransformTemplate()
-        }
-    }
-
-    getTransformTemplate() {
-        return this.transformTemplate
-    }
-
-    updateTransformTemplate() {
-        if (this.output) {
-            this.output("transform", this.transformTemplate)
+            this.onUpdate = batchUpdate(onUpdate)
         }
     }
 
@@ -102,7 +74,6 @@ export class MotionValuesMap {
 
         if (output) this.output = output
         this.values.forEach((value, key) => this.bindValueToOutput(key, value))
-        this.updateTransformTemplate()
     }
 
     unmount() {
@@ -137,7 +108,22 @@ export const useMotionValues = (props: MotionProps) => {
         return map
     })
     motionValues.setOnUpdate(props.onUpdate)
-    motionValues.setTransformTemplate(props.transformTemplate)
 
     return motionValues
+}
+
+function batchUpdate(update: OnUpdate) {
+    let shouldUpdate = false
+    const values: { [key: string]: string | number } = {}
+
+    const updateValues = () => update(values)
+
+    return (key: string, value: string | number) => {
+        values[key] = value
+
+        if (!shouldUpdate) {
+            shouldUpdate = true
+            sync.render(updateValues)
+        }
+    }
 }

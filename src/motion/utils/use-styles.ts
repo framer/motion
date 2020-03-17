@@ -1,9 +1,10 @@
 import { useRef, CSSProperties } from "react"
-import { buildStyleProperty, isTransformProp } from "stylefire"
+import { isTransformProp } from "../../dom/VisualElement/utils/transform"
+import { buildStyles } from "../../dom/VisualElement/utils/style"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
-import { MotionStyle } from "../types"
+import { MotionStyle, TransformTemplate } from "../types"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
 const transformOriginProps = new Set(["originX", "originY", "originZ"])
@@ -12,20 +13,13 @@ const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
 export const buildStyleAttr = (
     values: MotionValuesMap,
     styleProp: CSSProperties,
-    isStatic?: boolean
+    isStatic?: boolean,
+    transformTemplate?: TransformTemplate
 ): CSSProperties => {
     const motionValueStyles: { [key: string]: any } = resolveCurrent(values)
-    const transformTemplate = values.getTransformTemplate()
-
-    if (transformTemplate) {
-        // If `transform` has been manually set as a string, pass that through the template
-        // otherwise pass it forward to Stylefire's style property builder
-        motionValueStyles.transform = styleProp.transform
-            ? transformTemplate({}, styleProp.transform)
-            : transformTemplate
-    }
-
-    return buildStyleProperty({ ...styleProp, ...motionValueStyles }, !isStatic)
+    const target = { ...styleProp, ...motionValueStyles }
+    const opts = { enableHardwareAcceleration: !isStatic, transformTemplate }
+    return buildStyles(target as any, {}, opts)
 }
 
 export const useMotionStyles = <V extends {} = {}>(

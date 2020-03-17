@@ -8,16 +8,17 @@ import {
     Style,
     MagicBatchTree,
 } from "./types"
-import { NativeElement } from "../utils/use-native-element"
 import { MotionStyle } from "../types"
 import { MotionValue } from "../../value"
 import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { Magic } from "./Magic"
+import { VisualElement } from "../../dom/VisualElement"
+import { Styles } from "../../dom/VisualElement/types"
 
 const clampProgress = clamp(0, 1)
 
-export function snapshot(element: NativeElement): Snapshot {
+export function snapshot(element: VisualElement): Snapshot {
     const { top, left, right, bottom } = element.getBoundingBox()
     const {
         backgroundColor,
@@ -167,11 +168,8 @@ export function resolve<T extends unknown>(
  *
  * @param styleProp
  */
-export function resetStyles(
-    styleProp: MotionStyle = {},
-    layout?: Box
-): MotionStyle {
-    const styles: MotionStyle = {
+export function resetStyles(styleProp: MotionStyle = {}, layout?: Box): Styles {
+    const styles: Styles = {
         x: 0,
         y: 0,
         scale: 1,

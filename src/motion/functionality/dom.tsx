@@ -1,7 +1,7 @@
 // TODO: Move this file to `src/dom/`
 import * as React from "react"
 import { createElement, ComponentType, CSSProperties } from "react"
-import { buildSVGAttrs } from "stylefire"
+import { buildSVGAttrs } from "../../dom/VisualElement/svg/attrs"
 import { MotionProps } from "../types"
 import { buildStyleAttr } from "../utils/use-styles"
 import { svgElements } from "../utils/supported-elements"
@@ -61,11 +61,12 @@ function filterValidProps(props: MotionProps) {
 const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     const motionValueStyles = resolveCurrent(values)
     const props = buildSVGAttrs(
+        undefined,
         motionValueStyles,
+        { enableHardwareAcceleration: false },
         undefined,
         undefined,
-        undefined,
-        undefined,
+        0,
         false
     )
     props.style = { ...style, ...props.style } as any
@@ -87,16 +88,23 @@ export function createDomMotionConfig<P = MotionProps>(
     const isSVG = isDOM && svgElements.indexOf(Component as any) !== -1
 
     return {
-        renderComponent: (nativeElement, style, values, props, isStatic) => {
+        renderComponent: (ref, style, values, props, isStatic) => {
             const forwardedProps = isDOM ? filterValidProps(props) : props
 
             const staticVisualStyles = isSVG
                 ? buildSVGProps(values, style)
-                : { style: buildStyleAttr(values, style, isStatic) }
+                : {
+                      style: buildStyleAttr(
+                          values,
+                          style,
+                          isStatic,
+                          (props as MotionProps).transformTemplate
+                      ),
+                  }
 
             return createElement<any>(Component, {
                 ...forwardedProps,
-                ref: nativeElement.ref,
+                ref,
                 ...staticVisualStyles,
             })
         },
@@ -121,7 +129,7 @@ export function createDomMotionConfig<P = MotionProps>(
          *  2) User-defined "clean props" function that removes their plugin's props before being passed to the DOM.
          */
         loadFunctionalityComponents: (
-            nativeElement,
+            visualElement,
             values,
             props,
             context,
@@ -165,7 +173,7 @@ export function createDomMotionConfig<P = MotionProps>(
                             parentContext={parentContext}
                             values={values}
                             controls={controls}
-                            nativeElement={nativeElement}
+                            visualElement={visualElement}
                         />
                     )
                 }
@@ -173,14 +181,14 @@ export function createDomMotionConfig<P = MotionProps>(
 
             return activeComponents
         },
-        getValueControlsConfig(nativeElement, values) {
+        getValueControlsConfig(visualElement, values) {
             return {
                 values,
-                readValueFromSource: key => nativeElement.getStyle(key),
+                readValueFromSource: key => visualElement.readStyle(key),
                 // TODO: This is a good second source of plugins. This function contains the CSS variable
                 // and unit conversion support. These functions share a common signature. We could make another
                 // API for adding these.
-                makeTargetAnimatable: parseDomVariant(values, nativeElement),
+                makeTargetAnimatable: parseDomVariant(values, visualElement),
             }
         },
     }

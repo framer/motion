@@ -17,12 +17,12 @@ import { invariant } from "hey-listen"
 import { mix } from "@popmotion/popcorn"
 import { addDomEvent } from "../events/use-dom-event"
 import { extractEventInfo } from "../events/event-info"
-import { NativeElement } from "../motion/utils/use-native-element"
+import { VisualElement } from "../dom/VisualElement"
 
 const noop = (v: any) => v
 
 interface DragControlConfig {
-    nativeElement: NativeElement
+    visualElement: VisualElement
     values: MotionValuesMap
     controls: ValueAnimationControls
 }
@@ -103,7 +103,7 @@ export class ComponentDragControls {
     /**
      * @internal
      */
-    private nativeElement: NativeElement<Element>
+    private visualElement: VisualElement
 
     /**
      * A reference to the host component's animation controls.
@@ -158,8 +158,8 @@ export class ComponentDragControls {
         y: 0,
     }
 
-    constructor({ nativeElement, values, controls }: DragControlConfig) {
-        this.nativeElement = nativeElement
+    constructor({ visualElement, values, controls }: DragControlConfig) {
+        this.visualElement = visualElement
         this.values = values
         this.controls = controls
     }
@@ -218,7 +218,7 @@ export class ComponentDragControls {
                 const { dragConstraints, transformPagePoint } = this.props
                 this.constraints = calculateConstraintsFromDom(
                     (dragConstraints as RefObject<Element>).current as Element,
-                    this.nativeElement.getInstance(),
+                    this.visualElement.getInstance(),
                     this.point,
                     transformPagePoint
                 )
@@ -333,7 +333,7 @@ export class ComponentDragControls {
         const { transformPagePoint } = this.props
         const { point } = extractEventInfo(event)
         const boundingBox = getBoundingBox(
-            this.nativeElement.getInstance(),
+            this.visualElement.getInstance(),
             transformPagePoint
         )
         const center = {
@@ -494,7 +494,7 @@ export class ComponentDragControls {
             transformPagePoint
         )
         const draggableBox = getBoundingBox(
-            this.nativeElement.getInstance(),
+            this.visualElement.getInstance(),
             transformPagePoint
         )
 
@@ -545,7 +545,7 @@ export class ComponentDragControls {
             const { dragConstraints, transformPagePoint } = this.props
             const constraints = calculateConstraintsFromDom(
                 (dragConstraints as RefObject<Element>).current as Element,
-                this.nativeElement.getInstance(),
+                this.visualElement.getInstance(),
                 this.point,
                 transformPagePoint
             )

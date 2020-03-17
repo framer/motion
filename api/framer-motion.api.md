@@ -19,8 +19,8 @@ import { Ref } from 'react';
 import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { SpringProps } from 'popmotion';
-import { Styler } from 'stylefire';
 import { SVGAttributes } from 'react';
+import { TransformTemplate } from 'motion/types';
 
 // @public
 export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
@@ -729,10 +729,10 @@ export function useDragControls(): DragControls;
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
-// Warning: (ae-forgotten-export) The symbol "NativeElement" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useGestures<GestureHandlers>(props: GestureHandlers, ref: NativeElement): void;
+export function useGestures<GestureHandlers>(props: GestureHandlers, ref: VisualElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
 // 
@@ -745,7 +745,7 @@ export function useMotionValue<T>(initial: T): MotionValue<T>;
 // Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element> | NativeElement): void;
+export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element> | VisualElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "Present" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "NotPresent" needs to be exported by the entry point index.d.ts

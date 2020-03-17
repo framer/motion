@@ -12,14 +12,15 @@ import {
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
-import { useNativeElement, NativeElement } from "./utils/use-native-element"
+import { useVisualElement } from "../dom/VisualElement/use-visual-element"
+import { VisualElement } from "../dom/VisualElement"
 export { MotionProps }
 
 export interface MotionComponentConfig {
     loadFunctionalityComponents: LoadFunctionalityComponents
     renderComponent: RenderComponent
     getValueControlsConfig: (
-        nativeElement: NativeElement,
+        visualElement: VisualElement,
         values: MotionValuesMap
     ) => ValueAnimationConfig
 }
@@ -37,8 +38,15 @@ export const createMotionComponent = <P extends {}>({
         externalRef?: Ref<Element>
     ) {
         const parentContext = useContext(MotionContext)
-        const isStatic = parentContext.static || props.static || false
         const values = useMotionValues(props)
+        const isStatic = parentContext.static || props.static || false
+
+        const [visualElement, ref] = useVisualElement(
+            values,
+            !isStatic,
+            externalRef
+        )
+
         const style = useMotionStyles(
             values,
             props.style,
@@ -47,10 +55,8 @@ export const createMotionComponent = <P extends {}>({
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
 
-        const nativeElement = useNativeElement(values, !isStatic, externalRef)
-
         const controlsConfig = useConstant(() => {
-            return getValueControlsConfig(nativeElement, values)
+            return getValueControlsConfig(visualElement, values)
         })
         const controls = useValueAnimationControls(
             controlsConfig,
@@ -70,7 +76,7 @@ export const createMotionComponent = <P extends {}>({
         const functionality = isStatic
             ? null
             : loadFunctionalityComponents(
-                  nativeElement,
+                  visualElement,
                   values,
                   props,
                   context,
@@ -80,7 +86,7 @@ export const createMotionComponent = <P extends {}>({
               )
 
         const renderedComponent = renderComponent(
-            nativeElement,
+            ref,
             style,
             values,
             props,
