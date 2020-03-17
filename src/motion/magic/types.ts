@@ -27,7 +27,10 @@ export type BoxShadow = [string, number, number, number, number]
 export interface Style {
     backgroundColor: string
     border: string
-    borderRadius: number
+    borderTopLeftRadius: number
+    borderTopRightRadius: number
+    borderBottomLeftRadius: number
+    borderBottomRightRadius: number
     boxShadow: string
     color: string
     opacity: number
