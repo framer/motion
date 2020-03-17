@@ -189,7 +189,17 @@ export class Magic extends React.Component<FunctionalProps> {
         const prevStyle = this.prev.style
         const nextStyle = this.next.style
         const isAnimatingRotate = prevStyle.rotate !== nextStyle.rotate
-        const hasBorderRadius = prevStyle.borderRadius || nextStyle.borderRadius
+
+        const hasBorderTopLeftRadius =
+            prevStyle.borderTopLeftRadius || nextStyle.borderTopLeftRadius
+        const hasBorderTopRightRadius =
+            prevStyle.borderTopRightRadius || nextStyle.borderTopRightRadius
+        const hasBorderBottomLeftRadius =
+            prevStyle.borderBottomLeftRadius || nextStyle.borderBottomLeftRadius
+        const hasBorderBottomRightRadius =
+            prevStyle.borderBottomRightRadius ||
+            nextStyle.borderBottomRightRadius
+
         const hasBoxShadow =
             prevStyle.boxShadow !== "none" || nextStyle.boxShadow !== "none"
         const updateBoxShadow =
@@ -207,7 +217,14 @@ export class Magic extends React.Component<FunctionalProps> {
         const scaleX = values.get("scaleX", 1)
         const scaleY = values.get("scaleY", 1)
         const rotate = values.get("rotate", 0)
-        const borderRadius = values.get("borderRadius", "")
+
+        const borderTopLeftRadius = values.get("borderTopLeftRadius", "")
+        const borderTopRightRadius = values.get("borderTopRightRadius", "")
+        const borderBottomLeftRadius = values.get("borderBottomLeftRadius", "")
+        const borderBottomRightRadius = values.get(
+            "borderBottomRightRadius",
+            ""
+        )
 
         const frame = () => {
             // TODO: Break up each of these so we can animate separately
@@ -220,7 +237,32 @@ export class Magic extends React.Component<FunctionalProps> {
             this.updateTransform(x, y, scaleX, scaleY)
 
             isAnimatingRotate && this.updateRotate(p, rotate)
-            hasBorderRadius && this.updateBorderRadius(p, borderRadius)
+
+            hasBorderTopLeftRadius &&
+                this.updateBorderRadius(
+                    p,
+                    borderTopLeftRadius,
+                    "borderTopLeftRadius"
+                )
+            hasBorderTopRightRadius &&
+                this.updateBorderRadius(
+                    p,
+                    borderTopRightRadius,
+                    "borderTopRightRadius"
+                )
+            hasBorderBottomLeftRadius &&
+                this.updateBorderRadius(
+                    p,
+                    borderBottomLeftRadius,
+                    "borderBottomLeftRadius"
+                )
+            hasBorderBottomRightRadius &&
+                this.updateBorderRadius(
+                    p,
+                    borderBottomRightRadius,
+                    "borderBottomRightRadius"
+                )
+
             updateBoxShadow && updateBoxShadow(p)
         }
 
@@ -337,18 +379,23 @@ export class Magic extends React.Component<FunctionalProps> {
         rotate.set(target)
     }
 
-    updateBorderRadius(p: number, borderRadius: MotionValue<string>) {
+    updateBorderRadius(
+        p: number,
+        borderRadius: MotionValue<string>,
+        property: string
+    ) {
         const target = mix(
-            this.prev.style.borderRadius,
-            this.next.style.borderRadius,
+            this.prev.style[property],
+            this.next.style[property],
             p
         )
-        this.current.borderRadius = target
+
+        this.current[property] = target
 
         const targetX = target / this.delta.x.scale / this.treeScale.x
         const targetY = target / this.delta.y.scale / this.treeScale.y
 
-        borderRadius.set(`${targetX}px / ${targetY}px`)
+        borderRadius.set(`${targetX}px ${targetY}px`)
     }
 
     createUpdateBoxShadow(prev: string, next: string) {
