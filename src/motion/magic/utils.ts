@@ -22,11 +22,21 @@ export function snapshot(element: NativeElement): Snapshot {
     const {
         backgroundColor,
         border,
-        borderRadius,
+        borderTopLeftRadius,
+        borderTopRightRadius,
+        borderBottomLeftRadius,
+        borderBottomRightRadius,
         boxShadow,
         color,
         opacity,
     } = element.getComputedStyle()
+
+    const borderRadiusMatrix = [
+        borderTopLeftRadius,
+        borderTopRightRadius,
+        borderBottomLeftRadius,
+        borderBottomRightRadius,
+    ].map(item => (item ? parseFloat(item) : 0))
 
     return {
         layout: {
@@ -36,7 +46,10 @@ export function snapshot(element: NativeElement): Snapshot {
         style: {
             backgroundColor,
             border,
-            borderRadius: borderRadius ? parseFloat(borderRadius) : 0,
+            borderTopLeftRadius: borderRadiusMatrix[0],
+            borderTopRightRadius: borderRadiusMatrix[1],
+            borderBottomLeftRadius: borderRadiusMatrix[2],
+            borderBottomRightRadius: borderRadiusMatrix[3],
             boxShadow,
             color: color || "",
             opacity: opacity !== null ? parseFloat(opacity) : 0,
@@ -179,7 +192,24 @@ export function resetStyles(
         scaleY: 1,
         rotate: 0,
         boxShadow: resolve("", styleProp.boxShadow),
-        borderRadius: resolve("", styleProp.borderRadius),
+
+        borderTopLeftRadius: resolve(
+            "",
+            styleProp.borderTopLeftRadius ?? styleProp.borderRadius
+        ),
+        borderTopRightRadius: resolve(
+            "",
+            styleProp.borderTopRightRadius ?? styleProp.borderRadius
+        ),
+        borderBottomLeftRadius: resolve(
+            "",
+            styleProp.borderBottomLeftRadius ?? styleProp.borderRadius
+        ),
+        borderBottomRightRadius: resolve(
+            "",
+            styleProp.borderBottomRightRadius ?? styleProp.borderRadius
+        ),
+
         position: resolve("", styleProp.position) as any,
         width: resolve("", styleProp.width),
         height: resolve("", styleProp.height),
