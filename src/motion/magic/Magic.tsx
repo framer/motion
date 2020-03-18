@@ -6,7 +6,6 @@ import {
     snapshot,
     applyCurrent,
     resolve,
-    zeroDelta,
     numAnimatableStyles,
     animatableStyles,
     easeBox,
@@ -47,10 +46,7 @@ export class Magic extends React.Component<FunctionalProps> {
     progress: MotionValue<number>
 
     // TODO: Add comment to make sure its clear that this is mutative
-    delta: BoxDelta = {
-        x: { ...zeroDelta },
-        y: { ...zeroDelta },
-    }
+    delta: BoxDelta
 
     target: Box
 
@@ -69,6 +65,7 @@ export class Magic extends React.Component<FunctionalProps> {
         super(props)
         this.depth = props.localContext.depth
         this.progress = props.localContext.magicProgress as MotionValue<number>
+        this.delta = props.localContext.magicDelta as BoxDelta
     }
 
     componentDidMount() {
@@ -132,18 +129,6 @@ export class Magic extends React.Component<FunctionalProps> {
         const next = snapshot(nativeElement)
         next.style.rotate = resolve(0, style && style.rotate)
         this.next = next
-
-        this.linkTree()
-    }
-
-    linkTree() {
-        const { localContext, parentContext } = this.props
-        const parentDeltas = parentContext.magicDeltas || []
-
-        if (localContext.magicDeltas) {
-            localContext.magicDeltas.length = 0
-            localContext.magicDeltas.push(...parentDeltas, this.delta)
-        }
     }
 
     hide() {
