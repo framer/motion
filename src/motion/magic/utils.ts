@@ -1,4 +1,4 @@
-import { clamp, mix, progress } from "@popmotion/popcorn"
+import { clamp, mix, progress, distance } from "@popmotion/popcorn"
 import {
     Axis,
     AxisDelta,
@@ -128,6 +128,10 @@ export function calcDelta(
     delta.origin = origin !== undefined ? origin : calcOrigin(before, after)
     delta.originPoint = after.min + delta.origin * afterSize
     delta.translate = calcTranslate(before, after, delta.origin)
+
+    // Clamp
+    if (near(delta.scale, 1, 0.0001)) delta.scale = 1
+    if (near(delta.translate)) delta.translate = 0
 }
 
 export function calcBoxDelta(
@@ -140,14 +144,18 @@ export function calcBoxDelta(
     calcDelta(delta.y, before.y, after.y, origin)
 }
 
-export function applyDelta(axis: Axis, delta: AxisDelta): void {
-    axis.min = scaledPoint(delta, axis.min) + delta.translate
-    axis.max = scaledPoint(delta, axis.max) + delta.translate
+export function applyDelta(point: number, delta: AxisDelta): number {
+    return scaledPoint(delta, point) + delta.translate
+}
+
+export function applyAxisDelta(axis: Axis, delta: AxisDelta): void {
+    axis.min = applyDelta(axis.min, delta)
+    axis.max = applyDelta(axis.max, delta)
 }
 
 export function applyBoxDelta(box: Box, delta: BoxDelta): void {
-    applyDelta(box.x, delta.x)
-    applyDelta(box.y, delta.y)
+    applyAxisDelta(box.x, delta.x)
+    applyAxisDelta(box.y, delta.y)
 }
 
 export function applyTreeDeltas(box: Box, deltas: BoxDelta[]): void {
@@ -295,3 +303,7 @@ export const batchUpdate = (): MagicBatchTree => {
 }
 
 const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth
+
+export function near(value: number, target = 0, maxDistance = 0.01): boolean {
+    return distance(value, target) < maxDistance
+}
