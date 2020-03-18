@@ -9,6 +9,8 @@ import { MotionValuesMap } from "../utils/use-motion-values"
 import { BoxDelta } from "../../motion/magic/types"
 import { MotionValue } from "../../value"
 import { useMotionValue } from "../../value/use-motion-value"
+import { zeroDelta } from "../magic/utils"
+import { useConstant } from "../../utils/use-constant"
 
 export interface ExitProps {
     initial?: false | VariantLabels
@@ -25,6 +27,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     exitProps?: ExitProps
+    magicDelta?: BoxDelta
     magicDeltas?: BoxDelta[]
     // TODO: Replace this with an onUpdate on parentValues
     magicProgress?: MotionValue<number>
@@ -118,8 +121,13 @@ export const useMotionContext = (
             ? targetAnimate
             : null
 
-    // TODO it'd be better to do this differently
-    const magicDeltas = useRef<BoxDelta[]>([])
+    // TODO: We need every motion component in the stack to communicate down - for performance we can look into
+    // ditching zero deltas if this isn't a motion component
+    const magicDelta = useConstant(createZeroDelta)
+    const magicDeltas = useRef<BoxDelta[]>([
+        ...(parentContext.magicDeltas || []),
+        magicDelta,
+    ])
     const magicProgress = useMotionValue(0)
 
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
@@ -136,6 +144,7 @@ export const useMotionContext = (
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
             depth: parentContext.depth + 1,
+            magicDelta,
             magicDeltas: magicDeltas.current,
             magicProgress,
         }),
@@ -157,4 +166,11 @@ export const useMotionContext = (
     }, [])
 
     return context
+}
+
+function createZeroDelta() {
+    return {
+        x: { ...zeroDelta },
+        y: { ...zeroDelta },
+    }
 }

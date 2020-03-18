@@ -1,4 +1,4 @@
-import React from "react"
+import React, { CSSProperties } from "react"
 import { useState } from "react"
 import { motion, MagicMotion, AnimatePresence } from "@framer"
 
@@ -22,16 +22,25 @@ function SingleImage({ color, index, setIndex }) {
     //const close = () => setIndex(false);
 
     return (
-        <div style={singleImageContainer}>
-            {/* <div className="button prev" onClick={() => setIndex(index - 1)} />
+        <>
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.6 }}
+                exit={{ opacity: 0, transition: { duration: 3 } }}
+                style={overlay}
+                onClick={() => setIndex(false)}
+            />
+            <div style={singleImageContainer}>
+                {/* <div className="button prev" onClick={() => setIndex(index - 1)} />
       <div className="button next" onClick={() => setIndex(index + 1)} />
       <div className="button close" onClick={close} /> */}
-            <motion.div
-                magic
-                magicId={color}
-                style={{ ...singleImage, backgroundColor: color }}
-            />
-        </div>
+                <motion.div
+                    transition={{ duration: 10 }}
+                    magicId={color}
+                    style={{ ...singleImage, backgroundColor: color }}
+                />
+            </div>
+        </>
     )
 }
 
@@ -42,15 +51,6 @@ export function App() {
         <MagicMotion>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
-                {index !== false && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 0.6 }}
-                        exit={{ opacity: 0 }}
-                        style={overlay}
-                        onClick={() => setIndex(false)}
-                    />
-                )}
                 {index !== false && (
                     <SingleImage
                         index={index}
@@ -101,7 +101,7 @@ const overlay = {
     right: "0",
 }
 
-const singleImageContainer = {
+const singleImageContainer: CSSProperties = {
     position: "absolute",
     top: "0",
     left: "0",
