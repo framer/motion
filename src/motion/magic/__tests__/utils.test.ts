@@ -4,7 +4,7 @@ import {
     calcOrigin,
     calcTranslate,
     calcDelta,
-    applyDelta,
+    applyAxisDelta,
     // applyTreeDeltas,
     // calcBoxDelta,
     // applyBoxDelta,
@@ -132,7 +132,7 @@ test("calcDelta", () => {
     })
 })
 
-test("applyDelta", () => {
+test("applyAxisDelta", () => {
     const delta = {
         translate: 0,
         origin: 0,
@@ -142,17 +142,17 @@ test("applyDelta", () => {
 
     const a = { ...aAfter }
     calcDelta(delta, aBefore, a)
-    applyDelta(a, delta)
+    applyAxisDelta(a, delta)
     expect(a).toEqual(aBefore)
 
     const b = { ...bAfter }
     calcDelta(delta, bBefore, b)
-    applyDelta(b, delta)
+    applyAxisDelta(b, delta)
     expect(b).toEqual(bBefore)
 
     const c = { ...cAfter }
     calcDelta(delta, cBefore, c)
-    applyDelta(c, delta)
+    applyAxisDelta(c, delta)
     expect(c).toEqual(cBefore)
 })
 
