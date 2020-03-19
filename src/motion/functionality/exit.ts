@@ -1,22 +1,12 @@
 import { useRef, useEffect } from "react"
-import { invariant } from "hey-listen"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { AnimationControls } from "../../animation/AnimationControls"
+import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 
 export const Exit: FunctionalComponentDefinition = {
     key: "exit",
-    shouldRender: ({ exit }, { exitProps }) => {
-        const hasExitProps = !!exitProps
-        const hasExitAnimation = !!exit
-
-        invariant(
-            !hasExitProps || (hasExitProps && hasExitAnimation),
-            "No exit prop defined on a child of AnimatePresence."
-        )
-
-        return hasExitProps && hasExitAnimation
-    },
+    shouldRender: props => !!props.exit && !checkShouldInheritVariant(props),
     Component: makeRenderlessComponent((props: FunctionalProps) => {
         const { animate, controls, parentContext, exit } = props
         const { exitProps } = parentContext
@@ -27,32 +17,28 @@ export const Exit: FunctionalComponentDefinition = {
 
         const { isExiting, custom, onExitComplete } = exitProps
 
-        useEffect(
-            () => {
-                if (isExiting) {
-                    if (!isPlayingExitAnimation.current && exit) {
-                        controls.setProps({
-                            ...props,
-                            custom:
-                                custom !== undefined ? custom : props.custom,
-                        })
-                        controls.start(exit).then(onExitComplete)
-                    }
-
-                    isPlayingExitAnimation.current = true
-                } else if (
-                    isPlayingExitAnimation.current &&
-                    animate &&
-                    !(animate instanceof AnimationControls)
-                ) {
-                    controls.start(animate)
+        useEffect(() => {
+            if (isExiting) {
+                if (!isPlayingExitAnimation.current && exit) {
+                    controls.setProps({
+                        ...props,
+                        custom: custom !== undefined ? custom : props.custom,
+                    })
+                    controls.start(exit).then(onExitComplete)
                 }
 
-                if (!isExiting) {
-                    isPlayingExitAnimation.current = false
-                }
-            },
-            [isExiting]
-        )
+                isPlayingExitAnimation.current = true
+            } else if (
+                isPlayingExitAnimation.current &&
+                animate &&
+                !(animate instanceof AnimationControls)
+            ) {
+                controls.start(animate)
+            }
+
+            if (!isExiting) {
+                isPlayingExitAnimation.current = false
+            }
+        }, [isExiting])
     }),
 }

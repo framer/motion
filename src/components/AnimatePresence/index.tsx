@@ -1,6 +1,7 @@
 import {
     useContext,
     useRef,
+    useMemo,
     isValidElement,
     cloneElement,
     Children,
@@ -9,29 +10,10 @@ import {
     FunctionComponent,
 } from "react"
 import * as React from "react"
+import { PresenceContext, PresenceContextProps } from "./PresenceContext"
 import { AnimatePresenceProps } from "./types"
-import { MotionContext, ExitProps } from "../../motion/context/MotionContext"
 import { SyncLayoutContext } from "../../components/SyncLayout"
 import { useForceUpdate } from "../../utils/use-force-update"
-
-interface PresenceChildProps {
-    children: ReactElement<any>
-    exitProps?: ExitProps | undefined
-}
-
-const PresenceChild = ({ children, exitProps }: PresenceChildProps) => {
-    let context = useContext(MotionContext)
-
-    // Create a new `value` in all instances to ensure `motion` children re-render
-    // and detect any layout changes that might have occurred.
-    context = { ...context, exitProps: exitProps || {} }
-
-    return (
-        <MotionContext.Provider value={context}>
-            {children}
-        </MotionContext.Provider>
-    )
-}
 
 type ComponentKey = string | number
 

@@ -7,13 +7,6 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
 
-export interface ExitProps {
-    initial?: false | VariantLabels
-    isExiting?: boolean
-    onExitComplete?: () => void
-    custom?: any
-}
-
 export interface MotionContextProps {
     controls?: ValueAnimationControls
     values?: MotionValuesMap
