@@ -1,7 +1,6 @@
 import {
     useContext,
     useRef,
-    useMemo,
     isValidElement,
     cloneElement,
     Children,
@@ -10,10 +9,10 @@ import {
     FunctionComponent,
 } from "react"
 import * as React from "react"
-import { PresenceContext, PresenceContextProps } from "./PresenceContext"
 import { AnimatePresenceProps } from "./types"
 import { SyncLayoutContext } from "../../components/SyncLayout"
 import { useForceUpdate } from "../../utils/use-force-update"
+import { PresenceChild } from "./PresenceChild"
 
 type ComponentKey = string | number
 
@@ -155,7 +154,8 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
                 {filteredChildren.map(child => (
                     <PresenceChild
                         key={getChildKey(child)}
-                        exitProps={initial ? undefined : { initial: false }}
+                        isPresent
+                        initial={initial ? undefined : false}
                     >
                         {child}
                     </PresenceChild>
@@ -218,16 +218,15 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
             }
         }
 
-        const exitProps = {
-            custom,
-            isExiting: true,
-            onExitComplete: onExit,
-        }
-
         childrenToRender.splice(
             insertionIndex,
             0,
-            <PresenceChild key={getChildKey(child)} exitProps={exitProps}>
+            <PresenceChild
+                key={getChildKey(child)}
+                isPresent={false}
+                onExitComplete={onExit}
+                custom={custom}
+            >
                 {child}
             </PresenceChild>
         )
@@ -240,7 +239,9 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
         return exiting.has(key) ? (
             child
         ) : (
-            <PresenceChild key={getChildKey(child)}>{child}</PresenceChild>
+            <PresenceChild key={getChildKey(child)} isPresent>
+                {child}
+            </PresenceChild>
         )
     })
 

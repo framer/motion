@@ -1,43 +1,47 @@
 import * as React from "react"
-import { useEffect, useMemo, useRef } from "react"
-import { PresenceContextProps, PresenceContext } from "./PresenceContext"
+import { useMemo, useRef } from "react"
+import { PresenceContext } from "./PresenceContext"
+import { VariantLabels } from "../../motion/types"
 
-type PresenceChildProps = PresenceContextProps & {
+interface PresenceChildProps {
     children: React.ReactElement<any>
+    isPresent: boolean
+    onExitComplete?: () => void
+    initial?: false | VariantLabels
+    custom?: any
 }
 
 export const PresenceChild = ({
     children,
     initial,
-    isExiting,
+    isPresent,
     onExitComplete,
     custom,
 }: PresenceChildProps) => {
-    const totalExitingChildren = useRef(0)
-
-    useEffect(() => {
-        totalExitingChildren.current = 0
-    }, [isExiting])
+    const numPresenceChildren = useRef(0)
 
     const context = useMemo(() => {
         let numExitComplete = 0
 
-        const allExitComplete = () => {
-            numExitComplete++
-
-            if (numExitComplete >= totalExitingChildren.current) {
-                onExitComplete()
-            }
-        }
-
         return {
             initial,
-            isExiting,
-            onExitComplete: allExitComplete,
+            isPresent,
             custom,
-            register: () => totalExitingChildren.current++,
+            onExitComplete: () => {
+                numExitComplete++
+                if (
+                    onExitComplete &&
+                    numExitComplete >= numPresenceChildren.current
+                ) {
+                    onExitComplete()
+                }
+            },
+            register: () => {
+                numPresenceChildren.current++
+                return () => numPresenceChildren.current--
+            },
         }
-    }, [isExiting, initial, custom])
+    }, [isPresent, onExitComplete, initial, custom])
 
     return (
         <PresenceContext.Provider value={context}>

@@ -1,28 +1,31 @@
-import { useRef, useEffect } from "react"
+import { useRef, useEffect, useContext } from "react"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
+import { usePresence } from "../../components/AnimatePresence/use-presence"
+import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 
 export const Exit: FunctionalComponentDefinition = {
     key: "exit",
     shouldRender: props => !!props.exit && !checkShouldInheritVariant(props),
     Component: makeRenderlessComponent((props: FunctionalProps) => {
-        const { animate, controls, parentContext, exit } = props
-        const { exitProps } = parentContext
+        const { animate, controls, exit } = props
+        const [isPresent, onExitComplete] = usePresence()
+        const presenceContext = useContext(PresenceContext)
         const isPlayingExitAnimation = useRef(false)
 
-        // This early return is more for types - it won't actually run because of the `shouldRender` above.
-        if (!exitProps || !exit) return
-
-        const { isExiting, custom, onExitComplete } = exitProps
+        const custom =
+            presenceContext?.custom !== undefined
+                ? presenceContext.custom
+                : props.custom
 
         useEffect(() => {
-            if (isExiting) {
+            if (!isPresent) {
                 if (!isPlayingExitAnimation.current && exit) {
                     controls.setProps({
                         ...props,
-                        custom: custom !== undefined ? custom : props.custom,
+                        custom,
                     })
                     controls.start(exit).then(onExitComplete)
                 }
@@ -36,9 +39,9 @@ export const Exit: FunctionalComponentDefinition = {
                 controls.start(animate)
             }
 
-            if (!isExiting) {
+            if (isPresent) {
                 isPlayingExitAnimation.current = false
             }
-        }, [isExiting])
+        }, [isPresent])
     }),
 }

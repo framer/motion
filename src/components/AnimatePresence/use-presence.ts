@@ -1,5 +1,6 @@
-import { useContext } from "react"
-import { MotionContext } from "../../motion/context/MotionContext"
+import { useContext, useEffect } from "react"
+import { PresenceContext } from "./PresenceContext"
+import { warning } from "hey-listen"
 
 type Present = [true]
 
@@ -28,10 +29,16 @@ type NotPresent = [false, () => void]
  * @public
  */
 export function usePresence(): Present | NotPresent {
-    const { exitProps } = useContext(MotionContext)
+    const context = useContext(PresenceContext)
 
-    if (!exitProps) return [true]
+    warning(
+        context !== null,
+        "Component attempting to use presence outside of a AnimatePresence component. It will be removed from the tree without transition."
+    )
+    if (context === null) return [true]
+    const { isPresent, onExitComplete, register } = context
 
-    const { isExiting, onExitComplete } = exitProps
-    return isExiting && onExitComplete ? [false, onExitComplete] : [true]
+    useEffect(register, [])
+
+    return !isPresent && onExitComplete ? [false, onExitComplete] : [true]
 }
