@@ -31,7 +31,7 @@ export function useValueAnimationControls<P>(
     const controls = useConstant(() => new ValueAnimationControls<P>(config))
 
     // Reset and resubscribe children every render to ensure stagger order is correct
-    if (presenceContext && presenceContext.isPresent) {
+    if (!presenceContext || presenceContext.isPresent) {
         controls.resetChildren()
         controls.setProps(props)
         controls.setVariants(variants)
