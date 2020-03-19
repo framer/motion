@@ -50,7 +50,6 @@ export const useMotionContext = (
     const presenceContext = useContext(PresenceContext)
     // Override initial with that from a parent context, if defined
     if (presenceContext?.initial !== undefined) {
-        console.log("overwriting initial")
         initial = presenceContext.initial
     }
 
