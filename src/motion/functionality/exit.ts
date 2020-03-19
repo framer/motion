@@ -9,8 +9,8 @@ import { PresenceContext } from "../../components/AnimatePresence/PresenceContex
 export const Exit: FunctionalComponentDefinition = {
     key: "exit",
     shouldRender: props => {
-        const isMagic = props.magic || props.magicId !== undefined
-        return isMagic || (props.exit && !checkShouldInheritVariant(props))
+        const isMagic = !!props.magic || props.magicId !== undefined
+        return isMagic || (!!props.exit && !checkShouldInheritVariant(props))
     },
     Component: makeRenderlessComponent((props: FunctionalProps) => {
         const { animate, controls, exit } = props
