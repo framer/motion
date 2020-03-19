@@ -56,8 +56,7 @@ export const createMotionComponent = <P extends {}>({
         const controls = useValueAnimationControls(
             controlsConfig,
             props,
-            shouldInheritVariant,
-            parentContext
+            shouldInheritVariant
         )
 
         const context = useMotionContext(

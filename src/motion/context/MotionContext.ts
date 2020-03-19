@@ -1,18 +1,12 @@
 import * as React from "react"
-import { useMemo, useRef, useEffect, RefObject } from "react"
+import { useMemo, useRef, useEffect, RefObject, useContext } from "react"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
 import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
-
-export interface ExitProps {
-    initial?: false | VariantLabels
-    isExiting?: boolean
-    onExitComplete?: () => void
-    custom?: any
-}
+import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 
 export interface MotionContextProps {
     controls?: ValueAnimationControls
@@ -21,7 +15,6 @@ export interface MotionContextProps {
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
-    exitProps?: ExitProps
     isReducedMotion?: boolean | undefined
 }
 
@@ -54,12 +47,10 @@ export const useMotionContext = (
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover }: MotionProps
 ) => {
+    const presenceContext = useContext(PresenceContext)
     // Override initial with that from a parent context, if defined
-    if (
-        parentContext.exitProps &&
-        parentContext.exitProps.initial !== undefined
-    ) {
-        initial = parentContext.exitProps.initial
+    if (presenceContext?.initial !== undefined) {
+        initial = presenceContext.initial
     }
 
     let initialState: Target | VariantLabels | undefined

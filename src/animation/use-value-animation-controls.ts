@@ -4,11 +4,9 @@ import {
 } from "./ValueAnimationControls"
 import { useContext, useEffect } from "react"
 import { MotionProps } from "../motion/types"
-import {
-    MotionContext,
-    MotionContextProps,
-} from "../motion/context/MotionContext"
+import { MotionContext } from "../motion/context/MotionContext"
 import { useConstant } from "../utils/use-constant"
+import { PresenceContext } from "../components/AnimatePresence/PresenceContext"
 
 /**
  * Creates an imperative set of controls to trigger animations.
@@ -25,19 +23,15 @@ import { useConstant } from "../utils/use-constant"
 export function useValueAnimationControls<P>(
     config: ValueAnimationConfig,
     props: P & MotionProps,
-    subscribeToParentControls: boolean,
-    parentContext?: MotionContextProps
+    subscribeToParentControls: boolean
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
+    const presenceContext = useContext(PresenceContext)
     const controls = useConstant(() => new ValueAnimationControls<P>(config))
 
     // Reset and resubscribe children every render to ensure stagger order is correct
-    if (
-        !parentContext ||
-        !parentContext.exitProps ||
-        !parentContext.exitProps.isExiting
-    ) {
+    if (!presenceContext || presenceContext.isPresent) {
         controls.resetChildren()
         controls.setProps(props)
         controls.setVariants(variants)
