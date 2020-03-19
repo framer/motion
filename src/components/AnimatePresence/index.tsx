@@ -56,18 +56,14 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
 }
 
 /**
- * The `AnimatePresence` component enables the use of the `exit` prop to animate components
- * when they're removed from the component tree.
+ * `AnimatePresence` enables the animation of components that have been removed from the tree.
  *
- * When adding/removing more than a single child component, every component
- * **must** be given a unique `key` prop.
- *
- * You can propagate exit animations throughout a tree by using variants.
+ * When adding/removing more than a single child, every child **must** be given a unique `key` prop.
  *
  * @library
  *
- * You can use any component(s) within `AnimatePresence`, but the first `Frame` in each should
- * have an `exit` property defined.
+ * Any `Frame` components that have an `exit` property defined will animate out when removed from
+ * the tree.
  *
  * ```jsx
  * import { Frame, AnimatePresence } from 'framer'
@@ -89,10 +85,12 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  * }
  * ```
  *
+ * You can sequence exit animations throughout a tree using variants.
+ *
  * @motion
  *
- * You can use any component(s) within `AnimatePresence`, but the first `motion` component in each should
- * have an `exit` property defined.
+ * Any `motion` components that have an `exit` property defined will animate out when removed from
+ * the tree.
  *
  * ```jsx
  * import { motion, AnimatePresence } from 'framer-motion'
@@ -110,6 +108,8 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *   </AnimatePresence>
  * )
  * ```
+ *
+ * You can sequence exit animations throughout a tree using variants.
  *
  * @public
  */
