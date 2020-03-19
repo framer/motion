@@ -111,6 +111,10 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * You can sequence exit animations throughout a tree using variants.
  *
+ * If a child contains multiple `motion` components with `exit` props, it will only unmount the child
+ * once all `motion` components have finished animating out. Likewise, any components using
+ * `usePresence` all need to call `safeToRemove`.
+ *
  * @public
  */
 export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
