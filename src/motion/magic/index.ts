@@ -1,4 +1,4 @@
-import { Magic } from "./Magic"
+import { MagicContextProvider } from "./Magic"
 import { FunctionalComponentDefinition } from "../functionality/types"
 import { MotionProps } from "../types"
 
@@ -8,5 +8,5 @@ export const magic: FunctionalComponentDefinition = {
         const hasMagicProps = !!magic || magicId !== undefined
         return hasMagicProps && typeof window !== "undefined"
     },
-    Component: Magic,
+    Component: MagicContextProvider,
 }

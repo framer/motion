@@ -110,7 +110,7 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     getVisualTarget(child: Magic) {
         const { magicId } = child.props
 
-        if (magicId !== undefined && child.isExiting()) {
+        if (magicId !== undefined && !child.isPresent()) {
             const stack = this.getStack(magicId)
             const index = stack.findIndex(stackChild => child === stackChild)
 

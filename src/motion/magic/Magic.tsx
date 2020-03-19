@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useContext } from "react"
 import { FunctionalProps } from "../functionality/types"
 import { MagicContext } from "./MagicContext"
 import {
@@ -28,11 +29,34 @@ import { TargetAndTransition } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
 import { mix, mixColor } from "@popmotion/popcorn"
 import { complex } from "style-value-types"
+import { usePresence } from "../../components/AnimatePresence/use-presence"
 export { MagicControlledTree, MagicBatchTree }
 
-export class Magic extends React.Component<FunctionalProps> {
-    static contextType = MagicContext
+/**
+ * Magic Motion relies on multiple components and class components only support, hence this
+ * wrapper component that provides those contexts as props.
+ */
+export const MagicContextProvider = (props: FunctionalProps) => {
+    const [isPresent, safeToRemove] = usePresence()
+    const magicContext = useContext(MagicContext)
 
+    return (
+        <Magic
+            {...props}
+            isPresent={isPresent}
+            safeToRemove={safeToRemove}
+            magicContext={magicContext}
+        />
+    )
+}
+
+interface ContextProps {
+    isPresent: boolean
+    safeToRemove?: () => void
+    magicContext: MagicControlledTree | MagicBatchTree
+}
+
+export class Magic extends React.Component<FunctionalProps & ContextProps> {
     private unregisterFromMagicContext?: () => void
     private stopLayoutAnimation?: () => void
 
@@ -61,7 +85,7 @@ export class Magic extends React.Component<FunctionalProps> {
 
     prevRotate = 0
 
-    constructor(props: FunctionalProps) {
+    constructor(props: FunctionalProps & ContextProps) {
         super(props)
         this.depth = props.localContext.depth
         this.progress = props.localContext.magicProgress as MotionValue<number>
@@ -69,8 +93,10 @@ export class Magic extends React.Component<FunctionalProps> {
     }
 
     componentDidMount() {
-        if (this.context.register) {
-            this.unregisterFromMagicContext = this.context.register(this)
+        const { magicContext } = this.props
+
+        if (isControlledTree(magicContext)) {
+            this.unregisterFromMagicContext = magicContext.register(this)
         } else {
             this.getSnapshotBeforeUpdate = () => {
                 this.snapshot()
@@ -78,7 +104,7 @@ export class Magic extends React.Component<FunctionalProps> {
                 return null
             }
 
-            this.componentDidUpdate = () => this.context.flush()
+            this.componentDidUpdate = () => magicContext.flush()
         }
     }
 
@@ -156,7 +182,7 @@ export class Magic extends React.Component<FunctionalProps> {
             const { onMagicComplete } = this.props
             onMagicComplete && onMagicComplete()
 
-            this.isExiting() && this.safeToRemove()
+            !this.isPresent() && this.safeToRemove()
         })
 
         syncRenderSession.flush()
@@ -431,17 +457,13 @@ export class Magic extends React.Component<FunctionalProps> {
         }
     }
 
-    isExiting() {
-        const { parentContext } = this.props
-        return !!parentContext.exitProps?.isExiting
+    isPresent() {
+        return this.props.isPresent
     }
 
     safeToRemove() {
-        const { parentContext } = this.props
-
-        if (parentContext.exitProps?.onExitComplete) {
-            parentContext.exitProps.onExitComplete()
-        }
+        const { safeToRemove } = this.props
+        safeToRemove && safeToRemove()
     }
 
     render() {
@@ -455,6 +477,12 @@ function getAnimatableShadow(shadow: string, fallback: string) {
     }
 
     return complex.parse(shadow) as BoxShadow
+}
+
+function isControlledTree(
+    context: MagicControlledTree | MagicBatchTree
+): context is MagicControlledTree {
+    return !!(context as MagicControlledTree).register
 }
 
 //
