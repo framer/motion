@@ -4,12 +4,6 @@ import { MagicContext } from "./MagicContext"
 import { Magic } from "./Magic"
 import { batchUpdate } from "./utils"
 
-/**
- * TODO:
- * - Reimplement exit animation (reverse FLIP)
- * - Make work without MagicMotion wrapper
- */
-
 interface Props {
     children: React.ReactNode
 }
