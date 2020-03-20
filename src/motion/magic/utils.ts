@@ -9,7 +9,7 @@ import {
     MagicBatchTree,
 } from "./types"
 import { NativeElement } from "../utils/use-native-element"
-import { MotionStyle } from "../types"
+import { MotionStyle, MotionProps } from "../types"
 import { MotionValue } from "../../value"
 import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
@@ -196,6 +196,7 @@ export function resolve<T extends unknown>(
  */
 export function resetStyles(
     styleProp: MotionStyle = {},
+    animate: MotionProps["animate"],
     layout?: Box
 ): MotionStyle {
     const styles: MotionStyle = {
@@ -237,7 +238,14 @@ export function resetStyles(
 
     for (let i = 0; i < numAnimatableStyles; i++) {
         const key = animatableStyles[i]
-        styles[key] = resolve("", styleProp[key])
+
+        if (
+            // TODO: This is an awful way of detecting if a property is being directly animated,
+            // we need to find a better way of doing this that includes variants and inherited variants
+            !(typeof animate === "object" && animate.hasOwnProperty("opacity"))
+        ) {
+            styles[key] = resolve("", styleProp[key])
+        }
     }
 
     return styles
