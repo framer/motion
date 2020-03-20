@@ -10,9 +10,10 @@ function Gallery({ items, setIndex }) {
                     key={color}
                     onClick={() => setIndex(i)}
                     style={{ ...item, backgroundColor: color }}
-                    magic
                     magicId={color}
-                />
+                >
+                    <motion.div style={child} magicId={`child-${color}`} />
+                </motion.li>
             ))}
         </ul>
     )
@@ -27,6 +28,7 @@ function SingleImage({ color, index, setIndex }) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.6 }}
                 exit={{ opacity: 0, transition: { duration: 3 } }}
+                id="overlay"
                 style={overlay}
                 onClick={() => setIndex(false)}
             />
@@ -36,9 +38,16 @@ function SingleImage({ color, index, setIndex }) {
       <div className="button close" onClick={close} /> */}
                 <motion.div
                     transition={{ duration: 10 }}
+                    id="color"
                     magicId={color}
                     style={{ ...singleImage, backgroundColor: color }}
-                />
+                >
+                    <motion.div
+                        style={child}
+                        id="child"
+                        magicId={`child-${color}`}
+                    />
+                </motion.div>
             </div>
         </>
     )
@@ -117,4 +126,12 @@ const singleImage = {
     borderRadius: "20px",
     width: "500px",
     height: "300px",
+}
+
+const child = {
+    margin: 10,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: "black",
 }

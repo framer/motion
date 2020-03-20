@@ -107,6 +107,8 @@ export function calcTranslate(
 ): number {
     const beforePoint = mix(before.min, before.max, origin)
     const afterPoint = mix(after.min, after.max, origin)
+
+    //console.log(beforePoint, afterPoint, beforePoint - afterPoint)
     return beforePoint - afterPoint
 }
 
@@ -124,9 +126,12 @@ export function calcDelta(
 ): void {
     const beforeSize = before.max - before.min
     const afterSize = after.max - after.min
+
+    // TODO: Check this out
     delta.scale = beforeSize / afterSize
     delta.origin = origin !== undefined ? origin : calcOrigin(before, after)
     delta.originPoint = after.min + delta.origin * afterSize
+
     delta.translate = calcTranslate(before, after, delta.origin)
 
     // Clamp
@@ -154,6 +159,7 @@ export function applyAxisDelta(axis: Axis, delta: AxisDelta): void {
 }
 
 export function applyBoxDelta(box: Box, delta: BoxDelta): void {
+    //console.log(box.x, delta.x)
     applyAxisDelta(box.x, delta.x)
     applyAxisDelta(box.y, delta.y)
 }
@@ -253,20 +259,15 @@ export const zeroDelta: AxisDelta = {
 function easeAxis(
     axis: "x" | "y",
     target: Box,
-    prev: Snapshot,
-    next: Snapshot,
+    prev: Box,
+    next: Box,
     p: number
 ) {
-    target[axis].min = mix(next.layout[axis].min, prev.layout[axis].min, p)
-    target[axis].max = mix(next.layout[axis].max, prev.layout[axis].max, p)
+    target[axis].min = mix(prev[axis].min, next[axis].min, p)
+    target[axis].max = mix(prev[axis].max, next[axis].max, p)
 }
 
-export function easeBox(
-    target: Box,
-    prev: Snapshot,
-    next: Snapshot,
-    p: number
-) {
+export function easeBox(target: Box, prev: Box, next: Box, p: number) {
     easeAxis("x", target, prev, next, p)
     easeAxis("y", target, prev, next, p)
 }

@@ -29,6 +29,7 @@ export const PresenceChild = ({
             custom,
             onExitComplete: () => {
                 numExitComplete++
+                console.log(numExitComplete, numPresenceChildren.current)
                 if (
                     onExitComplete &&
                     numExitComplete >= numPresenceChildren.current
