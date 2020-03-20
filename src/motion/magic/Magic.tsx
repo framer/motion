@@ -106,7 +106,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         } else {
             this.getSnapshotBeforeUpdate = () => {
                 this.snapshot()
-                this.context.add(this)
+                magicContext.add(this)
                 return null
             }
 
@@ -131,9 +131,9 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     resetStyles() {
-        const { nativeElement, style, values } = this.props
+        const { nativeElement, style, values, animate } = this.props
 
-        const reset = resetStyles(style)
+        const reset = resetStyles(style, animate)
 
         if (this.isHidden) {
             reset.opacity = 0
@@ -176,10 +176,10 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         this.next = next || this.actual
 
-        // if (!this.prev) this.prev = this.next
-        // // If we're animating to an external target, copy its styles
-        // // straight to the `next` target
-        // if (target) this.next.style = target.style
+        if (!this.prev) this.prev = this.next
+        // If we're animating to an external target, copy its styles
+        // straight to the `next` target
+        if (next) this.next.style = next.style
 
         const animations = [
             this.startLayoutAnimation(),
@@ -331,10 +331,11 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             const prevStyle = this.prev.style[key]
             const nextStyle = this.next.style[key]
 
-            if (!prevStyle !== nextStyle) {
+            if (prevStyle !== nextStyle) {
                 shouldTransitionStyle = true
                 const value = values.get(key, prevStyle)
                 value.set(prevStyle)
+
                 target[key] = nextStyle
             }
         }
