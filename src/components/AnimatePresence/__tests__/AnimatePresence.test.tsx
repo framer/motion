@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from "../../.."
 import { motionValue } from "../../../value"
 
 describe("AnimatePresence", () => {
-    test("Does nothing on initial render by default", async () => {
+    test("Allows initial animation if no `initial` prop defined", async () => {
         const promise = new Promise(resolve => {
             const x = motionValue(0)
             const Component = () => {

@@ -1,58 +1,47 @@
-import { useRef, useEffect } from "react"
-import { invariant } from "hey-listen"
+import { useRef, useEffect, useContext } from "react"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FunctionalProps, FunctionalComponentDefinition } from "./types"
 import { AnimationControls } from "../../animation/AnimationControls"
+import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
+import { usePresence } from "../../components/AnimatePresence/use-presence"
+import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 
 export const Exit: FunctionalComponentDefinition = {
     key: "exit",
-    shouldRender: ({ exit }, { exitProps }) => {
-        const hasExitProps = !!exitProps
-        const hasExitAnimation = !!exit
-
-        invariant(
-            !hasExitProps || (hasExitProps && hasExitAnimation),
-            "No exit prop defined on a child of AnimatePresence."
-        )
-
-        return hasExitProps && hasExitAnimation
-    },
+    shouldRender: props => !!props.exit && !checkShouldInheritVariant(props),
     Component: makeRenderlessComponent((props: FunctionalProps) => {
-        const { animate, controls, parentContext, exit } = props
-        const { exitProps } = parentContext
+        const { animate, controls, exit } = props
+        const [isPresent, onExitComplete] = usePresence()
+        const presenceContext = useContext(PresenceContext)
         const isPlayingExitAnimation = useRef(false)
 
-        // This early return is more for types - it won't actually run because of the `shouldRender` above.
-        if (!exitProps || !exit) return
+        const custom =
+            presenceContext?.custom !== undefined
+                ? presenceContext.custom
+                : props.custom
 
-        const { isExiting, custom, onExitComplete } = exitProps
-
-        useEffect(
-            () => {
-                if (isExiting) {
-                    if (!isPlayingExitAnimation.current && exit) {
-                        controls.setProps({
-                            ...props,
-                            custom:
-                                custom !== undefined ? custom : props.custom,
-                        })
-                        controls.start(exit).then(onExitComplete)
-                    }
-
-                    isPlayingExitAnimation.current = true
-                } else if (
-                    isPlayingExitAnimation.current &&
-                    animate &&
-                    !(animate instanceof AnimationControls)
-                ) {
-                    controls.start(animate)
+        useEffect(() => {
+            if (!isPresent) {
+                if (!isPlayingExitAnimation.current && exit) {
+                    controls.setProps({
+                        ...props,
+                        custom,
+                    })
+                    controls.start(exit).then(onExitComplete)
                 }
 
-                if (!isExiting) {
-                    isPlayingExitAnimation.current = false
-                }
-            },
-            [isExiting]
-        )
+                isPlayingExitAnimation.current = true
+            } else if (
+                isPlayingExitAnimation.current &&
+                animate &&
+                !(animate instanceof AnimationControls)
+            ) {
+                controls.start(animate)
+            }
+
+            if (isPresent) {
+                isPlayingExitAnimation.current = false
+            }
+        }, [isPresent])
     }),
 }

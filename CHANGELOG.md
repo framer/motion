@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.0] 2020-03-19
+
+### Added
+
+-   `AnimatePresence` now supports multiple `usePresence` children within a given sub-tree.
+
 ## [1.9.1] 2020-03-06
 
 ### Fixed

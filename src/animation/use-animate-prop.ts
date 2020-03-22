@@ -59,54 +59,47 @@ export function useAnimateProp(
         prevValues.current = targetWithoutTransition(targetAndTransition, true)
     }
 
-    useEffect(
-        () => {
-            const targetToAnimate: Target = {}
-            // These are the values we're actually animating
-            const animatingTarget = targetWithoutTransition(targetAndTransition)
-            // This is the target as it'll be once transitionEnd values are applied
-            const finalTarget = targetWithoutTransition(
-                targetAndTransition,
-                true
+    useEffect(() => {
+        const targetToAnimate: Target = {}
+        // These are the values we're actually animating
+        const animatingTarget = targetWithoutTransition(targetAndTransition)
+        // This is the target as it'll be once transitionEnd values are applied
+        const finalTarget = targetWithoutTransition(targetAndTransition, true)
+
+        // Detect which values have changed between renders
+        for (const key in animatingTarget) {
+            // This value should animate on mount if this value doesn't already exist (wasn't
+            // defined in `style` or `initial`) or if it does exist and it's already changed.
+            const shouldAnimateOnMount =
+                isInitialRender.current &&
+                (!values.has(key) ||
+                    values.get(key)!.get() !== finalTarget[key])
+
+            // If this value has updated between renders or it's we're animating this value on mount,
+            // add it to the animate target.
+            const isValidValue = finalTarget[key] !== null
+            const valueHasUpdated = hasUpdated(
+                prevValues.current![key],
+                finalTarget[key]
             )
 
-            // Detect which values have changed between renders
-            for (const key in animatingTarget) {
-                // This value should animate on mount if this value doesn't already exist (wasn't
-                // defined in `style` or `initial`) or if it does exist and it's already changed.
-                const shouldAnimateOnMount =
-                    isInitialRender.current &&
-                    (!values.has(key) ||
-                        values.get(key)!.get() !== finalTarget[key])
-
-                // If this value has updated between renders or it's we're animating this value on mount,
-                // add it to the animate target.
-                const isValidValue = finalTarget[key] !== null
-                const valueHasUpdated = hasUpdated(
-                    prevValues.current![key],
-                    finalTarget[key]
-                )
-
-                if (isValidValue && (valueHasUpdated || shouldAnimateOnMount)) {
-                    targetToAnimate[key] = animatingTarget[key]
-                }
+            if (isValidValue && (valueHasUpdated || shouldAnimateOnMount)) {
+                targetToAnimate[key] = animatingTarget[key]
             }
+        }
 
-            isInitialRender.current = false
-            prevValues.current = {
-                ...prevValues.current,
-                ...finalTarget,
-            }
+        isInitialRender.current = false
+        prevValues.current = {
+            ...prevValues.current,
+            ...finalTarget,
+        }
 
-            if (Object.keys(targetToAnimate).length) {
-                controls.start({
-                    ...targetToAnimate,
-                    transition:
-                        targetAndTransition.transition || defaultTransition,
-                    transitionEnd: targetAndTransition.transitionEnd,
-                })
-            }
-        },
-        [targetAndTransition]
-    )
+        if (Object.keys(targetToAnimate).length) {
+            controls.start({
+                ...targetToAnimate,
+                transition: targetAndTransition.transition || defaultTransition,
+                transitionEnd: targetAndTransition.transitionEnd,
+            })
+        }
+    }, [targetAndTransition])
 }
