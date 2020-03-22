@@ -64,7 +64,11 @@ const getTranslateFromMatrix = (
         return getPosFromMatrix(matrix3d[1], pos3)
     } else {
         const matrix = transform.match(/^matrix\((.+)\)$/) as string[]
-        return getPosFromMatrix(matrix[1], pos2)
+        if (matrix) {
+            return getPosFromMatrix(matrix[1], pos2)
+        } else {
+            return 0
+        }
     }
 }
 
