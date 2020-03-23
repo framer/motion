@@ -67,10 +67,12 @@ export interface AnimationProps {
     // @beta (undocumented)
     magic?: boolean;
     // @beta (undocumented)
+    magicDependency?: any;
+    // @beta (undocumented)
     magicId?: string;
-    // (undocumented)
+    // @beta (undocumented)
     magicTransition?: Transition;
-    // (undocumented)
+    // @beta (undocumented)
     onMagicComplete?: () => void;
     transition?: Transition;
     variants?: Variants;
