@@ -6,6 +6,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fix
 
+-   Fixing `PresenceChild` losing correct count of exiting children if it re-renders. ([@inventingwithmonster](https://github.com/inventingwithmonster) in [#490](https://github.com/framer/motion/pull/490))
+
+## [1.10.1] 2020-03-23
+
+### Fix
+
 -   Fixing `AnimatePresence` children not re-rendering when their exiting siblings have been removed from the tree (which broke siblings `positionTransition` and `layoutTransition`). ([@inventingwithmonster](https://github.com/inventingwithmonster) in [#489](https://github.com/framer/motion/pull/489))
 -   Adding `null` check for `getTranslateFromMatrix` ([@JoyalJoyMadeckal](https://github.com/JoyalJoyMadeckal) in [#482](https://github.com/framer/motion/pull/482))
 

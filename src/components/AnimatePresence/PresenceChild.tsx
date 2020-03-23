@@ -19,35 +19,33 @@ export const PresenceChild = ({
     custom,
 }: PresenceChildProps) => {
     const numPresenceChildren = useRef(0)
+    const numExitComplete = useRef(0)
 
     const context = {
         initial,
         isPresent,
         custom,
+        onExitComplete: () => {
+            numExitComplete.current++
+
+            const allComplete =
+                numExitComplete.current >= numPresenceChildren.current
+
+            onExitComplete && allComplete && onExitComplete()
+        },
     }
 
-    const lifecycle = useMemo(() => {
-        let numExitComplete = 0
+    const register = useMemo(() => {
+        numExitComplete.current = 0
 
-        return {
-            onExitComplete: () => {
-                numExitComplete++
-                if (
-                    onExitComplete &&
-                    numExitComplete >= numPresenceChildren.current
-                ) {
-                    onExitComplete()
-                }
-            },
-            register: () => {
-                numPresenceChildren.current++
-                return () => numPresenceChildren.current--
-            },
+        return () => {
+            numPresenceChildren.current++
+            return () => numPresenceChildren.current--
         }
-    }, [isPresent, onExitComplete])
+    }, [isPresent])
 
     return (
-        <PresenceContext.Provider value={{ ...context, ...lifecycle }}>
+        <PresenceContext.Provider value={{ ...context, register }}>
             {children}
         </PresenceContext.Provider>
     )
