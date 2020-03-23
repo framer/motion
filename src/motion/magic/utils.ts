@@ -14,6 +14,7 @@ import { MotionValue } from "../../value"
 import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { Magic } from "./Magic"
+import { warning } from "hey-listen"
 
 const clampProgress = clamp(0, 1)
 
@@ -28,8 +29,14 @@ export function snapshot(element: NativeElement): Snapshot {
         borderBottomRightRadius,
         boxShadow,
         color,
+        display,
         opacity,
     } = element.getComputedStyle()
+
+    warning(
+        display !== "inline",
+        "Magic components can't be display: inline, as inline elements don't accept a transform. Try inline-block instead."
+    )
 
     const borderRadiusMatrix = [
         borderTopLeftRadius,
