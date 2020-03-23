@@ -289,9 +289,20 @@ export interface AnimationProps {
      */
     magicId?: string
 
+    /**
+     * @beta
+     */
     onMagicComplete?: () => void
 
+    /**
+     * @beta
+     */
     magicTransition?: Transition
+
+    /**
+     * @beta
+     */
+    magicDependency?: any
 }
 
 /**

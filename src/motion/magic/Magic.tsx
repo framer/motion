@@ -61,6 +61,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     private unregisterFromMagicContext?: () => void
     private stopLayoutAnimation?: () => void
 
+    private shouldTransition = true
+
     depth: number
 
     isHidden = false
@@ -119,6 +121,22 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.stopLayoutAnimation && this.stopLayoutAnimation()
     }
 
+    shouldComponentUpdate(nextProps: FunctionalProps & ContextProps) {
+        const hasDependency =
+            this.props.magicDependency !== undefined ||
+            nextProps.magicDependency !== undefined
+        const dependencyHasChanged =
+            this.props.magicDependency !== nextProps.magicDependency
+        const presenceHasChanged = this.props.isPresent !== nextProps.isPresent
+
+        this.shouldTransition =
+            !hasDependency ||
+            (hasDependency && dependencyHasChanged) ||
+            presenceHasChanged
+
+        return true
+    }
+
     resetRotation() {
         const { nativeElement, values } = this.props
         const rotate = values.get("rotate")
@@ -172,7 +190,13 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     startAnimation(next?: Snapshot) {
+        if (!this.shouldTransition) return
+
         syncRenderSession.open()
+
+        if (!this.isPresent() && this.props.magicId === undefined) {
+            this.safeToRemove()
+        }
 
         this.next = next || this.actual
 
@@ -288,12 +312,11 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.progress.set(progressOrigin) // Set twice to hard-reset velocity
 
         const { magicTransition, transition } = this.props
-        animation = startAnimation(
-            "progress",
-            this.progress,
-            progressTarget,
-            magicTransition || transition
-        )
+        animation = startAnimation("progress", this.progress, progressTarget, {
+            ...(magicTransition || transition),
+            restDelta: 1,
+            restSpeed: 10,
+        })
 
         // TODO: We're currently chaining just the parent and child deep, and if both
         // update then `frame` fires twice in a frame. This only leads to one render
@@ -459,9 +482,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     isPresent() {
-        if (this.props.magicId === "child-hsl(23, 100%, 50%)") {
-            console.log("red child", this.props.isPresent)
-        }
         return this.props.isPresent
     }
 
