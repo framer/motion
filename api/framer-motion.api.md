@@ -795,7 +795,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/motion/magic/MagicMotion.d.ts:24:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
+// types/motion/magic/MagicMotion.d.ts:19:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
