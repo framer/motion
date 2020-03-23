@@ -2,6 +2,8 @@ import React, { CSSProperties } from "react"
 import { useState } from "react"
 import { motion, MagicMotion, AnimatePresence } from "@framer"
 
+const transition = { type: "spring", stiffness: 500, damping: 30 }
+
 function Gallery({ items, setIndex }) {
     return (
         <ul style={container}>
@@ -11,6 +13,7 @@ function Gallery({ items, setIndex }) {
                     onClick={() => setIndex(i)}
                     style={{ ...item, backgroundColor: color }}
                     magicId={color}
+                    magicTransition={transition}
                 >
                     <motion.div style={child} magicId={`child-${color}`} />
                 </motion.li>
@@ -27,7 +30,8 @@ function SingleImage({ color, index, setIndex }) {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.6 }}
-                exit={{ opacity: 0, transition: { duration: 3 } }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 id="overlay"
                 style={overlay}
                 onClick={() => setIndex(false)}
@@ -37,15 +41,16 @@ function SingleImage({ color, index, setIndex }) {
       <div className="button next" onClick={() => setIndex(index + 1)} />
       <div className="button close" onClick={close} /> */}
                 <motion.div
-                    transition={{ duration: 10 }}
                     id="color"
                     magicId={color}
+                    magicTransition={transition}
                     style={{ ...singleImage, backgroundColor: color }}
                 >
                     <motion.div
                         style={child}
                         id="child"
                         magicId={`child-${color}`}
+                        magicTransition={transition}
                     />
                 </motion.div>
             </div>
@@ -98,6 +103,9 @@ const item = {
     cursor: "pointer",
     margin: "20px 0 0 20px",
     flex: "1 1 90px",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
 }
 
 const overlay = {
@@ -126,12 +134,13 @@ const singleImage = {
     borderRadius: "20px",
     width: "500px",
     height: "300px",
+    padding: 50,
 }
 
 const child = {
-    margin: 10,
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "black",
+    backgroundColor: "white",
+    //opacity: 0.5,
 }
