@@ -20,13 +20,16 @@ export const PresenceChild = ({
 }: PresenceChildProps) => {
     const numPresenceChildren = useRef(0)
 
-    const context = useMemo(() => {
+    const context = {
+        initial,
+        isPresent,
+        custom,
+    }
+
+    const lifecycle = useMemo(() => {
         let numExitComplete = 0
 
         return {
-            initial,
-            isPresent,
-            custom,
             onExitComplete: () => {
                 numExitComplete++
                 if (
@@ -41,10 +44,10 @@ export const PresenceChild = ({
                 return () => numPresenceChildren.current--
             },
         }
-    }, [isPresent, onExitComplete, initial, custom])
+    }, [isPresent, onExitComplete])
 
     return (
-        <PresenceContext.Provider value={context}>
+        <PresenceContext.Provider value={{ ...context, ...lifecycle }}>
             {children}
         </PresenceContext.Provider>
     )
