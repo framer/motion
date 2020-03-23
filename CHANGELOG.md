@@ -18,6 +18,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Fixing `PresenceChild` losing correct count of exiting children if it re-renders. ([@inventingwithmonster](https://github.com/inventingwithmonster) in [#490](https://github.com/framer/motion/pull/490))
 
+### Changed
+
+-   Removed developer warning when using `usePresence` outside of an `AnimatePresence` block.
+
 ## [1.10.1] 2020-03-23
 
 ### Fix
