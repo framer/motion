@@ -1,6 +1,5 @@
 import { useContext, useEffect } from "react"
 import { PresenceContext } from "./PresenceContext"
-import { warning } from "hey-listen"
 
 type Present = [true]
 
@@ -32,10 +31,6 @@ type NotPresent = [false, () => void]
 export function usePresence(): Present | NotPresent {
     const context = useContext(PresenceContext)
 
-    warning(
-        context !== null,
-        "Component attempting to use presence outside of a AnimatePresence component. It will be removed from the tree without transition."
-    )
     if (context === null) return [true]
     const { isPresent, onExitComplete, register } = context
 

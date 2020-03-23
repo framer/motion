@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.2] 2020-03-23
+
+### Fix
+
+-   Fixing `PresenceChild` losing correct count of exiting children if it re-renders. ([@inventingwithmonster](https://github.com/inventingwithmonster) in [#490](https://github.com/framer/motion/pull/490))
+
 ## [1.10.1] 2020-03-23
 
 ### Fix
