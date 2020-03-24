@@ -8,30 +8,33 @@ export function App() {
     return (
         <Wrapper>
             <Column isExpanded={isExpanded}>
-                <RowFC color={"red"}>
-                    <motion.span magic>Row 1</motion.span>
+                <RowFC color={"red"} borderColor={isExpanded ? "red" : "blue"}>
+                    {/* <motion.span magic>Row 1</motion.span> */}
                 </RowFC>
-                <RowFC color={"blue"}>
+                {/* <RowFC
+                    color={"blue"}
+                    borderColor={!isExpanded ? "red" : "blue"}
+                >
                     <motion.span magic>Row 2</motion.span>
                 </RowFC>
                 <RowFC color={"green"}>
                     <motion.span magic>Row 3</motion.span>
-                </RowFC>
+                </RowFC> */}
             </Column>
             <Button onClick={() => setIsExpanded(prev => !prev)}>Click</Button>
         </Wrapper>
     )
 }
 
-function RowFC({ color, children }) {
+function RowFC({ color, children, borderColor = "black" }) {
     return (
         <motion.div
             style={{
                 fontSize: "20px",
-                borderRadius: "8px",
-                background: "pink",
                 color,
-                border: "1px solid black",
+                border: `10px solid ${borderColor}`,
+                borderTopColor: borderColor,
+                borderTopLeftRadius: borderColor === "red" ? 10 : 100,
             }}
             magic
             transition={{
@@ -65,6 +68,17 @@ const Column = styled(motion.div)`
         props.isExpanded ? "5fr 1fr 1fr" : "1fr 5fr 1fr"};
     grid-gap: 20px;
     border: 1px solid dodgerblue;
+
+    div {
+        border-radius: 8px;
+        background: ${props => (props.isExpanded ? "red" : "blue")};
+        border: 1px solid pink;
+        opacity: ${props => (props.isExpanded ? 1 : 0.5)};
+    }
+
+    span {
+        display: inline-block;
+    }
 `
 
 const Button = styled(motion.button)`
