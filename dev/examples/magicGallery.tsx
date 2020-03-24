@@ -2,7 +2,7 @@ import React, { CSSProperties } from "react"
 import { useState } from "react"
 import { motion, MagicMotion, AnimatePresence } from "@framer"
 
-const transition = { type: "spring", stiffness: 500, damping: 30 }
+const transition = { duration: 5 } //{ type: "spring", stiffness: 500, damping: 30 }
 
 function Gallery({ items, setIndex }) {
     return (
@@ -14,8 +14,13 @@ function Gallery({ items, setIndex }) {
                     style={{ ...item, backgroundColor: color }}
                     magicId={color}
                     magicTransition={transition}
+                    id={i === 0 && "list-red"}
                 >
-                    <motion.div style={child} magicId={`child-${color}`} />
+                    <motion.div
+                        style={child}
+                        magicId={`child-${color}`}
+                        magicTransition={transition}
+                    />
                 </motion.li>
             ))}
         </ul>

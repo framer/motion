@@ -67,9 +67,11 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     isHidden = false
 
-    prev: Snapshot
-    actual: Snapshot
-    next: Snapshot
+    measuredOrigin: Snapshot
+    measuredTarget: Snapshot
+    visualOrigin: Snapshot
+    visualTarget: Snapshot
+
     correctedLayout: Box = {
         x: { min: 0, max: 0 },
         y: { min: 0, max: 0 },
@@ -107,7 +109,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             this.unregisterFromMagicContext = magicContext.register(this)
         } else {
             this.getSnapshotBeforeUpdate = () => {
-                this.snapshot()
+                this.snapshotOrigin()
                 magicContext.add(this)
                 return null
             }
@@ -149,36 +151,40 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     resetStyles() {
-        const { nativeElement, style, values, animate } = this.props
+        const { animate, nativeElement, style = {}, values } = this.props
+        const reset = resetStyles(style)
 
-        const reset = resetStyles(style, animate)
-
-        if (this.isHidden) {
+        // If we're animating opacity separately, we don't want to reset
+        // as it causes a visual flicker when adding the component
+        // TODO: We should do this universally for all animating props
+        // and account for variants too.
+        if (typeof animate === "object" && animate.hasOwnProperty("opacity")) {
+            delete reset.opacity
+        } else if (this.isHidden) {
             reset.opacity = 0
             values.get("opacity")?.set(0)
         }
 
         nativeElement.setStyle(reset)
-        // TODO: When exiting calculate size for new element
         nativeElement.render()
     }
 
-    snapshot() {
+    snapshotOrigin() {
         const { nativeElement } = this.props
-        const prev = snapshot(nativeElement)
-        applyCurrent(prev.style, this.current)
+        const origin = snapshot(nativeElement)
+        applyCurrent(origin.style, this.current)
 
-        if (this.isHidden) prev.style.opacity = 1
+        if (this.isHidden) origin.style.opacity = 1
 
-        this.prev = prev
+        this.measuredOrigin = origin
     }
 
-    snapshotNext() {
+    snapshotTarget() {
         const { nativeElement, style } = this.props
 
-        const actual = snapshot(nativeElement)
-        actual.style.rotate = resolve(0, style && style.rotate)
-        this.actual = actual
+        const target = snapshot(nativeElement)
+        target.style.rotate = resolve(0, style && style.rotate)
+        this.measuredTarget = target
     }
 
     hide() {
@@ -189,7 +195,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.isHidden = false
     }
 
-    startAnimation(next?: Snapshot) {
+    startAnimation(origin?: Snapshot, target?: Snapshot) {
         if (!this.shouldTransition) return
 
         syncRenderSession.open()
@@ -198,12 +204,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             this.safeToRemove()
         }
 
-        this.next = next || this.actual
-
-        if (!this.prev) this.prev = this.next
-        // If we're animating to an external target, copy its styles
-        // straight to the `next` target
-        if (next) this.next.style = next.style
+        this.visualTarget = target || this.measuredTarget
+        this.visualOrigin = origin || this.measuredOrigin || this.visualTarget
 
         const animations = [
             this.startLayoutAnimation(),
@@ -229,25 +231,29 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         this.stopLayoutAnimation && this.stopLayoutAnimation()
 
-        const prevStyle = this.prev.style
-        const nextStyle = this.next.style
-        const isAnimatingRotate = prevStyle.rotate !== nextStyle.rotate
+        const originStyle = this.visualOrigin.style
+        const targetStyle = this.visualTarget.style
+        const isAnimatingRotate = originStyle.rotate !== targetStyle.rotate
 
         const hasBorderTopLeftRadius =
-            prevStyle.borderTopLeftRadius || nextStyle.borderTopLeftRadius
+            originStyle.borderTopLeftRadius || targetStyle.borderTopLeftRadius
         const hasBorderTopRightRadius =
-            prevStyle.borderTopRightRadius || nextStyle.borderTopRightRadius
+            originStyle.borderTopRightRadius || targetStyle.borderTopRightRadius
         const hasBorderBottomLeftRadius =
-            prevStyle.borderBottomLeftRadius || nextStyle.borderBottomLeftRadius
+            originStyle.borderBottomLeftRadius ||
+            targetStyle.borderBottomLeftRadius
         const hasBorderBottomRightRadius =
-            prevStyle.borderBottomRightRadius ||
-            nextStyle.borderBottomRightRadius
+            originStyle.borderBottomRightRadius ||
+            targetStyle.borderBottomRightRadius
 
         const hasBoxShadow =
-            prevStyle.boxShadow !== "none" || nextStyle.boxShadow !== "none"
+            originStyle.boxShadow !== "none" || targetStyle.boxShadow !== "none"
         const updateBoxShadow =
             hasBoxShadow &&
-            this.createUpdateBoxShadow(prevStyle.boxShadow, nextStyle.boxShadow)
+            this.createUpdateBoxShadow(
+                originStyle.boxShadow,
+                targetStyle.boxShadow
+            )
 
         this.target = {
             x: { min: 0, max: 0 },
@@ -351,13 +357,13 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         for (let i = 0; i < numAnimatableStyles; i++) {
             const key = animatableStyles[i]
-            const prevStyle = this.prev.style[key]
-            const nextStyle = this.next.style[key]
+            const originStyle = this.visualOrigin.style[key]
+            const nextStyle = this.visualTarget.style[key]
 
-            if (prevStyle !== nextStyle) {
+            if (originStyle !== nextStyle) {
                 shouldTransitionStyle = true
-                const value = values.get(key, prevStyle)
-                value.set(prevStyle)
+                const value = values.get(key, originStyle)
+                value.set(originStyle)
 
                 target[key] = nextStyle
             }
@@ -375,9 +381,14 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const { parentContext } = this.props
         const parentDeltas = parentContext.magicDeltas || []
 
-        resetLayout(this.correctedLayout, this.actual.layout)
+        resetLayout(this.correctedLayout, this.measuredTarget.layout)
         applyTreeDeltas(this.correctedLayout, parentDeltas)
-        easeBox(this.target, this.prev.layout, this.next.layout, p)
+        easeBox(
+            this.target,
+            this.visualOrigin.layout,
+            this.visualTarget.layout,
+            p
+        )
         calcBoxDelta(this.delta, this.target, this.correctedLayout, origin)
 
         // TODO: If we could return this from applyTreeDeltas
@@ -407,8 +418,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     updateRotate(p: number, rotate: MotionValue<number>) {
         const target = mix(
-            this.prev.style.rotate as number,
-            this.next.style.rotate as number,
+            this.visualOrigin.style.rotate as number,
+            this.visualTarget.style.rotate as number,
             p
         )
         rotate.set(target)
@@ -420,8 +431,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         property: string
     ) {
         const target = mix(
-            this.prev.style[property],
-            this.next.style[property],
+            this.visualOrigin.style[property],
+            this.visualTarget.style[property],
             p
         )
 
