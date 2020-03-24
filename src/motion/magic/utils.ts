@@ -8,6 +8,7 @@ import {
     Style,
     MagicBatchTree,
     StackQuery,
+    MagicAnimationOptions,
 } from "./types"
 import { NativeElement } from "../utils/use-native-element"
 import { MotionStyle } from "../types"
@@ -293,7 +294,7 @@ export const batchUpdate = (): MagicBatchTree => {
 
     const add = (child: Magic) => queue.add(child)
 
-    const flush = (stack?: StackQuery) => {
+    const flush = (stack?: StackQuery, options?: MagicAnimationOptions) => {
         if (!queue.size) return
 
         const order = Array.from(queue).sort(sortByDepth)
@@ -308,23 +309,33 @@ export const batchUpdate = (): MagicBatchTree => {
 
         order.forEach(child => {
             if (!child.isHidden && !stack) {
-                child.startAnimation()
+                child.startAnimation(options)
             } else if (stack) {
+                // TODO: Cross-fade only needs to happen to a root component
                 // TODO: Clean all this crossfade stuff up, magicGallery is a good test example
                 if (child.isHidden && stack.isPrevious(child)) {
                     if (stack.isVisibleExiting(child)) {
+                        // The previous comonent crossfade in
                         let origin = stack.getVisibleOrigin(child)
 
                         // TODO: This kind of cross fade works ok because they share
                         // the same transition, will this always be true? Hell to the no
                         if (origin) {
                             origin = { ...origin }
-                            origin.style = { ...origin.style, opacity: 0 }
+                            origin.style = {
+                                ...origin.style,
+                                opacity: 0,
+                            }
                             child.measuredTarget.style.opacity = 1
                         }
 
-                        child.startAnimation(origin)
+                        child.startAnimation({
+                            ...options,
+                            origin,
+                            opacityEasing: [0, 0.7, 0.3, 1],
+                        })
                     } else {
+                        // The previous component crossfade out
                         let target = stack.getVisibleTarget(child)
 
                         if (target) {
@@ -332,9 +343,10 @@ export const batchUpdate = (): MagicBatchTree => {
                             target.style = { ...target.style, opacity: 0 }
                         }
 
-                        child.startAnimation(undefined, target)
+                        child.startAnimation({ ...options, target })
                     }
                 } else if (!child.isPresent()) {
+                    // The visible component crossfade out
                     let target = stack.getPreviousOrigin(child)
 
                     if (target) {
@@ -342,12 +354,16 @@ export const batchUpdate = (): MagicBatchTree => {
                         target.style = { ...target.style, opacity: 0 }
                     }
 
-                    child.startAnimation(undefined, target)
+                    child.startAnimation({
+                        ...options,
+                        target,
+                        opacityEasing: [0.46, 0.01, 0.72, 0.33],
+                    })
                 } else {
-                    child.startAnimation(
-                        undefined,
-                        stack.getPreviousOrigin(child)
-                    )
+                    child.startAnimation({
+                        ...options,
+                        target: stack.getPreviousOrigin(child),
+                    })
                 }
             }
         })
