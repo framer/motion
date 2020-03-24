@@ -245,10 +245,10 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     getSnapshotBeforeUpdate(): null;
     // (undocumented)
     getStack(id: string): Stack;
-    // Warning: (ae-forgotten-export) The symbol "Snapshot" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "StackQuery" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
-    getVisualTarget(child: Magic): Snapshot | undefined;
+    getStackQuery(): StackQuery;
     // (undocumented)
     register(child: Magic): () => void;
     // (undocumented)

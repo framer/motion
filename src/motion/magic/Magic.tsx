@@ -23,6 +23,7 @@ import {
     MagicControlledTree,
     MagicBatchTree,
     Axis,
+    MagicAnimationOptions,
 } from "./types"
 import { MotionValue } from "../../value"
 import { syncRenderSession } from "../../dom/sync-render-session"
@@ -195,7 +196,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.isHidden = false
     }
 
-    startAnimation(origin?: Snapshot, target?: Snapshot) {
+    startAnimation({ origin, target, ...opts }: MagicAnimationOptions = {}) {
         if (!this.shouldTransition) return
 
         syncRenderSession.open()
@@ -208,8 +209,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.visualOrigin = origin || this.measuredOrigin || this.visualTarget
 
         const animations = [
-            this.startLayoutAnimation(),
-            this.startStyleAnimation(),
+            this.startLayoutAnimation(opts),
+            this.startStyleAnimation(opts),
         ]
 
         Promise.all(animations.filter(Boolean)).then(() => {
@@ -226,7 +227,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
      * This uses the FLIP animation technique to animate physical dimensions
      * and correct distortion on related styles (ie borderRadius etc)
      */
-    startLayoutAnimation() {
+    startLayoutAnimation(opts: MagicAnimationOptions) {
         let animation
 
         this.stopLayoutAnimation && this.stopLayoutAnimation()
@@ -319,7 +320,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         const { magicTransition, transition } = this.props
         animation = startAnimation("progress", this.progress, progressTarget, {
-            ...(magicTransition || transition),
+            ...(opts.transition || magicTransition || transition),
             restDelta: 1,
             restSpeed: 10,
         })
@@ -350,7 +351,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
      * This is a straight animation between prev/next styles. This animates
      * styles that don't need scale inversion correction.
      */
-    startStyleAnimation() {
+    startStyleAnimation(opts: MagicAnimationOptions) {
         let shouldTransitionStyle = false
         const target: TargetAndTransition = {}
         const { values } = this.props
@@ -370,7 +371,19 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         }
 
         const { magicTransition, transition, controls } = this.props
-        target.transition = magicTransition || transition || {}
+        target.transition =
+            opts.transition || magicTransition || transition || {}
+
+        if (opts.opacityEasing) {
+            target.transition = {
+                opacity: {
+                    ...target.transition,
+                    type: "tween",
+                    ease: opts.opacityEasing,
+                },
+                default: { ...target.transition },
+            }
+        }
 
         if (shouldTransitionStyle) {
             return controls.start(target)
