@@ -324,7 +324,7 @@ export const batchUpdate = (): MagicBatchTree => {
                             origin = { ...origin }
                             origin.style = {
                                 ...origin.style,
-                                opacity: 0,
+                                opacity: 1.1, // TODO: Hacking to always be visible
                             }
                             child.measuredTarget.style.opacity = 1
                         }
@@ -347,17 +347,17 @@ export const batchUpdate = (): MagicBatchTree => {
                     }
                 } else if (!child.isPresent()) {
                     // The visible component crossfade out
-                    let target = stack.getPreviousOrigin(child)
+                    // let target = stack.getPreviousOrigin(child)
 
-                    if (target) {
-                        target = { ...target }
-                        target.style = { ...target.style, opacity: 0 }
-                    }
+                    // if (target) {
+                    //     target = { ...target }
+                    //     target.style = { ...target.style, opacity: 0 }
+                    // }
 
                     child.startAnimation({
                         ...options,
-                        target,
-                        opacityEasing: [0.46, 0.01, 0.72, 0.33],
+                        target: stack.getPreviousOrigin(child),
+                        //  opacityEasing: [0.46, 0.01, 0.72, 0.33],
                     })
                 } else {
                     child.startAnimation({

@@ -208,17 +208,19 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.visualTarget = target || this.measuredTarget
         this.visualOrigin = origin || this.measuredOrigin || this.visualTarget
 
-        const animations = [
-            this.startLayoutAnimation(opts),
-            this.startStyleAnimation(opts),
-        ]
+        if (this.visualOrigin && this.visualTarget) {
+            const animations = [
+                this.startLayoutAnimation(opts),
+                this.startStyleAnimation(opts),
+            ]
 
-        Promise.all(animations.filter(Boolean)).then(() => {
-            const { onMagicComplete } = this.props
-            onMagicComplete && onMagicComplete()
+            Promise.all(animations.filter(Boolean)).then(() => {
+                const { onMagicComplete } = this.props
+                onMagicComplete && onMagicComplete()
 
-            !this.isPresent() && this.safeToRemove()
-        })
+                !this.isPresent() && this.safeToRemove()
+            })
+        }
 
         syncRenderSession.flush()
     }
