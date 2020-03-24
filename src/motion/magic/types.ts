@@ -1,4 +1,5 @@
 import { Magic } from "./Magic"
+import { Transition } from "../../types"
 
 export interface Axis {
     min: number
@@ -48,7 +49,10 @@ export interface MagicControlledTree {
 
 export type GetVisualTarget = (child: Magic) => Snapshot | undefined
 
-export type FlushMagicChildren = (stackQuery?: StackQuery) => void
+export type FlushMagicChildren = (
+    stackQuery?: StackQuery,
+    opts?: MagicAnimationOptions
+) => void
 
 export interface MagicBatchTree {
     add: (child: Magic) => void
@@ -61,4 +65,11 @@ export interface StackQuery {
     getVisibleOrigin: (child: Magic) => Snapshot | undefined
     getPreviousOrigin: (child: Magic) => Snapshot | undefined
     getVisibleTarget: (child: Magic) => Snapshot | undefined
+}
+
+export interface MagicAnimationOptions {
+    origin?: Snapshot
+    target?: Snapshot
+    transition?: Transition
+    opacityEasing?: [number, number, number, number]
 }

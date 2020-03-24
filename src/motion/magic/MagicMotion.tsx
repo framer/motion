@@ -3,9 +3,11 @@ import { MagicControlledTree, Snapshot, StackQuery } from "./types"
 import { MagicContext } from "./MagicContext"
 import { Magic } from "./Magic"
 import { batchUpdate } from "./utils"
+import { Transition } from "../../types"
 
 interface Props {
     children: React.ReactNode
+    transition?: Transition
 }
 
 type Stack = Magic[]
@@ -53,7 +55,9 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
 
     componentDidUpdate() {
         this.children.forEach(child => this.update.add(child))
-        this.update.flush(this.getStackQuery())
+        this.update.flush(this.getStackQuery(), {
+            transition: this.props.transition,
+        })
     }
 
     register(child: Magic) {
