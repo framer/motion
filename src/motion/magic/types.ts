@@ -26,7 +26,6 @@ export type BoxShadow = [string, number, number, number, number]
 
 export interface Style {
     backgroundColor: string
-    border: string
     borderTopLeftRadius: number
     borderTopRightRadius: number
     borderBottomLeftRadius: number
@@ -49,9 +48,17 @@ export interface MagicControlledTree {
 
 export type GetVisualTarget = (child: Magic) => Snapshot | undefined
 
-export type FlushMagicChildren = (getVisualTarget?: GetVisualTarget) => void
+export type FlushMagicChildren = (stackQuery?: StackQuery) => void
 
 export interface MagicBatchTree {
     add: (child: Magic) => void
     flush: FlushMagicChildren
+}
+
+export interface StackQuery {
+    isPrevious: (child: Magic) => boolean
+    isVisibleExiting: (child: Magic) => boolean
+    getVisibleOrigin: (child: Magic) => Snapshot | undefined
+    getPreviousOrigin: (child: Magic) => Snapshot | undefined
+    getVisibleTarget: (child: Magic) => Snapshot | undefined
 }

@@ -7,9 +7,10 @@ import {
     Box,
     Style,
     MagicBatchTree,
+    StackQuery,
 } from "./types"
 import { NativeElement } from "../utils/use-native-element"
-import { MotionStyle, MotionProps } from "../types"
+import { MotionStyle } from "../types"
 import { MotionValue } from "../../value"
 import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
@@ -22,7 +23,6 @@ export function snapshot(element: NativeElement): Snapshot {
     const { top, left, right, bottom } = element.getBoundingBox()
     const {
         backgroundColor,
-        border,
         borderTopLeftRadius,
         borderTopRightRadius,
         borderBottomLeftRadius,
@@ -52,7 +52,6 @@ export function snapshot(element: NativeElement): Snapshot {
         },
         style: {
             backgroundColor,
-            border,
             borderTopLeftRadius: borderRadiusMatrix[0],
             borderTopRightRadius: borderRadiusMatrix[1],
             borderBottomLeftRadius: borderRadiusMatrix[2],
@@ -201,61 +200,63 @@ export function resolve<T extends unknown>(
  *
  * @param styleProp
  */
-export function resetStyles(
-    styleProp: MotionStyle = {},
-    animate: MotionProps["animate"],
-    layout?: Box
-): MotionStyle {
-    const styles: MotionStyle = {
+const resettable = {
+    //background: false,
+    backgroundColor: false,
+    //borderColor: false,
+    border: false,
+    borderRadius: false,
+    borderTopLeftRadius: "borderTop",
+    borderTopRightRadius: "borderTop",
+    borderBottomLeftRadius: "borderTop",
+    borderBottomRightRadius: "borderTop",
+    boxShadow: false,
+    color: false,
+    opacity: false,
+    // width: false,
+    // height: false,
+    // position: false,
+    // opacity: false,
+}
+
+export function resetStyles(style: MotionStyle): MotionStyle {
+    const reset: MotionStyle = {
         x: 0,
         y: 0,
         scale: 1,
         scaleX: 1,
         scaleY: 1,
         rotate: 0,
-        boxShadow: resolve("", styleProp.boxShadow),
-
-        borderTopLeftRadius: resolve(
-            "",
-            styleProp.borderTopLeftRadius ?? styleProp.borderRadius
-        ),
-        borderTopRightRadius: resolve(
-            "",
-            styleProp.borderTopRightRadius ?? styleProp.borderRadius
-        ),
-        borderBottomLeftRadius: resolve(
-            "",
-            styleProp.borderBottomLeftRadius ?? styleProp.borderRadius
-        ),
-        borderBottomRightRadius: resolve(
-            "",
-            styleProp.borderBottomRightRadius ?? styleProp.borderRadius
-        ),
-
-        position: resolve("", styleProp.position) as any,
-        width: resolve("", styleProp.width),
-        height: resolve("", styleProp.height),
     }
 
-    if (layout) {
-        styles.position = "absolute"
-        styles.width = layout.x.max - layout.x.min
-        styles.height = layout.y.max - layout.y.min
-    }
-
-    for (let i = 0; i < numAnimatableStyles; i++) {
-        const key = animatableStyles[i]
-
-        if (
-            // TODO: This is an awful way of detecting if a property is being directly animated,
-            // we need to find a better way of doing this that includes variants and inherited variants
-            !(typeof animate === "object" && animate.hasOwnProperty("opacity"))
-        ) {
-            styles[key] = resolve("", styleProp[key])
+    // TODO: We need to account for motionvalues
+    for (const key in resettable) {
+        if (style[key] !== undefined) {
+            reset[key] = style[key]
+        } else if (resettable[key] && style[resettable[key]]) {
+            reset[key] = style[resettable[key]]
+        } else {
+            //TODO neaten up fallback situations
+            if (key === "backgroundColor") {
+                if (style.background !== undefined) {
+                    // TODO: Might be robust to try and extract a color from this
+                    reset[key] = style.background as string
+                } else {
+                    reset[key] = ""
+                }
+            } else if (key.endsWith("Radius")) {
+                if (style.borderRadius !== undefined) {
+                    reset[key] = style.borderRadius
+                } else {
+                    reset[key] = ""
+                }
+            } else {
+                reset[key] = ""
+            }
         }
     }
 
-    return styles
+    return reset
 }
 
 export function applyCurrent(style: Style, current: Partial<Style>) {
@@ -292,24 +293,63 @@ export const batchUpdate = (): MagicBatchTree => {
 
     const add = (child: Magic) => queue.add(child)
 
-    const flush = (
-        getVisualTarget?: (child: Magic) => Snapshot | undefined
-    ) => {
+    const flush = (stack?: StackQuery) => {
         if (!queue.size) return
 
         const order = Array.from(queue).sort(sortByDepth)
 
         order.forEach(child => child.resetStyles())
-        order.forEach(child => !child.isHidden && child.snapshotNext())
 
         order.forEach(child => {
-            if (child.isHidden) return
+            if (!child.isHidden || (stack && stack.isPrevious(child))) {
+                child.snapshotTarget()
+            }
+        })
 
-            const visualTarget = getVisualTarget
-                ? getVisualTarget(child)
-                : undefined
+        order.forEach(child => {
+            if (!child.isHidden && !stack) {
+                child.startAnimation()
+            } else if (stack) {
+                // TODO: Clean all this crossfade stuff up, magicGallery is a good test example
+                if (child.isHidden && stack.isPrevious(child)) {
+                    if (stack.isVisibleExiting(child)) {
+                        let origin = stack.getVisibleOrigin(child)
 
-            child.startAnimation(visualTarget)
+                        // TODO: This kind of cross fade works ok because they share
+                        // the same transition, will this always be true? Hell to the no
+                        if (origin) {
+                            origin = { ...origin }
+                            origin.style = { ...origin.style, opacity: 0 }
+                            child.measuredTarget.style.opacity = 1
+                        }
+
+                        child.startAnimation(origin)
+                    } else {
+                        let target = stack.getVisibleTarget(child)
+
+                        if (target) {
+                            target = { ...target }
+                            target.style = { ...target.style, opacity: 0 }
+                        }
+
+                        child.startAnimation(undefined, target)
+                    }
+                } else if (!child.isPresent()) {
+                    let target = stack.getPreviousOrigin(child)
+
+                    if (target) {
+                        target = { ...target }
+                        target.style = { ...target.style, opacity: 0 }
+                    }
+
+                    child.startAnimation(undefined, target)
+                } else {
+                    child.startAnimation(
+                        undefined,
+                        stack.getPreviousOrigin(child)
+                    )
+                }
+            }
         })
 
         queue.clear()
@@ -323,3 +363,9 @@ const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth
 export function near(value: number, target = 0, maxDistance = 0.01): boolean {
     return distance(value, target) < maxDistance
 }
+
+// Replace with code from Stylefire
+const CAMEL_CASE_PATTERN = /([a-z])([A-Z])/g
+const REPLACE_TEMPLATE = "$1-$2"
+export const camelToDash = (str: string) =>
+    str.replace(CAMEL_CASE_PATTERN, REPLACE_TEMPLATE).toLowerCase()

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { MagicControlledTree, Snapshot } from "./types"
+import { MagicControlledTree, Snapshot, StackQuery } from "./types"
 import { MagicContext } from "./MagicContext"
 import { Magic } from "./Magic"
 import { batchUpdate } from "./utils"
@@ -35,12 +35,12 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     }
 
     getSnapshotBeforeUpdate() {
-        this.children.forEach(child => child.snapshot())
+        this.children.forEach(child => child.snapshotOrigin())
 
         this.stacks.forEach((stack, id) => {
             const latestChild = stack[stack.length - 1]
             if (latestChild) {
-                this.snapshots.set(id, latestChild.prev)
+                this.snapshots.set(id, latestChild.measuredOrigin)
             }
         })
 
@@ -53,7 +53,7 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
 
     componentDidUpdate() {
         this.children.forEach(child => this.update.add(child))
-        this.update.flush(child => this.getVisualTarget(child))
+        this.update.flush(this.getStackQuery())
     }
 
     register(child: Magic) {
@@ -90,7 +90,7 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
         const snapshot = this.snapshots.get(id)
         if (!snapshot) return
 
-        child.prev = snapshot
+        child.measuredOrigin = snapshot
 
         // If we have more than one child in this stack, hide the
         // previous child
@@ -101,27 +101,68 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
         }
     }
 
-    getVisualTarget(child: Magic) {
-        const { magicId } = child.props
-
-        if (magicId !== undefined && !child.isPresent()) {
-            const stack = this.getStack(magicId)
-            const index = stack.findIndex(stackChild => child === stackChild)
-
-            if (index === -1) return
-
-            const previousChild = stack[index - 1]
-
-            if (previousChild) return previousChild.prev
-        }
-    }
-
     getStack(id: string) {
         if (!this.stacks.has(id)) {
             this.stacks.set(id, [])
         }
 
         return this.stacks.get(id) as Stack
+    }
+
+    getStackQuery(): StackQuery {
+        const data = {}
+
+        this.stacks.forEach((stack, key) => {
+            const visibleIndex = stack.findIndex(child => !child.isHidden)
+            const visible =
+                visibleIndex !== -1 ? stack[visibleIndex] : undefined
+            const previousIndex = visibleIndex - 1
+            const previous =
+                previousIndex !== -1 ? stack[previousIndex] : undefined
+
+            data[key] = { visible, previous }
+        })
+
+        const getStack = (child: Magic) => {
+            const { magicId } = child.props
+            return magicId && data[magicId]
+        }
+
+        return {
+            isPrevious: (child: Magic) => {
+                const stack = getStack(child)
+
+                if (!stack) {
+                    return false
+                } else {
+                    return stack.previous === child
+                }
+            },
+            isVisibleExiting(child: Magic) {
+                const stack = getStack(child)
+
+                if (!stack) {
+                    return false
+                } else {
+                    return !stack.visible.isPresent()
+                }
+            },
+            getVisibleOrigin: (child: Magic) => {
+                const stack = getStack(child)
+                if (!stack) return
+                return stack.visible.measuredOrigin
+            },
+            getPreviousOrigin: (child: Magic) => {
+                const stack = getStack(child)
+                if (!stack || !stack.previous || child.isPresent()) return
+                return stack.previous.measuredTarget
+            },
+            getVisibleTarget: (child: Magic) => {
+                const stack = getStack(child)
+                if (!stack || !stack.visible) return
+                return stack.visible.measuredTarget
+            },
+        }
     }
 
     render() {
