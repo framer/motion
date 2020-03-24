@@ -13,14 +13,9 @@ function Gallery({ items, setIndex }) {
                     onClick={() => setIndex(i)}
                     style={{ ...item, backgroundColor: color }}
                     magicId={color}
-                    magicTransition={transition}
                     id={i === 0 && "list-red"}
                 >
-                    <motion.div
-                        style={child}
-                        magicId={`child-${color}`}
-                        magicTransition={transition}
-                    />
+                    <motion.div style={child} magicId={`child-${color}`} />
                 </motion.li>
             ))}
         </ul>
@@ -48,14 +43,12 @@ function SingleImage({ color, index, setIndex }) {
                 <motion.div
                     id="color"
                     magicId={color}
-                    magicTransition={transition}
                     style={{ ...singleImage, backgroundColor: color }}
                 >
                     <motion.div
                         style={child}
                         id="child"
                         magicId={`child-${color}`}
-                        magicTransition={transition}
                     />
                 </motion.div>
             </div>
@@ -67,7 +60,7 @@ export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     return (
-        <MagicMotion>
+        <MagicMotion transition={transition}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
