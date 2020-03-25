@@ -6,6 +6,7 @@ import { DraggableProps } from "./types"
 import { ComponentDragControls } from "./ComponentDragControls"
 import { useConstant } from "../utils/use-constant"
 import { NativeElement } from "../motion/utils/use-native-element"
+import { usePresence } from "../components/AnimatePresence/use-presence"
 
 /**
  * A hook that allows an element to be dragged.
@@ -31,10 +32,22 @@ export function useDrag(
     )
     dragControls.updateProps({ ...props, transformPagePoint })
 
+    useDisableDragOnExit(dragControls)
+
     useEffect(
         () => groupDragControls && groupDragControls.subscribe(dragControls),
         [dragControls]
     )
 
     useEffect(() => dragControls.mount(nativeElement.getInstance()), [])
+}
+
+function useDisableDragOnExit(dragControls: ComponentDragControls) {
+    const [isPresent, safeToRemove] = usePresence()
+    useEffect(() => {
+        if (!isPresent && safeToRemove) {
+            safeToRemove()
+            dragControls.stopMotion()
+        }
+    }, [isPresent])
 }

@@ -73,6 +73,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     visualOrigin: Snapshot
     visualTarget: Snapshot
 
+    hasAnimatedRotate: boolean = false
+
     correctedLayout: Box = {
         x: { min: 0, max: 0 },
         y: { min: 0, max: 0 },
@@ -197,6 +199,10 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     startAnimation({ origin, target, ...opts }: MagicAnimationOptions = {}) {
+        const { nativeElement, values } = this.props
+        const rotate = values.get("rotate")
+        rotate && nativeElement.setStyle("rotate", rotate.get())
+
         if (!this.shouldTransition) return
 
         syncRenderSession.open()
@@ -281,7 +287,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const frame = () => {
             // TODO: Break up each of these so we can animate separately
             const p = this.progress.get() / 1000
-            this.updateBoundingBox(p, isAnimatingRotate ? 0.5 : undefined)
+            this.updateBoundingBox(p, rotate.get() !== 0 ? 0.5 : undefined)
             this.updateTransform(x, y, scaleX, scaleY)
 
             isAnimatingRotate && this.updateRotate(p, rotate)
@@ -437,6 +443,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             this.visualTarget.style.rotate as number,
             p
         )
+
         rotate.set(target)
     }
 

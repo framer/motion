@@ -33,7 +33,7 @@ function SingleImage({ color, index, setIndex }) {
                 exit={{ opacity: 0 }}
                 transition={{ duration: 0.2 }}
                 id="overlay"
-                style={overlay}
+                style={{ ...overlay }}
                 onClick={() => setIndex(false)}
             />
             <div style={singleImageContainer}>
@@ -60,7 +60,7 @@ export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     return (
-        <MagicMotion transition={transition}>
+        <MagicMotion transition={transition} crossfade>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
