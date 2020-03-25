@@ -28,6 +28,8 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
 
     private update = batchUpdate()
 
+    private shouldTransition = true
+
     state = {
         forceRender: (): void => this.setState({ ...this.state }),
         register: (child: Magic) => this.register(child),
@@ -41,17 +43,19 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
         const dependencyHasChanged =
             this.props.dependency !== nextProps.dependency
 
-        const shouldUpdate =
+        this.shouldTransition =
             !hasDependency || (hasDependency && dependencyHasChanged)
 
-        if (shouldUpdate) {
+        if (this.shouldTransition) {
             this.children.forEach(child => child.resetRotation())
         }
 
-        return shouldUpdate
+        return true
     }
 
     getSnapshotBeforeUpdate() {
+        if (!this.shouldTransition) return
+
         this.children.forEach(child => child.snapshotOrigin())
 
         this.stacks.forEach((stack, id) => {
@@ -69,6 +73,8 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     }
 
     componentDidUpdate() {
+        if (!this.shouldTransition) return
+
         this.children.forEach(child => this.update.add(child))
 
         const { transition, crossfade } = this.props
