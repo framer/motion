@@ -43,19 +43,21 @@ const Item = ({ color, setPosition, moveItem, i }) => {
             onDragStart={() => setDragging(true)}
             onDragEnd={() => setDragging(false)}
             onDrag={(e, { point }) => moveItem(i, point.y)}
-            positionTransition={({ delta }) => {
-                if (isDragging) {
-                    // If we're dragging, we want to "undo" the items movement within the list
-                    // by manipulating its dragOriginY. This will keep the item under the cursor,
-                    // even though it's jumping around the DOM.
-                    dragOriginY.set(dragOriginY.get() + delta.y)
-                }
+            magic={!isDragging}
 
-                // If `positionTransition` is a function and returns `false`, it's telling
-                // Motion not to animate from its old position into its new one. If we're
-                // dragging, we don't want any animation to occur.
-                return !isDragging
-            }}
+            // magic={({ delta }) => {
+            //     if (isDragging) {
+            //         // If we're dragging, we want to "undo" the items movement within the list
+            //         // by manipulating its dragOriginY. This will keep the item under the cursor,
+            //         // even though it's jumping around the DOM.
+            //         dragOriginY.set(dragOriginY.get() + delta.y)
+            //     }
+
+            //     // If `magic` is a function and returns `false`, it's telling
+            //     // Motion not to animate from its old position into its new one. If we're
+            //     // dragging, we don't want any animation to occur.
+            //     return !isDragging
+            // }}
         />
     )
 }
