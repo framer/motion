@@ -294,7 +294,7 @@ export const batchUpdate = (): MagicBatchTree => {
 
     const add = (child: Magic) => queue.add(child)
 
-    const flush = (stack?: StackQuery, options?: MagicAnimationOptions) => {
+    const flush = (stack?: StackQuery, options: MagicAnimationOptions = {}) => {
         if (!queue.size) return
 
         const order = Array.from(queue).sort(sortByDepth)
@@ -308,62 +308,15 @@ export const batchUpdate = (): MagicBatchTree => {
         })
 
         order.forEach(child => {
+            // Perform a magic animtion as normal if the child isn't hidden
+            // and we're not handling magicId stacks in a special way
             if (!child.isHidden && !stack) {
                 child.startAnimation(options)
             } else if (stack) {
-                // TODO: Cross-fade only needs to happen to a root component
-                // TODO: Clean all this crossfade stuff up, magicGallery is a good test example
-                if (child.isHidden && stack.isPrevious(child)) {
-                    if (stack.isVisibleExiting(child)) {
-                        // The previous comonent crossfade in
-                        let origin = stack.getVisibleOrigin(child)
-
-                        // TODO: This kind of cross fade works ok because they share
-                        // the same transition, will this always be true? Hell to the no
-                        if (origin) {
-                            origin = { ...origin }
-                            origin.style = {
-                                ...origin.style,
-                                opacity: 1.1, // TODO: Hacking to always be visible
-                            }
-                            child.measuredTarget.style.opacity = 1
-                        }
-
-                        child.startAnimation({
-                            ...options,
-                            origin,
-                            opacityEasing: [0, 0.7, 0.3, 1],
-                        })
-                    } else {
-                        // The previous component crossfade out
-                        let target = stack.getVisibleTarget(child)
-
-                        if (target) {
-                            target = { ...target }
-                            target.style = { ...target.style, opacity: 0 }
-                        }
-
-                        child.startAnimation({ ...options, target })
-                    }
-                } else if (!child.isPresent()) {
-                    // The visible component crossfade out
-                    // let target = stack.getPreviousOrigin(child)
-
-                    // if (target) {
-                    //     target = { ...target }
-                    //     target.style = { ...target.style, opacity: 0 }
-                    // }
-
-                    child.startAnimation({
-                        ...options,
-                        target: stack.getPreviousOrigin(child),
-                        //  opacityEasing: [0.46, 0.01, 0.72, 0.33],
-                    })
+                if (options.crossfade) {
+                    crossfadeComponents(child, stack, options)
                 } else {
-                    child.startAnimation({
-                        ...options,
-                        target: stack.getPreviousOrigin(child),
-                    })
+                    switchComponents(child, stack, options)
                 }
             }
         })
@@ -372,6 +325,70 @@ export const batchUpdate = (): MagicBatchTree => {
     }
 
     return { add, flush }
+}
+
+function crossfadeComponents(
+    child: Magic,
+    stack: StackQuery,
+    options: MagicAnimationOptions
+) {
+    // TODO: Crossfade only needs to happen to the root component in any given stack
+
+    if (child.isHidden && stack.isPrevious(child)) {
+        if (!stack.isVisibleExiting(child)) {
+            // If this is the previous component that we're animating from,
+            // animate it to tthe visible component's position and fade out
+            const target = opacity(stack.getVisibleTarget(child), 0)
+            child.startAnimation({ ...options, target })
+        } else {
+            // If this is the previous component that we're animating to,
+            // animate it from the visible component's position and fade in
+            const origin = opacity(stack.getVisibleOrigin(child), 0.5)
+            const target = opacity(child.measuredTarget, 1)
+            child.startAnimation({ ...options, origin, target })
+        }
+    } else if (stack.isVisible(child)) {
+        if (!stack.isVisibleExiting(child)) {
+            // If this is the visible component that we're animating to,
+            // animate it from the previous component's position and fade in
+            const origin = opacity(stack.getPreviousOrigin(child), 0)
+            child.startAnimation({ ...options, origin })
+        } else {
+            // If this is the visible component that we're animating from,
+            // animate it to the previous component's position and fade out
+            const target = opacity(stack.getPreviousOrigin(child), 0)
+            child.startAnimation({ ...options, target })
+        }
+    } else if (!child.isHidden) {
+        child.startAnimation()
+    }
+}
+
+function switchComponents(
+    child: Magic,
+    stack: StackQuery,
+    options: MagicAnimationOptions
+) {
+    // If this is the top component in the stack, animate it to the previous origin
+    if (stack.isVisible(child)) {
+        child.startAnimation({
+            ...options,
+            target: opacity(stack.getPreviousOrigin(child), 1),
+        })
+    } else if (!child.isHidden) {
+        child.startAnimation()
+    }
+}
+
+function opacity(snapshot?: Snapshot, value: number = 1) {
+    if (!snapshot) return
+    return {
+        ...snapshot,
+        style: {
+            ...snapshot.style,
+            opacity: value,
+        },
+    }
 }
 
 const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth

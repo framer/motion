@@ -8,6 +8,7 @@ import { Transition } from "../../types"
 interface Props {
     children: React.ReactNode
     transition?: Transition
+    crossfade?: boolean
 }
 
 type Stack = Magic[]
@@ -55,8 +56,11 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
 
     componentDidUpdate() {
         this.children.forEach(child => this.update.add(child))
+
+        const { transition, crossfade } = this.props
         this.update.flush(this.getStackQuery(), {
-            transition: this.props.transition,
+            transition,
+            crossfade,
         })
     }
 
@@ -140,6 +144,15 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
                     return false
                 } else {
                     return stack.previous === child
+                }
+            },
+            isVisible: (child: Magic) => {
+                const stack = getStack(child)
+
+                if (!stack) {
+                    return false
+                } else {
+                    return stack.visible === child
                 }
             },
             isVisibleExiting(child: Magic) {
