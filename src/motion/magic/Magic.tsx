@@ -326,12 +326,20 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.progress.set(progressOrigin)
         this.progress.set(progressOrigin) // Set twice to hard-reset velocity
 
-        const { magicTransition, transition } = this.props
-        animation = startAnimation("progress", this.progress, progressTarget, {
-            ...(opts.transition || magicTransition || transition),
-            restDelta: 1,
-            restSpeed: 10,
-        })
+        const { magicTransition, transition, magic } = this.props
+
+        if (magic !== false) {
+            animation = startAnimation(
+                "progress",
+                this.progress,
+                progressTarget,
+                {
+                    ...(opts.transition || magicTransition || transition),
+                    restDelta: 1,
+                    restSpeed: 10,
+                }
+            )
+        }
 
         // TODO: We're currently chaining just the parent and child deep, and if both
         // update then `frame` fires twice in a frame. This only leads to one render
@@ -416,6 +424,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         // it'd save a second loop
         // TODO: Dont create a new object here
         this.treeScale = calcTreeScale(parentDeltas)
+
+        console.log(this.delta.y.translate)
     }
 
     updateTransform(

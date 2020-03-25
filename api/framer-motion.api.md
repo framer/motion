@@ -260,7 +260,7 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     // (undocumented)
     resumeSharedElement(id: string, child: Magic, stack: Stack): void;
     // (undocumented)
-    shouldComponentUpdate(): boolean;
+    shouldComponentUpdate(nextProps: Props): boolean;
     // (undocumented)
     state: {
         forceRender: () => void;
@@ -859,7 +859,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/motion/magic/MagicMotion.d.ts:22:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
+// types/motion/magic/MagicMotion.d.ts:23:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
