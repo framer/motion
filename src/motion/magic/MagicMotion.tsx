@@ -34,8 +34,6 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     }
 
     shouldComponentUpdate(nextProps: Props) {
-        this.children.forEach(child => child.resetRotation())
-
         const hasDependency =
             this.props.dependency !== undefined ||
             nextProps.dependency !== undefined
@@ -43,7 +41,14 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
         const dependencyHasChanged =
             this.props.dependency !== nextProps.dependency
 
-        return !hasDependency || (hasDependency && dependencyHasChanged)
+        const shouldUpdate =
+            !hasDependency || (hasDependency && dependencyHasChanged)
+
+        if (shouldUpdate) {
+            this.children.forEach(child => child.resetRotation())
+        }
+
+        return shouldUpdate
     }
 
     getSnapshotBeforeUpdate() {
