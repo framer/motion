@@ -9,6 +9,7 @@ interface Props {
     children: React.ReactNode
     transition?: Transition
     crossfade?: boolean
+    dependency?: any
 }
 
 type Stack = Magic[]
@@ -32,9 +33,17 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
         register: (child: Magic) => this.register(child),
     }
 
-    shouldComponentUpdate() {
+    shouldComponentUpdate(nextProps: Props) {
         this.children.forEach(child => child.resetRotation())
-        return true
+
+        const hasDependency =
+            this.props.dependency !== undefined ||
+            nextProps.dependency !== undefined
+
+        const dependencyHasChanged =
+            this.props.dependency !== nextProps.dependency
+
+        return !hasDependency || (hasDependency && dependencyHasChanged)
     }
 
     getSnapshotBeforeUpdate() {
