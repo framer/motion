@@ -207,10 +207,7 @@ export class ComponentDragControls {
 
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
-            bothAxis(axis => {
-                const axisPoint = this.point[axis]
-                axisPoint && axisPoint.stop()
-            })
+            this.stopMotion()
         }
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
@@ -492,6 +489,13 @@ export class ComponentDragControls {
             this.scalePoint()
             const { onDragTransitionEnd } = this.props
             onDragTransitionEnd && onDragTransitionEnd()
+        })
+    }
+
+    stopMotion() {
+        bothAxis(axis => {
+            const axisPoint = this.point[axis]
+            axisPoint && axisPoint.stop()
         })
     }
 
