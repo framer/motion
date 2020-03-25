@@ -10,12 +10,12 @@ function Card({ id, title, category, theme, isSelected, onClick }) {
                 <motion.div
                     className="card-content"
                     magicId={`card-container-${id}`}
-                    magicDependency={isSelected === id}
+                    magicDependency={isSelected}
                 >
                     <motion.div
                         className="card-image-container"
                         magicId={`card-image-container-${id}`}
-                        magicDependency={isSelected === id}
+                        magicDependency={isSelected}
                     >
                         <img
                             className="card-image"
@@ -26,7 +26,7 @@ function Card({ id, title, category, theme, isSelected, onClick }) {
                     <motion.div
                         className="title-container"
                         magicId={`title-container-${id}`}
-                        magicDependency={isSelected === id}
+                        magicDependency={isSelected}
                     >
                         <span className="category">{category}</span>
                         <h2>{title}</h2>
@@ -40,14 +40,16 @@ function Card({ id, title, category, theme, isSelected, onClick }) {
 function List({ selectedId, setOpen }) {
     return (
         <ul className="card-list">
-            {items.map(card => (
-                <Card
-                    key={card.id}
-                    {...card}
-                    isSelected={card.id === selectedId}
-                    onClick={() => setOpen(card.id)}
-                />
-            ))}
+            {items.map(card => {
+                return (
+                    <Card
+                        key={card.id}
+                        {...card}
+                        isSelected={card.id === selectedId}
+                        onClick={() => setOpen(card.id)}
+                    />
+                )
+            })}
         </ul>
     )
 }
