@@ -35,13 +35,15 @@ const bigParent = {
     height: 400,
     borderRadius: 0,
     rotate: 45,
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
 }
 const smallParent = {
     ...parent,
     width: 100,
     height: 100,
     borderRadius: 50,
-    rotate: 0,
+    rotate: 10,
 }
 
 const child = {
