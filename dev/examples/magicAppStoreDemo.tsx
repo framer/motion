@@ -188,7 +188,7 @@ function Store() {
     const [open, setOpen] = useState<string | false>(false)
 
     return (
-        <MagicMotion>
+        <MagicMotion crossfade>
             <List selectedId={open} setOpen={setOpen} />
             <AnimatePresence>
                 {open && <Item id={open} setOpen={setOpen} />}
@@ -224,16 +224,14 @@ const Container = styled.div`
     text-align: center;
     display: flex;
     justify-content: center;
+    width: 100vw;
+    max-width: 990px;
+    flex: 1 1 100%;
+    padding: 45px 25px;
 
     .screen {
         width: 100%;
         height: 100%;
-    }
-
-    .container {
-        max-width: 990px;
-        flex: 1 1 100%;
-        padding: 45px 25px;
     }
 
     h1 {
