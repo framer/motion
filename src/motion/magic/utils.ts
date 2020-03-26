@@ -9,6 +9,7 @@ import {
     MagicBatchTree,
     StackQuery,
     MagicAnimationOptions,
+    TransitionHandler,
 } from "./types"
 import { NativeElement } from "../utils/use-native-element"
 import { MotionStyle } from "../types"
@@ -290,41 +291,27 @@ export function easeBox(target: Box, prev: Box, next: Box, p: number) {
     easeAxis("y", target, prev, next, p)
 }
 
-export const batchUpdate = (): MagicBatchTree => {
+const defaultHandler: TransitionHandler = {
+    snapshotTarget: child => child.snapshotTarget(),
+    startAnimation: child => child.startAnimation(),
+}
+
+export const batchTransitions = (): MagicBatchTree => {
     const queue = new Set<Magic>()
 
     const add = (child: Magic) => queue.add(child)
 
-    const flush = (stack?: StackQuery, options: MagicAnimationOptions = {}) => {
+    const flush = ({
+        snapshotTarget,
+        startAnimation,
+    }: TransitionHandler = defaultHandler) => {
         if (!queue.size) return
 
         const order = Array.from(queue).sort(sortByDepth)
 
         order.forEach(child => child.resetStyles())
-
-        order.forEach(child => {
-            if (!child.isHidden || (stack && stack.isPrevious(child))) {
-                child.snapshotTarget()
-            }
-        })
-
-        const crossfadeState = {
-            isCrossfadingIn: false,
-            isCrossfadingOut: false,
-        }
-        order.forEach(child => {
-            // Perform a magic animtion as normal if the child isn't hidden
-            // and we're not handling magicId stacks in a special way
-            if (!child.isHidden && !stack) {
-                child.startAnimation(options)
-            } else if (stack) {
-                if (options.crossfade) {
-                    crossfadeComponents(child, stack, options, crossfadeState)
-                } else {
-                    switchComponents(child, stack, options)
-                }
-            }
-        })
+        order.forEach(snapshotTarget)
+        order.forEach(startAnimation)
 
         queue.clear()
     }
@@ -332,8 +319,8 @@ export const batchUpdate = (): MagicBatchTree => {
     return { add, flush }
 }
 
-const crossfadeIn = compress(0.1, 0.6, circOut)
-const crossfadeOut = compress(0.4, 1, linear)
+const crossfadeIn = compress(0, 0.5, circOut)
+const crossfadeOut = compress(0.5, 0.95, linear)
 function crossfadeComponents(
     child: Magic,
     stack: StackQuery,
@@ -351,21 +338,22 @@ function crossfadeComponents(
             child.startAnimation({
                 ...options,
                 target,
-                opacityEasing: !state.isCrossfadingOut
-                    ? crossfadeOut
-                    : undefined,
+                opacityEasing: crossfadeOut,
             })
             state.isCrossfadingOut = true
         } else {
             // If this is the previous component that we're animating to,
             // animate it from the visible component's position and fade in
-            const origin = opacity(stack.getVisibleOrigin(child), 0)
+            const origin = opacity(
+                stack.getVisibleOrigin(child),
+                !state.isCrossfadingIn ? 0 : 1
+            )
             const target = opacity(child.measuredTarget, 1)
             child.startAnimation({
                 ...options,
                 origin,
                 target,
-                opacityEasing: !state.isCrossfadingIn ? crossfadeIn : undefined,
+                opacityEasing: crossfadeIn,
             })
             state.isCrossfadingIn = true
         }
@@ -373,11 +361,20 @@ function crossfadeComponents(
         if (!stack.isVisibleExiting(child)) {
             // If this is the visible component that we're animating to,
             // animate it from the previous component's position and fade in
-            const origin = opacity(stack.getPreviousOrigin(child), 0)
+            let origin: Snapshot | undefined
+
+            if (!state.isCrossfadingIn) {
+                origin = stack.getPreviousOrigin(child) || child.measuredTarget
+            } else {
+                origin = stack.getPreviousOrigin(child)
+            }
+
+            origin = opacity(origin, !state.isCrossfadingIn ? 0 : 1)
+
             child.startAnimation({
                 ...options,
                 origin,
-                opacityEasing: !state.isCrossfadingIn ? crossfadeIn : undefined,
+                opacityEasing: crossfadeIn,
             })
             state.isCrossfadingIn = true
         } else {
@@ -390,9 +387,7 @@ function crossfadeComponents(
             child.startAnimation({
                 ...options,
                 target,
-                opacityEasing: !state.isCrossfadingOut
-                    ? crossfadeOut
-                    : undefined,
+                opacityEasing: crossfadeOut,
             })
             state.isCrossfadingOut = true
         }

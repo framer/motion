@@ -25,7 +25,7 @@ export interface MotionContextProps {
     // TODO: Replace this with an onUpdate on parentValues
     magicProgress?: MotionValue<number>
     isReducedMotion?: boolean | undefined
-    depth: number
+    magicDepth: number
 }
 
 /**
@@ -33,7 +33,7 @@ export interface MotionContextProps {
  */
 export const MotionContext = React.createContext<MotionContextProps>({
     static: false,
-    depth: -1,
+    magicDepth: -1,
 })
 
 const isVariantLabel = (v?: MotionProps["animate"]): v is string | string[] => {
@@ -56,7 +56,15 @@ export const useMotionContext = (
     controls: ValueAnimationControls,
     values: MotionValuesMap,
     isStatic: boolean = false,
-    { initial, animate, variants, whileTap, whileHover }: MotionProps
+    {
+        initial,
+        animate,
+        variants,
+        whileTap,
+        whileHover,
+        magic,
+        magicId,
+    }: MotionProps
 ) => {
     const presenceContext = useContext(PresenceContext)
     // Override initial with that from a parent context, if defined
@@ -134,7 +142,11 @@ export const useMotionContext = (
             values,
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
-            depth: parentContext.depth + 1,
+            magicDepth:
+                // TODO: Make nice isMagic
+                magic || magicId !== undefined
+                    ? parentContext.magicDepth + 1
+                    : parentContext.magicDepth,
             magicDelta,
             magicDeltas: magicDeltas.current,
             magicProgress,
