@@ -14,6 +14,11 @@ interface Props {
 
 type Stack = Magic[]
 
+const defaultMagicTransition = {
+    duration: 0.45,
+    ease: [0.4, 0, 0.1, 1],
+}
+
 /**
  * @public
  */
@@ -84,7 +89,7 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
 
         this.children.forEach(child => this.update.add(child))
 
-        const { transition, crossfade } = this.props
+        const { transition = defaultMagicTransition, crossfade } = this.props
         this.update.flush(this.getStackQuery(), {
             transition,
             crossfade,
@@ -96,7 +101,7 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
 
         const { magicId } = child.props
 
-        if (magicId) {
+        if (magicId !== undefined) {
             const stack = this.getStack(magicId)
             stack.push(child)
             this.hasMounted && this.resumeSharedElement(magicId, child, stack)
