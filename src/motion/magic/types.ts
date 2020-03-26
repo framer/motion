@@ -1,5 +1,6 @@
 import { Magic } from "./Magic"
 import { Transition } from "../../types"
+import { Easing } from "@popmotion/easing"
 
 export interface Axis {
     min: number
@@ -73,6 +74,6 @@ export interface MagicAnimationOptions {
     origin?: Snapshot
     target?: Snapshot
     transition?: Transition
-    opacityEasing?: [number, number, number, number]
+    opacityEasing?: Easing
     crossfade?: boolean
 }
