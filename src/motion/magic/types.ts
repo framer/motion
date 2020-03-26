@@ -45,16 +45,12 @@ export interface Snapshot {
 
 export interface MagicControlledTree {
     forceRender: () => void
-    forceRenderCount: number
     register: (child: Magic) => () => void
 }
 
 export type GetVisualTarget = (child: Magic) => Snapshot | undefined
 
-export type FlushMagicChildren = (
-    stackQuery?: StackQuery,
-    opts?: MagicAnimationOptions
-) => void
+export type FlushMagicChildren = (handler?: TransitionHandler) => void
 
 export interface MagicBatchTree {
     add: (child: Magic) => void
@@ -76,4 +72,36 @@ export interface MagicAnimationOptions {
     transition?: Transition
     opacityEasing?: Easing
     crossfade?: boolean
+}
+
+export interface MagicMotionProps {
+    /**
+     * @public
+     */
+    children: React.ReactNode
+
+    /**
+     *
+     */
+    transition?: Transition
+
+    /**
+     *
+     */
+    crossfade?: boolean
+
+    /**
+     *
+     */
+    dependency?: any
+
+    /**
+     *
+     */
+    supportRotate?: boolean
+}
+
+export interface TransitionHandler {
+    snapshotTarget: (child: Magic) => void
+    startAnimation: (child: Magic) => void
 }
