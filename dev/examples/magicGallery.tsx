@@ -28,30 +28,27 @@ function SingleImage({ color, index, setIndex }) {
     return (
         <>
             <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.6 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                id="overlay"
+                magic
                 style={{ ...overlay }}
                 onClick={() => setIndex(false)}
-            />
-            <div style={singleImageContainer}>
-                {/* <div className="button prev" onClick={() => setIndex(index - 1)} />
+            >
+                <div style={singleImageContainer}>
+                    {/* <div className="button prev" onClick={() => setIndex(index - 1)} />
       <div className="button next" onClick={() => setIndex(index + 1)} />
       <div className="button close" onClick={close} /> */}
-                <motion.div
-                    id="color"
-                    magicId={color}
-                    style={{ ...singleImage, backgroundColor: color }}
-                >
                     <motion.div
-                        style={child}
-                        id="child"
-                        magicId={`child-${color}`}
-                    />
-                </motion.div>
-            </div>
+                        id="color"
+                        magicId={color}
+                        style={{ ...singleImage, backgroundColor: color }}
+                    >
+                        <motion.div
+                            style={child}
+                            id="child"
+                            magicId={`child-${color}`}
+                        />
+                    </motion.div>
+                </div>
+            </motion.div>
         </>
     )
 }
@@ -60,7 +57,7 @@ export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     return (
-        <MagicMotion transition={{ duration: 2 }} crossfade dependency={index}>
+        <MagicMotion transition={{ duration: 5 }} crossfade dependency={index}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
@@ -107,8 +104,7 @@ const item = {
 }
 
 const overlay = {
-    background: "black",
-    opacity: "0.2",
+    background: "rgba(0,0,0,0.6)",
     position: "absolute",
     top: "0",
     left: "0",
