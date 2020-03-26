@@ -60,7 +60,7 @@ export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     return (
-        <MagicMotion transition={transition} dependency={index}>
+        <MagicMotion dependency={index}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (

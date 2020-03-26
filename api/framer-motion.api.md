@@ -242,7 +242,7 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     // (undocumented)
     componentDidUpdate(): void;
     // (undocumented)
-    getSnapshotBeforeUpdate(): null;
+    getSnapshotBeforeUpdate(): null | undefined;
     // (undocumented)
     getStack(id: string): Stack;
     // Warning: (ae-forgotten-export) The symbol "StackQuery" needs to be exported by the entry point index.d.ts
@@ -260,9 +260,10 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     // (undocumented)
     resumeSharedElement(id: string, child: Magic, stack: Stack): void;
     // (undocumented)
-    shouldComponentUpdate(nextProps: Props): boolean;
+    shouldComponentUpdate(nextProps: Props, nextState: MagicControlledTree): boolean;
     // (undocumented)
     state: {
+        forceRenderCount: number;
         forceRender: () => void;
         register: (child: Magic) => () => void;
     };
@@ -859,7 +860,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/motion/magic/MagicMotion.d.ts:23:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
+// types/motion/magic/MagicMotion.d.ts:25:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

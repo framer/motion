@@ -360,7 +360,7 @@ function crossfadeComponents(
             child.startAnimation({ ...options, target })
         }
     } else if (!child.isHidden) {
-        child.startAnimation()
+        child.startAnimation(options)
     }
 }
 
@@ -376,7 +376,7 @@ function switchComponents(
             target: opacity(stack.getPreviousOrigin(child), 1),
         })
     } else if (!child.isHidden) {
-        child.startAnimation()
+        child.startAnimation(options)
     }
 }
 
