@@ -283,6 +283,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             "borderBottomRightRadius",
             ""
         )
+        const opacity = values.get("opacity", 1)
 
         const frame = () => {
             // TODO: Break up each of these so we can animate separately
@@ -318,6 +319,16 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
                 )
 
             updateBoxShadow && updateBoxShadow(p)
+
+            if (opts.opacityEasing) {
+                opacity.set(
+                    mix(
+                        originStyle.opacity,
+                        targetStyle.opacity,
+                        opts.opacityEasing(p)
+                    )
+                )
+            }
         }
 
         const progressOrigin = 0
@@ -374,6 +385,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         for (let i = 0; i < numAnimatableStyles; i++) {
             const key = animatableStyles[i]
+            if (key === "opacity" && opts.opacityEasing) continue
             const originStyle = this.visualOrigin.style[key]
             const nextStyle = this.visualTarget.style[key]
 

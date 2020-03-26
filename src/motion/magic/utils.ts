@@ -17,6 +17,7 @@ import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { Magic } from "./Magic"
 import { warning } from "hey-listen"
+import { Easing, circOut, linear } from "@popmotion/easing"
 
 const clampProgress = clamp(0, 1)
 
@@ -307,6 +308,10 @@ export const batchUpdate = (): MagicBatchTree => {
             }
         })
 
+        const crossfadeState = {
+            isCrossfadingIn: false,
+            isCrossfadingOut: false,
+        }
         order.forEach(child => {
             // Perform a magic animtion as normal if the child isn't hidden
             // and we're not handling magicId stacks in a special way
@@ -314,7 +319,7 @@ export const batchUpdate = (): MagicBatchTree => {
                 child.startAnimation(options)
             } else if (stack) {
                 if (options.crossfade) {
-                    crossfadeComponents(child, stack, options)
+                    crossfadeComponents(child, stack, options, crossfadeState)
                 } else {
                     switchComponents(child, stack, options)
                 }
@@ -327,37 +332,69 @@ export const batchUpdate = (): MagicBatchTree => {
     return { add, flush }
 }
 
+const crossfadeIn = compress(0.1, 0.6, circOut)
+const crossfadeOut = compress(0.4, 1, linear)
 function crossfadeComponents(
     child: Magic,
     stack: StackQuery,
-    options: MagicAnimationOptions
+    options: MagicAnimationOptions,
+    state: { isCrossfadingIn: boolean; isCrossfadingOut: boolean }
 ) {
-    // TODO: Crossfade only needs to happen to the root component in any given stack
-
     if (child.isHidden && stack.isPrevious(child)) {
         if (!stack.isVisibleExiting(child)) {
             // If this is the previous component that we're animating from,
             // animate it to tthe visible component's position and fade out
-            const target = opacity(stack.getVisibleTarget(child), 0)
-            child.startAnimation({ ...options, target })
+            const target = opacity(
+                stack.getVisibleTarget(child),
+                !state.isCrossfadingOut ? 0 : 1
+            )
+            child.startAnimation({
+                ...options,
+                target,
+                opacityEasing: !state.isCrossfadingOut
+                    ? crossfadeOut
+                    : undefined,
+            })
+            state.isCrossfadingOut = true
         } else {
             // If this is the previous component that we're animating to,
             // animate it from the visible component's position and fade in
-            const origin = opacity(stack.getVisibleOrigin(child), 0.5)
+            const origin = opacity(stack.getVisibleOrigin(child), 0)
             const target = opacity(child.measuredTarget, 1)
-            child.startAnimation({ ...options, origin, target })
+            child.startAnimation({
+                ...options,
+                origin,
+                target,
+                opacityEasing: !state.isCrossfadingIn ? crossfadeIn : undefined,
+            })
+            state.isCrossfadingIn = true
         }
     } else if (stack.isVisible(child)) {
         if (!stack.isVisibleExiting(child)) {
             // If this is the visible component that we're animating to,
             // animate it from the previous component's position and fade in
             const origin = opacity(stack.getPreviousOrigin(child), 0)
-            child.startAnimation({ ...options, origin })
+            child.startAnimation({
+                ...options,
+                origin,
+                opacityEasing: !state.isCrossfadingIn ? crossfadeIn : undefined,
+            })
+            state.isCrossfadingIn = true
         } else {
             // If this is the visible component that we're animating from,
             // animate it to the previous component's position and fade out
-            const target = opacity(stack.getPreviousOrigin(child), 0)
-            child.startAnimation({ ...options, target })
+            const target = opacity(
+                stack.getPreviousOrigin(child),
+                !state.isCrossfadingOut ? 0 : 1
+            )
+            child.startAnimation({
+                ...options,
+                target,
+                opacityEasing: !state.isCrossfadingOut
+                    ? crossfadeOut
+                    : undefined,
+            })
+            state.isCrossfadingOut = true
         }
     } else if (!child.isHidden) {
         child.startAnimation(options)
@@ -402,3 +439,12 @@ const CAMEL_CASE_PATTERN = /([a-z])([A-Z])/g
 const REPLACE_TEMPLATE = "$1-$2"
 export const camelToDash = (str: string) =>
     str.replace(CAMEL_CASE_PATTERN, REPLACE_TEMPLATE).toLowerCase()
+
+function compress(min: number, max: number, easing: Easing): Easing {
+    return (p: number) => {
+        // Could replace ifs with clamp
+        if (p < min) return 0
+        if (p > max) return 1
+        return easing(progress(min, max, p))
+    }
+}
