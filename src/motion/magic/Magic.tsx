@@ -64,9 +64,14 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     private shouldTransition = true
 
+    shouldResumeFromPrevious = false
+    shouldRestoreVisibility = false
+
     depth: number
 
     isHidden = false
+
+    isVisible = true
 
     measuredOrigin: Snapshot
     measuredTarget: Snapshot
@@ -100,7 +105,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     constructor(props: FunctionalProps & ContextProps) {
         super(props)
-        this.depth = props.localContext.depth
+        this.depth = props.localContext.magicDepth
         this.progress = props.localContext.magicProgress as MotionValue<number>
         this.delta = props.localContext.magicDelta as BoxDelta
     }
@@ -188,14 +193,33 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const target = snapshot(nativeElement)
         target.style.rotate = resolve(0, style && style.rotate)
         this.measuredTarget = target
+
+        if (this.props.magicId === "overlay") {
+            console.log(target.style.opacity)
+        }
     }
 
-    hide() {
-        this.isHidden = true
+    hide(apply: boolean = false) {
+        this.isVisible = false
+
+        if (apply) {
+            const { values } = this.props
+            const opacity = values.get("opacity", 0)
+            opacity.set(0)
+        }
     }
 
-    show() {
-        this.isHidden = false
+    show(apply: boolean = false) {
+        this.isVisible = true
+
+        if (apply) {
+            const { values, style } = this.props
+            const opacity = values.get("opacity", 1)
+            const newOpacity = style ? resolve(1, style.opacity) : 1
+            opacity.set(newOpacity)
+        } else {
+            this.shouldRestoreVisibility = true
+        }
     }
 
     startAnimation({ origin, target, ...opts }: MagicAnimationOptions = {}) {
