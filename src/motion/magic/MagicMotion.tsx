@@ -31,11 +31,16 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
     private shouldTransition = true
 
     state = {
-        forceRender: (): void => this.setState({ ...this.state }),
+        forceRenderCount: 0,
+        forceRender: (): void =>
+            this.setState({
+                ...this.state,
+                forceRenderCount: this.state.forceRenderCount + 1,
+            }),
         register: (child: Magic) => this.register(child),
     }
 
-    shouldComponentUpdate(nextProps: Props) {
+    shouldComponentUpdate(nextProps: Props, nextState: MagicControlledTree) {
         const hasDependency =
             this.props.dependency !== undefined ||
             nextProps.dependency !== undefined
@@ -44,7 +49,9 @@ export class MagicMotion extends React.Component<Props, MagicControlledTree> {
             this.props.dependency !== nextProps.dependency
 
         this.shouldTransition =
-            !hasDependency || (hasDependency && dependencyHasChanged)
+            !hasDependency ||
+            (hasDependency && dependencyHasChanged) ||
+            nextState.forceRenderCount !== this.state.forceRenderCount
 
         if (this.shouldTransition) {
             this.children.forEach(child => child.resetRotation())
