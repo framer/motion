@@ -44,6 +44,7 @@ export interface Snapshot {
 
 export interface MagicControlledTree {
     forceRender: () => void
+    forceRenderCount: number
     register: (child: Magic) => () => void
 }
 

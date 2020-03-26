@@ -424,8 +424,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         // it'd save a second loop
         // TODO: Dont create a new object here
         this.treeScale = calcTreeScale(parentDeltas)
-
-        console.log(this.delta.y.translate)
     }
 
     updateTransform(
