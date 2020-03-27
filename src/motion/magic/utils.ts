@@ -7,8 +7,6 @@ import {
     Box,
     Style,
     MagicBatchTree,
-    StackQuery,
-    MagicAnimationOptions,
     TransitionHandler,
 } from "./types"
 import { NativeElement } from "../utils/use-native-element"
@@ -18,7 +16,6 @@ import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { Magic } from "./Magic"
 import { warning } from "hey-listen"
-import { Easing, circOut, linear } from "@popmotion/easing"
 
 const clampProgress = clamp(0, 1)
 
@@ -319,110 +316,6 @@ export const batchTransitions = (): MagicBatchTree => {
     return { add, flush }
 }
 
-const crossfadeIn = compress(0, 0.5, circOut)
-const crossfadeOut = compress(0.5, 0.95, linear)
-function crossfadeComponents(
-    child: Magic,
-    stack: StackQuery,
-    options: MagicAnimationOptions,
-    state: { isCrossfadingIn: boolean; isCrossfadingOut: boolean }
-) {
-    if (child.isHidden && stack.isPrevious(child)) {
-        if (!stack.isVisibleExiting(child)) {
-            // If this is the previous component that we're animating from,
-            // animate it to tthe visible component's position and fade out
-            const target = opacity(
-                stack.getVisibleTarget(child),
-                !state.isCrossfadingOut ? 0 : 1
-            )
-            child.startAnimation({
-                ...options,
-                target,
-                opacityEasing: crossfadeOut,
-            })
-            state.isCrossfadingOut = true
-        } else {
-            // If this is the previous component that we're animating to,
-            // animate it from the visible component's position and fade in
-            const origin = opacity(
-                stack.getVisibleOrigin(child),
-                !state.isCrossfadingIn ? 0 : 1
-            )
-            const target = opacity(child.measuredTarget, 1)
-            child.startAnimation({
-                ...options,
-                origin,
-                target,
-                opacityEasing: crossfadeIn,
-            })
-            state.isCrossfadingIn = true
-        }
-    } else if (stack.isVisible(child)) {
-        if (!stack.isVisibleExiting(child)) {
-            // If this is the visible component that we're animating to,
-            // animate it from the previous component's position and fade in
-            let origin: Snapshot | undefined
-
-            if (!state.isCrossfadingIn) {
-                origin = stack.getPreviousOrigin(child) || child.measuredTarget
-            } else {
-                origin = stack.getPreviousOrigin(child)
-            }
-
-            origin = opacity(origin, !state.isCrossfadingIn ? 0 : 1)
-
-            child.startAnimation({
-                ...options,
-                origin,
-                opacityEasing: crossfadeIn,
-            })
-            state.isCrossfadingIn = true
-        } else {
-            // If this is the visible component that we're animating from,
-            // animate it to the previous component's position and fade out
-            const target = opacity(
-                stack.getPreviousOrigin(child),
-                !state.isCrossfadingOut ? 0 : 1
-            )
-            child.startAnimation({
-                ...options,
-                target,
-                opacityEasing: crossfadeOut,
-            })
-            state.isCrossfadingOut = true
-        }
-    } else if (!child.isHidden) {
-        child.startAnimation(options)
-    }
-}
-
-function switchComponents(
-    child: Magic,
-    stack: StackQuery,
-    options: MagicAnimationOptions
-) {
-    // If this is the top component in the stack, animate it to the previous origin
-    if (stack.isVisible(child)) {
-        child.startAnimation({
-            ...options,
-            target: opacity(stack.getPreviousOrigin(child), 1),
-        })
-    } else if (!child.isHidden) {
-        child.startAnimation(options)
-    }
-}
-
-function opacity(snapshot?: Snapshot, value: number = 1) {
-    if (!snapshot) return
-    return {
-        ...snapshot,
-        style: {
-            ...snapshot.style,
-            opacity: value,
-        },
-    }
-}
-
 const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth
 
 export function near(value: number, target = 0, maxDistance = 0.01): boolean {
@@ -434,12 +327,3 @@ const CAMEL_CASE_PATTERN = /([a-z])([A-Z])/g
 const REPLACE_TEMPLATE = "$1-$2"
 export const camelToDash = (str: string) =>
     str.replace(CAMEL_CASE_PATTERN, REPLACE_TEMPLATE).toLowerCase()
-
-function compress(min: number, max: number, easing: Easing): Easing {
-    return (p: number) => {
-        // Could replace ifs with clamp
-        if (p < min) return 0
-        if (p > max) return 1
-        return easing(progress(min, max, p))
-    }
-}
