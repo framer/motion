@@ -1,96 +1,99 @@
 import * as React from "react"
-import { motion, useCycle, MagicMotion, AnimatePresence } from "@framer"
+import { useState } from "react"
+import { motion, MagicMotion, AnimatePresence } from "@framer"
 import styled from "styled-components"
 
 const Container = styled.div`
-    width: 200px;
-    height: 340px;
-    overflow: visible;
+    width: 300px;
+    height: 500px;
+    overflow: hidden;
     background-color: #f3f3f3;
     border-radius: 20px;
     position: relative;
 `
 
-const Small = styled(motion.div)`
-    width: 60px;
-    height: 60px;
-    overflow: visible;
-    border-radius: 10px;
-    position: absolute;
-
-    ${({ purple }) =>
-        purple
-            ? `
-      background-color: #85f;
-      top: 30px;
-      left: 30px;
-    `
-            : `
-      background-color: #0099ff;
-      top: 172px;
-      left: 102px;
-    `}
-`
-const Big = styled(motion.div)`
-    overflow: visible;
-    position: absolute;
-
-    ${({ purple }) =>
-        purple
-            ? `
-            top: 137px;
-            left: 26px;
-            width: 120px;
-            height: 120px;
-          background-color: rgba(136, 85, 255, 0.3); 
-          border-radius: 20px;
-    `
-            : `
-            top: 110px;
-            left: 40px;
-            width: 60px;
-            height: 60px;
-           background-color: rgba(0, 153, 255, 0.3);
-           border-radius: 10px;
-    `}
+const Page = styled(motion.div)`
+    background-color: ${({ color }) => color};
 `
 
-const Child = () => {
+const screen = {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+}
+
+const screenA = { ...screen, background: "red" }
+
+const screenB = { ...screen, background: "green" }
+
+const screenC = { ...screen, background: "blue" }
+
+const card = {
+    position: "absolute",
+    top: 50,
+    left: 50,
+    width: 200,
+    height: 200,
+    background: "pink",
+}
+
+const bigCard = {
+    ...card,
+    top: 200,
+    left: 0,
+    width: 300,
+    height: 300,
+    background: "pink",
+}
+
+function A() {
     return (
-        <Big magicId="big" purple>
-            <Small magicId="small" purple />
-        </Big>
+        <motion.div magic style={screenA}>
+            <motion.div magicId="cover" style={screen}>
+                <motion.div magicId="card" style={card}></motion.div>
+            </motion.div>
+        </motion.div>
     )
 }
 
-const Sibling = () => {
+function B() {
     return (
-        <>
-            <Big magicId="big" />
-            <Small magicId="small" />
-        </>
+        <motion.div magicId="cover" style={screenB}>
+            <motion.div magicId="card" style={bigCard}></motion.div>
+        </motion.div>
     )
 }
+function C() {
+    return (
+        <motion.div magicId="cover" style={screenC}>
+            <motion.div
+                magicId="card"
+                style={{ ...bigCard, top: 0 }}
+            ></motion.div>
+        </motion.div>
+    )
+}
+
+const Components = [A, B, C]
 
 export const App = () => {
-    const [isOn, toggleOn] = useCycle(false, true)
+    const [page, setPage] = useState(1)
+
+    const children = []
+
+    for (let i = 0; i < page; i++) {
+        const Component = Components[i]
+        children.push(<Component key={i} />)
+    }
 
     return (
-        <Container onClick={() => toggleOn()}>
-            <MagicMotion transition={{ duration: 2 }}>
-                <AnimatePresence>
-                    <Child />
-                    {isOn && (
-                        <motion.div
-                            key="siblings"
-                            initial={false}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0, transition: { duration: 20 } }}
-                        >
-                            <Sibling />
-                        </motion.div>
-                    )}
-                </AnimatePresence>
+        <Container
+            onClick={() => setPage(page === 3 ? 2 : Math.min(3, page + 1))}
+        >
+            <MagicMotion crossfade transition={{ duration: 2 }}>
+                <AnimatePresence>{children}</AnimatePresence>
             </MagicMotion>
         </Container>
     )
