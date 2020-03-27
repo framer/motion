@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, MagicMotion } from "@framer"
+import { motion, MagicMotion, AnimatePresence } from "@framer"
 
 interface ListProps {
     list: number[]
@@ -11,16 +11,18 @@ interface ListProps {
 const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
     return (
         <motion.ul magic style={styles.list}>
-            {list.map(id => (
-                <motion.li
-                    style={{ ...styles.item, backgroundColor, z: 2 }}
-                    key={id}
-                    magicId={id}
-                    id={"list-" + id}
-                    onClick={() => onItemClick(id)}
-                    drag
-                />
-            ))}
+            <AnimatePresence>
+                {list.map(id => (
+                    <motion.li
+                        style={{ ...styles.item, backgroundColor, z: 2 }}
+                        key={id}
+                        magicId={id}
+                        id={"list-" + id}
+                        onClick={() => onItemClick(id)}
+                        drag
+                    />
+                ))}
+            </AnimatePresence>
         </motion.ul>
     )
 }
@@ -36,7 +38,7 @@ export const App = () => {
     ])
 
     return (
-        <MagicMotion transition={{ duration: 2 }}>
+        <MagicMotion crossfade transition={{ duration: 2 }}>
             <div style={styles.container}>
                 <List
                     list={lists[0]}
