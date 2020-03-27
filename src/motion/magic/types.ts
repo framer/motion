@@ -57,20 +57,12 @@ export interface MagicBatchTree {
     flush: FlushMagicChildren
 }
 
-export interface StackQuery {
-    isPrevious: (child: Magic) => boolean
-    isVisible: (child: Magic) => boolean
-    isVisibleExiting: (child: Magic) => boolean
-    getVisibleOrigin: (child: Magic) => Snapshot | undefined
-    getPreviousOrigin: (child: Magic) => Snapshot | undefined
-    getVisibleTarget: (child: Magic) => Snapshot | undefined
-}
-
 export interface MagicAnimationOptions {
     origin?: Snapshot
     target?: Snapshot
     transition?: Transition
-    opacityEasing?: Easing
+    crossfadeEasing?: Easing
+    opacityTarget?: number
     crossfade?: boolean
 }
 
