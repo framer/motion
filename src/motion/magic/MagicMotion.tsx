@@ -2,7 +2,6 @@ import * as React from "react"
 import {
     MagicControlledTree,
     Snapshot,
-    StackQuery,
     MagicMotionProps,
     TransitionHandler,
     MagicAnimationOptions,
@@ -10,7 +9,8 @@ import {
 import { MagicContext } from "./MagicContext"
 import { Magic } from "./Magic"
 import { batchTransitions } from "./utils"
-import { Transition } from "../../types"
+import { Easing, circOut, linear } from "@popmotion/easing"
+import { progress } from "@popmotion/popcorn"
 
 type MagicStack = Magic[]
 type MagicStacks = Map<string, MagicStack>
@@ -56,6 +56,18 @@ export class MagicMotion extends React.Component<
      */
     private batch = batchTransitions()
 
+    /**
+     * Keep one snapshot for each stack in the event the all magicId children
+     * are removed from a stack before the new one is added.
+     */
+    private snapshots = new Map<string, Snapshot>()
+
+    /**
+     * We're tracking mount status as only subsequently-entering components need
+     * tagging with `shouldResumeFromPrevious`.
+     */
+    private hasMounted = false
+
     state = {
         /**
          * Allow children, like AnimatePresence, to force-render this component
@@ -65,6 +77,10 @@ export class MagicMotion extends React.Component<
         forceRender: (): void => this.setState({ ...this.state }),
 
         register: (child: Magic) => this.addChild(child),
+    }
+
+    componentDidMount() {
+        this.hasMounted = true
     }
 
     /**
@@ -117,6 +133,16 @@ export class MagicMotion extends React.Component<
 
         this.children.forEach(child => child.snapshotOrigin())
 
+        /**
+         * Every child keeps a local snapshot, but we also want to record
+         * snapshots of the visible children as, if they're are being removed
+         * in this render, we can still access them.
+         */
+        this.stacks.forEach((stack, key) => {
+            const latestChild = stack[stack.length - 1]
+            latestChild && this.snapshots.set(key, latestChild.measuredOrigin)
+        })
+
         return null
     }
 
@@ -137,7 +163,12 @@ export class MagicMotion extends React.Component<
         this.children.forEach(child => this.batch.add(child))
         const { crossfade, transition = defaultMagicTransition } = this.props
         const options = { crossfade, transition }
-        const handler = controlledHandler(options, this.rootDepth, this.stacks)
+        const handler = controlledHandler(
+            options,
+            this.rootDepth,
+            this.stacks,
+            this.snapshots
+        )
         this.batch.flush(handler)
     }
 
@@ -148,7 +179,7 @@ export class MagicMotion extends React.Component<
         this.setRootDepth(child)
         this.children.add(child)
         this.addChildToStack(child)
-        child.shouldResumeFromPrevious = true
+        if (this.hasMounted) child.shouldResumeFromPrevious = true
         return () => this.removeChild(child)
     }
 
@@ -159,7 +190,8 @@ export class MagicMotion extends React.Component<
         const stack = this.getStack(magicId)
         stack.push(child)
 
-        const previousChild = stack[stack.length - 2]
+        const stackLength = stack.length
+        const previousChild = stack[stackLength - 2]
         previousChild && previousChild.hide()
     }
 
@@ -209,10 +241,30 @@ export class MagicMotion extends React.Component<
     }
 }
 
+function stackQuery<T, F>(
+    callback: (magicId: string, child: Magic) => T | F,
+    fallback?: F
+) {
+    return (child: Magic) => {
+        const { magicId } = child.props
+        return magicId === undefined ? fallback : callback(magicId, child)
+    }
+}
+
+function compress(min: number, max: number, easing: Easing): Easing {
+    return (p: number) => {
+        // Could replace ifs with clamp
+        if (p < min) return 0
+        if (p > max) return 1
+        return easing(progress(min, max, p))
+    }
+}
+
 function controlledHandler(
     { transition, crossfade }: MagicAnimationOptions,
     rootDepth: number,
-    stacks: MagicStacks
+    stacks: MagicStacks,
+    snapshots: Map<string, Snapshot>
 ): TransitionHandler {
     const visible = new Map<string, Magic>()
     const previous = new Map<string, Magic>()
@@ -228,34 +280,95 @@ function controlledHandler(
         previous.set(key, stack[previousIndex])
     })
 
-    const isVisibleInStack = (child: Magic) => {
-        const { magicId } = child.props
-        return magicId === undefined ? true : visible.get(magicId) === child
-    }
+    const isVisibleInStack = stackQuery(
+        (magicId, child) => visible.get(magicId) === child,
+        true
+    )
 
-    const isPreviousInStack = (child: Magic) => {
-        const { magicId } = child.props
-        return magicId === undefined ? false : previous.get(magicId) === child
-    }
+    const isPreviousInStack = stackQuery(
+        (magicId, child) => previous.get(magicId) === child,
+        false
+    )
 
-    const getPreviousOrigin = (child: Magic) => {
-        const { magicId } = child.props
-        return magicId === undefined
-            ? undefined
-            : previous.get(magicId)?.measuredOrigin
-    }
+    const getPreviousOrigin = stackQuery(
+        magicId =>
+            previous.get(magicId)?.measuredOrigin || snapshots.get(magicId)
+    )
 
-    const getPreviousTarget = (child: Magic) => {
-        const { magicId } = child.props
-        return magicId === undefined
-            ? undefined
-            : previous.get(magicId)?.measuredTarget
-    }
+    const getPreviousTarget = stackQuery(
+        magicId => previous.get(magicId)?.measuredTarget
+    )
+
+    const getVisibleOrigin = stackQuery(
+        magicId => visible.get(magicId)?.measuredOrigin
+    )
+
+    const getVisibleTarget = stackQuery(
+        magicId => visible.get(magicId)?.measuredTarget
+    )
+
+    const isVisibleInStackPresent = stackQuery(magicId => {
+        const visibleInStack = visible.get(magicId)
+        return visibleInStack && visibleInStack.isPresent()
+    }, false)
 
     const isRootChild = (child: Magic) => child.depth === rootDepth
 
-    const crossfadeAnimation = () => {}
+    const crossfadeAnimation = (child: Magic) => {
+        let origin: Snapshot | undefined
+        let target: Snapshot | undefined
+        let crossfadeEasing: Easing | undefined
 
+        if (isVisibleInStack(child)) {
+            if (child.isPresent() && child.shouldResumeFromPrevious) {
+                // If this component is newly added and entering, animate out from
+                // the previous component
+                origin = getPreviousOrigin(child)
+
+                if (isRootChild(child)) {
+                    crossfadeEasing = crossfadeIn
+                    origin = opacity(origin || child.measuredTarget, 0)
+                }
+            } else if (!child.isPresent()) {
+                // Or if this child is being removed, animate to the previous component
+                target = getPreviousTarget(child)
+
+                if (isRootChild(child)) {
+                    crossfadeEasing = crossfadeOut
+                    target = opacity(target || child.measuredTarget, 0)
+                }
+            }
+        } else if (isPreviousInStack(child)) {
+            if (isVisibleInStackPresent(child)) {
+                // If the visible child in this stack is present, animate this component to it
+                target = getVisibleTarget(child)
+
+                if (isRootChild(child)) {
+                    crossfadeEasing = crossfadeOut
+                    target = opacity(target, 0)
+                }
+            } else {
+                // If the visible child in this stack is being removed, animate from it
+                origin = getVisibleOrigin(child)
+
+                if (isRootChild(child)) {
+                    crossfadeEasing = crossfadeIn
+                }
+            }
+        }
+
+        child.shouldResumeFromPrevious = false
+        child.startAnimation({
+            origin,
+            target,
+            transition,
+            crossfadeEasing,
+        })
+    }
+
+    /**
+     *
+     */
     const switchAnimation = (child: Magic) => {
         if (isVisibleInStack(child)) {
             let origin: Snapshot | undefined
@@ -264,7 +377,6 @@ function controlledHandler(
             if (child.isPresent()) {
                 if (child.shouldResumeFromPrevious) {
                     origin = getPreviousOrigin(child)
-                    child.shouldResumeFromPrevious = false
                 }
 
                 if (child.shouldRestoreVisibility) {
@@ -279,6 +391,7 @@ function controlledHandler(
         } else if (isPreviousInStack(child)) {
             child.hide(true)
         }
+        child.shouldResumeFromPrevious = false
     }
 
     return {
@@ -291,201 +404,16 @@ function controlledHandler(
     }
 }
 
-// export class MagicMotion extends React.Component<Props, MagicControlledTree> {
-//     private hasMounted = false
+const crossfadeIn = compress(0, 0.5, circOut)
+const crossfadeOut = compress(0.5, 0.95, linear)
 
-//     private children = new Set<Magic>()
-
-//     private stacks = new Map<string, Stack>()
-
-//     private snapshots = new Map<string, Snapshot>()
-
-//     private update = batchUpdate()
-
-//     private shouldTransition = true
-
-//     state = {
-//         forceRenderCount: 0,
-//         forceRender: (): void =>
-//             this.setState({
-//                 ...this.state,
-//                 forceRenderCount: this.state.forceRenderCount + 1,
-//             }),
-//         register: (child: Magic) => this.register(child),
-//     }
-
-//     shouldComponentUpdate(nextProps: Props, nextState: MagicControlledTree) {
-//         const hasDependency =
-//             this.props.dependency !== undefined ||
-//             nextProps.dependency !== undefined
-
-//         const dependencyHasChanged =
-//             this.props.dependency !== nextProps.dependency
-
-//         this.shouldTransition =
-//             !hasDependency ||
-//             (hasDependency && dependencyHasChanged) ||
-//             nextState.forceRenderCount !== this.state.forceRenderCount
-
-//         if (this.shouldTransition) {
-//             this.children.forEach(child => child.resetRotation())
-//         }
-
-//         return true
-//     }
-
-//     getSnapshotBeforeUpdate() {
-//         if (!this.shouldTransition) return
-
-//         this.children.forEach(child => child.snapshotOrigin())
-
-//////////////////// TODO: Reinstate this functionality?
-//         this.stacks.forEach((stack, id) => {
-//             const latestChild = stack[stack.length - 1]
-//             if (latestChild) {
-//                 this.snapshots.set(id, latestChild.measuredOrigin)
-//             }
-//         })
-
-//         return null
-//     }
-
-//     componentDidMount() {
-//         this.hasMounted = true
-//     }
-
-//     componentDidUpdate() {
-//         if (!this.shouldTransition) return
-
-//         this.children.forEach(child => this.update.add(child))
-
-//         const { transition = defaultMagicTransition, crossfade } = this.props
-//         this.update.flush(this.getStackQuery(), {
-//             transition,
-//             crossfade,
-//         })
-//     }
-
-//     register(child: Magic) {
-//         this.children.add(child)
-
-//         const { magicId } = child.props
-
-//         if (magicId !== undefined) {
-//             const stack = this.getStack(magicId)
-//             stack.push(child)
-//             this.hasMounted && this.resumeSharedElement(magicId, child, stack)
-//         }
-
-//         return () => this.removeChild(child)
-//     }
-
-//     removeChild(child: Magic) {
-//         this.children.delete(child)
-
-//         // TODO: This might have changed between renders
-//         const { magicId } = child.props
-//         if (!magicId) return
-
-//         const stack = this.getStack(magicId)
-//         const index = stack.findIndex(stackChild => child === stackChild)
-//         if (index === -1) return
-//         stack.splice(index, 1)
-
-//         const previousChild = stack[index - 1]
-//         if (previousChild) previousChild.show()
-//     }
-
-//     resumeSharedElement(id: string, child: Magic, stack: Stack) {
-//         const snapshot = this.snapshots.get(id)
-//         if (!snapshot) return
-
-//         child.measuredOrigin = snapshot
-
-//         // Hack, fix this and
-//         if (this.props.crossfade)
-//             child.measuredOrigin = opacity(child.measuredOrigin, 0)
-
-//         // If we have more than one child in this stack, hide the
-//         // previous child
-//         const stackLength = stack.length
-//         if (stackLength > 1) {
-//             const previousChild = stack[stackLength - 2]
-//             previousChild.hide()
-//         }
-//     }
-
-//     getStack(id: string) {
-//         if (!this.stacks.has(id)) {
-//             this.stacks.set(id, [])
-//         }
-
-//         return this.stacks.get(id) as Stack
-//     }
-
-//     getStackQuery(): StackQuery {
-//         const data = {}
-
-//         this.stacks.forEach((stack, key) => {
-//             const visibleIndex = stack.findIndex(child => !child.isHidden)
-//             const visible =
-//                 visibleIndex !== -1 ? stack[visibleIndex] : undefined
-//             const previousIndex = visibleIndex - 1
-//             const previous =
-//                 previousIndex !== -1 ? stack[previousIndex] : undefined
-
-//             data[key] = { visible, previous }
-//         })
-
-//         const getStack = (child: Magic) => {
-//             const { magicId } = child.props
-//             return magicId && data[magicId]
-//         }
-
-//         return {
-//             isPrevious: (child: Magic) => {
-//                 const stack = getStack(child)
-
-//                 if (!stack) {
-//                     return false
-//                 } else {
-//                     return stack.previous === child
-//                 }
-//             },
-//             isVisible: (child: Magic) => {
-//                 const stack = getStack(child)
-
-//                 if (!stack) {
-//                     return false
-//                 } else {
-//                     return stack.visible === child
-//                 }
-//             },
-//             isVisibleExiting(child: Magic) {
-//                 const stack = getStack(child)
-
-//                 if (!stack) {
-//                     return false
-//                 } else {
-//                     return !stack.visible.isPresent()
-//                 }
-//             },
-//             getVisibleOrigin: (child: Magic) => {
-//                 const stack = getStack(child)
-//                 if (!stack) return
-//                 return stack.visible.measuredOrigin
-//             },
-//             getPreviousOrigin: (child: Magic) => {
-//                 const stack = getStack(child)
-//                 if (!stack || !stack.previous || child.isPresent()) return
-//                 return stack.previous.measuredTarget
-//             },
-//             getVisibleTarget: (child: Magic) => {
-//                 const stack = getStack(child)
-//                 if (!stack || !stack.visible) return
-//                 return stack.visible.measuredTarget
-//             },
-//         }
-//     }
-
-// }
+function opacity(snapshot?: Snapshot, value: number = 1) {
+    if (!snapshot) return
+    return {
+        ...snapshot,
+        style: {
+            ...snapshot.style,
+            opacity: value,
+        },
+    }
+}

@@ -8,12 +8,11 @@ interface ListProps {
     backgroundColor: string
 }
 
-const List = ({ id, list, onItemClick, backgroundColor }: ListProps) => {
+const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul magic magicId={id} style={styles.list}>
+        <motion.ul magic style={styles.list}>
             {list.map(id => (
                 <motion.li
-                    magic
                     style={{ ...styles.item, backgroundColor, z: 2 }}
                     key={id}
                     magicId={id}
@@ -43,13 +42,11 @@ export const App = () => {
                     list={lists[0]}
                     onItemClick={id => moveItem(id, 1, lists, setLists)}
                     backgroundColor="red"
-                    id="listA"
                 />
                 <List
                     list={lists[1]}
                     onItemClick={id => moveItem(id, 0, lists, setLists)}
                     backgroundColor="blue"
-                    id="listB"
                 />
             </div>
         </MagicMotion>

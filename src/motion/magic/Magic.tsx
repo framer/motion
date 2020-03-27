@@ -193,10 +193,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const target = snapshot(nativeElement)
         target.style.rotate = resolve(0, style && style.rotate)
         this.measuredTarget = target
-
-        if (this.props.magicId === "overlay") {
-            console.log(target.style.opacity)
-        }
     }
 
     hide(apply: boolean = false) {
@@ -266,6 +262,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         const originStyle = this.visualOrigin.style
         const targetStyle = this.visualTarget.style
+
         const isAnimatingRotate = originStyle.rotate !== targetStyle.rotate
 
         const hasBorderTopLeftRadius =
@@ -280,7 +277,9 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             targetStyle.borderBottomRightRadius
 
         const hasBoxShadow =
-            originStyle.boxShadow !== "none" || targetStyle.boxShadow !== "none"
+            !isEmptyBoxShadow(originStyle.boxShadow) ||
+            !isEmptyBoxShadow(targetStyle.boxShadow)
+
         const updateBoxShadow =
             hasBoxShadow &&
             this.createUpdateBoxShadow(
@@ -344,12 +343,12 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
             updateBoxShadow && updateBoxShadow(p)
 
-            if (opts.opacityEasing) {
+            if (opts.crossfadeEasing) {
                 opacity.set(
                     mix(
                         originStyle.opacity,
                         targetStyle.opacity,
-                        opts.opacityEasing(p)
+                        opts.crossfadeEasing(p)
                     )
                 )
             }
@@ -409,7 +408,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         for (let i = 0; i < numAnimatableStyles; i++) {
             const key = animatableStyles[i]
-            if (key === "opacity" && opts.opacityEasing) continue
+            if (key === "opacity" && opts.crossfadeEasing) continue
             const originStyle = this.visualOrigin.style[key]
             const nextStyle = this.visualTarget.style[key]
 
@@ -426,12 +425,12 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         target.transition =
             opts.transition || magicTransition || transition || {}
 
-        if (opts.opacityEasing) {
+        if (opts.crossfadeEasing) {
             target.transition = {
                 opacity: {
                     ...target.transition,
                     type: "tween",
-                    ease: opts.opacityEasing,
+                    ease: opts.crossfadeEasing,
                 },
                 default: { ...target.transition },
             }
@@ -594,4 +593,8 @@ function resetAxis(axis: Axis, originAxis: Axis) {
 function resetLayout(box: Box, originBox: Box) {
     resetAxis(box.x, originBox.x)
     resetAxis(box.y, originBox.y)
+}
+
+function isEmptyBoxShadow(shadow: string) {
+    return !shadow || shadow === "none"
 }
