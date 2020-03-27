@@ -325,7 +325,12 @@ function controlledHandler(
                 // the previous component
                 origin = getPreviousOrigin(child)
 
-                if (isRootChild(child)) {
+                const { magicId } = child.props
+                const hasSnapshot =
+                    magicId !== undefined && snapshots.has(magicId)
+                snapshots.delete(magicId as string)
+
+                if (isRootChild(child) && !hasSnapshot) {
                     crossfadeEasing = crossfadeIn
                     origin = opacity(origin || child.measuredTarget, 0)
                 }
