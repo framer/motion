@@ -67,7 +67,7 @@ function B() {
 }
 function C() {
     return (
-        <motion.div magicId="cover" style={screenC}>
+        <motion.div magic style={screenC}>
             <motion.div
                 magicId="card"
                 style={{ ...bigCard, top: 0 }}
