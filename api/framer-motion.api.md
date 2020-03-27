@@ -4,6 +4,7 @@
 
 ```ts
 
+import * as CSS from 'csstype';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
@@ -11,6 +12,7 @@ import { ForwardRefExoticComponent } from 'react';
 import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { PropsWithoutRef } from 'react';
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { ReactElement } from 'react';
 import { ReactHTML } from 'react';
@@ -233,41 +235,34 @@ export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueTyp
 // @internal (undocumented)
 export const MagicContext: import("react").Context<MagicBatchTree | MagicControlledTree>;
 
-// Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "MagicMotionProps" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export class MagicMotion extends React.Component<Props, MagicControlledTree> {
+export class MagicMotion extends React.Component<MagicMotionProps, MagicControlledTree> {
+    addChild(child: Magic): () => void;
+    // (undocumented)
+    addChildToStack(child: Magic): void;
     // (undocumented)
     componentDidMount(): void;
-    // (undocumented)
     componentDidUpdate(): void;
-    // (undocumented)
     getSnapshotBeforeUpdate(): null | undefined;
-    // (undocumented)
-    getStack(id: string): Stack;
-    // Warning: (ae-forgotten-export) The symbol "StackQuery" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    getStackQuery(): StackQuery;
-    // (undocumented)
-    register(child: Magic): () => void;
+    // Warning: (ae-forgotten-export) The symbol "MagicStack" needs to be exported by the entry point index.d.ts
+    getStack(id: string): MagicStack;
     // (undocumented)
     removeChild(child: Magic): void;
     // (undocumented)
+    removeChildFromStack(child: Magic): void;
+    // (undocumented)
     render(): JSX.Element;
-    // Warning: (ae-forgotten-export) The symbol "Stack" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
-    resumeSharedElement(id: string, child: Magic, stack: Stack): void;
-    // (undocumented)
-    shouldComponentUpdate(nextProps: Props, nextState: MagicControlledTree): boolean;
+    setRootDepth(child: Magic): void;
+    shouldComponentUpdate(nextProps: MagicMotionProps, nextState: MagicControlledTree): boolean;
     // (undocumented)
     state: {
-        forceRenderCount: number;
         forceRender: () => void;
         register: (child: Magic) => () => void;
     };
-    }
+}
 
 // @public
 export const motion: {
@@ -592,7 +587,7 @@ export namespace Point {
 // Warning: (ae-internal-missing-underscore) The name "ReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function ReducedMotion({ children, enabled }: Props_2): JSX.Element;
+export function ReducedMotion({ children, enabled }: Props): JSX.Element;
 
 // @public (undocumented)
 export interface RelayoutInfo {
@@ -798,7 +793,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/motion/magic/MagicMotion.d.ts:25:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
+// types/motion/magic/MagicMotion.d.ts:50:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

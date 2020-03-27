@@ -243,8 +243,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             Promise.all(animations.filter(Boolean)).then(() => {
                 const { onMagicComplete } = this.props
                 onMagicComplete && onMagicComplete()
-
-                !this.isPresent() && this.safeToRemove()
             })
         }
 
@@ -372,7 +370,9 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
                     restDelta: 1,
                     restSpeed: 10,
                 }
-            )
+            ).then(() => this.safeToRemove())
+        } else {
+            this.safeToRemove()
         }
 
         // TODO: We're currently chaining just the parent and child deep, and if both
