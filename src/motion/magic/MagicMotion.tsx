@@ -312,6 +312,13 @@ function controlledHandler(
         return visibleInStack && visibleInStack.isPresent()
     }, false)
 
+    const isOnlyMemberOfStack = stackQuery(magicId => {
+        const stack = stacks.get(magicId)
+        return !stack ? true : stack.length <= 1
+    }, true)
+
+    const getSnapshot = stackQuery(magicId => snapshots.get(magicId))
+
     const isRootChild = (child: Magic) => child.depth === rootDepth
 
     const crossfadeAnimation = (child: Magic) => {
@@ -325,12 +332,10 @@ function controlledHandler(
                 // the previous component
                 origin = getPreviousOrigin(child)
 
-                const { magicId } = child.props
-                const hasSnapshot =
-                    magicId !== undefined && snapshots.has(magicId)
-                snapshots.delete(magicId as string)
-
-                if (isRootChild(child) && !hasSnapshot) {
+                if (
+                    isRootChild(child) &&
+                    !(isOnlyMemberOfStack(child) && getSnapshot(child))
+                ) {
                     crossfadeEasing = crossfadeIn
                     origin = opacity(origin || child.measuredTarget, 0)
                 }
