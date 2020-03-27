@@ -77,7 +77,9 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <MagicMotion>{isOn ? <Child /> : <Sibling />}</MagicMotion>
+            <MagicMotion crossfade>
+                {isOn ? <Child /> : <Sibling />}
+            </MagicMotion>
         </Container>
     )
 }
