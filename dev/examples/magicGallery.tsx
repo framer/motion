@@ -137,5 +137,6 @@ const child = {
     height: 50,
     borderRadius: 25,
     backgroundColor: "white",
+    opacity: 0.5,
     //opacity: 0.5,
 }

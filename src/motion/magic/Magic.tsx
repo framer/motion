@@ -69,8 +69,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     depth: number
 
-    isHidden = false
-
     isVisible = true
 
     measuredOrigin: Snapshot
@@ -159,7 +157,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     resetStyles() {
-        const { animate, nativeElement, style = {}, values } = this.props
+        const { animate, nativeElement, style = {} } = this.props
         const reset = resetStyles(style)
 
         // If we're animating opacity separately, we don't want to reset
@@ -168,9 +166,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         // and account for variants too.
         if (typeof animate === "object" && animate.hasOwnProperty("opacity")) {
             delete reset.opacity
-        } else if (this.isHidden) {
-            reset.opacity = 0
-            values.get("opacity")?.set(0)
         }
 
         nativeElement.setStyle(reset)
@@ -181,8 +176,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const { nativeElement } = this.props
         const origin = snapshot(nativeElement)
         applyCurrent(origin.style, this.current)
-
-        if (this.isHidden) origin.style.opacity = 1
 
         this.measuredOrigin = origin
     }
@@ -304,7 +297,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             "borderBottomRightRadius",
             ""
         )
-        const opacity = values.get("opacity", 1)
+
+        const opacity = values.get("opacity", this.visualOrigin.style.opacity)
 
         const frame = () => {
             // TODO: Break up each of these so we can animate separately
