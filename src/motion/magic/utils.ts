@@ -81,7 +81,7 @@ export function calcOrigin(before: Axis, after: Axis): number {
 
     if (beforeSize > afterSize) {
         origin = progress(before.min, before.max - afterSize, after.min)
-    } else {
+    } else if (afterSize > beforeSize) {
         origin = progress(after.min, after.max - beforeSize, before.min)
     }
 
