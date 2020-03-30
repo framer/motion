@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.10.3] 2020-03-23
+
+### Fix
+
+-   Attaching pan event handlers to `document` instead of `window`. ([@inventingwithmonster](https://github.com/inventingwithmonster) in [#490](https://github.com/framer/motion/pull/490))
+
 ## [1.10.2] 2020-03-23
 
 ### Fix
