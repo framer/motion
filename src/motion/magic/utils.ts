@@ -134,7 +134,7 @@ export function calcDelta(
     const afterSize = after.max - after.min
 
     // TODO: Check this out
-    delta.scale = beforeSize / afterSize
+    delta.scale = beforeSize / (afterSize || 0.0001)
     delta.origin = origin !== undefined ? origin : calcOrigin(before, after)
     delta.originPoint = after.min + delta.origin * afterSize
 
