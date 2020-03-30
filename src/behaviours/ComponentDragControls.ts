@@ -8,7 +8,6 @@ import {
 } from "./utils/block-viewport-scroll"
 import { Point } from "../events/types"
 import { ValueAnimationControls, MotionValuesMap } from "../motion"
-import { supportsTouchEvents } from "../events/utils"
 import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
@@ -55,11 +54,6 @@ interface BBox {
     x: number
     y: number
 }
-
-/**
- * Don't block the default pointerdown behaviour of these elements.
- */
-const allowDefaultPointerDown = new Set(["INPUT", "TEXTAREA", "SELECT"])
 
 export class ComponentDragControls {
     /**
@@ -178,24 +172,7 @@ export class ComponentDragControls {
     ) {
         snapToCursor && this.snapToCursor(originEvent)
 
-        const onSessionStart = (event: AnyPointerEvent) => {
-            // Prevent browser-specific behaviours like text selection or Chrome's image dragging.
-            if (
-                event.target &&
-                !allowDefaultPointerDown.has((event.target as Element).tagName)
-            ) {
-                // On iOS it's important to not `preventDefault` the `touchstart`
-                // event, as otherwise clicks won't fire inside the draggable element.
-                if (!supportsTouchEvents()) {
-                    event.preventDefault()
-
-                    // Make sure input elements loose focus when we prevent the default.
-                    if (document.activeElement instanceof HTMLElement) {
-                        document.activeElement.blur()
-                    }
-                }
-            }
-
+        const onSessionStart = () => {
             // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
             // which has come out of the difficulty in us being able to do this once a scroll gesture
             // has initiated in mobile browsers. This means if there's a horizontally-scrolling carousel

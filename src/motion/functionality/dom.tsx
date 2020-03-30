@@ -58,6 +58,28 @@ function filterValidProps(props: MotionProps) {
     return domProps
 }
 
+const buildHTMLProps = (
+    values: MotionValuesMap,
+    style: CSSProperties,
+    isStatic?: boolean,
+    isDrag?: boolean
+) => {
+    // The `any` isn't ideal but it is the type of createElement props argument
+    const props: any = {
+        style: buildStyleAttr(values, style, isStatic),
+    }
+
+    if (isDrag) {
+        // Disable text selection
+        props.style.userSelect = "none"
+
+        // Disable the ghost element when a user drags
+        props.draggable = false
+    }
+
+    return props
+}
+
 const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     const motionValueStyles = resolveCurrent(values)
     const props = buildSVGAttrs(
@@ -87,12 +109,12 @@ export function createDomMotionConfig<P = MotionProps>(
     const isSVG = isDOM && svgElements.indexOf(Component as any) !== -1
 
     return {
-        renderComponent: (ref, style, values, props, isStatic) => {
+        renderComponent: (ref, style, values, props: MotionProps, isStatic) => {
             const forwardedProps = isDOM ? filterValidProps(props) : props
 
             const staticVisualStyles = isSVG
                 ? buildSVGProps(values, style)
-                : { style: buildStyleAttr(values, style, isStatic) }
+                : buildHTMLProps(values, style, isStatic, !!props.drag)
 
             return createElement<any>(Component, {
                 ...forwardedProps,
