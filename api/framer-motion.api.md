@@ -245,7 +245,7 @@ export class MagicMotion extends React.Component<MagicMotionProps, MagicControll
     // (undocumented)
     componentDidMount(): void;
     componentDidUpdate(): void;
-    getSnapshotBeforeUpdate(): null | undefined;
+    getSnapshotBeforeUpdate(): null;
     // Warning: (ae-forgotten-export) The symbol "MagicStack" needs to be exported by the entry point index.d.ts
     getStack(id: string): MagicStack;
     // (undocumented)

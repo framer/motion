@@ -59,7 +59,7 @@ test("scaledPoint", () => {
 })
 
 test("calcOrigin", () => {
-    expect(calcOrigin({ min: 0, max: 100 }, { min: 0, max: 100 })).toBe(1)
+    expect(calcOrigin({ min: 0, max: 100 }, { min: 0, max: 100 })).toBe(0.5)
     expect(calcOrigin({ min: -100, max: 100 }, { min: -50, max: 50 })).toBe(0.5)
     expect(calcOrigin({ min: -50, max: 50 }, { min: -100, max: 100 })).toBe(0.5)
     expect(calcOrigin({ min: 200, max: 200 }, { min: 0, max: 100 })).toBe(1)
@@ -119,8 +119,8 @@ test("calcDelta", () => {
     calcDelta(delta, bBefore, bAfter)
     expect(delta).toEqual({
         translate: 0,
-        origin: 1,
-        originPoint: 300,
+        origin: 0.5,
+        originPoint: 250,
         scale: 1,
     })
     calcDelta(delta, cBefore, cAfter)
