@@ -8,7 +8,6 @@ import {
 } from "./utils/block-viewport-scroll"
 import { Point } from "../events/types"
 import { ValueAnimationControls, MotionValuesMap } from "../motion"
-import { supportsTouchEvents } from "../events/utils"
 import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
@@ -55,11 +54,6 @@ interface BBox {
     x: number
     y: number
 }
-
-/**
- * Don't block the default pointerdown behaviour of these elements.
- */
-const allowDefaultPointerDown = new Set(["INPUT", "TEXTAREA", "SELECT"])
 
 export class ComponentDragControls {
     /**
