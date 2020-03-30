@@ -223,12 +223,12 @@ export class PanSession {
             onSessionStart(event, getPanInfo(initialInfo, this.history))
 
         const removeOnPointerMove = addPointerEvent(
-            document,
+            window,
             "pointermove",
             (event, info) => this.handlePointerMove(event, info)
         )
         const removeOnPointerUp = addPointerEvent(
-            document,
+            window,
             "pointerup",
             (event, info) => this.handlePointerUp(event, info)
         )
