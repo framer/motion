@@ -216,13 +216,16 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const rotate = values.get("rotate")
         rotate && nativeElement.setStyle("rotate", rotate.get())
 
-        if (!this.shouldTransition) return
+        if (!this.shouldTransition) {
+            this.safeToRemove()
+            return
+        }
 
         syncRenderSession.open()
 
-        if (!this.isPresent() && this.props.magicId === undefined) {
-            this.safeToRemove()
-        }
+        // if (!this.isPresent() && this.props.magicId === undefined) {
+        //     this.safeToRemove()
+        // }
 
         this.visualTarget = target || this.measuredTarget
         this.visualOrigin = origin || this.measuredOrigin || this.visualTarget
@@ -231,9 +234,11 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
             const animations = [
                 this.startLayoutAnimation(opts),
                 this.startStyleAnimation(opts),
-            ]
+            ].filter(Boolean)
 
-            Promise.all(animations.filter(Boolean)).then(() => {
+            if (!animations.length) this.safeToRemove()
+
+            Promise.all(animations).then(() => {
                 const { onMagicComplete } = this.props
                 onMagicComplete && onMagicComplete()
             })
@@ -255,6 +260,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const targetStyle = this.visualTarget.style
 
         const isAnimatingRotate = originStyle.rotate !== targetStyle.rotate
+        // We really want to know if its ever aniamted rotate and the above isnt good enough
+        if (isAnimatingRotate) this.hasAnimatedRotate = isAnimatingRotate
 
         const hasBorderTopLeftRadius =
             originStyle.borderTopLeftRadius || targetStyle.borderTopLeftRadius
@@ -303,10 +310,10 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const frame = () => {
             // TODO: Break up each of these so we can animate separately
             const p = this.progress.get() / 1000
-            this.updateBoundingBox(p, rotate.get() !== 0 ? 0.5 : undefined)
+            this.updateBoundingBox(p, this.hasAnimatedRotate ? 0.5 : undefined)
             this.updateTransform(x, y, scaleX, scaleY)
 
-            isAnimatingRotate && this.updateRotate(p, rotate)
+            this.hasAnimatedRotate && this.updateRotate(p, rotate)
 
             hasBorderTopLeftRadius &&
                 this.updateBorderRadius(
