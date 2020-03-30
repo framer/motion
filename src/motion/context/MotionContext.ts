@@ -151,7 +151,13 @@ export const useMotionContext = (
             magicDeltas: magicDeltas.current,
             magicProgress,
         }),
-        [initialDependency, animateDependency, parentContext.isReducedMotion]
+        [
+            initialDependency,
+            animateDependency,
+            parentContext.isReducedMotion,
+            magic,
+            magicId,
+        ]
     )
 
     // Update the `static` property every render. This is unlikely to change but also essentially free.
