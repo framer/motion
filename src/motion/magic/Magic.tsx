@@ -242,6 +242,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
                 const { onMagicComplete } = this.props
                 onMagicComplete && onMagicComplete()
             })
+        } else {
+            this.safeToRemove()
         }
 
         syncRenderSession.flush()
