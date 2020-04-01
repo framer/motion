@@ -20,14 +20,21 @@ import { MagicValueHandlers } from "./values"
 
 const clampProgress = clamp(0, 1)
 
-export function snapshot(
+function snapshotLayout(element: NativeElement) {
+    const { top, left, right, bottom } = element.getBoundingBox()
+    return {
+        x: { min: left, max: right },
+        y: { min: top, max: bottom },
+    }
+}
+
+function snapshotStyle(
     element: NativeElement,
     valueHandlers: MagicValueHandlers
-): Snapshot {
-    const style = {}
-    const { top, left, right, bottom } = element.getBoundingBox()
-
+): Style {
     const computedStyle = element.getComputedStyle()
+
+    const style: Partial<Style> = {}
 
     for (const key in valueHandlers) {
         const handler = valueHandlers[key]
@@ -41,23 +48,21 @@ export function snapshot(
         }
     }
 
-    const { color, display, opacity } = computedStyle
-
     warning(
-        display !== "inline",
+        computedStyle.display !== "inline",
         "Magic components can't be display: inline, as inline elements don't accept a transform. Try inline-block instead."
     )
 
+    return style as Style
+}
+
+export function snapshot(
+    element: NativeElement,
+    valueHandlers: MagicValueHandlers
+): Snapshot {
     return {
-        layout: {
-            x: { min: left, max: right },
-            y: { min: top, max: bottom },
-        },
-        style: {
-            color: color || "",
-            opacity: opacity !== null ? parseFloat(opacity) : 0,
-            ...style,
-        },
+        layout: snapshotLayout(element),
+        style: snapshotStyle(element, valueHandlers),
     }
 }
 
@@ -177,14 +182,6 @@ export function applyTreeDeltas(box: Box, deltas: BoxDelta[]): void {
     }
 }
 
-export const animatableStyles = [
-    "opacity",
-    "backgroundColor",
-    "border",
-    "color",
-]
-export const numAnimatableStyles = animatableStyles.length
-
 export function resolve<T extends unknown>(
     defaultValue: T,
     value?: MotionValue | string | number | CustomValueType
@@ -199,16 +196,6 @@ export function resolve<T extends unknown>(
  *
  * @param styleProp
  */
-const resettable = {
-    border: false,
-    color: false,
-    opacity: false,
-    // width: false,
-    // height: false,
-    // position: false,
-    // opacity: false,
-}
-
 export function resetStyles(
     style: MotionStyle,
     valueHandlers: MagicValueHandlers
@@ -230,18 +217,6 @@ export function resetStyles(
             reset[key] = style[key]
         } else if (handler.reset) {
             reset[key] = handler.reset(style)
-        } else {
-            reset[key] = ""
-        }
-    }
-
-    // TODO: Remove this in favour of handlers
-    // TODO: We need to account for motionvalues
-    for (const key in resettable) {
-        if (style[key] !== undefined) {
-            reset[key] = style[key]
-        } else if (resettable[key] && style[resettable[key]]) {
-            reset[key] = style[resettable[key]]
         } else {
             reset[key] = ""
         }

@@ -66,16 +66,6 @@ export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels;
     // Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
     exit?: TargetAndTransition | VariantLabels | TargetResolver;
-    // @beta (undocumented)
-    magic?: boolean;
-    // @beta (undocumented)
-    magicDependency?: any;
-    // @beta (undocumented)
-    magicId?: string;
-    // @beta (undocumented)
-    magicTransition?: Transition;
-    // @beta (undocumented)
-    onMagicComplete?: () => void;
     transition?: Transition;
     variants?: Variants;
 }
@@ -473,8 +463,10 @@ export const MotionPluginContext: React.Context<MotionPluginsContext>;
 // @internal (undocumented)
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
+// Warning: (ae-forgotten-export) The symbol "MagicProps" needs to be exported by the entry point index.d.ts
+// 
 // @public
-export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
+export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MagicProps, MotionAdvancedProps {
     // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;

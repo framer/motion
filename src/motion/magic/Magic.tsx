@@ -7,8 +7,6 @@ import {
     snapshot,
     applyCurrent,
     resolve,
-    numAnimatableStyles,
-    animatableStyles,
     easeBox,
     applyTreeDeltas,
     calcBoxDelta,
@@ -19,7 +17,6 @@ import {
     Style,
     BoxDelta,
     Box,
-    BoxShadow,
     MagicControlledTree,
     MagicBatchTree,
     Axis,
@@ -29,10 +26,10 @@ import { MotionValue } from "../../value"
 import { syncRenderSession } from "../../dom/sync-render-session"
 import { TargetAndTransition } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
-import { mix, mixColor } from "@popmotion/popcorn"
-import { complex } from "style-value-types"
+import { mix } from "@popmotion/popcorn"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
-import { defaultMagicValues } from "./values"
+import { defaultMagicValues, MagicValueHandlers } from "./values"
+import { MotionPluginContext } from "../context/MotionPluginContext"
 export { MagicControlledTree, MagicBatchTree }
 
 /**
@@ -42,6 +39,7 @@ export { MagicControlledTree, MagicBatchTree }
 export const MagicContextProvider = (props: FunctionalProps) => {
     const [isPresent, safeToRemove] = usePresence()
     const magicContext = useContext(MagicContext)
+    const { magicValues } = useContext(MotionPluginContext)
 
     return (
         <Magic
@@ -49,6 +47,7 @@ export const MagicContextProvider = (props: FunctionalProps) => {
             isPresent={isPresent}
             safeToRemove={safeToRemove}
             magicContext={magicContext}
+            magicValues={magicValues}
         />
     )
 }
@@ -57,6 +56,7 @@ interface ContextProps {
     isPresent: boolean
     safeToRemove?: () => void
     magicContext: MagicControlledTree | MagicBatchTree
+    magicValues: MagicValueHandlers
 }
 
 export class Magic extends React.Component<FunctionalProps & ContextProps> {
@@ -64,6 +64,9 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     private stopLayoutAnimation?: () => void
 
     private shouldTransition = true
+
+    private supportedMotionValues: MagicValueHandlers
+    private animatableStyles: string[]
 
     shouldResumeFromPrevious = false
     shouldRestoreVisibility = false
@@ -104,6 +107,18 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.delta = props.localContext.magicDelta as BoxDelta
         this.depth = props.localContext.magicDepth
         this.progress = props.localContext.magicProgress as MotionValue<number>
+
+        const { magicValues } = props
+        this.supportedMotionValues = {
+            ...defaultMagicValues,
+            ...magicValues,
+        }
+        this.animatableStyles = []
+        for (const key in this.supportedMotionValues) {
+            if (!this.supportedMotionValues.createUpdater) {
+                this.animatableStyles.push(key)
+            }
+        }
     }
 
     componentDidMount() {
@@ -149,7 +164,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const { nativeElement, values } = this.props
         const rotate = values.get("rotate")
         this.current.rotate = rotate ? (rotate.get() as number) : 0
-
         if (!this.current.rotate) return
 
         nativeElement.setStyle("rotate", 0)
@@ -158,7 +172,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     resetStyles() {
         const { animate, nativeElement, style = {} } = this.props
-        const reset = resetStyles(style, defaultMagicValues)
+        const reset = resetStyles(style, this.supportedMotionValues)
 
         // If we're animating opacity separately, we don't want to reset
         // as it causes a visual flicker when adding the component
@@ -174,7 +188,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     snapshotOrigin() {
         const { nativeElement } = this.props
-        const origin = snapshot(nativeElement, defaultMagicValues)
+        const origin = snapshot(nativeElement, this.supportedMotionValues)
         applyCurrent(origin.style, this.current)
 
         this.measuredOrigin = origin
@@ -183,7 +197,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     snapshotTarget() {
         const { nativeElement, style } = this.props
 
-        const target = snapshot(nativeElement, defaultMagicValues)
+        const target = snapshot(nativeElement, this.supportedMotionValues)
         target.style.rotate = resolve(0, style && style.rotate)
         this.measuredTarget = target
     }
@@ -264,8 +278,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const { values } = this.props
         const updaters = {}
 
-        for (const key in defaultMagicValues) {
-            const handler = defaultMagicValues[key]
+        for (const key in this.supportedMotionValues) {
+            const handler = this.supportedMotionValues[key]
             if (!handler.createUpdater) continue
 
             updaters[key] = handler.createUpdater(
@@ -368,9 +382,10 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         let shouldTransitionStyle = false
         const target: TargetAndTransition = {}
         const { values } = this.props
+        const numAnimatableStyles = this.animatableStyles.length
 
         for (let i = 0; i < numAnimatableStyles; i++) {
-            const key = animatableStyles[i]
+            const key = this.animatableStyles[i]
             if (key === "opacity" && opts.crossfadeEasing) continue
             const originStyle = this.visualOrigin.style[key]
             const nextStyle = this.visualTarget.style[key]

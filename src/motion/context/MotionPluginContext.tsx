@@ -1,9 +1,11 @@
 import * as React from "react"
 import { createContext, useContext, useRef, ReactNode } from "react"
 import { Point } from "../../events/types"
+import { MagicValueHandlers } from "../magic/values"
 
 export interface MotionPluginsContext {
     transformPagePoint: (point: Point) => Point
+    magicValues: MagicValueHandlers
 }
 
 export interface MotionPluginProps extends MotionPluginsContext {
@@ -15,6 +17,7 @@ export interface MotionPluginProps extends MotionPluginsContext {
  */
 export const MotionPluginContext = createContext<MotionPluginsContext>({
     transformPagePoint: p => p,
+    magicValues: {},
 })
 
 /**
