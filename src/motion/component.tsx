@@ -38,6 +38,7 @@ export const createMotionComponent = <P extends {}>({
     ) {
         const parentContext = useContext(MotionContext)
         const isStatic = parentContext.static || props.static || false
+
         const values = useMotionValues(props)
         const style = useMotionStyles(
             values,
@@ -47,7 +48,12 @@ export const createMotionComponent = <P extends {}>({
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
 
-        const nativeElement = useNativeElement(values, !isStatic, externalRef)
+        const nativeElement = useNativeElement(
+            values,
+            !isStatic,
+            props.allowTransformNone,
+            externalRef
+        )
 
         const controlsConfig = useConstant(() => {
             return getValueControlsConfig(nativeElement, values)

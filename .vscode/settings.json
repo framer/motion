@@ -8,5 +8,8 @@
         "typescript",
         "typescriptreact",
         { "language": "html", "autoFix": true }
-    ]
+    ],
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    }
 }
