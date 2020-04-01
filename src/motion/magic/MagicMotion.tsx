@@ -170,6 +170,7 @@ export class MagicMotion extends React.Component<
             this.snapshots
         )
         this.batch.flush(handler)
+        this.snapshots.clear()
     }
 
     /**
@@ -319,8 +320,6 @@ function controlledHandler(
 
     const getSnapshot = stackQuery(magicId => snapshots.get(magicId))
 
-    const deleteSnapshot = stackQuery(magicId => snapshots.delete(magicId))
-
     const isRootChild = (child: Magic) => child.depth === rootDepth
 
     const crossfadeAnimation = (child: Magic) => {
@@ -341,9 +340,6 @@ function controlledHandler(
                     crossfadeEasing = crossfadeIn
                     origin = opacity(origin || child.measuredTarget, 0)
                 }
-
-                // TODO We might instead want to just replace the snapshots Set at the end of the animation
-                deleteSnapshot(child)
             } else if (!child.isPresent()) {
                 // Or if this child is being removed, animate to the previous component
                 target = getPreviousTarget(child)
