@@ -16,34 +16,37 @@ import { CustomValueType } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { Magic } from "./Magic"
 import { warning } from "hey-listen"
+import { MagicValueHandlers } from "./values"
 
 const clampProgress = clamp(0, 1)
 
-export function snapshot(element: NativeElement): Snapshot {
+export function snapshot(
+    element: NativeElement,
+    valueHandlers: MagicValueHandlers
+): Snapshot {
+    const style = {}
     const { top, left, right, bottom } = element.getBoundingBox()
-    const {
-        backgroundColor,
-        borderTopLeftRadius,
-        borderTopRightRadius,
-        borderBottomLeftRadius,
-        borderBottomRightRadius,
-        boxShadow,
-        color,
-        display,
-        opacity,
-    } = element.getComputedStyle()
+
+    const computedStyle = element.getComputedStyle()
+
+    for (const key in valueHandlers) {
+        const handler = valueHandlers[key]
+
+        if (handler.read === false) {
+            continue
+        } else if (handler.read) {
+            style[key] = handler.read(computedStyle[key])
+        } else {
+            style[key] = computedStyle[key]
+        }
+    }
+
+    const { color, display, opacity } = computedStyle
 
     warning(
         display !== "inline",
         "Magic components can't be display: inline, as inline elements don't accept a transform. Try inline-block instead."
     )
-
-    const borderRadiusMatrix = [
-        borderTopLeftRadius,
-        borderTopRightRadius,
-        borderBottomLeftRadius,
-        borderBottomRightRadius,
-    ].map(item => (item ? parseFloat(item) : 0))
 
     return {
         layout: {
@@ -51,14 +54,9 @@ export function snapshot(element: NativeElement): Snapshot {
             y: { min: top, max: bottom },
         },
         style: {
-            backgroundColor,
-            borderTopLeftRadius: borderRadiusMatrix[0],
-            borderTopRightRadius: borderRadiusMatrix[1],
-            borderBottomLeftRadius: borderRadiusMatrix[2],
-            borderBottomRightRadius: borderRadiusMatrix[3],
-            boxShadow,
             color: color || "",
             opacity: opacity !== null ? parseFloat(opacity) : 0,
+            ...style,
         },
     }
 }
@@ -88,16 +86,17 @@ export function calcOrigin(before: Axis, after: Axis): number {
     return clampProgress(origin)
 }
 
-export function calcTreeScale(deltas: BoxDelta[]): { x: number; y: number } {
+export function calcTreeScale(
+    scale: { x: number; y: number },
+    deltas: BoxDelta[]
+): void {
+    scale.x = scale.y = 1
     const numDeltas = deltas.length
-    const scale = { x: 1, y: 1 }
     for (let i = 0; i < numDeltas; i++) {
         const delta = deltas[i]
         scale.x *= delta.x.scale
         scale.y *= delta.y.scale
     }
-
-    return scale
 }
 
 /**
@@ -201,16 +200,7 @@ export function resolve<T extends unknown>(
  * @param styleProp
  */
 const resettable = {
-    //background: false,
-    backgroundColor: false,
-    //borderColor: false,
     border: false,
-    borderRadius: false,
-    borderTopLeftRadius: "borderTop",
-    borderTopRightRadius: "borderTop",
-    borderBottomLeftRadius: "borderTop",
-    borderBottomRightRadius: "borderTop",
-    boxShadow: false,
     color: false,
     opacity: false,
     // width: false,
@@ -219,7 +209,10 @@ const resettable = {
     // opacity: false,
 }
 
-export function resetStyles(style: MotionStyle): MotionStyle {
+export function resetStyles(
+    style: MotionStyle,
+    valueHandlers: MagicValueHandlers
+): MotionStyle {
     const reset: MotionStyle = {
         x: 0,
         y: 0,
@@ -229,6 +222,20 @@ export function resetStyles(style: MotionStyle): MotionStyle {
         rotate: 0,
     }
 
+    // TODO: We need to resolve MotionValues
+    for (const key in valueHandlers) {
+        const handler = valueHandlers[key]
+
+        if (style[key] !== undefined) {
+            reset[key] = style[key]
+        } else if (handler.reset) {
+            reset[key] = handler.reset(style)
+        } else {
+            reset[key] = ""
+        }
+    }
+
+    // TODO: Remove this in favour of handlers
     // TODO: We need to account for motionvalues
     for (const key in resettable) {
         if (style[key] !== undefined) {
@@ -236,23 +243,7 @@ export function resetStyles(style: MotionStyle): MotionStyle {
         } else if (resettable[key] && style[resettable[key]]) {
             reset[key] = style[resettable[key]]
         } else {
-            //TODO neaten up fallback situations
-            if (key === "backgroundColor") {
-                if (style.background !== undefined) {
-                    // TODO: Might be robust to try and extract a color from this
-                    reset[key] = style.background as string
-                } else {
-                    reset[key] = ""
-                }
-            } else if (key.endsWith("Radius")) {
-                if (style.borderRadius !== undefined) {
-                    reset[key] = style.borderRadius
-                } else {
-                    reset[key] = ""
-                }
-            } else {
-                reset[key] = ""
-            }
+            reset[key] = ""
         }
     }
 
