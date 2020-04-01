@@ -97,3 +97,34 @@ export interface TransitionHandler {
     snapshotTarget: (child: Magic) => void
     startAnimation: (child: Magic) => void
 }
+
+export interface MagicProps {
+    /**
+     * @beta
+     */
+    magic?: boolean
+    /**
+     * @beta
+     */
+    magicId?: string
+
+    /**
+     * @beta
+     */
+    onMagicComplete?: () => void
+
+    /**
+     * @beta
+     */
+    magicTransition?: Transition
+
+    /**
+     * @beta
+     */
+    magicDependency?: any
+
+    /**
+     * @internal
+     */
+    allowTransformNone?: boolean
+}

@@ -12,6 +12,7 @@ import {
 } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours/types"
+import { MagicProps } from "./magic/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -279,30 +280,6 @@ export interface AnimationProps {
      * ```
      */
     transition?: Transition
-
-    /**
-     * @beta
-     */
-    magic?: boolean
-    /**
-     * @beta
-     */
-    magicId?: string
-
-    /**
-     * @beta
-     */
-    onMagicComplete?: () => void
-
-    /**
-     * @beta
-     */
-    magicTransition?: Transition
-
-    /**
-     * @beta
-     */
-    magicDependency?: any
 }
 
 /**
@@ -450,6 +427,7 @@ export interface MotionProps
         MotionCallbacks,
         GestureHandlers,
         DraggableProps,
+        MagicProps,
         MotionAdvancedProps {
     /**
      * Properties, variant label or array of variant labels to start in.
