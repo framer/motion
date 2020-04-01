@@ -1,7 +1,7 @@
 import { MotionProps } from "../types"
 
 /**
- * A list of all valid MotionProps
+ * A list of all valid MotionProps.
  *
  * @internalremarks
  * This doesn't throw if a `MotionProp` name is missing - it should.
@@ -22,6 +22,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "magicId",
     "magicTransition",
     "magicDependency",
+    "allowTransformNone",
     "onMagicComplete",
     "onAnimationStart",
     "onAnimationComplete",

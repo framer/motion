@@ -223,10 +223,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
         syncRenderSession.open()
 
-        // if (!this.isPresent() && this.props.magicId === undefined) {
-        //     this.safeToRemove()
-        // }
-
         this.visualTarget = target || this.measuredTarget
         this.visualOrigin = origin || this.measuredOrigin || this.visualTarget
 

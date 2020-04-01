@@ -20,8 +20,11 @@ function subscribe(
     return () => subscribers.delete(id)
 }
 
+interface StylerConfig {}
+
 export class NativeElement<E extends Element = Element> {
     hasMounted = false
+    stylerConfig: StylerConfig
     externalRef?: Ref<E>
 
     current: E
@@ -31,14 +34,20 @@ export class NativeElement<E extends Element = Element> {
     mountSubscriptions: Map<Symbol, Subscription> = new Map()
     unmountSubscriptions: Map<Symbol, Subscription> = new Map()
 
-    constructor(externalRef?: Ref<E>) {
+    constructor(stylerConfig: StylerConfig, externalRef?: Ref<E>) {
         this.externalRef = externalRef
+        this.stylerConfig = stylerConfig
     }
 
     mount(element: E) {
+        invariant(
+            element instanceof Element,
+            "No ref found. Ensure components created with motion.custom forward refs using React.forwardRef"
+        )
+
         this.hasMounted = true
         this.current = element
-        this.styler = styler(element)
+        this.styler = styler(element, this.stylerConfig)
         this.mountSubscriptions.forEach(sub => sub(this))
         this.mountSubscriptions.clear()
 
@@ -117,24 +126,18 @@ const subscriberSymbol = Symbol("self")
 export function useNativeElement<E extends Element = Element>(
     values: MotionValuesMap,
     enableHardwareAcceleration: boolean,
+    allowTransformNone: boolean = true,
     externalRef?: Ref<E>
 ) {
     return useConstant(() => {
-        const nativeElement = new NativeElement(externalRef)
+        const stylerConfig = {
+            preparseOutput: false,
+            enableHardwareAcceleration,
+            allowTransformNone,
+        }
+        const nativeElement = new NativeElement(stylerConfig, externalRef)
 
         nativeElement.onMount(subscriberSymbol, () => {
-            const element = nativeElement.getInstance()
-
-            invariant(
-                element instanceof Element,
-                "No ref found. Ensure components created with motion.custom forward refs using React.forwardRef"
-            )
-
-            nativeElement.styler = styler(element, {
-                preparseOutput: false,
-                enableHardwareAcceleration,
-            })
-
             values.mount((key, value) => {
                 nativeElement.setStyle(key, value)
 
