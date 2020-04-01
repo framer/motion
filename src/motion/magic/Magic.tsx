@@ -32,6 +32,7 @@ import { startAnimation } from "../../animation/utils/transitions"
 import { mix, mixColor } from "@popmotion/popcorn"
 import { complex } from "style-value-types"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
+import { defaultMagicValues } from "./values"
 export { MagicControlledTree, MagicBatchTree }
 
 /**
@@ -90,10 +91,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     target: Box
 
-    treeScale: {
-        x: number
-        y: number
-    }
+    treeScale = { x: 1, y: 1 }
 
     current: Partial<Style> = {
         rotate: 0,
@@ -103,9 +101,9 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     constructor(props: FunctionalProps & ContextProps) {
         super(props)
+        this.delta = props.localContext.magicDelta as BoxDelta
         this.depth = props.localContext.magicDepth
         this.progress = props.localContext.magicProgress as MotionValue<number>
-        this.delta = props.localContext.magicDelta as BoxDelta
     }
 
     componentDidMount() {
@@ -129,6 +127,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.stopLayoutAnimation && this.stopLayoutAnimation()
     }
 
+    // TODO Can we combine this with MagicMotion?
     shouldComponentUpdate(nextProps: FunctionalProps & ContextProps) {
         const hasDependency =
             this.props.magicDependency !== undefined ||
@@ -145,6 +144,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         return true
     }
 
+    // TODO: Find a way to abstract this, as it's only needed in Framer
     resetRotation() {
         const { nativeElement, values } = this.props
         const rotate = values.get("rotate")
@@ -158,7 +158,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     resetStyles() {
         const { animate, nativeElement, style = {} } = this.props
-        const reset = resetStyles(style)
+        const reset = resetStyles(style, defaultMagicValues)
 
         // If we're animating opacity separately, we don't want to reset
         // as it causes a visual flicker when adding the component
@@ -174,7 +174,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     snapshotOrigin() {
         const { nativeElement } = this.props
-        const origin = snapshot(nativeElement)
+        const origin = snapshot(nativeElement, defaultMagicValues)
         applyCurrent(origin.style, this.current)
 
         this.measuredOrigin = origin
@@ -183,7 +183,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     snapshotTarget() {
         const { nativeElement, style } = this.props
 
-        const target = snapshot(nativeElement)
+        const target = snapshot(nativeElement, defaultMagicValues)
         target.style.rotate = resolve(0, style && style.rotate)
         this.measuredTarget = target
     }
@@ -258,50 +258,36 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const targetStyle = this.visualTarget.style
 
         const isAnimatingRotate = originStyle.rotate !== targetStyle.rotate
-        // We really want to know if its ever aniamted rotate and the above isnt good enough
+        // We really want to know if its ever animated rotate and the above isn't good enough
         if (isAnimatingRotate) this.hasAnimatedRotate = isAnimatingRotate
 
-        const hasBorderTopLeftRadius =
-            originStyle.borderTopLeftRadius || targetStyle.borderTopLeftRadius
-        const hasBorderTopRightRadius =
-            originStyle.borderTopRightRadius || targetStyle.borderTopRightRadius
-        const hasBorderBottomLeftRadius =
-            originStyle.borderBottomLeftRadius ||
-            targetStyle.borderBottomLeftRadius
-        const hasBorderBottomRightRadius =
-            originStyle.borderBottomRightRadius ||
-            targetStyle.borderBottomRightRadius
+        const { values } = this.props
+        const updaters = {}
 
-        const hasBoxShadow =
-            !isEmptyBoxShadow(originStyle.boxShadow) ||
-            !isEmptyBoxShadow(targetStyle.boxShadow)
+        for (const key in defaultMagicValues) {
+            const handler = defaultMagicValues[key]
+            if (!handler.createUpdater) continue
 
-        const updateBoxShadow =
-            hasBoxShadow &&
-            this.createUpdateBoxShadow(
-                originStyle.boxShadow,
-                targetStyle.boxShadow
+            updaters[key] = handler.createUpdater(
+                values,
+                originStyle[key],
+                targetStyle[key],
+                this.current,
+                this.delta,
+                this.treeScale
             )
+        }
 
         this.target = {
             x: { min: 0, max: 0 },
             y: { min: 0, max: 0 },
         }
 
-        const { values } = this.props
         const x = values.get("x", 0)
         const y = values.get("y", 0)
         const scaleX = values.get("scaleX", 1)
         const scaleY = values.get("scaleY", 1)
         const rotate = values.get("rotate", 0)
-
-        const borderTopLeftRadius = values.get("borderTopLeftRadius", "")
-        const borderTopRightRadius = values.get("borderTopRightRadius", "")
-        const borderBottomLeftRadius = values.get("borderBottomLeftRadius", "")
-        const borderBottomRightRadius = values.get(
-            "borderBottomRightRadius",
-            ""
-        )
 
         const opacity = values.get("opacity", this.visualOrigin.style.opacity)
 
@@ -313,32 +299,10 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
             this.hasAnimatedRotate && this.updateRotate(p, rotate)
 
-            hasBorderTopLeftRadius &&
-                this.updateBorderRadius(
-                    p,
-                    borderTopLeftRadius,
-                    "borderTopLeftRadius"
-                )
-            hasBorderTopRightRadius &&
-                this.updateBorderRadius(
-                    p,
-                    borderTopRightRadius,
-                    "borderTopRightRadius"
-                )
-            hasBorderBottomLeftRadius &&
-                this.updateBorderRadius(
-                    p,
-                    borderBottomLeftRadius,
-                    "borderBottomLeftRadius"
-                )
-            hasBorderBottomRightRadius &&
-                this.updateBorderRadius(
-                    p,
-                    borderBottomRightRadius,
-                    "borderBottomRightRadius"
-                )
-
-            updateBoxShadow && updateBoxShadow(p)
+            for (const key in updaters) {
+                const updater = updaters[key]
+                updater && updater(p)
+            }
 
             if (opts.crossfadeEasing) {
                 opacity.set(
@@ -457,7 +421,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         // TODO: If we could return this from applyTreeDeltas
         // it'd save a second loop
         // TODO: Dont create a new object here
-        this.treeScale = calcTreeScale(parentDeltas)
+        calcTreeScale(this.treeScale, parentDeltas)
     }
 
     updateTransform(
@@ -489,73 +453,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         rotate.set(target)
     }
 
-    updateBorderRadius(
-        p: number,
-        borderRadius: MotionValue<string>,
-        property: string
-    ) {
-        const target = mix(
-            this.visualOrigin.style[property],
-            this.visualTarget.style[property],
-            p
-        )
-
-        this.current[property] = target
-
-        const targetX = target / this.delta.x.scale / this.treeScale.x
-        const targetY = target / this.delta.y.scale / this.treeScale.y
-
-        borderRadius.set(`${targetX}px ${targetY}px`)
-    }
-
-    createUpdateBoxShadow(prev: string, next: string) {
-        const prevShadow = getAnimatableShadow(prev, next)
-        const nextShadow = getAnimatableShadow(next, prev)
-
-        const targetShadow = [...prevShadow] as BoxShadow
-        const mixShadowColor = mixColor(prevShadow[0], nextShadow[0])
-
-        const shadowTemplate = complex.createTransformer(
-            next !== "none" ? next : prev
-        ) as (shadow: BoxShadow) => string
-
-        const dx = this.delta.x
-        const dy = this.delta.y
-
-        const { values } = this.props
-        const boxShadow = values.get("boxShadow", "")
-
-        return (p: number) => {
-            // Update box shadow
-            targetShadow[0] = mixShadowColor(p) // color
-            targetShadow[1] = mix(prevShadow[1], nextShadow[1], p) // x
-            targetShadow[2] = mix(prevShadow[2], nextShadow[2], p) // y
-            targetShadow[3] = mix(prevShadow[3], nextShadow[3], p) // blur
-            targetShadow[4] = mix(prevShadow[4], nextShadow[4], p) // spread
-
-            // Update prev box shadow before FLIPPing
-            this.current.boxShadow = shadowTemplate(targetShadow)
-
-            // Apply FLIP inversion to physical dimensions. We need to take an average scale for XY to apply
-            // to blur and spread, which affect both axis equally.
-            targetShadow[1] = targetShadow[1] / dx.scale / this.treeScale.x
-            targetShadow[2] = targetShadow[2] / dy.scale / this.treeScale.y
-
-            const averageXYScale = mix(dx.scale, dy.scale, 0.5)
-            const averageTreeXTScale = mix(
-                this.treeScale.x,
-                this.treeScale.y,
-                0.5
-            )
-            targetShadow[3] =
-                targetShadow[3] / averageXYScale / averageTreeXTScale // blur
-            targetShadow[4] =
-                targetShadow[4] / averageXYScale / averageTreeXTScale // spread
-
-            boxShadow.set(shadowTemplate(targetShadow))
-        }
-    }
-
     isPresent() {
         return this.props.isPresent
     }
@@ -568,14 +465,6 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     render() {
         return null
     }
-}
-
-function getAnimatableShadow(shadow: string, fallback: string) {
-    if (shadow === "none") {
-        shadow = complex.getAnimatableNone(fallback)
-    }
-
-    return complex.parse(shadow) as BoxShadow
 }
 
 function isControlledTree(
@@ -592,8 +481,4 @@ function resetAxis(axis: Axis, originAxis: Axis) {
 function resetLayout(box: Box, originBox: Box) {
     resetAxis(box.x, originBox.x)
     resetAxis(box.y, originBox.y)
-}
-
-function isEmptyBoxShadow(shadow: string) {
-    return !shadow || shadow === "none"
 }
