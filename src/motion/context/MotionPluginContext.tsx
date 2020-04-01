@@ -8,7 +8,7 @@ export interface MotionPluginsContext {
     magicValues: MagicValueHandlers
 }
 
-export interface MotionPluginProps extends MotionPluginsContext {
+export interface MotionPluginProps extends Partial<MotionPluginsContext> {
     children?: ReactNode
 }
 

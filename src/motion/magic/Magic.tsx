@@ -65,7 +65,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     private shouldTransition = true
 
-    private supportedMotionValues: MagicValueHandlers
+    private supportedMagicValues: MagicValueHandlers
     private animatableStyles: string[]
 
     shouldResumeFromPrevious = false
@@ -109,13 +109,13 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         this.progress = props.localContext.magicProgress as MotionValue<number>
 
         const { magicValues } = props
-        this.supportedMotionValues = {
+        this.supportedMagicValues = {
             ...defaultMagicValues,
             ...magicValues,
         }
         this.animatableStyles = []
-        for (const key in this.supportedMotionValues) {
-            if (!this.supportedMotionValues.createUpdater) {
+        for (const key in this.supportedMagicValues) {
+            if (!this.supportedMagicValues[key].createUpdater) {
                 this.animatableStyles.push(key)
             }
         }
@@ -172,7 +172,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     resetStyles() {
         const { animate, nativeElement, style = {} } = this.props
-        const reset = resetStyles(style, this.supportedMotionValues)
+        const reset = resetStyles(style, this.supportedMagicValues)
 
         // If we're animating opacity separately, we don't want to reset
         // as it causes a visual flicker when adding the component
@@ -188,7 +188,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     snapshotOrigin() {
         const { nativeElement } = this.props
-        const origin = snapshot(nativeElement, this.supportedMotionValues)
+        const origin = snapshot(nativeElement, this.supportedMagicValues)
         applyCurrent(origin.style, this.current)
 
         this.measuredOrigin = origin
@@ -197,7 +197,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     snapshotTarget() {
         const { nativeElement, style } = this.props
 
-        const target = snapshot(nativeElement, this.supportedMotionValues)
+        const target = snapshot(nativeElement, this.supportedMagicValues)
         target.style.rotate = resolve(0, style && style.rotate)
         this.measuredTarget = target
     }
@@ -278,8 +278,8 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const { values } = this.props
         const updaters = {}
 
-        for (const key in this.supportedMotionValues) {
-            const handler = this.supportedMotionValues[key]
+        for (const key in this.supportedMagicValues) {
+            const handler = this.supportedMagicValues[key]
             if (!handler.createUpdater) continue
 
             updaters[key] = handler.createUpdater(
