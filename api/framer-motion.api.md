@@ -254,6 +254,32 @@ export class MagicMotion extends React.Component<MagicMotionProps, MagicControll
     };
 }
 
+// @public (undocumented)
+export interface MagicValueHandler {
+    // Warning: (ae-forgotten-export) The symbol "MotionValuesMap" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "BoxDelta" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Updater" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    createUpdater?: (values: MotionValuesMap, origin: string | number, target: string | number, current: {
+        [key: string]: string | number | undefined;
+    }, delta: BoxDelta, treeScale: {
+        x: number;
+        y: number;
+    }) => Updater | void;
+    // Warning: (ae-forgotten-export) The symbol "Read" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    read?: Read | false;
+    // (undocumented)
+    reset?: (style: MotionStyle) => any;
+}
+
+// @public (undocumented)
+export type MagicValueHandlers = {
+    [key: string]: MagicValueHandler;
+};
+
 // @public
 export const motion: {
     symbol: ForwardRefComponent<SVGSymbolElement, SVGMotionProps<SVGSymbolElement>>;
@@ -264,8 +290,8 @@ export const motion: {
     image: ForwardRefComponent<SVGImageElement, SVGMotionProps<SVGImageElement>>;
     text: ForwardRefComponent<SVGTextElement, SVGMotionProps<SVGTextElement>>;
     circle: ForwardRefComponent<SVGCircleElement, SVGMotionProps<SVGCircleElement>>;
-    svg: ForwardRefComponent<SVGSVGElement, SVGMotionProps<SVGSVGElement>>;
     animate: ForwardRefComponent<SVGElement, SVGMotionProps<SVGElement>>;
+    svg: ForwardRefComponent<SVGSVGElement, SVGMotionProps<SVGSVGElement>>;
     defs: ForwardRefComponent<SVGDefsElement, SVGMotionProps<SVGDefsElement>>;
     desc: ForwardRefComponent<SVGDescElement, SVGMotionProps<SVGDescElement>>;
     ellipse: ForwardRefComponent<SVGEllipseElement, SVGMotionProps<SVGEllipseElement>>;
