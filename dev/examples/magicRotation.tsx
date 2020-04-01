@@ -6,7 +6,7 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <MagicMotion>
+        <MagicMotion supportRotate>
             <motion.div
                 magic
                 transition={{ duration: 1 }}
