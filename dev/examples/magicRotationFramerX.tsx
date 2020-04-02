@@ -6,7 +6,7 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <MagicMotion>
+        <MagicMotion crossfade supportRotate>
             <AnimatePresence>
                 <motion.div
                     id="parent"
