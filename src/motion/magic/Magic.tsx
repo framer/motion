@@ -271,7 +271,9 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
         const originStyle = this.visualOrigin.style
         const targetStyle = this.visualTarget.style
 
-        const isAnimatingRotate = originStyle.rotate !== targetStyle.rotate
+        const isAnimatingRotate = Boolean(
+            originStyle.rotate || targetStyle.rotate
+        )
         // We really want to know if its ever animated rotate and the above isn't good enough
         if (isAnimatingRotate) this.hasAnimatedRotate = isAnimatingRotate
 

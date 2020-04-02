@@ -38,7 +38,7 @@ const singleBorderRadius = (key: string): MagicValueHandler => ({
         delta,
         treeScale
     ) => {
-        if (!(origin || target)) return
+        if (!origin && !target) return
 
         const motionValue = values.get(key, "")
 
@@ -76,7 +76,7 @@ export const defaultMagicValues: MagicValueHandlers = {
             delta,
             treeScale
         ) => {
-            if (!(!isEmptyBoxShadow(origin) || !isEmptyBoxShadow(target))) {
+            if (isEmptyBoxShadow(origin) && isEmptyBoxShadow(target)) {
                 return
             }
 
