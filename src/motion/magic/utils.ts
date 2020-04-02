@@ -12,7 +12,7 @@ import {
 import { NativeElement } from "../utils/use-native-element"
 import { MotionStyle } from "../types"
 import { MotionValue } from "../../value"
-import { CustomValueType } from "../../types"
+import { CustomValueType, Point } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { Magic } from "./Magic"
 import { warning } from "hey-listen"
@@ -20,11 +20,18 @@ import { MagicValueHandlers } from "./values"
 
 const clampProgress = clamp(0, 1)
 
-function snapshotLayout(element: NativeElement) {
+function snapshotLayout(
+    element: NativeElement,
+    transformPagePoint: (point: Point) => Point
+) {
     const { top, left, right, bottom } = element.getBoundingBox()
+
+    const topLeft = transformPagePoint({ x: left, y: top })
+    const bottomRight = transformPagePoint({ x: right, y: bottom })
+
     return {
-        x: { min: left, max: right },
-        y: { min: top, max: bottom },
+        x: { min: topLeft.x, max: bottomRight.x },
+        y: { min: topLeft.y, max: bottomRight.y },
     }
 }
 
@@ -58,10 +65,11 @@ function snapshotStyle(
 
 export function snapshot(
     element: NativeElement,
-    valueHandlers: MagicValueHandlers
+    valueHandlers: MagicValueHandlers,
+    transformPagePoint: (point: Point) => Point
 ): Snapshot {
     return {
-        layout: snapshotLayout(element),
+        layout: snapshotLayout(element, transformPagePoint),
         style: snapshotStyle(element, valueHandlers),
     }
 }
