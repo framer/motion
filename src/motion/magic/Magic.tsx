@@ -24,7 +24,7 @@ import {
 } from "./types"
 import { MotionValue } from "../../value"
 import { syncRenderSession } from "../../dom/sync-render-session"
-import { TargetAndTransition } from "../../types"
+import { TargetAndTransition, Point } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
 import { mix } from "@popmotion/popcorn"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
@@ -39,7 +39,7 @@ export { MagicControlledTree, MagicBatchTree }
 export const MagicContextProvider = (props: FunctionalProps) => {
     const [isPresent, safeToRemove] = usePresence()
     const magicContext = useContext(MagicContext)
-    const { magicValues } = useContext(MotionPluginContext)
+    const { magicValues, transformPagePoint } = useContext(MotionPluginContext)
 
     return (
         <Magic
@@ -48,6 +48,7 @@ export const MagicContextProvider = (props: FunctionalProps) => {
             safeToRemove={safeToRemove}
             magicContext={magicContext}
             magicValues={magicValues}
+            transformPagePoint={transformPagePoint}
         />
     )
 }
@@ -57,6 +58,7 @@ interface ContextProps {
     safeToRemove?: () => void
     magicContext: MagicControlledTree | MagicBatchTree
     magicValues: MagicValueHandlers
+    transformPagePoint: (point: Point) => Point
 }
 
 export class Magic extends React.Component<FunctionalProps & ContextProps> {
@@ -187,17 +189,25 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     snapshotOrigin() {
-        const { nativeElement } = this.props
-        const origin = snapshot(nativeElement, this.supportedMagicValues)
+        const { nativeElement, transformPagePoint } = this.props
+        const origin = snapshot(
+            nativeElement,
+            this.supportedMagicValues,
+            transformPagePoint
+        )
         applyCurrent(origin.style, this.current)
 
         this.measuredOrigin = origin
     }
 
     snapshotTarget() {
-        const { nativeElement, style } = this.props
+        const { nativeElement, style, transformPagePoint } = this.props
 
-        const target = snapshot(nativeElement, this.supportedMagicValues)
+        const target = snapshot(
+            nativeElement,
+            this.supportedMagicValues,
+            transformPagePoint
+        )
         target.style.rotate = resolve(0, style && style.rotate)
         this.measuredTarget = target
     }
