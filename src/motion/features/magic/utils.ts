@@ -9,11 +9,11 @@ import {
     MagicBatchTree,
     TransitionHandler,
 } from "./types"
-import { NativeElement } from "../utils/use-native-element"
-import { MotionStyle } from "../types"
-import { MotionValue } from "../../value"
-import { CustomValueType, Point } from "../../types"
-import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
+import { NativeElement } from "../../utils/use-native-element"
+import { MotionStyle } from "../../types"
+import { MotionValue } from "../../../value"
+import { CustomValueType, Point } from "../../../types"
+import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
 import { Magic } from "./Magic"
 import { warning } from "hey-listen"
 import { MagicValueHandlers } from "./values"

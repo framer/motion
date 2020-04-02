@@ -9,9 +9,9 @@ import { Gestures } from "./gestures"
 import { MotionComponentConfig } from "../component"
 import { Drag } from "./drag"
 import { parseDomVariant } from "../../dom/parse-dom-variant"
-import { MotionValuesMap } from "../../motion/utils/use-motion-values"
+import { MotionValuesMap } from "../utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
-import { magic } from "../magic"
+import { magic } from "./magic"
 import { isValidMotionProp } from "../utils/valid-prop"
 import { getAnimationComponent } from "./animation"
 import { Exit } from "./exit"
@@ -94,19 +94,18 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     return props
 }
 
-const functionalityComponents = [magic, Drag, Gestures, Exit]
-const numFunctionalityComponents = functionalityComponents.length
+const defaultFeatures = [magic, Drag, Gestures, Exit]
 
 /**
- * Create a configuration for `motion` components that provides DOM-specific functionality.
+ * Create a configuration for `motion` components that provides DOM-specific feature.
  *
  * @internal
  */
 export function createDomMotionConfig<P = MotionProps>(
-    Component: string | ComponentType<P>
+    ComponentToRender: string | ComponentType<P>
 ): MotionComponentConfig {
-    const isDOM = typeof Component === "string"
-    const isSVG = isDOM && svgElements.indexOf(Component as any) !== -1
+    const isDOM = typeof ComponentToRender === "string"
+    const isSVG = isDOM && svgElements.indexOf(ComponentToRender as any) !== -1
 
     return {
         renderComponent: (
@@ -122,7 +121,7 @@ export function createDomMotionConfig<P = MotionProps>(
                 ? buildSVGProps(values, style)
                 : buildHTMLProps(values, style, isStatic, !!props.drag)
 
-            return createElement<any>(Component, {
+            return createElement<any>(ComponentToRender, {
                 ...forwardedProps,
                 ref: nativeElement.ref,
                 ...staticVisualStyles,
@@ -130,36 +129,39 @@ export function createDomMotionConfig<P = MotionProps>(
         },
 
         /**
-         * loadFunctionalityComponents gets used by the `motion` component
+         * loadFeatures gets used by the `motion` component
          *
-         * Each functionality component gets provided the `ref`, animation controls and the `MotionValuesMap`
+         * Each feature component gets provided the `ref`, animation controls and the `MotionValuesMap`
          * generated for that component, as well as all the `props` passed to it by the user.
          *
-         * The pattern used to determine whether to load and use each piece of functionality is
-         * consistent (should render? Then push component) and could be used to extend functionality.
+         * The pattern used to determine whether to load and use each piece of feature is
+         * consistent (should render? Then push component) and could be used to extend feature.
          *
          * By exposing a mutable piece of memory via an API like `extendMotionComponent` we could
-         * allow users to add `FunctionalComponentDefinition`s. This would allow us to offer file size
+         * allow users to add `MotionFeature`s. This would allow us to offer file size
          * reductions by shipping an entry point that doesn't load gesture and drag functionality, and
-         * also offer a way for users to develop plugins/other functionality. Because these functionalities
+         * also offer a way for users to develop plugins/other feature. Because these functionalities
          * are loaded as components, we can look into using Suspense for this purpose.
          *
-         * For user-defined functionality we'd need to allow
+         * For user-defined feature we'd need to allow
          *  1) User-defined prop typing (extending `P`)
          *  2) User-defined "clean props" function that removes their plugin's props before being passed to the DOM.
          */
-        loadFunctionalityComponents: (
+        loadFeatures: (
             nativeElement,
             values,
             props,
             context,
             parentContext,
             controls,
-            inherit
+            inherit,
+            plugins
         ) => {
+            const allFeatures = [...defaultFeatures, ...plugins.features]
+            const numFeatures = allFeatures.length
             const activeComponents: JSX.Element[] = []
 
-            // TODO: Consolidate Animation functionality loading strategy with other functionality components
+            // TODO: Consolidate Animation feature loading strategy with other functionality components
             const Animation = getAnimationComponent(props)
 
             if (Animation) {
@@ -177,12 +179,8 @@ export function createDomMotionConfig<P = MotionProps>(
                 )
             }
 
-            for (let i = 0; i < numFunctionalityComponents; i++) {
-                const {
-                    shouldRender,
-                    key,
-                    Component,
-                } = functionalityComponents[i]
+            for (let i = 0; i < numFeatures; i++) {
+                const { shouldRender, key, Component } = allFeatures[i]
 
                 if (shouldRender(props, parentContext)) {
                     activeComponents.push(

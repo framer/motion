@@ -1,5 +1,5 @@
-import { MotionStyle } from "../types"
-import { MotionValuesMap } from "../utils/use-motion-values"
+import { MotionStyle } from "../../types"
+import { MotionValuesMap } from "../../utils/use-motion-values"
 import { mix, mixColor } from "@popmotion/popcorn"
 import { BoxDelta, BoxShadow } from "./types"
 import { complex } from "style-value-types"

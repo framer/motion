@@ -1,5 +1,5 @@
 import { Magic } from "./Magic"
-import { Transition } from "../../types"
+import { Transition } from "../../../types"
 import { Easing } from "@popmotion/easing"
 
 export interface Axis {
