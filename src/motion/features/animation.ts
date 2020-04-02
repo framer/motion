@@ -6,10 +6,10 @@ import { useVariants } from "../../animation/use-variants"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
-import { MotionValuesMap } from "../../motion/utils/use-motion-values"
+import { MotionValuesMap } from "../utils/use-motion-values"
 import { TargetAndTransition } from "../../types"
 
-interface AnimationFunctionalProps {
+interface AnimationFeatureProps {
     initial: MotionProps["initial"]
     animate: MotionProps["animate"]
     transition: MotionProps["transition"]
@@ -20,13 +20,8 @@ interface AnimationFunctionalProps {
 }
 
 export const AnimatePropComponents = {
-    [AnimatePropType.Target]: makeRenderlessComponent<AnimationFunctionalProps>(
-        ({
-            animate,
-            controls,
-            values,
-            transition,
-        }: AnimationFunctionalProps) => {
+    [AnimatePropType.Target]: makeRenderlessComponent<AnimationFeatureProps>(
+        ({ animate, controls, values, transition }: AnimationFeatureProps) => {
             return useAnimateProp(
                 animate as TargetAndTransition,
                 controls,
@@ -36,14 +31,14 @@ export const AnimatePropComponents = {
         }
     ),
     [AnimatePropType.VariantLabel]: makeRenderlessComponent<
-        AnimationFunctionalProps
+        AnimationFeatureProps
     >(
         ({
             animate,
             inherit = true,
             controls,
             initial,
-        }: AnimationFunctionalProps) => {
+        }: AnimationFeatureProps) => {
             return useVariants(
                 initial as VariantLabels,
                 animate as VariantLabels,
@@ -53,8 +48,8 @@ export const AnimatePropComponents = {
         }
     ),
     [AnimatePropType.AnimationSubscription]: makeRenderlessComponent<
-        AnimationFunctionalProps
-    >(({ animate, controls }: AnimationFunctionalProps) => {
+        AnimationFeatureProps
+    >(({ animate, controls }: AnimationFeatureProps) => {
         return useAnimationGroupSubscription(
             animate as AnimationControls,
             controls
@@ -65,20 +60,20 @@ export const AnimatePropComponents = {
 const isVariantLabel = (prop?: any): prop is VariantLabels =>
     Array.isArray(prop) || typeof prop === "string"
 
-const isAnimationSubscription = ({ animate }: AnimationFunctionalProps) =>
+const isAnimationSubscription = ({ animate }: AnimationFeatureProps) =>
     animate instanceof AnimationControls
 
 const animationProps = ["initial", "animate", "whileTap", "whileHover"]
 
 const animatePropTypeTests = {
-    [AnimatePropType.Target]: (props: AnimationFunctionalProps) => {
+    [AnimatePropType.Target]: (props: AnimationFeatureProps) => {
         return (
             props.animate !== undefined &&
             !isVariantLabel(props.animate) &&
             !isAnimationSubscription(props)
         )
     },
-    [AnimatePropType.VariantLabel]: (props: AnimationFunctionalProps) => {
+    [AnimatePropType.VariantLabel]: (props: AnimationFeatureProps) => {
         return (
             props.variants !== undefined ||
             animationProps.some(key => typeof props[key] === "string")
@@ -89,7 +84,7 @@ const animatePropTypeTests = {
 
 export const getAnimationComponent = (
     props: MotionProps
-): ComponentType<AnimationFunctionalProps> | undefined => {
+): ComponentType<AnimationFeatureProps> | undefined => {
     let animatePropType: AnimatePropType | undefined = undefined
 
     for (const key in AnimatePropType) {

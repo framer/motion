@@ -10,8 +10,11 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
-import { MagicContext } from "../../motion/magic/MagicContext"
-import { MagicControlledTree, MagicBatchTree } from "../../motion/magic/types"
+import { MagicContext } from "../../motion/features/magic/MagicContext"
+import {
+    MagicControlledTree,
+    MagicBatchTree,
+} from "../../motion/features/magic/types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
 type ComponentKey = string | number

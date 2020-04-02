@@ -1,15 +1,15 @@
 import { useRef, useEffect, useContext } from "react"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
-import { FunctionalProps, FunctionalComponentDefinition } from "./types"
+import { FeatureProps, MotionFeature } from "./types"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 
-export const Exit: FunctionalComponentDefinition = {
+export const Exit: MotionFeature = {
     key: "exit",
     shouldRender: props => !!props.exit && !checkShouldInheritVariant(props),
-    Component: makeRenderlessComponent((props: FunctionalProps) => {
+    Component: makeRenderlessComponent((props: FeatureProps) => {
         const { animate, controls, exit } = props
         const [isPresent, onExitComplete] = usePresence()
         const presenceContext = useContext(PresenceContext)
@@ -42,6 +42,6 @@ export const Exit: FunctionalComponentDefinition = {
             if (isPresent) {
                 isPlayingExitAnimation.current = false
             }
-        }, [isPresent])
+        }, [animate, controls, custom, exit, isPresent, onExitComplete, props])
     }),
 }

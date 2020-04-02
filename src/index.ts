@@ -79,9 +79,13 @@ export { EventInfo } from "./events/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { usePresence } from "./components/AnimatePresence/use-presence"
-export { MagicMotion } from "./motion/magic/MagicMotion"
-export { MagicContext } from "./motion/magic/MagicContext"
-export { MagicValueHandler, MagicValueHandlers } from "./motion/magic/values"
+export { MagicMotion } from "./motion/features/magic/MagicMotion"
+export { MagicContext } from "./motion/features/magic/MagicContext"
+export {
+    MagicValueHandler,
+    MagicValueHandlers,
+} from "./motion/features/magic/values"
+export { MotionFeature, FeatureProps } from "./motion/features/types"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export { useReducedMotion } from "./utils/use-reduced-motion"
 export { ReducedMotion } from "./components/ReducedMotion"

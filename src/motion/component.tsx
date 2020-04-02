@@ -5,18 +5,16 @@ import { useMotionStyles } from "./utils/use-styles"
 import { useValueAnimationControls } from "../animation/use-value-animation-controls"
 import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
-import {
-    LoadFunctionalityComponents,
-    RenderComponent,
-} from "./functionality/types"
+import { LoadMotionFeatures, RenderComponent } from "./features/types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { ValueAnimationConfig } from "../animation/ValueAnimationControls"
 import { useConstant } from "../utils/use-constant"
 import { useNativeElement, NativeElement } from "./utils/use-native-element"
+import { MotionPluginContext } from "./context/MotionPluginContext"
 export { MotionProps }
 
 export interface MotionComponentConfig {
-    loadFunctionalityComponents: LoadFunctionalityComponents
+    loadFeatures: LoadMotionFeatures
     renderComponent: RenderComponent
     getValueControlsConfig: (
         nativeElement: NativeElement,
@@ -29,7 +27,7 @@ export interface MotionComponentConfig {
  */
 export const createMotionComponent = <P extends {}>({
     getValueControlsConfig,
-    loadFunctionalityComponents,
+    loadFeatures,
     renderComponent,
 }: MotionComponentConfig) => {
     function MotionComponent(
@@ -72,16 +70,18 @@ export const createMotionComponent = <P extends {}>({
             props
         )
 
-        const functionality = isStatic
+        const plugins = useContext(MotionPluginContext)
+        const features = isStatic
             ? null
-            : loadFunctionalityComponents(
+            : loadFeatures(
                   nativeElement,
                   values,
                   props,
                   context,
                   parentContext,
                   controls,
-                  shouldInheritVariant
+                  shouldInheritVariant,
+                  plugins
               )
 
         const renderedComponent = renderComponent(
@@ -93,13 +93,13 @@ export const createMotionComponent = <P extends {}>({
         )
 
         // The mount order and hierarchy is specific to ensure our element ref is hydrated by the time
-        // all plugins and functionality has to execute.
+        // all plugins and features has to execute.
         return (
             <>
                 <MotionContext.Provider value={context}>
                     {renderedComponent}
                 </MotionContext.Provider>
-                {functionality}
+                {features}
             </>
         )
     }
