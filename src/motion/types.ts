@@ -12,7 +12,7 @@ import {
 } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours/types"
-import { MagicProps } from "./magic/types"
+import { MagicProps } from "./features/magic/types"
 
 export type MotionStyleProp = string | number | MotionValue
 

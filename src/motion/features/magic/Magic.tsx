@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useContext } from "react"
-import { FunctionalProps } from "../functionality/types"
+import { FeatureProps } from "../types"
 import { MagicContext } from "./MagicContext"
 import {
     resetStyles,
@@ -22,21 +22,21 @@ import {
     Axis,
     MagicAnimationOptions,
 } from "./types"
-import { MotionValue } from "../../value"
-import { syncRenderSession } from "../../dom/sync-render-session"
-import { TargetAndTransition, Point } from "../../types"
-import { startAnimation } from "../../animation/utils/transitions"
+import { MotionValue } from "../../../value"
+import { syncRenderSession } from "../../../dom/sync-render-session"
+import { TargetAndTransition, Point } from "../../../types"
+import { startAnimation } from "../../../animation/utils/transitions"
 import { mix } from "@popmotion/popcorn"
-import { usePresence } from "../../components/AnimatePresence/use-presence"
+import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { defaultMagicValues, MagicValueHandlers } from "./values"
-import { MotionPluginContext } from "../context/MotionPluginContext"
+import { MotionPluginContext } from "../../context/MotionPluginContext"
 export { MagicControlledTree, MagicBatchTree }
 
 /**
  * Magic Motion relies on multiple components and class components only support, hence this
  * wrapper component that provides those contexts as props.
  */
-export const MagicContextProvider = (props: FunctionalProps) => {
+export const MagicContextProvider = (props: FeatureProps) => {
     const [isPresent, safeToRemove] = usePresence()
     const magicContext = useContext(MagicContext)
     const { magicValues, transformPagePoint } = useContext(MotionPluginContext)
@@ -61,7 +61,7 @@ interface ContextProps {
     transformPagePoint: (point: Point) => Point
 }
 
-export class Magic extends React.Component<FunctionalProps & ContextProps> {
+export class Magic extends React.Component<FeatureProps & ContextProps> {
     private unregisterFromMagicContext?: () => void
     private stopLayoutAnimation?: () => void
 
@@ -104,7 +104,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
 
     prevRotate = 0
 
-    constructor(props: FunctionalProps & ContextProps) {
+    constructor(props: FeatureProps & ContextProps) {
         super(props)
         this.delta = props.localContext.magicDelta as BoxDelta
         this.depth = props.localContext.magicDepth
@@ -145,7 +145,7 @@ export class Magic extends React.Component<FunctionalProps & ContextProps> {
     }
 
     // TODO Can we combine this with MagicMotion?
-    shouldComponentUpdate(nextProps: FunctionalProps & ContextProps) {
+    shouldComponentUpdate(nextProps: FeatureProps & ContextProps) {
         const hasDependency =
             this.props.magicDependency !== undefined ||
             nextProps.magicDependency !== undefined

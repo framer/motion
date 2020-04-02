@@ -1,8 +1,8 @@
-import { FunctionalProps } from "../functionality/types"
+import { FeatureProps } from "../features/types"
 
-export const makeRenderlessComponent = <P = FunctionalProps>(
-    hook: Function
-) => (props: P) => {
+export const makeRenderlessComponent = <P = FeatureProps>(hook: Function) => (
+    props: P
+) => {
     hook(props)
     return null
 }

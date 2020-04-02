@@ -1,5 +1,5 @@
 import { createMotionComponent } from "./component"
-import { createDomMotionConfig } from "./functionality/dom"
+import { createDomMotionConfig } from "./features/dom"
 import * as React from "react"
 import {
     ReactHTML,

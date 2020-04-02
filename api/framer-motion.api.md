@@ -4,6 +4,7 @@
 
 ```ts
 
+import { ComponentType } from 'react';
 import * as CSS from 'csstype';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
@@ -74,7 +75,7 @@ export interface AnimationProps {
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const createMotionComponent: <P extends {}>({ getValueControlsConfig, loadFunctionalityComponents, renderComponent, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
+export const createMotionComponent: <P extends {}>({ getValueControlsConfig, loadFeatures, renderComponent, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
 
 // @public (undocumented)
 export interface CustomValueType {
@@ -811,7 +812,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/motion/magic/MagicMotion.d.ts:50:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
+// types/motion/features/magic/MagicMotion.d.ts:50:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
