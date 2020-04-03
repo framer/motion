@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, MagicMotion } from "@framer"
+import { motion } from "@framer"
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)

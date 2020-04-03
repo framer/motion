@@ -77,7 +77,7 @@ export { EventInfo } from "./events/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { usePresence } from "./components/AnimatePresence/use-presence"
-export { MagicMotion } from "./motion/features/magic/MagicMotion"
+export { SharedMagicMotion } from "./motion/features/magic/SharedMagicMotion"
 export { MagicContext } from "./motion/features/magic/MagicContext"
 export {
     MagicValueHandler,

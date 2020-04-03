@@ -1,13 +1,13 @@
 import React from "react"
 import { useState } from "react"
-import { motion, MagicMotion } from "@framer"
+import { motion, SharedMagicMotion } from "@framer"
 import styled from "styled-components"
 
 export function App() {
     const [selected, setSelected] = useState(0)
 
     return (
-        <MagicMotion>
+        <SharedMagicMotion>
             <Container>
                 {screens.map(({ title, color }, i) => (
                     <motion.li
@@ -20,7 +20,7 @@ export function App() {
                     >
                         {i === selected && (
                             <motion.div
-                                magicId="underline"
+                                sharedId="underline"
                                 className="underline"
                                 style={{ backgroundColor: color }}
                                 allowTransformNone={false}
@@ -30,7 +30,7 @@ export function App() {
                     </motion.li>
                 ))}
             </Container>
-        </MagicMotion>
+        </SharedMagicMotion>
     )
 }
 

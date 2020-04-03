@@ -125,6 +125,7 @@ export const defaultMagicValues: MagicValueHandlers = {
     opacity: {
         read: opacity => (opacity !== null ? parseFloat(opacity) : 0),
     },
+    position: {},
 }
 
 function getAnimatableShadow(shadow: string, fallback: string) {

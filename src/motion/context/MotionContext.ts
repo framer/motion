@@ -63,7 +63,7 @@ export const useMotionContext = (
         whileTap,
         whileHover,
         magic,
-        magicId,
+        sharedId,
     }: MotionProps
 ) => {
     const presenceContext = useContext(PresenceContext)
@@ -144,7 +144,7 @@ export const useMotionContext = (
             isReducedMotion: parentContext.isReducedMotion,
             magicDepth:
                 // TODO: Make nice isMagic
-                magic || magicId !== undefined
+                magic || sharedId !== undefined
                     ? parentContext.magicDepth + 1
                     : parentContext.magicDepth,
             magicDelta,
@@ -156,7 +156,7 @@ export const useMotionContext = (
             animateDependency,
             parentContext.isReducedMotion,
             magic,
-            magicId,
+            sharedId,
         ]
     )
 

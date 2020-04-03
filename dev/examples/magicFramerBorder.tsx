@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, MotionPlugins, MagicMotion } from "@framer"
+import { motion, useCycle, MotionPlugins, SharedMagicMotion } from "@framer"
 import { mix } from "@popmotion/popcorn"
 import styled from "styled-components"
 
@@ -58,7 +58,7 @@ export const App = () => {
 
     return (
         <MotionPlugins magicValues={border}>
-            <MagicMotion transition={{ duration: 3, ease: "circIn" }}>
+            <SharedMagicMotion transition={{ duration: 3, ease: "circIn" }}>
                 <Container magic onClick={() => toggleOn()} isOn={isOn}>
                     <motion.div
                         magic
@@ -81,7 +81,7 @@ export const App = () => {
                         }
                     />
                 </Container>
-            </MagicMotion>
+            </SharedMagicMotion>
         </MotionPlugins>
     )
 }

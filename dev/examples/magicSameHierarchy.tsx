@@ -30,12 +30,12 @@ export const App = () => {
     return (
         <Container
             isOn={isOn}
-            magicId="switch"
+            sharedId="switch"
             onClick={() => toggleOn()}
             magic
             style={{ backgroundColor: isOn ? "#09f" : "#bbb" }}
         >
-            <motion.div magic magicId="handle" />
+            <motion.div magic sharedId="handle" />
         </Container>
     )
 }

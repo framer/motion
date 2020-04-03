@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, useCycle, MagicMotion } from "@framer"
+import { motion, useCycle, SharedMagicMotion } from "@framer"
 import styled from "styled-components"
 
 /**
