@@ -17,20 +17,23 @@ import {
     Style,
     BoxDelta,
     Box,
-    MagicControlledTree,
+    SharedMagicTree,
     MagicBatchTree,
     Axis,
-    MagicAnimationOptions,
+    MagicAnimationConfig,
 } from "./types"
 import { MotionValue } from "../../../value"
 import { syncRenderSession } from "../../../dom/sync-render-session"
 import { TargetAndTransition, Point } from "../../../types"
 import { startAnimation } from "../../../animation/utils/transitions"
 import { mix } from "@popmotion/popcorn"
-import { usePresence } from "../../../components/AnimatePresence/use-presence"
+import {
+    usePresence,
+    SafeToRemove,
+} from "../../../components/AnimatePresence/use-presence"
 import { defaultMagicValues, MagicValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
-export { MagicControlledTree, MagicBatchTree }
+export { SharedMagicTree, MagicBatchTree }
 
 /**
  * Magic Motion relies on multiple components and class components only support, hence this
@@ -55,8 +58,8 @@ export const MagicContextProvider = (props: FeatureProps) => {
 
 interface ContextProps {
     isPresent: boolean
-    safeToRemove?: () => void
-    magicContext: MagicControlledTree | MagicBatchTree
+    safeToRemove?: null | SafeToRemove
+    magicContext: SharedMagicTree | MagicBatchTree
     magicValues: MagicValueHandlers
     transformPagePoint: (point: Point) => Point
 }
@@ -174,6 +177,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
 
     resetStyles() {
         const { animate, nativeElement, style = {} } = this.props
+
         const reset = resetStyles(style, this.supportedMagicValues)
 
         // If we're animating opacity separately, we don't want to reset
@@ -235,7 +239,8 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
         }
     }
 
-    startAnimation({ origin, target, ...opts }: MagicAnimationOptions = {}) {
+    // TODO: Reduce safeToRemove calls
+    startAnimation({ origin, target, ...opts }: MagicAnimationConfig = {}) {
         const { nativeElement, values } = this.props
         const rotate = values.get("rotate")
         rotate && nativeElement.setStyle("rotate", rotate.get())
@@ -273,7 +278,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
      * This uses the FLIP animation technique to animate physical dimensions
      * and correct distortion on related styles (ie borderRadius etc)
      */
-    startLayoutAnimation(opts: MagicAnimationOptions) {
+    startLayoutAnimation(opts: MagicAnimationConfig) {
         let animation
 
         this.stopLayoutAnimation && this.stopLayoutAnimation()
@@ -390,7 +395,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
      * This is a straight animation between prev/next styles. This animates
      * styles that don't need scale inversion correction.
      */
-    startStyleAnimation(opts: MagicAnimationOptions) {
+    startStyleAnimation(opts: MagicAnimationConfig) {
         let shouldTransitionStyle = false
         const target: TargetAndTransition = {}
         const { values } = this.props
@@ -495,9 +500,9 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
 }
 
 function isControlledTree(
-    context: MagicControlledTree | MagicBatchTree
-): context is MagicControlledTree {
-    return !!(context as MagicControlledTree).register
+    context: SharedMagicTree | MagicBatchTree
+): context is SharedMagicTree {
+    return !!(context as SharedMagicTree).register
 }
 
 function resetAxis(axis: Axis, originAxis: Axis) {

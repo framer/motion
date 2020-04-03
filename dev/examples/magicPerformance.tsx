@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, MagicMotion } from "@framer"
+import { motion, SharedMagicMotion } from "@framer"
 
 // TODO: This doesnt test performance yet - we need a complicated example to put here
 
@@ -8,7 +8,7 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <MagicMotion>
+        <SharedMagicMotion>
             <motion.div
                 magic
                 transition={{ duration: 1 }}
@@ -21,7 +21,7 @@ export const App = () => {
                     style={isOn ? bigChild : smallChild}
                 />
             </motion.div>
-        </MagicMotion>
+        </SharedMagicMotion>
     )
 }
 

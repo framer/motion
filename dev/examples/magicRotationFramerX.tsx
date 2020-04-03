@@ -1,44 +1,44 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, MagicMotion } from "@framer"
+import { motion, AnimatePresence, SharedMagicMotion } from "@framer"
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <MagicMotion crossfade supportRotate>
+        <SharedMagicMotion crossfade supportRotate>
             <AnimatePresence>
                 <motion.div
                     id="parent"
-                    magicId="parent"
+                    sharedId="parent"
                     transition={{ duration: 1 }}
                     style={smallParent}
                     onClick={() => setIsOn(!isOn)}
                     key="a"
                 >
                     <motion.div
-                        magicId="child"
+                        sharedId="child"
                         transition={{ duration: 1 }}
                         style={smallChild}
                     />
                 </motion.div>
                 {isOn && (
                     <motion.div
-                        magicId="parent"
+                        sharedId="parent"
                         transition={{ duration: 1 }}
                         style={bigParent}
                         onClick={() => setIsOn(!isOn)}
                         key="b"
                     >
                         <motion.div
-                            magicId="child"
+                            sharedId="child"
                             transition={{ duration: 1 }}
                             style={bigChild}
                         />
                     </motion.div>
                 )}
             </AnimatePresence>
-        </MagicMotion>
+        </SharedMagicMotion>
     )
 }
 

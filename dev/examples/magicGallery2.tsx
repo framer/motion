@@ -1,6 +1,6 @@
 import React from "react"
 import { useState } from "react"
-import { motion, MagicMotion, AnimatePresence } from "@framer"
+import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
 import styled from "styled-components"
 
 function Gallery({ items, setIndex }) {
@@ -13,7 +13,7 @@ function Gallery({ items, setIndex }) {
                     onClick={() => setIndex(i)}
                     style={{ backgroundColor: color }}
                     magic
-                    magicId={color}
+                    sharedId={color}
                 />
             ))}
         </ul>
@@ -30,7 +30,7 @@ function SingleImage({ color, index, setIndex }) {
       <div className="button close" onClick={close} /> */}
             <motion.div
                 magic
-                magicId={color}
+                sharedId={color}
                 className="single-image"
                 style={{ backgroundColor: color }}
             />
@@ -43,7 +43,7 @@ export function App() {
 
     return (
         <Container>
-            <MagicMotion>
+            <SharedMagicMotion>
                 <Gallery items={colors} setIndex={setIndex} />
                 <AnimatePresence>
                     {index !== false && (
@@ -66,7 +66,7 @@ export function App() {
                         />
                     )}
                 </AnimatePresence>
-            </MagicMotion>
+            </SharedMagicMotion>
         </Container>
     )
 }

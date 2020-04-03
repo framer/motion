@@ -1,10 +1,10 @@
 import * as React from "react"
 import {
-    MagicControlledTree,
+    SharedMagicTree,
     Snapshot,
-    MagicMotionProps,
+    SharedMagicMotionProps,
     TransitionHandler,
-    MagicAnimationOptions,
+    MagicAnimationConfig,
 } from "./types"
 import { MagicContext } from "./MagicContext"
 import { Magic } from "./Magic"
@@ -23,9 +23,9 @@ const defaultMagicTransition = {
 /**
  * @public
  */
-export class MagicMotion extends React.Component<
-    MagicMotionProps,
-    MagicControlledTree
+export class SharedMagicMotion extends React.Component<
+    SharedMagicMotionProps,
+    SharedMagicTree
 > {
     /**
      * Keep track of all magic children.
@@ -33,7 +33,7 @@ export class MagicMotion extends React.Component<
     private children = new Set<Magic>()
 
     /**
-     * As magic components with a defined `magicId` are added/removed to the tree,
+     * As magic components with a defined `sharedId` are added/removed to the tree,
      * we store them in order. When one is added, it will animate out from the
      * previous one, and when it's removed, it'll animate to the previous one.
      */
@@ -57,7 +57,7 @@ export class MagicMotion extends React.Component<
     private batch = batchTransitions()
 
     /**
-     * Keep one snapshot for each stack in the event the all magicId children
+     * Keep one snapshot for each stack in the event the all sharedId children
      * are removed from a stack before the new one is added.
      */
     private snapshots = new Map<string, Snapshot>()
@@ -88,8 +88,8 @@ export class MagicMotion extends React.Component<
      * want to control whether we take snapshots and perform magic transitions.
      */
     shouldComponentUpdate(
-        nextProps: MagicMotionProps,
-        nextState: MagicControlledTree
+        nextProps: SharedMagicMotionProps,
+        nextState: SharedMagicTree
     ) {
         this.shouldTransition = false
 
@@ -154,7 +154,7 @@ export class MagicMotion extends React.Component<
         if (!this.shouldTransition) return
 
         /**
-         * Magic animations can be used without the MagicMotion wrapping component.
+         * Magic animations can be used without the SharedMagicMotion wrapping component.
          * This requires some co-ordination across components to stop layout thrashing
          * and ensure measurements are taken at the correct time.
          *
@@ -185,10 +185,10 @@ export class MagicMotion extends React.Component<
     }
 
     addChildToStack(child: Magic) {
-        const { magicId } = child.props
-        if (magicId === undefined) return
+        const { sharedId } = child.props
+        if (sharedId === undefined) return
 
-        const stack = this.getStack(magicId)
+        const stack = this.getStack(sharedId)
         stack.push(child)
 
         const stackLength = stack.length
@@ -202,10 +202,10 @@ export class MagicMotion extends React.Component<
     }
 
     removeChildFromStack(child: Magic) {
-        const { magicId } = child.props
-        if (magicId === undefined) return
+        const { sharedId } = child.props
+        if (sharedId === undefined) return
 
-        const stack = this.getStack(magicId)
+        const stack = this.getStack(sharedId)
         const childIndex = stack.findIndex(stackChild => child === stackChild)
         if (childIndex === -1) return
 
@@ -217,8 +217,8 @@ export class MagicMotion extends React.Component<
     }
 
     /**
-     * Return a stack of magic children based on the provided magicId.
-     * Will create a stack if none currently exists with that magicId.
+     * Return a stack of magic children based on the provided sharedId.
+     * Will create a stack if none currently exists with that sharedId.
      */
     getStack(id: string): MagicStack {
         !this.stacks.has(id) && this.stacks.set(id, [])
@@ -243,12 +243,12 @@ export class MagicMotion extends React.Component<
 }
 
 function stackQuery<T, F>(
-    callback: (magicId: string, child: Magic) => T | F,
+    callback: (sharedId: string, child: Magic) => T | F,
     fallback?: F
 ) {
     return (child: Magic) => {
-        const { magicId } = child.props
-        return magicId === undefined ? fallback : callback(magicId, child)
+        const { sharedId } = child.props
+        return sharedId === undefined ? fallback : callback(sharedId, child)
     }
 }
 
@@ -262,7 +262,7 @@ function compress(min: number, max: number, easing: Easing): Easing {
 }
 
 function controlledHandler(
-    { transition, crossfade }: MagicAnimationOptions,
+    { transition, crossfade }: MagicAnimationConfig,
     rootDepth: number,
     stacks: MagicStacks,
     snapshots: Map<string, Snapshot>
@@ -282,43 +282,43 @@ function controlledHandler(
     })
 
     const isVisibleInStack = stackQuery(
-        (magicId, child) => visible.get(magicId) === child,
+        (sharedId, child) => visible.get(sharedId) === child,
         true
     )
 
     const isPreviousInStack = stackQuery(
-        (magicId, child) => previous.get(magicId) === child,
+        (sharedId, child) => previous.get(sharedId) === child,
         false
     )
 
     const getPreviousOrigin = stackQuery(
-        magicId =>
-            previous.get(magicId)?.measuredOrigin || snapshots.get(magicId)
+        sharedId =>
+            previous.get(sharedId)?.measuredOrigin || snapshots.get(sharedId)
     )
 
     const getPreviousTarget = stackQuery(
-        magicId => previous.get(magicId)?.measuredTarget
+        sharedId => previous.get(sharedId)?.measuredTarget
     )
 
     const getVisibleOrigin = stackQuery(
-        magicId => visible.get(magicId)?.measuredOrigin
+        sharedId => visible.get(sharedId)?.measuredOrigin
     )
 
     const getVisibleTarget = stackQuery(
-        magicId => visible.get(magicId)?.measuredTarget
+        sharedId => visible.get(sharedId)?.measuredTarget
     )
 
-    const isVisibleInStackPresent = stackQuery(magicId => {
-        const visibleInStack = visible.get(magicId)
+    const isVisibleInStackPresent = stackQuery(sharedId => {
+        const visibleInStack = visible.get(sharedId)
         return visibleInStack && visibleInStack.isPresent()
     }, false)
 
-    const isOnlyMemberOfStack = stackQuery(magicId => {
-        const stack = stacks.get(magicId)
+    const isOnlyMemberOfStack = stackQuery(sharedId => {
+        const stack = stacks.get(sharedId)
         return !stack ? true : stack.length <= 1
     }, true)
 
-    const getSnapshot = stackQuery(magicId => snapshots.get(magicId))
+    const getSnapshot = stackQuery(sharedId => snapshots.get(sharedId))
 
     const isRootChild = (child: Magic) => child.depth === rootDepth
 

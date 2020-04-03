@@ -1,6 +1,6 @@
 import React, { CSSProperties } from "react"
 import { useState } from "react"
-import { motion, MagicMotion, AnimatePresence } from "@framer"
+import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
 
 const transition = { duration: 5 } //{ type: "spring", stiffness: 500, damping: 30 }
 
@@ -12,10 +12,10 @@ function Gallery({ items, setIndex }) {
                     key={color}
                     onClick={() => setIndex(i)}
                     style={{ ...item, backgroundColor: color }}
-                    magicId={color}
+                    sharedId={color}
                     id={i === 0 && "list-red"}
                 >
-                    <motion.div style={child} magicId={`child-${color}`} />
+                    <motion.div style={child} sharedId={`child-${color}`} />
                 </motion.li>
             ))}
         </ul>
@@ -39,13 +39,13 @@ function SingleImage({ color, index, setIndex }) {
       <div className="button close" onClick={close} /> */}
                     <motion.div
                         id="color"
-                        magicId={color}
+                        sharedId={color}
                         style={{ ...singleImage, backgroundColor: color }}
                     >
                         <motion.div
                             style={child}
                             id="child"
-                            magicId={`child-${color}`}
+                            sharedId={`child-${color}`}
                         />
                     </motion.div>
                 </div>
@@ -58,7 +58,7 @@ export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     return (
-        <MagicMotion crossfade dependency={index}>
+        <SharedMagicMotion crossfade dependency={index}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
@@ -69,7 +69,7 @@ export function App() {
                     />
                 )}
             </AnimatePresence>
-        </MagicMotion>
+        </SharedMagicMotion>
     )
 }
 
