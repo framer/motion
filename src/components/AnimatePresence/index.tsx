@@ -216,7 +216,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 
             // Remove this child from the present children
             const removeIndex = presentChildren.current.findIndex(
-                child => child.key === key
+                presentChild => presentChild.key === key
             )
             presentChildren.current.splice(removeIndex, 1)
 
