@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, MagicMotion, AnimatePresence } from "@framer"
+import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
 
 interface ListProps {
     list: number[]
@@ -16,7 +16,7 @@ const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
                     <motion.li
                         style={{ ...styles.item, backgroundColor, z: 2 }}
                         key={id}
-                        magicId={id}
+                        sharedId={id}
                         id={"list-" + id}
                         onClick={() => onItemClick(id)}
                         drag
@@ -38,7 +38,7 @@ export const App = () => {
     ])
 
     return (
-        <MagicMotion crossfade transition={{ duration: 2 }}>
+        <SharedMagicMotion crossfade transition={{ duration: 2 }}>
             <div style={styles.container}>
                 <List
                     list={lists[0]}
@@ -51,7 +51,7 @@ export const App = () => {
                     backgroundColor="blue"
                 />
             </div>
-        </MagicMotion>
+        </SharedMagicMotion>
     )
 }
 

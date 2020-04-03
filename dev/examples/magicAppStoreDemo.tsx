@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, MagicMotion } from "@framer"
+import { motion, AnimatePresence, SharedMagicMotion } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 import styled from "styled-components"
@@ -9,12 +9,12 @@ function Card({ id, title, category, theme, isSelected, onClick }) {
             <motion.div className="card-content-container">
                 <motion.div
                     className="card-content"
-                    magicId={`card-container-${id}`}
+                    sharedId={`card-container-${id}`}
                     magicDependency={isSelected}
                 >
                     <motion.div
                         className="card-image-container"
-                        magicId={`card-image-container-${id}`}
+                        sharedId={`card-image-container-${id}`}
                         magicDependency={isSelected}
                     >
                         <img
@@ -25,7 +25,7 @@ function Card({ id, title, category, theme, isSelected, onClick }) {
                     </motion.div>
                     <motion.div
                         className="title-container"
-                        magicId={`title-container-${id}`}
+                        sharedId={`title-container-${id}`}
                         magicDependency={isSelected}
                     >
                         <span className="category">{category}</span>
@@ -70,12 +70,12 @@ export function Item({ id, setOpen }) {
             <div className="card-content-container open">
                 <motion.div
                     className="card-content"
-                    magicId={`card-container-${id}`} //2
+                    sharedId={`card-container-${id}`} //2
                     transition={openSpring}
                 >
                     <motion.div
                         className="card-image-container"
-                        magicId={`card-image-container-${id}`} //3
+                        sharedId={`card-image-container-${id}`} //3
                         transition={openSpring}
                     >
                         <img
@@ -86,7 +86,7 @@ export function Item({ id, setOpen }) {
                     </motion.div>
                     <motion.div
                         className="title-container"
-                        magicId={`title-container-${id}`} //4
+                        sharedId={`title-container-${id}`} //4
                         transition={openSpring}
                     >
                         <span className="category">{category}</span>
@@ -188,12 +188,12 @@ function Store() {
     const [open, setOpen] = useState<string | false>(false)
 
     return (
-        <MagicMotion crossfade>
+        <SharedMagicMotion crossfade>
             <List selectedId={open} setOpen={setOpen} />
             <AnimatePresence>
                 {open && <Item id={open} setOpen={setOpen} />}
             </AnimatePresence>
-        </MagicMotion>
+        </SharedMagicMotion>
     )
 }
 

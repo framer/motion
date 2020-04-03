@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, MagicMotion, AnimatePresence } from "@framer"
+import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -51,8 +51,8 @@ const bigCard = {
 function A() {
     return (
         <motion.div magic style={screenA}>
-            <motion.div magicId="cover" style={screen}>
-                <motion.div magicId="card" style={card}></motion.div>
+            <motion.div sharedId="cover" style={screen}>
+                <motion.div sharedId="card" style={card}></motion.div>
             </motion.div>
         </motion.div>
     )
@@ -60,8 +60,8 @@ function A() {
 
 function B() {
     return (
-        <motion.div magicId="cover" style={screenB}>
-            <motion.div magicId="card" style={bigCard}></motion.div>
+        <motion.div sharedId="cover" style={screenB}>
+            <motion.div sharedId="card" style={bigCard}></motion.div>
         </motion.div>
     )
 }
@@ -69,7 +69,7 @@ function C() {
     return (
         <motion.div magic style={screenC}>
             <motion.div
-                magicId="card"
+                sharedId="card"
                 style={{ ...bigCard, top: 0 }}
             ></motion.div>
         </motion.div>
@@ -92,9 +92,9 @@ export const App = () => {
         <Container
             onClick={() => setPage(page === 3 ? 2 : Math.min(3, page + 1))}
         >
-            <MagicMotion crossfade transition={{ duration: 2 }}>
+            <SharedMagicMotion crossfade transition={{ duration: 2 }}>
                 <AnimatePresence>{children}</AnimatePresence>
-            </MagicMotion>
+            </SharedMagicMotion>
         </Container>
     )
 }

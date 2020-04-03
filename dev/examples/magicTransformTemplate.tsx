@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, MagicMotion } from "@framer"
+import { motion, useCycle, SharedMagicMotion } from "@framer"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -56,12 +56,12 @@ const Child = () => {
     return (
         <Big
             magic
-            magicId="big"
+            sharedId="big"
             transformTemplate={(_, gen) =>
                 `translateX(-50%) translateY(-50%) ${gen}`
             }
         >
-            <Small magic magicId="small" />
+            <Small magic sharedId="small" />
         </Big>
     )
 }
@@ -71,13 +71,13 @@ const Sibling = () => {
         <>
             <Big
                 magic
-                magicId="big"
+                sharedId="big"
                 purple
                 transformTemplate={(_, gen) =>
                     `translateX(-50%) translateY(-50%) ${gen}`
                 }
             />
-            <Small magic magicId="small" purple />
+            <Small magic sharedId="small" purple />
         </>
     )
 }
@@ -87,7 +87,9 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <MagicMotion>{isOn ? <Child /> : <Sibling />}</MagicMotion>
+            <SharedMagicMotion>
+                {isOn ? <Child /> : <Sibling />}
+            </SharedMagicMotion>
         </Container>
     )
 }

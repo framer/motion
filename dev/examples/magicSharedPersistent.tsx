@@ -1,10 +1,10 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, MagicMotion } from "@framer"
+import { motion, AnimatePresence, SharedMagicMotion } from "@framer"
 
 /**
  * This demo shows persistent shared element transitions. When the red box is clicked,
- * a new one is created with the same magicId. The original box is hidden, but will appear
+ * a new one is created with the same sharedId. The original box is hidden, but will appear
  * to move towards the position of the newly created box. When the new red box is hidden,
  * it will perform an exit animation towards the size and location of the old box. When
  * it is finally removed from the DOM, the original box is made visible.
@@ -15,16 +15,16 @@ export const App = () => {
 
     return (
         <div style={container} onClick={() => setIsOn(!isOn)}>
-            <MagicMotion>
+            <SharedMagicMotion>
                 <div style={outline}>
-                    <motion.div magicId="box" id="source-box" style={box} />
+                    <motion.div sharedId="box" id="source-box" style={box} />
                 </div>
 
                 <div style={{ ...outline, width: 400, height: 400 }}>
                     <AnimatePresence>
                         {isOn && (
                             <motion.div
-                                magicId="box"
+                                sharedId="box"
                                 id="target-box"
                                 style={{
                                     ...box,
@@ -37,7 +37,7 @@ export const App = () => {
                         )}
                     </AnimatePresence>
                 </div>
-            </MagicMotion>
+            </SharedMagicMotion>
         </div>
     )
 }

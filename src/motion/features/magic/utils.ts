@@ -40,7 +40,6 @@ function snapshotStyle(
     valueHandlers: MagicValueHandlers
 ): Style {
     const computedStyle = element.getComputedStyle()
-
     const style: Partial<Style> = {}
 
     for (const key in valueHandlers) {
@@ -229,6 +228,10 @@ export function resetStyles(
             reset[key] = ""
         }
     }
+
+    // if (offsetSnapshot) {
+    //     Object.assign(reset, offsetSnapshot, { position: "absolute" })
+    // }
 
     return reset
 }

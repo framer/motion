@@ -1,9 +1,13 @@
 import { useContext, useEffect } from "react"
 import { PresenceContext } from "./PresenceContext"
 
+export type SafeToRemove = () => void
+
+type AlwaysPresent = [true, null]
+
 type Present = [true]
 
-type NotPresent = [false, () => void]
+type NotPresent = [false, SafeToRemove]
 
 /**
  * When a component is the child of `AnimatePresence`, it can use `usePresence`
@@ -28,10 +32,10 @@ type NotPresent = [false, () => void]
  *
  * @public
  */
-export function usePresence(): Present | NotPresent {
+export function usePresence(): AlwaysPresent | Present | NotPresent {
     const context = useContext(PresenceContext)
 
-    if (context === null) return [true]
+    if (context === null) return [true, null]
     const { isPresent, onExitComplete, register } = context
 
     useEffect(register, [])

@@ -1,12 +1,12 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, MagicMotion } from "@framer"
+import { motion, SharedMagicMotion } from "@framer"
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <MagicMotion>
+        <SharedMagicMotion>
             <div
                 style={!isOn ? alignLeft : alignRight}
                 onClick={() => setIsOn(!isOn)}
@@ -25,7 +25,7 @@ export const App = () => {
                     />
                 </motion.div>
             </div>
-        </MagicMotion>
+        </SharedMagicMotion>
     )
 }
 

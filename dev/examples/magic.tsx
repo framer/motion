@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, MagicMotion } from "@framer"
+import { motion, useCycle, SharedMagicMotion } from "@framer"
 
 const styles = [
     {
