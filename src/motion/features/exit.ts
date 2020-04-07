@@ -34,6 +34,7 @@ export const Exit: MotionFeature = {
             } else if (
                 isPlayingExitAnimation.current &&
                 animate &&
+                typeof animate !== "boolean" &&
                 !(animate instanceof AnimationControls)
             ) {
                 controls.start(animate)

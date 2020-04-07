@@ -1,6 +1,11 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
+import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
+
+/**
+ * This is a stress test of snapshotting ability as components
+ * animate between the two lists.
+ */
 
 interface ListProps {
     list: number[]
@@ -10,13 +15,13 @@ interface ListProps {
 
 const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul magic style={styles.list}>
+        <motion.ul animate style={styles.list}>
             <AnimatePresence>
                 {list.map(id => (
                     <motion.li
                         style={{ ...styles.item, backgroundColor, z: 2 }}
                         key={id}
-                        sharedId={id}
+                        layoutId={id}
                         id={"list-" + id}
                         onClick={() => onItemClick(id)}
                         drag
@@ -38,7 +43,7 @@ export const App = () => {
     ])
 
     return (
-        <SharedMagicMotion crossfade transition={{ duration: 2 }}>
+        <AnimateSharedLayout crossfade transition={{ duration: 2 }}>
             <div style={styles.container}>
                 <List
                     list={lists[0]}
@@ -51,7 +56,7 @@ export const App = () => {
                     backgroundColor="blue"
                 />
             </div>
-        </SharedMagicMotion>
+        </AnimateSharedLayout>
     )
 }
 

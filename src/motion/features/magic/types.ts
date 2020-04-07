@@ -66,9 +66,9 @@ export interface Snapshot {
 }
 
 /**
- * Functions provided to magic children of a `SharedMagicMotionProps` component.
+ * Functions provided to animate children of a `SharedLayoutProps` component.
  */
-export interface SharedMagicTree {
+export interface SharedLayoutTree {
     forceRender: () => void
     register: (child: Magic) => () => void
 }
@@ -91,7 +91,7 @@ export interface MagicBatchTree {
 }
 
 /**
- * Optional configuration for a magic animation.
+ * Optional configuration for a animate animation.
  */
 export interface MagicAnimationConfig {
     origin?: Snapshot
@@ -110,7 +110,7 @@ export interface MagicProps {
     /**
      * @public
      */
-    sharedId?: string
+    layoutId?: string
 
     /**
      * @public
@@ -133,14 +133,14 @@ export interface MagicProps {
     allowTransformNone?: boolean
 }
 
-export interface SharedMagicMotionProps {
+export interface SharedLayoutProps {
     /**
      * @public
      */
     children: React.ReactNode
 
     /**
-     * `transition` settings to use for the magic animation. Currently, only one transition
+     * `transition` settings to use for the animate animation. Currently, only one transition
      * can be defined for every animating value and every animating component.
      *
      * @public
@@ -150,13 +150,13 @@ export interface SharedMagicMotionProps {
     /**
      * TODO: Change to type before merge
      *
-     * When combined with `AnimatePresence`, `SharedMagicMotionProps` can customise how to visually switch
-     * between `sharedId` components as new ones enter and leave the tree.
+     * When combined with `AnimatePresence`, `SharedLayoutProps` can customise how to visually switch
+     * between `layoutId` components as new ones enter and leave the tree.
      *
-     * - "switch" (default): The old `sharedId` component will be hidden instantly when a new one enters, and
+     * - "switch" (default): The old `layoutId` component will be hidden instantly when a new one enters, and
      * the new one will perform the full transition. When the newest one is removed, it will perform
      * the full exit transition and then the old component will be shown instantly.
-     * - "crossfade": The root shared components will crossfade as `sharedId` children of both perform
+     * - "crossfade": The root shared components will crossfade as `layoutId` children of both perform
      * the same transition.
      *
      * TODO: Add code example
@@ -166,11 +166,11 @@ export interface SharedMagicMotionProps {
     crossfade?: boolean
 
     /**
-     * By default, `SharedMagicMotionProps` will run a magic animation on all children every time
+     * By default, `SharedLayoutProps` will run a animate animation on all children every time
      * it renders.
      *
      * To improve performance we can pass a variable to `dependency`, like a piece of state or a URL.
-     * `SharedMagicMotionProps` will only run magic animations when this dependency changes.
+     * `SharedLayoutProps` will only run animate animations when this dependency changes.
      *
      * @public
      */

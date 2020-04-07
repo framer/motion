@@ -56,15 +56,7 @@ export const useMotionContext = (
     controls: ValueAnimationControls,
     values: MotionValuesMap,
     isStatic: boolean = false,
-    {
-        initial,
-        animate,
-        variants,
-        whileTap,
-        whileHover,
-        magic,
-        sharedId,
-    }: MotionProps
+    { initial, animate, variants, whileTap, whileHover, layoutId }: MotionProps
 ) => {
     const presenceContext = useContext(PresenceContext)
     // Override initial with that from a parent context, if defined
@@ -144,7 +136,7 @@ export const useMotionContext = (
             isReducedMotion: parentContext.isReducedMotion,
             magicDepth:
                 // TODO: Make nice isMagic
-                magic || sharedId !== undefined
+                animate || layoutId !== undefined
                     ? parentContext.magicDepth + 1
                     : parentContext.magicDepth,
             magicDelta,
@@ -155,8 +147,8 @@ export const useMotionContext = (
             initialDependency,
             animateDependency,
             parentContext.isReducedMotion,
-            magic,
-            sharedId,
+            animate,
+            layoutId,
         ]
     )
 

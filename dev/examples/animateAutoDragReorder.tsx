@@ -4,6 +4,14 @@ import { motion, useMotionValue } from "@framer"
 import { clamp, distance } from "@popmotion/popcorn"
 import move from "array-move"
 
+/**
+ * This demonstrates drag working with automatic animations.
+ * When the element moves in the underlying layout, it visually
+ * stays stuck to the user's pointer.
+ *
+ * TODO: This is currently WIP and should be fixed before merge.
+ */
+
 const Item = ({ color, setPosition, moveItem, i }) => {
     const [isDragging, setDragging] = useState(false)
 
@@ -11,11 +19,6 @@ const Item = ({ color, setPosition, moveItem, i }) => {
     // This will allow us to measure its height and position, which will be useful to
     // decide when a dragging element should switch places with its siblings.
     const ref = useRef(null)
-
-    // By manually creating a reference to `dragOriginY` we can manipulate this value
-    // if the user is dragging this DOM element while the drag gesture is active to
-    // compensate for any movement as the items are re-positioned.
-    const dragOriginY = useMotionValue(0)
 
     const y = useMotionValue(0)
 
@@ -37,27 +40,12 @@ const Item = ({ color, setPosition, moveItem, i }) => {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 1.12 }}
             drag="y"
-            dragOriginY={dragOriginY}
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={1}
             onDragStart={() => setDragging(true)}
             onDragEnd={() => setDragging(false)}
             onDrag={(e, { point }) => moveItem(i, point.y)}
             magic={!isDragging}
-
-            // magic={({ delta }) => {
-            //     if (isDragging) {
-            //         // If we're dragging, we want to "undo" the items movement within the list
-            //         // by manipulating its dragOriginY. This will keep the item under the cursor,
-            //         // even though it's jumping around the DOM.
-            //         dragOriginY.set(dragOriginY.get() + delta.y)
-            //     }
-
-            //     // If `magic` is a function and returns `false`, it's telling
-            //     // Motion not to animate from its old position into its new one. If we're
-            //     // dragging, we don't want any animation to occur.
-            //     return !isDragging
-            // }}
         />
     )
 }

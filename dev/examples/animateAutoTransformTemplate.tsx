@@ -37,7 +37,7 @@ export const App = () => {
             }
             magic
         >
-            <Switch isOn={isOn} magic />
+            <Switch isOn={isOn} animate />
         </SwitchContainer>
     )
 }

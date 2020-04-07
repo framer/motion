@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, SharedMagicMotion } from "@framer"
+import { motion, useCycle, AnimateSharedLayout } from "@framer"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -57,8 +57,8 @@ const Big = styled(motion.div)`
 
 const Child = () => {
     return (
-        <Big magic sharedId="big" purple>
-            <Small magic sharedId="small" purple />
+        <Big animate layoutId="big" purple>
+            <Small animate layoutId="small" purple />
         </Big>
     )
 }
@@ -66,8 +66,8 @@ const Child = () => {
 const Sibling = () => {
     return (
         <>
-            <Big magic sharedId="big" />
-            <Small magic sharedId="small" />
+            <Big animate layoutId="big" />
+            <Small animate layoutId="small" />
         </>
     )
 }
@@ -77,9 +77,9 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <SharedMagicMotion crossfade>
+            <AnimateSharedLayout crossfade>
                 {isOn ? <Child /> : <Sibling />}
-            </SharedMagicMotion>
+            </AnimateSharedLayout>
         </Container>
     )
 }

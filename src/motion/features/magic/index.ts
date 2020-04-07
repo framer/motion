@@ -4,8 +4,9 @@ import { MotionProps } from "../../types"
 
 export const magic: MotionFeature = {
     key: "magic",
-    shouldRender: ({ magic, sharedId }: MotionProps) => {
-        const hasMagicProps = magic !== undefined || sharedId !== undefined
+    shouldRender: ({ animate, layoutId }: MotionProps) => {
+        const hasMagicProps =
+            typeof animate === "boolean" || layoutId !== undefined
         return hasMagicProps && typeof window !== "undefined"
     },
     Component: MagicContextProvider,

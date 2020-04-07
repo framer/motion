@@ -1,11 +1,12 @@
 import * as React from "react"
-import { motion, useCycle, MotionPlugins, SharedMagicMotion } from "@framer"
+import { motion, useCycle, MotionPlugins, AnimateSharedLayout } from "@framer"
 import { mix } from "@popmotion/popcorn"
 import styled from "styled-components"
 
 /**
  * This demo is called "Framer border" because it demonstrates border animations as Framer
  * implements borders, by positioning the inner div seperately to the sized outer Frame using `inset`
+ * and defining additional values with handlers passed to `magicValues`.
  */
 
 const Container = styled(motion.div)<{ isOn: boolean }>`
@@ -58,10 +59,10 @@ export const App = () => {
 
     return (
         <MotionPlugins magicValues={border}>
-            <SharedMagicMotion transition={{ duration: 3, ease: "circIn" }}>
-                <Container magic onClick={() => toggleOn()} isOn={isOn}>
+            <AnimateSharedLayout transition={{ duration: 3, ease: "circIn" }}>
+                <Container animate onClick={() => toggleOn()} isOn={isOn}>
                     <motion.div
-                        magic
+                        animate
                         style={
                             true
                                 ? {
@@ -81,7 +82,7 @@ export const App = () => {
                         }
                     />
                 </Container>
-            </SharedMagicMotion>
+            </AnimateSharedLayout>
         </MotionPlugins>
     )
 }

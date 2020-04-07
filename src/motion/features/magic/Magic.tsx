@@ -17,7 +17,7 @@ import {
     Style,
     BoxDelta,
     Box,
-    SharedMagicTree,
+    SharedLayoutTree,
     MagicBatchTree,
     Axis,
     MagicAnimationConfig,
@@ -33,7 +33,7 @@ import {
 } from "../../../components/AnimatePresence/use-presence"
 import { defaultMagicValues, MagicValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
-export { SharedMagicTree, MagicBatchTree }
+export { SharedLayoutTree, MagicBatchTree }
 
 /**
  * Magic Motion relies on multiple components and class components only support, hence this
@@ -59,7 +59,7 @@ export const MagicContextProvider = (props: FeatureProps) => {
 interface ContextProps {
     isPresent: boolean
     safeToRemove?: null | SafeToRemove
-    magicContext: SharedMagicTree | MagicBatchTree
+    magicContext: SharedLayoutTree | MagicBatchTree
     magicValues: MagicValueHandlers
     transformPagePoint: (point: Point) => Point
 }
@@ -352,9 +352,9 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
         this.progress.set(progressOrigin)
         this.progress.set(progressOrigin) // Set twice to hard-reset velocity
 
-        const { magicTransition, transition, magic } = this.props
+        const { magicTransition, transition, animate } = this.props
 
-        if (magic !== false) {
+        if (animate !== false) {
             animation = startAnimation(
                 "progress",
                 this.progress,
@@ -452,7 +452,6 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
 
         // TODO: If we could return this from applyTreeDeltas
         // it'd save a second loop
-        // TODO: Dont create a new object here
         calcTreeScale(this.treeScale, parentDeltas)
     }
 
@@ -500,9 +499,9 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
 }
 
 function isControlledTree(
-    context: SharedMagicTree | MagicBatchTree
-): context is SharedMagicTree {
-    return !!(context as SharedMagicTree).register
+    context: SharedLayoutTree | MagicBatchTree
+): context is SharedLayoutTree {
+    return !!(context as SharedLayoutTree).register
 }
 
 function resetAxis(axis: Axis, originAxis: Axis) {

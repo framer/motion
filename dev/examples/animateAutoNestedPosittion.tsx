@@ -11,14 +11,14 @@ export const App = () => {
     const childStyles = isOpen ? openChild : closedChild
     return (
         <motion.div
-            magic
+            animate
             style={isOpen ? openParent : closedParent}
             onClick={() => toggleIsOpen()}
             id="parent"
         >
-            <motion.div magic style={childStyles} id="child">
+            <motion.div animate style={childStyles} id="child">
                 <motion.div
-                    magic
+                    animate
                     style={{
                         ...childStyles,
                         height: "30%",
