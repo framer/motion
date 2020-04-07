@@ -1,4 +1,4 @@
-import { MagicContextProvider } from "./Magic"
+import { SharedLayoutContextProvider } from "./Magic"
 import { MotionFeature } from "../types"
 import { MotionProps } from "../../types"
 
@@ -9,5 +9,5 @@ export const magic: MotionFeature = {
             typeof animate === "boolean" || layoutId !== undefined
         return hasMagicProps && typeof window !== "undefined"
     },
-    Component: MagicContextProvider,
+    Component: SharedLayoutContextProvider,
 }

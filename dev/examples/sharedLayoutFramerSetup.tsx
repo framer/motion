@@ -94,7 +94,7 @@ export const App = () => {
         <Container
             onClick={() => setPage(page === 3 ? 2 : Math.min(3, page + 1))}
         >
-            <AnimateSharedLayout crossfade transition={{ duration: 2 }}>
+            <AnimateSharedLayout type="crossfade" transition={{ duration: 2 }}>
                 <AnimatePresence>{children}</AnimatePresence>
             </AnimateSharedLayout>
         </Container>

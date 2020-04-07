@@ -4,9 +4,10 @@ import {
     Snapshot,
     SharedLayoutProps,
     TransitionHandler,
-    MagicAnimationConfig,
+    AutoAnimationConfig,
+    SharedLayoutType,
 } from "./types"
-import { MagicContext } from "./MagicContext"
+import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Magic } from "./Magic"
 import { batchTransitions } from "./utils"
 import { Easing, circOut, linear } from "@popmotion/easing"
@@ -161,8 +162,8 @@ export class AnimateSharedLayout extends React.Component<
          * Here we use that same mechanism of schedule/flush.
          */
         this.children.forEach(child => this.batch.add(child))
-        const { crossfade, transition = defaultMagicTransition } = this.props
-        const options = { crossfade, transition }
+        const { type, transition = defaultMagicTransition } = this.props
+        const options = { type, transition }
         const handler = controlledHandler(
             options,
             this.rootDepth,
@@ -235,9 +236,9 @@ export class AnimateSharedLayout extends React.Component<
 
     render() {
         return (
-            <MagicContext.Provider value={this.state}>
+            <SharedLayoutContext.Provider value={this.state}>
                 {this.props.children}
-            </MagicContext.Provider>
+            </SharedLayoutContext.Provider>
         )
     }
 }
@@ -262,7 +263,7 @@ function compress(min: number, max: number, easing: Easing): Easing {
 }
 
 function controlledHandler(
-    { transition, crossfade }: MagicAnimationConfig,
+    { transition, type }: AutoAnimationConfig,
     rootDepth: number,
     stacks: MagicStacks,
     snapshots: Map<string, Snapshot>
@@ -413,7 +414,10 @@ function controlledHandler(
                 child.snapshotTarget()
             }
         },
-        startAnimation: crossfade ? crossfadeAnimation : switchAnimation,
+        startAnimation:
+            type === SharedLayoutType.Crossfade
+                ? crossfadeAnimation
+                : switchAnimation,
     }
 }
 
