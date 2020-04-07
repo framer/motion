@@ -58,7 +58,7 @@ export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     return (
-        <AnimateSharedLayout crossfade dependency={index}>
+        <AnimateSharedLayout type="crossfade" dependency={index}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (

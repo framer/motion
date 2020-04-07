@@ -24,6 +24,18 @@ import { SpringProps } from "popmotion"
 import { Styler } from "stylefire"
 import { SVGAttributes } from "react"
 
+// @public
+export const AnimatePresence: FunctionComponent<AnimatePresenceProps>
+
+// @public (undocumented)
+export interface AnimatePresenceProps {
+    custom?: any
+    // @beta
+    exitBeforeEnter?: boolean
+    initial?: boolean
+    onExitComplete?: () => void
+}
+
 // Warning: (ae-forgotten-export) The symbol "SharedLayoutProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "SharedLayoutTree" needs to be exported by the entry point index.d.ts
 //
@@ -58,18 +70,6 @@ export class AnimateSharedLayout extends React.Component<
         forceRender: () => void
         register: (child: Magic) => () => void
     }
-}
-
-// @public
-export const AnimatePresence: FunctionComponent<AnimatePresenceProps>
-
-// @public (undocumented)
-export interface AnimatePresenceProps {
-    custom?: any
-    // @beta
-    exitBeforeEnter?: boolean
-    initial?: boolean
-    onExitComplete?: () => void
 }
 
 // @public
@@ -313,10 +313,10 @@ export type KeyframesTarget =
     | CustomValueType[]
 
 // Warning: (ae-forgotten-export) The symbol "MagicBatchTree" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "MagicContext" should be prefixed with an underscore because the declaration is marked as @internal
+// Warning: (ae-internal-missing-underscore) The name "SharedLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 //
 // @internal (undocumented)
-export const MagicContext: import("react").Context<
+export const SharedLayoutContext: import("react").Context<
     MagicBatchTree | SharedLayoutTree
 >
 
