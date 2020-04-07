@@ -1,25 +1,29 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SharedMagicMotion } from "@framer"
+import { motion, AnimateSharedLayout } from "@framer"
+
+/**
+ * This demonstrates the rotation support used by Framer
+ */
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <SharedMagicMotion supportRotate>
+        <AnimateSharedLayout supportRotate>
             <motion.div
-                magic
+                animate
                 transition={{ duration: 1 }}
                 style={isOn ? bigParent : smallParent}
                 onClick={() => setIsOn(!isOn)}
             >
                 <motion.div
-                    magic
+                    animate
                     transition={{ duration: 1 }}
                     style={isOn ? bigChild : smallChild}
                 />
             </motion.div>
-        </SharedMagicMotion>
+        </AnimateSharedLayout>
     )
 }
 

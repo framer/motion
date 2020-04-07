@@ -1,7 +1,9 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
+import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
 import styled from "styled-components"
+
+/** This demo emulates the screen setup that Framer uses in Navigation component */
 
 const Container = styled.div`
     width: 300px;
@@ -36,7 +38,6 @@ const card = {
     left: 50,
     width: 200,
     height: 200,
-    rotate: 45,
     background: "pink",
 }
 
@@ -44,17 +45,16 @@ const bigCard = {
     ...card,
     top: 200,
     left: 0,
-    width: 200,
-    height: 200,
-    rotate: 45,
+    width: 300,
+    height: 300,
     background: "pink",
 }
 
 function A() {
     return (
-        <motion.div style={screenA}>
-            <motion.div style={screen}>
-                <motion.div sharedId="card" style={card}></motion.div>
+        <motion.div animate style={screenA}>
+            <motion.div layoutId="cover" style={screen}>
+                <motion.div layoutId="card" style={card}></motion.div>
             </motion.div>
         </motion.div>
     )
@@ -62,16 +62,16 @@ function A() {
 
 function B() {
     return (
-        <motion.div style={screenB}>
-            <motion.div sharedId="card" style={bigCard}></motion.div>
+        <motion.div layoutId="cover" style={screenB}>
+            <motion.div layoutId="card" style={bigCard}></motion.div>
         </motion.div>
     )
 }
 function C() {
     return (
-        <motion.div magic style={screenC}>
+        <motion.div animate style={screenC}>
             <motion.div
-                sharedId="card"
+                layoutId="card"
                 style={{ ...bigCard, top: 0 }}
             ></motion.div>
         </motion.div>
@@ -94,9 +94,9 @@ export const App = () => {
         <Container
             onClick={() => setPage(page === 3 ? 2 : Math.min(3, page + 1))}
         >
-            <SharedMagicMotion supportRotate transition={{ duration: 2 }}>
+            <AnimateSharedLayout crossfade transition={{ duration: 2 }}>
                 <AnimatePresence>{children}</AnimatePresence>
-            </SharedMagicMotion>
+            </AnimateSharedLayout>
         </Container>
     )
 }

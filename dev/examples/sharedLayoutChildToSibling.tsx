@@ -1,6 +1,12 @@
 import * as React from "react"
-import { motion, useCycle, SharedMagicMotion } from "@framer"
+import { motion, useCycle, AnimateSharedLayout } from "@framer"
 import styled from "styled-components"
+
+/**
+ * This example demonstrates using AnimateSharedLayout
+ * to animate between two sets of two components with a different
+ * hierarchy
+ */
 
 const Container = styled.div`
     width: 200px;
@@ -54,14 +60,8 @@ const Big = styled(motion.div)`
 
 const Child = () => {
     return (
-        <Big
-            magic
-            sharedId="big"
-            transformTemplate={(_, gen) =>
-                `translateX(-50%) translateY(-50%) ${gen}`
-            }
-        >
-            <Small magic sharedId="small" />
+        <Big animate layoutId="big">
+            <Small animate layoutId="small" />
         </Big>
     )
 }
@@ -69,15 +69,8 @@ const Child = () => {
 const Sibling = () => {
     return (
         <>
-            <Big
-                magic
-                sharedId="big"
-                purple
-                transformTemplate={(_, gen) =>
-                    `translateX(-50%) translateY(-50%) ${gen}`
-                }
-            />
-            <Small magic sharedId="small" purple />
+            <Big animate layoutId="big" purple />
+            <Small animate layoutId="small" purple />
         </>
     )
 }
@@ -87,9 +80,9 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <SharedMagicMotion>
+            <AnimateSharedLayout>
                 {isOn ? <Child /> : <Sibling />}
-            </SharedMagicMotion>
+            </AnimateSharedLayout>
         </Container>
     )
 }

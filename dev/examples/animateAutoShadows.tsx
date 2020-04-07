@@ -1,13 +1,17 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SharedMagicMotion } from "@framer"
+import { motion } from "@framer"
+
+/**
+ * Thie demonstrates the automatic animation of box-shadow
+ */
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
         <motion.div
-            magic
+            animate
             transition={{ duration: 2 }}
             style={!isOn ? big : small}
             onClick={() => setIsOn(!isOn)}

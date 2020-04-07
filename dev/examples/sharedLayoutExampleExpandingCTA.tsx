@@ -1,7 +1,14 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
+import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
 import styled from "styled-components"
+
+/**
+ * This demonstrates AnimateSharedLayout children animating correctly
+ * when children of AnimatePresence exit/enter
+ * TODO: Currently, the child in AnimatePresence is used as part
+ * of the layout measurements
+ */
 
 const Container = styled.div`
     position: absolute;
@@ -63,24 +70,25 @@ export const App = () => {
     const [isOpen, setIsOpen] = useState(false)
 
     return (
-        <SharedMagicMotion>
+        <AnimateSharedLayout>
             <Container>
-                <Popup magic onClick={() => setIsOpen(!isOpen)} id="popup">
-                    <Icon id="icon" isOpen={isOpen} magic>
-                        <Detail magic id="detail" />
+                <Popup animate onClick={() => setIsOpen(!isOpen)} id="popup">
+                    <Icon id="icon" isOpen={isOpen} animate>
+                        <Detail animate id="detail" />
                     </Icon>
                     <AnimatePresence>
                         {isOpen && (
-                            <ContentRow
-                                magic
+                            <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                            />
+                            >
+                                <ContentRow animate />
+                            </motion.div>
                         )}
                     </AnimatePresence>
                 </Popup>
             </Container>
-        </SharedMagicMotion>
+        </AnimateSharedLayout>
     )
 }

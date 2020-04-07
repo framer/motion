@@ -1,10 +1,10 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, SharedMagicMotion } from "@framer"
+import { motion, AnimatePresence, AnimateSharedLayout } from "@framer"
 
 /**
  * This demo shows persistent shared element transitions. When the red box is clicked,
- * a new one is created with the same sharedId. The original box is hidden, but will appear
+ * a new one is created with the same layoutId. The original box is hidden, but will appear
  * to move towards the position of the newly created box. When the new red box is hidden,
  * it will perform an exit animation towards the size and location of the old box. When
  * it is finally removed from the DOM, the original box is made visible.
@@ -15,16 +15,16 @@ export const App = () => {
 
     return (
         <div style={container} onClick={() => setIsOn(!isOn)}>
-            <SharedMagicMotion>
+            <AnimateSharedLayout>
                 <div style={outline}>
-                    <motion.div sharedId="box" id="source-box" style={box} />
+                    <motion.div layoutId="box" id="source-box" style={box} />
                 </div>
 
                 <div style={{ ...outline, width: 400, height: 400 }}>
                     <AnimatePresence>
                         {isOn && (
                             <motion.div
-                                sharedId="box"
+                                layoutId="box"
                                 id="target-box"
                                 style={{
                                     ...box,
@@ -32,12 +32,11 @@ export const App = () => {
                                     width: 400,
                                     height: 400,
                                 }}
-                                magicTransition={{ duration: 3 }}
                             />
                         )}
                     </AnimatePresence>
                 </div>
-            </SharedMagicMotion>
+            </AnimateSharedLayout>
         </div>
     )
 }

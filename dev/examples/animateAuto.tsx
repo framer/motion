@@ -1,5 +1,22 @@
 import * as React from "react"
-import { motion, useCycle, SharedMagicMotion } from "@framer"
+import { motion, useCycle } from "@framer"
+
+/**
+ * An example of auto animation by setting `animate` to `true`.
+ */
+
+export const App = () => {
+    const [count, cycleCount] = useCycle(0, 1, 2, 3)
+
+    return (
+        <motion.div
+            style={{ ...styles[count], position: "absolute" }}
+            animate
+            id={`shape-${count}`}
+            onClick={() => cycleCount()}
+        />
+    )
+}
 
 const styles = [
     {
@@ -30,22 +47,3 @@ const styles = [
         borderRadius: "100px",
     },
 ]
-
-/**
- * Issues:
- * - Nested stuff
- * - Animating between borderRadius value type
- */
-
-export const App = () => {
-    const [count, cycleCount] = useCycle(0, 1, 2, 3)
-
-    return (
-        <motion.div
-            style={{ ...styles[count], position: "absolute" }}
-            magic
-            id={`shape-${count}`}
-            onClick={() => cycleCount()}
-        />
-    )
-}

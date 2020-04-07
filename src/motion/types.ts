@@ -153,7 +153,7 @@ export interface AnimationProps {
      * <motion.div animate={animation} />
      * ```
      */
-    animate?: AnimationControls | TargetAndTransition | VariantLabels
+    animate?: AnimationControls | TargetAndTransition | VariantLabels | boolean
 
     /**
      * A target to animate to when this component is removed from the tree.

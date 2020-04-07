@@ -1,31 +1,29 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, SharedMagicMotion } from "@framer"
+import { motion, AnimateSharedLayout } from "@framer"
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <SharedMagicMotion>
+        <AnimateSharedLayout>
             <div
                 style={!isOn ? alignLeft : alignRight}
                 onClick={() => setIsOn(!isOn)}
             >
                 <motion.div
-                    magic
-                    transition={{ duration: 1 }}
+                    animate
                     style={isOn ? smallParent : bigParent}
                     id="parent"
                 >
                     <motion.div
-                        magic
+                        animate
                         id="child"
-                        transition={{ duration: 1 }}
                         style={isOn ? bigChild : smallChild}
                     />
                 </motion.div>
             </div>
-        </SharedMagicMotion>
+        </AnimateSharedLayout>
     )
 }
 

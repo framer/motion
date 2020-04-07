@@ -2,18 +2,23 @@ import * as React from "react"
 import { useState } from "react"
 import { motion } from "@framer"
 
+/**
+ * This demonstrates automatic border radius animations
+ * on individual corners, including scale and child scale correction
+ */
+
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
         <motion.div
-            magic
+            animate
             style={isOn ? bigParent : smallParent}
             onClick={() => setIsOn(!isOn)}
             transition={{ duration: 2 }}
         >
             <motion.div
-                magic
+                animate
                 style={isOn ? bigChild : smallChild}
                 transition={{ duration: 2 }}
             />
