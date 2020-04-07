@@ -10,7 +10,7 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
-import { MagicContext } from "../../motion/features/magic/MagicContext"
+import { SharedLayoutContext } from "../../motion/features/magic/SharedLayoutContext"
 import {
     SharedLayoutTree,
     MagicBatchTree,
@@ -130,9 +130,9 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
     let forceRender = useForceUpdate()
-    const magicContext = useContext(MagicContext)
+    const magicContext = useContext(SharedLayoutContext)
 
-    if (isControlledMagicContext(magicContext)) {
+    if (isControlledSharedLayoutContext(magicContext)) {
         forceRender = magicContext.forceRender
     }
 
@@ -276,7 +276,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     )
 }
 
-function isControlledMagicContext(
+function isControlledSharedLayoutContext(
     context: SharedLayoutTree | MagicBatchTree
 ): context is SharedLayoutTree {
     return !!(context as any).forceRender

@@ -77,7 +77,7 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <AnimateSharedLayout crossfade>
+            <AnimateSharedLayout type="crossfade">
                 {isOn ? <Child /> : <Sibling />}
             </AnimateSharedLayout>
         </Container>

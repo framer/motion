@@ -10,7 +10,7 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <AnimateSharedLayout crossfade supportRotate>
+        <AnimateSharedLayout type="crossfade" supportRotate>
             <AnimatePresence>
                 <motion.div
                     id="parent"

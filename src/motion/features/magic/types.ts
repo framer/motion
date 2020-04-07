@@ -93,20 +93,15 @@ export interface MagicBatchTree {
 /**
  * Optional configuration for a animate animation.
  */
-export interface MagicAnimationConfig {
+export interface AutoAnimationConfig {
     origin?: Snapshot
     target?: Snapshot
     transition?: Transition
     crossfadeEasing?: Easing
-    crossfade?: boolean
+    type?: SharedLayoutType
 }
 
 export interface MagicProps {
-    /**
-     *
-     * @public
-     */
-    magic?: boolean
     /**
      * @public
      */
@@ -131,6 +126,11 @@ export interface MagicProps {
      * @internal
      */
     allowTransformNone?: boolean
+}
+
+export enum SharedLayoutType {
+    Crossfade = "crossfade",
+    Switch = "switch",
 }
 
 export interface SharedLayoutProps {
@@ -163,7 +163,7 @@ export interface SharedLayoutProps {
      *
      * @public
      */
-    crossfade?: boolean
+    type: SharedLayoutType
 
     /**
      * By default, `SharedLayoutProps` will run a animate animation on all children every time

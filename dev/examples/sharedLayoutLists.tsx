@@ -43,7 +43,7 @@ export const App = () => {
     ])
 
     return (
-        <AnimateSharedLayout crossfade transition={{ duration: 2 }}>
+        <AnimateSharedLayout type="crossfade" transition={{ duration: 2 }}>
             <div style={styles.container}>
                 <List
                     list={lists[0]}

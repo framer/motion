@@ -5,6 +5,6 @@ import { batchTransitions } from "./utils"
 /**
  * @internal
  */
-export const MagicContext = createContext<SharedLayoutTree | MagicBatchTree>(
-    batchTransitions()
-)
+export const SharedLayoutContext = createContext<
+    SharedLayoutTree | MagicBatchTree
+>(batchTransitions())

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useContext } from "react"
 import { FeatureProps } from "../types"
-import { MagicContext } from "./MagicContext"
+import { SharedLayoutContext } from "./SharedLayoutContext"
 import {
     resetStyles,
     snapshot,
@@ -20,7 +20,7 @@ import {
     SharedLayoutTree,
     MagicBatchTree,
     Axis,
-    MagicAnimationConfig,
+    AutoAnimationConfig,
 } from "./types"
 import { MotionValue } from "../../../value"
 import { syncRenderSession } from "../../../dom/sync-render-session"
@@ -39,9 +39,9 @@ export { SharedLayoutTree, MagicBatchTree }
  * Magic Motion relies on multiple components and class components only support, hence this
  * wrapper component that provides those contexts as props.
  */
-export const MagicContextProvider = (props: FeatureProps) => {
+export const SharedLayoutContextProvider = (props: FeatureProps) => {
     const [isPresent, safeToRemove] = usePresence()
-    const magicContext = useContext(MagicContext)
+    const magicContext = useContext(SharedLayoutContext)
     const { magicValues, transformPagePoint } = useContext(MotionPluginContext)
 
     return (
@@ -65,7 +65,7 @@ interface ContextProps {
 }
 
 export class Magic extends React.Component<FeatureProps & ContextProps> {
-    private unregisterFromMagicContext?: () => void
+    private unregisterFromSharedLayoutContext?: () => void
     private stopLayoutAnimation?: () => void
 
     private shouldTransition = true
@@ -130,7 +130,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
         const { magicContext } = this.props
 
         if (isControlledTree(magicContext)) {
-            this.unregisterFromMagicContext = magicContext.register(this)
+            this.unregisterFromSharedLayoutContext = magicContext.register(this)
         } else {
             this.getSnapshotBeforeUpdate = () => {
                 this.snapshotOrigin()
@@ -143,7 +143,8 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
     }
 
     componentWillUnmount() {
-        this.unregisterFromMagicContext && this.unregisterFromMagicContext()
+        this.unregisterFromSharedLayoutContext &&
+            this.unregisterFromSharedLayoutContext()
         this.stopLayoutAnimation && this.stopLayoutAnimation()
     }
 
@@ -240,7 +241,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
     }
 
     // TODO: Reduce safeToRemove calls
-    startAnimation({ origin, target, ...opts }: MagicAnimationConfig = {}) {
+    startAnimation({ origin, target, ...opts }: AutoAnimationConfig = {}) {
         const { nativeElement, values } = this.props
         const rotate = values.get("rotate")
         rotate && nativeElement.setStyle("rotate", rotate.get())
@@ -278,7 +279,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
      * This uses the FLIP animation technique to animate physical dimensions
      * and correct distortion on related styles (ie borderRadius etc)
      */
-    startLayoutAnimation(opts: MagicAnimationConfig) {
+    startLayoutAnimation(opts: AutoAnimationConfig) {
         let animation
 
         this.stopLayoutAnimation && this.stopLayoutAnimation()
@@ -395,7 +396,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
      * This is a straight animation between prev/next styles. This animates
      * styles that don't need scale inversion correction.
      */
-    startStyleAnimation(opts: MagicAnimationConfig) {
+    startStyleAnimation(opts: AutoAnimationConfig) {
         let shouldTransitionStyle = false
         const target: TargetAndTransition = {}
         const { values } = this.props
