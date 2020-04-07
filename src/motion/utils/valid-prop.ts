@@ -19,7 +19,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "inherit",
     "static",
     "layoutId",
-    "magicTransition",
     "magicDependency",
     "allowTransformNone",
     "onMagicComplete",
