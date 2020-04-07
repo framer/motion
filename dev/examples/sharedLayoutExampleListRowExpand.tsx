@@ -1,7 +1,12 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, SharedMagicMotion } from "@framer"
+import { motion, AnimatePresence, AnimateSharedLayout } from "@framer"
 import styled from "styled-components"
+
+/**
+ * This demonstrates container components correctly animating
+ * resize when children are added/removed/expanded
+ */
 
 interface ItemProps {
     isOpen: boolean
@@ -47,25 +52,31 @@ const Image = styled(motion.div)`
 function Item({ isOpen, onClick, i }: ItemProps) {
     return (
         <Container
-            magic
+            animate
             onClick={onClick}
             transition={{ duration: 2 }}
             isOpen={isOpen}
             id="container"
         >
-            <Image id="image" magic transition={{ duration: 2 }} />
+            <Image id="image" animate transition={{ duration: 2 }} />
             <AnimatePresence>
                 {isOpen && (
-                    <motion.div
-                        magic
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        id={`content-${i}`}
-                    >
-                        <ContentRow />
-                        <ContentRow />
-                        <ContentRow />
+                    <motion.div animate>
+                        <ContentRow
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        />
+                        <ContentRow
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        />
+                        <ContentRow
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                        />
                     </motion.div>
                 )}
             </AnimatePresence>
@@ -78,8 +89,8 @@ export const App = () => {
     const [open, setIsOpen] = useState<false | number>(false)
 
     return (
-        <SharedMagicMotion>
-            <List magic>
+        <AnimateSharedLayout>
+            <List animate>
                 {items.map(id => (
                     <Item
                         key={id}
@@ -89,6 +100,6 @@ export const App = () => {
                     />
                 ))}
             </List>
-        </SharedMagicMotion>
+        </AnimateSharedLayout>
     )
 }

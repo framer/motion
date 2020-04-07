@@ -14,7 +14,7 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <motion.p magic style={{ fontSize: isOn ? 100 : 24 }}>
+            <motion.p animate style={{ fontSize: isOn ? 100 : 24 }}>
                 TEXT
             </motion.p>
         </Container>

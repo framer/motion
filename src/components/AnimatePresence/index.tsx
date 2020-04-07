@@ -12,7 +12,7 @@ import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { MagicContext } from "../../motion/features/magic/MagicContext"
 import {
-    SharedMagicTree,
+    SharedLayoutTree,
     MagicBatchTree,
 } from "../../motion/features/magic/types"
 import { useForceUpdate } from "../../utils/use-force-update"
@@ -277,7 +277,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 }
 
 function isControlledMagicContext(
-    context: SharedMagicTree | MagicBatchTree
-): context is SharedMagicTree {
+    context: SharedLayoutTree | MagicBatchTree
+): context is SharedLayoutTree {
     return !!(context as any).forceRender
 }

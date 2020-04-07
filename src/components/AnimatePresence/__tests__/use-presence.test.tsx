@@ -10,7 +10,7 @@ type CB = () => void
 describe("usePresence", () => {
     test("Can defer unmounting", async () => {
         const promise = new Promise(resolve => {
-            let remove: undefined | CB = undefined
+            let remove: null | undefined | CB = undefined
 
             const Child = () => {
                 const [isPresent, safeToRemove] = usePresence()
@@ -38,13 +38,13 @@ describe("usePresence", () => {
             resolve()
         })
 
-        return await promise
+        await promise
     })
 
     test("Multiple children can exit", async () => {
         const promise = new Promise(resolve => {
-            let removeA: undefined | CB = undefined
-            let removeB: undefined | CB = undefined
+            let removeA: null | undefined | CB = undefined
+            let removeB: null | undefined | CB = undefined
 
             const ChildA = () => {
                 const [isPresent, safeToRemove] = usePresence()
@@ -93,13 +93,13 @@ describe("usePresence", () => {
             resolve()
         })
 
-        return await promise
+        await promise
     })
 
     test("Multiple children can exit over multiple rerenders", async () => {
         const promise = new Promise(resolve => {
-            let removeA: undefined | CB = undefined
-            let removeB: undefined | CB = undefined
+            let removeA: null | undefined | CB = undefined
+            let removeB: null | undefined | CB = undefined
 
             const ChildA = () => {
                 const [isPresent, safeToRemove] = usePresence()
@@ -152,6 +152,6 @@ describe("usePresence", () => {
             resolve()
         })
 
-        return await promise
+        await promise
     })
 })

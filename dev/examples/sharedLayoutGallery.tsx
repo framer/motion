@@ -1,8 +1,13 @@
 import React, { CSSProperties } from "react"
 import { useState } from "react"
-import { motion, SharedMagicMotion, AnimatePresence } from "@framer"
+import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
 
-const transition = { duration: 5 } //{ type: "spring", stiffness: 500, damping: 30 }
+/**
+ * This demonstrates children with layoutId animating
+ * back to their origin components
+ */
+
+const transition = { type: "spring", stiffness: 500, damping: 30 }
 
 function Gallery({ items, setIndex }) {
     return (
@@ -12,10 +17,10 @@ function Gallery({ items, setIndex }) {
                     key={color}
                     onClick={() => setIndex(i)}
                     style={{ ...item, backgroundColor: color }}
-                    sharedId={color}
+                    layoutId={color}
                     id={i === 0 && "list-red"}
                 >
-                    <motion.div style={child} sharedId={`child-${color}`} />
+                    <motion.div style={child} layoutId={`child-${color}`} />
                 </motion.li>
             ))}
         </ul>
@@ -23,29 +28,24 @@ function Gallery({ items, setIndex }) {
 }
 
 function SingleImage({ color, index, setIndex }) {
-    //const close = () => setIndex(false);
-
     return (
         <>
             <motion.div
-                magic
+                animate
                 style={{ ...overlay }}
                 id="overlay"
                 onClick={() => setIndex(false)}
             >
                 <div style={singleImageContainer}>
-                    {/* <div className="button prev" onClick={() => setIndex(index - 1)} />
-      <div className="button next" onClick={() => setIndex(index + 1)} />
-      <div className="button close" onClick={close} /> */}
                     <motion.div
                         id="color"
-                        sharedId={color}
+                        layoutId={color}
                         style={{ ...singleImage, backgroundColor: color }}
                     >
                         <motion.div
                             style={child}
                             id="child"
-                            sharedId={`child-${color}`}
+                            layoutId={`child-${color}`}
                         />
                     </motion.div>
                 </div>
@@ -58,7 +58,7 @@ export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     return (
-        <SharedMagicMotion crossfade dependency={index}>
+        <AnimateSharedLayout crossfade dependency={index}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
@@ -69,7 +69,7 @@ export function App() {
                     />
                 )}
             </AnimatePresence>
-        </SharedMagicMotion>
+        </AnimateSharedLayout>
     )
 }
 

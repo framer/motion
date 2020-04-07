@@ -1,44 +1,48 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, SharedMagicMotion } from "@framer"
+import { motion, AnimatePresence, AnimateSharedLayout } from "@framer"
+
+/**
+ * This demonstrates the rotation support as setup by Framer's Navigation component
+ */
 
 export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <SharedMagicMotion crossfade supportRotate>
+        <AnimateSharedLayout crossfade supportRotate>
             <AnimatePresence>
                 <motion.div
                     id="parent"
-                    sharedId="parent"
+                    layoutId="parent"
                     transition={{ duration: 1 }}
                     style={smallParent}
                     onClick={() => setIsOn(!isOn)}
                     key="a"
                 >
                     <motion.div
-                        sharedId="child"
+                        layoutId="child"
                         transition={{ duration: 1 }}
                         style={smallChild}
                     />
                 </motion.div>
                 {isOn && (
                     <motion.div
-                        sharedId="parent"
+                        layoutId="parent"
                         transition={{ duration: 1 }}
                         style={bigParent}
                         onClick={() => setIsOn(!isOn)}
                         key="b"
                     >
                         <motion.div
-                            sharedId="child"
+                            layoutId="child"
                             transition={{ duration: 1 }}
                             style={bigChild}
                         />
                     </motion.div>
                 )}
             </AnimatePresence>
-        </SharedMagicMotion>
+        </AnimateSharedLayout>
     )
 }
 
