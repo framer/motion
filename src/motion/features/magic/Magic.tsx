@@ -353,7 +353,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
         this.progress.set(progressOrigin)
         this.progress.set(progressOrigin) // Set twice to hard-reset velocity
 
-        const { magicTransition, transition, animate } = this.props
+        const { transition, animate } = this.props
 
         if (animate !== false) {
             animation = startAnimation(
@@ -361,7 +361,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
                 this.progress,
                 progressTarget,
                 {
-                    ...(opts.transition || magicTransition || transition),
+                    ...(opts.transition || transition),
                     restDelta: 1,
                     restSpeed: 10,
                 }
@@ -417,9 +417,8 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
             }
         }
 
-        const { magicTransition, transition, controls } = this.props
-        target.transition =
-            opts.transition || magicTransition || transition || {}
+        const { transition, controls } = this.props
+        target.transition = opts.transition || transition || {}
 
         if (opts.crossfadeEasing) {
             target.transition = {

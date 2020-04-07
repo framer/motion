@@ -115,11 +115,6 @@ export interface MagicProps {
     /**
      * @public
      */
-    magicTransition?: Transition
-
-    /**
-     * @public
-     */
     magicDependency?: any
 
     /**
