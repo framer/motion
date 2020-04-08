@@ -5,7 +5,6 @@ import {
     SharedLayoutProps,
     TransitionHandler,
     AutoAnimationConfig,
-    SharedLayoutType,
 } from "./types"
 import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Magic } from "./Magic"
@@ -415,9 +414,7 @@ function controlledHandler(
             }
         },
         startAnimation:
-            type === SharedLayoutType.Crossfade
-                ? crossfadeAnimation
-                : switchAnimation,
+            type === "crossfade" ? crossfadeAnimation : switchAnimation,
     }
 }
 

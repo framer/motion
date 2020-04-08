@@ -14,10 +14,6 @@ const Container = styled.div`
     position: relative;
 `
 
-const Page = styled(motion.div)`
-    background-color: ${({ color }) => color};
-`
-
 const screen = {
     position: "absolute",
     top: 0,
@@ -26,76 +22,43 @@ const screen = {
     bottom: 0,
 }
 
-const screenA = { ...screen, background: "red" }
-
-const screenB = { ...screen, background: "green" }
-
-const screenC = { ...screen, background: "blue" }
-
 const card = {
     position: "absolute",
     top: 50,
     left: 50,
     width: 200,
     height: 200,
-    background: "pink",
-}
-
-const bigCard = {
-    ...card,
-    top: 200,
-    left: 0,
-    width: 300,
-    height: 300,
-    background: "pink",
+    background: "rgba(0,0,255,0.5)",
 }
 
 function A() {
     return (
-        <motion.div animate style={screenA}>
-            <motion.div layoutId="cover" style={screen}>
-                <motion.div layoutId="card" style={card}></motion.div>
-            </motion.div>
+        <motion.div layoutId="cover" style={screen}>
+            <motion.div layoutId="card" style={card}></motion.div>
         </motion.div>
     )
 }
 
 function B() {
     return (
-        <motion.div layoutId="cover" style={screenB}>
-            <motion.div layoutId="card" style={bigCard}></motion.div>
-        </motion.div>
-    )
-}
-function C() {
-    return (
-        <motion.div animate style={screenC}>
+        <motion.div layoutId="cover" style={screen}>
             <motion.div
                 layoutId="card"
-                style={{ ...bigCard, top: 0 }}
+                style={{ ...card, top: 200 }}
             ></motion.div>
         </motion.div>
     )
 }
 
-const Components = [A, B, C]
-
 export const App = () => {
-    const [page, setPage] = useState(1)
-
-    const children = []
-
-    for (let i = 0; i < page; i++) {
-        const Component = Components[i]
-        children.push(<Component key={i} />)
-    }
-
+    const [page, setPage] = useState(0)
     return (
-        <Container
-            onClick={() => setPage(page === 3 ? 2 : Math.min(3, page + 1))}
-        >
+        <Container onClick={() => setPage(page === 0 ? 1 : 0)}>
             <AnimateSharedLayout type="crossfade" transition={{ duration: 2 }}>
-                <AnimatePresence>{children}</AnimatePresence>
+                <AnimatePresence>
+                    <A />
+                    {page === 1 && <B />}
+                </AnimatePresence>
             </AnimateSharedLayout>
         </Container>
     )

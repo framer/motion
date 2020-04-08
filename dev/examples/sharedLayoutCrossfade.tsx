@@ -79,12 +79,10 @@ export function Item({ id, setOpen }) {
                 <motion.div
                     className="card-content"
                     layoutId={`card-container-${id}`} //2
-                    transition={openSpring}
                 >
                     <motion.div
                         className="card-image-container"
                         layoutId={`card-image-container-${id}`} //3
-                        transition={openSpring}
                     >
                         <img
                             className="card-image"
@@ -95,18 +93,11 @@ export function Item({ id, setOpen }) {
                     <motion.div
                         className="title-container"
                         layoutId={`title-container-${id}`} //4
-                        transition={openSpring}
                     >
                         <span className="category">{category}</span>
                         <h2>{title}</h2>
                     </motion.div>
-                    <motion.div
-                        className="content-container"
-                        animate //6
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }} //5
-                    >
+                    <motion.div className="content-container" animate>
                         Text
                     </motion.div>
                 </motion.div>

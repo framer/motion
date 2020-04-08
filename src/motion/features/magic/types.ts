@@ -98,7 +98,7 @@ export interface AutoAnimationConfig {
     target?: Snapshot
     transition?: Transition
     crossfadeEasing?: Easing
-    type?: SharedLayoutType
+    type?: "switch" | "crossfade"
 }
 
 export interface MagicProps {
@@ -121,11 +121,6 @@ export interface MagicProps {
      * @internal
      */
     allowTransformNone?: boolean
-}
-
-export enum SharedLayoutType {
-    Crossfade = "crossfade",
-    Switch = "switch",
 }
 
 export interface SharedLayoutProps {
@@ -158,7 +153,7 @@ export interface SharedLayoutProps {
      *
      * @public
      */
-    type: SharedLayoutType
+    type?: "switch" | "crossfade"
 
     /**
      * By default, `SharedLayoutProps` will run a animate animation on all children every time
