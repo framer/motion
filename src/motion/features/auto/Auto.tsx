@@ -241,8 +241,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         this.visualOrigin = origin || this.measuredOrigin || this.visualTarget
 
         this.delta.isVisible =
-            this.visualOrigin.style.opacity !== 0 ||
-            this.visualTarget.style.opacity !== 0
+            this.visualOrigin?.style.opacity !== 0 ||
+            this.visualTarget?.style.opacity !== 0
+
         const { parentContext } = this.props
         const parentDeltas = parentContext.magicDeltas || []
 
