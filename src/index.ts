@@ -77,6 +77,7 @@ export { EventInfo } from "./events/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { usePresence } from "./components/AnimatePresence/use-presence"
+export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export { SharedLayoutContext } from "./motion/features/auto/SharedLayoutContext"
 export {
