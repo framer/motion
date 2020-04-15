@@ -1,4 +1,4 @@
-import { Magic } from "./Magic"
+import { Auto } from "./Auto"
 import { Transition } from "../../../types"
 import { Easing } from "@popmotion/easing"
 
@@ -34,6 +34,7 @@ export interface Box {
 export interface BoxDelta {
     x: AxisDelta
     y: AxisDelta
+    isVisible: boolean
 }
 
 /**
@@ -70,15 +71,15 @@ export interface Snapshot {
  */
 export interface SharedLayoutTree {
     forceRender: () => void
-    register: (child: Magic) => () => void
+    register: (child: Auto) => () => void
 }
 
 /**
  * TODO
  */
 export interface TransitionHandler {
-    snapshotTarget: (child: Magic) => void
-    startAnimation: (child: Magic) => void
+    snapshotTarget: (child: Auto) => void
+    startAnimation: (child: Auto) => void
 }
 
 /**
@@ -86,7 +87,7 @@ export interface TransitionHandler {
  */
 type FlushMagicChildren = (handler?: TransitionHandler) => void
 export interface MagicBatchTree {
-    add: (child: Magic) => void
+    add: (child: Auto) => void
     flush: FlushMagicChildren
 }
 

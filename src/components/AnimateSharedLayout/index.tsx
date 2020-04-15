@@ -5,19 +5,41 @@ import {
     SharedLayoutProps,
     TransitionHandler,
     AutoAnimationConfig,
-} from "./types"
-import { SharedLayoutContext } from "./SharedLayoutContext"
-import { Magic } from "./Magic"
-import { batchTransitions } from "./utils"
+} from "../../motion/features/auto/types"
+import { SharedLayoutContext } from "../../motion/features/auto/SharedLayoutContext"
+import { Auto } from "../../motion/features/auto/Auto"
+import { batchTransitions } from "../../motion/features/auto/utils"
 import { Easing, circOut, linear } from "@popmotion/easing"
 import { progress } from "@popmotion/popcorn"
 
-type MagicStack = Magic[]
+type MagicStack = Auto[]
 type MagicStacks = Map<string, MagicStack>
 
 const defaultMagicTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
+}
+
+interface ChildData {
+    shouldResumeFromPrevious?: boolean
+    shouldRestoreVisibility?: boolean
+    isVisible?: boolean
+    snapshot?: Snapshot
+}
+
+/**
+ * Every render we analyse each child and create a map of data about the
+ * following shared layout transition
+ */
+const childData = new WeakMap<Auto, ChildData>()
+
+function getChildData(child: Auto): ChildData {
+    return (childData.get(child) as ChildData) || { isVisible: true }
+}
+
+function setChildData(child: Auto, newData: ChildData) {
+    const data = getChildData(child)
+    childData.set(child, { ...data, ...newData })
 }
 
 /**
@@ -30,7 +52,7 @@ export class AnimateSharedLayout extends React.Component<
     /**
      * Keep track of all animate children.
      */
-    private children = new Set<Magic>()
+    private children = new Set<Auto>()
 
     /**
      * As animate components with a defined `layoutId` are added/removed to the tree,
@@ -57,16 +79,16 @@ export class AnimateSharedLayout extends React.Component<
     private batch = batchTransitions()
 
     /**
-     * Keep one snapshot for each stack in the event the all layoutId children
-     * are removed from a stack before the new one is added.
-     */
-    private snapshots = new Map<string, Snapshot>()
-
-    /**
      * We're tracking mount status as only subsequently-entering components need
      * tagging with `shouldResumeFromPrevious`.
      */
     private hasMounted = false
+
+    /**
+     * Keep one snapshot for each stack in the event the all layoutId children
+     * are removed from a stack before the new one is added.
+     */
+    private snapshots = new Map<string, Snapshot>()
 
     state = {
         /**
@@ -76,7 +98,7 @@ export class AnimateSharedLayout extends React.Component<
          */
         forceRender: (): void => this.setState({ ...this.state }),
 
-        register: (child: Magic) => this.addChild(child),
+        register: (child: Auto) => this.addChild(child),
     }
 
     componentDidMount() {
@@ -154,7 +176,7 @@ export class AnimateSharedLayout extends React.Component<
         if (!this.shouldTransition) return
 
         /**
-         * Magic animations can be used without the AnimateSharedLayout wrapping component.
+         * Shared layout animations can be used without the AnimateSharedLayout wrapping component.
          * This requires some co-ordination across components to stop layout thrashing
          * and ensure measurements are taken at the correct time.
          *
@@ -169,22 +191,22 @@ export class AnimateSharedLayout extends React.Component<
             this.stacks,
             this.snapshots
         )
-        this.batch.flush(handler)
         this.snapshots.clear()
+        this.batch.flush(handler)
     }
 
     /**
      * Register a new `Magic` child
      */
-    addChild(child: Magic) {
+    addChild(child: Auto) {
         this.setRootDepth(child)
         this.children.add(child)
         this.addChildToStack(child)
-        if (this.hasMounted) child.shouldResumeFromPrevious = true
+
         return () => this.removeChild(child)
     }
 
-    addChildToStack(child: Magic) {
+    addChildToStack(child: Auto) {
         const { layoutId } = child.props
         if (layoutId === undefined) return
 
@@ -192,16 +214,24 @@ export class AnimateSharedLayout extends React.Component<
         stack.push(child)
 
         const stackLength = stack.length
-        const previousChild = stack[stackLength - 2]
-        previousChild && previousChild.hide()
+        if (stackLength > 1) {
+            this.hasMounted &&
+                setChildData(child, { shouldResumeFromPrevious: true })
+
+            stack.forEach((stackChild, i) => {
+                if (i < stackLength - 1) {
+                    setChildData(stackChild, { isVisible: false })
+                }
+            })
+        }
     }
 
-    removeChild(child: Magic) {
+    removeChild(child: Auto) {
         this.children.delete(child)
         this.removeChildFromStack(child)
     }
 
-    removeChildFromStack(child: Magic) {
+    removeChildFromStack(child: Auto) {
         const { layoutId } = child.props
         if (layoutId === undefined) return
 
@@ -212,8 +242,15 @@ export class AnimateSharedLayout extends React.Component<
         stack.splice(childIndex, 1)
 
         // Set the previous child to visible
-        const previousChild = stack[childIndex - 1]
-        previousChild && previousChild.show()
+        const previousChild = getPreviousChild(stack, stack.length)
+        // if (previousChild) console.log("showing", previousChild.props.debugId)
+
+        if (previousChild) {
+            setChildData(previousChild, {
+                isVisible: true,
+                shouldRestoreVisibility: true,
+            })
+        }
     }
 
     /**
@@ -226,7 +263,7 @@ export class AnimateSharedLayout extends React.Component<
         return this.stacks.get(id) as MagicStack
     }
 
-    setRootDepth(child: Magic) {
+    setRootDepth(child: Auto) {
         this.rootDepth =
             this.rootDepth === undefined
                 ? child.depth
@@ -243,10 +280,10 @@ export class AnimateSharedLayout extends React.Component<
 }
 
 function stackQuery<T, F>(
-    callback: (layoutId: string, child: Magic) => T | F,
+    callback: (layoutId: string, child: Auto) => T | F,
     fallback?: F
 ) {
-    return (child: Magic) => {
+    return (child: Auto) => {
         const { layoutId } = child.props
         return layoutId === undefined ? fallback : callback(layoutId, child)
     }
@@ -261,25 +298,43 @@ function compress(min: number, max: number, easing: Easing): Easing {
     }
 }
 
+function getPreviousChild(stack: MagicStack, index: number) {
+    for (let i = index - 1; i >= 0; i--) {
+        const child = stack[i]
+        if (child.isPresent()) {
+            return child
+        }
+    }
+}
+
+/**
+ * TODO: When refactoring this to be a testable pure function that creates a tree
+ * of data, allow components to declare themselves "ready" and only play the first
+ * frame until then
+ */
 function controlledHandler(
     { transition, type }: AutoAnimationConfig,
     rootDepth: number,
     stacks: MagicStacks,
     snapshots: Map<string, Snapshot>
 ): TransitionHandler {
-    const visible = new Map<string, Magic>()
-    const previous = new Map<string, Magic>()
+    const visible = new Map<string, Auto>()
+    const previous = new Map<string, Auto>()
 
     stacks.forEach((stack, key) => {
-        const visibleIndex = stack.findIndex(child => child.isVisible)
+        const visibleIndex = stack.findIndex(
+            child => getChildData(child).isVisible
+        )
         if (visibleIndex === -1) return
 
         visible.set(key, stack[visibleIndex])
-        const previousIndex = visibleIndex - 1
-        if (previousIndex === -1) return
-
-        previous.set(key, stack[previousIndex])
+        const previousChild = getPreviousChild(stack, visibleIndex)
+        previousChild && previous.set(key, previousChild)
     })
+
+    const isVisiblePresent = stackQuery(layoutId =>
+        visible.get(layoutId)?.isPresent()
+    )
 
     const isVisibleInStack = stackQuery(
         (layoutId, child) => visible.get(layoutId) === child,
@@ -289,15 +344,6 @@ function controlledHandler(
     const isPreviousInStack = stackQuery(
         (layoutId, child) => previous.get(layoutId) === child,
         false
-    )
-
-    const getPreviousOrigin = stackQuery(
-        layoutId =>
-            previous.get(layoutId)?.measuredOrigin || snapshots.get(layoutId)
-    )
-
-    const getPreviousTarget = stackQuery(
-        layoutId => previous.get(layoutId)?.measuredTarget
     )
 
     const getVisibleOrigin = stackQuery(
@@ -320,15 +366,24 @@ function controlledHandler(
 
     const getSnapshot = stackQuery(layoutId => snapshots.get(layoutId))
 
-    const isRootChild = (child: Magic) => child.depth === rootDepth
+    const isRootChild = (child: Auto) => child.depth === rootDepth
 
-    const crossfadeAnimation = (child: Magic) => {
+    const getPreviousOrigin = stackQuery(
+        layoutId => previous.get(layoutId)?.measuredOrigin
+    )
+
+    const getPreviousTarget = stackQuery(
+        layoutId => previous.get(layoutId)?.measuredTarget
+    )
+
+    function crossfadeAnimation(child: Auto) {
         let origin: Snapshot | undefined
         let target: Snapshot | undefined
         let crossfadeEasing: Easing | undefined
+        const { shouldResumeFromPrevious } = getChildData(child)
 
         if (isVisibleInStack(child)) {
-            if (child.isPresent() && child.shouldResumeFromPrevious) {
+            if (child.isPresent() && shouldResumeFromPrevious) {
                 // If this component is newly added and entering, animate out from
                 // the previous component
                 origin = getPreviousOrigin(child)
@@ -368,30 +423,38 @@ function controlledHandler(
             }
         }
 
-        child.shouldResumeFromPrevious = false
-        child.startAnimation({
-            origin,
-            target,
-            transition,
-            crossfadeEasing,
-        })
+        if (isVisibleInStack(child) || isPreviousInStack(child)) {
+            child.startAnimation({
+                origin,
+                target,
+                transition,
+                crossfadeEasing,
+            })
+        } else {
+            child.hide()
+        }
     }
 
-    /**
-     *
-     */
-    const switchAnimation = (child: Magic) => {
-        if (isVisibleInStack(child)) {
+    function switchAnimation(child: Auto) {
+        const {
+            isVisible,
+            shouldResumeFromPrevious,
+            shouldRestoreVisibility,
+        } = getChildData(child)
+
+        if (!isVisible) {
+            child.hide()
+        } else {
             let origin: Snapshot | undefined
             let target: Snapshot | undefined
 
             if (child.isPresent()) {
-                if (child.shouldResumeFromPrevious) {
+                if (shouldResumeFromPrevious) {
                     origin = getPreviousOrigin(child)
                 }
 
-                if (child.shouldRestoreVisibility) {
-                    child.show(true)
+                if (shouldRestoreVisibility) {
+                    child.show()
                     return
                 }
             } else {
@@ -399,22 +462,29 @@ function controlledHandler(
             }
 
             child.startAnimation({ origin, target, transition })
-        } else {
-            if (isPreviousInStack(child)) child.hide(true)
-
-            if (!child.isPresent()) child.safeToRemove()
         }
-        child.shouldResumeFromPrevious = false
     }
+
+    const animation =
+        type === "crossfade" ? crossfadeAnimation : switchAnimation
 
     return {
         snapshotTarget: child => {
-            if (isVisibleInStack(child) || isPreviousInStack(child)) {
+            const { shouldResumeFromPrevious } = getChildData(child)
+            if (
+                !isLayoutChild(child) ||
+                shouldResumeFromPrevious ||
+                isVisiblePresent(child)
+            ) {
                 child.snapshotTarget()
             }
         },
-        startAnimation:
-            type === "crossfade" ? crossfadeAnimation : switchAnimation,
+        startAnimation: child => {
+            animation(child)
+            setChildData(child, {
+                shouldResumeFromPrevious: false,
+            })
+        },
     }
 }
 
@@ -430,4 +500,8 @@ function opacity(snapshot?: Snapshot, value: number = 1) {
             opacity: value,
         },
     }
+}
+
+function isLayoutChild(child: Auto) {
+    return child.props.animate === true
 }
