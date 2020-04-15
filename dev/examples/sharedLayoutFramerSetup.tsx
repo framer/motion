@@ -31,19 +31,24 @@ const card = {
     background: "rgba(0,0,255,0.5)",
 }
 
-function A() {
+function A({ debugId }) {
     return (
-        <motion.div layoutId="cover" style={screen}>
-            <motion.div layoutId="card" style={card}></motion.div>
+        <motion.div layoutId="cover" debugId={debugId} style={screen}>
+            <motion.div
+                layoutId="card"
+                debugId={debugId}
+                style={card}
+            ></motion.div>
         </motion.div>
     )
 }
 
-function B() {
+function B({ debugId }) {
     return (
         <motion.div layoutId="cover" style={screen}>
             <motion.div
                 layoutId="card"
+                debugId={debugId}
                 style={{ ...card, top: 200 }}
             ></motion.div>
         </motion.div>
@@ -52,12 +57,25 @@ function B() {
 
 export const App = () => {
     const [page, setPage] = useState(0)
+    const [count, setCount] = useState(0)
+
     return (
-        <Container onClick={() => setPage(page === 0 ? 1 : 0)}>
-            <AnimateSharedLayout type="crossfade" transition={{ duration: 2 }}>
+        <Container
+            onClick={() => {
+                setPage(page === 0 ? 1 : 0)
+                setCount(count + 1)
+            }}
+        >
+            <AnimateSharedLayout
+                type="crossfade"
+                supportRotate
+                transition={{ duration: 2 }}
+            >
                 <AnimatePresence>
-                    <A />
-                    {page === 1 && <B />}
+                    <A key="a" debugId="a" />
+                    {page === 1 && (
+                        <B key={`b-${count}`} debugId={`b-${count}`} />
+                    )}
                 </AnimatePresence>
             </AnimateSharedLayout>
         </Container>

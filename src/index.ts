@@ -79,12 +79,12 @@ export { EventInfo } from "./events/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { usePresence } from "./components/AnimatePresence/use-presence"
-export { AnimateSharedLayout } from "./motion/features/magic/AnimateSharedLayout"
-export { SharedLayoutContext } from "./motion/features/magic/SharedLayoutContext"
+export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+export { SharedLayoutContext } from "./motion/features/auto/SharedLayoutContext"
 export {
     MagicValueHandler,
     MagicValueHandlers,
-} from "./motion/features/magic/values"
+} from "./motion/features/auto/values"
 export { MotionFeature, FeatureProps } from "./motion/features/types"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export { useReducedMotion } from "./utils/use-reduced-motion"

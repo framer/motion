@@ -45,7 +45,7 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
     const { magicValues, transformPagePoint } = useContext(MotionPluginContext)
 
     return (
-        <Magic
+        <Auto
             {...props}
             isPresent={isPresent}
             safeToRemove={safeToRemove}
@@ -64,7 +64,7 @@ interface ContextProps {
     transformPagePoint: (point: Point) => Point
 }
 
-export class Magic extends React.Component<FeatureProps & ContextProps> {
+export class Auto extends React.Component<FeatureProps & ContextProps> {
     private unregisterFromSharedLayoutContext?: () => void
     private stopLayoutAnimation?: () => void
 
@@ -73,12 +73,7 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
     private supportedMagicValues: MagicValueHandlers
     private animatableStyles: string[]
 
-    shouldResumeFromPrevious = false
-    shouldRestoreVisibility = false
-
     depth: number
-
-    isVisible = true
 
     measuredOrigin: Snapshot
     measuredTarget: Snapshot
@@ -148,7 +143,6 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
         this.stopLayoutAnimation && this.stopLayoutAnimation()
     }
 
-    // TODO Can we combine this with MagicMotion?
     shouldComponentUpdate(nextProps: FeatureProps & ContextProps) {
         const hasDependency =
             this.props.magicDependency !== undefined ||
@@ -200,9 +194,10 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
             this.supportedMagicValues,
             transformPagePoint
         )
+
         applyCurrent(origin.style, this.current)
 
-        this.measuredOrigin = origin
+        return (this.measuredOrigin = origin)
     }
 
     snapshotTarget() {
@@ -213,66 +208,69 @@ export class Magic extends React.Component<FeatureProps & ContextProps> {
             this.supportedMagicValues,
             transformPagePoint
         )
+
         target.style.rotate = resolve(0, style && style.rotate)
+
         this.measuredTarget = target
     }
 
-    hide(apply: boolean = false) {
-        this.isVisible = false
+    hide() {
+        this.stopLayoutAnimation && this.stopLayoutAnimation()
+        const { values } = this.props
+        const opacity = values.get("opacity", 0)
+        opacity.set(0)
 
-        if (apply) {
-            const { values } = this.props
-            const opacity = values.get("opacity", 0)
-            opacity.set(0)
-        }
+        if (!this.isPresent()) this.safeToRemove()
     }
 
-    show(apply: boolean = false) {
-        this.isVisible = true
-
-        if (apply) {
-            const { values, style } = this.props
-            const opacity = values.get("opacity", 1)
-            const newOpacity = style ? resolve(1, style.opacity) : 1
-            opacity.set(newOpacity)
-        } else {
-            this.shouldRestoreVisibility = true
-        }
+    show() {
+        const { values, style } = this.props
+        const opacity = values.get("opacity", 1)
+        const newOpacity = style ? resolve(1, style.opacity) : 1
+        opacity.set(newOpacity)
     }
 
-    // TODO: Reduce safeToRemove calls
     startAnimation({ origin, target, ...opts }: AutoAnimationConfig = {}) {
-        const { nativeElement, values } = this.props
-        const rotate = values.get("rotate")
-        rotate && nativeElement.setStyle("rotate", rotate.get())
-
-        if (!this.shouldTransition) {
-            this.safeToRemove()
-            return
-        }
-
-        syncRenderSession.open()
+        let animations: (Promise<void> | undefined)[] = []
 
         this.visualTarget = target || this.measuredTarget
+
+        // If we don't have a provided or measured origin, for instance if this is a newly-added component,
+        // we can just take the target and use that to at least maintain its position on screen as parent
+        // components animate
         this.visualOrigin = origin || this.measuredOrigin || this.visualTarget
 
-        if (this.visualOrigin && this.visualTarget) {
-            const animations = [
+        this.delta.isVisible =
+            this.visualOrigin.style.opacity !== 0 ||
+            this.visualTarget.style.opacity !== 0
+        const { parentContext } = this.props
+        const parentDeltas = parentContext.magicDeltas || []
+
+        if (
+            this.shouldTransition &&
+            this.visualOrigin &&
+            this.visualTarget &&
+            this.delta.isVisible &&
+            isTreeVisible(parentDeltas)
+        ) {
+            syncRenderSession.open()
+
+            animations = [
                 this.startLayoutAnimation(opts),
                 this.startStyleAnimation(opts),
             ].filter(Boolean)
-
-            if (!animations.length) this.safeToRemove()
 
             Promise.all(animations).then(() => {
                 const { onMagicComplete } = this.props
                 onMagicComplete && onMagicComplete()
             })
-        } else {
-            this.safeToRemove()
+
+            syncRenderSession.flush()
         }
 
-        syncRenderSession.flush()
+        // If we don't animate, make sure we call safeToRemove so if this is an
+        // exiting component it'll get removed
+        !animations.length && this.safeToRemove()
     }
 
     /**
@@ -512,4 +510,17 @@ function resetAxis(axis: Axis, originAxis: Axis) {
 function resetLayout(box: Box, originBox: Box) {
     resetAxis(box.x, originBox.x)
     resetAxis(box.y, originBox.y)
+}
+
+export function isTreeVisible(deltas: BoxDelta[]): boolean {
+    let isVisible = true
+    const numDeltas = deltas.length
+    for (let i = 0; i < numDeltas; i++) {
+        if (!deltas[i].isVisible) {
+            isVisible = false
+            continue
+        }
+    }
+
+    return isVisible
 }

@@ -10,11 +10,11 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
-import { SharedLayoutContext } from "../../motion/features/magic/SharedLayoutContext"
+import { SharedLayoutContext } from "../../motion/features/auto/SharedLayoutContext"
 import {
     SharedLayoutTree,
     MagicBatchTree,
-} from "../../motion/features/magic/types"
+} from "../../motion/features/auto/types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
 type ComponentKey = string | number
