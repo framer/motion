@@ -37,7 +37,7 @@ function A({ debugId }) {
             <motion.div
                 layoutId="card"
                 debugId={debugId}
-                style={card}
+                style={{ ...card, background: "blue" }}
             ></motion.div>
         </motion.div>
     )
@@ -49,7 +49,7 @@ function B({ debugId }) {
             <motion.div
                 layoutId="card"
                 debugId={debugId}
-                style={{ ...card, top: 200 }}
+                style={{ ...card, top: 200, background: "red" }}
             ></motion.div>
         </motion.div>
     )

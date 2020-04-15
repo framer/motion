@@ -27,7 +27,6 @@ describe("ssr", () => {
                     animate={{ x: 50 }}
                     style={{ y }}
                     exit={{ x: 0 }}
-                    magic
                 />
             </AnimatePresence>
         )
@@ -47,7 +46,6 @@ describe("ssr", () => {
                     animate={{ x: 50 }}
                     style={{ y }}
                     exit={{ x: 0 }}
-                    magic
                 />
             </AnimatePresence>
         )

@@ -42,9 +42,9 @@ export interface AnimatePresenceProps {
 // 
 // @public (undocumented)
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps, SharedLayoutTree> {
-    addChild(child: Magic): () => void;
+    addChild(child: Auto): () => void;
     // (undocumented)
-    addChildToStack(child: Magic): void;
+    addChildToStack(child: Auto): void;
     // (undocumented)
     componentDidMount(): void;
     componentDidUpdate(): void;
@@ -52,18 +52,18 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
     // Warning: (ae-forgotten-export) The symbol "MagicStack" needs to be exported by the entry point index.d.ts
     getStack(id: string): MagicStack;
     // (undocumented)
-    removeChild(child: Magic): void;
+    removeChild(child: Auto): void;
     // (undocumented)
-    removeChildFromStack(child: Magic): void;
+    removeChildFromStack(child: Auto): void;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
-    setRootDepth(child: Magic): void;
+    setRootDepth(child: Auto): void;
     shouldComponentUpdate(nextProps: SharedLayoutProps, nextState: SharedLayoutTree): boolean;
     // (undocumented)
     state: {
         forceRender: () => void;
-        register: (child: Magic) => () => void;
+        register: (child: Auto) => () => void;
     };
 }
 
@@ -624,6 +624,11 @@ export namespace Point {
     relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
 }
 
+// Warning: (ae-forgotten-export) The symbol "PresenceContextProps" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export const PresenceContext: import("react").Context<PresenceContextProps | null>;
+
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "ReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
 // 
@@ -933,7 +938,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/motion/features/magic/AnimateSharedLayout.d.ts:50:9 - (ae-forgotten-export) The symbol "Magic" needs to be exported by the entry point index.d.ts
+// types/components/AnimateSharedLayout/index.d.ts:50:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
