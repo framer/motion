@@ -191,8 +191,8 @@ export class AnimateSharedLayout extends React.Component<
             this.stacks,
             this.snapshots
         )
-        this.snapshots.clear()
         this.batch.flush(handler)
+        this.snapshots.clear()
     }
 
     /**
@@ -213,11 +213,11 @@ export class AnimateSharedLayout extends React.Component<
         const stack = this.getStack(layoutId)
         stack.push(child)
 
+        this.hasMounted &&
+            setChildData(child, { shouldResumeFromPrevious: true })
+
         const stackLength = stack.length
         if (stackLength > 1) {
-            this.hasMounted &&
-                setChildData(child, { shouldResumeFromPrevious: true })
-
             stack.forEach((stackChild, i) => {
                 if (i < stackLength - 1) {
                     setChildData(stackChild, { isVisible: false })
@@ -305,6 +305,10 @@ function getPreviousChild(stack: MagicStack, index: number) {
             return child
         }
     }
+
+    // If we only have two children, always return the first one
+    // even if it isn't present
+    if (stack.length === 2) return stack[0]
 }
 
 /**
@@ -328,6 +332,7 @@ function controlledHandler(
         if (visibleIndex === -1) return
 
         visible.set(key, stack[visibleIndex])
+
         const previousChild = getPreviousChild(stack, visibleIndex)
         previousChild && previous.set(key, previousChild)
     })
@@ -369,7 +374,8 @@ function controlledHandler(
     const isRootChild = (child: Auto) => child.depth === rootDepth
 
     const getPreviousOrigin = stackQuery(
-        layoutId => previous.get(layoutId)?.measuredOrigin
+        (layoutId, child) =>
+            previous.get(layoutId)?.measuredOrigin || getSnapshot(child)
     )
 
     const getPreviousTarget = stackQuery(
@@ -471,8 +477,9 @@ function controlledHandler(
     return {
         snapshotTarget: child => {
             const { shouldResumeFromPrevious } = getChildData(child)
+
             if (
-                !isLayoutChild(child) ||
+                isAutoAnimate(child) ||
                 shouldResumeFromPrevious ||
                 isVisiblePresent(child)
             ) {
@@ -502,6 +509,6 @@ function opacity(snapshot?: Snapshot, value: number = 1) {
     }
 }
 
-function isLayoutChild(child: Auto) {
+function isAutoAnimate(child: Auto) {
     return child.props.animate === true
 }
