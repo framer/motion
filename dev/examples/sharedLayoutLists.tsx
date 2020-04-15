@@ -22,9 +22,10 @@ const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
                         style={{ ...styles.item, backgroundColor, z: 2 }}
                         key={id}
                         layoutId={id}
+                        animate
                         id={"list-" + id}
                         onClick={() => onItemClick(id)}
-                        drag
+                        //  drag
                     />
                 ))}
             </AnimatePresence>
