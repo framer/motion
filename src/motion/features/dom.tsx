@@ -11,7 +11,7 @@ import { Drag } from "./drag"
 import { parseDomVariant } from "../../dom/parse-dom-variant"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { resolveCurrent } from "../../value/utils/resolve-values"
-import { magic } from "./magic"
+import { Auto } from "./auto"
 import { isValidMotionProp } from "../utils/valid-prop"
 import { getAnimationComponent } from "./animation"
 import { Exit } from "./exit"
@@ -94,7 +94,7 @@ const buildSVGProps = (values: MotionValuesMap, style: CSSProperties) => {
     return props
 }
 
-const defaultFeatures = [magic, Drag, Gestures, Exit]
+const defaultFeatures = [Auto, Drag, Gestures, Exit]
 
 /**
  * Create a configuration for `motion` components that provides DOM-specific feature.

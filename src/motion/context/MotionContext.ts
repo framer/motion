@@ -7,10 +7,10 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { BoxDelta } from "../features/magic/types"
+import { BoxDelta } from "../features/auto/types"
 import { MotionValue } from "../../value"
 import { useMotionValue } from "../../value/use-motion-value"
-import { zeroDelta } from "../features/magic/utils"
+import { zeroDelta } from "../features/auto/utils"
 import { useConstant } from "../../utils/use-constant"
 
 export interface MotionContextProps {
@@ -173,5 +173,6 @@ function createZeroDelta() {
     return {
         x: { ...zeroDelta },
         y: { ...zeroDelta },
+        isVisible: true,
     }
 }

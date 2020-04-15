@@ -14,7 +14,7 @@ import { MotionStyle } from "../../types"
 import { MotionValue } from "../../../value"
 import { CustomValueType, Point } from "../../../types"
 import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
-import { Magic } from "./Magic"
+import { Auto } from "./Auto"
 import { warning } from "hey-listen"
 import { MagicValueHandlers } from "./values"
 
@@ -271,9 +271,9 @@ const defaultHandler: TransitionHandler = {
 }
 
 export const batchTransitions = (): MagicBatchTree => {
-    const queue = new Set<Magic>()
+    const queue = new Set<Auto>()
 
-    const add = (child: Magic) => queue.add(child)
+    const add = (child: Auto) => queue.add(child)
 
     const flush = ({
         snapshotTarget,
@@ -293,7 +293,7 @@ export const batchTransitions = (): MagicBatchTree => {
     return { add, flush }
 }
 
-const sortByDepth = (a: Magic, b: Magic) => a.depth - b.depth
+const sortByDepth = (a: Auto, b: Auto) => a.depth - b.depth
 
 export function near(value: number, target = 0, maxDistance = 0.01): boolean {
     return distance(value, target) < maxDistance
