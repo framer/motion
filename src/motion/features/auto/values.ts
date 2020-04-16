@@ -125,7 +125,9 @@ export const defaultMagicValues: MagicValueHandlers = {
     opacity: {
         read: opacity => (opacity !== null ? parseFloat(opacity) : 0),
     },
-    position: {},
+    // TODO: When experiementing with this to pop AnimatePresence
+    // children out of the flow *ensure* it gets set back correctly
+    //position: {},
 }
 
 function getAnimatableShadow(shadow: string, fallback: string) {
