@@ -33,7 +33,7 @@ import {
 } from "../../../components/AnimatePresence/use-presence"
 import { defaultMagicValues, MagicValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
-import sync, { getFrameData } from "framesync"
+import sync from "framesync"
 export { SharedLayoutTree, MagicBatchTree }
 
 /**
