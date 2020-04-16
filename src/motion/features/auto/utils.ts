@@ -20,11 +20,44 @@ import { MagicValueHandlers } from "./values"
 
 const clampProgress = clamp(0, 1)
 
+interface BoundingBox {
+    top: number
+    left: number
+    bottom: number
+    right: number
+}
+
+/**
+ * If a bounding box is measured as 0 on either axis we encounter
+ * divide by zero errors. We can prevent the actual errors by dividing by
+ * an arbitrarily low amount, but then it's possible to see bugs where
+ * child elements appear smeared across the screen. By setting each axis
+ * to a non-zero measurement, the element itself will disappear (as you
+ * can't invert scale: 0) but it will correctly animate back out, and it
+ * fixes distortion on any children.
+ */
+function safeSize({ top, right, bottom, left }: BoundingBox): BoundingBox {
+    const safePixels = 0.5
+
+    if (top === bottom) {
+        top -= safePixels
+        bottom += safePixels
+    }
+
+    if (left === right) {
+        left -= safePixels
+        right += safePixels
+    }
+
+    return { top, right, bottom, left }
+}
+
 function snapshotLayout(
     element: NativeElement,
     transformPagePoint: (point: Point) => Point
 ) {
-    const { top, left, right, bottom } = element.getBoundingBox()
+    const boundingBox = element.getBoundingBox()
+    const { left, right, top, bottom } = safeSize(boundingBox)
 
     const topLeft = transformPagePoint({ x: left, y: top })
     const bottomRight = transformPagePoint({ x: right, y: bottom })
@@ -144,8 +177,7 @@ export function calcDelta(
     const beforeSize = before.max - before.min
     const afterSize = after.max - after.min
 
-    // TODO: Check this out
-    delta.scale = beforeSize / (afterSize || 0.0001)
+    delta.scale = beforeSize / afterSize
     delta.origin = origin !== undefined ? origin : calcOrigin(before, after)
     delta.originPoint = after.min + delta.origin * afterSize
 
