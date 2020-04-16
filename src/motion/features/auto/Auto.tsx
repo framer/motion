@@ -145,6 +145,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     shouldComponentUpdate(nextProps: FeatureProps & ContextProps) {
+        const { magicContext } = this.props
         const hasDependency =
             this.props.magicDependency !== undefined ||
             nextProps.magicDependency !== undefined
@@ -157,7 +158,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             (hasDependency && dependencyHasChanged) ||
             presenceHasChanged
 
-        return true
+        return !isControlledTree(magicContext)
     }
 
     // TODO: Find a way to abstract this, as it's only needed in Framer
