@@ -33,6 +33,7 @@ import {
 } from "../../../components/AnimatePresence/use-presence"
 import { defaultMagicValues, MagicValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
+import sync, { getFrameData } from "framesync"
 export { SharedLayoutTree, MagicBatchTree }
 
 /**
@@ -374,10 +375,12 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         // but it'd be cooler if it batched updates
         const { parentContext } = this.props
         const { magicProgress } = parentContext
-        const unsubscribeProgress = this.progress.onChange(frame)
+        const scheduleUpdate = () => sync.update(frame, false, true)
+
+        const unsubscribeProgress = this.progress.onChange(scheduleUpdate)
         let unsubscribeParentProgress: () => void
         if (magicProgress) {
-            unsubscribeParentProgress = magicProgress.onChange(frame)
+            unsubscribeParentProgress = magicProgress.onChange(scheduleUpdate)
         }
 
         this.stopLayoutAnimation = () => {
@@ -386,7 +389,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             unsubscribeParentProgress && unsubscribeParentProgress()
         }
 
-        frame()
+        scheduleUpdate()
 
         return animation
     }

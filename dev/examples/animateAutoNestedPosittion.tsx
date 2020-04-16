@@ -25,7 +25,18 @@ export const App = () => {
                         backgroundColor: isOpen ? "yellow" : "red",
                         width: isOpen ? "50%" : "100%",
                     }}
-                />
+                >
+                    <motion.div
+                        animate
+                        style={{
+                            ...childStyles,
+                            height: "30%",
+                            backgroundColor: isOpen ? "red" : "yellow",
+                            width: isOpen ? "50%" : "100%",
+                        }}
+                        id="superkid"
+                    />
+                </motion.div>
             </motion.div>
         </motion.div>
     )
