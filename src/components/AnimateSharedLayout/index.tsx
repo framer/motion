@@ -129,21 +129,6 @@ export class AnimateSharedLayout extends React.Component<
                 !hasDependency || (hasDependency && hasChanged)
         }
 
-        /**
-         * Hijacking this lifecycle method to reset rotation on any children so we
-         * can properly measure the current bounding box. This isn't publicly supported as
-         * this is naughty, but `rotate` is quite visible in Framer and needs some kind
-         * of support.
-         *
-         * Although this might run multiple times in concurrent mode, this is
-         * a write operation and getSnapshotBeforeUpdate is a read operation. So doing
-         * it here avoids layout thrashing.
-         */
-        const { supportRotate } = this.props
-        if (supportRotate && this.shouldTransition) {
-            this.children.forEach(child => child.resetRotation())
-        }
-
         return true
     }
 
@@ -153,6 +138,16 @@ export class AnimateSharedLayout extends React.Component<
     getSnapshotBeforeUpdate() {
         if (!this.shouldTransition) return null
 
+        /**
+         * Reset rotation on all children so we can properly measure the correct bounding box.
+         * The supportRotate prop isn't public API so this should only run in Framer.
+         */
+        const { supportRotate } = this.props
+        supportRotate && this.children.forEach(child => child.resetRotation())
+
+        /**
+         * Snapshot the visual origin of every child.
+         */
         this.children.forEach(child => child.snapshotOrigin())
 
         /**
