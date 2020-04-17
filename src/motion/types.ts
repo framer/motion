@@ -22,9 +22,7 @@ import {
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours/types"
 import { MagicProps } from "./features/auto/types"
-import {} from "react"
-import { HTMLElements } from "./utils/supported-elements"
-import { SVGElements } from "./utils/supported-elements"
+import { HTMLElements, SVGElements } from "./utils/supported-elements"
 
 export type MotionStyleProp = string | number | MotionValue
 
