@@ -10,7 +10,6 @@ import {
     easeBox,
     applyTreeDeltas,
     calcBoxDelta,
-    calcTreeScale,
 } from "./utils"
 import {
     Snapshot,
@@ -390,7 +389,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             unsubscribeParentProgress && unsubscribeParentProgress()
         }
 
-        scheduleUpdate()
+        // TODO: I would prefer this to be a scheduleUpdate call, for some reason this is breaking
+        // visualOrigin in the sharedLayoutFramerSetup demonstration
+        frame()
 
         return animation
     }
@@ -444,7 +445,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         const parentDeltas = parentContext.magicDeltas || []
 
         resetLayout(this.correctedLayout, this.measuredTarget.layout)
-        applyTreeDeltas(this.correctedLayout, parentDeltas)
+        applyTreeDeltas(this.correctedLayout, this.treeScale, parentDeltas)
         easeBox(
             this.target,
             this.visualOrigin.layout,
@@ -452,10 +453,6 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             p
         )
         calcBoxDelta(this.delta, this.target, this.correctedLayout, origin)
-
-        // TODO: If we could return this from applyTreeDeltas
-        // it'd save a second loop
-        calcTreeScale(this.treeScale, parentDeltas)
     }
 
     updateTransform(
