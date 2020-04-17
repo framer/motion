@@ -32,7 +32,7 @@ import {
 } from "../../../components/AnimatePresence/use-presence"
 import { defaultMagicValues, MagicValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
-import sync from "framesync"
+import sync, { cancelSync } from "framesync"
 export { SharedLayoutTree, MagicBatchTree }
 
 /**
@@ -384,6 +384,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         }
 
         this.stopLayoutAnimation = () => {
+            cancelSync.update(frame)
             this.progress.stop()
             unsubscribeProgress()
             unsubscribeParentProgress && unsubscribeParentProgress()
