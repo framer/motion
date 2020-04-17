@@ -1,11 +1,11 @@
-export { motion } from "./motion"
-export { createMotionComponent } from "./motion/component"
 export {
+    motion,
     HTMLMotionProps,
     SVGMotionProps,
     SVGAttributesAsMotionValues,
     ForwardRefComponent,
-} from "./motion/types"
+} from "./motion"
+export { createMotionComponent } from "./motion/component"
 export { useExternalRef } from "./motion/utils/use-external-ref"
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"

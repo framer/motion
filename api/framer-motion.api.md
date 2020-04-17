@@ -295,7 +295,7 @@ export type MagicValueHandlers = {
 };
 
 // @public
-export const motion: {};
+export const motion: any;
 
 // @public (undocumented)
 export interface MotionAdvancedProps {

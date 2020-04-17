@@ -1,7 +1,17 @@
-import * as React from "react"
-import { createMotionComponent } from "./component"
+import { createMotionComponent, MotionProps } from "./component"
 import { createDomMotionConfig } from "./features/dom"
-import { HTMLMotionComponents, SVGMotionComponents } from "./types"
+import {
+    ComponentType,
+    ReactHTML,
+    DetailedHTMLFactory,
+    HTMLAttributes,
+    PropsWithoutRef,
+    RefAttributes,
+    SVGAttributes,
+    ForwardRefExoticComponent,
+} from "react"
+import { HTMLElements, SVGElements } from "./utils/supported-elements"
+import { MakeMotion } from "./types"
 
 /**
  * These re-exports are to fix the "cannot be named" TypeScript errors.
@@ -25,7 +35,7 @@ export { createMotionComponent }
  *
  * @public
  */
-function custom<Props>(Component: string | React.ComponentType<Props>) {
+function custom<Props>(Component: string | ComponentType<Props>) {
     return createMotionComponent<Props>(createDomMotionConfig(Component))
 }
 
@@ -56,3 +66,82 @@ export const motion = new Proxy(
     { custom },
     { get: getMotionComponent }
 ) as Motion
+
+/**
+ * Support for React component props
+ */
+type UnwrapFactoryAttributes<F> = F extends DetailedHTMLFactory<infer P, any>
+    ? P
+    : never
+type UnwrapFactoryElement<F> = F extends DetailedHTMLFactory<any, infer P>
+    ? P
+    : never
+type UnwrapSVGFactoryElement<F> = F extends React.SVGProps<infer P> ? P : never
+
+type HTMLAttributesWithoutMotionProps<
+    Attributes extends HTMLAttributes<Element>,
+    Element extends HTMLElement
+> = { [K in Exclude<keyof Attributes, keyof MotionProps>]?: Attributes[K] }
+
+/**
+ * @public
+ */
+export type HTMLMotionProps<
+    TagName extends keyof ReactHTML
+> = HTMLAttributesWithoutMotionProps<
+    UnwrapFactoryAttributes<ReactHTML[TagName]>,
+    UnwrapFactoryElement<ReactHTML[TagName]>
+> &
+    MotionProps
+
+/**
+ * Motion-optimised versions of React's HTML components.
+ *
+ * @public
+ */
+export type HTMLMotionComponents = {
+    [K in HTMLElements]: ForwardRefComponent<
+        UnwrapFactoryElement<ReactHTML[K]>,
+        HTMLMotionProps<K>
+    >
+}
+
+interface SVGAttributesWithoutMotionProps<T>
+    extends Pick<
+        SVGAttributes<T>,
+        Exclude<keyof SVGAttributes<T>, keyof MotionProps>
+    > {}
+
+/**
+ * Blanket-accept any SVG attribute as a `MotionValue`
+ * @public
+ */
+export type SVGAttributesAsMotionValues<T> = MakeMotion<
+    SVGAttributesWithoutMotionProps<T>
+>
+
+/**
+ * @public
+ */
+export interface SVGMotionProps<T>
+    extends SVGAttributesAsMotionValues<T>,
+        MotionProps {}
+
+/**
+ * @public
+ */
+export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
+    PropsWithoutRef<P> & RefAttributes<T>
+>
+
+/**
+ * Motion-optimised versions of React's SVG components.
+ *
+ * @public
+ */
+export type SVGMotionComponents = {
+    [K in SVGElements]: ForwardRefComponent<
+        UnwrapSVGFactoryElement<JSX.IntrinsicElements[K]>,
+        SVGMotionProps<UnwrapSVGFactoryElement<JSX.IntrinsicElements[K]>>
+    >
+}
