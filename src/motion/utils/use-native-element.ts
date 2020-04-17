@@ -116,8 +116,8 @@ export class NativeElement<E extends Element = Element> {
         return window.getComputedStyle(this.current)
     }
 
-    render() {
-        this.styler.render()
+    render(forceRender = false) {
+        this.styler.render(forceRender)
     }
 }
 
