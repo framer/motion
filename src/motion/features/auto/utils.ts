@@ -131,19 +131,6 @@ export function calcOrigin(before: Axis, after: Axis): number {
     return clampProgress(origin)
 }
 
-export function calcTreeScale(
-    scale: { x: number; y: number },
-    deltas: BoxDelta[]
-): void {
-    scale.x = scale.y = 1
-    const numDeltas = deltas.length
-    for (let i = 0; i < numDeltas; i++) {
-        const delta = deltas[i]
-        scale.x *= delta.x.scale
-        scale.y *= delta.y.scale
-    }
-}
-
 /**
  *
  * @param before
@@ -208,16 +195,23 @@ export function applyAxisDelta(axis: Axis, delta: AxisDelta): void {
 }
 
 export function applyBoxDelta(box: Box, delta: BoxDelta): void {
-    //console.log(box.x, delta.x)
     applyAxisDelta(box.x, delta.x)
     applyAxisDelta(box.y, delta.y)
 }
 
-export function applyTreeDeltas(box: Box, deltas: BoxDelta[]): void {
+export function applyTreeDeltas(
+    box: Box,
+    treeScale: { x: number; y: number },
+    deltas: BoxDelta[]
+): void {
     const numDeltas = deltas.length
+    treeScale.x = treeScale.y = 1
 
     for (let i = 0; i < numDeltas; i++) {
-        applyBoxDelta(box, deltas[i])
+        const delta = deltas[i]
+        applyBoxDelta(box, delta)
+        treeScale.x *= delta.x.scale
+        treeScale.y *= delta.y.scale
     }
 }
 
