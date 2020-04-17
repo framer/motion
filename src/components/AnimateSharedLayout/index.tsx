@@ -129,6 +129,16 @@ export class AnimateSharedLayout extends React.Component<
                 !hasDependency || (hasDependency && hasChanged)
         }
 
+        /**
+         * Reset rotation on all children so we can properly measure the correct bounding box.
+         * The supportRotate prop isn't public API so this should only run in Framer.
+         *
+         * Ideally this would run in getSnapshotBeforeUpdate as shouldComponentUpdate may run
+         * multiple times in concurrent mode, but currently this is introducing bugs.
+         */
+        const { supportRotate } = this.props
+        supportRotate && this.children.forEach(child => child.resetRotation())
+
         return true
     }
 
@@ -137,13 +147,6 @@ export class AnimateSharedLayout extends React.Component<
      */
     getSnapshotBeforeUpdate() {
         if (!this.shouldTransition) return null
-
-        /**
-         * Reset rotation on all children so we can properly measure the correct bounding box.
-         * The supportRotate prop isn't public API so this should only run in Framer.
-         */
-        const { supportRotate } = this.props
-        supportRotate && this.children.forEach(child => child.resetRotation())
 
         /**
          * Snapshot the visual origin of every child.
@@ -238,7 +241,6 @@ export class AnimateSharedLayout extends React.Component<
 
         // Set the previous child to visible
         const previousChild = getPreviousChild(stack, stack.length)
-        // if (previousChild) console.log("showing", previousChild.props.debugId)
 
         if (previousChild) {
             setChildData(previousChild, {
