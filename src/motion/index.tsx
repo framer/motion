@@ -4,11 +4,10 @@ import { createDomMotionConfig } from "./features/dom"
 import { HTMLMotionComponents, SVGMotionComponents } from "./types"
 
 /**
- * These re-exports are to
+ * These re-exports are to fix the "cannot be named" TypeScript errors.
  */
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
-export { useExternalRef } from "./utils/use-external-ref"
 export { ValueAnimationControls } from "../animation/ValueAnimationControls"
 export { createMotionComponent }
 
