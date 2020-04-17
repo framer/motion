@@ -186,7 +186,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         }
 
         nativeElement.setStyle(reset)
-        nativeElement.render()
+        nativeElement.render(true)
     }
 
     snapshotOrigin() {
