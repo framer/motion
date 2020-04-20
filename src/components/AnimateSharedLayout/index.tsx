@@ -6,7 +6,7 @@ import {
     TransitionHandler,
     AutoAnimationConfig,
 } from "../../motion/features/auto/types"
-import { SharedLayoutContext } from "../../motion/features/auto/SharedLayoutContext"
+import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Auto } from "../../motion/features/auto/Auto"
 import { batchTransitions } from "../../motion/features/auto/utils"
 import { Easing, circOut, linear } from "@popmotion/easing"
