@@ -33,6 +33,7 @@ import {
 import { defaultMagicValues, MagicValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
+import { elementDragControls } from "../../../behaviours/ComponentDragControls"
 export { SharedLayoutTree, MagicBatchTree }
 
 /**
@@ -331,6 +332,10 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         const scaleY = values.get("scaleY", 1)
         const rotate = values.get("rotate", 0)
 
+        // TODO: Make API for this, stop all values. Currently just doing this to stop drag inertia animations
+        x.stop()
+        y.stop()
+
         const opacity = values.get("opacity", this.visualOrigin.style.opacity)
 
         const frame = () => {
@@ -363,26 +368,41 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         this.progress.set(progressOrigin)
         this.progress.set(progressOrigin) // Set twice to hard-reset velocity
 
-        const { transition, animate } = this.props
+        const { transition, animate, nativeElement } = this.props
 
         if (animate !== false) {
-            animation = startAnimation(
-                "progress",
-                this.progress,
-                progressTarget,
-                {
-                    ...(opts.transition || transition),
-                    restDelta: 1,
-                    restSpeed: 10,
-                }
-            ).then(() => this.safeToRemove())
+            const dragControls = elementDragControls.get(nativeElement)
+
+            if (!dragControls || !dragControls.isDragging) {
+                animation = startAnimation(
+                    "progress",
+                    this.progress,
+                    progressTarget,
+                    {
+                        ...(opts.transition || transition),
+                        restDelta: 1,
+                        restSpeed: 10,
+                    }
+                ).then(() => this.safeToRemove())
+            } else {
+                this.updateBoundingBox(progressOrigin)
+
+                // Reset drag origin so the element doesn't look like it's moved in the DOM
+                // TODO: This is currently lossy with big mouse movements
+                const { x: dragOriginX, y: dragOriginY } = dragControls.origin
+                dragOriginX.set(
+                    dragOriginX.get() + this.delta.x.translate - x.get()
+                )
+                dragOriginY.set(
+                    dragOriginY.get() + this.delta.y.translate - y.get()
+                )
+
+                this.safeToRemove()
+            }
         } else {
             this.safeToRemove()
         }
 
-        // TODO: We're currently chaining just the parent and child deep, and if both
-        // update then `frame` fires twice in a frame. This only leads to one render
-        // but it'd be cooler if it batched updates
         const { parentContext } = this.props
         const { magicProgress } = parentContext
         const scheduleUpdate = () => sync.update(frame, false, true)
