@@ -19,6 +19,11 @@ import { extractEventInfo } from "../events/event-info"
 import { startAnimation } from "../animation/utils/transitions"
 import { NativeElement } from "../motion/utils/use-native-element"
 
+export const elementDragControls = new WeakMap<
+    NativeElement,
+    ComponentDragControls
+>()
+
 const noop = (v: any) => v
 
 interface DragControlConfig {
@@ -62,7 +67,7 @@ export class ComponentDragControls {
      *
      * @internal
      */
-    private isDragging = false
+    isDragging = false
 
     /**
      * The current direction of drag, or `null` if both.
@@ -126,7 +131,7 @@ export class ComponentDragControls {
      *
      * @internal
      */
-    private origin: MotionPoint = {
+    origin: MotionPoint = {
         x: motionValue(0),
         y: motionValue(0),
     }
@@ -157,6 +162,7 @@ export class ComponentDragControls {
         this.nativeElement = nativeElement
         this.values = values
         this.controls = controls
+        elementDragControls.set(nativeElement, this)
     }
 
     /**

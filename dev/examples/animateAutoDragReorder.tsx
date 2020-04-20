@@ -20,8 +20,6 @@ const Item = ({ color, setPosition, moveItem, i }) => {
     // decide when a dragging element should switch places with its siblings.
     const ref = useRef(null)
 
-    const y = useMotionValue(0)
-
     // Update the measured position of the item so we can calculate when we should rearrange.
     useEffect(() => {
         setPosition(i, {
@@ -35,13 +33,18 @@ const Item = ({ color, setPosition, moveItem, i }) => {
             ref={ref}
             initial={false}
             // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
-            animate={isDragging ? onTop : flat}
-            style={{ background: color, height: heights[color], y }}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 1.12 }}
+            animate
+            style={{
+                background: color,
+                height: heights[color],
+                zIndex: isDragging ? 3 : 1,
+            }}
+            // whileHover={{ scale: 1.03 }}
+            // whileTap={{ scale: 1.12 }}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={1}
+            dragOriginY={useMotionValue(0)}
             onDragStart={() => setDragging(true)}
             onDragEnd={() => setDragging(false)}
             onDrag={(e, { point }) => moveItem(i, point.y)}
@@ -87,7 +90,7 @@ export const App = () => {
 const onTop = { zIndex: 1 }
 const flat = {
     zIndex: 0,
-    transition: { delay: 0.3 },
+    //transition: { delay: 0.3 },
 }
 
 const initialColors = ["#FF008C", "#D309E1", "#9C1AFF"] //, "#7700FF"]
