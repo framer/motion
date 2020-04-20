@@ -10,7 +10,7 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
-import { SharedLayoutContext } from "../../motion/features/auto/SharedLayoutContext"
+import { SharedLayoutContext } from "../AnimateSharedLayout/SharedLayoutContext"
 import {
     SharedLayoutTree,
     MagicBatchTree,
