@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useContext } from "react"
 import { FeatureProps } from "../types"
-import { SharedLayoutContext } from "./SharedLayoutContext"
+import { SharedLayoutContext } from "../../../components/AnimateSharedLayout/SharedLayoutContext"
 import {
     resetStyles,
     snapshot,
@@ -68,6 +68,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     private unregisterFromSharedLayoutContext?: () => void
     private stopLayoutAnimation?: () => void
 
+    private willTransition = false
     private shouldTransition = true
 
     private supportedMagicValues: MagicValueHandlers
@@ -126,6 +127,14 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
         if (isControlledTree(magicContext)) {
             this.unregisterFromSharedLayoutContext = magicContext.register(this)
+
+            // Check if this render was handled by AnimateSharedLayout. If it was,
+            // the usual logic in startAnimation to tell AnimatePresence that this component is safe to remove
+            // will have run. If it wasn't, we have to do that here.
+            this.componentDidUpdate = () => {
+                if (!this.willTransition) this.safeToRemove()
+                this.willTransition = false
+            }
         } else {
             this.getSnapshotBeforeUpdate = () => {
                 this.snapshotOrigin()
@@ -157,7 +166,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             (hasDependency && dependencyHasChanged) ||
             presenceHasChanged
 
-        return !isControlledTree(magicContext)
+        return !isControlledTree(magicContext) || presenceHasChanged
     }
 
     // TODO: Find a way to abstract this, as it's only needed in Framer
@@ -189,6 +198,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     snapshotOrigin() {
+        this.willTransition = true
         const { nativeElement, transformPagePoint } = this.props
         const origin = snapshot(
             nativeElement,

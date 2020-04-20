@@ -79,7 +79,7 @@ export { AnimatePresence } from "./components/AnimatePresence"
 export { usePresence } from "./components/AnimatePresence/use-presence"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
-export { SharedLayoutContext } from "./motion/features/auto/SharedLayoutContext"
+export { SharedLayoutContext } from "./components/AnimateSharedLayout/SharedLayoutContext"
 export {
     MagicValueHandler,
     MagicValueHandlers,
