@@ -12,6 +12,7 @@ import {
     resetBox,
     isNear,
     applyBoxDelta,
+    applyTreeDeltas,
     // applyTreeDeltas,
     // applyBoxDelta,
 } from "../utils"
@@ -221,6 +222,42 @@ test("applyBoxDelta", () => {
     expect(a).toEqual({
         x: { min: 150, max: 350 },
         y: { min: 225, max: 275 },
+    })
+})
+
+test("applyTreeDelta", () => {
+    const a = {
+        x: { min: 100, max: 200 },
+        y: { min: 300, max: 400 },
+    }
+
+    const scale = { x: 1, y: 1 }
+
+    const delta = {
+        x: {
+            translate: 100,
+            scale: 2,
+            origin: 0.5,
+            originPoint: 150,
+        },
+        y: {
+            translate: -100,
+            scale: 0.5,
+            origin: 0.5,
+            originPoint: 350,
+        },
+        isVisible: true,
+    }
+
+    applyTreeDeltas(a, scale, [delta, delta])
+
+    expect(a).toEqual({
+        x: { min: 250, max: 650 },
+        y: { min: 187.5, max: 212.5 },
+    })
+    expect(scale).toEqual({
+        x: 4,
+        y: 0.25,
     })
 })
 
