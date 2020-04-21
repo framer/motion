@@ -7,13 +7,13 @@ import {
     snapshot,
     applyCurrent,
     resolve,
-    easeBox,
+    tweenBox,
     applyTreeDeltas,
     calcBoxDelta,
     isTreeVisible,
     isSharedLayoutTree,
     getAnimatableValues,
-    resetLayout,
+    resetBox,
 } from "./utils"
 import { Snapshot, Style, BoxDelta, Box, AutoAnimationConfig } from "./types"
 import {
@@ -604,9 +604,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         const { parentContext } = this.props
         const parentDeltas = parentContext.magicDeltas || []
 
-        resetLayout(this.correctedLayout, this.measuredTarget.layout)
+        resetBox(this.correctedLayout, this.measuredTarget.layout)
         applyTreeDeltas(this.correctedLayout, this.treeScale, parentDeltas)
-        easeBox(
+        tweenBox(
             this.frameTarget,
             this.visualOrigin.layout,
             this.visualTarget.layout,

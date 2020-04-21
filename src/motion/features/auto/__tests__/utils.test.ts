@@ -1,45 +1,54 @@
-import { Axis } from "../types"
+import { Axis, Box } from "../types"
 import {
-    scaledPoint,
+    safeSize,
     calcOrigin,
     calcTranslate,
     calcDelta,
+    scaledPoint,
     applyAxisDelta,
     getAnimatableValues,
+    isTreeVisible,
+    zeroDelta,
+    resetBox,
+    isNear,
+    applyBoxDelta,
     // applyTreeDeltas,
-    // calcBoxDelta,
     // applyBoxDelta,
 } from "../utils"
 
-const aBefore: Axis = {
-    min: 100,
-    max: 400,
-}
+describe("safeSize", () => {
+    test("should return large bounding boxes as provided", () => {
+        expect(
+            safeSize({
+                top: 0,
+                left: 100,
+                bottom: 100,
+                right: 200,
+            })
+        ).toEqual({
+            top: 0,
+            left: 100,
+            bottom: 100,
+            right: 200,
+        })
+    })
 
-const aAfter: Axis = {
-    min: 0,
-    max: 200,
-}
-
-const bBefore: Axis = {
-    min: 200,
-    max: 300,
-}
-
-const bAfter: Axis = {
-    min: 200,
-    max: 300,
-}
-
-const cBefore: Axis = {
-    min: 300,
-    max: 500,
-}
-
-const cAfter: Axis = {
-    min: 350,
-    max: 450,
-}
+    test("should return small bounding boxes as 1x1px min", () => {
+        expect(
+            safeSize({
+                top: 0,
+                left: 0,
+                bottom: 0,
+                right: 0,
+            })
+        ).toEqual({
+            top: -0.5,
+            left: -0.5,
+            bottom: 0.5,
+            right: 0.5,
+        })
+    })
+})
 
 test("scaledPoint", () => {
     expect(
@@ -103,6 +112,36 @@ test("calcTranslate", () => {
     ).toBe(200)
 })
 
+const aBefore: Axis = {
+    min: 100,
+    max: 400,
+}
+
+const aAfter: Axis = {
+    min: 0,
+    max: 200,
+}
+
+const bBefore: Axis = {
+    min: 200,
+    max: 300,
+}
+
+const bAfter: Axis = {
+    min: 200,
+    max: 300,
+}
+
+const cBefore: Axis = {
+    min: 300,
+    max: 500,
+}
+
+const cAfter: Axis = {
+    min: 350,
+    max: 450,
+}
+
 test("calcDelta", () => {
     const delta = {
         translate: 0,
@@ -157,30 +196,32 @@ test("applyAxisDelta", () => {
     expect(c).toEqual(cBefore)
 })
 
-test("applyTreeDeltas", () => {
-    // TODO: Fix tests after migrating to mutative apporach
-    // const outerBefore = { x: { min: 0, max: 300 }, y: { min: 0, max: 300 } }
-    // const innerBefore = { x: { min: 100, max: 200 }, y: { min: 100, max: 200 } }
-    // const outerAfter = {
-    //     x: { min: 400, max: 1000 },
-    //     y: { min: 400, max: 1000 },
-    // }
-    // const innerAfter = { x: { min: 650, max: 750 }, y: { min: 650, max: 750 } }
-    // const outerDelta = calcBoxDelta(outerBefore, outerAfter)
-    // expect(applyBoxDelta(outerDelta, outerAfter)).toEqual(outerBefore)
-    // const innerAfterNested = applyBoxDelta(outerDelta, innerAfter)
-    // const innerNestedDelta = calcBoxDelta(innerBefore, innerAfterNested)
-    // expect(applyBoxDelta(innerNestedDelta, innerAfterNested)).toEqual(
-    //     innerBefore
-    // )
-    // const treeBefore = { x: { min: 50, max: 100 }, y: { min: 50, max: 100 } }
-    // const treeAfter = { x: { min: 100, max: 200 }, y: { min: 100, max: 200 } }
-    // const treeNested = applyTreeDeltas(
-    //     [outerDelta, innerNestedDelta],
-    //     treeAfter
-    // )
-    // const treeNestedDelta = calcBoxDelta(treeBefore, treeNested)
-    // expect(applyBoxDelta(treeNestedDelta, treeNested)).toEqual(treeBefore)
+test("applyBoxDelta", () => {
+    const a = {
+        x: { min: 100, max: 200 },
+        y: { min: 300, max: 400 },
+    }
+
+    applyBoxDelta(a, {
+        x: {
+            translate: 100,
+            scale: 2,
+            origin: 0.5,
+            originPoint: 150,
+        },
+        y: {
+            translate: -100,
+            scale: 0.5,
+            origin: 0.5,
+            originPoint: 350,
+        },
+        isVisible: true,
+    })
+
+    expect(a).toEqual({
+        x: { min: 150, max: 350 },
+        y: { min: 225, max: 275 },
+    })
 })
 
 test("getAnimatableValues", () => {
@@ -190,4 +231,79 @@ test("getAnimatableValues", () => {
             b: {},
         })
     ).toEqual(["b"])
+})
+
+test("isTreeVisible", () => {
+    expect(
+        isTreeVisible([
+            {
+                x: zeroDelta,
+                y: zeroDelta,
+                isVisible: true,
+            },
+            {
+                x: zeroDelta,
+                y: zeroDelta,
+                isVisible: true,
+            },
+            {
+                x: zeroDelta,
+                y: zeroDelta,
+                isVisible: true,
+            },
+        ])
+    ).toEqual(true)
+    expect(
+        isTreeVisible([
+            {
+                x: zeroDelta,
+                y: zeroDelta,
+                isVisible: true,
+            },
+            {
+                x: zeroDelta,
+                y: zeroDelta,
+                isVisible: false,
+            },
+            {
+                x: zeroDelta,
+                y: zeroDelta,
+                isVisible: true,
+            },
+        ])
+    ).toEqual(false)
+})
+
+describe("resetBox", () => {
+    test("it resets the provided box to the origin box", () => {
+        const box: Box = {
+            x: { min: 100, max: 200 },
+            y: { min: 100, max: 200 },
+        }
+
+        resetBox(box, {
+            x: { min: -100, max: 100 },
+            y: { min: 5, max: 10 },
+        })
+
+        expect(box).toEqual({
+            x: { min: -100, max: 100 },
+            y: { min: 5, max: 10 },
+        })
+    })
+})
+
+describe("isNear", () => {
+    test("detects when a number is near another within the default maxDistance", () => {
+        expect(isNear(10, 10.005)).toBe(true)
+        expect(isNear(10, 9.995)).toBe(true)
+        expect(isNear(10, 11)).toBe(false)
+        expect(isNear(10, 9)).toBe(false)
+    })
+    test("detects when a number is near another within a provided maxDistance", () => {
+        expect(isNear(10, 10.95, 1)).toBe(true)
+        expect(isNear(10, 9.05, 1)).toBe(true)
+        expect(isNear(10, 11, 1)).toBe(false)
+        expect(isNear(10, 9, 1)).toBe(false)
+    })
 })
