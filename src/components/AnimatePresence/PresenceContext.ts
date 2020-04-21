@@ -1,6 +1,9 @@
 import { createContext } from "react"
 import { VariantLabels } from "../../motion/types"
 
+/**
+ * @public
+ */
 export interface PresenceContextProps {
     isPresent: boolean
     register: () => () => void
@@ -9,4 +12,7 @@ export interface PresenceContextProps {
     custom?: any
 }
 
+/**
+ * @public
+ */
 export const PresenceContext = createContext<PresenceContextProps | null>(null)

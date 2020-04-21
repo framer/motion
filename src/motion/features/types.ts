@@ -6,6 +6,9 @@ import { MotionContextProps } from "../context/MotionContext"
 import { NativeElement } from "../utils/use-native-element"
 import { MotionPluginsContext } from "../context/MotionPluginContext"
 
+/**
+ * @public
+ */
 export interface FeatureProps extends MotionProps {
     controls: ValueAnimationControls
     values: MotionValuesMap
@@ -14,6 +17,9 @@ export interface FeatureProps extends MotionProps {
     parentContext: MotionContextProps
 }
 
+/**
+ * @public
+ */
 export interface MotionFeature {
     key: string
     shouldRender: (

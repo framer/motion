@@ -49,8 +49,8 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
     componentDidMount(): void;
     componentDidUpdate(): void;
     getSnapshotBeforeUpdate(): null;
-    // Warning: (ae-forgotten-export) The symbol "MagicStack" needs to be exported by the entry point index.d.ts
-    getStack(id: string): MagicStack;
+    // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
+    getStack(id: string): LayoutStack;
     // (undocumented)
     removeChild(child: Auto): void;
     // (undocumented)
@@ -100,6 +100,32 @@ export interface AnimationProps {
     transition?: Transition;
     variants?: Variants;
 }
+
+// @public (undocumented)
+export interface AutoValueHandler {
+    // Warning: (ae-forgotten-export) The symbol "MotionValuesMap" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "BoxDelta" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Updater" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    createUpdater?: (values: MotionValuesMap, origin: string | number, target: string | number, current: {
+        [key: string]: string | number | undefined;
+    }, delta: BoxDelta, treeScale: {
+        x: number;
+        y: number;
+    }) => Updater | void;
+    // Warning: (ae-forgotten-export) The symbol "Read" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    read?: Read | false;
+    // (undocumented)
+    reset?: (style: MotionStyle) => any;
+}
+
+// @public (undocumented)
+export type AutoValueHandlers = {
+    [key: string]: AutoValueHandler;
+};
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
@@ -184,8 +210,6 @@ export interface FeatureProps extends MotionProps {
     nativeElement: NativeElement;
     // (undocumented)
     parentContext: MotionContextProps;
-    // Warning: (ae-forgotten-export) The symbol "MotionValuesMap" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     values: MotionValuesMap;
 }
@@ -269,31 +293,6 @@ export interface Keyframes {
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
-// @public (undocumented)
-export interface MagicValueHandler {
-    // Warning: (ae-forgotten-export) The symbol "BoxDelta" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Updater" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    createUpdater?: (values: MotionValuesMap, origin: string | number, target: string | number, current: {
-        [key: string]: string | number | undefined;
-    }, delta: BoxDelta, treeScale: {
-        x: number;
-        y: number;
-    }) => Updater | void;
-    // Warning: (ae-forgotten-export) The symbol "Read" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    read?: Read | false;
-    // (undocumented)
-    reset?: (style: MotionStyle) => any;
-}
-
-// @public (undocumented)
-export type MagicValueHandlers = {
-    [key: string]: MagicValueHandler;
-};
-
 // @public
 export const motion: {
     symbol: ForwardRefComponent<SVGSymbolElement, SVGMotionProps<SVGSymbolElement>>;
@@ -304,6 +303,7 @@ export const motion: {
     image: ForwardRefComponent<SVGImageElement, SVGMotionProps<SVGImageElement>>;
     text: ForwardRefComponent<SVGTextElement, SVGMotionProps<SVGTextElement>>;
     circle: ForwardRefComponent<SVGCircleElement, SVGMotionProps<SVGCircleElement>>;
+    switch: ForwardRefComponent<SVGSwitchElement, SVGMotionProps<SVGSwitchElement>>;
     animate: ForwardRefComponent<SVGElement, SVGMotionProps<SVGElement>>;
     svg: ForwardRefComponent<SVGSVGElement, SVGMotionProps<SVGSVGElement>>;
     defs: ForwardRefComponent<SVGDefsElement, SVGMotionProps<SVGDefsElement>>;
@@ -346,7 +346,6 @@ export const motion: {
     radialGradient: ForwardRefComponent<SVGRadialGradientElement, SVGMotionProps<SVGRadialGradientElement>>;
     rect: ForwardRefComponent<SVGRectElement, SVGMotionProps<SVGRectElement>>;
     stop: ForwardRefComponent<SVGStopElement, SVGMotionProps<SVGStopElement>>;
-    switch: ForwardRefComponent<SVGSwitchElement, SVGMotionProps<SVGSwitchElement>>;
     textPath: ForwardRefComponent<SVGTextPathElement, SVGMotionProps<SVGTextPathElement>>;
     tspan: ForwardRefComponent<SVGTSpanElement, SVGMotionProps<SVGTSpanElement>>;
     use: ForwardRefComponent<SVGUseElement, SVGMotionProps<SVGUseElement>>;
@@ -369,6 +368,8 @@ export const motion: {
     time: ForwardRefComponent<HTMLElement, HTMLMotionProps<"time">>;
     link: ForwardRefComponent<HTMLLinkElement, HTMLMotionProps<"link">>;
     dialog: ForwardRefComponent<HTMLDialogElement, HTMLMotionProps<"dialog">>;
+    input: ForwardRefComponent<HTMLInputElement, HTMLMotionProps<"input">>;
+    select: ForwardRefComponent<HTMLSelectElement, HTMLMotionProps<"select">>;
     a: ForwardRefComponent<HTMLAnchorElement, HTMLMotionProps<"a">>;
     abbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     address: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
@@ -418,7 +419,6 @@ export const motion: {
     i: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     iframe: ForwardRefComponent<HTMLIFrameElement, HTMLMotionProps<"iframe">>;
     img: ForwardRefComponent<HTMLImageElement, HTMLMotionProps<"img">>;
-    input: ForwardRefComponent<HTMLInputElement, HTMLMotionProps<"input">>;
     ins: ForwardRefComponent<HTMLModElement, HTMLMotionProps<"ins">>;
     kbd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     keygen: ForwardRefComponent<HTMLElement, HTMLMotionProps<"keygen">>;
@@ -445,7 +445,6 @@ export const motion: {
     samp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     script: ForwardRefComponent<HTMLScriptElement, HTMLMotionProps<"script">>;
     section: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    select: ForwardRefComponent<HTMLSelectElement, HTMLMotionProps<"select">>;
     source: ForwardRefComponent<HTMLSourceElement, HTMLMotionProps<"source">>;
     span: ForwardRefComponent<HTMLSpanElement, HTMLMotionProps<"span">>;
     strong: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
@@ -512,10 +511,10 @@ export const MotionPluginContext: React.Context<MotionPluginsContext>;
 // @internal (undocumented)
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "MagicProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "AutoAnimateProps" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MagicProps, MotionAdvancedProps {
+export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, AutoAnimateProps, MotionAdvancedProps {
     // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;
@@ -663,11 +662,11 @@ export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boole
 // @internal
 export function resolveMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
-// Warning: (ae-forgotten-export) The symbol "MagicBatchTree" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SharedBatchTree" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "SharedLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const SharedLayoutContext: import("react").Context<MagicBatchTree | SharedLayoutTree>;
+export const SharedLayoutContext: import("react").Context<SharedLayoutTree | SharedBatchTree>;
 
 // @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;

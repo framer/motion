@@ -11,10 +11,7 @@ import {
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { SharedLayoutContext } from "../AnimateSharedLayout/SharedLayoutContext"
-import {
-    SharedLayoutTree,
-    MagicBatchTree,
-} from "../../motion/features/auto/types"
+import { SharedLayoutTree, SharedBatchTree } from "../AnimateSharedLayout/types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
 type ComponentKey = string | number
@@ -277,7 +274,7 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
 }
 
 function isControlledSharedLayoutContext(
-    context: SharedLayoutTree | MagicBatchTree
+    context: SharedLayoutTree | SharedBatchTree
 ): context is SharedLayoutTree {
     return !!(context as any).forceRender
 }

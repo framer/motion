@@ -12,7 +12,7 @@ import {
 } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours/types"
-import { MagicProps } from "./features/auto/types"
+import { AutoAnimateProps } from "./features/auto/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -427,7 +427,7 @@ export interface MotionProps
         MotionCallbacks,
         GestureHandlers,
         DraggableProps,
-        MagicProps,
+        AutoAnimateProps,
         MotionAdvancedProps {
     /**
      * Properties, variant label or array of variant labels to start in.
