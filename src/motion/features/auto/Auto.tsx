@@ -10,15 +10,12 @@ import {
     easeBox,
     applyTreeDeltas,
     calcBoxDelta,
+    isTreeVisible,
+    isSharedLayoutTree,
+    getAnimatableValues,
+    resetLayout,
 } from "./utils"
-import {
-    Snapshot,
-    Style,
-    BoxDelta,
-    Box,
-    Axis,
-    AutoAnimationConfig,
-} from "./types"
+import { Snapshot, Style, BoxDelta, Box, AutoAnimationConfig } from "./types"
 import {
     SharedLayoutTree,
     SharedBatchTree,
@@ -44,16 +41,16 @@ export { SharedLayoutTree, SharedBatchTree }
  */
 export const SharedLayoutContextProvider = (props: FeatureProps) => {
     const [isPresent, safeToRemove] = usePresence()
-    const magicContext = useContext(SharedLayoutContext)
-    const { magicValues, transformPagePoint } = useContext(MotionPluginContext)
+    const sharedLayoutContext = useContext(SharedLayoutContext)
+    const { autoValues, transformPagePoint } = useContext(MotionPluginContext)
 
     return (
         <Auto
             {...props}
             isPresent={isPresent}
             safeToRemove={safeToRemove}
-            magicContext={magicContext}
-            magicValues={magicValues}
+            sharedLayoutContext={sharedLayoutContext}
+            autoValues={autoValues}
             transformPagePoint={transformPagePoint}
         />
     )
@@ -62,90 +59,185 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
 interface ContextProps {
     isPresent: boolean
     safeToRemove?: null | SafeToRemove
-    magicContext: SharedLayoutTree | SharedBatchTree
-    magicValues: AutoValueHandlers
+    sharedLayoutContext: SharedLayoutTree | SharedBatchTree
+    autoValues: AutoValueHandlers
     transformPagePoint: (point: Point) => Point
 }
 
 export class Auto extends React.Component<FeatureProps & ContextProps> {
+    /**
+     * If this is a child of AnimateSharedLayout, this callback must be used to unregister on unmount
+     */
     private unregisterFromSharedLayoutContext?: () => void
+
+    /**
+     * Used to stop the current animation on the component's progress MotionValue
+     */
     private stopLayoutAnimation?: () => void
 
-    private willTransition = false
-    private shouldTransition = true
+    /**
+     * If this component is a child of both AnimateSharedLayout and AnimatePresence we need to know if
+     * it's safe to remove. This logic usually runs when AnimateSharedLayout triggers this component's
+     * startAnimation method. But if this component renders apart from AnimateSharedLayout, it needs to know
+     * that it didn't run this method and in the event that it's leaving the tree, can safely call `safeToRemove`.
+     */
+    private willAnimate = false
 
-    private supportedMagicValues: AutoValueHandlers
+    /**
+     * We use this value to track whether, on a given render, this component should animate. This is
+     * decided in shouldComponentUpdate, but the logic governing both is different.
+     */
+    private shouldAnimate = true
+
+    /**
+     * A map of value handlers that we use to automatically animate.
+     */
+    private supportedAutoValues: AutoValueHandlers
+
+    /**
+     * A list of values that we should automatically animate without applying scale correction.
+     */
     private animatableStyles: string[]
 
+    /**
+     * The depth in the React tree of this automatically animating component. Every automatically
+     * animating component increments this and we use it to detect when a component is a root
+     * auto-animate component of a given AnimateSharedLayout component, as these are used to crossfade
+     * between shared layout trees.
+     */
     depth: number
 
+    /**
+     * A snapshot of the component as it actually looked before a render.
+     */
     measuredOrigin: Snapshot
+
+    /**
+     * A snapshot of the component as it would look after a render.
+     */
     measuredTarget: Snapshot
+
+    /**
+     * A snapshot of the component as we want it to visually animate from. This might be a
+     * snapshot of an entirely different component.
+     */
     visualOrigin: Snapshot
+
+    /**
+     * A snapshot of the component as we want it to visually animate to. This might be a
+     * snapshot of an entirely different component.
+     */
     visualTarget: Snapshot
 
-    hasAnimatedRotate: boolean = false
-
+    /**
+     * The `measuredOrigin` layout as corrected for all the transforms being applied up the
+     * auto-animate tree. We use this as the final bounding box from which we calculate a transform
+     * delta to our desired visual position on any given frame.
+     *
+     * This is mutable to avoid object creation on each frame.
+     */
     correctedLayout: Box = {
         x: { min: 0, max: 0 },
         y: { min: 0, max: 0 },
     }
 
-    progress: MotionValue<number>
+    /**
+     * The visual target we want to project our component into on a given frame.
+     *
+     * This is mutable to avoid object creation on each frame.
+     */
+    frameTarget: Box = {
+        x: { min: 0, max: 0 },
+        y: { min: 0, max: 0 },
+    }
 
-    // TODO: Add comment to make sure its clear that this is mutative
+    /**
+     * A transform delta that, when applied to `correctedLayout`, will make this component appear
+     * on-screen as `frameTarget`.
+     *
+     * This is mutable to avoid object creation on each frame. It's also shared with every child down the
+     * auto-animate tree so they can use it to calculate a new `correctedLayout` each frame.
+     */
     delta: BoxDelta
 
-    target: Box
+    /**
+     * A flag to check whether this component has ever animated rotate. We use this to force
+     * originX/Y to 0.5
+     */
+    hasAnimatedRotate: boolean = false
 
+    /**
+     * A progress value that we use to interpolate between our `visualOrigin` and `visualTarget`. Currently
+     * this brings the limitation that all layout and layout-affected values (like `x` or `boxShadow`) all share
+     * the same animation. It would be relatively simple with further development to animate all of these
+     * values independently.
+     */
+    progress: MotionValue<number>
+
+    /**
+     * The overall scale of the local coordinate system as transformed by all parents of this component. We use this
+     * for scale correction on our calculated layouts and scale-affected values like `boxShadow`.
+     *
+     * This is mutable to avoid object creation on each frame.
+     */
     treeScale = { x: 1, y: 1 }
 
+    /**
+     * The current, pre-correction values of every scale-corrected value. We keep a record of these throughout
+     * an animation so if the animation is interrupted we can resume from this value instead of a scale-corrected
+     * value that may have no relevance in the next treeScale context.
+     */
     current: Partial<Style> = {
         rotate: 0,
     }
 
-    prevRotate = 0
-
     constructor(props: FeatureProps & ContextProps) {
         super(props)
+
+        // TODO: Can we move these back here somehow
         this.delta = props.localContext.magicDelta as BoxDelta
         this.depth = props.localContext.magicDepth
         this.progress = props.localContext.magicProgress as MotionValue<number>
 
-        const { magicValues } = props
-        this.supportedMagicValues = {
+        const { autoValues } = props
+        this.supportedAutoValues = {
             ...defaultMagicValues,
-            ...magicValues,
+            ...autoValues,
         }
-        this.animatableStyles = []
-        for (const key in this.supportedMagicValues) {
-            if (!this.supportedMagicValues[key].createUpdater) {
-                this.animatableStyles.push(key)
-            }
-        }
+
+        this.animatableStyles = getAnimatableValues(this.supportedAutoValues)
     }
 
     componentDidMount() {
-        const { magicContext } = this.props
+        const { sharedLayoutContext } = this.props
 
-        if (isControlledTree(magicContext)) {
-            this.unregisterFromSharedLayoutContext = magicContext.register(this)
+        if (isSharedLayoutTree(sharedLayoutContext)) {
+            this.unregisterFromSharedLayoutContext = sharedLayoutContext.register(
+                this
+            )
 
             // Check if this render was handled by AnimateSharedLayout. If it was,
             // the usual logic in startAnimation to tell AnimatePresence that this component is safe to remove
             // will have run. If it wasn't, we have to do that here.
             this.componentDidUpdate = () => {
-                if (!this.willTransition) this.safeToRemove()
-                this.willTransition = false
+                if (!this.willAnimate) this.safeToRemove()
+                this.willAnimate = false
             }
         } else {
+            /**
+             * If we're not a child of AnimateSharedLayout we can use some default batching that will
+             * ensure all auto-animation read/write cycles are batched across components. This
+             * reduces layout thrashing and ensures all measurements are correct. Currently, because componentDidUpdate
+             * fires before new component componentDidMount, newly entering components are missed out and need
+             * AnimateSharedLayout to work correctly.
+             */
             this.getSnapshotBeforeUpdate = () => {
                 this.snapshotOrigin()
-                magicContext.add(this)
+                sharedLayoutContext.add(this)
                 return null
             }
 
-            this.componentDidUpdate = () => magicContext.flush()
+            this.componentDidUpdate = () => sharedLayoutContext.flush()
         }
     }
 
@@ -156,23 +248,39 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     shouldComponentUpdate(nextProps: FeatureProps & ContextProps) {
-        const { magicContext } = this.props
+        const { sharedLayoutContext } = this.props
+
         const hasDependency =
             this.props.magicDependency !== undefined ||
             nextProps.magicDependency !== undefined
         const dependencyHasChanged =
             this.props.magicDependency !== nextProps.magicDependency
+
         const presenceHasChanged = this.props.isPresent !== nextProps.isPresent
 
-        this.shouldTransition =
+        this.shouldAnimate =
             !hasDependency ||
             (hasDependency && dependencyHasChanged) ||
             presenceHasChanged
 
-        return !isControlledTree(magicContext) || presenceHasChanged
+        /**
+         * We only use the component's lifecycle methods to snapshot and animate if
+         * it isn't a child of AnimateSharedLayout, so we can return false from this method.
+         *
+         * We do need to fire componentDidUpdate if the component's presence has changed so
+         * we can fire safeToRemove on exiting components.
+         */
+        return !isSharedLayoutTree(sharedLayoutContext) || presenceHasChanged
     }
 
-    // TODO: Find a way to abstract this, as it's only needed in Framer
+    /**
+     * Reset the component's rotation so we can accurately measure its bounding box. If it's rotated
+     * when we snapshot, the bounding box will be reported as larger than the component's actual size.
+     *
+     * This is currently only available inside of Framer by setting supportRotate on AnimateSharedLayout.
+     * It incurs an extra read/write cycle triggered on shouldComponentUpdate which, in concurrent mode,
+     * might trigger more than once per render. So it isn't recommended for production.
+     */
     resetRotation() {
         const { nativeElement, values } = this.props
         const rotate = values.get("rotate")
@@ -183,10 +291,13 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         nativeElement.render()
     }
 
+    /**
+     * Reset styles that we might be currently animating so we can read their target values from the DOM.
+     */
     resetStyles() {
         const { animate, nativeElement, style = {} } = this.props
 
-        const reset = resetStyles(style, this.supportedMagicValues)
+        const reset = resetStyles(style, this.supportedAutoValues)
 
         // If we're animating opacity separately, we don't want to reset
         // as it causes a visual flicker when adding the component
@@ -200,12 +311,15 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         nativeElement.render(true)
     }
 
+    /**
+     * Take a snapshot of the component as it currently exists before a render.
+     */
     snapshotOrigin() {
-        this.willTransition = true
+        this.willAnimate = true
         const { nativeElement, transformPagePoint } = this.props
         const origin = snapshot(
             nativeElement,
-            this.supportedMagicValues,
+            this.supportedAutoValues,
             transformPagePoint
         )
 
@@ -214,12 +328,15 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         return (this.measuredOrigin = origin)
     }
 
+    /**
+     * Take a snapshot of a component as it will exist after a render.
+     */
     snapshotTarget() {
         const { nativeElement, style, transformPagePoint } = this.props
 
         const target = snapshot(
             nativeElement,
-            this.supportedMagicValues,
+            this.supportedAutoValues,
             transformPagePoint
         )
 
@@ -228,6 +345,13 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         this.measuredTarget = target
     }
 
+    /**
+     * Hide this component using opacity. We can't set it to display: none as we might
+     * still need to measure it or its children.
+     *
+     * This is triggered if the component is a child of AnimateSharedLayout and a new component
+     * enters the tree that shares this component's layoutId.
+     */
     hide() {
         this.stopLayoutAnimation && this.stopLayoutAnimation()
         const { values } = this.props
@@ -244,6 +368,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         opacity.set(newOpacity)
     }
 
+    /**
+     * Start an auto or shared layout animattion.
+     */
     startAnimation({ origin, target, ...opts }: AutoAnimationConfig = {}) {
         let animations: (Promise<void> | undefined)[] = []
 
@@ -262,7 +389,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         const parentDeltas = parentContext.magicDeltas || []
 
         if (
-            this.shouldTransition &&
+            this.shouldAnimate &&
             this.visualOrigin &&
             this.visualTarget &&
             this.delta.isVisible &&
@@ -309,8 +436,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         const { values } = this.props
         const updaters = {}
 
-        for (const key in this.supportedMagicValues) {
-            const handler = this.supportedMagicValues[key]
+        for (const key in this.supportedAutoValues) {
+            const handler = this.supportedAutoValues[key]
             if (!handler.createUpdater) continue
 
             updaters[key] = handler.createUpdater(
@@ -323,7 +450,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             )
         }
 
-        this.target = {
+        this.frameTarget = {
             x: { min: 0, max: 0 },
             y: { min: 0, max: 0 },
         }
@@ -434,7 +561,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      * styles that don't need scale inversion correction.
      */
     startStyleAnimation(opts: AutoAnimationConfig) {
-        let shouldTransitionStyle = false
+        let shouldAnimateStyle = false
         const target: TargetAndTransition = {}
         const { values } = this.props
         const numAnimatableStyles = this.animatableStyles.length
@@ -446,7 +573,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             const nextStyle = this.visualTarget.style[key]
 
             if (originStyle !== nextStyle) {
-                shouldTransitionStyle = true
+                shouldAnimateStyle = true
                 const value = values.get(key, originStyle)
                 value.set(originStyle)
 
@@ -468,7 +595,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             }
         }
 
-        if (shouldTransitionStyle) {
+        if (shouldAnimateStyle) {
             return controls.start(target)
         }
     }
@@ -480,12 +607,12 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         resetLayout(this.correctedLayout, this.measuredTarget.layout)
         applyTreeDeltas(this.correctedLayout, this.treeScale, parentDeltas)
         easeBox(
-            this.target,
+            this.frameTarget,
             this.visualOrigin.layout,
             this.visualTarget.layout,
             p
         )
-        calcBoxDelta(this.delta, this.target, this.correctedLayout, origin)
+        calcBoxDelta(this.delta, this.frameTarget, this.correctedLayout, origin)
     }
 
     updateTransform(
@@ -529,33 +656,4 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     render() {
         return null
     }
-}
-
-function isControlledTree(
-    context: SharedLayoutTree | SharedBatchTree
-): context is SharedLayoutTree {
-    return !!(context as SharedLayoutTree).register
-}
-
-function resetAxis(axis: Axis, originAxis: Axis) {
-    axis.min = originAxis.min
-    axis.max = originAxis.max
-}
-
-function resetLayout(box: Box, originBox: Box) {
-    resetAxis(box.x, originBox.x)
-    resetAxis(box.y, originBox.y)
-}
-
-export function isTreeVisible(deltas: BoxDelta[]): boolean {
-    let isVisible = true
-    const numDeltas = deltas.length
-    for (let i = 0; i < numDeltas; i++) {
-        if (!deltas[i].isVisible) {
-            isVisible = false
-            continue
-        }
-    }
-
-    return isVisible
 }

@@ -17,7 +17,6 @@ import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { ReactElement } from 'react';
 import { ReactHTML } from 'react';
-import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 import { RefObject } from 'react';

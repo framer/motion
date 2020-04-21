@@ -5,6 +5,7 @@ import {
     calcTranslate,
     calcDelta,
     applyAxisDelta,
+    getAnimatableValues,
     // applyTreeDeltas,
     // calcBoxDelta,
     // applyBoxDelta,
@@ -180,4 +181,13 @@ test("applyTreeDeltas", () => {
     // )
     // const treeNestedDelta = calcBoxDelta(treeBefore, treeNested)
     // expect(applyBoxDelta(treeNestedDelta, treeNested)).toEqual(treeBefore)
+})
+
+test("getAnimatableValues", () => {
+    expect(
+        getAnimatableValues({
+            a: { createUpdater: () => () => "" },
+            b: {},
+        })
+    ).toEqual(["b"])
 })
