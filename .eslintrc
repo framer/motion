@@ -11,7 +11,6 @@
     "extends": ["prettier", "prettier/@typescript-eslint"],
     "rules": {
         "@typescript-eslint/no-unused-vars": "warn",
-        "@typescript-eslint/no-use-before-define": "warn",
         "@typescript-eslint/class-name-casing": "error",
         "@typescript-eslint/type-annotation-spacing": "error",
         "react/jsx-pascal-case": "error",
