@@ -1,19 +1,14 @@
 import * as React from "react"
-import {
-    SharedLayoutTree,
-    Snapshot,
-    SharedLayoutProps,
-    TransitionHandler,
-    AutoAnimationConfig,
-} from "../../motion/features/auto/types"
+import { SharedLayoutTree, SharedLayoutProps, TransitionHandler } from "./types"
+import { Snapshot, AutoAnimationConfig } from "../../motion/features/auto/types"
 import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Auto } from "../../motion/features/auto/Auto"
 import { batchTransitions } from "../../motion/features/auto/utils"
 import { Easing, circOut, linear } from "@popmotion/easing"
 import { progress } from "@popmotion/popcorn"
 
-type MagicStack = Auto[]
-type MagicStacks = Map<string, MagicStack>
+type LayoutStack = Auto[]
+type LayoutStacks = Map<string, LayoutStack>
 
 const defaultMagicTransition = {
     duration: 0.45,
@@ -59,7 +54,7 @@ export class AnimateSharedLayout extends React.Component<
      * we store them in order. When one is added, it will animate out from the
      * previous one, and when it's removed, it'll animate to the previous one.
      */
-    private stacks: MagicStacks = new Map()
+    private stacks: LayoutStacks = new Map()
 
     /**
      * Keep track of the depth of the most shallow animate child
@@ -254,10 +249,10 @@ export class AnimateSharedLayout extends React.Component<
      * Return a stack of animate children based on the provided layoutId.
      * Will create a stack if none currently exists with that layoutId.
      */
-    getStack(id: string): MagicStack {
+    getStack(id: string): LayoutStack {
         !this.stacks.has(id) && this.stacks.set(id, [])
 
-        return this.stacks.get(id) as MagicStack
+        return this.stacks.get(id) as LayoutStack
     }
 
     setRootDepth(child: Auto) {
@@ -295,7 +290,7 @@ function compress(min: number, max: number, easing: Easing): Easing {
     }
 }
 
-function getPreviousChild(stack: MagicStack, index: number) {
+function getPreviousChild(stack: LayoutStack, index: number) {
     for (let i = index - 1; i >= 0; i--) {
         const child = stack[i]
         if (child.isPresent()) {
@@ -316,7 +311,7 @@ function getPreviousChild(stack: MagicStack, index: number) {
 function controlledHandler(
     { transition, type }: AutoAnimationConfig,
     rootDepth: number,
-    stacks: MagicStacks,
+    stacks: LayoutStacks,
     snapshots: Map<string, Snapshot>
 ): TransitionHandler {
     const visible = new Map<string, Auto>()
