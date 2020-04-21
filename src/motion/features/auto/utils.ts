@@ -9,7 +9,7 @@ import { MotionStyle } from "../../types"
 import { MotionValue } from "../../../value"
 import { CustomValueType, Point } from "../../../types"
 import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
-import { Auto } from "./Auto"
+import { Auto, SharedLayoutTree } from "./Auto"
 import { warning } from "hey-listen"
 import { AutoValueHandlers } from "./values"
 
@@ -325,3 +325,43 @@ const CAMEL_CASE_PATTERN = /([a-z])([A-Z])/g
 const REPLACE_TEMPLATE = "$1-$2"
 export const camelToDash = (str: string) =>
     str.replace(CAMEL_CASE_PATTERN, REPLACE_TEMPLATE).toLowerCase()
+
+export function isSharedLayoutTree(
+    context: SharedLayoutTree | SharedBatchTree
+): context is SharedLayoutTree {
+    return !!(context as SharedLayoutTree).register
+}
+
+function resetAxis(axis: Axis, originAxis: Axis) {
+    axis.min = originAxis.min
+    axis.max = originAxis.max
+}
+
+export function resetLayout(box: Box, originBox: Box) {
+    resetAxis(box.x, originBox.x)
+    resetAxis(box.y, originBox.y)
+}
+
+export function isTreeVisible(deltas: BoxDelta[]): boolean {
+    let isVisible = true
+    const numDeltas = deltas.length
+    for (let i = 0; i < numDeltas; i++) {
+        if (!deltas[i].isVisible) {
+            isVisible = false
+            continue
+        }
+    }
+
+    return isVisible
+}
+
+/**
+ * Detect which automatically animatable values don't need scale correction and can be animated normally.
+ */
+export function getAnimatableValues(
+    supportedAutoValues: AutoValueHandlers
+): string[] {
+    return Object.keys(supportedAutoValues).filter(
+        key => !supportedAutoValues[key].createUpdater
+    )
+}

@@ -6,7 +6,7 @@ import styled from "styled-components"
 /**
  * This demo is called "Framer border" because it demonstrates border animations as Framer
  * implements borders, by positioning the inner div seperately to the sized outer Frame using `inset`
- * and defining additional values with handlers passed to `magicValues`.
+ * and defining additional values with handlers passed to `autoValues`.
  */
 
 const Container = styled(motion.div)<{ isOn: boolean }>`
@@ -58,7 +58,7 @@ export const App = () => {
     const [isOn, toggleOn] = useCycle(false, true)
 
     return (
-        <MotionPlugins magicValues={border}>
+        <MotionPlugins autoValues={border}>
             <AnimateSharedLayout transition={{ duration: 3, ease: "circIn" }}>
                 <Container animate onClick={() => toggleOn()} isOn={isOn}>
                     <motion.div
