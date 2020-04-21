@@ -8,7 +8,10 @@ type Read = (computedStyle: string) => string | number
 
 type Updater = (p: number) => void
 
-export interface MagicValueHandler {
+/**
+ * @public
+ */
+export interface AutoValueHandler {
     read?: Read | false
     reset?: (style: MotionStyle) => any
     // TODO: Seperate the interpolator from the correction
@@ -23,9 +26,12 @@ export interface MagicValueHandler {
     ) => Updater | void
 }
 
-export type MagicValueHandlers = { [key: string]: MagicValueHandler }
+/**
+ * @public
+ */
+export type AutoValueHandlers = { [key: string]: AutoValueHandler }
 
-const singleBorderRadius = (key: string): MagicValueHandler => ({
+const singleBorderRadius = (key: string): AutoValueHandler => ({
     reset: style => {
         return style.borderRadius !== undefined ? style.borderRadius : ""
     },
@@ -54,7 +60,7 @@ const singleBorderRadius = (key: string): MagicValueHandler => ({
     },
 })
 
-export const defaultMagicValues: MagicValueHandlers = {
+export const defaultMagicValues: AutoValueHandlers = {
     backgroundColor: {
         reset: style => {
             return style.background !== undefined ? style.background : ""

@@ -1,14 +1,9 @@
 import { clamp, mix, progress, distance } from "@popmotion/popcorn"
+import { Axis, AxisDelta, Snapshot, BoxDelta, Box, Style } from "./types"
 import {
-    Axis,
-    AxisDelta,
-    Snapshot,
-    BoxDelta,
-    Box,
-    Style,
-    MagicBatchTree,
+    SharedBatchTree,
     TransitionHandler,
-} from "./types"
+} from "../../../components/AnimateSharedLayout/types"
 import { NativeElement } from "../../utils/use-native-element"
 import { MotionStyle } from "../../types"
 import { MotionValue } from "../../../value"
@@ -16,7 +11,7 @@ import { CustomValueType, Point } from "../../../types"
 import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
 import { Auto } from "./Auto"
 import { warning } from "hey-listen"
-import { MagicValueHandlers } from "./values"
+import { AutoValueHandlers } from "./values"
 
 const clampProgress = clamp(0, 1)
 
@@ -70,7 +65,7 @@ function snapshotLayout(
 
 function snapshotStyle(
     element: NativeElement,
-    valueHandlers: MagicValueHandlers
+    valueHandlers: AutoValueHandlers
 ): Style {
     const computedStyle = element.getComputedStyle()
     const style: Partial<Style> = {}
@@ -97,7 +92,7 @@ function snapshotStyle(
 
 export function snapshot(
     element: NativeElement,
-    valueHandlers: MagicValueHandlers,
+    valueHandlers: AutoValueHandlers,
     transformPagePoint: (point: Point) => Point
 ): Snapshot {
     return {
@@ -231,7 +226,7 @@ export function resolve<T extends unknown>(
  */
 export function resetStyles(
     style: MotionStyle,
-    valueHandlers: MagicValueHandlers
+    valueHandlers: AutoValueHandlers
 ): MotionStyle {
     const reset: MotionStyle = {
         x: 0,
@@ -296,7 +291,7 @@ const defaultHandler: TransitionHandler = {
     startAnimation: child => child.startAnimation(),
 }
 
-export const batchTransitions = (): MagicBatchTree => {
+export const batchTransitions = (): SharedBatchTree => {
     const queue = new Set<Auto>()
 
     const add = (child: Auto) => queue.add(child)

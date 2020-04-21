@@ -16,11 +16,13 @@ import {
     Style,
     BoxDelta,
     Box,
-    SharedLayoutTree,
-    MagicBatchTree,
     Axis,
     AutoAnimationConfig,
 } from "./types"
+import {
+    SharedLayoutTree,
+    SharedBatchTree,
+} from "../../../components/AnimateSharedLayout/types"
 import { MotionValue } from "../../../value"
 import { syncRenderSession } from "../../../dom/sync-render-session"
 import { TargetAndTransition, Point } from "../../../types"
@@ -30,11 +32,11 @@ import {
     usePresence,
     SafeToRemove,
 } from "../../../components/AnimatePresence/use-presence"
-import { defaultMagicValues, MagicValueHandlers } from "./values"
+import { defaultMagicValues, AutoValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
 import { elementDragControls } from "../../../behaviours/ComponentDragControls"
-export { SharedLayoutTree, MagicBatchTree }
+export { SharedLayoutTree, SharedBatchTree }
 
 /**
  * Magic Motion relies on multiple components and class components only support, hence this
@@ -60,8 +62,8 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
 interface ContextProps {
     isPresent: boolean
     safeToRemove?: null | SafeToRemove
-    magicContext: SharedLayoutTree | MagicBatchTree
-    magicValues: MagicValueHandlers
+    magicContext: SharedLayoutTree | SharedBatchTree
+    magicValues: AutoValueHandlers
     transformPagePoint: (point: Point) => Point
 }
 
@@ -72,7 +74,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     private willTransition = false
     private shouldTransition = true
 
-    private supportedMagicValues: MagicValueHandlers
+    private supportedMagicValues: AutoValueHandlers
     private animatableStyles: string[]
 
     depth: number
@@ -530,7 +532,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 }
 
 function isControlledTree(
-    context: SharedLayoutTree | MagicBatchTree
+    context: SharedLayoutTree | SharedBatchTree
 ): context is SharedLayoutTree {
     return !!(context as SharedLayoutTree).register
 }
