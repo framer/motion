@@ -245,6 +245,12 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     startAnimation({ origin, target, ...opts }: AutoAnimationConfig = {}) {
         let animations: (Promise<void> | undefined)[] = []
 
+        // Restore rotation before any writes. If we don't do this, and for whatever
+        // reason the animation doesn't execute, rotation will be left at 0
+        const { nativeElement, values } = this.props
+        const rotate = values.get("rotate")
+        rotate && nativeElement.setStyle("rotate", rotate.get())
+
         this.visualTarget = target || this.measuredTarget
 
         // If we don't have a provided or measured origin, for instance if this is a newly-added component,
