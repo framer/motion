@@ -1,5 +1,27 @@
 import { Auto } from "../../motion/features/auto/Auto"
+import { Snapshot } from "../../motion/features/auto/types"
 import { Transition } from "../../types"
+
+export enum Presence {
+    Entering,
+    Present,
+    Exiting,
+}
+
+export interface LayoutMetadata {
+    layoutId: string | undefined
+    presence: Presence
+    origin?: Snapshot | undefined
+    target?: Snapshot | undefined
+    isLead: boolean
+    wasLead: boolean
+}
+
+export interface StackQuery {
+    isLeadPresent: (id: string | undefined) => boolean | undefined
+    getPreviousOrigin: (id: string | undefined) => Snapshot | undefined
+    getPreviousTarget: (id: string | undefined) => Snapshot | undefined
+}
 
 /**
  * Functions provided to animate children of a `SharedLayoutProps` component.

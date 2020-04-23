@@ -47,6 +47,10 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
     // (undocumented)
     componentDidMount(): void;
     componentDidUpdate(): void;
+    // Warning: (ae-forgotten-export) The symbol "TransitionHandler" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    generateBatchHandler(): TransitionHandler;
     getSnapshotBeforeUpdate(): null;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id: string): LayoutStack;
@@ -56,7 +60,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
     removeChildFromStack(child: Auto): void;
     // (undocumented)
     render(): JSX.Element;
-    // (undocumented)
+    resetMetadata(child: Auto): void;
     setRootDepth(child: Auto): void;
     shouldComponentUpdate(nextProps: SharedLayoutProps, nextState: SharedLayoutTree): boolean;
     // (undocumented)
@@ -64,6 +68,12 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
         forceRender: () => void;
         register: (child: Auto) => () => void;
     };
+    // (undocumented)
+    updateMetadata(child: Auto): void;
+    // Warning: (ae-forgotten-export) The symbol "StackQuery" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    updateStackMetadata(): StackQuery;
 }
 
 // @public
