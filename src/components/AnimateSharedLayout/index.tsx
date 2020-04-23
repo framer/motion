@@ -132,8 +132,11 @@ export class AnimateSharedLayout extends React.Component<
          * Ideally this would run in getSnapshotBeforeUpdate as shouldComponentUpdate may run
          * multiple times in concurrent mode, but currently this is introducing bugs.
          */
-        const { supportRotate } = this.props
-        supportRotate && this.children.forEach(child => child.resetRotation())
+        if (this.shouldTransition) {
+            const { supportRotate } = this.props
+            supportRotate &&
+                this.children.forEach(child => child.resetRotation())
+        }
 
         return true
     }
