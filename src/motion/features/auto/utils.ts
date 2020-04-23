@@ -1,22 +1,17 @@
 import { clamp, mix, progress, distance } from "@popmotion/popcorn"
+import { Axis, AxisDelta, Snapshot, BoxDelta, Box, Style } from "./types"
 import {
-    Axis,
-    AxisDelta,
-    Snapshot,
-    BoxDelta,
-    Box,
-    Style,
-    MagicBatchTree,
+    SharedBatchTree,
     TransitionHandler,
-} from "./types"
+} from "../../../components/AnimateSharedLayout/types"
 import { NativeElement } from "../../utils/use-native-element"
 import { MotionStyle } from "../../types"
 import { MotionValue } from "../../../value"
 import { CustomValueType, Point } from "../../../types"
 import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
-import { Auto } from "./Auto"
+import { Auto, SharedLayoutTree } from "./Auto"
 import { warning } from "hey-listen"
-import { MagicValueHandlers } from "./values"
+import { AutoValueHandlers } from "./values"
 
 const clampProgress = clamp(0, 1)
 
@@ -36,7 +31,12 @@ interface BoundingBox {
  * can't invert scale: 0) but it will correctly animate back out, and it
  * fixes distortion on any children.
  */
-function safeSize({ top, right, bottom, left }: BoundingBox): BoundingBox {
+export function safeSize({
+    top,
+    right,
+    bottom,
+    left,
+}: BoundingBox): BoundingBox {
     const safePixels = 0.5
 
     if (top === bottom) {
@@ -70,7 +70,7 @@ function snapshotLayout(
 
 function snapshotStyle(
     element: NativeElement,
-    valueHandlers: MagicValueHandlers
+    valueHandlers: AutoValueHandlers
 ): Style {
     const computedStyle = element.getComputedStyle()
     const style: Partial<Style> = {}
@@ -97,7 +97,7 @@ function snapshotStyle(
 
 export function snapshot(
     element: NativeElement,
-    valueHandlers: MagicValueHandlers,
+    valueHandlers: AutoValueHandlers,
     transformPagePoint: (point: Point) => Point
 ): Snapshot {
     return {
@@ -113,9 +113,6 @@ export function snapshot(
  * When a component is scaling, we want to generate a visually appeasing transform origin and allow
  * the component to scale out (or in) from there. This means 0 for components whose left edge
  * is the same or beyond the `before`, 1 for the inverse, and 0-1 for in between.
- *
- * @param before
- * @param after
  */
 export function calcOrigin(before: Axis, after: Axis): number {
     let origin = 0.5
@@ -132,10 +129,8 @@ export function calcOrigin(before: Axis, after: Axis): number {
 }
 
 /**
- *
- * @param before
- * @param after
- * @param origin
+ * Calculate a translation value that, if applied to `after` with the given
+ * `origin`, would return `before`
  */
 export function calcTranslate(
     before: Axis,
@@ -145,16 +140,27 @@ export function calcTranslate(
     const beforePoint = mix(before.min, before.max, origin)
     const afterPoint = mix(after.min, after.max, origin)
 
-    //console.log(beforePoint, afterPoint, beforePoint - afterPoint)
     return beforePoint - afterPoint
 }
 
+/**
+ * Applies a `scale` to a `point` from the given `originPoint`.
+ */
 export function scaledPoint({ scale, originPoint }: AxisDelta, point: number) {
     const distanceFromOrigin = point - originPoint
     const scaled = scale * distanceFromOrigin
     return originPoint + scaled
 }
 
+/**
+ * Calculate a transform delta that, if applied to `after`, will
+ * create `before`.
+ *
+ * The transform `origin` is optional. If not provided, it'll be automatically
+ * calculated based on the relative positions of the two bounding boxes.
+ *
+ * This is a mutative operation to avoid creating new objects every frame.
+ */
 export function calcDelta(
     delta: AxisDelta,
     before: Axis,
@@ -171,10 +177,15 @@ export function calcDelta(
     delta.translate = calcTranslate(before, after, delta.origin)
 
     // Clamp
-    if (near(delta.scale, 1, 0.0001)) delta.scale = 1
-    if (near(delta.translate)) delta.translate = 0
+    if (isNear(delta.scale, 1, 0.0001)) delta.scale = 1
+    if (isNear(delta.translate)) delta.translate = 0
 }
 
+/**
+ * Calculate a transform delta between before and after.
+ *
+ * This is a mutative operation to avoid creating new objects every frame.
+ */
 export function calcBoxDelta(
     delta: BoxDelta,
     before: Box,
@@ -185,20 +196,37 @@ export function calcBoxDelta(
     calcDelta(delta.y, before.y, after.y, origin)
 }
 
+/**
+ * Apple the translation and scale delta to a single point.
+ */
 export function applyDelta(point: number, delta: AxisDelta): number {
     return scaledPoint(delta, point) + delta.translate
 }
 
+/**
+ * Scale and translate both points on an axis.
+ *
+ * This is a mutative operation to avoid creating new objects every frame.
+ */
 export function applyAxisDelta(axis: Axis, delta: AxisDelta): void {
     axis.min = applyDelta(axis.min, delta)
     axis.max = applyDelta(axis.max, delta)
 }
 
+/**
+ * Scale and translate both axis of a box.
+ */
 export function applyBoxDelta(box: Box, delta: BoxDelta): void {
     applyAxisDelta(box.x, delta.x)
     applyAxisDelta(box.y, delta.y)
 }
 
+/**
+ * Apply a whole tree of deltas to a box. Along the way, keep track of the
+ * resultant scale of the tree.
+ *
+ * This is a mutative operation to avoid creating new objects every frame.
+ */
 export function applyTreeDeltas(
     box: Box,
     treeScale: { x: number; y: number },
@@ -231,7 +259,7 @@ export function resolve<T extends unknown>(
  */
 export function resetStyles(
     style: MotionStyle,
-    valueHandlers: MagicValueHandlers
+    valueHandlers: AutoValueHandlers
 ): MotionStyle {
     const reset: MotionStyle = {
         x: 0,
@@ -262,12 +290,19 @@ export function resetStyles(
     return reset
 }
 
+/**
+ * Apply the saved current styles to the provided style object.
+ */
 export function applyCurrent(style: Style, current: Partial<Style>) {
     for (const key in current) {
         style[key] = current[key]
     }
 }
 
+/**
+ * An object representing a zero or neutral delta. Applying this as a
+ * transform would leave a bounding box unchanged.
+ */
 export const zeroDelta: AxisDelta = {
     translate: 0,
     scale: 1,
@@ -275,7 +310,12 @@ export const zeroDelta: AxisDelta = {
     originPoint: 0,
 }
 
-function easeAxis(
+/**
+ * Tween a single axis between two bounding boxes.
+ *
+ * This is a mutative operation.
+ */
+function tweenAxis(
     axis: "x" | "y",
     target: Box,
     prev: Box,
@@ -286,9 +326,14 @@ function easeAxis(
     target[axis].max = mix(prev[axis].max, next[axis].max, p)
 }
 
-export function easeBox(target: Box, prev: Box, next: Box, p: number) {
-    easeAxis("x", target, prev, next, p)
-    easeAxis("y", target, prev, next, p)
+/**
+ * Tween between two bounding boxes.
+ *
+ * This is a mutative operation.
+ */
+export function tweenBox(target: Box, prev: Box, next: Box, p: number) {
+    tweenAxis("x", target, prev, next, p)
+    tweenAxis("y", target, prev, next, p)
 }
 
 const defaultHandler: TransitionHandler = {
@@ -296,7 +341,7 @@ const defaultHandler: TransitionHandler = {
     startAnimation: child => child.startAnimation(),
 }
 
-export const batchTransitions = (): MagicBatchTree => {
+export const batchTransitions = (): SharedBatchTree => {
     const queue = new Set<Auto>()
 
     const add = (child: Auto) => queue.add(child)
@@ -321,12 +366,64 @@ export const batchTransitions = (): MagicBatchTree => {
 
 const sortByDepth = (a: Auto, b: Auto) => a.depth - b.depth
 
-export function near(value: number, target = 0, maxDistance = 0.01): boolean {
+export function isNear(value: number, target = 0, maxDistance = 0.01): boolean {
     return distance(value, target) < maxDistance
 }
 
-// Replace with code from Stylefire
-const CAMEL_CASE_PATTERN = /([a-z])([A-Z])/g
-const REPLACE_TEMPLATE = "$1-$2"
-export const camelToDash = (str: string) =>
-    str.replace(CAMEL_CASE_PATTERN, REPLACE_TEMPLATE).toLowerCase()
+/**
+ * Check if the provided context is the SharedLayoutContext default
+ * or if we're the child of an AnimateSharedLayout component.
+ */
+export function isSharedLayoutTree(
+    context: SharedLayoutTree | SharedBatchTree
+): context is SharedLayoutTree {
+    return !!(context as SharedLayoutTree).register
+}
+
+/**
+ * Reset an axis to the provided origin box.
+ *
+ * This is a mutative operation.
+ */
+function resetAxis(axis: Axis, originAxis: Axis) {
+    axis.min = originAxis.min
+    axis.max = originAxis.max
+}
+
+/**
+ * Reset a box to the provided origin box.
+ *
+ * This is a mutative operation.
+ */
+export function resetBox(box: Box, originBox: Box) {
+    resetAxis(box.x, originBox.x)
+    resetAxis(box.y, originBox.y)
+}
+
+/**
+ * Look up the tree to check whether we're in a visible portion
+ * of the tree. If we're not, we can optimise away this animation.
+ */
+export function isTreeVisible(deltas: BoxDelta[]): boolean {
+    let isVisible = true
+    const numDeltas = deltas.length
+    for (let i = 0; i < numDeltas; i++) {
+        if (!deltas[i].isVisible) {
+            isVisible = false
+            continue
+        }
+    }
+
+    return isVisible
+}
+
+/**
+ * Detect which automatically animatable values don't need scale correction and can be animated normally.
+ */
+export function getAnimatableValues(
+    supportedAutoValues: AutoValueHandlers
+): string[] {
+    return Object.keys(supportedAutoValues).filter(
+        key => !supportedAutoValues[key].createUpdater
+    )
+}

@@ -1,5 +1,5 @@
-import React, { CSSProperties } from "react"
-import { useState } from "react"
+import * as React from "react"
+import { CSSProperties, useState } from "react"
 import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
 
 /**

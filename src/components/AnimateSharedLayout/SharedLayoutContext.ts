@@ -1,13 +1,10 @@
 import { createContext } from "react"
-import {
-    SharedLayoutTree,
-    MagicBatchTree,
-} from "../../motion/features/auto/types"
+import { SharedLayoutTree, SharedBatchTree } from "./types"
 import { batchTransitions } from "../../motion/features/auto/utils"
 
 /**
  * @internal
  */
 export const SharedLayoutContext = createContext<
-    SharedLayoutTree | MagicBatchTree
+    SharedLayoutTree | SharedBatchTree
 >(batchTransitions())
