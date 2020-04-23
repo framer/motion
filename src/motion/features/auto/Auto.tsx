@@ -444,6 +444,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         // If we don't animate, make sure we call safeToRemove so if this is an
         // exiting component it'll get removed
         !animations.length && this.safeToRemove()
+
+        // Force render to ensure there's no flashes of unstyled content from the reset
+        nativeElement.render()
     }
 
     /**
