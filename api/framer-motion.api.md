@@ -369,6 +369,8 @@ export const motion: {
     time: ForwardRefComponent<HTMLElement, HTMLMotionProps<"time">>;
     link: ForwardRefComponent<HTMLLinkElement, HTMLMotionProps<"link">>;
     dialog: ForwardRefComponent<HTMLDialogElement, HTMLMotionProps<"dialog">>;
+    input: ForwardRefComponent<HTMLInputElement, HTMLMotionProps<"input">>;
+    select: ForwardRefComponent<HTMLSelectElement, HTMLMotionProps<"select">>;
     a: ForwardRefComponent<HTMLAnchorElement, HTMLMotionProps<"a">>;
     abbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     address: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
@@ -418,7 +420,6 @@ export const motion: {
     i: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     iframe: ForwardRefComponent<HTMLIFrameElement, HTMLMotionProps<"iframe">>;
     img: ForwardRefComponent<HTMLImageElement, HTMLMotionProps<"img">>;
-    input: ForwardRefComponent<HTMLInputElement, HTMLMotionProps<"input">>;
     ins: ForwardRefComponent<HTMLModElement, HTMLMotionProps<"ins">>;
     kbd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     keygen: ForwardRefComponent<HTMLElement, HTMLMotionProps<"keygen">>;
@@ -445,7 +446,6 @@ export const motion: {
     samp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
     script: ForwardRefComponent<HTMLScriptElement, HTMLMotionProps<"script">>;
     section: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    select: ForwardRefComponent<HTMLSelectElement, HTMLMotionProps<"select">>;
     source: ForwardRefComponent<HTMLSourceElement, HTMLMotionProps<"source">>;
     span: ForwardRefComponent<HTMLSpanElement, HTMLMotionProps<"span">>;
     strong: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
