@@ -65,12 +65,18 @@ export interface Snapshot {
     style: Style
 }
 
+export enum VisibilityAction {
+    Show,
+    Hide,
+}
+
 /**
  * Optional configuration for a animate animation.
  */
 export interface AutoAnimationConfig {
     origin?: Snapshot
     target?: Snapshot
+    visibilityAction?: VisibilityAction
     transition?: Transition
     crossfadeEasing?: Easing
     type?: "switch" | "crossfade"
