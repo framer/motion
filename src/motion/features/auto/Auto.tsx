@@ -15,7 +15,14 @@ import {
     getAnimatableValues,
     resetBox,
 } from "./utils"
-import { Snapshot, Style, BoxDelta, Box, AutoAnimationConfig } from "./types"
+import {
+    Snapshot,
+    Style,
+    BoxDelta,
+    Box,
+    AutoAnimationConfig,
+    VisibilityAction,
+} from "./types"
 import {
     SharedLayoutTree,
     SharedBatchTree,
@@ -368,10 +375,28 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         opacity.set(newOpacity)
     }
 
+    setVisibility(visibilityAction: VisibilityAction) {
+        if (visibilityAction === VisibilityAction.Show) {
+            this.show()
+        } else {
+            this.hide()
+        }
+        return this.safeToRemove()
+    }
+
     /**
-     * Start an auto or shared layout animattion.
+     * Start an auto or shared layout animation.
      */
-    startAnimation({ origin, target, ...opts }: AutoAnimationConfig = {}) {
+    startAnimation({
+        origin,
+        target,
+        visibilityAction,
+        ...opts
+    }: AutoAnimationConfig = {}) {
+        if (visibilityAction !== undefined) {
+            return this.setVisibility(visibilityAction)
+        }
+
         let animations: (Promise<void> | undefined)[] = []
 
         this.visualTarget = target || this.measuredTarget
