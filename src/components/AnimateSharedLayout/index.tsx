@@ -15,6 +15,14 @@ import { batchTransitions } from "../../motion/features/auto/utils"
 // import { Easing, circOut, linear } from "@popmotion/easing"
 // import { progress } from "@popmotion/popcorn"
 import { createCrossfadeAnimation, createSwitchAnimation } from "./animations"
+import { motionValue } from "../../value"
+import { Easing, circOut, linear } from "@popmotion/easing"
+import { progress, mix } from "@popmotion/popcorn"
+
+interface Crossfade {
+    fadingIn: Auto | undefined
+    fadingOut: Auto | undefined
+}
 
 type LayoutStack = Auto[]
 type LayoutStacks = Map<string, LayoutStack>
@@ -172,18 +180,7 @@ export class AnimateSharedLayout extends React.Component<
      */
     componentDidUpdate() {
         // TODO: This would currently prevent animate children from working
-        if (!this.shouldTransition) return
-
-        /**
-         * Shared layout animations can be used without the AnimateSharedLayout wrapping component.
-         * This requires some co-ordination across components to stop layout thrashing
-         * and ensure measurements are taken at the correct time.
-         *
-         * Here we use that same mechanism of schedule/flush.
-         */
-        this.children.forEach(child => this.batch.add(child))
-        this.batch.flush(this.generateBatchHandler())
-        this.snapshots.clear()
+        this.shouldTransition && this.startAnimation()
     }
 
     /**
@@ -214,12 +211,11 @@ export class AnimateSharedLayout extends React.Component<
 
         stack.forEach(stackChild => {
             const { position } = getMetadata(stackChild)
-            if (position === StackPosition.Lead) {
-                setMetadata(stackChild, {
-                    position: StackPosition.Previous,
-                    prevPosition: StackPosition.Lead,
-                })
-            }
+            const isLead = position === StackPosition.Lead
+            setMetadata(stackChild, {
+                position: isLead ? StackPosition.Previous : undefined,
+                prevPosition: isLead ? StackPosition.Lead : undefined,
+            })
         })
 
         stack.push(child)
@@ -273,7 +269,7 @@ export class AnimateSharedLayout extends React.Component<
         }
     }
 
-    generateBatchHandler(): TransitionHandler {
+    startAnimation() {
         const { type, transition = defaultMagicTransition } = this.props
         const options = { type, transition }
 
@@ -285,7 +281,7 @@ export class AnimateSharedLayout extends React.Component<
         this.children.forEach(child => this.updateMetadata(child))
         const stackMetadata = this.getStackQuery()
 
-        return {
+        const handler: TransitionHandler = {
             snapshotTarget: child => {
                 const { layoutId, presence } = getMetadata(child)
 
@@ -306,10 +302,21 @@ export class AnimateSharedLayout extends React.Component<
                     getMetadata(child),
                     stackMetadata
                 )
+
                 child.startAnimation({ ...options, ...config })
                 this.resetMetadata(child)
             },
         }
+        /**
+         * Shared layout animations can be used without the AnimateSharedLayout wrapping component.
+         * This requires some co-ordination across components to stop layout thrashing
+         * and ensure measurements are taken at the correct time.
+         *
+         * Here we use that same mechanism of schedule/flush.
+         */
+        this.children.forEach(child => this.batch.add(child))
+        this.batch.flush(handler)
+        this.snapshots.clear()
     }
 
     getStackQuery(): StackQuery {
@@ -354,17 +361,23 @@ export class AnimateSharedLayout extends React.Component<
                 leadComponents
             ),
             isRootDepth: depth => depth === this.rootDepth,
-            getCrossfadeIn: () => 0,
-            getCrossfadeOut: () => 1,
+            getCrossfadeIn: () => (origin: number, target: number, p: number) =>
+                mix(0, target, crossfadeIn(p)),
+            getCrossfadeOut: () => (
+                origin: number,
+                _target: number,
+                p: number
+            ) => mix(origin, 0, crossfadeOut(p)),
         }
     }
 
     updateMetadata(child: Auto) {
         const { presence } = getMetadata(child)
-        if (child.isPresent() && presence === Presence.Exiting) {
-            setMetadata(child, { presence: Presence.Present })
-        } else if (!child.isPresent() && presence !== Presence.Exiting) {
+
+        if (!child.isPresent()) {
             setMetadata(child, { presence: Presence.Exiting })
+        } else if (presence !== Presence.Entering) {
+            setMetadata(child, { presence: Presence.Present })
         }
     }
 
@@ -409,15 +422,6 @@ function queryStack<T>(
     }
 }
 
-// function compress(min: number, max: number, easing: Easing): Easing {
-//     return (p: number) => {
-//         // Could replace ifs with clamp
-//         if (p < min) return 0
-//         if (p > max) return 1
-//         return easing(progress(min, max, p))
-//     }
-// }
-
 function getPreviousChild(stack: LayoutStack, index: number) {
     for (let i = index - 1; i >= 0; i--) {
         const child = stack[i]
@@ -431,174 +435,29 @@ function getPreviousChild(stack: LayoutStack, index: number) {
     if (stack.length === 2) return stack[0]
 }
 
-/**
- * Create custom handlers for the snapshotTarget and startAnimation
- * phases of the batched child processing. We batch these steps to
- * reduce read/write cycles to the DOM.
- */
-//function batchSharedLayoutChildren(): TransitionHandler {
-// { transition, type }: AutoAnimationConfig,
-// rootDepth: number,
-// stacks: LayoutStacks,
-// snapshots: Map<string, Snapshot>
-// const visible = new Map<string, Auto>()
-// const previous = new Map<string, Auto>()
-// stacks.forEach((stack, key) => {
-//     const visibleIndex = stack.findIndex(
-//         child => getChildData(child).isVisible
-//     )
-//     if (visibleIndex === -1) return
-//     visible.set(key, stack[visibleIndex])
-//     const previousChild = getPreviousChild(stack, visibleIndex)
-//     previousChild && previous.set(key, previousChild)
-// })
-// const isVisiblePresent = stackQuery(layoutId =>
-//     visible.get(layoutId)?.isPresent()
-// )
-// const isVisibleInStack = stackQuery(
-//     (layoutId, child) => visible.get(layoutId) === child,
-//     true
-// )
-// const isPreviousInStack = stackQuery(
-//     (layoutId, child) => previous.get(layoutId) === child,
-//     false
-// )
-// const getVisibleOrigin = stackQuery(
-//     layoutId => visible.get(layoutId)?.measuredOrigin
-// )
-// const getVisibleTarget = stackQuery(
-//     layoutId => visible.get(layoutId)?.measuredTarget
-// )
-// const isVisibleInStackPresent = stackQuery(layoutId => {
-//     const visibleInStack = visible.get(layoutId)
-//     return visibleInStack && visibleInStack.isPresent()
-// }, false)
-// const isOnlyMemberOfStack = stackQuery(layoutId => {
-//     const stack = stacks.get(layoutId)
-//     return !stack ? true : stack.length <= 1
-// }, true)
-// const getSnapshot = stackQuery(layoutId => snapshots.get(layoutId))
-// const isRootChild = (child: Auto) => child.depth === rootDepth
-// const getPreviousOrigin = stackQuery(
-//     (layoutId, child) =>
-//         previous.get(layoutId)?.measuredOrigin || getSnapshot(child)
-// )
-// const getPreviousTarget = stackQuery(
-//     layoutId => previous.get(layoutId)?.measuredTarget
-// )
-// function crossfadeAnimation(child: Auto) {
-//     let origin: Snapshot | undefined
-//     let target: Snapshot | undefined
-//     let crossfadeEasing: Easing | undefined
-//     const { shouldResumeFromPrevious } = getChildData(child)
-//     if (isVisibleInStack(child)) {
-//         if (child.isPresent() && shouldResumeFromPrevious) {
-//             // If this component is newly added and entering, animate out from
-//             // the previous component
-//             origin = getPreviousOrigin(child)
-//             if (
-//                 isRootChild(child) &&
-//                 !(isOnlyMemberOfStack(child) && getSnapshot(child))
-//             ) {
-//                 crossfadeEasing = crossfadeIn
-//                 origin = opacity(origin || child.measuredTarget, 0)
-//             }
-//         } else if (!child.isPresent()) {
-//             // Or if this child is being removed, animate to the previous component
-//             target = getPreviousTarget(child)
-//             if (isRootChild(child)) {
-//                 crossfadeEasing = crossfadeOut
-//                 target = opacity(target || child.measuredTarget, 0)
-//             }
-//         }
-//     } else if (isPreviousInStack(child)) {
-//         if (isVisibleInStackPresent(child)) {
-//             // If the visible child in this stack is present, animate this component to it
-//             target = getVisibleTarget(child)
-//             if (isRootChild(child)) {
-//                 crossfadeEasing = crossfadeOut
-//                 target = opacity(target, 0)
-//             }
-//         } else {
-//             // If the visible child in this stack is being removed, animate from it
-//             origin = getVisibleOrigin(child)
-//             if (isRootChild(child)) {
-//                 crossfadeEasing = crossfadeIn
-//             }
-//         }
-//     }
-//     if (isVisibleInStack(child) || isPreviousInStack(child)) {
-//         child.startAnimation({
-//             origin,
-//             target,
-//             transition,
-//             crossfadeEasing,
-//         })
-//     } else {
-//         child.hide()
-//     }
-// }
-// function switchAnimation(child: Auto) {
-//     const {
-//         isVisible,
-//         shouldResumeFromPrevious,
-//         shouldRestoreVisibility,
-//     } = getChildData(child)
-//     if (!isVisible) {
-//         child.hide()
-//     } else {
-//         let origin: Snapshot | undefined
-//         let target: Snapshot | undefined
-//         if (child.isPresent()) {
-//             if (shouldResumeFromPrevious) {
-//                 origin = getPreviousOrigin(child)
-//             }
-//             if (shouldRestoreVisibility) {
-//                 child.show()
-//                 return
-//             }
-//         } else {
-//             target = getPreviousTarget(child)
-//         }
-//         child.startAnimation({ origin, target, transition })
-//     }
-// }
-// const animation =
-//     type === "crossfade" ? crossfadeAnimation : switchAnimation
-// return {
-//     snapshotTarget: child => {
-//         const { shouldResumeFromPrevious } = getChildData(child)
-//         if (
-//             isAutoAnimate(child) ||
-//             shouldResumeFromPrevious ||
-//             isVisiblePresent(child)
-//         ) {
-//             child.snapshotTarget()
-//         }
-//     },
-//     startAnimation: child => {
-//         animation(child)
-//         setChildData(child, {
-//             shouldResumeFromPrevious: false,
-//         })
-//     },
-// }
-//}
-
-//const crossfadeIn = compress(0, 0.5, circOut)
-//const crossfadeOut = compress(0.5, 0.95, linear)
-
-// function opacity(snapshot?: Snapshot, value: number = 1) {
-//     if (!snapshot) return
-//     return {
-//         ...snapshot,
-//         style: {
-//             ...snapshot.style,
-//             opacity: value,
-//         },
-//     }
-// }
+function opacity(snapshot?: Snapshot, value: number = 1) {
+    if (!snapshot) return
+    return {
+        ...snapshot,
+        style: {
+            ...snapshot.style,
+            opacity: value,
+        },
+    }
+}
 
 function isAutoAnimate(child: Auto) {
     return child.props.animate === true
 }
+
+function compress(min: number, max: number, easing: Easing): Easing {
+    return (p: number) => {
+        // Could replace ifs with clamp
+        if (p < min) return 0
+        if (p > max) return 1
+        return easing(progress(min, max, p))
+    }
+}
+
+const crossfadeIn = compress(0, 0.5, circOut)
+const crossfadeOut = compress(0.5, 0.95, linear)

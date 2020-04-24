@@ -15,23 +15,17 @@ import {
     getAnimatableValues,
     resetBox,
 } from "./utils"
-import {
-    Snapshot,
-    Style,
-    BoxDelta,
-    Box,
-    AutoAnimationConfig,
-    VisibilityAction,
-} from "./types"
+import { Snapshot, Style, BoxDelta, Box, AutoAnimationConfig } from "./types"
 import {
     SharedLayoutTree,
     SharedBatchTree,
+    VisibilityAction,
 } from "../../../components/AnimateSharedLayout/types"
 import { MotionValue } from "../../../value"
 import { syncRenderSession } from "../../../dom/sync-render-session"
 import { TargetAndTransition, Point } from "../../../types"
 import { startAnimation } from "../../../animation/utils/transitions"
-import { mix } from "@popmotion/popcorn"
+import { mix, progress } from "@popmotion/popcorn"
 import {
     usePresence,
     SafeToRemove,
@@ -40,6 +34,7 @@ import { defaultMagicValues, AutoValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
 import { elementDragControls } from "../../../behaviours/ComponentDragControls"
+import { Easing, circOut, linear } from "@popmotion/easing"
 export { SharedLayoutTree, SharedBatchTree }
 
 /**
@@ -499,7 +494,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         x.stop()
         y.stop()
 
-        const opacity = values.get("opacity", this.visualOrigin.style.opacity)
+        const opacity = values.get("opacity", originStyle.opacity)
 
         const frame = () => {
             // TODO: Break up each of these so we can animate separately
@@ -514,13 +509,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
                 updater && updater(p)
             }
 
-            if (opts.crossfadeEasing) {
+            if (opts.crossfade) {
                 opacity.set(
-                    mix(
-                        originStyle.opacity,
-                        targetStyle.opacity,
-                        opts.crossfadeEasing(p)
-                    )
+                    opts.crossfade(originStyle.opacity, targetStyle.opacity, p)
                 )
             }
         }
@@ -602,7 +593,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
         for (let i = 0; i < numAnimatableStyles; i++) {
             const key = this.animatableStyles[i]
-            if (key === "opacity" && opts.crossfadeEasing) continue
+            if (key === "opacity" && opts.crossfade) continue
             const originStyle = this.visualOrigin.style[key]
             const nextStyle = this.visualTarget.style[key]
 
@@ -617,17 +608,6 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
         const { transition, controls } = this.props
         target.transition = opts.transition || transition || {}
-
-        if (opts.crossfadeEasing) {
-            target.transition = {
-                opacity: {
-                    ...target.transition,
-                    type: "tween",
-                    ease: opts.crossfadeEasing,
-                },
-                default: { ...target.transition },
-            }
-        }
 
         if (shouldAnimateStyle) {
             return controls.start(target)
