@@ -1,5 +1,6 @@
 import { Transition } from "../../../types"
 import { Easing } from "@popmotion/easing"
+import { VisibilityAction } from "../../../components/AnimateSharedLayout/types"
 
 /**
  * Description of a single axis. min/max is an abstraction of left/right top/bottom front/back
@@ -65,11 +66,6 @@ export interface Snapshot {
     style: Style
 }
 
-export enum VisibilityAction {
-    Show,
-    Hide,
-}
-
 /**
  * Optional configuration for a animate animation.
  */
@@ -80,6 +76,7 @@ export interface AutoAnimationConfig {
     transition?: Transition
     crossfadeEasing?: Easing
     type?: "switch" | "crossfade"
+    crossfade?: any
 }
 
 export interface AutoAnimateProps {

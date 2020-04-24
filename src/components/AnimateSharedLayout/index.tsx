@@ -6,6 +6,7 @@ import {
     Presence,
     LayoutMetadata,
     StackQuery,
+    StackPosition,
 } from "./types"
 import { Snapshot } from "../../motion/features/auto/types"
 import { SharedLayoutContext } from "./SharedLayoutContext"
@@ -193,10 +194,11 @@ export class AnimateSharedLayout extends React.Component<
         this.children.add(child)
 
         setMetadata(child, {
+            depth: child.depth,
             layoutId: child.props.layoutId,
             presence: this.hasMounted ? Presence.Entering : Presence.Present,
-            isLead: true,
-            wasLead: false,
+            position: StackPosition.Lead,
+            prevPosition: StackPosition.Lead,
         })
 
         this.addChildToStack(child)
@@ -211,11 +213,11 @@ export class AnimateSharedLayout extends React.Component<
         const stack = this.getStack(layoutId)
 
         stack.forEach(stackChild => {
-            const { isLead } = getMetadata(stackChild)
-            if (isLead) {
+            const { position } = getMetadata(stackChild)
+            if (position === StackPosition.Lead) {
                 setMetadata(stackChild, {
-                    isLead: false,
-                    wasLead: true,
+                    position: StackPosition.Previous,
+                    prevPosition: StackPosition.Lead,
                 })
             }
         })
@@ -243,8 +245,8 @@ export class AnimateSharedLayout extends React.Component<
 
         if (previousChild) {
             setMetadata(previousChild, {
-                isLead: true,
-                wasLead: false,
+                position: StackPosition.Lead,
+                prevPosition: StackPosition.Previous,
             })
         }
     }
@@ -316,7 +318,7 @@ export class AnimateSharedLayout extends React.Component<
 
         this.stacks.forEach((stack, key) => {
             const leadIndex = stack.findIndex(
-                child => getMetadata(child).isLead
+                child => getMetadata(child).position === StackPosition.Lead
             )
             if (leadIndex === -1) return
 
@@ -339,6 +341,21 @@ export class AnimateSharedLayout extends React.Component<
                 previous => previous && previous.measuredTarget,
                 previousComponents
             ),
+            getLeadOrigin: queryStack(
+                lead => lead?.measuredOrigin,
+                leadComponents
+            ),
+            getLeadTarget: queryStack(
+                lead => lead?.measuredTarget,
+                leadComponents
+            ),
+            getLead: queryStack(
+                lead => lead && getMetadata(lead),
+                leadComponents
+            ),
+            isRootDepth: depth => depth === this.rootDepth,
+            getCrossfadeIn: () => 0,
+            getCrossfadeOut: () => 1,
         }
     }
 
@@ -355,7 +372,7 @@ export class AnimateSharedLayout extends React.Component<
      * Reset the metadata
      */
     resetMetadata(child: Auto) {
-        const { presence, isLead } = getMetadata(child)
+        const { presence } = getMetadata(child)
         const newData: Partial<LayoutMetadata> = {}
 
         // If the component was entering it can be considered entered now
@@ -364,9 +381,9 @@ export class AnimateSharedLayout extends React.Component<
         }
 
         // If on this render the component is the lead, set to was lead for the next frame
-        if (isLead) {
-            newData.wasLead = true
-        }
+        // if (isLead) {
+        //     newData.wasLead = true
+        // }
 
         setMetadata(child, newData)
     }
