@@ -1,20 +1,25 @@
 //import { Auto } from "../../motion/features/auto/Auto"
+import { Snapshot, AutoAnimationConfig } from "../../motion/features/auto/types"
 import {
-    Snapshot,
-    AutoAnimationConfig,
+    LayoutMetadata,
+    Presence,
+    StackQuery,
     VisibilityAction,
-} from "../../motion/features/auto/types"
-import { LayoutMetadata, Presence, StackQuery } from "./types"
+    StackPosition,
+} from "./types"
 
 export function createSwitchAnimation(
-    { layoutId, presence, isLead, wasLead }: LayoutMetadata,
+    { layoutId, presence, position, prevPosition }: LayoutMetadata,
     stack: StackQuery
 ): AutoAnimationConfig {
-    if (presence !== Presence.Entering && isLead !== wasLead) {
+    // TODO Switch prevPosition to see if this is lead, then we
+    // can remove prevPosition
+    if (presence !== Presence.Entering && position !== prevPosition) {
         return {
-            visibilityAction: isLead
-                ? VisibilityAction.Show
-                : VisibilityAction.Hide,
+            visibilityAction:
+                position === StackPosition.Lead
+                    ? VisibilityAction.Show
+                    : VisibilityAction.Hide,
         }
     }
 
@@ -31,36 +36,45 @@ export function createSwitchAnimation(
 }
 
 export function createCrossfadeAnimation(
-    _metadata: LayoutMetadata
+    { layoutId, presence, position, depth }: LayoutMetadata,
+    stack: StackQuery
 ): AutoAnimationConfig {
-    const animationConfig = {}
-    return animationConfig
+    const config: AutoAnimationConfig = {}
+
+    if (position === StackPosition.Lead) {
+        if (presence === Presence.Entering) {
+            config.origin = stack.getPreviousOrigin(layoutId)
+        } else if (presence === Presence.Exiting) {
+            config.target = stack.getPreviousTarget(layoutId)
+        }
+    } else if (position === StackPosition.Previous) {
+        const lead = stack.getLead(layoutId)
+        if (lead && lead.presence === Presence.Entering) {
+            config.target = stack.getLeadTarget(layoutId)
+        } else if (lead && lead.presence === Presence.Exiting) {
+            config.origin = stack.getLeadOrigin(layoutId)
+        }
+    }
+
+    // Handle crossfade opacity
+    if (stack.isRootDepth(depth)) {
+        if (position === StackPosition.Lead || layoutId === undefined) {
+            if (presence === Presence.Entering) {
+                config.crossfade = stack.getCrossfadeIn()
+            } else if (presence === Presence.Exiting) {
+                config.crossfade = stack.getCrossfadeOut()
+            }
+        } else if (position === StackPosition.Previous) {
+            const lead = stack.getLead(layoutId)
+            if (!lead || (lead && lead.presence === Presence.Entering)) {
+                config.crossfade = stack.getCrossfadeOut()
+            } else if (lead && lead.presence === Presence.Exiting) {
+                config.crossfade = stack.getCrossfadeIn()
+            }
+        } else {
+            config.visibilityAction = VisibilityAction.Hide
+        }
+    }
+
+    return config
 }
-
-// function switchAnimation(child: Auto) {
-//   const {
-//       isVisible,
-//       shouldResumeFromPrevious,
-//       shouldRestoreVisibility,
-//   } = getChildData(child)
-
-//   if (!isVisible) {
-//       child.hide()
-//   } else {
-
-//       if (child.isPresent()) {
-//           if (shouldResumeFromPrevious) {
-//               origin = getPreviousOrigin(child)
-//           }
-
-//           if (shouldRestoreVisibility) {
-//               child.show()
-//               return
-//           }
-//       } else {
-//           target = getPreviousTarget(child)
-//       }
-
-//       child.startAnimation({ origin, target, transition })
-//   }
-// }

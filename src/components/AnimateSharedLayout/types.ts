@@ -9,18 +9,35 @@ export enum Presence {
 }
 
 export interface LayoutMetadata {
-    layoutId: string | undefined
+    layoutId?: string
     presence: Presence
     origin?: Snapshot | undefined
     target?: Snapshot | undefined
-    isLead: boolean
-    wasLead: boolean
+    position?: StackPosition
+    prevPosition?: StackPosition
+    depth: number
 }
 
 export interface StackQuery {
     isLeadPresent: (id: string | undefined) => boolean | undefined
+    getLead: (id: string | undefined) => LayoutMetadata | undefined
     getPreviousOrigin: (id: string | undefined) => Snapshot | undefined
     getPreviousTarget: (id: string | undefined) => Snapshot | undefined
+    getLeadOrigin: (id: string | undefined) => Snapshot | undefined
+    getLeadTarget: (id: string | undefined) => Snapshot | undefined
+    getCrossfadeOut: () => any
+    getCrossfadeIn: () => any
+    isRootDepth: (depth: number) => boolean
+}
+
+export enum VisibilityAction {
+    Show,
+    Hide,
+}
+
+export enum StackPosition {
+    Lead,
+    Previous,
 }
 
 /**
