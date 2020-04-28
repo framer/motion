@@ -187,7 +187,7 @@ function Store() {
     const [open, setOpen] = useState<string | false>(false)
 
     return (
-        <AnimateSharedLayout type="crossfade">
+        <AnimateSharedLayout type="crossfade" transition={{ duration: 2 }}>
             <List selectedId={open} setOpen={setOpen} />
             <AnimatePresence>
                 {open && <Item id={open} setOpen={setOpen} />}
