@@ -47,22 +47,23 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
     // (undocumented)
     componentDidMount(): void;
     componentDidUpdate(): void;
-    // Warning: (ae-forgotten-export) The symbol "TransitionHandler" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    generateBatchHandler(): TransitionHandler;
     getSnapshotBeforeUpdate(): null;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id: string): LayoutStack;
+    // Warning: (ae-forgotten-export) The symbol "StackQuery" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    getStackQuery(): StackQuery;
     // (undocumented)
     removeChild(child: Auto): void;
     // (undocumented)
     removeChildFromStack(child: Auto): void;
     // (undocumented)
     render(): JSX.Element;
-    resetMetadata(child: Auto): void;
     setRootDepth(child: Auto): void;
     shouldComponentUpdate(nextProps: SharedLayoutProps, nextState: SharedLayoutTree): boolean;
+    // (undocumented)
+    startAnimation(): void;
     // (undocumented)
     state: {
         forceRender: () => void;
@@ -70,10 +71,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
     };
     // (undocumented)
     updateMetadata(child: Auto): void;
-    // Warning: (ae-forgotten-export) The symbol "StackQuery" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    updateStackMetadata(): StackQuery;
 }
 
 // @public
@@ -312,7 +309,6 @@ export const motion: {
     image: ForwardRefComponent<SVGImageElement, SVGMotionProps<SVGImageElement>>;
     text: ForwardRefComponent<SVGTextElement, SVGMotionProps<SVGTextElement>>;
     circle: ForwardRefComponent<SVGCircleElement, SVGMotionProps<SVGCircleElement>>;
-    switch: ForwardRefComponent<SVGSwitchElement, SVGMotionProps<SVGSwitchElement>>;
     animate: ForwardRefComponent<SVGElement, SVGMotionProps<SVGElement>>;
     svg: ForwardRefComponent<SVGSVGElement, SVGMotionProps<SVGSVGElement>>;
     defs: ForwardRefComponent<SVGDefsElement, SVGMotionProps<SVGDefsElement>>;
@@ -355,6 +351,7 @@ export const motion: {
     radialGradient: ForwardRefComponent<SVGRadialGradientElement, SVGMotionProps<SVGRadialGradientElement>>;
     rect: ForwardRefComponent<SVGRectElement, SVGMotionProps<SVGRectElement>>;
     stop: ForwardRefComponent<SVGStopElement, SVGMotionProps<SVGStopElement>>;
+    switch: ForwardRefComponent<SVGSwitchElement, SVGMotionProps<SVGSwitchElement>>;
     textPath: ForwardRefComponent<SVGTextPathElement, SVGMotionProps<SVGTextPathElement>>;
     tspan: ForwardRefComponent<SVGTSpanElement, SVGMotionProps<SVGTSpanElement>>;
     use: ForwardRefComponent<SVGUseElement, SVGMotionProps<SVGUseElement>>;
@@ -675,7 +672,7 @@ export function resolveMotionValue(value?: string | number | CustomValueType | M
 // Warning: (ae-internal-missing-underscore) The name "SharedLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const SharedLayoutContext: import("react").Context<SharedLayoutTree | SharedBatchTree>;
+export const SharedLayoutContext: import("react").Context<SharedBatchTree | SharedLayoutTree>;
 
 // @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
@@ -852,7 +849,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/components/AnimateSharedLayout/index.d.ts:50:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
+// types/components/AnimateSharedLayout/index.d.ts:53:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

@@ -12,17 +12,9 @@ import { Snapshot } from "../../motion/features/auto/types"
 import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Auto } from "../../motion/features/auto/Auto"
 import { batchTransitions } from "../../motion/features/auto/utils"
-// import { Easing, circOut, linear } from "@popmotion/easing"
-// import { progress } from "@popmotion/popcorn"
 import { createCrossfadeAnimation, createSwitchAnimation } from "./animations"
-import { motionValue } from "../../value"
 import { Easing, circOut, linear } from "@popmotion/easing"
 import { progress, mix } from "@popmotion/popcorn"
-
-interface Crossfade {
-    fadingIn: Auto | undefined
-    fadingOut: Auto | undefined
-}
 
 type LayoutStack = Auto[]
 type LayoutStacks = Map<string, LayoutStack>
@@ -39,7 +31,7 @@ const defaultMagicTransition = {
 const metadata = new WeakMap<Auto, LayoutMetadata>()
 
 function getMetadata(child: Auto): LayoutMetadata {
-    return (metadata.get(child) as LayoutMetadata) || { isVisible: true }
+    return (metadata.get(child) as LayoutMetadata) || {}
 }
 
 function setMetadata(child: Auto, newData: Partial<LayoutMetadata>) {
@@ -100,6 +92,9 @@ export class AnimateSharedLayout extends React.Component<
          * Allow children, like AnimatePresence, to force-render this component
          * to ensure animate children correctly identify parallel state changes that
          * might affect their layout.
+         *
+         * TODO: Don't trigger rerender in the middle of layout animation, just mark
+         * as rerenderable
          */
         forceRender: (): void => this.setState({ ...this.state }),
 
@@ -209,13 +204,33 @@ export class AnimateSharedLayout extends React.Component<
 
         const stack = this.getStack(layoutId)
 
-        stack.forEach(stackChild => {
+        stack.forEach((stackChild, i) => {
             const { position } = getMetadata(stackChild)
             const isLead = position === StackPosition.Lead
-            setMetadata(stackChild, {
-                position: isLead ? StackPosition.Previous : undefined,
-                prevPosition: isLead ? StackPosition.Lead : undefined,
-            })
+
+            if (isLead && !stackChild.isPresent() && i > 0) {
+                /**
+                 * If this is the lead component, but it's leaving the tree,
+                 * **and** we have a previous component, we can consider this
+                 * superseded by the new component
+                 */
+                setMetadata(stackChild, {
+                    position: undefined,
+                    prevPosition: StackPosition.Lead,
+                })
+
+                // TODO Replace this with a search
+                const previousChild = stack[i - 1]
+                setMetadata(previousChild, {
+                    position: StackPosition.Previous,
+                    prevPosition: undefined,
+                })
+            } else {
+                setMetadata(stackChild, {
+                    position: isLead ? StackPosition.Previous : undefined,
+                    prevPosition: isLead ? StackPosition.Lead : undefined,
+                })
+            }
         })
 
         stack.push(child)
@@ -279,7 +294,7 @@ export class AnimateSharedLayout extends React.Component<
                 : createSwitchAnimation
 
         this.children.forEach(child => this.updateMetadata(child))
-        const stackMetadata = this.getStackQuery()
+        const stackQuery = this.getStackQuery()
 
         const handler: TransitionHandler = {
             snapshotTarget: child => {
@@ -292,19 +307,28 @@ export class AnimateSharedLayout extends React.Component<
                     presence !== Presence.Exiting ||
                     // If the lead component in the stack is present, snapshot
                     // TODO: Figure out what this breaks if removed
-                    stackMetadata.isLeadPresent(layoutId)
+                    stackQuery.isLeadPresent(layoutId)
                 ) {
                     child.snapshotTarget()
                 }
             },
             startAnimation: child => {
-                const config = createAnimation(
-                    getMetadata(child),
-                    stackMetadata
-                )
+                const childData = getMetadata(child)
+                const config = createAnimation(childData, stackQuery)
 
-                child.startAnimation({ ...options, ...config })
-                this.resetMetadata(child)
+                const animation = child.startAnimation({
+                    ...options,
+                    ...config,
+                })
+
+                // If this component is entering, consider the end of this animation
+                // when it's present
+                if (animation && childData.presence === Presence.Entering) {
+                    animation.then(() => {
+                        child.isPresent() &&
+                            setMetadata(child, { presence: Presence.Present })
+                    })
+                }
             },
         }
         /**
@@ -361,8 +385,11 @@ export class AnimateSharedLayout extends React.Component<
                 leadComponents
             ),
             isRootDepth: depth => depth === this.rootDepth,
-            getCrossfadeIn: () => (origin: number, target: number, p: number) =>
-                mix(0, target, crossfadeIn(p)),
+            getCrossfadeIn: () => (
+                _origin: number,
+                target: number,
+                p: number
+            ) => mix(0, target, crossfadeIn(p)),
             getCrossfadeOut: () => (
                 origin: number,
                 _target: number,
@@ -379,26 +406,6 @@ export class AnimateSharedLayout extends React.Component<
         } else if (presence !== Presence.Entering) {
             setMetadata(child, { presence: Presence.Present })
         }
-    }
-
-    /**
-     * Reset the metadata
-     */
-    resetMetadata(child: Auto) {
-        const { presence } = getMetadata(child)
-        const newData: Partial<LayoutMetadata> = {}
-
-        // If the component was entering it can be considered entered now
-        if (presence === Presence.Entering) {
-            newData.presence = Presence.Present
-        }
-
-        // If on this render the component is the lead, set to was lead for the next frame
-        // if (isLead) {
-        //     newData.wasLead = true
-        // }
-
-        setMetadata(child, newData)
     }
 
     render() {
@@ -433,17 +440,6 @@ function getPreviousChild(stack: LayoutStack, index: number) {
     // If we only have two children, always return the first one
     // even if it isn't present
     if (stack.length === 2) return stack[0]
-}
-
-function opacity(snapshot?: Snapshot, value: number = 1) {
-    if (!snapshot) return
-    return {
-        ...snapshot,
-        style: {
-            ...snapshot.style,
-            opacity: value,
-        },
-    }
 }
 
 function isAutoAnimate(child: Auto) {

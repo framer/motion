@@ -33,7 +33,7 @@ const card = {
 
 function A({ debugId }) {
     return (
-        <motion.div layoutId="cover" debugId={debugId} style={screen}>
+        <motion.div debugId={debugId} style={screen}>
             <motion.div
                 layoutId="card"
                 debugId={debugId}
@@ -45,7 +45,7 @@ function A({ debugId }) {
 
 function B({ debugId }) {
     return (
-        <motion.div layoutId="cover" style={screen}>
+        <motion.div style={screen}>
             <motion.div
                 layoutId="card"
                 debugId={debugId}
