@@ -25,7 +25,7 @@ import { MotionValue } from "../../../value"
 import { syncRenderSession } from "../../../dom/sync-render-session"
 import { TargetAndTransition, Point } from "../../../types"
 import { startAnimation } from "../../../animation/utils/transitions"
-import { mix, progress } from "@popmotion/popcorn"
+import { mix } from "@popmotion/popcorn"
 import {
     usePresence,
     SafeToRemove,
@@ -34,7 +34,6 @@ import { defaultMagicValues, AutoValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
 import { elementDragControls } from "../../../behaviours/ComponentDragControls"
-import { Easing, circOut, linear } from "@popmotion/easing"
 export { SharedLayoutTree, SharedBatchTree }
 
 /**
@@ -356,9 +355,10 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      */
     hide() {
         this.stopLayoutAnimation && this.stopLayoutAnimation()
-        const { values } = this.props
+        const { values, nativeElement } = this.props
         const opacity = values.get("opacity", 0)
         opacity.set(0)
+        nativeElement.render()
 
         if (!this.isPresent()) this.safeToRemove()
     }
@@ -392,6 +392,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             return this.setVisibility(visibilityAction)
         }
 
+        let animationPromise: Promise<void> | undefined
         let animations: (Promise<void> | undefined)[] = []
 
         // Restore rotation before any writes. If we don't do this, and for whatever
@@ -428,7 +429,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
                 this.startStyleAnimation(opts),
             ].filter(Boolean)
 
-            Promise.all(animations).then(() => {
+            animationPromise = Promise.all(animations).then(() => {
                 const { onMagicComplete } = this.props
                 onMagicComplete && onMagicComplete()
             })
@@ -442,6 +443,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
         // Force render to ensure there's no flashes of unstyled content from the reset
         nativeElement.render()
+
+        return animationPromise
     }
 
     /**
