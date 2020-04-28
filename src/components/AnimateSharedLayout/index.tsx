@@ -4,10 +4,10 @@ import {
     SharedLayoutProps,
     TransitionHandler,
     Presence,
-    LayoutMetadata,
     StackQuery,
     StackPosition,
 } from "./types"
+import { getMetadata, setMetadata } from "./metadata"
 import { Snapshot } from "../../motion/features/auto/types"
 import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Auto } from "../../motion/features/auto/Auto"
@@ -22,21 +22,6 @@ type LayoutStacks = Map<string, LayoutStack>
 const defaultMagicTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
-}
-
-/**
- * Every render we analyse each child and create a map of data about the
- * following shared layout transition
- */
-const metadata = new WeakMap<Auto, LayoutMetadata>()
-
-function getMetadata(child: Auto): LayoutMetadata {
-    return (metadata.get(child) as LayoutMetadata) || {}
-}
-
-function setMetadata(child: Auto, newData: Partial<LayoutMetadata>) {
-    const data = getMetadata(child)
-    metadata.set(child, { ...data, ...newData })
 }
 
 /**
@@ -203,6 +188,7 @@ export class AnimateSharedLayout extends React.Component<
         if (layoutId === undefined) return
 
         const stack = this.getStack(layoutId)
+        stack.add(child)
 
         stack.forEach((stackChild, i) => {
             const { position } = getMetadata(stackChild)
@@ -229,6 +215,9 @@ export class AnimateSharedLayout extends React.Component<
                 setMetadata(stackChild, {
                     position: isLead ? StackPosition.Previous : undefined,
                     prevPosition: isLead ? StackPosition.Lead : undefined,
+                    presence: stackChild.isPresent()
+                        ? Presence.Present
+                        : Presence.Exiting,
                 })
             }
         })
@@ -293,7 +282,16 @@ export class AnimateSharedLayout extends React.Component<
                 ? createCrossfadeAnimation
                 : createSwitchAnimation
 
-        this.children.forEach(child => this.updateMetadata(child))
+        this.children.forEach(child => {
+            const { presence } = getMetadata(child)
+
+            if (!child.isPresent()) {
+                setMetadata(child, { presence: Presence.Exiting })
+            } else if (presence !== Presence.Entering) {
+                setMetadata(child, { presence: Presence.Present })
+            }
+        })
+
         const stackQuery = this.getStackQuery()
 
         const handler: TransitionHandler = {
@@ -395,16 +393,6 @@ export class AnimateSharedLayout extends React.Component<
                 _target: number,
                 p: number
             ) => mix(origin, 0, crossfadeOut(p)),
-        }
-    }
-
-    updateMetadata(child: Auto) {
-        const { presence } = getMetadata(child)
-
-        if (!child.isPresent()) {
-            setMetadata(child, { presence: Presence.Exiting })
-        } else if (presence !== Presence.Entering) {
-            setMetadata(child, { presence: Presence.Present })
         }
     }
 
