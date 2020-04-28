@@ -69,8 +69,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
         forceRender: () => void;
         register: (child: Auto) => () => void;
     };
-    // (undocumented)
-    updateMetadata(child: Auto): void;
 }
 
 // @public

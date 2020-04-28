@@ -499,3 +499,36 @@ describe("createCrossfadeAnimation", () => {
         ).toEqual({ visibilityAction: VisibilityAction.Hide })
     })
 })
+
+test("Fade out final lead root component: [A1] -> [A1 (exiting)]", () => {
+    const lead = {
+        layoutId: "a",
+        position: StackPosition.Lead,
+        presence: Presence.Exiting,
+        depth: 0,
+    }
+
+    const stack: StackQuery = {
+        isLeadPresent: () => true,
+        getPreviousOrigin: () => undefined as any,
+        getPreviousTarget: () => undefined as any,
+        isRootDepth: () => true,
+        getCrossfadeOut: () => 0 as any,
+        getCrossfadeIn: () => 1 as any,
+        getLeadOrigin: () => undefined as any,
+        getLeadTarget: () => undefined as any,
+        getLead: () => lead,
+    }
+    // A1
+    expect(
+        createCrossfadeAnimation(
+            {
+                layoutId: "a",
+                position: StackPosition.Lead,
+                presence: Presence.Exiting,
+                depth: 0,
+            },
+            stack
+        )
+    ).toEqual({ crossfade: 0 })
+})
