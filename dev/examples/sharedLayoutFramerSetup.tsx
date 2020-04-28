@@ -32,15 +32,7 @@ const card = {
 }
 
 function A({ debugId }) {
-    return (
-        <motion.div debugId={debugId} style={screen}>
-            <motion.div
-                layoutId="card"
-                debugId={debugId}
-                style={{ ...card, background: "blue" }}
-            ></motion.div>
-        </motion.div>
-    )
+    return <motion.div debugId={debugId} style={screen}></motion.div>
 }
 
 function B({ debugId }) {
@@ -55,10 +47,22 @@ function B({ debugId }) {
     )
 }
 
+function C({ debugId }) {
+    return (
+        <motion.div debugId={debugId} style={screen}>
+            <motion.div
+                layoutId="card"
+                debugId={debugId}
+                style={{ ...card, background: "blue" }}
+            ></motion.div>
+        </motion.div>
+    )
+}
+
 export const App = () => {
     const [page, setPage] = useState(0)
     const [count, setCount] = useState(0)
-
+    console.log(count)
     return (
         <Container
             onClick={() => {
@@ -73,9 +77,10 @@ export const App = () => {
             >
                 <AnimatePresence>
                     <A key="a" debugId="a" />
-                    {page === 1 && (
-                        <B key={`b-${count}`} debugId={`b-${count}`} />
+                    {count >= 1 && count <= 3 && (
+                        <B key={`b-1`} debugId={`b-${count}`} />
                     )}
+                    {count === 2 && <C key={`b-2`} debugId={`b-${count}`} />}
                 </AnimatePresence>
             </AnimateSharedLayout>
         </Container>
