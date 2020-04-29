@@ -74,6 +74,7 @@ export class AnimateSharedLayout extends React.Component<
 
     componentDidMount() {
         this.hasMounted = true
+        this.stacks.forEach(stack => stack.updateLeadAndFollow())
     }
 
     /**
@@ -212,13 +213,19 @@ export class AnimateSharedLayout extends React.Component<
                 ? createCrossfadeAnimation
                 : createSwitchAnimation
 
+        // Update presence metadata based on latest AnimatePresence status
         this.children.forEach(child => {
             if (!child.isPresent()) {
                 child.presence = Presence.Exiting
             } else if (child.presence !== Presence.Entering) {
-                child.presence = Presence.Present
+                child.presence =
+                    child.presence === Presence.Exiting
+                        ? Presence.Entering
+                        : Presence.Present
             }
         })
+
+        this.stacks.forEach(stack => stack.updateLeadAndFollow())
 
         const handler: TransitionHandler = {
             snapshotTarget: child => {
@@ -254,9 +261,7 @@ export class AnimateSharedLayout extends React.Component<
                     ...config,
                 })
 
-                // If this component is entering, consider the end of this animation
-                // when it's present
-                if (animation && child.presence === Presence.Entering) {
+                if (animation) {
                     animation.then(() => {
                         if (child.isPresent()) child.presence = Presence.Present
                     })

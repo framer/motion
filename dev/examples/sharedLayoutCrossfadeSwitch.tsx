@@ -52,11 +52,11 @@ export const App = () => {
             <AnimateSharedLayout type="crossfade">
                 <AnimatePresence>
                     {isOn ? (
-                        <Small key="a" layoutId="letter">
+                        <Small key="a" debugId="a" layoutId="letter">
                             A
                         </Small>
                     ) : (
-                        <Small key="b" layoutId="letter">
+                        <Small key="b" debugId="b" layoutId="letter">
                             B
                         </Small>
                     )}
