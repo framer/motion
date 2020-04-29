@@ -13,8 +13,8 @@ export interface PresenceMetadata {
 }
 
 export enum VisibilityAction {
-    Show,
     Hide,
+    Show,
 }
 
 export enum StackPosition {

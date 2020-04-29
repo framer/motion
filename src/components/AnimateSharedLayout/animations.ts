@@ -9,18 +9,15 @@ export function createSwitchAnimation(
     _isRoot: boolean,
     stack?: LayoutStack
 ): AutoAnimationConfig {
-    if (
+    if (stack && child !== stack.lead) {
+        return { visibilityAction: VisibilityAction.Hide }
+    } else if (
         stack &&
         child.presence !== Presence.Entering &&
-        (child === stack.lead || child === stack.prevLead) &&
+        child === stack.lead &&
         stack.lead !== stack.prevLead
     ) {
-        return {
-            visibilityAction:
-                child === stack.lead
-                    ? VisibilityAction.Show
-                    : VisibilityAction.Hide,
-        }
+        return { visibilityAction: VisibilityAction.Show }
     }
 
     let origin: Snapshot | undefined

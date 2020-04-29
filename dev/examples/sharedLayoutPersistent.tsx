@@ -15,15 +15,21 @@ export const App = () => {
 
     return (
         <div style={container} onClick={() => setIsOn(!isOn)}>
-            <AnimateSharedLayout>
+            <AnimateSharedLayout type="crossfade">
                 <div style={outline}>
-                    <motion.div layoutId="box" id="source-box" style={box} />
+                    <motion.div
+                        layoutId="box"
+                        debugId="source"
+                        id="source-box"
+                        style={box}
+                    />
                 </div>
 
                 <div style={{ ...outline, width: 400, height: 400 }}>
                     <AnimatePresence>
                         {isOn && (
                             <motion.div
+                                debugId="overlay"
                                 layoutId="box"
                                 id="target-box"
                                 style={{
