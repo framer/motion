@@ -49,11 +49,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, Shar
     componentDidUpdate(): void;
     getSnapshotBeforeUpdate(): null;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
-    getStack(id: string): LayoutStack;
-    // Warning: (ae-forgotten-export) The symbol "StackQuery" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    getStackQuery(): StackQuery;
+    getStack(id: string): LayoutStack<Auto>;
     // (undocumented)
     removeChild(child: Auto): void;
     // (undocumented)
@@ -847,7 +843,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/components/AnimateSharedLayout/index.d.ts:53:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
+// types/components/AnimateSharedLayout/index.d.ts:48:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

@@ -361,6 +361,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      * enters the tree that shares this component's layoutId.
      */
     hide() {
+        this.delta.isVisible = false
         this.stopLayoutAnimation && this.stopLayoutAnimation()
         const { values, nativeElement } = this.props
         const opacity = values.get("opacity", 0)
@@ -371,6 +372,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     show() {
+        this.delta.isVisible = true
         const { values, style } = this.props
         const opacity = values.get("opacity", 1)
         const newOpacity = style ? resolve(1, style.opacity) : 1
