@@ -1,4 +1,4 @@
-import { Child, findLeadAndFollow, LeadAndFollow } from "../stack"
+import { Stack, StackChild, findLeadAndFollow, LeadAndFollow } from "../stack"
 
 let id = 0
 
@@ -7,20 +7,12 @@ function makeChild(isPresent = true) {
     return { id, isPresent: () => isPresent }
 }
 
-// function get(stack: Stack) {
-//     return (stack as any).order
-// }
-
-// function set(stack: Stack, order: any) {
-//     ;(stack as any).order = order
-// }
-
-function testFindLead(
-    stack: Child[],
-    previous: Array<Child | undefined>,
-    expected: Array<Child | undefined>
+function testFindLead<T extends StackChild>(
+    stack: T[],
+    previous: Array<T | undefined>,
+    expected: Array<T | undefined>
 ) {
-    const [lead, prev] = findLeadAndFollow(stack, previous as LeadAndFollow)
+    const [lead, prev] = findLeadAndFollow(stack, previous as LeadAndFollow<T>)
     expect(lead).toBe(expected[0])
     expect(prev).toBe(expected[1])
 }
@@ -140,5 +132,44 @@ describe("findLeadAndFollow", () => {
         const b = makeChild(false)
         const c = makeChild(false)
         testFindLead([a, b, c], [b, a], [b, a])
+    })
+})
+
+describe("Stack", () => {
+    test("It correctly adds and removes children", () => {
+        const stack = new Stack()
+        const a = makeChild(true)
+        stack.add(a)
+        expect(stack.order).toEqual([a])
+        const b = makeChild(true)
+        const c = makeChild(true)
+        stack.add(b)
+        stack.add(c)
+        expect(stack.order).toEqual([a, b, c])
+        stack.remove(b)
+        expect(stack.order).toEqual([a, c])
+    })
+
+    test("It correctly updates lead and follow", () => {
+        const stack = new Stack()
+        const a = makeChild(true)
+        const b = makeChild(true)
+        const c = makeChild(true)
+        stack.add(a)
+        stack.add(b)
+        stack.add(c)
+        stack.updateLeadAndFollow()
+        expect(stack.lead).toBe(c)
+        expect(stack.follow).toBe(b)
+    })
+
+    test("It correctly updates snapshot", () => {
+        const stack = new Stack()
+        const a = makeChild(true)
+        ;(a as any).measuredOrigin = "snapshot"
+        stack.add(a)
+        stack.updateLeadAndFollow()
+        stack.updateSnapshot()
+        expect(stack.snapshot).toBe("snapshot")
     })
 })
