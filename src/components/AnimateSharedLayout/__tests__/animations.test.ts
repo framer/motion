@@ -1,534 +1,296 @@
-import { createSwitchAnimation, createCrossfadeAnimation } from "../animations"
-import { StackQuery, Presence, StackPosition, VisibilityAction } from "../types"
+import {
+    createSwitchAnimation,
+    createCrossfadeAnimation,
+    crossfadeOut,
+    crossfadeIn,
+} from "../animations"
+import { LayoutStack } from "../stack"
+import { Presence, VisibilityAction } from "../types" //, StackPosition, VisibilityAction } from "../types"
+import { makeChild } from "./utils"
+
+function update(stack: LayoutStack) {
+    stack.updateLeadAndFollow()
+    stack.updateSnapshot()
+}
 
 describe("createSwitchAnimation", () => {
     test("[A1] -> [A2]", () => {
-        const stack: Partial<StackQuery> = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => ({ isOrigin: true } as any),
-            getPreviousTarget: () => ({ isTarget: true } as any),
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        stack.add(a)
+        update(stack)
+        stack.remove(a)
+        stack.add(b)
+        stack.updateLeadAndFollow()
 
-        expect(
-            createSwitchAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Lead,
-                    prevPosition: StackPosition.Lead,
-                    presence: Presence.Entering,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({ origin: { isOrigin: true } })
+        expect(createSwitchAnimation(b, true, stack)).toEqual({
+            origin: "aOrigin",
+        })
     })
 
     test("[A1] -> [A1]", () => {
-        const stack: Partial<StackQuery> = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => ({ isOrigin: true } as any),
-            getPreviousTarget: () => ({ isTarget: true } as any),
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        stack.add(a)
+        update(stack)
+        update(stack)
 
-        expect(
-            createSwitchAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Lead,
-                    prevPosition: StackPosition.Lead,
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({})
+        expect(createSwitchAnimation(a, true, stack)).toEqual({})
     })
 
     test("[A1] -> [A1, A2]", () => {
-        const stack: Partial<StackQuery> = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => ({ isOrigin: true } as any),
-            getPreviousTarget: () => ({ isTarget: true } as any),
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
 
         // Normal animate component
-        expect(
-            createSwitchAnimation(
-                {
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({})
+        const normal = makeChild(
+            Presence.Present,
+            "normalOrigin",
+            "normalTarget"
+        )
+        expect(createSwitchAnimation(normal, false)).toEqual({})
 
         // A1
-        expect(
-            createSwitchAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    prevPosition: StackPosition.Lead,
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({ visibilityAction: VisibilityAction.Hide })
+        expect(createSwitchAnimation(a, true, stack)).toEqual({
+            visibilityAction: VisibilityAction.Hide,
+        })
 
         // A2
-        expect(
-            createSwitchAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Lead,
-                    prevPosition: StackPosition.Lead,
-                    presence: Presence.Entering,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({ origin: { isOrigin: true } })
+        expect(createSwitchAnimation(b, true, stack)).toEqual({
+            origin: "aOrigin",
+        })
     })
 
     test("[A1, A2] -> [A1, A2 (exiting)]", () => {
-        const stack: Partial<StackQuery> = {
-            isLeadPresent: () => false,
-            getPreviousOrigin: () => ({ isOrigin: true } as any),
-            getPreviousTarget: () => ({ isTarget: true } as any),
-        }
-
-        // Normal animate component
-        expect(
-            createSwitchAnimation(
-                {
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({})
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        stack.add(a)
+        stack.add(b)
+        update(stack)
+        update(stack)
 
         // A1
-        expect(
-            createSwitchAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    prevPosition: StackPosition.Previous,
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({})
+        a.presence = Presence.Present
+        expect(createSwitchAnimation(a, true, stack)).toEqual({})
 
         // A2
-        expect(
-            createSwitchAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Lead,
-                    prevPosition: StackPosition.Lead,
-                    presence: Presence.Exiting,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({ target: { isTarget: true } })
+        b.presence = Presence.Exiting
+        expect(createSwitchAnimation(b, true, stack)).toEqual({
+            target: "aTarget",
+        })
     })
 
     test("[A1, A2 (exiting)] -> [A1]", () => {
-        const stack: Partial<StackQuery> = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => ({ isOrigin: true } as any),
-            getPreviousTarget: () => ({ isTarget: true } as any),
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        stack.add(a)
+        stack.add(b)
+        update(stack)
+        stack.remove(b)
+        update(stack)
 
         // A1
-        expect(
-            createSwitchAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Lead,
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack as any
-            )
-        ).toEqual({ visibilityAction: VisibilityAction.Show })
+        expect(createSwitchAnimation(a, true, stack as any)).toEqual({
+            visibilityAction: VisibilityAction.Show,
+        })
     })
 })
 
 describe("createCrossfadeAnimation", () => {
     test("Switching root components: [A1] -> [A1 (exiting), A2]", () => {
-        const lead = {
-            layoutId: "a",
-            position: StackPosition.Lead,
-            presence: Presence.Entering,
-            depth: 0,
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Exiting, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
 
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: () => true,
-            getCrossfadeOut: () => 0 as any,
-            getCrossfadeIn: () => 1 as any,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => lead,
-        }
         // A1
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    presence: Presence.Exiting,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ target: "leadTarget", crossfade: 0 })
+        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+            target: "bTarget",
+            crossfade: crossfadeOut,
+        })
+
         // A2
-        expect(createCrossfadeAnimation(lead, stack)).toEqual({
-            origin: "previousOrigin",
-            crossfade: 1,
+        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+            origin: "aOrigin",
+            crossfade: crossfadeIn,
         })
     })
+    test("Switching root components: [A1] -> [A1 (exiting), A2]", () => {
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Exiting, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
 
-    test("Switching components: [A1] -> [A1 (exiting), A2]", () => {
-        const lead = {
-            layoutId: "a",
-            position: StackPosition.Lead,
-            presence: Presence.Entering,
-            depth: 1,
-        }
-
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: depth => depth === 0,
-            getCrossfadeOut: () => 0,
-            getCrossfadeIn: () => 1,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => lead,
-        }
-
-        // Animate root
-        expect(
-            createCrossfadeAnimation(
-                {
-                    presence: Presence.Exiting,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ crossfade: 0 })
-
-        expect(
-            createCrossfadeAnimation(
-                {
-                    presence: Presence.Entering,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ crossfade: 1 })
         // A1
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    presence: Presence.Exiting,
-                    depth: 1,
-                },
-                stack
-            )
-        ).toEqual({ target: "leadTarget" })
+        expect(createCrossfadeAnimation(a, false, stack)).toEqual({
+            target: "bTarget",
+        })
+
         // A2
-        expect(createCrossfadeAnimation(lead, stack)).toEqual({
-            origin: "previousOrigin",
+        expect(createCrossfadeAnimation(b, false, stack)).toEqual({
+            origin: "aOrigin",
         })
     })
 
     test("Interrupting switch animation: [A1 (exiting), A2] -interrupted-> [A1, A2 (exiting)]", () => {
-        const lead = {
-            layoutId: "a",
-            position: StackPosition.Lead,
-            presence: Presence.Exiting,
-            depth: 0,
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        stack.add(a)
+        stack.add(b)
+        update(stack)
 
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: () => true,
-            getCrossfadeOut: () => 0 as any,
-            getCrossfadeIn: () => 1 as any,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => lead,
-        }
         // A1
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    presence: Presence.Entering,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ origin: "leadOrigin", crossfade: 1 })
+        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+            origin: "bOrigin",
+            crossfade: crossfadeIn,
+        })
+
         // A2
-        expect(createCrossfadeAnimation(lead, stack)).toEqual({
-            target: "previousTarget",
-            crossfade: 0,
+        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+            target: "aTarget",
+            crossfade: crossfadeOut,
         })
     })
 
     test("Adding: [A1] -> [A1, A2]", () => {
-        const lead = {
-            layoutId: "a",
-            position: StackPosition.Lead,
-            presence: Presence.Entering,
-            depth: 0,
-        }
-
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: () => true,
-            getCrossfadeOut: () => 0 as any,
-            getCrossfadeIn: () => 1 as any,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => lead,
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
 
         // A1
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ target: "leadTarget", crossfade: 0 })
+        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+            target: "bTarget",
+            crossfade: crossfadeOut,
+        })
 
         // A2
-        expect(createCrossfadeAnimation(lead, stack)).toEqual({
-            origin: "previousOrigin",
-            crossfade: 1,
+        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+            origin: "aOrigin",
+            crossfade: crossfadeIn,
         })
     })
 
     test("Removing: [A1, A2] -> [A1]", () => {
-        const lead = {
-            layoutId: "a",
-            position: StackPosition.Lead,
-            presence: Presence.Present,
-            depth: 0,
-        }
-
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: () => true,
-            getCrossfadeOut: () => 0 as any,
-            getCrossfadeIn: () => 1 as any,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => lead,
-        }
-        // A1
-        expect(createCrossfadeAnimation(lead, stack)).toEqual({})
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
+        stack.remove(b)
+        update(stack)
+        expect(createCrossfadeAnimation(a, true, stack)).toEqual({})
     })
 
     test("Interrupting remove with new component: [A1, A2 (exiting)] -interrupted-> [A1, A2 (exiting), A3]", () => {
-        const lead = {
-            layoutId: "a",
-            position: StackPosition.Lead,
-            presence: Presence.Entering,
-            depth: 0,
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        const c = makeChild(Presence.Entering, "cOrigin", "cTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
+        stack.add(c)
+        update(stack)
 
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: () => true,
-            getCrossfadeOut: () => 0 as any,
-            getCrossfadeIn: () => 1 as any,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => lead,
-        }
         // A1
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ target: "leadTarget", crossfade: 0 })
+        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+            target: "cTarget",
+            crossfade: crossfadeOut,
+        })
 
         // A2
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    presence: Presence.Exiting,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ visibilityAction: VisibilityAction.Hide })
+        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+            visibilityAction: VisibilityAction.Hide,
+        })
 
         // A3
-        expect(createCrossfadeAnimation(lead, stack)).toEqual({
-            origin: "previousOrigin",
-            crossfade: 1,
+        expect(createCrossfadeAnimation(c, true, stack)).toEqual({
+            origin: "aOrigin",
+            crossfade: crossfadeIn,
         })
     })
 
     test("Interrupting remove by removing: [A1, A2, A3 (exiting)] -interrupted-> [A1, A2 (exiting), A3 (exiting)]", () => {
-        const lead = {
-            layoutId: "a",
-            position: StackPosition.Lead,
-            presence: Presence.Exiting,
-            depth: 0,
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        const c = makeChild(Presence.Exiting, "cOrigin", "cTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
+        stack.add(c)
+        update(stack)
 
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: () => true,
-            getCrossfadeOut: () => 0 as any,
-            getCrossfadeIn: () => 1 as any,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => lead,
-        }
         // A1
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    presence: Presence.Present,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ origin: "leadOrigin", crossfade: 1 })
+        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+            origin: "bOrigin",
+            crossfade: crossfadeIn,
+        })
 
         // A2
-        expect(createCrossfadeAnimation(lead, stack)).toEqual({
-            target: "previousTarget",
-            crossfade: 0,
+        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+            target: "aTarget",
+            crossfade: crossfadeOut,
         })
 
         // A3
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    presence: Presence.Exiting,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ visibilityAction: VisibilityAction.Hide })
+        expect(createCrossfadeAnimation(c, true, stack)).toEqual({
+            visibilityAction: VisibilityAction.Hide,
+        })
     })
 
     test("Interrupting remove by removing to nothing: [, A2, A3 (exiting)] -interrupted-> [, A2 (exiting), A3 (exiting)]", () => {
-        const stack: StackQuery = {
-            isLeadPresent: () => true,
-            getPreviousOrigin: () => "previousOrigin" as any,
-            getPreviousTarget: () => "previousTarget" as any,
-            isRootDepth: () => true,
-            getCrossfadeOut: () => 0 as any,
-            getCrossfadeIn: () => 1 as any,
-            getLeadOrigin: () => "leadOrigin" as any,
-            getLeadTarget: () => "leadTarget" as any,
-            getLead: () => undefined,
-        }
+        const stack = new LayoutStack()
+        const a = makeChild(Presence.Exiting, "aOrigin", "aTarget")
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        stack.add(a)
+        update(stack)
+        stack.add(b)
+        update(stack)
 
         // A2
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    position: StackPosition.Previous,
-                    presence: Presence.Exiting,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ crossfade: 0 })
+        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+            crossfade: crossfadeOut,
+        })
 
         // A3
-        expect(
-            createCrossfadeAnimation(
-                {
-                    layoutId: "a",
-                    presence: Presence.Exiting,
-                    depth: 0,
-                },
-                stack
-            )
-        ).toEqual({ visibilityAction: VisibilityAction.Hide })
+        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+            visibilityAction: VisibilityAction.Hide,
+        })
     })
 })
 
 test("Fade out final lead root component: [A1] -> [A1 (exiting)]", () => {
-    const lead = {
-        layoutId: "a",
-        position: StackPosition.Lead,
-        presence: Presence.Exiting,
-        depth: 0,
-    }
+    const stack = new LayoutStack()
+    const a = makeChild(Presence.Exiting, "aOrigin", "aTarget")
+    stack.add(a)
+    update(stack)
 
-    const stack: StackQuery = {
-        isLeadPresent: () => true,
-        getPreviousOrigin: () => undefined as any,
-        getPreviousTarget: () => undefined as any,
-        isRootDepth: () => true,
-        getCrossfadeOut: () => 0 as any,
-        getCrossfadeIn: () => 1 as any,
-        getLeadOrigin: () => undefined as any,
-        getLeadTarget: () => undefined as any,
-        getLead: () => lead,
-    }
     // A1
-    expect(
-        createCrossfadeAnimation(
-            {
-                layoutId: "a",
-                position: StackPosition.Lead,
-                presence: Presence.Exiting,
-                depth: 0,
-            },
-            stack
-        )
-    ).toEqual({ crossfade: 0 })
+    expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+        crossfade: crossfadeOut,
+    })
 })
