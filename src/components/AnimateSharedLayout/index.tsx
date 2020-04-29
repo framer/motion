@@ -4,22 +4,14 @@ import {
     SharedLayoutProps,
     TransitionHandler,
     Presence,
-    StackQuery,
-    StackPosition,
 } from "./types"
-import { getMetadata, setMetadata } from "./metadata"
-import { Snapshot } from "../../motion/features/auto/types"
 import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Auto } from "../../motion/features/auto/Auto"
 import { batchTransitions } from "../../motion/features/auto/utils"
 import { createCrossfadeAnimation, createSwitchAnimation } from "./animations"
-import { Easing, circOut, linear } from "@popmotion/easing"
-import { progress, mix } from "@popmotion/popcorn"
+import { LayoutStack } from "./Stack"
 
-type LayoutStack = Auto[]
-type LayoutStacks = Map<string, LayoutStack>
-
-const defaultMagicTransition = {
+const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
 }
@@ -41,7 +33,7 @@ export class AnimateSharedLayout extends React.Component<
      * we store them in order. When one is added, it will animate out from the
      * previous one, and when it's removed, it'll animate to the previous one.
      */
-    private stacks: LayoutStacks = new Map()
+    private stacks: Map<string, LayoutStack<Auto>> = new Map()
 
     /**
      * Keep track of the depth of the most shallow animate child
@@ -65,12 +57,6 @@ export class AnimateSharedLayout extends React.Component<
      * tagging with `shouldResumeFromPrevious`.
      */
     private hasMounted = false
-
-    /**
-     * Keep one snapshot for each stack in the event the all layoutId children
-     * are removed from a stack before the new one is added.
-     */
-    private snapshots = new Map<string, Snapshot>()
 
     state = {
         /**
@@ -146,10 +132,7 @@ export class AnimateSharedLayout extends React.Component<
          * snapshots of the visible children as, if they're are being removed
          * in this render, we can still access them.
          */
-        this.stacks.forEach((stack, key) => {
-            const latestChild = stack[stack.length - 1]
-            latestChild && this.snapshots.set(key, latestChild.measuredOrigin)
-        })
+        this.stacks.forEach(stack => stack.updateSnapshot())
 
         return null
     }
@@ -164,19 +147,13 @@ export class AnimateSharedLayout extends React.Component<
     }
 
     /**
-     * Register a new `Magic` child
+     * Register a new `Auto` child
      */
     addChild(child: Auto) {
         this.setRootDepth(child)
         this.children.add(child)
 
-        setMetadata(child, {
-            depth: child.depth,
-            layoutId: child.props.layoutId,
-            presence: this.hasMounted ? Presence.Entering : Presence.Present,
-            position: StackPosition.Lead,
-            prevPosition: StackPosition.Lead,
-        })
+        child.presence = this.hasMounted ? Presence.Entering : Presence.Present
 
         this.addChildToStack(child)
 
@@ -189,40 +166,6 @@ export class AnimateSharedLayout extends React.Component<
 
         const stack = this.getStack(layoutId)
         stack.add(child)
-
-        stack.forEach((stackChild, i) => {
-            const { position } = getMetadata(stackChild)
-            const isLead = position === StackPosition.Lead
-
-            if (isLead && !stackChild.isPresent() && i > 0) {
-                /**
-                 * If this is the lead component, but it's leaving the tree,
-                 * **and** we have a previous component, we can consider this
-                 * superseded by the new component
-                 */
-                setMetadata(stackChild, {
-                    position: undefined,
-                    prevPosition: StackPosition.Lead,
-                })
-
-                // TODO Replace this with a search
-                const previousChild = stack[i - 1]
-                setMetadata(previousChild, {
-                    position: StackPosition.Previous,
-                    prevPosition: undefined,
-                })
-            } else {
-                setMetadata(stackChild, {
-                    position: isLead ? StackPosition.Previous : undefined,
-                    prevPosition: isLead ? StackPosition.Lead : undefined,
-                    presence: stackChild.isPresent()
-                        ? Presence.Present
-                        : Presence.Exiting,
-                })
-            }
-        })
-
-        stack.push(child)
     }
 
     removeChild(child: Auto) {
@@ -235,30 +178,17 @@ export class AnimateSharedLayout extends React.Component<
         if (layoutId === undefined) return
 
         const stack = this.getStack(layoutId)
-        const childIndex = stack.findIndex(stackChild => child === stackChild)
-        if (childIndex === -1) return
-
-        stack.splice(childIndex, 1)
-
-        // Set the previous child to visible
-        const previousChild = getPreviousChild(stack, stack.length)
-
-        if (previousChild) {
-            setMetadata(previousChild, {
-                position: StackPosition.Lead,
-                prevPosition: StackPosition.Previous,
-            })
-        }
+        stack.remove(child)
     }
 
     /**
      * Return a stack of animate children based on the provided layoutId.
      * Will create a stack if none currently exists with that layoutId.
      */
-    getStack(id: string): LayoutStack {
-        !this.stacks.has(id) && this.stacks.set(id, [])
+    getStack(id: string): LayoutStack<Auto> {
+        !this.stacks.has(id) && this.stacks.set(id, new LayoutStack())
 
-        return this.stacks.get(id) as LayoutStack
+        return this.stacks.get(id) as LayoutStack<Auto>
     }
 
     /**
@@ -274,7 +204,7 @@ export class AnimateSharedLayout extends React.Component<
     }
 
     startAnimation() {
-        const { type, transition = defaultMagicTransition } = this.props
+        const { type, transition = defaultLayoutTransition } = this.props
         const options = { type, transition }
 
         const createAnimation =
@@ -283,36 +213,41 @@ export class AnimateSharedLayout extends React.Component<
                 : createSwitchAnimation
 
         this.children.forEach(child => {
-            const { presence } = getMetadata(child)
-
             if (!child.isPresent()) {
-                setMetadata(child, { presence: Presence.Exiting })
-            } else if (presence !== Presence.Entering) {
-                setMetadata(child, { presence: Presence.Present })
+                child.presence = Presence.Exiting
+            } else if (child.presence !== Presence.Entering) {
+                child.presence = Presence.Present
             }
         })
 
-        const stackQuery = this.getStackQuery()
-
         const handler: TransitionHandler = {
             snapshotTarget: child => {
-                const { layoutId, presence } = getMetadata(child)
+                const { layoutId } = child.props
+                const stack =
+                    layoutId !== undefined ? this.getStack(layoutId) : undefined
 
                 if (
                     // If this component has an animate prop
                     isAutoAnimate(child) ||
                     // If this component is either entering or present
-                    presence !== Presence.Exiting ||
+                    child.presence !== Presence.Exiting ||
                     // If the lead component in the stack is present, snapshot
                     // TODO: Figure out what this breaks if removed
-                    stackQuery.isLeadPresent(layoutId)
+                    stack?.lead?.isPresent()
                 ) {
                     child.snapshotTarget()
                 }
             },
             startAnimation: child => {
-                const childData = getMetadata(child)
-                const config = createAnimation(childData, stackQuery)
+                const { layoutId } = child.props
+                const stack =
+                    layoutId !== undefined ? this.getStack(layoutId) : undefined
+
+                const config = createAnimation(
+                    child,
+                    child.depth === this.rootDepth,
+                    stack
+                )
 
                 const animation = child.startAnimation({
                     ...options,
@@ -321,10 +256,9 @@ export class AnimateSharedLayout extends React.Component<
 
                 // If this component is entering, consider the end of this animation
                 // when it's present
-                if (animation && childData.presence === Presence.Entering) {
+                if (animation && child.presence === Presence.Entering) {
                     animation.then(() => {
-                        child.isPresent() &&
-                            setMetadata(child, { presence: Presence.Present })
+                        if (child.isPresent()) child.presence = Presence.Present
                     })
                 }
             },
@@ -338,62 +272,11 @@ export class AnimateSharedLayout extends React.Component<
          */
         this.children.forEach(child => this.batch.add(child))
         this.batch.flush(handler)
-        this.snapshots.clear()
-    }
 
-    getStackQuery(): StackQuery {
-        const leadComponents = new Map<string, Auto>()
-        const previousComponents = new Map<string, Auto>()
-
-        this.stacks.forEach((stack, key) => {
-            const leadIndex = stack.findIndex(
-                child => getMetadata(child).position === StackPosition.Lead
-            )
-            if (leadIndex === -1) return
-
-            leadComponents.set(key, stack[leadIndex])
-            const previous = getPreviousChild(stack, leadIndex)
-            previous && previousComponents.set(key, previous)
-        })
-
-        return {
-            isLeadPresent: queryStack(
-                lead => lead && getMetadata(lead).presence !== Presence.Exiting,
-                leadComponents
-            ),
-            getPreviousOrigin: queryStack(
-                (previous, id) =>
-                    previous ? previous.measuredOrigin : this.snapshots.get(id),
-                previousComponents
-            ),
-            getPreviousTarget: queryStack(
-                previous => previous && previous.measuredTarget,
-                previousComponents
-            ),
-            getLeadOrigin: queryStack(
-                lead => lead?.measuredOrigin,
-                leadComponents
-            ),
-            getLeadTarget: queryStack(
-                lead => lead?.measuredTarget,
-                leadComponents
-            ),
-            getLead: queryStack(
-                lead => lead && getMetadata(lead),
-                leadComponents
-            ),
-            isRootDepth: depth => depth === this.rootDepth,
-            getCrossfadeIn: () => (
-                _origin: number,
-                target: number,
-                p: number
-            ) => mix(0, target, crossfadeIn(p)),
-            getCrossfadeOut: () => (
-                origin: number,
-                _target: number,
-                p: number
-            ) => mix(origin, 0, crossfadeOut(p)),
-        }
+        /**
+         * Clear snapshots so subsequent rerenders don't retain memory of outgoing components
+         */
+        this.stacks.forEach(stack => (stack.snapshot = undefined))
     }
 
     render() {
@@ -405,43 +288,6 @@ export class AnimateSharedLayout extends React.Component<
     }
 }
 
-function queryStack<T>(
-    callback: (child: Auto | undefined, id: string) => T,
-    components: Map<string, Auto>
-) {
-    return (id: string | undefined) => {
-        if (id === undefined) return
-
-        const child = components.get(id)
-        return callback(child, id)
-    }
-}
-
-function getPreviousChild(stack: LayoutStack, index: number) {
-    for (let i = index - 1; i >= 0; i--) {
-        const child = stack[i]
-        if (child.isPresent()) {
-            return child
-        }
-    }
-
-    // If we only have two children, always return the first one
-    // even if it isn't present
-    if (stack.length === 2) return stack[0]
-}
-
 function isAutoAnimate(child: Auto) {
     return child.props.animate === true
 }
-
-function compress(min: number, max: number, easing: Easing): Easing {
-    return (p: number) => {
-        // Could replace ifs with clamp
-        if (p < min) return 0
-        if (p > max) return 1
-        return easing(progress(min, max, p))
-    }
-}
-
-const crossfadeIn = compress(0, 0.5, circOut)
-const crossfadeOut = compress(0.5, 0.95, linear)

@@ -1,11 +1,11 @@
-import { Stack, StackChild, findLeadAndFollow, LeadAndFollow } from "../stack"
-
-let id = 0
-
-function makeChild(isPresent = true) {
-    id++
-    return { id, isPresent: () => isPresent }
-}
+import {
+    LayoutStack,
+    StackChild,
+    findLeadAndFollow,
+    LeadAndFollow,
+} from "../stack"
+import { makeChild } from "./utils"
+import { Presence } from "../types"
 
 function testFindLead<T extends StackChild>(
     stack: T[],
@@ -19,130 +19,130 @@ function testFindLead<T extends StackChild>(
 
 describe("findLeadAndFollow", () => {
     test("[] -> [a]", () => {
-        const a = makeChild(true)
+        const a = makeChild()
         testFindLead([a], [], [a])
     })
 
     test("[a] -> [a]", () => {
-        const a = makeChild(true)
+        const a = makeChild()
         testFindLead([a], [a], [a])
     })
 
     test("[a] -> [a(e)]", () => {
-        const a = makeChild(false)
+        const a = makeChild(Presence.Exiting)
         testFindLead([a], [a], [a])
     })
 
     test("[a] -> [a, b]", () => {
-        const a = makeChild(true)
-        const b = makeChild(true)
+        const a = makeChild()
+        const b = makeChild()
         testFindLead([a, b], [a], [b, a])
     })
 
     test("[a] -> [a(e), b]", () => {
-        const a = makeChild(false)
-        const b = makeChild(true)
+        const a = makeChild(Presence.Exiting)
+        const b = makeChild()
         testFindLead([a, b], [a], [b, a])
     })
 
     test("[a, b] -> [a, b(e)]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
         testFindLead([a, b], [b, a], [b, a])
     })
 
     test("[a, b] -> [a]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
         testFindLead([a], [b, a], [a])
     })
 
     test("[a, b] -> [a, b, c]", () => {
-        const a = makeChild(true)
-        const b = makeChild(true)
-        const c = makeChild(true)
+        const a = makeChild()
+        const b = makeChild()
+        const c = makeChild()
         testFindLead([a, b, c], [b, a], [c, b])
     })
 
     test("[a, b, c] -> [a, b, c]", () => {
-        const a = makeChild(true)
-        const b = makeChild(true)
-        const c = makeChild(true)
+        const a = makeChild()
+        const b = makeChild()
+        const c = makeChild()
         testFindLead([a, b, c], [c, b], [c, b])
     })
 
     test("[a, b, c] -> [a, b, c(e)]", () => {
-        const a = makeChild(true)
-        const b = makeChild(true)
-        const c = makeChild(false)
+        const a = makeChild()
+        const b = makeChild()
+        const c = makeChild(Presence.Exiting)
         testFindLead([a, b, c], [b, a], [c, b])
     })
 
     test("[a, b, c(e)] -> [a, b, c(e)]", () => {
-        const a = makeChild(true)
-        const b = makeChild(true)
-        const c = makeChild(false)
+        const a = makeChild()
+        const b = makeChild()
+        const c = makeChild(Presence.Exiting)
         testFindLead([a, b, c], [c, b], [c, b])
     })
 
     test("[a, b, c(e)] -> [a, b(e), c(e)]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
-        const c = makeChild(false)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
+        const c = makeChild(Presence.Exiting)
         testFindLead([a, b, c], [c, b], [b, a])
     })
 
     test("[a, b(e), c(e)] -> [a, b(e), c(e)]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
-        const c = makeChild(false)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
+        const c = makeChild(Presence.Exiting)
         testFindLead([a, b, c], [b, a], [b, a])
     })
 
     test("[a, b(e)] -> [a, b(e), c]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
-        const c = makeChild(true)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
+        const c = makeChild()
         testFindLead([a, b, c], [b, a], [c, a])
     })
 
     test(" [a, b(e), c]-> [a, b(e), c]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
-        const c = makeChild(true)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
+        const c = makeChild()
         testFindLead([a, b, c], [c, a], [c, a])
     })
 
     test("[a, b(e), c] -> [a, b(e), c(e)]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
-        const c = makeChild(false)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
+        const c = makeChild(Presence.Exiting)
         testFindLead([a, b, c], [c, a], [c, a])
     })
 
     test("[a, b(e), c(e)] -> [a, b(e), c(e)] (c as lead)", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
-        const c = makeChild(false)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
+        const c = makeChild(Presence.Exiting)
         testFindLead([a, b, c], [c, a], [c, a])
     })
 
     test("[a, b(e), c(e)] -> [a, b(e), c(e) (b as lead)]", () => {
-        const a = makeChild(true)
-        const b = makeChild(false)
-        const c = makeChild(false)
+        const a = makeChild()
+        const b = makeChild(Presence.Exiting)
+        const c = makeChild(Presence.Exiting)
         testFindLead([a, b, c], [b, a], [b, a])
     })
 })
 
 describe("Stack", () => {
     test("It correctly adds and removes children", () => {
-        const stack = new Stack()
-        const a = makeChild(true)
+        const stack = new LayoutStack()
+        const a = makeChild()
         stack.add(a)
         expect(stack.order).toEqual([a])
-        const b = makeChild(true)
-        const c = makeChild(true)
+        const b = makeChild()
+        const c = makeChild()
         stack.add(b)
         stack.add(c)
         expect(stack.order).toEqual([a, b, c])
@@ -151,10 +151,10 @@ describe("Stack", () => {
     })
 
     test("It correctly updates lead and follow", () => {
-        const stack = new Stack()
-        const a = makeChild(true)
-        const b = makeChild(true)
-        const c = makeChild(true)
+        const stack = new LayoutStack()
+        const a = makeChild()
+        const b = makeChild()
+        const c = makeChild()
         stack.add(a)
         stack.add(b)
         stack.add(c)
@@ -164,8 +164,8 @@ describe("Stack", () => {
     })
 
     test("It correctly updates snapshot", () => {
-        const stack = new Stack()
-        const a = makeChild(true)
+        const stack = new LayoutStack()
+        const a = makeChild()
         ;(a as any).measuredOrigin = "snapshot"
         stack.add(a)
         stack.updateLeadAndFollow()

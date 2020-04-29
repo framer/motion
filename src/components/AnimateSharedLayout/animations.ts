@@ -1,23 +1,23 @@
-//import { Auto } from "../../motion/features/auto/Auto"
+import { Easing, circOut, linear } from "@popmotion/easing"
+import { progress, mix } from "@popmotion/popcorn"
 import { Snapshot, AutoAnimationConfig } from "../../motion/features/auto/types"
-import {
-    LayoutMetadata,
-    Presence,
-    StackQuery,
-    VisibilityAction,
-    StackPosition,
-} from "./types"
+import { Presence, VisibilityAction } from "./types"
+import { LayoutStack, StackChild } from "./Stack"
 
 export function createSwitchAnimation(
-    { layoutId, presence, position, prevPosition }: LayoutMetadata,
-    stack: StackQuery
+    child: StackChild,
+    _isRoot: boolean,
+    stack?: LayoutStack
 ): AutoAnimationConfig {
-    // TODO Switch prevPosition to see if this is lead, then we
-    // can remove prevPosition
-    if (presence !== Presence.Entering && position !== prevPosition) {
+    if (
+        stack &&
+        child.presence !== Presence.Entering &&
+        (child === stack.lead || child === stack.prevLead) &&
+        stack.lead !== stack.prevLead
+    ) {
         return {
             visibilityAction:
-                position === StackPosition.Lead
+                child === stack.lead
                     ? VisibilityAction.Show
                     : VisibilityAction.Hide,
         }
@@ -26,55 +26,74 @@ export function createSwitchAnimation(
     let origin: Snapshot | undefined
     let target: Snapshot | undefined
 
-    if (presence === Presence.Entering) {
-        origin = stack.getPreviousOrigin(layoutId)
-    } else if (presence === Presence.Exiting) {
-        target = stack.getPreviousTarget(layoutId)
+    if (child.presence === Presence.Entering) {
+        origin = stack?.getFollowOrigin()
+    } else if (child.presence === Presence.Exiting) {
+        target = stack?.getFollowTarget()
     }
 
     return { origin, target }
 }
 
 export function createCrossfadeAnimation(
-    { layoutId, presence, position, depth }: LayoutMetadata,
-    stack: StackQuery
+    child: StackChild,
+    isRoot: boolean,
+    stack?: LayoutStack
 ): AutoAnimationConfig {
     const config: AutoAnimationConfig = {}
+    const stackLead = stack && stack.lead
+    const stackLeadPresence = stackLead?.presence
 
-    if (position === StackPosition.Lead) {
-        if (presence === Presence.Entering) {
-            config.origin = stack.getPreviousOrigin(layoutId)
-        } else if (presence === Presence.Exiting) {
-            config.target = stack.getPreviousTarget(layoutId)
+    if (stack && child === stackLead) {
+        if (child.presence === Presence.Entering) {
+            config.origin = stack.getFollowOrigin()
+        } else if (child.presence === Presence.Exiting) {
+            config.target = stack.getFollowTarget()
         }
-    } else if (position === StackPosition.Previous) {
-        const lead = stack.getLead(layoutId)
-        if (lead && lead.presence === Presence.Entering) {
-            config.target = stack.getLeadTarget(layoutId)
-        } else if (lead && lead.presence === Presence.Exiting) {
-            config.origin = stack.getLeadOrigin(layoutId)
+    } else if (stack && child === stack.follow) {
+        if (stackLeadPresence === Presence.Entering) {
+            config.target = stack.getLeadTarget()
+        } else if (stackLeadPresence === Presence.Exiting) {
+            config.origin = stack.getLeadOrigin()
         }
     }
 
-    // Handle crossfade opacity
-    if (stack.isRootDepth(depth)) {
-        if (position === StackPosition.Lead || layoutId === undefined) {
-            if (presence === Presence.Entering) {
-                config.crossfade = stack.getCrossfadeIn()
-            } else if (presence === Presence.Exiting) {
-                config.crossfade = stack.getCrossfadeOut()
-            }
-        } else if (position === StackPosition.Previous) {
-            const lead = stack.getLead(layoutId)
-            if (!lead || (lead && lead.presence === Presence.Entering)) {
-                config.crossfade = stack.getCrossfadeOut()
-            } else if (lead && lead.presence === Presence.Exiting) {
-                config.crossfade = stack.getCrossfadeIn()
-            }
-        } else {
-            config.visibilityAction = VisibilityAction.Hide
+    // // Handle crossfade opacity
+    if (!isRoot) return config
+
+    if (!stack || child === stackLead) {
+        if (child.presence === Presence.Entering) {
+            config.crossfade = crossfadeIn
+        } else if (child.presence === Presence.Exiting) {
+            config.crossfade = crossfadeOut
         }
+    } else if (stack && child === stack.follow) {
+        if (!stackLead || stackLeadPresence === Presence.Entering) {
+            config.crossfade = crossfadeOut
+        } else if (stackLeadPresence === Presence.Exiting) {
+            config.crossfade = crossfadeIn
+        }
+    } else {
+        config.visibilityAction = VisibilityAction.Hide
     }
 
     return config
 }
+
+function compress(min: number, max: number, easing: Easing): Easing {
+    return (p: number) => {
+        // Could replace ifs with clamp
+        if (p < min) return 0
+        if (p > max) return 1
+        return easing(progress(min, max, p))
+    }
+}
+
+const easeCrossfadeIn = compress(0, 0.5, circOut)
+const easeCrossfadeOut = compress(0.5, 0.95, linear)
+
+export const crossfadeIn = (_origin: number, target: number, p: number) =>
+    mix(0, target, easeCrossfadeIn(p))
+
+export const crossfadeOut = (origin: number, _target: number, p: number) =>
+    mix(origin, 0, easeCrossfadeOut(p))
