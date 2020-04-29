@@ -1,19 +1,36 @@
-//import { Snapshot } from "../../motion/features/auto/types"
+import { Snapshot } from "../../motion/features/auto/types"
 
-export interface Child {
+export interface StackChild {
     isPresent: () => boolean
-    measuredOrigin?: any
+    measuredOrigin?: Snapshot
 }
 
-export type LeadAndFollow = [Child | undefined, Child | undefined]
+export type LeadAndFollow<T> = [T | undefined, T | undefined]
 
-export function findLeadAndFollow(
-    stack: Child[],
-    [prevLead, prevFollow]: LeadAndFollow
-): LeadAndFollow {
-    let lead: Child | undefined = undefined
+/**
+ * For each layout animation, we want to identify two components
+ * within a stack that will serve as the "lead" and "follow" components.
+ *
+ * In the switch animation, the lead component performs the entire animation.
+ * It uses the follow bounding box to animate out from and back to. The follow
+ * component is hidden.
+ *
+ * In the crossfade animation, both the lead and follow components perform
+ * the entire animation, animating from the follow origin bounding box to the lead
+ * target bounding box.
+ *
+ * Generalising a stack as First In Last Out, *searching from the end* we can
+ * generally consider the lead component to be:
+ *  - If the last child is present, the last child
+ *  - If the last child is exiting, the last *encountered* exiting component
+ */
+export function findLeadAndFollow<T extends StackChild>(
+    stack: T[],
+    [prevLead, prevFollow]: LeadAndFollow<T>
+): LeadAndFollow<T> {
+    let lead: T | undefined = undefined
     let leadIndex = 0
-    let follow: Child | undefined = undefined
+    let follow: T | undefined = undefined
 
     // Find the lead child first
     const numInStack = stack.length
@@ -59,9 +76,14 @@ export function findLeadAndFollow(
         }
     }
 
+    // If the lead has changed and the previous lead still exists in the
+    // stack, set it to the previous lead. This allows us to differentiate between
+    // a, b, c(exit) -> a, b(exit), c(exit)
+    // and
+    // a, b(exit), c -> a, b(exit), c(exit)
     if (
-        !lastIsPresent &&
         lead !== prevLead &&
+        !lastIsPresent &&
         follow === prevFollow &&
         stack.find(stackChild => stackChild === prevLead)
     ) {
@@ -71,43 +93,33 @@ export function findLeadAndFollow(
     return [lead, follow]
 }
 
-// export class Stack {
-//     private order: Child[] = []
+export class Stack<T extends StackChild> {
+    order: T[] = []
 
-//     previous?: Child | undefined
-//     lead?: Child | undefined
+    lead?: T | undefined
+    follow?: T | undefined
 
-//     snapshot?: Snapshot
+    snapshot?: Snapshot
 
-//     add(child: Child) {
-//         this.order.push(child)
-//         this.lead =
-//     }
+    add(child: T) {
+        this.order.push(child)
+    }
 
-//     remove(child: Child) {
-//         const index = this.order.findIndex(stackChild => child === stackChild)
-//         if (index === -1) return
+    remove(child: T) {
+        const index = this.order.findIndex(stackChild => child === stackChild)
+        if (index !== -1) this.order.splice(index, 1)
+    }
 
-//         this.order.splice(index, 1)
-//     }
+    updateLeadAndFollow() {
+        const [lead, follow] = findLeadAndFollow(this.order, [
+            this.lead,
+            this.follow,
+        ])
+        this.lead = lead
+        this.follow = follow
+    }
 
-//     updateLead() {
-//         const numChildren = this.order.length
-//         this.order.forEach((child, i) => {})
-
-//         /**
-//          * The lead component is
-//          * - The last present child OR
-//          * - The first exiting child UNLESS
-//          *    - The current
-//          *
-//          * The previous component is
-//          * - The immediate previous present component
-//          *    -
-//          */
-//     }
-
-//     updateSnapshot() {
-//         this.lead && this.lead.measuredOrigin
-//     }
-// }
+    updateSnapshot() {
+        if (this.lead) this.snapshot = this.lead.measuredOrigin
+    }
+}
