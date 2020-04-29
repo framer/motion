@@ -1,5 +1,4 @@
 import { Auto } from "../../motion/features/auto/Auto"
-import { Snapshot } from "../../motion/features/auto/types"
 import { Transition } from "../../types"
 
 export enum Presence {
@@ -8,26 +7,9 @@ export enum Presence {
     Exiting,
 }
 
-export interface LayoutMetadata {
+export interface PresenceMetadata {
     layoutId?: string
     presence: Presence
-    origin?: Snapshot | undefined
-    target?: Snapshot | undefined
-    position?: StackPosition
-    prevPosition?: StackPosition
-    depth: number
-}
-
-export interface StackQuery {
-    isLeadPresent: (id: string | undefined) => boolean | undefined
-    getLead: (id: string | undefined) => LayoutMetadata | undefined
-    getPreviousOrigin: (id: string | undefined) => Snapshot | undefined
-    getPreviousTarget: (id: string | undefined) => Snapshot | undefined
-    getLeadOrigin: (id: string | undefined) => Snapshot | undefined
-    getLeadTarget: (id: string | undefined) => Snapshot | undefined
-    getCrossfadeOut: () => any
-    getCrossfadeIn: () => any
-    isRootDepth: (depth: number) => boolean
 }
 
 export enum VisibilityAction {

@@ -1,8 +1,11 @@
 import { Snapshot } from "../../motion/features/auto/types"
+import { Presence } from "./types"
 
 export interface StackChild {
     isPresent: () => boolean
+    presence?: Presence
     measuredOrigin?: Snapshot
+    measuredTarget?: Snapshot
 }
 
 export type LeadAndFollow<T> = [T | undefined, T | undefined]
@@ -93,11 +96,14 @@ export function findLeadAndFollow<T extends StackChild>(
     return [lead, follow]
 }
 
-export class Stack<T extends StackChild> {
+export class LayoutStack<T extends StackChild = StackChild> {
     order: T[] = []
 
     lead?: T | undefined
     follow?: T | undefined
+
+    prevLead?: T | undefined
+    prevFollow?: T | undefined
 
     snapshot?: Snapshot
 
@@ -107,19 +113,45 @@ export class Stack<T extends StackChild> {
 
     remove(child: T) {
         const index = this.order.findIndex(stackChild => child === stackChild)
-        if (index !== -1) this.order.splice(index, 1)
+        if (index !== -1) {
+            this.order.splice(index, 1)
+        }
     }
 
     updateLeadAndFollow() {
+        this.prevLead = this.lead
+        this.prevFollow = this.follow
+
         const [lead, follow] = findLeadAndFollow(this.order, [
             this.lead,
             this.follow,
         ])
+
         this.lead = lead
         this.follow = follow
     }
 
     updateSnapshot() {
         if (this.lead) this.snapshot = this.lead.measuredOrigin
+    }
+
+    isLeadPresent() {
+        return this.lead && this.lead?.presence !== Presence.Exiting
+    }
+
+    getFollowOrigin() {
+        return this.follow ? this.follow.measuredOrigin : this.snapshot
+    }
+
+    getFollowTarget() {
+        return this.follow?.measuredTarget
+    }
+
+    getLeadOrigin() {
+        return this.lead?.measuredOrigin
+    }
+
+    getLeadTarget() {
+        return this.lead?.measuredTarget
     }
 }

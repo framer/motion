@@ -20,6 +20,7 @@ import {
     SharedLayoutTree,
     SharedBatchTree,
     VisibilityAction,
+    Presence,
 } from "../../../components/AnimateSharedLayout/types"
 import { MotionValue } from "../../../value"
 import { syncRenderSession } from "../../../dom/sync-render-session"
@@ -191,6 +192,12 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     current: Partial<Style> = {
         rotate: 0,
     }
+
+    /**
+     * AnimatePresence currently only provides a binary true/false presence state. AnimateSharedLayout
+     * currently also relies on an "entering" state, which it determines and stores here.
+     */
+    presence: Presence
 
     constructor(props: FeatureProps & ContextProps) {
         super(props)
