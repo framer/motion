@@ -58,16 +58,32 @@ export class AnimateSharedLayout extends React.Component<
      */
     private hasMounted = false
 
+    /**
+     * Keep track of whether we're currently animating layout and block forced re-renders
+     * until we're not.
+     */
+    private isAnimating = false
+
+    /**
+     * If a forced re-render is triggered while there's a shared layout animation we block
+     * it and check this boolean after all animations are complete.
+     */
+    private shouldRerender = false
+
     state = {
         /**
          * Allow children, like AnimatePresence, to force-render this component
          * to ensure animate children correctly identify parallel state changes that
          * might affect their layout.
-         *
-         * TODO: Don't trigger rerender in the middle of layout animation, just mark
-         * as rerenderable
          */
-        forceRender: (): void => this.setState({ ...this.state }),
+        forceRender: (): void => {
+            if (!this.isAnimating) {
+                this.shouldRerender = false
+                this.setState({ ...this.state })
+            } else {
+                this.shouldRerender = true
+            }
+        },
 
         register: (child: Auto) => this.addChild(child),
     }
@@ -205,6 +221,9 @@ export class AnimateSharedLayout extends React.Component<
     }
 
     startAnimation() {
+        let numAnimations = 0
+        let numCompletedAnimations = 0
+
         const { type, transition = defaultLayoutTransition } = this.props
         const options = { type, transition }
 
@@ -262,8 +281,20 @@ export class AnimateSharedLayout extends React.Component<
                 })
 
                 if (animation) {
+                    this.isAnimating = true
+                    numAnimations++
+
                     animation.then(() => {
                         if (child.isPresent()) child.presence = Presence.Present
+                        numCompletedAnimations++
+
+                        if (
+                            this.shouldRerender &&
+                            numCompletedAnimations >= numAnimations
+                        ) {
+                            this.isAnimating = false
+                            this.state.forceRender()
+                        }
                     })
                 }
             },
