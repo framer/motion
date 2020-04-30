@@ -1,8 +1,8 @@
 import { MotionStyle } from "../../types"
 import { MotionValuesMap } from "../../utils/use-motion-values"
 import { mix, mixColor } from "@popmotion/popcorn"
-import { BoxDelta, BoxShadow } from "./types"
-import { complex } from "style-value-types"
+import { BoxDelta, BoxShadow, Box, Axis } from "./types"
+import { complex, px } from "style-value-types"
 
 type Read = (computedStyle: string) => string | number
 
@@ -22,7 +22,9 @@ export interface AutoValueHandler {
         target: string | number,
         current: { [key: string]: string | number | undefined },
         delta: BoxDelta,
-        treeScale: { x: number; y: number }
+        treeScale: { x: number; y: number },
+        originBox: Box,
+        targetBox: Box
     ) => Updater | void
 }
 
@@ -31,31 +33,68 @@ export interface AutoValueHandler {
  */
 export type AutoValueHandlers = { [key: string]: AutoValueHandler }
 
+function convertSingleRadius(value: string, axis: Axis) {
+    const parsed = parseFloat(value)
+
+    if (px.test(value)) {
+        return parsed
+    } else {
+        const factor = parsed / 100
+        return factor * (axis.max - axis.min)
+    }
+}
+
+export function radiusAsPixels(
+    value: string,
+    box: Box
+): { x: number; y: number } {
+    const [x, y] = value.split(" ")
+
+    return {
+        x: convertSingleRadius(x, box.x),
+        y: convertSingleRadius(y || x, box.y),
+    }
+}
+
 const singleBorderRadius = (key: string): AutoValueHandler => ({
     reset: style => {
         return style.borderRadius !== undefined ? style.borderRadius : ""
     },
-    read: radius => (radius ? parseFloat(radius) : 0),
     createUpdater: (
         values,
-        origin: number,
-        target: number,
+        origin: string,
+        target: string,
         current,
         delta,
-        treeScale
+        treeScale,
+        originBox,
+        targetBox
     ) => {
         if (!origin && !target) return
 
         const motionValue = values.get(key, "")
 
+        const originAsPixels = radiusAsPixels(origin, originBox)
+        const targetAsPixels = radiusAsPixels(target, targetBox)
+
         return p => {
-            const v = mix(origin, target, p)
-            current[key] = v
+            const vx = mix(originAsPixels.x, targetAsPixels.x, p)
+            const vy = mix(originAsPixels.y, targetAsPixels.y, p)
 
-            const targetX = v / delta.x.scale / treeScale.x
-            const targetY = v / delta.y.scale / treeScale.y
+            current[key] = `${vx}px ${vy}px`
 
-            motionValue.set(`${targetX}px ${targetY}px`)
+            const targetX = vx / delta.x.scale / treeScale.x
+            const targetY = vy / delta.y.scale / treeScale.y
+
+            // Perform the animation in pixels but if we don't need correction just set
+            // to the target so percentages have an affect going forward
+            const latest =
+                p === 1 &&
+                delta.x.scale / treeScale.x / delta.y.scale / treeScale.y === 1
+                    ? target
+                    : `${targetX}px ${targetY}px`
+
+            motionValue.set(latest)
         }
     },
 })
