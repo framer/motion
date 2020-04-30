@@ -487,7 +487,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
                 targetStyle[key],
                 this.current,
                 this.delta,
-                this.treeScale
+                this.treeScale,
+                this.visualOrigin.layout,
+                this.visualTarget.layout
             )
         }
 
