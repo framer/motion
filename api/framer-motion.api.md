@@ -105,6 +105,7 @@ export interface AnimationProps {
 export interface AutoValueHandler {
     // Warning: (ae-forgotten-export) The symbol "MotionValuesMap" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "BoxDelta" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "Box" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "Updater" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -113,7 +114,7 @@ export interface AutoValueHandler {
     }, delta: BoxDelta, treeScale: {
         x: number;
         y: number;
-    }) => Updater | void;
+    }, originBox: Box, targetBox: Box) => Updater | void;
     // Warning: (ae-forgotten-export) The symbol "Read" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -937,7 +938,7 @@ export type Variants = {
 
 // Warnings were encountered during analysis:
 // 
-// types/components/AnimateSharedLayout/index.d.ts:48:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
+// types/components/AnimateSharedLayout/index.d.ts:55:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
