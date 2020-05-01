@@ -33,8 +33,6 @@ const setAndResetVelocity = (value: MotionValue, to: string | number) => {
 const isNumOrPxType = (v?: ValueType): v is ValueType =>
     v === number || v === px
 
-export type BoundingBox = { [key in BoundingBoxDimension]: number }
-
 export enum BoundingBoxDimension {
     width = "width",
     height = "height",

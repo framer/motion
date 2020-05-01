@@ -84,7 +84,6 @@ export {
     Spring,
     Keyframes,
     Inertia,
-    Point,
     None,
     EasingFunction,
     TargetAndTransition,
@@ -107,3 +106,4 @@ export {
 export { MotionFeature, FeatureProps } from "./motion/features/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./behaviours/types"
+export * from "./types/geometry"
