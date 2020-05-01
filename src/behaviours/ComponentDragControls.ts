@@ -144,6 +144,10 @@ export class ComponentDragControls {
      * @internal
      */
     private prevConstraints: AxisBox2D
+    private prev = {
+        x: 0,
+        y: 0,
+    }
 
     constructor({ nativeElement, values, controls }: DragControlConfig) {
         this.nativeElement = nativeElement
@@ -290,6 +294,8 @@ export class ComponentDragControls {
 
     recordBoxInfo(constraints?: AxisBox2D | false) {
         if (constraints) this.prevConstraints = constraints
+        if (this.point.x) this.prev.x = this.point.x.get()
+        if (this.point.y) this.prev.y = this.point.y.get()
     }
 
     snapToCursor(event: AnyPointerEvent) {
@@ -512,7 +518,7 @@ export class ComponentDragControls {
                 ? (constraintsWidth - draggableWidth) / width
                 : 1
 
-            pointToScale.set(pointToScale.get() * scale)
+            pointToScale.set(this.prev[axis] * Math.abs(scale))
         }
 
         scaleAxisPoint("x")
@@ -637,17 +643,19 @@ function calculateConstraintsFromDom(
 }
 
 function calculateAxisConstraints(parentAxis: Axis, draggableAxis: Axis): Axis {
-    const constraints = {
-        min: parentAxis.min - draggableAxis.min,
-        max: parentAxis.max - draggableAxis.max,
+    let min = parentAxis.min - draggableAxis.min
+    let max = parentAxis.max - draggableAxis.max
+
+    // If the parent axis is actually smaller than the draggable axis then we can
+    // flip the constraints
+    if (
+        parentAxis.max - parentAxis.min <
+        draggableAxis.max - draggableAxis.min
+    ) {
+        ;[min, max] = [max, min]
     }
 
-    if (constraints.max < 0) {
-        constraints.min = constraints.max
-        constraints.max = 0
-    }
-
-    return constraints
+    return { min, max }
 }
 
 export function calculateConstraints(
