@@ -22,7 +22,7 @@ describe("convertBoundingBoxToAxisBox", () => {
 
 describe("calcAxisCenter", () => {
     test("correctly returns the center of a single axis", () => {
-        expect(calcAxisCenter({ min: -100, max: 200 })).toEqual(100)
+        expect(calcAxisCenter({ min: -100, max: 200 })).toEqual(50)
         expect(calcAxisCenter({ min: 600, max: 700 })).toEqual(650)
     })
 })

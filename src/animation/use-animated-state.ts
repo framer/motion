@@ -42,7 +42,7 @@ import { useConstant } from "../utils/use-constant"
 export function useAnimatedState(initialState: any) {
     const [animationState, onUpdate] = useState(initialState)
     const config = useConstant(() => ({ onUpdate }))
-    const values = useMotionValues(config)
+    const values = useMotionValues(config, false)
     const controls = useValueAnimationControls(
         {
             values,

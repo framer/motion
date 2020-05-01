@@ -120,7 +120,7 @@ const specialMotionValueProps = new Set([
     "_dragValueY",
 ])
 
-export const useMotionValues = (props: MotionProps) => {
+export const useMotionValues = (props: MotionProps, isStatic: boolean) => {
     const motionValues = useConstant(() => {
         const map = new MotionValuesMap()
 
@@ -142,7 +142,7 @@ export const useMotionValues = (props: MotionProps) => {
         return map
     })
     motionValues.setOnUpdate(props.onUpdate)
-    motionValues.setTransformTemplate(props.transformTemplate)
+    !isStatic && motionValues.setTransformTemplate(props.transformTemplate)
 
     return motionValues
 }
