@@ -1,8 +1,9 @@
 import { MotionStyle } from "../../types"
 import { MotionValuesMap } from "../../utils/use-motion-values"
 import { mix, mixColor } from "@popmotion/popcorn"
-import { BoxDelta, BoxShadow, Box, Axis } from "./types"
+import { BoxDelta, BoxShadow } from "./types"
 import { complex, px } from "style-value-types"
+import { AxisBox2D, Axis } from "../../../types/geometry"
 
 type Read = (computedStyle: string) => string | number
 
@@ -23,8 +24,8 @@ export interface AutoValueHandler {
         current: { [key: string]: string | number | undefined },
         delta: BoxDelta,
         treeScale: { x: number; y: number },
-        originBox: Box,
-        targetBox: Box
+        originBox: AxisBox2D,
+        targetBox: AxisBox2D
     ) => Updater | void
 }
 
@@ -46,7 +47,7 @@ function convertSingleRadius(value: string, axis: Axis) {
 
 export function radiusAsPixels(
     value: string,
-    box: Box
+    box: AxisBox2D
 ): { x: number; y: number } {
     const [x, y] = value.split(" ")
 

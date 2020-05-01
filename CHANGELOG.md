@@ -18,11 +18,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   Magic Motion
+-   `AnimateSharedLayout`
 
 ### Removed
 
--   `positionTransition` and `layoutTransition` props (use `magic` instead).
+-   `positionTransition` and `layoutTransition` props (use `animate={true}` instead).
+-   `Point` type in favour of `Point2D`.
+
+### Fixed
+
+-   Allow `dragConstraints` to be a ref that is smaller than the draggable element.
 
 ## [1.10.3] 2020-03-23
 

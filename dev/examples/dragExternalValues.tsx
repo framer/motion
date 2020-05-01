@@ -9,8 +9,12 @@ const style = {
 }
 
 export const App = () => {
-    const x = useMotionValue(0)
+    const x = useMotionValue(200)
     const controls = useAnimation()
+
+    // React.useLayoutEffect(() => {
+    //     x.set(100)
+    // })
 
     return (
         <motion.div style={{ x }} animate={controls}>

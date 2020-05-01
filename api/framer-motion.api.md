@@ -105,7 +105,6 @@ export interface AnimationProps {
 export interface AutoValueHandler {
     // Warning: (ae-forgotten-export) The symbol "MotionValuesMap" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "BoxDelta" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Box" needs to be exported by the entry point index.d.ts
     // Warning: (ae-forgotten-export) The symbol "Updater" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -114,7 +113,7 @@ export interface AutoValueHandler {
     }, delta: BoxDelta, treeScale: {
         x: number;
         y: number;
-    }, originBox: Box, targetBox: Box) => Updater | void;
+    }, originBox: AxisBox2D, targetBox: AxisBox2D) => Updater | void;
     // Warning: (ae-forgotten-export) The symbol "Read" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -127,6 +126,48 @@ export interface AutoValueHandler {
 export type AutoValueHandlers = {
     [key: string]: AutoValueHandler;
 };
+
+// @public (undocumented)
+export interface Axis {
+    // (undocumented)
+    max: number;
+    // (undocumented)
+    min: number;
+}
+
+// @public (undocumented)
+export interface AxisBox2D {
+    // (undocumented)
+    x: Axis;
+    // (undocumented)
+    y: Axis;
+}
+
+// @public (undocumented)
+export interface AxisBox3D extends AxisBox2D {
+    // (undocumented)
+    z: Axis;
+}
+
+// @public (undocumented)
+export interface BoundingBox2D {
+    // (undocumented)
+    bottom: number;
+    // (undocumented)
+    left: number;
+    // (undocumented)
+    right: number;
+    // (undocumented)
+    top: number;
+}
+
+// @public (undocumented)
+export interface BoundingBox3D extends BoundingBox2D {
+    // (undocumented)
+    back: number;
+    // (undocumented)
+    front: number;
+}
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
@@ -193,6 +234,8 @@ export type EasingFunction = (v: number) => number;
 
 // @public (undocumented)
 export interface EventInfo {
+    // Warning: (ae-forgotten-export) The symbol "Point" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
     point: Point;
 }
@@ -609,7 +652,7 @@ export interface PanInfo {
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void;
 
 // @public (undocumented)
-export interface Point {
+export interface Point2D {
     // (undocumented)
     x: number;
     // (undocumented)
@@ -617,11 +660,9 @@ export interface Point {
 }
 
 // @public (undocumented)
-export namespace Point {
-    const // @beta (undocumented)
-    subtract: (a: Point, b: Point) => Point;
-    const // @beta (undocumented)
-    relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
+export interface Point3D extends Point2D {
+    // (undocumented)
+    z: number;
 }
 
 // Warning: (ae-forgotten-export) The symbol "PresenceContextProps" needs to be exported by the entry point index.d.ts
@@ -780,6 +821,9 @@ export function transform<T>(inputValue: number, inputRange: number[], outputRan
 
 // @public
 export function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (inputValue: number) => T;
+
+// @public (undocumented)
+export type TransformPoint2D = (point: Point2D) => Point2D;
 
 // Warning: (ae-forgotten-export) The symbol "TransitionDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TransitionMap" needs to be exported by the entry point index.d.ts

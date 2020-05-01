@@ -1,14 +1,7 @@
 import { Transition } from "../../../types"
 import { Easing } from "@popmotion/easing"
 import { VisibilityAction } from "../../../components/AnimateSharedLayout/types"
-
-/**
- * Description of a single axis. min/max is an abstraction of left/right top/bottom front/back
- */
-export interface Axis {
-    min: number
-    max: number
-}
+import { AxisBox2D } from "../../../types/geometry"
 
 /**
  * The transform delta that, when applied to Axis a will visually transform it to Axis b
@@ -18,14 +11,6 @@ export interface AxisDelta {
     scale: number
     origin: number
     originPoint: number
-}
-
-/**
- * A description of a 2D box.
- */
-export interface Box {
-    x: Axis
-    y: Axis
 }
 
 /**
@@ -62,7 +47,7 @@ export interface Style {
  * A snapshot of an element to be taken before and after a render.
  */
 export interface Snapshot {
-    layout: Box
+    layout: AxisBox2D
     style: Style
 }
 
