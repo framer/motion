@@ -11,20 +11,28 @@ import { ValueAnimationControls, MotionValuesMap } from "../motion"
 import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
-import { MotionPluginsContext } from "../motion/context/MotionPluginContext"
 import { invariant } from "hey-listen"
 import { mix } from "@popmotion/popcorn"
 import { addDomEvent } from "../events/use-dom-event"
 import { extractEventInfo } from "../events/event-info"
 import { startAnimation } from "../animation/utils/transitions"
 import { NativeElement } from "../motion/utils/use-native-element"
+import {
+    TransformPoint2D,
+    BoundingBox2D,
+    Axis,
+    AxisBox2D,
+} from "../types/geometry"
+import {
+    transformBoundingBox,
+    convertBoundingBoxToAxisBox,
+    calcAxisCenter,
+} from "../utils/geometry"
 
 export const elementDragControls = new WeakMap<
     NativeElement,
     ComponentDragControls
 >()
-
-const noop = (v: any) => v
 
 interface DragControlConfig {
     nativeElement: NativeElement
@@ -37,14 +45,7 @@ export interface DragControlOptions {
 }
 
 interface DragControlsProps extends DraggableProps {
-    transformPagePoint: (point: Point) => Point
-}
-
-export type Constraints = {
-    left?: number
-    right?: number
-    top?: number
-    bottom?: number
+    transformPagePoint?: TransformPoint2D
 }
 
 type DragDirection = "x" | "y"
@@ -52,13 +53,6 @@ type DragDirection = "x" | "y"
 type MotionPoint = {
     x: MotionValue<number>
     y: MotionValue<number>
-}
-
-interface BBox {
-    width: number
-    height: number
-    x: number
-    y: number
 }
 
 export class ComponentDragControls {
@@ -77,11 +71,11 @@ export class ComponentDragControls {
     private currentDirection: DragDirection | null = null
 
     /**
-     * The permitted t/r/b/l boundaries of travel, in pixels.
+     * The permitted boundaries of travel, in pixels.
      *
      * @internal
      */
-    private constraints: Constraints | false = false
+    private constraints: AxisBox2D | false = false
 
     /**
      * If `true`, our constraints need to be resolved from a Element ref
@@ -96,9 +90,7 @@ export class ComponentDragControls {
      *
      * @internal
      */
-    private props: DragControlsProps = {
-        transformPagePoint: noop,
-    }
+    private props: DragControlsProps = {}
 
     /**
      * @internal
@@ -151,12 +143,7 @@ export class ComponentDragControls {
      *
      * @internal
      */
-    private prevConstraintsBox: BBox = {
-        width: 0,
-        height: 0,
-        x: 0,
-        y: 0,
-    }
+    private prevConstraints: AxisBox2D
 
     constructor({ nativeElement, values, controls }: DragControlConfig) {
         this.nativeElement = nativeElement
@@ -210,6 +197,7 @@ export class ComponentDragControls {
             bothAxis(axis => {
                 const axisPoint = this.point[axis]
                 if (!axisPoint) return
+
                 this.origin[axis].set(axisPoint.get())
             })
 
@@ -245,6 +233,7 @@ export class ComponentDragControls {
                 }
                 return
             }
+
             this.updatePoint("x", offset)
             this.updatePoint("y", offset)
             const { onDrag } = this.props
@@ -299,15 +288,8 @@ export class ComponentDragControls {
         onDragEnd && onDragEnd(event, convertPanToDrag(info, this.point))
     }
 
-    recordBoxInfo(constraints?: Constraints | false) {
-        if (constraints) {
-            const { right, left, bottom, top } = constraints
-            this.prevConstraintsBox.width = (right || 0) - (left || 0)
-            this.prevConstraintsBox.height = (bottom || 0) - (top || 0)
-        }
-
-        if (this.point.x) this.prevConstraintsBox.x = this.point.x.get()
-        if (this.point.y) this.prevConstraintsBox.y = this.point.y.get()
+    recordBoxInfo(constraints?: AxisBox2D | false) {
+        if (constraints) this.prevConstraints = constraints
     }
 
     snapToCursor(event: AnyPointerEvent) {
@@ -317,20 +299,22 @@ export class ComponentDragControls {
             this.nativeElement.getInstance(),
             transformPagePoint
         )
+
         const center = {
-            x: boundingBox.width / 2 + boundingBox.left + window.scrollX,
-            y: boundingBox.height / 2 + boundingBox.top + window.scrollY,
+            x: calcAxisCenter(boundingBox.x) + window.scrollX,
+            y: calcAxisCenter(boundingBox.y) + window.scrollY,
         }
+
         const offset = {
             x: point.x - center.x,
             y: point.y - center.y,
         }
 
         bothAxis(axis => {
-            const point = this.point[axis]
+            const axisPoint = this.point[axis]
 
-            if (!point) return
-            this.origin[axis].set(point.get())
+            if (!axisPoint) return
+            this.origin[axis].set(axisPoint.get())
         })
 
         this.updatePoint("x", offset)
@@ -354,6 +338,7 @@ export class ComponentDragControls {
             this.constraints,
             dragElastic
         )
+
         axisPoint.set(current)
     }
 
@@ -396,9 +381,17 @@ export class ComponentDragControls {
         // If `dragConstraints` is a React `ref`, we should resolve the constraints once the
         // component has rendered.
         this.constraintsNeedResolution = isRefObject(dragConstraints)
-        this.constraints = this.constraintsNeedResolution
-            ? this.constraints || false
-            : (dragConstraints as Constraints | false)
+
+        if (this.constraintsNeedResolution) {
+            this.constraints = this.constraints || false
+        } else {
+            this.constraints =
+                dragConstraints && dragConstraints !== false
+                    ? convertBoundingBoxToAxisBox(
+                          dragConstraints as BoundingBox2D
+                      )
+                    : false
+        }
     }
 
     private applyConstraintsToPoint(constraints = this.constraints) {
@@ -426,9 +419,7 @@ export class ComponentDragControls {
                 return
             }
 
-            const transition = this.constraints
-                ? getConstraints(axis, this.constraints)
-                : {}
+            const transition = this.constraints ? this.constraints[axis] : {}
 
             /**
              * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
@@ -491,16 +482,14 @@ export class ComponentDragControls {
             dragConstraints.current as Element,
             transformPagePoint
         )
+
         const draggableBox = getBoundingBox(
             this.nativeElement.getInstance(),
             transformPagePoint
         )
 
         // Scale a point relative to the transformation of a constraints-providing element.
-        const scaleAxisPoint = (
-            axis: "x" | "y",
-            dimension: "width" | "height"
-        ) => {
+        const scaleAxisPoint = (axis: "x" | "y") => {
             const pointToScale = this.point[axis]
             if (!pointToScale) return
 
@@ -513,16 +502,21 @@ export class ComponentDragControls {
 
             // If the previous dimension was `0` (default), set `scale` to `1` to prevent
             // divide by zero errors.
-            const scale = this.prevConstraintsBox[dimension]
-                ? (constraintsBox[dimension] - draggableBox[dimension]) /
-                  this.prevConstraintsBox[dimension]
+            const { min, max } = this.prevConstraints[axis]
+            const width = max - min
+            const constraintsWidth =
+                constraintsBox[axis].max - constraintsBox[axis].min
+            const draggableWidth =
+                draggableBox[axis].max - draggableBox[axis].min
+            const scale = width
+                ? (constraintsWidth - draggableWidth) / width
                 : 1
 
-            pointToScale.set(this.prevConstraintsBox[axis] * scale)
+            pointToScale.set(pointToScale.get() * scale)
         }
 
-        scaleAxisPoint("x", "width")
-        scaleAxisPoint("y", "height")
+        scaleAxisPoint("x")
+        scaleAxisPoint("y")
     }
 
     mount(element: Element) {
@@ -577,17 +571,6 @@ function convertPanToDrag(info: PanInfo, point: Partial<MotionPoint>) {
     }
 }
 
-function getConstraints(
-    axis: "x" | "y",
-    { top, right, bottom, left }: Constraints
-) {
-    if (axis === "x") {
-        return { min: left, max: right }
-    } else {
-        return { min: top, max: bottom }
-    }
-}
-
 function shouldDrag(
     direction: DragDirection,
     drag: boolean | DragDirection | undefined,
@@ -630,9 +613,9 @@ function getCurrentDirection(
 function calculateConstraintsFromDom(
     constraintsElement: Element,
     draggableElement: Element,
-    point: Partial<MotionPoint>,
-    transformPagePoint: MotionPluginsContext["transformPagePoint"]
-) {
+    _point: Partial<MotionPoint>, // TODO: Remove this argument if we keep transform reset
+    transformPagePoint?: TransformPoint2D
+): AxisBox2D {
     invariant(
         constraintsElement !== null && draggableElement !== null,
         "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
@@ -642,59 +625,66 @@ function calculateConstraintsFromDom(
         constraintsElement,
         transformPagePoint
     )
+
+    const draggableTransform = (draggableElement as HTMLElement).style.transform
+    ;(draggableElement as HTMLElement).style.transform = "none"
     const draggableBoundingBox = getBoundingBox(
         draggableElement,
         transformPagePoint
     )
+    ;(draggableElement as HTMLElement).style.transform = draggableTransform
+    return calculateConstraints(parentBoundingBox, draggableBoundingBox)
+}
 
-    const left =
-        parentBoundingBox.left -
-        draggableBoundingBox.left +
-        getCurrentOffset(point.x)
+function calculateAxisConstraints(parentAxis: Axis, draggableAxis: Axis): Axis {
+    const constraints = {
+        min: parentAxis.min - draggableAxis.min,
+        max: parentAxis.max - draggableAxis.max,
+    }
 
-    const top =
-        parentBoundingBox.top -
-        draggableBoundingBox.top +
-        getCurrentOffset(point.y)
+    if (constraints.max < 0) {
+        constraints.min = constraints.max
+        constraints.max = 0
+    }
 
-    const right = parentBoundingBox.width - draggableBoundingBox.width + left
-    const bottom = parentBoundingBox.height - draggableBoundingBox.height + top
+    return constraints
+}
 
-    return { top, left, right, bottom }
+export function calculateConstraints(
+    parentBox: AxisBox2D,
+    draggableBox: AxisBox2D
+): AxisBox2D {
+    return {
+        x: calculateAxisConstraints(parentBox.x, draggableBox.x),
+        y: calculateAxisConstraints(parentBox.y, draggableBox.y),
+    }
 }
 
 function getBoundingBox(
     element: Element,
-    transformPagePoint: MotionPluginsContext["transformPagePoint"]
-) {
+    transformPagePoint?: TransformPoint2D
+): AxisBox2D {
     const rect = element.getBoundingClientRect()
-
-    const { x: left, y: top } = transformPagePoint({
-        x: rect.left,
-        y: rect.top,
-    })
-    const { x: width, y: height } = transformPagePoint({
-        x: rect.width,
-        y: rect.height,
-    })
-    return { left, top, width, height }
+    return convertBoundingBoxToAxisBox(
+        transformBoundingBox(rect, transformPagePoint)
+    )
 }
 
-function getCurrentOffset(point?: MotionValue<number>) {
-    return point ? point.get() : 0
-}
+// function getCurrentOffset(point?: MotionValue<number>) {
+//     return point ? point.get() : 0
+// }
 
 function applyConstraints(
     axis: "x" | "y",
     value: number | MotionValue<number>,
-    constraints: Constraints | false,
+    constraints: AxisBox2D | false,
     dragElastic: boolean | number | undefined
 ): number {
     let constrainedValue = value instanceof MotionValue ? value.get() : value
     if (!constraints) {
         return constrainedValue
     }
-    const { min, max } = getConstraints(axis, constraints)
+    const { min, max } = constraints[axis]
 
     if (min !== undefined && constrainedValue < min) {
         constrainedValue = dragElastic

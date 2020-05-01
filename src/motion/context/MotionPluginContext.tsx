@@ -1,11 +1,11 @@
 import * as React from "react"
 import { createContext, useContext, useRef } from "react"
-import { Point } from "../../events/types"
 import { AutoValueHandlers } from "../features/auto/values"
 import { MotionFeature } from "../features/types"
+import { TransformPoint2D } from "../../types/geometry"
 
 export interface MotionPluginsContext {
-    transformPagePoint: (point: Point) => Point
+    transformPagePoint: TransformPoint2D
     autoValues: AutoValueHandlers
     features: MotionFeature[]
 }

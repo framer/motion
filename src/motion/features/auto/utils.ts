@@ -1,5 +1,5 @@
 import { clamp, mix, progress, distance } from "@popmotion/popcorn"
-import { Axis, AxisDelta, Snapshot, BoxDelta, Box, Style } from "./types"
+import { AxisDelta, Snapshot, BoxDelta, Style } from "./types"
 import {
     SharedBatchTree,
     TransitionHandler,
@@ -7,20 +7,23 @@ import {
 import { NativeElement } from "../../utils/use-native-element"
 import { MotionStyle } from "../../types"
 import { MotionValue } from "../../../value"
-import { CustomValueType, Point } from "../../../types"
+import { CustomValueType } from "../../../types"
 import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
 import { Auto, SharedLayoutTree } from "./Auto"
 import { warning } from "hey-listen"
 import { AutoValueHandlers } from "./values"
+import {
+    convertBoundingBoxToAxisBox,
+    transformBoundingBox,
+} from "../../../utils/geometry"
+import {
+    BoundingBox2D,
+    Axis,
+    AxisBox2D,
+    TransformPoint2D,
+} from "../../../types/geometry"
 
 const clampProgress = clamp(0, 1)
-
-interface BoundingBox {
-    top: number
-    left: number
-    bottom: number
-    right: number
-}
 
 /**
  * If a bounding box is measured as 0 on either axis we encounter
@@ -36,7 +39,7 @@ export function safeSize({
     right,
     bottom,
     left,
-}: BoundingBox): BoundingBox {
+}: BoundingBox2D): BoundingBox2D {
     const safePixels = 0.5
 
     if (top === bottom) {
@@ -54,18 +57,16 @@ export function safeSize({
 
 function snapshotLayout(
     element: NativeElement,
-    transformPagePoint: (point: Point) => Point
+    transformPoint: TransformPoint2D
 ) {
     const boundingBox = element.getBoundingBox()
-    const { left, right, top, bottom } = safeSize(boundingBox)
+    const safeBoundingBox = safeSize(boundingBox)
+    const transformedBoundingBox = transformBoundingBox(
+        safeBoundingBox,
+        transformPoint
+    )
 
-    const topLeft = transformPagePoint({ x: left, y: top })
-    const bottomRight = transformPagePoint({ x: right, y: bottom })
-
-    return {
-        x: { min: topLeft.x, max: bottomRight.x },
-        y: { min: topLeft.y, max: bottomRight.y },
-    }
+    return convertBoundingBoxToAxisBox(transformedBoundingBox)
 }
 
 function snapshotStyle(
@@ -98,10 +99,10 @@ function snapshotStyle(
 export function snapshot(
     element: NativeElement,
     valueHandlers: AutoValueHandlers,
-    transformPagePoint: (point: Point) => Point
+    transformPoint: TransformPoint2D
 ): Snapshot {
     return {
-        layout: snapshotLayout(element, transformPagePoint),
+        layout: snapshotLayout(element, transformPoint),
         style: snapshotStyle(element, valueHandlers),
     }
 }
@@ -188,8 +189,8 @@ export function calcDelta(
  */
 export function calcBoxDelta(
     delta: BoxDelta,
-    before: Box,
-    after: Box,
+    before: AxisBox2D,
+    after: AxisBox2D,
     origin?: number
 ): void {
     calcDelta(delta.x, before.x, after.x, origin)
@@ -216,7 +217,7 @@ export function applyAxisDelta(axis: Axis, delta: AxisDelta): void {
 /**
  * Scale and translate both axis of a box.
  */
-export function applyBoxDelta(box: Box, delta: BoxDelta): void {
+export function applyBoxDelta(box: AxisBox2D, delta: BoxDelta): void {
     applyAxisDelta(box.x, delta.x)
     applyAxisDelta(box.y, delta.y)
 }
@@ -228,7 +229,7 @@ export function applyBoxDelta(box: Box, delta: BoxDelta): void {
  * This is a mutative operation to avoid creating new objects every frame.
  */
 export function applyTreeDeltas(
-    box: Box,
+    box: AxisBox2D,
     treeScale: { x: number; y: number },
     deltas: BoxDelta[]
 ): void {
@@ -317,9 +318,9 @@ export const zeroDelta: AxisDelta = {
  */
 function tweenAxis(
     axis: "x" | "y",
-    target: Box,
-    prev: Box,
-    next: Box,
+    target: AxisBox2D,
+    prev: AxisBox2D,
+    next: AxisBox2D,
     p: number
 ) {
     target[axis].min = mix(prev[axis].min, next[axis].min, p)
@@ -331,7 +332,12 @@ function tweenAxis(
  *
  * This is a mutative operation.
  */
-export function tweenBox(target: Box, prev: Box, next: Box, p: number) {
+export function tweenAxisBox(
+    target: AxisBox2D,
+    prev: AxisBox2D,
+    next: AxisBox2D,
+    p: number
+) {
     tweenAxis("x", target, prev, next, p)
     tweenAxis("y", target, prev, next, p)
 }
@@ -395,7 +401,7 @@ function resetAxis(axis: Axis, originAxis: Axis) {
  *
  * This is a mutative operation.
  */
-export function resetBox(box: Box, originBox: Box) {
+export function resetBox(box: AxisBox2D, originBox: AxisBox2D) {
     resetAxis(box.x, originBox.x)
     resetAxis(box.y, originBox.y)
 }

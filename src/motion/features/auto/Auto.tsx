@@ -7,7 +7,7 @@ import {
     snapshot,
     applyCurrent,
     resolve,
-    tweenBox,
+    tweenAxisBox,
     applyTreeDeltas,
     calcBoxDelta,
     isTreeVisible,
@@ -15,7 +15,7 @@ import {
     getAnimatableValues,
     resetBox,
 } from "./utils"
-import { Snapshot, Style, BoxDelta, Box, AutoAnimationConfig } from "./types"
+import { Snapshot, Style, BoxDelta, AutoAnimationConfig } from "./types"
 import {
     SharedLayoutTree,
     SharedBatchTree,
@@ -24,7 +24,7 @@ import {
 } from "../../../components/AnimateSharedLayout/types"
 import { MotionValue } from "../../../value"
 import { syncRenderSession } from "../../../dom/sync-render-session"
-import { TargetAndTransition, Point } from "../../../types"
+import { TargetAndTransition } from "../../../types"
 import { startAnimation } from "../../../animation/utils/transitions"
 import { mix } from "@popmotion/popcorn"
 import {
@@ -35,6 +35,7 @@ import { defaultMagicValues, AutoValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
 import { elementDragControls } from "../../../behaviours/ComponentDragControls"
+import { TransformPoint2D, AxisBox2D } from "../../../types/geometry"
 export { SharedLayoutTree, SharedBatchTree }
 
 /**
@@ -63,7 +64,7 @@ interface ContextProps {
     safeToRemove?: null | SafeToRemove
     sharedLayoutContext: SharedLayoutTree | SharedBatchTree
     autoValues: AutoValueHandlers
-    transformPagePoint: (point: Point) => Point
+    transformPagePoint: TransformPoint2D
 }
 
 export class Auto extends React.Component<FeatureProps & ContextProps> {
@@ -138,7 +139,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      *
      * This is mutable to avoid object creation on each frame.
      */
-    correctedLayout: Box = {
+    correctedLayout: AxisBox2D = {
         x: { min: 0, max: 0 },
         y: { min: 0, max: 0 },
     }
@@ -148,7 +149,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      *
      * This is mutable to avoid object creation on each frame.
      */
-    frameTarget: Box = {
+    frameTarget: AxisBox2D = {
         x: { min: 0, max: 0 },
         y: { min: 0, max: 0 },
     }
@@ -634,7 +635,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
         resetBox(this.correctedLayout, this.measuredTarget.layout)
         applyTreeDeltas(this.correctedLayout, this.treeScale, parentDeltas)
-        tweenBox(
+        tweenAxisBox(
             this.frameTarget,
             this.visualOrigin.layout,
             this.visualTarget.layout,

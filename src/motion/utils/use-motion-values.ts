@@ -113,7 +113,12 @@ export class MotionValuesMap {
     }
 }
 
-const specialMotionValueProps = new Set(["dragOriginX", "dragOriginY"])
+const specialMotionValueProps = new Set([
+    "dragOriginX",
+    "dragOriginY",
+    "_dragValueX",
+    "_dragValueY",
+])
 
 export const useMotionValues = (props: MotionProps) => {
     const motionValues = useConstant(() => {
