@@ -37,7 +37,7 @@ export const createMotionComponent = <P extends {}>({
         const parentContext = useContext(MotionContext)
         const isStatic = parentContext.static || props.static || false
 
-        const values = useMotionValues(props)
+        const values = useMotionValues(props, isStatic)
         const style = useMotionStyles(
             values,
             props.style,

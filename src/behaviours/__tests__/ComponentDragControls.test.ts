@@ -83,5 +83,35 @@ describe("calculateConstraints", () => {
             x: { min: -200, max: 0 },
             y: { min: -200, max: 0 },
         })
+
+        const container2 = {
+            x: { min: 100, max: 200 },
+            y: { min: 100, max: 200 },
+        }
+
+        const draggable2 = {
+            x: { min: -200, max: 200 },
+            y: { min: -200, max: 200 },
+        }
+
+        expect(calculateConstraints(container2, draggable2)).toEqual({
+            x: { min: 0, max: 300 },
+            y: { min: 0, max: 300 },
+        })
+
+        const container3 = {
+            x: { min: 0, max: 200 },
+            y: { min: 0, max: 200 },
+        }
+
+        const draggable3 = {
+            x: { min: 100, max: 400 },
+            y: { min: 100, max: 400 },
+        }
+
+        expect(calculateConstraints(container3, draggable3)).toEqual({
+            x: { min: -200, max: -100 },
+            y: { min: -200, max: -100 },
+        })
     })
 })
