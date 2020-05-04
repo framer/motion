@@ -3,7 +3,7 @@ import { buildStyleProperty, isTransformProp } from "stylefire"
 import { resolveCurrent } from "../../value/utils/resolve-values"
 import { MotionValuesMap } from "./use-motion-values"
 import { MotionValue, motionValue } from "../../value"
-import { MotionStyle } from "../types"
+import { MotionStyle, MotionProps } from "../types"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
 const transformOriginProps = new Set(["originX", "originY", "originZ"])
@@ -12,10 +12,11 @@ const isTransformOriginProp = (key: string) => transformOriginProps.has(key)
 export const buildStyleAttr = (
     values: MotionValuesMap,
     styleProp: CSSProperties,
+    props: MotionProps,
     isStatic?: boolean
 ): CSSProperties => {
     const motionValueStyles: { [key: string]: any } = resolveCurrent(values)
-    const transformTemplate = values.getTransformTemplate()
+    const { transformTemplate } = props
 
     if (transformTemplate) {
         // If `transform` has been manually set as a string, pass that through the template
