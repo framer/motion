@@ -4,7 +4,7 @@ import { motion } from "../../src"
 
 const dragContainer = {
     width: "400px",
-    height: "60vh",
+    height: "100px",
     background: "#F30552",
     borderRadius: "10px",
 }
@@ -14,6 +14,7 @@ const draggable = {
     height: 100,
     background: "white",
     borderRadius: "10px",
+    opacity: 0.5,
 }
 export const App = () => {
     const ref = useRef(null)
