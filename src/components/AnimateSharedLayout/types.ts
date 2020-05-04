@@ -28,6 +28,7 @@ export enum StackPosition {
 export interface SharedLayoutTree {
     forceRender: () => void
     register: (child: Auto) => () => void
+    move: (child: Auto) => void
 }
 
 export interface TransitionHandler {
