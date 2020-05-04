@@ -7,7 +7,7 @@ test("buildStyleAttr returns React-compatible styles", () => {
     values.set("x", motionValue(10))
     values.set("y", motionValue(20))
     values.set("originZ", motionValue(10))
-    const style = buildStyleAttr(values, {})
+    const style = buildStyleAttr(values, {}, {})
 
     expect(style).toEqual({
         transform: "translateX(10px) translateY(20px) translateZ(0)",
