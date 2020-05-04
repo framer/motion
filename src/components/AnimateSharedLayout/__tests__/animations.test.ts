@@ -165,6 +165,7 @@ describe("createCrossfadeAnimation", () => {
             crossfade: crossfadeIn,
         })
     })
+
     test("Switching root components: [A1] -> [A1 (exiting), A2]", () => {
         const stack = new LayoutStack()
         const a = makeChild(Presence.Exiting, "aOrigin", "aTarget")

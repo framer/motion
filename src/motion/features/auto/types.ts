@@ -84,4 +84,19 @@ export interface AutoAnimateProps {
      * @internal
      */
     allowTransformNone?: boolean
+
+    /**
+     * Manually control a component's place in its layout stack. This is currently only intended for optimisations
+     * in Framer's Navigation component.
+     *
+     * @internal
+     */
+    layoutOrder?: number
+
+    /**
+     * Manually control a component's presence. Currently only intended for optimisations in Framer Navigation component.
+     *
+     * @internal
+     */
+    isPresent?: boolean
 }

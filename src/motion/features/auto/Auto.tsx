@@ -49,8 +49,10 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
 
     return (
         <Auto
-            {...props}
+            // We allow isPresent to be overwritten by manually setting it to true/false
+            // This is only intended for optimisations in Framer
             isPresent={isPresent}
+            {...props}
             safeToRemove={safeToRemove}
             sharedLayoutContext={sharedLayoutContext}
             autoValues={autoValues}
@@ -71,7 +73,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     /**
      * If this is a child of AnimateSharedLayout, this callback must be used to unregister on unmount
      */
-    private unregisterFromSharedLayoutContext?: () => void
+    private unregisterSharedLayoutContext?: () => void
 
     /**
      * Used to stop the current animation on the component's progress MotionValue
@@ -221,14 +223,23 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         const { sharedLayoutContext } = this.props
 
         if (isSharedLayoutTree(sharedLayoutContext)) {
-            this.unregisterFromSharedLayoutContext = sharedLayoutContext.register(
+            this.unregisterSharedLayoutContext = sharedLayoutContext.register(
                 this
             )
 
             // Check if this render was handled by AnimateSharedLayout. If it was,
             // the usual logic in startAnimation to tell AnimatePresence that this component is safe to remove
             // will have run. If it wasn't, we have to do that here.
-            this.componentDidUpdate = () => {
+            this.componentDidUpdate = prevProps => {
+                const { layoutOrder } = this.props
+
+                if (
+                    layoutOrder !== undefined &&
+                    layoutOrder !== prevProps.layoutOrder
+                ) {
+                    sharedLayoutContext.move(this)
+                }
+
                 if (!this.willAnimate) this.safeToRemove()
                 this.willAnimate = false
             }
@@ -251,14 +262,12 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     componentWillUnmount() {
-        this.unregisterFromSharedLayoutContext &&
-            this.unregisterFromSharedLayoutContext()
+        this.unregisterSharedLayoutContext &&
+            this.unregisterSharedLayoutContext()
         this.stopLayoutAnimation && this.stopLayoutAnimation()
     }
 
     shouldComponentUpdate(nextProps: FeatureProps & ContextProps) {
-        const { sharedLayoutContext } = this.props
-
         const hasDependency =
             this.props.magicDependency !== undefined ||
             nextProps.magicDependency !== undefined
@@ -279,7 +288,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
          * We do need to fire componentDidUpdate if the component's presence has changed so
          * we can fire safeToRemove on exiting components.
          */
-        return !isSharedLayoutTree(sharedLayoutContext) || presenceHasChanged
+        return true //!isSharedLayoutTree(sharedLayoutContext) || presenceHasChanged
     }
 
     /**

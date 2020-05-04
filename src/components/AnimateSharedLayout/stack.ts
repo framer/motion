@@ -6,6 +6,9 @@ export interface StackChild {
     presence?: Presence
     measuredOrigin?: Snapshot
     measuredTarget?: Snapshot
+    props: {
+        layoutOrder?: number
+    }
 }
 
 export type LeadAndFollow<T> = [T | undefined, T | undefined]
@@ -108,14 +111,27 @@ export class LayoutStack<T extends StackChild = StackChild> {
     snapshot?: Snapshot
 
     add(child: T) {
-        this.order.push(child)
+        const { layoutOrder } = child.props
+
+        if (layoutOrder === undefined) {
+            this.order.push(child)
+        } else {
+            let index = this.order.findIndex(
+                stackChild => layoutOrder <= (stackChild.props.layoutOrder || 0)
+            )
+
+            if (index === -1) {
+                child.presence = Presence.Entering
+                index = this.order.length
+            }
+
+            this.order.splice(index, 0, child)
+        }
     }
 
     remove(child: T) {
         const index = this.order.findIndex(stackChild => child === stackChild)
-        if (index !== -1) {
-            this.order.splice(index, 1)
-        }
+        if (index !== -1) this.order.splice(index, 1)
     }
 
     updateLeadAndFollow() {
