@@ -87,10 +87,6 @@ export class MotionValuesMap {
         }
     }
 
-    getTransformTemplate() {
-        return this.transformTemplate
-    }
-
     updateTransformTemplate() {
         if (this.output) {
             this.output("transform", this.transformTemplate)

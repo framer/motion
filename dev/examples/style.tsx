@@ -14,8 +14,8 @@ export const App = () => {
         <motion.div
             static
             transformTemplate={(_, generated) => {
-                console.log(_, generated)
-                return generated
+                console.log("firing template")
+                return generated + " translateX(-200px)"
             }}
             style={style}
         />
