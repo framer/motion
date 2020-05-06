@@ -65,7 +65,6 @@ const isTargetResolver = (p: any): p is TargetResolver => {
 
 /**
  * Check if value is a list of variant labels
- * @param v -
  */
 const isVariantLabels = (v: any): v is string[] => Array.isArray(v)
 
@@ -73,10 +72,12 @@ export type ReadValueFromSource = (key: string) => number | string
 
 export type MakeTargetAnimatable = (
     target: TargetWithKeyframes,
-    transitionEnd?: Target | undefined
+    origin?: Target,
+    transitionEnd?: Target
 ) => {
     target: TargetWithKeyframes
-    transitionEnd?: Target | undefined
+    origin?: Target
+    transitionEnd?: Target
 }
 
 export interface ValueAnimationConfig {
@@ -204,7 +205,8 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     ) {
         let { target, transitionEnd } = this.resolveVariant(definition)
         target = this.transformValues({ ...target, ...transitionEnd } as any)
-        return Object.keys(target).forEach(key => {
+
+        for (const key in target) {
             if (isActive.has(key)) return
             isActive.add(key)
             if (target) {
@@ -218,7 +220,7 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
                 if (!priority) this.baseTarget[key] = targetValue
             }
-        })
+        }
     }
 
     /**
@@ -488,9 +490,14 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 
         this.checkForNewValues(target)
 
+        const origin = this.transformValues(
+            getOrigin(target as any, transition as any, this.values) as any
+        )
+
         if (this.makeTargetAnimatable) {
             const animatable = this.makeTargetAnimatable(
                 target,
+                origin,
                 transitionEnd as any
             )
             target = animatable.target
@@ -689,4 +696,25 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
     resetChildren() {
         if (this.children) this.children.clear()
     }
+}
+
+function getOriginFromTransition(key: string, transition: Transition) {
+    if (transition[key]) return transition[key].from
+    if (transition["default"]) return transition["default"].from
+    return transition.from
+}
+
+function getOrigin(
+    target: Target,
+    transition: Transition,
+    values: MotionValuesMap
+) {
+    const origin: Target = {}
+
+    for (const key in target) {
+        origin[key] =
+            getOriginFromTransition(key, transition) ?? values.get(key)?.get()
+    }
+
+    return origin
 }

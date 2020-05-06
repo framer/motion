@@ -8,5 +8,11 @@ const style = {
 }
 
 export const App = () => {
-    return <motion.div animate={{ width: "100%" }} style={style} />
+    return (
+        <motion.div
+            animate={{ width: "100%" }}
+            transition={{ duration: 5, from: "50%" }}
+            style={style}
+        />
+    )
 }
