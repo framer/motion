@@ -699,9 +699,10 @@ export class ValueAnimationControls<P extends {} = {}, V extends {} = {}> {
 }
 
 function getOriginFromTransition(key: string, transition: Transition) {
-    if (transition[key]) return transition[key].from
-    if (transition["default"]) return transition["default"].from
-    return transition.from
+    if (!transition) return
+    const valueTransition =
+        transition[key] || transition["default"] || transition
+    return valueTransition.from
 }
 
 function getOrigin(
