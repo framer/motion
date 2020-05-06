@@ -11,13 +11,16 @@ const style = {
 
 export const App = () => {
     return (
-        <motion.div
-            static
-            transformTemplate={(_, generated) => {
-                console.log("firing template")
-                return generated + " translateX(-200px)"
-            }}
-            style={style}
-        />
+        <motion.div static>
+            <motion.div
+                transformTemplate={(_, generated) => {
+                    console.log("firing template")
+                    return generated + " translateX(-200px)"
+                }}
+                variants={{ show: { backgroundColor: "green", x: 10 } }}
+                initial="show"
+                style={style}
+            />
+        </motion.div>
     )
 }

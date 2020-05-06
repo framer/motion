@@ -37,11 +37,10 @@ export const createMotionComponent = <P extends {}>({
         const parentContext = useContext(MotionContext)
         const isStatic = parentContext.static || props.static || false
 
-        const values = useMotionValues(props, isStatic)
+        const values = useMotionValues(props)
         const style = useMotionStyles(
             values,
             props.style,
-            isStatic,
             props.transformValues
         )
         const shouldInheritVariant = checkShouldInheritVariant(props)
