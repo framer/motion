@@ -158,6 +158,7 @@ const checkAndConvertChangedValueTypes = (
     values: MotionValuesMap,
     nativeElement: NativeElement<Element>,
     target: TargetWithKeyframes,
+    origin: Target = {},
     transitionEnd: Target = {}
 ): { target: TargetWithKeyframes; transitionEnd: Target } => {
     target = { ...target }
@@ -170,81 +171,76 @@ const checkAndConvertChangedValueTypes = (
     let removedTransformValues: RemovedTransforms = []
     let hasAttemptedToRemoveTransformValues = false
 
-    const changedValueTypeKeys: string[] = targetPositionalKeys.reduce(
-        (acc, key) => {
-            const value = values.get(key) as MotionValue<number | string>
-            if (!value) return acc
+    const changedValueTypeKeys: string[] = []
+    for (const key in targetPositionalKeys) {
+        const value = values.get(key) as MotionValue<number | string>
+        if (!values.has(key)) continue
 
-            const from = value.get()
-            const to = target[key]
-            const fromType = getDimensionValueType(from)
-            let toType
+        const from = origin[key]
+        const to = target[key]
+        const fromType = getDimensionValueType(from)
+        let toType
 
-            // TODO: The current implementation of this basically throws an error
-            // if you try and do value conversion via keyframes. There's probably
-            // a way of doing this but the performance implications would need greater scrutiny,
-            // as it'd be doing multiple resize-remeasure operations.
-            if (isKeyframesTarget(to)) {
-                const numKeyframes = to.length
+        // TODO: The current implementation of this basically throws an error
+        // if you try and do value conversion via keyframes. There's probably
+        // a way of doing this but the performance implications would need greater scrutiny,
+        // as it'd be doing multiple resize-remeasure operations.
+        if (isKeyframesTarget(to)) {
+            const numKeyframes = to.length
 
-                for (let i = to[0] === null ? 1 : 0; i < numKeyframes; i++) {
-                    if (!toType) {
-                        toType = getDimensionValueType(to[i])
+            for (let i = to[0] === null ? 1 : 0; i < numKeyframes; i++) {
+                if (!toType) {
+                    toType = getDimensionValueType(to[i])
 
-                        invariant(
-                            toType === fromType ||
-                                (isNumOrPxType(fromType) &&
-                                    isNumOrPxType(toType)),
-                            "Keyframes must be of the same dimension as the current value"
-                        )
-                    } else {
-                        invariant(
-                            getDimensionValueType(to[i]) === toType,
-                            "All keyframes must be of the same type"
-                        )
-                    }
+                    invariant(
+                        toType === fromType ||
+                            (isNumOrPxType(fromType) && isNumOrPxType(toType)),
+                        "Keyframes must be of the same dimension as the current value"
+                    )
+                } else {
+                    invariant(
+                        getDimensionValueType(to[i]) === toType,
+                        "All keyframes must be of the same type"
+                    )
+                }
+            }
+        } else {
+            toType = getDimensionValueType(to)
+        }
+
+        if (fromType !== toType) {
+            // If they're both just number or px, convert them both to numbers rather than
+            // relying on resize/remeasure to convert (which is wasteful in this situation)
+            if (isNumOrPxType(fromType) && isNumOrPxType(toType)) {
+                const current = value.get()
+                if (typeof current === "string") {
+                    value.set(parseFloat(current))
+                }
+                if (typeof to === "string") {
+                    target[key] = parseFloat(to)
+                } else if (Array.isArray(to) && toType === px) {
+                    target[key] = to.map(parseFloat)
                 }
             } else {
-                toType = getDimensionValueType(to)
-            }
-
-            if (fromType !== toType) {
-                // If they're both just number or px, convert them both to numbers rather than
-                // relying on resize/remeasure to convert (which is wasteful in this situation)
-                if (isNumOrPxType(fromType) && isNumOrPxType(toType)) {
-                    const current = value.get()
-                    if (typeof current === "string") {
-                        value.set(parseFloat(current))
-                    }
-                    if (typeof to === "string") {
-                        target[key] = parseFloat(to)
-                    } else if (Array.isArray(to) && toType === px) {
-                        target[key] = to.map(parseFloat)
-                    }
-                } else {
-                    // If we're going to do value conversion via DOM measurements, we first
-                    // need to remove non-positional transform values that could affect the bbox measurements.
-                    if (!hasAttemptedToRemoveTransformValues) {
-                        removedTransformValues = removeNonTranslationalTransform(
-                            values,
-                            nativeElement
-                        )
-                        hasAttemptedToRemoveTransformValues = true
-                    }
-
-                    acc.push(key)
-                    transitionEnd[key] =
-                        transitionEnd[key] !== undefined
-                            ? transitionEnd[key]
-                            : target[key]
-                    setAndResetVelocity(value, to)
+                // If we're going to do value conversion via DOM measurements, we first
+                // need to remove non-positional transform values that could affect the bbox measurements.
+                if (!hasAttemptedToRemoveTransformValues) {
+                    removedTransformValues = removeNonTranslationalTransform(
+                        values,
+                        nativeElement
+                    )
+                    hasAttemptedToRemoveTransformValues = true
                 }
-            }
 
-            return acc
-        },
-        [] as string[]
-    )
+                changedValueTypeKeys.push(key)
+                transitionEnd[key] =
+                    transitionEnd[key] !== undefined
+                        ? transitionEnd[key]
+                        : target[key]
+                setAndResetVelocity(value, to)
+            }
+        }
+    }
 
     if (changedValueTypeKeys.length) {
         const convertedTarget = convertChangedValueTypes(
@@ -275,16 +271,13 @@ const checkAndConvertChangedValueTypes = (
  *
  * Allows animation between `'auto'` -> `'100%'` or `0` -> `'calc(50% - 10vw)'`
  *
- * @param values
- * @param nativeElement
- * @param target
- * @param transitionEnd
  * @internal
  */
 export function unitConversion(
     values: MotionValuesMap,
     nativeElement: NativeElement<Element>,
     target: TargetWithKeyframes,
+    origin?: Target,
     transitionEnd?: Target
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     return hasPositionalKey(target)
@@ -292,6 +285,7 @@ export function unitConversion(
               values,
               nativeElement,
               target,
+              origin,
               transitionEnd
           )
         : { target, transitionEnd }

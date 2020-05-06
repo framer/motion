@@ -1,9 +1,33 @@
 import { useEffect, useState, useContext } from "react"
-import {
-    prefersReducedMotion,
-    determineShouldReduceMotion,
-} from "../dom/accessibility"
+import { motionValue } from "../value"
 import { MotionContext } from "../motion/context/MotionContext"
+
+// Does this device prefer reduced motion? Returns `null` server-side.
+export const prefersReducedMotion = motionValue<boolean | null>(null)
+
+if (typeof window !== "undefined") {
+    if (window.matchMedia) {
+        const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)")
+
+        const setReducedMotionPreferences = () =>
+            prefersReducedMotion.set(motionMediaQuery.matches)
+
+        motionMediaQuery.addListener(setReducedMotionPreferences)
+
+        setReducedMotionPreferences()
+    } else {
+        prefersReducedMotion.set(false)
+    }
+}
+
+export function determineShouldReduceMotion(
+    prefersReduced: boolean | null,
+    isReducedMotion: boolean | undefined
+): boolean {
+    return typeof isReducedMotion === "boolean"
+        ? isReducedMotion
+        : Boolean(prefersReduced)
+}
 
 /**
  * A hook that returns `true` if we should be using reduced motion based on the current device's Reduced Motion setting.
