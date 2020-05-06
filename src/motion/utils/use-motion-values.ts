@@ -36,6 +36,12 @@ export class MotionValuesMap {
         }
     }
 
+    delete(key: string) {
+        this.values.delete(key)
+        const unsubscribe = this.unsubscribers.get(key)
+        unsubscribe && unsubscribe()
+    }
+
     get<Value>(key: string): MotionValue<Value> | undefined
     get<Value>(key: string, defaultValue: Value): MotionValue<Value>
     get<Value>(
@@ -116,7 +122,7 @@ const specialMotionValueProps = new Set([
     "_dragValueY",
 ])
 
-export const useMotionValues = (props: MotionProps, isStatic: boolean) => {
+export const useMotionValues = (props: MotionProps) => {
     const motionValues = useConstant(() => {
         const map = new MotionValuesMap()
 
@@ -138,7 +144,7 @@ export const useMotionValues = (props: MotionProps, isStatic: boolean) => {
         return map
     })
     motionValues.setOnUpdate(props.onUpdate)
-    !isStatic && motionValues.setTransformTemplate(props.transformTemplate)
+    motionValues.setTransformTemplate(props.transformTemplate)
 
     return motionValues
 }
