@@ -8,7 +8,7 @@ export const parseDomVariant = (
     values: MotionValuesMap,
     nativeElement: NativeElement<Element>
 ): MakeTargetAnimatable => {
-    return (target, transitionEnd) => {
+    return (target, origin, transitionEnd) => {
         const resolved = resolveCSSVariables(
             values,
             nativeElement,
@@ -18,6 +18,12 @@ export const parseDomVariant = (
         target = resolved.target
         transitionEnd = resolved.transitionEnd
 
-        return unitConversion(values, nativeElement, target, transitionEnd)
+        return unitConversion(
+            values,
+            nativeElement,
+            target,
+            origin,
+            transitionEnd
+        )
     }
 }

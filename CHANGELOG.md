@@ -16,6 +16,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Allow `dragConstraints` to be a ref that is smaller than the draggable element.
+-   Removing a `MotionValue` from `style` now correctly removes it.
 
 ## [1.11.1] 2020-06-16
 
