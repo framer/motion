@@ -219,6 +219,7 @@ export interface DraggableProps extends DragHandlers {
     _dragValueX?: MotionValue<number>;
     // @internal (undocumented)
     _dragValueY?: MotionValue<number>;
+    onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
 }
 
 // @public (undocumented)
