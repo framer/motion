@@ -27,6 +27,7 @@ import {
     transformBoundingBox,
     convertBoundingBoxToAxisBox,
     calcAxisCenter,
+    convertAxisBoxToBoundingBox,
 } from "../utils/geometry"
 
 export const elementDragControls = new WeakMap<
@@ -187,14 +188,25 @@ export class ComponentDragControls {
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
             // If constraints are an element, resolve them again in case they've updated.
             if (this.constraintsNeedResolution) {
-                const { dragConstraints, transformPagePoint } = this.props
+                const {
+                    dragConstraints,
+                    transformPagePoint,
+                    onMeasureDragConstraints,
+                } = this.props
+
                 this.constraints = calculateConstraintsFromDom(
                     (dragConstraints as RefObject<Element>).current as Element,
                     this.nativeElement.getInstance(),
                     this.point,
                     transformPagePoint
                 )
+
                 this.applyConstraintsToPoint()
+
+                onMeasureDragConstraints &&
+                    onMeasureDragConstraints(
+                        convertAxisBoxToBoundingBox(this.constraints)
+                    )
             }
 
             // Set point origin and stop any existing animations.
