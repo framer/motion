@@ -187,27 +187,7 @@ export class ComponentDragControls {
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
             // If constraints are an element, resolve them again in case they've updated.
-            if (this.constraintsNeedResolution) {
-                const {
-                    dragConstraints,
-                    transformPagePoint,
-                    onMeasureDragConstraints,
-                } = this.props
-
-                this.constraints = calculateConstraintsFromDom(
-                    (dragConstraints as RefObject<Element>).current as Element,
-                    this.nativeElement.getInstance(),
-                    this.point,
-                    transformPagePoint
-                )
-
-                this.applyConstraintsToPoint()
-
-                onMeasureDragConstraints &&
-                    onMeasureDragConstraints(
-                        convertAxisBoxToBoundingBox(this.constraints)
-                    )
-            }
+            this.resolveDragConstraints()
 
             // Set point origin and stop any existing animations.
             bothAxis(axis => {
@@ -271,6 +251,36 @@ export class ComponentDragControls {
             },
             { transformPagePoint }
         )
+    }
+
+    resolveDragConstraints() {
+        if (!this.constraintsNeedResolution) return
+
+        const {
+            dragConstraints,
+            onMeasureDragConstraints,
+            transformPagePoint,
+        } = this.props
+        const constraintsElement = (dragConstraints as RefObject<Element>)
+            .current as Element
+
+        this.constraints = calculateConstraintsFromDom(
+            constraintsElement,
+            this.nativeElement.getInstance(),
+            this.point,
+            transformPagePoint
+        )
+
+        if (onMeasureDragConstraints) {
+            const constraints = onMeasureDragConstraints(
+                convertAxisBoxToBoundingBox(this.constraints)
+            )
+
+            if (constraints)
+                this.constraints = convertBoundingBoxToAxisBox(constraints)
+        }
+
+        this.applyConstraintsToPoint()
     }
 
     cancelDrag() {
@@ -412,12 +422,12 @@ export class ComponentDragControls {
         }
     }
 
-    private applyConstraintsToPoint(constraints = this.constraints) {
+    private applyConstraintsToPoint() {
         return bothAxis(axis => {
             const axisPoint = this.point[axis]
             axisPoint &&
                 !axisPoint.isAnimating() &&
-                applyConstraints(axis, axisPoint, constraints, 0)
+                applyConstraints(axis, axisPoint, this.constraints, 0)
         })
     }
 
@@ -552,16 +562,8 @@ export class ComponentDragControls {
         )
 
         if (this.constraintsNeedResolution) {
-            const { dragConstraints, transformPagePoint } = this.props
-            const constraints = calculateConstraintsFromDom(
-                (dragConstraints as RefObject<Element>).current as Element,
-                this.nativeElement.getInstance(),
-                this.point,
-                transformPagePoint
-            )
-
-            this.applyConstraintsToPoint(constraints)
-            this.recordBoxInfo(constraints)
+            this.resolveDragConstraints()
+            this.recordBoxInfo(this.constraints)
         } else if (!this.isDragging && this.constraints) {
             this.applyConstraintsToPoint()
         }
