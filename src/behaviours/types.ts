@@ -529,5 +529,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * @public
      */
-    onMeasureDragConstraints?: (constraints: BoundingBox2D) => void
+    onMeasureDragConstraints?: (
+        constraints: BoundingBox2D
+    ) => BoundingBox2D | void
 }
