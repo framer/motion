@@ -4,6 +4,7 @@ import { MotionValue } from "../value"
 import { Omit, Inertia } from "../types"
 import { AnimationControls } from "../animation/AnimationControls"
 import { DragControls } from "./use-drag-controls"
+import { BoundingBox2D } from "../types/geometry"
 
 /**
  * @public
@@ -522,4 +523,11 @@ export interface DraggableProps extends DragHandlers {
      * ```
      */
     dragListener?: boolean
+
+    /**
+     * If `dragConstraints` is set to a React ref, this callback will call with the measured drag constraints.
+     *
+     * @public
+     */
+    onMeasureDragConstraints?: (constraints: BoundingBox2D) => void
 }
