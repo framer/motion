@@ -19,6 +19,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   `AnimateSharedLayout`
+-   `onMeasureDragConstraints` prop that fires when `dragConstraints` are measured.
 
 ### Removed
 
