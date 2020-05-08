@@ -12,6 +12,7 @@ import {
     isNear,
     applyBoxDelta,
     applyTreeDeltas,
+    fixTransparentRGBPair,
 } from "../utils"
 import { Axis, AxisBox2D } from "../../../../types/geometry"
 
@@ -340,5 +341,21 @@ describe("isNear", () => {
         expect(isNear(10, 9.05, 1)).toBe(true)
         expect(isNear(10, 11, 1)).toBe(false)
         expect(isNear(10, 9, 1)).toBe(false)
+    })
+})
+
+describe("fixTransparentRGBPair", () => {
+    test("Leaves non-transparent values as-is", () => {
+        expect(
+            fixTransparentRGBPair("rgba(1,0,0,0)", "rgba(255,255,255,1)")
+        ).toEqual(["rgba(1, 0, 0, 0)", "rgba(255, 255, 255, 1)"])
+    })
+    test("Convert transparent black values to a transparent version of the other color", () => {
+        expect(
+            fixTransparentRGBPair("rgba(0,0,0,0)", "rgba(255,255,255,1)")
+        ).toEqual(["rgba(255, 255, 255, 0)", "rgba(255, 255, 255, 1)"])
+        expect(
+            fixTransparentRGBPair("rgba(255,255,255,1)", "rgba(0,0,0,0)")
+        ).toEqual(["rgba(255, 255, 255, 1)", "rgba(255, 255, 255, 0)"])
     })
 })

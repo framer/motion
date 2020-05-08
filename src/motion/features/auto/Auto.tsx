@@ -14,6 +14,7 @@ import {
     isSharedLayoutTree,
     getAnimatableValues,
     resetBox,
+    fixTransparentRGBPair,
 } from "./utils"
 import { Snapshot, Style, BoxDelta, AutoAnimationConfig } from "./types"
 import {
@@ -618,15 +619,27 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         for (let i = 0; i < numAnimatableStyles; i++) {
             const key = this.animatableStyles[i]
             if (key === "opacity" && opts.crossfade) continue
-            const originStyle = this.visualOrigin.style[key]
-            const nextStyle = this.visualTarget.style[key]
+            let originStyle = this.visualOrigin.style[key]
+            let targetStyle = this.visualTarget.style[key]
 
-            if (originStyle !== nextStyle) {
+            /**
+             * If backgroundColor has been read as `rgba(0 0 0 0)` it's mostly likely got a fully
+             * transparent background. If we animate to/from this color, we'll animate to/from transparent
+             * black rather than the transparent origin/target colour.
+             */
+            if (key === "backgroundColor") {
+                ;[originStyle, targetStyle] = fixTransparentRGBPair(
+                    originStyle,
+                    targetStyle
+                )
+            }
+
+            if (originStyle !== targetStyle) {
                 shouldAnimateStyle = true
                 const value = values.get(key, originStyle)
                 value.set(originStyle)
 
-                target[key] = nextStyle
+                target[key] = targetStyle
             }
         }
 
