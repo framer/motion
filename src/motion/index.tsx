@@ -1,12 +1,13 @@
 import * as React from "react"
 import { createMotionComponent } from "./component"
 import { createDomMotionConfig } from "./features/dom"
-import { HTMLMotionComponents, SVGMotionComponents } from "./types"
+import { HTMLMotionComponents, SVGMotionComponents, MotionProps } from "./types"
 
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
 export { ValueAnimationControls } from "../animation/ValueAnimationControls"
+export { MotionProps }
 export { createMotionComponent }
 
 /**

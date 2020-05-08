@@ -1,10 +1,9 @@
 import * as React from "react"
 import { useState } from "react"
 import { render } from "../../../jest.setup"
-import { motion } from "../../"
+import { motion, BoundingBox2D } from "../../"
 import { motionValue, MotionValue } from "../../value"
 import { fireEvent } from "@testing-library/dom"
-import { Constraints } from "../ComponentDragControls"
 import { MockDrag, Point, drag, frame, deferred, sleep } from "./utils"
 
 describe("dragging", () => {
@@ -702,7 +701,11 @@ describe("dragging", () => {
     test("drag constraints can be updated", async () => {
         const x = motionValue(0)
         const y = motionValue(0)
-        const Component = ({ constraints }: { constraints: Constraints }) => (
+        const Component = ({
+            constraints,
+        }: {
+            constraints: Partial<BoundingBox2D>
+        }) => (
             <MockDrag>
                 <motion.div
                     drag
@@ -736,7 +739,11 @@ describe("dragging", () => {
     test("updates position when updating drag constraints", async () => {
         const x = motionValue(100)
         const y = motionValue(100)
-        const Component = ({ constraints }: { constraints: Constraints }) => (
+        const Component = ({
+            constraints,
+        }: {
+            constraints: Partial<BoundingBox2D>
+        }) => (
             <MockDrag>
                 <motion.div
                     drag
