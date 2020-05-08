@@ -2,7 +2,7 @@ import { Easing, circOut, linear } from "@popmotion/easing"
 import { progress, mix } from "@popmotion/popcorn"
 import { Snapshot, AutoAnimationConfig } from "../../motion/features/auto/types"
 import { Presence, VisibilityAction } from "./types"
-import { LayoutStack, StackChild } from "./Stack"
+import { LayoutStack, StackChild } from "./stack"
 
 export function createSwitchAnimation(
     child: StackChild,
