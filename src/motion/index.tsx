@@ -3,9 +3,6 @@ import { createMotionComponent } from "./component"
 import { createDomMotionConfig } from "./features/dom"
 import { HTMLMotionComponents, SVGMotionComponents } from "./types"
 
-/**
- * These re-exports are to
- */
 export { MotionContext } from "./context/MotionContext"
 export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
