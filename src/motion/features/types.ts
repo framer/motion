@@ -1,4 +1,4 @@
-import { ComponentType, CSSProperties, ReactElement } from "react"
+import * as React from "react"
 import { MotionProps } from "../types"
 import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
@@ -26,7 +26,7 @@ export interface MotionFeature {
         props: MotionProps,
         parentContext: MotionContextProps
     ) => boolean
-    Component: ComponentType<FeatureProps>
+    Component: React.ComponentType<FeatureProps>
 }
 
 export type LoadMotionFeatures<P = {}> = (
@@ -38,12 +38,12 @@ export type LoadMotionFeatures<P = {}> = (
     controls: ValueAnimationControls<P>,
     inherit: boolean,
     plugins: MotionPluginsContext
-) => ReactElement<FeatureProps>[]
+) => React.ReactElement<FeatureProps>[]
 
 export type RenderComponent<P = {}> = (
     nativeElement: NativeElement,
-    style: CSSProperties,
+    style: React.CSSProperties,
     values: MotionValuesMap,
     props: P,
     isStatic?: boolean
-) => ReactElement
+) => React.ReactElement
