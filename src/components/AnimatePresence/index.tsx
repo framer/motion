@@ -6,14 +6,17 @@ import {
     Children,
     ReactElement,
     ReactNode,
-    FunctionComponent,
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { SharedLayoutContext } from "../AnimateSharedLayout/SharedLayoutContext"
-import { SharedLayoutTree, SharedBatchTree } from "../AnimateSharedLayout/types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
+import {
+    SharedLayoutTree,
+    SharedBatchTree,
+} from "../../components/AnimateSharedLayout/types"
+
 type ComponentKey = string | number
 
 function getChildKey(child: ReactElement<any>): ComponentKey {
@@ -117,7 +120,7 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * @public
  */
-export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
+export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
     children,
     custom,
     initial = true,
@@ -127,10 +130,10 @@ export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
     let forceRender = useForceUpdate()
-    const magicContext = useContext(SharedLayoutContext)
+    const layoutContext = useContext(SharedLayoutContext)
 
-    if (isControlledSharedLayoutContext(magicContext)) {
-        forceRender = magicContext.forceRender
+    if (isControlledSharedLayoutContext(layoutContext)) {
+        forceRender = layoutContext.forceRender
     }
 
     const isInitialRender = useRef(true)
