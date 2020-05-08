@@ -4,18 +4,15 @@
 
 ```ts
 
-import { ComponentType } from 'react';
 import * as CSS from 'csstype';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
-import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { ReactElement } from 'react';
 import { ReactHTML } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
@@ -24,9 +21,6 @@ import { SpringProps } from 'popmotion';
 import { Styler } from 'stylefire';
 import { SVGAttributes } from 'react';
 
-// @public
-export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
-
 // @public (undocumented)
 export interface AnimatePresenceProps {
     custom?: any;
@@ -34,38 +28,6 @@ export interface AnimatePresenceProps {
     exitBeforeEnter?: boolean;
     initial?: boolean;
     onExitComplete?: () => void;
-}
-
-// Warning: (ae-forgotten-export) The symbol "SharedLayoutProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "SharedLayoutTree" needs to be exported by the entry point index.d.ts
-// 
-// @public (undocumented)
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps, SharedLayoutTree> {
-    addChild(child: Auto): () => void;
-    // (undocumented)
-    addChildToStack(child: Auto): void;
-    // (undocumented)
-    componentDidMount(): void;
-    componentDidUpdate(): void;
-    getSnapshotBeforeUpdate(): null;
-    // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
-    getStack(id: string): LayoutStack<Auto>;
-    // (undocumented)
-    removeChild(child: Auto): void;
-    // (undocumented)
-    removeChildFromStack(child: Auto): void;
-    // (undocumented)
-    render(): JSX.Element;
-    setRootDepth(child: Auto): void;
-    shouldComponentUpdate(nextProps: SharedLayoutProps, nextState: SharedLayoutTree): boolean;
-    // (undocumented)
-    startAnimation(): void;
-    // (undocumented)
-    state: {
-        forceRender: () => void;
-        register: (child: Auto) => () => void;
-        move: (child: Auto) => void;
-    };
 }
 
 // @public
@@ -339,179 +301,10 @@ export interface Keyframes {
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
+// Warning: (ae-forgotten-export) The symbol "Motion" needs to be exported by the entry point index.d.ts
+// 
 // @public
-export const motion: {
-    symbol: ForwardRefComponent<SVGSymbolElement, SVGMotionProps<SVGSymbolElement>>;
-    clipPath: ForwardRefComponent<SVGClipPathElement, SVGMotionProps<SVGClipPathElement>>;
-    filter: ForwardRefComponent<SVGFilterElement, SVGMotionProps<SVGFilterElement>>;
-    mask: ForwardRefComponent<SVGMaskElement, SVGMotionProps<SVGMaskElement>>;
-    marker: ForwardRefComponent<SVGMarkerElement, SVGMotionProps<SVGMarkerElement>>;
-    image: ForwardRefComponent<SVGImageElement, SVGMotionProps<SVGImageElement>>;
-    text: ForwardRefComponent<SVGTextElement, SVGMotionProps<SVGTextElement>>;
-    circle: ForwardRefComponent<SVGCircleElement, SVGMotionProps<SVGCircleElement>>;
-    animate: ForwardRefComponent<SVGElement, SVGMotionProps<SVGElement>>;
-    svg: ForwardRefComponent<SVGSVGElement, SVGMotionProps<SVGSVGElement>>;
-    defs: ForwardRefComponent<SVGDefsElement, SVGMotionProps<SVGDefsElement>>;
-    desc: ForwardRefComponent<SVGDescElement, SVGMotionProps<SVGDescElement>>;
-    ellipse: ForwardRefComponent<SVGEllipseElement, SVGMotionProps<SVGEllipseElement>>;
-    feBlend: ForwardRefComponent<SVGFEBlendElement, SVGMotionProps<SVGFEBlendElement>>;
-    feColorMatrix: ForwardRefComponent<SVGFEColorMatrixElement, SVGMotionProps<SVGFEColorMatrixElement>>;
-    feComponentTransfer: ForwardRefComponent<SVGFEComponentTransferElement, SVGMotionProps<SVGFEComponentTransferElement>>;
-    feComposite: ForwardRefComponent<SVGFECompositeElement, SVGMotionProps<SVGFECompositeElement>>;
-    feConvolveMatrix: ForwardRefComponent<SVGFEConvolveMatrixElement, SVGMotionProps<SVGFEConvolveMatrixElement>>;
-    feDiffuseLighting: ForwardRefComponent<SVGFEDiffuseLightingElement, SVGMotionProps<SVGFEDiffuseLightingElement>>;
-    feDisplacementMap: ForwardRefComponent<SVGFEDisplacementMapElement, SVGMotionProps<SVGFEDisplacementMapElement>>;
-    feDistantLight: ForwardRefComponent<SVGFEDistantLightElement, SVGMotionProps<SVGFEDistantLightElement>>;
-    feDropShadow: ForwardRefComponent<SVGFEDropShadowElement, SVGMotionProps<SVGFEDropShadowElement>>;
-    feFlood: ForwardRefComponent<SVGFEFloodElement, SVGMotionProps<SVGFEFloodElement>>;
-    feFuncA: ForwardRefComponent<SVGFEFuncAElement, SVGMotionProps<SVGFEFuncAElement>>;
-    feFuncB: ForwardRefComponent<SVGFEFuncBElement, SVGMotionProps<SVGFEFuncBElement>>;
-    feFuncG: ForwardRefComponent<SVGFEFuncGElement, SVGMotionProps<SVGFEFuncGElement>>;
-    feFuncR: ForwardRefComponent<SVGFEFuncRElement, SVGMotionProps<SVGFEFuncRElement>>;
-    feGaussianBlur: ForwardRefComponent<SVGFEGaussianBlurElement, SVGMotionProps<SVGFEGaussianBlurElement>>;
-    feImage: ForwardRefComponent<SVGFEImageElement, SVGMotionProps<SVGFEImageElement>>;
-    feMerge: ForwardRefComponent<SVGFEMergeElement, SVGMotionProps<SVGFEMergeElement>>;
-    feMergeNode: ForwardRefComponent<SVGFEMergeNodeElement, SVGMotionProps<SVGFEMergeNodeElement>>;
-    feMorphology: ForwardRefComponent<SVGFEMorphologyElement, SVGMotionProps<SVGFEMorphologyElement>>;
-    feOffset: ForwardRefComponent<SVGFEOffsetElement, SVGMotionProps<SVGFEOffsetElement>>;
-    fePointLight: ForwardRefComponent<SVGFEPointLightElement, SVGMotionProps<SVGFEPointLightElement>>;
-    feSpecularLighting: ForwardRefComponent<SVGFESpecularLightingElement, SVGMotionProps<SVGFESpecularLightingElement>>;
-    feSpotLight: ForwardRefComponent<SVGFESpotLightElement, SVGMotionProps<SVGFESpotLightElement>>;
-    feTile: ForwardRefComponent<SVGFETileElement, SVGMotionProps<SVGFETileElement>>;
-    feTurbulence: ForwardRefComponent<SVGFETurbulenceElement, SVGMotionProps<SVGFETurbulenceElement>>;
-    foreignObject: ForwardRefComponent<SVGForeignObjectElement, SVGMotionProps<SVGForeignObjectElement>>;
-    g: ForwardRefComponent<SVGGElement, SVGMotionProps<SVGGElement>>;
-    line: ForwardRefComponent<SVGLineElement, SVGMotionProps<SVGLineElement>>;
-    linearGradient: ForwardRefComponent<SVGLinearGradientElement, SVGMotionProps<SVGLinearGradientElement>>;
-    metadata: ForwardRefComponent<SVGMetadataElement, SVGMotionProps<SVGMetadataElement>>;
-    path: ForwardRefComponent<SVGPathElement, SVGMotionProps<SVGPathElement>>;
-    pattern: ForwardRefComponent<SVGPatternElement, SVGMotionProps<SVGPatternElement>>;
-    polygon: ForwardRefComponent<SVGPolygonElement, SVGMotionProps<SVGPolygonElement>>;
-    polyline: ForwardRefComponent<SVGPolylineElement, SVGMotionProps<SVGPolylineElement>>;
-    radialGradient: ForwardRefComponent<SVGRadialGradientElement, SVGMotionProps<SVGRadialGradientElement>>;
-    rect: ForwardRefComponent<SVGRectElement, SVGMotionProps<SVGRectElement>>;
-    stop: ForwardRefComponent<SVGStopElement, SVGMotionProps<SVGStopElement>>;
-    switch: ForwardRefComponent<SVGSwitchElement, SVGMotionProps<SVGSwitchElement>>;
-    textPath: ForwardRefComponent<SVGTextPathElement, SVGMotionProps<SVGTextPathElement>>;
-    tspan: ForwardRefComponent<SVGTSpanElement, SVGMotionProps<SVGTSpanElement>>;
-    use: ForwardRefComponent<SVGUseElement, SVGMotionProps<SVGUseElement>>;
-    view: ForwardRefComponent<SVGViewElement, SVGMotionProps<SVGViewElement>>;
-    object: ForwardRefComponent<HTMLObjectElement, HTMLMotionProps<"object">>;
-    style: ForwardRefComponent<HTMLStyleElement, HTMLMotionProps<"style">>;
-    progress: ForwardRefComponent<HTMLProgressElement, HTMLMotionProps<"progress">>;
-    ruby: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    table: ForwardRefComponent<HTMLTableElement, HTMLMotionProps<"table">>;
-    small: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    sub: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    embed: ForwardRefComponent<HTMLEmbedElement, HTMLMotionProps<"embed">>;
-    pre: ForwardRefComponent<HTMLPreElement, HTMLMotionProps<"pre">>;
-    caption: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    menu: ForwardRefComponent<HTMLElement, HTMLMotionProps<"menu">>;
-    button: ForwardRefComponent<HTMLButtonElement, HTMLMotionProps<"button">>;
-    menuitem: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    meter: ForwardRefComponent<HTMLElement, HTMLMotionProps<"meter">>;
-    textarea: ForwardRefComponent<HTMLTextAreaElement, HTMLMotionProps<"textarea">>;
-    time: ForwardRefComponent<HTMLElement, HTMLMotionProps<"time">>;
-    link: ForwardRefComponent<HTMLLinkElement, HTMLMotionProps<"link">>;
-    dialog: ForwardRefComponent<HTMLDialogElement, HTMLMotionProps<"dialog">>;
-    input: ForwardRefComponent<HTMLInputElement, HTMLMotionProps<"input">>;
-    select: ForwardRefComponent<HTMLSelectElement, HTMLMotionProps<"select">>;
-    a: ForwardRefComponent<HTMLAnchorElement, HTMLMotionProps<"a">>;
-    abbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    address: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    area: ForwardRefComponent<HTMLAreaElement, HTMLMotionProps<"area">>;
-    article: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    aside: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    audio: ForwardRefComponent<HTMLAudioElement, HTMLMotionProps<"audio">>;
-    b: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    base: ForwardRefComponent<HTMLBaseElement, HTMLMotionProps<"base">>;
-    bdi: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    bdo: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    big: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    blockquote: ForwardRefComponent<HTMLElement, HTMLMotionProps<"blockquote">>;
-    body: ForwardRefComponent<HTMLBodyElement, HTMLMotionProps<"body">>;
-    br: ForwardRefComponent<HTMLBRElement, HTMLMotionProps<"br">>;
-    canvas: ForwardRefComponent<HTMLCanvasElement, HTMLMotionProps<"canvas">>;
-    cite: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    code: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    col: ForwardRefComponent<HTMLTableColElement, HTMLMotionProps<"col">>;
-    colgroup: ForwardRefComponent<HTMLTableColElement, HTMLMotionProps<"colgroup">>;
-    data: ForwardRefComponent<HTMLDataElement, HTMLMotionProps<"data">>;
-    datalist: ForwardRefComponent<HTMLDataListElement, HTMLMotionProps<"datalist">>;
-    dd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    del: ForwardRefComponent<HTMLElement, HTMLMotionProps<"del">>;
-    details: ForwardRefComponent<HTMLElement, HTMLMotionProps<"details">>;
-    dfn: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    div: ForwardRefComponent<HTMLDivElement, HTMLMotionProps<"div">>;
-    dl: ForwardRefComponent<HTMLDListElement, HTMLMotionProps<"dl">>;
-    dt: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    em: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    fieldset: ForwardRefComponent<HTMLFieldSetElement, HTMLMotionProps<"fieldset">>;
-    figcaption: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    figure: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    footer: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    form: ForwardRefComponent<HTMLFormElement, HTMLMotionProps<"form">>;
-    h1: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h2: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h3: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h4: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h5: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h6: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    head: ForwardRefComponent<HTMLHeadElement, HTMLMotionProps<"head">>;
-    header: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    hgroup: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    hr: ForwardRefComponent<HTMLHRElement, HTMLMotionProps<"hr">>;
-    html: ForwardRefComponent<HTMLHtmlElement, HTMLMotionProps<"html">>;
-    i: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    iframe: ForwardRefComponent<HTMLIFrameElement, HTMLMotionProps<"iframe">>;
-    img: ForwardRefComponent<HTMLImageElement, HTMLMotionProps<"img">>;
-    ins: ForwardRefComponent<HTMLModElement, HTMLMotionProps<"ins">>;
-    kbd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    keygen: ForwardRefComponent<HTMLElement, HTMLMotionProps<"keygen">>;
-    label: ForwardRefComponent<HTMLLabelElement, HTMLMotionProps<"label">>;
-    legend: ForwardRefComponent<HTMLLegendElement, HTMLMotionProps<"legend">>;
-    li: ForwardRefComponent<HTMLLIElement, HTMLMotionProps<"li">>;
-    main: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    map: ForwardRefComponent<HTMLMapElement, HTMLMotionProps<"map">>;
-    mark: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    meta: ForwardRefComponent<HTMLMetaElement, HTMLMotionProps<"meta">>;
-    nav: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    noscript: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    ol: ForwardRefComponent<HTMLOListElement, HTMLMotionProps<"ol">>;
-    optgroup: ForwardRefComponent<HTMLOptGroupElement, HTMLMotionProps<"optgroup">>;
-    option: ForwardRefComponent<HTMLOptionElement, HTMLMotionProps<"option">>;
-    output: ForwardRefComponent<HTMLElement, HTMLMotionProps<"output">>;
-    p: ForwardRefComponent<HTMLParagraphElement, HTMLMotionProps<"p">>;
-    param: ForwardRefComponent<HTMLParamElement, HTMLMotionProps<"param">>;
-    picture: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    q: ForwardRefComponent<HTMLQuoteElement, HTMLMotionProps<"q">>;
-    rp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    rt: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    s: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    samp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    script: ForwardRefComponent<HTMLScriptElement, HTMLMotionProps<"script">>;
-    section: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    source: ForwardRefComponent<HTMLSourceElement, HTMLMotionProps<"source">>;
-    span: ForwardRefComponent<HTMLSpanElement, HTMLMotionProps<"span">>;
-    strong: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    summary: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    sup: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    tbody: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
-    td: ForwardRefComponent<HTMLTableDataCellElement, HTMLMotionProps<"td">>;
-    tfoot: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
-    th: ForwardRefComponent<HTMLTableHeaderCellElement, HTMLMotionProps<"th">>;
-    thead: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
-    title: ForwardRefComponent<HTMLTitleElement, HTMLMotionProps<"title">>;
-    tr: ForwardRefComponent<HTMLTableRowElement, HTMLMotionProps<"tr">>;
-    track: ForwardRefComponent<HTMLTrackElement, HTMLMotionProps<"track">>;
-    u: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    ul: ForwardRefComponent<HTMLUListElement, HTMLMotionProps<"ul">>;
-    var: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    video: ForwardRefComponent<HTMLVideoElement, HTMLMotionProps<"video">>;
-    wbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    webview: ForwardRefComponent<HTMLWebViewElement, HTMLMotionProps<"webview">>;
-    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<Element>>;
-};
+export const motion: Motion;
 
 // @public (undocumented)
 export interface MotionAdvancedProps {
@@ -538,7 +331,7 @@ export const MotionContext: React.Context<MotionContextProps>;
 // @public (undocumented)
 export interface MotionFeature {
     // (undocumented)
-    Component: ComponentType<FeatureProps>;
+    Component: React.ComponentType<FeatureProps>;
     // (undocumented)
     key: string;
     // (undocumented)
@@ -707,6 +500,7 @@ export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boole
 export function resolveMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
 // Warning: (ae-forgotten-export) The symbol "SharedBatchTree" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SharedLayoutTree" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "SharedLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
@@ -884,10 +678,6 @@ export type Variants = {
     [key: string]: Variant;
 };
 
-
-// Warnings were encountered during analysis:
-// 
-// types/components/AnimateSharedLayout/index.d.ts:55:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
