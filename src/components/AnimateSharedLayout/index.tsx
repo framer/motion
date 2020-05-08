@@ -9,7 +9,7 @@ import { SharedLayoutContext } from "./SharedLayoutContext"
 import { Auto } from "../../motion/features/auto/Auto"
 import { batchTransitions } from "../../motion/features/auto/utils"
 import { createCrossfadeAnimation, createSwitchAnimation } from "./animations"
-import { LayoutStack } from "./Stack"
+import { LayoutStack } from "./stack"
 
 const defaultLayoutTransition = {
     duration: 0.45,
