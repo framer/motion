@@ -110,7 +110,7 @@ export class LayoutStack<T extends StackChild = StackChild> {
 
     snapshot?: Snapshot
 
-    add(child: T) {
+    add(child: T, hasMounted = true) {
         const { layoutOrder } = child.props
 
         if (layoutOrder === undefined) {
@@ -121,7 +121,7 @@ export class LayoutStack<T extends StackChild = StackChild> {
             )
 
             if (index === -1) {
-                child.presence = Presence.Entering
+                if (hasMounted) child.presence = Presence.Entering
                 index = this.order.length
             }
 

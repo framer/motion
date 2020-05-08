@@ -1,4 +1,7 @@
 import { clamp, mix, progress, distance } from "@popmotion/popcorn"
+import { warning } from "hey-listen"
+import { AutoValueHandlers } from "./values"
+import { rgba, RGBA } from "style-value-types"
 import { AxisDelta, Snapshot, BoxDelta, Style } from "./types"
 import {
     SharedBatchTree,
@@ -10,8 +13,6 @@ import { MotionValue } from "../../../value"
 import { CustomValueType } from "../../../types"
 import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
 import { Auto, SharedLayoutTree } from "./Auto"
-import { warning } from "hey-listen"
-import { AutoValueHandlers } from "./values"
 import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
@@ -432,4 +433,24 @@ export function getAnimatableValues(
     return Object.keys(supportedAutoValues).filter(
         key => !supportedAutoValues[key].createUpdater
     )
+}
+
+function fixTransparentRGB(a: RGBA, b: RGBA): string {
+    const isBlack = !a.red && !a.green && !a.blue
+    const isTransparent = !a.alpha
+
+    const fixed = isBlack && isTransparent ? { ...b, alpha: 0 } : a
+    return (rgba as any).transform(fixed)
+}
+
+export function fixTransparentRGBPair(
+    origin: string,
+    target: string
+): [string, string] {
+    const parsedOrigin = rgba.parse(origin)
+    const parsedTarget = rgba.parse(target)
+    return [
+        fixTransparentRGB(parsedOrigin, parsedTarget),
+        fixTransparentRGB(parsedTarget, parsedOrigin),
+    ]
 }
