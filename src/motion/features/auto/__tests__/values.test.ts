@@ -1,8 +1,8 @@
 import { radiusAsPixels } from "../values"
-import { Box } from "../types"
+import { AxisBox2D } from "../../../../types/geometry"
 
 describe("radiusAsPixels", () => {
-    const box: Box = {
+    const box: AxisBox2D = {
         x: { min: 100, max: 200 },
         y: { min: 100, max: 300 },
     }

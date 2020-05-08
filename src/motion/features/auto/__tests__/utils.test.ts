@@ -1,4 +1,3 @@
-import { Axis, Box } from "../types"
 import {
     safeSize,
     calcOrigin,
@@ -13,9 +12,8 @@ import {
     isNear,
     applyBoxDelta,
     applyTreeDeltas,
-    // applyTreeDeltas,
-    // applyBoxDelta,
 } from "../utils"
+import { Axis, AxisBox2D } from "../../../../types/geometry"
 
 describe("safeSize", () => {
     test("should return large bounding boxes as provided", () => {
@@ -313,7 +311,7 @@ test("isTreeVisible", () => {
 
 describe("resetBox", () => {
     test("it resets the provided box to the origin box", () => {
-        const box: Box = {
+        const box: AxisBox2D = {
             x: { min: 100, max: 200 },
             y: { min: 100, max: 200 },
         }

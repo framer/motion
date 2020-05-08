@@ -1,24 +1,22 @@
 /**
  * Components
  */
+export { motion, useExternalRef, createMotionComponent } from "./motion"
+export { AnimatePresence } from "./components/AnimatePresence"
+export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export {
-    motion,
-    useExternalRef,
-    createMotionComponent,
     HTMLMotionProps,
     SVGMotionProps,
     SVGAttributesAsMotionValues,
     ForwardRefComponent,
-} from "./motion"
-export { AnimatePresence } from "./components/AnimatePresence"
-export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+} from "./motion/types"
 
 /**
  * Motion values
  */
+export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { resolveMotionValue } from "./value/utils/resolve-motion-value"
-export { useMotionValue } from "./value/use-motion-value"
 export { useInvertedScale } from "./value/use-inverted-scale"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
