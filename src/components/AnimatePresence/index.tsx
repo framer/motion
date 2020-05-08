@@ -1,4 +1,3 @@
-import * as React from "react"
 import {
     useContext,
     useRef,
@@ -7,8 +6,8 @@ import {
     Children,
     ReactElement,
     ReactNode,
-    FunctionComponent,
 } from "react"
+import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { SharedLayoutContext } from "../AnimateSharedLayout/SharedLayoutContext"
 import { useForceUpdate } from "../../utils/use-force-update"
@@ -121,7 +120,7 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * @public
  */
-export const AnimatePresence: FunctionComponent<AnimatePresenceProps> = ({
+export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
     children,
     custom,
     initial = true,

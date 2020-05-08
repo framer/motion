@@ -21,6 +21,9 @@ import { SpringProps } from 'popmotion';
 import { Styler } from 'stylefire';
 import { SVGAttributes } from 'react';
 
+// @public
+export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps>;
+
 // @public (undocumented)
 export interface AnimatePresenceProps {
     custom?: any;
@@ -28,6 +31,38 @@ export interface AnimatePresenceProps {
     exitBeforeEnter?: boolean;
     initial?: boolean;
     onExitComplete?: () => void;
+}
+
+// Warning: (ae-forgotten-export) The symbol "SharedLayoutProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SharedLayoutTree" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export class AnimateSharedLayout extends React.Component<SharedLayoutProps, SharedLayoutTree> {
+    addChild(child: Auto): () => void;
+    // (undocumented)
+    addChildToStack(child: Auto): void;
+    // (undocumented)
+    componentDidMount(): void;
+    componentDidUpdate(): void;
+    getSnapshotBeforeUpdate(): null;
+    // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
+    getStack(id: string): LayoutStack<Auto>;
+    // (undocumented)
+    removeChild(child: Auto): void;
+    // (undocumented)
+    removeChildFromStack(child: Auto): void;
+    // (undocumented)
+    render(): JSX.Element;
+    setRootDepth(child: Auto): void;
+    shouldComponentUpdate(nextProps: SharedLayoutProps, nextState: SharedLayoutTree): boolean;
+    // (undocumented)
+    startAnimation(): void;
+    // (undocumented)
+    state: {
+        forceRender: () => void;
+        register: (child: Auto) => () => void;
+        move: (child: Auto) => void;
+    };
 }
 
 // @public
@@ -500,7 +535,6 @@ export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boole
 export function resolveMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
 // Warning: (ae-forgotten-export) The symbol "SharedBatchTree" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "SharedLayoutTree" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "SharedLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
@@ -678,6 +712,10 @@ export type Variants = {
     [key: string]: Variant;
 };
 
+
+// Warnings were encountered during analysis:
+// 
+// types/components/AnimateSharedLayout/index.d.ts:55:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
