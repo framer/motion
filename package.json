@@ -90,7 +90,7 @@
     },
     "dependencies": {
         "@popmotion/easing": "^1.0.2",
-        "@popmotion/popcorn": "^0.4.2",
+        "@popmotion/popcorn": "^0.4.4",
         "framesync": "^4.0.4",
         "hey-listen": "^1.0.8",
         "popmotion": "9.0.0-beta-8",
