@@ -96,7 +96,7 @@
         "popmotion": "9.0.0-beta-8",
         "style-value-types": "^3.1.6",
         "stylefire": "^7.0.2",
-        "tslib": "^1.10.0"
+        "tslib": "^1.11.1"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
