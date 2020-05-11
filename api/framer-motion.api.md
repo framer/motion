@@ -678,6 +678,9 @@ export interface Tween {
     yoyo?: number;
 }
 
+// @beta
+export function useAnimatedState(initialState: any): any[];
+
 // @public
 export function useAnimation(): AnimationControls;
 
