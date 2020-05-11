@@ -239,6 +239,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
                     layoutOrder !== prevProps.layoutOrder
                 ) {
                     sharedLayoutContext.move(this)
+                    this.resetStyles()
                 }
 
                 if (!this.willAnimate) this.safeToRemove()
@@ -282,14 +283,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             (hasDependency && dependencyHasChanged) ||
             presenceHasChanged
 
-        /**
-         * We only use the component's lifecycle methods to snapshot and animate if
-         * it isn't a child of AnimateSharedLayout, so we can return false from this method.
-         *
-         * We do need to fire componentDidUpdate if the component's presence has changed so
-         * we can fire safeToRemove on exiting components.
-         */
-        return true //!isSharedLayoutTree(sharedLayoutContext) || presenceHasChanged
+        return true
     }
 
     /**
