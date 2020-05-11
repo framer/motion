@@ -7,7 +7,6 @@
 import * as CSS from 'csstype';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
-import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { PropsWithoutRef } from 'react';
@@ -17,325 +16,22 @@ import { ReactHTML } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 import { RefObject } from 'react';
-import { SpringProps } from 'popmotion';
 import { Styler } from 'stylefire';
 import { SVGAttributes } from 'react';
 
-// @public
-export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps>;
-
-// @public (undocumented)
-export interface AnimatePresenceProps {
-    custom?: any;
-    // @beta
-    exitBeforeEnter?: boolean;
-    initial?: boolean;
-    onExitComplete?: () => void;
-}
-
-// Warning: (ae-forgotten-export) The symbol "SharedLayoutProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "SharedLayoutTree" needs to be exported by the entry point index.d.ts
-// 
-// @public (undocumented)
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps, SharedLayoutTree> {
-    addChild(child: Auto): () => void;
-    // (undocumented)
-    addChildToStack(child: Auto): void;
-    // (undocumented)
-    componentDidMount(): void;
-    componentDidUpdate(): void;
-    getSnapshotBeforeUpdate(): null;
-    // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
-    getStack(id: string): LayoutStack<Auto>;
-    // (undocumented)
-    removeChild(child: Auto): void;
-    // (undocumented)
-    removeChildFromStack(child: Auto): void;
-    // (undocumented)
-    render(): JSX.Element;
-    setRootDepth(child: Auto): void;
-    shouldComponentUpdate(nextProps: SharedLayoutProps, nextState: SharedLayoutTree): boolean;
-    // (undocumented)
-    startAnimation(): void;
-    // (undocumented)
-    state: {
-        forceRender: () => void;
-        register: (child: Auto) => () => void;
-        move: (child: Auto) => void;
-    };
-}
-
-// @public
-export class AnimationControls {
-    // @internal
-    mount(): void;
-    set(definition: AnimationDefinition): void;
-    // @internal
-    setDefaultTransition(transition: Transition): void;
-    // @internal
-    setVariants(variants: Variants): void;
-    // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
-    start(definition: AnimationDefinition, transitionOverride?: Transition): Promise<any>;
-    stop(): void;
-    // Warning: (ae-forgotten-export) The symbol "ValueAnimationControls" needs to be exported by the entry point index.d.ts
-    // 
-    // @internal
-    subscribe(controls: ValueAnimationControls): () => boolean;
-    // @internal
-    unmount(): void;
-    }
-
-// Warning: (ae-internal-missing-underscore) The name "animationControls" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export const animationControls: () => AnimationControls;
-
-// @public (undocumented)
-export interface AnimationProps {
-    animate?: AnimationControls | TargetAndTransition | VariantLabels | boolean;
-    // Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
-    exit?: TargetAndTransition | VariantLabels | TargetResolver;
-    transition?: Transition;
-    variants?: Variants;
-}
-
-// @public (undocumented)
-export interface AutoValueHandler {
-    // Warning: (ae-forgotten-export) The symbol "MotionValuesMap" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "BoxDelta" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Updater" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    createUpdater?: (values: MotionValuesMap, origin: string | number, target: string | number, current: {
-        [key: string]: string | number | undefined;
-    }, delta: BoxDelta, treeScale: {
-        x: number;
-        y: number;
-    }, originBox: AxisBox2D, targetBox: AxisBox2D) => Updater | void;
-    // Warning: (ae-forgotten-export) The symbol "Read" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    read?: Read | false;
-    // (undocumented)
-    reset?: (style: MotionStyle) => any;
-}
-
-// @public (undocumented)
-export type AutoValueHandlers = {
-    [key: string]: AutoValueHandler;
-};
-
-// @public (undocumented)
-export interface Axis {
-    // (undocumented)
-    max: number;
-    // (undocumented)
-    min: number;
-}
-
-// @public (undocumented)
-export interface AxisBox2D {
-    // (undocumented)
-    x: Axis;
-    // (undocumented)
-    y: Axis;
-}
-
-// @public (undocumented)
-export interface AxisBox3D extends AxisBox2D {
-    // (undocumented)
-    z: Axis;
-}
-
-// @public (undocumented)
-export interface BoundingBox2D {
-    // (undocumented)
-    bottom: number;
-    // (undocumented)
-    left: number;
-    // (undocumented)
-    right: number;
-    // (undocumented)
-    top: number;
-}
-
-// @public (undocumented)
-export interface BoundingBox3D extends BoundingBox2D {
-    // (undocumented)
-    back: number;
-    // (undocumented)
-    front: number;
-}
-
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "MotionProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
 export const createMotionComponent: <P extends {}>({ getValueControlsConfig, loadFeatures, renderComponent, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
-
-// @public (undocumented)
-export interface CustomValueType {
-    // (undocumented)
-    mix: (from: any, to: any) => (p: number) => number | string;
-    // (undocumented)
-    toValue: () => number | string;
-}
-
-// @public
-export class DragControls {
-    // Warning: (ae-forgotten-export) The symbol "DragControlOptions" needs to be exported by the entry point index.d.ts
-    start(event: React.MouseEvent | React.TouchEvent | React.PointerEvent | MouseEvent | TouchEvent | PointerEvent, options?: DragControlOptions): void;
-    // Warning: (ae-forgotten-export) The symbol "ComponentDragControls" needs to be exported by the entry point index.d.ts
-    // 
-    // @internal
-    subscribe(controls: ComponentDragControls): () => void;
-}
-
-// @public (undocumented)
-export interface DraggableProps extends DragHandlers {
-    drag?: boolean | "x" | "y";
-    dragConstraints?: false | Partial<BoundingBox2D> | RefObject<Element>;
-    dragControls?: DragControls;
-    dragDirectionLock?: boolean;
-    dragElastic?: boolean | number;
-    dragListener?: boolean;
-    dragMomentum?: boolean;
-    dragOriginX?: MotionValue<number>;
-    dragOriginY?: MotionValue<number>;
-    dragPropagation?: boolean;
-    // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
-    dragTransition?: InertiaOptions;
-    // @internal (undocumented)
-    _dragTransitionControls?: AnimationControls;
-    // @internal (undocumented)
-    _dragValueX?: MotionValue<number>;
-    // @internal (undocumented)
-    _dragValueY?: MotionValue<number>;
-    onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
-}
-
-// @public (undocumented)
-export interface DragHandlers {
-    onDirectionLock?(axis: "x" | "y"): void;
-    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onDragEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onDragStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onDragTransitionEnd?(): void;
-}
-
-// @public
-export type EasingFunction = (v: number) => number;
-
-// @public (undocumented)
-export interface EventInfo {
-    // Warning: (ae-forgotten-export) The symbol "Point" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    point: Point;
-}
-
-// @public (undocumented)
-export interface FeatureProps extends MotionProps {
-    // (undocumented)
-    controls: ValueAnimationControls;
-    // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    localContext: MotionContextProps;
-    // Warning: (ae-forgotten-export) The symbol "NativeElement" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    nativeElement: NativeElement;
-    // (undocumented)
-    parentContext: MotionContextProps;
-    // (undocumented)
-    values: MotionValuesMap;
-}
-
-// @public (undocumented)
-export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
-
-// @public (undocumented)
-export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
-
-// @public (undocumented)
-export interface HoverHandlers {
-    onHoverEnd?(event: MouseEvent, info: EventInfo): void;
-    onHoverStart?(event: MouseEvent, info: EventInfo): void;
-    whileHover?: string | TargetAndTransition;
-}
-
-// Warning: (ae-forgotten-export) The symbol "HTMLAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "UnwrapFactoryAttributes" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "UnwrapFactoryElement" needs to be exported by the entry point index.d.ts
-// 
-// @public (undocumented)
-export type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWithoutMotionProps<UnwrapFactoryAttributes<ReactHTML[TagName]>, UnwrapFactoryElement<ReactHTML[TagName]>> & MotionProps;
-
-// @public
-export interface Inertia {
-    bounceDamping?: number;
-    bounceStiffness?: number;
-    // @internal (undocumented)
-    delay?: number;
-    from?: number | string;
-    max?: number;
-    min?: number;
-    modifyTarget?(v: number): number;
-    power?: number;
-    restDelta?: number;
-    timeConstant?: number;
-    type: "inertia";
-    velocity?: number;
-}
-
-// @public
-export function isValidMotionProp(key: string): boolean;
-
-// Warning: (ae-internal-missing-underscore) The name "Keyframes" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export interface Keyframes {
-    // (undocumented)
-    delay?: number;
-    // @public
-    duration?: number;
-    // Warning: (ae-forgotten-export) The symbol "Easing" needs to be exported by the entry point index.d.ts
-    // 
-    // @public
-    ease?: Easing | Easing[];
-    easings?: Easing | Easing[];
-    // (undocumented)
-    elapsed?: number;
-    // @public
-    flip?: number;
-    // (undocumented)
-    from?: number | string;
-    // @public
-    loop?: number;
-    // @public (undocumented)
-    repeatDelay?: number;
-    // @public
-    times?: number[];
-    // (undocumented)
-    to?: number | string | ValueTarget;
-    // @public
-    type: "keyframes";
-    values: KeyframesTarget;
-    // (undocumented)
-    velocity?: number;
-    // @public
-    yoyo?: number;
-}
-
-// @public (undocumented)
-export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
 // Warning: (ae-forgotten-export) The symbol "Motion" needs to be exported by the entry point index.d.ts
 // 
 // @public
 export const motion: Motion;
 
+<<<<<<< HEAD
 // @public (undocumented)
 export interface MotionAdvancedProps {
     custom?: any;
@@ -643,77 +339,13 @@ export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?
 // @public
 export function useDragControls(): DragControls;
 
+=======
+>>>>>>> Latest critical path rearchitecture
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
-// @public
-export function useGestures<GestureHandlers>(props: GestureHandlers, ref: NativeElement): void;
-
-// Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
-// 
-// @public
-export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
-
-// @public
-export function useMotionValue<T>(initial: T): MotionValue<T>;
-
-// Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element> | NativeElement): void;
-
-// Warning: (ae-forgotten-export) The symbol "AlwaysPresent" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "Present" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "NotPresent" needs to be exported by the entry point index.d.ts
-// 
-// @public
-export function usePresence(): AlwaysPresent | Present | NotPresent;
-
-// @public
-export function useReducedMotion(): boolean;
-
-// @public
-export function useSpring(source: MotionValue | number, config?: SpringProps): MotionValue<any>;
-
-// Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, controls, }: TapHandlers & ControlsProp, ref: RefObject<Element>): void;
-
-// Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
-// 
-// @public
-export function useTransform<T>(parent: MotionValue, transform: Transformer<T>): MotionValue;
-
-// @public
-export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
-
-// Warning: (ae-forgotten-export) The symbol "ScrollMotionValues" needs to be exported by the entry point index.d.ts
-// 
-// @public
-export function useViewportScroll(): ScrollMotionValues;
-
-// @public (undocumented)
-export type ValueTarget = SingleTarget | KeyframesTarget;
-
-// @public (undocumented)
-export type Variant = TargetAndTransition | TargetResolver;
-
-// @public
-export type VariantLabels = string | string[];
-
-// @public (undocumented)
-export type Variants = {
-    [key: string]: Variant;
-};
-
-
-// Warnings were encountered during analysis:
-// 
-// types/components/AnimateSharedLayout/index.d.ts:55:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
