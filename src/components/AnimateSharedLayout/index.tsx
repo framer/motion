@@ -225,9 +225,6 @@ export class AnimateSharedLayout extends React.Component<
     }
 
     startAnimation() {
-        let numAnimations = 0
-        let numCompletedAnimations = 0
-
         const { type, transition = defaultLayoutTransition } = this.props
         const options = { type, transition }
 
@@ -269,6 +266,9 @@ export class AnimateSharedLayout extends React.Component<
                 }
             },
             startAnimation: child => {
+                let numAnimations = 0
+                let numCompletedAnimations = 0
+
                 const { layoutId } = child.props
                 const stack =
                     layoutId !== undefined ? this.getStack(layoutId) : undefined
@@ -284,23 +284,23 @@ export class AnimateSharedLayout extends React.Component<
                     ...config,
                 })
 
-                if (animation) {
-                    this.isAnimating = true
-                    numAnimations++
+                if (!animation) return
 
-                    animation.then(() => {
-                        if (child.isPresent()) child.presence = Presence.Present
-                        numCompletedAnimations++
+                this.isAnimating = true
+                numAnimations++
 
-                        if (
-                            this.shouldRerender &&
-                            numCompletedAnimations >= numAnimations
-                        ) {
-                            this.isAnimating = false
-                            this.state.forceRender()
-                        }
-                    })
-                }
+                animation.then(() => {
+                    if (child.isPresent()) child.presence = Presence.Present
+                    numCompletedAnimations++
+
+                    if (numCompletedAnimations >= numAnimations) {
+                        this.isAnimating = false
+                    }
+
+                    if (this.shouldRerender && !this.isAnimating) {
+                        this.state.forceRender()
+                    }
+                })
             },
         }
         /**

@@ -207,9 +207,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         super(props)
 
         // TODO: Can we move these back here somehow
-        this.delta = props.localContext.magicDelta as BoxDelta
-        this.depth = props.localContext.magicDepth
-        this.progress = props.localContext.magicProgress as MotionValue<number>
+        this.delta = props.localContext.layoutDelta as BoxDelta
+        this.depth = props.localContext.layoutDepth
+        this.progress = props.localContext.layoutProgress as MotionValue<number>
 
         const { autoValues } = props
         this.supportedAutoValues = {
@@ -358,6 +358,23 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         this.measuredTarget = target
     }
 
+    popFromFlow() {
+        const { nativeElement } = this.props
+        const { position } = this.measuredTarget.style
+
+        if (position === "absolute" || position === "fixed") return
+
+        const { x, y } = this.measuredTarget.layout
+
+        nativeElement.setStyle({
+            position: "absolute",
+            width: x.max - x.min,
+            height: y.max - y.min,
+        })
+
+        nativeElement.render()
+    }
+
     /**
      * Hide this component using opacity. We can't set it to display: none as we might
      * still need to measure it or its children.
@@ -427,7 +444,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             this.visualTarget?.style.opacity !== 0
 
         const { parentContext } = this.props
-        const parentDeltas = parentContext.magicDeltas || []
+        const parentDeltas = parentContext.layoutDeltas || []
 
         if (
             this.shouldAnimate &&
@@ -436,6 +453,11 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             this.delta.isVisible &&
             isTreeVisible(parentDeltas)
         ) {
+            // if (this.props.id === "content")
+            //     console.log(
+            //         this.visualOrigin.layout.x,
+            //         this.visualTarget.layout.x
+            //     )
             syncRenderSession.open()
 
             animations = [
@@ -577,13 +599,13 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         }
 
         const { parentContext } = this.props
-        const { magicProgress } = parentContext
+        const { layoutProgress } = parentContext
         const scheduleUpdate = () => sync.update(frame, false, true)
 
         const unsubscribeProgress = this.progress.onChange(scheduleUpdate)
         let unsubscribeParentProgress: () => void
-        if (magicProgress) {
-            unsubscribeParentProgress = magicProgress.onChange(scheduleUpdate)
+        if (layoutProgress) {
+            unsubscribeParentProgress = layoutProgress.onChange(scheduleUpdate)
         }
 
         this.stopLayoutAnimation = () => {
@@ -647,7 +669,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
     updateBoundingBox(p: number, origin?: number) {
         const { parentContext } = this.props
-        const parentDeltas = parentContext.magicDeltas || []
+        const parentDeltas = parentContext.layoutDeltas || []
 
         resetBox(this.correctedLayout, this.measuredTarget.layout)
         applyTreeDeltas(this.correctedLayout, this.treeScale, parentDeltas)

@@ -20,12 +20,13 @@ export interface MotionContextProps {
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
-    magicDelta?: BoxDelta
-    magicDeltas?: BoxDelta[]
+    presenceId?: number
+    layoutDelta?: BoxDelta
+    layoutDeltas?: BoxDelta[]
     // TODO: Replace this with an onUpdate on parentValues
-    magicProgress?: MotionValue<number>
+    layoutProgress?: MotionValue<number>
     isReducedMotion?: boolean | undefined
-    magicDepth: number
+    layoutDepth: number
 }
 
 /**
@@ -33,7 +34,7 @@ export interface MotionContextProps {
  */
 export const MotionContext = React.createContext<MotionContextProps>({
     static: false,
-    magicDepth: -1,
+    layoutDepth: -1,
 })
 
 const isVariantLabel = (v?: MotionProps["animate"]): v is string | string[] => {
@@ -59,6 +60,9 @@ export const useMotionContext = (
     { initial, animate, variants, whileTap, whileHover, layoutId }: MotionProps
 ) => {
     const presenceContext = useContext(PresenceContext)
+    const presenceId = presenceContext?.id
+    const isPresenceRoot = parentContext.presenceId !== presenceId
+
     // Override initial with that from a parent context, if defined
     if (presenceContext?.initial !== undefined) {
         initial = presenceContext.initial
@@ -114,12 +118,12 @@ export const useMotionContext = (
 
     // TODO: We need every motion component in the stack to communicate down - for performance we can look into
     // ditching zero deltas if this isn't a motion component
-    const magicDelta = useConstant(createZeroDelta)
-    const magicDeltas = useRef<BoxDelta[]>([
-        ...(parentContext.magicDeltas || []),
-        magicDelta,
+    const layoutDelta = useConstant(createZeroDelta)
+    const layoutDeltas = useRef<BoxDelta[]>([
+        ...(parentContext.layoutDeltas || []),
+        layoutDelta,
     ])
-    const magicProgress = useMotionValue(0)
+    const layoutProgress = useMotionValue(0)
 
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
     // unlikely to change, by making the context an object it'll be considered a new value every render.
@@ -134,14 +138,16 @@ export const useMotionContext = (
             values,
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
-            magicDepth:
+            presenceId,
+            layoutDepth:
                 // TODO: Make nice isMagic
                 animate || layoutId !== undefined
-                    ? parentContext.magicDepth + 1
-                    : parentContext.magicDepth,
-            magicDelta,
-            magicDeltas: magicDeltas.current,
-            magicProgress,
+                    ? parentContext.layoutDepth + 1
+                    : parentContext.layoutDepth,
+            layoutDelta,
+            layoutDeltas: layoutDeltas.current,
+            layoutProgress,
+            isPresenceRoot,
         }),
         [
             initialDependency,
@@ -149,6 +155,7 @@ export const useMotionContext = (
             parentContext.isReducedMotion,
             animate,
             layoutId,
+            presenceId,
         ]
     )
 
