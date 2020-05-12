@@ -5,7 +5,6 @@ import {
     inertia,
     delay as delayAction,
     ColdSubscription,
-    value,
 } from "popmotion"
 import {
     ResolvedValueTarget,
