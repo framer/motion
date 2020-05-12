@@ -5,6 +5,7 @@ import { VariantLabels } from "../../motion/types"
  * @public
  */
 export interface PresenceContextProps {
+    id: number
     isPresent: boolean
     register: () => () => void
     onExitComplete?: () => void
