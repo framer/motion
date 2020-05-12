@@ -2,6 +2,7 @@ import * as React from "react"
 import { useMemo, useRef } from "react"
 import { PresenceContext } from "./PresenceContext"
 import { VariantLabels } from "../../motion/types"
+import { useConstant } from "../../utils/use-constant"
 
 interface PresenceChildProps {
     children: React.ReactElement<any>
@@ -11,6 +12,13 @@ interface PresenceChildProps {
     custom?: any
 }
 
+let presenceId = 0
+function getPresenceId() {
+    const id = presenceId
+    presenceId++
+    return id
+}
+
 export const PresenceChild = ({
     children,
     initial,
@@ -18,6 +26,7 @@ export const PresenceChild = ({
     onExitComplete,
     custom,
 }: PresenceChildProps) => {
+    const id = useConstant(getPresenceId)
     const numPresenceChildren = useRef(0)
     const numExitComplete = useRef(0)
 
@@ -45,7 +54,7 @@ export const PresenceChild = ({
     }, [isPresent])
 
     return (
-        <PresenceContext.Provider value={{ ...context, register }}>
+        <PresenceContext.Provider value={{ id, ...context, register }}>
             {children}
         </PresenceContext.Provider>
     )

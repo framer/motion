@@ -41,6 +41,7 @@ export interface Style {
     color: string
     opacity: number
     rotate?: number
+    position: string
 }
 
 /**

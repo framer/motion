@@ -79,11 +79,12 @@ export const App = () => {
                     <AnimatePresence>
                         {isOpen && (
                             <motion.div
+                                id="content"
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
                             >
-                                <ContentRow animate />
+                                <ContentRow />
                             </motion.div>
                         )}
                     </AnimatePresence>
