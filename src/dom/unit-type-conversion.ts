@@ -172,9 +172,10 @@ const checkAndConvertChangedValueTypes = (
     let hasAttemptedToRemoveTransformValues = false
 
     const changedValueTypeKeys: string[] = []
-    for (const key in targetPositionalKeys) {
+
+    targetPositionalKeys.forEach(key => {
         const value = values.get(key) as MotionValue<number | string>
-        if (!values.has(key)) continue
+        if (!values.has(key)) return
 
         const from = origin[key]
         const to = target[key]
@@ -240,7 +241,7 @@ const checkAndConvertChangedValueTypes = (
                 setAndResetVelocity(value, to)
             }
         }
-    }
+    })
 
     if (changedValueTypeKeys.length) {
         const convertedTarget = convertChangedValueTypes(
