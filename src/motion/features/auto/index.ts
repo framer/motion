@@ -4,11 +4,9 @@ import { MotionProps } from "../../types"
 
 export const Auto: MotionFeature = {
     key: "auto",
-    shouldRender: ({ animate, layoutId, exit }: MotionProps) => {
+    shouldRender: ({ animate, layoutId }: MotionProps) => {
         const hasAutoAnimateProps =
-            typeof animate === "boolean" ||
-            layoutId !== undefined ||
-            exit !== undefined
+            typeof animate === "boolean" || layoutId !== undefined
         return hasAutoAnimateProps && typeof window !== "undefined"
     },
     Component: SharedLayoutContextProvider,
