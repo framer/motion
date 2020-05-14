@@ -301,7 +301,10 @@ export interface DraggableProps extends DragHandlers {
      * />
      * ```
      */
-    dragElastic?: boolean | number
+    dragElastic?:
+        | boolean
+        | number
+        | { top?: number; right?: number; bottom?: number; left?: number }
 
     /**
      * Apply momentum from the pan gesture to the component when dragging

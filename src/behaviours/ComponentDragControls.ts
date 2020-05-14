@@ -345,7 +345,7 @@ export class ComponentDragControls {
             axis,
             this.origin[axis].get() + offset[axis],
             this.constraints,
-            dragElastic
+            getElasticDragFactor(axis, offset, dragElastic)
         )
         axisPoint.set(current)
     }
@@ -429,8 +429,9 @@ export class ComponentDragControls {
              * We could do something here where we affect the `bounceStiffness` and `bounceDamping`
              * using the value of `dragElastic`.
              */
-            const bounceStiffness = dragElastic ? 200 : 1000000
-            const bounceDamping = dragElastic ? 40 : 10000000
+            const dragFactor = getElasticDragFactor(axis, velocity, dragElastic)
+            const bounceStiffness = dragFactor ? 200 : 1000000
+            const bounceDamping = dragFactor ? 40 : 10000000
 
             const animationControls = _dragTransitionControls || this.controls
 
@@ -571,6 +572,34 @@ function getConstraints(
     }
 }
 
+function getElasticDragFactor(
+    axis: "x" | "y",
+    offset: { x: number; y: number },
+    elasticDrag: boolean | number | Constraints | undefined
+) {
+    switch (typeof elasticDrag) {
+        case "object": {
+            if (axis === "x") {
+                if (!offset.x) {
+                    return 0
+                }
+
+                return offset.x >= 0 ? elasticDrag.right : elasticDrag.left
+            } else {
+                if (!offset.y) {
+                    return 0
+                }
+
+                return offset.y >= 0 ? elasticDrag.bottom : elasticDrag.top
+            }
+        }
+        case "boolean":
+            return elasticDrag ? 0.35 : 0
+        default:
+            return elasticDrag
+    }
+}
+
 function shouldDrag(
     direction: DragDirection,
     drag: boolean | DragDirection | undefined,
@@ -668,7 +697,7 @@ function applyConstraints(
     axis: "x" | "y",
     value: number | MotionValue<number>,
     constraints: Constraints | false,
-    dragElastic: boolean | number | undefined
+    dragFactor: number | undefined
 ): number {
     let constrainedValue = value instanceof MotionValue ? value.get() : value
     if (!constraints) {
@@ -677,12 +706,12 @@ function applyConstraints(
     const { min, max } = getConstraints(axis, constraints)
 
     if (min !== undefined && constrainedValue < min) {
-        constrainedValue = dragElastic
-            ? applyOverdrag(min, constrainedValue, dragElastic)
+        constrainedValue = dragFactor
+            ? applyOverdrag(min, constrainedValue, dragFactor)
             : Math.max(min, constrainedValue)
     } else if (max !== undefined && constrainedValue > max) {
-        constrainedValue = dragElastic
-            ? applyOverdrag(max, constrainedValue, dragElastic)
+        constrainedValue = dragFactor
+            ? applyOverdrag(max, constrainedValue, dragFactor)
             : Math.min(max, constrainedValue)
     }
     if (value instanceof MotionValue) {
@@ -691,11 +720,6 @@ function applyConstraints(
     return constrainedValue
 }
 
-function applyOverdrag(
-    origin: number,
-    current: number,
-    dragElastic: boolean | number
-) {
-    const dragFactor = typeof dragElastic === "number" ? dragElastic : 0.35
+function applyOverdrag(origin: number, current: number, dragFactor: number) {
     return mix(origin, current, dragFactor)
 }
