@@ -186,7 +186,7 @@ export class AnimateSharedLayout extends React.Component<
         if (layoutId === undefined) return
 
         const stack = this.getStack(layoutId)
-        stack.add(child, this.hasMounted)
+        stack.add(child)
     }
 
     removeChild(child: Auto) {
