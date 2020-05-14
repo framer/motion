@@ -14,7 +14,7 @@ import { MotionContext } from "../motion/context/MotionContext"
  * It will actively respond to changes and re-render your components with the latest setting.
  *
  * ```jsx
- * export function Sidebar({ isOpem }) {
+ * export function Sidebar({ isOpen }) {
  *   const shouldReduceMotion = useReducedMotion()
  *   const closedX = shouldReduceMotion ? 0 : "-100%"
  *
