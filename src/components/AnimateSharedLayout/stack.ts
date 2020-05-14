@@ -110,7 +110,10 @@ export class LayoutStack<T extends StackChild = StackChild> {
 
     snapshot?: Snapshot
 
-    add(child: T, hasMounted = true) {
+    // Track whether we've ever had a child
+    hasChildren: boolean = false
+
+    add(child: T) {
         const { layoutOrder } = child.props
 
         if (layoutOrder === undefined) {
@@ -121,12 +124,16 @@ export class LayoutStack<T extends StackChild = StackChild> {
             )
 
             if (index === -1) {
-                if (hasMounted) child.presence = Presence.Entering
+                child.presence = this.hasChildren
+                    ? Presence.Entering
+                    : Presence.Present
                 index = this.order.length
             }
 
             this.order.splice(index, 0, child)
         }
+
+        this.hasChildren = true
     }
 
     remove(child: T) {
