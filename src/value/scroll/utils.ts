@@ -38,7 +38,6 @@ export function createScrollUpdater(
         // Set absolute positions
         values.scrollX.set(xOffset)
         values.scrollY.set(yOffset)
-
         // Set 0-1 progress
         setProgress(xOffset, xMaxOffset, values.scrollXProgress)
         setProgress(yOffset, yMaxOffset, values.scrollYProgress)

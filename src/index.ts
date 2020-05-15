@@ -13,7 +13,7 @@ export { unwrapMotionValue } from "./value/utils/unwrap-value"
 export { useInvertedScale } from "./value/use-inverted-scale"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
-export { useScroll } from "./value/scroll/use-scroll"
+export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 export {
     AnimationControls,
