@@ -1,5 +1,9 @@
 import { useLayoutEffect } from "react"
-import { createScrollMotionValues, createScrollUpdater } from "./utils"
+import {
+    createScrollMotionValues,
+    createScrollUpdater,
+    ScrollMotionValues,
+} from "./utils"
 import { addDomEvent } from "../../events/use-dom-event"
 
 const viewportScrollValues = createScrollMotionValues()
@@ -63,7 +67,7 @@ function addEventListeners() {
  *
  * @public
  */
-export function useViewportScroll() {
+export function useViewportScroll(): ScrollMotionValues {
     useLayoutEffect(() => {
         !hasListeners && addEventListeners()
     }, [])
