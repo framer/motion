@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.0] 2020-05-15
+
+### Added
+
+-   Added a `useElementScroll` hook that allows the creation of scroll motion values for HTML elements. ([@souporserious](https://github.com/souporserious) in [#195](https://github.com/framer/motion/pull/195))
+
 ## [1.10.3] 2020-03-23
 
 ### Fix

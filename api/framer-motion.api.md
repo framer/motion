@@ -573,6 +573,18 @@ export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
 export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boolean;
 
 // @public (undocumented)
+export interface ScrollMotionValues {
+    // (undocumented)
+    scrollX: MotionValue<number>;
+    // (undocumented)
+    scrollXProgress: MotionValue<number>;
+    // (undocumented)
+    scrollY: MotionValue<number>;
+    // (undocumented)
+    scrollYProgress: MotionValue<number>;
+}
+
+// @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
@@ -690,6 +702,9 @@ export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?
 // @public
 export function useDragControls(): DragControls;
 
+// @public
+export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValues;
+
 // Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
@@ -737,8 +752,6 @@ export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>
 // @public
 export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
 
-// Warning: (ae-forgotten-export) The symbol "ScrollMotionValues" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export function useViewportScroll(): ScrollMotionValues;
 
