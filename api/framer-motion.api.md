@@ -573,6 +573,18 @@ export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
 export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boolean;
 
 // @public (undocumented)
+export interface ScrollMotionValues {
+    // (undocumented)
+    scrollX: MotionValue<number>;
+    // (undocumented)
+    scrollXProgress: MotionValue<number>;
+    // (undocumented)
+    scrollY: MotionValue<number>;
+    // (undocumented)
+    scrollYProgress: MotionValue<number>;
+}
+
+// @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
@@ -690,8 +702,6 @@ export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?
 // @public
 export function useDragControls(): DragControls;
 
-// Warning: (ae-forgotten-export) The symbol "ScrollMotionValues" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValues;
 
