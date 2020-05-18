@@ -6,6 +6,7 @@ export interface StackChild {
     presence?: Presence
     measuredOrigin?: Snapshot
     measuredTarget?: Snapshot
+    shouldAnimate?: boolean
     props: {
         layoutOrder?: number
     }
@@ -163,7 +164,11 @@ export class LayoutStack<T extends StackChild = StackChild> {
     }
 
     getFollowOrigin() {
-        return this.follow ? this.follow.measuredOrigin : this.snapshot
+        // This shouldAnimate check is quite specifically a fix for the optimisation made in Framer
+        // where components are kept in the tree ready to be re-used
+        return this.follow && this.follow.shouldAnimate
+            ? this.follow.measuredOrigin
+            : this.snapshot
     }
 
     getFollowTarget() {
