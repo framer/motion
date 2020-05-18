@@ -90,12 +90,6 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     private willAnimate = false
 
     /**
-     * We use this value to track whether, on a given render, this component should animate. This is
-     * decided in shouldComponentUpdate, but the logic governing both is different.
-     */
-    private shouldAnimate = true
-
-    /**
      * A map of value handlers that we use to automatically animate.
      */
     private supportedAutoValues: AutoValueHandlers
@@ -104,6 +98,12 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      * A list of values that we should automatically animate without applying scale correction.
      */
     private animatableStyles: string[]
+
+    /**
+     * We use this value to track whether, on a given render, this component should animate. This is
+     * decided in shouldComponentUpdate, but the logic governing both is different.
+     */
+    shouldAnimate = true
 
     /**
      * The depth in the React tree of this automatically animating component. Every automatically
@@ -232,9 +232,15 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             // the usual logic in startAnimation to tell AnimatePresence that this component is safe to remove
             // will have run. If it wasn't, we have to do that here.
             this.componentDidUpdate = prevProps => {
-                const { layoutOrder } = this.props
+                const { layoutId, layoutOrder } = this.props
 
-                if (
+                if (layoutId !== prevProps.layoutId) {
+                    this.unregisterSharedLayoutContext &&
+                        this.unregisterSharedLayoutContext()
+                    this.unregisterSharedLayoutContext = sharedLayoutContext.register(
+                        this
+                    )
+                } else if (
                     layoutOrder !== undefined &&
                     layoutOrder !== prevProps.layoutOrder
                 ) {
