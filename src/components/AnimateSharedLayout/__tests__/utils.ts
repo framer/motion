@@ -14,6 +14,7 @@ export function makeChild(
         presence,
         measuredOrigin,
         measuredTarget,
+        shouldAnimate: true,
         props: {},
     }
 }
