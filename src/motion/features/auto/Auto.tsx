@@ -37,6 +37,10 @@ import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
 import { elementDragControls } from "../../../behaviours/ComponentDragControls"
 import { TransformPoint2D, AxisBox2D } from "../../../types/geometry"
+import {
+    TransformBoundaryValues,
+    TransformBoundaryContext,
+} from "../../../components/TransformBoundary"
 export { SharedLayoutTree, SharedBatchTree }
 
 /**
@@ -47,6 +51,7 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
     const [isPresent, safeToRemove] = usePresence()
     const sharedLayoutContext = useContext(SharedLayoutContext)
     const { autoValues, transformPagePoint } = useContext(MotionPluginContext)
+    const transformBoundaryValues = useContext(TransformBoundaryContext)
 
     return (
         <Auto
@@ -58,6 +63,7 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
             sharedLayoutContext={sharedLayoutContext}
             autoValues={autoValues}
             transformPagePoint={transformPagePoint}
+            transformBoundaryValues={transformBoundaryValues}
         />
     )
 }
@@ -68,6 +74,7 @@ interface ContextProps {
     sharedLayoutContext: SharedLayoutTree | SharedBatchTree
     autoValues: AutoValueHandlers
     transformPagePoint: TransformPoint2D
+    transformBoundaryValues: TransformBoundaryValues
 }
 
 export class Auto extends React.Component<FeatureProps & ContextProps> {
@@ -335,11 +342,16 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      */
     snapshotOrigin() {
         this.willAnimate = true
-        const { nativeElement, transformPagePoint } = this.props
+        const {
+            nativeElement,
+            transformPagePoint,
+            transformBoundaryValues,
+        } = this.props
         const origin = snapshot(
             nativeElement,
             this.supportedAutoValues,
-            transformPagePoint
+            transformPagePoint,
+            transformBoundaryValues
         )
 
         applyCurrent(origin.style, this.current)
@@ -351,12 +363,18 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      * Take a snapshot of a component as it will exist after a render.
      */
     snapshotTarget() {
-        const { nativeElement, style, transformPagePoint } = this.props
+        const {
+            nativeElement,
+            style,
+            transformPagePoint,
+            transformBoundaryValues,
+        } = this.props
 
         const target = snapshot(
             nativeElement,
             this.supportedAutoValues,
-            transformPagePoint
+            transformPagePoint,
+            transformBoundaryValues
         )
 
         target.style.rotate = resolve(0, style && style.rotate)

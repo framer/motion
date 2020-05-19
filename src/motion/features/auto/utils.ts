@@ -23,6 +23,7 @@ import {
     AxisBox2D,
     TransformPoint2D,
 } from "../../../types/geometry"
+import { TransformBoundaryValues } from "components/TransformBoundary"
 
 const clampProgress = clamp(0, 1)
 
@@ -58,13 +59,15 @@ export function safeSize({
 
 function snapshotLayout(
     element: NativeElement,
-    transformPoint: TransformPoint2D
+    transformPoint: TransformPoint2D,
+    transformBoundaryValues: TransformBoundaryValues
 ) {
     const boundingBox = element.getBoundingBox()
     const safeBoundingBox = safeSize(boundingBox)
     const transformedBoundingBox = transformBoundingBox(
         safeBoundingBox,
-        transformPoint
+        transformPoint,
+        transformBoundaryValues
     )
 
     return convertBoundingBoxToAxisBox(transformedBoundingBox)
@@ -102,10 +105,15 @@ function snapshotStyle(
 export function snapshot(
     element: NativeElement,
     valueHandlers: AutoValueHandlers,
-    transformPoint: TransformPoint2D
+    transformPoint: TransformPoint2D,
+    transformBoundaryValues: TransformBoundaryValues
 ): Snapshot {
     return {
-        layout: snapshotLayout(element, transformPoint),
+        layout: snapshotLayout(
+            element,
+            transformPoint,
+            transformBoundaryValues
+        ),
         style: snapshotStyle(element, valueHandlers),
     }
 }

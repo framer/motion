@@ -5,6 +5,7 @@ import {
     Axis,
 } from "../types/geometry"
 import { noop } from "./noop"
+import { TransformBoundaryValues } from "components/TransformBoundary"
 
 /**
  * Bounding boxes tend to be defined as top, left, right, bottom. For various operations
@@ -42,10 +43,19 @@ export function convertAxisBoxToBoundingBox({
  */
 export function transformBoundingBox(
     { top, left, bottom, right }: BoundingBox2D,
-    transformPoint: TransformPoint2D = noop
+    transformPoint: TransformPoint2D = noop,
+    transformBoundaryValues?: TransformBoundaryValues
 ): BoundingBox2D {
-    const topLeft = transformPoint({ x: left, y: top })
-    const bottomRight = transformPoint({ x: right, y: bottom })
+    const { x, y } = transformBoundaryValues || {}
+
+    const offsetX = x?.get() || 0
+    const offsetY = y?.get() || 0
+
+    const topLeft = transformPoint({ x: left - offsetX, y: top - offsetY })
+    const bottomRight = transformPoint({
+        x: right - offsetX,
+        y: bottom - offsetY,
+    })
 
     return {
         top: topLeft.y,
