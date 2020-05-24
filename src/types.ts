@@ -1575,6 +1575,16 @@ export interface None {
     velocity?: number
 }
 
+/**
+ * @public
+ */
+export interface TransformValues {
+    image?: string
+    size?: number | string
+    width?: number | string
+    height?: number | string
+}
+
 export type PopmotionTransitionProps =
     | Tween
     | Spring
