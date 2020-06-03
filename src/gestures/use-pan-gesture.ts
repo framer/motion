@@ -1,4 +1,4 @@
-import { RefObject, useRef, useContext } from "react"
+import { RefObject, useRef, useContext, useEffect } from "react"
 import { EventInfo } from "../events/types"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
@@ -185,9 +185,11 @@ export function usePanGesture(
         },
     }
 
-    if (panSession.current !== null) {
-        panSession.current.updateHandlers(handlers)
-    }
+    useEffect(() => {
+        if (panSession.current !== null) {
+            panSession.current.updateHandlers(handlers)
+        }
+    })
 
     function onPointerDown(event: AnyPointerEvent) {
         panSession.current = new PanSession(event, handlers, {
