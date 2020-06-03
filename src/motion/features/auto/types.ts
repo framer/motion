@@ -63,6 +63,7 @@ export interface AutoAnimationConfig {
     crossfadeEasing?: Easing
     type?: "switch" | "crossfade"
     crossfade?: any
+    shouldAnimate?: boolean
 }
 
 export interface AutoAnimateProps {
@@ -100,4 +101,11 @@ export interface AutoAnimateProps {
      * @internal
      */
     isPresent?: boolean
+
+    /**
+     * Manually control whether a component should animate it's transition. Currently only intended for optimisations in Framer Navigation component.
+     *
+     * @internal
+     */
+    shouldAnimate?: boolean
 }
