@@ -210,6 +210,10 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         this.delta = props.localContext.layoutDelta as BoxDelta
         this.depth = props.localContext.layoutDepth
         this.progress = props.localContext.layoutProgress as MotionValue<number>
+        this.shouldAnimate =
+            props.shouldAnimate !== undefined
+                ? props.shouldAnimate
+                : this.shouldAnimate
 
         const { autoValues } = props
         this.supportedAutoValues = {
@@ -276,6 +280,11 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     shouldComponentUpdate(nextProps: FeatureProps & ContextProps) {
+        if (this.props.shouldAnimate !== undefined) {
+            this.shouldAnimate = this.props.shouldAnimate
+            return true
+        }
+
         const hasDependency =
             this.props.magicDependency !== undefined ||
             nextProps.magicDependency !== undefined
@@ -451,6 +460,11 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
         const { parentContext } = this.props
         const parentDeltas = parentContext.layoutDeltas || []
+
+        this.shouldAnimate =
+            opts.shouldAnimate !== undefined
+                ? opts.shouldAnimate
+                : this.shouldAnimate
 
         if (
             this.shouldAnimate &&
