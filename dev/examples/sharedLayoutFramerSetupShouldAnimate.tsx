@@ -42,21 +42,21 @@ const child = {
     borderRadius: 20,
 }
 
-function A({ layoutOrder, zIndex, shouldAnimate }) {
+function A({ layoutOrder, zIndex, _shouldAnimate }) {
     return (
         <motion.div style={{ ...screen, zIndex }}>
             <motion.div
                 key="card"
                 layoutId="card"
                 layoutOrder={layoutOrder}
-                shouldAnimate={false}
+                _shouldAnimate={false}
                 style={{ ...card, background: "green" }}
             >
                 <motion.div
                     key="child"
                     layoutId="child"
                     layoutOrder={layoutOrder}
-                    shouldAnimate={shouldAnimate}
+                    _shouldAnimate={_shouldAnimate}
                     style={{ ...child }}
                 ></motion.div>
             </motion.div>
@@ -64,19 +64,19 @@ function A({ layoutOrder, zIndex, shouldAnimate }) {
     )
 }
 
-function B({ layoutOrder, zIndex, shouldAnimate }) {
+function B({ layoutOrder, zIndex, _shouldAnimate }) {
     return (
         <motion.div style={{ ...screen, zIndex }}>
             <motion.div
                 layoutId="card"
                 layoutOrder={layoutOrder}
-                shouldAnimate={false}
+                _shouldAnimate={false}
                 style={{ ...card, background: "red" }}
             >
                 <motion.div
                     layoutId="child"
                     layoutOrder={layoutOrder}
-                    shouldAnimate={shouldAnimate}
+                    _shouldAnimate={_shouldAnimate}
                     style={{ ...child, top: 50 }}
                 ></motion.div>
             </motion.div>
@@ -102,7 +102,7 @@ export const App = () => {
                 Component: stack[i],
                 key: i,
                 layoutOrder: i,
-                shouldAnimate: i === 0 ? false : true,
+                _shouldAnimate: i === 0 ? false : true,
             })
         } else {
             components[existingIndex] = {
@@ -110,7 +110,7 @@ export const App = () => {
                 key: existingIndex,
                 zIndex: i,
                 layoutOrder: i,
-                shouldAnimate: true,
+                _shouldAnimate: true,
             }
         }
     }
