@@ -211,8 +211,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         this.depth = props.localContext.layoutDepth
         this.progress = props.localContext.layoutProgress as MotionValue<number>
         this.shouldAnimate =
-            props.shouldAnimate !== undefined
-                ? props.shouldAnimate
+            props._shouldAnimate !== undefined
+                ? props._shouldAnimate
                 : this.shouldAnimate
 
         const { autoValues } = props
@@ -280,8 +280,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     shouldComponentUpdate(nextProps: FeatureProps & ContextProps) {
-        if (this.props.shouldAnimate !== undefined) {
-            this.shouldAnimate = this.props.shouldAnimate
+        if (this.props._shouldAnimate !== undefined) {
+            this.shouldAnimate = this.props._shouldAnimate
             return true
         }
 

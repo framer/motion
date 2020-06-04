@@ -9,7 +9,7 @@ export interface StackChild {
     shouldAnimate?: boolean
     props: {
         layoutOrder?: number
-        shouldAnimate?: boolean
+        _shouldAnimate?: boolean
     }
 }
 
@@ -165,7 +165,7 @@ export class LayoutStack<T extends StackChild = StackChild> {
     }
 
     shouldStackAnimate() {
-        return this.lead && this.lead?.props?.shouldAnimate === true
+        return this.lead && this.lead?.props?._shouldAnimate === true
     }
 
     getFollowOrigin() {

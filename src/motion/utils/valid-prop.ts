@@ -20,6 +20,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "static",
     "layoutId",
     "layoutOrder",
+    "_shouldAnimate",
     "isPresent",
     "magicDependency",
     "allowTransformNone",
