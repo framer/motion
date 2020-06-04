@@ -258,9 +258,9 @@ export class AnimateSharedLayout extends React.Component<
                     isAutoAnimate(child) ||
                     // If this component is either entering or present
                     child.presence !== Presence.Exiting ||
-                    // If the lead component in the stack is present, snapshot
+                    // If the lead component in the stack is present and should animate, snapshot
                     // TODO: Figure out what this breaks if removed
-                    stack?.lead?.isPresent()
+                    (stack?.lead?.isPresent() && stack?.shouldStackAnimate())
                 ) {
                     child.snapshotTarget()
                 }
@@ -282,6 +282,7 @@ export class AnimateSharedLayout extends React.Component<
                 const animation = child.startAnimation({
                     ...options,
                     ...config,
+                    shouldAnimate: stack?.shouldStackAnimate(),
                 })
 
                 if (!animation) return
