@@ -107,5 +107,5 @@ export interface AutoAnimateProps {
      *
      * @internal
      */
-    shouldAnimate?: boolean
+    _shouldAnimate?: boolean
 }
