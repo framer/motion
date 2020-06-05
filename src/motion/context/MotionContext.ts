@@ -1,20 +1,21 @@
 import * as React from "react"
 import { useMemo, useRef, useEffect, RefObject, useContext } from "react"
-import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
+import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
 import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
-import { MotionValuesMap } from "../utils/use-motion-values"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { BoxDelta } from "../features/auto/types"
 import { MotionValue } from "../../value"
 import { useMotionValue } from "../../value/use-motion-value"
 import { zeroDelta } from "../features/auto/utils"
 import { useConstant } from "../../utils/use-constant"
+import { VisualElement } from "../../render/VisualElement"
 
 export interface MotionContextProps {
-    controls?: ValueAnimationControls
+    visualElement?: VisualElement<any>
+    controls?: VisualElementAnimationControls
     values?: MotionValuesMap
     initial?: false | VariantLabels
     animate?: VariantLabels
@@ -54,8 +55,8 @@ const isAnimationControls = (
  */
 export const useMotionContext = (
     parentContext: MotionContextProps,
-    controls: ValueAnimationControls,
-    values: MotionValuesMap,
+    controls: VisualElementAnimationControls,
+    visualElement: VisualElement<any>,
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover, layoutId }: MotionProps
 ) => {
@@ -80,7 +81,7 @@ export const useMotionContext = (
     // parent's first render
     const hasMounted = useRef(false)
 
-    // We propagate this component's ValueAnimationControls *if* we're being provided variants,
+    // We propagate this component's VisualElementAnimationControls *if* we're being provided variants,
     // if we're being used to control variants, or if we're being passed animation controls.
     // Otherwise this component should be "invisible" to variant propagation. This is a slight concession
     // to Framer X where every `Frame` is a `motion` component and it might be if we change that in the future

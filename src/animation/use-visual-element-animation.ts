@@ -1,12 +1,13 @@
 import {
-    ValueAnimationControls,
-    ValueAnimationConfig,
-} from "./ValueAnimationControls"
+    VisualElementAnimationControls,
+    AnimationControlsConfig,
+} from "./VisualElementAnimationControls"
 import { useContext, useEffect } from "react"
 import { MotionProps } from "../motion/types"
 import { MotionContext } from "../motion/context/MotionContext"
 import { useConstant } from "../utils/use-constant"
 import { PresenceContext } from "../components/AnimatePresence/PresenceContext"
+import { VisualElement } from "../render/VisualElement"
 
 /**
  * Creates an imperative set of controls to trigger animations.
@@ -20,15 +21,18 @@ import { PresenceContext } from "../components/AnimatePresence/PresenceContext"
  *
  * @internal
  */
-export function useValueAnimationControls<P>(
-    config: ValueAnimationConfig,
+export function useVisualElementAnimation<P>(
+    visualElement: VisualElement,
     props: P & MotionProps,
+    config: AnimationControlsConfig,
     subscribeToParentControls: boolean
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
     const presenceContext = useContext(PresenceContext)
-    const controls = useConstant(() => new ValueAnimationControls<P>(config))
+    const controls = useConstant(
+        () => new VisualElementAnimationControls<P>(visualElement, config)
+    )
 
     // Reset and resubscribe children every render to ensure stagger order is correct
     if (!presenceContext || presenceContext.isPresent) {

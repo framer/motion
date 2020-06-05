@@ -1,8 +1,8 @@
 import { Variants, Transition } from "../types"
 import {
-    ValueAnimationControls,
+    VisualElementAnimationControls,
     AnimationDefinition,
-} from "./ValueAnimationControls"
+} from "./VisualElementAnimationControls"
 import { invariant } from "hey-listen"
 
 type PendingAnimations = {
@@ -42,7 +42,7 @@ export class AnimationControls {
      *
      * @internal
      */
-    private componentControls = new Set<ValueAnimationControls>()
+    private componentControls = new Set<VisualElementAnimationControls>()
 
     /**
      * A map of variants that can be later referenced via `start(variantLabel)`
@@ -87,7 +87,7 @@ export class AnimationControls {
      *
      * @internal
      */
-    subscribe(controls: ValueAnimationControls) {
+    subscribe(controls: VisualElementAnimationControls) {
         this.componentControls.add(controls)
         if (this.variants) controls.setVariants(this.variants)
         if (this.defaultTransition)

@@ -5,7 +5,7 @@ import { useAnimateProp } from "../../animation/use-animate-prop"
 import { useVariants } from "../../animation/use-variants"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { AnimationControls } from "../../animation/AnimationControls"
-import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
+import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { TargetAndTransition } from "../../types"
 
@@ -14,7 +14,7 @@ interface AnimationFeatureProps {
     animate: MotionProps["animate"]
     transition: MotionProps["transition"]
     variants: MotionProps["variants"]
-    controls: ValueAnimationControls
+    controls: VisualElementAnimationControls
     values: MotionValuesMap
     inherit: boolean
 }

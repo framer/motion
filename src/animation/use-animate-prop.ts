@@ -1,6 +1,6 @@
 import { useRef, useEffect } from "react"
 import { Target, Transition, TargetAndTransition } from "../types"
-import { ValueAnimationControls } from "./ValueAnimationControls"
+import { VisualElementAnimationControls } from "./VisualElementAnimationControls"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { shallowCompare } from "../utils/shallow-compare"
 
@@ -48,7 +48,7 @@ function targetWithoutTransition(
  */
 export function useAnimateProp(
     targetAndTransition: TargetAndTransition,
-    controls: ValueAnimationControls,
+    controls: VisualElementAnimationControls,
     values: MotionValuesMap,
     defaultTransition?: Transition
 ) {

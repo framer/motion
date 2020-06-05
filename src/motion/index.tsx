@@ -1,12 +1,12 @@
 import * as React from "react"
 import { createMotionComponent } from "./component"
-import { createDomMotionConfig } from "./features/dom"
 import { HTMLMotionComponents, SVGMotionComponents, MotionProps } from "./types"
+import { HTMLVisualElement } from "../render/dom/HTMLVisualElement"
+import { domConfig } from "../render/dom"
 
 export { MotionContext } from "./context/MotionContext"
-export { MotionValuesMap } from "./utils/use-motion-values"
 export { useExternalRef } from "./utils/use-external-ref"
-export { ValueAnimationControls } from "../animation/ValueAnimationControls"
+export { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 export { MotionProps }
 export { createMotionComponent }
 
@@ -25,7 +25,10 @@ export { createMotionComponent }
  * @public
  */
 function custom<Props>(Component: string | React.ComponentType<Props>) {
-    return createMotionComponent<Props>(createDomMotionConfig(Component))
+    return createMotionComponent<Props, HTMLElement, HTMLVisualElement>(
+        Component,
+        domConfig
+    )
 }
 
 type CustomMotionComponent = { custom: typeof custom }
@@ -36,10 +39,7 @@ function getMotionComponent(target: CustomMotionComponent, key: string) {
     if (key === "custom") return target.custom
 
     if (!componentCache.has(key)) {
-        componentCache.set(
-            key,
-            createMotionComponent(createDomMotionConfig(key))
-        )
+        componentCache.set(key, createMotionComponent(key, domConfig))
     }
 
     return componentCache.get(key)

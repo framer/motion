@@ -1,6 +1,6 @@
 import { useEffect, useRef, useContext } from "react"
 import { VariantLabels } from "../motion/types"
-import { ValueAnimationControls } from "./ValueAnimationControls"
+import { VisualElementAnimationControls } from "./VisualElementAnimationControls"
 import {
     resolveVariantLabels,
     asDependencyList,
@@ -25,7 +25,7 @@ export function useVariants(
     initial: VariantLabels,
     animate: VariantLabels,
     inherit: boolean,
-    controls: ValueAnimationControls
+    controls: VisualElementAnimationControls
 ) {
     let targetVariants = resolveVariantLabels(animate)
     const context = useContext(MotionContext)

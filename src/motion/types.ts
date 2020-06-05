@@ -22,7 +22,10 @@ import {
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../behaviours/types"
 import { AutoAnimateProps } from "./features/auto/types"
-import { HTMLElements, SVGElements } from "./utils/supported-elements"
+import {
+    HTMLElements,
+    SVGElements,
+} from "../render/dom/utils/supported-elements"
 
 export type MotionStyleProp = string | number | MotionValue
 
