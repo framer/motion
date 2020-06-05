@@ -165,7 +165,9 @@ export class LayoutStack<T extends StackChild = StackChild> {
     }
 
     shouldStackAnimate() {
-        return this.lead && this.lead?.props?._shouldAnimate === true
+        return this.lead && this.lead?.isPresent()
+            ? this.lead?.props?._shouldAnimate === true
+            : this.follow && this.follow?.props._shouldAnimate === true
     }
 
     getFollowOrigin() {
