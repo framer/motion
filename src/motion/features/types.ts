@@ -1,16 +1,17 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
+import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { MotionValuesMap } from "../utils/use-motion-values"
 import { MotionContextProps } from "../context/MotionContext"
 import { NativeElement } from "../utils/use-native-element"
 import { MotionPluginsContext } from "../context/MotionPluginContext"
+import { VisualElement } from "../../render/VisualElement"
 
 /**
  * @public
  */
 export interface FeatureProps extends MotionProps {
-    controls: ValueAnimationControls
+    controls: VisualElementAnimationControls
     values: MotionValuesMap
     nativeElement: NativeElement
     localContext: MotionContextProps
@@ -35,15 +36,13 @@ export type LoadMotionFeatures<P = {}> = (
     props: P & MotionProps,
     context: MotionContextProps,
     parentContext: MotionContextProps,
-    controls: ValueAnimationControls<P>,
+    controls: VisualElementAnimationControls<P>,
     inherit: boolean,
     plugins: MotionPluginsContext
 ) => React.ReactElement<FeatureProps>[]
 
 export type RenderComponent<P = {}> = (
-    nativeElement: NativeElement,
-    style: React.CSSProperties,
-    values: MotionValuesMap,
-    props: P,
-    isStatic?: boolean
-) => React.ReactElement
+    Component: string | React.ComponentType<P>,
+    props: MotionProps,
+    visualElement: VisualElement<any>
+) => any

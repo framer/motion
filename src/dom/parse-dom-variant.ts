@@ -1,29 +1,16 @@
 import { resolveCSSVariables } from "./css-variables-conversion"
-import { MotionValuesMap } from "../motion"
 import { unitConversion } from "./unit-type-conversion"
-import { MakeTargetAnimatable } from "../animation/ValueAnimationControls"
-import { NativeElement } from "../motion/utils/use-native-element"
+import { MakeTargetAnimatable } from "../animation/VisualElementAnimationControls"
 
-export const parseDomVariant = (
-    values: MotionValuesMap,
-    nativeElement: NativeElement<Element>
-): MakeTargetAnimatable => {
-    return (target, origin, transitionEnd) => {
-        const resolved = resolveCSSVariables(
-            values,
-            nativeElement,
-            target,
-            transitionEnd
-        )
-        target = resolved.target
-        transitionEnd = resolved.transitionEnd
+export const parseDomVariant: MakeTargetAnimatable = (
+    visualElement,
+    target,
+    origin,
+    transitionEnd
+) => {
+    const resolved = resolveCSSVariables(visualElement, target, transitionEnd)
+    target = resolved.target
+    transitionEnd = resolved.transitionEnd
 
-        return unitConversion(
-            values,
-            nativeElement,
-            target,
-            origin,
-            transitionEnd
-        )
-    }
+    return unitConversion(visualElement, target, origin, transitionEnd)
 }

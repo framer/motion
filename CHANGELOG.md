@@ -570,7 +570,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Using `transition` and `transitionEnd` as direct values on the `animate` prop on subsequent renders.
 -   Rounding `zIndex`.
--   `AnimationControls.start` now accepts the same `AnimationDefinition` as `ValueAnimationControls.start`.
+-   `AnimationControls.start` now accepts the same `AnimationDefinition` as `VisualElementAnimationControls.start`.
 
 ## [0.16.8] 2019-05-06
 

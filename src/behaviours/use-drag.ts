@@ -1,6 +1,6 @@
 import { useEffect, useContext } from "react"
 import { MotionValuesMap } from "../motion/utils/use-motion-values"
-import { ValueAnimationControls } from "../animation/ValueAnimationControls"
+import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { DraggableProps } from "./types"
 import { ComponentDragControls } from "./ComponentDragControls"
@@ -22,7 +22,7 @@ export function useDrag(
     props: DraggableProps,
     nativeElement: NativeElement<Element>,
     values: MotionValuesMap,
-    controls: ValueAnimationControls
+    controls: VisualElementAnimationControls
 ) {
     const { dragControls: groupDragControls } = props
     const { transformPagePoint } = useContext(MotionPluginContext)

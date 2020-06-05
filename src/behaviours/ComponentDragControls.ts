@@ -7,7 +7,7 @@ import {
     blockViewportScroll,
 } from "./utils/block-viewport-scroll"
 import { Point } from "../events/types"
-import { ValueAnimationControls, MotionValuesMap } from "../motion"
+import { VisualElementAnimationControls, MotionValuesMap } from "../motion"
 import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
@@ -38,7 +38,7 @@ export const elementDragControls = new WeakMap<
 interface DragControlConfig {
     nativeElement: NativeElement
     values: MotionValuesMap
-    controls: ValueAnimationControls
+    controls: VisualElementAnimationControls
 }
 
 export interface DragControlOptions {
@@ -103,7 +103,7 @@ export class ComponentDragControls {
      *
      * @internal
      */
-    private controls: ValueAnimationControls
+    private controls: VisualElementAnimationControls
 
     /**
      * A reference to the host component's motion values.
