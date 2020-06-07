@@ -1,31 +1,24 @@
-import commonjs from "rollup-plugin-commonjs"
-import typescript from "rollup-plugin-typescript2"
-import resolve from "rollup-plugin-node-resolve"
-import { uglify } from "rollup-plugin-uglify"
-import replace from "rollup-plugin-replace"
+import typescript from "@rollup/plugin-typescript"
+import resolve from "@rollup/plugin-node-resolve"
+import { terser } from "rollup-plugin-terser"
+import replace from "@rollup/plugin-replace"
 import pkg from "./package.json"
 
-const makeExternalPredicate = externalArr => {
-    if (externalArr.length === 0) {
-        return () => false
-    }
-    const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`)
-    return id => pattern.test(id)
-}
-
-const typescriptConfig = {
-    cacheRoot: "tmp/.rpt2_cache",
-    tsconfigOverride: { compilerOptions: { declaration: false } },
-}
+const typescriptConfig = { declaration: false }
 
 const config = {
     input: "src/index.ts",
 }
 
-const external = makeExternalPredicate([
+const srcmap = {
+    sourcemap: true,
+    sourcemapExcludeSources: true
+}
+
+const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
-])
+]
 
 const umd = Object.assign({}, config, {
     output: {
@@ -34,11 +27,11 @@ const umd = Object.assign({}, config, {
         name: "Motion",
         exports: "named",
         globals: { react: "React" },
+        ...srcmap,
     },
     external: ["react", "react-dom"],
     plugins: [
         resolve(),
-        commonjs(),
         typescript(typescriptConfig),
         replace({
             "process.env.NODE_ENV": JSON.stringify("development"),
@@ -49,15 +42,15 @@ const umd = Object.assign({}, config, {
 const umdProd = Object.assign({}, umd, {
     output: Object.assign({}, umd.output, {
         file: `dist/${pkg.name}.js`,
+        sourcemap: false,
     }),
     plugins: [
         resolve(),
-        commonjs(),
-        typescript(typescriptConfig),
+        typescript({...typescriptConfig, sourceMap:false}),
         replace({
             "process.env.NODE_ENV": JSON.stringify("production"),
         }),
-        uglify(),
+        terser({ output:{ comments: false }}),
     ],
 })
 
@@ -66,8 +59,9 @@ const cjs = Object.assign({}, config, {
         file: `dist/${pkg.name}.cjs.js`,
         format: "cjs",
         exports: "named",
+        ...srcmap,
     },
-    plugins: [commonjs(), typescript(typescriptConfig)],
+    plugins: [typescript(typescriptConfig)],
     external,
 })
 
@@ -76,8 +70,9 @@ const es = Object.assign({}, config, {
         file: `dist/${pkg.name}.es.js`,
         format: "es",
         exports: "named",
+        ...srcmap,
     },
-    plugins: [commonjs(), typescript(typescriptConfig)],
+    plugins: [typescript(typescriptConfig)],
     external,
 })
 
