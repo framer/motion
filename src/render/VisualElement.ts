@@ -143,7 +143,7 @@ export abstract class VisualElement<E = any> {
     }
 
     // Mount the VisualElement with the actual DOM element
-    private mount(element: E) {
+    protected mount(element: E) {
         invariant(
             !!element,
             "No ref found. Ensure components created with motion.custom forward refs using React.forwardRef"

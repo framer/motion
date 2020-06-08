@@ -12,7 +12,7 @@ import { TransformPoint2D } from "../../types/geometry"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
 import { VisualElementConfig } from "../types"
 
-export interface HTMLConfig extends VisualElementConfig {
+export interface HTMLVisualElementConfig extends VisualElementConfig {
     allowTransformNone?: boolean
     enableHardwareAcceleration?: boolean
     transformPagePoint?: TransformPoint2D
@@ -23,6 +23,21 @@ export interface TransformOrigin {
     originX?: number
     originY?: number
     originZ?: number
+}
+
+export interface SVGMotionAttributes {
+    [key: string]: any
+    style: {
+        transform?: string
+        transformOrigin?: string
+    }
+}
+
+export type Dimensions = {
+    x: number
+    y: number
+    width: number
+    height: number
 }
 
 /**

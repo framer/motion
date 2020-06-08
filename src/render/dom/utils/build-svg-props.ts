@@ -1,16 +1,7 @@
-import { ResolvedValues, SVGAttributes } from "./types"
-import { MotionProps } from "../../../motion/types"
-import { buildStyleProp, BuildStylePropConfig } from "./style"
-import { calcSVGTransformOrigin } from "./utils/svg-transform-origin"
-import { Dimensions } from "./types"
-import { buildPath } from "./path"
+import { SVGMotionAttributes } from "../types"
+import { ResolvedValues } from "../../types"
 
-interface BuildSVGAttrConfig extends BuildStylePropConfig {
-    dimensions: Dimensions
-    totalPathLength?: number
-}
-
-const svgAttrsTemplate = (): SVGAttributes => ({
+const svgAttrsTemplate = (): SVGMotionAttributes => ({
     style: {},
 })
 
@@ -28,8 +19,8 @@ function buildSVGAttrs(
         ...latest
     }: ResolvedValues,
     config: BuildSVGAttrConfig,
-    attrs: SVGAttributes = svgAttrsTemplate()
-): SVGAttributes {
+    attrs: SVGMotionAttributes = svgAttrsTemplate()
+): SVGMotionAttributes {
     const style = buildStyleProp(latest, config)
 
     if (style.transform) {
@@ -73,7 +64,7 @@ const reactRenderConfig = {
 export function buildSVGProps(
     latest: ResolvedValues,
     { style }: MotionProps
-): SVGAttributes {
+): SVGMotionAttributes {
     const attrs = buildSVGAttrs(latest, reactRenderConfig)
     attrs.style = { ...style, ...attrs.style } as any
     return attrs

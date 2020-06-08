@@ -1,5 +1,5 @@
 import { ResolvedValues } from "../../types"
-import { HTMLConfig, TransformOrigin } from "../types"
+import { HTMLVisualElementConfig, TransformOrigin } from "../types"
 import { getValueType, getValueAsType } from "./value-types"
 import { isTransformProp, isTransformOriginProp } from "./transform"
 import { buildTransform } from "./build-transform"
@@ -35,7 +35,7 @@ export function buildHTMLStyles(
         enableHardwareAcceleration,
         transformTemplate,
         allowTransformNone,
-    }: HTMLConfig
+    }: HTMLVisualElementConfig
 ): void {
     transformKeys.length = 0
     let transformIsDefault = true
