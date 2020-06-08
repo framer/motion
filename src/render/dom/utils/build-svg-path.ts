@@ -1,5 +1,5 @@
-import { SVGAttributes } from "./types"
 import { px } from "style-value-types"
+import { SVGMotionAttributes } from "../types"
 
 const progressToPixels = (progress: number, length: number) =>
     (px as any).transform(progress * length)
@@ -14,8 +14,8 @@ const camelKeys = {
     array: "strokeDasharray",
 }
 
-export function buildPath(
-    attrs: SVGAttributes,
+export function buildSVGPath(
+    attrs: SVGMotionAttributes,
     totalLength: number,
     length: number,
     spacing = 1,
