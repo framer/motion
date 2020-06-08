@@ -96,7 +96,7 @@ export abstract class VisualElement<E = any> {
     private update = () => this.config.onUpdate!(this.latest)
 
     // Trigger a synchronous render using the latest MotionValues
-    abstract render: () => void
+    abstract render(): void
 
     // Build display attributes
     abstract build(): void
@@ -123,6 +123,9 @@ export abstract class VisualElement<E = any> {
         }
     }
 
+    // Pre-bound version of render
+    triggerRender = () => this.render()
+
     // Subscribe to changes in a MotionValue
     private subscribeToValue(key: string, value: MotionValue) {
         const onChange = (latest: string | number) => {
@@ -131,7 +134,7 @@ export abstract class VisualElement<E = any> {
             this.config.onUpdate && sync.update(this.update, false, true)
         }
 
-        const onRender = () => sync.render(this.render, false, true)
+        const onRender = () => sync.render(this.triggerRender, false, true)
 
         const unsubscribeOnChange = value.onChange(onChange)
         const unsubscribeOnRender = value.onRenderRequest(onRender)
