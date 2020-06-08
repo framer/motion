@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from ".."
+import { motion } from "../.."
 import { hasUpdated } from "../../animation/use-animate-prop"
 import * as React from "react"
 

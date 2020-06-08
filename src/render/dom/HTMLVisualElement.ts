@@ -1,6 +1,5 @@
 import { VisualElement } from "../VisualElement"
 import { BoundingBox2D } from "../../types/geometry"
-import { safeBoundingBox } from "./utils/safe-bounding-box"
 import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
@@ -11,11 +10,18 @@ import { HTMLConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
 import { getValueType } from "./utils/value-types"
 
-export class HTMLVisualElement extends VisualElement<HTMLElement> {
+export class HTMLVisualElement<
+    E extends HTMLElement | SVGElement = HTMLElement
+> extends VisualElement<E> {
     /**
      *
      */
     style: ResolvedValues = {}
+
+    /**
+     *
+     */
+    reactStyle: ResolvedValues = {}
 
     /**
      *
@@ -25,7 +31,7 @@ export class HTMLVisualElement extends VisualElement<HTMLElement> {
     /**
      *
      */
-    private config: HTMLConfig = {
+    protected config: HTMLConfig = {
         enableHardwareAcceleration: true,
     }
 
@@ -98,9 +104,13 @@ export class HTMLVisualElement extends VisualElement<HTMLElement> {
         const { transformPagePoint } = this.config
 
         let box = this.element.getBoundingClientRect() as BoundingBox2D
-        box = safeBoundingBox(box)
         box = transformBoundingBox(box, transformPagePoint)
         return convertBoundingBoxToAxisBox(box)
+    }
+
+    clean() {
+        this.style = {}
+        this.vars = {}
     }
 
     /**
@@ -124,10 +134,12 @@ export class HTMLVisualElement extends VisualElement<HTMLElement> {
             const defaultValueType = getValueType(key)
             return defaultValueType ? defaultValueType.default || 0 : 0
         } else {
-            return window
-                .getComputedStyle(this.getInstance())
-                .getPropertyValue(key)
+            return this.getComputedStyle().getPropertyValue(key)
         }
+    }
+
+    getComputedStyle() {
+        return window.getComputedStyle(this.getInstance())
     }
 
     /**

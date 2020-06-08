@@ -1,9 +1,9 @@
 import { MotionStyle } from "../../types"
-import { MotionValuesMap } from "../../utils/use-motion-values"
 import { mix, mixColor } from "@popmotion/popcorn"
 import { BoxDelta, BoxShadow } from "./types"
 import { complex, px } from "style-value-types"
 import { AxisBox2D, Axis } from "../../../types/geometry"
+import { VisualElement } from "../../../render/VisualElement"
 
 type Read = (computedStyle: string) => string | number
 
@@ -18,7 +18,7 @@ export interface AutoValueHandler {
     // TODO: Seperate the interpolator from the correction
     // And save the former to current automatically
     createUpdater?: (
-        values: MotionValuesMap,
+        visualElement: VisualElement,
         origin: string | number,
         target: string | number,
         current: { [key: string]: string | number | undefined },
@@ -62,7 +62,7 @@ const singleBorderRadius = (key: string): AutoValueHandler => ({
         return style.borderRadius !== undefined ? style.borderRadius : ""
     },
     createUpdater: (
-        values,
+        visualElement,
         origin: string,
         target: string,
         current,
@@ -73,7 +73,7 @@ const singleBorderRadius = (key: string): AutoValueHandler => ({
     ) => {
         if (!origin && !target) return
 
-        const motionValue = values.get(key, "")
+        const motionValue = visualElement.getValue(key, "")
 
         const originAsPixels = radiusAsPixels(origin, originBox)
         const targetAsPixels = radiusAsPixels(target, targetBox)
@@ -115,7 +115,7 @@ export const defaultMagicValues: AutoValueHandlers = {
     borderBottomRightRadius: singleBorderRadius("borderBottomRightRadius"),
     boxShadow: {
         createUpdater: (
-            values,
+            visualElement,
             origin: string,
             target: string,
             current,
@@ -138,7 +138,7 @@ export const defaultMagicValues: AutoValueHandlers = {
 
             const dx = delta.x
             const dy = delta.y
-            const boxShadow = values.get("boxShadow", "")
+            const boxShadow = visualElement.getValue("boxShadow", "")
 
             return p => {
                 // Update box shadow

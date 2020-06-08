@@ -1,9 +1,10 @@
 import { resolveCSSVariables } from "./css-variables-conversion"
 import { unitConversion } from "./unit-type-conversion"
-import { MakeTargetAnimatable } from "../animation/VisualElementAnimationControls"
+import { MakeTargetAnimatable } from "../../../animation/VisualElementAnimationControls"
+import { HTMLVisualElement } from "../HTMLVisualElement"
 
 export const parseDomVariant: MakeTargetAnimatable = (
-    visualElement,
+    visualElement: HTMLVisualElement,
     target,
     origin,
     transitionEnd

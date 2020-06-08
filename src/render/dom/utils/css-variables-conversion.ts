@@ -1,7 +1,6 @@
-import { MotionValuesMap } from "../motion/utils/use-motion-values"
-import { Target, TargetWithKeyframes } from "../types"
+import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "hey-listen"
-import { NativeElement } from "../motion/utils/use-native-element"
+import { HTMLVisualElement } from "../HTMLVisualElement"
 
 function isCSSVariable(value: any): value is string {
     return typeof value === "string" && value.startsWith("var(--")
@@ -60,12 +59,11 @@ function getVariableValue(
  * @internal
  */
 export function resolveCSSVariables(
-    values: MotionValuesMap,
-    nativeElement: NativeElement<Element>,
+    visualElement: HTMLVisualElement,
     { ...target }: TargetWithKeyframes,
     transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
-    const element = nativeElement.getInstance()
+    const element = visualElement.getInstance()
     if (!(element instanceof HTMLElement)) return { target, transitionEnd }
 
     // If `transitionEnd` isn't `undefined`, clone it. We could clone `target` and `transitionEnd`
@@ -75,7 +73,7 @@ export function resolveCSSVariables(
     }
 
     // Go through existing `MotionValue`s and ensure any existing CSS variables are resolved
-    values.forEach(value => {
+    visualElement.forEachValue(value => {
         const current = value.get()
         if (!isCSSVariable(current)) return
 

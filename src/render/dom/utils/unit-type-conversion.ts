@@ -1,12 +1,12 @@
-import { Target, TargetWithKeyframes } from "../types"
-import { MotionValuesMap } from "../motion"
-import { MotionValue } from "../value"
-import { transformProps } from "stylefire"
-import { getDimensionValueType } from "./value-types"
-import { isKeyframesTarget } from "../animation/utils/is-keyframes-target"
+import { Target, TargetWithKeyframes } from "../../../types"
+import { getDimensionValueType } from "../../../dom/value-types"
+import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { number, px, ValueType } from "style-value-types"
-import { NativeElement } from "../motion/utils/use-native-element"
+import { HTMLVisualElement } from "../HTMLVisualElement"
+import { MotionValue } from "../../../value"
+import { transformProps } from "./transform"
+import { AxisBox2D } from "../../../types/geometry"
 
 const positionalKeys = new Set([
     "width",
@@ -43,7 +43,7 @@ export enum BoundingBoxDimension {
 }
 
 type GetActualMeasurementInPixels = (
-    bbox: ClientRect | DOMRect,
+    bbox: AxisBox2D,
     computedStyle: Partial<CSSStyleDeclaration>
 ) => number
 
@@ -76,14 +76,13 @@ const nonTranslationalTransformKeys = transformProps.filter(
 )
 
 type RemovedTransforms = [string, string | number][]
-function removeNonTranslationalTransform(
-    values: MotionValuesMap,
-    nativeElement: NativeElement<Element>
-) {
+function removeNonTranslationalTransform(visualElement: HTMLVisualElement) {
     const removedTransforms: RemovedTransforms = []
 
     nonTranslationalTransformKeys.forEach(key => {
-        const value: MotionValue<string | number> | undefined = values.get(key)
+        const value:
+            | MotionValue<string | number>
+            | undefined = visualElement.getValue(key)
         if (value !== undefined) {
             removedTransforms.push([key, value.get()])
             value.set(key.startsWith("scale") ? 1 : 0)
@@ -91,20 +90,20 @@ function removeNonTranslationalTransform(
     })
 
     // Apply changes to element before measurement
-    if (removedTransforms.length) nativeElement.render()
+    if (removedTransforms.length) visualElement.render()
 
     return removedTransforms
 }
 
 const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
     // Dimensions
-    width: ({ width }) => width,
-    height: ({ height }) => height,
+    width: ({ x }) => x.max - x.min,
+    height: ({ y }) => y.max - y.min,
 
     top: (_bbox, { top }) => parseFloat(top as string),
     left: (_bbox, { left }) => parseFloat(left as string),
-    bottom: ({ height }, { top }) => parseFloat(top as string) + height,
-    right: ({ width }, { left }) => parseFloat(left as string) + width,
+    bottom: ({ y }, { top }) => parseFloat(top as string) + (y.max - y.min),
+    right: ({ x }, { left }) => parseFloat(left as string) + (x.max - x.min),
 
     // Transform
     x: getTranslateFromMatrix(4, 13),
@@ -113,12 +112,11 @@ const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
 
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
-    values: MotionValuesMap,
-    nativeElement: NativeElement<Element>,
+    visualElement: HTMLVisualElement,
     changedKeys: string[]
 ) => {
-    const originBbox = nativeElement.getBoundingBox()
-    const elementComputedStyle = nativeElement.getComputedStyle()
+    const originBbox = visualElement.getBoundingBox()
+    const elementComputedStyle = visualElement.getComputedStyle()
     const {
         display,
         top,
@@ -132,18 +130,18 @@ const convertChangedValueTypes = (
     // If the element is currently set to display: "none", make it visible before
     // measuring the target bounding box
     if (display === "none") {
-        nativeElement.setStyle("display", target.display || "block")
+        visualElement.style["display"] = (target.display as string) || "block"
     }
 
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)
-    nativeElement.render()
+    visualElement.render()
 
-    const targetBbox = nativeElement.getBoundingBox()
+    const targetBbox = visualElement.getBoundingBox()
 
     changedKeys.forEach(key => {
         // Restore styles to their **calculated computed style**, not their actual
         // originally set style. This allows us to animate between equivalent pixel units.
-        const value = values.get(key) as MotionValue
+        const value = visualElement.getValue(key) as MotionValue
         setAndResetVelocity(
             value,
             positionalValues[key](originBbox, originComputedStyle)
@@ -155,8 +153,7 @@ const convertChangedValueTypes = (
 }
 
 const checkAndConvertChangedValueTypes = (
-    values: MotionValuesMap,
-    nativeElement: NativeElement<Element>,
+    visualElement: HTMLVisualElement,
     target: TargetWithKeyframes,
     origin: Target = {},
     transitionEnd: Target = {}
@@ -174,8 +171,10 @@ const checkAndConvertChangedValueTypes = (
     const changedValueTypeKeys: string[] = []
 
     targetPositionalKeys.forEach(key => {
-        const value = values.get(key) as MotionValue<number | string>
-        if (!values.has(key)) return
+        const value = visualElement.getValue(key) as MotionValue<
+            number | string
+        >
+        if (!visualElement.hasValue(key)) return
 
         const from = origin[key]
         const to = target[key]
@@ -227,8 +226,7 @@ const checkAndConvertChangedValueTypes = (
                 // need to remove non-positional transform values that could affect the bbox measurements.
                 if (!hasAttemptedToRemoveTransformValues) {
                     removedTransformValues = removeNonTranslationalTransform(
-                        values,
-                        nativeElement
+                        visualElement
                     )
                     hasAttemptedToRemoveTransformValues = true
                 }
@@ -246,20 +244,19 @@ const checkAndConvertChangedValueTypes = (
     if (changedValueTypeKeys.length) {
         const convertedTarget = convertChangedValueTypes(
             target,
-            values,
-            nativeElement,
+            visualElement,
             changedValueTypeKeys
         )
 
         // If we removed transform values, reapply them before the next render
         if (removedTransformValues.length) {
             removedTransformValues.forEach(([key, value]) => {
-                values.get(key)!.set(value)
+                visualElement.getValue(key)!.set(value)
             })
         }
 
         // Reapply original values
-        nativeElement.render()
+        visualElement.render()
 
         return { target: convertedTarget, transitionEnd }
     } else {
@@ -275,16 +272,14 @@ const checkAndConvertChangedValueTypes = (
  * @internal
  */
 export function unitConversion(
-    values: MotionValuesMap,
-    nativeElement: NativeElement<Element>,
+    visualElement: HTMLVisualElement,
     target: TargetWithKeyframes,
     origin?: Target,
     transitionEnd?: Target
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     return hasPositionalKey(target)
         ? checkAndConvertChangedValueTypes(
-              values,
-              nativeElement,
+              visualElement,
               target,
               origin,
               transitionEnd

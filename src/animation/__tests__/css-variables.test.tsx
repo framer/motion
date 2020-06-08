@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../../motion"
-import { parseCSSVariable } from "../../dom/css-variables-conversion"
+import { motion } from "../.."
 import * as React from "react"
+import { parseCSSVariable } from "../../render/dom/utils/css-variables-conversion"
 
 const fromName = "--from"
 const toName = "--to"

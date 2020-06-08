@@ -3,7 +3,7 @@ import * as React from "react"
 import { useSpring } from "../use-spring"
 import { useMotionValue } from "../use-motion-value"
 import { motionValue, MotionValue } from ".."
-import { motion } from "../../motion"
+import { motion } from "../../"
 
 describe("useSpring", () => {
     test("can create a motion value from a number", async () => {

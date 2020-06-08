@@ -7,7 +7,6 @@ import {
     blockViewportScroll,
 } from "./utils/block-viewport-scroll"
 import { Point } from "../events/types"
-import { VisualElementAnimationControls, MotionValuesMap } from "../motion"
 import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
@@ -16,7 +15,6 @@ import { mix } from "@popmotion/popcorn"
 import { addDomEvent } from "../events/use-dom-event"
 import { extractEventInfo } from "../events/event-info"
 import { startAnimation } from "../animation/utils/transitions"
-import { NativeElement } from "../motion/utils/use-native-element"
 import {
     TransformPoint2D,
     BoundingBox2D,
@@ -29,15 +27,16 @@ import {
     calcAxisCenter,
     convertAxisBoxToBoundingBox,
 } from "../utils/geometry"
+import { VisualElement } from "../render/VisualElement"
+import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 
 export const elementDragControls = new WeakMap<
-    NativeElement,
-    ComponentDragControls
+    VisualElement,
+    VisualElementDragControls
 >()
 
 interface DragControlConfig {
-    nativeElement: NativeElement
-    values: MotionValuesMap
+    visualElement: VisualElement
     controls: VisualElementAnimationControls
 }
 
@@ -56,7 +55,7 @@ type MotionPoint = {
     y: MotionValue<number>
 }
 
-export class ComponentDragControls {
+export class VisualElementDragControls {
     /**
      * Track whether we're currently dragging.
      *
@@ -96,7 +95,7 @@ export class ComponentDragControls {
     /**
      * @internal
      */
-    private nativeElement: NativeElement<Element>
+    private visualElement: VisualElement
 
     /**
      * A reference to the host component's animation controls.
@@ -104,13 +103,6 @@ export class ComponentDragControls {
      * @internal
      */
     private controls: VisualElementAnimationControls
-
-    /**
-     * A reference to the host component's motion values.
-     *
-     * @internal
-     */
-    private values: MotionValuesMap
 
     /**
      * References to the MotionValues used for tracking the current dragged point.
@@ -150,11 +142,10 @@ export class ComponentDragControls {
         y: 0,
     }
 
-    constructor({ nativeElement, values, controls }: DragControlConfig) {
-        this.nativeElement = nativeElement
-        this.values = values
+    constructor({ visualElement, controls }: DragControlConfig) {
+        this.visualElement = visualElement
         this.controls = controls
-        elementDragControls.set(nativeElement, this)
+        elementDragControls.set(visualElement, this)
     }
 
     /**
@@ -266,7 +257,7 @@ export class ComponentDragControls {
 
         this.constraints = calculateConstraintsFromDom(
             constraintsElement,
-            this.nativeElement.getInstance(),
+            this.visualElement.getInstance(),
             this.point,
             transformPagePoint
         )
@@ -324,7 +315,7 @@ export class ComponentDragControls {
         const { transformPagePoint } = this.props
         const { point } = extractEventInfo(event)
         const boundingBox = getBoundingBox(
-            this.nativeElement.getInstance(),
+            this.visualElement.getInstance(),
             transformPagePoint
         )
 
@@ -403,7 +394,10 @@ export class ComponentDragControls {
         bothAxis(axis => {
             if (!shouldDrag(axis, drag, this.currentDirection)) return
             const defaultValue = axis === "x" ? _dragValueX : _dragValueY
-            this.setPoint(axis, defaultValue || this.values.get(axis, 0))
+            this.setPoint(
+                axis,
+                defaultValue || this.visualElement.getValue(axis, 0)
+            )
         })
 
         // If `dragConstraints` is a React `ref`, we should resolve the constraints once the
@@ -512,7 +506,7 @@ export class ComponentDragControls {
         )
 
         const draggableBox = getBoundingBox(
-            this.nativeElement.getInstance(),
+            this.visualElement.getInstance(),
             transformPagePoint
         )
 

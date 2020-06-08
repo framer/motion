@@ -1,4 +1,4 @@
-import { VisualElementAnimationControls } from "../motion"
+import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 
 export interface ControlsProp {
     controls?: VisualElementAnimationControls

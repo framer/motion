@@ -1,3 +1,3 @@
-import { VisualElement } from "../VisualElement"
+import { HTMLVisualElement } from "./HTMLVisualElement"
 
-export class SVGVisualElement extends VisualElement<SVGElement> {}
+export class SVGVisualElement extends HTMLVisualElement<SVGElement> {}
