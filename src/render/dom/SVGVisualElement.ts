@@ -1,9 +1,15 @@
 import { HTMLVisualElement } from "./HTMLVisualElement"
-import { buildSVGProps } from "./utils/build-svg-props"
+import { buildSVGAttrs } from "./utils/build-svg-attrs"
 import { Dimensions } from "./types"
+import { ResolvedValues } from "../types"
 
-export class SVGVisualElement extends HTMLVisualElement<SVGElement> {
+export class SVGVisualElement extends HTMLVisualElement<
+    SVGElement | SVGPathElement
+> {
+    attrs: ResolvedValues = {}
+
     private dimensions: Dimensions
+    private pathLength: number
 
     protected mount(element: SVGElement) {
         super.mount(element)
@@ -18,21 +24,39 @@ export class SVGVisualElement extends HTMLVisualElement<SVGElement> {
                     ? (this.element as SVGGraphicsElement).getBBox()
                     : (this.element.getBoundingClientRect() as DOMRect)
         } catch (e) {
-            // most likely trying to measure an unrendered element under Firefox
+            // Most likely trying to measure an unrendered element under Firefox
             this.dimensions = { x: 0, y: 0, width: 0, height: 0 }
+        }
+
+        if (isPath(this.element)) {
+            this.pathLength = this.element.getTotalLength()
+        }
+    }
+
+    render() {
+        super.render()
+
+        for (const key in this.attrs) {
+            if (key !== "style") {
+                this.element.setAttribute(key, this.attrs[key] as string)
+            }
         }
     }
 
     build() {
         super.build()
-        buildSVGProps(this.latest, this.style)
+        buildSVGAttrs(
+            this.latest,
+            this.style,
+            this.attrs,
+            this.dimensions,
+            this.pathLength
+        )
     }
 }
 
-this.latest,
-    this.style,
-    this.vars,
-    this.transform,
-    this.transformOrigin,
-    this.transformKeys,
-    this.config
+function isPath(
+    element: SVGElement | SVGPathElement
+): element is SVGPathElement {
+    return element.tagName === "path"
+}

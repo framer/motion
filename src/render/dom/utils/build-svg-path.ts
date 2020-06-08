@@ -1,5 +1,5 @@
 import { px } from "style-value-types"
-import { SVGMotionAttributes } from "../types"
+import { ResolvedValues } from "../../types"
 
 const progressToPixels = (progress: number, length: number) =>
     (px as any).transform(progress * length)
@@ -15,7 +15,7 @@ const camelKeys = {
 }
 
 export function buildSVGPath(
-    attrs: SVGMotionAttributes,
+    attrs: ResolvedValues,
     totalLength: number,
     length: number,
     spacing = 1,
