@@ -2,8 +2,9 @@ import { Ref } from "react"
 import { isRefObject } from "../utils/is-ref-object"
 import { MotionValue } from "../value"
 import sync, { cancelSync } from "framesync"
-import { MotionProps } from "../motion/types"
-import { ResolvedValues } from "./types"
+import { VisualElementConfig, ResolvedValues } from "./types"
+import { AxisBox2D } from "../types/geometry"
+import { invariant } from "hey-listen"
 
 export abstract class VisualElement<E = any> {
     // A reference to the parent VisualElement
@@ -24,8 +25,10 @@ export abstract class VisualElement<E = any> {
     // An optional user-provided React ref
     private externalRef?: Ref<E>
 
-    // A reference to the latest component props
-    private props: MotionProps = {}
+    /**
+     *
+     */
+    protected config: VisualElementConfig = {}
 
     // An alias for element to allow VisualElement to be used
     // like a RefObject. This is a temporary measure to work with
@@ -82,10 +85,6 @@ export abstract class VisualElement<E = any> {
         return value
     }
 
-    updateProps(props: MotionProps) {
-        this.props = props
-    }
-
     forEachValue(callback: (value: MotionValue, key: string) => void) {
         this.values.forEach(callback)
     }
@@ -94,7 +93,7 @@ export abstract class VisualElement<E = any> {
         return this.element
     }
 
-    private update = () => this.props.onUpdate!(this.latest)
+    private update = () => this.config.onUpdate!(this.latest)
 
     // Trigger a synchronous render using the latest MotionValues
     abstract render: () => void
@@ -102,14 +101,34 @@ export abstract class VisualElement<E = any> {
     // Build display attributes
     abstract build(): void
 
+    // Clean data structures
+    abstract clean(): void
+
     // Directly read a value from the underlying element
     abstract readNativeValue(key: string): string | number
+
+    abstract getBoundingBox(): AxisBox2D
+
+    private setSingleStaticValue(key: string, value: string | number) {
+        this.latest[key] = value
+    }
+
+    setStaticValues(values: string | ResolvedValues, value?: string | number) {
+        if (typeof values === "string") {
+            this.setSingleStaticValue(values, value as string | number)
+        } else {
+            for (const key in values) {
+                this.setSingleStaticValue(key, values[key])
+            }
+        }
+    }
 
     // Subscribe to changes in a MotionValue
     private subscribeToValue(key: string, value: MotionValue) {
         const onChange = (latest: string | number) => {
+            this.setSingleStaticValue(key, latest)
             this.latest[key] = latest
-            this.props.onUpdate && sync.update(this.update, false, true)
+            this.config.onUpdate && sync.update(this.update, false, true)
         }
 
         const onRender = () => sync.render(this.render, false, true)
@@ -125,14 +144,19 @@ export abstract class VisualElement<E = any> {
 
     // Mount the VisualElement with the actual DOM element
     private mount(element: E) {
+        invariant(
+            !!element,
+            "No ref found. Ensure components created with motion.custom forward refs using React.forwardRef"
+        )
+
         this.element = this.current = element
 
         // Subscribe to any pre-existing MotionValues
-        this.values.forEach((value, key) => this.subscribeToValue(key, value))
+        this.forEachValue((value, key) => this.subscribeToValue(key, value))
     }
 
     private unmount() {
-        this.values.forEach((_, key) => this.removeValue(key))
+        this.forEachValue((_, key) => this.removeValue(key))
         cancelSync.update(this.update)
         cancelSync.render(this.render)
     }
@@ -145,9 +169,9 @@ export abstract class VisualElement<E = any> {
         if (!this.externalRef) return
 
         if (typeof this.externalRef === "function") {
-            this.externalRef(null)
+            this.externalRef(element)
         } else if (isRefObject(this.externalRef)) {
-            ;(this.externalRef as any).current = null
+            ;(this.externalRef as any).current = element
         }
     }
 }

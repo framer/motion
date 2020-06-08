@@ -1,9 +1,9 @@
 import * as React from "react"
 import { useConstant } from "../utils/use-constant"
 import {
-    ComponentDragControls,
+    VisualElementDragControls,
     DragControlOptions,
-} from "./ComponentDragControls"
+} from "./VisualElementDragControls"
 
 /**
  * Can manually trigger a drag gesture on one or more `drag`-enabled `motion` components.
@@ -45,14 +45,14 @@ import {
  * @public
  */
 export class DragControls {
-    private componentControls = new Set<ComponentDragControls>()
+    private componentControls = new Set<VisualElementDragControls>()
 
     /**
-     * Subscribe a component's internal `ComponentDragControls` to the user-facing API.
+     * Subscribe a component's internal `VisualElementDragControls` to the user-facing API.
      *
      * @internal
      */
-    subscribe(controls: ComponentDragControls): () => void {
+    subscribe(controls: VisualElementDragControls): () => void {
         this.componentControls.add(controls)
         return () => this.componentControls.delete(controls)
     }

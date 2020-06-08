@@ -7,22 +7,16 @@ import {
     SharedBatchTree,
     TransitionHandler,
 } from "../../../components/AnimateSharedLayout/types"
-import { NativeElement } from "../../utils/use-native-element"
 import { MotionStyle } from "../../types"
 import { MotionValue } from "../../../value"
 import { CustomValueType } from "../../../types"
 import { resolveMotionValue } from "../../../value/utils/resolve-motion-value"
 import { Auto, SharedLayoutTree } from "./Auto"
-import {
-    convertBoundingBoxToAxisBox,
-    transformBoundingBox,
-} from "../../../utils/geometry"
-import {
-    BoundingBox2D,
-    Axis,
-    AxisBox2D,
-    TransformPoint2D,
-} from "../../../types/geometry"
+import { Axis, AxisBox2D } from "../../../types/geometry"
+import { VisualElement } from "../../../render/VisualElement"
+import { eachAxis } from "../../../utils/each-axis"
+import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
+import { ResolvedValues } from "../../../render/types"
 
 const clampProgress = clamp(0, 1)
 
@@ -35,43 +29,27 @@ const clampProgress = clamp(0, 1)
  * can't invert scale: 0) but it will correctly animate back out, and it
  * fixes distortion on any children.
  */
-export function safeSize({
-    top,
-    right,
-    bottom,
-    left,
-}: BoundingBox2D): BoundingBox2D {
+export function safeSize(box: AxisBox2D): AxisBox2D {
     const safePixels = 0.5
 
-    if (top === bottom) {
-        top -= safePixels
-        bottom += safePixels
-    }
+    eachAxis(axis => {
+        const boxAxis = box[axis]
+        if (boxAxis.min === boxAxis.max) {
+            boxAxis.min -= safePixels
+            boxAxis.max += safePixels
+        }
+    })
 
-    if (left === right) {
-        left -= safePixels
-        right += safePixels
-    }
-
-    return { top, right, bottom, left }
+    return box
 }
 
-function snapshotLayout(
-    element: NativeElement,
-    transformPoint: TransformPoint2D
-) {
+function snapshotLayout(element: VisualElement) {
     const boundingBox = element.getBoundingBox()
-    const safeBoundingBox = safeSize(boundingBox)
-    const transformedBoundingBox = transformBoundingBox(
-        safeBoundingBox,
-        transformPoint
-    )
-
-    return convertBoundingBoxToAxisBox(transformedBoundingBox)
+    return safeSize(boundingBox)
 }
 
 function snapshotStyle(
-    element: NativeElement,
+    element: HTMLVisualElement,
     valueHandlers: AutoValueHandlers
 ): Style {
     const computedStyle = element.getComputedStyle()
@@ -100,12 +78,11 @@ function snapshotStyle(
 }
 
 export function snapshot(
-    element: NativeElement,
-    valueHandlers: AutoValueHandlers,
-    transformPoint: TransformPoint2D
+    element: HTMLVisualElement,
+    valueHandlers: AutoValueHandlers
 ): Snapshot {
     return {
-        layout: snapshotLayout(element, transformPoint),
+        layout: snapshotLayout(element),
         style: snapshotStyle(element, valueHandlers),
     }
 }
@@ -264,8 +241,8 @@ export function resolve<T extends unknown>(
 export function resetStyles(
     style: MotionStyle,
     valueHandlers: AutoValueHandlers
-): MotionStyle {
-    const reset: MotionStyle = {
+): ResolvedValues {
+    const reset = {
         x: 0,
         y: 0,
         scale: 1,

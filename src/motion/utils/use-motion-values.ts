@@ -8,10 +8,6 @@ import {
     isTransformOriginProp,
 } from "../../render/dom/utils/transform"
 
-interface PreviousValues {
-    [key: string]: number | string | MotionValue
-}
-
 interface MotionValueSource {
     [key: string]: MotionValue | unknown
 }
@@ -44,18 +40,30 @@ export function useMotionValues<P>(
      */
     addMotionValues(visualElement, prev, props as any)
     if (props.style) addMotionValues(visualElement, prev, props.style, true)
+
+    /**
+     * Transform custom values if provided a handler, ie size -> width/height
+     * Ideally we'd ditch this by removing support for size and other custom values from Framer.
+     */
+    if (props.transformValues) {
+        ;(visualElement as any).reactStyle = props.transformValues(
+            (visualElement as any).reactStyle
+        )
+    }
 }
 
 /**
  * Add incoming MotionValues
+ *
+ * TODO: Type the VisualElements properly
  */
 function addMotionValues(
     visualElement: VisualElement<any>,
-    prev: PreviousValues,
+    prev: MotionValueSource,
     source: MotionValueSource,
     isStyle: boolean = false
 ) {
-    if (isStyle) visualElement.staticStyle = {}
+    if (isStyle) (visualElement as any).reactStyle = {}
 
     for (const key in source) {
         const value = source[key]
@@ -80,7 +88,7 @@ function addMotionValues(
             }
             foundMotionValue = true
         } else if (isStyle) {
-            visualElement.staticStyle[key] = value
+            ;(visualElement as any).reactStyle[key] = value
         }
 
         if (foundMotionValue) prev[key] = value
@@ -98,4 +106,4 @@ const reservedNames = new Set([
     "_dragValueY",
 ])
 
-const empty = (): PreviousValues => ({})
+const empty = (): MotionValueSource => ({})

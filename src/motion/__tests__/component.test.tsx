@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
-import { motion } from "../"
+import { motion } from "../../"
 import * as React from "react"
 import styled from "styled-components"
 
@@ -318,11 +318,11 @@ describe("motion component rendering and styles", () => {
                 transformTemplate={(_, generated) =>
                     `translateY(20px) ${generated}`
                 }
-                style={{ transform: "translateX(10px)" }}
+                style={{ x: 10 }}
             />
         )
         expect(container.firstChild).toHaveStyle(
-            "transform: translateY(20px) translateX(10px)"
+            "transform: translateY(20px) translateX(10px) translateZ(0)"
         )
     })
 

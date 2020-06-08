@@ -7,8 +7,8 @@ export const Drag: MotionFeature = {
     key: "drag",
     shouldRender: (props: MotionProps) => !!props.drag,
     Component: makeRenderlessComponent(
-        ({ nativeElement, values, controls, ...props }: FeatureProps) => {
-            return useDrag(props, nativeElement, values, controls)
+        ({ visualElement, controls, ...props }: FeatureProps) => {
+            return useDrag(props, visualElement, controls)
         }
     ),
 }

@@ -23,8 +23,8 @@ export const Gestures: MotionFeature = {
         return gestureProps.some(key => props.hasOwnProperty(key))
     },
     Component: makeRenderlessComponent(
-        ({ nativeElement, ...props }: FeatureProps) => {
-            useGestures(props, nativeElement)
+        ({ visualElement, ...props }: FeatureProps) => {
+            useGestures(props, visualElement)
         }
     ),
 }

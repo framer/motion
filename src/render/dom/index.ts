@@ -1,12 +1,58 @@
-import { MotionComponentConfig } from "../../motion/component"
-import { useVisualElement } from "./use-dom-visual-element"
+import * as React from "react"
+import { MotionComponentConfig } from "../../motion"
+import { useDomVisualElement } from "./use-dom-visual-element"
 import { render } from "./render"
-import { parseDomVariant } from "../../dom/parse-dom-variant"
+import { parseDomVariant } from "./utils/parse-dom-variant"
+import { createMotionComponent } from "../../motion"
+import { HTMLMotionComponents, SVGMotionComponents } from "./types"
 
-export const domConfig: MotionComponentConfig = {
-    useVisualElement,
-    render,
+/**
+ * DOM-specific config for `motion` components
+ */
+const config: MotionComponentConfig<HTMLElement | SVGElement> = {
+    useVisualElement: useDomVisualElement as any,
+    render: render as any,
     animationControlsConfig: {
         makeTargetAnimatable: parseDomVariant,
     },
 }
+
+/**
+ * Convert any React component into a `motion` component. The provided component
+ * **must** use `React.forwardRef` to the underlying DOM component you want to animate.
+ *
+ * ```jsx
+ * const Component = React.forwardRef((props, ref) => {
+ *   return <div ref={ref} />
+ * })
+ *
+ * const MotionComponent = motion.custom(Component)
+ * ```
+ *
+ * @public
+ */
+function custom<Props>(Component: string | React.ComponentType<Props>) {
+    return createMotionComponent(Component, config)
+}
+
+type CustomMotionComponent = { custom: typeof custom }
+type Motion = HTMLMotionComponents & SVGMotionComponents & CustomMotionComponent
+
+const componentCache = new Map<string, any>()
+function get(target: CustomMotionComponent, key: string) {
+    if (key === "custom") return target.custom
+
+    if (!componentCache.has(key)) {
+        componentCache.set(key, createMotionComponent(key, config))
+    }
+
+    return componentCache.get(key)
+}
+
+/**
+ * HTML & SVG components, optimised for use with gestures and animation. These can be used as
+ * drop-in replacements for any HTML & SVG component, all CSS & SVG properties are supported.
+ *
+ * @public
+ */
+export const motion = new Proxy({ custom }, { get }) as Motion

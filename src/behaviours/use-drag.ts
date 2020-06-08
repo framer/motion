@@ -1,12 +1,11 @@
 import { useEffect, useContext } from "react"
-import { MotionValuesMap } from "../motion/utils/use-motion-values"
 import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { DraggableProps } from "./types"
-import { ComponentDragControls } from "./ComponentDragControls"
+import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../utils/use-constant"
-import { NativeElement } from "../motion/utils/use-native-element"
 import { usePresence } from "../components/AnimatePresence/use-presence"
+import { VisualElement } from "../render/VisualElement"
 
 /**
  * A hook that allows an element to be dragged.
@@ -20,15 +19,14 @@ import { usePresence } from "../components/AnimatePresence/use-presence"
  */
 export function useDrag(
     props: DraggableProps,
-    nativeElement: NativeElement<Element>,
-    values: MotionValuesMap,
+    visualElement: VisualElement,
     controls: VisualElementAnimationControls
 ) {
     const { dragControls: groupDragControls } = props
     const { transformPagePoint } = useContext(MotionPluginContext)
 
     const dragControls = useConstant(
-        () => new ComponentDragControls({ nativeElement, values, controls })
+        () => new VisualElementDragControls({ visualElement, controls })
     )
     dragControls.updateProps({ ...props, transformPagePoint })
 
@@ -39,10 +37,10 @@ export function useDrag(
         [dragControls]
     )
 
-    useEffect(() => dragControls.mount(nativeElement.getInstance()), [])
+    useEffect(() => dragControls.mount(visualElement.getInstance()), [])
 }
 
-function useDisableDragOnExit(dragControls: ComponentDragControls) {
+function useDisableDragOnExit(dragControls: VisualElementDragControls) {
     const [isPresent, safeToRemove] = usePresence()
     useEffect(() => {
         if (!isPresent && safeToRemove) {

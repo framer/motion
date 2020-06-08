@@ -16,7 +16,6 @@ import { VisualElement } from "../../render/VisualElement"
 export interface MotionContextProps {
     visualElement?: VisualElement<any>
     controls?: VisualElementAnimationControls
-    values?: MotionValuesMap
     initial?: false | VariantLabels
     animate?: VariantLabels
     static?: boolean
@@ -136,7 +135,7 @@ export const useMotionContext = (
                 : parentContext.controls,
             initial: targetInitial,
             animate: targetAnimate,
-            values,
+            visualElement,
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
             presenceId,

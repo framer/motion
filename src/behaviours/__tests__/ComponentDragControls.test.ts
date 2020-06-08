@@ -1,4 +1,4 @@
-import { calculateConstraints } from "../ComponentDragControls"
+import { calculateConstraints } from "../VisualElementDragControls"
 
 describe("calculateConstraints", () => {
     test("Correctly calculate constraints when container is larger than draggable element", () => {

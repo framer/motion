@@ -1,15 +1,9 @@
 /**
  * Components
  */
-export { motion, useExternalRef, createMotionComponent } from "./motion"
+export { motion } from "./render/dom"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
-export {
-    HTMLMotionProps,
-    SVGMotionProps,
-    SVGAttributesAsMotionValues,
-    ForwardRefComponent,
-} from "./motion/types"
 
 /**
  * Motion values
@@ -50,6 +44,8 @@ export { isValidMotionProp } from "./motion/utils/valid-prop"
 export { usePresence } from "./components/AnimatePresence/use-presence"
 export { useDragControls, DragControls } from "./behaviours/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
+export { useExternalRef } from "./motion/utils/use-external-ref"
+export { createMotionComponent } from "./motion"
 
 /**
  * Contexts
@@ -67,6 +63,12 @@ export { AnimatePresenceProps } from "./components/AnimatePresence/types"
  * Types
  */
 export {
+    HTMLMotionProps,
+    SVGMotionProps,
+    SVGAttributesAsMotionValues,
+    ForwardRefComponent,
+} from "./render/dom/types"
+export {
     AnimationProps,
     MotionProps,
     MotionCallbacks,
@@ -77,6 +79,7 @@ export {
     RelayoutInfo,
     ResolveLayoutTransition,
 } from "./motion/types"
+export { VisualElementAnimationControls } from "./animation/VisualElementAnimationControls"
 export {
     Orchestration,
     Tween,

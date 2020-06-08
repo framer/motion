@@ -35,8 +35,8 @@ import {
 import { defaultMagicValues, AutoValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
-import { elementDragControls } from "../../../behaviours/ComponentDragControls"
-import { TransformPoint2D, AxisBox2D } from "../../../types/geometry"
+import { elementDragControls } from "../../../behaviours/VisualElementDragControls"
+import { AxisBox2D } from "../../../types/geometry"
 export { SharedLayoutTree, SharedBatchTree }
 
 /**
@@ -46,7 +46,7 @@ export { SharedLayoutTree, SharedBatchTree }
 export const SharedLayoutContextProvider = (props: FeatureProps) => {
     const [isPresent, safeToRemove] = usePresence()
     const sharedLayoutContext = useContext(SharedLayoutContext)
-    const { autoValues, transformPagePoint } = useContext(MotionPluginContext)
+    const { autoValues } = useContext(MotionPluginContext)
 
     return (
         <Auto
@@ -57,7 +57,6 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
             safeToRemove={safeToRemove}
             sharedLayoutContext={sharedLayoutContext}
             autoValues={autoValues}
-            transformPagePoint={transformPagePoint}
         />
     )
 }
@@ -67,7 +66,6 @@ interface ContextProps {
     safeToRemove?: null | SafeToRemove
     sharedLayoutContext: SharedLayoutTree | SharedBatchTree
     autoValues: AutoValueHandlers
-    transformPagePoint: TransformPoint2D
 }
 
 export class Auto extends React.Component<FeatureProps & ContextProps> {
@@ -310,20 +308,20 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      * might trigger more than once per render. So it isn't recommended for production.
      */
     resetRotation() {
-        const { nativeElement, values } = this.props
-        const rotate = values.get("rotate")
+        const { visualElement } = this.props
+        const rotate = visualElement.getValue("rotate")
         this.current.rotate = rotate ? (rotate.get() as number) : 0
         if (!this.current.rotate) return
 
-        nativeElement.setStyle("rotate", 0)
-        nativeElement.render()
+        visualElement.setStaticValues("rotate", 0)
+        visualElement.render()
     }
 
     /**
      * Reset styles that we might be currently animating so we can read their target values from the DOM.
      */
     resetStyles() {
-        const { animate, nativeElement, style = {} } = this.props
+        const { animate, visualElement, style = {} } = this.props
 
         const reset = resetStyles(style, this.supportedAutoValues)
 
@@ -335,8 +333,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             delete reset.opacity
         }
 
-        nativeElement.setStyle(reset)
-        nativeElement.render(true)
+        visualElement.setStaticValues(reset)
+        visualElement.render()
     }
 
     /**
@@ -344,12 +342,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      */
     snapshotOrigin() {
         this.willAnimate = true
-        const { nativeElement, transformPagePoint } = this.props
-        const origin = snapshot(
-            nativeElement,
-            this.supportedAutoValues,
-            transformPagePoint
-        )
+        const { visualElement } = this.props
+        const origin = snapshot(visualElement, this.supportedAutoValues)
 
         applyCurrent(origin.style, this.current)
 
@@ -360,13 +354,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      * Take a snapshot of a component as it will exist after a render.
      */
     snapshotTarget() {
-        const { nativeElement, style, transformPagePoint } = this.props
+        const { visualElement, style } = this.props
 
-        const target = snapshot(
-            nativeElement,
-            this.supportedAutoValues,
-            transformPagePoint
-        )
+        const target = snapshot(visualElement, this.supportedAutoValues)
 
         target.style.rotate = resolve(0, style && style.rotate)
 
@@ -374,20 +364,20 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     }
 
     popFromFlow() {
-        const { nativeElement } = this.props
+        const { visualElement } = this.props
         const { position } = this.measuredTarget.style
 
         if (position === "absolute" || position === "fixed") return
 
         const { x, y } = this.measuredTarget.layout
 
-        nativeElement.setStyle({
+        visualElement.setStaticValues({
             position: "absolute",
             width: x.max - x.min,
             height: y.max - y.min,
         })
 
-        nativeElement.render()
+        visualElement.render()
     }
 
     /**
@@ -400,18 +390,18 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     hide() {
         this.delta.isVisible = false
         this.stopLayoutAnimation && this.stopLayoutAnimation()
-        const { values, nativeElement } = this.props
-        const opacity = values.get("opacity", 0)
+        const { visualElement } = this.props
+        const opacity = visualElement.getValue("opacity", 0)
         opacity.set(0)
-        nativeElement.render()
+        visualElement.render()
 
         if (!this.isPresent()) this.safeToRemove()
     }
 
     show() {
         this.delta.isVisible = true
-        const { values, style } = this.props
-        const opacity = values.get("opacity", 1)
+        const { visualElement, style } = this.props
+        const opacity = visualElement.getValue("opacity", 1)
         const newOpacity = style ? resolve(1, style.opacity) : 1
         opacity.set(newOpacity)
     }
@@ -443,9 +433,10 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
         // Restore rotation before any writes. If we don't do this, and for whatever
         // reason the animation doesn't execute, rotation will be left at 0
-        const { nativeElement, values } = this.props
-        const rotate = values.get("rotate")
-        rotate && nativeElement.setStyle("rotate", rotate.get())
+        const { visualElement } = this.props
+        const rotate = visualElement.getValue("rotate")
+        rotate &&
+            visualElement.setStaticValues("rotate", rotate.get() as number)
 
         this.visualTarget = target || this.measuredTarget
 
@@ -473,11 +464,6 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             this.delta.isVisible &&
             isTreeVisible(parentDeltas)
         ) {
-            // if (this.props.id === "content")
-            //     console.log(
-            //         this.visualOrigin.layout.x,
-            //         this.visualTarget.layout.x
-            //     )
             syncRenderSession.open()
 
             animations = [
@@ -498,7 +484,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         !animations.length && this.safeToRemove()
 
         // Force render to ensure there's no flashes of unstyled content from the reset
-        nativeElement.render()
+        visualElement.render()
 
         return animationPromise
     }
@@ -521,7 +507,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         // We really want to know if its ever animated rotate and the above isn't good enough
         if (isAnimatingRotate) this.hasAnimatedRotate = isAnimatingRotate
 
-        const { values } = this.props
+        const { visualElement } = this.props
         const updaters = {}
 
         for (const key in this.supportedAutoValues) {
@@ -529,7 +515,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             if (!handler.createUpdater) continue
 
             updaters[key] = handler.createUpdater(
-                values,
+                visualElement,
                 originStyle[key],
                 targetStyle[key],
                 this.current,
@@ -545,17 +531,17 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             y: { min: 0, max: 0 },
         }
 
-        const x = values.get("x", 0)
-        const y = values.get("y", 0)
-        const scaleX = values.get("scaleX", 1)
-        const scaleY = values.get("scaleY", 1)
-        const rotate = values.get("rotate", 0)
+        const x = visualElement.getValue("x", 0)
+        const y = visualElement.getValue("y", 0)
+        const scaleX = visualElement.getValue("scaleX", 1)
+        const scaleY = visualElement.getValue("scaleY", 1)
+        const rotate = visualElement.getValue("rotate", 0)
 
         // TODO: Make API for this, stop all values. Currently just doing this to stop drag inertia animations
         x.stop()
         y.stop()
 
-        const opacity = values.get("opacity", originStyle.opacity)
+        const opacity = visualElement.getValue("opacity", originStyle.opacity)
 
         const frame = () => {
             // TODO: Break up each of these so we can animate separately
@@ -583,10 +569,10 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         this.progress.set(progressOrigin)
         this.progress.set(progressOrigin) // Set twice to hard-reset velocity
 
-        const { transition, animate, nativeElement } = this.props
+        const { transition, animate } = this.props
 
         if (animate !== false) {
-            const dragControls = elementDragControls.get(nativeElement)
+            const dragControls = elementDragControls.get(visualElement)
 
             if (!dragControls || !dragControls.isDragging) {
                 animation = startAnimation(
@@ -649,7 +635,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     startStyleAnimation(opts: AutoAnimationConfig) {
         let shouldAnimateStyle = false
         const target: TargetAndTransition = {}
-        const { values } = this.props
+        const { visualElement } = this.props
         const numAnimatableStyles = this.animatableStyles.length
 
         for (let i = 0; i < numAnimatableStyles; i++) {
@@ -672,7 +658,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
 
             if (originStyle !== targetStyle) {
                 shouldAnimateStyle = true
-                const value = values.get(key, originStyle)
+                const value = visualElement.getValue(key, originStyle)
                 value.set(originStyle)
 
                 target[key] = targetStyle
@@ -708,12 +694,12 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
         scaleX: MotionValue<number>,
         scaleY: MotionValue<number>
     ) {
-        const { nativeElement } = this.props
+        const { visualElement } = this.props
         const dx = this.delta.x
         const dy = this.delta.y
 
-        nativeElement.setStyle("originX", dx.origin)
-        nativeElement.setStyle("originY", dy.origin)
+        visualElement.setStaticValues("originX", dx.origin)
+        visualElement.setStaticValues("originY", dy.origin)
 
         x.set(dx.translate / this.treeScale.x)
         y.set(dy.translate / this.treeScale.y)
