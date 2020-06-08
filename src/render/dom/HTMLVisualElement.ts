@@ -6,7 +6,7 @@ import {
 } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
-import { HTMLConfig, TransformOrigin } from "./types"
+import { HTMLVisualElementConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
 import { getValueType } from "./utils/value-types"
 
@@ -31,7 +31,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    protected config: HTMLConfig = {
+    protected config: HTMLVisualElementConfig = {
         enableHardwareAcceleration: true,
     }
 
@@ -89,7 +89,7 @@ export class HTMLVisualElement<
         enableHardwareAcceleration = true,
         allowTransformNone = true,
         ...config
-    }: HTMLConfig = {}) {
+    }: HTMLVisualElementConfig = {}) {
         this.config = {
             allowTransformNone,
             enableHardwareAcceleration,
