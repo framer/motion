@@ -145,7 +145,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    render = () => {
+    render() {
         this.build()
         Object.assign(this.element.style, this.style)
 
