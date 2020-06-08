@@ -31,7 +31,7 @@ describe("HTMLVisualElement", () => {
     it("fires provided onUpdate callbacks when values change", async () => {
         const promise = new Promise<ResolvedValues>(resolve => {
             const visualElement = getMounted()
-            visualElement.updateProps({ onUpdate: resolve })
+            visualElement.updateConfig({ onUpdate: resolve })
             const x = motionValue(0)
 
             visualElement.addValue("x", x)

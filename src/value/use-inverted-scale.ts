@@ -52,19 +52,19 @@ export function useInvertedScale(
 ): ScaleMotionValues {
     let parentScaleX = useMotionValue(1)
     let parentScaleY = useMotionValue(1)
-    const { values } = useContext(MotionContext)
+    const { visualElement } = useContext(MotionContext)
 
     invariant(
-        !!(scale || values),
+        !!(scale || visualElement),
         "If no scale values are provided, useInvertedScale must be used within a child of another motion component."
     )
 
     if (scale) {
         parentScaleX = scale.scaleX || parentScaleX
         parentScaleY = scale.scaleY || parentScaleY
-    } else if (values) {
-        parentScaleX = values.get("scaleX", 1)
-        parentScaleY = values.get("scaleY", 1)
+    } else if (visualElement) {
+        parentScaleX = visualElement.getValue("scaleX", 1)
+        parentScaleY = visualElement.getValue("scaleY", 1)
     }
 
     const scaleX = useTransform(parentScaleX, invertScale)

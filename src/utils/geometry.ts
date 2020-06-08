@@ -61,3 +61,10 @@ export function transformBoundingBox(
 export function calcAxisCenter({ min, max }: Axis) {
     return (max - min) / 2 + min
 }
+
+/**
+ * Create an empty axis box of zero size
+ */
+export function axisBox(): AxisBox2D {
+    return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
+}

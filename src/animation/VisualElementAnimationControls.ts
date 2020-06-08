@@ -493,6 +493,7 @@ export class VisualElementAnimationControls<
 
         if (this.makeTargetAnimatable) {
             const animatable = this.makeTargetAnimatable(
+                this.visualElement,
                 target,
                 origin,
                 transitionEnd as any

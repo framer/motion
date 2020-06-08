@@ -2,13 +2,17 @@ import { VisualElement } from "./VisualElement"
 import { MotionProps } from "../motion/types"
 import { Ref } from "react"
 
-export type UseVisualElement<E, VE extends VisualElement<E>> = (
+export type UseVisualElement<E> = (
     props: MotionProps,
-    parent?: VE,
+    parent?: VisualElement,
     isStatic?: boolean,
     ref?: Ref<E>
-) => VE
+) => VisualElement
 
 export interface ResolvedValues {
     [key: string]: string | number
+}
+
+export interface VisualElementConfig {
+    onUpdate?: MotionProps["onUpdate"]
 }

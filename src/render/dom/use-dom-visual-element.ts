@@ -3,7 +3,7 @@ import { HTMLVisualElement } from "./HTMLVisualElement"
 import { useConstant } from "../../utils/use-constant"
 import { MotionProps } from "../../motion/types"
 
-export function useVisualElement<E = any>(
+export function useDomVisualElement<E = any>(
     props: MotionProps,
     parent?: HTMLVisualElement,
     isStatic: boolean = false,
@@ -14,10 +14,8 @@ export function useVisualElement<E = any>(
     )
 
     visualElement.updateConfig({
-        allowTransformNone: props.allowTransformNone,
         enableHardwareAcceleration: !isStatic,
-        transformTemplate: props.transformTemplate,
-        onUpdate: props.onUpdate,
+        ...props,
     })
 
     return visualElement

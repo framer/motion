@@ -20,32 +20,24 @@ describe("safeSize", () => {
     test("should return large bounding boxes as provided", () => {
         expect(
             safeSize({
-                top: 0,
-                left: 100,
-                bottom: 100,
-                right: 200,
+                x: { min: 100, max: 200 },
+                y: { min: 0, max: 100 },
             })
         ).toEqual({
-            top: 0,
-            left: 100,
-            bottom: 100,
-            right: 200,
+            x: { min: 100, max: 200 },
+            y: { min: 0, max: 100 },
         })
     })
 
     test("should return small bounding boxes as 1x1px min", () => {
         expect(
             safeSize({
-                top: 0,
-                left: 0,
-                bottom: 0,
-                right: 0,
+                x: { min: 0, max: 0 },
+                y: { min: 0, max: 0 },
             })
         ).toEqual({
-            top: -0.5,
-            left: -0.5,
-            bottom: 0.5,
-            right: 0.5,
+            x: { min: -0.5, max: 0.5 },
+            y: { min: -0.5, max: 0.5 },
         })
     })
 })

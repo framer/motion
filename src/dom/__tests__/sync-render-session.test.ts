@@ -1,35 +1,44 @@
 import "../../../jest.setup"
-import { createStylerFactory } from "stylefire"
 import { syncRenderSession } from "../sync-render-session"
+import { VisualElement } from "../../render/VisualElement"
+
+class StubVisualElement extends VisualElement {
+    getBoundingBox() {
+        return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
+    }
+
+    readNativeValue() {
+        return 0
+    }
+
+    build() {}
+
+    render = () => {
+        this.element.v = this.latest.v
+    }
+}
 
 test("correctly executes render session", () => {
-    let v = 0
-    const numberStyler = createStylerFactory({
-        onRead: () => 0,
-        onRender: state => (v += state.v as number),
-    })
+    const stub = { v: 0 }
 
-    const styler = numberStyler()
-    styler.set({ v: 1 })
-    expect(v).toBe(0)
-    styler.render()
-    expect(v).toBe(1)
+    const visualElement = new StubVisualElement()
 
-    syncRenderSession.open()
-    syncRenderSession.push(styler)
-    styler.set({ v: 2 })
-    expect(v).toBe(1)
-    syncRenderSession.flush()
-    expect(v).toBe(3)
+    visualElement.ref(stub)
+
+    visualElement.setStaticValues({ v: 1 })
+    expect(stub.v).toBe(0)
+    visualElement.render()
+    expect(stub.v).toBe(1)
 
     syncRenderSession.open()
+    syncRenderSession.push(visualElement)
+
+    visualElement.setStaticValues({ v: 2 })
+    expect(stub.v).toBe(1)
     syncRenderSession.flush()
-    expect(v).toBe(3)
+    expect(stub.v).toBe(2)
 
     syncRenderSession.open()
-    syncRenderSession.push(styler)
-    styler.set({ v: 3 })
-    expect(v).toBe(3)
     syncRenderSession.flush()
-    expect(v).toBe(6)
+    expect(stub.v).toBe(2)
 })
