@@ -2,8 +2,9 @@ import { VisualElement } from "./VisualElement"
 import { MotionProps } from "../motion/types"
 import { Ref } from "react"
 
-export type UseVisualElement<E> = (
-    props: MotionProps,
+export type UseVisualElement<E, P = MotionProps> = (
+    Component: string | React.ComponentType<P>,
+    props: MotionProps & P,
     parent?: VisualElement,
     isStatic?: boolean,
     ref?: Ref<E>
