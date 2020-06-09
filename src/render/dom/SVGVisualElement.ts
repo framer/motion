@@ -1,7 +1,8 @@
 import { HTMLVisualElement } from "./HTMLVisualElement"
 import { buildSVGAttrs } from "./utils/build-svg-attrs"
-import { Dimensions } from "./types"
+import { Dimensions, HTMLVisualElementConfig } from "./types"
 import { ResolvedValues } from "../types"
+import { buildHTMLStyles } from "./utils/build-html-styles"
 
 export class SVGVisualElement extends HTMLVisualElement<
     SVGElement | SVGPathElement
@@ -10,6 +11,15 @@ export class SVGVisualElement extends HTMLVisualElement<
 
     private dimensions: Dimensions
     private pathLength: number
+
+    /**
+     *
+     */
+    protected defaultConfig: HTMLVisualElementConfig = {
+        enableHardwareAcceleration: false,
+    }
+
+    protected config = this.defaultConfig
 
     protected mount(element: SVGElement) {
         super.mount(element)
@@ -44,7 +54,15 @@ export class SVGVisualElement extends HTMLVisualElement<
     }
 
     build() {
-        super.build()
+        buildHTMLStyles(
+            this.latest,
+            this.attrs,
+            this.vars,
+            this.transform,
+            this.transformOrigin,
+            this.transformKeys,
+            this.config
+        )
         buildSVGAttrs(
             this.latest,
             this.style,

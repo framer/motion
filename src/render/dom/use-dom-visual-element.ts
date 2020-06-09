@@ -1,20 +1,23 @@
-import { Ref } from "react"
 import { HTMLVisualElement } from "./HTMLVisualElement"
 import { useConstant } from "../../utils/use-constant"
 import { MotionProps } from "../../motion/types"
 import { SVGVisualElement } from "./SVGVisualElement"
+import { UseVisualElement } from "../types"
+import { isSVGComponent } from "./utils/is-svg-component"
 
-export function useDomVisualElement<E = any>(
-    props: MotionProps,
-    parent?: HTMLVisualElement | SVGVisualElement,
-    isStatic: boolean = false,
-    ref?: Ref<E>
-) {
+export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
+    Component,
+    props,
+    parent,
+    isStatic,
+    ref
+) => {
     const visualElement = useConstant(() => {
-        const isSVG = isStatic
-        return isSVG
-            ? new SVGVisualElement(parent as any, ref as any)
-            : new HTMLVisualElement(parent as any, ref as any)
+        const DOMVisualElement = isSVGComponent(Component)
+            ? SVGVisualElement
+            : HTMLVisualElement
+
+        return new DOMVisualElement(parent, ref as any)
     })
 
     visualElement.updateConfig({

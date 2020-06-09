@@ -51,6 +51,7 @@ export function createMotionComponent<P extends {}, E>(
          * for more performant animations and interactions
          */
         const visualElement = useVisualElement(
+            Component,
             props,
             parentContext.visualElement as any,
             isStatic,

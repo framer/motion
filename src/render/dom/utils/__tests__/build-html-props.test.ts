@@ -1,4 +1,4 @@
-import "../../../../jest.setup"
+import "../../../../../jest.setup"
 import { HTMLVisualElement } from "../../HTMLVisualElement"
 import { buildHTMLProps } from "../build-html-props"
 import { motionValue } from "../../../../value"

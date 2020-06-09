@@ -31,24 +31,27 @@ export class HTMLVisualElement<
     /**
      *
      */
-    protected config: HTMLVisualElementConfig = {
+    protected defaultConfig: HTMLVisualElementConfig = {
         enableHardwareAcceleration: true,
+        allowTransformNone: true,
     }
 
-    /**
-     *
-     */
-    private transform: ResolvedValues = {}
+    protected config = this.defaultConfig
 
     /**
      *
      */
-    private transformOrigin: TransformOrigin = {}
+    protected transform: ResolvedValues = {}
 
     /**
      *
      */
-    private transformKeys: string[] = []
+    protected transformOrigin: TransformOrigin = {}
+
+    /**
+     *
+     */
+    protected transformKeys: string[] = []
 
     /**
      * The measured bounding box as it exists on the page with no transforms applied.
@@ -85,14 +88,9 @@ export class HTMLVisualElement<
         delete this.style[key]
     }
 
-    updateConfig({
-        enableHardwareAcceleration = true,
-        allowTransformNone = true,
-        ...config
-    }: HTMLVisualElementConfig = {}) {
+    updateConfig(config: HTMLVisualElementConfig = {}) {
         this.config = {
-            allowTransformNone,
-            enableHardwareAcceleration,
+            ...this.defaultConfig,
             ...config,
         }
     }
