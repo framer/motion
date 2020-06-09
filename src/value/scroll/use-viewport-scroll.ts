@@ -1,10 +1,10 @@
-import { useLayoutEffect } from "react"
 import {
     createScrollMotionValues,
     createScrollUpdater,
     ScrollMotionValues,
 } from "./utils"
 import { addDomEvent } from "../../events/use-dom-event"
+import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
 const viewportScrollValues = createScrollMotionValues()
 
@@ -68,7 +68,7 @@ function addEventListeners() {
  * @public
  */
 export function useViewportScroll(): ScrollMotionValues {
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         !hasListeners && addEventListeners()
     }, [])
 

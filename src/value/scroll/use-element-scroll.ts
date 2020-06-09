@@ -1,4 +1,4 @@
-import { RefObject, useLayoutEffect } from "react"
+import { RefObject } from "react"
 import { useConstant } from "../../utils/use-constant"
 import {
     createScrollMotionValues,
@@ -6,6 +6,7 @@ import {
     createScrollUpdater,
 } from "./utils"
 import { addDomEvent } from "../../events/use-dom-event"
+import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { invariant } from "hey-listen"
 
 const getElementScrollOffsets = (element: HTMLElement) => () => {
@@ -69,7 +70,7 @@ export function useElementScroll(
 ): ScrollMotionValues {
     const values = useConstant(createScrollMotionValues)
 
-    useLayoutEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         const element = ref.current
 
         invariant(
