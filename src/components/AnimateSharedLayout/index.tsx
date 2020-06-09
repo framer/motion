@@ -279,10 +279,15 @@ export class AnimateSharedLayout extends React.Component<
                     stack
                 )
 
+                const shouldAnimate =
+                    type === "crossfade" && child.depth === this.rootDepth
+                        ? true
+                        : stack?.shouldStackAnimate()
+
                 const animation = child.startAnimation({
                     ...options,
                     ...config,
-                    shouldAnimate: stack?.shouldStackAnimate(),
+                    shouldAnimate,
                 })
 
                 if (!animation) return
