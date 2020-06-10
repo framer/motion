@@ -3,7 +3,7 @@
 .DS_Store
 /dist
 /lib
-/tmp
+/tsc
 yarn-error.log
 /coverage
 /test_reports

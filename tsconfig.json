@@ -10,6 +10,8 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
         "declaration": true,
+        "declarationDir": "types",
+        "outDir": "tsc",
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
