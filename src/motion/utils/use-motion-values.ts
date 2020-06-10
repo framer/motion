@@ -26,13 +26,22 @@ export function useMotionValues<P>(
      * Remove MotionValues that are no longer present
      */
     for (const key in prev) {
-        const propIsValue = isMotionValue(props[key])
-        const styleIsValue = props.style && isMotionValue(props.style[key])
+        const isTransform = isTransformProp(key) || isTransformOriginProp(key)
+        const existsAsProp = props[key]
+        const existsAsStyle = props.style && props.style[key]
+        const propIsMotionValue = existsAsProp && isMotionValue(props[key])
+        const styleIsMotionValue =
+            existsAsStyle && isMotionValue(props.style![key])
 
-        if (!propIsValue && !styleIsValue) {
+        const transformRemoved = isTransform && !existsAsProp && !existsAsStyle
+        const motionValueRemoved =
+            !isTransform && !propIsMotionValue && !styleIsMotionValue
+        console.log(key, transformRemoved)
+        if (transformRemoved || motionValueRemoved) {
             visualElement.removeValue(key)
             delete prev[key]
         }
+        console.log((visualElement as any).style)
     }
 
     /**

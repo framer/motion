@@ -5,12 +5,6 @@ export function buildHTMLProps(
     visualElement: HTMLVisualElement,
     { drag }: MotionProps
 ) {
-    /**
-     *
-     */
-    visualElement.clean()
-    visualElement.build()
-
     // The `any` isn't ideal but it is the type of createElement props argument
     const htmlProps: any = {
         style: {

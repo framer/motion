@@ -27,7 +27,7 @@ export function useFeatures(
 ): null | JSX.Element[] {
     const plugins = useContext(MotionPluginContext)
 
-    if (isStatic) return null
+    if (isStatic || typeof window === "undefined") return null
 
     const allFeatures = [...defaultFeatures, ...plugins.features]
     const numFeatures = allFeatures.length

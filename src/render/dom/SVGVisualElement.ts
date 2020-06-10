@@ -2,7 +2,6 @@ import { HTMLVisualElement } from "./HTMLVisualElement"
 import { buildSVGAttrs } from "./utils/build-svg-attrs"
 import { Dimensions, HTMLVisualElementConfig } from "./types"
 import { ResolvedValues } from "../types"
-import { buildHTMLStyles } from "./utils/build-html-styles"
 
 export class SVGVisualElement extends HTMLVisualElement<
     SVGElement | SVGPathElement
@@ -43,33 +42,32 @@ export class SVGVisualElement extends HTMLVisualElement<
         }
     }
 
+    clean() {
+        super.clean()
+        this.attrs = {}
+    }
+
+    build() {
+        buildSVGAttrs(
+            this.latest,
+            this.style,
+            this.vars,
+            this.attrs,
+            this.transform,
+            this.transformOrigin,
+            this.transformKeys,
+            this.config,
+            this.dimensions,
+            this.pathLength
+        )
+    }
+
     render() {
         super.render()
 
         for (const key in this.attrs) {
-            if (key !== "style") {
-                this.element.setAttribute(key, this.attrs[key] as string)
-            }
+            this.element.setAttribute(key, this.attrs[key] as string)
         }
-    }
-
-    build() {
-        buildHTMLStyles(
-            this.latest,
-            this.attrs,
-            this.vars,
-            this.transform,
-            this.transformOrigin,
-            this.transformKeys,
-            this.config
-        )
-        buildSVGAttrs(
-            this.latest,
-            this.style,
-            this.attrs,
-            this.dimensions,
-            this.pathLength
-        )
     }
 }
 
