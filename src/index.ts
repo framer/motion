@@ -39,7 +39,10 @@ export { transform } from "./utils/transform"
 export { useReducedMotion } from "./utils/use-reduced-motion"
 export { ReducedMotion } from "./components/ReducedMotion"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
-export { usePresence } from "./components/AnimatePresence/use-presence"
+export {
+    usePresence,
+    useIsPresent,
+} from "./components/AnimatePresence/use-presence"
 export { useDragControls, DragControls } from "./behaviours/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
 export { useExternalRef } from "./motion/utils/use-external-ref"

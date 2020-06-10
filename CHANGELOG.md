@@ -8,6 +8,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `AnimateSharedLayout`
 -   `onMeasureDragConstraints` prop that fires when `dragConstraints` are measured.
+-   `useIsPresent`, a read-only version of `usePresence`.
 
 ### Removed
 

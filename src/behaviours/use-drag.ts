@@ -4,7 +4,7 @@ import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { DraggableProps } from "./types"
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../utils/use-constant"
-import { usePresence } from "../components/AnimatePresence/use-presence"
+import { useIsPresent } from "../components/AnimatePresence/use-presence"
 import { VisualElement } from "../render/VisualElement"
 
 /**
@@ -41,11 +41,8 @@ export function useDrag(
 }
 
 function useDisableDragOnExit(dragControls: VisualElementDragControls) {
-    const [isPresent, safeToRemove] = usePresence()
+    const isPresent = useIsPresent()
     useEffect(() => {
-        if (!isPresent && safeToRemove) {
-            safeToRemove()
-            dragControls.stopMotion()
-        }
+        if (!isPresent) dragControls.stopMotion()
     }, [isPresent])
 }

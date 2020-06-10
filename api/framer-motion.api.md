@@ -650,6 +650,9 @@ export function useGestures<GestureHandlers>(props: GestureHandlers, ref: Visual
 // @public
 export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
+// @public (undocumented)
+export function useIsPresent(): boolean;
+
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;
 

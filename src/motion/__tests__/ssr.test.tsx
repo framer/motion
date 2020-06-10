@@ -1,6 +1,6 @@
 import * as React from "react"
 import { renderToString } from "react-dom/server"
-import { motion } from "../"
+import { motion } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 
@@ -56,6 +56,7 @@ describe("ssr", () => {
     })
 
     test("correctly renders SVG", () => {
+        console.log("-------- SVG")
         const cx = motionValue(100)
         const pathLength = motionValue(100)
         const circle = renderToString(
