@@ -128,7 +128,7 @@ export class HTMLVisualElement<
     }
 
     read(key: string): number | string | null {
-        return this.getComputedStyle().getPropertyValue(key) || 0
+        return this.getComputedStyle()[key] || 0
     }
 
     readNativeValue(key: string) {
