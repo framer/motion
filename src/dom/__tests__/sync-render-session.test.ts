@@ -13,6 +13,8 @@ class StubVisualElement extends VisualElement {
 
     build() {}
 
+    clean() {}
+
     render = () => {
         this.element.v = this.latest.v
     }
