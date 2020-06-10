@@ -127,12 +127,16 @@ export class HTMLVisualElement<
         )
     }
 
+    read(key: string): number | string | null {
+        return this.getComputedStyle().getPropertyValue(key) || 0
+    }
+
     readNativeValue(key: string) {
         if (isTransformProp(key)) {
             const defaultValueType = getValueType(key)
             return defaultValueType ? defaultValueType.default || 0 : 0
         } else {
-            return this.getComputedStyle().getPropertyValue(key)
+            return this.read(key)
         }
     }
 

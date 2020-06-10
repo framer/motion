@@ -44,6 +44,9 @@ export function usePresence(): AlwaysPresent | Present | NotPresent {
     return !isPresent && onExitComplete ? [false, onExitComplete] : [true]
 }
 
+/**
+ * @public
+ */
 export function useIsPresent() {
     const context = useContext(PresenceContext)
     return context === null ? true : context.isPresent

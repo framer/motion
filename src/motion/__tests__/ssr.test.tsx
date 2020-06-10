@@ -56,7 +56,6 @@ describe("ssr", () => {
     })
 
     test("correctly renders SVG", () => {
-        console.log("-------- SVG")
         const cx = motionValue(100)
         const pathLength = motionValue(100)
         const circle = renderToString(
