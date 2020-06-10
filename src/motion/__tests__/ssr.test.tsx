@@ -72,7 +72,7 @@ describe("ssr", () => {
         )
 
         expect(circle).toBe(
-            '<circle cx="100" style="background:#fff;transform:translateX(100px);transform-origin:0px 0px" stroke-width="10"></circle>'
+            '<circle cx="100" style="background:#fff" stroke-width="10"></circle>'
         )
     })
 })

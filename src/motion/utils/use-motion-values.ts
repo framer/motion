@@ -27,6 +27,7 @@ export function useMotionValues<P>(
      */
     for (const key in prev) {
         const isTransform = isTransformProp(key) || isTransformOriginProp(key)
+
         const existsAsProp = props[key]
         const existsAsStyle = props.style && props.style[key]
         const propIsMotionValue = existsAsProp && isMotionValue(props[key])
@@ -36,12 +37,11 @@ export function useMotionValues<P>(
         const transformRemoved = isTransform && !existsAsProp && !existsAsStyle
         const motionValueRemoved =
             !isTransform && !propIsMotionValue && !styleIsMotionValue
-        console.log(key, transformRemoved)
+
         if (transformRemoved || motionValueRemoved) {
             visualElement.removeValue(key)
             delete prev[key]
         }
-        console.log((visualElement as any).style)
     }
 
     /**

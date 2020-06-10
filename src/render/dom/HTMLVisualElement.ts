@@ -1,5 +1,5 @@
 import { VisualElement } from "../VisualElement"
-import { BoundingBox2D } from "../../types/geometry"
+import { BoundingBox2D, AxisBox2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
@@ -98,7 +98,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    getBoundingBox() {
+    getBoundingBox(): AxisBox2D {
         const { transformPagePoint } = this.config
 
         let box = this.element.getBoundingClientRect() as BoundingBox2D
