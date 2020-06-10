@@ -20,7 +20,7 @@ export function render<Props>(
     /**
      * Every render, empty and rebuild the animated values to be applied to our Element.
      * During animation these data structures are used in a mutable fashion to reduce
-     * garbage collection, but between renders we can flush them to removed values
+     * garbage collection, but between renders we can flush them to remove values
      * that might have been taken out of the provided props.
      */
     visualElement.clean()
