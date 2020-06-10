@@ -35,8 +35,7 @@ type SetterOptions = {
 }
 
 /**
- * Get the current value of every `MotionValue`
- * @param values -
+ * Get the current value of every `MotionValue` in a `VisualElement`
  */
 const getCurrent = (visualElement: VisualElement) => {
     const current = {}
@@ -45,8 +44,7 @@ const getCurrent = (visualElement: VisualElement) => {
 }
 
 /**
- * Get the current velocity of every `MotionValue`
- * @param values -
+ * Get the current velocity of every `MotionValue` in a `VisualElement`
  */
 const getVelocity = (visualElement: VisualElement) => {
     const velocity = {}
@@ -59,7 +57,6 @@ const getVelocity = (visualElement: VisualElement) => {
 /**
  * Check if value is a function that returns a `Target`. A generic typeof === 'function'
  * check, just helps with typing.
- * @param p -
  */
 const isTargetResolver = (p: any): p is TargetResolver => {
     return typeof p === "function"
@@ -266,7 +263,12 @@ export class VisualElementAnimationControls<
                     `No initial value for "${key}" can be inferred. Ensure an initial value for "${key}" is defined on the component.`
                 )
             }
-
+            console.log(
+                key,
+                value,
+                getValueType(value),
+                complex.test(targetValue)
+            )
             if (typeof value === "string" && isNumericalString(value)) {
                 // If this is a number read as a string, ie "0" or "200", convert it to a number
                 value = parseFloat(value)
