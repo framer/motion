@@ -17,7 +17,7 @@ export const App = () => {
                 cy={125}
                 r={r}
                 fill={fill}
-                animate={{ r: 100 }}
+                animate={{ r: 100, x: 100 }}
                 transition={{ duration: 3 }}
             />
         </svg>

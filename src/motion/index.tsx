@@ -1,10 +1,6 @@
 import * as React from "react"
 import { useContext, forwardRef, Ref } from "react"
-import {
-    MotionContext,
-    MotionContextProps,
-    useMotionContext,
-} from "./context/MotionContext"
+import { MotionContext, useMotionContext } from "./context/MotionContext"
 import { MotionProps } from "./types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { useMotionValues } from "./utils/use-motion-values"
@@ -42,7 +38,7 @@ export function createMotionComponent<P extends {}, E>(
          * If this component or any ancestor isStatic, we disable hardware acceleration
          * and don't load any additional functionality.
          */
-        const isStatic = checkIfStatic(parentContext, props)
+        const isStatic = parentContext.static || props.static || false
 
         /**
          * Create a VisualElement for this component. A VisualElement provides a common
@@ -113,17 +109,4 @@ export function createMotionComponent<P extends {}, E>(
     }
 
     return forwardRef(MotionComponent)
-}
-
-/**
- * Returns true if we're running on a server, or if this component and/or
- * any ancestors have been set isStatic={true}.
- */
-function checkIfStatic(parentContext: MotionContextProps, props: MotionProps) {
-    return (
-        typeof window === "undefined" ||
-        parentContext.static ||
-        props.static ||
-        false
-    )
 }

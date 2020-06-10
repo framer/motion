@@ -1,8 +1,8 @@
-import { Dimensions } from "../types"
+import { Dimensions, TransformOrigin, HTMLVisualElementConfig } from "../types"
 import { ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./build-svg-path"
-import { SVGVisualElement } from "../SVGVisualElement"
+import { buildHTMLStyles } from "./build-html-styles"
 
 const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
 
@@ -15,15 +15,39 @@ export function buildSVGAttrs(
         pathLength,
         pathSpacing = 1,
         pathOffset = 0,
+        // This is object creation, which we try to avoid per-frame.
+        ...latest
     }: ResolvedValues,
     style: ResolvedValues,
+    vars: ResolvedValues,
     attrs: ResolvedValues,
+    transform: ResolvedValues,
+    transformOrigin: TransformOrigin,
+    transformKeys: string[],
+    config: HTMLVisualElementConfig,
     dimensions: Dimensions,
     totalPathLength: number
 ): ResolvedValues {
-    if (style.transform) {
-        attrs.transform = style.transform
-        delete style.transform
+    /**
+     * With SVG we treat all animated values as attributes rather than CSS, so we build into attrs
+     */
+    buildHTMLStyles(
+        latest,
+        attrs,
+        vars,
+        transform,
+        transformOrigin,
+        transformKeys,
+        config
+    )
+
+    /**
+     * However, we apply transforms as CSS transforms. So if we detect a transform we take it from attrs
+     * and copy it into style.
+     */
+    if (attrs.transform) {
+        style.transform = attrs.transform
+        delete attrs.transform
     }
 
     // Parse transformOrigin
@@ -39,6 +63,7 @@ export function buildSVGAttrs(
     if (attrX !== undefined) attrs.x = attrX
     if (attrY !== undefined) attrs.y = attrY
 
+    // Build SVG path if one has been measured
     if (totalPathLength !== undefined && pathLength !== undefined) {
         buildSVGPath(
             attrs,
@@ -51,14 +76,4 @@ export function buildSVGAttrs(
     }
 
     return attrs
-}
-
-export function buildSVGProps(visualElement: SVGVisualElement) {
-    visualElement.clean()
-    visualElement.build()
-
-    return {
-        ...visualElement.attrs,
-        style: visualElement.style,
-    }
 }
