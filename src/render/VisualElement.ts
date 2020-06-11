@@ -109,6 +109,10 @@ export abstract class VisualElement<E = any> {
         return this.element
     }
 
+    updateConfig(config: VisualElementConfig = {}) {
+        this.config = { ...config }
+    }
+
     // A pre-bound call to the user-provided `onUpdate` callback. This won't
     // be called more than once per frame.
     private update = () => this.config.onUpdate!(this.latest)
