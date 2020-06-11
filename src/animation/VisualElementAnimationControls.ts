@@ -12,11 +12,11 @@ import {
 } from "../types"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
-import { getValueType } from "../dom/value-types"
 import { startAnimation } from "./utils/transitions"
 import { invariant } from "hey-listen"
 import { isNumericalString } from "../utils/is-numerical-string"
 import { VisualElement } from "../render/VisualElement"
+import { findValueType } from "../render/dom/utils/value-types"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -263,16 +263,11 @@ export class VisualElementAnimationControls<
                     `No initial value for "${key}" can be inferred. Ensure an initial value for "${key}" is defined on the component.`
                 )
             }
-            console.log(
-                key,
-                value,
-                getValueType(value),
-                complex.test(targetValue)
-            )
+
             if (typeof value === "string" && isNumericalString(value)) {
                 // If this is a number read as a string, ie "0" or "200", convert it to a number
                 value = parseFloat(value)
-            } else if (!getValueType(value) && complex.test(targetValue)) {
+            } else if (!findValueType(value) && complex.test(targetValue)) {
                 // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
                 value = complex.getAnimatableNone(targetValue as string)
             }

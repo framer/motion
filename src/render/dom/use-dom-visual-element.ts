@@ -5,6 +5,10 @@ import { SVGVisualElement } from "./SVGVisualElement"
 import { UseVisualElement } from "../types"
 import { isSVGComponent } from "./utils/is-svg-component"
 
+/**
+ * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
+ * or SVGVisualElement for the component.
+ */
 export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     Component,
     props,

@@ -3,6 +3,10 @@ import { unitConversion } from "./unit-type-conversion"
 import { MakeTargetAnimatable } from "../../../animation/VisualElementAnimationControls"
 import { HTMLVisualElement } from "../HTMLVisualElement"
 
+/**
+ * Parse a DOM variant to make it animatable. This involves resolving CSS variables
+ * and ensuring animations like "20%" => "calc(50vw)" are performed in pixels.
+ */
 export const parseDomVariant: MakeTargetAnimatable = (
     visualElement: HTMLVisualElement,
     target,

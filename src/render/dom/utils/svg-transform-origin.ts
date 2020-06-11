@@ -7,6 +7,10 @@ function calcOrigin(origin: number | string, offset: number, size: number) {
         : (px as any).transform(offset + size * origin)
 }
 
+/**
+ * The SVG transform origin defaults are different to CSS and is less intuitive,
+ * so we use the measured dimensions of the SVG to reconcile these.
+ */
 export function calcSVGTransformOrigin(
     dimensions: Dimensions,
     originX: number | string,

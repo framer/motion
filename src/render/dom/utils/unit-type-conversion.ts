@@ -1,5 +1,4 @@
 import { Target, TargetWithKeyframes } from "../../../types"
-import { getDimensionValueType } from "../../../dom/value-types"
 import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { number, px, ValueType } from "style-value-types"
@@ -7,6 +6,7 @@ import { HTMLVisualElement } from "../HTMLVisualElement"
 import { MotionValue } from "../../../value"
 import { transformProps } from "./transform"
 import { AxisBox2D } from "../../../types/geometry"
+import { findDimensionValueType } from "./value-types"
 
 const positionalKeys = new Set([
     "width",
@@ -178,7 +178,7 @@ const checkAndConvertChangedValueTypes = (
 
         const from = origin[key]
         const to = target[key]
-        const fromType = getDimensionValueType(from)
+        const fromType = findDimensionValueType(from)
         let toType
 
         // TODO: The current implementation of this basically throws an error
@@ -190,7 +190,7 @@ const checkAndConvertChangedValueTypes = (
 
             for (let i = to[0] === null ? 1 : 0; i < numKeyframes; i++) {
                 if (!toType) {
-                    toType = getDimensionValueType(to[i])
+                    toType = findDimensionValueType(to[i])
 
                     invariant(
                         toType === fromType ||
@@ -199,13 +199,13 @@ const checkAndConvertChangedValueTypes = (
                     )
                 } else {
                     invariant(
-                        getDimensionValueType(to[i]) === toType,
+                        findDimensionValueType(to[i]) === toType,
                         "All keyframes must be of the same type"
                     )
                 }
             }
         } else {
-            toType = getDimensionValueType(to)
+            toType = findDimensionValueType(to)
         }
 
         if (fromType !== toType) {
