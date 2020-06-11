@@ -23,6 +23,7 @@ interface NavigationState {
     containerCanProvideBoundingBoxes: Record<string, boolean>
     current: number
     previous: number
+    dependency: string
 }
 
 const Navigation = (props: NavigationState) => {
@@ -162,6 +163,7 @@ export const App = () => {
         containerCanProvideBoundingBoxes: { a: true },
         current: 0,
         previous: -1,
+        dependency: performance.now().toString(),
     })
 
     const nextPage = React.useCallback(() => {
@@ -172,6 +174,7 @@ export const App = () => {
             containerVisualIndex,
             containerIsRemoved,
             containerCanProvideBoundingBoxes,
+            dependency,
         } = navigationState
         if (
             lastScreenRef.current === "a" &&
@@ -200,6 +203,8 @@ export const App = () => {
                     ...containerCanProvideBoundingBoxes,
                     b: true,
                 },
+                // Dependency not updated to add new screen as "Instant"
+                dependency,
             }
             lastScreenRef.current = "b"
             setNavigationState(newState)
@@ -226,6 +231,7 @@ export const App = () => {
                     ...containerCanProvideBoundingBoxes,
                     b: true,
                 },
+                dependency,
             }
             lastScreenRef.current = "b"
             setNavigationState(newState)
@@ -251,6 +257,8 @@ export const App = () => {
                     ...containerCanProvideBoundingBoxes,
                     b: true,
                 },
+                // Dependency updated to transition to A with magic motion
+                dependency: performance.now().toString(),
             }
             setNavigationState(newState)
             lastScreenRef.current = "a"
@@ -262,6 +270,7 @@ export const App = () => {
             type="crossfade"
             supportRotate
             transition={{ duration: 2 }}
+            dependency={navigationState.dependency}
         >
             <AnimatePresence>
                 <motion.div
