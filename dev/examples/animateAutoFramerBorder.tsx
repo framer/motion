@@ -28,10 +28,17 @@ const Container = styled(motion.div)<{ isOn: boolean }>`
 
 const borderWidth = (axis: "x" | "y", key: string) => ({
     read: width => (width ? parseFloat(width) : 0),
-    createUpdater: (values, origin, target, current, delta, treeScale) => {
+    createUpdater: (
+        visualElement,
+        origin,
+        target,
+        current,
+        delta,
+        treeScale
+    ) => {
         if (!(origin || target)) return
 
-        const motionValue = values.get(key, "")
+        const motionValue = visualElement.getValue(key, "")
 
         return p => {
             const v = mix(origin, target, p)
