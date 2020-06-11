@@ -167,7 +167,7 @@ export interface BoundingBox3D extends BoundingBox2D {
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
-// @internal (undocumented)
+// @internal
 export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { useVisualElement, render, animationControlsConfig, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
 // @public (undocumented)

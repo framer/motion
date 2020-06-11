@@ -12,10 +12,40 @@ import { TransformPoint2D } from "../../types/geometry"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
 import { VisualElementConfig } from "../types"
 
-export interface HTMLVisualElementConfig extends VisualElementConfig {
+/**
+ * Configuration for the HTML and SVGVisualElement renderers.
+ */
+export interface DOMVisualElementConfig extends VisualElementConfig {
+    /**
+     * Whether to permit `transform: none` if the calculated transform equals zero.
+     */
     allowTransformNone?: boolean
+
+    /**
+     * Whether to enable hardware acceleration. This will force the layer to the GPU
+     * by setting `translateZ(0)` to the transform style.
+     */
     enableHardwareAcceleration?: boolean
+
+    /**
+     * An optional function that can take a page point and return a new one.
+     * Used to enable drag and layout animations in the scaled canvases of Framer Desktop preview.
+     */
     transformPagePoint?: TransformPoint2D
+
+    /**
+     * A function that can accept the generated transform property and return a new one.
+     * Used for custom transform property orders. In the medium-term I'd like to ditch this
+     * and replace with a template function that can scoop up other animated values so
+     * we can do, for instance:
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ blur: 20 }}
+     *   style={{ filter: combine`blur(${"blur"}px)` }}
+     * />
+     * ```
+     */
     transformTemplate?: MotionProps["transformTemplate"]
 }
 
@@ -25,14 +55,10 @@ export interface TransformOrigin {
     originZ?: number
 }
 
-export interface SVGMotionAttributes {
-    [key: string]: any
-    style: {
-        transform?: string
-        transformOrigin?: string
-    }
-}
-
+/**
+ * Measured dimensions of an SVG component.
+ * TODO: Look into replacing this with AxisBox2D when we port over magic motion
+ */
 export type Dimensions = {
     x: number
     y: number
