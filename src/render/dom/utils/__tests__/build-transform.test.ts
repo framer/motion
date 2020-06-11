@@ -2,17 +2,36 @@ import "../../../../../jest.setup"
 import { buildTransform } from "../build-transform"
 
 describe("buildTransform", () => {
-    it("correctly builds transform strings", () => {
+    it("Outputs 'none' when transformIsDefault is true", () => {
         expect(buildTransform({ x: 0 }, ["x"], undefined, true)).toBe("none")
+    })
 
+    it("Outputs the provided transform when transformIsDefault is false", () => {
         expect(
-            buildTransform({ x: 0 }, ["x"], undefined, true, true, false)
+            buildTransform({ x: 0 }, ["x"], undefined, false, true, false)
         ).toBe("translateX(0) translateZ(0)")
+    })
 
+    it("Only outputs translateZ(0) if enableHardwareAcceleration is enabled", () => {
         expect(
-            buildTransform({ x: 0 }, ["x"], undefined, true, false, false)
+            buildTransform({ x: 0 }, ["x"], undefined, false, false, false)
         ).toBe("translateX(0)")
+    })
 
+    it("Still outputs translateZ if z is explicitly assigned", () => {
+        expect(
+            buildTransform(
+                { x: 0, z: "5px" },
+                ["x", "z"],
+                undefined,
+                false,
+                false,
+                false
+            )
+        ).toBe("translateX(0) translateZ(5px)")
+    })
+
+    it("Correctly handles transformTemplate if provided", () => {
         expect(
             buildTransform(
                 { x: "5px" },
@@ -23,9 +42,20 @@ describe("buildTransform", () => {
                 false
             )
         ).toBe("translateX(10px)")
+    })
 
+    it("Outputs transform values in the correct corder", () => {
         expect(
-            buildTransform({ z: "5px" }, ["z"], undefined, false, false)
-        ).toBe("translateZ(5px)")
+            buildTransform(
+                { scale: 2, rotate: "90deg", x: 0, y: "10px" },
+                ["scale", "rotate", "y", "x"],
+                undefined,
+                true,
+                true,
+                false
+            )
+        ).toBe(
+            "translateX(0) translateY(10px) scale(2) rotate(90deg) translateZ(0)"
+        )
     })
 })
