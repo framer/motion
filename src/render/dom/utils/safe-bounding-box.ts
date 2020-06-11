@@ -1,4 +1,5 @@
-import { BoundingBox2D } from "../../../types/geometry"
+import { AxisBox2D } from "../../../types/geometry"
+import { eachAxis } from "../../../utils/each-axis"
 
 /**
  * If a bounding box is measured as 0 on either axis we encounter
@@ -9,23 +10,16 @@ import { BoundingBox2D } from "../../../types/geometry"
  * can't invert scale: 0) but it will correctly animate back out, and it
  * fixes distortion on any children.
  */
-export function safeBoundingBox({
-    top,
-    right,
-    bottom,
-    left,
-}: BoundingBox2D): BoundingBox2D {
+export function safeBoundingBox(box: AxisBox2D): AxisBox2D {
     const safePixels = 0.5
 
-    if (top === bottom) {
-        top -= safePixels
-        bottom += safePixels
-    }
+    eachAxis(axis => {
+        const boxAxis = box[axis]
+        if (boxAxis.min === boxAxis.max) {
+            boxAxis.min -= safePixels
+            boxAxis.max += safePixels
+        }
+    })
 
-    if (left === right) {
-        left -= safePixels
-        right += safePixels
-    }
-
-    return { top, right, bottom, left }
+    return box
 }
