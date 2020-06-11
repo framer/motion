@@ -18,6 +18,14 @@ export interface MotionComponentConfig<E> {
 }
 
 /**
+ * Create a `motion` component.
+ *
+ * This function accepts a Component argument, which can be either a string (ie "div"
+ * for `motion.div`), or an actual React component.
+ *
+ * Alongside this is a config option which provides a way of rendering the provided
+ * component "offline", or outside the React render cycle.
+ *
  * @internal
  */
 export function createMotionComponent<P extends {}, E>(

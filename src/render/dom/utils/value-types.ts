@@ -7,11 +7,36 @@ import {
     progressPercentage,
     number,
     ValueType,
+    percent,
+    vw,
+    vh,
+    complex,
 } from "style-value-types"
 
-const int = { ...number, transform: Math.round }
+interface ValueTypeMap {
+    [key: string]: ValueType
+}
 
-const valueTypes: { [key: string]: ValueType } = {
+/**
+ * ValueType for "auto"
+ */
+export const auto: ValueType = {
+    test: (v: any) => v === "auto",
+    parse: v => v,
+}
+
+/**
+ * ValueType for ints
+ */
+const int = {
+    ...number,
+    transform: Math.round,
+}
+
+/**
+ * A map of default value types for common values
+ */
+const defaultValueTypes: ValueTypeMap = {
     // Color props
     color,
     backgroundColor: color,
@@ -94,8 +119,40 @@ const valueTypes: { [key: string]: ValueType } = {
     numOctaves: int,
 }
 
-export const getValueType = (key: string) => valueTypes[key]
+/**
+ * A list of value types commonly used for dimensions
+ */
+const dimensionValueTypes = [number, px, percent, degrees, vw, vh, auto]
 
+/**
+ * Tests a provided value against a ValueType
+ */
+const testValueType = (v: any) => (type: ValueType) => type.test(v)
+
+/**
+ * Tests a dimensional value against the list of dimension ValueTypes
+ */
+export const findDimensionValueType = (v: any) =>
+    dimensionValueTypes.find(testValueType(v))
+
+/**
+ * A list of all ValueTypes
+ */
+const valueTypes = [...dimensionValueTypes, color, complex]
+
+/**
+ * Tests a value against the list of ValueTypes
+ */
+export const findValueType = (v: any) => valueTypes.find(testValueType(v))
+
+/**
+ * Gets the default ValueType for the provided value key
+ */
+export const getDefaultValueType = (key: string) => defaultValueTypes[key]
+
+/**
+ * Provided a value and a ValueType, returns the value as that value type.
+ */
 export const getValueAsType = (value: any, type?: ValueType) => {
     return type && typeof value === "number"
         ? (type as any).transform(value)

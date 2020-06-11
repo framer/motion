@@ -1,4 +1,4 @@
-import { Dimensions, TransformOrigin, HTMLVisualElementConfig } from "../types"
+import { Dimensions, TransformOrigin, DOMVisualElementConfig } from "../types"
 import { ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./build-svg-path"
@@ -6,6 +6,9 @@ import { buildHTMLStyles } from "./build-html-styles"
 
 const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
 
+/**
+ * Build SVG visual attrbutes, like cx and style.transform
+ */
 export function buildSVGAttrs(
     {
         attrX,
@@ -24,7 +27,7 @@ export function buildSVGAttrs(
     transform: ResolvedValues,
     transformOrigin: TransformOrigin,
     transformKeys: string[],
-    config: HTMLVisualElementConfig,
+    config: DOMVisualElementConfig,
     dimensions: Dimensions,
     totalPathLength: number
 ): ResolvedValues {

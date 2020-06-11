@@ -12,10 +12,14 @@ import { VisualElementAnimationControls } from "../../animation/VisualElementAni
 import { getAnimationComponent } from "./animation"
 
 /**
- * TODO: Provide the option to load these dynamically.
+ * Currently we load all features synchronously, but it would be better to offer multiple entry points
+ * that allow these to be loaded in asynchronously.
  */
 const defaultFeatures = [Auto, Drag, Gestures, Exit]
 
+/**
+ * Load features via renderless components based on the provided MotionProps
+ */
 export function useFeatures(
     isStatic: boolean,
     visualElement: VisualElement,
@@ -27,6 +31,8 @@ export function useFeatures(
 ): null | JSX.Element[] {
     const plugins = useContext(MotionPluginContext)
 
+    // If this is a static component, or we're rendering on the server, we don't load
+    // any feature components
     if (isStatic || typeof window === "undefined") return null
 
     const allFeatures = [...defaultFeatures, ...plugins.features]
@@ -51,6 +57,7 @@ export function useFeatures(
         )
     }
 
+    // Decide which features we should render and add them to the returned array
     for (let i = 0; i < numFeatures; i++) {
         const { shouldRender, key, Component } = allFeatures[i]
 
