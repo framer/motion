@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { VisualElement } from "../render/VisualElement"
 import { useConstant } from "../utils/use-constant"
 import { useVisualElementAnimation } from "./use-visual-element-animation"
 import { AnimationDefinition } from "./VisualElementAnimationControls"
+import { ResolvedValues } from "../render/types"
 
 class StateVisualElement extends VisualElement {
+    latestState: ResolvedValues = {}
+
     build() {}
     clean() {}
 
@@ -13,21 +16,35 @@ class StateVisualElement extends VisualElement {
     }
 
     readNativeValue(key: string) {
-        return this.element[key] || 0
+        return this.latestState[key] || 0
     }
 
-    render() {}
+    render() {
+        console.log("render", this.latest.foo)
+    }
 }
 
+/**
+ * This is not an officially supported API and may be removed
+ * on any version.
+ * @internal
+ */
 export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)
     const visualElement = useConstant(() => new StateVisualElement())
 
     visualElement.updateConfig({
-        onUpdate: v => setAnimationState(v),
+        onUpdate: v => setAnimationState({ ...v }),
     })
 
+    visualElement.latestState = animationState
+
     const controls = useVisualElementAnimation(visualElement, {}, {})
+
+    useEffect(() => {
+        ;(visualElement as any).mount({})
+        return () => (visualElement as any).unmount()
+    }, [])
 
     const startAnimation = useConstant(
         () => (animationDefinition: AnimationDefinition) => {
