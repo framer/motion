@@ -623,6 +623,11 @@ export interface Tween {
     yoyo?: number;
 }
 
+// Warning: (ae-internal-missing-underscore) The name "useAnimatedState" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export function useAnimatedState(initialState: any): any[];
+
 // @public
 export function useAnimation(): AnimationControls;
 

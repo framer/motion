@@ -47,6 +47,7 @@ export { useDragControls, DragControls } from "./behaviours/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
 export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
+export { useAnimatedState } from "./animation/use-animated-state"
 
 /**
  * Contexts
