@@ -148,8 +148,19 @@ const b = () => (
     </Layer>
 )
 
+const c = () => (
+    <Layer id={"5"} layoutId="container" style={containerStyle}>
+        <Layer
+            id={"6"}
+            layoutId="card"
+            style={{ ...cardStyle, top: 100, background: "green" }}
+        />
+    </Layer>
+)
+
 const A = React.createElement(a)
 const B = React.createElement(b)
+const C = React.createElement(c)
 
 export const App = () => {
     const lastScreenRef = React.useRef("a")
@@ -241,27 +252,28 @@ export const App = () => {
                 previous: current,
                 containers: {
                     ...containers,
+                    c: C,
                 },
                 containerIndex: {
                     ...containerIndex,
-                    a: current + 1,
+                    c: current + 1,
                 },
                 containerVisualIndex: {
                     ...containerVisualIndex,
                 },
                 containerIsRemoved: {
                     ...containerIsRemoved,
-                    b: true,
+                    c: true,
                 },
                 containerCanProvideBoundingBoxes: {
                     ...containerCanProvideBoundingBoxes,
-                    b: true,
+                    c: true,
                 },
                 // Dependency updated to transition to A with magic motion
                 dependency: performance.now().toString(),
             }
             setNavigationState(newState)
-            lastScreenRef.current = "a"
+            lastScreenRef.current = "c"
         }
     }, [navigationState])
 

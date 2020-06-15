@@ -164,7 +164,16 @@ export class AnimateSharedLayout extends React.Component<
      */
     componentDidUpdate() {
         // TODO: This would currently prevent animate children from working
-        this.shouldTransition && this.startAnimation()
+        if (this.shouldTransition) {
+            this.startAnimation()
+        } else {
+            this.children.forEach(child => {
+                child.stopLayoutAnimation && child.stopLayoutAnimation()
+
+                // Warning - this will stop all other animations even non-magic ones
+                child.props.controls.stop()
+            })
+        }
     }
 
     /**
@@ -248,23 +257,7 @@ export class AnimateSharedLayout extends React.Component<
         this.stacks.forEach(stack => stack.updateLeadAndFollow())
 
         const handler: TransitionHandler = {
-            snapshotTarget: child => {
-                const { layoutId } = child.props
-                const stack =
-                    layoutId !== undefined ? this.getStack(layoutId) : undefined
-
-                if (
-                    // If this component has an animate prop
-                    isAutoAnimate(child) ||
-                    // If this component is either entering or present
-                    child.presence !== Presence.Exiting ||
-                    // If the lead component in the stack is present and should animate, snapshot
-                    // TODO: Figure out what this breaks if removed
-                    (stack?.lead?.isPresent() && stack?.shouldStackAnimate())
-                ) {
-                    child.snapshotTarget()
-                }
-            },
+            snapshotTarget: child => child.snapshotTarget(),
             startAnimation: child => {
                 let numAnimations = 0
                 let numCompletedAnimations = 0
@@ -332,8 +325,4 @@ export class AnimateSharedLayout extends React.Component<
             </SharedLayoutContext.Provider>
         )
     }
-}
-
-function isAutoAnimate(child: Auto) {
-    return child.props.animate === true
 }
