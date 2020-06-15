@@ -79,7 +79,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
     /**
      * Used to stop the current animation on the component's progress MotionValue
      */
-    private stopLayoutAnimation?: () => void
+    stopLayoutAnimation?: () => void
 
     /**
      * If this component is a child of both AnimateSharedLayout and AnimatePresence we need to know if
@@ -470,6 +470,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             this.shouldAnimate &&
             this.visualOrigin &&
             this.visualTarget &&
+            this.measuredTarget &&
             this.delta.isVisible &&
             isTreeVisible(parentDeltas)
         ) {
