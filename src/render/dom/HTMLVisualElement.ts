@@ -62,32 +62,53 @@ export class HTMLVisualElement<
 
     /**
      * The measured bounding box as it exists on the page with no transforms applied.
+     *
+     * If `layout` is `true`, or `layoutId` is defined, to calculate the visual output
+     * of a component in any given frame, we:
+     *
+     *   1. layoutBox -> correctedLayoutBox
+     *      Apply the delta between the tree transform when the layoutBox was measured and
+     *      the tree transform in this frame to the layoutBox
+     *   2. targetLayoutBox -> finalTargetBox
+     *      Apply the VisualElement's `transform` properties to the targetLayoutBox
+     *   3. Calculate the delta between correctedLayoutBox and finalTargetBox and apply
+     *      it as a transform style.
      */
-    //private measuredBox = axisBox()
+    private layoutBox = axisBox()
 
     /**
-     * The `measuredBox` layout as corrected for all the transforms being applied up the
+     * The `layoutBox` layout with transforms applied from up the
      * tree. We use this as the final bounding box from which we calculate a transform
      * delta to our desired visual position on any given frame.
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    //private correctedBox = axisBox()
+    private correctedLayoutBox = axisBox()
 
     /**
-     * The visual target we want to project our component into on a given frame.
+     * The visual target we want to project our component into on a given frame
+     * before applying transforms defined in `animate` or `style`.
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    //private targetBox = axisBox()
+    private targetLayoutBox = axisBox()
 
     /**
-     * The overall scale of the local coordinate system as transformed by all parents of this component. We use this
-     * for scale correction on our calculated layouts and scale-affected values like `boxShadow`.
+     * The visual target we want to project our component into on a given frame
+     * before applying transforms defined in `animate` or `style`.
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    //private treeScale = { x: 1, y: 1 }
+    private finalTargetBox = axisBox()
+
+    /**
+     * The overall scale of the local coordinate system as transformed by all parents
+     * of this component. We use this for scale correction on our calculated layouts
+     * and scale-affected values like `boxShadow`.
+     *
+     * This is considered mutable to avoid object creation on each frame.
+     */
+    private treeScale = { x: 1, y: 1 }
 
     /**
      * When a value is removed, we want to make sure it's removed from all rendered data structures.
@@ -187,7 +208,7 @@ export class HTMLVisualElement<
     }
 }
 
-// const axisBox = (): AxisBox2D => ({
-//     x: { min: 0, max: 0 },
-//     y: { min: 0, max: 0 },
-// })
+const axisBox = (): AxisBox2D => ({
+    x: { min: 0, max: 0 },
+    y: { min: 0, max: 0 },
+})
