@@ -19,9 +19,7 @@ class StateVisualElement extends VisualElement {
         return this.latestState[key] || 0
     }
 
-    render() {
-        console.log("render", this.latest.foo)
-    }
+    render() {}
 }
 
 /**
