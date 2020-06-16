@@ -44,7 +44,7 @@ const child = {
 
 function A({ layoutOrder, zIndex, _shouldAnimate }) {
     return (
-        <motion.div style={{ ...screen, zIndex }}>
+        <motion.div style={{ ...screen, zIndex }} layoutId="wrapper">
             <motion.div
                 key="card"
                 layoutId="card"
@@ -66,7 +66,7 @@ function A({ layoutOrder, zIndex, _shouldAnimate }) {
 
 function B({ layoutOrder, zIndex, _shouldAnimate }) {
     return (
-        <motion.div style={{ ...screen, zIndex }}>
+        <motion.div style={{ ...screen, zIndex }} layoutId="wrapper">
             <motion.div
                 layoutId="card"
                 layoutOrder={layoutOrder}
