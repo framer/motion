@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.11.1] 2020-06-16
+
+### Fixed
+
+-   Using `useIsomorphicEffect` for `useElementScroll` and `useViewportScroll`.([@thebuilder](https://github.com/thebuilder) in [#592](https://github.com/framer/motion/pull/592))
+
 ## [1.11.0] 2020-05-15
 
 ### Added
