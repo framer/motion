@@ -1,5 +1,5 @@
 import * as React from "react"
-import { MotionComponentConfig } from "../../motion"
+import { MotionComponentConfig, MotionProps } from "../../motion"
 import { useDomVisualElement } from "./use-dom-visual-element"
 import { render } from "./render"
 import { parseDomVariant } from "./utils/parse-dom-variant"
@@ -18,6 +18,16 @@ const config: MotionComponentConfig<HTMLElement | SVGElement> = {
 }
 
 /**
+ * I'd rather the return type of `custom` to be implicit but this throws
+ * incorrect relative paths in the exported types and API Extractor throws
+ * a wobbly.
+ */
+type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
+    React.PropsWithoutRef<Props & MotionProps> &
+        React.RefAttributes<SVGElement | HTMLElement>
+>
+
+/**
  * Convert any React component into a `motion` component. The provided component
  * **must** use `React.forwardRef` to the underlying DOM component you want to animate.
  *
@@ -31,7 +41,9 @@ const config: MotionComponentConfig<HTMLElement | SVGElement> = {
  *
  * @public
  */
-function custom<Props>(Component: string | React.ComponentType<Props>) {
+function custom<Props>(
+    Component: string | React.ComponentType<Props>
+): CustomDomComponent<Props> {
     return createMotionComponent(Component, config)
 }
 
