@@ -354,6 +354,7 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      * Take a snapshot of a component as it will exist after a render.
      */
     snapshotTarget() {
+        console.log("snapshot target")
         const { visualElement, style } = this.props
 
         const target = snapshot(visualElement, this.supportedAutoValues)

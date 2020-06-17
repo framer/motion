@@ -8,8 +8,6 @@ import move from "array-move"
  * This demonstrates drag working with automatic animations.
  * When the element moves in the underlying layout, it visually
  * stays stuck to the user's pointer.
- *
- * TODO: This is currently WIP and should be fixed before merge.
  */
 
 const Item = ({ color, setPosition, moveItem, i }) => {
@@ -32,8 +30,8 @@ const Item = ({ color, setPosition, moveItem, i }) => {
         <motion.li
             ref={ref}
             initial={false}
-            // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
             animate
+            // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
             style={{
                 background: color,
                 height: heights[color],
@@ -42,13 +40,13 @@ const Item = ({ color, setPosition, moveItem, i }) => {
             // whileHover={{ scale: 1.03 }}
             // whileTap={{ scale: 1.12 }}
             drag="y"
+            // Animate the component back to 0 when dragging ends
             dragConstraints={{ top: 0, bottom: 0 }}
+            // But allow full movement outside those constraints
             dragElastic={1}
-            dragOriginY={useMotionValue(0)}
             onDragStart={() => setDragging(true)}
             onDragEnd={() => setDragging(false)}
             onDrag={(e, { point }) => moveItem(i, point.y)}
-            magic={!isDragging}
         />
     )
 }

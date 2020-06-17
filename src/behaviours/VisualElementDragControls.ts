@@ -403,7 +403,7 @@ export class VisualElementDragControls {
         // If `dragConstraints` is a React `ref`, we should resolve the constraints once the
         // component has rendered.
         this.constraintsNeedResolution = isRefObject(dragConstraints)
-        console.log(dragConstraints)
+
         if (this.constraintsNeedResolution) {
             this.constraints = this.constraints || false
         } else {

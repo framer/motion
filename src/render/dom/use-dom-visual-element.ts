@@ -31,6 +31,7 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     })
 
     useLayoutEffect(() => {
+        console.log("useDomVisualElement layout effect!")
         visualElement.isLayoutAware && visualElement.updateLayoutBox()
     })
 
