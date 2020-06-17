@@ -108,7 +108,10 @@ export class SVGVisualElement extends HTMLVisualElement<
 
         // Loop through attributes and apply them to the SVGElement
         for (const key in this.attrs) {
-            this.element.setAttribute(key, this.attrs[key] as string)
+            this.element.setAttribute(
+                camelToDash(key),
+                this.attrs[key] as string
+            )
         }
     }
 }
