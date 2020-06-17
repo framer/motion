@@ -327,9 +327,9 @@ export interface AnimationProps {
      * }
      *
      * // This component will animate position when `isVisible` is toggled.
-     * const MyComponent = ({ isOpen }) => {
+     * const MyComponent = ({ isVisible }) => {
      *   return (
-     *     <motion.div positionTransition={spring} style={{ left: isOpen ? 0 : 100 }} />
+     *     <motion.div positionTransition={spring} style={{ left: isVisible ? 0 : 100 }} />
      *   )
      * }
      *
