@@ -46,8 +46,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "_dragValueX",
     "_dragValueY",
     "_dragTransitionControls",
-    "dragOriginX",
-    "dragOriginY",
     "onPan",
     "onPanStart",
     "onPanEnd",

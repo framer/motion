@@ -3,12 +3,18 @@ import { BoundingBox2D, AxisBox2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
+    axisBox,
+    copyAxisBox,
 } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
+import { calcBoxDelta } from "../../motion/features/auto/utils"
+import { BoxDelta } from "../../motion/features/auto/types"
+import { MotionValue, motionValue } from "../../value"
+import { startAnimation } from "../../animation/utils/transitions"
 
 /**
  * A VisualElement for HTMLElements
@@ -91,7 +97,21 @@ export class HTMLVisualElement<
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    private targetLayoutBox = axisBox()
+    private targetLayoutBox: AxisBox2D
+
+    /**
+     * MotionValues that
+     */
+    private layout = {
+        x: {
+            translate: new MotionValue(0),
+            scale: new MotionValue(1),
+        },
+        y: {
+            translate: new MotionValue(0),
+            scale: new MotionValue(1),
+        },
+    }
 
     /**
      * The visual target we want to project our component into on a given frame
@@ -109,6 +129,17 @@ export class HTMLVisualElement<
      * This is considered mutable to avoid object creation on each frame.
      */
     private treeScale = { x: 1, y: 1 }
+
+    private axisAnimation = {}
+
+    /**
+     *
+     */
+    private delta: BoxDelta = {
+        x: { ...zeroDelta },
+        y: { ...zeroDelta },
+        isVisible: true,
+    }
 
     /**
      * When a value is removed, we want to make sure it's removed from all rendered data structures.
@@ -147,22 +178,6 @@ export class HTMLVisualElement<
     }
 
     /**
-     * Build a style prop using the latest resolved MotionValues
-     */
-    build() {
-        // TODO: Add shadow bounding box resolution
-        buildHTMLStyles(
-            this.latest,
-            this.style,
-            this.vars,
-            this.transform,
-            this.transformOrigin,
-            this.transformKeys,
-            this.config
-        )
-    }
-
-    /**
      * Read a value directly from the HTMLElement style.
      */
     read(key: string): number | string | null {
@@ -191,6 +206,91 @@ export class HTMLVisualElement<
     }
 
     /**
+     *
+     */
+    updateLayoutBox() {
+        const bbox = this.getBoundingBox()
+        this.layoutBox = bbox
+
+        if (!this.targetLayoutBox) {
+            this.targetLayoutBox = copyAxisBox(bbox)
+        }
+    }
+
+    setAxisTarget(axis: "x" | "y", min: number, max: number) {
+        this.targetLayoutBox[axis].min = min
+        this.targetLayoutBox[axis].max = max
+        this.scheduleRender()
+    }
+
+    getTargetLayoutBox() {
+        return this.targetLayoutBox
+    }
+
+    enableLayoutAware() {
+        this.isLayoutAware = true
+    }
+
+    // TODO Move all this layout stuff to a WeakMap-bound class
+    startAxisTranslateAnimation(axis: "x" | "y", transition: Transition) {
+        this.stopAxisAnimation(axis)
+
+        const axisData = this.targetLayoutBox[axis]
+        const min = motionValue(axisData.min)
+        const length = axisData.max - axisData.min
+
+        startAnimation(axis, min, 0, transition)
+
+        min.onChange(v => {
+            axisData.min = v
+            axisData.max = v + length
+            this.scheduleRender()
+        })
+
+        this.axisAnimation[axis] = min
+    }
+
+    stopAxisAnimation(axis: "x" | "y") {
+        if (this.axisAnimation[axis]) {
+            this.axisAnimation[axis].stop()
+        }
+    }
+
+    /**
+     * Build a style prop using the latest resolved MotionValues
+     */
+    build() {
+        if (this.isLayoutAware) {
+            calcBoxDelta(this.delta, this.targetLayoutBox, this.layoutBox, 0.5)
+
+            // this.setStaticValues("originX", dx.origin)
+            // this.setStaticValues("originY", dy.origin)
+            const dx = this.delta.x
+            const dy = this.delta.y
+            this.config.transformTemplate = (_, gen) => {
+                return `scaleX(${dx.scale}) scaleY(${dy.scale}) translate(${dx.translate}px, ${dy.translate}px) ${gen}`
+            }
+
+            /**
+             * 1. Apply animation to target layout
+             * 2. Stop animation on target layout on mouse down
+             * 3.
+             */
+        }
+
+        // TODO: Add shadow bounding box resolution
+        buildHTMLStyles(
+            this.latest,
+            this.style,
+            this.vars,
+            this.transform,
+            this.transformOrigin,
+            this.transformKeys,
+            this.config
+        )
+    }
+
+    /**
      * Render the Element by rebuilding and applying the latest styles and vars.
      */
     render() {
@@ -208,7 +308,9 @@ export class HTMLVisualElement<
     }
 }
 
-const axisBox = (): AxisBox2D => ({
-    x: { min: 0, max: 0 },
-    y: { min: 0, max: 0 },
-})
+const zeroDelta = {
+    translate: 0,
+    scale: 1,
+    origin: 0,
+    originPoint: 0,
+}

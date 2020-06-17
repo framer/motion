@@ -371,62 +371,6 @@ export interface DraggableProps extends DragHandlers {
     _dragTransitionControls?: AnimationControls
 
     /**
-     * Drag position is calculated by applying the pan offset to the x/y origin
-     * measured when the drag gesture begins.
-     *
-     * By manually creating `dragOriginX` as a `MotionValue`, it can be updated
-     * while the gesture is active, for instance to visually offset any movement should
-     * the component change layout.
-     *
-     * @library
-     *
-     * ```jsx
-     * const dragOriginX = useMotionValue(0)
-     *
-     * return <Frame dragOriginX={dragOriginX} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * const dragOriginX = useMotionValue(0)
-     *
-     * return <motion.div dragOriginX={dragOriginX} />
-     * ```
-     *
-     * @public
-     */
-    dragOriginX?: MotionValue<number>
-
-    /**
-     * Drag position is calculated by applying the pan offset to the x/y origin
-     * measured when the drag gesture begins.
-     *
-     * By manually creating `dragOriginY` as a `MotionValue`, it can be updated
-     * while the gesture is active, for instance to visually offset any movement should
-     * the component change layout.
-     *
-     * @library
-     *
-     * ```jsx
-     * const dragOriginY = useMotionValue(0)
-     *
-     * return <Frame dragOriginY={dragOriginY} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * const dragOriginY = useMotionValue(0)
-     *
-     * return <motion.div dragOriginY={dragOriginY} />
-     * ```
-     *
-     * @public
-     */
-    dragOriginY?: MotionValue<number>
-
-    /**
      * Usually, dragging is initiated by pressing down on a component and moving it. For some
      * use-cases, for instance clicking at an arbitrary point on a video scrubber, we
      * might want to initiate dragging from a different component than the draggable one.

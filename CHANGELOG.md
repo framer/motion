@@ -28,6 +28,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   `Point` type in favour of `Point2D`.
 -   `useAnimatedState`
 -   `stylefire` as a dependency.
+-   `dragOriginX` and `dragOriginY` props.
 
 ### Fixed
 

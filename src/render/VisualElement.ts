@@ -151,6 +151,8 @@ export abstract class VisualElement<E = any> {
     // Pre-bound version of render
     triggerRender = () => this.render()
 
+    scheduleRender = () => sync.render(this.triggerRender, false, true)
+
     // Subscribe to changes in a MotionValue
     private subscribeToValue(key: string, value: MotionValue) {
         const onChange = (latest: string | number) => {
@@ -159,10 +161,8 @@ export abstract class VisualElement<E = any> {
             this.config.onUpdate && sync.update(this.update, false, true)
         }
 
-        const onRender = () => sync.render(this.triggerRender, false, true)
-
         const unsubscribeOnChange = value.onChange(onChange)
-        const unsubscribeOnRender = value.onRenderRequest(onRender)
+        const unsubscribeOnRender = value.onRenderRequest(this.scheduleRender)
 
         this.valueSubscriptions.set(key, () => {
             unsubscribeOnChange()

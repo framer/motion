@@ -4,6 +4,7 @@ import { MotionProps } from "../../motion/types"
 import { SVGVisualElement } from "./SVGVisualElement"
 import { UseVisualElement } from "../types"
 import { isSVGComponent } from "./utils/is-svg-component"
+import { useLayoutEffect } from "react"
 
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
@@ -27,6 +28,10 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     visualElement.updateConfig({
         enableHardwareAcceleration: !isStatic,
         ...props,
+    })
+
+    useLayoutEffect(() => {
+        visualElement.isLayoutAware && visualElement.updateLayoutBox()
     })
 
     return visualElement

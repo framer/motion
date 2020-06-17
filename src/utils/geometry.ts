@@ -3,6 +3,8 @@ import {
     TransformPoint2D,
     AxisBox2D,
     Axis,
+    NewAxis2D,
+    NewAxis,
 } from "../types/geometry"
 import { noop } from "./noop"
 
@@ -67,4 +69,43 @@ export function calcAxisCenter({ min, max }: Axis) {
  */
 export function axisBox(): AxisBox2D {
     return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
+}
+
+/**
+ * TODO Rename all the following and
+ */
+export function newAxis(): NewAxis {
+    return { point: 0, length: 0 }
+}
+
+export function newAxisBox(): NewAxis2D {
+    return {
+        x: newAxis(),
+        y: newAxis(),
+    }
+}
+
+function convertAxis(axis: Axis): NewAxis {
+    return {
+        point: axis.min,
+        length: axis.max - axis.min,
+    }
+}
+
+export function convertOldAxisBox(box: AxisBox2D): NewAxis2D {
+    return {
+        x: convertAxis(box.x),
+        y: convertAxis(box.y),
+    }
+}
+
+export function copyAxisBox(box: NewAxis2D): NewAxis2D {
+    return {
+        x: { ...box.x },
+        y: { ...box.y },
+    }
+}
+
+export function axisMax(axis: NewAxis) {
+    return axis.point + axis.length
 }
