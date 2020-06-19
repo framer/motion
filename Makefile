@@ -69,7 +69,7 @@ pretty: bootstrap
 	prettier --write */**/*.tsx */**/*.ts
 
 $(DECLARATION_TARGET): $(SOURCE_FILES)
-	yarn tsc -p . --emitDeclarationOnly --removeComments false
+	yarn tsc -p .
 
 $(API_TARGET) $(API_REVIEW_FILE): api-extractor.json $(DECLARATION_TARGET)
 	yarn api-extractor run -l

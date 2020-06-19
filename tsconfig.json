@@ -11,11 +11,11 @@
         "emitDecoratorMetadata": true,
         "declaration": true,
         "declarationDir": "types",
+        "outDir": "tsc",
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
         "rootDir": "src",
-        "outDir": "lib",
         "sourceMap": true,
         "baseUrl": "src",
         "paths": {
