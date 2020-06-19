@@ -27,7 +27,7 @@
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
-        "build": "make api && rollup -c && yarn measure",
+        "build": "tsc -p . && rollup -c && make api && yarn measure",
         "prepublishOnly": "yarn test && yarn build",
         "measure": "gzip -c dist/framer-motion.js | wc -c",
         "deduplicate": "yarn-deduplicate yarn.lock",

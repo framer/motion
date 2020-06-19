@@ -4,6 +4,7 @@
 /dist
 /lib
 /tsc
+/tmp
 yarn-error.log
 /coverage
 /test_reports
