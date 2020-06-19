@@ -27,27 +27,36 @@ const Item = ({ color, setPosition, moveItem, i }) => {
     })
 
     return (
-        <motion.li
-            ref={ref}
-            initial={false}
-            animate
-            // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
+        <li
             style={{
-                background: color,
+                backgroundColor: color + 33,
+                padding: 0,
                 height: heights[color],
                 zIndex: isDragging ? 3 : 1,
             }}
-            // whileHover={{ scale: 1.03 }}
-            // whileTap={{ scale: 1.12 }}
-            drag="y"
-            // Animate the component back to 0 when dragging ends
-            dragConstraints={{ top: 0, bottom: 0 }}
-            // But allow full movement outside those constraints
-            dragElastic={1}
-            onDragStart={() => setDragging(true)}
-            onDragEnd={() => setDragging(false)}
-            onDrag={(e, { point }) => moveItem(i, point.y)}
-        />
+        >
+            <motion.div
+                ref={ref}
+                initial={false}
+                layout
+                // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
+                style={{
+                    background: color,
+                    height: heights[color],
+                    borderRadius: 5,
+                }}
+                // whileHover={{ scale: 1.03 }}
+                // whileTap={{ scale: 1.12 }}
+                drag="y"
+                // Animate the component back to 0 when dragging ends
+                dragConstraints={{ top: 0, bottom: 0 }}
+                // But allow full movement outside those constraints
+                dragElastic={1}
+                onDragStart={() => setDragging(true)}
+                onDragEnd={() => setDragging(false)}
+                onDrag={(e, { point }) => moveItem(i, point.y)}
+            />
+        </li>
     )
 }
 

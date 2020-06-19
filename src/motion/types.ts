@@ -541,6 +541,12 @@ export interface MotionProps
      * @internal
      */
     transformValues?<V extends any>(values: V): V
+
+    /**
+     * TODO: Move this to Layout
+     * @internal
+     */
+    layout: boolean
 }
 
 export type TransformTemplate = (

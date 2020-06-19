@@ -11,7 +11,7 @@ import { isRefObject } from "../utils/is-ref-object"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../gestures/PanSession"
 import { invariant } from "hey-listen"
-import { mix } from "@popmotion/popcorn"
+import { mix, progress } from "@popmotion/popcorn"
 import { addDomEvent } from "../events/use-dom-event"
 import { extractEventInfo } from "../events/event-info"
 import { startAnimation } from "../animation/utils/transitions"
@@ -29,6 +29,7 @@ import {
 } from "../utils/geometry"
 import { VisualElement } from "../render/VisualElement"
 import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
+import { HTMLVisualElement } from "../render/dom/HTMLVisualElement"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -95,7 +96,7 @@ export class VisualElementDragControls {
     /**
      * @internal
      */
-    private visualElement: VisualElement
+    private visualElement: HTMLVisualElement
 
     /**
      * A reference to the host component's animation controls.
@@ -110,6 +111,14 @@ export class VisualElementDragControls {
      * @internal
      */
     private point: Partial<MotionPoint> = {}
+
+    /**
+     * @internal
+     */
+    private cursorProgress = {
+        x: 0.5,
+        y: 0.5,
+    }
 
     /**
      * The origin point for the current drag gesture.
@@ -144,6 +153,7 @@ export class VisualElementDragControls {
 
     constructor({ visualElement, controls }: DragControlConfig) {
         this.visualElement = visualElement
+        this.visualElement.enableLayoutAware()
         this.controls = controls
         elementDragControls.set(visualElement, this)
     }
@@ -177,17 +187,6 @@ export class VisualElementDragControls {
         }
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
-            // If constraints are an element, resolve them again in case they've updated.
-            this.resolveDragConstraints()
-
-            // Set point origin and stop any existing animations.
-            bothAxis(axis => {
-                const axisPoint = this.point[axis]
-                if (!axisPoint) return
-
-                this.origin[axis].set(axisPoint.get())
-            })
-
             // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
             const { drag, dragPropagation } = this.props
             if (drag && !dragPropagation) {
@@ -195,6 +194,27 @@ export class VisualElementDragControls {
                 this.openGlobalLock = getGlobalLock(drag)
                 if (!this.openGlobalLock) return
             }
+
+            // If we have the lock, we can initiate dragging
+
+            // If constraints are an element, resolve them again in case they've updated.
+            this.resolveDragConstraints()
+
+            // Record the progress of the mouse within the draggable element on each axis.
+            // onPan, we're going to use this to calculate a new bounding box for the element to
+            // project into. This will ensure that even if the DOM element moves via a relayout, it'll
+            // stick to the correct place under the pointer.
+            this.visualElement.updateLayoutBox()
+            this.visualElement.lockTargetBox()
+
+            bothAxis(axis => {
+                const { min, max } = this.visualElement.visualBox[axis]
+                this.cursorProgress[axis] = progress(
+                    min,
+                    max,
+                    axis === "x" ? event.clientX : event.clientY
+                )
+            })
 
             this.isDragging = true
             this.currentDirection = null
@@ -221,8 +241,8 @@ export class VisualElementDragControls {
                 return
             }
 
-            this.updatePoint("x", offset)
-            this.updatePoint("y", offset)
+            this.updatePoint("x", event)
+            this.updatePoint("y", event)
             const { onDrag } = this.props
             onDrag && onDrag(event, convertPanToDrag(info, this.point))
         }
@@ -244,6 +264,7 @@ export class VisualElementDragControls {
         )
     }
 
+    // TODO We're measuring the dragging element twice here
     resolveDragConstraints() {
         if (!this.constraintsNeedResolution) return
 
@@ -287,6 +308,7 @@ export class VisualElementDragControls {
     }
 
     stop(event: AnyPointerEvent, info: PanInfo) {
+        this.visualElement.unlockTargetBox()
         this.panSession?.end()
         this.panSession = null
         const isDragging = this.isDragging
@@ -344,21 +366,32 @@ export class VisualElementDragControls {
         this.point[axis] = value
     }
 
-    updatePoint(axis: DragDirection, offset: { x: number; y: number }) {
+    updatePoint(axis: DragDirection, event: AnyPointerEvent) {
         const { drag, dragElastic } = this.props
         const axisPoint = this.point[axis]
 
         // If we're not dragging this axis, do an early return.
         if (!shouldDrag(axis, drag, this.currentDirection) || !axisPoint) return
 
-        const current = applyConstraints(
-            axis,
-            this.origin[axis].get() + offset[axis],
-            this.constraints,
-            dragElastic
-        )
+        const layoutAxis = this.visualElement.layoutBox[axis]
 
-        axisPoint.set(current)
+        const pointer = axis === "x" ? event.clientX : event.clientY
+        const length = layoutAxis.max - layoutAxis.min
+
+        const p = this.cursorProgress[axis]
+        const min = p * length
+        const max = (1 - p) * length
+
+        this.visualElement.setAxisTarget(axis, pointer - min, pointer + max)
+
+        // const current = applyConstraints(
+        //     axis,
+        //     this.origin[axis].get() + offset[axis],
+        //     this.constraints,
+        //     dragElastic
+        // )
+
+        // axisPoint.set(current)
     }
 
     updateProps({

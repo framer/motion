@@ -1,4 +1,4 @@
-import { useEffect, useContext } from "react"
+import { useEffect, useContext, useLayoutEffect } from "react"
 import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { DraggableProps } from "./types"

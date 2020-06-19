@@ -15,6 +15,12 @@ import { calcBoxDelta } from "../../motion/features/auto/utils"
 import { BoxDelta } from "../../motion/features/auto/types"
 import { MotionValue, motionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
+import {
+    updateAxisDelta,
+    MotionAxisDelta,
+    MotionBoxDelta,
+    undoTransform,
+} from "./layout/utils"
 
 /**
  * A VisualElement for HTMLElements
@@ -100,20 +106,6 @@ export class HTMLVisualElement<
     private targetLayoutBox: AxisBox2D
 
     /**
-     * MotionValues that
-     */
-    private layout = {
-        x: {
-            translate: new MotionValue(0),
-            scale: new MotionValue(1),
-        },
-        y: {
-            translate: new MotionValue(0),
-            scale: new MotionValue(1),
-        },
-    }
-
-    /**
      * The visual target we want to project our component into on a given frame
      * before applying transforms defined in `animate` or `style`.
      *
@@ -132,14 +124,9 @@ export class HTMLVisualElement<
 
     private axisAnimation = {}
 
-    /**
-     *
-     */
-    private delta: BoxDelta = {
-        x: { ...zeroDelta },
-        y: { ...zeroDelta },
-        isVisible: true,
-    }
+    private delta: BoxDelta
+
+    private isVisible = true
 
     /**
      * When a value is removed, we want to make sure it's removed from all rendered data structures.
@@ -210,17 +197,51 @@ export class HTMLVisualElement<
      */
     updateLayoutBox() {
         const bbox = this.getBoundingBox()
+
+        this.visualBox = { x: { ...bbox.x }, y: { ...bbox.y } }
         this.layoutBox = bbox
 
-        if (!this.targetLayoutBox) {
+        // Undo the current delta to the measured bounding box
+        // TODO: Fix everything else too
+        // TODO: Make this nice and accomodate for scale
+
+        undoTransform(bbox, this.delta)
+
+        if (!this.targetLayoutBox || !this.isTargetBoxLocked) {
             this.targetLayoutBox = copyAxisBox(bbox)
         }
+
+        this.updateTargetBox("x")
+        this.updateTargetBox("y")
+        this.render()
+    }
+
+    // DO this but less crap
+    lockTargetBox() {
+        this.isTargetBoxLocked = true
+    }
+
+    unlockTargetBox() {
+        this.isTargetBoxLocked = false
     }
 
     setAxisTarget(axis: "x" | "y", min: number, max: number) {
-        this.targetLayoutBox[axis].min = min
-        this.targetLayoutBox[axis].max = max
-        this.scheduleRender()
+        const targetAxis = this.targetLayoutBox[axis]
+        targetAxis.min = min
+        targetAxis.max = max
+
+        this.updateTargetBox(axis)
+    }
+
+    updateTargetBox(axis: "x" | "y") {
+        updateAxisDelta(
+            this.delta[axis],
+            this.layoutBox[axis],
+            this.targetLayoutBox[axis]
+        )
+
+        const value = this.getValue(axis)
+        value?.set(this.delta[axis].translate)
     }
 
     getTargetLayoutBox() {
@@ -229,6 +250,11 @@ export class HTMLVisualElement<
 
     enableLayoutAware() {
         this.isLayoutAware = true
+
+        this.delta = {
+            x: { ...zeroDelta },
+            y: { ...zeroDelta },
+        }
     }
 
     // TODO Move all this layout stuff to a WeakMap-bound class
@@ -260,15 +286,9 @@ export class HTMLVisualElement<
      * Build a style prop using the latest resolved MotionValues
      */
     build() {
-        if (this.isLayoutAware) {
-            calcBoxDelta(this.delta, this.targetLayoutBox, this.layoutBox, 0.5)
-
-            // this.setStaticValues("originX", dx.origin)
-            // this.setStaticValues("originY", dy.origin)
-            const dx = this.delta.x
-            const dy = this.delta.y
+        if (this.isLayoutAware && this.targetLayoutBox) {
             this.config.transformTemplate = (_, gen) => {
-                return `scaleX(${dx.scale}) scaleY(${dy.scale}) translate(${dx.translate}px, ${dy.translate}px) ${gen}`
+                return `scaleX(${this.delta.x.scale}) scaleY(${this.delta.y.scale}) ${gen}`
             }
 
             /**
@@ -313,4 +333,19 @@ const zeroDelta = {
     scale: 1,
     origin: 0,
     originPoint: 0,
+}
+
+function createMotionAxis(
+    translateMotionValue: MotionValue<number>
+): MotionAxisDelta {
+    const axis = {
+        translate: motionValue(0),
+        scale: motionValue(1),
+        origin: 0.5,
+        originPoint: 0,
+    }
+
+    axis.translate.onChange(v => translateMotionValue.set(v))
+
+    return axis
 }

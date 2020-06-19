@@ -21,12 +21,7 @@ export interface MotionContextProps {
     static?: boolean
     hasMounted?: RefObject<boolean>
     presenceId?: number
-    layoutDelta?: BoxDelta
-    layoutDeltas?: BoxDelta[]
-    // TODO: Replace this with an onUpdate on parentValues
-    layoutProgress?: MotionValue<number>
     isReducedMotion?: boolean | undefined
-    layoutDepth: number
 }
 
 /**
@@ -34,7 +29,6 @@ export interface MotionContextProps {
  */
 export const MotionContext = React.createContext<MotionContextProps>({
     static: false,
-    layoutDepth: -1,
 })
 
 const isVariantLabel = (v?: MotionProps["animate"]): v is string | string[] => {
@@ -116,15 +110,6 @@ export const useMotionContext = (
             ? targetAnimate
             : null
 
-    // TODO: We need every motion component in the stack to communicate down - for performance we can look into
-    // ditching zero deltas if this isn't a motion component
-    const layoutDelta = useConstant(createZeroDelta)
-    const layoutDeltas = useRef<BoxDelta[]>([
-        ...(parentContext.layoutDeltas || []),
-        layoutDelta,
-    ])
-    const layoutProgress = useMotionValue(0)
-
     // The context to provide to the child. We `useMemo` because although `controls` and `initial` are
     // unlikely to change, by making the context an object it'll be considered a new value every render.
     // So all child motion components will re-render as a result.
@@ -139,14 +124,6 @@ export const useMotionContext = (
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
             presenceId,
-            layoutDepth:
-                // TODO: Make nice isMagic
-                animate || layoutId !== undefined
-                    ? parentContext.layoutDepth + 1
-                    : parentContext.layoutDepth,
-            layoutDelta,
-            layoutDeltas: layoutDeltas.current,
-            layoutProgress,
             isPresenceRoot,
         }),
         [
