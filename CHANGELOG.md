@@ -25,6 +25,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Using `Proxy` to generate `motion` components. This saves ~0.5kb from the bundle size and ensures compatibility with all DOM elements and Web Components.
+-   Changed build process and using Terser for uglification. Reduces bundle size by ~1.2kb. ([@stokesman](https://github.com/stokesman) in [#596](https://github.com/framer/motion/pull/596))
 
 ## [1.11.1] 2020-06-16
 
