@@ -1,8 +1,8 @@
-import { MotionValue } from "../../../value"
 import { isNear } from "../../../motion/features/auto/utils"
 import { Axis, AxisBox2D } from "../../../types/geometry"
 import { progress, clamp, mix } from "@popmotion/popcorn"
 import { AxisDelta, BoxDelta } from "../../../motion/features/auto/types"
+import { HTMLVisualElement } from "../HTMLVisualElement"
 
 const clampProgress = clamp(0, 1)
 
@@ -38,17 +38,6 @@ export function calcOrigin(source: Axis, target: Axis): number {
 }
 
 /**
- *
- */
-export function calcOriginPoint(
-    point: number,
-    length: number,
-    origin: number
-): number {
-    return point + origin * length
-}
-
-/**
  * Update the MotionAxisDelta with a transform that projects source into target.
  *
  * The transform `origin` is optional. If not provided, it'll be automatically
@@ -64,27 +53,92 @@ export function updateAxisDelta(
     const targetLength = target.max - target.min
 
     delta.origin = origin === undefined ? calcOrigin(source, target) : origin
-    delta.originPoint = calcOriginPoint(source.min, sourceLength, delta.origin)
+    delta.originPoint = mix(source.min, source.max, delta.origin)
 
     delta.scale = targetLength / sourceLength
-    delta.translate = calcTranslate(source, target, delta.origin)
-
-    // Clamp
     if (isNear(delta.scale, 1, 0.0001)) delta.scale = 1
+
+    delta.translate = calcTranslate(source, target, delta.origin)
     if (isNear(delta.translate)) delta.translate = 0
 }
 
-export function undoAxisTransform(source: Axis, delta: AxisDelta) {
-    source.min -= delta.translate
-    source.max -= delta.translate
+export function updateBoxDelta(
+    delta: BoxDelta,
+    source: AxisBox2D,
+    target: AxisBox2D,
+    origin?: number
+): void {
+    updateAxisDelta(delta.x, source.x, target.x, origin)
+    updateAxisDelta(delta.y, source.y, target.y, origin)
 }
 
 /**
- * TODO: This needs to accomodate
- * - tree delta
- * - additional scale transform
+ * Applies a `scale` to a `point` from the given `originPoint`.
  */
-export function undoTransform(source: AxisBox2D, delta: BoxDelta): void {
-    undoAxisTransform(source.x, delta.x)
-    undoAxisTransform(source.y, delta.y)
+export function scalePoint({ scale, originPoint }: AxisDelta, point: number) {
+    const distanceFromOrigin = point - originPoint
+    const scaled = scale * distanceFromOrigin
+    return originPoint + scaled
+}
+
+/**
+ * Reset an axis to the provided origin box.
+ *
+ * This is a mutative operation.
+ */
+function resetAxis(axis: Axis, originAxis: Axis) {
+    axis.min = originAxis.min
+    axis.max = originAxis.max
+}
+
+/**
+ * Reset a box to the provided origin box.
+ *
+ * This is a mutative operation.
+ */
+export function resetBox(box: AxisBox2D, originBox: AxisBox2D) {
+    resetAxis(box.x, originBox.x)
+    resetAxis(box.y, originBox.y)
+}
+
+/**
+ * Apple the translation and scale delta to a single point.
+ */
+export function applyPointDelta(point: number, delta: AxisDelta): number {
+    return scalePoint(delta, point) + delta.translate
+}
+
+/**
+ * Scale and translate both points on an axis.
+ *
+ * This is a mutative operation to avoid creating new objects every frame.
+ */
+export function applyAxisDelta(axis: Axis, delta: AxisDelta): void {
+    axis.min = applyPointDelta(axis.min, delta)
+    axis.max = applyPointDelta(axis.max, delta)
+}
+
+/**
+ * Scale and translate both axis of a box.
+ */
+export function applyBoxDelta(box: AxisBox2D, delta: BoxDelta): void {
+    applyAxisDelta(box.x, delta.x)
+    applyAxisDelta(box.y, delta.y)
+}
+
+export function applyTreeDeltas(
+    box: AxisBox2D,
+    treeScale: { x: number; y: number },
+    treePath: HTMLVisualElement[]
+) {
+    treeScale.x = treeScale.y = 1
+
+    const treeLength = treePath.length
+    for (let i = 0; i < treeLength; i++) {
+        const parent = treePath[i]
+        const delta = parent.delta
+        applyBoxDelta(box, delta)
+        treeScale.x *= delta.x.scale
+        treeScale.y *= delta.y.scale
+    }
 }

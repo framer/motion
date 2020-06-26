@@ -6,6 +6,7 @@ import { motionValue } from "../../../value"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
 import { tweenAxis } from "./utils"
+import { Transition } from "../../../types"
 
 class Component extends React.Component<FeatureProps> {
     private prevLayoutBox: AxisBox2D
@@ -28,6 +29,11 @@ class Component extends React.Component<FeatureProps> {
     getSnapshotBeforeUpdate() {
         this.snapshot()
         return null
+    }
+
+    componentDidMount() {
+        const { visualElement } = this.props
+        visualElement.enableLayoutAware()
     }
 
     componentDidUpdate() {
@@ -59,7 +65,6 @@ class Component extends React.Component<FeatureProps> {
 
         const frame = () => {
             tweenAxis(frameTarget, prevAxis, newAxis, progress.get() / 1000)
-
             visualElement.setAxisTarget(axis, frameTarget.min, frameTarget.max)
         }
 
@@ -67,7 +72,14 @@ class Component extends React.Component<FeatureProps> {
 
         stopAnimation && stopAnimation()
 
-        const animation = startAnimation(axis, progress, progressTarget)
+        const { transition } = this.props
+        const axisTransition = getAxisTransition(axis, transition)
+        const animation = startAnimation(
+            axis,
+            progress,
+            progressTarget,
+            axisTransition
+        )
 
         const unsubscribeProgress = progress.onChange(frame)
 
@@ -77,10 +89,11 @@ class Component extends React.Component<FeatureProps> {
         }
     }
 
-    updateAxisTarget(axis: "x" | "y", p: number, origin: Axis, target: Axis) {
-        const frameTarget = this.frameTarget[axis]
-        tweenAxis(frameTarget, origin, target, p)
-    }
+    // updateAxisTarget(axis: "x" | "y", p: number, origin: Axis, target: Axis) {
+    //     const frameTarget = this.frameTarget[axis]
+    //     console.log(frameTarget, origin, target)
+    //     tweenAxis(frameTarget, origin, target, p)
+    // }
 
     snapshot() {
         const { visualElement } = this.props
@@ -102,4 +115,16 @@ export const AnimateLayout: MotionFeature = {
 
 function hasMoved(a: Axis, b: Axis) {
     return a.min !== b.min || a.max !== b.max
+}
+
+const defaultTransition = {
+    duration: 3,
+}
+
+function getAxisTransition(axis: "x" | "y", transition: Transition) {
+    if (!transition) {
+        return defaultTransition
+    } else {
+        return transition[axis] || transition["default"] || transition
+    }
 }

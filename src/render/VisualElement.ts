@@ -16,7 +16,7 @@ import { invariant } from "hey-listen"
  */
 export abstract class VisualElement<E = any> {
     // A reference to the parent VisualElement
-    protected parent?: VisualElement<E>
+    parent?: VisualElement<E>
 
     // The actual element
     protected element: E
@@ -32,6 +32,8 @@ export abstract class VisualElement<E = any> {
 
     // An optional user-provided React ref
     private externalRef?: Ref<E>
+
+    private treePath: VisualElement[]
 
     // A configuration for this VisualElement, each derived class can extend this.
     protected config: VisualElementConfig = {}
@@ -49,6 +51,7 @@ export abstract class VisualElement<E = any> {
         // the auto-animation stuff with VisualElement we might need to make this
         // relationship two-way
         this.parent = parent
+        this.treePath = parent ? [...parent.treePath, parent] : []
 
         // Calculate the depth of this node in the VisualElement graph
         this.depth = parent ? parent.depth + 1 : 0

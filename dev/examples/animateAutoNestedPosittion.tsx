@@ -11,32 +11,34 @@ export const App = () => {
     const childStyles = isOpen ? openChild : closedChild
     return (
         <motion.div
-            animate
+            layout
             style={isOpen ? openParent : closedParent}
             onClick={() => toggleIsOpen()}
             id="parent"
         >
-            <motion.div animate style={childStyles} id="child">
+            {/* {!isOpen && (
                 <motion.div
-                    animate
+                    layout
+                    style={{
+                        ...childStyles,
+                        height: "30%",
+                        backgroundColor: isOpen ? "red" : "yellow",
+                        width: isOpen ? "50%" : "100%",
+                    }}
+                    id="superkid"
+                />
+            )} */}
+            <motion.div layout style={childStyles} id="child">
+                <motion.div
+                    layout
                     style={{
                         ...childStyles,
                         height: "30%",
                         backgroundColor: isOpen ? "yellow" : "red",
                         width: isOpen ? "50%" : "100%",
                     }}
-                >
-                    <motion.div
-                        animate
-                        style={{
-                            ...childStyles,
-                            height: "30%",
-                            backgroundColor: isOpen ? "red" : "yellow",
-                            width: isOpen ? "50%" : "100%",
-                        }}
-                        id="superkid"
-                    />
-                </motion.div>
+                    id="yr"
+                ></motion.div>
             </motion.div>
         </motion.div>
     )

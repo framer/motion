@@ -11,16 +11,17 @@ import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
-import { calcBoxDelta } from "../../motion/features/auto/utils"
 import { BoxDelta } from "../../motion/features/auto/types"
 import { MotionValue, motionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import {
     updateAxisDelta,
-    MotionAxisDelta,
-    MotionBoxDelta,
-    undoTransform,
+    removeBoxDelta,
+    resetBox,
+    applyTreeDeltas,
+    updateBoxDelta,
 } from "./layout/utils"
+import { eachAxis } from "../../utils/each-axis"
 
 /**
  * A VisualElement for HTMLElements
@@ -124,7 +125,10 @@ export class HTMLVisualElement<
 
     private axisAnimation = {}
 
-    private delta: BoxDelta
+    delta: BoxDelta = {
+        x: { ...zeroDelta },
+        y: { ...zeroDelta },
+    }
 
     private isVisible = true
 
@@ -189,7 +193,11 @@ export class HTMLVisualElement<
      * Return the computed style after a render.
      */
     getComputedStyle() {
-        return window.getComputedStyle(this.getInstance())
+        return window.getComputedStyle(this.element)
+    }
+
+    resetTransform() {
+        this.element.style.transform = "none"
     }
 
     /**
@@ -197,15 +205,7 @@ export class HTMLVisualElement<
      */
     updateLayoutBox() {
         const bbox = this.getBoundingBox()
-
-        this.visualBox = { x: { ...bbox.x }, y: { ...bbox.y } }
         this.layoutBox = bbox
-
-        // Undo the current delta to the measured bounding box
-        // TODO: Fix everything else too
-        // TODO: Make this nice and accomodate for scale
-
-        undoTransform(bbox, this.delta)
 
         if (!this.targetLayoutBox || !this.isTargetBoxLocked) {
             this.targetLayoutBox = copyAxisBox(bbox)
@@ -213,7 +213,6 @@ export class HTMLVisualElement<
 
         this.updateTargetBox("x")
         this.updateTargetBox("y")
-        this.render()
     }
 
     // DO this but less crap
@@ -230,7 +229,8 @@ export class HTMLVisualElement<
         targetAxis.min = min
         targetAxis.max = max
 
-        this.updateTargetBox(axis)
+        this.scheduleRender()
+        //this.updateTargetBox(axis)
     }
 
     updateTargetBox(axis: "x" | "y") {
@@ -241,7 +241,7 @@ export class HTMLVisualElement<
         )
 
         const value = this.getValue(axis)
-        value?.set(this.delta[axis].translate)
+        value!.set(this.delta[axis].translate)
     }
 
     getTargetLayoutBox() {
@@ -251,10 +251,11 @@ export class HTMLVisualElement<
     enableLayoutAware() {
         this.isLayoutAware = true
 
-        this.delta = {
-            x: { ...zeroDelta },
-            y: { ...zeroDelta },
-        }
+        eachAxis(axis => {
+            if (!this.hasValue(axis)) {
+                this.addValue(axis, motionValue(0))
+            }
+        })
     }
 
     // TODO Move all this layout stuff to a WeakMap-bound class
@@ -282,20 +283,49 @@ export class HTMLVisualElement<
         }
     }
 
+    updateDelta() {
+        // TODO REplace this with batching
+        this.treePath.forEach(p => p.updateDelta())
+
+        resetBox(this.correctedLayoutBox, this.layoutBox)
+        applyTreeDeltas(
+            this.correctedLayoutBox,
+            this.treeScale,
+            this.treePath as any
+        )
+
+        updateBoxDelta(
+            this.delta,
+            this.correctedLayoutBox,
+            this.targetLayoutBox
+        )
+        if (this.element.id === "yr") {
+            console.log(this.correctedLayoutBox.x)
+        }
+    }
+
     /**
      * Build a style prop using the latest resolved MotionValues
      */
     build() {
         if (this.isLayoutAware && this.targetLayoutBox) {
+            this.updateDelta()
+
+            // console.log(this.element.id, getFrameData().timestamp)
+
+            // TODO move this into transform reconciler
+            // TODO Figure out if we want to share translate X and Y
             this.config.transformTemplate = (_, gen) => {
-                return `scaleX(${this.delta.x.scale}) scaleY(${this.delta.y.scale}) ${gen}`
+                return `${gen} translateX(${this.delta.x.translate /
+                    this.treeScale.x}px) translateY(${this.delta.y.translate /
+                    this.treeScale.y}px) scaleX(${this.delta.x.scale}) scaleY(${
+                    this.delta.y.scale
+                })`
             }
 
-            /**
-             * 1. Apply animation to target layout
-             * 2. Stop animation on target layout on mouse down
-             * 3.
-             */
+            /// TODO: Make these motion values always
+            this.latest.originX = this.delta.x.origin
+            this.latest.originY = this.delta.y.origin
         }
 
         // TODO: Add shadow bounding box resolution
@@ -333,19 +363,4 @@ const zeroDelta = {
     scale: 1,
     origin: 0,
     originPoint: 0,
-}
-
-function createMotionAxis(
-    translateMotionValue: MotionValue<number>
-): MotionAxisDelta {
-    const axis = {
-        translate: motionValue(0),
-        scale: motionValue(1),
-        origin: 0.5,
-        originPoint: 0,
-    }
-
-    axis.translate.onChange(v => translateMotionValue.set(v))
-
-    return axis
 }

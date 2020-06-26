@@ -30,6 +30,7 @@ import {
 import { VisualElement } from "../render/VisualElement"
 import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 import { HTMLVisualElement } from "../render/dom/HTMLVisualElement"
+import { eachAxis } from "../utils/each-axis"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -207,8 +208,8 @@ export class VisualElementDragControls {
             this.visualElement.updateLayoutBox()
             this.visualElement.lockTargetBox()
 
-            bothAxis(axis => {
-                const { min, max } = this.visualElement.visualBox[axis]
+            eachAxis(axis => {
+                const { min, max } = this.visualElement.targetLayoutBox[axis]
                 this.cursorProgress[axis] = progress(
                     min,
                     max,
@@ -351,7 +352,7 @@ export class VisualElementDragControls {
             y: point.y - center.y,
         }
 
-        bothAxis(axis => {
+        eachAxis(axis => {
             const axisPoint = this.point[axis]
 
             if (!axisPoint) return
@@ -424,7 +425,7 @@ export class VisualElementDragControls {
 
         // Get the `MotionValue` for both draggable axes, or create them if they don't already
         // exist on this component.
-        bothAxis(axis => {
+        eachAxis(axis => {
             if (!shouldDrag(axis, drag, this.currentDirection)) return
             const defaultValue = axis === "x" ? _dragValueX : _dragValueY
             this.setPoint(
@@ -450,7 +451,7 @@ export class VisualElementDragControls {
     }
 
     private applyConstraintsToPoint() {
-        return bothAxis(axis => {
+        return eachAxis(axis => {
             const axisPoint = this.point[axis]
             axisPoint &&
                 !axisPoint.isAnimating() &&
@@ -469,7 +470,7 @@ export class VisualElementDragControls {
             _dragTransitionControls,
         } = this.props
 
-        const momentumAnimations = bothAxis(axis => {
+        const momentumAnimations = eachAxis(axis => {
             if (!shouldDrag(axis, drag, this.currentDirection)) {
                 return
             }
@@ -522,7 +523,7 @@ export class VisualElementDragControls {
     }
 
     stopMotion() {
-        bothAxis(axis => {
+        eachAxis(axis => {
             const axisPoint = this.point[axis]
             axisPoint && axisPoint.stop()
         })
@@ -601,11 +602,6 @@ export class VisualElementDragControls {
             this.cancelDrag()
         }
     }
-}
-
-// Call a handler once for each axis
-function bothAxis<T>(handler: (axis: "x" | "y") => T): T[] {
-    return [handler("x"), handler("y")]
 }
 
 function convertPanToDrag(info: PanInfo, point: Partial<MotionPoint>) {
