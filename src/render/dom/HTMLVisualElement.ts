@@ -1,5 +1,5 @@
 import { VisualElement } from "../VisualElement"
-import { BoundingBox2D, AxisBox2D } from "../../types/geometry"
+import { BoundingBox2D, AxisBox2D, Point2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
@@ -121,7 +121,7 @@ export class HTMLVisualElement<
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    private treeScale = { x: 1, y: 1 }
+    private treeScale: Point2D = { x: 1, y: 1 }
 
     private axisAnimation = {}
 

@@ -12,13 +12,20 @@ export const App = () => {
 
     return (
         <motion.div
-            animate
+            layout
+            initial={false}
+            animate={{ borderRadius: isOn ? 0 : 50 }}
             style={isOn ? bigParent : smallParent}
             onClick={() => setIsOn(!isOn)}
             transition={{ duration: 2 }}
         >
             <motion.div
-                animate
+                layout
+                initial={false}
+                animate={{
+                    borderTopRightRadius: isOn ? 100 : 0,
+                    borderBottomRightRadius: isOn ? 100 : 0,
+                }}
                 style={isOn ? bigChild : smallChild}
                 transition={{ duration: 2 }}
             />
@@ -33,14 +40,14 @@ const bigParent = {
     ...parent,
     width: 500,
     height: 500,
-    borderRadius: 100,
+    //borderRadius: 100,
 }
 const smallParent = {
     ...parent,
     width: 200,
     height: 100,
-    borderRadius: 100,
-    borderTopRightRadius: 50,
+    //borderRadius: 100,
+    //borderTopRightRadius: 50,
 }
 
 const child = {
@@ -50,13 +57,13 @@ const bigChild = {
     ...child,
     width: 100,
     height: 100,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
+    //borderTopRightRadius: 0,
+    //borderBottomRightRadius: 0,
 }
 const smallChild = {
     ...child,
     width: 20,
     height: 20,
-    borderTopRightRadius: 20,
-    borderBottomRightRadius: 20,
+    //borderTopRightRadius: 20,
+    //borderBottomRightRadius: 20,
 }
