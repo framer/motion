@@ -27,6 +27,7 @@ export const App = () => {
                 drag
                 dragConstraints={ref}
                 dragElastic={0.2}
+                onMeasureDragConstraints={v => console.log(v)}
                 style={draggable}
             />
         </motion.div>
