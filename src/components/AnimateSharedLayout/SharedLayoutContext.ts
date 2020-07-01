@@ -1,10 +1,87 @@
 import { createContext } from "react"
-import { SharedLayoutTree, SharedBatchTree } from "./types"
-import { batchTransitions } from "../../motion/features/auto/utils"
+import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 
 /**
- * @internal
+ * Handlers for batching sync layout lifecycles. We batches these processes to cut
+ * down on layout thrashing
  */
+export interface SyncLayoutLifecycles {
+    measureLayout: (child: HTMLVisualElement) => void
+    layoutReady: (child: HTMLVisualElement) => void
+}
+
+/**
+ * The exposed API for children to add themselves to the batcher and to flush it.
+ */
+export interface SyncLayoutBatcher {
+    add: (child: HTMLVisualElement) => void
+    flush: (handler?: SyncLayoutLifecycles) => void
+}
+
+/**
+ * Extra API methods available to children if they're a descendant of AnimateSharedLayout
+ */
+export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
+    syncUpdate: (force?: boolean) => void
+    forceUpdate: () => void
+    register: (child: HTMLVisualElement) => () => void
+}
+
+/**
+ * Default handlers for batching VisualElements
+ */
+const defaultHandler: SyncLayoutLifecycles = {
+    measureLayout: child => child.measureLayout(),
+    layoutReady: child => child.layoutReady(),
+}
+
+/**
+ * Sort VisualElements by tree depth, so we process the highest elements first.
+ */
+const sortByDepth = (a: HTMLVisualElement, b: HTMLVisualElement) =>
+    a.depth - b.depth
+
+/**
+ * Create a batcher to process VisualElements
+ */
+export function createBatcher(): SyncLayoutBatcher {
+    const queue = new Set<HTMLVisualElement>()
+
+    const add = (child: HTMLVisualElement) => queue.add(child)
+
+    const flush = ({
+        measureLayout,
+        layoutReady,
+    }: SyncLayoutLifecycles = defaultHandler) => {
+        const order = Array.from(queue).sort(sortByDepth)
+
+        /**
+         * Write: Reset any transforms on children elements so we can read their actual layout
+         */
+        order.forEach(child => child.resetTransform())
+
+        /**
+         * Read: Measure the actual layout
+         */
+        order.forEach(measureLayout)
+
+        /**
+         * Write: Notify the VisualElements they're ready for further write operations.
+         */
+        order.forEach(layoutReady)
+
+        queue.clear()
+    }
+
+    return { add, flush }
+}
+
+export function isSharedLayout(
+    context: SyncLayoutBatcher | SharedLayoutSyncMethods
+): context is SharedLayoutSyncMethods {
+    return !!(context as any).forceUpdate
+}
+
 export const SharedLayoutContext = createContext<
-    SharedLayoutTree | SharedBatchTree
->(batchTransitions())
+    SyncLayoutBatcher | SharedLayoutSyncMethods
+>(createBatcher())

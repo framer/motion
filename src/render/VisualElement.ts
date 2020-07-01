@@ -18,6 +18,11 @@ export abstract class VisualElement<E = any> {
     // A reference to the parent VisualElement
     parent?: VisualElement<E>
 
+    // An iterable list of current children
+    children: Set<VisualElement<E>> = new Set()
+
+    private removeFromParent?: () => void
+
     // The actual element
     protected element: E
 
@@ -51,6 +56,7 @@ export abstract class VisualElement<E = any> {
         // the auto-animation stuff with VisualElement we might need to make this
         // relationship two-way
         this.parent = parent
+
         this.treePath = parent ? [...parent.treePath, parent] : []
 
         // Calculate the depth of this node in the VisualElement graph
@@ -59,6 +65,11 @@ export abstract class VisualElement<E = any> {
         // A reference to any externally-defined React ref. This might live better
         // outside the VisualElement and be handled in a hook.
         this.externalRef = ref
+    }
+
+    subscribe(child: VisualElement<E>) {
+        this.children.add(child)
+        return () => this.children.delete(child)
     }
 
     // Check whether this element has a MotionValue of the provided key
@@ -156,6 +167,16 @@ export abstract class VisualElement<E = any> {
 
     scheduleRender = () => sync.render(this.triggerRender, false, true)
 
+    scheduleChildRender = child => child.scheduleRender()
+
+    scheduleChildrenRender() {
+        this.children.forEach(this.scheduleChildRender)
+        // console.log(this.children)
+        // for (const child of this.children) {
+        //     child.scheduleRender()
+        // }
+    }
+
     // Subscribe to changes in a MotionValue
     private subscribeToValue(key: string, value: MotionValue) {
         const onChange = (latest: string | number) => {
@@ -180,6 +201,8 @@ export abstract class VisualElement<E = any> {
             "No ref found. Ensure components created with motion.custom forward refs using React.forwardRef"
         )
 
+        this.removeFromParent = this.parent?.subscribe(this)
+
         this.element = this.current = element
 
         // Subscribe to any pre-existing MotionValues
@@ -191,6 +214,7 @@ export abstract class VisualElement<E = any> {
         this.forEachValue((_, key) => this.removeValue(key))
         cancelSync.update(this.update)
         cancelSync.render(this.render)
+        this.removeFromParent && this.removeFromParent()
     }
 
     // This function gets passed to the rendered component's `ref` prop

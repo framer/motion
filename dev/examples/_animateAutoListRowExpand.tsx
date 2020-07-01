@@ -49,17 +49,18 @@ const Image = styled(motion.div)`
     border-radius: 20px;
 `
 
-function Item({ isOpen, onClick, i }: ItemProps) {
+function Item({ onClick, i }: ItemProps) {
+    const [isOpen, setIsOpen] = useState<false | number>(0)
+
     return (
         <Container
             layout
-            onClick={onClick}
-            transition={{ duration: 2 }}
+            onClick={() => setIsOpen(!isOpen)}
             isOpen={isOpen}
             id="container"
         >
-            <Image id="image" layout transition={{ duration: 2 }} />
-            <AnimatePresence>
+            <Image id="image" layout />
+            <AnimatePresence initial={false}>
                 {isOpen && (
                     <motion.div
                         layout
@@ -77,20 +78,21 @@ function Item({ isOpen, onClick, i }: ItemProps) {
     )
 }
 
-const items = [0] //, 1, 2]
-export const App = () => {
-    const [open, setIsOpen] = useState<false | number>(false)
-
+const Component = () => {
     return (
-        <List layout>
+        <List initial={{ borderRadius: 25 }} layout>
             {items.map(id => (
-                <Item
-                    key={id}
-                    isOpen={open === id}
-                    onClick={() => setIsOpen(open === id ? false : id)}
-                    i={id}
-                />
+                <Item key={id} i={id} />
             ))}
         </List>
+    )
+}
+
+const items = [0, 1, 2]
+export const App = () => {
+    return (
+        <AnimateSharedLayout>
+            <Component />
+        </AnimateSharedLayout>
     )
 }

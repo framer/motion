@@ -59,7 +59,6 @@ export {
     MotionPluginContext,
 } from "./motion/context/MotionPluginContext"
 export { MotionContext } from "./motion/context/MotionContext"
-export { SharedLayoutContext } from "./components/AnimateSharedLayout/SharedLayoutContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 

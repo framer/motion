@@ -17,20 +17,6 @@ export interface BoundingBox3D extends BoundingBox2D {
 }
 
 /**
- * TODO: Replace Axis with this
- * @public
- */
-export interface NewAxis {
-    point: number
-    length: number
-}
-
-export interface NewAxis2D {
-    x: NewAxis
-    y: NewAxis
-}
-
-/**
  * @public
  */
 export interface Axis {

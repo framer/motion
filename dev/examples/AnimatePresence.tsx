@@ -2,6 +2,10 @@ import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 
+/**
+ * An example of a single-child AnimatePresence animation
+ */
+
 const style = {
     width: 100,
     height: 100,

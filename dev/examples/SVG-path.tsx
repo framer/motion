@@ -2,6 +2,10 @@ import * as React from "react"
 import { useState } from "react"
 import { motion, useMotionValue, useTransform } from "@framer"
 
+/**
+ * An example of animating SVG motion.path using Motion's special pathLength property
+ */
+
 const tickVariants = {
     pressed: (isChecked: boolean) => ({ pathLength: isChecked ? 0.85 : 0.2 }),
     checked: { pathLength: 1 },

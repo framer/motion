@@ -84,7 +84,7 @@ const singleBorderRadius = (key: string): AutoValueHandler => ({
 
             current[key] = `${vx}px ${vy}px`
 
-            const targetX = vx / delta.x.scale / treeScale.x
+            const targetX = vx / (delta.x.scale / treeScale.x)
             const targetY = vy / delta.y.scale / treeScale.y
 
             // Perform the animation in pixels but if we don't need correction just set

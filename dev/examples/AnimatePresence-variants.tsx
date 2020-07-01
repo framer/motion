@@ -2,6 +2,10 @@ import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 
+/**
+ * An example of AnimatePresence with exit defined as a variant through a tree.
+ */
+
 const style = {
     width: 200,
     height: 200,

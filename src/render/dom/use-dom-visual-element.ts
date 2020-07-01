@@ -4,6 +4,7 @@ import { MotionProps } from "../../motion/types"
 import { SVGVisualElement } from "./SVGVisualElement"
 import { UseVisualElement } from "../types"
 import { isSVGComponent } from "./utils/is-svg-component"
+import { useIsPresent } from "../../components/AnimatePresence/use-presence"
 
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
@@ -28,6 +29,12 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
         enableHardwareAcceleration: !isStatic,
         ...props,
     })
+
+    visualElement.layoutId = props.layoutId
+
+    const isPresent = useIsPresent()
+    visualElement.isPresent =
+        props.isPresent !== undefined ? props.isPresent : isPresent
 
     return visualElement
 }

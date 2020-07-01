@@ -1,5 +1,5 @@
 import { VisualElement } from "../VisualElement"
-import { BoundingBox2D, AxisBox2D, Point2D } from "../../types/geometry"
+import { BoundingBox2D, Axis, AxisBox2D, Point2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
@@ -20,8 +20,13 @@ import {
     resetBox,
     applyTreeDeltas,
     updateBoxDelta,
+    scalePoint,
 } from "./layout/utils"
 import { eachAxis } from "../../utils/each-axis"
+import { Presence } from "../../components/AnimateSharedLayout/types"
+import { mix } from "@popmotion/popcorn"
+
+type LayoutCallback = (layoutBox: AxisBox2D, prevViewportBox: AxisBox2D) => void
 
 /**
  * A VisualElement for HTMLElements
@@ -47,6 +52,14 @@ export class HTMLVisualElement<
      * every frame. We use a mutable data structure to reduce GC during animations.
      */
     vars: ResolvedValues = {}
+
+    /**
+     *
+     * TODO Move all layout related stuff to a VisualElementLayout class linked via WeakMap
+     */
+    layoutId?: string
+    presence?: Presence
+    isPresent?: boolean
 
     /**
      * A mutable record of transforms we want to apply directly to the rendered Element
@@ -114,6 +127,10 @@ export class HTMLVisualElement<
      */
     private finalTargetBox = axisBox()
 
+    private isLayoutAware = false
+
+    prevViewportBox?: AxisBox2D
+
     /**
      * The overall scale of the local coordinate system as transformed by all parents
      * of this component. We use this for scale correction on our calculated layouts
@@ -125,12 +142,22 @@ export class HTMLVisualElement<
 
     private axisAnimation = {}
 
+    targetLayoutDelta: BoxDelta = {
+        x: { ...zeroDelta },
+        y: { ...zeroDelta },
+    }
+
     delta: BoxDelta = {
         x: { ...zeroDelta },
         y: { ...zeroDelta },
     }
 
     private isVisible = true
+
+    snapshot() {
+        this.prevViewportBox = this.getBoundingBox()
+        undoTransforms(this.prevViewportBox, this.values)
+    }
 
     /**
      * When a value is removed, we want to make sure it's removed from all rendered data structures.
@@ -203,8 +230,9 @@ export class HTMLVisualElement<
     /**
      *
      */
-    updateLayoutBox() {
+    measureLayout() {
         const bbox = this.getBoundingBox()
+
         this.layoutBox = bbox
 
         if (!this.targetLayoutBox || !this.isTargetBoxLocked) {
@@ -225,11 +253,14 @@ export class HTMLVisualElement<
     }
 
     setAxisTarget(axis: "x" | "y", min: number, max: number) {
+        // TODO Remove this
+        if (!this.targetLayoutBox) return
         const targetAxis = this.targetLayoutBox[axis]
         targetAxis.min = min
         targetAxis.max = max
 
         this.scheduleRender()
+        this.scheduleChildrenRender()
         //this.updateTargetBox(axis)
     }
 
@@ -241,7 +272,7 @@ export class HTMLVisualElement<
         )
 
         const value = this.getValue(axis)
-        value!.set(this.delta[axis].translate)
+        value && value!.set(this.delta[axis].translate)
     }
 
     getTargetLayoutBox() {
@@ -251,11 +282,7 @@ export class HTMLVisualElement<
     enableLayoutAware() {
         this.isLayoutAware = true
 
-        eachAxis(axis => {
-            if (!this.hasValue(axis)) {
-                this.addValue(axis, motionValue(0))
-            }
-        })
+        this.targetLayoutBox = copyAxisBox(this.layoutBox)
     }
 
     // TODO Move all this layout stuff to a WeakMap-bound class
@@ -294,14 +321,31 @@ export class HTMLVisualElement<
             this.treePath as any
         )
 
+        applyLocalTransforms(
+            this.finalTargetBox,
+            this.targetLayoutBox,
+            this.values
+        )
+
         updateBoxDelta(
-            this.delta,
+            this.targetLayoutDelta,
             this.correctedLayoutBox,
             this.targetLayoutBox
         )
-        if (this.element.id === "yr") {
-            console.log(this.correctedLayoutBox.x)
-        }
+        updateBoxDelta(this.delta, this.correctedLayoutBox, this.finalTargetBox)
+    }
+
+    private layoutReadyListeners: Set<LayoutCallback> = new Set()
+
+    layoutReady() {
+        this.layoutReadyListeners.forEach(listener => {
+            listener(this.layoutBox, this.prevViewportBox || this.layoutBox)
+        })
+    }
+
+    onLayoutReady(callback: LayoutCallback) {
+        this.layoutReadyListeners.add(callback)
+        return () => this.layoutReadyListeners.delete(callback)
     }
 
     /**
@@ -310,22 +354,6 @@ export class HTMLVisualElement<
     build() {
         if (this.isLayoutAware && this.targetLayoutBox) {
             this.updateDelta()
-
-            // console.log(this.element.id, getFrameData().timestamp)
-
-            // TODO move this into transform reconciler
-            // TODO Figure out if we want to share translate X and Y
-            this.config.transformTemplate = (_, gen) => {
-                return `${gen} translateX(${this.delta.x.translate /
-                    this.treeScale.x}px) translateY(${this.delta.y.translate /
-                    this.treeScale.y}px) scaleX(${this.delta.x.scale}) scaleY(${
-                    this.delta.y.scale
-                })`
-            }
-
-            /// TODO: Make these motion values always
-            this.latest.originX = this.delta.x.origin
-            this.latest.originY = this.delta.y.origin
         }
 
         // TODO: Add shadow bounding box resolution
@@ -336,7 +364,12 @@ export class HTMLVisualElement<
             this.transform,
             this.transformOrigin,
             this.transformKeys,
-            this.config
+            this.config,
+            this.isLayoutAware,
+            this.targetLayoutDelta,
+            this.delta,
+            this.treeScale,
+            this.targetLayoutBox
         )
     }
 
@@ -363,4 +396,105 @@ const zeroDelta = {
     scale: 1,
     origin: 0,
     originPoint: 0,
+}
+
+function undoScalePoint(
+    point: number,
+    scale: number,
+    originPoint: number
+): number {
+    const distanceFromOrigin = point - originPoint
+    const scaled = distanceFromOrigin / scale
+    return originPoint + scaled
+}
+
+function undoTransformOnAxis(
+    axis: Axis,
+    boxScale: number = 1,
+    scale: number = 1,
+    translate: number = 0,
+    origin: number = 0.5
+) {
+    axis.min -= translate
+    axis.max -= translate
+
+    const axisScaleOriginPoint = mix(axis.min, axis.max, origin)
+    axis.min = undoScalePoint(axis.min, scale, axisScaleOriginPoint)
+    axis.max = undoScalePoint(axis.max, scale, axisScaleOriginPoint)
+
+    // TODO This is probably the same as before
+    const boxScaleOriginPoint = mix(axis.min, axis.max, origin)
+    axis.min = undoScalePoint(axis.min, boxScale, boxScaleOriginPoint)
+    axis.max = undoScalePoint(axis.max, boxScale, boxScaleOriginPoint)
+}
+
+function undoTransforms(bbox: AxisBox2D, values: MotionValueMap) {
+    undoTransformOnAxis(
+        bbox.x,
+        values.get("scale")?.get(),
+        values.get("scaleX")?.get(),
+        values.get("x")?.get(),
+        values.get("originX")?.get()
+    )
+    undoTransformOnAxis(
+        bbox.y,
+        values.get("scale")?.get(),
+        values.get("scaleY")?.get(),
+        values.get("y")?.get(),
+        values.get("originY")?.get()
+    )
+}
+
+function applyScaleToPoint(
+    point: number,
+    originPoint: number,
+    scale: number
+): number {
+    const distanceFromOrigin = point - originPoint
+    const scaled = scale * distanceFromOrigin
+    return originPoint + scaled
+}
+
+function applyTransformToAxis(
+    finalAxis: Axis,
+    targetBbox: Axis,
+    boxScale: number = 1,
+    scale: number = 1,
+    translate: number = 0,
+    origin: number = 0.5
+) {
+    finalAxis.min = targetBbox.min
+    finalAxis.max = targetBbox.max
+
+    const originPoint = mix(finalAxis.min, finalAxis.max, origin)
+    finalAxis.min = applyScaleToPoint(finalAxis.min, originPoint, boxScale)
+    finalAxis.max = applyScaleToPoint(finalAxis.max, originPoint, boxScale)
+    finalAxis.min = applyScaleToPoint(finalAxis.min, originPoint, scale)
+    finalAxis.max = applyScaleToPoint(finalAxis.max, originPoint, scale)
+    finalAxis.min += translate
+    finalAxis.max += translate
+}
+
+// TODO: Consolidate with utils
+function applyLocalTransforms(
+    finalBbox: AxisBox2D,
+    targetBbox: AxisBox2D,
+    values: MotionValueMap
+) {
+    applyTransformToAxis(
+        finalBbox.x,
+        targetBbox.x,
+        values.get("scale")?.get(),
+        values.get("scaleX")?.get(),
+        values.get("x")?.get(),
+        values.get("originX")?.get()
+    )
+    applyTransformToAxis(
+        finalBbox.y,
+        targetBbox.y,
+        values.get("scale")?.get(),
+        values.get("scaleY")?.get(),
+        values.get("y")?.get(),
+        values.get("originY")?.get()
+    )
 }

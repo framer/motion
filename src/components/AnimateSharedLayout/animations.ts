@@ -2,10 +2,11 @@ import { Easing, circOut, linear } from "@popmotion/easing"
 import { progress, mix } from "@popmotion/popcorn"
 import { Snapshot, AutoAnimationConfig } from "../../motion/features/auto/types"
 import { Presence, VisibilityAction } from "./types"
-import { LayoutStack, StackChild } from "./stack"
+import { LayoutStack } from "./stack"
+import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 
 export function createSwitchAnimation(
-    child: StackChild,
+    child: HTMLVisualElement,
     _isRoot: boolean,
     stack?: LayoutStack
 ): AutoAnimationConfig {
@@ -33,7 +34,7 @@ export function createSwitchAnimation(
 }
 
 export function createCrossfadeAnimation(
-    child: StackChild,
+    child: HTMLVisualElement,
     isRoot: boolean,
     stack?: LayoutStack
 ): AutoAnimationConfig {

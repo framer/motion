@@ -9,13 +9,14 @@ import {
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
-import { SharedLayoutContext } from "../AnimateSharedLayout/SharedLayoutContext"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
 import {
-    SharedLayoutTree,
-    SharedBatchTree,
-} from "../../components/AnimateSharedLayout/types"
+    SharedLayoutContext,
+    SyncLayoutBatcher,
+    SharedLayoutSyncMethods,
+    isSharedLayout,
+} from "../AnimateSharedLayout/SharedLayoutContext"
 
 type ComponentKey = string | number
 
@@ -132,8 +133,8 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
     let forceRender = useForceUpdate()
     const layoutContext = useContext(SharedLayoutContext)
 
-    if (isControlledSharedLayoutContext(layoutContext)) {
-        forceRender = layoutContext.forceRender
+    if (isSharedLayout(layoutContext)) {
+        forceRender = layoutContext.forceUpdate
     }
 
     const isInitialRender = useRef(true)
@@ -212,6 +213,7 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
         const insertionIndex = presentKeys.indexOf(key)
 
         const onExit = () => {
+            allChildren.delete(key)
             exiting.delete(key)
 
             // Remove this child from the present children
@@ -274,10 +276,4 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
                 : childrenToRender.map(child => cloneElement(child))}
         </>
     )
-}
-
-function isControlledSharedLayoutContext(
-    context: SharedLayoutTree | SharedBatchTree
-): context is SharedLayoutTree {
-    return !!(context as any).forceRender
 }

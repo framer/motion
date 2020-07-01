@@ -1,12 +1,16 @@
 import * as React from "react"
-import { useState } from "react"
 import { motion, useAnimation } from "@framer"
+
+/**
+ * An example of firing an animation onMount using the useAnimation hook
+ */
 
 const style = {
     width: 100,
     height: 100,
-    background: "red",
+    background: "white",
     opacity: 1,
+    borderRadius: 20,
 }
 
 export const App = () => {

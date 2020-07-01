@@ -1,7 +1,11 @@
 import * as React from "react"
-import { useState, useEffect, useCallback } from "react"
-import { motion, useMotionValue, useTransform, useAnimation } from "@framer"
+import { useEffect, useCallback } from "react"
+import { motion, useAnimation } from "@framer"
 
+/**
+ * This is an example of SVGs working without explicitly setting initial
+ * values.
+ */
 // https://github.com/framer/motion/issues/216
 const animation = {
     strokeDasharray: ["1px, 200px", "100px, 200px", "100px, 200px"],
@@ -14,19 +18,13 @@ const animation = {
 export const App = () => {
     const controls = useAnimation()
 
-    const handleAnimationComplete = useCallback(
-        () => {
-            controls.start(animation)
-        },
-        [controls]
-    )
+    const handleAnimationComplete = useCallback(() => {
+        controls.start(animation)
+    }, [controls])
 
-    useEffect(
-        () => {
-            controls.start(animation)
-        },
-        [controls]
-    )
+    useEffect(() => {
+        controls.start(animation)
+    }, [controls])
 
     return (
         <motion.svg

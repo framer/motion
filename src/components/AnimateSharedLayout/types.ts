@@ -1,5 +1,5 @@
-import { Auto } from "../../motion/features/auto/Auto"
 import { Transition } from "../../types"
+import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 
 export enum Presence {
     Entering,
@@ -27,18 +27,18 @@ export enum StackPosition {
  */
 export interface SharedLayoutTree {
     forceRender: () => void
-    register: (child: Auto) => () => void
-    move: (child: Auto) => void
+    register: (child: HTMLVisualElement) => () => void
+    move: (child: HTMLVisualElement) => void
 }
 
 export interface TransitionHandler {
-    snapshotTarget: (child: Auto) => void
-    startAnimation: (child: Auto) => void
+    snapshotTarget: (child: HTMLVisualElement) => void
+    startAnimation: (child: HTMLVisualElement) => void
 }
 
 type FlushMagicChildren = (handler?: TransitionHandler) => void
 export interface SharedBatchTree {
-    add: (child: Auto) => void
+    add: (child: HTMLVisualElement) => void
     flush: FlushMagicChildren
 }
 

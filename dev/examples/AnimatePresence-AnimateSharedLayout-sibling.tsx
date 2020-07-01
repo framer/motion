@@ -2,11 +2,18 @@ import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 
+/**
+ * An example of an AnimatePresence child animating in and out, and AnimateSharedLayout
+ * ensuring that layout update is shared with the sibling `motion.div layout`
+ */
+
 const style = {
     width: 100,
     height: 100,
-    background: "red",
+    background: "white",
     opacity: 1,
+    borderRadius: 20,
+    margin: 20,
 }
 
 function ExitComponent() {
@@ -19,7 +26,6 @@ function ExitComponent() {
                 transition={{ duration: 1 }}
                 style={style}
             />
-            <motion.div layoutId="a" />
         </>
     )
 }
@@ -34,17 +40,19 @@ export const Component = () => {
     })
 
     return (
-        <AnimateSharedLayout>
+        <>
             <AnimatePresence initial={false} onRest={() => console.log("rest")}>
                 {isVisible && <ExitComponent />}
             </AnimatePresence>
-        </AnimateSharedLayout>
+            <motion.div layout style={style} />
+        </>
     )
 }
 
-// Move <AnimateSharedLayout> between Component and App to see that the child is removed
-// whether or not AnimateSharedLayout rerenders
-
 export const App = () => {
-    return <Component />
+    return (
+        <AnimateSharedLayout>
+            <Component />
+        </AnimateSharedLayout>
+    )
 }

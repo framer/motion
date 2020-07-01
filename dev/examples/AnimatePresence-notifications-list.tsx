@@ -2,6 +2,11 @@ import * as React from "react"
 import { useState } from "react"
 import { motion, AnimatePresence } from "@framer"
 
+/**
+ * An example of pairing AnimatePresence with layout animations to create a notifications list
+ * that correctly animate into their new positions as others are added/removed.
+ */
+
 export const App = () => {
     const [notifications, setNotifications] = useState([0])
 
@@ -12,7 +17,7 @@ export const App = () => {
                     {notifications.map(id => (
                         <motion.li
                             key={id}
-                            positionTransition
+                            layout
                             drag="x"
                             dragConstraints={{ left: 0, right: 0 }}
                             initial={{ opacity: 0, y: 50, scale: 0.3 }}
@@ -40,7 +45,10 @@ export const App = () => {
 
 const remove = (arr: number[], item: number) => {
     const newArr = [...arr]
-    newArr.splice(newArr.findIndex(i => i === item), 1)
+    newArr.splice(
+        newArr.findIndex(i => i === item),
+        1
+    )
     return newArr
 }
 
@@ -73,6 +81,18 @@ body {
     height: 100vh;
     flex-direction: column;
   }
+
+  button {
+      position: fixed;
+      bottom: 10px;
+      left: 10px;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      border: none;
+      background: white;
+      font-size: 48px;
+  }
   
   ul,
   li {
@@ -96,5 +116,6 @@ body {
     background: white;
     margin: 10px;
     flex: 0 0 100px;
+    border-radius: 20px;
   }
   `

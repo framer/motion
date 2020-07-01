@@ -68,35 +68,7 @@ export function calcAxisCenter({ min, max }: Axis) {
  * Create an empty axis box of zero size
  */
 export function axisBox(): AxisBox2D {
-    return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
-}
-
-/**
- * TODO Rename all the following and
- */
-export function newAxis(): NewAxis {
-    return { point: 0, length: 0 }
-}
-
-export function newAxisBox(): NewAxis2D {
-    return {
-        x: newAxis(),
-        y: newAxis(),
-    }
-}
-
-function convertAxis(axis: Axis): NewAxis {
-    return {
-        point: axis.min,
-        length: axis.max - axis.min,
-    }
-}
-
-export function convertOldAxisBox(box: AxisBox2D): NewAxis2D {
-    return {
-        x: convertAxis(box.x),
-        y: convertAxis(box.y),
-    }
+    return { x: { min: 0, max: 1 }, y: { min: 0, max: 1 } }
 }
 
 export function copyAxisBox(box: NewAxis2D): NewAxis2D {
@@ -104,8 +76,4 @@ export function copyAxisBox(box: NewAxis2D): NewAxis2D {
         x: { ...box.x },
         y: { ...box.y },
     }
-}
-
-export function axisMax(axis: NewAxis) {
-    return axis.point + axis.length
 }

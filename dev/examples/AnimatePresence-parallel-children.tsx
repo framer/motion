@@ -2,6 +2,11 @@ import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 
+/**
+ * An example of three top-level AnimatePresence children controlling the exit of a single
+ * component (in this case, the Fragment)
+ */
+
 const style = {
     width: 100,
     height: 100,

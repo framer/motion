@@ -9,8 +9,6 @@ import { tweenAxis } from "./utils"
 import { Transition } from "../../../types"
 
 class Component extends React.Component<FeatureProps> {
-    private prevLayoutBox: AxisBox2D
-
     private frameTarget = {
         x: { min: 0, max: 0 },
         y: { min: 0, max: 0 },
@@ -26,33 +24,34 @@ class Component extends React.Component<FeatureProps> {
         y: undefined,
     }
 
-    getSnapshotBeforeUpdate() {
-        this.snapshot()
-        return null
-    }
+    private unsubLayoutReady: () => {}
 
     componentDidMount() {
         const { visualElement } = this.props
         visualElement.enableLayoutAware()
+        this.unsubLayoutReady = visualElement.onLayoutReady(
+            (layout, origin) => {
+                console.log(layout.y, origin.y)
+                if (!visualElement.isTargetBoxLocked) {
+                    eachAxis(axis =>
+                        this.animateAxis(axis, layout[axis], origin[axis])
+                    )
+                }
+            }
+        )
     }
 
-    componentDidUpdate() {
+    componentWillUnmount() {
+        this.unsubLayoutReady()
+        eachAxis(axis => {
+            this.stopAxisAnimation[axis] && this.stopAxisAnimation[axis]()
+        })
+    }
+
+    animateAxis(axis: "x" | "y", layout: Axis, origin: Axis) {
+        if (!hasMoved(origin, layout)) return
         const { visualElement } = this.props
-        if (visualElement.isTargetBoxLocked) return
-
-        eachAxis(axis => this.animateAxis(axis))
-    }
-
-    componentWillMount() {
-        eachAxis(axis => this.stopAxisAnimation[axis]())
-    }
-
-    animateAxis(axis: "x" | "y") {
-        const { visualElement } = this.props
-        const prevAxis = this.prevLayoutBox[axis]
-        const newAxis = visualElement.layoutBox[axis]
         const frameTarget = this.frameTarget[axis]
-        if (!hasMoved(prevAxis, newAxis)) return
 
         const progress = this.progress[axis]
         const stopAnimation = this.stopAxisAnimation[axis]
@@ -64,11 +63,12 @@ class Component extends React.Component<FeatureProps> {
         progress.set(progressOrigin) // Set twice to hard-reset velocity
 
         const frame = () => {
-            tweenAxis(frameTarget, prevAxis, newAxis, progress.get() / 1000)
+            tweenAxis(frameTarget, origin, layout, progress.get() / 1000)
             visualElement.setAxisTarget(axis, frameTarget.min, frameTarget.max)
         }
 
         frame()
+        visualElement.render()
 
         stopAnimation && stopAnimation()
 
@@ -89,19 +89,6 @@ class Component extends React.Component<FeatureProps> {
         }
     }
 
-    // updateAxisTarget(axis: "x" | "y", p: number, origin: Axis, target: Axis) {
-    //     const frameTarget = this.frameTarget[axis]
-    //     console.log(frameTarget, origin, target)
-    //     tweenAxis(frameTarget, origin, target, p)
-    // }
-
-    snapshot() {
-        const { visualElement } = this.props
-        this.prevLayoutBox = visualElement.getBoundingBox()
-        // TODO: Perhaps undo scale transform?
-        return this.prevLayoutBox
-    }
-
     render() {
         return null
     }
@@ -109,7 +96,7 @@ class Component extends React.Component<FeatureProps> {
 
 export const AnimateLayout: MotionFeature = {
     key: "animate-layout",
-    shouldRender: (props: MotionProps) => !!props.layout,
+    shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
     Component,
 }
 
@@ -118,7 +105,7 @@ function hasMoved(a: Axis, b: Axis) {
 }
 
 const defaultTransition = {
-    duration: 3,
+    //duration: 3,
 }
 
 function getAxisTransition(axis: "x" | "y", transition: Transition) {

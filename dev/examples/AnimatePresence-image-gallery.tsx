@@ -3,6 +3,10 @@ import * as React from "react"
 import { useState } from "react"
 import { wrap } from "@popmotion/popcorn"
 
+/**
+ * An example of a single-image, single-child image gallery using AnimatePresence
+ */
+
 const variants = {
     enter: (delta: number) => ({
         x: delta > 0 ? 1000 : -1000,
