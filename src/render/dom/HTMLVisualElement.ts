@@ -1,32 +1,39 @@
 import { VisualElement } from "../VisualElement"
-import { BoundingBox2D, Axis, AxisBox2D, Point2D } from "../../types/geometry"
+import {
+    BoundingBox2D,
+    Axis,
+    AxisBox2D,
+    Point2D,
+    BoxDelta,
+} from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
     axisBox,
-    copyAxisBox,
+    delta,
 } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
-import { BoxDelta } from "../../motion/features/auto/types"
-import { MotionValue, motionValue } from "../../value"
-import { startAnimation } from "../../animation/utils/transitions"
-import {
-    updateAxisDelta,
-    removeBoxDelta,
-    resetBox,
-    applyTreeDeltas,
-    updateBoxDelta,
-    scalePoint,
-} from "./layout/utils"
-import { eachAxis } from "../../utils/each-axis"
 import { Presence } from "../../components/AnimateSharedLayout/types"
 import { mix } from "@popmotion/popcorn"
+import { HTMLLayout } from "./layout/HTMLLayout"
+import {
+    resetBox,
+    applyTreeDeltas,
+    applyBoxTransforms,
+    removeBoxTransforms,
+} from "./layout/delta-apply"
+import { updateBoxDelta } from "./layout/delta-calc"
+import { Transition } from "../../types"
+import { eachAxis } from "../../utils/each-axis"
+import { motionValue } from "../../value"
+import { startAnimation } from "../../animation/utils/transitions"
+import { getBoundingBox } from "./layout/measure"
 
-type LayoutCallback = (layoutBox: AxisBox2D, prevViewportBox: AxisBox2D) => void
+export type LayoutUpdateHandler = (layout: AxisBox2D, prev: AxisBox2D) => void
 
 /**
  * A VisualElement for HTMLElements
@@ -34,6 +41,14 @@ type LayoutCallback = (layoutBox: AxisBox2D, prevViewportBox: AxisBox2D) => void
 export class HTMLVisualElement<
     E extends HTMLElement | SVGElement = HTMLElement
 > extends VisualElement<E> {
+    /**
+     *
+     */
+    protected defaultConfig: DOMVisualElementConfig = {
+        enableHardwareAcceleration: true,
+        allowTransformNone: true,
+    }
+
     /**
      * A mutable record of styles we want to apply directly to the rendered Element
      * every frame. We use a mutable data structure to reduce GC during animations.
@@ -53,11 +68,7 @@ export class HTMLVisualElement<
      */
     vars: ResolvedValues = {}
 
-    /**
-     *
-     * TODO Move all layout related stuff to a VisualElementLayout class linked via WeakMap
-     */
-    layoutId?: string
+    // TODO
     presence?: Presence
     isPresent?: boolean
 
@@ -79,85 +90,7 @@ export class HTMLVisualElement<
      */
     protected transformKeys: string[] = []
 
-    protected defaultConfig: DOMVisualElementConfig = {
-        enableHardwareAcceleration: true,
-        allowTransformNone: true,
-    }
-
     protected config = this.defaultConfig
-
-    /**
-     * The measured bounding box as it exists on the page with no transforms applied.
-     *
-     * If `layout` is `true`, or `layoutId` is defined, to calculate the visual output
-     * of a component in any given frame, we:
-     *
-     *   1. layoutBox -> correctedLayoutBox
-     *      Apply the delta between the tree transform when the layoutBox was measured and
-     *      the tree transform in this frame to the layoutBox
-     *   2. targetLayoutBox -> finalTargetBox
-     *      Apply the VisualElement's `transform` properties to the targetLayoutBox
-     *   3. Calculate the delta between correctedLayoutBox and finalTargetBox and apply
-     *      it as a transform style.
-     */
-    private layoutBox = axisBox()
-
-    /**
-     * The `layoutBox` layout with transforms applied from up the
-     * tree. We use this as the final bounding box from which we calculate a transform
-     * delta to our desired visual position on any given frame.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    private correctedLayoutBox = axisBox()
-
-    /**
-     * The visual target we want to project our component into on a given frame
-     * before applying transforms defined in `animate` or `style`.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    private targetLayoutBox: AxisBox2D
-
-    /**
-     * The visual target we want to project our component into on a given frame
-     * before applying transforms defined in `animate` or `style`.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    private finalTargetBox = axisBox()
-
-    private isLayoutAware = false
-
-    prevViewportBox?: AxisBox2D
-
-    /**
-     * The overall scale of the local coordinate system as transformed by all parents
-     * of this component. We use this for scale correction on our calculated layouts
-     * and scale-affected values like `boxShadow`.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    private treeScale: Point2D = { x: 1, y: 1 }
-
-    private axisAnimation = {}
-
-    targetLayoutDelta: BoxDelta = {
-        x: { ...zeroDelta },
-        y: { ...zeroDelta },
-    }
-
-    delta: BoxDelta = {
-        x: { ...zeroDelta },
-        y: { ...zeroDelta },
-    }
-
-    private isVisible = true
-
-    snapshot() {
-        this.prevViewportBox = this.getBoundingBox()
-        undoTransforms(this.prevViewportBox, this.values)
-    }
 
     /**
      * When a value is removed, we want to make sure it's removed from all rendered data structures.
@@ -184,18 +117,6 @@ export class HTMLVisualElement<
     }
 
     /**
-     * Measure and return the Element's bounding box. We convert it to a AxisBox2D
-     * structure to make it easier to work on each individual axis generically.
-     */
-    getBoundingBox(): AxisBox2D {
-        const { transformPagePoint } = this.config
-
-        let box = this.element.getBoundingClientRect() as BoundingBox2D
-        box = transformBoundingBox(box, transformPagePoint)
-        return convertBoundingBoxToAxisBox(box)
-    }
-
-    /**
      * Read a value directly from the HTMLElement style.
      */
     read(key: string): number | string | null {
@@ -217,146 +138,302 @@ export class HTMLVisualElement<
     }
 
     /**
+     * ========================================
+     * Layout
+     * ========================================
+     */
+    private isLayoutReprojectionEnabled = false
+
+    enableLayoutReprojection() {
+        this.isLayoutReprojectionEnabled = true
+    }
+
+    /**
+     * A set of layout update event handlers. These are only called once all layouts have been read,
+     * making it safe to perform DOM write operations.
+     */
+    private layoutUpdateListeners: Set<LayoutUpdateHandler> = new Set()
+
+    /**
+     * Optional id. If set, and this is the child of an AnimateSharedLayout component,
+     * the targetBox can be transerred to a new component with the same ID.
+     */
+    layoutId?: string
+
+    /**
+     * The measured bounding box as it exists on the page with no transforms applied.
+     *
+     * To calculate the visual output of a component in any given frame, we:
+     *
+     *   1. box -> boxCorrected
+     *      Apply the delta between the tree transform when the box was measured and
+     *      the tree transform in this frame to the box
+     *   2. targetBox -> targetBoxFinal
+     *      Apply the VisualElement's `transform` properties to the targetBox
+     *   3. Calculate the delta between boxCorrected and targetBoxFinal and apply
+     *      it as a transform style.
+     */
+    box = axisBox()
+
+    /**
+     * The `box` layout with transforms applied from up the
+     * tree. We use this as the final bounding box from which we calculate a transform
+     * delta to our desired visual position on any given frame.
+     *
+     * This is considered mutable to avoid object creation on each frame.
+     */
+    private boxCorrected = axisBox()
+
+    /**
+     * The visual target we want to project our component into on a given frame
+     * before applying transforms defined in `animate` or `style`.
+     *
+     * This is considered mutable to avoid object creation on each frame.
+     */
+    targetBox = axisBox()
+
+    /**
+     * The visual target we want to project our component into on a given frame
+     * before applying transforms defined in `animate` or `style`.
+     *
+     * This is considered mutable to avoid object creation on each frame.
+     */
+    private targetBoxFinal = axisBox()
+
+    /**
+     * Can be used to store a snapshot of the measured viewport bounding box before
+     * a re-render.
+     */
+    private prevViewportBox?: AxisBox2D
+
+    /**
+     * The overall scale of the local coordinate system as transformed by all parents
+     * of this component. We use this for scale correction on our calculated layouts
+     * and scale-affected values like `boxShadow`.
+     *
+     * This is considered mutable to avoid object creation on each frame.
+     */
+    treeScale: Point2D = { x: 1, y: 1 }
+
+    /**
+     * The delta between the boxCorrected and the desired
+     * targetBox (before user-set transforms are applied). The calculated output will be
+     * handed to the renderer and used as part of the style correction calculations, for
+     * instance calculating how to display the desired border-radius correctly.
+     *
+     * This is considered mutable to avoid object creation on each frame.
+     */
+    delta: BoxDelta = delta()
+
+    /**
+     * The delta between the boxCorrected and the desired targetBoxFinal. The calculated
+     * output will be handed to the renderer and used to project the boxCorrected into
+     * the targetBoxFinal.
+     *
+     * This is considered mutable to avoid object creation on each frame.
+     */
+    deltaFinal: BoxDelta = delta()
+
+    /**
+     *
+     */
+    stopLayoutAxisAnimation = {
+        x: () => {},
+        y: () => {},
+    }
+
+    /**
+     * Register an event listener to fire when the layout is updated. We might want to expose support
+     * for this via a `motion` prop.
+     */
+    onLayoutUpdate(callback: LayoutUpdateHandler) {
+        this.layoutUpdateListeners.add(callback)
+        return () => this.layoutUpdateListeners.delete(callback)
+    }
+
+    /**
+     * To be called when all layouts are successfully updated. In turn we can notify layoutUpdate
+     * subscribers.
+     */
+    layoutReady() {
+        this.layoutUpdateListeners.forEach(listener => {
+            listener(this.box, this.prevViewportBox || this.box)
+        })
+    }
+
+    /**
+     * Measure and return the Element's bounding box. We convert it to a AxisBox2D
+     * structure to make it easier to work on each individual axis generically.
+     */
+    getBoundingBox(): AxisBox2D {
+        const { transformPagePoint } = this.config
+        return getBoundingBox(this.element, transformPagePoint)
+    }
+
+    getBoundingBoxWithoutTransforms() {
+        const bbox = this.getBoundingBox()
+        removeBoxTransforms(bbox, this.latest)
+        return bbox
+    }
+
+    /**
      * Return the computed style after a render.
      */
     getComputedStyle() {
         return window.getComputedStyle(this.element)
     }
 
+    /**
+     *
+     */
+    snapshotBoundingBox() {
+        this.prevViewportBox = this.getBoundingBoxWithoutTransforms()
+    }
+
+    measureLayout() {
+        this.box = this.getBoundingBox()
+    }
+
+    /**
+     * Ensure the targetBox reflects the latest visual box on screen
+     */
+    refreshTargetBox() {
+        this.targetBox = this.getBoundingBoxWithoutTransforms()
+    }
+
+    /**
+     * Reset the transform on the current Element
+     */
     resetTransform() {
         this.element.style.transform = "none"
+    }
+
+    targetBoxLocked: boolean
+
+    lockTargetBox() {
+        this.targetBoxLocked = true
+    }
+
+    unlockTargetBox() {
+        this.targetBoxLocked = false
+    }
+
+    /**
+     * Set new min/max boundaries to project an axis into
+     */
+    setAxisTarget(axis: "x" | "y", min: number, max: number) {
+        const targetAxis = this.targetBox[axis]
+        targetAxis.min = min
+        targetAxis.max = max
+
+        /**
+         * When we change the target for either axis, we want to make sure that
+         * this element and any immediate children will render on the next frame.
+         */
+        this.scheduleRender()
+        this.scheduleChildrenRender()
     }
 
     /**
      *
      */
-    measureLayout() {
-        const bbox = this.getBoundingBox()
-
-        this.layoutBox = bbox
-
-        if (!this.targetLayoutBox || !this.isTargetBoxLocked) {
-            this.targetLayoutBox = copyAxisBox(bbox)
-        }
-
-        this.updateTargetBox("x")
-        this.updateTargetBox("y")
+    private axisProgress = {
+        x: motionValue(0),
+        y: motionValue(0),
     }
 
-    // DO this but less crap
-    lockTargetBox() {
-        this.isTargetBoxLocked = true
+    /**
+     *
+     */
+    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition) {
+        const progress = this.axisProgress[axis]
+
+        const { min, max } = this.targetBox[axis]
+        const length = max - min
+
+        progress.set(min)
+        progress.set(min) // Set twice to hard-reset velocity
+        progress.clearListeners()
+        progress.onChange(v => this.setAxisTarget(axis, v, v + length))
+
+        return startAnimation(axis, progress, 0, transition)
     }
 
-    unlockTargetBox() {
-        this.isTargetBoxLocked = false
+    stopLayoutAnimation() {
+        eachAxis(axis => this.axisProgress[axis].stop())
     }
 
-    setAxisTarget(axis: "x" | "y", min: number, max: number) {
-        // TODO Remove this
-        if (!this.targetLayoutBox) return
-        const targetAxis = this.targetLayoutBox[axis]
-        targetAxis.min = min
-        targetAxis.max = max
+    /**
+     * Update the layout deltas to reflect the relative positions of the layout
+     * and the desired target box
+     */
+    updateLayoutDeltas() {
+        /**
+         * Ensure that all the parent deltas are up-to-date before calculating this delta.
+         *
+         * TODO: This approach is exceptionally wasteful as every child will update
+         * the deltas of its parent even if it's already updated for this frame.
+         * We can optimise this by replacing this to a call directly to the root VisualElement
+         * which then runs iteration from the top-down, but only once per framestamp.
+         */
+        this.treePath.forEach((p: HTMLVisualElement) => p.updateLayoutDeltas())
 
-        this.scheduleRender()
-        this.scheduleChildrenRender()
-        //this.updateTargetBox(axis)
+        /**
+         * Early return if layout reprojection isn't enabled
+         */
+        if (!this.isLayoutReprojectionEnabled) return
+
+        /**
+         * Reset the corrected box with the latest values from box, as we're then going
+         * to perform mutative operations on it.
+         */
+        resetBox(this.boxCorrected, this.box)
+
+        /**
+         * Apply all the parent deltas to this box to produce the corrected box. This
+         * is the layout box, as it will appear on screen as a result of the transforms of its parents.
+         */
+        applyTreeDeltas(this.boxCorrected, this.treeScale, this.treePath as any)
+
+        /**
+         * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
+         * This is the final box that we will then project into by calculating a transform delta and
+         * applying it to the corrected box.
+         */
+        applyBoxTransforms(this.targetBoxFinal, this.targetBox, this.latest)
+
+        /**
+         * Update the delta between the corrected box and the target box before user-set transforms were applied.
+         * This will allow us to calculate the corrected borderRadius and boxShadow to compensate
+         * for our layout reprojection, but still allow them to be scaled correctly by the user.
+         * It might be that to simplify this we may want to accept that user-set scale is also corrected
+         * and we wouldn't have to keep and calc both deltas, OR we could support a user setting
+         * to allow people to choose whether these styles are corrected based on just the
+         * layout reprojection or the final bounding box.
+         */
+        updateBoxDelta(this.delta, this.boxCorrected, this.targetBox)
+
+        /**
+         * Update the delta between the corrected box and the final target box, after
+         * user-set transforms are applied to it. This will be used by the renderer to
+         * create a transform style that will reproject the element from its actual layout
+         * into the desired bounding box.
+         */
+        updateBoxDelta(this.deltaFinal, this.boxCorrected, this.targetBoxFinal)
     }
 
-    updateTargetBox(axis: "x" | "y") {
-        updateAxisDelta(
-            this.delta[axis],
-            this.layoutBox[axis],
-            this.targetLayoutBox[axis]
-        )
-
-        const value = this.getValue(axis)
-        value && value!.set(this.delta[axis].translate)
-    }
-
-    getTargetLayoutBox() {
-        return this.targetLayoutBox
-    }
-
-    enableLayoutAware() {
-        this.isLayoutAware = true
-
-        this.targetLayoutBox = copyAxisBox(this.layoutBox)
-    }
-
-    // TODO Move all this layout stuff to a WeakMap-bound class
-    startAxisTranslateAnimation(axis: "x" | "y", transition: Transition) {
-        this.stopAxisAnimation(axis)
-
-        const axisData = this.targetLayoutBox[axis]
-        const min = motionValue(axisData.min)
-        const length = axisData.max - axisData.min
-
-        startAnimation(axis, min, 0, transition)
-
-        min.onChange(v => {
-            axisData.min = v
-            axisData.max = v + length
-            this.scheduleRender()
-        })
-
-        this.axisAnimation[axis] = min
-    }
-
-    stopAxisAnimation(axis: "x" | "y") {
-        if (this.axisAnimation[axis]) {
-            this.axisAnimation[axis].stop()
-        }
-    }
-
-    updateDelta() {
-        // TODO REplace this with batching
-        this.treePath.forEach(p => p.updateDelta())
-
-        resetBox(this.correctedLayoutBox, this.layoutBox)
-        applyTreeDeltas(
-            this.correctedLayoutBox,
-            this.treeScale,
-            this.treePath as any
-        )
-
-        applyLocalTransforms(
-            this.finalTargetBox,
-            this.targetLayoutBox,
-            this.values
-        )
-
-        updateBoxDelta(
-            this.targetLayoutDelta,
-            this.correctedLayoutBox,
-            this.targetLayoutBox
-        )
-        updateBoxDelta(this.delta, this.correctedLayoutBox, this.finalTargetBox)
-    }
-
-    private layoutReadyListeners: Set<LayoutCallback> = new Set()
-
-    layoutReady() {
-        this.layoutReadyListeners.forEach(listener => {
-            listener(this.layoutBox, this.prevViewportBox || this.layoutBox)
-        })
-    }
-
-    onLayoutReady(callback: LayoutCallback) {
-        this.layoutReadyListeners.add(callback)
-        return () => this.layoutReadyListeners.delete(callback)
-    }
+    /**
+     * ========================================
+     * Build & render
+     * ========================================
+     */
 
     /**
      * Build a style prop using the latest resolved MotionValues
      */
     build() {
-        if (this.isLayoutAware && this.targetLayoutBox) {
-            this.updateDelta()
-        }
+        this.isLayoutReprojectionEnabled && this.updateLayoutDeltas()
 
-        // TODO: Add shadow bounding box resolution
         buildHTMLStyles(
             this.latest,
             this.style,
@@ -365,11 +442,11 @@ export class HTMLVisualElement<
             this.transformOrigin,
             this.transformKeys,
             this.config,
-            this.isLayoutAware,
-            this.targetLayoutDelta,
+            this.isLayoutReprojectionEnabled,
             this.delta,
+            this.deltaFinal,
             this.treeScale,
-            this.targetLayoutBox
+            this.targetBoxFinal
         )
     }
 
@@ -389,112 +466,4 @@ export class HTMLVisualElement<
             this.element.style.setProperty(key, this.vars[key] as string)
         }
     }
-}
-
-const zeroDelta = {
-    translate: 0,
-    scale: 1,
-    origin: 0,
-    originPoint: 0,
-}
-
-function undoScalePoint(
-    point: number,
-    scale: number,
-    originPoint: number
-): number {
-    const distanceFromOrigin = point - originPoint
-    const scaled = distanceFromOrigin / scale
-    return originPoint + scaled
-}
-
-function undoTransformOnAxis(
-    axis: Axis,
-    boxScale: number = 1,
-    scale: number = 1,
-    translate: number = 0,
-    origin: number = 0.5
-) {
-    axis.min -= translate
-    axis.max -= translate
-
-    const axisScaleOriginPoint = mix(axis.min, axis.max, origin)
-    axis.min = undoScalePoint(axis.min, scale, axisScaleOriginPoint)
-    axis.max = undoScalePoint(axis.max, scale, axisScaleOriginPoint)
-
-    // TODO This is probably the same as before
-    const boxScaleOriginPoint = mix(axis.min, axis.max, origin)
-    axis.min = undoScalePoint(axis.min, boxScale, boxScaleOriginPoint)
-    axis.max = undoScalePoint(axis.max, boxScale, boxScaleOriginPoint)
-}
-
-function undoTransforms(bbox: AxisBox2D, values: MotionValueMap) {
-    undoTransformOnAxis(
-        bbox.x,
-        values.get("scale")?.get(),
-        values.get("scaleX")?.get(),
-        values.get("x")?.get(),
-        values.get("originX")?.get()
-    )
-    undoTransformOnAxis(
-        bbox.y,
-        values.get("scale")?.get(),
-        values.get("scaleY")?.get(),
-        values.get("y")?.get(),
-        values.get("originY")?.get()
-    )
-}
-
-function applyScaleToPoint(
-    point: number,
-    originPoint: number,
-    scale: number
-): number {
-    const distanceFromOrigin = point - originPoint
-    const scaled = scale * distanceFromOrigin
-    return originPoint + scaled
-}
-
-function applyTransformToAxis(
-    finalAxis: Axis,
-    targetBbox: Axis,
-    boxScale: number = 1,
-    scale: number = 1,
-    translate: number = 0,
-    origin: number = 0.5
-) {
-    finalAxis.min = targetBbox.min
-    finalAxis.max = targetBbox.max
-
-    const originPoint = mix(finalAxis.min, finalAxis.max, origin)
-    finalAxis.min = applyScaleToPoint(finalAxis.min, originPoint, boxScale)
-    finalAxis.max = applyScaleToPoint(finalAxis.max, originPoint, boxScale)
-    finalAxis.min = applyScaleToPoint(finalAxis.min, originPoint, scale)
-    finalAxis.max = applyScaleToPoint(finalAxis.max, originPoint, scale)
-    finalAxis.min += translate
-    finalAxis.max += translate
-}
-
-// TODO: Consolidate with utils
-function applyLocalTransforms(
-    finalBbox: AxisBox2D,
-    targetBbox: AxisBox2D,
-    values: MotionValueMap
-) {
-    applyTransformToAxis(
-        finalBbox.x,
-        targetBbox.x,
-        values.get("scale")?.get(),
-        values.get("scaleX")?.get(),
-        values.get("x")?.get(),
-        values.get("originX")?.get()
-    )
-    applyTransformToAxis(
-        finalBbox.y,
-        targetBbox.y,
-        values.get("scale")?.get(),
-        values.get("scaleY")?.get(),
-        values.get("y")?.get(),
-        values.get("originY")?.get()
-    )
 }

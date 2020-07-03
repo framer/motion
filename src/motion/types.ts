@@ -11,7 +11,7 @@ import {
     MakeCustomValueType,
 } from "../types"
 import { GestureHandlers } from "../gestures"
-import { DraggableProps } from "../behaviours/types"
+import { DraggableProps } from "../gestures/drag/types"
 import { AutoAnimateProps } from "./features/auto/types"
 
 export type MotionStyleProp = string | number | MotionValue
@@ -543,10 +543,9 @@ export interface MotionProps
     transformValues?<V extends any>(values: V): V
 
     /**
-     * TODO: Move this to Layout
-     * @internal
+     * TODO: Move this somewhere appropriate and document
      */
-    layout: boolean
+    layout?: boolean
 }
 
 export type TransformTemplate = (

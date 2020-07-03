@@ -1,5 +1,4 @@
-import { BoxDelta } from "../../../motion/features/auto/types"
-import { Point2D, Axis, AxisBox2D } from "../../../types/geometry"
+import { Point2D, Axis, AxisBox2D, BoxDelta } from "../../../types/geometry"
 import { percent, complex } from "style-value-types"
 import { mix } from "@popmotion/popcorn"
 
@@ -32,12 +31,13 @@ export function convertPercentToPixels(latest: number, viewportBox: AxisBox2D) {
 
 export function correctBorderRadius(
     latest: string | number,
+    viewportBox: AxisBox2D,
     delta: BoxDelta,
-    treeScale: Point2D,
-    viewportBox: AxisBox2D
+    treeScale: Point2D
 ) {
     let x = 0
     let y = 0
+
     // TODO: Always calculate radius as a percentage to reduce unncessary repaints
     if (typeof latest === "string") {
         // TODO: Double check we actually need to do anything with percentages

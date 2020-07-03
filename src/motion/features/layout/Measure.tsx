@@ -57,7 +57,7 @@ class Measure extends React.Component<SyncProps> {
         if (isSharedLayout(syncLayout)) {
             syncLayout.syncUpdate()
         } else {
-            visualElement.snapshot()
+            visualElement.snapshotBoundingBox()
             syncLayout.add(visualElement)
         }
 

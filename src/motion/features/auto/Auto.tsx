@@ -35,7 +35,7 @@ import {
 import { defaultMagicValues, AutoValueHandlers } from "./values"
 import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
-import { elementDragControls } from "../../../behaviours/VisualElementDragControls"
+import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
 import { AxisBox2D } from "../../../types/geometry"
 export { SharedLayoutTree, SharedBatchTree }
 

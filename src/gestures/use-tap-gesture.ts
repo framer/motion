@@ -4,7 +4,7 @@ import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { ControlsProp, RemoveEvent } from "./types"
-import { getGlobalLock } from "../behaviours/utils/lock"
+import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 

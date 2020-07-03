@@ -28,15 +28,13 @@ class Component extends React.Component<FeatureProps> {
 
     componentDidMount() {
         const { visualElement } = this.props
-        visualElement.enableLayoutAware()
-        this.unsubLayoutReady = visualElement.onLayoutReady(
+        visualElement.enableLayoutReprojection()
+        this.unsubLayoutReady = visualElement.onLayoutUpdate(
             (layout, origin) => {
-                console.log(layout.y, origin.y)
-                if (!visualElement.isTargetBoxLocked) {
-                    eachAxis(axis =>
-                        this.animateAxis(axis, layout[axis], origin[axis])
-                    )
-                }
+                if (visualElement.isTargetBoxLocked) return
+                eachAxis(axis => {
+                    this.animateAxis(axis, layout[axis], origin[axis])
+                })
             }
         )
     }
@@ -51,8 +49,11 @@ class Component extends React.Component<FeatureProps> {
     animateAxis(axis: "x" | "y", layout: Axis, origin: Axis) {
         if (!hasMoved(origin, layout)) return
         const { visualElement } = this.props
-        const frameTarget = this.frameTarget[axis]
 
+        // TODO: We can check this per axis and only lock dragging axis
+        if (visualElement.targetBoxLocked) return
+
+        const frameTarget = this.frameTarget[axis]
         const progress = this.progress[axis]
         const stopAnimation = this.stopAxisAnimation[axis]
 

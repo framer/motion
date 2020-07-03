@@ -3,8 +3,7 @@ import {
     TransformPoint2D,
     AxisBox2D,
     Axis,
-    NewAxis2D,
-    NewAxis,
+    BoxDelta,
 } from "../types/geometry"
 import { noop } from "./noop"
 
@@ -71,9 +70,26 @@ export function axisBox(): AxisBox2D {
     return { x: { min: 0, max: 1 }, y: { min: 0, max: 1 } }
 }
 
-export function copyAxisBox(box: NewAxis2D): NewAxis2D {
+export function copyAxisBox(box: AxisBox2D): AxisBox2D {
     return {
         x: { ...box.x },
         y: { ...box.y },
+    }
+}
+
+/**
+ * Create an empty box delta
+ */
+const zeroDelta = {
+    translate: 0,
+    scale: 1,
+    origin: 0,
+    originPoint: 0,
+}
+
+export function delta(): BoxDelta {
+    return {
+        x: { ...zeroDelta },
+        y: { ...zeroDelta },
     }
 }

@@ -6,7 +6,7 @@ import {
     drag,
     frame,
     deferred,
-} from "../../behaviours/__tests__/utils"
+} from "../../gestures/drag/__tests__/utils"
 
 describe("pan", () => {
     test("pan handlers aren't frozen at pan session start", async () => {

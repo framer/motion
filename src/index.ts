@@ -45,7 +45,10 @@ export {
     usePresence,
     useIsPresent,
 } from "./components/AnimatePresence/use-presence"
-export { useDragControls, DragControls } from "./behaviours/use-drag-controls"
+export {
+    useDragControls,
+    DragControls,
+} from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
 export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
@@ -110,5 +113,5 @@ export {
 } from "./motion/features/auto/values"
 export { MotionFeature, FeatureProps } from "./motion/features/types"
 export { GestureHandlers } from "./gestures"
-export { DraggableProps, DragHandlers } from "./behaviours/types"
+export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export * from "./types/geometry"

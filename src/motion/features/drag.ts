@@ -1,5 +1,5 @@
 import { MotionProps } from "../types"
-import { useDrag } from "../../behaviours/use-drag"
+import { useDrag } from "../../gestures/drag/use-drag"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FeatureProps, MotionFeature } from "./types"
 

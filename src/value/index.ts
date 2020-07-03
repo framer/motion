@@ -209,6 +209,10 @@ export class MotionValue<V = any> {
         return this.subscribeTo(this.updateSubscribers, subscription)
     }
 
+    clearListeners() {
+        this.updateSubscribers?.clear()
+    }
+
     /**
      * Adds a function that will be notified when the `MotionValue` requests a render.
      *

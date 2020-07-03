@@ -14,7 +14,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Added a `useElementScroll` hook that allows the creation of scroll motion values for HTML elements. ([@souporserious](https://github.com/souporserious) in [#195](https://github.com/framer/motion/pull/195))
 
-## [2.0.0] Unreleased
+## [2.0.0] 2020-07-10
 
 ### Added
 
@@ -26,7 +26,8 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `positionTransition` and `layoutTransition` props (use `animate={true}` instead).
 -   `Point` type in favour of `Point2D`.
--   `useAnimatedState`
+-   `useAnimatedState`: Moved to Framer library.
+-   `useCycle`: Moved to Framer library.
 -   `stylefire` as a dependency.
 -   `dragOriginX` and `dragOriginY` props.
 
@@ -38,6 +39,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 
 -   Using `Proxy` to generate `motion` components. This saves ~0.5kb from the bundle size and ensures compatibility with all DOM elements and Web Components.
+-   `x` and `y` transform values won't change as a result of a drag gesture as this now works via layout reprojection.
 
 ## [1.10.3] 2020-03-23
 

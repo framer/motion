@@ -58,3 +58,23 @@ export interface Point3D extends Point2D {
  * @public
  */
 export type TransformPoint2D = (point: Point2D) => Point2D
+
+/**
+ * The transform delta that, when applied to Axis a will visually transform it to Axis b
+ * @public
+ */
+export interface AxisDelta {
+    translate: number
+    scale: number
+    origin: number
+    originPoint: number
+}
+
+/**
+ * The transform delta that, when applied to Box a will visually transform it to Box b.
+ * @public
+ */
+export interface BoxDelta {
+    x: AxisDelta
+    y: AxisDelta
+}

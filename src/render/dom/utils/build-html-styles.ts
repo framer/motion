@@ -5,8 +5,8 @@ import { isTransformProp, isTransformOriginProp } from "./transform"
 import { buildTransform } from "./build-transform"
 import { isCSSVariable } from "./is-css-variable"
 import { valueScaleCorrection } from "../layout/scale-correction"
-import { Point2D, AxisBox2D } from "../../../types/geometry"
-import { BoxDelta } from "../../../motion/features/auto/types"
+import { Point2D, AxisBox2D, BoxDelta } from "../../../types/geometry"
+import { Point } from "../../../events/types"
 
 /**
  * Build style and CSS variables
@@ -40,16 +40,17 @@ export function buildHTMLStyles(
         transformTemplate,
         allowTransformNone,
     }: DOMVisualElementConfig,
-    isLayoutAware: boolean = false,
-    layoutDelta?: BoxDelta,
-    transformDelta?: BoxDelta,
+    isLayoutReprojectionEnabled?: boolean,
+    delta?: BoxDelta,
+    deltaFinal?: BoxDelta,
     treeScale?: Point2D,
-    viewportBox?: AxisBox2D
+    targetBox?: AxisBox2D
 ): void {
     // Only perform scale correction if we've been provided data to perform
     // the calculations and if all scales don't equal 1
     const performScaleCorrection =
-        isLayoutAware && shouldPerformScaleCorrection(layoutDelta, treeScale)
+        isLayoutReprojectionEnabled &&
+        shouldPerformScaleCorrection(delta, treeScale)
 
     // Empty the transformKeys array. As we're throwing out refs to its items
     // this might not be as cheap as suspected. Maybe using the array as a buffer
@@ -57,8 +58,8 @@ export function buildHTMLStyles(
     transformKeys.length = 0
 
     // Track whether we encounter any transform or transformOrigin values.
-    let hasTransform = isLayoutAware
-    let hasTransformOrigin = isLayoutAware
+    let hasTransform = !!isLayoutReprojectionEnabled
+    let hasTransformOrigin = !!isLayoutReprojectionEnabled
 
     // Does the calculated transform essentially equal "none"?
     let transformIsNone = true
@@ -100,12 +101,13 @@ export function buildHTMLStyles(
 
             // If we need to perform scale correction, and we have a handler for this
             // value type (ie borderRadius), perform it
+
             if (performScaleCorrection && valueScaleCorrection[key]) {
                 const corrected = valueScaleCorrection[key].process(
                     value,
-                    layoutDelta,
-                    treeScale,
-                    viewportBox
+                    targetBox!,
+                    delta!,
+                    treeScale!
                 )
                 /**
                  * Scale-correctable values can define a number of other values to break
@@ -128,7 +130,7 @@ export function buildHTMLStyles(
 
     // Only process transform if values aren't defaults
     if (hasTransform || transformTemplate) {
-        if (!isLayoutAware) {
+        if (!isLayoutReprojectionEnabled) {
             style.transform = buildTransform(
                 transform,
                 transformKeys,
@@ -138,56 +140,41 @@ export function buildHTMLStyles(
                 allowTransformNone
             )
         } else {
-            style.transform = `translateX(${transformDelta.x.translate /
-                treeScale.x}px) translateY(${transformDelta.y.translate /
-                treeScale.y}px) scaleX(${transformDelta.x.scale}) scaleY(${
-                transformDelta.y.scale
-            }) translateZ(0)`
+            style.transform = layoutReprojection(deltaFinal!, treeScale!)
         }
     }
 
     // Only process transform origin if values aren't default
     if (hasTransformOrigin) {
-        const originX =
-            isLayoutAware && transformDelta
-                ? transformDelta.x.origin * 100 + "%"
-                : transformOrigin.originX || "50%"
+        const originX = isLayoutReprojectionEnabled
+            ? deltaFinal!.x.origin * 100 + "%"
+            : transformOrigin.originX || "50%"
 
-        const originY =
-            isLayoutAware && transformDelta
-                ? transformDelta.y.origin * 100 + "%"
-                : transformOrigin.originY || "50%"
+        const originY = isLayoutReprojectionEnabled
+            ? deltaFinal!.y.origin * 100 + "%"
+            : transformOrigin.originY || "50%"
+
         const originZ = transformOrigin.originZ || "0"
+
         style.transformOrigin = `${originX} ${originY} ${originZ}`
     }
-
-    // // console.log(this.element.id, getFrameData().timestamp)
-
-    // // TODO move this into transform reconciler
-    // // TODO Figure out if we want to share translate X and Y
-    // this.config.transformTemplate = (_, gen) => {
-    //     return `${gen} translateX(${this.transformDelta.x.translate /
-    //         this.treeScale.x}px) translateY(${this.transformDelta.y.translate /
-    //         this.treeScale.y}px) scaleX(${this.transformDelta.x.scale}) scaleY(${
-    //         this.transformDelta.y.scale
-    //     })`
-    // }
-
-    // /// TODO: Make these motion values always
-    // this.latest.originX = this.transformDelta.x.origin
-    // this.latest.originY = this.transformDelta.y.origin
 }
 
-function shouldPerformScaleCorrection(
-    transformDelta?: BoxDelta,
-    treeScale?: Point2D
-) {
+function shouldPerformScaleCorrection(delta?: BoxDelta, treeScale?: Point2D) {
     return (
-        transformDelta &&
+        delta &&
         treeScale &&
-        (transformDelta.x.scale !== 1 ||
-            transformDelta.y.scale !== 1 ||
+        (delta.x.scale !== 1 ||
+            delta.y.scale !== 1 ||
             treeScale.x !== 1 ||
             treeScale.y !== 1)
     )
+}
+
+function layoutReprojection(delta: BoxDelta, treeScale: Point2D) {
+    const x = delta.x.translate / treeScale.x
+    const y = delta.y.translate / treeScale.y
+    const scaleX = delta.x.scale
+    const scaleY = delta.y.scale
+    return `translate3d(${x}px, ${y}px, 0) scale(${scaleX}, ${scaleY})`
 }

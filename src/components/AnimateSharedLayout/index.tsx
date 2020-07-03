@@ -134,7 +134,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         /**
          * Snapshot children
          */
-        this.children.forEach(child => child.snapshot())
+        this.children.forEach(child => child.snapshotBoundingBox())
 
         /**
          * Every child keeps a local snapshot, but we also want to record

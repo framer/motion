@@ -4,25 +4,6 @@ import { VisibilityAction } from "../../../components/AnimateSharedLayout/types"
 import { AxisBox2D } from "../../../types/geometry"
 
 /**
- * The transform delta that, when applied to Axis a will visually transform it to Axis b
- */
-export interface AxisDelta {
-    translate: number
-    scale: number
-    origin: number
-    originPoint: number
-}
-
-/**
- * The transform delta that, when applied to Box a will visually transform it to Box b.
- */
-export interface BoxDelta {
-    x: AxisDelta
-    y: AxisDelta
-    isVisible: boolean
-}
-
-/**
  * An array representing a split CSS box shadow as returned by getComputedStyle.
  * color/x/y/blur/spread
  */
