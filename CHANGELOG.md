@@ -2,18 +2,6 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [1.11.1] 2020-06-16
-
-### Fixed
-
--   Using `useIsomorphicEffect` for `useElementScroll` and `useViewportScroll`.([@thebuilder](https://github.com/thebuilder) in [#592](https://github.com/framer/motion/pull/592))
-
-## [1.11.0] 2020-05-15
-
-### Added
-
--   Added a `useElementScroll` hook that allows the creation of scroll motion values for HTML elements. ([@souporserious](https://github.com/souporserious) in [#195](https://github.com/framer/motion/pull/195))
-
 ## [2.0.0] 2020-07-15
 
 ### Added
@@ -41,6 +29,18 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Using `Proxy` to generate `motion` components. This saves ~0.5kb from the bundle size and ensures compatibility with all DOM elements and Web Components.
 -   `x` and `y` transform values won't change as a result of a drag gesture as this now works via layout reprojection.
 -   Drag events now report `point` as the pointer relative to the viewport, to bring in line with other pointer events.
+
+## [1.11.1] 2020-06-16
+
+### Fixed
+
+-   Using `useIsomorphicEffect` for `useElementScroll` and `useViewportScroll`.([@thebuilder](https://github.com/thebuilder) in [#592](https://github.com/framer/motion/pull/592))
+
+## [1.11.0] 2020-05-15
+
+### Added
+
+-   Added a `useElementScroll` hook that allows the creation of scroll motion values for HTML elements. ([@souporserious](https://github.com/souporserious) in [#195](https://github.com/framer/motion/pull/195))
 
 ## [1.10.3] 2020-03-23
 
