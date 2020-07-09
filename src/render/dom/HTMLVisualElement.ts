@@ -1,25 +1,15 @@
 import { VisualElement } from "../VisualElement"
-import {
-    BoundingBox2D,
-    Axis,
-    AxisBox2D,
-    Point2D,
-    BoxDelta,
-} from "../../types/geometry"
-import {
-    convertBoundingBoxToAxisBox,
-    transformBoundingBox,
-    axisBox,
-    delta,
-} from "../../utils/geometry"
+import { AxisBox2D, Point2D, BoxDelta } from "../../types/geometry"
+import { delta, copyAxisBox } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
-import { Presence } from "../../components/AnimateSharedLayout/types"
-import { mix } from "@popmotion/popcorn"
-import { HTMLLayout } from "./layout/HTMLLayout"
+import {
+    Presence,
+    SharedLayoutAnimationConfig,
+} from "../../components/AnimateSharedLayout/types"
 import {
     resetBox,
     applyTreeDeltas,
@@ -33,7 +23,11 @@ import { motionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 
-export type LayoutUpdateHandler = (layout: AxisBox2D, prev: AxisBox2D) => void
+export type LayoutUpdateHandler = (
+    layout: AxisBox2D,
+    prev: AxisBox2D,
+    config?: SharedLayoutAnimationConfig
+) => void
 
 /**
  * A VisualElement for HTMLElements
@@ -68,7 +62,10 @@ export class HTMLVisualElement<
      */
     vars: ResolvedValues = {}
 
-    // TODO
+    /**
+     * Presence data. This is hydrated by useDomVisualElement and used by AnimateSharedLayout
+     * to decide how to animate entering/exiting layoutId
+     */
     presence?: Presence
     isPresent?: boolean
 
@@ -90,7 +87,7 @@ export class HTMLVisualElement<
      */
     protected transformKeys: string[] = []
 
-    protected config = this.defaultConfig
+    config = this.defaultConfig
 
     /**
      * When a value is removed, we want to make sure it's removed from all rendered data structures.
@@ -173,7 +170,7 @@ export class HTMLVisualElement<
      *   3. Calculate the delta between boxCorrected and targetBoxFinal and apply
      *      it as a transform style.
      */
-    box = axisBox()
+    box: AxisBox2D
 
     /**
      * The `box` layout with transforms applied from up the
@@ -182,7 +179,7 @@ export class HTMLVisualElement<
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    private boxCorrected = axisBox()
+    private boxCorrected: AxisBox2D
 
     /**
      * The visual target we want to project our component into on a given frame
@@ -190,7 +187,7 @@ export class HTMLVisualElement<
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    targetBox = axisBox()
+    targetBox: AxisBox2D
 
     /**
      * The visual target we want to project our component into on a given frame
@@ -198,13 +195,13 @@ export class HTMLVisualElement<
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    private targetBoxFinal = axisBox()
+    private targetBoxFinal: AxisBox2D
 
     /**
      * Can be used to store a snapshot of the measured viewport bounding box before
      * a re-render.
      */
-    private prevViewportBox?: AxisBox2D
+    prevViewportBox?: AxisBox2D
 
     /**
      * The overall scale of the local coordinate system as transformed by all parents
@@ -255,9 +252,9 @@ export class HTMLVisualElement<
      * To be called when all layouts are successfully updated. In turn we can notify layoutUpdate
      * subscribers.
      */
-    layoutReady() {
+    layoutReady(config?: SharedLayoutAnimationConfig) {
         this.layoutUpdateListeners.forEach(listener => {
-            listener(this.box, this.prevViewportBox || this.box)
+            listener(this.box, this.prevViewportBox || this.box, config)
         })
     }
 
@@ -292,6 +289,12 @@ export class HTMLVisualElement<
 
     measureLayout() {
         this.box = this.getBoundingBox()
+        this.boxCorrected = copyAxisBox(this.box)
+
+        if (!this.targetBox) {
+            this.targetBox = copyAxisBox(this.box)
+            this.targetBoxFinal = copyAxisBox(this.box)
+        }
     }
 
     /**
@@ -308,14 +311,17 @@ export class HTMLVisualElement<
         this.element.style.transform = "none"
     }
 
-    targetBoxLocked: boolean
-
-    lockTargetBox() {
-        this.targetBoxLocked = true
+    axisLocks = {
+        x: false,
+        y: false,
     }
 
-    unlockTargetBox() {
-        this.targetBoxLocked = false
+    getAxisLock(axis: "x" | "y") {
+        if (this.axisLocks[axis]) return
+
+        this.axisLocks[axis] = true
+
+        return () => (this.axisLocks[axis] = false)
     }
 
     /**
@@ -420,6 +426,13 @@ export class HTMLVisualElement<
          * into the desired bounding box.
          */
         updateBoxDelta(this.deltaFinal, this.boxCorrected, this.targetBoxFinal)
+
+        /**
+         * If we have a listener for the viewport box, fire it.
+         * TODO: Only fire if the box has been updated.
+         * TODO: Finalise event name before documentation.
+         */
+        this.config.onViewportBoxUpdate?.(this.targetBox)
     }
 
     /**
@@ -432,7 +445,9 @@ export class HTMLVisualElement<
      * Build a style prop using the latest resolved MotionValues
      */
     build() {
-        this.isLayoutReprojectionEnabled && this.updateLayoutDeltas()
+        this.isLayoutReprojectionEnabled &&
+            this.box &&
+            this.updateLayoutDeltas()
 
         buildHTMLStyles(
             this.latest,
@@ -442,7 +457,7 @@ export class HTMLVisualElement<
             this.transformOrigin,
             this.transformKeys,
             this.config,
-            this.isLayoutReprojectionEnabled,
+            this.isLayoutReprojectionEnabled && !!this.box,
             this.delta,
             this.deltaFinal,
             this.treeScale,

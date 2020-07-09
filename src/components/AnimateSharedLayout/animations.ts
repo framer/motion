@@ -1,15 +1,17 @@
-import { Easing, circOut, linear } from "@popmotion/easing"
-import { progress, mix } from "@popmotion/popcorn"
-import { Snapshot, AutoAnimationConfig } from "../../motion/features/auto/types"
-import { Presence, VisibilityAction } from "./types"
+import {
+    Presence,
+    VisibilityAction,
+    SharedLayoutAnimationConfig,
+} from "./types"
 import { LayoutStack } from "./stack"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { AxisBox2D } from "../../types/geometry"
 
 export function createSwitchAnimation(
     child: HTMLVisualElement,
     _isRoot: boolean,
     stack?: LayoutStack
-): AutoAnimationConfig {
+): SharedLayoutAnimationConfig {
     if (stack && child !== stack.lead) {
         return { visibilityAction: VisibilityAction.Hide }
     } else if (
@@ -21,38 +23,39 @@ export function createSwitchAnimation(
         return { visibilityAction: VisibilityAction.Show }
     }
 
-    let origin: Snapshot | undefined
-    let target: Snapshot | undefined
+    let originBox: AxisBox2D | undefined
+    let targetBox: AxisBox2D | undefined
 
     if (child.presence === Presence.Entering) {
-        origin = stack?.getFollowOrigin()
+        originBox = stack?.getFollowOrigin()
     } else if (child.presence === Presence.Exiting) {
-        target = stack?.getFollowTarget()
+        targetBox = stack?.getFollowTarget()
     }
 
-    return { origin, target }
+    return { originBox, targetBox }
 }
 
 export function createCrossfadeAnimation(
     child: HTMLVisualElement,
     isRoot: boolean,
     stack?: LayoutStack
-): AutoAnimationConfig {
-    const config: AutoAnimationConfig = {}
+): SharedLayoutAnimationConfig {
+    const config: SharedLayoutAnimationConfig = {}
     const stackLead = stack && stack.lead
     const stackLeadPresence = stackLead?.presence
 
     if (stack && child === stackLead) {
         if (child.presence === Presence.Entering) {
-            config.origin = stack.getFollowOrigin()
+            config.originBox = stack.getFollowOrigin()
         } else if (child.presence === Presence.Exiting) {
-            config.target = stack.getFollowTarget()
+            config.targetBox = stack.getFollowTarget()
         }
     } else if (stack && child === stack.follow) {
+        config.transition = stack.getLeadTransition()
         if (stackLeadPresence === Presence.Entering) {
-            config.target = stack.getLeadTarget()
+            config.targetBox = stack.getLeadTarget()
         } else if (stackLeadPresence === Presence.Exiting) {
-            config.origin = stack.getLeadOrigin()
+            config.originBox = stack.getLeadOrigin()
         }
     }
 
@@ -61,15 +64,16 @@ export function createCrossfadeAnimation(
 
     if (!stack || child === stackLead) {
         if (child.presence === Presence.Entering) {
-            config.crossfade = crossfadeIn
+            config.crossfadeOpacity = stack?.follow?.getValue("opacity", 0)
         } else if (child.presence === Presence.Exiting) {
-            config.crossfade = crossfadeOut
+            //config.crossfade = crossfadeOut
         }
     } else if (stack && child === stack.follow) {
         if (!stackLead || stackLeadPresence === Presence.Entering) {
-            config.crossfade = crossfadeOut
+            //config.crossfade = crossfadeOut
         } else if (stackLeadPresence === Presence.Exiting) {
-            config.crossfade = crossfadeIn
+            config.crossfadeOpacity = stack?.lead?.getValue("opacity", 1)
+            //config.crossfade = crossfadeIn
         }
     } else {
         config.visibilityAction = VisibilityAction.Hide
@@ -77,21 +81,3 @@ export function createCrossfadeAnimation(
 
     return config
 }
-
-function compress(min: number, max: number, easing: Easing): Easing {
-    return (p: number) => {
-        // Could replace ifs with clamp
-        if (p < min) return 0
-        if (p > max) return 1
-        return easing(progress(min, max, p))
-    }
-}
-
-const easeCrossfadeIn = compress(0, 0.5, circOut)
-const easeCrossfadeOut = compress(0.5, 0.95, linear)
-
-export const crossfadeIn = (_origin: number, target: number, p: number) =>
-    mix(0, target, easeCrossfadeIn(p))
-
-export const crossfadeOut = (origin: number, _target: number, p: number) =>
-    mix(origin, 0, easeCrossfadeOut(p))

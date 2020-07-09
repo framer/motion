@@ -12,13 +12,13 @@ export const App = () => {
     return (
         <AnimateSharedLayout supportRotate>
             <motion.div
-                animate
+                layout
                 transition={{ duration: 1 }}
                 style={isOn ? bigParent : smallParent}
                 onClick={() => setIsOn(!isOn)}
             >
                 <motion.div
-                    animate
+                    layout
                     transition={{ duration: 1 }}
                     style={isOn ? bigChild : smallChild}
                 />

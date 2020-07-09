@@ -24,7 +24,8 @@ export interface SyncLayoutBatcher {
 export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
     syncUpdate: (force?: boolean) => void
     forceUpdate: () => void
-    register: (child: HTMLVisualElement) => () => void
+    register: (child: HTMLVisualElement) => void
+    remove: (child: HTMLVisualElement) => void
 }
 
 /**
@@ -64,7 +65,6 @@ export function createBatcher(): SyncLayoutBatcher {
          * Read: Measure the actual layout
          */
         order.forEach(measureLayout)
-
         /**
          * Write: Notify the VisualElements they're ready for further write operations.
          */

@@ -9,6 +9,7 @@ import { RenderComponent } from "./features/types"
 import { AnimationControlsConfig } from "../animation/VisualElementAnimationControls"
 import { useVisualElementAnimation } from "../animation/use-visual-element-animation"
 import { useFeatures } from "./features/use-features"
+import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
@@ -103,6 +104,11 @@ export function createMotionComponent<P extends {}, E>(
         )
 
         const component = render(Component, props, visualElement)
+
+        /**
+         *
+         */
+        useSnapshotOnUnmount(visualElement)
 
         // The mount order and hierarchy is specific to ensure our element ref is hydrated by the time
         // all plugins and features has to execute.

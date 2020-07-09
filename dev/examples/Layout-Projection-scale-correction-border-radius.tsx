@@ -33,24 +33,24 @@ export const App = () => {
             onClick={() => setIsOn(!isOn)}
             transition={transition}
         >
-            {/* <motion.div
-                    layout
-                    id="red"
-                    initial="straight"
-                    animate="rounded"
-                    variants={{
-                        straight: {
-                            borderTopRightRadius: 50,
-                            borderBottomRightRadius: 50,
-                        },
-                        rounded: {
-                            borderTopRightRadius: 0,
-                            borderBottomRightRadius: 0,
-                        },
-                    }}
-                    style={isOn ? bigChild : smallChild}
-                    transition={transition}
-                /> */}
+            <motion.div
+                layout
+                id="red"
+                initial="straight"
+                animate="rounded"
+                variants={{
+                    straight: {
+                        borderTopRightRadius: 50,
+                        borderBottomRightRadius: 50,
+                    },
+                    rounded: {
+                        borderTopRightRadius: 0,
+                        borderBottomRightRadius: 0,
+                    },
+                }}
+                style={isOn ? bigChild : smallChild}
+                transition={transition}
+            />
         </motion.div>
     )
 }

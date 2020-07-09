@@ -1,10 +1,10 @@
 import { RefObject } from "react"
-import { PanInfo } from "../gestures"
-import { MotionValue } from "../value"
-import { Omit, Inertia } from "../types"
-import { AnimationControls } from "../animation/AnimationControls"
+import { PanInfo } from "../PanSession"
+import { Inertia } from "../../types"
+import { BoundingBox2D } from "../../types/geometry"
+import { MotionValue } from "../../value"
+import { AnimationControls } from "../../animation/AnimationControls"
 import { DragControls } from "./use-drag-controls"
-import { BoundingBox2D } from "../types/geometry"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,

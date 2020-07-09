@@ -16,12 +16,6 @@ interface SyncProps extends FeatureProps {
  * This component is responsible for scheduling the measuring of the motion component
  */
 class Measure extends React.Component<SyncProps> {
-    /**
-     * If this component is the child of a SyncContext, this will be hydrated with an unsubscribe
-     * from parent function
-     */
-    private removeChild?: () => void
-
     constructor(props: SyncProps) {
         super(props)
 
@@ -40,9 +34,7 @@ class Measure extends React.Component<SyncProps> {
      */
     componentDidMount() {
         const { syncLayout, visualElement } = this.props
-        if (isSharedLayout(syncLayout)) {
-            this.removeChild = syncLayout.register(visualElement)
-        }
+        isSharedLayout(syncLayout) && syncLayout.register(visualElement)
     }
 
     /**
@@ -64,12 +56,7 @@ class Measure extends React.Component<SyncProps> {
         return null
     }
 
-    /**
-     * Remove the child from the SyncContext on unmount
-     */
-    componentWillUnmount() {
-        this.removeChild?.()
-    }
+    componentDidUpdate() {}
 
     render() {
         return null

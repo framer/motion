@@ -1,8 +1,6 @@
 import { TransformTemplate } from "../../../motion/types"
 import { ResolvedValues } from "../../types"
 import { sortTransformProps } from "./transform"
-import { BoxDelta } from "../../../motion/features/auto/types"
-import { Point2D } from "@popmotion/popcorn"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",

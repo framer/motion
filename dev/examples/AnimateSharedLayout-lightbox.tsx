@@ -16,8 +16,10 @@ function Gallery({ items, setIndex }) {
                 <motion.li
                     key={color}
                     onClick={() => setIndex(i)}
+                    initial={{ borderRadius: 10 }}
                     style={{ ...item, backgroundColor: color }}
                     layoutId={color}
+                    transition={{ duration: 5 }}
                     id={i === 0 && "list-red"}
                 >
                     <motion.div style={child} layoutId={`child-${color}`} />
@@ -31,34 +33,36 @@ function SingleImage({ color, index, setIndex }) {
     return (
         <>
             <motion.div
-                animate
-                style={{ ...overlay }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={overlay}
                 id="overlay"
                 onClick={() => setIndex(false)}
-            >
-                <div style={singleImageContainer}>
+            />
+            <div style={singleImageContainer}>
+                <motion.div
+                    id="color"
+                    layoutId={color}
+                    transition={{ duration: 20 }}
+                    initial={{ borderRadius: 20 }}
+                    style={{ ...singleImage, backgroundColor: color }}
+                >
                     <motion.div
-                        id="color"
-                        layoutId={color}
-                        style={{ ...singleImage, backgroundColor: color }}
-                    >
-                        <motion.div
-                            style={child}
-                            id="child"
-                            layoutId={`child-${color}`}
-                        />
-                    </motion.div>
-                </div>
-            </motion.div>
+                        style={child}
+                        id="child"
+                        layoutId={`child-${color}`}
+                    />
+                </motion.div>
+            </div>
         </>
     )
 }
 
-export function App() {
+export function Component() {
     const [index, setIndex] = useState<false | number>(false)
-
     return (
-        <AnimateSharedLayout type="crossfade" dependency={index}>
+        <>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
@@ -69,6 +73,14 @@ export function App() {
                     />
                 )}
             </AnimatePresence>
+        </>
+    )
+}
+
+export function App() {
+    return (
+        <AnimateSharedLayout type="crossfade">
+            <Component />
         </AnimateSharedLayout>
     )
 }
@@ -94,7 +106,6 @@ const container = {
 }
 
 const item = {
-    borderRadius: "10px",
     padding: "20px",
     cursor: "pointer",
     margin: "20px 0 0 20px",
@@ -126,7 +137,6 @@ const singleImageContainer: CSSProperties = {
 }
 
 const singleImage = {
-    borderRadius: "20px",
     width: "500px",
     height: "300px",
     padding: 50,

@@ -6,11 +6,6 @@ import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { BoxDelta } from "../features/auto/types"
-import { MotionValue } from "../../value"
-import { useMotionValue } from "../../value/use-motion-value"
-import { zeroDelta } from "../features/auto/utils"
-import { useConstant } from "../../utils/use-constant"
 import { VisualElement } from "../../render/VisualElement"
 
 export interface MotionContextProps {
@@ -151,12 +146,4 @@ export const useMotionContext = (
     }, [])
 
     return context
-}
-
-function createZeroDelta() {
-    return {
-        x: { ...zeroDelta },
-        y: { ...zeroDelta },
-        isVisible: true,
-    }
 }

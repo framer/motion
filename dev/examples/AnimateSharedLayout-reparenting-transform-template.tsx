@@ -55,13 +55,12 @@ const Big = styled(motion.div)`
 const Child = () => {
     return (
         <Big
-            magic
             layoutId="big"
             transformTemplate={(_, gen) =>
                 `translateX(-50%) translateY(-50%) ${gen}`
             }
         >
-            <Small animate layoutId="small" />
+            <Small layoutId="small" />
         </Big>
     )
 }
@@ -70,14 +69,13 @@ const Sibling = () => {
     return (
         <>
             <Big
-                magic
                 layoutId="big"
                 purple
                 transformTemplate={(_, gen) =>
                     `translateX(-50%) translateY(-50%) ${gen}`
                 }
             />
-            <Small animate layoutId="small" purple />
+            <Small layoutId="small" purple />
         </>
     )
 }

@@ -1,5 +1,5 @@
 import { Point2D, Axis, AxisBox2D, BoxDelta } from "../../../types/geometry"
-import { percent, complex } from "style-value-types"
+import { complex } from "style-value-types"
 import { mix } from "@popmotion/popcorn"
 
 type ScaleCorrection = (
@@ -18,51 +18,40 @@ type ScaleCorrectionDefinitionMap = {
     [key: string]: ScaleCorrectionDefinition
 }
 
-function convertAxisPercentToPixels(latest: number, axis: Axis) {
-    const factor = latest / 100
-    return factor * (axis.max - axis.min)
+export function pixelsToPercent(pixels: number, axis: Axis): number {
+    return (pixels / (axis.max - axis.min)) * 100
 }
 
-export function convertPercentToPixels(latest: number, viewportBox: AxisBox2D) {
-    const x = convertAxisPercentToPixels(latest, viewportBox.x)
-    const y = convertAxisPercentToPixels(latest, viewportBox.y)
-    return `${x}px ${y}px`
-}
-
+/**
+ * We always correct borderRadius as a percentage rather than pixels to reduce paints.
+ * For example, if you are projecting a box that is 100px wide with a 10px borderRadius
+ * into a box that is 200px wide with a 20px borderRadius, that is actually a 10%
+ * borderRadius in both states. If we animate between the two in pixels that will trigger
+ * a paint each time. If we animate between the two in percentage we'll avoid a paint.
+ */
 export function correctBorderRadius(
     latest: string | number,
-    viewportBox: AxisBox2D,
-    delta: BoxDelta,
-    treeScale: Point2D
+    viewportBox: AxisBox2D
 ) {
-    let x = 0
-    let y = 0
+    /**
+     * If latest is a string, we either presume it's already a percentage, in which case it'll
+     * already be stretched appropriately, or it's another value type which we don't support.
+     */
+    if (typeof latest !== "number") return latest
 
-    // TODO: Always calculate radius as a percentage to reduce unncessary repaints
-    if (typeof latest === "string") {
-        // TODO: Double check we actually need to do anything with percentages
-        if (percent.test(latest)) {
-            // If this is a percentage, convert it to pixels using the latest viewport box
-            const percentAsNumber = percent.parse(latest)
-            x = convertAxisPercentToPixels(percentAsNumber, viewportBox.x)
-            y = convertAxisPercentToPixels(percentAsNumber, viewportBox.y)
-        } else {
-            // If this isn't a percentage, it isn't currently supported
-            return latest
-        }
-    } else {
-        x = y = latest
-    }
+    /**
+     * If latest is a number, it's a pixel value. We use the current viewportBox to calculate that
+     * pixel value as a percentage of each axis
+     */
+    const x = pixelsToPercent(latest, viewportBox.x)
+    const y = pixelsToPercent(latest, viewportBox.y)
 
-    // Perform scale correction
-    x = x / delta.x.scale / treeScale.x
-    y = y / delta.y.scale / treeScale.y
-
-    return `${x}px ${y}px`
+    return `${x}% ${y}%`
 }
 
 export function correctBoxShadow(
     latest: string,
+    _viewportBox: AxisBox2D,
     delta: BoxDelta,
     treeScale: Point2D
 ) {
@@ -116,4 +105,13 @@ export const valueScaleCorrection: ScaleCorrectionDefinitionMap = {
     boxShadow: {
         process: correctBoxShadow,
     },
+}
+
+/**
+ * @private
+ */
+export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap) {
+    for (const key in correctors) {
+        valueScaleCorrection[key] = correctors[key]
+    }
 }

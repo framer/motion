@@ -3,7 +3,7 @@ import { useState } from "react"
 import { motion } from "@framer"
 
 /**
- * Thie demonstrates the automatic animation of box-shadow
+ * Thie demonstrates the scale correction of box shadow
  */
 
 export const App = () => {
@@ -11,8 +11,12 @@ export const App = () => {
 
     return (
         <motion.div
-            animate
-            transition={{ duration: 2 }}
+            layout
+            initial={{ borderRadius: 20, boxShadow: "10px 10px 20px #000" }}
+            transition={{
+                boxShadow: { duration: 0.5, yoyo: Infinity },
+                default: { duration: 2 },
+            }}
             style={!isOn ? big : small}
             onClick={() => setIsOn(!isOn)}
         />
@@ -22,14 +26,12 @@ export const App = () => {
 const big = {
     width: 400,
     height: 400,
-    borderRadius: 20,
     backgroundColor: "white",
 }
 
 const small = {
     width: 200,
     height: 200,
-    borderRadius: 20,
     backgroundColor: "white",
     boxShadow: "10px 15px 5px red",
 }

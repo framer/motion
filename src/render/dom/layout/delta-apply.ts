@@ -174,16 +174,11 @@ export function removeAxisTransforms(
     transforms: ResolvedValues,
     [key, scaleKey, originKey]: string[]
 ) {
-    const originPoint = mix(
-        axis.min,
-        axis.max,
-        (transforms[originKey] as number) || 0.5
-    )
-    applyAxisDelta(
+    removeAxisDelta(
         axis,
         transforms[key] as number,
         transforms[scaleKey] as number,
-        originPoint,
+        transforms[originKey] as number,
         transforms.scale as number
     )
 }

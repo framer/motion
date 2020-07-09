@@ -12,6 +12,7 @@ export const App = () => {
     return (
         <motion.div
             layout
+            transition={transition}
             style={isOpen ? openParent : closedParent}
             onClick={() => toggleIsOpen()}
             id="parent"
@@ -28,9 +29,15 @@ export const App = () => {
                     id="superkid"
                 />
             )} */}
-            <motion.div layout style={childStyles} id="child">
+            <motion.div
+                layout
+                transition={transition}
+                style={childStyles}
+                id="child"
+            >
                 <motion.div
                     layout
+                    transition={transition}
                     style={{
                         ...childStyles,
                         height: "30%",

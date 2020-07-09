@@ -12,7 +12,7 @@ import {
 } from "../types"
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
-import { AutoAnimateProps } from "./features/auto/types"
+import { LayoutProps } from "./features/layout/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -427,7 +427,7 @@ export interface MotionProps
         MotionCallbacks,
         GestureHandlers,
         DraggableProps,
-        AutoAnimateProps,
+        LayoutProps,
         MotionAdvancedProps {
     /**
      * Properties, variant label or array of variant labels to start in.
@@ -541,11 +541,6 @@ export interface MotionProps
      * @internal
      */
     transformValues?<V extends any>(values: V): V
-
-    /**
-     * TODO: Move this somewhere appropriate and document
-     */
-    layout?: boolean
 }
 
 export type TransformTemplate = (

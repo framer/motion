@@ -13,8 +13,6 @@ import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
 import {
     SharedLayoutContext,
-    SyncLayoutBatcher,
-    SharedLayoutSyncMethods,
     isSharedLayout,
 } from "../AnimateSharedLayout/SharedLayoutContext"
 

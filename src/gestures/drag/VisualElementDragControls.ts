@@ -1,6 +1,5 @@
 import { RefObject } from "react"
 import { DraggableProps, DragHandler } from "./types"
-import { MotionValue, motionValue } from "../../value"
 import { Lock, getGlobalLock } from "./utils/lock"
 import {
     unblockViewportScroll,
@@ -11,35 +10,21 @@ import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
 import { invariant } from "hey-listen"
-import { mix, progress } from "@popmotion/popcorn"
+import { progress } from "@popmotion/popcorn"
 import { addDomEvent } from "../../events/use-dom-event"
-import {
-    extractEventInfo,
-    getViewportPointFromEvent,
-} from "../../events/event-info"
+import { getViewportPointFromEvent } from "../../events/event-info"
 import { startAnimation } from "../../animation/utils/transitions"
+import { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
 import {
-    TransformPoint2D,
-    BoundingBox2D,
-    Axis,
-    AxisBox2D,
-} from "../../types/geometry"
-import {
-    transformBoundingBox,
     convertBoundingBoxToAxisBox,
-    calcAxisCenter,
     convertAxisBoxToBoundingBox,
 } from "../../utils/geometry"
-import { VisualElement } from "../../render/VisualElement"
-import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import { eachAxis } from "../../utils/each-axis"
 import {
     calcRelativeConstraints,
     calcConstrainedMinPoint,
-    calcConstraintsFromDom,
     ResolvedConstraints,
-    calcProgressWithinConstraints,
     calcViewportConstraints,
     calcPositionFromProgress,
 } from "./utils/constraints"
@@ -54,11 +39,11 @@ export const elementDragControls = new WeakMap<
 interface DragControlConfig {
     // TODO: I'd like to work towards making this work generically with VisualElement
     visualElement: HTMLVisualElement
-    controls: VisualElementAnimationControls
 }
 
 export interface DragControlOptions {
     snapToCursor?: boolean
+    cursorProgress?: Point2D
 }
 
 interface DragControlsProps extends DraggableProps {
@@ -67,10 +52,10 @@ interface DragControlsProps extends DraggableProps {
 
 type DragDirection = "x" | "y"
 
-type MotionPoint = {
-    x: MotionValue<number>
-    y: MotionValue<number>
-}
+/**
+ *
+ */
+let lastPointerEvent: AnyPointerEvent
 
 export class VisualElementDragControls {
     /**
@@ -107,27 +92,13 @@ export class VisualElementDragControls {
     private visualElement: HTMLVisualElement
 
     /**
-     * A reference to the host component's animation controls.
-     *
-     * @internal
-     */
-    private controls: VisualElementAnimationControls
-
-    /**
-     * References to the MotionValues used for tracking the current dragged point.
-     *
-     * @internal
-     */
-    private point: Partial<MotionPoint> = {}
-
-    /**
      * Track the initial position of the cursor relative to the dragging element
      * when dragging starts as a value of 0-1 on each axis. We then use this to calculate
      * an ideal bounding box for the VisualElement renderer to project into every frame.
      *
      * @internal
      */
-    private cursorProgress = {
+    cursorProgress: Point2D = {
         x: 0.5,
         y: 0.5,
     }
@@ -147,21 +118,9 @@ export class VisualElementDragControls {
      */
     private constraintsBox?: AxisBox2D
 
-    /**
-     * A reference to the previous constraints bounding box
-     *
-     * @internal
-     */
-    private prevConstraints: AxisBox2D
-    private prev = {
-        x: 0,
-        y: 0,
-    }
-
-    constructor({ visualElement, controls }: DragControlConfig) {
+    constructor({ visualElement }: DragControlConfig) {
         this.visualElement = visualElement
         this.visualElement.enableLayoutReprojection()
-        this.controls = controls
         elementDragControls.set(visualElement, this)
     }
 
@@ -172,7 +131,7 @@ export class VisualElementDragControls {
      */
     start(
         originEvent: AnyPointerEvent,
-        { snapToCursor = false }: DragControlOptions = {}
+        { snapToCursor = false, cursorProgress }: DragControlOptions = {}
     ) {
         /**
          * If this drag session has been manually triggered by the user, it might be from an event
@@ -213,7 +172,7 @@ export class VisualElementDragControls {
              * stick to the correct place under the pointer.
              */
             this.prepareBoundingBox()
-            this.visualElement.lockTargetBox()
+            ;(this.visualElement as any).lockTargetBox()
 
             /**
              * Resolve the drag constraints. These are either set as top/right/bottom/left constraints
@@ -236,7 +195,9 @@ export class VisualElementDragControls {
             const { point } = getViewportPointFromEvent(event)
             eachAxis(axis => {
                 const { min, max } = this.visualElement.targetBox[axis]
-                this.cursorProgress[axis] = progress(min, max, point[axis])
+                this.cursorProgress[axis] = cursorProgress
+                    ? cursorProgress[axis]
+                    : progress(min, max, point[axis])
             })
 
             // Set current drag status
@@ -244,7 +205,7 @@ export class VisualElementDragControls {
             this.currentDirection = null
 
             // Fire onDragStart event
-            this.fireEventHandler(event, info, this.props.onDragStart)
+            this.props.onDragStart?.(event, info)
         }
 
         const onMove = (event: AnyPointerEvent, info: PanInfo) => {
@@ -267,11 +228,14 @@ export class VisualElementDragControls {
             }
 
             // Update each point with the latest position
-            this.updatePoint("x", event)
-            this.updatePoint("y", event)
+            this.updateAxis("x", event)
+            this.updateAxis("y", event)
 
             // Fire onDrag event
-            this.fireEventHandler(event, info, this.props.onDrag)
+            this.props.onDrag?.(event, info)
+
+            // Update the last pointer event
+            lastPointerEvent = event
         }
 
         const onEnd: DragHandler = (event, info) => this.stop(event, info)
@@ -299,14 +263,6 @@ export class VisualElementDragControls {
         this.visualElement.measureLayout()
         element.style.transform = transform
         this.visualElement.refreshTargetBox()
-    }
-
-    fireEventHandler(
-        event: AnyPointerEvent,
-        info: PanInfo,
-        handler?: DragHandler
-    ) {
-        if (handler) handler(event, convertPanToDrag(info, this.point))
     }
 
     resolveDragConstraints() {
@@ -381,7 +337,7 @@ export class VisualElementDragControls {
     }
 
     stop(event: AnyPointerEvent, info: PanInfo) {
-        this.visualElement.unlockTargetBox()
+        ;(this.visualElement as any).unlockTargetBox()
         this.panSession?.end()
         this.panSession = null
         const isDragging = this.isDragging
@@ -395,39 +351,38 @@ export class VisualElementDragControls {
             this.animateDragEnd(velocity)
         }
 
-        this.fireEventHandler(event, info, onDragEnd)
+        onDragEnd?.(event, info)
     }
 
     snapToCursor(event: AnyPointerEvent) {
-        // const { transformPagePoint } = this.props
-        // const { point } = extractEventInfo(event)
-        // const boundingBox = getBoundingBox(
-        //     this.visualElement.getInstance(),
-        //     transformPagePoint
-        // )
-        // const center = {
-        //     x: calcAxisCenter(boundingBox.x) + window.scrollX,
-        //     y: calcAxisCenter(boundingBox.y) + window.scrollY,
-        // }
-        // const offset = {
-        //     x: point.x - center.x,
-        //     y: point.y - center.y,
-        // }
-        // this.updatePoint("x", offset)
-        // this.updatePoint("y", offset)
+        this.prepareBoundingBox()
+        this.cursorProgress.x = 0.5
+        this.cursorProgress.y = 0.5
+        this.updateAxis("x", event)
+        this.updateAxis("y", event)
     }
 
-    updatePoint(axis: DragDirection, event: AnyPointerEvent) {
+    /**
+     * Update the specified axis with the latest pointer information.
+     */
+    updateAxis(axis: DragDirection, event: AnyPointerEvent) {
         const { drag, dragElastic } = this.props
 
         // If we're not dragging this axis, do an early return.
         if (!shouldDrag(axis, drag, this.currentDirection)) return
 
+        // Get the actual layout bounding box of the element
         const axisLayout = this.visualElement.box[axis]
+
+        // Calculate its current length. In the future we might want to lerp this to animate
+        // between lengths if the layout changes as we change the DOM
         const axisLength = axisLayout.max - axisLayout.min
+
+        // Get the initial progress that the pointer sat on this axis on gesture start.
         const axisProgress = this.cursorProgress[axis]
         const { point } = getViewportPointFromEvent(event)
 
+        // Calculate a new min point based on the latest pointer position, constraints and elastic
         const min = calcConstrainedMinPoint(
             point[axis],
             axisLength,
@@ -436,16 +391,16 @@ export class VisualElementDragControls {
             dragElastic as number
         )
 
+        // Update the axis viewport target with this new min and the length
         this.visualElement.setAxisTarget(axis, min, min + axisLength)
     }
 
-    // TODO Let's see if we still need _dragValueX and make this a simple this.props = props if not
     updateProps({
         drag = false,
         dragDirectionLock = false,
         dragPropagation = false,
         dragConstraints = false,
-        dragElastic = true,
+        dragElastic = 0.35,
         dragMomentum = true,
         ...remainingProps
     }: DragControlsProps) {
@@ -454,27 +409,10 @@ export class VisualElementDragControls {
             dragDirectionLock,
             dragPropagation,
             dragConstraints,
-            dragElastic: dragElastic === true ? 0.35 : dragElastic,
+            dragElastic,
             dragMomentum,
             ...remainingProps,
         }
-
-        const { _dragValueX, _dragValueY } = remainingProps
-
-        // Get the `MotionValue` for both draggable axes, or create them if they don't already
-        // exist on this component.
-        eachAxis(axis => {
-            if (!shouldDrag(axis, drag, this.currentDirection)) return
-            const defaultValue = axis === "x" ? _dragValueX : _dragValueY
-            this.setPoint(
-                axis,
-                defaultValue || this.visualElement.getValue(axis, 0)
-            )
-        })
-    }
-
-    setPoint(axis: DragDirection, value: MotionValue<number>) {
-        this.point[axis] = value
     }
 
     private animateDragEnd(velocity: Point) {
@@ -485,7 +423,6 @@ export class VisualElementDragControls {
             dragTransition,
             _dragValueX,
             _dragValueY,
-            _dragTransitionControls,
         } = this.props
 
         const momentumAnimations = eachAxis(axis => {
@@ -503,8 +440,6 @@ export class VisualElementDragControls {
              */
             const bounceStiffness = dragElastic ? 200 : 1000000
             const bounceDamping = dragElastic ? 40 : 10000000
-
-            const animationControls = _dragTransitionControls || this.controls
 
             const inertia = {
                 type: "inertia",
@@ -577,7 +512,12 @@ export class VisualElementDragControls {
         })
     }
 
-    mount(element: Element) {
+    mount(visualElement: HTMLVisualElement) {
+        const element = visualElement.getInstance()
+
+        /**
+         * Attach a pointerdown event listener on this DOM element to initiate drag tracking.
+         */
         const stopPointerListener = addPointerEvent(
             element,
             "pointerdown",
@@ -587,32 +527,32 @@ export class VisualElementDragControls {
             }
         )
 
-        const stopResizeListener = addDomEvent(window, "resize", () =>
+        /**
+         * Attach a window resize listener to scale the draggable target within its defined
+         * constraints as the window resizes.
+         */
+        const stopResizeListener = addDomEvent(window, "resize", () => {
             this.scalePoint()
-        )
+        })
 
-        // if (this.constraintsNeedResolution) {
-        //     this.resolveDragConstraints()
-        //     this.recordBoxInfo(this.constraints)
-        // } else if (!this.isDragging && this.constraints) {
-        //     this.applyConstraintsToPoint()
-        // }
+        /**
+         * If the previous component with this same layoutId was dragging at the time
+         * it was unmounted, we want to continue the same gesture on this component.
+         */
+        const { prevSnapshot } = visualElement
+        prevSnapshot?.isDragging &&
+            this.start(lastPointerEvent, {
+                cursorProgress: prevSnapshot.cursorProgress,
+            })
 
+        /**
+         * Return a function that will teardown the drag gesture
+         */
         return () => {
             stopPointerListener && stopPointerListener()
             stopResizeListener && stopResizeListener()
             this.cancelDrag()
         }
-    }
-}
-
-function convertPanToDrag(info: PanInfo, point: Partial<MotionPoint>) {
-    return {
-        ...info,
-        point: {
-            x: point.x ? point.x.get() : 0,
-            y: point.y ? point.y.get() : 0,
-        },
     }
 }
 

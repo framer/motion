@@ -18,13 +18,13 @@ export const App = () => {
 
     return (
         <Box
-            animate
+            layout
             isOn={isOn}
             onClick={() => setIsOn(!isOn)}
             transition={transition}
         >
             <motion.div>
-                <JitterBox animate transition={transition} />
+                <JitterBox layout transition={transition} />
             </motion.div>
         </Box>
     )

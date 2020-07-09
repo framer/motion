@@ -34,11 +34,13 @@ type NotPresent = [false, SafeToRemove]
  */
 export function usePresence(): AlwaysPresent | Present | NotPresent {
     const context = useContext(PresenceContext)
+
     if (context === null) return [true, null]
 
     const { isPresent, onExitComplete, register } = context
 
-    // Context will never change without full re-renders so it's safe to call this hook conditionally
+    // It's safe to call this hook conditionally (after an early return) because the context will always
+    // either be null or non-null for the lifespan of the component.
     useEffect(register, [])
 
     return !isPresent && onExitComplete ? [false, onExitComplete] : [true]

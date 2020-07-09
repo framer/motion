@@ -39,7 +39,7 @@ export class SVGVisualElement extends HTMLVisualElement<
      * Without duplicating this call from HTMLVisualElement we end up with HTMLVisualElement.defaultConfig
      * being assigned to config
      */
-    protected config = this.defaultConfig
+    config = this.defaultConfig
 
     /**
      * Measure the SVG element on mount. This can affect page rendering so there might be a

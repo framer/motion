@@ -60,8 +60,8 @@ const Big = styled(motion.div)`
 
 const Child = () => {
     return (
-        <Big animate layoutId="big">
-            <Small animate layoutId="small" />
+        <Big layoutId="big">
+            <Small layoutId="small" />
         </Big>
     )
 }
@@ -69,20 +69,25 @@ const Child = () => {
 const Sibling = () => {
     return (
         <>
-            <Big animate layoutId="big" purple />
-            <Small animate layoutId="small" purple />
+            <Big layoutId="big" purple />
+            <Small layoutId="small" purple />
         </>
     )
 }
 
-export const App = () => {
+const Component = () => {
     const [isOn, toggleOn] = useCycle(false, true)
 
     return (
         <Container onClick={() => toggleOn()}>
-            <AnimateSharedLayout>
-                {isOn ? <Child /> : <Sibling />}
-            </AnimateSharedLayout>
+            {isOn ? <Child /> : <Sibling />}
         </Container>
+    )
+}
+export const App = () => {
+    return (
+        <AnimateSharedLayout>
+            <Component />
+        </AnimateSharedLayout>
     )
 }

@@ -6,7 +6,6 @@ import { buildTransform } from "./build-transform"
 import { isCSSVariable } from "./is-css-variable"
 import { valueScaleCorrection } from "../layout/scale-correction"
 import { Point2D, AxisBox2D, BoxDelta } from "../../../types/geometry"
-import { Point } from "../../../events/types"
 
 /**
  * Build style and CSS variables
@@ -46,12 +45,6 @@ export function buildHTMLStyles(
     treeScale?: Point2D,
     targetBox?: AxisBox2D
 ): void {
-    // Only perform scale correction if we've been provided data to perform
-    // the calculations and if all scales don't equal 1
-    const performScaleCorrection =
-        isLayoutReprojectionEnabled &&
-        shouldPerformScaleCorrection(delta, treeScale)
-
     // Empty the transformKeys array. As we're throwing out refs to its items
     // this might not be as cheap as suspected. Maybe using the array as a buffer
     // with a manual incrementation would be better.
@@ -102,7 +95,7 @@ export function buildHTMLStyles(
             // If we need to perform scale correction, and we have a handler for this
             // value type (ie borderRadius), perform it
 
-            if (performScaleCorrection && valueScaleCorrection[key]) {
+            if (isLayoutReprojectionEnabled && valueScaleCorrection[key]) {
                 const corrected = valueScaleCorrection[key].process(
                     value,
                     targetBox!,
@@ -158,17 +151,6 @@ export function buildHTMLStyles(
 
         style.transformOrigin = `${originX} ${originY} ${originZ}`
     }
-}
-
-function shouldPerformScaleCorrection(delta?: BoxDelta, treeScale?: Point2D) {
-    return (
-        delta &&
-        treeScale &&
-        (delta.x.scale !== 1 ||
-            delta.y.scale !== 1 ||
-            treeScale.x !== 1 ||
-            treeScale.y !== 1)
-    )
 }
 
 function layoutReprojection(delta: BoxDelta, treeScale: Point2D) {

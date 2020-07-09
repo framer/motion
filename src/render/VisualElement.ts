@@ -5,6 +5,7 @@ import sync, { cancelSync } from "framesync"
 import { VisualElementConfig, ResolvedValues } from "./types"
 import { AxisBox2D } from "../types/geometry"
 import { invariant } from "hey-listen"
+import { Snapshot } from "../components/AnimateSharedLayout/stack"
 
 /**
  * VisualElement is an abstract class that provides a generic animation-optimised interface to the
@@ -20,6 +21,10 @@ export abstract class VisualElement<E = any> {
 
     // An iterable list of current children
     children: Set<VisualElement<E>> = new Set()
+
+    // A snapshot of the previous component that shared a layoutId with this component. Will
+    // only be hydrated by AnimateSharedLayout
+    prevSnapshot?: Snapshot
 
     private removeFromParent?: () => void
 
@@ -167,14 +172,10 @@ export abstract class VisualElement<E = any> {
 
     scheduleRender = () => sync.render(this.triggerRender, false, true)
 
-    scheduleChildRender = child => child.scheduleRender()
+    scheduleChildRender = (child: VisualElement) => child.scheduleRender()
 
     scheduleChildrenRender() {
         this.children.forEach(this.scheduleChildRender)
-        // console.log(this.children)
-        // for (const child of this.children) {
-        //     child.scheduleRender()
-        // }
     }
 
     // Subscribe to changes in a MotionValue

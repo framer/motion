@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useRef, useEffect } from "react"
-import { motion, useMotionValue } from "@framer"
+import { motion } from "@framer"
 import { clamp, distance } from "@popmotion/popcorn"
 import move from "array-move"
 
@@ -41,12 +41,12 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 layout
                 // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
                 style={{
-                    background: color,
+                    background: "white",
                     height: heights[color],
                     borderRadius: 5,
                 }}
-                // whileHover={{ scale: 1.03 }}
-                // whileTap={{ scale: 1.12 }}
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 1.12 }}
                 drag="y"
                 // Animate the component back to 0 when dragging ends
                 dragConstraints={{ top: 0, bottom: 0 }}
@@ -54,7 +54,9 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 dragElastic={1}
                 onDragStart={() => setDragging(true)}
                 onDragEnd={() => setDragging(false)}
-                onDrag={(e, { point }) => moveItem(i, point.y)}
+                onViewportBoxUpdate={(_viewportBox, delta) =>
+                    isDragging && moveItem(i, delta.y.translate)
+                }
             />
         </li>
     )

@@ -20,6 +20,11 @@ import { RefObject } from 'react';
 import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
 
+// Warning: (ae-forgotten-export) The symbol "ScaleCorrectionDefinitionMap" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): void;
+
 // @public
 export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps>;
 
@@ -33,35 +38,37 @@ export interface AnimatePresenceProps {
 }
 
 // Warning: (ae-forgotten-export) The symbol "SharedLayoutProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "SharedLayoutTree" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps, SharedLayoutTree> {
-    addChild(child: Auto): () => void;
+export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
+    // Warning: (ae-forgotten-export) The symbol "HTMLVisualElement" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
-    addChildToStack(child: Auto): void;
+    addChild(child: HTMLVisualElement): void;
+    // (undocumented)
+    addToStack(child: HTMLVisualElement): void;
     // (undocumented)
     componentDidMount(): void;
+    // (undocumented)
     componentDidUpdate(): void;
-    getSnapshotBeforeUpdate(): null;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
-    getStack(id: string): LayoutStack<Auto>;
+    getStack(id?: string): LayoutStack | undefined;
     // (undocumented)
-    removeChild(child: Auto): void;
+    removeChild(child: HTMLVisualElement): void;
     // (undocumented)
-    removeChildFromStack(child: Auto): void;
+    removeFromStack(child: HTMLVisualElement): void;
     // (undocumented)
     render(): JSX.Element;
-    setRootDepth(child: Auto): void;
-    shouldComponentUpdate(nextProps: SharedLayoutProps, nextState: SharedLayoutTree): boolean;
     // (undocumented)
-    startAnimation(): void;
+    scheduleUpdate(force?: boolean): void;
     // (undocumented)
-    state: {
-        forceRender: () => void;
-        register: (child: Auto) => () => void;
-        move: (child: Auto) => void;
-    };
+    setRootDepth(child: HTMLVisualElement): void;
+    // (undocumented)
+    startLayoutAnimation(): void;
+    // Warning: (ae-forgotten-export) The symbol "SharedLayoutSyncMethods" needs to be exported by the entry point index.d.ts
+    syncContext: SharedLayoutSyncMethods;
+    // (undocumented)
+    updateStacks(): void;
 }
 
 // @public
@@ -97,32 +104,6 @@ export interface AnimationProps {
 }
 
 // @public (undocumented)
-export interface AutoValueHandler {
-    // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "BoxDelta" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Updater" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    createUpdater?: (visualElement: VisualElement, origin: string | number, target: string | number, current: {
-        [key: string]: string | number | undefined;
-    }, delta: BoxDelta, treeScale: {
-        x: number;
-        y: number;
-    }, originBox: AxisBox2D, targetBox: AxisBox2D) => Updater | void;
-    // Warning: (ae-forgotten-export) The symbol "Read" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    read?: Read | false;
-    // (undocumented)
-    reset?: (style: MotionStyle) => any;
-}
-
-// @public (undocumented)
-export type AutoValueHandlers = {
-    [key: string]: AutoValueHandler;
-};
-
-// @public (undocumented)
 export interface Axis {
     // (undocumented)
     max: number;
@@ -144,6 +125,18 @@ export interface AxisBox3D extends AxisBox2D {
     z: Axis;
 }
 
+// @public
+export interface AxisDelta {
+    // (undocumented)
+    origin: number;
+    // (undocumented)
+    originPoint: number;
+    // (undocumented)
+    scale: number;
+    // (undocumented)
+    translate: number;
+}
+
 // @public (undocumented)
 export interface BoundingBox2D {
     // (undocumented)
@@ -162,6 +155,14 @@ export interface BoundingBox3D extends BoundingBox2D {
     back: number;
     // (undocumented)
     front: number;
+}
+
+// @public
+export interface BoxDelta {
+    // (undocumented)
+    x: AxisDelta;
+    // (undocumented)
+    y: AxisDelta;
 }
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
@@ -197,8 +198,6 @@ export interface DraggableProps extends DragHandlers {
     dragElastic?: boolean | number;
     dragListener?: boolean;
     dragMomentum?: boolean;
-    dragOriginX?: MotionValue<number>;
-    dragOriginY?: MotionValue<number>;
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
@@ -214,9 +213,10 @@ export interface DraggableProps extends DragHandlers {
 // @public (undocumented)
 export interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
-    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onDragEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onDragStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDrag?: DragHandler;
+    onDragEnd?: DragHandler;
+    // Warning: (ae-forgotten-export) The symbol "DragHandler" needs to be exported by the entry point index.d.ts
+    onDragStart?: DragHandler;
     onDragTransitionEnd?(): void;
 }
 
@@ -243,8 +243,6 @@ export interface FeatureProps extends MotionProps {
     localContext: MotionContextProps;
     // (undocumented)
     parentContext: MotionContextProps;
-    // Warning: (ae-forgotten-export) The symbol "HTMLVisualElement" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     visualElement: HTMLVisualElement;
 }
@@ -377,10 +375,10 @@ export const MotionPluginContext: React.Context<MotionPluginsContext>;
 // @internal (undocumented)
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "AutoAnimateProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "LayoutProps" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, AutoAnimateProps, MotionAdvancedProps {
+export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
     // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;
@@ -408,6 +406,8 @@ export class MotionValue<V = any> {
     constructor(init: V);
     // @internal
     attach(passiveEffect: PassiveEffect<V>): void;
+    // (undocumented)
+    clearListeners(): void;
     destroy(): void;
     get(): V;
     // (undocumented)
@@ -525,12 +525,6 @@ export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boole
 // 
 // @internal
 export function resolveMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
-
-// Warning: (ae-forgotten-export) The symbol "SharedBatchTree" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "SharedLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export const SharedLayoutContext: import("react").Context<SharedBatchTree | SharedLayoutTree>;
 
 // @public (undocumented)
 <<<<<<< HEAD
@@ -710,6 +704,8 @@ export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValue
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
+// Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
+// 
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: VisualElement): void;
 
@@ -848,10 +844,6 @@ export class VisualElementAnimationControls<P extends {} = {}, V extends {} = {}
     stop(): void;
     }
 
-
-// Warnings were encountered during analysis:
-// 
-// types/components/AnimateSharedLayout/index.d.ts:55:9 - (ae-forgotten-export) The symbol "Auto" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

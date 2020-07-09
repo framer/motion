@@ -53,6 +53,7 @@ export { useDomEvent } from "./events/use-dom-event"
 export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
 export { useAnimatedState } from "./animation/use-animated-state"
+export { addScaleCorrection } from "./render/dom/layout/scale-correction"
 
 /**
  * Contexts
@@ -107,10 +108,6 @@ export {
     Variants,
 } from "./types"
 export { EventInfo } from "./events/types"
-export {
-    AutoValueHandler,
-    AutoValueHandlers,
-} from "./motion/features/auto/values"
 export { MotionFeature, FeatureProps } from "./motion/features/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./gestures/drag/types"

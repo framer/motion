@@ -1,5 +1,6 @@
 import { Transition } from "../../types"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { AxisBox2D } from "../../types/geometry"
+import { MotionValue } from "../../value"
 
 export enum Presence {
     Entering,
@@ -7,39 +8,9 @@ export enum Presence {
     Exiting,
 }
 
-export interface PresenceMetadata {
-    layoutId?: string
-    presence: Presence
-}
-
 export enum VisibilityAction {
     Hide,
     Show,
-}
-
-export enum StackPosition {
-    Lead,
-    Previous,
-}
-
-/**
- * Functions provided to animate children of a `SharedLayoutProps` component.
- */
-export interface SharedLayoutTree {
-    forceRender: () => void
-    register: (child: HTMLVisualElement) => () => void
-    move: (child: HTMLVisualElement) => void
-}
-
-export interface TransitionHandler {
-    snapshotTarget: (child: HTMLVisualElement) => void
-    startAnimation: (child: HTMLVisualElement) => void
-}
-
-type FlushMagicChildren = (handler?: TransitionHandler) => void
-export interface SharedBatchTree {
-    add: (child: HTMLVisualElement) => void
-    flush: FlushMagicChildren
 }
 
 export interface SharedLayoutProps {
@@ -98,4 +69,13 @@ export interface SharedLayoutProps {
      * @internal
      */
     supportRotate?: boolean
+}
+
+export interface SharedLayoutAnimationConfig {
+    visibilityAction?: VisibilityAction
+    originBox?: AxisBox2D
+    targetBox?: AxisBox2D
+    transition?: Transition
+    crossfadeOpacity?: MotionValue<number>
+    onLayoutAnimationComplete?: () => void
 }

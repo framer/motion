@@ -2,12 +2,9 @@ import {
     Axis,
     AxisBox2D,
     BoundingBox2D,
-    TransformPoint2D,
     Point2D,
 } from "../../../types/geometry"
 import { mix } from "@popmotion/popcorn"
-import { invariant } from "hey-listen"
-import { getBoundingBox } from "../../../render/dom/layout/measure"
 import { calcOrigin } from "../../../render/dom/layout/delta-calc"
 
 export interface ResolvedConstraints {
@@ -55,7 +52,8 @@ export function calcRelativeAxisConstraints(
     }
 
     if (max !== undefined) {
-        constraints.max = axis.min + max - length
+        // const minConstraint = axis.min + max
+        constraints.max = Math.max(axis.min + max - length, axis.min + max)
     }
 
     return constraints

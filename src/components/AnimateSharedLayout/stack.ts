@@ -1,26 +1,17 @@
 import { Presence } from "./types"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import { ResolvedValues } from "../../render/types"
-import { AxisBox2D } from "../../types/geometry"
+import { AxisBox2D, Point2D } from "../../types/geometry"
 import { isTransformProp } from "../../render/dom/utils/transform"
-import { motionValue } from "../.."
+import { elementDragControls } from "../../gestures/drag/VisualElementDragControls"
+import { motionValue } from "../../value"
+import { Transition } from "../../types"
 
 export interface Snapshot {
-    isDragging: boolean
+    isDragging?: boolean
+    cursorProgress?: Point2D
     latestMotionValues: ResolvedValues
     boundingBox?: AxisBox2D
-}
-
-export interface StackChild {
-    isPresent: () => boolean
-    presence?: Presence
-    prevViewportBox?: Snapshot
-    layoutBox?: Snapshot
-    shouldAnimate?: boolean
-    props: {
-        layoutOrder?: number
-        _shouldAnimate?: boolean
-    }
 }
 
 export type LeadAndFollow<T> = [T | undefined, T | undefined]
@@ -42,25 +33,23 @@ export type LeadAndFollow<T> = [T | undefined, T | undefined]
  *  - If the last child is present, the last child
  *  - If the last child is exiting, the last *encountered* exiting component
  */
-export function findLeadAndFollow<T extends HTMLVisualElement>(
-    stack: T[],
-    [prevLead, prevFollow]: LeadAndFollow<T>
-): LeadAndFollow<T> {
-    let lead: T | undefined = undefined
+export function findLeadAndFollow(
+    stack: HTMLVisualElement[],
+    [prevLead, prevFollow]: LeadAndFollow<HTMLVisualElement>
+): LeadAndFollow<HTMLVisualElement> {
+    let lead: HTMLVisualElement | undefined = undefined
     let leadIndex = 0
-    let follow: T | undefined = undefined
+    let follow: HTMLVisualElement | undefined = undefined
 
     // Find the lead child first
     const numInStack = stack.length
-    let lastIsPresent = false
+    let lastIsPresent: boolean | undefined = false
 
     for (let i = numInStack - 1; i >= 0; i--) {
         const child = stack[i]
 
         const isLastInStack = i === numInStack - 1
-        if (isLastInStack) {
-            lastIsPresent = child.isPresent
-        }
+        if (isLastInStack) lastIsPresent = child.isPresent
 
         if (lastIsPresent) {
             lead = child
@@ -111,28 +100,29 @@ export function findLeadAndFollow<T extends HTMLVisualElement>(
     return [lead, follow]
 }
 
-export class LayoutStack<T extends HTMLVisualElement = HTMLVisualElement> {
-    order: T[] = []
+export class LayoutStack {
+    order: HTMLVisualElement[] = []
 
-    lead?: T | undefined
-    follow?: T | undefined
+    lead?: HTMLVisualElement | undefined
+    follow?: HTMLVisualElement | undefined
 
-    prevLead?: T | undefined
-    prevFollow?: T | undefined
+    prevLead?: HTMLVisualElement | undefined
+    prevFollow?: HTMLVisualElement | undefined
 
     snapshot?: Snapshot
 
     // Track whether we've ever had a child
     hasChildren: boolean = false
 
-    add(child: T) {
-        const { layoutOrder } = child
+    add(child: HTMLVisualElement) {
+        const { layoutOrder } = child.config
 
         if (layoutOrder === undefined) {
             this.order.push(child)
         } else {
             let index = this.order.findIndex(
-                stackChild => layoutOrder <= (stackChild.props.layoutOrder || 0)
+                stackChild =>
+                    layoutOrder <= (stackChild.config.layoutOrder || 0)
             )
 
             if (index === -1) {
@@ -145,11 +135,17 @@ export class LayoutStack<T extends HTMLVisualElement = HTMLVisualElement> {
             this.order.splice(index, 0, child)
         }
 
+        /**
+         *
+         */
+
         // Load previous values from snapshot into this child
         // TODO Neaten up
         // TODO Double check when reimplementing move
         // TODO Add isDragging status and
         if (this.snapshot) {
+            child.prevSnapshot = this.snapshot
+            // TODO Remove in favour of above
             child.prevViewportBox = this.snapshot.boundingBox
 
             const latest = this.snapshot.latestMotionValues
@@ -165,7 +161,7 @@ export class LayoutStack<T extends HTMLVisualElement = HTMLVisualElement> {
         this.hasChildren = true
     }
 
-    remove(child: T) {
+    remove(child: HTMLVisualElement) {
         const index = this.order.findIndex(stackChild => child === stackChild)
         if (index !== -1) this.order.splice(index, 1)
     }
@@ -184,22 +180,27 @@ export class LayoutStack<T extends HTMLVisualElement = HTMLVisualElement> {
     }
 
     updateSnapshot() {
-        if (this.lead) {
-            const snapshot = {
-                isDragging: false,
-                boundingBox: this.lead.prevViewportBox,
-                latestMotionValues: {},
-            }
+        if (!this.lead) return
 
-            this.lead.forEachValue((value, key) => {
-                const latest = value.get()
-                if (!isTransformProp(latest)) {
-                    snapshot.latestMotionValues[key] = latest
-                }
-            })
-
-            this.snapshot = snapshot
+        const snapshot: Snapshot = {
+            boundingBox: this.lead.prevViewportBox,
+            latestMotionValues: {},
         }
+
+        this.lead.forEachValue((value, key) => {
+            const latest = value.get()
+            if (!isTransformProp(latest)) {
+                snapshot.latestMotionValues[key] = latest
+            }
+        })
+
+        const dragControls = elementDragControls.get(this.lead)
+        if (dragControls && dragControls.isDragging) {
+            snapshot.isDragging = true
+            snapshot.cursorProgress = dragControls.cursorProgress
+        }
+
+        this.snapshot = snapshot
     }
 
     isLeadPresent() {
@@ -207,28 +208,33 @@ export class LayoutStack<T extends HTMLVisualElement = HTMLVisualElement> {
     }
 
     shouldStackAnimate() {
-        return this.lead && this.lead?.isPresent
-            ? this.lead?.props?._shouldAnimate === true
-            : this.follow && this.follow?.props._shouldAnimate === true
+        return true
+        // return this.lead && this.lead?.isPresent
+        //     ? this.lead?.props?._shouldAnimate === true
+        //     : this.follow && this.follow?.props._shouldAnimate === true
     }
 
-    getFollowOrigin() {
+    getFollowOrigin(): AxisBox2D | undefined {
         // This shouldAnimate check is quite specifically a fix for the optimisation made in Framer
         // where components are kept in the tree ready to be re-used
-        return this.follow && this.follow.shouldAnimate
+        return this.follow // && this.follow.shouldAnimate
             ? this.follow.prevViewportBox
-            : this.snapshot
+            : this.snapshot?.boundingBox
     }
 
-    getFollowTarget() {
-        return this.follow?.layoutBox
+    getFollowTarget(): AxisBox2D | undefined {
+        return this.follow?.box
     }
 
-    getLeadOrigin() {
+    getLeadOrigin(): AxisBox2D | undefined {
         return this.lead?.prevViewportBox
     }
 
-    getLeadTarget() {
-        return this.lead?.layoutBox
+    getLeadTarget(): AxisBox2D | undefined {
+        return this.lead?.box
+    }
+
+    getLeadTransition(): Transition | undefined {
+        return this.lead?.config.transition
     }
 }
