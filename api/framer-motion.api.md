@@ -527,18 +527,6 @@ export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boole
 export function resolveMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
 
 // @public (undocumented)
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 export interface ScrollMotionValues {
     // (undocumented)
     scrollX: MotionValue<number>;
@@ -552,42 +540,6 @@ export interface ScrollMotionValues {
 
 // @public (undocumented)
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType
->>>>>>> Renaming to magic
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType;
->>>>>>> Renaming SyncLayout to MagicMove and moving auto examples
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType
->>>>>>> Rewriting components lifecycle-first
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType;
->>>>>>> Rearchitecture
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType
->>>>>>> Fixing shared persistent animations
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType;
->>>>>>> Fixing exports
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType
->>>>>>> Renaming MagicMotion to SharedMagicMotion
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType;
->>>>>>> Fixing lint error
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType
->>>>>>> Updating examples to use latest API
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType;
->>>>>>> Removing magicTransition prop
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType
->>>>>>> Adding VisualElement
-=======
-export type SingleTarget = ResolvedSingleTarget | CustomValueType;
->>>>>>> Fixing tests
 
 // @public
 export interface Spring {
@@ -752,55 +704,6 @@ export function useTransform<T>(parent: MotionValue, transform: Transformer<T>):
 // @public
 export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
 
-<<<<<<< HEAD
-=======
-// Warning: (ae-forgotten-export) The symbol "ScrollMotionValues" needs to be exported by the entry point index.d.ts
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-//
->>>>>>> Renaming to magic
-=======
-// 
->>>>>>> Renaming SyncLayout to MagicMove and moving auto examples
-=======
-//
->>>>>>> Rewriting components lifecycle-first
-=======
-// 
->>>>>>> Rearchitecture
-=======
-//
->>>>>>> Fixing shared persistent animations
-=======
-// 
->>>>>>> Fixing exports
-=======
-//
->>>>>>> Renaming MagicMotion to SharedMagicMotion
-=======
-// 
->>>>>>> Fixing lint error
-=======
-//
->>>>>>> Updating examples to use latest API
-=======
-// 
->>>>>>> Removing magicTransition prop
-=======
-//
->>>>>>> Adding VisualElement
-=======
-// 
->>>>>>> Fixing tests
 // @public
 export function useViewportScroll(): ScrollMotionValues;
 
