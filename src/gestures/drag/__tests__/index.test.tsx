@@ -873,41 +873,4 @@ describe("dragging", () => {
             "transform: translateX(105px) translateY(0px) translateZ(0)"
         )
     })
-
-    test("accepts dragOriginX and dragOriginY", async () => {
-        const x = motionValue(0)
-        const y = motionValue(0)
-        const dragOriginX = motionValue(0)
-        const dragOriginY = motionValue(0)
-        const Component = () => (
-            <MockDrag>
-                <motion.div
-                    drag
-                    dragOriginX={dragOriginX}
-                    dragOriginY={dragOriginY}
-                    style={{ x, y }}
-                />
-            </MockDrag>
-        )
-
-        const { container, rerender } = render(<Component />)
-        rerender(<Component />)
-
-        const pointer = await drag(container.firstChild).to(100, 100)
-        await pointer.to(50, 50)
-
-        dragOriginX.set(-100)
-        dragOriginY.set(-100)
-
-        await pointer.to(200, 200)
-        pointer.end()
-
-        expect({
-            x: x.get(),
-            y: y.get(),
-        }).toEqual({
-            x: 100,
-            y: 100,
-        })
-    })
 })

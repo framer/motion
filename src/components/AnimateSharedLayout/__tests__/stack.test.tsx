@@ -162,10 +162,13 @@ describe("Stack", () => {
     test("It correctly updates snapshot", () => {
         const stack = new LayoutStack()
         const a = makeChild()
-        ;(a as any).measuredOrigin = "snapshot"
+        ;(a as any).prevViewportBox = "a"
         stack.add(a)
         stack.updateLeadAndFollow()
         stack.updateSnapshot()
-        expect(stack.snapshot).toBe("snapshot")
+        expect(stack.snapshot).toStrictEqual({
+            boundingBox: "a",
+            latestMotionValues: { opacity: 0 },
+        })
     })
 })

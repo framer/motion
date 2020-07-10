@@ -29,7 +29,7 @@ import {
     calcPositionFromProgress,
 } from "./utils/constraints"
 import { getBoundingBox } from "../../render/dom/layout/measure"
-import { calcOrigin } from "../../render/dom/layout/delta-calc"
+import { calcOrigin } from "../../utils/geometry/delta-calc"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,

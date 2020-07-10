@@ -4,8 +4,8 @@ import {
     AxisBox2D,
     Axis,
     BoxDelta,
-} from "../types/geometry"
-import { noop } from "./noop"
+} from "../../types/geometry"
+import { noop } from "../noop"
 
 /**
  * Bounding boxes tend to be defined as top, left, right, bottom. For various operations

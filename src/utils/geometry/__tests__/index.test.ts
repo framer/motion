@@ -2,7 +2,7 @@ import {
     convertBoundingBoxToAxisBox,
     transformBoundingBox,
     calcAxisCenter,
-} from "../geometry"
+} from ".."
 
 describe("convertBoundingBoxToAxisBox", () => {
     test("correctly converts a BoundingBox to AxisBox", () => {

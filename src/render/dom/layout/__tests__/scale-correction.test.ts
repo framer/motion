@@ -1,4 +1,8 @@
-import { pixelsToPercent, correctBoxShadow } from "../scale-correction"
+import {
+    pixelsToPercent,
+    correctBoxShadow,
+    correctBorderRadius,
+} from "../scale-correction"
 
 describe("pixelsToPercent", () => {
     test("Correctly converts pixels to percent", () => {
@@ -62,5 +66,25 @@ describe("correctBoxShadow", () => {
                 }
             )
         ).toBe("40px 40px 40px 40px rgba(0, 0, 0, 1)")
+    })
+})
+
+describe("correctBorderRadius", () => {
+    test("Leaves non-pixel values alone", () => {
+        expect(
+            correctBorderRadius("20%", {
+                x: { min: 0, max: 0 },
+                y: { min: 0, max: 0 },
+            })
+        ).toBe("20%")
+    })
+
+    test("Correctly scales pixel values by converting them to percentage of the viewport box", () => {
+        expect(
+            correctBorderRadius(20, {
+                x: { min: 0, max: 100 },
+                y: { min: 0, max: 200 },
+            })
+        ).toBe("20% 10%")
     })
 })

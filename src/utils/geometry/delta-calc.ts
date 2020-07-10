@@ -1,4 +1,4 @@
-import { Axis, AxisDelta, BoxDelta, AxisBox2D } from "../../../types/geometry"
+import { Axis, AxisDelta, BoxDelta, AxisBox2D } from "../../types/geometry"
 import { mix, progress, clamp, distance } from "@popmotion/popcorn"
 
 const clampProgress = clamp(0, 1)

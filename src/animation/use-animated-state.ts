@@ -5,6 +5,10 @@ import { useVisualElementAnimation } from "./use-visual-element-animation"
 import { AnimationDefinition } from "./VisualElementAnimationControls"
 import { ResolvedValues } from "../render/types"
 
+/**
+ * This is just a very basic VisualElement, more of a hack to keep supporting useAnimatedState with
+ * the latest APIs.
+ */
 class StateVisualElement extends VisualElement {
     latestState: ResolvedValues = {}
 
@@ -19,9 +23,7 @@ class StateVisualElement extends VisualElement {
         return this.latestState[key] || 0
     }
 
-    render() {
-        console.log("render", this.latest.foo)
-    }
+    render() {}
 }
 
 /**

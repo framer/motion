@@ -21,7 +21,7 @@ describe("createSwitchAnimation", () => {
         stack.updateLeadAndFollow()
 
         expect(createSwitchAnimation(b, true, stack)).toEqual({
-            origin: "aOrigin",
+            originBox: "aOrigin",
         })
     })
 
@@ -59,7 +59,7 @@ describe("createSwitchAnimation", () => {
 
         // A2
         expect(createSwitchAnimation(b, true, stack)).toEqual({
-            origin: "aOrigin",
+            originBox: "aOrigin",
         })
     })
 
@@ -79,7 +79,7 @@ describe("createSwitchAnimation", () => {
 
         // A2
         expect(createSwitchAnimation(b, true, stack)).toEqual({
-            target: "aTarget",
+            targetBox: "aTarget",
         })
     })
 
@@ -99,7 +99,7 @@ describe("createSwitchAnimation", () => {
 
         // A2
         expect(createSwitchAnimation(b, true, stack)).toEqual({
-            origin: "aOrigin",
+            originBox: "aOrigin",
         })
 
         b.presence = Presence.Exiting
@@ -112,7 +112,7 @@ describe("createSwitchAnimation", () => {
 
         // A2
         expect(createSwitchAnimation(b, true, stack)).toEqual({
-            target: "aTarget",
+            targetBox: "aTarget",
         })
         stack.remove(b)
         stack.updateLeadAndFollow()
@@ -152,12 +152,12 @@ describe("createCrossfadeAnimation", () => {
 
         // A1
         expect(createCrossfadeAnimation(a, true, stack)).toEqual({
-            target: "bTarget",
+            targetBox: "bTarget",
         })
 
         // A2
         expect(createCrossfadeAnimation(b, true, stack)).toEqual({
-            origin: "aOrigin",
+            originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
         })
     })
@@ -173,12 +173,12 @@ describe("createCrossfadeAnimation", () => {
 
         // A1
         expect(createCrossfadeAnimation(a, false, stack)).toEqual({
-            target: "bTarget",
+            targetBox: "bTarget",
         })
 
         // A2
         expect(createCrossfadeAnimation(b, false, stack)).toEqual({
-            origin: "aOrigin",
+            originBox: "aOrigin",
         })
     })
 
@@ -208,13 +208,14 @@ describe("createCrossfadeAnimation", () => {
 
         // A1
         expect(createCrossfadeAnimation(a, true, stack)).toEqual({
-            origin: "bOrigin",
+            originBox: "bOrigin",
             crossfadeOpacity: aOpacity,
+            transition: undefined,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, true, stack)).toEqual({
-            target: "aTarget",
+            targetBox: "aTarget",
         })
     })
 
@@ -230,12 +231,12 @@ describe("createCrossfadeAnimation", () => {
 
         // A1
         expect(createCrossfadeAnimation(a, true, stack)).toEqual({
-            target: "bTarget",
+            targetBox: "bTarget",
         })
 
         // A2
         expect(createCrossfadeAnimation(b, true, stack)).toEqual({
-            origin: "aOrigin",
+            originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
         })
     })
@@ -268,7 +269,7 @@ describe("createCrossfadeAnimation", () => {
 
         // A1
         expect(createCrossfadeAnimation(a, true, stack)).toEqual({
-            target: "cTarget",
+            targetBox: "cTarget",
         })
 
         // A2
@@ -278,7 +279,7 @@ describe("createCrossfadeAnimation", () => {
 
         // A3
         expect(createCrossfadeAnimation(c, true, stack)).toEqual({
-            origin: "aOrigin",
+            originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
         })
     })
@@ -298,13 +299,13 @@ describe("createCrossfadeAnimation", () => {
 
         // A1
         expect(createCrossfadeAnimation(a, true, stack)).toEqual({
-            origin: "bOrigin",
+            originBox: "bOrigin",
             crossfadeOpacity: bOpacity,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, true, stack)).toEqual({
-            target: "aTarget",
+            targetBox: "aTarget",
         })
 
         // A3

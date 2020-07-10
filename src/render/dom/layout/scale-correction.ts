@@ -61,9 +61,13 @@ export function correctBoxShadow(
     const shadow = complex.parse(latest) as BoxShadow
     const template = complex.createTransformer(latest)
 
+    // Calculate the overall context scale
+    const xScale = delta.x.scale * treeScale.x
+    const yScale = delta.y.scale * treeScale.y
+
     // Scale x/y
-    shadow[1] /= delta.x.scale * treeScale.x
-    shadow[2] /= delta.y.scale * treeScale.y
+    shadow[1] /= xScale
+    shadow[2] /= yScale
 
     /**
      * Ideally we'd correct x and y scales individually, but because blur and
@@ -71,11 +75,7 @@ export function correctBoxShadow(
      * We could potentially improve the outcome of this by incorporating the ratio between
      * the two scales.
      */
-    const averageScale = mix(
-        delta.x.scale * treeScale.x,
-        delta.y.scale * treeScale.y,
-        0.5
-    )
+    const averageScale = mix(xScale, yScale, 0.5)
 
     // Blur
     if (typeof shadow[3] === "number") shadow[3] /= averageScale

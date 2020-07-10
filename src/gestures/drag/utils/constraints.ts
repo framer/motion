@@ -5,7 +5,7 @@ import {
     Point2D,
 } from "../../../types/geometry"
 import { mix } from "@popmotion/popcorn"
-import { calcOrigin } from "../../../render/dom/layout/delta-calc"
+import { calcOrigin } from "../../../utils/geometry/delta-calc"
 
 export interface ResolvedConstraints {
     x: Partial<Axis>

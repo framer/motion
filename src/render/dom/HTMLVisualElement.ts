@@ -15,8 +15,8 @@ import {
     applyTreeDeltas,
     applyBoxTransforms,
     removeBoxTransforms,
-} from "./layout/delta-apply"
-import { updateBoxDelta } from "./layout/delta-calc"
+} from "../../utils/geometry/delta-apply"
+import { updateBoxDelta } from "../../utils/geometry/delta-calc"
 import { Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue } from "../../value"
