@@ -14,7 +14,10 @@ export interface Snapshot {
     boundingBox?: AxisBox2D
 }
 
-export type LeadAndFollow<T> = [T | undefined, T | undefined]
+export type LeadAndFollow = [
+    HTMLVisualElement | undefined,
+    HTMLVisualElement | undefined
+]
 
 /**
  * For each layout animation, we want to identify two components
@@ -35,8 +38,8 @@ export type LeadAndFollow<T> = [T | undefined, T | undefined]
  */
 export function findLeadAndFollow(
     stack: HTMLVisualElement[],
-    [prevLead, prevFollow]: LeadAndFollow<HTMLVisualElement>
-): LeadAndFollow<HTMLVisualElement> {
+    [prevLead, prevFollow]: LeadAndFollow
+): LeadAndFollow {
     let lead: HTMLVisualElement | undefined = undefined
     let leadIndex = 0
     let follow: HTMLVisualElement | undefined = undefined

@@ -15,11 +15,11 @@
   <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
   <img src="https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square" />
   </a>
-  <a href="http://twitter.com/framer" target="_blank">
+  <a href="https://twitter.com/framer" target="_blank">
   <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
   </a>
-  <a href="https://spectrum.chat/framer" target="_blank">
-  <img src="https://withspectrum.github.io/badge/badge.svg" />
+  <a href="https://discord.gg/DfkSpYe" target="_blank">
+  <img src="https://img.shields.io/discord/308323056592486420.svg?logo=discord&logoColor=white" alt="Chat on Discord">
   </a>
 </p>
 
@@ -59,7 +59,7 @@ npm install framer-motion
 import { motion } from "framer-motion"
 
 export const MyComponent = ({ isVisible }) => (
-  <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />
+    <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />
 )
 ```
 

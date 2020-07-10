@@ -1,18 +1,14 @@
-import {
-    LayoutStack,
-    StackChild,
-    findLeadAndFollow,
-    LeadAndFollow,
-} from "../stack"
+import { LayoutStack, findLeadAndFollow, LeadAndFollow } from "../stack"
 import { makeChild } from "./utils"
 import { Presence } from "../types"
+import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
 
-function testFindLead<T extends StackChild>(
-    stack: T[],
-    previous: Array<T | undefined>,
-    expected: Array<T | undefined>
+function testFindLead(
+    stack: HTMLVisualElement[],
+    previous: Array<HTMLVisualElement | undefined>,
+    expected: Array<HTMLVisualElement | undefined>
 ) {
-    const [lead, prev] = findLeadAndFollow(stack, previous as LeadAndFollow<T>)
+    const [lead, prev] = findLeadAndFollow(stack, previous as LeadAndFollow)
     expect(lead).toBe(expected[0])
     expect(prev).toBe(expected[1])
 }

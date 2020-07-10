@@ -1,6 +1,6 @@
 import * as React from "react"
-import { render } from "../../../jest.setup"
-import { motion, useDragControls } from "../../"
+import { render } from "../../../../jest.setup"
+import { motion, useDragControls } from "../../../"
 import { MockDrag, drag } from "./utils"
 
 describe("useDragControls", () => {

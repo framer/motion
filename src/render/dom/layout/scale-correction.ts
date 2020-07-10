@@ -49,6 +49,8 @@ export function correctBorderRadius(
     return `${x}% ${y}%`
 }
 
+type BoxShadow = [string, number, number, number, number]
+
 export function correctBoxShadow(
     latest: string,
     _viewportBox: AxisBox2D,
@@ -56,8 +58,12 @@ export function correctBoxShadow(
     treeScale: Point2D
 ) {
     // GC Warning - this creates a function and object every frame
-    const shadow = complex.parse(latest)
+    const shadow = complex.parse(latest) as BoxShadow
     const template = complex.createTransformer(latest)
+
+    // Scale x/y
+    shadow[1] /= delta.x.scale * treeScale.x
+    shadow[2] /= delta.y.scale * treeScale.y
 
     /**
      * Ideally we'd correct x and y scales individually, but because blur and
@@ -66,22 +72,18 @@ export function correctBoxShadow(
      * the two scales.
      */
     const averageScale = mix(
-        delta.x.scale / treeScale.x,
-        delta.y.scale / treeScale.y,
+        delta.x.scale * treeScale.x,
+        delta.y.scale * treeScale.y,
         0.5
     )
 
     // Blur
-    if (typeof shadow[3] === "number") {
-        shadow[3] = shadow[3] / averageScale
-    }
+    if (typeof shadow[3] === "number") shadow[3] /= averageScale
 
     // Spread
-    if (typeof shadow[4] === "number") {
-        shadow[4] = shadow[4] / averageScale
-    }
+    if (typeof shadow[4] === "number") shadow[4] /= averageScale
 
-    return template(shadow)
+    return template(shadow as any)
 }
 
 const borderCorrectionDefinition = {
@@ -108,7 +110,7 @@ export const valueScaleCorrection: ScaleCorrectionDefinitionMap = {
 }
 
 /**
- * @private
+ * @internal
  */
 export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap) {
     for (const key in correctors) {

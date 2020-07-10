@@ -251,6 +251,8 @@ export class HTMLVisualElement<
     /**
      * To be called when all layouts are successfully updated. In turn we can notify layoutUpdate
      * subscribers.
+     *
+     * TODO: We don't currently use more than one listener
      */
     layoutReady(config?: SharedLayoutAnimationConfig) {
         this.layoutUpdateListeners.forEach(listener => {
@@ -304,24 +306,15 @@ export class HTMLVisualElement<
         this.targetBox = this.getBoundingBoxWithoutTransforms()
     }
 
+    lockTargetBox() {}
+
+    unlockTargetBox() {}
+
     /**
      * Reset the transform on the current Element
      */
     resetTransform() {
         this.element.style.transform = "none"
-    }
-
-    axisLocks = {
-        x: false,
-        y: false,
-    }
-
-    getAxisLock(axis: "x" | "y") {
-        if (this.axisLocks[axis]) return
-
-        this.axisLocks[axis] = true
-
-        return () => (this.axisLocks[axis] = false)
     }
 
     /**

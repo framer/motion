@@ -21,8 +21,9 @@ import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
 
 // Warning: (ae-forgotten-export) The symbol "ScaleCorrectionDefinitionMap" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "addScaleCorrection" should be prefixed with an underscore because the declaration is marked as @internal
 // 
-// @public (undocumented)
+// @internal (undocumented)
 export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): void;
 
 // @public

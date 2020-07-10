@@ -12,20 +12,35 @@ export interface ResolvedConstraints {
     y: Partial<Axis>
 }
 
+/**
+ * Apply constraints to a point. These constraints are both physical along an
+ * axis, and an elastic factor that determines how much to constrain the point
+ * by if it does lie outside the defined parameters.
+ */
 export function applyConstraints(
     point: number,
     { min, max }: Partial<Axis>,
     elastic?: number
 ): number {
     if (min !== undefined && point < min) {
+        // If we have a min point defined, and this is outside of that, constrain
         point = elastic ? mix(min, point, elastic) : Math.max(point, min)
     } else if (max !== undefined && point > max) {
+        // If we have a max point defined, and this is outside of that, constrain
         point = elastic ? mix(max, point, elastic) : Math.min(point, max)
     }
 
     return point
 }
 
+/**
+ * Calculates a min projection point based on a pointer, pointer progress
+ * within the drag target, and constraints.
+ *
+ * For instance if an element was 100px width, we were dragging from 0.25
+ * along this axis, the pointer is at 200px, and there were no constraints,
+ * we would calculate a min projection point of 175px.
+ */
 export function calcConstrainedMinPoint(
     point: number,
     length: number,
@@ -39,6 +54,10 @@ export function calcConstrainedMinPoint(
     return constraints ? applyConstraints(min, constraints, elastic) : min
 }
 
+/**
+ * Calculate constraints in terms of the viewport when
+ * defined relatively to the measured axis.
+ */
 export function calcRelativeAxisConstraints(
     axis: Axis,
     min?: number,
@@ -52,13 +71,16 @@ export function calcRelativeAxisConstraints(
     }
 
     if (max !== undefined) {
-        // const minConstraint = axis.min + max
         constraints.max = Math.max(axis.min + max - length, axis.min + max)
     }
 
     return constraints
 }
 
+/**
+ * Calculate constraints in terms of the viewport when
+ * defined relatively to the measured bounding box.
+ */
 export function calcRelativeConstraints(
     layoutBox: AxisBox2D,
     { top, left, bottom, right }: Partial<BoundingBox2D>
@@ -69,6 +91,9 @@ export function calcRelativeConstraints(
     }
 }
 
+/**
+ * Calculate viewport constraints when defined as another viewport-relative axis
+ */
 export function calcViewportAxisConstraints(
     layoutAxis: Axis,
     constraintsAxis: Axis
@@ -91,6 +116,9 @@ export function calcViewportAxisConstraints(
     }
 }
 
+/**
+ * Calculate viewport constraints when defined as another viewport-relative box
+ */
 export function calcViewportConstraints(
     layoutBox: AxisBox2D,
     constraintsBox: AxisBox2D
@@ -101,6 +129,14 @@ export function calcViewportConstraints(
     }
 }
 
+/**
+ * Calculate the relative progress of one constraints box relative to another.
+ * Imagine a page scroll bar. At the top, this would return 0, at the bottom, 1.
+ * Anywhere in-between, a value between 0 and 1.
+ *
+ * This also handles flipped constraints, for instance a draggable container within
+ * a smaller viewport like a scrollable view.
+ */
 export function calcProgressWithinConstraints(
     layoutBox: AxisBox2D,
     constraintsBox: AxisBox2D
@@ -111,6 +147,9 @@ export function calcProgressWithinConstraints(
     }
 }
 
+/**
+ * Calculate the an axis position based on two axes and a progress value.
+ */
 export function calcPositionFromProgress(
     axis: Axis,
     constraints: Axis,

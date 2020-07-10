@@ -10,6 +10,9 @@ import {
     SharedLayoutContext,
 } from "./SharedLayoutContext"
 
+/**
+ * @public
+ */
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     /**
      * A list of all the children in the shared layout

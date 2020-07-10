@@ -1,8 +1,8 @@
 import * as React from "react"
 import { useState } from "react"
-import { render } from "../../../jest.setup"
-import { motion, BoundingBox2D } from "../../"
-import { motionValue, MotionValue } from "../../value"
+import { render } from "../../../../jest.setup"
+import { motion, BoundingBox2D } from "../../../"
+import { motionValue, MotionValue } from "../../../value"
 import { fireEvent } from "@testing-library/dom"
 import { MockDrag, Point, drag, frame, deferred, sleep } from "./utils"
 

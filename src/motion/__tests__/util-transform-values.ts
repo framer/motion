@@ -6,6 +6,7 @@ import {
     ResolvedValueTarget,
     ResolvedKeyframesTarget,
 } from "../../types"
+import { ResolvedValues } from "../../render/types"
 
 export const resolveSingleValue = (
     v: string | number | CustomValueType
@@ -29,7 +30,7 @@ const resolveValue = (v: ValueTarget): ResolvedValueTarget => {
 }
 
 // If this function grows with new properties it'll probably benefit from a map approach
-export const transformValues = <T extends any>(values: T): T => {
+export const transformValues = <T extends ResolvedValues>(values: T): T => {
     for (const key in values) {
         values[key] = resolveValue(values[key]) as any
     }

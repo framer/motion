@@ -172,7 +172,7 @@ export class VisualElementDragControls {
              * stick to the correct place under the pointer.
              */
             this.prepareBoundingBox()
-            ;(this.visualElement as any).lockTargetBox()
+            this.visualElement.lockTargetBox()
 
             /**
              * Resolve the drag constraints. These are either set as top/right/bottom/left constraints
@@ -337,7 +337,7 @@ export class VisualElementDragControls {
     }
 
     stop(event: AnyPointerEvent, info: PanInfo) {
-        ;(this.visualElement as any).unlockTargetBox()
+        this.visualElement.unlockTargetBox()
         this.panSession?.end()
         this.panSession = null
         const isDragging = this.isDragging

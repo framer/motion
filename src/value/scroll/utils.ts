@@ -1,5 +1,8 @@
 import { motionValue, MotionValue } from "../"
 
+/**
+ * @public
+ */
 export interface ScrollMotionValues {
     scrollX: MotionValue<number>
     scrollY: MotionValue<number>
