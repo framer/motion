@@ -83,6 +83,7 @@ export interface AxisDelta {
     translate: number
     scale: number
     origin: number
+    originPoint: number
 }
 
 /**

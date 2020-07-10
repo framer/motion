@@ -13,7 +13,6 @@ import { invariant } from "hey-listen"
 import { progress } from "@popmotion/popcorn"
 import { addDomEvent } from "../../events/use-dom-event"
 import { getViewportPointFromEvent } from "../../events/event-info"
-import { startAnimation } from "../../animation/utils/transitions"
 import { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,

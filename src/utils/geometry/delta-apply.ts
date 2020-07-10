@@ -56,10 +56,9 @@ export function applyAxisDelta(
     axis: Axis,
     translate: number = 0,
     scale: number = 1,
-    origin: number = 0.5,
+    originPoint: number,
     boxScale?: number
 ): void {
-    const originPoint = mix(axis.min, axis.max, origin)
     axis.min = applyPointDelta(
         axis.min,
         translate,
@@ -67,6 +66,7 @@ export function applyAxisDelta(
         originPoint,
         boxScale
     )
+
     axis.max = applyPointDelta(
         axis.max,
         translate,
@@ -80,8 +80,8 @@ export function applyAxisDelta(
  * Applies a translate/scale delta to a box
  */
 export function applyBoxDelta(box: AxisBox2D, { x, y }: BoxDelta): void {
-    applyAxisDelta(box.x, x.translate, x.scale, x.origin)
-    applyAxisDelta(box.y, y.translate, y.scale, y.origin)
+    applyAxisDelta(box.x, x.translate, x.scale, x.originPoint)
+    applyAxisDelta(box.y, y.translate, y.scale, y.originPoint)
 }
 
 /**
@@ -99,12 +99,18 @@ export function applyAxisTransforms(
     final.min = axis.min
     final.max = axis.max
 
+    const originPoint = mix(
+        axis.min,
+        axis.max,
+        (transforms[originKey] as number) || 0.5
+    )
+
     // Apply the axis delta to the final axis
     applyAxisDelta(
         final,
         transforms[key] as number,
         transforms[scaleKey] as number,
-        transforms[originKey] as number,
+        originPoint,
         transforms.scale as number
     )
 }
@@ -195,7 +201,8 @@ export function removeAxisTransforms(
 }
 
 /**
- *
+ * Remove a transforms from an box. This is essentially the steps of applyAxisBox in reverse
+ * and acts as a bridge between motion values and removeAxisDelta
  */
 export function removeBoxTransforms(
     box: AxisBox2D,
@@ -206,7 +213,8 @@ export function removeBoxTransforms(
 }
 
 /**
- *
+ * Apply a tree of deltas to a box. We do this to calculate the effect of all the transforms
+ * in a tree upon our box before then calculating how to project it into our desired viewport-relative box
  */
 export function applyTreeDeltas(
     box: AxisBox2D,

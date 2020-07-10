@@ -104,7 +104,7 @@ export interface AnimationProps {
     variants?: Variants;
 }
 
-// @public (undocumented)
+// @public
 export interface Axis {
     // (undocumented)
     max: number;
@@ -112,7 +112,7 @@ export interface Axis {
     min: number;
 }
 
-// @public (undocumented)
+// @public
 export interface AxisBox2D {
     // (undocumented)
     x: Axis;
@@ -138,7 +138,7 @@ export interface AxisDelta {
     translate: number;
 }
 
-// @public (undocumented)
+// @public
 export interface BoundingBox2D {
     // (undocumented)
     bottom: number;
@@ -150,7 +150,7 @@ export interface BoundingBox2D {
     top: number;
 }
 
-// @public (undocumented)
+// @public
 export interface BoundingBox3D extends BoundingBox2D {
     // (undocumented)
     back: number;
@@ -202,12 +202,6 @@ export interface DraggableProps extends DragHandlers {
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
-    // @internal (undocumented)
-    _dragTransitionControls?: AnimationControls;
-    // @internal (undocumented)
-    _dragValueX?: MotionValue<number>;
-    // @internal (undocumented)
-    _dragValueY?: MotionValue<number>;
     onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
 }
 
@@ -474,7 +468,7 @@ export interface PanInfo {
 // @public (undocumented)
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void;
 
-// @public (undocumented)
+// @public
 export interface Point2D {
     // (undocumented)
     x: number;
@@ -482,7 +476,7 @@ export interface Point2D {
     y: number;
 }
 
-// @public (undocumented)
+// @public
 export interface Point3D extends Point2D {
     // (undocumented)
     z: number;
@@ -599,7 +593,7 @@ export function transform<T>(inputValue: number, inputRange: number[], outputRan
 // @public
 export function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (inputValue: number) => T;
 
-// @public (undocumented)
+// @public
 export type TransformPoint2D = (point: Point2D) => Point2D;
 
 // Warning: (ae-forgotten-export) The symbol "TransitionDefinition" needs to be exported by the entry point index.d.ts

@@ -9,8 +9,8 @@ import {
     removePointDelta,
     removeAxisDelta,
     removeAxisTransforms,
-    applyTreeDeltas,
     removeBoxTransforms,
+    applyTreeDeltas,
 } from "../delta-apply"
 import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
 
@@ -62,13 +62,13 @@ describe("applyPointDelta", () => {
 describe("applyAxisDelta", () => {
     test("correctly applies a delta to an axis", () => {
         const axis = { min: 100, max: 200 }
-        applyAxisDelta(axis, 100, 2, 0.5)
+        applyAxisDelta(axis, 100, 2, 150)
         expect(axis).toEqual({ min: 150, max: 350 })
     })
 
     test("correctly applies a delta to an axis with an additional boxScale", () => {
         const axis = { min: 100, max: 200 }
-        applyAxisDelta(axis, 100, 2, 0.5, 2)
+        applyAxisDelta(axis, 100, 2, 150, 2)
         expect(axis).toEqual({ min: 50, max: 450 })
     })
 })
@@ -198,8 +198,8 @@ describe("applyTreeDeltas", () => {
         const scale = { x: 1, y: 1 }
 
         const delta = {
-            x: { translate: 100, scale: 2, origin: 0.5 },
-            y: { translate: -100, scale: 0.5, origin: 0.5 },
+            x: { translate: 100, scale: 2, origin: 0.5, originPoint: 150 },
+            y: { translate: -100, scale: 0.5, origin: 0.5, originPoint: 350 },
         }
 
         const element = new HTMLVisualElement()

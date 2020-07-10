@@ -57,6 +57,7 @@ export function updateAxisDelta(
     const targetLength = target.max - target.min
 
     delta.origin = origin === undefined ? calcOrigin(source, target) : origin
+    delta.originPoint = mix(source.min, source.max, delta.origin)
 
     delta.scale = targetLength / sourceLength
     if (isNear(delta.scale, 1, 0.0001)) delta.scale = 1

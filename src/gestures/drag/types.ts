@@ -2,8 +2,6 @@ import { RefObject } from "react"
 import { PanInfo } from "../PanSession"
 import { Inertia } from "../../types"
 import { BoundingBox2D } from "../../types/geometry"
-import { MotionValue } from "../../value"
-import { AnimationControls } from "../../animation/AnimationControls"
 import { DragControls } from "./use-drag-controls"
 
 export type DragHandler = (

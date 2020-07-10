@@ -84,6 +84,7 @@ const zeroDelta = {
     translate: 0,
     scale: 1,
     origin: 0,
+    originPoint: 0,
 }
 
 export function delta(): BoxDelta {

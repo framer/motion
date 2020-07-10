@@ -59,7 +59,7 @@ class Animate extends React.Component<AnimateProps> {
             targetBox,
             visibilityAction,
             ...config
-        }: SharedLayoutAnimationConfig
+        }: SharedLayoutAnimationConfig = {}
     ) => {
         const { visualElement } = this.props
 

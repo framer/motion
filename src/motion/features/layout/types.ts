@@ -52,7 +52,7 @@ export interface LayoutProps {
      *
      * @public
      */
-    onLayoutAnimationComplete: () => void
+    onLayoutAnimationComplete?: () => void
 
     /**
      * @internal
