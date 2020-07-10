@@ -10,11 +10,6 @@ import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 /**
  * A hook that allows an element to be dragged.
  *
- * @param param
- * @param ref
- * @param values
- * @param controls
- *
  * @internal
  */
 export function useDrag(props: DraggableProps, visualElement: VisualElement) {
@@ -31,14 +26,22 @@ export function useDrag(props: DraggableProps, visualElement: VisualElement) {
 
     useDisableDragOnExit(dragControls)
 
+    // If we've been provided a DragControls for manual control over the drag gesture,
+    // subscribe this component to it on mount.
     useEffect(
         () => groupDragControls && groupDragControls.subscribe(dragControls),
         [dragControls]
     )
 
+    // Mount the drag controls with the visualElement
     useEffect(() => dragControls.mount(visualElement as HTMLVisualElement), [])
 }
 
+/**
+ * Disable drag on components that are exiting the tree as a child of AnimatePresence.
+ * We might want to take another look at this to see if we maintain dragging while exiting,
+ * for instance if we're crossfading between two dragging components.
+ */
 function useDisableDragOnExit(dragControls: VisualElementDragControls) {
     const isPresent = useIsPresent()
     useEffect(() => {

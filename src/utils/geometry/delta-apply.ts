@@ -8,7 +8,7 @@ import { ResolvedValues } from "../../render/types"
  *
  * This is a mutative operation.
  */
-function resetAxis(axis: Axis, originAxis: Axis) {
+export function resetAxis(axis: Axis, originAxis: Axis) {
     axis.min = originAxis.min
     axis.max = originAxis.max
 }
@@ -24,7 +24,7 @@ export function resetBox(box: AxisBox2D, originBox: AxisBox2D) {
 }
 
 /**
- *
+ * Scales a point based on a factor and an originPoint
  */
 export function scalePoint(point: number, scale: number, originPoint: number) {
     const distanceFromOrigin = point - originPoint
@@ -33,7 +33,7 @@ export function scalePoint(point: number, scale: number, originPoint: number) {
 }
 
 /**
- *
+ * Applies a translate/scale delta to a point
  */
 export function applyPointDelta(
     point: number,
@@ -49,13 +49,17 @@ export function applyPointDelta(
     return scalePoint(point, scale, originPoint) + translate
 }
 
+/**
+ * Applies a translate/scale delta to an axis
+ */
 export function applyAxisDelta(
     axis: Axis,
     translate: number = 0,
     scale: number = 1,
-    originPoint: number,
+    origin: number = 0.5,
     boxScale?: number
 ): void {
+    const originPoint = mix(axis.min, axis.max, origin)
     axis.min = applyPointDelta(
         axis.min,
         translate,
@@ -73,15 +77,17 @@ export function applyAxisDelta(
 }
 
 /**
- * Scale and translate both axis of a box.
+ * Applies a translate/scale delta to a box
  */
 export function applyBoxDelta(box: AxisBox2D, { x, y }: BoxDelta): void {
-    applyAxisDelta(box.x, x.translate, x.scale, x.originPoint)
-    applyAxisDelta(box.y, y.translate, y.scale, y.originPoint)
+    applyAxisDelta(box.x, x.translate, x.scale, x.origin)
+    applyAxisDelta(box.y, y.translate, y.scale, y.origin)
 }
 
 /**
- *
+ * Apply a transform to an axis from the latest resolved motion values.
+ * This function basically acts as a bridge between a flat motion value map
+ * and applyAxisDelta
  */
 export function applyAxisTransforms(
     final: Axis,
@@ -93,30 +99,24 @@ export function applyAxisTransforms(
     final.min = axis.min
     final.max = axis.max
 
-    const originPoint = mix(
-        axis.min,
-        axis.max,
-        (transforms[originKey] as number) || 0.5
-    )
-
     // Apply the axis delta to the final axis
     applyAxisDelta(
         final,
         transforms[key] as number,
         transforms[scaleKey] as number,
-        originPoint,
+        transforms[originKey] as number,
         transforms.scale as number
     )
 }
 
 /**
- *
+ * The names of the motion values we want to apply as translation, scale and origin.
  */
 const xKeys = ["x", "scaleX", "originX"]
 const yKeys = ["y", "scaleY", "originY"]
 
 /**
- *
+ * Apply a transform to a box from the latest resolved motion values.
  */
 export function applyBoxTransforms(
     finalBox: AxisBox2D,
@@ -127,6 +127,9 @@ export function applyBoxTransforms(
     applyAxisTransforms(finalBox.y, box.y, transforms, yKeys)
 }
 
+/**
+ * Remove a delta from a point. This is essentially the steps of applyPointDelta in reverse
+ */
 export function removePointDelta(
     point: number,
     translate: number,
@@ -144,6 +147,9 @@ export function removePointDelta(
     return point
 }
 
+/**
+ * Remove a delta from an axis. This is essentially the steps of applyAxisDelta in reverse
+ */
 export function removeAxisDelta(
     axis: Axis,
     translate: number = 0,
@@ -151,7 +157,7 @@ export function removeAxisDelta(
     origin: number = 0.5,
     boxScale?: number
 ): void {
-    const originPoint = mix(axis.min, axis.max, origin)
+    const originPoint = mix(axis.min, axis.max, origin) - translate
 
     axis.min = removePointDelta(
         axis.min,
@@ -160,6 +166,7 @@ export function removeAxisDelta(
         originPoint,
         boxScale
     )
+
     axis.max = removePointDelta(
         axis.max,
         translate,
@@ -169,6 +176,10 @@ export function removeAxisDelta(
     )
 }
 
+/**
+ * Remove a transforms from an axis. This is essentially the steps of applyAxisTransforms in reverse
+ * and acts as a bridge between motion values and removeAxisDelta
+ */
 export function removeAxisTransforms(
     axis: Axis,
     transforms: ResolvedValues,

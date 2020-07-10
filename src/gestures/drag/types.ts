@@ -352,24 +352,6 @@ export interface DraggableProps extends DragHandlers {
     dragTransition?: InertiaOptions
 
     /**
-     * @internalremarks
-     *
-     * _dragValueX, _dragValueY and _dragTransitionControls are a way of allowing this
-     * component to be a drag target for another element.
-     *
-     * @internal
-     */
-    _dragValueX?: MotionValue<number>
-    /**
-     * @internal
-     */
-    _dragValueY?: MotionValue<number>
-    /**
-     * @internal
-     */
-    _dragTransitionControls?: AnimationControls
-
-    /**
      * Usually, dragging is initiated by pressing down on a component and moving it. For some
      * use-cases, for instance clicking at an arbitrary point on a video scrubber, we
      * might want to initiate dragging from a different component than the draggable one.

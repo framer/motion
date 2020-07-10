@@ -6,29 +6,30 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   `AnimateSharedLayout`
+-   `layout` prop for automatic layout animations.
+-   `AnimateSharedLayout` and `layoutId` for shared layout animations.
 -   `onMeasureDragConstraints` prop that fires when `dragConstraints` are measured.
 -   `useIsPresent`, a read-only version of `usePresence`.
+-   Allow `dragConstraints` to be a ref that is smaller than the draggable element.
 
 ### Removed
 
--   `positionTransition` and `layoutTransition` props (use `animate={true}` instead).
+-   `positionTransition` and `layoutTransition` props (use `layout={true}` instead).
 -   `Point` type in favour of `Point2D`.
 -   `useAnimatedState`: Moved to Framer library.
 -   `useCycle`: Moved to Framer library.
+-   `dragOriginX`, `dragOriginY` props.
 -   `stylefire` as a dependency.
--   `dragOriginX` and `dragOriginY` props.
 
 ### Fixed
 
--   Allow `dragConstraints` to be a ref that is smaller than the draggable element.
--   Removing a `MotionValue` from `style` now correctly removes it.
+-   Removing a `MotionValue` from `style` now correctly unsets it from the element.
 
 ### Changed
 
 -   Using `Proxy` to generate `motion` components. This saves ~0.5kb from the bundle size and ensures compatibility with all DOM elements and Web Components.
--   `x` and `y` transform values won't change as a result of a drag gesture as this now works via layout reprojection.
--   Drag events now report `point` as the pointer relative to the viewport, to bring in line with other pointer events.
+-   `x` and `y` transform values won't change as a result of a drag gesture as this now works via layout projection.
+-   Drag events now report `point` as the pointer relative to the viewport, in line with other pointer events.
 
 ## [1.11.1] 2020-06-16
 

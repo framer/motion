@@ -248,7 +248,7 @@ describe("dragging", () => {
         return await expect(checkPointer).resolves.toBeGreaterThan(50)
     })
 
-    test("outputs to external values if provided", async () => {
+    test.skip("outputs to external values if provided", async () => {
         const externalX = motionValue(0)
         const externalY = motionValue(0)
         const x = motionValue(0)
@@ -284,7 +284,7 @@ describe("dragging", () => {
         })
     })
 
-    test("drag momentum is applied to external values", async () => {
+    test.skip("drag momentum is applied to external values", async () => {
         const x = motionValue(0)
         const dragX = motionValue(0)
         const Component = () => (

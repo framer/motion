@@ -1,4 +1,6 @@
 /**
+ * A typically user-facing description of a bounding box using traditional t/l/r/b
+ *
  * @public
  */
 export interface BoundingBox2D {
@@ -9,6 +11,8 @@ export interface BoundingBox2D {
 }
 
 /**
+ * A 3D bounding box
+ *
  * @public
  */
 export interface BoundingBox3D extends BoundingBox2D {
@@ -17,6 +21,9 @@ export interface BoundingBox3D extends BoundingBox2D {
 }
 
 /**
+ * A description of a single axis using non-axis specific terms to denote the min and max
+ * value of any axis.
+ *
  * @public
  */
 export interface Axis {
@@ -25,6 +32,9 @@ export interface Axis {
 }
 
 /**
+ * A description of a bounding box describing each axis individually. This allows us
+ * to treate each axis generically.
+ *
  * @public
  */
 export interface AxisBox2D {
@@ -40,6 +50,8 @@ export interface AxisBox3D extends AxisBox2D {
 }
 
 /**
+ * A description of a two-dimensional point
+ *
  * @public
  */
 export interface Point2D {
@@ -48,6 +60,8 @@ export interface Point2D {
 }
 
 /**
+ * A description of a three-dimensional point
+ *
  * @public
  */
 export interface Point3D extends Point2D {
@@ -55,6 +69,8 @@ export interface Point3D extends Point2D {
 }
 
 /**
+ * A function that accepts a two-dimensional point and returns a new one.
+ *
  * @public
  */
 export type TransformPoint2D = (point: Point2D) => Point2D
@@ -67,7 +83,6 @@ export interface AxisDelta {
     translate: number
     scale: number
     origin: number
-    originPoint: number
 }
 
 /**

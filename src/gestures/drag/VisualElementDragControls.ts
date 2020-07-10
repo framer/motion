@@ -416,14 +416,7 @@ export class VisualElementDragControls {
     }
 
     private animateDragEnd(velocity: Point) {
-        const {
-            drag,
-            dragMomentum,
-            dragElastic,
-            dragTransition,
-            _dragValueX,
-            _dragValueY,
-        } = this.props
+        const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
         const momentumAnimations = eachAxis(axis => {
             if (!shouldDrag(axis, drag, this.currentDirection)) {
@@ -452,15 +445,10 @@ export class VisualElementDragControls {
                 ...transition,
             }
 
-            const externalAxisMotionValue =
-                axis === "x" ? _dragValueX : _dragValueY
-
             // If we're not animating on an externally-provided `MotionValue` we can use the
             // component's animation controls which will handle interactions with whileHover (etc),
             // otherwise we just have to animate the `MotionValue` itself.
-            return externalAxisMotionValue
-                ? startAnimation(axis, externalAxisMotionValue, 0, inertia)
-                : this.visualElement.startLayoutAxisAnimation(axis, inertia)
+            return this.visualElement.startLayoutAxisAnimation(axis, inertia)
         })
 
         // Run all animations and then resolve the new drag constraints.

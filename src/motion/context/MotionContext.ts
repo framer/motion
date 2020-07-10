@@ -50,6 +50,8 @@ export const useMotionContext = (
 ) => {
     const presenceContext = useContext(PresenceContext)
     const presenceId = presenceContext?.id
+    // This is currently unimplemented but this will be use to determine whether to pop this element
+    // out the DOM on exit
     const isPresenceRoot = parentContext.presenceId !== presenceId
 
     // Override initial with that from a parent context, if defined

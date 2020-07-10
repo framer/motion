@@ -20,14 +20,6 @@ export interface SharedLayoutProps {
     children: React.ReactNode
 
     /**
-     * `transition` settings to use for the animate animation. Currently, only one transition
-     * can be defined for every animating value and every animating component.
-     *
-     * @public
-     */
-    transition?: Transition
-
-    /**
      * When combined with `AnimatePresence`, `SharedLayoutProps` can customise how to visually switch
      * between `layoutId` components as new ones enter and leave the tree.
      *
@@ -37,11 +29,17 @@ export interface SharedLayoutProps {
      * - "crossfade": The root shared components will crossfade as `layoutId` children of both perform
      * the same transition.
      *
-     * TODO: Add code example
-     *
      * @public
      */
     type?: "switch" | "crossfade"
+
+    /**
+     * `transition` settings to use for the animate animation. Currently, only one transition
+     * can be defined for every animating value and every animating component.
+     *
+     * @internal
+     */
+    _transition?: Transition
 
     /**
      * By default, `SharedLayoutProps` will run a animate animation on all children every time
@@ -50,9 +48,11 @@ export interface SharedLayoutProps {
      * To improve performance we can pass a variable to `dependency`, like a piece of state or a URL.
      * `SharedLayoutProps` will only run animate animations when this dependency changes.
      *
-     * @public
+     * TODO: Potentially replace this with a shouldAnimate
+     *
+     * @internal
      */
-    dependency?: any
+    _dependency?: any
 
     /**
      * Currently, transforms intefere with Magic Motion measurements. There may be a future
@@ -68,7 +68,7 @@ export interface SharedLayoutProps {
      *
      * @internal
      */
-    supportRotate?: boolean
+    _supportRotate?: boolean
 }
 
 export interface SharedLayoutAnimationConfig {
