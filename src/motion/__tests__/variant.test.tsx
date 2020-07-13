@@ -9,10 +9,10 @@ describe("animate prop as variant", () => {
         hidden: { opacity: 0, x: -100, transition: { type: false } },
         visible: { opacity: 1, x: 100, transition: { type: false } },
     }
-    // const childVariants: Variants = {
-    //     hidden: { opacity: 0, x: -100, transition: { type: false } },
-    //     visible: { opacity: 1, x: 50, transition: { type: false } },
-    // }
+    const childVariants: Variants = {
+        hidden: { opacity: 0, x: -100, transition: { type: false } },
+        visible: { opacity: 1, x: 50, transition: { type: false } },
+    }
 
     test("animates to set variant", async () => {
         const promise = new Promise(resolve => {

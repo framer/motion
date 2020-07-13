@@ -192,6 +192,7 @@ export class VisualElementDragControls {
              * make based on the drag position.
              */
             const { point } = getViewportPointFromEvent(event)
+            console.log(point)
             eachAxis(axis => {
                 const { min, max } = this.visualElement.targetBox[axis]
                 this.cursorProgress[axis] = cursorProgress

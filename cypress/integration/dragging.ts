@@ -3,13 +3,13 @@ describe("dragging", () => {
         cy.visit("?test=dragging-ref-constraint")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown")
+            .trigger("mousedown", { clientX: 10, clientY: 10 })
             .wait(100)
-            .trigger("pointermove", { pageX: 5, pageY: 55 })
+            .trigger("mousemove", { clientX: 15, clientY: 65 })
             .wait(100)
-            .trigger("pointermove", { pageX: 300, pageY: 300 })
+            .trigger("mousemove", { clientX: 300, clientY: 300 })
             .wait(100)
-            .trigger("pointerup", { force: true })
+            .trigger("mouseup", { force: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
