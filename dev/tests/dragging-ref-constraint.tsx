@@ -14,6 +14,7 @@ export const App = () => {
             ref={containerRef}
         >
             <motion.div
+                id="box"
                 data-testid="draggable"
                 drag
                 dragElastic={0}

@@ -192,7 +192,7 @@ export class VisualElementDragControls {
              * make based on the drag position.
              */
             const { point } = getViewportPointFromEvent(event)
-            console.log(point)
+
             eachAxis(axis => {
                 const { min, max } = this.visualElement.targetBox[axis]
                 this.cursorProgress[axis] = cursorProgress
@@ -283,9 +283,6 @@ export class VisualElementDragControls {
         }
     }
 
-    /**
-     *
-     */
     resolveRefConstraints(
         layoutBox: AxisBox2D,
         constraints: RefObject<Element>
@@ -308,7 +305,8 @@ export class VisualElementDragControls {
         )
 
         /**
-         * If
+         * If there's an onMeasureDragConstraints listener we call it and
+         * if different constraints are returned, set constraints to that
          */
         if (onMeasureDragConstraints) {
             const userConstraints = onMeasureDragConstraints(
@@ -346,6 +344,7 @@ export class VisualElementDragControls {
         if (!isDragging) return
 
         const { dragMomentum, dragElastic, onDragEnd } = this.props
+
         if (dragMomentum || dragElastic) {
             const { velocity } = info
             this.animateDragEnd(velocity)

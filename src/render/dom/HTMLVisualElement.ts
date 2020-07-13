@@ -341,10 +341,17 @@ export class HTMLVisualElement<
     }
 
     /**
-     * Reset the transform on the current Element
+     * Reset the transform on the current Element. This is called as part
+     * of a batched process across the entire layout tree. To remove this write
+     * cycle it'd be interesting to see if it's possible to "undo" all the current
+     * layout transforms up the tree in the same way this.getBoundingBoxWithoutTransforms
+     * works
      */
     resetTransform() {
         this.element.style.transform = "none"
+
+        // Ensure that whatever happens next, we restore our transform
+        this.scheduleRender()
     }
 
     /**
