@@ -9,7 +9,6 @@ import { AxisBox2D } from "../../types/geometry"
 
 export function createSwitchAnimation(
     child: HTMLVisualElement,
-    _isRoot: boolean,
     stack?: LayoutStack
 ): SharedLayoutAnimationConfig {
     if (stack && child !== stack.lead) {
@@ -37,7 +36,6 @@ export function createSwitchAnimation(
 
 export function createCrossfadeAnimation(
     child: HTMLVisualElement,
-    isRoot: boolean,
     stack?: LayoutStack
 ): SharedLayoutAnimationConfig {
     const config: SharedLayoutAnimationConfig = {}
@@ -59,21 +57,20 @@ export function createCrossfadeAnimation(
         }
     }
 
-    // // Handle crossfade opacity
-    if (!isRoot) return config
+    // If neither the lead or follow component is the root child of AnimatePresence,
+    // don't handle crossfade animations
+    if (!stack?.follow?.isPresenceRoot && !stackLead?.isPresenceRoot) {
+        return config
+    }
 
     if (!stack || child === stackLead) {
         if (child.presence === Presence.Entering) {
             config.crossfadeOpacity = stack?.follow?.getValue("opacity", 0)
-        } else if (child.presence === Presence.Exiting) {
-            //config.crossfade = crossfadeOut
         }
     } else if (stack && child === stack.follow) {
         if (!stackLead || stackLeadPresence === Presence.Entering) {
-            //config.crossfade = crossfadeOut
         } else if (stackLeadPresence === Presence.Exiting) {
             config.crossfadeOpacity = stack?.lead?.getValue("opacity", 1)
-            //config.crossfade = crossfadeIn
         }
     } else {
         config.visibilityAction = VisibilityAction.Hide

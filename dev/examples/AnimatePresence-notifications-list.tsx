@@ -7,30 +7,40 @@ import { motion, AnimatePresence } from "@framer"
  * that correctly animate into their new positions as others are added/removed.
  */
 
+function Notification({ id, notifications, setNotifications }) {
+    return (
+        <motion.li
+            id={id}
+            layout
+            drag="x"
+            dragConstraints={{ left: 0, right: 0 }}
+            initial={{ opacity: 0, y: 50, scale: 0 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{
+                opacity: 0,
+                scale: 0.5,
+                transition: { duration: 0.2 },
+            }}
+            onDrag={(e, { offset }) => {
+                offset.x > 50 && setNotifications(remove(notifications, id))
+            }}
+        />
+    )
+}
+
 export const App = () => {
     const [notifications, setNotifications] = useState([0])
 
     return (
         <div className="container">
             <ul>
-                <AnimatePresence>
+                <AnimatePresence initial={false}>
                     {notifications.map(id => (
-                        <motion.li
+                        <Notification
+                            id={id}
                             key={id}
-                            layout
-                            drag="x"
-                            dragConstraints={{ left: 0, right: 0 }}
-                            initial={{ opacity: 0, y: 50, scale: 0.3 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{
-                                opacity: 0,
-                                scale: 0.5,
-                                transition: { duration: 0.2 },
-                            }}
-                            onDrag={(e, { offset }) => {
-                                offset.x > 50 &&
-                                    setNotifications(remove(notifications, id))
-                            }}
+                            notifications={notifications}
+                            setNotifications={setNotifications}
                         />
                     ))}
                 </AnimatePresence>
@@ -44,11 +54,10 @@ export const App = () => {
 }
 
 const remove = (arr: number[], item: number) => {
+    const itemIndex = arr.findIndex(i => i === item)
+
     const newArr = [...arr]
-    newArr.splice(
-        newArr.findIndex(i => i === item),
-        1
-    )
+    newArr.splice(itemIndex, 1)
     return newArr
 }
 

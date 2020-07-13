@@ -139,10 +139,20 @@ export class HTMLVisualElement<
      * Layout
      * ========================================
      */
-    private isLayoutReprojectionEnabled = false
+    isLayoutProjectionEnabled = false
 
-    enableLayoutReprojection() {
-        this.isLayoutReprojectionEnabled = true
+    /**
+     * A boolean that flags whether this component has children that need to be update
+     * when this component changes layout.
+     */
+    hasLayoutChildren = false
+
+    enableLayoutProjection() {
+        this.isLayoutProjectionEnabled = true
+        forEachParent(
+            this as HTMLVisualElement,
+            parent => (parent.hasLayoutChildren = true)
+        )
     }
 
     /**
@@ -239,6 +249,20 @@ export class HTMLVisualElement<
         y: () => {},
     }
 
+    isVisible?: boolean
+
+    hide() {
+        if (!this.isVisible) return
+        this.isVisible = false
+        this.scheduleRender()
+    }
+
+    show() {
+        if (this.isVisible) return
+        this.isVisible = true
+        this.scheduleRender()
+    }
+
     /**
      * Register an event listener to fire when the layout is updated. We might want to expose support
      * for this via a `motion` prop.
@@ -306,9 +330,15 @@ export class HTMLVisualElement<
         this.targetBox = this.getBoundingBoxWithoutTransforms()
     }
 
-    lockTargetBox() {}
+    isTargetBoxLocked = false
 
-    unlockTargetBox() {}
+    lockTargetBox() {
+        this.isTargetBoxLocked = true
+    }
+
+    unlockTargetBox() {
+        this.isTargetBoxLocked = false
+    }
 
     /**
      * Reset the transform on the current Element
@@ -326,11 +356,16 @@ export class HTMLVisualElement<
         targetAxis.max = max
 
         /**
-         * When we change the target for either axis, we want to make sure that
-         * this element and any immediate children will render on the next frame.
+         * If this component re-renders we need to ensure that any children performing
+         * layout projection also update
+         *
+         * TODO: This recursively traverses all children for each axis and for each component. A performance
+         * improvement would be to:
+         *  1. Flag the root component as dirty and schedule it to update pre-render
+         *  2. Recursively traverse tree from root layout component during this update
+         *      scheduling renders and updating deltas
          */
-        this.scheduleRender()
-        this.scheduleChildrenRender()
+        scheduleChildrenLayoutRender(this as HTMLVisualElement)
     }
 
     /**
@@ -380,7 +415,7 @@ export class HTMLVisualElement<
         /**
          * Early return if layout reprojection isn't enabled
          */
-        if (!this.isLayoutReprojectionEnabled) return
+        if (!this.isLayoutProjectionEnabled || !this.box) return
 
         /**
          * Reset the corrected box with the latest values from box, as we're then going
@@ -438,9 +473,11 @@ export class HTMLVisualElement<
      * Build a style prop using the latest resolved MotionValues
      */
     build() {
-        this.isLayoutReprojectionEnabled &&
-            this.box &&
-            this.updateLayoutDeltas()
+        if (this.isVisible !== undefined) {
+            this.style.visibility = this.isVisible ? "visible" : "hidden"
+        }
+
+        this.isLayoutProjectionEnabled && this.box && this.updateLayoutDeltas()
 
         buildHTMLStyles(
             this.latest,
@@ -450,7 +487,7 @@ export class HTMLVisualElement<
             this.transformOrigin,
             this.transformKeys,
             this.config,
-            this.isLayoutReprojectionEnabled && !!this.box,
+            this.isLayoutProjectionEnabled && !!this.box,
             this.delta,
             this.deltaFinal,
             this.treeScale,
@@ -475,3 +512,41 @@ export class HTMLVisualElement<
         }
     }
 }
+
+function scheduleChildrenLayoutRender(element: HTMLVisualElement) {
+    if (element.isLayoutProjectionEnabled) {
+        element.scheduleRender()
+    }
+
+    if (element.hasLayoutChildren) {
+        element.children.forEach(scheduleChildrenLayoutRender)
+    }
+}
+
+function forEachParent(
+    child: HTMLVisualElement,
+    callback: (parent: HTMLVisualElement) => void
+) {
+    let parent:
+        | HTMLVisualElement
+        | undefined = child.parent as HTMLVisualElement
+
+    while (parent) {
+        callback(parent)
+        parent = parent.parent as HTMLVisualElement
+    }
+}
+
+// TODO Move to delta-calc
+// function relativeAxis(parent: Axis, child: Axis) {
+//     return {
+//         min: parent.min - child.min,
+//         max: parent.max - child.max,
+//     }
+// }
+// function relativeBox(parent: AxisBox2D, child: AxisBox2D) {
+//     return {
+//         x: relativeAxis(parent.x, child.x),
+//         y: relativeAxis(parent.y, child.y),
+//     }
+// }

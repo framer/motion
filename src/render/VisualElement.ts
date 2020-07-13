@@ -48,6 +48,8 @@ export abstract class VisualElement<E = any> {
     // A configuration for this VisualElement, each derived class can extend this.
     protected config: VisualElementConfig = {}
 
+    isPresenceRoot?: boolean
+
     // An alias for element to allow VisualElement to be used
     // like a RefObject. This is a temporary measure to work with
     // some existing internal APIs.
@@ -172,12 +174,6 @@ export abstract class VisualElement<E = any> {
 
     scheduleRender = () => sync.render(this.triggerRender, false, true)
 
-    scheduleChildRender = (child: VisualElement) => child.scheduleRender()
-
-    scheduleChildrenRender() {
-        this.children.forEach(this.scheduleChildRender)
-    }
-
     // Subscribe to changes in a MotionValue
     private subscribeToValue(key: string, value: MotionValue) {
         const onChange = (latest: string | number) => {
@@ -202,8 +198,21 @@ export abstract class VisualElement<E = any> {
             "No ref found. Ensure components created with motion.custom forward refs using React.forwardRef"
         )
 
-        this.removeFromParent = this.parent?.subscribe(this)
+        if (this.parent) {
+            this.removeFromParent = this.parent.subscribe(this)
 
+            /**
+             * Save a reference to the nearest layout projecting ancestor.
+             */
+            // this.layoutParent = this.parent.isLayoutProjectionEnabled
+            //     ? this.parent
+            //     : this.parent.layoutParent
+        }
+
+        /**
+         * Save the element to this.element as a semantic API, this.current to the VisualElement
+         * is compatible with existing RefObject APIs.
+         */
         this.element = this.current = element
 
         // Subscribe to any pre-existing MotionValues

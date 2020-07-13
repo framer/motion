@@ -6,8 +6,12 @@ import { motionValue, MotionValue } from "../../../value"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
 import { tweenAxis } from "./utils"
-import { Transition, EasingFunction } from "../../../types"
-import { SharedLayoutAnimationConfig } from "../../../components/AnimateSharedLayout/types"
+import { EasingFunction } from "../../../types"
+import {
+    SharedLayoutAnimationConfig,
+    VisibilityAction,
+    Presence,
+} from "../../../components/AnimateSharedLayout/types"
 import { mix, circOut, linear, progress } from "@popmotion/popcorn"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 
@@ -42,7 +46,7 @@ class Animate extends React.Component<AnimateProps> {
 
     componentDidMount() {
         const { visualElement } = this.props
-        visualElement.enableLayoutReprojection()
+        visualElement.enableLayoutProjection()
         this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
     }
 
@@ -64,6 +68,13 @@ class Animate extends React.Component<AnimateProps> {
         const { visualElement } = this.props
 
         /**
+         * If this visualElement is present, immediately switch its presence from Entering to Present.
+         * This is so if a subsequent animation starts before its finished rendering it resumes from its
+         * current position rather than a previous component's bounding box.
+         */
+        if (visualElement.isPresent) visualElement.presence = Presence.Present
+
+        /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be
          * overridden by the provided config.
          */
@@ -73,9 +84,16 @@ class Animate extends React.Component<AnimateProps> {
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis(axis => {
-            if (visibilityAction) {
-                return false
+            if (visualElement.isTargetBoxLocked) {
+                return
+            } else if (visibilityAction !== undefined) {
+                // If we're meant to show/hide the visualElement, do so
+                visibilityAction === VisibilityAction.Hide
+                    ? visualElement.hide()
+                    : visualElement.show()
             } else if (boxHasMoved) {
+                // If the box has moved, animate between it's current visual state and its
+                // final state
                 return this.animateAxis(
                     axis,
                     target[axis],
@@ -83,6 +101,8 @@ class Animate extends React.Component<AnimateProps> {
                     config
                 )
             } else {
+                // If the box has remained in the same place, immediately set the axis target
+                // to the final desired state
                 return visualElement.setAxisTarget(
                     axis,
                     target[axis].min,
@@ -99,10 +119,16 @@ class Animate extends React.Component<AnimateProps> {
          * kept in by the tree by AnimatePresence) then call safeToRemove when all axis animations
          * have successfully finished.
          */
-        if (!visualElement.isPresent) {
+        return Promise.all(animations).then(() => {
             config.onLayoutAnimationComplete?.()
-            Promise.all(animations).then(() => this.safeToRemove())
-        }
+
+            if (visualElement.isPresent) {
+                visualElement.presence = Presence.Present
+            } else {
+                config.onLayoutAnimationComplete?.()
+                this.safeToRemove()
+            }
+        })
     }
 
     animateAxis(
@@ -150,16 +176,12 @@ class Animate extends React.Component<AnimateProps> {
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
 
-        // Get a specific transition for this axis
-        transition = transition || this.props.transition || defaultTransition
-        const axisTransition = getAxisTransition(axis, transition)
-
         // Start the animation on this axis
         const animation = startAnimation(
-            axis,
+            axis === "x" ? "layoutX" : "layoutY",
             layoutProgress,
             progressTarget,
-            axisTransition
+            transition || this.props.transition || defaultTransition
         )
 
         // Create a function to stop animation on this specific axis
@@ -211,14 +233,6 @@ function hasAxisMoved(a: Axis, b: Axis) {
 const defaultTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
-}
-
-function getAxisTransition(axis: "x" | "y", transition: Transition) {
-    if (!transition) {
-        return defaultTransition
-    } else {
-        return transition[axis] || transition["default"] || transition
-    }
 }
 
 function compress(

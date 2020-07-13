@@ -130,7 +130,10 @@ const convertChangedValueTypes = (
     // If the element is currently set to display: "none", make it visible before
     // measuring the target bounding box
     if (display === "none") {
-        visualElement.style["display"] = (target.display as string) || "block"
+        visualElement.setStaticValues(
+            "display",
+            (target.display as string) || "block"
+        )
     }
 
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)

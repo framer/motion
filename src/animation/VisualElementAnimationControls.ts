@@ -256,7 +256,7 @@ export class VisualElementAnimationControls<
             // value from the DOM. It might be worth investigating whether to check props (for SVG)
             // or props.style (for HTML) if the value exists there before attempting to read.
             if (value === null) {
-                value = this.visualElement.readNativeValue(key)
+                value = this.visualElement.readNativeValue(key) || target[key]
 
                 invariant(
                     value !== null,

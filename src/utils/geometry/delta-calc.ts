@@ -4,14 +4,14 @@ import { mix, progress, clamp, distance } from "@popmotion/popcorn"
 const clampProgress = clamp(0, 1)
 
 /**
- *
+ * Returns true if the provided value is within maxDistance of the provided target
  */
 export function isNear(value: number, target = 0, maxDistance = 0.01): boolean {
     return distance(value, target) < maxDistance
 }
 
 /**
- *
+ * Calculate the translate needed to be applied to source to get target
  */
 export function calcTranslate(
     source: Axis,
@@ -25,7 +25,8 @@ export function calcTranslate(
 }
 
 /**
- *
+ * Calculate a transform origin relative to the source axis, between 0-1, that results
+ * in an asthetically pleasing scale/transform needed to project from source to target.
  */
 export function calcOrigin(source: Axis, target: Axis): number {
     let origin = 0.5
@@ -42,7 +43,7 @@ export function calcOrigin(source: Axis, target: Axis): number {
 }
 
 /**
- * Update the MotionAxisDelta with a transform that projects source into target.
+ * Update the AxisDelta with a transform that projects source into target.
  *
  * The transform `origin` is optional. If not provided, it'll be automatically
  * calculated based on the relative positions of the two bounding boxes.
@@ -67,7 +68,10 @@ export function updateAxisDelta(
 }
 
 /**
+ * Update the BoxDelta with a transform that projects the source into the target.
  *
+ * The transform `origin` is optional. If not provided, it'll be automatically
+ * calculated based on the relative positions of the two bounding boxes.
  */
 export function updateBoxDelta(
     delta: BoxDelta,

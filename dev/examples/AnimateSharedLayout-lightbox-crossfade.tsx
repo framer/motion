@@ -19,6 +19,7 @@ function Gallery({ items, setIndex }) {
                     initial={{ borderRadius: 10 }}
                     style={{ ...item, backgroundColor: color }}
                     layoutId={color}
+                    transition={{ duration: 5 }}
                     id={i === 0 && "list-red"}
                 >
                     <motion.div style={child} layoutId={`child-${color}`} />
@@ -28,25 +29,33 @@ function Gallery({ items, setIndex }) {
     )
 }
 
-function SingleImage({ color, index, setIndex }) {
+function SingleImage({ color, setIndex }) {
     return (
-        <div style={singleImageContainer}>
-            <div onClick={() => setIndex(index - 1)} style={prev} />
+        <>
             <motion.div
-                id="color"
-                layoutId={color}
-                initial={{ borderRadius: 20 }}
-                exit={{ x: -200 }}
-                style={{ ...singleImage, backgroundColor: color }}
-            >
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={overlay}
+                id="overlay"
+                onClick={() => setIndex(false)}
+            />
+            <div style={singleImageContainer}>
                 <motion.div
-                    style={child}
-                    id="child"
-                    layoutId={`child-${color}`}
-                />
-            </motion.div>
-            <div onClick={() => setIndex(index + 1)} style={next} />
-        </div>
+                    id="color"
+                    layoutId={color}
+                    transition={{ duration: 20 }}
+                    initial={{ borderRadius: 20 }}
+                    style={{ ...singleImage, backgroundColor: color }}
+                >
+                    <motion.div
+                        style={child}
+                        id="child"
+                        layoutId={`child-${color}`}
+                    />
+                </motion.div>
+            </div>
+        </>
     )
 }
 
@@ -57,22 +66,8 @@ export function Component() {
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        style={overlay}
-                        id="overlay"
-                        key="overlay"
-                        onClick={() => setIndex(false)}
-                    />
-                )}
-            </AnimatePresence>
-            <AnimatePresence>
-                {index !== false && (
                     <SingleImage
                         index={index}
-                        key={colors[index]}
                         color={colors[index]}
                         setIndex={setIndex}
                     />
@@ -84,7 +79,7 @@ export function Component() {
 
 export function App() {
     return (
-        <AnimateSharedLayout>
+        <AnimateSharedLayout type="crossfade">
             <Component />
         </AnimateSharedLayout>
     )
@@ -154,17 +149,4 @@ const child = {
     backgroundColor: "white",
     opacity: 0.5,
     //opacity: 0.5,
-}
-
-const next = {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    background: "rgba(255,255,255,0.5)",
-    margin: 10,
-    pointerEvents: "auto",
-}
-
-const prev = {
-    ...next,
 }

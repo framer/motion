@@ -48,11 +48,10 @@ export const useMotionContext = (
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover, layoutId }: MotionProps
 ) => {
+    // Determine whether this is a root element of an AnimatePresence component
     const presenceContext = useContext(PresenceContext)
     const presenceId = presenceContext?.id
-    // This is currently unimplemented but this will be use to determine whether to pop this element
-    // out the DOM on exit
-    const isPresenceRoot = parentContext.presenceId !== presenceId
+    visualElement.isPresenceRoot = parentContext.presenceId !== presenceId
 
     // Override initial with that from a parent context, if defined
     if (presenceContext?.initial !== undefined) {
@@ -121,7 +120,6 @@ export const useMotionContext = (
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
             presenceId,
-            isPresenceRoot,
         }),
         [
             initialDependency,

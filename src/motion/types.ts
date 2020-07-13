@@ -13,6 +13,7 @@ import {
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
+import { ResolvedValues } from "../render/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -540,7 +541,7 @@ export interface MotionProps
      *
      * @internal
      */
-    transformValues?<V extends any>(values: V): V
+    transformValues?<V extends ResolvedValues>(values: V): V
 }
 
 export type TransformTemplate = (

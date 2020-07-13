@@ -11,8 +11,8 @@ const animation = {
     strokeDasharray: ["1px, 200px", "100px, 200px", "100px, 200px"],
     strokeDashoffset: [0, -15, -125],
     transition: { duration: 1.4, ease: "linear" },
-    cx: 100,
-    cy: 100,
+    cx: 44,
+    cy: 44,
 }
 
 export const App = () => {
@@ -27,12 +27,7 @@ export const App = () => {
     }, [controls])
 
     return (
-        <motion.svg
-            viewBox="22 22 44 44"
-            width="44"
-            height="44"
-            animate={{ rotate: 90 }}
-        >
+        <motion.svg viewBox="22 22 44 44" width="44" height="44">
             <motion.circle
                 animate={controls}
                 onAnimationComplete={handleAnimationComplete}

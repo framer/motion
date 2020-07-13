@@ -20,8 +20,8 @@ describe("correctBoxShadow", () => {
                     y: { min: 0, max: 0 },
                 },
                 {
-                    x: { scale: 0.5, translate: 0, origin: 0 },
-                    y: { scale: 0.5, translate: 0, origin: 0 },
+                    x: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
+                    y: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
                 },
                 {
                     x: 1,
@@ -37,8 +37,8 @@ describe("correctBoxShadow", () => {
                     y: { min: 0, max: 0 },
                 },
                 {
-                    x: { scale: 0.5, translate: 0, origin: 0 },
-                    y: { scale: 0.5, translate: 0, origin: 0 },
+                    x: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
+                    y: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
                 },
                 {
                     x: 0.5,

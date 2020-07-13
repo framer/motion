@@ -36,6 +36,16 @@ const Draggable = styled(motion.div)`
     width: 100px;
     height: 100px;
     border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+`
+
+const Dot = styled(motion.div)`
+    background: rgb(255, 0, 136);
+    width: 20px;
+    height: 20px;
+    border-radius: 10px;
 `
 
 function Target({ onViewportBoxUpdate }) {
@@ -47,7 +57,9 @@ function Target({ onViewportBoxUpdate }) {
                 dragElastic={1}
                 onViewportBoxUpdate={onViewportBoxUpdate}
                 layoutId="a"
-            />
+            >
+                <Dot layoutId="dot" />
+            </Draggable>
         </Shadow>
     )
 }

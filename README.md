@@ -33,17 +33,17 @@ It looks like this:
 <motion.div animate={{ x: 0 }} />
 ```
 
-And does this:
+It does all this:
 
--   Spring physics
--   Keyframes
--   Drag
+-   Spring animations
+-   Simple keyframes syntax
+-   Gestures (drag/tap/hover)
+-   Layout and shared layout animations
 -   SVG paths
+-   Exit animations
 -   Server-side rendering
--   Pose-inspired tree animations
+-   Variants for orchestrating animations across components
 -   CSS variables
--   Position transitions
--   Unmount transitions
 
 ...and a whole lot more.
 

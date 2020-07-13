@@ -63,8 +63,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // (undocumented)
     scheduleUpdate(force?: boolean): void;
     // (undocumented)
-    setRootDepth(child: HTMLVisualElement): void;
-    // (undocumented)
     startLayoutAnimation(): void;
     // Warning: (ae-forgotten-export) The symbol "SharedLayoutSyncMethods" needs to be exported by the entry point index.d.ts
     syncContext: SharedLayoutSyncMethods;
@@ -379,8 +377,10 @@ export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHan
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
     transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
+    // Warning: (ae-forgotten-export) The symbol "ResolvedValues" needs to be exported by the entry point index.d.ts
+    // 
     // @internal
-    transformValues?<V extends any>(values: V): V;
+    transformValues?<V extends ResolvedValues>(values: V): V;
 }
 
 // Warning: (ae-forgotten-export) The symbol "MotionCSS" needs to be exported by the entry point index.d.ts

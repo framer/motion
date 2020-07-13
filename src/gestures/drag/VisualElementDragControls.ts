@@ -119,7 +119,7 @@ export class VisualElementDragControls {
 
     constructor({ visualElement }: DragControlConfig) {
         this.visualElement = visualElement
-        this.visualElement.enableLayoutReprojection()
+        this.visualElement.enableLayoutProjection()
         elementDragControls.set(visualElement, this)
     }
 

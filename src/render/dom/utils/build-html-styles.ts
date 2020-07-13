@@ -39,7 +39,7 @@ export function buildHTMLStyles(
         transformTemplate,
         allowTransformNone,
     }: DOMVisualElementConfig,
-    isLayoutReprojectionEnabled?: boolean,
+    isLayoutProjectionEnabled?: boolean,
     delta?: BoxDelta,
     deltaFinal?: BoxDelta,
     treeScale?: Point2D,
@@ -51,8 +51,8 @@ export function buildHTMLStyles(
     transformKeys.length = 0
 
     // Track whether we encounter any transform or transformOrigin values.
-    let hasTransform = !!isLayoutReprojectionEnabled
-    let hasTransformOrigin = !!isLayoutReprojectionEnabled
+    let hasTransform = !!isLayoutProjectionEnabled
+    let hasTransformOrigin = !!isLayoutProjectionEnabled
 
     // Does the calculated transform essentially equal "none"?
     let transformIsNone = true
@@ -95,7 +95,7 @@ export function buildHTMLStyles(
             // If we need to perform scale correction, and we have a handler for this
             // value type (ie borderRadius), perform it
 
-            if (isLayoutReprojectionEnabled && valueScaleCorrection[key]) {
+            if (isLayoutProjectionEnabled && valueScaleCorrection[key]) {
                 const corrected = valueScaleCorrection[key].process(
                     value,
                     targetBox!,
@@ -123,7 +123,7 @@ export function buildHTMLStyles(
 
     // Only process transform if values aren't defaults
     if (hasTransform || transformTemplate) {
-        if (!isLayoutReprojectionEnabled) {
+        if (!isLayoutProjectionEnabled) {
             style.transform = buildTransform(
                 transform,
                 transformKeys,
@@ -139,11 +139,11 @@ export function buildHTMLStyles(
 
     // Only process transform origin if values aren't default
     if (hasTransformOrigin) {
-        const originX = isLayoutReprojectionEnabled
+        const originX = isLayoutProjectionEnabled
             ? deltaFinal!.x.origin * 100 + "%"
             : transformOrigin.originX || "50%"
 
-        const originY = isLayoutReprojectionEnabled
+        const originY = isLayoutProjectionEnabled
             ? deltaFinal!.y.origin * 100 + "%"
             : transformOrigin.originY || "50%"
 

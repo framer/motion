@@ -39,12 +39,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     private updateScheduled = false
 
     /**
-     * The tree depth of the root motion component. This is a rudimentary way of tracking which components
-     * to use in crossfades. It might be that this isn't sufficient.
-     */
-    private rootDepth: number
-
-    /**
      * The methods provided to all children in the shared layout tree.
      */
     syncContext: SharedLayoutSyncMethods = {
@@ -110,11 +104,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
                 const { layoutId } = child
 
                 child.layoutReady({
-                    ...createAnimation(
-                        child,
-                        child.depth === this.rootDepth,
-                        this.getStack(layoutId)
-                    ),
+                    ...createAnimation(child, this.getStack(layoutId)),
                     onLayoutAnimationComplete: () => {
                         if (child.isPresent) child.presence = Presence.Present
                     },
@@ -174,7 +164,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     }
 
     addChild(child: HTMLVisualElement) {
-        this.setRootDepth(child)
         this.children.add(child)
         this.addToStack(child)
 
@@ -195,17 +184,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     removeFromStack(child: HTMLVisualElement) {
         const stack = this.getStack(child.layoutId)
         stack?.remove(child)
-    }
-
-    /**
-     *
-     */
-    setRootDepth(child: HTMLVisualElement) {
-        if (this.rootDepth === undefined) {
-            this.rootDepth = child.depth
-        } else {
-            this.rootDepth = Math.min(child.depth, this.rootDepth)
-        }
     }
 
     /**

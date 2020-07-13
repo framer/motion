@@ -13,32 +13,32 @@ describe("createSwitchAnimation", () => {
     test("[A1] -> [A2]", () => {
         const stack = new LayoutStack()
         const a = makeChild(Presence.Present, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget", true)
         stack.add(a)
         update(stack)
         stack.remove(a)
         stack.add(b)
         stack.updateLeadAndFollow()
 
-        expect(createSwitchAnimation(b, true, stack)).toEqual({
+        expect(createSwitchAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
         })
     })
 
     test("[A1] -> [A1]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
         stack.add(a)
         update(stack)
         update(stack)
 
-        expect(createSwitchAnimation(a, true, stack)).toEqual({})
+        expect(createSwitchAnimation(a, stack)).toEqual({})
     })
 
     test("[A1] -> [A1, A2]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget", true)
         stack.add(a)
         update(stack)
         stack.add(b)
@@ -48,57 +48,58 @@ describe("createSwitchAnimation", () => {
         const normal = makeChild(
             Presence.Present,
             "normalOrigin",
-            "normalTarget"
+            "normalTarget",
+            false
         )
-        expect(createSwitchAnimation(normal, false)).toEqual({})
+        expect(createSwitchAnimation(normal)).toEqual({})
 
         // A1
-        expect(createSwitchAnimation(a, true, stack)).toEqual({
+        expect(createSwitchAnimation(a, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
         })
 
         // A2
-        expect(createSwitchAnimation(b, true, stack)).toEqual({
+        expect(createSwitchAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
         })
     })
 
     test("[A1, A2] -> [A1, A2 (exiting)]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget", true)
         stack.add(a)
         stack.add(b)
         update(stack)
         update(stack)
 
         // A1
-        expect(createSwitchAnimation(a, true, stack)).toEqual({
+        expect(createSwitchAnimation(a, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
         })
 
         // A2
-        expect(createSwitchAnimation(b, true, stack)).toEqual({
+        expect(createSwitchAnimation(b, stack)).toEqual({
             targetBox: "aTarget",
         })
     })
 
     test("[A1, A2 (entering)] -> [A1, A2 (exiting)]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget", true)
         stack.add(a)
         stack.updateLeadAndFollow()
         stack.add(b)
         stack.updateLeadAndFollow()
 
         // A1
-        expect(createSwitchAnimation(a, true, stack)).toEqual({
+        expect(createSwitchAnimation(a, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
         })
 
         // A2
-        expect(createSwitchAnimation(b, true, stack)).toEqual({
+        expect(createSwitchAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
         })
 
@@ -106,26 +107,26 @@ describe("createSwitchAnimation", () => {
         stack.updateLeadAndFollow()
 
         // A1
-        expect(createSwitchAnimation(a, true, stack)).toEqual({
+        expect(createSwitchAnimation(a, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
         })
 
         // A2
-        expect(createSwitchAnimation(b, true, stack)).toEqual({
+        expect(createSwitchAnimation(b, stack)).toEqual({
             targetBox: "aTarget",
         })
         stack.remove(b)
         stack.updateLeadAndFollow()
 
-        expect(createSwitchAnimation(a, true, stack)).toEqual({
+        expect(createSwitchAnimation(a, stack)).toEqual({
             visibilityAction: VisibilityAction.Show,
         })
     })
 
     test("[A1, A2 (exiting)] -> [A1]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget", true)
         stack.add(a)
         stack.add(b)
         update(stack)
@@ -133,7 +134,7 @@ describe("createSwitchAnimation", () => {
         update(stack)
 
         // A1
-        expect(createSwitchAnimation(a, true, stack as any)).toEqual({
+        expect(createSwitchAnimation(a, stack as any)).toEqual({
             visibilityAction: VisibilityAction.Show,
         })
     })
@@ -143,20 +144,26 @@ describe("createCrossfadeAnimation", () => {
     test("Switching root components: [A1] -> [A1 (exiting), A2]", () => {
         const stack = new LayoutStack()
         const aOpacity = motionValue(0)
-        const a = makeChild(Presence.Exiting, "aOrigin", "aTarget", aOpacity)
-        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        const a = makeChild(
+            Presence.Exiting,
+            "aOrigin",
+            "aTarget",
+            true,
+            aOpacity
+        )
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget", true)
         stack.add(a)
         update(stack)
         stack.add(b)
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "bTarget",
         })
 
         // A2
-        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
         })
@@ -164,27 +171,27 @@ describe("createCrossfadeAnimation", () => {
 
     test("Switching root components: [A1] -> [A1 (exiting), A2]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Exiting, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        const a = makeChild(Presence.Exiting, "aOrigin", "aTarget", false)
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget", false)
         stack.add(a)
         update(stack)
         stack.add(b)
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, false, stack)).toEqual({
+        expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "bTarget",
         })
 
         // A2
-        expect(createCrossfadeAnimation(b, false, stack)).toEqual({
+        expect(createCrossfadeAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
         })
     })
 
     test("[A1, A2 (exiting)] -> [A1]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
         const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
         stack.add(a)
         update(stack)
@@ -194,27 +201,33 @@ describe("createCrossfadeAnimation", () => {
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, true, stack as any)).toEqual({})
+        expect(createCrossfadeAnimation(a, stack as any)).toEqual({})
     })
 
     test("Interrupting switch animation: [A1 (exiting), A2] -interrupted-> [A1, A2 (exiting)]", () => {
         const stack = new LayoutStack()
         const aOpacity = motionValue(0)
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget", aOpacity)
-        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        const a = makeChild(
+            Presence.Present,
+            "aOrigin",
+            "aTarget",
+            true,
+            aOpacity
+        )
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget", true)
         stack.add(a)
         stack.add(b)
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(a, stack)).toEqual({
             originBox: "bOrigin",
             crossfadeOpacity: aOpacity,
             transition: undefined,
         })
 
         // A2
-        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(b, stack)).toEqual({
             targetBox: "aTarget",
         })
     })
@@ -222,20 +235,26 @@ describe("createCrossfadeAnimation", () => {
     test("Adding: [A1] -> [A1, A2]", () => {
         const stack = new LayoutStack()
         const aOpacity = motionValue(0)
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget", aOpacity)
-        const b = makeChild(Presence.Entering, "bOrigin", "bTarget")
+        const a = makeChild(
+            Presence.Present,
+            "aOrigin",
+            "aTarget",
+            true,
+            aOpacity
+        )
+        const b = makeChild(Presence.Entering, "bOrigin", "bTarget", true)
         stack.add(a)
         update(stack)
         stack.add(b)
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "bTarget",
         })
 
         // A2
-        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
         })
@@ -243,23 +262,29 @@ describe("createCrossfadeAnimation", () => {
 
     test("Removing: [A1, A2] -> [A1]", () => {
         const stack = new LayoutStack()
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget", true)
         stack.add(a)
         update(stack)
         stack.add(b)
         update(stack)
         stack.remove(b)
         update(stack)
-        expect(createCrossfadeAnimation(a, true, stack)).toEqual({})
+        expect(createCrossfadeAnimation(a, stack)).toEqual({})
     })
 
     test("Interrupting remove with new component: [A1, A2 (exiting)] -interrupted-> [A1, A2 (exiting), A3]", () => {
         const stack = new LayoutStack()
         const aOpacity = motionValue(0)
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget", aOpacity)
-        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget")
-        const c = makeChild(Presence.Entering, "cOrigin", "cTarget")
+        const a = makeChild(
+            Presence.Present,
+            "aOrigin",
+            "aTarget",
+            true,
+            aOpacity
+        )
+        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget", true)
+        const c = makeChild(Presence.Entering, "cOrigin", "cTarget", true)
         stack.add(a)
         update(stack)
         stack.add(b)
@@ -268,17 +293,17 @@ describe("createCrossfadeAnimation", () => {
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "cTarget",
         })
 
         // A2
-        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(b, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
         })
 
         // A3
-        expect(createCrossfadeAnimation(c, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(c, stack)).toEqual({
             originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
         })
@@ -287,9 +312,15 @@ describe("createCrossfadeAnimation", () => {
     test("Interrupting remove by removing: [A1, A2, A3 (exiting)] -interrupted-> [A1, A2 (exiting), A3 (exiting)]", () => {
         const stack = new LayoutStack()
         const bOpacity = motionValue(0)
-        const a = makeChild(Presence.Present, "aOrigin", "aTarget")
-        const b = makeChild(Presence.Exiting, "bOrigin", "bTarget", bOpacity)
-        const c = makeChild(Presence.Exiting, "cOrigin", "cTarget")
+        const a = makeChild(Presence.Present, "aOrigin", "aTarget", true)
+        const b = makeChild(
+            Presence.Exiting,
+            "bOrigin",
+            "bTarget",
+            true,
+            bOpacity
+        )
+        const c = makeChild(Presence.Exiting, "cOrigin", "cTarget", true)
         stack.add(a)
         update(stack)
         stack.add(b)
@@ -298,18 +329,18 @@ describe("createCrossfadeAnimation", () => {
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(a, stack)).toEqual({
             originBox: "bOrigin",
             crossfadeOpacity: bOpacity,
         })
 
         // A2
-        expect(createCrossfadeAnimation(b, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(b, stack)).toEqual({
             targetBox: "aTarget",
         })
 
         // A3
-        expect(createCrossfadeAnimation(c, true, stack)).toEqual({
+        expect(createCrossfadeAnimation(c, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
         })
     })

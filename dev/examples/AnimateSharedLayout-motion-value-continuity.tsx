@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState, useRef, useLayoutEffect } from "react"
+import { useState } from "react"
 import { motion, AnimateSharedLayout } from "@framer"
 import styled from "styled-components"
 
@@ -18,14 +18,7 @@ class Underline extends React.Component {
 
 class Item extends React.Component {
     render() {
-        const {
-            i,
-            title,
-            selected,
-            color,
-            setSelected,
-            forceUpdate,
-        } = this.props
+        const { i, title, selected, color, setSelected } = this.props
 
         return (
             <motion.li
@@ -33,7 +26,6 @@ class Item extends React.Component {
                 id={i}
                 layout
                 className={`title ${i === selected && "selected"}`}
-                initial={false}
                 animate={{ color: i === selected ? color : "#333" }}
                 onClick={() => setSelected(i)}
             >
