@@ -334,6 +334,7 @@ describe("createCrossfadeAnimation", () => {
         expect(createCrossfadeAnimation(a, stack)).toEqual({
             originBox: "bOrigin",
             crossfadeOpacity: bOpacity,
+            transition: undefined,
         })
 
         // A2

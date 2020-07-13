@@ -17,7 +17,6 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   `positionTransition` and `layoutTransition` props (use `layout={true}` instead).
 -   `Point` type in favour of `Point2D`.
 -   `useAnimatedState`: Moved to Framer library.
--   `useCycle`: Moved to Framer library.
 -   `dragOriginX`, `dragOriginY` props.
 -   `stylefire` as a dependency.
 

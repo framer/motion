@@ -10,9 +10,10 @@ import { ResolvedValues } from "../render/types"
  * the latest APIs.
  */
 class StateVisualElement extends VisualElement {
-    latestState: ResolvedValues = {}
+    initialState: ResolvedValues = {}
 
     build() {}
+
     clean() {}
 
     getBoundingBox() {
@@ -20,10 +21,12 @@ class StateVisualElement extends VisualElement {
     }
 
     readNativeValue(key: string) {
-        return this.latestState[key] || 0
+        return this.initialState[key] || 0
     }
 
-    render() {}
+    render() {
+        this.build()
+    }
 }
 
 /**
@@ -39,7 +42,7 @@ export function useAnimatedState(initialState: any) {
         onUpdate: v => setAnimationState({ ...v }),
     })
 
-    visualElement.latestState = animationState
+    visualElement.initialState = initialState
 
     const controls = useVisualElementAnimation(visualElement, {}, {})
 
