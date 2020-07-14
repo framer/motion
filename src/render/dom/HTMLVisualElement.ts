@@ -19,7 +19,7 @@ import {
 import { updateBoxDelta } from "../../utils/geometry/delta-calc"
 import { Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
-import { motionValue } from "../../value"
+import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 
@@ -386,7 +386,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    axisProgress = {
+    axisProgress: MotionPoint = {
         x: motionValue(0),
         y: motionValue(0),
     }
@@ -552,6 +552,11 @@ function forEachParent(
         callback(parent)
         parent = parent.parent as HTMLVisualElement
     }
+}
+
+interface MotionPoint {
+    x: MotionValue<number>
+    y: MotionValue<number>
 }
 
 // TODO Move to delta-calc
