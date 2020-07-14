@@ -142,7 +142,7 @@ export abstract class VisualElement<E = any> {
     abstract render(): void
 
     // Build display attributes
-    abstract build(): void
+    abstract build(isReactRender: boolean): void
 
     // Clean data structures
     abstract clean(): void

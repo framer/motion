@@ -461,7 +461,7 @@ export class HTMLVisualElement<
      * Update the layout deltas to reflect the relative positions of the layout
      * and the desired target box
      */
-    updateLayoutDeltas() {
+    updateLayoutDeltas(isReactRender: boolean) {
         /**
          * Ensure that all the parent deltas are up-to-date before calculating this delta.
          *
@@ -470,7 +470,9 @@ export class HTMLVisualElement<
          * We can optimise this by replacing this to a call directly to the root VisualElement
          * which then runs iteration from the top-down, but only once per framestamp.
          */
-        this.treePath.forEach((p: HTMLVisualElement) => p.updateLayoutDeltas())
+        this.treePath.forEach((p: HTMLVisualElement) =>
+            p.updateLayoutDeltas(isReactRender)
+        )
 
         /**
          * Early return if layout reprojection isn't enabled
@@ -520,9 +522,11 @@ export class HTMLVisualElement<
          * TODO: Only fire if the box has been updated.
          * TODO: Finalise event name before documentation.
          */
-        this.hasViewportBoxUpdated &&
-            this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
-        this.hasViewportBoxUpdated = false
+        if (!isReactRender) {
+            this.hasViewportBoxUpdated &&
+                this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
+            this.hasViewportBoxUpdated = false
+        }
     }
 
     /**
@@ -534,12 +538,14 @@ export class HTMLVisualElement<
     /**
      * Build a style prop using the latest resolved MotionValues
      */
-    build() {
+    build(isReactRender: boolean) {
         if (this.isVisible !== undefined) {
             this.style.visibility = this.isVisible ? "visible" : "hidden"
         }
 
-        this.isLayoutProjectionEnabled && this.box && this.updateLayoutDeltas()
+        this.isLayoutProjectionEnabled &&
+            this.box &&
+            this.updateLayoutDeltas(isReactRender)
 
         buildHTMLStyles(
             this.latest,
@@ -562,7 +568,7 @@ export class HTMLVisualElement<
      */
     render() {
         // Rebuild the latest animated values into style and vars caches.
-        this.build()
+        this.build(false)
 
         // Directly assign style into the Element's style prop. In tests Object.assign is the
         // fastest way to assign styles.
