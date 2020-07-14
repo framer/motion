@@ -519,8 +519,7 @@ export class HTMLVisualElement<
 
         /**
          * If we have a listener for the viewport box, fire it.
-         * TODO: Only fire if the box has been updated.
-         * TODO: Finalise event name before documentation.
+         * TODO: Instead of manually checking this, use framesync postRender
          */
         if (!isReactRender) {
             this.hasViewportBoxUpdated &&
