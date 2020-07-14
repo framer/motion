@@ -440,6 +440,7 @@ export class VisualElementDragControls {
                 bounceDamping,
                 timeConstant: 750,
                 restDelta: 1,
+                restSpeed: 10,
                 ...dragTransition,
                 ...transition,
             }
@@ -523,6 +524,14 @@ export class VisualElementDragControls {
         })
 
         /**
+         * Ensure drag constraints are resolved correctly relative to the dragging element
+         * whenever its layout changes.
+         */
+        const stopLayoutUpdateListener = visualElement.onLayoutUpdate(() => {
+            if (this.isDragging) this.resolveDragConstraints()
+        })
+
+        /**
          * If the previous component with this same layoutId was dragging at the time
          * it was unmounted, we want to continue the same gesture on this component.
          */
@@ -536,8 +545,9 @@ export class VisualElementDragControls {
          * Return a function that will teardown the drag gesture
          */
         return () => {
-            stopPointerListener && stopPointerListener()
-            stopResizeListener && stopResizeListener()
+            stopPointerListener?.()
+            stopResizeListener?.()
+            stopLayoutUpdateListener?.()
             this.cancelDrag()
         }
     }

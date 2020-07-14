@@ -162,6 +162,12 @@ export class HTMLVisualElement<
     private layoutUpdateListeners: Set<LayoutUpdateHandler> = new Set()
 
     /**
+     * Keep track of whether the viewport box has been updated since the last render.
+     * If it has, we want to fire the onViewportBoxUpdate listener.
+     */
+    private hasViewportBoxUpdated = false
+
+    /**
      * Optional id. If set, and this is the child of an AnimateSharedLayout component,
      * the targetBox can be transerred to a new component with the same ID.
      */
@@ -275,8 +281,6 @@ export class HTMLVisualElement<
     /**
      * To be called when all layouts are successfully updated. In turn we can notify layoutUpdate
      * subscribers.
-     *
-     * TODO: We don't currently use more than one listener
      */
     layoutReady(config?: SharedLayoutAnimationConfig) {
         this.layoutUpdateListeners.forEach(listener => {
@@ -337,6 +341,7 @@ export class HTMLVisualElement<
     }
 
     unlockTargetBox() {
+        this.stopLayoutAnimation()
         this.isTargetBoxLocked = false
     }
 
@@ -362,6 +367,9 @@ export class HTMLVisualElement<
         targetAxis.min = min
         targetAxis.max = max
 
+        // Flag that we want to fire the onViewportBoxUpdate event handler
+        this.hasViewportBoxUpdated = true
+
         /**
          * If this component re-renders we need to ensure that any children performing
          * layout projection also update
@@ -378,7 +386,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    private axisProgress = {
+    axisProgress = {
         x: motionValue(0),
         y: motionValue(0),
     }
@@ -392,9 +400,9 @@ export class HTMLVisualElement<
         const { min, max } = this.targetBox[axis]
         const length = max - min
 
+        progress.clearListeners()
         progress.set(min)
         progress.set(min) // Set twice to hard-reset velocity
-        progress.clearListeners()
         progress.onChange(v => this.setAxisTarget(axis, v, v + length))
 
         return startAnimation(axis, progress, 0, transition)
@@ -467,7 +475,9 @@ export class HTMLVisualElement<
          * TODO: Only fire if the box has been updated.
          * TODO: Finalise event name before documentation.
          */
-        this.config.onViewportBoxUpdate?.(this.targetBox)
+        this.hasViewportBoxUpdated &&
+            this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
+        this.hasViewportBoxUpdated = false
     }
 
     /**

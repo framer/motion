@@ -20,6 +20,7 @@ export function useDrag(props: DraggableProps, visualElement: VisualElement) {
             visualElement: visualElement as HTMLVisualElement,
         })
     })
+
     dragControls.updateProps({ ...props, transformPagePoint })
 
     // If we've been provided a DragControls for manual control over the drag gesture,

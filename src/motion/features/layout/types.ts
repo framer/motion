@@ -1,4 +1,4 @@
-import { AxisBox2D } from "../../../types/geometry"
+import { AxisBox2D, BoxDelta } from "../../../types/geometry"
 
 export interface LayoutProps {
     /**
@@ -55,7 +55,9 @@ export interface LayoutProps {
     onLayoutAnimationComplete?: () => void
 
     /**
-     * @internal
+     * A callback that fires whenever the viewport-relative bounding box updates.
+     *
+     * @public
      */
-    onViewportBoxUpdate?: (box: AxisBox2D) => void
+    onViewportBoxUpdate?: (box: AxisBox2D, delta: BoxDelta) => void
 }

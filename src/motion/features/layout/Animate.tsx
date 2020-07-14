@@ -2,7 +2,7 @@ import * as React from "react"
 import { MotionProps } from "../../types"
 import { FeatureProps, MotionFeature } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
-import { motionValue, MotionValue } from "../../../value"
+import { MotionValue } from "../../../value"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
 import { tweenAxis } from "./utils"
@@ -30,11 +30,6 @@ class Animate extends React.Component<AnimateProps> {
     private frameTarget = {
         x: { min: 0, max: 0 },
         y: { min: 0, max: 0 },
-    }
-
-    private progress = {
-        x: motionValue(0),
-        y: motionValue(0),
     }
 
     private stopAxisAnimation: AxisLocks = {
@@ -131,6 +126,11 @@ class Animate extends React.Component<AnimateProps> {
         })
     }
 
+    /**
+     * TODO: This manually performs animations on the visualElement's layout progress
+     * values. It'd be preferable to amend the HTMLVisualElement.startLayoutAxisAnimation
+     * API to accept more custom animations like this.
+     */
     animateAxis(
         axis: "x" | "y",
         target: Axis,
@@ -141,12 +141,13 @@ class Animate extends React.Component<AnimateProps> {
 
         const { visualElement } = this.props
         const frameTarget = this.frameTarget[axis]
-        const layoutProgress = this.progress[axis]
+        const layoutProgress = visualElement.axisProgress[axis]
 
         /**
          * Set layout progress back to 0. We set it twice to hard-reset any velocity that might
          * be re-incoporated into a subsequent spring animation.
          */
+        layoutProgress.clearListeners()
         layoutProgress.set(0)
         layoutProgress.set(0)
 

@@ -29,7 +29,6 @@ const Item = ({ color, setPosition, moveItem, i }) => {
     return (
         <li
             style={{
-                backgroundColor: color + 33,
                 padding: 0,
                 height: heights[color],
                 zIndex: isDragging ? 3 : 1,
@@ -38,6 +37,7 @@ const Item = ({ color, setPosition, moveItem, i }) => {
             <motion.div
                 ref={ref}
                 initial={false}
+                id={i}
                 layout
                 // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
                 style={{
@@ -45,8 +45,14 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                     height: heights[color],
                     borderRadius: 5,
                 }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 1.12 }}
+                whileHover={{
+                    scale: 1.03,
+                    boxShadow: "0px 3px 3px rgba(0,0,0,0.15)",
+                }}
+                whileTap={{
+                    scale: 1.12,
+                    boxShadow: "0px 5px 5px rgba(0,0,0,0.1)",
+                }}
                 drag="y"
                 // Animate the component back to 0 when dragging ends
                 dragConstraints={{ top: 0, bottom: 0 }}
@@ -54,9 +60,9 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 dragElastic={1}
                 onDragStart={() => setDragging(true)}
                 onDragEnd={() => setDragging(false)}
-                onViewportBoxUpdate={(_viewportBox, delta) =>
+                onViewportBoxUpdate={(_viewportBox, delta) => {
                     isDragging && moveItem(i, delta.y.translate)
-                }
+                }}
             />
         </li>
     )
@@ -116,7 +122,7 @@ export interface Position {
 }
 
 // Prevent rapid reverse swapping
-const buffer = 5
+const buffer = 20
 
 export const findIndex = (
     i: number,
