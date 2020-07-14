@@ -22,6 +22,7 @@ import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
+import { getWindowScroll } from "./layout/window-scroll"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -317,13 +318,57 @@ export class HTMLVisualElement<
         this.prevViewportBox = this.getBoundingBoxWithoutTransforms()
     }
 
+    /**
+     * The viewport scroll at the time of the previous layout measurement.
+     */
+    viewportScroll: Point2D
+
     measureLayout() {
         this.box = this.getBoundingBox()
         this.boxCorrected = copyAxisBox(this.box)
 
+        /**
+         * The rest of this function, with the exception of the targetBox initialisation,
+         * is a temporary solution (aka massive hack) to solving the updating
+         * of targetBoxes after we've scrolled the page.
+         *
+         * The targetBox is set relative to the viewport. If we change this box, for instance
+         * by dragging, then scroll, the element will correctly scroll away with the page.
+         * But the targetBox is still relative to the viewport. So if we then update the
+         * underlying box measurement the updateDelta function will correctly project the
+         * element to the part of the viewport defined in targetBox. So if the element isn't
+         * position: fixed we need to update this box too.
+         *
+         * See: dev/tests/scroll-projection for practical example of this in action.
+         *
+         * This solution is a bit last-minute. This will break if targetBox is being animated
+         * by dragEnd or layout animation. We could look into a model where animations are defined
+         * relatively. Or a model where there's a permanent element-relative bounding box. But this
+         * approach seems to work quite well for now.
+         *
+         * TODO: Is it possible to cache the window.scroll position? Perhaps
+         * for this animation frame.
+         */
+        const scroll = getWindowScroll()
+
+        if (!this.viewportScroll) this.viewportScroll = { ...scroll }
+
+        const xScrollDelta = this.viewportScroll.x - scroll.x
+        const yScrollDelta = this.viewportScroll.y - scroll.y
+
+        this.viewportScroll.x = scroll.x
+        this.viewportScroll.y = scroll.y
+
         if (!this.targetBox) {
             this.targetBox = copyAxisBox(this.box)
             this.targetBoxFinal = copyAxisBox(this.box)
+        } else if (
+            !isViewportRelativeLayout(this.getInstance() as HTMLElement)
+        ) {
+            this.targetBox.x.min += xScrollDelta
+            this.targetBox.x.max += xScrollDelta
+            this.targetBox.y.min += yScrollDelta
+            this.targetBox.y.max += yScrollDelta
         }
     }
 
@@ -559,16 +604,17 @@ interface MotionPoint {
     y: MotionValue<number>
 }
 
-// TODO Move to delta-calc
-// function relativeAxis(parent: Axis, child: Axis) {
-//     return {
-//         min: parent.min - child.min,
-//         max: parent.max - child.max,
-//     }
-// }
-// function relativeBox(parent: AxisBox2D, child: AxisBox2D) {
-//     return {
-//         x: relativeAxis(parent.x, child.x),
-//         y: relativeAxis(parent.y, child.y),
-//     }
-// }
+function isViewportRelativeLayout(element: HTMLElement): boolean {
+    const { offsetParent } = element
+
+    // If this doesn't have an offsetParent, it's position: fixed
+    if (offsetParent === null) return true
+
+    // In Firefox, the above will return `body`
+    if (window.getComputedStyle(element).position === "fixed") return true
+
+    // If we've reached the body and it isn't position fixed, return false
+    if (offsetParent === document.body) return false
+
+    return isViewportRelativeLayout(offsetParent as HTMLElement)
+}
