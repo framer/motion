@@ -38,16 +38,10 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      */
     private updateScheduled = false
 
-    private _renderScheduled = false
-
-    set renderScheduled(val: boolean) {
-        if (val) console.trace()
-        this._renderScheduled = val
-    }
-
-    get renderScheduled() {
-        return this._renderScheduled
-    }
+    /**
+     * Tracks whether we already have a render scheduled. If we don't, we'll force one with this.forceRender
+     */
+    private renderScheduled = false
 
     /**
      * The methods provided to all children in the shared layout tree.
