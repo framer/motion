@@ -206,10 +206,9 @@ export interface DraggableProps extends DragHandlers {
 // @public (undocumented)
 export interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
-    onDrag?: DragHandler;
-    onDragEnd?: DragHandler;
-    // Warning: (ae-forgotten-export) The symbol "DragHandler" needs to be exported by the entry point index.d.ts
-    onDragStart?: DragHandler;
+    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDragEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDragStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
     onDragTransitionEnd?(): void;
 }
 
@@ -323,8 +322,8 @@ export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueTyp
 export interface LayoutProps {
     layout?: boolean;
     layoutId?: string;
-    onLayoutAnimationComplete?: () => void;
-    onViewportBoxUpdate?: (box: AxisBox2D, delta: BoxDelta) => void;
+    onLayoutAnimationComplete?(): void;
+    onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "Motion" needs to be exported by the entry point index.d.ts
