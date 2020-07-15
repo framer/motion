@@ -36,7 +36,6 @@ function SingleImage({ color, index, setIndex }) {
                 id="color"
                 layoutId={color}
                 initial={{ borderRadius: 20 }}
-                exit={{ x: -200 }}
                 style={{ ...singleImage, backgroundColor: color }}
             >
                 <motion.div

@@ -1,5 +1,6 @@
 import { createContext } from "react"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { Presence } from "./types"
 
 /**
  * Handlers for batching sync layout lifecycles. We batches these processes to cut
@@ -65,10 +66,21 @@ export function createBatcher(): SyncLayoutBatcher {
          * Read: Measure the actual layout
          */
         order.forEach(measureLayout)
+
         /**
          * Write: Notify the VisualElements they're ready for further write operations.
          */
         order.forEach(layoutReady)
+
+        /**
+         * After all children have started animating, ensure any Entering components are set to Present.
+         * If we add deferred animations (set up all animations and then start them in two loops) this
+         * could be moved to the start loop. But it needs to happen after all the animations configs
+         * are generated in AnimateSharedLayout as this relies on presence data
+         */
+        order.forEach(child => {
+            if (child.isPresent) child.presence = Presence.Present
+        })
 
         queue.clear()
     }

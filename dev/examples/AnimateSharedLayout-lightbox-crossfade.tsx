@@ -44,7 +44,6 @@ function SingleImage({ color, setIndex }) {
                 <motion.div
                     id="color"
                     layoutId={color}
-                    transition={{ duration: 20 }}
                     initial={{ borderRadius: 20 }}
                     style={{ ...singleImage, backgroundColor: color }}
                 >
@@ -66,11 +65,7 @@ export function Component() {
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
-                    <SingleImage
-                        index={index}
-                        color={colors[index]}
-                        setIndex={setIndex}
-                    />
+                    <SingleImage color={colors[index]} setIndex={setIndex} />
                 )}
             </AnimatePresence>
         </>

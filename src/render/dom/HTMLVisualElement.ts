@@ -258,13 +258,13 @@ export class HTMLVisualElement<
     isVisible?: boolean
 
     hide() {
-        if (!this.isVisible) return
+        if (this.isVisible === false) return
         this.isVisible = false
         this.scheduleRender()
     }
 
     show() {
-        if (this.isVisible) return
+        if (this.isVisible === true) return
         this.isVisible = true
         this.scheduleRender()
     }

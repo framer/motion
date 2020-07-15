@@ -63,13 +63,6 @@ class Animate extends React.Component<AnimateProps> {
         const { visualElement } = this.props
 
         /**
-         * If this visualElement is present, immediately switch its presence from Entering to Present.
-         * This is so if a subsequent animation starts before its finished rendering it resumes from its
-         * current position rather than a previous component's bounding box.
-         */
-        if (visualElement.isPresent) visualElement.presence = Presence.Present
-
-        /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be
          * overridden by the provided config.
          */

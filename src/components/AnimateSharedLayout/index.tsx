@@ -38,6 +38,17 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      */
     private updateScheduled = false
 
+    private _renderScheduled = false
+
+    set renderScheduled(val: boolean) {
+        if (val) console.trace()
+        this._renderScheduled = val
+    }
+
+    get renderScheduled() {
+        return this._renderScheduled
+    }
+
     /**
      * The methods provided to all children in the shared layout tree.
      */
@@ -63,7 +74,17 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.startLayoutAnimation()
     }
 
+    shouldComponentUpdate() {
+        this.renderScheduled = true
+        return true
+    }
+
     startLayoutAnimation() {
+        /**
+         * Reset update and render scheduled status
+         */
+        this.renderScheduled = this.updateScheduled = false
+
         const { type } = this.props
 
         /**
@@ -103,12 +124,9 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
             layoutReady: child => {
                 const { layoutId } = child
 
-                child.layoutReady({
-                    ...createAnimation(child, this.getStack(layoutId)),
-                    onLayoutAnimationComplete: () => {
-                        if (child.isPresent) child.presence = Presence.Present
-                    },
-                })
+                child.layoutReady(
+                    createAnimation(child, this.getStack(layoutId))
+                )
             },
         }
 
@@ -126,11 +144,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Clear snapshots so subsequent rerenders don't retain memory of outgoing components
          */
         this.stacks.forEach(stack => (stack.snapshot = undefined))
-
-        /**
-         * Reset updateScheduled status
-         */
-        this.updateScheduled = false
     }
 
     updateStacks() {
@@ -158,9 +171,12 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.stacks.forEach(stack => stack.updateSnapshot())
 
         /**
-         * Force a rerender by setting state
+         * Force a rerender by setting state if we aren't already going to render.
          */
-        this.forceUpdate()
+        if (force || !this.renderScheduled) {
+            this.renderScheduled = true
+            this.forceUpdate()
+        }
     }
 
     addChild(child: HTMLVisualElement) {
