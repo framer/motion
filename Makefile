@@ -55,12 +55,12 @@ publish: clean bootstrap
 
 test: bootstrap $(API_TARGET)
 	yarn test
-	yarn tsc dist/framer-motion.d.ts
+	yarn tsc dist/framer-motion.d.ts --skipLibCheck
 
 test-ci: bootstrap $(API_TARGET)
 	mkdir -p $(TEST_REPORT_PATH)
 	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test-ci --ci --reporters=jest-junit
-	yarn tsc dist/framer-motion.d.ts
+	yarn tsc dist/framer-motion.d.ts --skipLibCheck
 
 lint: bootstrap
 	yarn lint
