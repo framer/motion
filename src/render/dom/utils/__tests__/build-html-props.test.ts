@@ -25,7 +25,7 @@ describe("buildHTMLProps", () => {
         element.reactStyle.color = "#fff"
 
         element.clean()
-        element.build()
+        element.build(true)
 
         const draggableProps = buildHTMLProps(element, { drag: true })
 
@@ -40,7 +40,7 @@ describe("buildHTMLProps", () => {
         })
 
         element.clean()
-        element.build()
+        element.build(true)
         const notDraggableProps = buildHTMLProps(element, { drag: false })
 
         expect(notDraggableProps).toEqual({
