@@ -16,11 +16,13 @@ describe("useAnimatedState", () => {
                     hasAnimated || (state.foo !== 0 && state.foo !== 100)
 
                 useEffect(() => {
-                    setState({ foo: 100, transition: { duration: 0.05 } }).then(
-                        () =>
-                            requestAnimationFrame(() =>
-                                resolve([hasAnimated, latest.foo])
-                            )
+                    setState({
+                        foo: 100,
+                        transition: { duration: 0.05 },
+                    }).then(() =>
+                        requestAnimationFrame(() =>
+                            resolve([hasAnimated, latest.foo])
+                        )
                     )
                 }, [])
 

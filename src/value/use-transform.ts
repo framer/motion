@@ -1,6 +1,8 @@
 import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
-import { useRef, useMemo } from "react"
+import { useMemo, useRef } from "react"
+import { useMotionValue } from "./use-motion-value"
+import { useUnmountEffect } from "../utils/use-unmount-effect"
 
 type Transformer<T> = (v: any) => T
 
@@ -9,8 +11,6 @@ const isTransformer = <T>(
 ): v is Transformer<T> => {
     return typeof v === "function"
 }
-
-const noop = (v: any) => v
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
@@ -119,21 +119,29 @@ export function useTransform<T>(
     to?: T[],
     options?: TransformOptions<T>
 ): MotionValue<T> {
-    const value = useRef<MotionValue<T> | null>(null)
-    let comparitor: any[] = [parent]
-    let transformer = noop
+    const comparitor = isTransformer(customTransform)
+        ? [parent]
+        : [parent, customTransform.join(","), to?.join(",")]
 
-    if (isTransformer(customTransform)) {
-        transformer = customTransform
-    } else if (Array.isArray(to)) {
-        const from = customTransform
-        transformer = transform(from, to, options)
-        comparitor = [parent, from.join(","), to.join(",")]
-    }
-
-    return useMemo(() => {
-        if (value.current) value.current.destroy()
-        value.current = parent.addChild({ transformer })
-        return value.current
+    const transformer = useMemo(() => {
+        return isTransformer(customTransform)
+            ? customTransform
+            : transform(customTransform, to as T[], options)
     }, comparitor)
+
+    const initialValue = transformer(parent.get())
+    const value = useMotionValue(initialValue)
+
+    // Handle subscription to parent
+    const unsubscribe = useRef<() => void>()
+    useMemo(() => {
+        unsubscribe.current && unsubscribe.current()
+        unsubscribe.current = parent.onChange(v => value.set(transformer(v)))
+
+        // Manually set with the latest parent value in case we've re-parented
+        value.set(initialValue)
+    }, [parent, value, transformer])
+    useUnmountEffect(() => unsubscribe.current && unsubscribe.current())
+
+    return value
 }

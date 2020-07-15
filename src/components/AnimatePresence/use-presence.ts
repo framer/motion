@@ -1,9 +1,14 @@
 import { useContext, useEffect } from "react"
 import { PresenceContext } from "./PresenceContext"
+import { useConstant } from "../../utils/use-constant"
+
+export type SafeToRemove = () => void
+
+type AlwaysPresent = [true, null]
 
 type Present = [true]
 
-type NotPresent = [false, () => void]
+type NotPresent = [false, SafeToRemove]
 
 /**
  * When a component is the child of `AnimatePresence`, it can use `usePresence`
@@ -28,13 +33,33 @@ type NotPresent = [false, () => void]
  *
  * @public
  */
-export function usePresence(): Present | NotPresent {
+export function usePresence(): AlwaysPresent | Present | NotPresent {
     const context = useContext(PresenceContext)
 
-    if (context === null) return [true]
+    if (context === null) return [true, null]
+
     const { isPresent, onExitComplete, register } = context
 
-    useEffect(register, [])
+    // It's safe to call the following hooks conditionally (after an early return) because the context will always
+    // either be null or non-null for the lifespan of the component.
 
-    return !isPresent && onExitComplete ? [false, onExitComplete] : [true]
+    // Replace with useOpaqueId when released in React
+    const id = useUniqueId()
+    useEffect(() => register(id), [])
+
+    const safeToRemove = () => onExitComplete?.(id)
+
+    return !isPresent && onExitComplete ? [false, safeToRemove] : [true]
 }
+
+/**
+ * @public
+ */
+export function useIsPresent() {
+    const context = useContext(PresenceContext)
+    return context === null ? true : context.isPresent
+}
+
+let counter = 0
+const incrementId = () => counter++
+const useUniqueId = () => useConstant(incrementId)

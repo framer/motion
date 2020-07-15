@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
-import { motion } from "../../motion"
+import { motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { motionValue, MotionValue } from ".."
 

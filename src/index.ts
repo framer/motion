@@ -1,27 +1,31 @@
-export {
-    motion,
-    useExternalRef,
-    createMotionComponent,
-    HTMLMotionProps,
-    SVGMotionProps,
-    SVGAttributesAsMotionValues,
-    ForwardRefComponent,
-} from "./motion"
+/**
+ * Components
+ */
+export { motion } from "./render/dom"
+export { AnimatePresence } from "./components/AnimatePresence"
+export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+
+/**
+ * Motion values
+ */
 export { useMotionValue } from "./value/use-motion-value"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
-export { unwrapMotionValue } from "./value/utils/unwrap-value"
+export { resolveMotionValue } from "./value/utils/resolve-motion-value"
 export { useInvertedScale } from "./value/use-inverted-scale"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
+
+/**
+ * Utils
+ */
 export {
     AnimationControls,
     animationControls,
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
-export { useAnimatedState } from "./animation/use-animated-state"
 export {
     HoverHandlers,
     TapHandlers,
@@ -34,11 +38,43 @@ export {
 } from "./gestures"
 export { useCycle } from "./utils/use-cycle"
 export { transform } from "./utils/transform"
+export { useReducedMotion } from "./utils/use-reduced-motion"
+export { ReducedMotion } from "./components/ReducedMotion"
+export { isValidMotionProp } from "./motion/utils/valid-prop"
+export {
+    usePresence,
+    useIsPresent,
+} from "./components/AnimatePresence/use-presence"
+export {
+    useDragControls,
+    DragControls,
+} from "./gestures/drag/use-drag-controls"
+export { useDomEvent } from "./events/use-dom-event"
+export { useExternalRef } from "./motion/utils/use-external-ref"
+export { createMotionComponent } from "./motion"
+export { useAnimatedState } from "./animation/use-animated-state"
+export { addScaleCorrection } from "./render/dom/layout/scale-correction"
+
+/**
+ * Contexts
+ */
 export {
     MotionPlugins,
     MotionPluginContext,
 } from "./motion/context/MotionPluginContext"
 export { MotionContext } from "./motion/context/MotionContext"
+export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
+export { AnimatePresenceProps } from "./components/AnimatePresence/types"
+
+/**
+ * Types
+ */
+export {
+    HTMLMotionProps,
+    SVGMotionProps,
+    SVGAttributesAsMotionValues,
+    ForwardRefComponent,
+} from "./render/dom/types"
 export {
     AnimationProps,
     MotionProps,
@@ -50,16 +86,13 @@ export {
     RelayoutInfo,
     ResolveLayoutTransition,
 } from "./motion/types"
-export { GestureHandlers } from "./gestures"
-export { DraggableProps, DragHandlers } from "./behaviours/types"
-export { useDragControls, DragControls } from "./behaviours/use-drag-controls"
+export { VisualElementAnimationControls } from "./animation/VisualElementAnimationControls"
 export {
     Orchestration,
     Tween,
     Spring,
     Keyframes,
     Inertia,
-    Point,
     None,
     EasingFunction,
     TargetAndTransition,
@@ -74,12 +107,10 @@ export {
     Variant,
     Variants,
 } from "./types"
-export { useDomEvent } from "./events/use-dom-event"
 export { EventInfo } from "./events/types"
-export { AnimatePresenceProps } from "./components/AnimatePresence/types"
-export { AnimatePresence } from "./components/AnimatePresence"
-export { usePresence } from "./components/AnimatePresence/use-presence"
-export { UnstableSyncLayout } from "./components/SyncLayout"
-export { isValidMotionProp } from "./motion/utils/valid-prop"
-export { useReducedMotion } from "./utils/use-reduced-motion"
-export { ReducedMotion } from "./components/ReducedMotion"
+export { MotionFeature, FeatureProps } from "./motion/features/types"
+export { GestureHandlers } from "./gestures"
+export { DraggableProps, DragHandlers } from "./gestures/drag/types"
+export { LayoutProps } from "./motion/features/layout/types"
+export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
+export * from "./types/geometry"

@@ -1,7 +1,7 @@
-import { ValueAnimationControls } from "../motion"
+import { VisualElementAnimationControls } from "../animation/VisualElementAnimationControls"
 
 export interface ControlsProp {
-    controls?: ValueAnimationControls
+    controls?: VisualElementAnimationControls
 }
 
 export type RemoveEvent = () => void

@@ -10,13 +10,13 @@ type CB = () => void
 describe("usePresence", () => {
     test("Can defer unmounting", async () => {
         const promise = new Promise(resolve => {
-            let remove: undefined | CB = undefined
+            let remove: CB
 
             const Child = () => {
                 const [isPresent, safeToRemove] = usePresence()
 
                 useEffect(() => {
-                    if (!isPresent) remove = safeToRemove
+                    if (safeToRemove) remove = safeToRemove
                 }, [isPresent])
 
                 return <div />
@@ -31,26 +31,26 @@ describe("usePresence", () => {
 
             expect(container.firstChild).toBeTruthy()
 
-            act(() => remove && remove())
+            act(() => remove())
 
             expect(container.firstChild).toBeFalsy()
 
             resolve()
         })
 
-        return await promise
+        await promise
     })
 
     test("Multiple children can exit", async () => {
         const promise = new Promise(resolve => {
-            let removeA: undefined | CB = undefined
-            let removeB: undefined | CB = undefined
+            let removeA: CB
+            let removeB: CB
 
             const ChildA = () => {
                 const [isPresent, safeToRemove] = usePresence()
 
                 useEffect(() => {
-                    if (!isPresent) removeA = safeToRemove
+                    if (safeToRemove) removeA = safeToRemove
                 }, [isPresent, safeToRemove])
 
                 return <div />
@@ -60,7 +60,7 @@ describe("usePresence", () => {
                 const [isPresent, safeToRemove] = usePresence()
 
                 useEffect(() => {
-                    if (!isPresent) removeB = safeToRemove
+                    if (safeToRemove) removeB = safeToRemove
                 }, [isPresent, safeToRemove])
 
                 return <div />
@@ -82,30 +82,30 @@ describe("usePresence", () => {
 
             expect(container.firstChild).toBeTruthy()
 
-            act(() => removeA && removeA())
+            act(() => removeA())
 
             expect(container.firstChild).toBeTruthy()
 
-            act(() => removeB && removeB())
+            act(() => removeB())
 
             expect(container.firstChild).toBeFalsy()
 
             resolve()
         })
 
-        return await promise
+        await promise
     })
 
     test("Multiple children can exit over multiple rerenders", async () => {
         const promise = new Promise(resolve => {
-            let removeA: undefined | CB = undefined
-            let removeB: undefined | CB = undefined
+            let removeA: CB
+            let removeB: CB
 
             const ChildA = () => {
                 const [isPresent, safeToRemove] = usePresence()
 
                 useEffect(() => {
-                    if (!isPresent) removeA = safeToRemove
+                    if (safeToRemove) removeA = safeToRemove
                 }, [isPresent, safeToRemove])
 
                 return <div />
@@ -115,7 +115,7 @@ describe("usePresence", () => {
                 const [isPresent, safeToRemove] = usePresence()
 
                 useEffect(() => {
-                    if (!isPresent) removeB = safeToRemove
+                    if (safeToRemove) removeB = safeToRemove
                 }, [isPresent, safeToRemove])
 
                 return <div />
@@ -137,7 +137,7 @@ describe("usePresence", () => {
 
             expect(container.firstChild).toBeTruthy()
 
-            act(() => removeA && removeA())
+            act(() => removeA())
 
             rerender(<Parent isVisible={false} />)
 
@@ -145,13 +145,13 @@ describe("usePresence", () => {
 
             rerender(<Parent isVisible={false} />)
 
-            act(() => removeB && removeB())
+            act(() => removeB())
 
             expect(container.firstChild).toBeFalsy()
 
             resolve()
         })
 
-        return await promise
+        await promise
     })
 })

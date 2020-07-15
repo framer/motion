@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/38039349/60953119-d3c6f300-a2fc-11e9-9596-4978e5d52180.png" width="176" height="170" alt="Framer Motion" />
+  <img src="https://static.framer.com/motion/motion-readme-4.gif" width="400" height="250" alt="Framer Motion" />
 </p>
 
 <h3 align="center">
@@ -15,11 +15,11 @@
   <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
   <img src="https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square" />
   </a>
-  <a href="http://twitter.com/framer" target="_blank">
+  <a href="https://twitter.com/framer" target="_blank">
   <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
   </a>
-  <a href="https://spectrum.chat/framer" target="_blank">
-  <img src="https://withspectrum.github.io/badge/badge.svg" />
+  <a href="https://discord.gg/DfkSpYe" target="_blank">
+  <img src="https://img.shields.io/discord/308323056592486420.svg?logo=discord&logoColor=white" alt="Chat on Discord">
   </a>
 </p>
 
@@ -33,17 +33,17 @@ It looks like this:
 <motion.div animate={{ x: 0 }} />
 ```
 
-And does this:
+It does all this:
 
--   Spring physics
--   Keyframes
--   Drag
+-   Spring animations
+-   Simple keyframes syntax
+-   Gestures (drag/tap/hover)
+-   Layout and shared layout animations
 -   SVG paths
+-   Exit animations
 -   Server-side rendering
--   Pose-inspired tree animations
+-   Variants for orchestrating animations across components
 -   CSS variables
--   Position transitions
--   Unmount transitions
 
 ...and a whole lot more.
 
@@ -59,7 +59,7 @@ npm install framer-motion
 import { motion } from "framer-motion"
 
 export const MyComponent = ({ isVisible }) => (
-  <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />
+    <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />
 )
 ```
 

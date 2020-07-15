@@ -145,7 +145,7 @@ const getAnimation = (
     // for instance 100 to #fff. This might live better in Popmotion.
     warning(
         isOriginAnimatable === isTargetAnimatable,
-        `You are trying to animate ${key} from "${origin}" to ${target}. "${origin}" is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
+        `You are trying to animate ${key} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
     )
 
     // Parse the `transition` prop and return options for the Popmotion animation
@@ -189,7 +189,7 @@ export function startAnimation(
     key: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    { delay = 0, ...transition }: Transition
+    { delay = 0, ...transition }: Transition = {}
 ) {
     return value.start(complete => {
         let activeAnimation: ColdSubscription

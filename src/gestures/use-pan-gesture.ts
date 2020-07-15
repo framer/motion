@@ -4,6 +4,7 @@ import { MotionPluginContext } from "../motion/context/MotionPluginContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { PanSession, PanInfo, AnyPointerEvent } from "./PanSession"
+import { VisualElement } from "../render/VisualElement"
 
 export type PanHandler = (event: Event, info: PanInfo) => void
 
@@ -166,7 +167,7 @@ export interface PanHandlers {
  */
 export function usePanGesture(
     { onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers,
-    ref: RefObject<Element>
+    ref: RefObject<Element> | VisualElement
 ) {
     const hasPanEvents = onPan || onPanStart || onPanEnd || onPanSessionStart
     const panSession = useRef<PanSession | null>(null)

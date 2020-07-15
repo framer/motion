@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "1.11.1",
+    "version": "2.0.0",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
     "types": "dist/framer-motion.d.ts",
@@ -45,7 +45,7 @@
         "@testing-library/dom": "^6.10.1",
         "@testing-library/react": "^9.3.2",
         "@types/jest": "^23.3.9",
-        "@types/node": "^10.12.9",
+        "@types/node": "12.7.4",
         "@types/react": "^16.9.11",
         "@types/react-dom": "^16.9.4",
         "@types/styled-components": "^4.1.0",
@@ -81,6 +81,7 @@
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
         "typescript": "^3.7.5",
+        "uglifyjs-webpack-plugin": "^2.2.0",
         "webpack": "^4.25.1",
         "webpack-cli": "^3.1.2",
         "webpack-dev-server": "^3.7.2",
@@ -93,7 +94,6 @@
         "hey-listen": "^1.0.8",
         "popmotion": "9.0.0-beta-8",
         "style-value-types": "^3.1.6",
-        "stylefire": "^7.0.2",
         "tslib": "^1.10.0"
     },
     "optionalDependencies": {

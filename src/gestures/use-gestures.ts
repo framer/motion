@@ -1,7 +1,7 @@
-import { RefObject } from "react"
 import { PanHandlers, usePanGesture } from "./use-pan-gesture"
 import { TapHandlers, useTapGesture } from "./use-tap-gesture"
 import { HoverHandlers, useHoverGesture } from "./use-hover-gesture"
+import { VisualElement } from "../render/VisualElement"
 
 /**
  * @public
@@ -17,7 +17,7 @@ export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers
  */
 export function useGestures<GestureHandlers>(
     props: GestureHandlers,
-    ref: RefObject<Element>
+    ref: VisualElement
 ) {
     usePanGesture(props, ref)
     useTapGesture(props, ref)

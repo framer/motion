@@ -1,8 +1,8 @@
 import { useRef, useEffect } from "react"
 import { Target, Transition, TargetAndTransition } from "../types"
-import { ValueAnimationControls } from "./ValueAnimationControls"
-import { MotionValuesMap } from "../motion/utils/use-motion-values"
+import { VisualElementAnimationControls } from "./VisualElementAnimationControls"
 import { shallowCompare } from "../utils/shallow-compare"
+import { VisualElement } from "../render/VisualElement"
 
 export const hasUpdated = (
     prev: string | number | any[],
@@ -48,8 +48,8 @@ function targetWithoutTransition(
  */
 export function useAnimateProp(
     targetAndTransition: TargetAndTransition,
-    controls: ValueAnimationControls,
-    values: MotionValuesMap,
+    controls: VisualElementAnimationControls,
+    visualElement: VisualElement,
     defaultTransition?: Transition
 ) {
     const isInitialRender = useRef(true)
@@ -72,8 +72,8 @@ export function useAnimateProp(
             // defined in `style` or `initial`) or if it does exist and it's already changed.
             const shouldAnimateOnMount =
                 isInitialRender.current &&
-                (!values.has(key) ||
-                    values.get(key)!.get() !== finalTarget[key])
+                (!visualElement.hasValue(key) ||
+                    visualElement.getValue(key)!.get() !== finalTarget[key])
 
             // If this value has updated between renders or it's we're animating this value on mount,
             // add it to the animate target.

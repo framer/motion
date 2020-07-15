@@ -1,7 +1,7 @@
 import { MotionProps } from "../types"
 
 /**
- * A list of all valid MotionProps
+ * A list of all valid MotionProps.
  *
  * @internalremarks
  * This doesn't throw if a `MotionProp` name is missing - it should.
@@ -18,14 +18,17 @@ const validMotionProps = new Set<keyof MotionProps>([
     "custom",
     "inherit",
     "static",
-    "positionTransition",
-    "layoutTransition",
+    "layout",
+    "layoutId",
+    "onLayoutAnimationComplete",
+    "onViewportBoxUpdate",
     "onAnimationStart",
     "onAnimationComplete",
     "onUpdate",
     "onDragStart",
     "onDrag",
     "onDragEnd",
+    "onMeasureDragConstraints",
     "onDirectionLock",
     "onDragTransitionEnd",
     "drag",
@@ -37,11 +40,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "dragMomentum",
     "dragPropagation",
     "dragTransition",
-    "_dragValueX",
-    "_dragValueY",
-    "_dragTransitionControls",
-    "dragOriginX",
-    "dragOriginY",
     "onPan",
     "onPanStart",
     "onPanEnd",

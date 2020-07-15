@@ -4,25 +4,30 @@
 
 ```ts
 
+import * as CSS from 'csstype';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
-import { FunctionComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { PropsWithoutRef } from 'react';
+import * as PropTypes from 'prop-types';
 import * as React from 'react';
-import { ReactElement } from 'react';
 import { ReactHTML } from 'react';
-import { ReactNode } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { SpringProps } from 'popmotion';
 import { SVGAttributes } from 'react';
 
+// Warning: (ae-forgotten-export) The symbol "ScaleCorrectionDefinitionMap" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "addScaleCorrection" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): void;
+
 // @public
-export const AnimatePresence: FunctionComponent<AnimatePresenceProps>;
+export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps>;
 
 // @public (undocumented)
 export interface AnimatePresenceProps {
@@ -31,8 +36,38 @@ export interface AnimatePresenceProps {
     exitBeforeEnter?: boolean;
     initial?: boolean;
     onExitComplete?: () => void;
-    // @internal
-    _syncLayout?: () => void;
+}
+
+// @public (undocumented)
+export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
+    // Warning: (ae-forgotten-export) The symbol "HTMLVisualElement" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    addChild(child: HTMLVisualElement): void;
+    // (undocumented)
+    addToStack(child: HTMLVisualElement): void;
+    // (undocumented)
+    componentDidMount(): void;
+    // (undocumented)
+    componentDidUpdate(): void;
+    // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
+    getStack(id?: string): LayoutStack | undefined;
+    // (undocumented)
+    removeChild(child: HTMLVisualElement): void;
+    // (undocumented)
+    removeFromStack(child: HTMLVisualElement): void;
+    // (undocumented)
+    render(): JSX.Element;
+    // (undocumented)
+    scheduleUpdate(force?: boolean): void;
+    // (undocumented)
+    shouldComponentUpdate(): boolean;
+    // (undocumented)
+    startLayoutAnimation(): void;
+    // Warning: (ae-forgotten-export) The symbol "SharedLayoutSyncMethods" needs to be exported by the entry point index.d.ts
+    syncContext: SharedLayoutSyncMethods;
+    // (undocumented)
+    updateStacks(): void;
 }
 
 // @public
@@ -47,10 +82,8 @@ export class AnimationControls {
     // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
     start(definition: AnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
-    // Warning: (ae-forgotten-export) The symbol "ValueAnimationControls" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
-    subscribe(controls: ValueAnimationControls): () => boolean;
+    subscribe(controls: VisualElementAnimationControls): () => boolean;
     // @internal
     unmount(): void;
     }
@@ -62,21 +95,80 @@ export const animationControls: () => AnimationControls;
 
 // @public (undocumented)
 export interface AnimationProps {
-    animate?: AnimationControls | TargetAndTransition | VariantLabels;
+    animate?: AnimationControls | TargetAndTransition | VariantLabels | boolean;
     // Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
     exit?: TargetAndTransition | VariantLabels | TargetResolver;
-    // @beta
-    layoutTransition?: Transition | boolean | ResolveLayoutTransition;
-    positionTransition?: Transition | boolean | ResolveLayoutTransition;
     transition?: Transition;
     variants?: Variants;
+}
+
+// @public
+export interface Axis {
+    // (undocumented)
+    max: number;
+    // (undocumented)
+    min: number;
+}
+
+// @public
+export interface AxisBox2D {
+    // (undocumented)
+    x: Axis;
+    // (undocumented)
+    y: Axis;
+}
+
+// @public (undocumented)
+export interface AxisBox3D extends AxisBox2D {
+    // (undocumented)
+    z: Axis;
+}
+
+// @public
+export interface AxisDelta {
+    // (undocumented)
+    origin: number;
+    // (undocumented)
+    originPoint: number;
+    // (undocumented)
+    scale: number;
+    // (undocumented)
+    translate: number;
+}
+
+// @public
+export interface BoundingBox2D {
+    // (undocumented)
+    bottom: number;
+    // (undocumented)
+    left: number;
+    // (undocumented)
+    right: number;
+    // (undocumented)
+    top: number;
+}
+
+// @public
+export interface BoundingBox3D extends BoundingBox2D {
+    // (undocumented)
+    back: number;
+    // (undocumented)
+    front: number;
+}
+
+// @public
+export interface BoxDelta {
+    // (undocumented)
+    x: AxisDelta;
+    // (undocumented)
+    y: AxisDelta;
 }
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
-// @internal (undocumented)
-export const createMotionComponent: <P extends {}>({ getValueControlsConfig, loadFunctionalityComponents, renderComponent, }: MotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<Element>>;
+// @internal
+export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { useVisualElement, render, animationControlsConfig, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
 // @public (undocumented)
 export interface CustomValueType {
@@ -90,37 +182,25 @@ export interface CustomValueType {
 export class DragControls {
     // Warning: (ae-forgotten-export) The symbol "DragControlOptions" needs to be exported by the entry point index.d.ts
     start(event: React.MouseEvent | React.TouchEvent | React.PointerEvent | MouseEvent | TouchEvent | PointerEvent, options?: DragControlOptions): void;
-    // Warning: (ae-forgotten-export) The symbol "ComponentDragControls" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "VisualElementDragControls" needs to be exported by the entry point index.d.ts
     // 
     // @internal
-    subscribe(controls: ComponentDragControls): () => void;
+    subscribe(controls: VisualElementDragControls): () => void;
 }
 
 // @public (undocumented)
 export interface DraggableProps extends DragHandlers {
     drag?: boolean | "x" | "y";
-    dragConstraints?: false | {
-        top?: number;
-        right?: number;
-        bottom?: number;
-        left?: number;
-    } | RefObject<Element>;
+    dragConstraints?: false | Partial<BoundingBox2D> | RefObject<Element>;
     dragControls?: DragControls;
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
     dragListener?: boolean;
     dragMomentum?: boolean;
-    dragOriginX?: MotionValue<number>;
-    dragOriginY?: MotionValue<number>;
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
-    // @internal (undocumented)
-    _dragTransitionControls?: AnimationControls;
-    // @internal (undocumented)
-    _dragValueX?: MotionValue<number>;
-    // @internal (undocumented)
-    _dragValueY?: MotionValue<number>;
+    onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
 }
 
 // @public (undocumented)
@@ -137,8 +217,26 @@ export type EasingFunction = (v: number) => number;
 
 // @public (undocumented)
 export interface EventInfo {
+    // Warning: (ae-forgotten-export) The symbol "Point" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
     point: Point;
+}
+
+// @public (undocumented)
+export interface FeatureProps extends MotionProps {
+    // Warning: (ae-incompatible-release-tags) The symbol "controls" is marked as @public, but its signature references "VisualElementAnimationControls" which is marked as @internal
+    // 
+    // (undocumented)
+    controls: VisualElementAnimationControls;
+    // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    localContext: MotionContextProps;
+    // (undocumented)
+    parentContext: MotionContextProps;
+    // (undocumented)
+    visualElement: HTMLVisualElement;
 }
 
 // @public (undocumented)
@@ -220,179 +318,18 @@ export interface Keyframes {
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
+// @public (undocumented)
+export interface LayoutProps {
+    layout?: boolean;
+    layoutId?: string;
+    onLayoutAnimationComplete?(): void;
+    onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
+}
+
+// Warning: (ae-forgotten-export) The symbol "Motion" needs to be exported by the entry point index.d.ts
+// 
 // @public
-export const motion: {
-    symbol: ForwardRefComponent<SVGSymbolElement, SVGMotionProps<SVGSymbolElement>>;
-    clipPath: ForwardRefComponent<SVGClipPathElement, SVGMotionProps<SVGClipPathElement>>;
-    filter: ForwardRefComponent<SVGFilterElement, SVGMotionProps<SVGFilterElement>>;
-    mask: ForwardRefComponent<SVGMaskElement, SVGMotionProps<SVGMaskElement>>;
-    marker: ForwardRefComponent<SVGMarkerElement, SVGMotionProps<SVGMarkerElement>>;
-    image: ForwardRefComponent<SVGImageElement, SVGMotionProps<SVGImageElement>>;
-    text: ForwardRefComponent<SVGTextElement, SVGMotionProps<SVGTextElement>>;
-    circle: ForwardRefComponent<SVGCircleElement, SVGMotionProps<SVGCircleElement>>;
-    svg: ForwardRefComponent<SVGSVGElement, SVGMotionProps<SVGSVGElement>>;
-    animate: ForwardRefComponent<SVGElement, SVGMotionProps<SVGElement>>;
-    defs: ForwardRefComponent<SVGDefsElement, SVGMotionProps<SVGDefsElement>>;
-    desc: ForwardRefComponent<SVGDescElement, SVGMotionProps<SVGDescElement>>;
-    ellipse: ForwardRefComponent<SVGEllipseElement, SVGMotionProps<SVGEllipseElement>>;
-    feBlend: ForwardRefComponent<SVGFEBlendElement, SVGMotionProps<SVGFEBlendElement>>;
-    feColorMatrix: ForwardRefComponent<SVGFEColorMatrixElement, SVGMotionProps<SVGFEColorMatrixElement>>;
-    feComponentTransfer: ForwardRefComponent<SVGFEComponentTransferElement, SVGMotionProps<SVGFEComponentTransferElement>>;
-    feComposite: ForwardRefComponent<SVGFECompositeElement, SVGMotionProps<SVGFECompositeElement>>;
-    feConvolveMatrix: ForwardRefComponent<SVGFEConvolveMatrixElement, SVGMotionProps<SVGFEConvolveMatrixElement>>;
-    feDiffuseLighting: ForwardRefComponent<SVGFEDiffuseLightingElement, SVGMotionProps<SVGFEDiffuseLightingElement>>;
-    feDisplacementMap: ForwardRefComponent<SVGFEDisplacementMapElement, SVGMotionProps<SVGFEDisplacementMapElement>>;
-    feDistantLight: ForwardRefComponent<SVGFEDistantLightElement, SVGMotionProps<SVGFEDistantLightElement>>;
-    feDropShadow: ForwardRefComponent<SVGFEDropShadowElement, SVGMotionProps<SVGFEDropShadowElement>>;
-    feFlood: ForwardRefComponent<SVGFEFloodElement, SVGMotionProps<SVGFEFloodElement>>;
-    feFuncA: ForwardRefComponent<SVGFEFuncAElement, SVGMotionProps<SVGFEFuncAElement>>;
-    feFuncB: ForwardRefComponent<SVGFEFuncBElement, SVGMotionProps<SVGFEFuncBElement>>;
-    feFuncG: ForwardRefComponent<SVGFEFuncGElement, SVGMotionProps<SVGFEFuncGElement>>;
-    feFuncR: ForwardRefComponent<SVGFEFuncRElement, SVGMotionProps<SVGFEFuncRElement>>;
-    feGaussianBlur: ForwardRefComponent<SVGFEGaussianBlurElement, SVGMotionProps<SVGFEGaussianBlurElement>>;
-    feImage: ForwardRefComponent<SVGFEImageElement, SVGMotionProps<SVGFEImageElement>>;
-    feMerge: ForwardRefComponent<SVGFEMergeElement, SVGMotionProps<SVGFEMergeElement>>;
-    feMergeNode: ForwardRefComponent<SVGFEMergeNodeElement, SVGMotionProps<SVGFEMergeNodeElement>>;
-    feMorphology: ForwardRefComponent<SVGFEMorphologyElement, SVGMotionProps<SVGFEMorphologyElement>>;
-    feOffset: ForwardRefComponent<SVGFEOffsetElement, SVGMotionProps<SVGFEOffsetElement>>;
-    fePointLight: ForwardRefComponent<SVGFEPointLightElement, SVGMotionProps<SVGFEPointLightElement>>;
-    feSpecularLighting: ForwardRefComponent<SVGFESpecularLightingElement, SVGMotionProps<SVGFESpecularLightingElement>>;
-    feSpotLight: ForwardRefComponent<SVGFESpotLightElement, SVGMotionProps<SVGFESpotLightElement>>;
-    feTile: ForwardRefComponent<SVGFETileElement, SVGMotionProps<SVGFETileElement>>;
-    feTurbulence: ForwardRefComponent<SVGFETurbulenceElement, SVGMotionProps<SVGFETurbulenceElement>>;
-    foreignObject: ForwardRefComponent<SVGForeignObjectElement, SVGMotionProps<SVGForeignObjectElement>>;
-    g: ForwardRefComponent<SVGGElement, SVGMotionProps<SVGGElement>>;
-    line: ForwardRefComponent<SVGLineElement, SVGMotionProps<SVGLineElement>>;
-    linearGradient: ForwardRefComponent<SVGLinearGradientElement, SVGMotionProps<SVGLinearGradientElement>>;
-    metadata: ForwardRefComponent<SVGMetadataElement, SVGMotionProps<SVGMetadataElement>>;
-    path: ForwardRefComponent<SVGPathElement, SVGMotionProps<SVGPathElement>>;
-    pattern: ForwardRefComponent<SVGPatternElement, SVGMotionProps<SVGPatternElement>>;
-    polygon: ForwardRefComponent<SVGPolygonElement, SVGMotionProps<SVGPolygonElement>>;
-    polyline: ForwardRefComponent<SVGPolylineElement, SVGMotionProps<SVGPolylineElement>>;
-    radialGradient: ForwardRefComponent<SVGRadialGradientElement, SVGMotionProps<SVGRadialGradientElement>>;
-    rect: ForwardRefComponent<SVGRectElement, SVGMotionProps<SVGRectElement>>;
-    stop: ForwardRefComponent<SVGStopElement, SVGMotionProps<SVGStopElement>>;
-    switch: ForwardRefComponent<SVGSwitchElement, SVGMotionProps<SVGSwitchElement>>;
-    textPath: ForwardRefComponent<SVGTextPathElement, SVGMotionProps<SVGTextPathElement>>;
-    tspan: ForwardRefComponent<SVGTSpanElement, SVGMotionProps<SVGTSpanElement>>;
-    use: ForwardRefComponent<SVGUseElement, SVGMotionProps<SVGUseElement>>;
-    view: ForwardRefComponent<SVGViewElement, SVGMotionProps<SVGViewElement>>;
-    object: ForwardRefComponent<HTMLObjectElement, HTMLMotionProps<"object">>;
-    style: ForwardRefComponent<HTMLStyleElement, HTMLMotionProps<"style">>;
-    progress: ForwardRefComponent<HTMLProgressElement, HTMLMotionProps<"progress">>;
-    ruby: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    table: ForwardRefComponent<HTMLTableElement, HTMLMotionProps<"table">>;
-    small: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    sub: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    embed: ForwardRefComponent<HTMLEmbedElement, HTMLMotionProps<"embed">>;
-    pre: ForwardRefComponent<HTMLPreElement, HTMLMotionProps<"pre">>;
-    caption: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    menu: ForwardRefComponent<HTMLElement, HTMLMotionProps<"menu">>;
-    button: ForwardRefComponent<HTMLButtonElement, HTMLMotionProps<"button">>;
-    menuitem: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    meter: ForwardRefComponent<HTMLElement, HTMLMotionProps<"meter">>;
-    textarea: ForwardRefComponent<HTMLTextAreaElement, HTMLMotionProps<"textarea">>;
-    time: ForwardRefComponent<HTMLElement, HTMLMotionProps<"time">>;
-    link: ForwardRefComponent<HTMLLinkElement, HTMLMotionProps<"link">>;
-    dialog: ForwardRefComponent<HTMLDialogElement, HTMLMotionProps<"dialog">>;
-    a: ForwardRefComponent<HTMLAnchorElement, HTMLMotionProps<"a">>;
-    abbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    address: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    area: ForwardRefComponent<HTMLAreaElement, HTMLMotionProps<"area">>;
-    article: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    aside: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    audio: ForwardRefComponent<HTMLAudioElement, HTMLMotionProps<"audio">>;
-    b: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    base: ForwardRefComponent<HTMLBaseElement, HTMLMotionProps<"base">>;
-    bdi: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    bdo: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    big: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    blockquote: ForwardRefComponent<HTMLElement, HTMLMotionProps<"blockquote">>;
-    body: ForwardRefComponent<HTMLBodyElement, HTMLMotionProps<"body">>;
-    br: ForwardRefComponent<HTMLBRElement, HTMLMotionProps<"br">>;
-    canvas: ForwardRefComponent<HTMLCanvasElement, HTMLMotionProps<"canvas">>;
-    cite: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    code: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    col: ForwardRefComponent<HTMLTableColElement, HTMLMotionProps<"col">>;
-    colgroup: ForwardRefComponent<HTMLTableColElement, HTMLMotionProps<"colgroup">>;
-    data: ForwardRefComponent<HTMLDataElement, HTMLMotionProps<"data">>;
-    datalist: ForwardRefComponent<HTMLDataListElement, HTMLMotionProps<"datalist">>;
-    dd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    del: ForwardRefComponent<HTMLElement, HTMLMotionProps<"del">>;
-    details: ForwardRefComponent<HTMLElement, HTMLMotionProps<"details">>;
-    dfn: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    div: ForwardRefComponent<HTMLDivElement, HTMLMotionProps<"div">>;
-    dl: ForwardRefComponent<HTMLDListElement, HTMLMotionProps<"dl">>;
-    dt: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    em: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    fieldset: ForwardRefComponent<HTMLFieldSetElement, HTMLMotionProps<"fieldset">>;
-    figcaption: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    figure: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    footer: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    form: ForwardRefComponent<HTMLFormElement, HTMLMotionProps<"form">>;
-    h1: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h2: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h3: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h4: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h5: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    h6: ForwardRefComponent<HTMLHeadingElement, HTMLMotionProps<"h1">>;
-    head: ForwardRefComponent<HTMLHeadElement, HTMLMotionProps<"head">>;
-    header: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    hgroup: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    hr: ForwardRefComponent<HTMLHRElement, HTMLMotionProps<"hr">>;
-    html: ForwardRefComponent<HTMLHtmlElement, HTMLMotionProps<"html">>;
-    i: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    iframe: ForwardRefComponent<HTMLIFrameElement, HTMLMotionProps<"iframe">>;
-    img: ForwardRefComponent<HTMLImageElement, HTMLMotionProps<"img">>;
-    input: ForwardRefComponent<HTMLInputElement, HTMLMotionProps<"input">>;
-    ins: ForwardRefComponent<HTMLModElement, HTMLMotionProps<"ins">>;
-    kbd: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    keygen: ForwardRefComponent<HTMLElement, HTMLMotionProps<"keygen">>;
-    label: ForwardRefComponent<HTMLLabelElement, HTMLMotionProps<"label">>;
-    legend: ForwardRefComponent<HTMLLegendElement, HTMLMotionProps<"legend">>;
-    li: ForwardRefComponent<HTMLLIElement, HTMLMotionProps<"li">>;
-    main: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    map: ForwardRefComponent<HTMLMapElement, HTMLMotionProps<"map">>;
-    mark: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    meta: ForwardRefComponent<HTMLMetaElement, HTMLMotionProps<"meta">>;
-    nav: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    noscript: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    ol: ForwardRefComponent<HTMLOListElement, HTMLMotionProps<"ol">>;
-    optgroup: ForwardRefComponent<HTMLOptGroupElement, HTMLMotionProps<"optgroup">>;
-    option: ForwardRefComponent<HTMLOptionElement, HTMLMotionProps<"option">>;
-    output: ForwardRefComponent<HTMLElement, HTMLMotionProps<"output">>;
-    p: ForwardRefComponent<HTMLParagraphElement, HTMLMotionProps<"p">>;
-    param: ForwardRefComponent<HTMLParamElement, HTMLMotionProps<"param">>;
-    picture: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    q: ForwardRefComponent<HTMLQuoteElement, HTMLMotionProps<"q">>;
-    rp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    rt: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    s: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    samp: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    script: ForwardRefComponent<HTMLScriptElement, HTMLMotionProps<"script">>;
-    section: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    select: ForwardRefComponent<HTMLSelectElement, HTMLMotionProps<"select">>;
-    source: ForwardRefComponent<HTMLSourceElement, HTMLMotionProps<"source">>;
-    span: ForwardRefComponent<HTMLSpanElement, HTMLMotionProps<"span">>;
-    strong: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    summary: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    sup: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    tbody: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
-    td: ForwardRefComponent<HTMLTableDataCellElement, HTMLMotionProps<"td">>;
-    tfoot: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
-    th: ForwardRefComponent<HTMLTableHeaderCellElement, HTMLMotionProps<"th">>;
-    thead: ForwardRefComponent<HTMLTableSectionElement, HTMLMotionProps<"tbody">>;
-    title: ForwardRefComponent<HTMLTitleElement, HTMLMotionProps<"title">>;
-    tr: ForwardRefComponent<HTMLTableRowElement, HTMLMotionProps<"tr">>;
-    track: ForwardRefComponent<HTMLTrackElement, HTMLMotionProps<"track">>;
-    u: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    ul: ForwardRefComponent<HTMLUListElement, HTMLMotionProps<"ul">>;
-    var: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    video: ForwardRefComponent<HTMLVideoElement, HTMLMotionProps<"video">>;
-    wbr: ForwardRefComponent<HTMLElement, HTMLMotionProps<"ruby">>;
-    webview: ForwardRefComponent<HTMLWebViewElement, HTMLMotionProps<"webview">>;
-    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<Element>>;
-};
+export const motion: Motion;
 
 // @public (undocumented)
 export interface MotionAdvancedProps {
@@ -411,11 +348,20 @@ export interface MotionCallbacks {
     }): void;
 }
 
-// Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
 export const MotionContext: React.Context<MotionContextProps>;
+
+// @public (undocumented)
+export interface MotionFeature {
+    // (undocumented)
+    Component: React.ComponentType<FeatureProps>;
+    // (undocumented)
+    key: string;
+    // (undocumented)
+    shouldRender: (props: MotionProps, parentContext: MotionContextProps) => boolean;
+}
 
 // Warning: (ae-forgotten-export) The symbol "MotionPluginsContext" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "MotionPluginContext" should be prefixed with an underscore because the declaration is marked as @internal
@@ -430,14 +376,16 @@ export const MotionPluginContext: React.Context<MotionPluginsContext>;
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
 // @public
-export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, MotionAdvancedProps {
+export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
     // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
     transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
+    // Warning: (ae-forgotten-export) The symbol "ResolvedValues" needs to be exported by the entry point index.d.ts
+    // 
     // @internal
-    transformValues?<V extends any>(values: V): V;
+    transformValues?<V extends ResolvedValues>(values: V): V;
 }
 
 // Warning: (ae-forgotten-export) The symbol "MotionCSS" needs to be exported by the entry point index.d.ts
@@ -454,23 +402,21 @@ export type MotionTransform = MakeMotion<TransformProperties>;
 
 // @public
 export class MotionValue<V = any> {
-    // Warning: (ae-forgotten-export) The symbol "Config" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
-    constructor(init: V, { transformer, parent }?: Config<V>);
-    // @internal
-    addChild(config?: Config<V>): MotionValue<V>;
+    constructor(init: V);
     // @internal
     attach(passiveEffect: PassiveEffect<V>): void;
+    // (undocumented)
+    clearListeners(): void;
     destroy(): void;
     get(): V;
+    // (undocumented)
+    getPrevious(): V;
     getVelocity(): number;
     isAnimating(): boolean;
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
     onRenderRequest(subscription: Subscriber<V>): () => boolean;
-    // @internal
-    removeChild(child: MotionValue): void;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
     // 
@@ -486,7 +432,7 @@ export class MotionValue<V = any> {
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function motionValue<V>(init: V, opts?: Config<V>): MotionValue<V>;
+export function motionValue<V>(init: V): MotionValue<V>;
 
 // @public (undocumented)
 export interface None {
@@ -527,21 +473,24 @@ export interface PanInfo {
 // @public (undocumented)
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void;
 
-// @public (undocumented)
-export interface Point {
+// @public
+export interface Point2D {
     // (undocumented)
     x: number;
     // (undocumented)
     y: number;
 }
 
-// @public (undocumented)
-export namespace Point {
-    const // @beta (undocumented)
-    subtract: (a: Point, b: Point) => Point;
-    const // @beta (undocumented)
-    relativeTo: (idOrElem: string | HTMLElement) => ({ x, y }: Point) => Point | undefined;
+// @public
+export interface Point3D extends Point2D {
+    // (undocumented)
+    z: number;
 }
+
+// Warning: (ae-forgotten-export) The symbol "PresenceContextProps" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export const PresenceContext: import("react").Context<PresenceContextProps | null>;
 
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "ReducedMotion" should be prefixed with an underscore because the declaration is marked as @internal
@@ -572,6 +521,11 @@ export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
 // @public (undocumented)
 export type ResolveLayoutTransition = (info: RelayoutInfo) => Transition | boolean;
 
+// Warning: (ae-internal-missing-underscore) The name "resolveMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export function resolveMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
+
 // @public (undocumented)
 export interface ScrollMotionValues {
     // (undocumented)
@@ -582,6 +536,21 @@ export interface ScrollMotionValues {
     scrollY: MotionValue<number>;
     // (undocumented)
     scrollYProgress: MotionValue<number>;
+}
+
+// @public (undocumented)
+export interface SharedLayoutProps {
+    // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    children: React_2.ReactNode;
+    // @internal
+    _dependency?: any;
+    // @internal
+    _supportRotate?: boolean;
+    // @internal
+    _transition?: Transition;
+    type?: "switch" | "crossfade";
 }
 
 // @public (undocumented)
@@ -611,10 +580,8 @@ export type Subscriber<T> = (v: T) => void;
 // @public
 export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMotionProps<T>>;
 
-// Warning: (ae-forgotten-export) The symbol "Omit" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
-export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Omit<MotionProps, "positionTransition"> {
+export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, MotionProps {
 }
 
 // @public (undocumented)
@@ -646,6 +613,9 @@ export function transform<T>(inputValue: number, inputRange: number[], outputRan
 // @public
 export function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (inputValue: number) => T;
 
+// @public
+export type TransformPoint2D = (point: Point2D) => Point2D;
+
 // Warning: (ae-forgotten-export) The symbol "TransitionDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TransitionMap" needs to be exported by the entry point index.d.ts
 // 
@@ -674,18 +644,9 @@ export interface Tween {
     yoyo?: number;
 }
 
-// Warning: (ae-forgotten-export) The symbol "SyncLayoutProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "UnstableSyncLayout" should be prefixed with an underscore because the declaration is marked as @internal
+// Warning: (ae-internal-missing-underscore) The name "useAnimatedState" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export const UnstableSyncLayout: ({ children }: SyncLayoutProps) => JSX.Element;
-
-// Warning: (ae-internal-missing-underscore) The name "unwrapMotionValue" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export function unwrapMotionValue(value?: string | number | CustomValueType | MotionValue): string | number;
-
-// @beta
 export function useAnimatedState(initialState: any): any[];
 
 // @public
@@ -710,13 +671,18 @@ export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValue
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
+// Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
+// 
 // @public
-export function useGestures<GestureHandlers>(props: GestureHandlers, ref: RefObject<Element>): void;
+export function useGestures<GestureHandlers>(props: GestureHandlers, ref: VisualElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
 // 
 // @public
 export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
+
+// @public (undocumented)
+export function useIsPresent(): boolean;
 
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;
@@ -724,13 +690,14 @@ export function useMotionValue<T>(initial: T): MotionValue<T>;
 // Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element>): void;
+export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element> | VisualElement): void;
 
+// Warning: (ae-forgotten-export) The symbol "AlwaysPresent" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "Present" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "NotPresent" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function usePresence(): Present | NotPresent;
+export function usePresence(): AlwaysPresent | Present | NotPresent;
 
 // @public
 export function useReducedMotion(): boolean;
@@ -747,7 +714,7 @@ export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, contro
 // Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useTransform<T>(parent: MotionValue, transform: Transformer_2<T>): MotionValue;
+export function useTransform<T>(parent: MotionValue, transform: Transformer<T>): MotionValue;
 
 // @public
 export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
@@ -768,6 +735,32 @@ export type VariantLabels = string | string[];
 export type Variants = {
     [key: string]: Variant;
 };
+
+// Warning: (ae-internal-missing-underscore) The name "VisualElementAnimationControls" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export class VisualElementAnimationControls<P extends {} = {}, V extends {} = {}> {
+    // Warning: (ae-forgotten-export) The symbol "AnimationControlsConfig" needs to be exported by the entry point index.d.ts
+    constructor(visualElement: VisualElement, { makeTargetAnimatable }: AnimationControlsConfig);
+    addChild(controls: VisualElementAnimationControls): void;
+    apply(definition: AnimationDefinition): void;
+    clearOverride(overrideIndex: number): void;
+    // (undocumented)
+    removeChild(controls: VisualElementAnimationControls): void;
+    // (undocumented)
+    resetChildren(): void;
+    setDefaultTransition(transition?: Transition): void;
+    setOverride(definition: AnimationDefinition, overrideIndex: number): void;
+    setProps(props: P & MotionProps): void;
+    setVariants(variants?: Variants): void;
+    // Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    start(definition: AnimationDefinition, opts?: AnimationOptions): Promise<void>;
+    startOverride(overrideIndex: number): Promise<void> | undefined;
+    // (undocumented)
+    stop(): void;
+    }
 
 
 // (No @packageDocumentation comment for this package)

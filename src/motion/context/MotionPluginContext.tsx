@@ -1,13 +1,15 @@
 import * as React from "react"
-import { createContext, useContext, useRef, ReactNode } from "react"
-import { Point } from "../../events/types"
+import { createContext, useContext, useRef } from "react"
+import { MotionFeature } from "../features/types"
+import { TransformPoint2D } from "../../types/geometry"
 
 export interface MotionPluginsContext {
-    transformPagePoint: (point: Point) => Point
+    transformPagePoint: TransformPoint2D
+    features: MotionFeature[]
 }
 
-export interface MotionPluginProps extends MotionPluginsContext {
-    children?: ReactNode
+export interface MotionPluginProps extends Partial<MotionPluginsContext> {
+    children?: React.ReactNode
 }
 
 /**
@@ -15,6 +17,7 @@ export interface MotionPluginProps extends MotionPluginsContext {
  */
 export const MotionPluginContext = createContext<MotionPluginsContext>({
     transformPagePoint: p => p,
+    features: [],
 })
 
 /**

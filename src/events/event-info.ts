@@ -27,25 +27,41 @@ export type EventListenerWithPointInfo = (
 
 const defaultPagePoint = { pageX: 0, pageY: 0 }
 
-function pointFromTouch(e: TouchEvent) {
+function pointFromTouch(e: TouchEvent, pointType: "page" | "client" = "page") {
     const primaryTouch = e.touches[0] || e.changedTouches[0]
-    const { pageX, pageY } = primaryTouch || defaultPagePoint
+    const point = primaryTouch || defaultPagePoint
 
-    return { x: pageX, y: pageY }
+    return {
+        x: point[pointType + "X"],
+        y: point[pointType + "Y"],
+    }
 }
 
-function pointFromMouse({ pageX = 0, pageY = 0 }: MouseEvent | PointerEvent) {
-    return { x: pageX, y: pageY }
+function pointFromMouse(
+    point: MouseEvent | PointerEvent,
+    pointType: "page" | "client" = "page"
+) {
+    return {
+        x: point[pointType + "X"],
+        y: point[pointType + "Y"],
+    }
 }
 
 export function extractEventInfo(
-    event: MouseEvent | TouchEvent | PointerEvent
+    event: MouseEvent | TouchEvent | PointerEvent,
+    pointType: "page" | "client" = "page"
 ): EventInfo {
     return {
         point: isTouchEvent(event)
-            ? pointFromTouch(event)
-            : pointFromMouse(event),
+            ? pointFromTouch(event, pointType)
+            : pointFromMouse(event, pointType),
     }
+}
+
+export function getViewportPointFromEvent(
+    event: MouseEvent | TouchEvent | PointerEvent
+) {
+    return extractEventInfo(event, "client")
 }
 
 export const wrapHandler = (

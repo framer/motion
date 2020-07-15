@@ -11,7 +11,9 @@ import {
     MakeCustomValueType,
 } from "../types"
 import { GestureHandlers } from "../gestures"
-import { DraggableProps } from "../behaviours/types"
+import { DraggableProps } from "../gestures/drag/types"
+import { LayoutProps } from "./features/layout/types"
+import { ResolvedValues } from "../render/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -152,7 +154,7 @@ export interface AnimationProps {
      * <motion.div animate={animation} />
      * ```
      */
-    animate?: AnimationControls | TargetAndTransition | VariantLabels
+    animate?: AnimationControls | TargetAndTransition | VariantLabels | boolean
 
     /**
      * A target to animate to when this component is removed from the tree.
@@ -279,141 +281,6 @@ export interface AnimationProps {
      * ```
      */
     transition?: Transition
-
-    /**
-     * @library
-     *
-     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it harder
-     * for us to know when a `Frame`'s position changes within the `Stack` and make it animate to its new position.
-     *
-     * By adding `positionTransition` to a `Frame`, it'll automatically animate to its new position in the `Stack`,
-     * whether the `Stack` layout has changed or the `Frame` has changed its order within it.
-     *
-     * It can either be set as a `Transition`, or just `true` to use the default layout transition.
-     *
-     * ```jsx
-     * function MyComponent({ distribution = "space-around" }) {
-     *   const spring = {
-     *     type: "spring",
-     *     damping: 10,
-     *     stiffness: 100
-     *   }
-     *
-     *   return (
-     *     <Stack distribution={distribution}>
-     *       <Frame layoutTransition={spring} />
-     *     </Stack>
-     *   )
-     * }
-     * ```
-     *
-     * @motion
-     *
-     * If `positionTransition` is defined on a `motion` component, it will automatically animate any changes to its layout
-     * using a performant `x`/`y` transform.
-     *
-     * `positionTransition` can either be set as a `Transition`, or just `true` to use the default position transition, which is a snappy spring.
-     *
-     * It can also be set as a function that will resolve when the component has changed layout. This function
-     * should return either a `Transition`, or `true`. For advanced use-cases where you want the component
-     * to visually stay in its previous position, this function can also return `false`. This function will receive
-     * the `delta` of the changed layout.
-     *
-     * ```jsx
-     * const spring = {
-     *   type: "spring",
-     *   damping: 10,
-     *   stiffness: 100
-     * }
-     *
-     * // This component will animate position when `isVisible` is toggled.
-     * const MyComponent = ({ isVisible }) => {
-     *   return (
-     *     <motion.div positionTransition={spring} style={{ left: isVisible ? 0 : 100 }} />
-     *   )
-     * }
-     *
-     * // This component will animate items to their new position if its place in `items` changes order.
-     * const MyComponent = ({ items }) => {
-     *   return items.map((item) => (
-     *     <motion.div key={item.id} positionTransition={spring} />
-     *   ))
-     * }
-     * ```
-     *
-     * @public
-     */
-    positionTransition?: Transition | boolean | ResolveLayoutTransition
-
-    /**
-     * @library
-     *
-     * When a `Frame` is the child of a `Stack`, the `Stack` is responsible for its layout. This makes it
-     * difficult for to know when the layout changes and smoothly animate components to their new positions.
-     *
-     * By adding `layoutTransition` to a child `Frame`, it'll automatically animate to its new position
-     * when it moves in the `Stack`, whether the `Stack` layout has changed, or the `Frame` has changed order within it.
-     *
-     * It can either be set as a `Transition`, or just `true` to use the default layout transition.
-     *
-     * Animating size with `scale` can introduce visual distortion to the component's children. If unwanted,
-     * the `useInvertedScale` function can be used to undo this distortion.
-     *
-     * ```jsx
-     * function MyComponent({ distribution = "space-around" }) {
-     *   const spring = {
-     *     type: "spring",
-     *     damping: 10,
-     *     stiffness: 100
-     *   }
-     *
-     *   return (
-     *     <Stack distribution={distribution}>
-     *       <Frame layoutTransition={spring} />
-     *     </Stack>
-     *   )
-     * }
-     * ```
-     *
-     * @motion
-     *
-     * If `layoutTransition` is defined on a `motion` component, the component will automatically
-     * animate any changes to its position **and** size.
-     *
-     * It will do so using performant transforms. So if a `motion` component changes position, it'll animate
-     * to its new position using `x` and `y`. If it changes size, it'll animate using `scaleX` and `scaleY`.
-     *
-     * Animating size with `scale` can introduce visual distortion to the component's children. If unwanted,
-     * the `useInvertedScale` function can be used to undo this distortion.
-     *
-     * `layoutTransition` can either be set as a `Transition`, or just `true` to use the default layout transition,
-     * which is a smooth `0.8` second ease.
-     *
-     * It can also be set as a function that will resolve when the component has changed layout. This function
-     * should return either a `Transition`, or `true`. For advanced use-cases where you want the component
-     * to visually stay in its previous position, this function can also return `false`. This function will receive
-     * the `delta` of the changed layout.
-     *
-     * ```jsx
-     * const spring = {
-     *   type: "spring",
-     *   damping: 10,
-     *   stiffness: 100
-     * }
-     *
-     * // This component will animate between sizes when `isVisible` is toggled.
-     * const MyComponent = ({ isVisible }) => {
-     *   return (
-     *     <motion.div layoutTransition={spring}>
-     *       {isVisible && <Content />}
-     *     </motion.div>
-     *   )
-     * }
-     * ```
-     *
-     * @beta
-     */
-    layoutTransition?: Transition | boolean | ResolveLayoutTransition
 }
 
 /**
@@ -561,6 +428,7 @@ export interface MotionProps
         MotionCallbacks,
         GestureHandlers,
         DraggableProps,
+        LayoutProps,
         MotionAdvancedProps {
     /**
      * Properties, variant label or array of variant labels to start in.
@@ -673,7 +541,7 @@ export interface MotionProps
      *
      * @internal
      */
-    transformValues?<V extends any>(values: V): V
+    transformValues?<V extends ResolvedValues>(values: V): V
 }
 
 export type TransformTemplate = (

@@ -1,20 +1,21 @@
 import * as React from "react"
 import { useMemo, useRef, useEffect, RefObject, useContext } from "react"
-import { ValueAnimationControls } from "../../animation/ValueAnimationControls"
+import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
 import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
-import { MotionValuesMap } from "../utils/use-motion-values"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
+import { VisualElement } from "../../render/VisualElement"
 
 export interface MotionContextProps {
-    controls?: ValueAnimationControls
-    values?: MotionValuesMap
+    visualElement?: VisualElement<any>
+    controls?: VisualElementAnimationControls
     initial?: false | VariantLabels
     animate?: VariantLabels
     static?: boolean
     hasMounted?: RefObject<boolean>
+    presenceId?: number
     isReducedMotion?: boolean | undefined
 }
 
@@ -42,12 +43,16 @@ const isAnimationControls = (
  */
 export const useMotionContext = (
     parentContext: MotionContextProps,
-    controls: ValueAnimationControls,
-    values: MotionValuesMap,
+    controls: VisualElementAnimationControls,
+    visualElement: VisualElement<any>,
     isStatic: boolean = false,
-    { initial, animate, variants, whileTap, whileHover }: MotionProps
+    { initial, animate, variants, whileTap, whileHover, layoutId }: MotionProps
 ) => {
+    // Determine whether this is a root element of an AnimatePresence component
     const presenceContext = useContext(PresenceContext)
+    const presenceId = presenceContext?.id
+    visualElement.isPresenceRoot = parentContext.presenceId !== presenceId
+
     // Override initial with that from a parent context, if defined
     if (presenceContext?.initial !== undefined) {
         initial = presenceContext.initial
@@ -65,7 +70,7 @@ export const useMotionContext = (
     // parent's first render
     const hasMounted = useRef(false)
 
-    // We propagate this component's ValueAnimationControls *if* we're being provided variants,
+    // We propagate this component's VisualElementAnimationControls *if* we're being provided variants,
     // if we're being used to control variants, or if we're being passed animation controls.
     // Otherwise this component should be "invisible" to variant propagation. This is a slight concession
     // to Framer X where every `Frame` is a `motion` component and it might be if we change that in the future
@@ -111,11 +116,19 @@ export const useMotionContext = (
                 : parentContext.controls,
             initial: targetInitial,
             animate: targetAnimate,
-            values,
+            visualElement,
             hasMounted,
             isReducedMotion: parentContext.isReducedMotion,
+            presenceId,
         }),
-        [initialDependency, animateDependency, parentContext.isReducedMotion]
+        [
+            initialDependency,
+            animateDependency,
+            parentContext.isReducedMotion,
+            animate,
+            layoutId,
+            presenceId,
+        ]
     )
 
     // Update the `static` property every render. This is unlikely to change but also essentially free.

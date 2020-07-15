@@ -2,6 +2,35 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.0.0] 2020-07-15
+
+### Added
+
+-   `layout` prop for automatic layout animations.
+-   `AnimateSharedLayout` and `layoutId` for shared layout animations.
+-   `onMeasureDragConstraints` prop that fires when `dragConstraints` are measured.
+-   `useIsPresent`, a read-only version of `usePresence`.
+-   Allow `dragConstraints` to be a ref that is smaller than the draggable element.
+
+### Removed
+
+-   `positionTransition` and `layoutTransition` props (use `layout={true}` instead).
+-   `Point` type in favour of `Point2D`.
+-   `useAnimatedState`: Moved to Framer library.
+-   `dragOriginX`, `dragOriginY` props.
+-   `stylefire` as a dependency.
+
+### Fixed
+
+-   Removing a `MotionValue` from `style` now correctly unsets it from the element.
+
+### Changed
+
+-   Using `Proxy` to generate `motion` components. This saves ~0.5kb from the bundle size and ensures compatibility with all DOM elements and Web Components.
+-   `x` and `y` transform values won't change as a result of a drag gesture as this now works via layout projection.
+-   Drag events now report `point` as the pointer relative to the viewport, in line with other pointer events.
+-   Changed build process and using Terser for uglification. Reduces bundle size by ~1.2kb. ([@stokesman](https://github.com/stokesman) in [#596](https://github.com/framer/motion/pull/596))
+
 ## [1.11.1] 2020-06-16
 
 ### Fixed
@@ -25,6 +54,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fix
 
 -   Fixing `PresenceChild` losing correct count of exiting children if it re-renders. ([@inventingwithmonster](https://github.com/inventingwithmonster) in [#490](https://github.com/framer/motion/pull/490))
+
+### Changed
+
+-   Removed developer warning when using `usePresence` outside of an `AnimatePresence` block.
 
 ## [1.10.1] 2020-03-23
 

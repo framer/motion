@@ -1,6 +1,5 @@
 import { CSSProperties, SVGAttributes } from "react"
 import { TransformProperties, CustomStyles } from "./motion/types"
-export { Point } from "./events/types"
 
 /**
  * @public

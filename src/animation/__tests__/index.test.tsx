@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import * as React from "react"
 import { useEffect } from "react"
-import { motion } from "../../motion"
+import { motion } from "../.."
 import { useAnimation } from "../use-animation"
 import { useMotionValue } from "../../value/use-motion-value"
 import { motionValue } from "../../value"

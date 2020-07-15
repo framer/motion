@@ -9,7 +9,7 @@ import {
     mouseUp,
     render,
 } from "../../../jest.setup"
-import { drag, MockDrag } from "../../behaviours/__tests__/utils"
+import { drag, MockDrag } from "../../gestures/drag/__tests__/utils"
 
 function mockWhenFirstArgumentIs(
     original: (...args: any[]) => any,

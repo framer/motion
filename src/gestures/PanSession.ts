@@ -4,8 +4,9 @@ import { extractEventInfo } from "../events/event-info"
 import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
-import { unblockViewportScroll } from "../behaviours/utils/block-viewport-scroll"
+import { unblockViewportScroll } from "../gestures/drag/utils/block-viewport-scroll"
 import { distance } from "@popmotion/popcorn"
+import { TransformPoint2D } from "../types/geometry"
 
 export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
 
@@ -153,7 +154,7 @@ interface PanSessionHandlers {
 }
 
 interface PanSessionOptions {
-    transformPagePoint?: (point: Point) => Point
+    transformPagePoint?: TransformPoint2D
 }
 
 interface TimestampedPoint extends Point {
@@ -187,7 +188,7 @@ export class PanSession {
     /**
      * @internal
      */
-    private transformPagePoint?: (point: Point) => Point
+    private transformPagePoint?: TransformPoint2D
 
     /**
      * @internal
