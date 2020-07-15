@@ -38,8 +38,6 @@ export interface AnimatePresenceProps {
     onExitComplete?: () => void;
 }
 
-// Warning: (ae-forgotten-export) The symbol "SharedLayoutProps" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // Warning: (ae-forgotten-export) The symbol "HTMLVisualElement" needs to be exported by the entry point index.d.ts
@@ -321,6 +319,14 @@ export interface Keyframes {
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
+// @public (undocumented)
+export interface LayoutProps {
+    layout?: boolean;
+    layoutId?: string;
+    onLayoutAnimationComplete?: () => void;
+    onViewportBoxUpdate?: (box: AxisBox2D, delta: BoxDelta) => void;
+}
+
 // Warning: (ae-forgotten-export) The symbol "Motion" needs to be exported by the entry point index.d.ts
 // 
 // @public
@@ -370,8 +376,6 @@ export const MotionPluginContext: React.Context<MotionPluginsContext>;
 // @internal (undocumented)
 export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
-// Warning: (ae-forgotten-export) The symbol "LayoutProps" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
     // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
@@ -533,6 +537,21 @@ export interface ScrollMotionValues {
     scrollY: MotionValue<number>;
     // (undocumented)
     scrollYProgress: MotionValue<number>;
+}
+
+// @public (undocumented)
+export interface SharedLayoutProps {
+    // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    children: React_2.ReactNode;
+    // @internal
+    _dependency?: any;
+    // @internal
+    _supportRotate?: boolean;
+    // @internal
+    _transition?: Transition;
+    type?: "switch" | "crossfade";
 }
 
 // @public (undocumented)
