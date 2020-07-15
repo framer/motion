@@ -52,8 +52,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
-    set renderScheduled(val: boolean);
-    get renderScheduled(): boolean;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id?: string): LayoutStack | undefined;
     // (undocumented)
