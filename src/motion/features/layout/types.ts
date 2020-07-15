@@ -52,12 +52,12 @@ export interface LayoutProps {
      *
      * @public
      */
-    onLayoutAnimationComplete?: () => void
+    onLayoutAnimationComplete?(): void
 
     /**
      * A callback that fires whenever the viewport-relative bounding box updates.
      *
      * @public
      */
-    onViewportBoxUpdate?: (box: AxisBox2D, delta: BoxDelta) => void
+    onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
 }

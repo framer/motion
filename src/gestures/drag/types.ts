@@ -39,7 +39,10 @@ export interface DragHandlers {
      *
      * @public
      */
-    onDragStart?: DragHandler
+    onDragStart?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: PanInfo
+    ): void
 
     /**
      * Callback function that fires when dragging ends.
@@ -67,7 +70,10 @@ export interface DragHandlers {
      *
      * @public
      */
-    onDragEnd?: DragHandler
+    onDragEnd?(
+        event: MouseEvent | TouchEvent | PointerEvent,
+        info: PanInfo
+    ): void
 
     /**
      * Callback function that fires when the component is dragged.
@@ -95,7 +101,7 @@ export interface DragHandlers {
      *
      * @public
      */
-    onDrag?: DragHandler
+    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires a drag direction is determined.
