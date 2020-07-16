@@ -1,4 +1,5 @@
 import { AxisBox2D, BoxDelta } from "../../../types/geometry"
+import { MotionValue } from "../../../value"
 
 export interface LayoutProps {
     /**
@@ -63,4 +64,52 @@ export interface LayoutProps {
      * @public
      */
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
+
+    /**
+     * A **readonly** MotionValue that will be updated with the latest x-axis delta
+     * between a component's viewport box and its actual layout box.
+     *
+     * This will only be updated when using layout-aware props like `layout` and `drag`.
+     *
+     * ```jsx
+     * function Component() {
+     *   const deltaX = useMotionValue(0)
+     *   const opacity = useTransform(deltaX, [-100, 0, 100], [0, 1, 0])
+     *
+     *   return (
+     *     <motion.div
+     *       drag="x"
+     *       deltaX={deltaX}
+     *       style={{ opacity }}
+     *     />
+     * }
+     * ```
+     *
+     * @public
+     */
+    deltaX?: MotionValue<number>
+
+    /**
+     * A **readonly** MotionValue that will be updated with the latest x-axis delta
+     * between a component's viewport box and its actual layout box.
+     *
+     * This will only be updated when using layout-aware props like `layout` and `drag`.
+     *
+     * ```jsx
+     * function Component() {
+     *   const deltaY = useMotionValue(0)
+     *   const opacity = useTransform(deltaY, [-100, 0, 100], [0, 1, 0])
+     *
+     *   return (
+     *     <motion.div
+     *       drag="x"
+     *       deltaY={deltaY}
+     *       style={{ opacity }}
+     *     />
+     * }
+     * ```
+     *
+     * @public
+     */
+    deltaY?: MotionValue<number>
 }

@@ -99,11 +99,10 @@ export function applyAxisTransforms(
     final.min = axis.min
     final.max = axis.max
 
-    const originPoint = mix(
-        axis.min,
-        axis.max,
-        (transforms[originKey] as number) || 0.5
-    )
+    const axisOrigin =
+        transforms[originKey] !== undefined ? transforms[originKey] : 0.5
+
+    const originPoint = mix(axis.min, axis.max, axisOrigin as number)
 
     // Apply the axis delta to the final axis
     applyAxisDelta(

@@ -44,6 +44,8 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                     background: "white",
                     height: heights[color],
                     borderRadius: 5,
+                    originX: 0,
+                    originY: 0,
                 }}
                 whileHover={{
                     scale: 1.03,

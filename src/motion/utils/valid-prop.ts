@@ -20,6 +20,8 @@ const validMotionProps = new Set<keyof MotionProps>([
     "static",
     "layout",
     "layoutId",
+    "deltaX",
+    "deltaY",
     "onLayoutAnimationComplete",
     "onViewportBoxUpdate",
     "onAnimationStart",

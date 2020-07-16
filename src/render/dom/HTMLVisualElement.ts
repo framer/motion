@@ -115,6 +115,10 @@ export class HTMLVisualElement<
 
     updateConfig(config: DOMVisualElementConfig = {}) {
         this.config = { ...this.defaultConfig, ...config }
+
+        const { deltaX, deltaY, onViewportBoxUpdate } = this.config
+        if (deltaX || deltaY || onViewportBoxUpdate)
+            this.deltaViewport = delta()
     }
 
     /**
@@ -250,23 +254,27 @@ export class HTMLVisualElement<
 
     /**
      *
+     * The delta between the box (not corrected for transforms) and the targetBox.
+     * We only calculate this if the user has provided deltaX or deltaY props.
+     * As an outward-facing API, the deltas we calculate are pretty useless because they're
+     * based on all the transforms that have been applied up through the tree.
+     * So this is used to provide a saner, viewport-relative delta.
      */
-    stopLayoutAxisAnimation = {
-        x: () => {},
-        y: () => {},
-    }
+    deltaViewport: BoxDelta
 
     isVisible?: boolean
 
     hide() {
-        if (this.isVisible === false) return
-        this.isVisible = false
-        this.scheduleRender()
+        this.setVisibility(false)
     }
 
     show() {
-        if (this.isVisible === true) return
-        this.isVisible = true
+        this.setVisibility(true)
+    }
+
+    setVisibility(visibility: boolean) {
+        if (this.isVisible === visibility) return
+        this.isVisible = visibility
         this.scheduleRender()
     }
 
@@ -380,9 +388,9 @@ export class HTMLVisualElement<
         targetAxis.max = max
 
         // Flag that we want to fire the onViewportBoxUpdate event handler
+        !this.hasViewportBoxUpdated &&
+            this.rootParent.scheduleUpdateLayoutDelta()
         this.hasViewportBoxUpdated = true
-
-        this.rootParent.scheduleUpdateLayoutDelta()
     }
 
     /**
@@ -482,21 +490,38 @@ export class HTMLVisualElement<
         updateBoxDelta(this.deltaFinal, this.boxCorrected, this.targetBoxFinal)
 
         /**
-         * If we have a listener for the viewport box, fire it.
-         */
-        this.hasViewportBoxUpdated &&
-            this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
-        this.hasViewportBoxUpdated = false
-
-        /**
          * Ensure this element renders on the next frame if the projection transform has changed.
          */
         const deltaTransform = createDeltaTransform(
             this.deltaFinal,
             this.treeScale
         )
-        deltaTransform !== this.deltaTransform && this.scheduleRender()
+
+        if (deltaTransform !== this.deltaTransform) {
+            this.scheduleRender()
+            this.updateLayoutListeners()
+        }
+
         this.deltaTransform = deltaTransform
+        this.hasViewportBoxUpdated = false
+    }
+
+    updateLayoutListeners() {
+        const { deltaX, deltaY, onViewportBoxUpdate } = this.config
+        if (!(deltaX || deltaY || onViewportBoxUpdate)) return
+
+        /**
+         * The viewport-relative delta isn't used to apply transforms to the actual
+         * element but it's the most relevent delta for the user. So we only update it
+         * if they're actively listening to it.
+         */
+        updateBoxDelta(this.deltaViewport, this.box, this.targetBox)
+
+        onViewportBoxUpdate?.(this.targetBox, this.deltaViewport)
+
+        const { x, y } = this.deltaViewport
+        deltaX?.set(x.translate)
+        deltaY?.set(y.translate)
     }
 
     /**

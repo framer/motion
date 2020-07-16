@@ -11,6 +11,7 @@ import { MotionProps, MakeMotion } from "../../motion/types"
 import { TransformPoint2D } from "../../types/geometry"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
 import { VisualElementConfig } from "../types"
+import { LayoutProps } from "../../motion/features/layout/types"
 
 /**
  * Configuration for the HTML and SVGVisualElement renderers.
@@ -48,11 +49,14 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
      */
     transformTemplate?: MotionProps["transformTemplate"]
 
-    onViewportBoxUpdate?: MotionProps["onViewportBoxUpdate"]
+    onViewportBoxUpdate?: LayoutProps["onViewportBoxUpdate"]
 
     transition?: MotionProps["transition"]
 
     layoutOrder?: number
+
+    deltaX?: LayoutProps["deltaX"]
+    deltaY?: LayoutProps["deltaY"]
 }
 
 export interface TransformOrigin {
