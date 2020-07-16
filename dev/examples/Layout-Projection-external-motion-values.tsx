@@ -3,7 +3,8 @@ import { motion, useMotionValue, useTransform } from "@framer"
 import styled from "styled-components"
 
 /**
- *
+ * This is an example of hooking up MotionValues to the component's projected layout
+ * via the layoutX and layoutY props.
  */
 
 export const Example = () => {
