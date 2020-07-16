@@ -37,7 +37,7 @@ const Item = ({ color, setPosition, moveItem, i }) => {
             <motion.div
                 ref={ref}
                 initial={false}
-                id={i}
+                id={color}
                 layout
                 // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
                 style={{
@@ -122,7 +122,7 @@ export interface Position {
 }
 
 // Prevent rapid reverse swapping
-const buffer = 20
+const buffer = 5
 
 export const findIndex = (
     i: number,

@@ -321,7 +321,7 @@ export class HTMLVisualElement<
          * that targetBox is affected by scroll in the same way as the measured box
          */
         const { x, y } = this.axisProgress
-        if (!x.isAnimating() && !y.isAnimating()) {
+        if (!this.isTargetBoxLocked && !x.isAnimating() && !y.isAnimating()) {
             this.targetBox = copyAxisBox(this.prevViewportBox)
         }
     }
