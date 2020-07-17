@@ -14,6 +14,7 @@ import {
 } from "../../../components/AnimateSharedLayout/types"
 import { mix, circOut, linear, progress } from "@popmotion/popcorn"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
+import { LayoutProps } from "./types"
 
 interface AxisLocks {
     x?: () => void
@@ -21,6 +22,7 @@ interface AxisLocks {
 }
 
 interface AnimateProps extends FeatureProps {
+    layout?: LayoutProps["layout"]
     safeToRemove?: null | undefined | (() => void)
 }
 
@@ -60,7 +62,7 @@ class Animate extends React.Component<AnimateProps> {
             ...config
         }: SharedLayoutAnimationConfig = {}
     ) => {
-        const { visualElement } = this.props
+        const { visualElement, layout } = this.props
 
         /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be
@@ -72,6 +74,15 @@ class Animate extends React.Component<AnimateProps> {
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis(axis => {
+            /**
+             * If layout is set to "position", we can resize the origin box based on the target
+             * box and only animate its position.
+             */
+            if (layout === "position") {
+                const targetLength = target[axis].max - target[axis].min
+                origin[axis].max = origin[axis].min + targetLength
+            }
+
             if (visualElement.isTargetBoxLocked) {
                 return
             } else if (visibilityAction !== undefined) {

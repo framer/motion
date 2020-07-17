@@ -25,7 +25,7 @@ export function App() {
                 maxWidth: 500,
             }}
         >
-            <motion.div layout="preserve" transition={transition}>
+            <motion.div layout="position" transition={transition}>
                 {c === 1 ? textA : textB}
             </motion.div>
         </motion.div>

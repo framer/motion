@@ -7,10 +7,8 @@ import {
     isSharedLayout,
     SharedLayoutContext,
 } from "../../../components/AnimateSharedLayout/SharedLayoutContext"
-import { LayoutProps } from "./types"
 
 interface SyncProps extends FeatureProps {
-    layout?: LayoutProps["layout"]
     syncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher
 }
 
@@ -46,12 +44,12 @@ class Measure extends React.Component<SyncProps> {
      * If it is stand-alone component, add it to the batcher.
      */
     getSnapshotBeforeUpdate() {
-        const { layout, syncLayout, visualElement } = this.props
+        const { syncLayout, visualElement } = this.props
 
         if (isSharedLayout(syncLayout)) {
             syncLayout.syncUpdate()
         } else {
-            layout !== "preserve" && visualElement.snapshotBoundingBox()
+            visualElement.snapshotBoundingBox()
             syncLayout.add(visualElement)
         }
 
