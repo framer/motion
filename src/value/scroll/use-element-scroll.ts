@@ -26,6 +26,8 @@ const getElementScrollOffsets = (element: HTMLElement) => () => {
  * - `scrollXProgress` — Horizontal scroll progress between `0` and `1`.
  * - `scrollYProgress` — Vertical scroll progress between `0` and `1`.
  *
+ * This element must be set to `overflow: scroll` on either or both axes to report scroll offset.
+ *
  * @library
  *
  * ```jsx
