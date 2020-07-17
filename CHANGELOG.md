@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.0] 2020-07-17
+
+### Added
+
+-   `layout="position"` for position-only layout animations.
+
 ## [2.0.1] 2020-07-16
 
 ### Fixed
