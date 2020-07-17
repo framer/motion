@@ -108,6 +108,6 @@ function addMotionValues(
  * These are props we accept as MotionValues but don't want to add
  * to the VisualElement
  */
-const reservedNames = new Set<string>([])
+const reservedNames = new Set<string>(["layoutX", "layoutY"])
 
 const empty = (): MotionValueSource => ({})
