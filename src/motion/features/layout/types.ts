@@ -20,7 +20,7 @@ export interface LayoutProps {
      *
      * @public
      */
-    layout?: boolean
+    layout?: boolean | "preserve"
 
     /**
      * Enable shared layout transitions between components for children of `AnimateSharedLayout`.
