@@ -18,6 +18,9 @@ export interface LayoutProps {
      * `boxShadow` and `borderRadius` will automatically be corrected if they are already being
      * animated on this component. Otherwise, set them directly via the `initial` prop.
      *
+     * If `layout` is set to `"position"`, the size of the component will change instantly and
+     * only its position will animate.
+     *
      * @public
      */
     layout?: boolean | "position"
