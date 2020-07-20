@@ -242,7 +242,9 @@ export class HTMLVisualElement<
     deltaFinal: BoxDelta = delta()
 
     /**
-     *
+     * The computed transform string to apply deltaFinal to the element. Currently this is only
+     * being used to diff and decide whether to render on the current frame, but a minor optmisation
+     * could be to provide this to the buildHTMLStyle function.
      */
     deltaTransform: string
 
