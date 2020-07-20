@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.1] 2020-07-20
+
+### Fixed
+
+-   Performance improvements to layout delta calculations.
+
 ## [2.1.0] 2020-07-17
 
 ### Added
