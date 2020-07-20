@@ -19,6 +19,9 @@ export abstract class VisualElement<E = any> {
     // A reference to the parent VisualElement
     parent?: VisualElement<E>
 
+    // A reference to the root parent VisualElement
+    rootParent?: VisualElement<E>
+
     // An iterable list of current children
     children: Set<VisualElement<E>> = new Set()
 
@@ -59,10 +62,9 @@ export abstract class VisualElement<E = any> {
     readonly depth: number
 
     constructor(parent?: VisualElement<E>, ref?: Ref<E>) {
-        // Create a relationship with the provided parent. When we come to replace
-        // the auto-animation stuff with VisualElement we might need to make this
-        // relationship two-way
+        // Create a relationship with the provided parent.
         this.parent = parent
+        this.rootParent = parent ? parent.rootParent : this
 
         this.treePath = parent ? [...parent.treePath, parent] : []
 
@@ -200,13 +202,6 @@ export abstract class VisualElement<E = any> {
 
         if (this.parent) {
             this.removeFromParent = this.parent.subscribe(this)
-
-            /**
-             * Save a reference to the nearest layout projecting ancestor.
-             */
-            // this.layoutParent = this.parent.isLayoutProjectionEnabled
-            //     ? this.parent
-            //     : this.parent.layoutParent
         }
 
         /**

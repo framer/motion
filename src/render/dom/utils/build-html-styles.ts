@@ -6,6 +6,7 @@ import { buildTransform } from "./build-transform"
 import { isCSSVariable } from "./is-css-variable"
 import { valueScaleCorrection } from "../layout/scale-correction"
 import { Point2D, AxisBox2D, BoxDelta } from "../../../types/geometry"
+import { createDeltaTransform } from "./project-layout"
 
 /**
  * Build style and CSS variables
@@ -133,7 +134,7 @@ export function buildHTMLStyles(
                 allowTransformNone
             )
         } else {
-            style.transform = layoutReprojection(deltaFinal!, treeScale!)
+            style.transform = createDeltaTransform(deltaFinal!, treeScale!)
         }
     }
 
@@ -151,12 +152,4 @@ export function buildHTMLStyles(
 
         style.transformOrigin = `${originX} ${originY} ${originZ}`
     }
-}
-
-function layoutReprojection(delta: BoxDelta, treeScale: Point2D) {
-    const x = delta.x.translate / treeScale.x
-    const y = delta.y.translate / treeScale.y
-    const scaleX = delta.x.scale
-    const scaleY = delta.y.scale
-    return `translate3d(${x}px, ${y}px, 0) scale(${scaleX}, ${scaleY})`
 }
