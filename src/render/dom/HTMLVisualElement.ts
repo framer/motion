@@ -25,7 +25,6 @@ import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
-import sync, { getFrameData } from "framesync"
 import { createDeltaTransform } from "./utils/project-layout"
 
 export type LayoutUpdateHandler = (
@@ -381,7 +380,7 @@ export class HTMLVisualElement<
         // Flag that we want to fire the onViewportBoxUpdate event handler
         this.hasViewportBoxUpdated = true
 
-        this.rootParent.scheduleUpdateDeltas()
+        this.rootParent.scheduleUpdateLayoutDelta()
     }
 
     /**
@@ -411,10 +410,6 @@ export class HTMLVisualElement<
 
     stopLayoutAnimation() {
         eachAxis(axis => this.axisProgress[axis].stop())
-    }
-
-    scheduleUpdateDeltas() {
-        sync.update(this.rootParent.updateLayoutDelta, false, true)
     }
 
     updateLayoutDelta = () => {
@@ -447,8 +442,8 @@ export class HTMLVisualElement<
         if (this.parent) {
             updateTreeScale(
                 this.treeScale,
-                this.parent.treeScale,
-                this.parent.delta
+                (this.parent as any).treeScale,
+                (this.parent as any).delta
             )
         }
 
@@ -550,7 +545,7 @@ export class HTMLVisualElement<
     }
 }
 
-const fireUpdateLayoutDelta = (child: HTMLVisualElement) =>
+const fireUpdateLayoutDelta = (child: VisualElement) =>
     child.updateLayoutDelta()
 
 interface MotionPoint {

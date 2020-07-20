@@ -2,7 +2,6 @@ import { Axis, AxisBox2D, BoxDelta } from "../../types/geometry"
 import { mix } from "@popmotion/popcorn"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import { ResolvedValues } from "../../render/types"
-import { getFrameData } from "framesync"
 
 /**
  * Reset an axis to the provided origin box.

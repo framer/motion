@@ -20,7 +20,7 @@ export abstract class VisualElement<E = any> {
     parent?: VisualElement<E>
 
     // A reference to the root parent VisualElement
-    rootParent?: VisualElement<E>
+    rootParent: VisualElement<E>
 
     // An iterable list of current children
     children: Set<VisualElement<E>> = new Set()
@@ -155,6 +155,8 @@ export abstract class VisualElement<E = any> {
     // A function that returns a bounding box for the rendered instance.
     abstract getBoundingBox(): AxisBox2D
 
+    abstract updateLayoutDelta(): void
+
     // Set a single `latest` value
     private setSingleStaticValue(key: string, value: string | number) {
         this.latest[key] = value
@@ -175,6 +177,10 @@ export abstract class VisualElement<E = any> {
     triggerRender = () => this.render()
 
     scheduleRender = () => sync.render(this.triggerRender, false, true)
+
+    scheduleUpdateLayoutDelta() {
+        sync.update(this.rootParent.updateLayoutDelta, false, true)
+    }
 
     // Subscribe to changes in a MotionValue
     private subscribeToValue(key: string, value: MotionValue) {
