@@ -195,8 +195,6 @@ describe("applyTreeDeltas", () => {
             y: { min: 300, max: 400 },
         }
 
-        const scale = { x: 1, y: 1 }
-
         const delta = {
             x: { translate: 100, scale: 2, origin: 0.5, originPoint: 150 },
             y: { translate: -100, scale: 0.5, origin: 0.5, originPoint: 350 },
@@ -205,16 +203,11 @@ describe("applyTreeDeltas", () => {
         const element = new HTMLVisualElement()
         element.delta = delta
 
-        applyTreeDeltas(box, scale, [element, element])
+        applyTreeDeltas(box, [element, element])
 
         expect(box).toEqual({
             x: { min: 250, max: 650 },
             y: { min: 187.5, max: 212.5 },
-        })
-
-        expect(scale).toEqual({
-            x: 4,
-            y: 0.25,
         })
     })
 })
