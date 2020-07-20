@@ -12,6 +12,8 @@ import { ResolvedValues } from "../render/types"
 class StateVisualElement extends VisualElement {
     initialState: ResolvedValues = {}
 
+    updateLayoutDelta() {}
+
     build() {}
 
     clean() {}

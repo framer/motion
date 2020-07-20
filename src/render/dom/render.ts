@@ -24,7 +24,7 @@ export function render<Props>(
      * that might have been taken out of the provided props.
      */
     visualElement.clean()
-    visualElement.build(true)
+    visualElement.build()
 
     // Generate props to visually render this component
     const visualProps = isSVGComponent(Component)

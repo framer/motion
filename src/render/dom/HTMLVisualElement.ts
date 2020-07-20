@@ -16,12 +16,16 @@ import {
     applyBoxTransforms,
     removeBoxTransforms,
 } from "../../utils/geometry/delta-apply"
-import { updateBoxDelta } from "../../utils/geometry/delta-calc"
+import {
+    updateBoxDelta,
+    updateTreeScale,
+} from "../../utils/geometry/delta-calc"
 import { Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
+import { createDeltaTransform } from "./utils/project-layout"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -141,18 +145,8 @@ export class HTMLVisualElement<
      */
     isLayoutProjectionEnabled = false
 
-    /**
-     * A boolean that flags whether this component has children that need to be update
-     * when this component changes layout.
-     */
-    hasLayoutChildren = false
-
     enableLayoutProjection() {
         this.isLayoutProjectionEnabled = true
-        forEachParent(
-            this as HTMLVisualElement,
-            parent => (parent.hasLayoutChildren = true)
-        )
     }
 
     /**
@@ -246,6 +240,13 @@ export class HTMLVisualElement<
      * This is considered mutable to avoid object creation on each frame.
      */
     deltaFinal: BoxDelta = delta()
+
+    /**
+     * The computed transform string to apply deltaFinal to the element. Currently this is only
+     * being used to diff and decide whether to render on the current frame, but a minor optmisation
+     * could be to provide this to the buildHTMLStyle function.
+     */
+    deltaTransform: string
 
     /**
      *
@@ -381,17 +382,7 @@ export class HTMLVisualElement<
         // Flag that we want to fire the onViewportBoxUpdate event handler
         this.hasViewportBoxUpdated = true
 
-        /**
-         * If this component re-renders we need to ensure that any children performing
-         * layout projection also update
-         *
-         * TODO: This recursively traverses all children for each axis and for each component. A performance
-         * improvement would be to:
-         *  1. Flag the root component as dirty and schedule it to update pre-render
-         *  2. Recursively traverse tree from root layout component during this update
-         *      scheduling renders and updating deltas
-         */
-        scheduleChildrenLayoutRender(this as HTMLVisualElement)
+        this.rootParent.scheduleUpdateLayoutDelta()
     }
 
     /**
@@ -423,28 +414,23 @@ export class HTMLVisualElement<
         eachAxis(axis => this.axisProgress[axis].stop())
     }
 
+    updateLayoutDelta = () => {
+        this.isLayoutProjectionEnabled && this.updateDeltas()
+
+        /**
+         * Ensure all children layouts are also updated.
+         *
+         * This uses a pre-bound function executor rather than a lamda to avoid creating a new function
+         * multiple times per frame (source of mid-animation GC)
+         */
+        this.children.forEach(fireUpdateLayoutDelta)
+    }
+
     /**
      * Update the layout deltas to reflect the relative positions of the layout
      * and the desired target box
      */
-    updateLayoutDeltas(isReactRender: boolean) {
-        /**
-         * Ensure that all the parent deltas are up-to-date before calculating this delta.
-         *
-         * TODO: This approach is exceptionally wasteful as every child will update
-         * the deltas of its parent even if it's already updated for this frame.
-         * We can optimise this by replacing this to a call directly to the root VisualElement
-         * which then runs iteration from the top-down, but only once per framestamp.
-         */
-        this.treePath.forEach((p: HTMLVisualElement) =>
-            p.updateLayoutDeltas(isReactRender)
-        )
-
-        /**
-         * Early return if layout reprojection isn't enabled
-         */
-        if (!this.isLayoutProjectionEnabled || !this.box) return
-
+    updateDeltas() {
         /**
          * Reset the corrected box with the latest values from box, as we're then going
          * to perform mutative operations on it.
@@ -452,10 +438,22 @@ export class HTMLVisualElement<
         resetBox(this.boxCorrected, this.box)
 
         /**
+         * If this component has a parent, update this treeScale by incorporating the parent's
+         * delta into its treeScale.
+         */
+        if (this.parent) {
+            updateTreeScale(
+                this.treeScale,
+                (this.parent as any).treeScale,
+                (this.parent as any).delta
+            )
+        }
+
+        /**
          * Apply all the parent deltas to this box to produce the corrected box. This
          * is the layout box, as it will appear on screen as a result of the transforms of its parents.
          */
-        applyTreeDeltas(this.boxCorrected, this.treeScale, this.treePath as any)
+        applyTreeDeltas(this.boxCorrected, this.treePath as any)
 
         /**
          * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
@@ -485,13 +483,20 @@ export class HTMLVisualElement<
 
         /**
          * If we have a listener for the viewport box, fire it.
-         * TODO: Instead of manually checking this, use framesync postRender
          */
-        if (!isReactRender) {
-            this.hasViewportBoxUpdated &&
-                this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
-            this.hasViewportBoxUpdated = false
-        }
+        this.hasViewportBoxUpdated &&
+            this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
+        this.hasViewportBoxUpdated = false
+
+        /**
+         * Ensure this element renders on the next frame if the projection transform has changed.
+         */
+        const deltaTransform = createDeltaTransform(
+            this.deltaFinal,
+            this.treeScale
+        )
+        deltaTransform !== this.deltaTransform && this.scheduleRender()
+        this.deltaTransform = deltaTransform
     }
 
     /**
@@ -503,14 +508,10 @@ export class HTMLVisualElement<
     /**
      * Build a style prop using the latest resolved MotionValues
      */
-    build(isReactRender: boolean) {
+    build() {
         if (this.isVisible !== undefined) {
             this.style.visibility = this.isVisible ? "visible" : "hidden"
         }
-
-        this.isLayoutProjectionEnabled &&
-            this.box &&
-            this.updateLayoutDeltas(isReactRender)
 
         buildHTMLStyles(
             this.latest,
@@ -533,7 +534,7 @@ export class HTMLVisualElement<
      */
     render() {
         // Rebuild the latest animated values into style and vars caches.
-        this.build(false)
+        this.build()
 
         // Directly assign style into the Element's style prop. In tests Object.assign is the
         // fastest way to assign styles.
@@ -546,29 +547,12 @@ export class HTMLVisualElement<
     }
 }
 
-function scheduleChildrenLayoutRender(element: HTMLVisualElement) {
-    if (element.isLayoutProjectionEnabled) {
-        element.scheduleRender()
-    }
-
-    if (element.hasLayoutChildren) {
-        element.children.forEach(scheduleChildrenLayoutRender)
-    }
-}
-
-function forEachParent(
-    child: HTMLVisualElement,
-    callback: (parent: HTMLVisualElement) => void
-) {
-    let parent:
-        | HTMLVisualElement
-        | undefined = child.parent as HTMLVisualElement
-
-    while (parent) {
-        callback(parent)
-        parent = parent.parent as HTMLVisualElement
-    }
-}
+/**
+ * Pre-bound version of updateLayoutDelta so we're not creating a new function multiple
+ * times per frame.
+ */
+const fireUpdateLayoutDelta = (child: VisualElement) =>
+    child.updateLayoutDelta()
 
 interface MotionPoint {
     x: MotionValue<number>

@@ -1,4 +1,10 @@
-import { Axis, AxisDelta, BoxDelta, AxisBox2D } from "../../types/geometry"
+import {
+    Axis,
+    AxisDelta,
+    BoxDelta,
+    AxisBox2D,
+    Point2D,
+} from "../../types/geometry"
 import { mix, progress, clamp, distance } from "@popmotion/popcorn"
 
 const clampProgress = clamp(0, 1)
@@ -81,4 +87,16 @@ export function updateBoxDelta(
 ): void {
     updateAxisDelta(delta.x, source.x, target.x, origin)
     updateAxisDelta(delta.y, source.y, target.y, origin)
+}
+
+/**
+ * Update the treeScale by incorporating the parent's latest scale into its treeScale.
+ */
+export function updateTreeScale(
+    treeScale: Point2D,
+    parentTreeScale: Point2D,
+    parentDelta: BoxDelta
+) {
+    treeScale.x = parentTreeScale.x * parentDelta.x.scale
+    treeScale.y = parentTreeScale.y * parentDelta.y.scale
 }
