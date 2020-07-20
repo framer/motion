@@ -3,7 +3,9 @@ import {
     calcTranslate,
     calcOrigin,
     updateAxisDelta,
+    updateTreeScale,
 } from "../delta-calc"
+import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
 
 describe("isNear", () => {
     test("Correctly indicate when the provided value is within maxDistance of the provided target", () => {
@@ -101,5 +103,21 @@ describe("updateAxisDelta", () => {
             scale: 2,
             translate: 300,
         })
+    })
+})
+
+describe("updateTreeScale", () => {
+    test("Correctly updates a treeScale object by incorporating a parent delta into its scale", () => {
+        const treeScale = { x: 1, y: 1 }
+        const element = new HTMLVisualElement()
+        element.delta = {
+            x: { scale: 2, translate: 0, origin: 0, originPoint: 0 },
+            y: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
+        }
+        element.treeScale = { x: 2, y: 2 }
+
+        updateTreeScale(treeScale, element.treeScale, element.delta)
+
+        expect(treeScale).toEqual({ x: 4, y: 1 })
     })
 })

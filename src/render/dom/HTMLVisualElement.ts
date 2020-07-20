@@ -547,6 +547,10 @@ export class HTMLVisualElement<
     }
 }
 
+/**
+ * Pre-bound version of updateLayoutDelta so we're not creating a new function multiple
+ * times per frame.
+ */
 const fireUpdateLayoutDelta = (child: VisualElement) =>
     child.updateLayoutDelta()
 
