@@ -17,14 +17,16 @@ export const gestureProps = [
     "onHoverEnd",
 ]
 
+const GestureComponent = makeRenderlessComponent(
+    ({ visualElement, ...props }: FeatureProps) => {
+        useGestures(props, visualElement)
+    }
+)
+
 export const Gestures: MotionFeature = {
     key: "gestures",
     shouldRender: (props: MotionProps) => {
         return gestureProps.some(key => props.hasOwnProperty(key))
     },
-    Component: makeRenderlessComponent(
-        ({ visualElement, ...props }: FeatureProps) => {
-            useGestures(props, visualElement)
-        }
-    ),
+    getComponent: () => GestureComponent,
 }

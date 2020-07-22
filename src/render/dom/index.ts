@@ -8,6 +8,7 @@ import { HTMLMotionComponents, SVGMotionComponents } from "./types"
 import { Drag } from "../../motion/features/drag"
 import { Gestures } from "../../motion/features/gestures"
 import { Exit } from "../../motion/features/exit"
+import { Animation } from "../../motion/features/animation"
 import { AnimateLayout } from "../../motion/features/layout/Animate"
 import { MeasureLayout } from "../../motion/features/layout/Measure"
 import { MotionFeature } from "../../motion/features/types"
@@ -80,6 +81,7 @@ function createMotionProxy(defaultFeatures: MotionFeature[]) {
  */
 export const motion = /*@__PURE__*/ createMotionProxy([
     MeasureLayout,
+    Animation,
     Drag,
     Gestures,
     Exit,
@@ -89,4 +91,4 @@ export const motion = /*@__PURE__*/ createMotionProxy([
 /**
  * @public
  */
-export const m = /*@__PURE__*/ createMotionProxy([])
+export const m = /*@__PURE__*/ createMotionProxy([MeasureLayout])

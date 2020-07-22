@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useRef } from "react"
-import { motion, MotionPlugins } from "../../src"
+import { motion, MotionConfig } from "../../src"
 
 const dragContainer = {
     width: "50%",
@@ -23,7 +23,7 @@ export const App = () => {
     const ref = useRef(null)
 
     return (
-        <MotionPlugins
+        <MotionConfig
             transformPagePoint={({ x, y }) => ({
                 x: x / 1.2,
                 y: y / 1.2,
@@ -37,6 +37,6 @@ export const App = () => {
                     style={draggable}
                 />
             </motion.div>
-        </MotionPlugins>
+        </MotionConfig>
     )
 }

@@ -217,13 +217,15 @@ class Animate extends React.Component<AnimateProps> {
     }
 }
 
+function AnimateLayoutContextProvider(props: FeatureProps) {
+    const [, safeToRemove] = usePresence()
+    return <Animate {...props} safeToRemove={safeToRemove} />
+}
+
 export const AnimateLayout: MotionFeature = {
     key: "animate-layout",
     shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
-    Component: (props: FeatureProps) => {
-        const [, safeToRemove] = usePresence()
-        return <Animate {...props} safeToRemove={safeToRemove} />
-    },
+    getComponent: () => AnimateLayoutContextProvider,
 }
 
 function hasMoved(a: AxisBox2D, b: AxisBox2D) {

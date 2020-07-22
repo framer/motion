@@ -6,6 +6,15 @@ export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 
 /**
+ * Features
+ */
+export { Animation as AnimationFeature } from "./motion/features/animation"
+export { Drag as DragFeature } from "./motion/features/drag"
+export { Exit as ExitFeature } from "./motion/features/exit"
+export { Gestures as GesturesFeature } from "./motion/features/gestures"
+export { AnimateLayout as AnimateLayoutFeature } from "./motion/features/layout/Animate"
+
+/**
  * Motion values
  */
 export { useMotionValue } from "./value/use-motion-value"
@@ -59,9 +68,9 @@ export { addScaleCorrection } from "./render/dom/layout/scale-correction"
  * Contexts
  */
 export {
-    MotionPlugins,
-    MotionPluginContext,
-} from "./motion/context/MotionPluginContext"
+    MotionConfig,
+    MotionConfigContext,
+} from "./motion/context/MotionConfigContext"
 export { MotionContext } from "./motion/context/MotionContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 

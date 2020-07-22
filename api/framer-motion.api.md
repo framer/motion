@@ -26,6 +26,9 @@ import { SVGAttributes } from 'react';
 // @internal (undocumented)
 export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): void;
 
+// @public (undocumented)
+export const AnimateLayoutFeature: MotionFeature;
+
 // @public
 export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps>;
 
@@ -92,6 +95,9 @@ export class AnimationControls {
 // 
 // @internal (undocumented)
 export const animationControls: () => AnimationControls;
+
+// @public (undocumented)
+export const AnimationFeature: MotionFeature;
 
 // @public (undocumented)
 export interface AnimationProps {
@@ -189,6 +195,9 @@ export class DragControls {
 }
 
 // @public (undocumented)
+export const DragFeature: MotionFeature;
+
+// @public (undocumented)
 export interface DraggableProps extends DragHandlers {
     drag?: boolean | "x" | "y";
     dragConstraints?: false | Partial<BoundingBox2D> | RefObject<Element>;
@@ -224,6 +233,9 @@ export interface EventInfo {
 }
 
 // @public (undocumented)
+export const ExitFeature: MotionFeature;
+
+// @public (undocumented)
 export interface FeatureProps extends MotionProps {
     // Warning: (ae-incompatible-release-tags) The symbol "controls" is marked as @public, but its signature references "VisualElementAnimationControls" which is marked as @internal
     // 
@@ -244,6 +256,9 @@ export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRe
 
 // @public (undocumented)
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
+
+// @public (undocumented)
+export const GesturesFeature: MotionFeature;
 
 // @public (undocumented)
 export interface HoverHandlers {
@@ -356,6 +371,24 @@ export interface MotionCallbacks {
     }): void;
 }
 
+// Warning: (ae-forgotten-export) The symbol "MotionConfigProps" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export function MotionConfig({ children, features, ...props }: MotionConfigProps): JSX.Element;
+
+// Warning: (ae-internal-missing-underscore) The name "MotionConfigContext" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export interface MotionConfigContext {
+    // (undocumented)
+    features: MotionFeature[];
+    // (undocumented)
+    transformPagePoint: TransformPoint2D;
+}
+
+// @internal (undocumented)
+export const MotionConfigContext: React.Context<MotionConfigContext>;
+
 // Warning: (ae-internal-missing-underscore) The name "MotionContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
@@ -364,24 +397,12 @@ export const MotionContext: React.Context<MotionContextProps>;
 // @public (undocumented)
 export interface MotionFeature {
     // (undocumented)
-    Component: React.ComponentType<FeatureProps>;
+    getComponent: (props: MotionProps) => React.ComponentType<FeatureProps> | undefined;
     // (undocumented)
     key: string;
     // (undocumented)
     shouldRender: (props: MotionProps, parentContext: MotionContextProps) => boolean;
 }
-
-// Warning: (ae-forgotten-export) The symbol "MotionPluginsContext" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "MotionPluginContext" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export const MotionPluginContext: React.Context<MotionPluginsContext>;
-
-// Warning: (ae-forgotten-export) The symbol "MotionPluginProps" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "MotionPlugins" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function MotionPlugins({ children, ...props }: MotionPluginProps): JSX.Element;
 
 // @public
 export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
