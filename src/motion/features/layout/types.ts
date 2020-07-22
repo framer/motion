@@ -1,5 +1,8 @@
 import { AxisBox2D, BoxDelta } from "../../../types/geometry"
 
+/**
+ * @public
+ */
 export interface LayoutProps {
     /**
      * If `true`, this component will automatically animate to its new position when

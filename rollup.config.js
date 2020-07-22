@@ -12,6 +12,14 @@ const external = [
     ...Object.keys(pkg.peerDependencies || {}),
 ]
 
+const pureClass = {
+    transform(code) {
+        // Replace TS emitted @class function annotations with PURE so terser
+        // can remove them
+        return code.replace(/\/\*\* @class \*\//g, "/*@__PURE__*/")
+    },
+}
+
 const umd = Object.assign({}, config, {
     output: {
         file: `dist/${pkg.name}.dev.js`,
@@ -38,7 +46,8 @@ const umdProd = Object.assign({}, umd, {
         replace({
             "process.env.NODE_ENV": JSON.stringify("production"),
         }),
-        terser({ output:{ comments: false }}),
+        pureClass,
+        terser({ output: { comments: false } }),
     ],
 })
 

@@ -4,24 +4,15 @@ import { MotionPluginContext } from "../context/MotionPluginContext"
 import { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from ".."
 import { MotionContextProps } from "../context/MotionContext"
-import { Drag } from "./drag"
-import { Gestures } from "./gestures"
-import { Exit } from "./exit"
 import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { getAnimationComponent } from "./animation"
-import { AnimateLayout } from "./layout/Animate"
-import { MeasureLayout } from "./layout/Measure"
-
-/**
- * Currently we load all features synchronously, but it would be better to offer multiple entry points
- * that allow these to be loaded in asynchronously.
- */
-const defaultFeatures = [MeasureLayout, Drag, Gestures, Exit, AnimateLayout]
+import { MotionFeature } from "./types"
 
 /**
  * Load features via renderless components based on the provided MotionProps
  */
 export function useFeatures(
+    defaultFeatures: MotionFeature[],
     isStatic: boolean,
     visualElement: VisualElement,
     controls: VisualElementAnimationControls,

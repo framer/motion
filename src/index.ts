@@ -1,7 +1,7 @@
 /**
  * Components
  */
-export { motion } from "./render/dom"
+export { motion, m } from "./render/dom"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 
@@ -64,7 +64,6 @@ export {
 } from "./motion/context/MotionPluginContext"
 export { MotionContext } from "./motion/context/MotionContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
-export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 
 /**
  * Types
@@ -112,5 +111,6 @@ export { MotionFeature, FeatureProps } from "./motion/features/types"
 export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
+export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
 export * from "./types/geometry"
