@@ -37,14 +37,17 @@ DECLARATION_TARGET=types/index.d.ts
 build: bootstrap
 	yarn build
 
+watch: bootstrap
+	yarn watch
+
 dev: bootstrap
 	npm run start-dev-server
 
-watch: bootstrap
+test-watch: bootstrap
 	if test -f coverage/lcov-report/index.html; then \
 	 open coverage/lcov-report/index.html; \
 	fi;
-	yarn watch
+	yarn test-watch
 
 bump:
 	npm version patch

@@ -135,6 +135,8 @@ export function buildHTMLStyles(
             )
         } else {
             style.transform = createDeltaTransform(deltaFinal!, treeScale!)
+            if (transformTemplate)
+                style.transform = transformTemplate(transform, style.transform)
         }
     }
 

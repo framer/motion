@@ -365,7 +365,10 @@ export class HTMLVisualElement<
      * works
      */
     resetTransform() {
-        this.element.style.transform = "none"
+        const { transformTemplate } = this.config
+        this.element.style.transform = transformTemplate
+            ? transformTemplate({}, "")
+            : "none"
 
         // Ensure that whatever happens next, we restore our transform
         this.scheduleRender()
@@ -415,7 +418,7 @@ export class HTMLVisualElement<
     }
 
     updateLayoutDelta = () => {
-        this.isLayoutProjectionEnabled && this.updateDeltas()
+        this.isLayoutProjectionEnabled && this.box && this.updateDeltas()
 
         /**
          * Ensure all children layouts are also updated.
