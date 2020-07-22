@@ -5,17 +5,12 @@ import { render } from "./render"
 import { parseDomVariant } from "./utils/parse-dom-variant"
 import { createMotionComponent } from "../../motion"
 import { HTMLMotionComponents, SVGMotionComponents } from "./types"
-
-/**
- * DOM-specific config for `motion` components
- */
-const config: MotionComponentConfig<HTMLElement | SVGElement> = {
-    useVisualElement: useDomVisualElement as any,
-    render: render as any,
-    animationControlsConfig: {
-        makeTargetAnimatable: parseDomVariant,
-    },
-}
+import { Drag } from "../../motion/features/drag"
+import { Gestures } from "../../motion/features/gestures"
+import { Exit } from "../../motion/features/exit"
+import { AnimateLayout } from "../../motion/features/layout/Animate"
+import { MeasureLayout } from "../../motion/features/layout/Measure"
+import { MotionFeature } from "../../motion/features/types"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -41,24 +36,40 @@ type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
  *
  * @public
  */
-function custom<Props>(
-    Component: string | React.ComponentType<Props>
-): CustomDomComponent<Props> {
-    return createMotionComponent(Component, config)
-}
 
-type CustomMotionComponent = { custom: typeof custom }
-type Motion = HTMLMotionComponents & SVGMotionComponents & CustomMotionComponent
+function createMotionProxy(defaultFeatures: MotionFeature[]) {
+    type CustomMotionComponent = { custom: typeof custom }
+    type Motion = HTMLMotionComponents &
+        SVGMotionComponents &
+        CustomMotionComponent
 
-const componentCache = new Map<string, any>()
-function get(target: CustomMotionComponent, key: string) {
-    if (key === "custom") return target.custom
-
-    if (!componentCache.has(key)) {
-        componentCache.set(key, createMotionComponent(key, config))
+    const config: MotionComponentConfig<HTMLElement | SVGElement> = {
+        defaultFeatures,
+        useVisualElement: useDomVisualElement as any,
+        render: render as any,
+        animationControlsConfig: {
+            makeTargetAnimatable: parseDomVariant,
+        },
     }
 
-    return componentCache.get(key)
+    function custom<Props>(
+        Component: string | React.ComponentType<Props>
+    ): CustomDomComponent<Props> {
+        return createMotionComponent(Component, config)
+    }
+
+    const componentCache = new Map<string, any>()
+    function get(target: CustomMotionComponent, key: string) {
+        if (key === "custom") return target.custom
+
+        if (!componentCache.has(key)) {
+            componentCache.set(key, createMotionComponent(key, config))
+        }
+
+        return componentCache.get(key)
+    }
+
+    return new Proxy({ custom }, { get }) as Motion
 }
 
 /**
@@ -67,4 +78,15 @@ function get(target: CustomMotionComponent, key: string) {
  *
  * @public
  */
-export const motion = new Proxy({ custom }, { get }) as Motion
+export const motion = /*@__PURE__*/ createMotionProxy([
+    MeasureLayout,
+    Drag,
+    Gestures,
+    Exit,
+    AnimateLayout,
+])
+
+/**
+ * @public
+ */
+export const m = /*@__PURE__*/ createMotionProxy([])

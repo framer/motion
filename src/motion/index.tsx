@@ -5,7 +5,7 @@ import { MotionProps } from "./types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { useMotionValues } from "./utils/use-motion-values"
 import { UseVisualElement } from "../render/types"
-import { RenderComponent } from "./features/types"
+import { RenderComponent, MotionFeature } from "./features/types"
 import { AnimationControlsConfig } from "../animation/VisualElementAnimationControls"
 import { useVisualElementAnimation } from "../animation/use-visual-element-animation"
 import { useFeatures } from "./features/use-features"
@@ -13,6 +13,7 @@ import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
+    defaultFeatures: MotionFeature[]
     useVisualElement: UseVisualElement<E>
     render: RenderComponent
     animationControlsConfig: AnimationControlsConfig
@@ -32,6 +33,7 @@ export interface MotionComponentConfig<E> {
 export function createMotionComponent<P extends {}, E>(
     Component: string | React.ComponentType<P>,
     {
+        defaultFeatures,
         useVisualElement,
         render,
         animationControlsConfig,
@@ -94,6 +96,7 @@ export function createMotionComponent<P extends {}, E>(
          * Load features as renderless components unless the component isStatic
          */
         const features = useFeatures(
+            defaultFeatures,
             isStatic,
             visualElement,
             controls,

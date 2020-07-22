@@ -168,7 +168,7 @@ export interface BoxDelta {
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { useVisualElement, render, animationControlsConfig, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
+export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { defaultFeatures, useVisualElement, render, animationControlsConfig, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
 // @public (undocumented)
 export interface CustomValueType {
@@ -326,10 +326,18 @@ export interface LayoutProps {
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
 }
 
-// Warning: (ae-forgotten-export) The symbol "Motion" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "SVGMotionComponents" needs to be exported by the entry point index.d.ts
 // 
+// @public (undocumented)
+export const m: HTMLMotionComponents & SVGMotionComponents & {
+    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => CustomDomComponent<Props>;
+};
+
 // @public
-export const motion: Motion;
+export const motion: HTMLMotionComponents & SVGMotionComponents & {
+    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => CustomDomComponent<Props>;
+};
 
 // @public (undocumented)
 export interface MotionAdvancedProps {
@@ -762,6 +770,10 @@ export class VisualElementAnimationControls<P extends {} = {}, V extends {} = {}
     stop(): void;
     }
 
+
+// Warnings were encountered during analysis:
+// 
+// types/render/dom/index.d.ts:23:5 - (ae-forgotten-export) The symbol "CustomDomComponent" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
