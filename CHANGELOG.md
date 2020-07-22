@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.2] 2020-07-22
+
+### Fixed
+
+-   Respecting `transformTemplate` for layout animations.
+-   Fixed `this.box is undefined` errors.
+
 ## [2.1.1] 2020-07-20
 
 ### Fixed
