@@ -77,12 +77,12 @@ describe("calcRelativeAxisConstraints", () => {
 
     test("Correctly calculates viewport constraints if constraints are smaller than bounding box", () => {
         expect(
-            calcRelativeAxisConstraints({ min: 0, max: 100 }, 0, 0)
-        ).toEqual({ min: 0, max: 0 })
+            calcRelativeAxisConstraints({ min: 0, max: 100 }, 0, 50)
+        ).toEqual({ min: -50, max: 0 })
 
         expect(
-            calcRelativeAxisConstraints({ min: 100, max: 200 }, 0, 0)
-        ).toEqual({ min: 100, max: 100 })
+            calcRelativeAxisConstraints({ min: 100, max: 200 }, 0, 50)
+        ).toEqual({ min: 50, max: 100 })
     })
 
     test("Correctly calculates viewport constraints if constraints are same size as bounding box", () => {
