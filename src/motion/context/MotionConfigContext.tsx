@@ -8,7 +8,7 @@ export interface MotionConfigContext {
     features: MotionFeature[]
 }
 
-export interface MotionConfigProps extends MotionConfigContext {
+export interface MotionConfigProps extends Partial<MotionConfigContext> {
     children?: React.ReactNode
 }
 

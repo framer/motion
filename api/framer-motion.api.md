@@ -176,6 +176,9 @@ export interface BoxDelta {
 // @internal
 export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { defaultFeatures, useVisualElement, render, animationControlsConfig, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
+// @public
+export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>;
+
 // @public (undocumented)
 export interface CustomValueType {
     // (undocumented)
@@ -791,10 +794,6 @@ export class VisualElementAnimationControls<P extends {} = {}, V extends {} = {}
     stop(): void;
     }
 
-
-// Warnings were encountered during analysis:
-// 
-// types/render/dom/index.d.ts:23:5 - (ae-forgotten-export) The symbol "CustomDomComponent" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 
