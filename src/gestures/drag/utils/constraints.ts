@@ -71,8 +71,10 @@ export function calcRelativeAxisConstraints(
     }
 
     if (max !== undefined) {
-        constraints.max = Math.max(axis.min + max - length, axis.min + max)
+        constraints.max = axis.min + max - length
     }
+
+    // TODO: Fix if axis is larger than constraints
 
     return constraints
 }
