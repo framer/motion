@@ -18,7 +18,7 @@ import { MotionFeature } from "../../motion/features/types"
  * incorrect relative paths in the exported types and API Extractor throws
  * a wobbly.
  */
-type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
+export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
     React.PropsWithoutRef<Props & MotionProps> &
         React.RefAttributes<SVGElement | HTMLElement>
 >

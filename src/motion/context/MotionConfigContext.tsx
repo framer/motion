@@ -1,24 +1,15 @@
 import * as React from "react"
-import { createContext, useMemo, useState, useEffect } from "react"
+import { createContext, useContext, useMemo } from "react"
 import { MotionFeature } from "../features/types"
 import { TransformPoint2D } from "../../types/geometry"
-import { invariant } from "hey-listen"
 
 export interface MotionConfigContext {
     transformPagePoint: TransformPoint2D
     features: MotionFeature[]
 }
 
-interface DefaultFeatureExport {
-    default: MotionFeature[]
-}
-
-type FeatureImport = () => Promise<DefaultFeatureExport>
-
-export interface MotionConfigProps {
+export interface MotionConfigProps extends MotionConfigContext {
     children?: React.ReactNode
-    transformPagePoint: TransformPoint2D
-    features: MotionFeature[] | FeatureImport
 }
 
 /**
@@ -56,30 +47,19 @@ export function MotionConfig({
     features = [],
     ...props
 }: MotionConfigProps) {
-    const [loadedFeatures, setFeatures] = useState<MotionFeature[]>(
-        Array.isArray(features) ? features : []
-    )
+    const pluginContext = useContext(MotionConfigContext)
+    const loadedFeatures = [...pluginContext.features, ...features]
 
-    useEffect(() => {
-        if (Array.isArray(features)) return
+    // We do want to rerender children when the number of loaded features changes
+    const value = useMemo(() => ({ features: loadedFeatures }), [
+        loadedFeatures.length,
+    ]) as MotionConfigContext
 
-        features().then(res => {
-            invariant(
-                Array.isArray(res.default),
-                "The default export of the imported file must be an array of MotionFeatures"
-            )
-
-            setFeatures(res.default)
-        })
-    }, [])
-
-    const value = useMemo(
-        () => ({
-            ...props,
-            features: loadedFeatures,
-        }),
-        [loadedFeatures]
-    )
+    // Mutative to prevent triggering rerenders in all listening
+    // components every time this component renders
+    for (const key in props) {
+        value[key] = props[key]
+    }
 
     return (
         <MotionConfigContext.Provider value={value}>

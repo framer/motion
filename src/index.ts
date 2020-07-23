@@ -83,6 +83,7 @@ export {
     SVGAttributesAsMotionValues,
     ForwardRefComponent,
 } from "./render/dom/types"
+export { CustomDomComponent } from "./render/dom"
 export {
     AnimationProps,
     MotionProps,

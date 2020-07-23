@@ -1,5 +1,6 @@
 import * as React from "react"
 import { m, MotionConfig } from "@framer"
+import { useEffect, useState } from "react"
 
 /**
  * An example of dynamically loading features from a different entry point.
@@ -30,8 +31,14 @@ const Component = React.memo(() => {
 })
 
 export const App = () => {
+    const [loadedFeatures, setFeatures] = useState([])
+
+    useEffect(() => {
+        import("./inc/dynamic-features").then(res => setFeatures(res.default))
+    }, [])
+
     return (
-        <MotionConfig features={() => import("./inc/dynamic-features")}>
+        <MotionConfig features={loadedFeatures}>
             <Component />
         </MotionConfig>
     )
