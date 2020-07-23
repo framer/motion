@@ -8632,6 +8632,14 @@ style-value-types@^3.1.6, style-value-types@^3.1.7:
     hey-listen "^1.0.8"
     tslib "^1.10.0"
 
+style-value-types@^3.1.8:
+  version "3.1.8"
+  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.1.8.tgz#70bcb1dd81c8f0df08453cb65d417682eee2246f"
+  integrity sha512-VGW8+ybQTArYcID0aSrRMrA7oQC9bvC9OGCTcPQFBqCVW8HGxwXT/jnO+xGvLk9H+ePUBLnBE5w+IhAbqCtzuw==
+  dependencies:
+    hey-listen "^1.0.8"
+    tslib "^1.10.0"
+
 styled-components@^4.1.1:
   version "4.4.1"
   resolved "https://registry.yarnpkg.com/styled-components/-/styled-components-4.4.1.tgz#e0631e889f01db67df4de576fedaca463f05c2f2"
