@@ -8632,10 +8632,10 @@ style-value-types@^3.1.6, style-value-types@^3.1.7:
     hey-listen "^1.0.8"
     tslib "^1.10.0"
 
-style-value-types@^3.1.8:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.1.8.tgz#70bcb1dd81c8f0df08453cb65d417682eee2246f"
-  integrity sha512-VGW8+ybQTArYcID0aSrRMrA7oQC9bvC9OGCTcPQFBqCVW8HGxwXT/jnO+xGvLk9H+ePUBLnBE5w+IhAbqCtzuw==
+style-value-types@^3.1.9:
+  version "3.1.9"
+  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-3.1.9.tgz#faf7da660d3f284ed695cff61ea197d85b9122cc"
+  integrity sha512-050uqgB7WdvtgacoQKm+4EgKzJExVq0sieKBQQtJiU3Muh6MYcCp4T3M8+dfl6VOF2LR0NNwXBP1QYEed8DfIw==
   dependencies:
     hey-listen "^1.0.8"
     tslib "^1.10.0"
