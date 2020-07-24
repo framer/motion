@@ -12,6 +12,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Application of relative drag constraints.
 -   User-set transforms were only updating when layout transforms updated.
+-   Fixing drag on SVG components.
 
 ## [2.1.3] 2020-07-23
 
