@@ -3,6 +3,7 @@ import { ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./build-svg-path"
 import { buildHTMLStyles } from "./build-html-styles"
+import { BoxDelta, Point2D, AxisBox2D } from "../../../types/geometry"
 
 const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
 
@@ -29,7 +30,12 @@ export function buildSVGAttrs(
     transformKeys: string[],
     config: DOMVisualElementConfig,
     dimensions: Dimensions,
-    totalPathLength: number
+    totalPathLength: number,
+    isLayoutProjectionEnabled?: boolean,
+    delta?: BoxDelta,
+    deltaFinal?: BoxDelta,
+    treeScale?: Point2D,
+    targetBox?: AxisBox2D
 ): ResolvedValues {
     /**
      * With SVG we treat all animated values as attributes rather than CSS, so we build into attrs
@@ -41,7 +47,12 @@ export function buildSVGAttrs(
         transform,
         transformOrigin,
         transformKeys,
-        config
+        config,
+        isLayoutProjectionEnabled,
+        delta,
+        deltaFinal,
+        treeScale,
+        targetBox
     )
 
     /**

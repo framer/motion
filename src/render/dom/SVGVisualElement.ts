@@ -98,7 +98,12 @@ export class SVGVisualElement extends HTMLVisualElement<
             this.transformKeys,
             this.config,
             this.dimensions,
-            this.totalPathLength
+            this.totalPathLength,
+            this.isLayoutProjectionEnabled && !!this.box,
+            this.delta,
+            this.deltaFinal,
+            this.treeScale,
+            this.targetBoxFinal
         )
     }
 
