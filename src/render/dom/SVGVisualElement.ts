@@ -88,6 +88,8 @@ export class SVGVisualElement extends HTMLVisualElement<
     }
 
     build() {
+        this.updateTransformDeltas()
+
         buildSVGAttrs(
             this.latest,
             this.style,

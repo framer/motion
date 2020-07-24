@@ -62,7 +62,7 @@ describe("Drag", () => {
             .wait(200)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
-            .wait(200)
+            .wait(100)
             .trigger("pointermove", 200, 10, { force: true })
             .wait(50)
             .trigger("pointermove", 10, 200, { force: true })
@@ -83,11 +83,11 @@ describe("Drag", () => {
             .wait(200)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
-            .wait(200)
+            .wait(100)
             .trigger("pointermove", 10, 200, { force: true })
             .wait(50)
             .trigger("pointermove", 200, 10, { force: true })
-            .wait(50)
+            .wait(100)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
