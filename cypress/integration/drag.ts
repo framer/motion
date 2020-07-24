@@ -2,7 +2,7 @@ describe("Drag", () => {
     it("Drags the element by the defined distance", () => {
         cy.visit("?test=drag")
             .get("[data-testid='draggable']")
-            .wait(100)
+            .wait(200)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
@@ -21,7 +21,7 @@ describe("Drag", () => {
     it("Locks drag to x", () => {
         cy.visit("?test=drag&axis=x")
             .get("[data-testid='draggable']")
-            .wait(100)
+            .wait(200)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
@@ -40,7 +40,7 @@ describe("Drag", () => {
     it("Locks drag to y", () => {
         cy.visit("?test=drag&axis=y")
             .get("[data-testid='draggable']")
-            .wait(100)
+            .wait(200)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
@@ -59,10 +59,10 @@ describe("Drag", () => {
     it("Direction locks to x", () => {
         cy.visit("?test=drag&lock=true")
             .get("[data-testid='draggable']")
-            .wait(100)
+            .wait(200)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
-            .wait(100)
+            .wait(200)
             .trigger("pointermove", 200, 10, { force: true })
             .wait(50)
             .trigger("pointermove", 10, 200, { force: true })
@@ -80,10 +80,10 @@ describe("Drag", () => {
     it("Direction locks to y", () => {
         cy.visit("?test=drag&lock=true")
             .get("[data-testid='draggable']")
-            .wait(100)
+            .wait(200)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
-            .wait(100)
+            .wait(200)
             .trigger("pointermove", 10, 200, { force: true })
             .wait(50)
             .trigger("pointermove", 200, 10, { force: true })
@@ -100,7 +100,7 @@ describe("Drag", () => {
 
     it("Constraints as object: bottom right", () => {
         cy.visit("?test=drag&right=100&bottom=100")
-            .wait(100)
+            .wait(200)
             .get("[data-testid='draggable']")
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
@@ -119,7 +119,7 @@ describe("Drag", () => {
 
     it("Constraints as object: top left", () => {
         cy.visit("?test=drag&left=-10&top=-10")
-            .wait(100)
+            .wait(200)
             .get("[data-testid='draggable']")
             .trigger("pointerdown", 40, 40)
             .trigger("pointermove", 30, 30) // Gesture will start from first move past threshold
@@ -138,7 +138,7 @@ describe("Drag", () => {
 
     it("doesn't reset drag constraints (ref-based), while dragging, on unrelated parent component updates", () => {
         cy.visit("?test=drag-ref-constraints")
-            .wait(100)
+            .wait(200)
             .get("[data-testid='draggable']")
             .trigger("pointerdown", 10, 10)
             .trigger("pointermove", 15, 15)
