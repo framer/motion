@@ -205,7 +205,7 @@ export class HTMLVisualElement<
      *
      * This is considered mutable to avoid object creation on each frame.
      */
-    private targetBoxFinal: AxisBox2D = axisBox()
+    protected targetBoxFinal: AxisBox2D = axisBox()
 
     /**
      * Can be used to store a snapshot of the measured viewport bounding box before
