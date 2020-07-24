@@ -418,7 +418,7 @@ export class HTMLVisualElement<
     }
 
     updateLayoutDelta = () => {
-        this.isLayoutProjectionEnabled && this.box && this.updateDeltas()
+        this.isLayoutProjectionEnabled && this.box && this.updateLayoutDeltas()
 
         /**
          * Ensure all children layouts are also updated.
@@ -433,7 +433,7 @@ export class HTMLVisualElement<
      * Update the layout deltas to reflect the relative positions of the layout
      * and the desired target box
      */
-    updateDeltas() {
+    updateLayoutDeltas() {
         /**
          * Reset the corrected box with the latest values from box, as we're then going
          * to perform mutative operations on it.
@@ -459,13 +459,6 @@ export class HTMLVisualElement<
         applyTreeDeltas(this.boxCorrected, this.treePath as any)
 
         /**
-         * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
-         * This is the final box that we will then project into by calculating a transform delta and
-         * applying it to the corrected box.
-         */
-        applyBoxTransforms(this.targetBoxFinal, this.targetBox, this.latest)
-
-        /**
          * Update the delta between the corrected box and the target box before user-set transforms were applied.
          * This will allow us to calculate the corrected borderRadius and boxShadow to compensate
          * for our layout reprojection, but still allow them to be scaled correctly by the user.
@@ -477,14 +470,6 @@ export class HTMLVisualElement<
         updateBoxDelta(this.delta, this.boxCorrected, this.targetBox)
 
         /**
-         * Update the delta between the corrected box and the final target box, after
-         * user-set transforms are applied to it. This will be used by the renderer to
-         * create a transform style that will reproject the element from its actual layout
-         * into the desired bounding box.
-         */
-        updateBoxDelta(this.deltaFinal, this.boxCorrected, this.targetBoxFinal)
-
-        /**
          * If we have a listener for the viewport box, fire it.
          */
         this.hasViewportBoxUpdated &&
@@ -494,12 +479,28 @@ export class HTMLVisualElement<
         /**
          * Ensure this element renders on the next frame if the projection transform has changed.
          */
-        const deltaTransform = createDeltaTransform(
-            this.deltaFinal,
-            this.treeScale
-        )
+        const deltaTransform = createDeltaTransform(this.delta, this.treeScale)
         deltaTransform !== this.deltaTransform && this.scheduleRender()
         this.deltaTransform = deltaTransform
+    }
+
+    updateTransformDeltas() {
+        if (!this.isLayoutProjectionEnabled || !this.box) return
+
+        /**
+         * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
+         * This is the final box that we will then project into by calculating a transform delta and
+         * applying it to the corrected box.
+         */
+        applyBoxTransforms(this.targetBoxFinal, this.targetBox, this.latest)
+
+        /**
+         * Update the delta between the corrected box and the final target box, after
+         * user-set transforms are applied to it. This will be used by the renderer to
+         * create a transform style that will reproject the element from its actual layout
+         * into the desired bounding box.
+         */
+        updateBoxDelta(this.deltaFinal, this.boxCorrected, this.targetBoxFinal)
     }
 
     /**
@@ -512,6 +513,8 @@ export class HTMLVisualElement<
      * Build a style prop using the latest resolved MotionValues
      */
     build() {
+        this.updateTransformDeltas()
+
         if (this.isVisible !== undefined) {
             this.style.visibility = this.isVisible ? "visible" : "hidden"
         }
