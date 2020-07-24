@@ -67,7 +67,7 @@ describe("Drag", () => {
             .trigger("pointermove", 200, 10, { force: true })
             .wait(50)
             .trigger("pointermove", 10, 200, { force: true })
-            .wait(50)
+            .wait(100)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
