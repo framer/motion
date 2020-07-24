@@ -2,6 +2,17 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.4] 2020-07-24
+
+### Added
+
+-   Drag Cypress test suite.
+
+### Fixed
+
+-   Application of relative drag constraints.
+-   User-set transforms were only updating when layout transforms updated.
+
 ## [2.1.3] 2020-07-23
 
 ### Fixed

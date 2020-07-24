@@ -38,17 +38,33 @@ describe("calcConstraintedMinPoint", () => {
 describe("calcRelativeAxisConstraints", () => {
     test("Correctly calculates viewport constraints given a relative bounding box", () => {
         expect(
+            calcRelativeAxisConstraints({ min: 0, max: 50 }, undefined, 100)
+        ).toEqual({
+            max: 50,
+        })
+        expect(
+            calcRelativeAxisConstraints({ min: 0, max: 50 }, undefined, 50)
+        ).toEqual({
+            max: 0,
+        })
+        expect(
+            calcRelativeAxisConstraints({ min: 0, max: 50 }, undefined, 200)
+        ).toEqual({
+            max: 150,
+        })
+
+        expect(
             calcRelativeAxisConstraints({ min: 100, max: 200 }, -100, 300)
         ).toEqual({
             min: 0,
-            max: 400,
+            max: 300,
         })
 
         expect(
             calcRelativeAxisConstraints({ min: 100, max: 200 }, undefined, 300)
         ).toEqual({
             min: undefined,
-            max: 400,
+            max: 300,
         })
 
         expect(
@@ -59,21 +75,31 @@ describe("calcRelativeAxisConstraints", () => {
         })
     })
 
-    test("Correctly calculates viewport constraints if constraints are smaller than bounding box", () => {
+    test("Correctly calculates viewport constraints if constraints are smaller than or equal to bounding box", () => {
         expect(
-            calcRelativeAxisConstraints({ min: 100, max: 200 }, 0, 0)
-        ).toEqual({
-            min: 100,
-            max: 100,
-        })
-    })
+            calcRelativeAxisConstraints({ min: 0, max: 100 }, 0, 50)
+        ).toEqual({ min: 0, max: 0 })
 
-    test("Correctly calculates viewport constraints if constraints are same size as bounding box", () => {
+        expect(
+            calcRelativeAxisConstraints({ min: 100, max: 200 }, 0, 50)
+        ).toEqual({ min: 100, max: 100 })
+
+        expect(
+            calcRelativeAxisConstraints({ min: 214, max: 414 }, 0, 0)
+        ).toEqual({ min: 214, max: 214 })
+
+        expect(
+            calcRelativeAxisConstraints({ min: 0, max: 100 }, 0, 100)
+        ).toEqual({
+            min: 0,
+            max: 0,
+        })
+
         expect(
             calcRelativeAxisConstraints({ min: 100, max: 200 }, 0, 100)
         ).toEqual({
             min: 100,
-            max: 200,
+            max: 100,
         })
     })
 })

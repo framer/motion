@@ -311,56 +311,6 @@ describe("drag", () => {
 //         return checkPointer
 //     })
 
-//     test("limit to x", async () => {
-//         const x = motionValue(0)
-//         const y = motionValue(0)
-//         const Component = () => (
-//             <MockDrag>
-//                 <motion.div drag="x" style={{ x, y }} />
-//             </MockDrag>
-//         )
-
-//         const { container, rerender } = render(<Component />)
-//         rerender(<Component />)
-
-//         const pointer = await drag(container.firstChild).to(1, 1)
-//         await pointer.to(50, 50)
-//         pointer.end()
-
-//         expect({
-//             x: x.get(),
-//             y: y.get(),
-//         }).toEqual({
-//             x: 50,
-//             y: 0,
-//         })
-//     })
-
-//     test("limit to y", async () => {
-//         const x = motionValue(0)
-//         const y = motionValue(0)
-//         const Component = () => (
-//             <MockDrag>
-//                 <motion.div drag="y" style={{ x, y }} />
-//             </MockDrag>
-//         )
-
-//         const { container, rerender } = render(<Component />)
-//         rerender(<Component />)
-
-//         const pointer = await drag(container.firstChild).to(1, 1)
-//         await pointer.to(50, 50)
-//         pointer.end()
-
-//         expect({
-//             x: x.get(),
-//             y: y.get(),
-//         }).toEqual({
-//             x: 0,
-//             y: 50,
-//         })
-//     })
-
 //     test("limit to initial direction: x", async () => {
 //         const x = motionValue(0)
 //         const y = motionValue(0)
