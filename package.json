@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "2.1.2",
+    "version": "2.1.3",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
     "types": "dist/framer-motion.d.ts",
@@ -29,7 +29,7 @@
         "prettier": "prettier ./src/* --write",
         "build": "tsc -p . && rollup -c && make api && yarn measure",
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
-        "prepublishOnly": "yarn import && yarn test && yarn build",
+        "prepublishOnly": "rm yarn.lock && yarn import && yarn test && yarn build",
         "measure": "gzip -c dist/framer-motion.js | wc -c",
         "deduplicate": "yarn-deduplicate yarn.lock",
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
