@@ -18,16 +18,7 @@ export const App = () => {
                 r={50}
                 fill={"white"}
                 drag
-                // drag
-                // dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                // whileTap={{ scale: 0.95 }}
-                // onTap={handleTap}
-                // onTapStart={handleTapStart}
-                // onTapCancel={handleTapCancel}
-                // onDrag={handleDrag}
-                // onDragStart={handleDragStart}
-                // onDragEnd={handleDragEnd}
-                // style={styleA}
+                dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
             />
         </svg>
     )
