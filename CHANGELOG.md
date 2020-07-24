@@ -8,6 +8,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   HSLA interpolation when either HSLA contains a decimal.
 -   Whitespace-syntax color support.
+-   `onLayoutAnimationComplete` now firing correctly.
 
 ## [2.1.2] 2020-07-22
 

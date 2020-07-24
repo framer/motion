@@ -119,12 +119,11 @@ class Animate extends React.Component<AnimateProps> {
          * have successfully finished.
          */
         return Promise.all(animations).then(() => {
-            config.onLayoutAnimationComplete?.()
+            this.props.onLayoutAnimationComplete?.()
 
             if (visualElement.isPresent) {
                 visualElement.presence = Presence.Present
             } else {
-                config.onLayoutAnimationComplete?.()
                 this.safeToRemove()
             }
         })
