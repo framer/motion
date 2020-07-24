@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.1.3] 2020-07-23
+
+### Fixed
+
+-   HSLA interpolation when either HSLA contains a decimal.
+-   Whitespace-syntax color support.
+
 ## [2.1.2] 2020-07-22
 
 ### Fixed

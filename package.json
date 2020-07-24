@@ -29,7 +29,7 @@
         "prettier": "prettier ./src/* --write",
         "build": "tsc -p . && rollup -c && make api && yarn measure",
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
-        "prepublishOnly": "yarn test && yarn build",
+        "prepublishOnly": "yarn import && yarn test && yarn build",
         "measure": "gzip -c dist/framer-motion.js | wc -c",
         "deduplicate": "yarn-deduplicate yarn.lock",
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
@@ -95,7 +95,7 @@
         "framesync": "^4.0.4",
         "hey-listen": "^1.0.8",
         "popmotion": "9.0.0-beta-8",
-        "style-value-types": "^3.1.6",
+        "style-value-types": "^3.1.9",
         "tslib": "^1.10.0"
     },
     "optionalDependencies": {
