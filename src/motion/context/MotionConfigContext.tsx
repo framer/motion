@@ -3,8 +3,20 @@ import { createContext, useContext, useMemo } from "react"
 import { MotionFeature } from "../features/types"
 import { TransformPoint2D } from "../../types/geometry"
 
+/**
+ * @public
+ */
 export interface MotionConfigContext {
+    /**
+     * @internal
+     */
     transformPagePoint: TransformPoint2D
+
+    /**
+     * An array of features to provide to children.
+     *
+     * @public
+     */
     features: MotionFeature[]
 }
 
@@ -13,7 +25,7 @@ export interface MotionConfigProps extends Partial<MotionConfigContext> {
 }
 
 /**
- * @internal
+ * @public
  */
 export const MotionConfigContext = createContext<MotionConfigContext>({
     transformPagePoint: p => p,
