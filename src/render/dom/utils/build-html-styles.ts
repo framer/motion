@@ -134,7 +134,12 @@ export function buildHTMLStyles(
                 allowTransformNone
             )
         } else {
-            style.transform = createDeltaTransform(deltaFinal!, treeScale!)
+            style.transform = createDeltaTransform(
+                deltaFinal!,
+                treeScale!,
+                transform,
+                transformKeys
+            )
             if (transformTemplate)
                 style.transform = transformTemplate(transform, style.transform)
         }
@@ -142,6 +147,7 @@ export function buildHTMLStyles(
 
     // Only process transform origin if values aren't default
     if (hasTransformOrigin) {
+        console.log(deltaFinal!.x.origin)
         const originX = isLayoutProjectionEnabled
             ? deltaFinal!.x.origin * 100 + "%"
             : transformOrigin.originX || "50%"

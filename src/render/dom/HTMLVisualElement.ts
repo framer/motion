@@ -4,7 +4,7 @@ import { delta, copyAxisBox, axisBox } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
-import { isTransformProp } from "./utils/transform"
+import { isTransformProp, transformAxes } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
 import {
     Presence,
@@ -312,7 +312,7 @@ export class HTMLVisualElement<
     }
 
     /**
-     *
+     * Record the bounding box as it exists before a re-render.
      */
     snapshotBoundingBox() {
         this.prevViewportBox = this.getBoundingBoxWithoutTransforms()
@@ -371,6 +371,35 @@ export class HTMLVisualElement<
             : "none"
 
         // Ensure that whatever happens next, we restore our transform
+        this.scheduleRender()
+    }
+
+    /**
+     * This is currently only supported within Framer.
+     *
+     * @internal
+     */
+    resetRotate() {
+        let hasReset = false
+        const resetValues: ResolvedValues = {}
+
+        transformAxes.forEach(axis => {
+            const key = "rotate" + axis
+            if (!this.hasValue(key)) return
+
+            hasReset = true
+            resetValues[key] = this.latest[key]
+            this.latest[key] = 0
+        })
+
+        if (!hasReset) return
+
+        this.render()
+
+        for (const key in resetValues) {
+            this.latest[key] = resetValues[key]
+        }
+
         this.scheduleRender()
     }
 
@@ -459,6 +488,11 @@ export class HTMLVisualElement<
         applyTreeDeltas(this.boxCorrected, this.treePath as any)
 
         /**
+         *
+         */
+        const origin = true ? 0.5 : undefined
+
+        /**
          * Update the delta between the corrected box and the target box before user-set transforms were applied.
          * This will allow us to calculate the corrected borderRadius and boxShadow to compensate
          * for our layout reprojection, but still allow them to be scaled correctly by the user.
@@ -467,8 +501,8 @@ export class HTMLVisualElement<
          * to allow people to choose whether these styles are corrected based on just the
          * layout reprojection or the final bounding box.
          */
-        updateBoxDelta(this.delta, this.boxCorrected, this.targetBox)
-
+        updateBoxDelta(this.delta, this.boxCorrected, this.targetBox, origin)
+        console.log(this.delta.x.origin)
         /**
          * If we have a listener for the viewport box, fire it.
          */
@@ -495,12 +529,22 @@ export class HTMLVisualElement<
         applyBoxTransforms(this.targetBoxFinal, this.targetBox, this.latest)
 
         /**
+         *
+         */
+        const origin = true ? 0.5 : undefined
+
+        /**
          * Update the delta between the corrected box and the final target box, after
          * user-set transforms are applied to it. This will be used by the renderer to
          * create a transform style that will reproject the element from its actual layout
          * into the desired bounding box.
          */
-        updateBoxDelta(this.deltaFinal, this.boxCorrected, this.targetBoxFinal)
+        updateBoxDelta(
+            this.deltaFinal,
+            this.boxCorrected,
+            this.targetBoxFinal,
+            origin
+        )
     }
 
     /**

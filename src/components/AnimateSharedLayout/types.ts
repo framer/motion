@@ -60,7 +60,7 @@ export interface SharedLayoutProps {
      * can be reverse-applied to a measured bounding box.
      *
      * `rotate` is different in that it can't easily be reverse engineered from a measured bounding box.
-     * Setting `supportRotate` to `true` adds another write cycle to Magic Motion before the origin
+     * Setting `_supportRotate` to `true` adds another write cycle to Magic Motion before the origin
      * snapshot that resets rotate to `0`. It's then read from `style={{ rotate }}` and animated seperately.
      *
      * This isn't for general consumption and is only intended for use within Framer where the

@@ -2,7 +2,7 @@
  * A list of all transformable axes. We'll use this list to generated a version
  * of each axes for each transform.
  */
-const axes = ["", "X", "Y", "Z"]
+export const transformAxes = ["", "X", "Y", "Z"]
 
 /**
  * An ordered array of each transformable value. By default, transform values
@@ -15,7 +15,9 @@ const order = ["translate", "scale", "rotate", "skew", "transformPerspective"]
  */
 export const transformProps = ["x", "y", "z"]
 order.forEach(operationKey => {
-    axes.forEach(axesKey => transformProps.push(operationKey + axesKey))
+    transformAxes.forEach(axesKey =>
+        transformProps.push(operationKey + axesKey)
+    )
 })
 
 /**
