@@ -1,6 +1,6 @@
 import { RefObject, useRef, useContext, useEffect } from "react"
 import { EventInfo } from "../events/types"
-import { MotionPluginContext } from "../motion/context/MotionPluginContext"
+import { MotionConfigContext } from "../motion/context/MotionConfigContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { PanSession, PanInfo, AnyPointerEvent } from "./PanSession"
@@ -171,7 +171,7 @@ export function usePanGesture(
 ) {
     const hasPanEvents = onPan || onPanStart || onPanEnd || onPanSessionStart
     const panSession = useRef<PanSession | null>(null)
-    const { transformPagePoint } = useContext(MotionPluginContext)
+    const { transformPagePoint } = useContext(MotionConfigContext)
 
     const handlers = {
         onSessionStart: onPanSessionStart,

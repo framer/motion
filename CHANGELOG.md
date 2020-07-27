@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.2.0] 2020-07-27
+
+### Added
+
+-   `m` component is a lightweight, featureless version of the `motion` component.
+-   `MotionConfig` is used to dynamically provide features to `m` components via context.
+
 ## [2.1.4] 2020-07-24
 
 ### Added

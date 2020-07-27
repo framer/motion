@@ -5,28 +5,12 @@ import { useAnimateProp } from "../../animation/use-animate-prop"
 import { useVariants } from "../../animation/use-variants"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { AnimationControls } from "../../animation/AnimationControls"
-import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { TargetAndTransition } from "../../types"
-import { VisualElement } from "../../render/VisualElement"
-
-interface AnimationFeatureProps {
-    initial: MotionProps["initial"]
-    animate: MotionProps["animate"]
-    transition: MotionProps["transition"]
-    variants: MotionProps["variants"]
-    controls: VisualElementAnimationControls
-    visualElement: VisualElement
-    inherit: boolean
-}
+import { FeatureProps, MotionFeature } from "./types"
 
 export const AnimatePropComponents = {
-    [AnimatePropType.Target]: makeRenderlessComponent<AnimationFeatureProps>(
-        ({
-            animate,
-            controls,
-            visualElement,
-            transition,
-        }: AnimationFeatureProps) => {
+    [AnimatePropType.Target]: makeRenderlessComponent<FeatureProps>(
+        ({ animate, controls, visualElement, transition }: FeatureProps) => {
             return useAnimateProp(
                 animate as TargetAndTransition,
                 controls,
@@ -35,15 +19,8 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.VariantLabel]: makeRenderlessComponent<
-        AnimationFeatureProps
-    >(
-        ({
-            animate,
-            inherit = true,
-            controls,
-            initial,
-        }: AnimationFeatureProps) => {
+    [AnimatePropType.VariantLabel]: makeRenderlessComponent<FeatureProps>(
+        ({ animate, inherit = true, controls, initial }: FeatureProps) => {
             return useVariants(
                 initial as VariantLabels,
                 animate as VariantLabels,
@@ -53,8 +30,8 @@ export const AnimatePropComponents = {
         }
     ),
     [AnimatePropType.AnimationSubscription]: makeRenderlessComponent<
-        AnimationFeatureProps
-    >(({ animate, controls }: AnimationFeatureProps) => {
+        FeatureProps
+    >(({ animate, controls }: FeatureProps) => {
         return useAnimationGroupSubscription(
             animate as AnimationControls,
             controls
@@ -65,20 +42,20 @@ export const AnimatePropComponents = {
 const isVariantLabel = (prop?: any): prop is VariantLabels =>
     Array.isArray(prop) || typeof prop === "string"
 
-const isAnimationSubscription = ({ animate }: AnimationFeatureProps) =>
+const isAnimationSubscription = ({ animate }: FeatureProps) =>
     animate instanceof AnimationControls
 
 const animationProps = ["initial", "animate", "whileTap", "whileHover"]
 
 const animatePropTypeTests = {
-    [AnimatePropType.Target]: (props: AnimationFeatureProps) => {
+    [AnimatePropType.Target]: (props: FeatureProps) => {
         return (
             props.animate !== undefined &&
             !isVariantLabel(props.animate) &&
             !isAnimationSubscription(props)
         )
     },
-    [AnimatePropType.VariantLabel]: (props: AnimationFeatureProps) => {
+    [AnimatePropType.VariantLabel]: (props: FeatureProps) => {
         return (
             props.variants !== undefined ||
             animationProps.some(key => typeof props[key] === "string")
@@ -89,7 +66,7 @@ const animatePropTypeTests = {
 
 export const getAnimationComponent = (
     props: MotionProps
-): ComponentType<AnimationFeatureProps> | undefined => {
+): ComponentType<FeatureProps> | undefined => {
     let animatePropType: AnimatePropType | undefined = undefined
 
     for (const key in AnimatePropType) {
@@ -99,4 +76,13 @@ export const getAnimationComponent = (
     }
 
     return animatePropType ? AnimatePropComponents[animatePropType] : undefined
+}
+
+/**
+ * @public
+ */
+export const Animation: MotionFeature = {
+    key: "animation",
+    shouldRender: () => true,
+    getComponent: getAnimationComponent,
 }

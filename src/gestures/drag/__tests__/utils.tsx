@@ -1,6 +1,6 @@
 import * as React from "react"
 import sync from "framesync"
-import { MotionPlugins } from "../../../motion/context/MotionPluginContext"
+import { MotionConfig } from "../../../motion/context/MotionConfigContext"
 import { act } from "react-dom/test-utils"
 import { fireEvent } from "@testing-library/dom"
 
@@ -60,5 +60,5 @@ export const sleep = (ms: number) =>
     new Promise(resolve => setTimeout(resolve, ms))
 
 export const MockDrag = ({ children }: { children: React.ReactNode }) => (
-    <MotionPlugins transformPagePoint={() => pos}>{children}</MotionPlugins>
+    <MotionConfig transformPagePoint={() => pos}>{children}</MotionConfig>
 )

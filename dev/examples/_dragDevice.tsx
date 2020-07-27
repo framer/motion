@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, MotionPlugins } from "../../src"
+import { motion, MotionConfig } from "../../src"
 
 const styleA = {
     width: 100,
@@ -20,9 +20,9 @@ const invertScale = (scale: number) => point => {
 }
 
 const Device = ({ children }) => (
-    <MotionPlugins transformPagePoint={invertScale(0.5)}>
+    <MotionConfig transformPagePoint={invertScale(0.5)}>
         <div style={device}>{children}</div>
-    </MotionPlugins>
+    </MotionConfig>
 )
 
 export const App = () => {

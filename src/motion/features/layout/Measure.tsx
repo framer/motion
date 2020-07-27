@@ -63,12 +63,14 @@ class Measure extends React.Component<SyncProps> {
     }
 }
 
+function MeasureContextProvider(props: FeatureProps) {
+    const syncLayout = useContext(SharedLayoutContext)
+    return <Measure {...props} syncLayout={syncLayout} />
+}
+
 export const MeasureLayout: MotionFeature = {
     key: "measure-layout",
     shouldRender: (props: MotionProps) =>
         !!props.drag || !!props.layout || !!props.layoutId,
-    Component: (props: FeatureProps) => {
-        const syncLayout = useContext(SharedLayoutContext)
-        return <Measure {...props} syncLayout={syncLayout} />
-    },
+    getComponent: () => MeasureContextProvider,
 }

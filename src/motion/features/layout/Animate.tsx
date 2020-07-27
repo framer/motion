@@ -217,13 +217,9 @@ class Animate extends React.Component<AnimateProps> {
     }
 }
 
-export const AnimateLayout: MotionFeature = {
-    key: "animate-layout",
-    shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
-    Component: (props: FeatureProps) => {
-        const [, safeToRemove] = usePresence()
-        return <Animate {...props} safeToRemove={safeToRemove} />
-    },
+function AnimateLayoutContextProvider(props: FeatureProps) {
+    const [, safeToRemove] = usePresence()
+    return <Animate {...props} safeToRemove={safeToRemove} />
 }
 
 function hasMoved(a: AxisBox2D, b: AxisBox2D) {
@@ -254,3 +250,12 @@ function compress(
 
 const easeCrossfadeIn = compress(0, 0.5, circOut)
 const easeCrossfadeOut = compress(0.5, 0.95, linear)
+
+/**
+ * @public
+ */
+export const AnimateLayout: MotionFeature = {
+    key: "animate-layout",
+    shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
+    getComponent: () => AnimateLayoutContextProvider,
+}

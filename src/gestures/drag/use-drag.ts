@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react"
-import { MotionPluginContext } from "../../motion/context/MotionPluginContext"
+import { MotionConfigContext } from "../../motion/context/MotionConfigContext"
 import { DraggableProps } from "./types"
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"
@@ -13,7 +13,7 @@ import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
  */
 export function useDrag(props: DraggableProps, visualElement: VisualElement) {
     const { dragControls: groupDragControls } = props
-    const { transformPagePoint } = useContext(MotionPluginContext)
+    const { transformPagePoint } = useContext(MotionConfigContext)
 
     const dragControls = useConstant(() => {
         return new VisualElementDragControls({
