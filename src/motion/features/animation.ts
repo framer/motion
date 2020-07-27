@@ -78,6 +78,9 @@ export const getAnimationComponent = (
     return animatePropType ? AnimatePropComponents[animatePropType] : undefined
 }
 
+/**
+ * @public
+ */
 export const Animation: MotionFeature = {
     key: "animation",
     shouldRender: () => true,

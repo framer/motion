@@ -222,12 +222,6 @@ function AnimateLayoutContextProvider(props: FeatureProps) {
     return <Animate {...props} safeToRemove={safeToRemove} />
 }
 
-export const AnimateLayout: MotionFeature = {
-    key: "animate-layout",
-    shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
-    getComponent: () => AnimateLayoutContextProvider,
-}
-
 function hasMoved(a: AxisBox2D, b: AxisBox2D) {
     return hasAxisMoved(a.x, b.x) || hasAxisMoved(a.y, b.y)
 }
@@ -256,3 +250,12 @@ function compress(
 
 const easeCrossfadeIn = compress(0, 0.5, circOut)
 const easeCrossfadeOut = compress(0.5, 0.95, linear)
+
+/**
+ * @public
+ */
+export const AnimateLayout: MotionFeature = {
+    key: "animate-layout",
+    shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
+    getComponent: () => AnimateLayoutContextProvider,
+}

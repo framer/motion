@@ -23,6 +23,9 @@ const GestureComponent = makeRenderlessComponent(
     }
 )
 
+/**
+ * @public
+ */
 export const Gestures: MotionFeature = {
     key: "gestures",
     shouldRender: (props: MotionProps) => {

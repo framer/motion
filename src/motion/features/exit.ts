@@ -43,6 +43,9 @@ const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
     }, [animate, controls, custom, exit, isPresent, onExitComplete, props])
 })
 
+/**
+ * @public
+ */
 export const Exit: MotionFeature = {
     key: "exit",
     shouldRender: props => !!props.exit && !checkShouldInheritVariant(props),
