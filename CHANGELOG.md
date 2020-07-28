@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.0] 2020-07-28
+
+### Added
+
+-   `useTemplate`, a hook for combining MotionValues using a string template literal.
+
 ## [2.2.0] 2020-07-27
 
 ### Added
