@@ -16,7 +16,10 @@ export const App = () => {
                 initial={false}
                 transition={{ duration: 1 }}
                 style={isOn ? bigParent : smallParent}
-                animate={{ rotate: isOn ? 45 : 10 }}
+                animate={{
+                    rotate: isOn ? 45 : 10,
+                    borderRadius: isOn ? 0 : 50,
+                }}
                 onClick={() => setIsOn(!isOn)}
             >
                 <motion.div
@@ -24,7 +27,10 @@ export const App = () => {
                     initial={false}
                     transition={{ duration: 1 }}
                     style={isOn ? bigChild : smallChild}
-                    animate={{ rotate: isOn ? 0 : 45 }}
+                    animate={{
+                        rotate: isOn ? 0 : 45,
+                        borderRadius: isOn ? 20 : 0,
+                    }}
                 />
             </motion.div>
         </AnimateSharedLayout>
@@ -41,7 +47,6 @@ const bigParent = {
     ...parent,
     width: 400,
     height: 400,
-    borderRadius: 0,
     justifyContent: "flex-start",
     alignItems: "flex-start",
 }
@@ -49,7 +54,6 @@ const smallParent = {
     ...parent,
     width: 100,
     height: 100,
-    borderRadius: 50,
 }
 
 const child = {
@@ -59,11 +63,9 @@ const bigChild = {
     ...child,
     width: 100,
     height: 100,
-    borderRadius: 20,
 }
 const smallChild = {
     ...child,
     width: 50,
     height: 50,
-    borderRadius: 0,
 }

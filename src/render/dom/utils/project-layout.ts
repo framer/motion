@@ -1,6 +1,6 @@
 import { BoxDelta, Point2D } from "../../../types/geometry"
 import { ResolvedValues } from "../../types"
-import { sortTransformProps } from "./transform"
+import { sortTransformProps, boxDistortingKeys } from "./transform"
 
 export function createDeltaTransform(
     delta: BoxDelta,
@@ -21,7 +21,9 @@ export function createDeltaTransform(
 
         for (let i = 0; i < numTransformKeys; i++) {
             const key = transformKeys[i]
-            transform += ` ${key}(${latestTransform[key]})`
+            if (boxDistortingKeys.has(key)) {
+                transform += ` ${key}(${latestTransform[key]})`
+            }
         }
     }
 

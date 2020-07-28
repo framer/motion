@@ -124,6 +124,13 @@ export class HTMLVisualElement<
         return this.getComputedStyle()[key] || 0
     }
 
+    addValue(key: string, value: MotionValue) {
+        super.addValue(key, value)
+
+        //
+        if (key.startsWith("rotate")) this.layoutOrigin = 0.5
+    }
+
     /**
      * Read a value directly from the HTMLElement in case it's not defined by a Motion
      * prop. If it's a transform, we just return a pre-defined default value as reading these
@@ -247,6 +254,14 @@ export class HTMLVisualElement<
      * could be to provide this to the buildHTMLStyle function.
      */
     deltaTransform: string
+
+    /**
+     * If we've got a rotate motion value, we force layout projection calculations
+     * to use o layout origin of 0.5 rather than dynamically calculating one based
+     * on relative positioning. This is so the component always rotates around its center rather
+     * than an arbitrarily computed point.
+     */
+    private layoutOrigin: number | undefined
 
     /**
      *
@@ -375,31 +390,51 @@ export class HTMLVisualElement<
     }
 
     /**
-     * This is currently only supported within Framer.
+     * Reset rotate on this element. Doing so allows us to accurately measure the
+     * bounding box of the element.
+     *
+     * This function will only be called if _supportRotate is enabled in a parent
+     * AnimateSharedLayout. This is a private prop for use within Framer. It allows
+     * us to support rotation in Magic Motion.
      *
      * @internal
      */
     resetRotate() {
-        let hasReset = false
+        // If there's no detected rotation values, we can early return without a forced render.
+        let hasRotate = false
+
+        // Keep a record of all the values we've reset
         const resetValues: ResolvedValues = {}
 
+        // Check the rotate value of all axes and reset to 0
         transformAxes.forEach(axis => {
             const key = "rotate" + axis
+
+            // If this rotation doesn't exist as a motion value, then we don't
+            // need to reset it
             if (!this.hasValue(key)) return
 
-            hasReset = true
+            hasRotate = true
+
+            // Record the rotation and then temporarily set it to 0
             resetValues[key] = this.latest[key]
             this.latest[key] = 0
         })
 
-        if (!hasReset) return
+        // If there's no rotation values, we don't need to do any more.
+        if (!hasRotate) return
 
+        // Force a render of this element to apply the transform with all rotations
+        // set to 0.
         this.render()
 
+        // Put back all the values we reset
         for (const key in resetValues) {
             this.latest[key] = resetValues[key]
         }
 
+        // Schedule a render for the next frame. This ensures we won't visually
+        // see the element with the reset rotate value applied.
         this.scheduleRender()
     }
 
@@ -488,11 +523,6 @@ export class HTMLVisualElement<
         applyTreeDeltas(this.boxCorrected, this.treePath as any)
 
         /**
-         *
-         */
-        const origin = true ? 0.5 : undefined
-
-        /**
          * Update the delta between the corrected box and the target box before user-set transforms were applied.
          * This will allow us to calculate the corrected borderRadius and boxShadow to compensate
          * for our layout reprojection, but still allow them to be scaled correctly by the user.
@@ -501,8 +531,13 @@ export class HTMLVisualElement<
          * to allow people to choose whether these styles are corrected based on just the
          * layout reprojection or the final bounding box.
          */
-        updateBoxDelta(this.delta, this.boxCorrected, this.targetBox, origin)
-        console.log(this.delta.x.origin)
+        updateBoxDelta(
+            this.delta,
+            this.boxCorrected,
+            this.targetBox,
+            this.layoutOrigin
+        )
+
         /**
          * If we have a listener for the viewport box, fire it.
          */
@@ -529,11 +564,6 @@ export class HTMLVisualElement<
         applyBoxTransforms(this.targetBoxFinal, this.targetBox, this.latest)
 
         /**
-         *
-         */
-        const origin = true ? 0.5 : undefined
-
-        /**
          * Update the delta between the corrected box and the final target box, after
          * user-set transforms are applied to it. This will be used by the renderer to
          * create a transform style that will reproject the element from its actual layout
@@ -543,7 +573,7 @@ export class HTMLVisualElement<
             this.deltaFinal,
             this.boxCorrected,
             this.targetBoxFinal,
-            origin
+            this.layoutOrigin
         )
     }
 

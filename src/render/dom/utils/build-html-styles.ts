@@ -53,7 +53,7 @@ export function buildHTMLStyles(
 
     // Track whether we encounter any transform or transformOrigin values.
     let hasTransform = !!isLayoutProjectionEnabled
-    let hasTransformOrigin = !!isLayoutProjectionEnabled
+    let hasTransformOrigin = hasTransform
 
     // Does the calculated transform essentially equal "none"?
     let transformIsNone = true
@@ -122,7 +122,7 @@ export function buildHTMLStyles(
         }
     }
 
-    // Only process transform if values aren't defaults
+    // Only process transform if we have transform values
     if (hasTransform || transformTemplate) {
         if (!isLayoutProjectionEnabled) {
             style.transform = buildTransform(
@@ -145,9 +145,8 @@ export function buildHTMLStyles(
         }
     }
 
-    // Only process transform origin if values aren't default
+    // Only process transformOrigin if we have transformOrigin values
     if (hasTransformOrigin) {
-        console.log(deltaFinal!.x.origin)
         const originX = isLayoutProjectionEnabled
             ? deltaFinal!.x.origin * 100 + "%"
             : transformOrigin.originX || "50%"
