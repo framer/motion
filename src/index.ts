@@ -18,11 +18,11 @@ export { AnimateLayout as AnimateLayoutFeature } from "./motion/features/layout/
  * Motion values
  */
 export { useMotionValue } from "./value/use-motion-value"
+export { useMotionTemplate } from "./value/use-motion-template"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { resolveMotionValue } from "./value/utils/resolve-motion-value"
 export { useInvertedScale } from "./value/use-inverted-scale"
 export { useTransform } from "./value/use-transform"
-export { useTemplate } from "./value/use-template"
 export { useSpring } from "./value/use-spring"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export { useElementScroll } from "./value/scroll/use-element-scroll"

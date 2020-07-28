@@ -2,15 +2,15 @@ import { render } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
-import { useTemplate } from "../use-template"
+import { useMotionTemplate } from "../use-motion-template"
 import { MotionValue, motionValue } from ".."
 
-describe("useTemplate", () => {
+describe("useMotionTemplate", () => {
     test("sets initial value", async () => {
         const Component = () => {
             const x = useMotionValue(1)
             const y = useMotionValue(2)
-            const transform = useTemplate`translateX(${x}px) translateY(${y}px)`
+            const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px)`
             return <motion.div style={{ transform }} />
         }
 
@@ -25,7 +25,7 @@ describe("useTemplate", () => {
         const Component = () => {
             const x = useMotionValue(1)
             const y = useMotionValue(2)
-            const transform = useTemplate`translateX(${x}px) translateY(${y}px)`
+            const transform = useMotionTemplate`translateX(${x}px) translateY(${y}px)`
 
             React.useEffect(() => {
                 x.set(10)
@@ -51,7 +51,7 @@ describe("useTemplate", () => {
         const a = motionValue(1)
         const b = motionValue(2)
         const Component = ({ value }: { value: MotionValue }) => {
-            const transform = useTemplate`translateX(${value}px)`
+            const transform = useMotionTemplate`translateX(${value}px)`
             return <motion.div style={{ transform }} />
         }
 

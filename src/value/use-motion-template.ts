@@ -11,13 +11,13 @@ import { useMotionValue } from "./use-motion-value"
  *   motion,
  *   useSpring,
  *   useMotionValue,
- *   useTemplate
+ *   useMotionTemplate
  * } from "framer-motion"
  *
  * function Component() {
  *   const shadowX = useSpring(0)
  *   const shadowY = useMotionValue(0)
- *   const shadow = useTemplate`drop-shadow(${shadowX}px ${shadowY}px 20px rgba(0,0,0,0.3))`
+ *   const shadow = useMotionTemplate`drop-shadow(${shadowX}px ${shadowY}px 20px rgba(0,0,0,0.3))`
  *
  *   return <motion.div style={{ filter: shadow }} />
  * }
@@ -25,7 +25,7 @@ import { useMotionValue } from "./use-motion-value"
  *
  * @public
  */
-export function useTemplate(
+export function useMotionTemplate(
     fragments: TemplateStringsArray,
     ...values: MotionValue[]
 ) {
@@ -68,12 +68,12 @@ export function useTemplate(
      * Subscribe to all motion values found within the template. Whenever any of them change,
      * schedule an update.
      */
-    useSubscriptions(values, () => sync.update(updateValue, false, true))
+    useValueOnChange(values, () => sync.update(updateValue, false, true))
 
     return value
 }
 
-function useSubscriptions(values: MotionValue[], handler: () => void) {
+function useValueOnChange(values: MotionValue[], handler: () => void) {
     useEffect(() => {
         const subscriptions = values.map(value => value.onChange(handler))
         return () => subscriptions.forEach(unsubscribe => unsubscribe())
