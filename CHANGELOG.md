@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.3.1] Unreleased
+
+### Added
+
+-   Support for rotate in `AnimateSharedLayout`. This is an internal feature only for use in Framer.
+
 ## [2.3.0] 2020-07-28
 
 ### Added
