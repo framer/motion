@@ -127,7 +127,8 @@ export class HTMLVisualElement<
     addValue(key: string, value: MotionValue) {
         super.addValue(key, value)
 
-        //
+        // If we have rotate values we want to foce the layoutOrigin used in layout projection
+        // to the center of the element.
         if (key.startsWith("rotate")) this.layoutOrigin = 0.5
     }
 
