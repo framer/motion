@@ -1,6 +1,8 @@
 import { TransformTemplate } from "../../../motion/types"
 import { ResolvedValues } from "../../types"
-import { sortTransformProps } from "./transform"
+import { sortTransformProps, boxDistortingKeys } from "./transform"
+import { Point2D, BoxDelta } from "../../../types/geometry"
+import { TransformOrigin } from "../types"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -22,15 +24,15 @@ export function buildTransform(
     enableHardwareAcceleration = true,
     allowTransformNone = true
 ) {
-    // The transform string we're going to build into
+    // The transform string we're going to build into.
     let transformString = ""
+
+    // Transform keys into their default order - this will determine the output order.
+    transformKeys.sort(sortTransformProps)
 
     // Track whether the defined transform has a defined z so we don't add a
     // second to enable hardware acceleration
     let transformHasZ = false
-
-    // Transform keys into their default order - this will determine the output order.
-    transformKeys.sort(sortTransformProps)
 
     // Loop over each transform and build them into transformString
     const numTransformKeys = transformKeys.length
@@ -56,6 +58,48 @@ export function buildTransform(
         )
     } else if (allowTransformNone && transformIsDefault) {
         transformString = "none"
+    }
+
+    return transformString
+}
+
+export function buildTransformOrigin({
+    originX = "50%",
+    originY = "50%",
+    originZ = 0,
+}: TransformOrigin) {
+    return `${originX} ${originY} ${originZ}`
+}
+
+export function buildLayoutProjectionTransform(
+    delta: BoxDelta,
+    treeScale: Point2D
+) {
+    const x = delta.x.translate / treeScale.x
+    const y = delta.y.translate / treeScale.y
+    const scaleX = delta.x.scale
+    const scaleY = delta.y.scale
+    return `translate3d(${x}px, ${y}px, 0) scale(${scaleX}, ${scaleY})`
+}
+
+export function buildLayoutProjectionTransformOrigin({ x, y }: BoxDelta) {
+    return `${x.origin * 100}% ${y.origin * 100}% 0`
+}
+
+export function buildBoxDistortingTransforms(
+    transform: ResolvedValues,
+    transformKeys: string[]
+) {
+    let transformString = ""
+
+    transformKeys.sort(sortTransformProps)
+
+    const numTransformKeys = transformKeys.length
+    for (let i = 0; i < numTransformKeys; i++) {
+        const key = transformKeys[i]
+        if (boxDistortingKeys.has(key)) {
+            transformString += `${key}(${transform[key]}) `
+        }
     }
 
     return transformString

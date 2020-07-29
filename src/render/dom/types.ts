@@ -56,9 +56,9 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
 }
 
 export interface TransformOrigin {
-    originX?: number
-    originY?: number
-    originZ?: number
+    originX?: number | string
+    originY?: number | string
+    originZ?: number | string
 }
 
 /**
