@@ -66,4 +66,15 @@ export interface LayoutProps {
      * @public
      */
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
+
+    /**
+     * If `false`, this component won't perform a layout animation on the current render.
+     * If this kind of functionality is to be made public, a prop like layoutDependency would probably
+     * make for a friendlier API.
+     *
+     * This is currently only intended for use within Framer.
+     *
+     * @internal
+     */
+    _shouldAnimateLayout?: boolean
 }

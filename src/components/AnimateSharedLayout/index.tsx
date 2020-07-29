@@ -48,7 +48,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      */
     syncContext: SharedLayoutSyncMethods = {
         ...createBatcher(),
-        syncUpdate: force => this.scheduleUpdate(force),
+        syncUpdate: () => this.scheduleUpdate(),
         forceUpdate: () => {
             // By copying syncContext to itself, when this component re-renders it'll also re-render
             // all children subscribed to the SharedLayout context.
@@ -74,12 +74,14 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     }
 
     startLayoutAnimation() {
+        const { type, _shouldAnimate } = this.props
+
+        if (_shouldAnimate === false) return
+
         /**
          * Reset update and render scheduled status
          */
         this.renderScheduled = this.updateScheduled = false
-
-        const { type } = this.props
 
         /**
          * Update presence metadata based on the latest AnimatePresence status.
@@ -145,7 +147,10 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     }
 
     scheduleUpdate(force = false) {
-        if (!(force || !this.updateScheduled)) return
+        const { _shouldAnimate } = this.props
+        if (!(force || !this.updateScheduled) || _shouldAnimate === false) {
+            return
+        }
 
         /**
          * Flag we've scheduled an update

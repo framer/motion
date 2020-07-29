@@ -34,25 +34,16 @@ export interface SharedLayoutProps {
     type?: "switch" | "crossfade"
 
     /**
-     * `transition` settings to use for the animate animation. Currently, only one transition
-     * can be defined for every animating value and every animating component.
+     * By default, `AnimateSharedLayout` will run layout animations on all children on every render,
+     * and on every child render.
+     *
+     * To improve performance we can pass use `_shouldAnimate` to disable this on particular render.
+     *
+     * This is only intended for use within Framer.
      *
      * @internal
      */
-    _transition?: Transition
-
-    /**
-     * By default, `SharedLayoutProps` will run a animate animation on all children every time
-     * it renders.
-     *
-     * To improve performance we can pass a variable to `dependency`, like a piece of state or a URL.
-     * `SharedLayoutProps` will only run animate animations when this dependency changes.
-     *
-     * TODO: Potentially replace this with a shouldAnimate
-     *
-     * @internal
-     */
-    _dependency?: any
+    _shouldAnimate?: any
 
     /**
      * Currently, transforms intefere with Magic Motion measurements. There may be a future

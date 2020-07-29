@@ -62,7 +62,12 @@ class Animate extends React.Component<AnimateProps> {
             ...config
         }: SharedLayoutAnimationConfig = {}
     ) => {
-        const { visualElement, layout } = this.props
+        const { visualElement, layout, _shouldAnimateLayout } = this.props
+
+        /**
+         * Early return if we've been instructed not to animate this render.
+         */
+        if (_shouldAnimateLayout === false) return this.safeToRemove()
 
         /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be

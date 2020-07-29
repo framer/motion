@@ -56,6 +56,9 @@ class Measure extends React.Component<SyncProps> {
         return null
     }
 
+    /**
+     * We have to stub this if we've defined getSnapshotBeforeUpdate to avoid React dev warnings.
+     */
     componentDidUpdate() {}
 
     render() {

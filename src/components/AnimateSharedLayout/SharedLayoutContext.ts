@@ -23,7 +23,7 @@ export interface SyncLayoutBatcher {
  * Extra API methods available to children if they're a descendant of AnimateSharedLayout
  */
 export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
-    syncUpdate: (force?: boolean) => void
+    syncUpdate: () => void
     forceUpdate: () => void
     register: (child: HTMLVisualElement) => void
     remove: (child: HTMLVisualElement) => void
