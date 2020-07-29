@@ -20,6 +20,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "static",
     "layout",
     "layoutId",
+    "_layoutOrder",
     "onLayoutAnimationComplete",
     "onViewportBoxUpdate",
     "onAnimationStart",

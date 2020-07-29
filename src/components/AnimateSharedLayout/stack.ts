@@ -118,14 +118,14 @@ export class LayoutStack {
     hasChildren: boolean = false
 
     add(child: HTMLVisualElement) {
-        const { layoutOrder } = child.config
+        const { _layoutOrder } = child.config
 
-        if (layoutOrder === undefined) {
+        if (_layoutOrder === undefined) {
             this.order.push(child)
         } else {
             let index = this.order.findIndex(
                 stackChild =>
-                    layoutOrder <= (stackChild.config.layoutOrder || 0)
+                    _layoutOrder <= (stackChild.config._layoutOrder || 0)
             )
 
             if (index === -1) {

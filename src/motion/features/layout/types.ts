@@ -66,4 +66,12 @@ export interface LayoutProps {
      * @public
      */
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
+
+    /**
+     * Components with a layoutId are added to a stack with that layoutId in the other
+     * they were added. Using _layoutOrder can assume manual control of this logic.
+     *
+     * @internal
+     */
+    _layoutOrder?: number
 }
