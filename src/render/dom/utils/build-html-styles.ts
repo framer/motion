@@ -138,6 +138,10 @@ export function buildHTMLStyles(
             treeScale!
         )
 
+        /**
+         * If we have transform styles, build only those that distort bounding boxes (rotate/skew)
+         * as translations and scales will already have been used to calculate deltaFinal.
+         */
         if (hasTransform) {
             style.transform +=
                 " " + buildBoxDistortingTransforms(transform, transformKeys)

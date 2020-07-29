@@ -25,7 +25,7 @@ import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
-import { createDeltaTransform } from "./utils/project-layout"
+import { buildLayoutProjectionTransform } from "./utils/build-transform"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -548,7 +548,10 @@ export class HTMLVisualElement<
         /**
          * Ensure this element renders on the next frame if the projection transform has changed.
          */
-        const deltaTransform = createDeltaTransform(this.delta, this.treeScale)
+        const deltaTransform = buildLayoutProjectionTransform(
+            this.delta,
+            this.treeScale
+        )
         deltaTransform !== this.deltaTransform && this.scheduleRender()
         this.deltaTransform = deltaTransform
     }
