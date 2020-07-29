@@ -57,7 +57,7 @@ export function buildHTMLStyles(
     transformKeys.length = 0
 
     // Track whether we encounter any transform or transformOrigin values.
-    let hasTransform = !!isLayoutProjectionEnabled
+    let hasTransform = false
     let hasTransformOrigin = false
 
     // Does the calculated transform essentially equal "none"?
