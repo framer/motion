@@ -445,7 +445,7 @@ export class MotionValue<V = any> {
     isAnimating(): boolean;
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
-    onRenderRequest(subscription: Subscriber<V>): () => boolean;
+    onRenderRequest(subscription: Subscriber<V>): () => void;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
     // 
@@ -454,8 +454,10 @@ export class MotionValue<V = any> {
     stop(): void;
     // (undocumented)
     updateAndNotify: (v: V, render?: boolean) => void;
+    // Warning: (ae-forgotten-export) The symbol "SubscriptionManager" needs to be exported by the entry point index.d.ts
+    // 
     // @internal
-    updateSubscribers?: Set<Subscriber<V>>;
+    updateSubscribers: SubscriptionManager<Subscriber<V>>;
     }
 
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
@@ -712,6 +714,9 @@ export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotio
 
 // @public (undocumented)
 export function useIsPresent(): boolean;
+
+// @public
+export function useMotionTemplate(fragments: TemplateStringsArray, ...values: MotionValue[]): MotionValue<string>;
 
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;

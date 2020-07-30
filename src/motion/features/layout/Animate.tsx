@@ -39,7 +39,7 @@ class Animate extends React.Component<AnimateProps> {
         y: undefined,
     }
 
-    private unsubLayoutReady: () => {}
+    private unsubLayoutReady: () => void
 
     componentDidMount() {
         const { visualElement } = this.props
