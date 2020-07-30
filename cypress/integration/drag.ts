@@ -67,7 +67,7 @@ describe("Drag", () => {
 
     it("Direction locks to x", () => {
         cy.visit("?test=drag&lock=true")
-            .wait(100)
+            .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
             .trigger("pointerdown", 5, 5)
@@ -89,7 +89,7 @@ describe("Drag", () => {
 
     it("Direction locks to y", () => {
         cy.visit("?test=drag&lock=true")
-            .wait(100)
+            .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
             .trigger("pointerdown", 5, 5)
@@ -113,6 +113,7 @@ describe("Drag", () => {
         cy.visit("?test=drag&right=100&bottom=100")
             .wait(200)
             .get("[data-testid='draggable']")
+            .wait(100)
             .trigger("pointerdown", 5, 5)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
@@ -132,6 +133,7 @@ describe("Drag", () => {
         cy.visit("?test=drag&left=-10&top=-10")
             .wait(200)
             .get("[data-testid='draggable']")
+            .wait(100)
             .trigger("pointerdown", 40, 40)
             .trigger("pointermove", 30, 30) // Gesture will start from first move past threshold
             .wait(50)
