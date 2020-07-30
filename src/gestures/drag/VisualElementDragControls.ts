@@ -397,11 +397,15 @@ export class VisualElementDragControls {
         if (!offset || !handler) return
 
         const { dragElastic } = this.props
-        const update = applyConstraints(
-            this.originPoint[axis]?.get()! + offset[axis],
-            this.constraints?.[axis],
-            dragElastic as number
-        )
+        const nextValue = this.originPoint[axis]?.get()! + offset[axis]
+
+        const update = this.constraints
+            ? applyConstraints(
+                  nextValue,
+                  this.constraints?.[axis],
+                  dragElastic as number
+              )
+            : nextValue
 
         handler.set(update)
     }
