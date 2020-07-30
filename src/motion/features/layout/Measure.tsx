@@ -57,7 +57,7 @@ class Measure extends React.Component<SyncProps> {
                 _layoutOrder !== prevProps._layoutOrder
             ) {
                 syncLayout.remove(visualElement)
-                syncLayout.add(visualElement)
+                syncLayout.register(visualElement)
             }
         } else {
             /**

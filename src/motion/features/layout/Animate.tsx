@@ -158,8 +158,11 @@ class Animate extends React.Component<AnimateProps> {
          * If this is a crossfade animation, create a function that updates both the opacity of this component
          * and the one being crossfaded out.
          */
-        const crossfade =
-            crossfadeOpacity && this.createCrossfadeAnimation(crossfadeOpacity)
+        let crossfade: (p: number) => void
+        if (crossfadeOpacity) {
+            crossfade = this.createCrossfadeAnimation(crossfadeOpacity)
+            visualElement.show()
+        }
 
         /**
          * Create an animation function to run once per frame. This will tween the visual bounding box from

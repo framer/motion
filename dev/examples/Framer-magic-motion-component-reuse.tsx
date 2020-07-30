@@ -34,37 +34,39 @@ const card = {
 
 function A({ layoutOrder }) {
     return (
-        <motion.div style={screen}>
+        <div style={screen}>
             <motion.div
                 layoutId="card"
-                layoutOrder={layoutOrder}
+                _layoutOrder={layoutOrder}
+                transition={{ duration: 2 }}
                 style={{ ...card, top: 200, background: "green" }}
             ></motion.div>
-        </motion.div>
+        </div>
     )
 }
 
 function B({ layoutOrder }) {
     return (
-        <motion.div style={screen}>
+        <div style={screen}>
             <motion.div
                 layoutId="card"
-                layoutOrder={layoutOrder}
-                style={{ ...card, top: 200, background: "red" }}
+                _layoutOrder={layoutOrder}
+                transition={{ duration: 2 }}
+                style={{ ...card, top: 100, background: "red" }}
             ></motion.div>
-        </motion.div>
+        </div>
     )
 }
 
 function C({ layoutOrder }) {
     return (
-        <motion.div style={screen}>
+        <div style={screen}>
             <motion.div
                 layoutId="card"
-                layoutOrder={layoutOrder}
+                _layoutOrder={layoutOrder}
                 style={{ ...card, background: "blue" }}
             ></motion.div>
-        </motion.div>
+        </div>
     )
 }
 
@@ -101,7 +103,7 @@ export const App = () => {
         <Container onClick={() => setPage(page + 1)}>
             <AnimateSharedLayout
                 type="crossfade"
-                supportRotate
+                _supportRotate
                 transition={{ duration: 2 }}
             >
                 <AnimatePresence>
