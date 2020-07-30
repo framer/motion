@@ -191,7 +191,7 @@ export class MotionValue<V = any> {
      * @public
      */
     onChange(subscription: Subscriber<V>): () => void {
-        return this.updateSubscribers.subscribe(subscription)
+        return this.updateSubscribers.add(subscription)
     }
 
     clearListeners() {
@@ -207,7 +207,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     onRenderRequest(subscription: Subscriber<V>) {
-        return this.renderSubscribers.subscribe(subscription)
+        return this.renderSubscribers.add(subscription)
     }
 
     /**

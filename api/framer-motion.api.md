@@ -445,7 +445,7 @@ export class MotionValue<V = any> {
     isAnimating(): boolean;
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
-    onRenderRequest(subscription: Subscriber<V>): () => void;
+    onRenderRequest(subscription: Subscriber<V>): () => boolean;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
     // 

@@ -27,7 +27,7 @@ import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 import { createDeltaTransform } from "./utils/project-layout"
 import { SubscriptionManager } from "../../utils/subscription-manager"
-import { MotionProps } from "../../motion/types"
+import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -115,8 +115,18 @@ export class HTMLVisualElement<
         this.transform = {}
     }
 
+    private removeOnViewportBoxUpdate?: () => void
+
     updateConfig(config: DOMVisualElementConfig = {}) {
         this.config = { ...this.defaultConfig, ...config }
+
+        // Handle onViewportBoxUpdate prop as a normal subscription to onViewportBoxUpdate
+        if (config.onViewportBoxUpdate) {
+            this.removeOnViewportBoxUpdate?.()
+            this.removeOnViewportBoxUpdate = this.onViewportBoxUpdate(
+                config.onViewportBoxUpdate
+            )
+        }
     }
 
     /**
@@ -160,7 +170,7 @@ export class HTMLVisualElement<
     >()
 
     private viewportBoxUpdateListeners = new SubscriptionManager<
-        MotionProps["onViewportBoxUpdate"]
+        OnViewportBoxUpdate
     >()
 
     /**
@@ -283,11 +293,11 @@ export class HTMLVisualElement<
      * for this via a `motion` prop.
      */
     onLayoutUpdate(callback: LayoutUpdateHandler) {
-        return this.layoutUpdateListeners.subscribe(callback)
+        return this.layoutUpdateListeners.add(callback)
     }
 
-    onViewportBoxUpdate(callback: MotionProps["onViewportBoxUpdate"]) {
-        return this.viewportBoxUpdateListeners.subscribe(callback)
+    onViewportBoxUpdate(callback: OnViewportBoxUpdate) {
+        return this.viewportBoxUpdateListeners.add(callback)
     }
 
     /**
