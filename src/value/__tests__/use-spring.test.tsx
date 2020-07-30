@@ -69,6 +69,6 @@ describe("useSpring", () => {
         rerender(<Component target={a} />)
         rerender(<Component target={a} />)
 
-        expect((a!.updateSubscribers! as any).numSubscriptions).toBe(1)
+        expect((a!.updateSubscribers! as any).subscriptions.size).toBe(1)
     })
 })
