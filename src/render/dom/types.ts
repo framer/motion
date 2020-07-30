@@ -48,8 +48,6 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
      */
     transformTemplate?: MotionProps["transformTemplate"]
 
-    onViewportBoxUpdate?: MotionProps["onViewportBoxUpdate"]
-
     transition?: MotionProps["transition"]
 
     layoutOrder?: number

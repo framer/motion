@@ -1,5 +1,7 @@
 import { AxisBox2D, BoxDelta } from "../../../types/geometry"
 
+export type OnViewportBoxUpdate = (box: AxisBox2D, delta: BoxDelta) => void
+
 /**
  * @public
  */
