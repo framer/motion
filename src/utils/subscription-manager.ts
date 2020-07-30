@@ -16,12 +16,12 @@ export class SubscriptionManager<Handler extends GenericHandler> {
          * Using ...args would be preferable but it's array creation and this
          * might be fired every frame.
          */
-        a?: Parameters<Handler>[0],
-        b?: Parameters<Handler>[1],
-        c?: Parameters<Handler>[2]
+        _a?: Parameters<Handler>[0],
+        _b?: Parameters<Handler>[1],
+        _c?: Parameters<Handler>[2]
     ) {
         for (const handler of this.subscriptions) {
-            ;(handler as any)(a, b, c)
+            handler.call(arguments)
         }
     }
 
