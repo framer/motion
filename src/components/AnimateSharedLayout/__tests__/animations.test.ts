@@ -160,12 +160,14 @@ describe("createCrossfadeAnimation", () => {
         // A1
         expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "bTarget",
+            shouldStackAnimate: true,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
+            shouldStackAnimate: true,
         })
     })
 
@@ -181,11 +183,13 @@ describe("createCrossfadeAnimation", () => {
         // A1
         expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "bTarget",
+            shouldStackAnimate: true,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
+            shouldStackAnimate: true,
         })
     })
 
@@ -201,7 +205,9 @@ describe("createCrossfadeAnimation", () => {
         update(stack)
 
         // A1
-        expect(createCrossfadeAnimation(a, stack as any)).toEqual({})
+        expect(createCrossfadeAnimation(a, stack as any)).toEqual({
+            shouldStackAnimate: true,
+        })
     })
 
     // TODO: Skipping this because it's complaining about a serialisation match
@@ -225,11 +231,13 @@ describe("createCrossfadeAnimation", () => {
             originBox: "bOrigin",
             crossfadeOpacity: aOpacity,
             transition: undefined,
+            shouldStackAnimate: true,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, stack)).toStrictEqual({
             targetBox: "aTarget",
+            shouldStackAnimate: true,
         })
     })
 
@@ -252,12 +260,14 @@ describe("createCrossfadeAnimation", () => {
         // A1
         expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "bTarget",
+            shouldStackAnimate: true,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, stack)).toEqual({
             originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
+            shouldStackAnimate: true,
         })
     })
 
@@ -271,7 +281,9 @@ describe("createCrossfadeAnimation", () => {
         update(stack)
         stack.remove(b)
         update(stack)
-        expect(createCrossfadeAnimation(a, stack)).toEqual({})
+        expect(createCrossfadeAnimation(a, stack)).toEqual({
+            shouldStackAnimate: true,
+        })
     })
 
     test("Interrupting remove with new component: [A1, A2 (exiting)] -interrupted-> [A1, A2 (exiting), A3]", () => {
@@ -296,17 +308,20 @@ describe("createCrossfadeAnimation", () => {
         // A1
         expect(createCrossfadeAnimation(a, stack)).toEqual({
             targetBox: "cTarget",
+            shouldStackAnimate: true,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
+            shouldStackAnimate: true,
         })
 
         // A3
         expect(createCrossfadeAnimation(c, stack)).toEqual({
             originBox: "aOrigin",
             crossfadeOpacity: aOpacity,
+            shouldStackAnimate: true,
         })
     })
 
@@ -335,16 +350,19 @@ describe("createCrossfadeAnimation", () => {
             originBox: "bOrigin",
             crossfadeOpacity: bOpacity,
             transition: undefined,
+            shouldStackAnimate: true,
         })
 
         // A2
         expect(createCrossfadeAnimation(b, stack)).toEqual({
             targetBox: "aTarget",
+            shouldStackAnimate: true,
         })
 
         // A3
         expect(createCrossfadeAnimation(c, stack)).toEqual({
             visibilityAction: VisibilityAction.Hide,
+            shouldStackAnimate: true,
         })
     })
 
