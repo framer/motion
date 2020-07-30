@@ -26,6 +26,7 @@ import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 import { buildLayoutProjectionTransform } from "./utils/build-transform"
+import { SubscriptionManager } from "../../utils/subscription-manager"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -161,7 +162,9 @@ export class HTMLVisualElement<
      * A set of layout update event handlers. These are only called once all layouts have been read,
      * making it safe to perform DOM write operations.
      */
-    private layoutUpdateListeners: Set<LayoutUpdateHandler> = new Set()
+    private layoutUpdateListeners = new SubscriptionManager<
+        LayoutUpdateHandler
+    >()
 
     /**
      * Keep track of whether the viewport box has been updated since the last render.
@@ -291,8 +294,7 @@ export class HTMLVisualElement<
      * for this via a `motion` prop.
      */
     onLayoutUpdate(callback: LayoutUpdateHandler) {
-        this.layoutUpdateListeners.add(callback)
-        return () => this.layoutUpdateListeners.delete(callback)
+        return this.layoutUpdateListeners.subscribe(callback)
     }
 
     /**
@@ -300,9 +302,11 @@ export class HTMLVisualElement<
      * subscribers.
      */
     layoutReady(config?: SharedLayoutAnimationConfig) {
-        this.layoutUpdateListeners.forEach(listener => {
-            listener(this.box, this.prevViewportBox || this.box, config)
-        })
+        this.layoutUpdateListeners.notify(
+            this.box,
+            this.prevViewportBox || this.box,
+            config
+        )
     }
 
     /**
