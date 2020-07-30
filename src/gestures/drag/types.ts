@@ -3,6 +3,7 @@ import { PanInfo } from "../PanSession"
 import { Inertia } from "../../types"
 import { BoundingBox2D } from "../../types/geometry"
 import { DragControls } from "./use-drag-controls"
+import { MotionValue } from "value"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,
@@ -458,4 +459,22 @@ export interface DraggableProps extends DragHandlers {
     onMeasureDragConstraints?: (
         constraints: BoundingBox2D
     ) => BoundingBox2D | void
+
+    /**
+     * Usually, dragging uses the layout project engine, and applies transforms to the underlying VisualElement.
+     * Passing MotionValues as _dragX and _dragY instead applies drag updates to these motion values.
+     * This allows you to manually control how updates from a drag gesture on an element is applied.
+     *
+     * @public
+     */
+    _dragX?: MotionValue<number>
+
+    /**
+     * Usually, dragging uses the layout project engine, and applies transforms to the underlying VisualElement.
+     * Passing MotionValues as _dragX and _dragY instead applies drag updates to these motion values.
+     * This allows you to manually control how updates from a drag gesture on an element is applied.
+     *
+     * @public
+     */
+    _dragY?: MotionValue<number>
 }
