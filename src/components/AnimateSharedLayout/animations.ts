@@ -38,7 +38,9 @@ export function createCrossfadeAnimation(
     child: HTMLVisualElement,
     stack?: LayoutStack
 ): SharedLayoutAnimationConfig {
-    const config: SharedLayoutAnimationConfig = {}
+    const config: SharedLayoutAnimationConfig = {
+        shouldStackAnimate: stack ? stack.shouldStackAnimate() : true,
+    }
     const stackLead = stack && stack.lead
     const stackLeadPresence = stackLead?.presence
 

@@ -73,6 +73,37 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         return true
     }
 
+    scheduleUpdate(force = false) {
+        const { _shouldAnimate } = this.props
+        if (!(force || !this.updateScheduled) || _shouldAnimate === false)
+            return
+
+        /**
+         * Flag we've scheduled an update
+         */
+        this.updateScheduled = true
+
+        /**
+         * Snapshot children
+         */
+        this.children.forEach(child => child.snapshotBoundingBox())
+
+        /**
+         * Every child keeps a local snapshot, but we also want to record
+         * snapshots of the visible children as, if they're are being removed
+         * in this render, we can still access them.
+         */
+        this.stacks.forEach(stack => stack.updateSnapshot())
+
+        /**
+         * Force a rerender by setting state if we aren't already going to render.
+         */
+        if (force || !this.renderScheduled) {
+            this.renderScheduled = true
+            this.forceUpdate()
+        }
+    }
+
     startLayoutAnimation() {
         const { type, _shouldAnimate } = this.props
 
@@ -144,47 +175,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
 
     updateStacks() {
         this.stacks.forEach(stack => stack.updateLeadAndFollow())
-    }
-
-    scheduleUpdate(force = false) {
-        const { _shouldAnimate } = this.props
-        if (!(force || !this.updateScheduled) || _shouldAnimate === false) {
-            return
-        }
-
-        /**
-         * Flag we've scheduled an update
-         */
-        this.updateScheduled = true
-
-        /**
-         * Write: If we're supporting bounding box-distorting transforms, reset them before
-         * measuring the bounding box. This is currently only supported within Framer
-         * and introduces a write cycle.
-         */
-        if (this.props._supportRotate) {
-            this.children.forEach(child => child.resetRotate())
-        }
-
-        /**
-         * Read: Snapshot children
-         */
-        this.children.forEach(child => child.snapshotBoundingBox())
-
-        /**
-         * Every child keeps a local snapshot, but we also want to record
-         * snapshots of the visible children as, if they're are being removed
-         * in this render, we can still access them.
-         */
-        this.stacks.forEach(stack => stack.updateSnapshot())
-
-        /**
-         * Force a rerender by setting state if we aren't already going to render.
-         */
-        if (force || !this.renderScheduled) {
-            this.renderScheduled = true
-            this.forceUpdate()
-        }
     }
 
     addChild(child: HTMLVisualElement) {

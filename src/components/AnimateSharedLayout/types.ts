@@ -43,7 +43,7 @@ export interface SharedLayoutProps {
      *
      * @internal
      */
-    _shouldAnimate?: any
+    _shouldAnimate?: boolean
 
     /**
      * Currently, transforms intefere with Magic Motion measurements. There may be a future
@@ -68,4 +68,5 @@ export interface SharedLayoutAnimationConfig {
     targetBox?: AxisBox2D
     transition?: Transition
     crossfadeOpacity?: MotionValue<number>
+    shouldStackAnimate?: boolean
 }
