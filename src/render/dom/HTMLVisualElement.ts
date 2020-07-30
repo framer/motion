@@ -115,18 +115,8 @@ export class HTMLVisualElement<
         this.transform = {}
     }
 
-    private removeOnViewportBoxUpdate?: () => void
-
     updateConfig(config: DOMVisualElementConfig = {}) {
         this.config = { ...this.defaultConfig, ...config }
-
-        // Handle onViewportBoxUpdate prop as a normal subscription to onViewportBoxUpdate
-        if (config.onViewportBoxUpdate) {
-            this.removeOnViewportBoxUpdate?.()
-            this.removeOnViewportBoxUpdate = this.onViewportBoxUpdate(
-                config.onViewportBoxUpdate
-            )
-        }
     }
 
     /**

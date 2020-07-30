@@ -8,7 +8,7 @@ export class SubscriptionManager<Handler extends GenericHandler> {
 
     add(handler: Handler) {
         this.subscriptions.add(handler)
-        return () => this.subscriptions.delete(handler)
+        return (): void => this.subscriptions.delete(handler)
     }
 
     notify(
