@@ -5,6 +5,7 @@ import { SVGVisualElement } from "./SVGVisualElement"
 import { UseVisualElement } from "../types"
 import { isSVGComponent } from "./utils/is-svg-component"
 import { useIsPresent } from "../../components/AnimatePresence/use-presence"
+import { useEffect } from "react"
 
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
@@ -35,6 +36,12 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     const isPresent = useIsPresent()
     visualElement.isPresent =
         props.isPresent !== undefined ? props.isPresent : isPresent
+
+    useEffect(() => {
+        if (props.onViewportBoxUpdate) {
+            return visualElement.onViewportBoxUpdate(props.onViewportBoxUpdate)
+        }
+    }, [props.onViewportBoxUpdate])
 
     return visualElement
 }
