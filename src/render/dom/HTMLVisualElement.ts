@@ -27,6 +27,7 @@ import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 import { buildLayoutProjectionTransform } from "./utils/build-transform"
 import { SubscriptionManager } from "../../utils/subscription-manager"
+import { MotionProps } from "../../motion/types"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -166,6 +167,10 @@ export class HTMLVisualElement<
         LayoutUpdateHandler
     >()
 
+    private viewportBoxUpdateListeners = new SubscriptionManager<
+        MotionProps["onViewportBoxUpdate"]
+    >()
+
     /**
      * Keep track of whether the viewport box has been updated since the last render.
      * If it has, we want to fire the onViewportBoxUpdate listener.
@@ -295,6 +300,10 @@ export class HTMLVisualElement<
      */
     onLayoutUpdate(callback: LayoutUpdateHandler) {
         return this.layoutUpdateListeners.subscribe(callback)
+    }
+
+    onViewportBoxUpdate(callback: MotionProps["onViewportBoxUpdate"]) {
+        return this.viewportBoxUpdateListeners.subscribe(callback)
     }
 
     /**
@@ -547,7 +556,7 @@ export class HTMLVisualElement<
          * If we have a listener for the viewport box, fire it.
          */
         this.hasViewportBoxUpdated &&
-            this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
+            this.viewportBoxUpdateListeners.notify(this.targetBox, this.delta)
         this.hasViewportBoxUpdated = false
 
         /**
