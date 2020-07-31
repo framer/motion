@@ -167,6 +167,10 @@ export class HTMLVisualElement<
         LayoutUpdateHandler
     >()
 
+    private layoutMeasureListeners = new SubscriptionManager<
+        LayoutUpdateHandler
+    >()
+
     private viewportBoxUpdateListeners = new SubscriptionManager<
         OnViewportBoxUpdate
     >()
@@ -302,6 +306,10 @@ export class HTMLVisualElement<
         return this.layoutUpdateListeners.add(callback)
     }
 
+    onLayoutMeasure(callback: LayoutUpdateHandler) {
+        return this.layoutMeasureListeners.add(callback)
+    }
+
     onViewportBoxUpdate(callback: OnViewportBoxUpdate) {
         return this.viewportBoxUpdateListeners.add(callback)
     }
@@ -366,6 +374,11 @@ export class HTMLVisualElement<
         this.boxCorrected = copyAxisBox(this.box)
 
         if (!this.targetBox) this.targetBox = copyAxisBox(this.box)
+
+        this.layoutMeasureListeners.notify(
+            this.box,
+            this.prevViewportBox || this.box
+        )
     }
 
     /**
