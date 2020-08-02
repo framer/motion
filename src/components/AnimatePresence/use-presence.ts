@@ -21,7 +21,7 @@ type NotPresent = [false, SafeToRemove]
  *   const [isPresent, safeToRemove] = usePresence()
  *
  *   useEffect(() => {
- *     !isPresent setTimeout(safeToRemove, 1000)
+ *     !isPresent && setTimeout(safeToRemove, 1000)
  *   }, [isPresent])
  *
  *   return <div />
