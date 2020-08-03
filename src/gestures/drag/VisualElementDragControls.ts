@@ -190,6 +190,7 @@ export class VisualElementDragControls {
              * viewport coordinates.
              */
             this.resolveDragConstraints()
+            console.log(this.constraints)
 
             /**
              * When dragging starts, we want to find where the cursor is relative to the bounding box
@@ -281,10 +282,10 @@ export class VisualElementDragControls {
     }
 
     resolveDragConstraints() {
-        const { dragConstraints } = this.props
+        const { dragConstraints, _dragX, _dragY } = this.props
 
         if (dragConstraints) {
-            this.constraints = isRefObject(dragConstraints)
+            const constraints = isRefObject(dragConstraints)
                 ? this.resolveRefConstraints(
                       this.visualElement.box,
                       dragConstraints
@@ -293,6 +294,20 @@ export class VisualElementDragControls {
                       this.visualElement.box,
                       dragConstraints
                   )
+
+            if (constraints && (_dragX || _dragY)) {
+                eachAxis(axis => {
+                    const max =
+                        (constraints[axis].max || 0) -
+                        (constraints[axis].min || 0)
+                    constraints[axis] = {
+                        min: 0,
+                        max,
+                    }
+                })
+            }
+
+            this.constraints = constraints
         } else {
             this.constraints = false
         }
@@ -402,7 +417,7 @@ export class VisualElementDragControls {
         const update = this.constraints
             ? applyConstraints(
                   nextValue,
-                  this.constraints?.[axis],
+                  this.constraints[axis],
                   dragElastic as number
               )
             : nextValue

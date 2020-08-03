@@ -7,6 +7,14 @@ import {
     useTransform,
 } from "@framer"
 
+const parent = {
+    width: "50%",
+    height: 300,
+    display: "flex",
+    justifyContent: "stretch",
+    alignItems: "stretch",
+}
+
 const container = {
     width: "50%",
     height: 300,
@@ -35,17 +43,22 @@ export const App = () => {
         ["red", "yellow", "green", "blue"]
     )
     return (
-        <motion.div
-            drag={"x"}
-            style={container}
-            _dragX={x}
-            _dragY={y}
-            ref={ref}
-            dragConstraints={ref}
-        >
+        <div ref={ref} style={parent}>
             <motion.div
-                style={{ transform: style, backgroundColor: color, ...child }}
-            ></motion.div>
-        </motion.div>
+                drag={"x"}
+                style={container}
+                _dragX={x}
+                _dragY={y}
+                dragConstraints={ref}
+            >
+                <motion.div
+                    style={{
+                        transform: style,
+                        backgroundColor: color,
+                        ...child,
+                    }}
+                ></motion.div>
+            </motion.div>
+        </div>
     )
 }
