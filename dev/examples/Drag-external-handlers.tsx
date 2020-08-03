@@ -50,6 +50,7 @@ export const App = () => {
                 _dragX={x}
                 _dragY={y}
                 dragConstraints={ref}
+                onMeasureDragConstraints={constraints => constraints}
             >
                 <motion.div
                     style={{

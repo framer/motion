@@ -109,8 +109,8 @@ export class VisualElementDragControls {
     // When updating _dragX, or _dragY instead of the VisualElement,
     // persist their values between drag gestures.
     private originPoint: {
-        x?: MotionValue<number>
-        y?: MotionValue<number>
+        x?: number
+        y?: number
     } = {}
 
     // This is a reference to the global drag gesture lock, ensuring only one component
@@ -211,9 +211,10 @@ export class VisualElementDragControls {
                 this.cursorProgress[axis] = cursorProgress
                     ? cursorProgress[axis]
                     : progress(min, max, point[axis])
-
+                console.log("call set")
                 if (_dragX || _dragY)
-                    this.originPoint[axis] = axis === "x" ? _dragX : _dragY
+                    this.originPoint[axis] =
+                        axis === "x" ? _dragX?.get() : _dragY?.get()
             })
 
             // Set current drag status
@@ -282,7 +283,7 @@ export class VisualElementDragControls {
     }
 
     resolveDragConstraints() {
-        const { dragConstraints, _dragX, _dragY } = this.props
+        const { dragConstraints } = this.props
 
         if (dragConstraints) {
             const constraints = isRefObject(dragConstraints)
@@ -295,18 +296,6 @@ export class VisualElementDragControls {
                       dragConstraints
                   )
 
-            if (constraints && (_dragX || _dragY)) {
-                eachAxis(axis => {
-                    const max =
-                        (constraints[axis].max || 0) -
-                        (constraints[axis].min || 0)
-                    constraints[axis] = {
-                        min: 0,
-                        max,
-                    }
-                })
-            }
-
             this.constraints = constraints
         } else {
             this.constraints = false
@@ -317,7 +306,12 @@ export class VisualElementDragControls {
         layoutBox: AxisBox2D,
         constraints: RefObject<Element>
     ) {
-        const { onMeasureDragConstraints, transformPagePoint } = this.props
+        const {
+            onMeasureDragConstraints,
+            transformPagePoint,
+            _dragY,
+            _dragX,
+        } = this.props
         const constraintsElement = constraints.current as Element
 
         invariant(
@@ -334,6 +328,20 @@ export class VisualElementDragControls {
             layoutBox,
             this.constraintsBox
         )
+
+        /**
+         * If external drag handlers are provided, convert the AxisBox constraints into constraints relative to the parent.
+         */
+        if (_dragX || _dragY) {
+            eachAxis(axis => {
+                measuredConstraints[axis] = {
+                    min: 0,
+                    max:
+                        measuredConstraints[axis].max -
+                        measuredConstraints[axis].min,
+                }
+            })
+        }
 
         /**
          * If there's an onMeasureDragConstraints listener we call it and
@@ -412,7 +420,7 @@ export class VisualElementDragControls {
         if (!offset || !handler) return
 
         const { dragElastic } = this.props
-        const nextValue = this.originPoint[axis]?.get()! + offset[axis]
+        const nextValue = this.originPoint[axis]! + offset[axis]
 
         const update = this.constraints
             ? applyConstraints(
