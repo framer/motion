@@ -41,9 +41,6 @@ dev: bootstrap
 	npm run start-dev-server
 
 watch: bootstrap
-	if test -f coverage/lcov-report/index.html; then \
-	 open coverage/lcov-report/index.html; \
-	fi;
 	yarn watch
 
 bump:

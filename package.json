@@ -25,7 +25,7 @@
         "test-server": "jest --config jest.config.ssr.json",
         "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
-        "watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
+        "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
         "prettier": "prettier ./src/* --write",
         "build": "tsc -p . && rollup -c && make api && yarn measure",
         "prepublishOnly": "yarn test && yarn build",
@@ -89,6 +89,7 @@
     "dependencies": {
         "@popmotion/easing": "^1.0.2",
         "@popmotion/popcorn": "^0.4.2",
+        "concurrently": "^5.2.0",
         "framesync": "^4.0.4",
         "hey-listen": "^1.0.8",
         "popmotion": "9.0.0-beta-8",

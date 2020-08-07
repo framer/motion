@@ -7,9 +7,9 @@ export interface StackChild {
     measuredOrigin?: Snapshot
     measuredTarget?: Snapshot
     shouldAnimate?: boolean
+    layoutOrder?: number
     props: {
-        layoutOrder?: number
-        _shouldAnimate?: boolean
+        _shouldAnimateLayout?: (calculate: boolean) => boolean
     }
 }
 
@@ -116,13 +116,13 @@ export class LayoutStack<T extends StackChild = StackChild> {
     hasChildren: boolean = false
 
     add(child: T) {
-        const { layoutOrder } = child.props
+        const { layoutOrder } = child
 
         if (layoutOrder === undefined) {
             this.order.push(child)
         } else {
             let index = this.order.findIndex(
-                stackChild => layoutOrder <= (stackChild.props.layoutOrder || 0)
+                stackChild => layoutOrder <= (stackChild.layoutOrder || 0)
             )
 
             if (index === -1) {
@@ -165,9 +165,16 @@ export class LayoutStack<T extends StackChild = StackChild> {
     }
 
     shouldStackAnimate() {
-        return this.lead && this.lead?.isPresent()
-            ? this.lead?.props?._shouldAnimate
-            : this.follow && this.follow?.props._shouldAnimate
+        console.log(this.lead?.props, this.follow.props)
+        if (this.lead && this.lead.isPresent()) {
+            // Prepare the lead to calculate if it should animate by ensuring the follow has registered it's props in framer...
+            if (this.follow) this.follow.props._shouldAnimateLayout?.(false)
+            // Calculate if the lead should animate just in time.
+            return this.lead.props._shouldAnimateLayout?.(true)
+        }
+        // If the lead isn't present, ensure that it's registered it's props in framer before we calculate.
+        if (this.lead) this.lead.props._shouldAnimateLayout?.(false)
+        return this.follow && this.follow.props._shouldAnimateLayout?.(true)
     }
 
     getFollowOrigin() {

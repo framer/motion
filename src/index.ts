@@ -4,6 +4,7 @@
 export { motion } from "./render/dom"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+export { SharedLayoutTree } from "./components/SharedLayoutTree"
 
 /**
  * Motion values

@@ -37,6 +37,10 @@ import { MotionPluginContext } from "../../context/MotionPluginContext"
 import sync, { cancelSync } from "framesync"
 import { elementDragControls } from "../../../behaviours/VisualElementDragControls"
 import { AxisBox2D } from "../../../types/geometry"
+import {
+    SharedLayoutTreeContext,
+    SharedLayoutTreeConfig,
+} from "../../../components/SharedLayoutTree"
 export { SharedLayoutTree, SharedBatchTree }
 
 /**
@@ -47,6 +51,7 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
     const [isPresent, safeToRemove] = usePresence()
     const sharedLayoutContext = useContext(SharedLayoutContext)
     const { autoValues } = useContext(MotionPluginContext)
+    const treeContext = useContext(SharedLayoutTreeContext)
 
     return (
         <Auto
@@ -54,6 +59,7 @@ export const SharedLayoutContextProvider = (props: FeatureProps) => {
             // This is only intended for optimisations in Framer
             isPresent={isPresent}
             {...props}
+            treeConfig={treeContext?.treeConfig}
             safeToRemove={safeToRemove}
             sharedLayoutContext={sharedLayoutContext}
             autoValues={autoValues}
@@ -66,6 +72,7 @@ interface ContextProps {
     safeToRemove?: null | SafeToRemove
     sharedLayoutContext: SharedLayoutTree | SharedBatchTree
     autoValues: AutoValueHandlers
+    treeConfig?: SharedLayoutTreeConfig
 }
 
 export class Auto extends React.Component<FeatureProps & ContextProps> {
@@ -201,6 +208,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
      */
     presence: Presence
 
+    layoutOrder?: number = undefined
+
     constructor(props: FeatureProps & ContextProps) {
         super(props)
 
@@ -234,7 +243,8 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
             // the usual logic in startAnimation to tell AnimatePresence that this component is safe to remove
             // will have run. If it wasn't, we have to do that here.
             this.componentDidUpdate = prevProps => {
-                const { layoutId, layoutOrder } = this.props
+                const { layoutId, treeConfig } = this.props
+                const layoutOrder = treeConfig?.layoutOrder
 
                 if (layoutId !== prevProps.layoutId) {
                     this.unregisterSharedLayoutContext &&
@@ -244,8 +254,9 @@ export class Auto extends React.Component<FeatureProps & ContextProps> {
                     )
                 } else if (
                     layoutOrder !== undefined &&
-                    layoutOrder !== prevProps.layoutOrder
+                    layoutOrder !== this.layoutOrder
                 ) {
+                    this.layoutOrder = layoutOrder
                     sharedLayoutContext.move(this)
                     this.resetStyles()
                 }
