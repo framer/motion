@@ -711,7 +711,7 @@ export function useGestures<GestureHandlers>(props: GestureHandlers, ref: Visual
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
 // 
-// @public
+// @public (undocumented)
 export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
 // @public (undocumented)
@@ -749,18 +749,18 @@ export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, contro
 
 // Warning: (ae-forgotten-export) The symbol "InputRange" needs to be exported by the entry point index.d.ts
 // 
-// @public (undocumented)
-export function useTransform<I = string | number, O = string | number>(value: MotionValue<number>, inputRange: InputRange, outputRange: O[], options?: TransformOptions<O>): MotionValue<O>;
+// @public
+export function useTransform<I, O>(value: MotionValue<number>, inputRange: InputRange, outputRange: O[], options?: TransformOptions<O>): MotionValue<O>;
 
 // Warning: (ae-forgotten-export) The symbol "SingleTransformer" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useTransform<I = string | number, O = string | number>(input: MotionValue<I>, transformer: SingleTransformer<I, O>): MotionValue<O>;
+export function useTransform<I, O>(input: MotionValue<I>, transformer: SingleTransformer<I, O>): MotionValue<O>;
 
 // Warning: (ae-forgotten-export) The symbol "MultiTransformer" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useTransform<I = string | number, O = string | number>(input: MotionValue<I>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
+export function useTransform<I, O>(input: MotionValue<string | number>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
 
 // @public
 export function useViewportScroll(): ScrollMotionValues;

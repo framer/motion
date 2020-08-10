@@ -2,8 +2,6 @@ import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
 import { useCombineMotionValues } from "./use-combine-values"
 import { useConstant } from "../utils/use-constant"
-import { useMotionValue } from "./use-motion-value"
-import { useOnChange } from "./use-on-change"
 
 export type InputRange = number[]
 type SingleTransformer<I, O> = (input: I) => O
@@ -182,21 +180,9 @@ export function useTransform<I, O>(
               input,
               transformer as MultiTransformer<string | number, O>
           )
-        : useSingleTransform(input, transformer as SingleTransformer<I, O>)
-}
-
-function useSingleTransform<I, O>(
-    input: MotionValue<I>,
-    transformer: SingleTransformer<I, O>
-): MotionValue<O> {
-    const initialValue = transformer(input.get())
-
-    const output = useMotionValue(initialValue)
-    output.set(initialValue)
-
-    useOnChange(input, latest => output.set(transformer(latest)))
-
-    return output
+        : useListTransform([input], ([latest]) =>
+              (transformer as SingleTransformer<I, O>)(latest)
+          )
 }
 
 function useListTransform<I, O>(
