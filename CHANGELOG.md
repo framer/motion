@@ -8,14 +8,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Support for `transformPerspective` style.
 -   Internal: `_dragX` and `_dragY` external `MotionValue` targets for drag gesture.
+-   Internal: Support for rotate in `AnimateSharedLayout` within Framer.
+-   Internal: `onViewportBoxUpdate`, `onLayoutMeasure` and `onLayoutUpdate` event handlers added to `HTMLVisualElement`.
 
 ### Fixed
 
 -   Fixed `AnimateSharedLayout` within React `17.0.0-rc.0`.
--   Internal: Support for rotate in `AnimateSharedLayout` within Framer.
-
-### Fixed
-
 -   Drag now works directly on `x` and `y` transforms unless `layout` or `layoutId` are also set.
 
 ## [2.3.0] 2020-07-28
