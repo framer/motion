@@ -148,6 +148,10 @@ export function buildHTMLStyles(
             style.transform = style.transform.trim()
         }
 
+        if (transformTemplate) {
+            style.transform = transformTemplate(transform, style.transform)
+        }
+
         style.transformOrigin = buildLayoutProjectionTransformOrigin(
             deltaFinal!
         )
