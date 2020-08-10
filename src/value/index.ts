@@ -207,6 +207,9 @@ export class MotionValue<V = any> {
      * @internal
      */
     onRenderRequest(subscription: Subscriber<V>) {
+        // Render immediately
+        subscription(this.get())
+
         return this.renderSubscribers.add(subscription)
     }
 
