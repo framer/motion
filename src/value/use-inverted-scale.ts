@@ -45,7 +45,7 @@ export const invertScale = (scale: number) =>
  * }
  * ```
  *
- * @public
+ * @deprecated
  */
 let hasWarned = false
 export function useInvertedScale(

@@ -5,7 +5,7 @@ import { useConstant } from "../utils/use-constant"
 import { useMotionValue } from "./use-motion-value"
 import { useOnChange } from "./use-on-change"
 
-type InputRange = number[]
+export type InputRange = number[]
 type SingleTransformer<I, O> = (input: I) => O
 type MultiTransformer<I, O> = (input: I[]) => O
 type Transformer<I, O> =
@@ -78,7 +78,7 @@ type Transformer<I, O> =
  *
  * @public
  */
-export function useTransform<I = string | number, O = string | number>(
+export function useTransform<I, O>(
     value: MotionValue<number>,
     inputRange: InputRange,
     outputRange: O[],
@@ -120,7 +120,7 @@ export function useTransform<I = string | number, O = string | number>(
  *
  * @public
  */
-export function useTransform<I = string | number, O = string | number>(
+export function useTransform<I, O>(
     input: MotionValue<I>,
     transformer: SingleTransformer<I, O>
 ): MotionValue<O>
@@ -161,12 +161,12 @@ export function useTransform<I = string | number, O = string | number>(
  *
  * @public
  */
-export function useTransform<I = string | number, O = string | number>(
+export function useTransform<I, O>(
     input: MotionValue<string | number>[],
     transformer: MultiTransformer<I, O>
 ): MotionValue<O>
 
-export function useTransform<I = string | number, O = string | number>(
+export function useTransform<I, O>(
     input: MotionValue<I> | MotionValue<string | number>[],
     inputRangeOrTransformer: InputRange | Transformer<I, O>,
     outputRange?: O[],
@@ -199,7 +199,7 @@ function useSingleTransform<I, O>(
     return output
 }
 
-function useListTransform<I = string | number, O = string | number>(
+function useListTransform<I, O>(
     values: MotionValue<I>[],
     transformer: MultiTransformer<I, O>
 ): MotionValue<O> {
