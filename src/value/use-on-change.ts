@@ -11,3 +11,10 @@ export function useOnChange<T>(
         [value]
     )
 }
+
+export function useMultiOnChange(values: MotionValue[], handler: () => void) {
+    useEffect(() => {
+        const subscriptions = values.map(value => value.onChange(handler))
+        return () => subscriptions.forEach(unsubscribe => unsubscribe())
+    }, values)
+}

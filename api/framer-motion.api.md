@@ -747,13 +747,20 @@ export function useSpring(source: MotionValue | number, config?: SpringProps): M
 // @internal (undocumented)
 export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, controls, }: TapHandlers & ControlsProp, ref: RefObject<Element>): void;
 
-// Warning: (ae-forgotten-export) The symbol "Transformer" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "InputRange" needs to be exported by the entry point index.d.ts
 // 
-// @public
-export function useTransform<T>(parent: MotionValue, transform: Transformer<T>): MotionValue;
+// @public (undocumented)
+export function useTransform<I = number, O = string | number>(value: MotionValue<number>, inputRange: InputRange, outputRange: O[], options?: TransformOptions<O>): MotionValue<O>;
 
-// @public
-export function useTransform<T>(parent: MotionValue<number>, from: number[], to: T[], options?: TransformOptions<T>): MotionValue<T>;
+// Warning: (ae-forgotten-export) The symbol "SingleTransformer" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export function useTransform<I = string | number, O = string | number>(value: MotionValue<I>, transformer: SingleTransformer<I, O>): MotionValue<O>;
+
+// Warning: (ae-forgotten-export) The symbol "MultiTransformer" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export function useTransform<I = string | number, O = string | number>(value: MotionValue<I>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
 
 // @public
 export function useViewportScroll(): ScrollMotionValues;

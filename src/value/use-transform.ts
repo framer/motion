@@ -1,16 +1,32 @@
 import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
-import { useMemo, useRef } from "react"
+import { useCombineMotionValues } from "./use-combine-values"
+import { useConstant } from "../utils/use-constant"
 import { useMotionValue } from "./use-motion-value"
-import { useUnmountEffect } from "../utils/use-unmount-effect"
+import { useOnChange } from "./use-on-change"
 
-type Transformer<T> = (v: any) => T
+type InputRange = number[]
+type SingleTransformer<I, O> = (input: I) => O
+type MultiTransformer<I, O> = (input: I[]) => O
+type Transformer<I, O> = SingleTransformer<I, O> | MultiTransformer<I, O>
 
-const isTransformer = <T>(
-    v: number[] | Transformer<T>
-): v is Transformer<T> => {
-    return typeof v === "function"
+function isTransformer<I, O>(
+    transformer: InputRange | Transformer<I, O>
+): transformer is Transformer<I, O> {
+    return typeof transformer === "function"
 }
+
+/**
+ *
+ *
+ * @public
+ */
+export function useTransform<I = number, O = string | number>(
+    value: MotionValue<number>,
+    inputRange: InputRange,
+    outputRange: O[],
+    options?: TransformOptions<O>
+): MotionValue<O>
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
@@ -41,16 +57,58 @@ const isTransformer = <T>(
  * }
  * ```
  *
- * @param value - The `MotionValue` to transform the output of.
- * @param transform - Function that accepts the output of `value` and returns a new value.
+ * @param input - A `MotionValue` that will pass its latest value through `transform` to update the returned `MotionValue`.
+ * @param transform - A function that accepts the latest value from `input` and returns a new value.
  * @returns `MotionValue`
  *
  * @public
  */
-export function useTransform<T>(
-    parent: MotionValue,
-    transform: Transformer<T>
-): MotionValue
+export function useTransform<I = string | number, O = string | number>(
+    input: MotionValue<I>,
+    transformer: SingleTransformer<I, O>
+): MotionValue<O>
+
+/**
+ * Pass an array of `MotionValue`s and a function to combine them. In this example, `z` will be the `x` multiplied by `y`.
+ *
+ * @library
+ *
+ * ```jsx
+ * import * as React from "react"
+ * import { Frame, useMotionValue, useTransform } from "framer"
+ *
+ * export function MyComponent() {
+ *   const x = useMotionValue(0)
+ *   const y = useMotionValue(0)
+ *   const z = useTransform([x, y], latest => latest.x * latest.y)
+ *
+ *   return <Frame x={x} y={y} z={z} />
+ * }
+ * ```
+ *
+ * @motion
+ *
+ * ```jsx
+ * export const MyComponent = () => {
+ *   const x = useMotionValue(0)
+ *   const y = useMotionValue(0)
+ *   const z = useTransform([x, y], latest => latest.x * latest.y)
+ *
+ *   return <motion.div style={{ x, y, z }} />
+ * }
+ * ```
+ *
+ * @param input - An array of `MotionValue`s that will pass their latest values through `transform` to update the returned `MotionValue`.
+ * @param transform - A function that accepts the latest values from `input` and returns a new value.
+ * @returns `MotionValue`
+ *
+ * @public
+ */
+export function useTransform<I = string | number, O = string | number>(
+    input: MotionValue<I>[],
+    transformer: MultiTransformer<I, O>
+): MotionValue<O>
+
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
  *
@@ -107,41 +165,47 @@ export function useTransform<T>(
  *
  * @public
  */
-export function useTransform<T>(
-    parent: MotionValue<number>,
-    from: number[],
-    to: T[],
-    options?: TransformOptions<T>
-): MotionValue<T>
-export function useTransform<T>(
-    parent: MotionValue,
-    customTransform: Transformer<T> | number[],
-    to?: T[],
-    options?: TransformOptions<T>
-): MotionValue<T> {
-    const comparitor = isTransformer(customTransform)
-        ? [parent]
-        : [parent, customTransform.join(","), to?.join(",")]
+export function useTransform<I = string | number, O = string | number>(
+    input: MotionValue<I> | MotionValue<I>[],
+    inputRangeOrTransformer: InputRange | Transformer<I, O>,
+    outputRange?: O[],
+    options?: TransformOptions<O>
+): MotionValue<O> {
+    const transformer = isTransformer(inputRangeOrTransformer)
+        ? inputRangeOrTransformer
+        : transform(inputRangeOrTransformer, outputRange!, options)
 
-    const transformer = useMemo(() => {
-        return isTransformer(customTransform)
-            ? customTransform
-            : transform(customTransform, to as T[], options)
-    }, comparitor)
+    return Array.isArray(input)
+        ? useListTransform(input, transformer as MultiTransformer<I, O>)
+        : useSingleTransform(input, transformer as SingleTransformer<I, O>)
+}
 
-    const initialValue = transformer(parent.get())
-    const value = useMotionValue(initialValue)
+function useSingleTransform<I, O>(
+    input: MotionValue<I>,
+    transformer: SingleTransformer<I, O>
+): MotionValue<O> {
+    const initialValue = transformer(input.get())
+    const output = useMotionValue(initialValue)
+    output.set(initialValue)
 
-    // Handle subscription to parent
-    const unsubscribe = useRef<() => void>()
-    useMemo(() => {
-        unsubscribe.current && unsubscribe.current()
-        unsubscribe.current = parent.onChange(v => value.set(transformer(v)))
+    useOnChange(input, latest => output.set(transformer(latest)))
 
-        // Manually set with the latest parent value in case we've re-parented
-        value.set(initialValue)
-    }, [parent, value, transformer])
-    useUnmountEffect(() => unsubscribe.current && unsubscribe.current())
+    return output
+}
 
-    return value
+function useListTransform<I = string | number, O = string | number>(
+    values: MotionValue<I>[],
+    transformer: MultiTransformer<I, O>
+): MotionValue<O> {
+    const latest = useConstant<I[]>(() => [])
+
+    return useCombineMotionValues(values, () => {
+        latest.length = 0
+        const numValues = values.length
+        for (let i = 0; i < numValues; i++) {
+            latest[i] = values[i].get()
+        }
+
+        return transformer(latest)
+    })
 }
