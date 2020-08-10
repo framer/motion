@@ -44,7 +44,7 @@ describe("buildTransform", () => {
         ).toBe("translateX(10px)")
     })
 
-    it("Outputs transform values in the correct corder", () => {
+    it("Outputs transform values in the correct order", () => {
         expect(
             buildTransform(
                 { scale: 2, rotate: "90deg", x: 0, y: "10px" },

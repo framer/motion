@@ -10,17 +10,27 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <AnimateSharedLayout supportRotate>
+        <AnimateSharedLayout _supportRotate>
             <motion.div
                 layout
+                initial={false}
                 transition={{ duration: 1 }}
                 style={isOn ? bigParent : smallParent}
+                animate={{
+                    rotate: isOn ? 45 : 10,
+                    borderRadius: isOn ? 0 : 50,
+                }}
                 onClick={() => setIsOn(!isOn)}
             >
                 <motion.div
                     layout
+                    initial={false}
                     transition={{ duration: 1 }}
                     style={isOn ? bigChild : smallChild}
+                    animate={{
+                        rotate: isOn ? 0 : 45,
+                        borderRadius: isOn ? 20 : 0,
+                    }}
                 />
             </motion.div>
         </AnimateSharedLayout>
@@ -37,8 +47,6 @@ const bigParent = {
     ...parent,
     width: 400,
     height: 400,
-    borderRadius: 0,
-    rotate: 45,
     justifyContent: "flex-start",
     alignItems: "flex-start",
 }
@@ -46,8 +54,6 @@ const smallParent = {
     ...parent,
     width: 100,
     height: 100,
-    borderRadius: 50,
-    rotate: 10,
 }
 
 const child = {
@@ -57,13 +63,9 @@ const bigChild = {
     ...child,
     width: 100,
     height: 100,
-    borderRadius: 20,
-    rotate: 0,
 }
 const smallChild = {
     ...child,
     width: 50,
     height: 50,
-    borderRadius: 0,
-    rotate: 45,
 }

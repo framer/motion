@@ -153,7 +153,16 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.updateScheduled = true
 
         /**
-         * Snapshot children
+         * Write: If we're supporting bounding box-distorting transforms, reset them before
+         * measuring the bounding box. This is currently only supported within Framer
+         * and introduces a write cycle.
+         */
+        if (this.props._supportRotate) {
+            this.children.forEach(child => child.resetRotate())
+        }
+
+        /**
+         * Read: Snapshot children
          */
         this.children.forEach(child => child.snapshotBoundingBox())
 

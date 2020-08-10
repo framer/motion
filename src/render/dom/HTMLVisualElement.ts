@@ -4,7 +4,7 @@ import { delta, copyAxisBox, axisBox } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
-import { isTransformProp } from "./utils/transform"
+import { isTransformProp, transformAxes } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
 import {
     Presence,
@@ -25,7 +25,7 @@ import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
-import { createDeltaTransform } from "./utils/project-layout"
+import { buildLayoutProjectionTransform } from "./utils/build-transform"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -122,6 +122,14 @@ export class HTMLVisualElement<
      */
     read(key: string): number | string | null {
         return this.getComputedStyle()[key] || 0
+    }
+
+    addValue(key: string, value: MotionValue) {
+        super.addValue(key, value)
+
+        // If we have rotate values we want to foce the layoutOrigin used in layout projection
+        // to the center of the element.
+        if (key.startsWith("rotate")) this.layoutOrigin = 0.5
     }
 
     /**
@@ -249,6 +257,14 @@ export class HTMLVisualElement<
     deltaTransform: string
 
     /**
+     * If we've got a rotate motion value, we force layout projection calculations
+     * to use o layout origin of 0.5 rather than dynamically calculating one based
+     * on relative positioning. This is so the component always rotates around its center rather
+     * than an arbitrarily computed point.
+     */
+    private layoutOrigin: number | undefined
+
+    /**
      *
      */
     stopLayoutAxisAnimation = {
@@ -312,7 +328,7 @@ export class HTMLVisualElement<
     }
 
     /**
-     *
+     * Record the bounding box as it exists before a re-render.
      */
     snapshotBoundingBox() {
         this.prevViewportBox = this.getBoundingBoxWithoutTransforms()
@@ -371,6 +387,55 @@ export class HTMLVisualElement<
             : "none"
 
         // Ensure that whatever happens next, we restore our transform
+        this.scheduleRender()
+    }
+
+    /**
+     * Reset rotate on this element. Doing so allows us to accurately measure the
+     * bounding box of the element.
+     *
+     * This function will only be called if _supportRotate is enabled in a parent
+     * AnimateSharedLayout. This is a private prop for use within Framer. It allows
+     * us to support rotation in Magic Motion.
+     *
+     * @internal
+     */
+    resetRotate() {
+        // If there's no detected rotation values, we can early return without a forced render.
+        let hasRotate = false
+
+        // Keep a record of all the values we've reset
+        const resetValues: ResolvedValues = {}
+
+        // Check the rotate value of all axes and reset to 0
+        transformAxes.forEach(axis => {
+            const key = "rotate" + axis
+
+            // If this rotation doesn't exist as a motion value, then we don't
+            // need to reset it
+            if (!this.hasValue(key)) return
+
+            hasRotate = true
+
+            // Record the rotation and then temporarily set it to 0
+            resetValues[key] = this.latest[key]
+            this.latest[key] = 0
+        })
+
+        // If there's no rotation values, we don't need to do any more.
+        if (!hasRotate) return
+
+        // Force a render of this element to apply the transform with all rotations
+        // set to 0.
+        this.render()
+
+        // Put back all the values we reset
+        for (const key in resetValues) {
+            this.latest[key] = resetValues[key]
+        }
+
+        // Schedule a render for the next frame. This ensures we won't visually
+        // see the element with the reset rotate value applied.
         this.scheduleRender()
     }
 
@@ -467,7 +532,12 @@ export class HTMLVisualElement<
          * to allow people to choose whether these styles are corrected based on just the
          * layout reprojection or the final bounding box.
          */
-        updateBoxDelta(this.delta, this.boxCorrected, this.targetBox)
+        updateBoxDelta(
+            this.delta,
+            this.boxCorrected,
+            this.targetBox,
+            this.layoutOrigin
+        )
 
         /**
          * If we have a listener for the viewport box, fire it.
@@ -479,7 +549,10 @@ export class HTMLVisualElement<
         /**
          * Ensure this element renders on the next frame if the projection transform has changed.
          */
-        const deltaTransform = createDeltaTransform(this.delta, this.treeScale)
+        const deltaTransform = buildLayoutProjectionTransform(
+            this.delta,
+            this.treeScale
+        )
         deltaTransform !== this.deltaTransform && this.scheduleRender()
         this.deltaTransform = deltaTransform
     }
@@ -500,7 +573,12 @@ export class HTMLVisualElement<
          * create a transform style that will reproject the element from its actual layout
          * into the desired bounding box.
          */
-        updateBoxDelta(this.deltaFinal, this.boxCorrected, this.targetBoxFinal)
+        updateBoxDelta(
+            this.deltaFinal,
+            this.boxCorrected,
+            this.targetBoxFinal,
+            this.layoutOrigin
+        )
     }
 
     /**

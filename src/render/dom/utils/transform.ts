@@ -2,7 +2,7 @@
  * A list of all transformable axes. We'll use this list to generated a version
  * of each axes for each transform.
  */
-const axes = ["", "X", "Y", "Z"]
+export const transformAxes = ["", "X", "Y", "Z"]
 
 /**
  * An ordered array of each transformable value. By default, transform values
@@ -11,11 +11,21 @@ const axes = ["", "X", "Y", "Z"]
 const order = ["translate", "scale", "rotate", "skew", "transformPerspective"]
 
 /**
+ * Used to store the keys of all transforms that will distorted a measured bounding box.
+ */
+export const boxDistortingKeys: Set<string> = new Set()
+
+/**
  * Generate a list of every possible transform key.
  */
 export const transformProps = ["x", "y", "z"]
 order.forEach(operationKey => {
-    axes.forEach(axesKey => transformProps.push(operationKey + axesKey))
+    const isDistorting = new Set(["rotate", "skew"]).has(operationKey)
+    transformAxes.forEach(axesKey => {
+        const key = operationKey + axesKey
+        transformProps.push(key)
+        isDistorting && boxDistortingKeys.add(key)
+    })
 })
 
 /**

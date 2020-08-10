@@ -714,6 +714,9 @@ export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotio
 export function useIsPresent(): boolean;
 
 // @public
+export function useMotionTemplate(fragments: TemplateStringsArray, ...values: MotionValue[]): MotionValue<string>;
+
+// @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;
 
 // Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal

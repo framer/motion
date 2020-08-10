@@ -1,6 +1,8 @@
 import { TransformTemplate } from "../../../motion/types"
 import { ResolvedValues } from "../../types"
-import { sortTransformProps } from "./transform"
+import { sortTransformProps, boxDistortingKeys } from "./transform"
+import { Point2D, BoxDelta } from "../../../types/geometry"
+import { TransformOrigin } from "../types"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -22,15 +24,15 @@ export function buildTransform(
     enableHardwareAcceleration = true,
     allowTransformNone = true
 ) {
-    // The transform string we're going to build into
+    // The transform string we're going to build into.
     let transformString = ""
+
+    // Transform keys into their default order - this will determine the output order.
+    transformKeys.sort(sortTransformProps)
 
     // Track whether the defined transform has a defined z so we don't add a
     // second to enable hardware acceleration
     let transformHasZ = false
-
-    // Transform keys into their default order - this will determine the output order.
-    transformKeys.sort(sortTransformProps)
 
     // Loop over each transform and build them into transformString
     const numTransformKeys = transformKeys.length
@@ -56,6 +58,68 @@ export function buildTransform(
         )
     } else if (allowTransformNone && transformIsDefault) {
         transformString = "none"
+    }
+
+    return transformString
+}
+
+/**
+ * Build a transformOrigin style. Uses the same defaults as the browser for
+ * undefined origins.
+ */
+export function buildTransformOrigin({
+    originX = "50%",
+    originY = "50%",
+    originZ = 0,
+}: TransformOrigin) {
+    return `${originX} ${originY} ${originZ}`
+}
+
+/**
+ * Build a transform style that takes a calculated delta between the element's current
+ * space on screen and projects it into the desired space.
+ */
+export function buildLayoutProjectionTransform(
+    { x, y }: BoxDelta,
+    treeScale: Point2D
+) {
+    /**
+     * The translations we use to calculate are always relative to the viewport coordinate space.
+     * But when we apply scales, we also scale the coordinate space of an element and its children.
+     * For instance if we have a treeScale (the culmination of all parent scales) of 0.5 and we need
+     * to move an element 100 pixels, we actually need to move it 200 in within that scaled space.
+     */
+    const xTranslate = x.translate / treeScale.x
+    const yTranslate = y.translate / treeScale.y
+
+    return `translate3d(${xTranslate}px, ${yTranslate}px, 0) scale(${x.scale}, ${y.scale})`
+}
+
+/**
+ * Take the calculated delta origin and apply it as a transform string.
+ */
+export function buildLayoutProjectionTransformOrigin({ x, y }: BoxDelta) {
+    return `${x.origin * 100}% ${y.origin * 100}% 0`
+}
+
+/**
+ * Build a transform string only from the properties that distort bounding box measurements
+ * (rotate and skew)
+ */
+export function buildBoxDistortingTransforms(
+    transform: ResolvedValues,
+    transformKeys: string[]
+) {
+    let transformString = ""
+
+    transformKeys.sort(sortTransformProps)
+
+    const numTransformKeys = transformKeys.length
+    for (let i = 0; i < numTransformKeys; i++) {
+        const key = transformKeys[i]
+        if (boxDistortingKeys.has(key)) {
+            transformString += `${key}(${transform[key]}) `
+        }
     }
 
     return transformString

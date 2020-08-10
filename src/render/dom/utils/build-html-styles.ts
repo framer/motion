@@ -2,11 +2,16 @@ import { ResolvedValues } from "../../types"
 import { DOMVisualElementConfig, TransformOrigin } from "../types"
 import { getDefaultValueType, getValueAsType } from "./value-types"
 import { isTransformProp, isTransformOriginProp } from "./transform"
-import { buildTransform } from "./build-transform"
+import {
+    buildTransform,
+    buildLayoutProjectionTransform,
+    buildLayoutProjectionTransformOrigin,
+    buildTransformOrigin,
+    buildBoxDistortingTransforms,
+} from "./build-transform"
 import { isCSSVariable } from "./is-css-variable"
 import { valueScaleCorrection } from "../layout/scale-correction"
 import { Point2D, AxisBox2D, BoxDelta } from "../../../types/geometry"
-import { createDeltaTransform } from "./project-layout"
 
 /**
  * Build style and CSS variables
@@ -52,8 +57,8 @@ export function buildHTMLStyles(
     transformKeys.length = 0
 
     // Track whether we encounter any transform or transformOrigin values.
-    let hasTransform = !!isLayoutProjectionEnabled
-    let hasTransformOrigin = !!isLayoutProjectionEnabled
+    let hasTransform = false
+    let hasTransformOrigin = false
 
     // Does the calculated transform essentially equal "none"?
     let transformIsNone = true
@@ -122,9 +127,36 @@ export function buildHTMLStyles(
         }
     }
 
-    // Only process transform if values aren't defaults
-    if (hasTransform || transformTemplate) {
-        if (!isLayoutProjectionEnabled) {
+    /**
+     * Build transform and transformOrigin. If we're performing layout projection these need
+     * to be based off the deltaFinal data. Any user-set origins will have been pre-baked
+     * into the deltaFinal.
+     */
+    if (isLayoutProjectionEnabled) {
+        style.transform = buildLayoutProjectionTransform(
+            deltaFinal!,
+            treeScale!
+        )
+
+        /**
+         * If we have transform styles, build only those that distort bounding boxes (rotate/skew)
+         * as translations and scales will already have been used to calculate deltaFinal.
+         */
+        if (hasTransform) {
+            style.transform +=
+                " " + buildBoxDistortingTransforms(transform, transformKeys)
+            style.transform = style.transform.trim()
+        }
+
+        if (transformTemplate) {
+            style.transform = transformTemplate(transform, style.transform)
+        }
+
+        style.transformOrigin = buildLayoutProjectionTransformOrigin(
+            deltaFinal!
+        )
+    } else {
+        if (hasTransform) {
             style.transform = buildTransform(
                 transform,
                 transformKeys,
@@ -133,25 +165,10 @@ export function buildHTMLStyles(
                 enableHardwareAcceleration,
                 allowTransformNone
             )
-        } else {
-            style.transform = createDeltaTransform(deltaFinal!, treeScale!)
-            if (transformTemplate)
-                style.transform = transformTemplate(transform, style.transform)
         }
-    }
 
-    // Only process transform origin if values aren't default
-    if (hasTransformOrigin) {
-        const originX = isLayoutProjectionEnabled
-            ? deltaFinal!.x.origin * 100 + "%"
-            : transformOrigin.originX || "50%"
-
-        const originY = isLayoutProjectionEnabled
-            ? deltaFinal!.y.origin * 100 + "%"
-            : transformOrigin.originY || "50%"
-
-        const originZ = transformOrigin.originZ || "0"
-
-        style.transformOrigin = `${originX} ${originY} ${originZ}`
+        if (hasTransformOrigin) {
+            style.transformOrigin = buildTransformOrigin(transformOrigin)
+        }
     }
 }
