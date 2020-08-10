@@ -12,15 +12,10 @@ type Transformer<I, O> =
     | SingleTransformer<I, O>
     /**
      * Ideally, this would be typed <I, O> in all instances, but to type this
-     * more accurately requires tuple support in TypeScript.
+     * more accurately requires the tuple support in TypeScript 4:
+     * https://gist.github.com/InventingWithMonster/c4d23752a0fae7888596c4ff6d92733a
      */
     | MultiTransformer<string | number, O>
-
-function isTransformer<I, O>(
-    transformer: InputRange | Transformer<I, O>
-): transformer is Transformer<I, O> {
-    return typeof transformer === "function"
-}
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
@@ -177,9 +172,10 @@ export function useTransform<I = string | number, O = string | number>(
     outputRange?: O[],
     options?: TransformOptions<O>
 ): MotionValue<O> {
-    const transformer = isTransformer(inputRangeOrTransformer)
-        ? inputRangeOrTransformer
-        : transform(inputRangeOrTransformer, outputRange!, options)
+    const transformer =
+        typeof inputRangeOrTransformer === "function"
+            ? inputRangeOrTransformer
+            : transform(inputRangeOrTransformer, outputRange!, options)
 
     return Array.isArray(input)
         ? useListTransform(
