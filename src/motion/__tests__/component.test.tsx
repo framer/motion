@@ -243,27 +243,6 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toHaveStyle("background-color: #f00")
     })
 
-    // Skipping this test because originX and originY aren't correctly detected by
-    // @testing-library/react, it returns a false positive.
-    it.skip("style supports originX and originY", () => {
-        const { container } = render(<motion.div style={{ originX: "25%" }} />)
-        expect(container.firstChild).toHaveStyle("transform-origin: 25% 50%")
-    })
-
-    it("updates style for transform values", () => {
-        let rotate = 0
-
-        const Component = () => {
-            rotate += 45
-            return <motion.div style={{ rotate }} />
-        }
-        const { container, rerender } = render(<Component />)
-        rerender(<Component />)
-        expect(container.firstChild).toHaveStyle(
-            "transform: rotate(90deg) translateZ(0)"
-        )
-    })
-
     it("applies transformTemplate on initial render", () => {
         const { container } = render(
             <motion.div

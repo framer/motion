@@ -53,13 +53,15 @@ describe("useDomEvent", () => {
             const Component = () => {
                 const ref = useRef(document.body)
                 useDomEvent(ref, "mousedown", handler)
-                useEffect(resolve)
                 return <div />
             }
             const { rerender, unmount } = render(<Component />)
             rerender(<Component />)
             unmount()
-            fireEvent.mouseDown(document.body)
+            requestAnimationFrame(() => {
+                fireEvent.mouseDown(document.body)
+                resolve()
+            })
         })
         await expect(promise).resolves.toEqual(undefined)
         expect(handler).not.toHaveBeenCalled()
