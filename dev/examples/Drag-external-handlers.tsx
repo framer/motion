@@ -51,15 +51,15 @@ export const App = () => {
         <motion.div ref={ref} style={container}>
             <motion.div
                 drag={"x"}
-                // _dragX={x}
-                // _dragY={y}
+                _dragX={x}
+                _dragY={y}
                 dragConstraints={ref}
                 onMeasureDragConstraints={constraints => constraints}
                 style={{
                     backgroundColor: color,
                     ...child,
-                    x,
-                    y,
+                    // x,
+                    // y,
                 }}
             />
             <motion.div

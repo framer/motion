@@ -484,13 +484,19 @@ export class VisualElementDragControls {
     private getExternalAxis(axis: DragDirection) {
         const { _dragX, _dragY, style } = this.props
         if (axis === "x") {
-            return _dragX || isMotionValue(style?.x)
-                ? (style?.x as MotionValue<number>)
-                : undefined
+            return (
+                _dragX ||
+                (isMotionValue(style?.x)
+                    ? (style?.x as MotionValue<number>)
+                    : undefined)
+            )
         } else {
-            return _dragY || isMotionValue(style?.y)
-                ? (style?.y as MotionValue<number>)
-                : undefined
+            return (
+                _dragY ||
+                (isMotionValue(style?.y)
+                    ? (style?.y as MotionValue<number>)
+                    : undefined)
+            )
         }
     }
 
