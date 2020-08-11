@@ -14,6 +14,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Fixed `AnimateSharedLayout` within React `17.0.0-rc.0`.
 -   Internal: Support for rotate in `AnimateSharedLayout` within Framer.
 
+### Fixed
+
+-   Providing `x` and `y` `MotionValue`s to `style` will now make drag work directly on those transforms.
+
 ## [2.3.0] 2020-07-28
 
 ### Added
