@@ -36,6 +36,7 @@ export const App = () => {
     const ref = useRef()
     const x = useMotionValue(0)
     const y = useMotionValue(0)
+    const transform = useMotionTemplate`translate3d(${x}px, ${y}px, 0)`
     const color = useTransform(
         x,
         [0, 100, 200, 300],
@@ -43,7 +44,7 @@ export const App = () => {
     )
 
     useEffect(() => {
-        return x.onChange(v => console.log(v))
+        return transform.onChange(v => console.log(v))
     })
 
     return (
@@ -58,7 +59,14 @@ export const App = () => {
                     backgroundColor: color,
                     ...child,
                 }}
-            ></motion.div>
+            />
+            <motion.div
+                style={{
+                    transform,
+                    backgroundColor: color,
+                    ...child,
+                }}
+            />
         </motion.div>
     )
 }
