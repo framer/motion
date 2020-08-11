@@ -2,6 +2,10 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+### Fixed
+
+-   Support for `transformPerspective` style.
+
 ## [2.3.1] Unreleased
 
 ### Added
