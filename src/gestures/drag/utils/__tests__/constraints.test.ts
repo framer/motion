@@ -4,7 +4,6 @@ import {
     calcConstrainedMinPoint,
     calcViewportAxisConstraints,
     calcPositionFromProgress,
-    rebaseConstraints,
 } from "../constraints"
 
 describe("applyConstraints", () => {
