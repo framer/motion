@@ -1,6 +1,7 @@
 import { createContext } from "react"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import { Presence } from "./types"
+import { LayoutTree } from "./SharedLayoutTree"
 
 /**
  * Handlers for batching sync layout lifecycles. We batches these processes to cut
@@ -25,8 +26,8 @@ export interface SyncLayoutBatcher {
 export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
     syncUpdate: (force?: boolean) => void
     forceUpdate: () => void
-    register: (child: HTMLVisualElement) => void
-    remove: (child: HTMLVisualElement) => void
+    register: (child: HTMLVisualElement | LayoutTree) => void
+    remove: (child: HTMLVisualElement | LayoutTree) => void
 }
 
 /**

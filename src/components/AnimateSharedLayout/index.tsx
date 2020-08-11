@@ -1,7 +1,7 @@
 import * as React from "react"
 import { SharedLayoutProps, Presence } from "./types"
 import { createCrossfadeAnimation, createSwitchAnimation } from "./animations"
-import { LayoutStack } from "./stack"
+import { LayoutStack, TreeStack, isSharedLayoutTree } from "./stack"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import {
     SharedLayoutSyncMethods,
@@ -9,6 +9,7 @@ import {
     SyncLayoutLifecycles,
     SharedLayoutContext,
 } from "./SharedLayoutContext"
+import { LayoutTree } from "./SharedLayoutTree"
 
 /**
  * @public
@@ -25,6 +26,11 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      * previous one, and when it's removed, it'll animate to the previous one.
      */
     private stacks: Map<string, LayoutStack> = new Map()
+
+    /**
+     * In Framer, we do stuff.
+     */
+    private tree = new TreeStack()
 
     /**
      * Track whether the component has mounted. If it hasn't, the presence of added children
@@ -79,13 +85,13 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          */
         this.renderScheduled = this.updateScheduled = false
 
-        const { type } = this.props
+        const { type } = this.props as SharedLayoutProps
 
         /**
          * Update presence metadata based on the latest AnimatePresence status.
          * This is a kind of goofy way of dealing with this, perhaps there's a better model to find.
          */
-        this.children.forEach(child => {
+        this.forEachChild(child => {
             if (!child.isPresent) {
                 child.presence = Presence.Exiting
             } else if (child.presence !== Presence.Entering) {
@@ -117,7 +123,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
             measureLayout: child => child.measureLayout(),
             layoutReady: child => {
                 const { layoutId } = child
-
                 child.layoutReady(
                     createAnimation(child, this.getStack(layoutId))
                 )
@@ -131,7 +136,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          *
          * Here we use that same mechanism of schedule/flush.
          */
-        this.children.forEach(child => this.syncContext.add(child))
+        this.forEachChild(child => this.syncContext.add(child))
         this.syncContext.flush(handler)
 
         /**
@@ -140,8 +145,30 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.stacks.forEach(stack => (stack.snapshot = undefined))
     }
 
+    get isSharedLayoutTreeParent() {
+        return this.tree.order.length > 0
+    }
+
+    forEachChild(cb: (child: HTMLVisualElement) => void) {
+        return this.isSharedLayoutTreeParent
+            ? this.tree.order.forEach(tree => tree.children.forEach(cb))
+            : this.children.forEach(cb)
+    }
+
     updateStacks() {
-        this.stacks.forEach(stack => stack.updateLeadAndFollow())
+        /**
+         * If AnimateSharedLayout is the parent of SharedLayout Trees,
+         * generate new stacks based on the contents of the Lead and Follow trees.
+         */
+        return this.isSharedLayoutTreeParent
+            ? this.updateTree()
+            : this.stacks.forEach(stack => stack.updateLeadAndFollow())
+    }
+
+    updateTree() {
+        this.tree.sortOrder()
+        this.tree.updateLeadAndFollow()
+        this.stacks = this.tree.createLayoutStacks()
     }
 
     scheduleUpdate(force = false) {
@@ -158,13 +185,13 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * and introduces a write cycle.
          */
         if (this.props._supportRotate) {
-            this.children.forEach(child => child.resetRotate())
+            this.forEachChild(child => child.resetRotate())
         }
 
         /**
          * Read: Snapshot children
          */
-        this.children.forEach(child => child.snapshotBoundingBox())
+        this.forEachChild(child => child.snapshotBoundingBox())
 
         /**
          * Every child keeps a local snapshot, but we also want to record
@@ -182,22 +209,41 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         }
     }
 
-    addChild(child: HTMLVisualElement) {
-        this.children.add(child)
-        this.addToStack(child)
-
-        child.presence = this.hasMounted ? Presence.Entering : Presence.Present
+    addChild(child: HTMLVisualElement | LayoutTree) {
+        return isSharedLayoutTree(child)
+            ? this.addToTree(child)
+            : this.addToStack(child)
     }
 
-    removeChild(child: HTMLVisualElement) {
+    removeChild(child: HTMLVisualElement | LayoutTree) {
+        return isSharedLayoutTree(child)
+            ? this.tree.remove(child)
+            : this.removeVisualElementChild(child)
+    }
+
+    removeVisualElementChild(child: HTMLVisualElement) {
         this.scheduleUpdate()
         this.children.delete(child)
         this.removeFromStack(child)
     }
 
+    addVisualElementChild(child: HTMLVisualElement) {
+        this.children.add(child)
+        this.addToStack(child)
+        child.presence = this.hasMounted ? Presence.Entering : Presence.Present
+    }
+
     addToStack(child: HTMLVisualElement) {
         const stack = this.getStack(child.layoutId)
         stack?.add(child)
+    }
+
+    addToTree(child: LayoutTree) {
+        this.tree.add(child)
+    }
+
+    removeFromTree(child: LayoutTree) {
+        this.tree.remove(child)
     }
 
     removeFromStack(child: HTMLVisualElement) {
