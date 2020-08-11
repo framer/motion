@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import {
     motion,
     useMotionValue,
@@ -17,7 +17,7 @@ const parent = {
 }
 
 const container = {
-    width: "50%",
+    width: 600,
     height: 300,
     background: "rgba(255,255,255,0.5)",
     borderRadius: 20,
@@ -30,37 +30,35 @@ const child: React.CSSProperties = {
     width: 200,
     height: 200,
     borderRadius: 20,
-    pointerEvents: "none",
 }
 
 export const App = () => {
     const ref = useRef()
     const x = useMotionValue(0)
     const y = useMotionValue(0)
-    const style = useMotionTemplate`translate3d(${x}px, ${y}px, 0)`
     const color = useTransform(
         x,
         [0, 100, 200, 300],
         ["#f00", "#ff0", "#0f0", "#00f"]
     )
+
+    useEffect(() => {
+        return x.onChange(v => console.log(v))
+    })
+
     return (
-        <div ref={ref} style={parent}>
+        <motion.div ref={ref} style={container}>
             <motion.div
                 drag={"x"}
-                style={container}
                 _dragX={x}
                 _dragY={y}
                 dragConstraints={ref}
                 onMeasureDragConstraints={constraints => constraints}
-            >
-                <motion.div
-                    style={{
-                        transform: style,
-                        backgroundColor: color,
-                        ...child,
-                    }}
-                ></motion.div>
-            </motion.div>
-        </div>
+                style={{
+                    backgroundColor: color,
+                    ...child,
+                }}
+            ></motion.div>
+        </motion.div>
     )
 }
