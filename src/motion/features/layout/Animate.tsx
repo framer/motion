@@ -59,18 +59,10 @@ class Animate extends React.Component<AnimateProps> {
             originBox,
             targetBox,
             visibilityAction,
-            shouldStackAnimate,
             ...config
         }: SharedLayoutAnimationConfig = {}
     ) => {
-        const { visualElement, layout, _shouldAnimateLayout } = this.props
-
-        /**
-         * Early return if we've been instructed not to animate this render.
-         */
-        if (_shouldAnimateLayout === false || shouldStackAnimate === false) {
-            return this.safeToRemove()
-        }
+        const { visualElement, layout } = this.props
 
         /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be

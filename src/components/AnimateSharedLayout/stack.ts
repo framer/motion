@@ -211,15 +211,16 @@ export class LayoutStack {
     }
 
     shouldStackAnimate() {
-        return this.lead && this.lead?.isPresent
-            ? this.lead?.config._shouldAnimate !== false
-            : this.follow && this.follow?.config._shouldAnimate !== false
+        return true
+        // return this.lead && this.lead?.isPresent
+        //     ? this.lead?.props?._shouldAnimate === true
+        //     : this.follow && this.follow?.props._shouldAnimate === true
     }
 
     getFollowOrigin(): AxisBox2D | undefined {
         // This shouldAnimate check is quite specifically a fix for the optimisation made in Framer
         // where components are kept in the tree ready to be re-used
-        return this.follow && this.follow.config._shouldAnimate !== false
+        return this.follow // && this.follow.shouldAnimate
             ? this.follow.prevViewportBox
             : this.snapshot?.boundingBox
     }
