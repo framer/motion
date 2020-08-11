@@ -44,7 +44,7 @@ export const App = () => {
     )
 
     useEffect(() => {
-        return x.onChange(v => console.log(v))
+        return transform.onChange(v => console.log(v))
     })
 
     return (
