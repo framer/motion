@@ -342,8 +342,6 @@ export interface LayoutProps {
     layoutId?: string;
     onLayoutAnimationComplete?(): void;
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
-    // @internal
-    _shouldAnimateLayout?: boolean;
 }
 
 // Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts

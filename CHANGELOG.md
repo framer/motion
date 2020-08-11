@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Support for rotate in `AnimateSharedLayout`. This is an internal feature only for use in Framer.
+-   Added `_shouldAnimate` to `AnimateSharedLayout`. This is an internal prop intended for Framer use.
 
 ## [2.3.0] 2020-07-28
 
