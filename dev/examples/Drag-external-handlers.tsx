@@ -44,20 +44,22 @@ export const App = () => {
     )
 
     useEffect(() => {
-        return transform.onChange(v => console.log(v))
+        return x.onChange(v => console.log(v))
     })
 
     return (
         <motion.div ref={ref} style={container}>
             <motion.div
                 drag={"x"}
-                _dragX={x}
-                _dragY={y}
+                // _dragX={x}
+                // _dragY={y}
                 dragConstraints={ref}
                 onMeasureDragConstraints={constraints => constraints}
                 style={{
                     backgroundColor: color,
                     ...child,
+                    x,
+                    y,
                 }}
             />
             <motion.div

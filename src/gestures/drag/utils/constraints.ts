@@ -163,7 +163,10 @@ export function calcPositionFromProgress(
 /**
  * Rebase the calculated viewport constraints relative to the layout.min point.
  */
-function rebaseAxisConstraints(layout: Axis, constraints: Partial<Axis>) {
+export function rebaseAxisConstraints(
+    layout: Axis,
+    constraints: Partial<Axis>
+) {
     const relativeConstraints: Partial<Axis> = {}
 
     if (constraints.min !== undefined) {
@@ -175,14 +178,4 @@ function rebaseAxisConstraints(layout: Axis, constraints: Partial<Axis>) {
     }
 
     return relativeConstraints
-}
-
-export function rebaseConstraints(
-    layout: AxisBox2D,
-    constraints: ResolvedConstraints
-): ResolvedConstraints {
-    return {
-        x: rebaseAxisConstraints(layout.x, constraints.x),
-        y: rebaseAxisConstraints(layout.y, constraints.y),
-    }
 }

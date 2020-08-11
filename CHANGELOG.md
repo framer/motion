@@ -2,9 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.4.0] 2020-08-12
+
 ### Added
 
 -   Support for `transformPerspective` style.
+-   Internal: `_dragX` and `_dragY` external `MotionValue` targets for drag gesture.
 
 ### Fixed
 

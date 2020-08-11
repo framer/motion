@@ -7,6 +7,7 @@ import {
     isSharedLayout,
     SharedLayoutContext,
 } from "../../../components/AnimateSharedLayout/SharedLayoutContext"
+import { eachAxis } from "../../../utils/each-axis"
 
 interface SyncProps extends FeatureProps {
     syncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher
@@ -16,19 +17,6 @@ interface SyncProps extends FeatureProps {
  * This component is responsible for scheduling the measuring of the motion component
  */
 class Measure extends React.Component<SyncProps> {
-    constructor(props: SyncProps) {
-        super(props)
-
-        /**
-         * If this component isn't the child of a SyncContext, make it responsible for flushing
-         * the layout batcher
-         */
-        const { syncLayout } = props
-        if (!isSharedLayout(syncLayout)) {
-            this.componentDidUpdate = () => syncLayout.flush()
-        }
-    }
-
     /**
      * If this is a child of a SyncContext, register the VisualElement with it on mount.
      */
@@ -56,7 +44,30 @@ class Measure extends React.Component<SyncProps> {
         return null
     }
 
-    componentDidUpdate() {}
+    componentDidUpdate() {
+        const { syncLayout, visualElement } = this.props
+
+        if (!isSharedLayout(syncLayout)) syncLayout.flush()
+
+        /**
+         * If this axis isn't animating as a result of this render we want to reset the targetBox
+         * to the measured box
+         */
+        const { x, y } = visualElement.axisProgress
+        if (
+            !visualElement.isTargetBoxLocked &&
+            !x.isAnimating() &&
+            !y.isAnimating()
+        ) {
+            eachAxis(axis => {
+                const { min, max } = visualElement.box[axis]
+                visualElement.setAxisTarget(axis, min, max)
+            })
+
+            // Force a render to ensure there's no flash of uncorrected bounding box.
+            visualElement.render()
+        }
+    }
 
     render() {
         return null

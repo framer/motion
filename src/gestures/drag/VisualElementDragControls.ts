@@ -27,12 +27,15 @@ import {
     calcViewportConstraints,
     calcPositionFromProgress,
     applyConstraints,
-    rebaseConstraints,
+    rebaseAxisConstraints,
 } from "./utils/constraints"
 import { getBoundingBox } from "../../render/dom/layout/measure"
 import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "types"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { MotionProps } from "../../motion"
+import { MotionValue } from "../../value"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,
@@ -87,7 +90,7 @@ export class VisualElementDragControls {
      *
      * @internal
      */
-    private props: DragControlsProps = {}
+    private props: DragControlsProps & MotionProps = {}
 
     /**
      * @internal
@@ -206,7 +209,6 @@ export class VisualElementDragControls {
 
             eachAxis(axis => {
                 const { min, max } = this.visualElement.targetBox[axis]
-                const { _dragX, _dragY } = this.props
 
                 this.cursorProgress[axis] = cursorProgress
                     ? cursorProgress[axis]
@@ -216,9 +218,9 @@ export class VisualElementDragControls {
                  * If we have external drag MotionValues, record their origin point. On pointermove
                  * we'll apply the pan gesture offset directly to this value.
                  */
-                if (_dragX || _dragY) {
-                    this.originPoint[axis] =
-                        axis === "x" ? _dragX?.get() : _dragY?.get()
+                const externalTarget = this.getExternalAxis(axis)
+                if (externalTarget) {
+                    this.originPoint[axis] = externalTarget.get()
                 }
             })
 
@@ -288,7 +290,7 @@ export class VisualElementDragControls {
     }
 
     resolveDragConstraints() {
-        const { dragConstraints, _dragX, _dragY } = this.props
+        const { dragConstraints } = this.props
 
         if (dragConstraints) {
             this.constraints = isRefObject(dragConstraints)
@@ -308,11 +310,15 @@ export class VisualElementDragControls {
          * If we're outputting to external MotionValues, we want to rebase the measured constraints
          * from viewport-relative to component-relative.
          */
-        if (this.constraints && (_dragX || _dragY)) {
-            this.constraints = rebaseConstraints(
-                this.visualElement.box,
-                this.constraints
-            )
+        if (this.constraints) {
+            eachAxis(axis => {
+                if (this.getExternalAxis(axis)) {
+                    this.constraints[axis] = rebaseAxisConstraints(
+                        this.visualElement.box[axis],
+                        this.constraints[axis]
+                    )
+                }
+            })
         }
     }
 
@@ -463,7 +469,7 @@ export class VisualElementDragControls {
         dragElastic = 0.35,
         dragMomentum = true,
         ...remainingProps
-    }: DragControlsProps) {
+    }: DragControlsProps & MotionProps) {
         this.props = {
             drag,
             dragDirectionLock,
@@ -476,8 +482,16 @@ export class VisualElementDragControls {
     }
 
     private getExternalAxis(axis: DragDirection) {
-        const { _dragX, _dragY } = this.props
-        return axis === "x" ? _dragX : _dragY
+        const { _dragX, _dragY, style } = this.props
+        if (axis === "x") {
+            return _dragX || isMotionValue(style?.x)
+                ? (style?.x as MotionValue<number>)
+                : undefined
+        } else {
+            return _dragY || isMotionValue(style?.y)
+                ? (style?.y as MotionValue<number>)
+                : undefined
+        }
     }
 
     private animateDragEnd(velocity: Point) {

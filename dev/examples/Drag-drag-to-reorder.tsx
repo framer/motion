@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useRef, useEffect } from "react"
-import { motion } from "@framer"
+import { motion, useMotionValue } from "@framer"
 import { clamp, distance } from "@popmotion/popcorn"
 import move from "array-move"
 
@@ -25,7 +25,7 @@ const Item = ({ color, setPosition, moveItem, i }) => {
             top: ref.current.offsetTop,
         })
     })
-
+    const y = useMotionValue(0)
     return (
         <li
             style={{
@@ -38,12 +38,12 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 ref={ref}
                 initial={false}
                 id={color}
-                layout
                 // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
                 style={{
                     background: "white",
                     height: heights[color],
                     borderRadius: 5,
+                    //y,
                 }}
                 whileHover={{
                     scale: 1.03,
@@ -60,6 +60,10 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 dragElastic={1}
                 onDragStart={() => setDragging(true)}
                 onDragEnd={() => setDragging(false)}
+                // onUpdate={({ y }) => {
+                //     console.log(y)
+                //     isDragging && moveItem(i, y)
+                // }}
                 onViewportBoxUpdate={(_viewportBox, delta) => {
                     isDragging && moveItem(i, delta.y.translate)
                 }}
