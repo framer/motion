@@ -8,26 +8,28 @@ function Component() {
     const [count, cycleCount] = useCycle(0, 1, 2, 3)
 
     return (
-        <AnimateSharedLayout>
-            <motion.div
-                initial={false}
-                style={{
-                    position: "absolute",
-                    ...styles[count],
-                }}
-                transition={{ duration: 3 }}
-                animate={animate[count]}
-                layoutId="box"
-                id={`shape-${count}`}
-                key={`shape-${count}`}
-                onClick={() => cycleCount()}
-            />
-        </AnimateSharedLayout>
+        <motion.div
+            initial={false}
+            style={{
+                position: "absolute",
+                ...styles[count],
+            }}
+            transition={{ duration: 3 }}
+            animate={animate[count]}
+            layoutId="box"
+            id={`shape-${count}`}
+            key={`shape-${count}`}
+            onClick={() => cycleCount()}
+        />
     )
 }
 
 export const App = () => {
-    return <Component />
+    return (
+        <AnimateSharedLayout>
+            <Component />
+        </AnimateSharedLayout>
+    )
 }
 
 const animate = [
