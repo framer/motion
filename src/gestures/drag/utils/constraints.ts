@@ -159,3 +159,30 @@ export function calcPositionFromProgress(
     const min = mix(constraints.min, constraints.max - axisLength, progress)
     return { min, max: min + axisLength }
 }
+
+/**
+ * Rebase the calculated viewport constraints relative to the layout.min point.
+ */
+function rebaseAxisConstraints(layout: Axis, constraints: Partial<Axis>) {
+    const relativeConstraints: Partial<Axis> = {}
+
+    if (constraints.min !== undefined) {
+        relativeConstraints.min = constraints.min - layout.min
+    }
+
+    if (constraints.max !== undefined) {
+        relativeConstraints.max = constraints.max - layout.min
+    }
+
+    return relativeConstraints
+}
+
+export function rebaseConstraints(
+    layout: AxisBox2D,
+    constraints: ResolvedConstraints
+): ResolvedConstraints {
+    return {
+        x: rebaseAxisConstraints(layout.x, constraints.x),
+        y: rebaseAxisConstraints(layout.y, constraints.y),
+    }
+}

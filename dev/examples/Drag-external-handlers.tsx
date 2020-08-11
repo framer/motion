@@ -8,6 +8,7 @@ import {
 } from "@framer"
 
 const parent = {
+    background: "rgba(255,255,255,0.2)",
     width: "50%",
     height: 300,
     display: "flex",
@@ -40,7 +41,7 @@ export const App = () => {
     const color = useTransform(
         x,
         [0, 100, 200, 300],
-        ["red", "yellow", "green", "blue"]
+        ["#f00", "#ff0", "#0f0", "#00f"]
     )
     return (
         <div ref={ref} style={parent}>
