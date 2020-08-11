@@ -10,7 +10,6 @@ import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from '@popmotion/easing';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
-import { MotionValue as MotionValue_2 } from 'value';
 import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
@@ -213,8 +212,8 @@ export interface DraggableProps extends DragHandlers {
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
-    _dragX?: MotionValue_2<number>;
-    _dragY?: MotionValue_2<number>;
+    _dragX?: MotionValue<number>;
+    _dragY?: MotionValue<number>;
     onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
 }
 

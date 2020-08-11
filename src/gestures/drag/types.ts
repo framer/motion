@@ -3,7 +3,7 @@ import { PanInfo } from "../PanSession"
 import { Inertia } from "../../types"
 import { BoundingBox2D } from "../../types/geometry"
 import { DragControls } from "./use-drag-controls"
-import { MotionValue } from "value"
+import { MotionValue } from "../../value"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,
