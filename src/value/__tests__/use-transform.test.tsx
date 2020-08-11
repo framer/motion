@@ -3,7 +3,7 @@ import * as React from "react"
 import { motion } from "../../"
 import { useMotionValue } from "../use-motion-value"
 import { useTransform } from "../use-transform"
-// import { MotionValue, motionValue } from ".."
+import { MotionValue, motionValue } from ".."
 
 class Custom {
     value: number = 0
