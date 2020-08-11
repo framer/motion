@@ -45,6 +45,7 @@ export interface TransformProperties {
     originY?: string | number
     originZ?: string | number
     perspective?: string | number
+    transformPerspective?: string | number
 }
 
 /**
