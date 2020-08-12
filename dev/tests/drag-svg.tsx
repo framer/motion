@@ -11,6 +11,7 @@ export const App = () => {
     const left = parseFloat(params.get("left")) || undefined
     const right = parseFloat(params.get("right")) || undefined
     const bottom = parseFloat(params.get("bottom")) || undefined
+    const layout = params.get("layout") || undefined
 
     return (
         <svg style={{ width: 500, height: 500 }}>
@@ -26,6 +27,7 @@ export const App = () => {
                 cx={50}
                 cy={50}
                 r={20}
+                layout={layout}
             />
         </svg>
     )
