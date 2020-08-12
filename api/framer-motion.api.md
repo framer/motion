@@ -10,6 +10,7 @@ import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from 'popmotion';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { HTMLVisualElement as HTMLVisualElement_2 } from 'render/dom/HTMLVisualElement';
 import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
@@ -43,22 +44,33 @@ export interface AnimatePresenceProps {
 
 // @public (undocumented)
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
-    // Warning: (ae-forgotten-export) The symbol "HTMLVisualElement" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "LayoutTree" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
-    addChild(child: HTMLVisualElement): void;
+    addChild(child: HTMLVisualElement | LayoutTree): void;
     // (undocumented)
     addToStack(child: HTMLVisualElement): void;
+    // (undocumented)
+    addToTree(child: LayoutTree): void;
+    // (undocumented)
+    addVisualElementChild(child: HTMLVisualElement): void;
     // (undocumented)
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
+    // (undocumented)
+    forEachChild(cb: (child: HTMLVisualElement) => void): void;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id?: string): LayoutStack | undefined;
     // (undocumented)
-    removeChild(child: HTMLVisualElement): void;
+    removeChild(child: HTMLVisualElement | LayoutTree): void;
+    get isSharedLayoutTreeParent(): boolean;
     // (undocumented)
     removeFromStack(child: HTMLVisualElement): void;
+    // (undocumented)
+    removeFromTree(child: LayoutTree): void;
+    // (undocumented)
+    removeVisualElementChild(child: HTMLVisualElement): void;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
@@ -67,10 +79,11 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     shouldComponentUpdate(): boolean;
     // (undocumented)
     startLayoutAnimation(): void;
-    // Warning: (ae-forgotten-export) The symbol "SharedLayoutSyncMethods" needs to be exported by the entry point index.d.ts
     syncContext: SharedLayoutSyncMethods;
     // (undocumented)
     updateStacks(): void;
+    // (undocumented)
+    updateTree(): void;
 }
 
 // @public
@@ -169,6 +182,11 @@ export interface BoxDelta {
     // (undocumented)
     y: AxisDelta;
 }
+
+// Warning: (ae-forgotten-export) The symbol "SyncLayoutBatcher" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export function createBatcher(): SyncLayoutBatcher;
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
@@ -279,6 +297,98 @@ export interface HoverHandlers {
 // @public (undocumented)
 export type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWithoutMotionProps<UnwrapFactoryAttributes<ReactHTML[TagName]>, UnwrapFactoryElement<ReactHTML[TagName]>> & MotionProps;
 
+// Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement> extends VisualElement<E> {
+    // (undocumented)
+    addValue(key: string, value: MotionValue): void;
+    // Warning: (ae-forgotten-export) The symbol "MotionPoint" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    axisProgress: MotionPoint;
+    box: AxisBox2D;
+    build(): void;
+    clean(): void;
+    // (undocumented)
+    config: DOMVisualElementConfig;
+    // Warning: (ae-forgotten-export) The symbol "DOMVisualElementConfig" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    protected defaultConfig: DOMVisualElementConfig;
+    delta: BoxDelta;
+    deltaFinal: BoxDelta;
+    deltaTransform: string;
+    // (undocumented)
+    enableLayoutProjection(): void;
+    getBoundingBox(): AxisBox2D;
+    // (undocumented)
+    getBoundingBoxWithoutTransforms(): AxisBox2D;
+    getComputedStyle(): CSSStyleDeclaration;
+    // (undocumented)
+    hide(): void;
+    isLayoutProjectionEnabled: boolean;
+    // (undocumented)
+    isPresent?: boolean;
+    // (undocumented)
+    isTargetBoxLocked: boolean;
+    // (undocumented)
+    isVisible?: boolean;
+    layoutId?: string;
+    layoutReady(config?: SharedLayoutAnimationConfig): void;
+    // (undocumented)
+    lockTargetBox(): void;
+    // (undocumented)
+    measureLayout(): void;
+    // Warning: (ae-forgotten-export) The symbol "LayoutUpdateHandler" needs to be exported by the entry point index.d.ts
+    onLayoutUpdate(callback: LayoutUpdateHandler): () => boolean;
+    // Warning: (ae-forgotten-export) The symbol "Presence" needs to be exported by the entry point index.d.ts
+    presence?: Presence;
+    prevViewportBox?: AxisBox2D;
+    reactStyle: ResolvedValues;
+    read(key: string): number | string | null;
+    readNativeValue(key: string): any;
+    refreshTargetBox(): void;
+    removeValue(key: string): void;
+    render(): void;
+    // @internal
+    resetRotate(): void;
+    resetTransform(): void;
+    setAxisTarget(axis: "x" | "y", min: number, max: number): void;
+    // (undocumented)
+    show(): void;
+    snapshotBoundingBox(): void;
+    // (undocumented)
+    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition): Promise<void>;
+    // (undocumented)
+    stopLayoutAnimation(): void;
+    // (undocumented)
+    stopLayoutAxisAnimation: {
+        x: () => void;
+        y: () => void;
+    };
+    // Warning: (ae-forgotten-export) The symbol "ResolvedValues" needs to be exported by the entry point index.d.ts
+    style: ResolvedValues;
+    targetBox: AxisBox2D;
+    protected targetBoxFinal: AxisBox2D;
+    protected transform: ResolvedValues;
+    protected transformKeys: string[];
+    // Warning: (ae-forgotten-export) The symbol "TransformOrigin" needs to be exported by the entry point index.d.ts
+    protected transformOrigin: TransformOrigin;
+    treeScale: Point2D;
+    // (undocumented)
+    unlockTargetBox(): void;
+    // (undocumented)
+    updateConfig(config?: DOMVisualElementConfig): void;
+    // (undocumented)
+    updateLayoutDelta: () => void;
+    updateLayoutDeltas(): void;
+    // (undocumented)
+    updateTransformDeltas(): void;
+    vars: ResolvedValues;
+    viewportScroll: Point2D;
+}
+
 // @public
 export interface Inertia {
     bounceDamping?: number;
@@ -344,6 +454,8 @@ export interface LayoutProps {
     layoutId?: string;
     onLayoutAnimationComplete?(): void;
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
+    // @internal
+    _shouldAnimateLayout?: (calculate: boolean) => boolean | void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts
@@ -413,8 +525,6 @@ export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHan
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
     transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
-    // Warning: (ae-forgotten-export) The symbol "ResolvedValues" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
     transformValues?<V extends ResolvedValues>(values: V): V;
 }
@@ -579,6 +689,27 @@ export interface ScrollMotionValues {
 }
 
 // @public (undocumented)
+export interface SharedLayoutAnimationConfig {
+    // (undocumented)
+    crossfadeOpacity?: MotionValue<number>;
+    // (undocumented)
+    originBox?: AxisBox2D;
+    // (undocumented)
+    shouldStackAnimate?: boolean;
+    // (undocumented)
+    targetBox?: AxisBox2D;
+    // (undocumented)
+    transition?: Transition;
+    // Warning: (ae-forgotten-export) The symbol "VisibilityAction" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    visibilityAction?: VisibilityAction;
+}
+
+// @public (undocumented)
+export const SharedLayoutContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
+
+// @public (undocumented)
 export interface SharedLayoutProps {
     // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
     // 
@@ -591,6 +722,18 @@ export interface SharedLayoutProps {
     // @internal
     _transition?: Transition;
     type?: "switch" | "crossfade";
+}
+
+// @public
+export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
+    // (undocumented)
+    forceUpdate: () => void;
+    // (undocumented)
+    register: (child: HTMLVisualElement | LayoutTree) => void;
+    // (undocumented)
+    remove: (child: HTMLVisualElement | LayoutTree) => void;
+    // (undocumented)
+    syncUpdate: (force?: boolean) => void;
 }
 
 // @public (undocumented)
@@ -622,6 +765,14 @@ export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMoti
 
 // @public (undocumented)
 export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, MotionProps {
+}
+
+// @public
+export interface SyncLayoutLifecycles {
+    // (undocumented)
+    layoutReady: (child: HTMLVisualElement) => void;
+    // (undocumented)
+    measureLayout: (child: HTMLVisualElement) => void;
 }
 
 // @public (undocumented)
@@ -713,8 +864,6 @@ export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValue
 // @internal
 export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
-// Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, ref: VisualElement): void;
 
