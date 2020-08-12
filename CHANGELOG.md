@@ -16,7 +16,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Providing `x` and `y` `MotionValue`s to `style` will now make drag work directly on those transforms.
+-   Drag now works directly on `x` and `y` transforms unless `layout` or `layoutId` are also set.
 
 ## [2.3.0] 2020-07-28
 

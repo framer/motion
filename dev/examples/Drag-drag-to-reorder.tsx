@@ -38,6 +38,7 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 ref={ref}
                 initial={false}
                 id={color}
+                layout
                 // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
                 style={{
                     background: "white",
