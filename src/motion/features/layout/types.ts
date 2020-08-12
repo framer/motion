@@ -81,5 +81,5 @@ export interface LayoutProps {
      *
      * @internal
      */
-    _register?: () => boolean
+    _register?: () => void
 }
