@@ -201,6 +201,48 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(0)
     })
 
+    test("delay propagates throughout children", async () => {
+        const promise = new Promise(resolve => {
+            const opacity = motionValue(0)
+            const variants: Variants = {
+                visible: {
+                    opacity: 1,
+                },
+                hidden: {
+                    opacity: 0,
+                },
+            }
+
+            function Component() {
+                return (
+                    <motion.div
+                        variants={variants}
+                        initial="hidden"
+                        animate="visible"
+                        transition={{ type: false, delayChildren: 1 }}
+                    >
+                        <motion.div
+                            variants={variants}
+                            transition={{ type: false }}
+                        >
+                            <motion.div
+                                variants={variants}
+                                style={{ opacity }}
+                            />
+                        </motion.div>
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            setTimeout(() => resolve(opacity.get()), 300)
+        })
+
+        return expect(promise).resolves.toBe(0)
+    })
+
     test("propagates through components with no `animate` prop", async () => {
         const promise = new Promise(resolve => {
             const opacity = motionValue(0)
