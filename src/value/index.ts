@@ -2,6 +2,7 @@ import sync, { getFrameData, FrameData } from "framesync"
 import { Action } from "popmotion"
 import { velocityPerSecond } from "@popmotion/popcorn"
 import { PopmotionTransitionProps } from "../types"
+import { SubscriptionManager } from "../utils/subscription-manager"
 
 export type Transformer<T> = (v: T) => T
 
@@ -62,14 +63,14 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    updateSubscribers?: Set<Subscriber<V>>
+    updateSubscribers = new SubscriptionManager<Subscriber<V>>()
 
     /**
      * Functions to notify when the `MotionValue` updates and `render` is set to `true`.
      *
      * @internal
      */
-    private renderSubscribers?: Set<Subscriber<V>>
+    private renderSubscribers = new SubscriptionManager<Subscriber<V>>()
 
     /**
      * Add a passive effect to this `MotionValue`.
@@ -109,21 +110,6 @@ export class MotionValue<V = any> {
     constructor(init: V) {
         this.set(init, false)
         this.canTrackVelocity = isFloat(this.current)
-    }
-
-    /**
-     * Subscribes a subscriber function to a subscription list.
-     *
-     * @param subscriptions - A `Set` of subscribers.
-     * @param subscription - A subscriber function.
-     */
-    private subscribeTo(
-        subscriptions: Set<Subscriber<V>>,
-        subscription: Subscriber<V>
-    ) {
-        const updateSubscriber = () => subscription(this.current)
-        subscriptions.add(updateSubscriber)
-        return () => subscriptions.delete(updateSubscriber)
     }
 
     /**
@@ -205,12 +191,11 @@ export class MotionValue<V = any> {
      * @public
      */
     onChange(subscription: Subscriber<V>): () => void {
-        if (!this.updateSubscribers) this.updateSubscribers = new Set()
-        return this.subscribeTo(this.updateSubscribers, subscription)
+        return this.updateSubscribers.add(subscription)
     }
 
     clearListeners() {
-        this.updateSubscribers?.clear()
+        this.updateSubscribers.clear()
     }
 
     /**
@@ -222,10 +207,10 @@ export class MotionValue<V = any> {
      * @internal
      */
     onRenderRequest(subscription: Subscriber<V>) {
-        if (!this.renderSubscribers) this.renderSubscribers = new Set()
         // Render immediately
-        this.notifySubscriber(subscription)
-        return this.subscribeTo(this.renderSubscribers, subscription)
+        subscription(this.get())
+
+        return this.renderSubscribers.add(subscription)
     }
 
     /**
@@ -264,12 +249,12 @@ export class MotionValue<V = any> {
         this.prev = this.current
         this.current = v
 
-        if (this.updateSubscribers && this.prev !== this.current) {
-            this.updateSubscribers.forEach(this.notifySubscriber)
+        if (this.prev !== this.current) {
+            this.updateSubscribers.notify(this.current)
         }
 
-        if (render && this.renderSubscribers) {
-            this.renderSubscribers.forEach(this.notifySubscriber)
+        if (render) {
+            this.renderSubscribers.notify(this.current)
         }
 
         // Update timestamp
@@ -317,20 +302,6 @@ export class MotionValue<V = any> {
                   this.timeDelta
               )
             : 0
-    }
-
-    /**
-     * Notify a subscriber with the latest value.
-     *
-     * This is an instanced and bound function to prevent generating a new
-     * function once per frame.
-     *
-     * @param subscriber - The subscriber to notify.
-     *
-     * @internal
-     */
-    private notifySubscriber = (subscriber: Subscriber<V>) => {
-        subscriber(this.current)
     }
 
     /**
@@ -411,8 +382,8 @@ export class MotionValue<V = any> {
      * @public
      */
     destroy() {
-        this.updateSubscribers && this.updateSubscribers.clear()
-        this.renderSubscribers && this.renderSubscribers.clear()
+        this.updateSubscribers.clear()
+        this.renderSubscribers.clear()
         this.stop()
     }
 }

@@ -26,6 +26,8 @@ import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 import { buildLayoutProjectionTransform } from "./utils/build-transform"
+import { SubscriptionManager } from "../../utils/subscription-manager"
+import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -161,7 +163,17 @@ export class HTMLVisualElement<
      * A set of layout update event handlers. These are only called once all layouts have been read,
      * making it safe to perform DOM write operations.
      */
-    private layoutUpdateListeners: Set<LayoutUpdateHandler> = new Set()
+    private layoutUpdateListeners = new SubscriptionManager<
+        LayoutUpdateHandler
+    >()
+
+    private layoutMeasureListeners = new SubscriptionManager<
+        LayoutUpdateHandler
+    >()
+
+    private viewportBoxUpdateListeners = new SubscriptionManager<
+        OnViewportBoxUpdate
+    >()
 
     /**
      * Keep track of whether the viewport box has been updated since the last render.
@@ -291,8 +303,15 @@ export class HTMLVisualElement<
      * for this via a `motion` prop.
      */
     onLayoutUpdate(callback: LayoutUpdateHandler) {
-        this.layoutUpdateListeners.add(callback)
-        return () => this.layoutUpdateListeners.delete(callback)
+        return this.layoutUpdateListeners.add(callback)
+    }
+
+    onLayoutMeasure(callback: LayoutUpdateHandler) {
+        return this.layoutMeasureListeners.add(callback)
+    }
+
+    onViewportBoxUpdate(callback: OnViewportBoxUpdate) {
+        return this.viewportBoxUpdateListeners.add(callback)
     }
 
     /**
@@ -300,9 +319,11 @@ export class HTMLVisualElement<
      * subscribers.
      */
     layoutReady(config?: SharedLayoutAnimationConfig) {
-        this.layoutUpdateListeners.forEach(listener => {
-            listener(this.box, this.prevViewportBox || this.box, config)
-        })
+        this.layoutUpdateListeners.notify(
+            this.box,
+            this.prevViewportBox || this.box,
+            config
+        )
     }
 
     /**
@@ -353,6 +374,11 @@ export class HTMLVisualElement<
         this.boxCorrected = copyAxisBox(this.box)
 
         if (!this.targetBox) this.targetBox = copyAxisBox(this.box)
+
+        this.layoutMeasureListeners.notify(
+            this.box,
+            this.prevViewportBox || this.box
+        )
     }
 
     /**
@@ -543,7 +569,7 @@ export class HTMLVisualElement<
          * If we have a listener for the viewport box, fire it.
          */
         this.hasViewportBoxUpdated &&
-            this.config.onViewportBoxUpdate?.(this.targetBox, this.delta)
+            this.viewportBoxUpdateListeners.notify(this.targetBox, this.delta)
         this.hasViewportBoxUpdated = false
 
         /**

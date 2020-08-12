@@ -30,7 +30,8 @@
         "noUnusedParameters": true,
         "removeComments": false,
         "lib": ["es2017", "dom"],
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "downlevelIteration": true
     },
     "compileOnSave": false,
     "buildOnSave": false,
