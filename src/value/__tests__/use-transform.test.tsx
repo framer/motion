@@ -36,6 +36,26 @@ describe("as function", () => {
     })
 })
 
+describe("as function with multiple values", () => {
+    test("sets initial value", async () => {
+        const Component = () => {
+            const x = useMotionValue(4)
+            const y = useMotionValue("5px")
+            const z = useTransform(
+                [x, y],
+                ([latestX, latestY]: [number, string]) =>
+                    latestX * parseFloat(latestY)
+            )
+            return <motion.div style={{ x, y, z }} />
+        }
+
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(4px) translateY(5px) translateZ(20px)"
+        )
+    })
+})
+
 describe("as input/output range", () => {
     test("sets initial value", async () => {
         const Component = () => {

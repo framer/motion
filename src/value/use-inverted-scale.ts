@@ -2,7 +2,7 @@ import { useContext } from "react"
 import { MotionContext } from "../motion/context/MotionContext"
 import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
-import { invariant } from "hey-listen"
+import { invariant, warning } from "hey-listen"
 import { useMotionValue } from "./use-motion-value"
 
 interface ScaleMotionValues {
@@ -47,6 +47,7 @@ export const invertScale = (scale: number) =>
  *
  * @public
  */
+let hasWarned = false
 export function useInvertedScale(
     scale?: Partial<ScaleMotionValues>
 ): ScaleMotionValues {
@@ -58,6 +59,12 @@ export function useInvertedScale(
         !!(scale || visualElement),
         "If no scale values are provided, useInvertedScale must be used within a child of another motion component."
     )
+
+    warning(
+        hasWarned,
+        "useInvertedScale is deprecated and will be removed in 3.0. Use the layout prop instead."
+    )
+    hasWarned = true
 
     if (scale) {
         parentScaleX = scale.scaleX || parentScaleX

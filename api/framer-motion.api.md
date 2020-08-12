@@ -750,17 +750,17 @@ export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap, contro
 // Warning: (ae-forgotten-export) The symbol "InputRange" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export function useTransform<I = number, O = string | number>(value: MotionValue<number>, inputRange: InputRange, outputRange: O[], options?: TransformOptions<O>): MotionValue<O>;
+export function useTransform<I = string | number, O = string | number>(value: MotionValue<number>, inputRange: InputRange, outputRange: O[], options?: TransformOptions<O>): MotionValue<O>;
 
 // Warning: (ae-forgotten-export) The symbol "SingleTransformer" needs to be exported by the entry point index.d.ts
 // 
-// @public (undocumented)
-export function useTransform<I = string | number, O = string | number>(value: MotionValue<I>, transformer: SingleTransformer<I, O>): MotionValue<O>;
+// @public
+export function useTransform<I = string | number, O = string | number>(input: MotionValue<I>, transformer: SingleTransformer<I, O>): MotionValue<O>;
 
 // Warning: (ae-forgotten-export) The symbol "MultiTransformer" needs to be exported by the entry point index.d.ts
 // 
-// @public (undocumented)
-export function useTransform<I = string | number, O = string | number>(value: MotionValue<I>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
+// @public
+export function useTransform<I = string | number, O = string | number>(input: MotionValue<I>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
 
 // @public
 export function useViewportScroll(): ScrollMotionValues;
