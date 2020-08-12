@@ -55,6 +55,7 @@ class Measure extends React.Component<SyncProps> {
          */
         const { x, y } = visualElement.axisProgress
         if (
+            visualElement.box &&
             !visualElement.isTargetBoxLocked &&
             !x.isAnimating() &&
             !y.isAnimating()
