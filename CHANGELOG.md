@@ -2,15 +2,14 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-### Fixed
+### Added
 
 -   Support for `transformPerspective` style.
 
-## [2.3.1] Unreleased
+### Fixed
 
-### Added
-
--   Support for rotate in `AnimateSharedLayout`. This is an internal feature only for use in Framer.
+-   Fixed `AnimateSharedLayout` within React `17.0.0-rc.0`.
+-   Internal: Support for rotate in `AnimateSharedLayout` within Framer.
 
 ## [2.3.0] 2020-07-28
 
