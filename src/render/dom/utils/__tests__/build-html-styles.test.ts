@@ -22,13 +22,13 @@ describe("buildHTMLStyles", () => {
     })
 
     test("Builds transform with default value types", () => {
-        const latest = { x: 1, y: 2, rotateX: 90 }
+        const latest = { x: 1, y: 2, rotateX: 90, transformPerspective: 200 }
         const style = {}
         build(latest, { style })
 
         expect(style).toEqual({
             transform:
-                "translateX(1px) translateY(2px) rotateX(90deg) translateZ(0)",
+                "perspective(200px) translateX(1px) translateY(2px) rotateX(90deg) translateZ(0)",
         })
     })
 

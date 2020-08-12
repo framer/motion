@@ -105,6 +105,7 @@ const defaultValueTypes: ValueTypeMap = {
     y: px,
     z: px,
     perspective: px,
+    transformPerspective: px,
     opacity: alpha,
     originX: progressPercentage,
     originY: progressPercentage,

@@ -8,6 +8,7 @@ const translateAlias: { [key: string]: string } = {
     x: "translateX",
     y: "translateY",
     z: "translateZ",
+    transformPerspective: "perspective",
 }
 
 /**

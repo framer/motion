@@ -31,6 +31,17 @@ describe("buildTransform", () => {
         ).toBe("translateX(0) translateZ(5px)")
     })
 
+    it("Correctly handles transformPerspective", () => {
+        expect(
+            buildTransform(
+                { x: "100px", transformPerspective: "200px" },
+                ["x", "transformPerspective"],
+                undefined,
+                false
+            )
+        ).toBe("perspective(200px) translateX(100px) translateZ(0)")
+    })
+
     it("Correctly handles transformTemplate if provided", () => {
         expect(
             buildTransform(
