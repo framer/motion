@@ -36,6 +36,8 @@ const validMotionProps = new Set<keyof MotionProps>([
     "dragListener",
     "dragConstraints",
     "dragDirectionLock",
+    "_dragX",
+    "_dragY",
     "dragElastic",
     "dragMomentum",
     "dragPropagation",

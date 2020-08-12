@@ -212,6 +212,8 @@ export interface DraggableProps extends DragHandlers {
     dragPropagation?: boolean;
     // Warning: (ae-forgotten-export) The symbol "InertiaOptions" needs to be exported by the entry point index.d.ts
     dragTransition?: InertiaOptions;
+    _dragX?: MotionValue<number>;
+    _dragY?: MotionValue<number>;
     onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
 }
 

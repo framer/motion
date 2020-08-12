@@ -6,6 +6,8 @@ import * as React from "react"
 export const App = () => {
     const containerRef = React.useRef(null)
     const [dragging, setDragging] = React.useState(false)
+    const params = new URLSearchParams(window.location.search)
+    const layout = params.get("layout") || undefined
 
     return (
         <motion.div
@@ -25,6 +27,7 @@ export const App = () => {
                     background: dragging ? "yellow" : "red",
                 }}
                 dragConstraints={containerRef}
+                layout={layout}
                 onDragStart={() => setDragging(true)}
                 onDragEnd={() => setDragging(false)}
             />

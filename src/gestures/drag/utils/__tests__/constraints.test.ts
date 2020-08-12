@@ -4,6 +4,7 @@ import {
     calcConstrainedMinPoint,
     calcViewportAxisConstraints,
     calcPositionFromProgress,
+    rebaseAxisConstraints,
 } from "../constraints"
 
 describe("applyConstraints", () => {
@@ -148,5 +149,16 @@ describe("calcPositionFromProgress", () => {
                 1
             )
         ).toEqual({ min: 400, max: 500 })
+    })
+})
+
+describe("rebaseAxisConstraints", () => {
+    test("Converts viewport-relative constraints to element-relative", () => {
+        expect(
+            rebaseAxisConstraints({ min: 0, max: 100 }, { min: -100 })
+        ).toEqual({ min: -100 })
+        expect(
+            rebaseAxisConstraints({ min: 200, max: 300 }, { max: 400 })
+        ).toEqual({ max: 200 })
     })
 })

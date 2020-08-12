@@ -11,6 +11,7 @@ export const App = () => {
     const left = parseFloat(params.get("left")) || undefined
     const right = parseFloat(params.get("right")) || undefined
     const bottom = parseFloat(params.get("bottom")) || undefined
+    const layout = params.get("layout") || undefined
 
     return (
         <motion.div
@@ -21,6 +22,7 @@ export const App = () => {
             dragMomentum={false}
             dragConstraints={{ top, left, right, bottom }}
             dragDirectionLock={!!lock}
+            layout={layout}
             style={{
                 width: 50,
                 height: 50,

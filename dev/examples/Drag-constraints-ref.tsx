@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useRef } from "react"
+import { useRef, useState } from "react"
 import { motion } from "../../src"
 
 const container = {
@@ -21,6 +21,7 @@ const child = {
 
 export const App = () => {
     const ref = useRef()
+    const [count, setCount] = useState(0)
     return (
         <div ref={ref} style={container}>
             <motion.div
@@ -30,6 +31,7 @@ export const App = () => {
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.1 }}
                 style={child}
+                onClick={() => setCount(count + 1)}
             />
         </div>
     )
