@@ -67,38 +67,40 @@ describe("Drag", () => {
     })
 
     it("Direction locks to x", () => {
+        cy.reload()
         cy.visit("?test=drag&lock=true")
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
-            .trigger("pointermove", 10, 5) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 5, 5, { force: true })
+            .trigger("pointermove", 5, 5, { force: true }) // Gesture will start from first move past threshold
             .wait(100)
-            .trigger("pointermove", 200, 5, { force: true })
+            .trigger("pointermove", 200, 10, { force: true })
             .wait(50)
-            .trigger("pointermove", 5, 200, { force: true })
+            .trigger("pointermove", 10, 200, { force: true })
             .wait(100)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
 
-                expect(left).to.equal(200)
                 expect(top).to.equal(0)
+                expect(left).to.equal(200)
             })
     })
 
     it("Direction locks to y", () => {
+        cy.reload()
         cy.visit("?test=drag&lock=true")
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
-            .trigger("pointermove", 5, 10) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 5, 5, { force: true })
+            .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
             .wait(100)
-            .trigger("pointermove", 5, 200, { force: true })
+            .trigger("pointermove", 10, 200, { force: true })
             .wait(100)
-            .trigger("pointermove", 200, 5, { force: true })
+            .trigger("pointermove", 200, 10, { force: true })
             .wait(100)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
@@ -195,7 +197,7 @@ describe("Drag & Layout", () => {
             .get("[data-testid='draggable']")
             .wait(200)
             .trigger("pointerdown", 5, 5)
-            .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
+            .trigger("pointermove", 5, 5) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 300, { force: true })
             .wait(50)
@@ -229,16 +231,17 @@ describe("Drag & Layout", () => {
     })
 
     it("Direction locks to x", () => {
+        cy.reload()
         cy.visit("?test=drag&lock=true&layout=true")
             .wait(100)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
-            .trigger("pointermove", 10, 5) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 5, 5, { force: true })
+            .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
             .wait(100)
-            .trigger("pointermove", 200, 5, { force: true })
+            .trigger("pointermove", 200, 10, { force: true })
             .wait(50)
-            .trigger("pointermove", 5, 200, { force: true })
+            .trigger("pointermove", 10, 200, { force: true })
             .wait(100)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
@@ -255,12 +258,12 @@ describe("Drag & Layout", () => {
             .wait(100)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
-            .trigger("pointermove", 5, 10) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 5, 5, { force: true })
+            .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
             .wait(100)
-            .trigger("pointermove", 5, 200, { force: true })
+            .trigger("pointermove", 10, 200, { force: true })
             .wait(100)
-            .trigger("pointermove", 200, 5, { force: true })
+            .trigger("pointermove", 200, 10, { force: true })
             .wait(100)
             .trigger("pointerup", { force: true })
             .should(($draggable: any) => {
