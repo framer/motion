@@ -72,7 +72,7 @@ class Animate extends React.Component<AnimateProps> {
         target = targetBox || target
 
         const boxHasMoved = hasMoved(origin, target)
-        console.log("animate")
+
         const animations = eachAxis(axis => {
             /**
              * If layout is set to "position", we can resize the origin box based on the target
