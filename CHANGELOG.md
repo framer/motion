@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.4.1] 2020-08-12
+
+### Fixed
+
+-   Adding defensive check for `visualElement.box` in `MeasureLayout`.
+
 ## [2.4.0] 2020-08-12
 
 ### Added
