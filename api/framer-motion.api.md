@@ -445,7 +445,7 @@ export interface LayoutProps {
     onLayoutAnimationComplete?(): void;
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
     // @internal
-    _register?: () => boolean;
+    _register?: () => void;
     // @internal
     _shouldAnimateLayout?: () => boolean;
 }
@@ -692,8 +692,6 @@ export interface SharedLayoutAnimationConfig {
     targetBox?: AxisBox2D;
     // (undocumented)
     transition?: Transition;
-    // Warning: (ae-forgotten-export) The symbol "VisibilityAction" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     visibilityAction?: VisibilityAction;
 }
@@ -928,6 +926,14 @@ export type VariantLabels = string | string[];
 export type Variants = {
     [key: string]: Variant;
 };
+
+// @public (undocumented)
+export enum VisibilityAction {
+    // (undocumented)
+    Hide = 0,
+    // (undocumented)
+    Show = 1
+}
 
 // Warning: (ae-internal-missing-underscore) The name "VisualElementAnimationControls" should be prefixed with an underscore because the declaration is marked as @internal
 // 

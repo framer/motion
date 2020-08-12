@@ -126,7 +126,10 @@ export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
-export { SharedLayoutAnimationConfig } from "./components/AnimateSharedLayout/types"
+export {
+    SharedLayoutAnimationConfig,
+    VisibilityAction,
+} from "./components/AnimateSharedLayout/types"
 export {
     SharedLayoutSyncMethods,
     SharedLayoutContext,

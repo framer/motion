@@ -183,7 +183,7 @@ export class HTMLVisualElement<
 
     /**
      * Optional id. If set, and this is the child of an AnimateSharedLayout component,
-     * the targetBox can be transerred to a new component with the same ID.
+     * the targetBox can be transferred to a new component with the same ID.
      */
     layoutId?: string
 
