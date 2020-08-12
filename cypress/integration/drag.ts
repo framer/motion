@@ -32,6 +32,7 @@ describe("Drag", () => {
             .get("[data-testid='draggable']")
             .wait(200)
             .trigger("pointerdown", 5, 5)
+            .wait(50)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 300, { force: true })
