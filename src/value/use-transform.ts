@@ -1,16 +1,87 @@
 import { MotionValue } from "../value"
 import { transform, TransformOptions } from "../utils/transform"
-import { useMemo, useRef } from "react"
-import { useMotionValue } from "./use-motion-value"
-import { useUnmountEffect } from "../utils/use-unmount-effect"
+import { useCombineMotionValues } from "./use-combine-values"
+import { useConstant } from "../utils/use-constant"
 
-type Transformer<T> = (v: any) => T
+export type InputRange = number[]
+type SingleTransformer<I, O> = (input: I) => O
+type MultiTransformer<I, O> = (input: I[]) => O
+type Transformer<I, O> =
+    | SingleTransformer<I, O>
+    /**
+     * Ideally, this would be typed <I, O> in all instances, but to type this
+     * more accurately requires the tuple support in TypeScript 4:
+     * https://gist.github.com/InventingWithMonster/c4d23752a0fae7888596c4ff6d92733a
+     */
+    | MultiTransformer<string | number, O>
 
-const isTransformer = <T>(
-    v: number[] | Transformer<T>
-): v is Transformer<T> => {
-    return typeof v === "function"
-}
+/**
+ * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
+ *
+ * @remarks
+ *
+ * Given an input range of `[-200, -100, 100, 200]` and an output range of
+ * `[0, 1, 1, 0]`, the returned `MotionValue` will:
+ *
+ * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`.
+ * - When provided a value between `-100` and `100`, will return `1`.
+ * - When provided a value between `100` and `200`, will return a value between `1` and  `0`
+ *
+ *
+ * The input range must be a linear series of numbers. The output range
+ * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
+ *
+ * Every value in the output range must be of the same type and in the same format.
+ *
+ * @library
+ *
+ * ```jsx
+ * export function MyComponent() {
+ *   const x = useMotionValue(0)
+ *   const xRange = [-200, -100, 100, 200]
+ *   const opacityRange = [0, 1, 1, 0]
+ *   const opacity = useTransform(x, xRange, opacityRange)
+ *
+ *   return <Frame x={x} animate={{ x: 200 }} opacity={opacity} />
+ * }
+ * ```
+ *
+ * @motion
+ *
+ * ```jsx
+ * export const MyComponent = () => {
+ *   const x = useMotionValue(0)
+ *   const xRange = [-200, -100, 100, 200]
+ *   const opacityRange = [0, 1, 1, 0]
+ *   const opacity = useTransform(x, xRange, opacityRange)
+ *
+ *   return (
+ *     <motion.div
+ *       animate={{ x: 200 }}
+ *       style={{ opacity, x }}
+ *     />
+ *   )
+ * }
+ * ```
+ *
+ * @param inputValue - `MotionValue`
+ * @param inputRange - A linear series of numbers (either all increasing or decreasing)
+ * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
+ * @param options -
+ *
+ *  - clamp: boolean. Clamp values to within the given range. Defaults to `true`
+ *  - ease: EasingFunction[]. Easing functions to use on the interpolations between each value in the input and output ranges. If provided as an array, the array must be one item shorter than the input and output ranges, as the easings apply to the transition between each.
+ *
+ * @returns `MotionValue`
+ *
+ * @public
+ */
+export function useTransform<I, O>(
+    value: MotionValue<number>,
+    inputRange: InputRange,
+    outputRange: O[],
+    options?: TransformOptions<O>
+): MotionValue<O>
 
 /**
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
@@ -41,44 +112,32 @@ const isTransformer = <T>(
  * }
  * ```
  *
- * @param value - The `MotionValue` to transform the output of.
- * @param transform - Function that accepts the output of `value` and returns a new value.
+ * @param input - A `MotionValue` that will pass its latest value through `transform` to update the returned `MotionValue`.
+ * @param transform - A function that accepts the latest value from `input` and returns a new value.
  * @returns `MotionValue`
  *
  * @public
  */
-export function useTransform<T>(
-    parent: MotionValue,
-    transform: Transformer<T>
-): MotionValue
+export function useTransform<I, O>(
+    input: MotionValue<I>,
+    transformer: SingleTransformer<I, O>
+): MotionValue<O>
+
 /**
- * Create a `MotionValue` that transforms the output of another `MotionValue` by mapping it from one range of values into another.
- *
- * @remarks
- *
- * Given an input range of `[-200, -100, 100, 200]` and an output range of
- * `[0, 1, 1, 0]`, the returned `MotionValue` will:
- *
- * - When provided a value between `-200` and `-100`, will return a value between `0` and  `1`.
- * - When provided a value between `-100` and `100`, will return `1`.
- * - When provided a value between `100` and `200`, will return a value between `1` and  `0`
- *
- *
- * The input range must be a linear series of numbers. The output range
- * can be any value type supported by Framer Motion: numbers, colors, shadows, etc.
- *
- * Every value in the output range must be of the same type and in the same format.
+ * Pass an array of `MotionValue`s and a function to combine them. In this example, `z` will be the `x` multiplied by `y`.
  *
  * @library
  *
  * ```jsx
+ * import * as React from "react"
+ * import { Frame, useMotionValue, useTransform } from "framer"
+ *
  * export function MyComponent() {
  *   const x = useMotionValue(0)
- *   const xRange = [-200, -100, 100, 200]
- *   const opacityRange = [0, 1, 1, 0]
- *   const opacity = useTransform(x, xRange, opacityRange)
+ *   const y = useMotionValue(0)
+ *   const z = useTransform([x, y], [latestX, latestY] => latestX * latestY)
  *
- *   return <Frame drag="x" x={x} opacity={opacity} />
+ *   return <Frame x={x} y={y} z={z} />
  * }
  * ```
  *
@@ -87,61 +146,58 @@ export function useTransform<T>(
  * ```jsx
  * export const MyComponent = () => {
  *   const x = useMotionValue(0)
- *   const xRange = [-200, -100, 100, 200]
- *   const opacityRange = [0, 1, 1, 0]
- *   const opacity = useTransform(x, xRange, opacityRange)
+ *   const y = useMotionValue(0)
+ *   const z = useTransform([x, y], [latestX, latestY] => latestX * latestY)
  *
- *   return <motion.div drag="x" style={{ opacity, x }} />
+ *   return <motion.div style={{ x, y, z }} />
  * }
  * ```
  *
- * @param inputValue - `MotionValue`
- * @param inputRange - A linear series of numbers (either all increasing or decreasing)
- * @param outputRange - A series of numbers, colors or strings. Must be the same length as `inputRange`.
- * @param options -
- *
- *  - clamp: boolean - Clamp values to within the given range. Defaults to `true`
- *  - ease: EasingFunction[] - Easing functions to use on the interpolations between each value in the input and output ranges. If provided as an array, the array must be one item shorter than the input and output ranges, as the easings apply to the transition **between** each.
- *
+ * @param input - An array of `MotionValue`s that will pass their latest values through `transform` to update the returned `MotionValue`.
+ * @param transform - A function that accepts the latest values from `input` and returns a new value.
  * @returns `MotionValue`
  *
  * @public
  */
-export function useTransform<T>(
-    parent: MotionValue<number>,
-    from: number[],
-    to: T[],
-    options?: TransformOptions<T>
-): MotionValue<T>
-export function useTransform<T>(
-    parent: MotionValue,
-    customTransform: Transformer<T> | number[],
-    to?: T[],
-    options?: TransformOptions<T>
-): MotionValue<T> {
-    const comparitor = isTransformer(customTransform)
-        ? [parent]
-        : [parent, customTransform.join(","), to?.join(",")]
+export function useTransform<I, O>(
+    input: MotionValue<string | number>[],
+    transformer: MultiTransformer<I, O>
+): MotionValue<O>
 
-    const transformer = useMemo(() => {
-        return isTransformer(customTransform)
-            ? customTransform
-            : transform(customTransform, to as T[], options)
-    }, comparitor)
+export function useTransform<I, O>(
+    input: MotionValue<I> | MotionValue<string | number>[],
+    inputRangeOrTransformer: InputRange | Transformer<I, O>,
+    outputRange?: O[],
+    options?: TransformOptions<O>
+): MotionValue<O> {
+    const transformer =
+        typeof inputRangeOrTransformer === "function"
+            ? inputRangeOrTransformer
+            : transform(inputRangeOrTransformer, outputRange!, options)
 
-    const initialValue = transformer(parent.get())
-    const value = useMotionValue(initialValue)
+    return Array.isArray(input)
+        ? useListTransform(
+              input,
+              transformer as MultiTransformer<string | number, O>
+          )
+        : useListTransform([input], ([latest]) =>
+              (transformer as SingleTransformer<I, O>)(latest)
+          )
+}
 
-    // Handle subscription to parent
-    const unsubscribe = useRef<() => void>()
-    useMemo(() => {
-        unsubscribe.current && unsubscribe.current()
-        unsubscribe.current = parent.onChange(v => value.set(transformer(v)))
+function useListTransform<I, O>(
+    values: MotionValue<I>[],
+    transformer: MultiTransformer<I, O>
+): MotionValue<O> {
+    const latest = useConstant<I[]>(() => [])
 
-        // Manually set with the latest parent value in case we've re-parented
-        value.set(initialValue)
-    }, [parent, value, transformer])
-    useUnmountEffect(() => unsubscribe.current && unsubscribe.current())
+    return useCombineMotionValues(values, () => {
+        latest.length = 0
+        const numValues = values.length
+        for (let i = 0; i < numValues; i++) {
+            latest[i] = values[i].get()
+        }
 
-    return value
+        return transformer(latest)
+    })
 }

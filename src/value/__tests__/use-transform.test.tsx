@@ -36,6 +36,26 @@ describe("as function", () => {
     })
 })
 
+describe("as function with multiple values", () => {
+    test("sets initial value", async () => {
+        const Component = () => {
+            const x = useMotionValue(4)
+            const y = useMotionValue("5px")
+            const z = useTransform(
+                [x, y],
+                ([latestX, latestY]: [number, string]) =>
+                    latestX * parseFloat(latestY)
+            )
+            return <motion.div style={{ x, y, z }} />
+        }
+
+        const { container } = render(<Component />)
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(4px) translateY(5px) translateZ(20px)"
+        )
+    })
+})
+
 describe("as input/output range", () => {
     test("sets initial value", async () => {
         const Component = () => {
@@ -53,12 +73,15 @@ describe("as input/output range", () => {
             const x = useMotionValue(100)
             const opacity = useTransform(x, [0, 200], [0, 1])
 
-            x.set(20)
+            React.useEffect(() => {
+                x.set(20)
+            }, [])
 
             return <motion.div style={{ x, opacity }} />
         }
 
-        const { container } = render(<Component />)
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
         expect(container.firstChild).toHaveStyle("opacity: 0.1")
     })
 
@@ -71,12 +94,15 @@ describe("as input/output range", () => {
                 [new Custom(100), new Custom(200)]
             )
 
-            x.set(20)
+            React.useEffect(() => {
+                x.set(20)
+            }, [])
 
             return <motion.div style={{ x, y }} />
         }
 
-        const { container } = render(<Component />)
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(20px) translateY(120px) translateZ(0)"
         )
@@ -109,8 +135,7 @@ test("can be re-pointed to another `MotionValue`", async () => {
     expect(container.firstChild as Element).toHaveStyle(
         "transform: translateX(4px) translateZ(0)"
     )
-    b.set(10)
-    expect(x.get()).toBe(20)
+
     rerender(<Component target={a} />)
     expect(container.firstChild as Element).toHaveStyle(
         "transform: translateX(2px) translateZ(0)"

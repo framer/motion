@@ -6,6 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+-   Upgraded `useTransform` to accept multiple `MotionValue`s.
 -   Support for `transformPerspective` style.
 -   Internal: `_dragX` and `_dragY` external `MotionValue` targets for drag gesture.
 -   Internal: Support for rotate in `AnimateSharedLayout` within Framer.
@@ -15,6 +16,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Fixed `AnimateSharedLayout` within React `17.0.0-rc.0`.
 -   Drag now works directly on `x` and `y` transforms unless `layout` or `layoutId` are also set.
+
+### Changed
+
+-   Marked `useInvertedScale` as deprecated.
 
 ## [2.3.0] 2020-07-28
 

@@ -1,7 +1,5 @@
-import { useEffect } from "react"
-import sync from "framesync"
 import { MotionValue } from "."
-import { useMotionValue } from "./use-motion-value"
+import { useCombineMotionValues } from "./use-combine-values"
 
 /**
  * Combine multiple motion values into a new one using a string template literal.
@@ -33,6 +31,7 @@ export function useMotionTemplate(
      * Create a function that will build a string from the latest motion values.
      */
     const numFragments = fragments.length
+
     function buildValue() {
         let output = ``
 
@@ -45,37 +44,5 @@ export function useMotionTemplate(
         return output
     }
 
-    /**
-     * Initialise the returned motion value. This remains the same between renders.
-     */
-    const value = useMotionValue(buildValue())
-
-    /**
-     * Create a function that will update the template motion value with the latest values.
-     * This is pre-bound so whenever a motion value updates it can schedule its
-     * execution in Framesync. If it's already been scheduled it won't be fired twice
-     * in a single frame.
-     */
-    const updateValue = () => value.set(buildValue())
-
-    /**
-     * Synchronously update the motion value with the latest values during the render.
-     * This ensures that within a React render, the styles applied to the DOM are up-to-date.
-     */
-    updateValue()
-
-    /**
-     * Subscribe to all motion values found within the template. Whenever any of them change,
-     * schedule an update.
-     */
-    useValueOnChange(values, () => sync.update(updateValue, false, true))
-
-    return value
-}
-
-function useValueOnChange(values: MotionValue[], handler: () => void) {
-    useEffect(() => {
-        const subscriptions = values.map(value => value.onChange(handler))
-        return () => subscriptions.forEach(unsubscribe => unsubscribe())
-    })
+    return useCombineMotionValues(values, buildValue)
 }
