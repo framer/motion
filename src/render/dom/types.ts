@@ -50,7 +50,8 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
 
     transition?: MotionProps["transition"]
 
-    layoutOrder?: number
+    _shouldAnimateLayout?: () => boolean
+    _register?: () => void
 }
 
 export interface TransformOrigin {
