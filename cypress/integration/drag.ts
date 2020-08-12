@@ -232,9 +232,8 @@ describe("Drag & Layout", () => {
         cy.visit("?test=drag&lock=true&layout=true")
             .wait(100)
             .get("[data-testid='draggable']")
-            .wait(100)
+            .wait(200)
             .trigger("pointerdown", 5, 5)
-            .wait(100)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(100)
             .trigger("pointermove", 200, 10, { force: true })
