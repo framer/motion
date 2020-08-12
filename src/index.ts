@@ -4,6 +4,7 @@
 export { motion, m } from "./render/dom"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+export { HTMLVisualElement } from "./render/dom/HTMLVisualElement"
 
 /**
  * Features
@@ -125,4 +126,11 @@ export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
+export { SharedLayoutAnimationConfig } from "./components/AnimateSharedLayout/types"
+export {
+    SharedLayoutSyncMethods,
+    SharedLayoutContext,
+    SyncLayoutLifecycles,
+    createBatcher,
+} from "./components/AnimateSharedLayout/SharedLayoutContext"
 export * from "./types/geometry"
