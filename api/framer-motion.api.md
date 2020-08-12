@@ -10,7 +10,6 @@ import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from 'popmotion';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
-import { HTMLVisualElement as HTMLVisualElement_2 } from 'render/dom/HTMLVisualElement';
 import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
@@ -44,33 +43,20 @@ export interface AnimatePresenceProps {
 
 // @public (undocumented)
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
-    // Warning: (ae-forgotten-export) The symbol "LayoutTree" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
-    addChild(child: HTMLVisualElement | LayoutTree): void;
+    addChild(child: HTMLVisualElement): void;
     // (undocumented)
     addToStack(child: HTMLVisualElement): void;
-    // (undocumented)
-    addToTree(child: LayoutTree): void;
-    // (undocumented)
-    addVisualElementChild(child: HTMLVisualElement): void;
     // (undocumented)
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
-    // (undocumented)
-    forEachChild(cb: (child: HTMLVisualElement) => void): void;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id?: string): LayoutStack | undefined;
     // (undocumented)
-    removeChild(child: HTMLVisualElement | LayoutTree): void;
-    get isSharedLayoutTreeParent(): boolean;
+    removeChild(child: HTMLVisualElement): void;
     // (undocumented)
     removeFromStack(child: HTMLVisualElement): void;
-    // (undocumented)
-    removeFromTree(child: LayoutTree): void;
-    // (undocumented)
-    removeVisualElementChild(child: HTMLVisualElement): void;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
@@ -82,8 +68,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     syncContext: SharedLayoutSyncMethods;
     // (undocumented)
     updateStacks(): void;
-    // (undocumented)
-    updateTree(): void;
 }
 
 // @public
@@ -340,8 +324,14 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     lockTargetBox(): void;
     // (undocumented)
     measureLayout(): void;
+    // (undocumented)
+    onLayoutMeasure(callback: LayoutUpdateHandler): () => undefined;
     // Warning: (ae-forgotten-export) The symbol "LayoutUpdateHandler" needs to be exported by the entry point index.d.ts
-    onLayoutUpdate(callback: LayoutUpdateHandler): () => boolean;
+    onLayoutUpdate(callback: LayoutUpdateHandler): () => undefined;
+    // Warning: (ae-forgotten-export) The symbol "OnViewportBoxUpdate" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    onViewportBoxUpdate(callback: OnViewportBoxUpdate): () => undefined;
     // Warning: (ae-forgotten-export) The symbol "Presence" needs to be exported by the entry point index.d.ts
     presence?: Presence;
     prevViewportBox?: AxisBox2D;
@@ -455,7 +445,9 @@ export interface LayoutProps {
     onLayoutAnimationComplete?(): void;
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
     // @internal
-    _shouldAnimateLayout?: (calculate: boolean) => boolean | void;
+    _register?: () => boolean;
+    // @internal
+    _shouldAnimateLayout?: () => boolean;
 }
 
 // Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts
@@ -729,9 +721,9 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
     // (undocumented)
     forceUpdate: () => void;
     // (undocumented)
-    register: (child: HTMLVisualElement | LayoutTree) => void;
+    register: (child: HTMLVisualElement) => void;
     // (undocumented)
-    remove: (child: HTMLVisualElement | LayoutTree) => void;
+    remove: (child: HTMLVisualElement) => void;
     // (undocumented)
     syncUpdate: (force?: boolean) => void;
 }
