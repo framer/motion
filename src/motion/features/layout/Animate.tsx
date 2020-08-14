@@ -96,10 +96,9 @@ class Animate extends React.Component<AnimateProps> {
                 visibilityAction === VisibilityAction.Hide
                     ? visualElement.hide()
                     : visualElement.show()
-            } else if (boxHasMoved || config.crossfadeOpacity) {
+            } else if (boxHasMoved) {
                 // If the box has moved, animate between it's current visual state and its
                 // final state
-                console.log("running animate axis", visualElement.layoutId)
                 return this.animateAxis(
                     axis,
                     target[axis],
