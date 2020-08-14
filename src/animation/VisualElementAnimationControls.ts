@@ -568,8 +568,6 @@ export class VisualElementAnimationControls<
         /**
          * If we have children, create a callback that runs all their animations.
          * Otherwise, we resolve a Promise immediately for a composable no-op.
-         *
-         *
          */
         const getChildrenAnimations = this.children
             ? (forwardDelay: number = 0) => {
