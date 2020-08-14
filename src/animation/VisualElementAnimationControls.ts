@@ -585,7 +585,7 @@ export class VisualElementAnimationControls<
             : () => Promise.resolve()
 
         /**
-         * If the transition explicitly defines a when option, we need to resolve either
+         * If the transition explicitly defines a "when" option, we need to resolve either
          * this animation or all children animations before playing the other.
          */
         const { when } = transition
