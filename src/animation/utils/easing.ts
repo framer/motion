@@ -1,6 +1,6 @@
 import { invariant } from "hey-listen"
-import { cubicBezier } from "@popmotion/easing"
-import * as easingLookup from "@popmotion/easing"
+import { cubicBezier } from "popmotion"
+import * as easingLookup from "popmotion"
 import { Easing } from "../../types"
 
 export const easingDefinitionToFunction = (definition: Easing) => {

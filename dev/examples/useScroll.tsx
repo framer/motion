@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useEffect, useState, useRef } from "react"
 import { motion, useElementScroll, useSpring, useTransform } from "@framer"
-import { mix } from "@popmotion/popcorn"
+import { mix } from "popmotion"
 
 const randomInt = (min, max) => Math.round(mix(min, max, Math.random()))
 const generateParagraphLength = () => randomInt(10, 40)

@@ -1,4 +1,4 @@
-import { mix } from "@popmotion/popcorn"
+import { mix } from "popmotion"
 import { Axis } from "../../../types/geometry"
 
 export function tweenAxis(target: Axis, prev: Axis, next: Axis, p: number) {

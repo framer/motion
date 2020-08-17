@@ -1,5 +1,4 @@
-import { interpolate } from "@popmotion/popcorn"
-import { Easing } from "@popmotion/easing"
+import { interpolate, Easing } from "popmotion"
 import { CustomValueType } from "../types"
 
 /**

@@ -1,5 +1,5 @@
 import { Axis, AxisBox2D, BoxDelta } from "../../types/geometry"
-import { mix } from "@popmotion/popcorn"
+import { mix } from "popmotion"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import { ResolvedValues } from "../../render/types"
 

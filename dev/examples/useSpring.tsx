@@ -2,7 +2,7 @@ import * as React from "react"
 import { useState, useMemo, useEffect, useRef } from "react"
 import { render } from "react-dom"
 import { motion, useMotionValue, useSpring } from "@framer"
-import { distance } from "@popmotion/popcorn"
+import { distance } from "popmotion"
 import { spring } from "popmotion"
 
 //const grid = [[0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15]]

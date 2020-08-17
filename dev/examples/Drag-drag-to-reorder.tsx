@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useRef, useEffect } from "react"
 import { motion } from "@framer"
-import { clamp, distance } from "@popmotion/popcorn"
+import { clamp, distance } from "popmotion"
 import move from "array-move"
 
 /**

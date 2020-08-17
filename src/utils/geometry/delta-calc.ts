@@ -5,9 +5,9 @@ import {
     AxisBox2D,
     Point2D,
 } from "../../types/geometry"
-import { mix, progress, clamp, distance } from "@popmotion/popcorn"
+import { mix, progress, clamp, distance } from "popmotion"
 
-const clampProgress = clamp(0, 1)
+const clampProgress = (v: number) => clamp(0, 1, v)
 
 /**
  * Returns true if the provided value is within maxDistance of the provided target

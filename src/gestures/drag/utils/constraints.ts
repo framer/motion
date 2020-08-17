@@ -4,7 +4,7 @@ import {
     BoundingBox2D,
     Point2D,
 } from "../../../types/geometry"
-import { mix } from "@popmotion/popcorn"
+import { mix } from "popmotion"
 import { calcOrigin } from "../../../utils/geometry/delta-calc"
 
 export interface ResolvedConstraints {

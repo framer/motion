@@ -7,7 +7,7 @@
 import * as CSS from 'csstype';
 import { CSSProperties } from 'react';
 import { DetailedHTMLFactory } from 'react';
-import { Easing as Easing_2 } from '@popmotion/easing';
+import { Easing as Easing_2 } from 'popmotion';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
 import { PropsWithoutRef } from 'react';

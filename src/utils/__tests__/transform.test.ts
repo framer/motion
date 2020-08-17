@@ -1,7 +1,7 @@
 import "../../../jest.setup"
 import { transform } from "../transform"
 
-// Functionality of `transform` is thoroughly tested in `@popmotion/popcorn/interpolate`
+// Functionality of `transform` is thoroughly tested in `popmotion/interpolate`
 // but here we test the overload functionality and some basic interpolations/typings
 describe("transform", () => {
     test("works identically with both syntax", () => {
@@ -39,9 +39,14 @@ describe("transform", () => {
     })
 
     test("works with arrays", () => {
-        expect(transform([0, 1], [[1, "#fff"], [2, "#000"]])(0.5)).toEqual([
-            1.5,
-            "rgba(180, 180, 180, 1)",
-        ])
+        expect(
+            transform(
+                [0, 1],
+                [
+                    [1, "#fff"],
+                    [2, "#000"],
+                ]
+            )(0.5)
+        ).toEqual([1.5, "rgba(180, 180, 180, 1)"])
     })
 })

@@ -1,6 +1,6 @@
 import { Point2D, Axis, AxisBox2D, BoxDelta } from "../../../types/geometry"
 import { complex } from "style-value-types"
-import { mix } from "@popmotion/popcorn"
+import { mix } from "popmotion"
 
 type ScaleCorrection = (
     latest: string | number,

@@ -1,7 +1,5 @@
 import sync, { getFrameData, FrameData } from "framesync"
-import { Action } from "popmotion"
-import { velocityPerSecond } from "@popmotion/popcorn"
-import { PopmotionTransitionProps } from "../types"
+import { velocityPerSecond } from "popmotion"
 import { SubscriptionManager } from "../utils/subscription-manager"
 
 export type Transformer<T> = (v: T) => T
@@ -15,8 +13,6 @@ export type Subscriber<T> = (v: T) => void
  * @public
  */
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void
-
-export type ActionFactory = (actionConfig: PopmotionTransitionProps) => Action
 
 export type StartAnimation = (complete: () => void) => () => void
 

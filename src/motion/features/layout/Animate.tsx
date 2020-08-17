@@ -12,7 +12,7 @@ import {
     VisibilityAction,
     Presence,
 } from "../../../components/AnimateSharedLayout/types"
-import { mix, circOut, linear, progress } from "@popmotion/popcorn"
+import { mix, circOut, linear, progress } from "popmotion"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
 
