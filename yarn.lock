@@ -4583,6 +4583,11 @@ http-errors@~1.6.2:
     setprototypeof "1.1.0"
     statuses ">= 1.4.0 < 2"
 
+http-parser-js@>=0.5.1:
+  version "0.5.2"
+  resolved "https://registry.yarnpkg.com/http-parser-js/-/http-parser-js-0.5.2.tgz#da2e31d237b393aae72ace43882dd7e270a8ff77"
+  integrity sha512-opCO9ASqg5Wy2FNo7A0sxy71yGbbkJJXLdgMK04Tcypw9jr2MgWbyubb0+WdmDmGnFflO7fRbqbaihh/ENDlRQ==
+
 http-proxy-middleware@0.19.1:
   version "0.19.1"
   resolved "https://registry.yarnpkg.com/http-proxy-middleware/-/http-proxy-middleware-0.19.1.tgz#183c7dc4aa1479150306498c210cdaf96080a43a"
@@ -7044,10 +7049,10 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-popmotion@^9.0.0-rc.3:
-  version "9.0.0-rc.3"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-rc.3.tgz#e8a2c59aa400b24bf5c18545d4e8a94740db5a0f"
-  integrity sha512-j+eLfw1+FVava++3GiMDWt3IR8NWwdCP2BME5HAlSLN6TX1zQzFzsrALk31QNeyzA51EYW1QWByg1OKsh0rS9Q==
+popmotion@^9.0.0-rc.4:
+  version "9.0.0-rc.4"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-rc.4.tgz#e542b414c2f1eb4ef8863c9032610a1ac88fdad4"
+  integrity sha512-1r3pOGMX3jRGAivELVT5u6rhwK9ZqD/+EUU1JQvoGqeCveErHu4dqcPwdXicYLJskmZEjWE7bpC3ya665872lQ==
   dependencies:
     framesync "^4.0.4"
     hey-listen "^1.0.8"
@@ -7786,7 +7791,7 @@ rxjs@^6.1.0, rxjs@^6.3.3, rxjs@^6.4.0, rxjs@^6.5.2, rxjs@^6.5.5:
   dependencies:
     tslib "^1.9.0"
 
-safe-buffer@5.1.2, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
+safe-buffer@5.1.2, safe-buffer@>=5.1.0, safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
   integrity sha512-Gd2UZBJDkXlY7GbJxfsE8/nvKkUEU1G38c1siN6QP6a9PT9MmHB8GnpscSmMJSoF8LOIrt8ud/wPtojys4G6+g==
