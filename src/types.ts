@@ -393,13 +393,116 @@ export interface Orchestration {
     staggerDirection?: number
 }
 
+export interface Repeat {
+    /**
+     * The number of times to repeat the transition. Set to `Infinity` for perpetual repeating.
+     *
+     * Without setting `repeatType`, this will loop the animation.
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   repeat: Infinity,
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ rotate: 180 }}
+     *   transition={{ repeat: Infinity, duration: 2 }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    repeat?: number
+
+    /**
+     * How to repeat the animation. This can be either:
+     * - "loop": Repeats the animation from the start
+     * - "reverse": Alternates between forward and backwards playback
+     * - "mirror": Switchs `from` and `to` alternately
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   repeat: 1,
+     *   repeatType: "reverse",
+     *   duration: 2
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ rotate: 180 }}
+     *   transition={{
+     *     repeat: 1,
+     *     repeatType: "reverse",
+     *     duration: 2
+     *   }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    repeatType?: "loop" | "reverse" | "mirror"
+
+    /**
+     * When repeating an animation using `loop`, `flip`, or `yoyo`, `repeatDelay` can set the
+     * duration of the time to wait, in seconds, between each repetition.
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   yoyo: Infinity,
+     *   repeatDelay: 1
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ rotate: 180 }}
+     *   transition={{ yoyo: Infinity, repeatDelay: 1 }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    repeatDelay?: number
+}
+
 /**
  * An animation that animates between two or more values over a specific duration of time.
  * This is the default animation for non-physical values like `color` and `opacity`.
  *
  * @public
  */
-export interface Tween {
+export interface Tween extends Repeat {
     /**
      * Set `type` to `"tween"` to use a duration-based tween animation.
      * If any non-orchestration `transition` values are set without a `type` property,
@@ -593,7 +696,7 @@ export interface Tween {
      * />
      * ```
      *
-     * @public
+     * @deprecated
      */
     loop?: number
 
@@ -624,7 +727,7 @@ export interface Tween {
      * />
      * ```
      *
-     * @public
+     * @deprecated
      */
     flip?: number
 
@@ -655,41 +758,9 @@ export interface Tween {
      * />
      * ```
      *
-     * @public
+     * @deprecated
      */
     yoyo?: number
-
-    /**
-     * When repeating an animation using `loop`, `flip`, or `yoyo`, `repeatDelay` can set the
-     * duration of the time to wait, in seconds, between each repetition.
-     *
-     * @library
-     *
-     * ```jsx
-     * const transition = {
-     *   yoyo: Infinity,
-     *   repeatDelay: 1
-     * }
-     *
-     * <Frame
-     *   animate={{ rotate: 180 }}
-     *   transition={transition}
-     * />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.div
-     *   animate={{ rotate: 180 }}
-     *   transition={{ yoyo: Infinity, repeatDelay: 1 }}
-     * />
-     * ```
-     *
-     *
-     * @public
-     */
-    repeatDelay?: number
 
     /**
      * The value to animate from.
@@ -744,7 +815,7 @@ export interface Tween {
  *
  * @public
  */
-export interface Spring {
+export interface Spring extends Repeat {
     /**
      * Set `type` to `"spring"` to animate using spring physics for natural
      * movement. Type is set to `"spring"` by default.
