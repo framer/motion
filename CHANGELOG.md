@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.5.1] 2020-08-18
+
+### Fixed
+
+-   Occasional glitchy movement with `type: "spring"` and `repeatType: "mirror"`
+
 ## [2.5.0] 2020-08-18
 
 ### Added
