@@ -543,6 +543,13 @@ export interface RelayoutInfo {
 }
 
 // @public (undocumented)
+export interface Repeat {
+    repeat?: number;
+    repeatDelay?: number;
+    repeatType?: "loop" | "reverse" | "mirror";
+}
+
+// @public (undocumented)
 export type ResolvedKeyframesTarget = [null, ...number[]] | number[] | [null, ...string[]] | string[];
 
 // @public (undocumented)
@@ -590,7 +597,7 @@ export interface SharedLayoutProps {
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
-export interface Spring {
+export interface Spring extends Repeat {
     damping?: number;
     // @internal (undocumented)
     delay?: number;
@@ -656,7 +663,7 @@ export type TransformPoint2D = (point: Point2D) => Point2D;
 export type Transition = (Orchestration & TransitionDefinition) | (Orchestration & TransitionMap);
 
 // @public
-export interface Tween {
+export interface Tween extends Repeat {
     // @internal (undocumented)
     delay?: number;
     duration?: number;
@@ -664,16 +671,18 @@ export interface Tween {
     easings?: Easing[];
     // @internal
     elapsed?: number;
+    // @deprecated
     flip?: number;
     from?: number | string;
+    // @deprecated
     loop?: number;
-    repeatDelay?: number;
     times?: number[];
     // @internal (undocumented)
     to?: number | string | ValueTarget;
     type?: "tween";
     // @internal (undocumented)
     velocity?: number;
+    // @deprecated
     yoyo?: number;
 }
 
