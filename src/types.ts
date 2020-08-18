@@ -393,7 +393,7 @@ export interface Orchestration {
     staggerDirection?: number
 }
 
-export interface RepeatOptions {
+export interface Repeat {
     /**
      * The number of times to repeat the transition. Set to `Infinity` for perpetual repeating.
      *
@@ -502,7 +502,7 @@ export interface RepeatOptions {
  *
  * @public
  */
-export interface Tween extends RepeatOptions {
+export interface Tween extends Repeat {
     /**
      * Set `type` to `"tween"` to use a duration-based tween animation.
      * If any non-orchestration `transition` values are set without a `type` property,
@@ -815,7 +815,7 @@ export interface Tween extends RepeatOptions {
  *
  * @public
  */
-export interface Spring extends RepeatOptions {
+export interface Spring extends Repeat {
     /**
      * Set `type` to `"spring"` to animate using spring physics for natural
      * movement. Type is set to `"spring"` by default.

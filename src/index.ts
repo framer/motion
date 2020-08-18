@@ -99,6 +99,7 @@ export {
 export { VisualElementAnimationControls } from "./animation/VisualElementAnimationControls"
 export {
     Orchestration,
+    Repeat,
     Tween,
     Spring,
     Keyframes,

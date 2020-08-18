@@ -2,6 +2,7 @@ import {
     isTransitionDefined,
     convertTransitionToAnimationOptions,
     getDelayFromTransition,
+    hydrateKeyframes,
 } from "../transitions"
 import { linear, easeInOut, circIn } from "popmotion"
 
@@ -45,6 +46,15 @@ describe("convertTransitionToAnimationOptions", () => {
         ).toEqual({
             repeat: Infinity,
             repeatType: "loop",
+            type: "keyframes",
+        })
+
+        expect(
+            convertTransitionToAnimationOptions({
+                repeat: Infinity,
+            })
+        ).toEqual({
+            repeat: Infinity,
             type: "keyframes",
         })
 
@@ -105,5 +115,31 @@ describe("getDelayFromTransition", () => {
                 "x"
             )
         ).toBe(0)
+    })
+})
+
+describe("hydrateKeyframes", () => {
+    test("Replaces null with from", () => {
+        const opts = {
+            from: 1,
+            to: [null, 2, 3],
+        }
+        hydrateKeyframes(opts)
+        expect(opts).toEqual({
+            from: 1,
+            to: [1, 2, 3],
+        })
+    })
+
+    test("Leaves to alone if first value is not null", () => {
+        const opts = {
+            from: 1,
+            to: [2, 2, 3],
+        }
+        hydrateKeyframes(opts)
+        expect(opts).toEqual({
+            from: 1,
+            to: [2, 2, 3],
+        })
     })
 })
