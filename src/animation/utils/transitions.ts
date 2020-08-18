@@ -145,8 +145,8 @@ function getAnimation(
 
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
-            ? startPopmotionInertia(transition, options)
-            : startPopmotionAnimate(transition, options)
+            ? startPopmotionInertia(valueTransition, options)
+            : startPopmotionAnimate(valueTransition, options)
     }
 
     function set() {
@@ -179,8 +179,9 @@ export function startAnimation(
         const start = getAnimation(key, value, target, transition, onComplete)
 
         const delay = getDelayFromTransition(transition, key)
+
         if (delay) {
-            delayTimer = setTimeout(start, delay)
+            delayTimer = setTimeout(start, secondsToMilliseconds(delay))
         } else {
             start()
         }
