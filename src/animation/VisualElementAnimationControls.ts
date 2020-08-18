@@ -8,7 +8,6 @@ import {
     TargetAndTransition,
     Variant,
     TargetWithKeyframes,
-    Orchestration,
 } from "../types"
 import { VariantLabels, MotionProps } from "../motion/types"
 import { resolveFinalValueInKeyframes } from "../utils/resolve-value"
@@ -552,48 +551,53 @@ export class VisualElementAnimationControls<
     }
 
     private animateVariant(variantLabel: string, opts?: AnimationOptions) {
-        let when: Orchestration["when"] = false
-        let delayChildren = 0
-        let staggerChildren = 0
-        let staggerDirection = 1
         const priority = (opts && opts.priority) || 0
         const variant = this.variants[variantLabel]
+        const transition = variant
+            ? this.resolveVariant(variant).transition || {}
+            : {}
 
-        const getAnimations: () => Promise<any> = variant
+        /**
+         * If we have a variant, create a callback that runs it as an animation.
+         * Otherwise, we resolve a Promise immediately for a composable no-op.
+         */
+        const getAnimation = variant
             ? () => this.animate(variant, opts)
             : () => Promise.resolve()
 
-        const getChildrenAnimations: () => Promise<any> = this.children
-            ? () => {
+        /**
+         * If we have children, create a callback that runs all their animations.
+         * Otherwise, we resolve a Promise immediately for a composable no-op.
+         */
+        const getChildrenAnimations = this.children
+            ? (forwardDelay: number = 0) => {
+                  const { delayChildren = 0 } = transition
                   return this.animateChildren(
                       variantLabel,
-                      delayChildren,
-                      staggerChildren,
-                      staggerDirection,
+                      delayChildren + forwardDelay,
+                      transition.staggerChildren,
+                      transition.staggerDirection,
                       priority
                   )
               }
             : () => Promise.resolve()
 
-        if (variant && this.children) {
-            const { transition } = this.resolveVariant(variant)
-            if (transition) {
-                when = transition.when || when
-                delayChildren = transition.delayChildren || delayChildren
-                staggerChildren = transition.staggerChildren || staggerChildren
-                staggerDirection =
-                    transition.staggerDirection || staggerDirection
-            }
-        }
-
+        /**
+         * If the transition explicitly defines a "when" option, we need to resolve either
+         * this animation or all children animations before playing the other.
+         */
+        const { when } = transition
         if (when) {
             const [first, last] =
                 when === "beforeChildren"
-                    ? [getAnimations, getChildrenAnimations]
-                    : [getChildrenAnimations, getAnimations]
+                    ? [getAnimation, getChildrenAnimations]
+                    : [getChildrenAnimations, getAnimation]
             return first().then(last)
         } else {
-            return Promise.all([getAnimations(), getChildrenAnimations()])
+            return Promise.all([
+                getAnimation(),
+                getChildrenAnimations(opts?.delay),
+            ])
         }
     }
 

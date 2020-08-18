@@ -12,18 +12,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Fixed support for `null` in keyframes animations.
+-   Fixed `delay` propagation.
 
 ## [2.4.3] 2020-08-18
 
 ### Changed
 
 -   Upgrading to Popmotion 9 RC.
-
-## [2.4.2] 2020-08-14
-
-### Fixed
-
--   Fixing delay propagation in variants.
 
 ## [2.4.1] 2020-08-12
 
