@@ -19,12 +19,6 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Upgrading to Popmotion 9 RC.
 
-## [2.4.2] 2020-08-14
-
-### Fixed
-
--   Fixing delay propagation in variants.
-
 ## [2.4.1] 2020-08-12
 
 ### Fixed
