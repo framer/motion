@@ -1,7 +1,7 @@
 import * as React from "react"
 import { render } from "react-dom"
 import { Frame, useCycle, useAnimation } from "@framer"
-import { wrap, distance } from "@popmotion/popcorn"
+import { wrap, distance } from "popmotion"
 import { motion } from "../../src"
 
 const count = 100

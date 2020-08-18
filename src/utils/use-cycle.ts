@@ -1,5 +1,5 @@
 import { useState, useRef } from "react"
-import { wrap } from "@popmotion/popcorn"
+import { wrap } from "popmotion"
 import { warning } from "hey-listen"
 
 type Cycle = (i?: number) => void

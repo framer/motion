@@ -1,5 +1,5 @@
 import { useRef, useMemo } from "react"
-import { spring, SpringProps, ColdSubscription } from "popmotion"
+import { animate, PlaybackControls, SpringOptions } from "popmotion"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
@@ -26,9 +26,9 @@ import { useOnChange } from "./use-on-change"
  */
 export function useSpring(
     source: MotionValue | number,
-    config: SpringProps = {}
+    config: SpringOptions = {}
 ) {
-    const activeSpringAnimation = useRef<ColdSubscription | null>(null)
+    const activeSpringAnimation = useRef<PlaybackControls | null>(null)
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
     useMemo(() => {
@@ -37,12 +37,13 @@ export function useSpring(
                 activeSpringAnimation.current.stop()
             }
 
-            activeSpringAnimation.current = spring({
+            activeSpringAnimation.current = animate({
                 from: value.get(),
                 to: v,
                 velocity: value.getVelocity(),
                 ...config,
-            }).start(set)
+                onUpdate: set,
+            })
 
             return value.get()
         })

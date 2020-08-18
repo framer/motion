@@ -1,187 +1,169 @@
 import {
-    tween,
-    spring,
-    keyframes,
-    inertia,
-    delay as delayAction,
-    ColdSubscription,
-} from "popmotion"
-import {
-    ResolvedValueTarget,
     Transition,
-    Tween,
-    Keyframes,
-    TransitionMap,
-    PopmotionTransitionProps,
-    TransitionDefinition,
-    ValueTarget,
+    PermissiveTransitionDefinition,
+    ResolvedValueTarget,
 } from "../../types"
-import { ActionFactory, MotionValue } from "../../value"
-import { isKeyframesTarget } from "./is-keyframes-target"
-import { getDefaultTransition } from "./default-transitions"
-import { just } from "./just"
-import { warning } from "hey-listen"
-import { isEasingArray, easingDefinitionToFunction } from "./easing"
-import { linear } from "@popmotion/easing"
-import { isDurationAnimation } from "./is-duration-animation"
-import { isAnimatable } from "./is-animatable"
+import {
+    AnimationOptions,
+    Animatable,
+    PlaybackControls,
+    animate,
+    inertia,
+} from "popmotion"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
+import { isEasingArray, easingDefinitionToFunction } from "./easing"
+import { MotionValue } from "../../value"
+import { isAnimatable } from "./is-animatable"
+import { warning } from "hey-listen"
 
-const transitions = { tween, spring, keyframes, inertia, just }
-
-const transitionOptionParser = {
-    tween: (opts: Tween): Tween => {
-        if (opts.ease) {
-            const ease = isEasingArray(opts.ease) ? opts.ease[0] : opts.ease
-            opts.ease = easingDefinitionToFunction(ease)
-        }
-
-        return opts
-    },
-    keyframes: ({ from, to, velocity, ...opts }: Partial<Keyframes>) => {
-        if (opts.values && opts.values[0] === null) {
-            const values = [...opts.values]
-            values[0] = from as string | number
-            opts.values = values as string[] | number[]
-        }
-
-        if (opts.ease) {
-            opts.easings = isEasingArray(opts.ease)
-                ? opts.ease.map(easingDefinitionToFunction)
-                : easingDefinitionToFunction(opts.ease)
-        }
-        opts.ease = linear
-
-        return opts
-    },
-}
-
-const isTransitionDefined = ({
+/**
+ * Decide whether a transition is defined on a given Transition.
+ * This filters out orchestration options and returns true
+ * if any options are left.
+ */
+export function isTransitionDefined({
     when,
     delay,
     delayChildren,
     staggerChildren,
     staggerDirection,
     ...transition
-}: Transition) => {
-    return Object.keys(transition).length
+}: Transition) {
+    return !!Object.keys(transition).length
 }
 
-const getTransitionDefinition = (
-    key: string,
-    to: ValueTarget,
-    transitionDefinition?: Transition
-): PopmotionTransitionProps => {
-    const delay = transitionDefinition ? transitionDefinition.delay : 0
+/**
+ * Convert Framer Motion's Transition type into Popmotion-compatible options.
+ */
+export function convertTransitionToAnimationOptions<T extends Animatable>({
+    yoyo,
+    loop,
+    flip,
+    ease,
+    ...transition
+}: PermissiveTransitionDefinition): AnimationOptions<T> {
+    const options: AnimationOptions<T> = { ...transition }
 
-    // If no object, return default transition
-    // A better way to handle this would be to deconstruct out all the shared Orchestration props
-    // and see if there's any props remaining
-    if (
-        transitionDefinition === undefined ||
-        !isTransitionDefined(transitionDefinition)
-    ) {
-        return {
-            delay,
-            ...getDefaultTransition(key, to),
-        }
+    /**
+     * Convert any existing durations from seconds to milliseconds
+     */
+    if (transition.duration)
+        options["duration"] = secondsToMilliseconds(transition.duration)
+    if (transition.repeatDelay)
+        options.repeatDelay = secondsToMilliseconds(transition.repeatDelay)
+
+    /**
+     * Map easing names to Popmotion's easing functions
+     */
+    if (ease) {
+        options["ease"] = isEasingArray(ease)
+            ? ease.map(easingDefinitionToFunction)
+            : easingDefinitionToFunction(ease)
     }
 
-    const valueTransitionDefinition: TransitionDefinition =
-        transitionDefinition[key] ||
-        (transitionDefinition as TransitionMap).default ||
-        transitionDefinition
-
-    if (valueTransitionDefinition.type === false) {
-        return {
-            delay: valueTransitionDefinition.hasOwnProperty("delay")
-                ? valueTransitionDefinition.delay
-                : delay,
-            to: isKeyframesTarget(to)
-                ? (to[to.length - 1] as string | number)
-                : to,
-            type: "just",
-        }
-    } else if (isKeyframesTarget(to)) {
-        return {
-            values: to,
-            duration: 0.8,
-            delay,
-            ease: "linear",
-            ...valueTransitionDefinition,
-            // This animation must be keyframes if we're animating through an array
-            type: "keyframes",
-        }
-    } else {
-        return {
-            type: "tween",
-            to,
-            delay,
-            ...valueTransitionDefinition,
-        } as any
+    /**
+     * Support legacy transition API
+     */
+    if (transition.type === "tween") options.type = "keyframes"
+    if (yoyo) {
+        options.repeatType = "reverse"
+    } else if (loop) {
+        options.repeatType = "loop"
+    } else if (flip) {
+        options.repeatType = "mirror"
     }
+    options.repeat = loop || yoyo || flip
+
+    /**
+     * TODO: Popmotion 9 has the ability to automatically detect whether to use
+     * a keyframes or spring animation, but does so by detecting velocity and other spring options.
+     * It'd be good to introduce a similar thing here.
+     */
+    if (transition.type !== "spring") options.type = "keyframes"
+
+    return options
 }
 
-const preprocessOptions = (
-    type: string,
-    opts: Partial<PopmotionTransitionProps>
-): PopmotionTransitionProps => {
-    return transitionOptionParser[type]
-        ? transitionOptionParser[type](opts)
-        : opts
+/**
+ * Get the delay for a value by checking Transition with decreasing specificity.
+ */
+export function getDelayFromTransition(transition: Transition, key: string) {
+    return (
+        transition[key]?.delay ??
+        transition["default"]?.delay ??
+        transition.delay ??
+        0
+    )
 }
 
-const getAnimation = (
+function startPopmotionAnimate(
+    transition: PermissiveTransitionDefinition,
+    options: any
+): PlaybackControls {
+    return animate({
+        ...options,
+        ...convertTransitionToAnimationOptions(transition),
+    })
+}
+
+function startPopmotionInertia(
+    transition: PermissiveTransitionDefinition,
+    options: any
+): { stop: () => void } {
+    return inertia({ ...options, ...transition })
+}
+
+/**
+ *
+ */
+function getAnimation(
     key: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    transition?: Transition
-): [ActionFactory, PopmotionTransitionProps] => {
+    transition: PermissiveTransitionDefinition,
+    onComplete: () => void
+) {
     const origin = value.get()
-    const isOriginAnimatable = isAnimatable(key, origin)
+    const valueTransition =
+        transition[key] || transition["default"] || transition
+    const isOriginAnimatable = isAnimatable(key, value.get())
     const isTargetAnimatable = isAnimatable(key, target)
 
-    // TODO we could probably improve this check to ensure both values are of the same type -
-    // for instance 100 to #fff. This might live better in Popmotion.
     warning(
         isOriginAnimatable === isTargetAnimatable,
         `You are trying to animate ${key} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
     )
 
-    // Parse the `transition` prop and return options for the Popmotion animation
-    const { type = "tween", ...transitionDefinition } = getTransitionDefinition(
-        key,
-        target,
-        transition
-    )
-
-    // If this is an animatable pair of values, return an animation, otherwise use `just`
-    const actionFactory: ActionFactory =
-        isOriginAnimatable && isTargetAnimatable
-            ? (transitions[type] as ActionFactory)
-            : just
-
-    const opts = preprocessOptions(type, {
-        from: origin,
-        velocity: value.getVelocity(),
-        ...transitionDefinition,
-    })
-
-    // Convert duration from Framer Motion's seconds into Popmotion's milliseconds
-    if (isDurationAnimation(opts)) {
-        if (opts.duration) {
-            opts.duration = secondsToMilliseconds(opts.duration)
+    function start() {
+        const options = {
+            from: origin,
+            to: target,
+            velocity: value.getVelocity(),
+            onComplete,
+            onUpdate: (v: Animatable) => value.set(v),
         }
-        if (opts.repeatDelay) {
-            opts.repeatDelay = secondsToMilliseconds(opts.repeatDelay)
-        }
+
+        return valueTransition.type === "inertia" ||
+            valueTransition.type === "decay"
+            ? startPopmotionInertia(valueTransition, options)
+            : startPopmotionAnimate(valueTransition, options)
     }
 
-    return [actionFactory, opts]
+    function set() {
+        value.set(target)
+        onComplete()
+    }
+
+    return !isOriginAnimatable ||
+        !isTargetAnimatable ||
+        valueTransition.type === false
+        ? set
+        : start
 }
 
 /**
- * Start animation on a value. This function completely encapsulates Popmotion-specific logic.
+ * Start animation on a MotionValue. This function is an interface between
+ * Framer Motion and Popmotion
  *
  * @internal
  */
@@ -189,40 +171,24 @@ export function startAnimation(
     key: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    { delay = 0, ...transition }: Transition = {}
+    transition: Transition = {}
 ) {
-    return value.start(complete => {
-        let activeAnimation: ColdSubscription
-        const [
-            animationFactory,
-            { delay: valueDelay, ...options },
-        ] = getAnimation(key, value, target, transition)
+    return value.start(onComplete => {
+        let delayTimer: number
+        let controls: { stop: () => void }
+        const start = getAnimation(key, value, target, transition, onComplete)
 
-        if (valueDelay !== undefined) {
-            delay = valueDelay
-        }
+        const delay = getDelayFromTransition(transition, key)
 
-        const animate = () => {
-            const animation = animationFactory(options)
-            // Bind animation opts to animation
-            activeAnimation = animation.start({
-                update: (v: any) => value.set(v),
-                complete,
-            })
-        }
-
-        // If we're delaying this animation, only resolve it **after** the delay to
-        // ensure the value's resolve velocity is up-to-date.
         if (delay) {
-            activeAnimation = delayAction(secondsToMilliseconds(delay)).start({
-                complete: animate,
-            })
+            delayTimer = setTimeout(start, secondsToMilliseconds(delay))
         } else {
-            animate()
+            start()
         }
 
         return () => {
-            if (activeAnimation) activeAnimation.stop()
+            clearTimeout(delayTimer)
+            controls?.stop()
         }
     })
 }

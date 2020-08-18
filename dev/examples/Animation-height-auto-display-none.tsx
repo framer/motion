@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState } from "react"
 import { motion } from "@framer"
-import { mix } from "@popmotion/popcorn"
+import { mix } from "popmotion"
 
 /**
  * This is an example of animating height: auto from a component that was display: none

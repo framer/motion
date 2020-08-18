@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState } from "react"
 import { motion, AnimateSharedLayout, addScaleCorrection } from "@framer"
-import { mix } from "@popmotion/popcorn"
+import { mix } from "popmotion"
 import styled from "styled-components"
 
 /**

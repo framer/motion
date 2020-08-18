@@ -1,7 +1,6 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../../"
+import { motion, motionValue } from "../../"
 import * as React from "react"
-import { motionValue } from "../../value"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -169,7 +168,7 @@ describe("animate prop as object", () => {
             }
             const Component = ({ rotate, onComplete }: any) => (
                 <motion.div
-                    animate={{ rotate }}
+                    animate={{ rotate: `${rotate}deg` }}
                     transition={{ duration: 0.05 }}
                     style={{ rotate: "0deg" }}
                     onUpdate={({ rotate }) =>
@@ -234,30 +233,6 @@ describe("animate prop as object", () => {
             const Component = () => (
                 <motion.div
                     animate={{ x: [0, 1, 2] }}
-                    transition={{ ease: [easing, easing], duration: 0.1 }}
-                    style={{ x }}
-                    onAnimationComplete={onComplete}
-                />
-            )
-            const { rerender } = render(<Component />)
-            rerender(<Component />)
-        })
-
-        return expect(promise).resolves.toHaveBeenCalled()
-    })
-
-    test("tween - accepts ease as an array", async () => {
-        const promise = new Promise(resolve => {
-            const x = motionValue(0)
-            const easingListener = jest.fn()
-            const easing = (v: number) => {
-                easingListener()
-                return v
-            }
-            const onComplete = () => resolve(easingListener)
-            const Component = () => (
-                <motion.div
-                    animate={{ x: 2 }}
                     transition={{ ease: [easing, easing], duration: 0.1 }}
                     style={{ x }}
                     onAnimationComplete={onComplete}
