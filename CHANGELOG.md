@@ -12,6 +12,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Fixed support for `null` in keyframes animations.
+-   Fixed `delay` propagation.
 
 ## [2.4.3] 2020-08-18
 
