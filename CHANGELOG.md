@@ -2,6 +2,17 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.5.0] 2020-08-18
+
+### Added
+
+-   New repeat syntax
+-   Support for repeated springs
+
+### Fixed
+
+-   Fixed support for `null` in keyframes animations.
+
 ## [2.4.3] 2020-08-18
 
 ### Changed

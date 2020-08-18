@@ -72,7 +72,7 @@ export function convertTransitionToAnimationOptions<T extends Animatable>({
     } else if (flip) {
         options.repeatType = "mirror"
     }
-    options.repeat = loop || yoyo || flip
+    options.repeat = loop || yoyo || flip || transition.repeat
 
     /**
      * TODO: Popmotion 9 has the ability to automatically detect whether to use
@@ -96,10 +96,20 @@ export function getDelayFromTransition(transition: Transition, key: string) {
     )
 }
 
+export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
+    if (Array.isArray(options.to) && options.to[0] === null) {
+        options.to = [...options.to]
+        options.to[0] = options.from
+    }
+
+    return options
+}
+
 function startPopmotionAnimate(
     transition: PermissiveTransitionDefinition,
     options: any
 ): PlaybackControls {
+    hydrateKeyframes(options)
     return animate({
         ...options,
         ...convertTransitionToAnimationOptions(transition),
