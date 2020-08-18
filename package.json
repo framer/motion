@@ -82,7 +82,7 @@
         "styled-components": "^4.1.1",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
-        "typescript": "^3.7.5",
+        "typescript": "^3.9.7",
         "uglifyjs-webpack-plugin": "^2.2.0",
         "webpack": "^4.25.1",
         "webpack-cli": "^3.1.2",

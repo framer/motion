@@ -17,7 +17,7 @@ import { ReactHTML } from 'react';
 import { Ref } from 'react';
 import { RefAttributes } from 'react';
 import { RefObject } from 'react';
-import { SpringProps } from 'popmotion';
+import { SpringOptions } from 'popmotion';
 import { SVGAttributes } from 'react';
 
 // Warning: (ae-forgotten-export) The symbol "ScaleCorrectionDefinitionMap" needs to be exported by the entry point index.d.ts
@@ -739,7 +739,7 @@ export function usePresence(): AlwaysPresent | Present | NotPresent;
 export function useReducedMotion(): boolean;
 
 // @public
-export function useSpring(source: MotionValue | number, config?: SpringProps): MotionValue<any>;
+export function useSpring(source: MotionValue | number, config?: SpringOptions): MotionValue<any>;
 
 // Warning: (ae-forgotten-export) The symbol "ControlsProp" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal

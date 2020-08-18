@@ -1,30 +1,20 @@
-import { Transition } from "../../types"
-
-// import {
-//     animate,
-//     inertia,
-//     PlaybackControls,
-//     AnimationOptions,
-//     InertiaOptions,
-//     Animatable,
-// } from "popmotion"
-// import {
-//     ResolvedValueTarget,
-//     Transition,
-//     Tween,
-//     Keyframes,
-//     TransitionMap,
-//     PopmotionTransitionProps,
-//     TransitionDefinition,
-//     ValueTarget,
-// } from "../../types"
-// import { MotionValue } from "../../value"
-// import { isKeyframesTarget } from "./is-keyframes-target"
-// import { getDefaultTransition } from "./default-transitions"
-// import { warning } from "hey-listen"
-// import { isEasingArray, easingDefinitionToFunction } from "./easing"
-// import { isAnimatable } from "./is-animatable"
-// import { secondsToMilliseconds } from "../../utils/time-conversion"
+import {
+    Transition,
+    PermissiveTransitionDefinition,
+    ResolvedValueTarget,
+} from "../../types"
+import {
+    AnimationOptions,
+    Animatable,
+    PlaybackControls,
+    animate,
+    inertia,
+} from "popmotion"
+import { secondsToMilliseconds } from "../../utils/time-conversion"
+import { isEasingArray, easingDefinitionToFunction } from "./easing"
+import { MotionValue } from "../../value"
+import { isAnimatable } from "./is-animatable"
+import { warning } from "hey-listen"
 
 /**
  * Decide whether a transition is defined on a given Transition.
@@ -42,122 +32,162 @@ export function isTransitionDefined({
     return !!Object.keys(transition).length
 }
 
-// function convertMotionToPopmotion<T extends Animatable>(
-//     options: TransitionDefinition,
-//     target: T | T[]
-// ): Partial<AnimationOptions<T>> | Partial<InertiaOptions> {
-//     const popmotionOptions:
-//         | Partial<AnimationOptions<T>>
-//         | Partial<InertiaOptions> = {}
+/**
+ * Convert Framer Motion's Transition type into Popmotion-compatible options.
+ */
+export function convertTransitionToAnimationOptions<T extends Animatable>({
+    yoyo,
+    loop,
+    flip,
+    ease,
+    ...transition
+}: PermissiveTransitionDefinition): AnimationOptions<T> {
+    const options: AnimationOptions<T> = { ...transition }
 
-//     // Instant transition
-//     if (options.type === false) {
-//         return { duration: 0 }
-//     } else {
-//         popmotionOptions.duration = isKeyframesTarget(target as any) ? 0.8 : 0.3
-//     }
+    /**
+     * Convert any existing durations from seconds to milliseconds
+     */
+    if (transition.duration)
+        options["duration"] = secondsToMilliseconds(transition.duration)
+    if (transition.repeatDelay)
+        options.repeatDelay = secondsToMilliseconds(transition.repeatDelay)
 
-//     // Convert Motion's second-based durations to Popmotion's milliseconds
-//     if (options.duration) {
-//         options.duration = secondsToMilliseconds(options.duration)
-//     }
-//     if (options.repeatDelay) {
-//         options.repeatDelay = secondsToMilliseconds(options.repeatDelay)
-//     }
+    /**
+     * Map easing names to Popmotion's easing functions
+     */
+    if (ease) {
+        options["ease"] = isEasingArray(ease)
+            ? ease.map(easingDefinitionToFunction)
+            : easingDefinitionToFunction(ease)
+    }
 
-//     if (options.ease) {
-//         options.ease = isEasingArray(options.ease)
-//             ? options.ease.map(easingDefinitionToFunction)
-//             : easingDefinitionToFunction(options.ease)
-//     }
+    /**
+     * Support legacy transition API
+     */
+    if (transition.type === "tween") options.type = "keyframes"
+    if (yoyo) {
+        options.repeatType = "reverse"
+    } else if (loop) {
+        options.repeatType = "loop"
+    } else if (flip) {
+        options.repeatType = "mirror"
+    }
+    options.repeat = loop || yoyo || flip
 
-//     return popmotionOptions
-// }
+    /**
+     * TODO: Popmotion 9 has the ability to automatically detect whether to use
+     * a keyframes or spring animation, but does so by detecting velocity and other spring options.
+     * It'd be good to introduce a similar thing here.
+     */
+    if (transition.type !== "spring") options.type = "keyframes"
 
-// function getAnimationOptions<T extends Animatable>(
-//     key: string,
-//     target: T | T[],
-//     definition?: Transition
-// ): AnimationOptions<T> | InertiaOptions {
-//     const delay = definition ? definition.delay : 0
+    return options
+}
 
-//     /**
-//      * If no transition has been set, return the default transition.
-//      */
-//     if (definition === undefined || !isTransitionDefined(definition)) {
-//         return { delay, ...getDefaultTransition(key, target) }
-//     }
+/**
+ * Get the delay for a value by checking Transition with decreasing specificity.
+ */
+export function getDelayFromTransition(transition: Transition, key: string) {
+    return (
+        transition[key]?.delay ??
+        transition["default"]?.delay ??
+        transition.delay ??
+        0
+    )
+}
 
-//     /**
-//      * Get the transition specific to this value. In order of specificity, this
-//      * descends from key-specific, "default", to the transition object itself.
-//      */
-//     const valueDefinition: TransitionDefinition =
-//         definition[key] || definition["default"] || definition
+function startPopmotionAnimate(
+    transition: PermissiveTransitionDefinition,
+    options: any
+): PlaybackControls {
+    return animate({
+        ...options,
+        ...convertTransitionToAnimationOptions(transition),
+    })
+}
 
-//     return convertMotionToPopmotion(valueDefinition, target)
-// }
+function startPopmotionInertia(
+    transition: PermissiveTransitionDefinition,
+    options: any
+): { stop: () => void } {
+    return inertia({ ...options, ...transition })
+}
 
-// function getAnimation(
-//     key: string,
-//     value: MotionValue,
-//     target: ResolvedValueTarget,
-//     transition?: Transition
-// ) {
-//     let factory: typeof animate | typeof inertia
-//     const isOriginAnimatable = isAnimatable(key, origin)
-//     const isTargetAnimatable = isAnimatable(key, target)
+/**
+ *
+ */
+function getAnimation(
+    key: string,
+    value: MotionValue,
+    target: ResolvedValueTarget,
+    transition: PermissiveTransitionDefinition,
+    onComplete: () => void
+) {
+    const origin = value.get()
+    const valueTransition =
+        transition[key] || transition["default"] || transition
+    const isOriginAnimatable = isAnimatable(key, value.get())
+    const isTargetAnimatable = isAnimatable(key, target)
 
-//     // TODO we could probably improve this check to ensure both values are of the same type -
-//     // for instance 100 to #fff.
-//     warning(
-//         isOriginAnimatable === isTargetAnimatable,
-//         `You are trying to animate ${key} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
-//     )
+    warning(
+        isOriginAnimatable === isTargetAnimatable,
+        `You are trying to animate ${key} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
+    )
 
-//     // Parse the `transition` prop and return options for the Popmotion animation
-//     const options = getAnimationOptions(key, target, transition)
+    function start() {
+        const options = {
+            from: origin,
+            to: target,
+            velocity: value.getVelocity(),
+            onComplete,
+            onUpdate: (v: Animatable) => value.set(v),
+        }
 
-//     return (onComplete: () => void) => {
-//         preprocess(options)
+        return valueTransition.type === "inertia" ||
+            valueTransition.type === "decay"
+            ? startPopmotionInertia(transition, options)
+            : startPopmotionAnimate(transition, options)
+    }
 
-//         return factory({
-//             from: value.get(),
-//             velocity: value.getVelocity(),
-//             ...options,
-//             onComplete,
-//         })
-//     }
-// }
+    function set() {
+        value.set(target)
+        onComplete()
+    }
 
-// /**
-//  * Start animation on a value. This function is an interface to Popmotion.
-//  *
-//  * @internal
-//  */
-// export function startAnimation(
-//     key: string,
-//     value: MotionValue,
-//     target: ResolvedValueTarget,
-//     transition: Transition = {}
-// ) {
-//     return value.start(complete => {
-//         let timeout: number
-//         const start = getAnimation(key, value, target, transition)
+    return !isOriginAnimatable ||
+        !isTargetAnimatable ||
+        valueTransition.type === false
+        ? set
+        : start
+}
 
-//         let controls: PlaybackControls
-//         if (delay) {
-//             timeout = setTimeout(
-//                 () => start(complete),
-//                 secondsToMilliseconds(delay)
-//             )
-//         } else {
-//             controls = start(complete)
-//         }
+/**
+ * Start animation on a MotionValue. This function is an interface between
+ * Framer Motion and Popmotion
+ *
+ * @internal
+ */
+export function startAnimation(
+    key: string,
+    value: MotionValue,
+    target: ResolvedValueTarget,
+    transition: Transition = {}
+) {
+    return value.start(onComplete => {
+        let delayTimer: number
+        let controls: { stop: () => void }
+        const start = getAnimation(key, value, target, transition, onComplete)
 
-//         return () => {
-//             clearTimeout(timeout)
-//             controls?.stop()
-//         }
-//     })
-// }
+        const delay = getDelayFromTransition(transition, key)
+        if (delay) {
+            delayTimer = setTimeout(start, delay)
+        } else {
+            start()
+        }
+
+        return () => {
+            clearTimeout(delayTimer)
+            controls?.stop()
+        }
+    })
+}
