@@ -50,7 +50,7 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
     const filtered: ReactElement<any>[] = []
 
     // We use forEach here instead of map as map mutates the component key by preprending `.$`
-    Children.forEach(children, child => {
+    Children.toArray(children).forEach(child => {
         if (isValidElement(child)) filtered.push(child)
     })
 
