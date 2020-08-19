@@ -7,9 +7,18 @@ import {
     isTransformProp,
     isTransformOriginProp,
 } from "../../render/dom/utils/transform"
+import { valueScaleCorrection } from "../../render/dom/layout/scale-correction"
 
 interface MotionValueSource {
     [key: string]: MotionValue | unknown
+}
+
+function isForcedMotionValue(key: string) {
+    return (
+        isTransformProp(key) ||
+        isTransformOriginProp(key) ||
+        !!valueScaleCorrection[key]
+    )
 }
 
 /**
@@ -26,17 +35,16 @@ export function useMotionValues<P>(
      * Remove MotionValues that are no longer present
      */
     for (const key in prev) {
-        const isTransform = isTransformProp(key) || isTransformOriginProp(key)
-
+        const isForced = isForcedMotionValue(key)
         const existsAsProp = props[key]
         const existsAsStyle = props.style && props.style[key]
         const propIsMotionValue = existsAsProp && isMotionValue(props[key])
         const styleIsMotionValue =
             existsAsStyle && isMotionValue(props.style![key])
 
-        const transformRemoved = isTransform && !existsAsProp && !existsAsStyle
+        const transformRemoved = isForced && !existsAsProp && !existsAsStyle
         const motionValueRemoved =
-            !isTransform && !propIsMotionValue && !styleIsMotionValue
+            !isForced && !propIsMotionValue && !styleIsMotionValue
 
         if (transformRemoved || motionValueRemoved) {
             visualElement.removeValue(key)
@@ -84,7 +92,7 @@ function addMotionValues(
                 visualElement.addValue(key, value)
                 foundMotionValue = true
             }
-        } else if (isTransformProp(key) || isTransformOriginProp(key)) {
+        } else if (isForcedMotionValue(key)) {
             // If this is a transform prop, always create a MotionValue
             // to ensure we can reconcile them all together.
             if (!visualElement.hasValue(key)) {
