@@ -428,9 +428,12 @@ export interface Repeat {
 
     /**
      * How to repeat the animation. This can be either:
-     * - "loop": Repeats the animation from the start
-     * - "reverse": Alternates between forward and backwards playback
-     * - "mirror": Switchs `from` and `to` alternately
+     *
+     * "loop": Repeats the animation from the start
+     *
+     * "reverse": Alternates between forward and backwards playback
+     *
+     * "mirror": Switchs `from` and `to` alternately
      *
      * @library
      *
@@ -465,14 +468,14 @@ export interface Repeat {
     repeatType?: "loop" | "reverse" | "mirror"
 
     /**
-     * When repeating an animation using `loop`, `flip`, or `yoyo`, `repeatDelay` can set the
+     * When repeating an animation, `repeatDelay` will set the
      * duration of the time to wait, in seconds, between each repetition.
      *
      * @library
      *
      * ```jsx
      * const transition = {
-     *   yoyo: Infinity,
+     *   repeat: Infinity,
      *   repeatDelay: 1
      * }
      *
@@ -487,7 +490,7 @@ export interface Repeat {
      * ```jsx
      * <motion.div
      *   animate={{ rotate: 180 }}
-     *   transition={{ yoyo: Infinity, repeatDelay: 1 }}
+     *   transition={{ repeat: Infinity, repeatDelay: 1 }}
      * />
      * ```
      *
