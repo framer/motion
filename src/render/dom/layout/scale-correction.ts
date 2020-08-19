@@ -1,5 +1,5 @@
 import { Point2D, Axis, AxisBox2D, BoxDelta } from "../../../types/geometry"
-import { complex } from "style-value-types"
+import { complex, px } from "style-value-types"
 import { mix } from "popmotion"
 
 type ScaleCorrection = (
@@ -34,10 +34,16 @@ export function correctBorderRadius(
     viewportBox: AxisBox2D
 ) {
     /**
-     * If latest is a string, we either presume it's already a percentage, in which case it'll
-     * already be stretched appropriately, or it's another value type which we don't support.
+     * If latest is a string, if it's a percentage we can return immediately as it's
+     * going to be stretched appropriately. Otherwise, if it's a pixel, convert it to a number.
      */
-    if (typeof latest !== "number") return latest
+    if (typeof latest === "string") {
+        if (px.test(latest)) {
+            latest = parseFloat(latest)
+        } else {
+            return latest
+        }
+    }
 
     /**
      * If latest is a number, it's a pixel value. We use the current viewportBox to calculate that
