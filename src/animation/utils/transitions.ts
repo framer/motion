@@ -26,6 +26,7 @@ import { linear } from "@popmotion/easing"
 import { isDurationAnimation } from "./is-duration-animation"
 import { isAnimatable } from "./is-animatable"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
+import { complex } from "style-value-types"
 
 const transitions = { tween, spring, keyframes, inertia, just }
 
@@ -137,9 +138,19 @@ const getAnimation = (
     target: ResolvedValueTarget,
     transition?: Transition
 ): [ActionFactory, PopmotionTransitionProps] => {
-    const origin = value.get()
-    const isOriginAnimatable = isAnimatable(key, origin)
+    let origin = value.get()
+
     const isTargetAnimatable = isAnimatable(key, target)
+
+    /**
+     * If we're trying to animate from "none", try and get an animatable version
+     * of the target. This could be improved to work both ways.
+     */
+    if (origin === "none" && isTargetAnimatable && typeof target === "string") {
+        origin = complex.getAnimatableNone(target as string)
+    }
+
+    const isOriginAnimatable = isAnimatable(key, origin)
 
     // TODO we could probably improve this check to ensure both values are of the same type -
     // for instance 100 to #fff. This might live better in Popmotion.
