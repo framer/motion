@@ -15,6 +15,7 @@ import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
 import { isAnimatable } from "./is-animatable"
 import { getDefaultTransition } from "./default-transitions"
+import { complex } from "style-value-types"
 import { warning } from "hey-listen"
 
 type StopAnimation = { stop: () => void }
@@ -150,11 +151,21 @@ function getAnimation(
     transition: PermissiveTransitionDefinition,
     onComplete: () => void
 ) {
-    const origin = value.get()
     const valueTransition =
         transition[key] || transition["default"] || transition
-    const isOriginAnimatable = isAnimatable(key, value.get())
+    let origin = value.get()
+
     const isTargetAnimatable = isAnimatable(key, target)
+
+    /**
+     * If we're trying to animate from "none", try and get an animatable version
+     * of the target. This could be improved to work both ways.
+     */
+    if (origin === "none" && isTargetAnimatable && typeof target === "string") {
+        origin = complex.getAnimatableNone(target as string)
+    }
+
+    const isOriginAnimatable = isAnimatable(key, origin)
 
     warning(
         isOriginAnimatable === isTargetAnimatable,
