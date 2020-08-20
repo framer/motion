@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.5.2] 2020-08-20
+
+### Fixed
+
+-   Drag transitionEnd conflicting with layout animations.
+
 ## [2.5.1] 2020-08-18
 
 ### Fixed
