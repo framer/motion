@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.5.4] 2020-08-20
+
+### Fixed
+
+-   Fixed jumpy drag transitions resulting from existing animations not being correctly stopped.
+
 ## [2.5.3] 2020-08-20
 
 ### Fixed
