@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.5.5] 2020-08-20
+
+### Fixed
+
+-   Tweaked `restDelta` in `popmotion@9.0.0-rc.7` for smoother `opacity` transitions.
+
 ## [2.5.4] 2020-08-20
 
 ### Fixed
