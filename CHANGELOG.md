@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.5.3] 2020-08-20
+
+### Fixed
+
+-   Improved velocity check for underdamped springs.
+
 ## [2.5.2] 2020-08-20
 
 ### Fixed
