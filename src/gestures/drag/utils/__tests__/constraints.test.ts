@@ -41,31 +41,31 @@ describe("calcRelativeAxisConstraints", () => {
         expect(
             calcRelativeAxisConstraints({ min: 0, max: 50 }, undefined, 100)
         ).toEqual({
-            max: 50,
+            max: 100,
         })
         expect(
             calcRelativeAxisConstraints({ min: 0, max: 50 }, undefined, 50)
         ).toEqual({
-            max: 0,
+            max: 50,
         })
         expect(
             calcRelativeAxisConstraints({ min: 0, max: 50 }, undefined, 200)
         ).toEqual({
-            max: 150,
+            max: 200,
         })
 
         expect(
             calcRelativeAxisConstraints({ min: 100, max: 200 }, -100, 300)
         ).toEqual({
             min: 0,
-            max: 300,
+            max: 400,
         })
 
         expect(
             calcRelativeAxisConstraints({ min: 100, max: 200 }, undefined, 300)
         ).toEqual({
             min: undefined,
-            max: 300,
+            max: 400,
         })
 
         expect(
@@ -74,16 +74,14 @@ describe("calcRelativeAxisConstraints", () => {
             min: 0,
             max: undefined,
         })
-    })
 
-    test("Correctly calculates viewport constraints if constraints are smaller than or equal to bounding box", () => {
         expect(
             calcRelativeAxisConstraints({ min: 0, max: 100 }, 0, 50)
-        ).toEqual({ min: 0, max: 0 })
+        ).toEqual({ min: 0, max: 50 })
 
         expect(
             calcRelativeAxisConstraints({ min: 100, max: 200 }, 0, 50)
-        ).toEqual({ min: 100, max: 100 })
+        ).toEqual({ min: 100, max: 150 })
 
         expect(
             calcRelativeAxisConstraints({ min: 214, max: 414 }, 0, 0)
@@ -93,14 +91,14 @@ describe("calcRelativeAxisConstraints", () => {
             calcRelativeAxisConstraints({ min: 0, max: 100 }, 0, 100)
         ).toEqual({
             min: 0,
-            max: 0,
+            max: 100,
         })
 
         expect(
             calcRelativeAxisConstraints({ min: 100, max: 200 }, 0, 100)
         ).toEqual({
             min: 100,
-            max: 100,
+            max: 200,
         })
     })
 })
