@@ -96,6 +96,11 @@ export class VisualElementDragControls {
     private visualElement: HTMLVisualElement
 
     /**
+     * @internal
+     */
+    private hasMutatedConstraints: boolean = false
+
+    /**
      * Track the initial position of the cursor relative to the dragging element
      * when dragging starts as a value of 0-1 on each axis. We then use this to calculate
      * an ideal bounding box for the VisualElement renderer to project into every frame.
@@ -308,7 +313,7 @@ export class VisualElementDragControls {
          * If we're outputting to external MotionValues, we want to rebase the measured constraints
          * from viewport-relative to component-relative.
          */
-        if (this.constraints) {
+        if (this.constraints && !this.hasMutatedConstraints) {
             eachAxis(axis => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
@@ -350,6 +355,9 @@ export class VisualElementDragControls {
             const userConstraints = onMeasureDragConstraints(
                 convertAxisBoxToBoundingBox(measuredConstraints)
             )
+
+            this.hasMutatedConstraints = !!userConstraints
+
             if (userConstraints) {
                 measuredConstraints = convertBoundingBoxToAxisBox(
                     userConstraints
