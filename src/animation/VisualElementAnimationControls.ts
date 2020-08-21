@@ -424,13 +424,9 @@ export class VisualElementAnimationControls<
                 this.variants[key]
             )
 
-            if (transitionEnd) {
-                this.setValues(transitionEnd, { isActive })
-            }
+            target && this.setValues(target, { isActive })
 
-            if (target) {
-                this.setValues(target, { isActive })
-            }
+            transitionEnd && this.setValues(transitionEnd, { isActive })
 
             if (this.children && this.children.size) {
                 this.children.forEach(child =>
