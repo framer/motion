@@ -203,7 +203,6 @@ export class VisualElementAnimationControls<
                 const targetValue = resolveFinalValueInKeyframes(target[key])
                 if (this.visualElement.hasValue(key)) {
                     const value = this.visualElement.getValue(key)
-                    console.log("setting", key, "to", targetValue, value)
                     value && value.set(targetValue)
                 } else {
                     this.visualElement.addValue(key, motionValue(targetValue))
@@ -432,7 +431,7 @@ export class VisualElementAnimationControls<
             if (target) {
                 this.setValues(target, { isActive })
             }
-            console.log(target)
+
             if (this.children && this.children.size) {
                 this.children.forEach(child =>
                     child.applyVariantLabels(variantLabelList)
