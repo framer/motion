@@ -74,4 +74,14 @@ describe("ssr", () => {
             '<circle cx="100" style="background:#fff" stroke-width="10"></circle>'
         )
     })
+
+    test("initial correctly overrides style", () => {
+        const div = renderToString(
+            <motion.div initial={{ x: 100 }} style={{ x: 200 }} />
+        )
+
+        expect(div).toBe(
+            `<div style="transform:translateX(100px) translateZ(0)"></div>`
+        )
+    })
 })

@@ -2,7 +2,7 @@ import * as React from "react"
 import { motion } from "@framer"
 
 /**
- * An example of orchestraing animations through children using variants.
+ * An example of orchestrating animations through children using variants.
  */
 
 // Styles
