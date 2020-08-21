@@ -55,26 +55,22 @@ export function calcConstrainedMinPoint(
 }
 
 /**
- * Calculate constraints in terms of the viewport when
- * defined relatively to the measured axis.
+ * Calculate constraints in terms of the viewport when defined relatively to the
+ * measured axis. This is measured from the nearest edge, so a max constraint of 200
+ * on an axis with a max value of 300 would return a constraint of 500 - axis length
  */
 export function calcRelativeAxisConstraints(
     axis: Axis,
     min?: number,
     max?: number
 ): Partial<Axis> {
-    const constraints: Partial<Axis> = {}
-    const length = axis.max - axis.min
-
-    if (min !== undefined) {
-        constraints.min = axis.min + min
+    return {
+        min: min !== undefined ? axis.min + min : undefined,
+        max:
+            max !== undefined
+                ? axis.max + max - (axis.max - axis.min)
+                : undefined,
     }
-
-    if (max !== undefined) {
-        constraints.max = Math.max(axis.min + max - length, axis.min)
-    }
-
-    return constraints
 }
 
 /**

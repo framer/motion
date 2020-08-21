@@ -2,8 +2,8 @@ import * as React from "react"
 import { motion } from "../../src"
 
 const styleA = {
-    width: 200,
-    height: 200,
+    width: 100,
+    height: 100,
     background: "white",
     borderRadius: 20,
 }

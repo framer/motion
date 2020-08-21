@@ -229,11 +229,14 @@ export interface DraggableProps extends DragHandlers {
     dragPropagation?: boolean
 
     /**
-     * An object of optional `top`, `left`, `right`, `bottom` pixel values,
-     * beyond which dragging is constrained.
+     * Applies constraints on the permitted draggable area.
      *
-     * Another component can be used as drag constraints by creating a `ref` with React's `useRef`.hook.
-     * This `ref` should be passed to that component's `ref` prop and to this component's `dragConstraints` prop.
+     * It can accept an object of optional `top`, `left`, `right`, and `bottom` values, measured in pixels.
+     * This will define a distance from the nearest edge of the draggable component. For
+     *
+     * Alternatively, it can accept a `ref` to another component created with React's `useRef` hook.
+     * This `ref` should be passed both to the draggable component's `dragConstraints` prop, and the `ref`
+     * of the component you want to use as constraints.
      *
      * @library
      *

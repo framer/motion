@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Reverting relative `dragConstraints` resolution.
+-   Reverting relative `dragConstraints` resolution that was erroneously changed in `2.1.3`.
 
 ## [2.5.5] 2020-08-20
 
