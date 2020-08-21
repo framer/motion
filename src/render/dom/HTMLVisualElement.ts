@@ -263,7 +263,7 @@ export class HTMLVisualElement<
 
     /**
      * The computed transform string to apply deltaFinal to the element. Currently this is only
-     * being used to diff and decide whether to render on the current frame, but a minor optmisation
+     * being used to diff and decide whether to render on the current frame, but a minor optimisation
      * could be to provide this to the buildHTMLStyle function.
      */
     deltaTransform: string
@@ -271,7 +271,7 @@ export class HTMLVisualElement<
     /**
      * If we've got a rotate motion value, we force layout projection calculations
      * to use o layout origin of 0.5 rather than dynamically calculating one based
-     * on relative positioning. This is so the component always rotates around its center rather
+     * on relative positioning. This is so the component always rotates around its centre rather
      * than an arbitrarily computed point.
      */
     private layoutOrigin: number | undefined

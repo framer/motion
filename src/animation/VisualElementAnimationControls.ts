@@ -203,6 +203,7 @@ export class VisualElementAnimationControls<
                 const targetValue = resolveFinalValueInKeyframes(target[key])
                 if (this.visualElement.hasValue(key)) {
                     const value = this.visualElement.getValue(key)
+                    console.log("setting", key, "to", targetValue, value)
                     value && value.set(targetValue)
                 } else {
                     this.visualElement.addValue(key, motionValue(targetValue))
@@ -251,7 +252,7 @@ export class VisualElementAnimationControls<
             if (Array.isArray(targetValue)) {
                 value = targetValue[0]
             }
-            console.log(value, targetValue)
+
             // If it isn't a keyframes or the first keyframes value was set as `null`, read the
             // value from the DOM. It might be worth investigating whether to check props (for SVG)
             // or props.style (for HTML) if the value exists there before attempting to read.
@@ -269,7 +270,6 @@ export class VisualElementAnimationControls<
                 // If this is a number read as a string, ie "0" or "200", convert it to a number
                 value = parseFloat(value)
             } else if (!findValueType(value) && complex.test(targetValue)) {
-                console.log(value, targetValue)
                 // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
                 value = complex.getAnimatableNone(targetValue as string)
             }
@@ -432,7 +432,7 @@ export class VisualElementAnimationControls<
             if (target) {
                 this.setValues(target, { isActive })
             }
-
+            console.log(target)
             if (this.children && this.children.size) {
                 this.children.forEach(child =>
                     child.applyVariantLabels(variantLabelList)
