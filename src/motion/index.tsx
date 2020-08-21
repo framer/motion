@@ -109,7 +109,9 @@ export function createMotionComponent<P extends {}, E>(
         const component = render(Component, props, visualElement)
 
         /**
-         *
+         * If this component is a child of AnimateSharedLayout, we need to snapshot the component
+         * before it's unmounted. This lives here rather than in features/layout/Measure because
+         * as a child component its unmount effect runs after this component has been unmounted.
          */
         useSnapshotOnUnmount(visualElement)
 
