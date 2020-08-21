@@ -125,8 +125,8 @@ describe("Drag SVG", () => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
 
-                expect(left).to.equal(90)
-                expect(top).to.equal(90)
+                expect(left).to.equal(130)
+                expect(top).to.equal(130)
             })
     })
 
@@ -270,8 +270,8 @@ describe("Drag SVG & Layout", () => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
 
-                expect(left).to.equal(90)
-                expect(top).to.equal(90)
+                expect(left).to.equal(130)
+                expect(top).to.equal(130)
             })
     })
 
