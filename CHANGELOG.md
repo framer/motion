@@ -2,6 +2,36 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.0] 2020-Unreleased
+
+### Fixed
+
+-   Reverting relative `dragConstraints` resolution that was erroneously changed in `2.1.3`.
+
+## [2.5.5] 2020-08-20
+
+### Fixed
+
+-   Tweaked `restDelta` in `popmotion@9.0.0-rc.7` for smoother `opacity` transitions.
+
+## [2.5.4] 2020-08-20
+
+### Fixed
+
+-   Fixed jumpy drag transitions resulting from existing animations not being correctly stopped.
+
+## [2.5.3] 2020-08-20
+
+### Fixed
+
+-   Improved velocity check for underdamped springs.
+
+## [2.5.2] 2020-08-20
+
+### Fixed
+
+-   Drag transitionEnd conflicting with layout animations.
+
 ## [2.5.1] 2020-08-18
 
 ### Fixed

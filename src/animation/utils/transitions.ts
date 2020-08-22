@@ -16,6 +16,8 @@ import { MotionValue } from "../../value"
 import { isAnimatable } from "./is-animatable"
 import { warning } from "hey-listen"
 
+type StopAnimation = { stop: () => void }
+
 /**
  * Decide whether a transition is defined on a given Transition.
  * This filters out orchestration options and returns true
@@ -144,7 +146,7 @@ function getAnimation(
         `You are trying to animate ${key} from "${origin}" to "${target}". ${origin} is not an animatable value - to enable this animation set ${origin} to a value animatable to ${target} via the \`style\` property.`
     )
 
-    function start() {
+    function start(): StopAnimation {
         const options = {
             from: origin,
             to: target,
@@ -159,9 +161,10 @@ function getAnimation(
             : startPopmotionAnimate(valueTransition, options)
     }
 
-    function set() {
+    function set(): StopAnimation {
         value.set(target)
         onComplete()
+        return { stop: () => {} }
     }
 
     return !isOriginAnimatable ||
@@ -185,10 +188,17 @@ export function startAnimation(
 ) {
     return value.start(onComplete => {
         let delayTimer: number
-        let controls: { stop: () => void }
-        const start = getAnimation(key, value, target, transition, onComplete)
-
+        let controls: StopAnimation
+        const animation = getAnimation(
+            key,
+            value,
+            target,
+            transition,
+            onComplete
+        )
         const delay = getDelayFromTransition(transition, key)
+
+        const start = () => (controls = animation())
 
         if (delay) {
             delayTimer = setTimeout(start, secondsToMilliseconds(delay))

@@ -54,13 +54,10 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                     boxShadow: "0px 5px 5px rgba(0,0,0,0.1)",
                 }}
                 drag="y"
-                // Animate the component back to 0 when dragging ends
-                dragConstraints={{ top: 0, bottom: 0 }}
-                // But allow full movement outside those constraints
-                dragElastic={1}
                 onDragStart={() => setDragging(true)}
                 onDragEnd={() => setDragging(false)}
                 onViewportBoxUpdate={(_viewportBox, delta) => {
+                    color === "#FF008C" && console.log(_viewportBox.y.min)
                     isDragging && moveItem(i, delta.y.translate)
                 }}
             />

@@ -180,16 +180,17 @@ class Animate extends React.Component<AnimateProps> {
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
 
+        // Create a function to stop animation on this specific axis
+        const unsubscribeProgress = layoutProgress.onChange(frame)
+
         // Start the animation on this axis
         const animation = startAnimation(
             axis === "x" ? "layoutX" : "layoutY",
             layoutProgress,
             progressTarget,
             transition || this.props.transition || defaultTransition
-        )
+        ).then(unsubscribeProgress)
 
-        // Create a function to stop animation on this specific axis
-        const unsubscribeProgress = layoutProgress.onChange(frame)
         this.stopAxisAnimation[axis] = () => {
             layoutProgress.stop()
             unsubscribeProgress()
