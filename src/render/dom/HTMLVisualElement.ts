@@ -29,8 +29,6 @@ import { buildLayoutProjectionTransform } from "./utils/build-transform"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 
-import { getFrameData } from "framesync"
-
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
     prev: AxisBox2D,
