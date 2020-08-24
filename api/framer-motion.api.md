@@ -748,7 +748,7 @@ export interface Spring extends Repeat {
 // Warning: (ae-internal-missing-underscore) The name "startAnimation" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function startAnimation(key: string, value: MotionValue, target: ResolvedValueTarget, { delay, ...transition }?: Transition): Promise<void>;
+export function startAnimation(key: string, value: MotionValue, target: ResolvedValueTarget, transition?: Transition): Promise<void>;
 
 // @public (undocumented)
 export type Subscriber<T> = (v: T) => void;
