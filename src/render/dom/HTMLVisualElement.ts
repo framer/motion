@@ -471,7 +471,6 @@ export class HTMLVisualElement<
      * Set new min/max boundaries to project an axis into
      */
     setAxisTarget(axis: "x" | "y", min: number, max: number) {
-        // RAther than set the targetBox, set a cache that gets flushed during updateLayoutDeltas
         const targetAxis = this.targetBox[axis]
         targetAxis.min = min
         targetAxis.max = max
