@@ -70,7 +70,7 @@
         "jest-watch-typeahead": "^0.4.2",
         "lint-staged": "^8.0.4",
         "lodash": "^4.17.13",
-        "prettier": "^1.19.1",
+        "prettier": "^2.0.5",
         "progress-bar-webpack-plugin": "^1.11.0",
         "react": "^17.0.0-rc.0",
         "react-dev-utils": "^6.1.1",
@@ -98,11 +98,6 @@
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
     },
     "lint-staged": {
         "linters": {
