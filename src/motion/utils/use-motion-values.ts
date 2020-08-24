@@ -100,9 +100,6 @@ function addMotionValues<P>(
         } else if (isForcedMotionValue(key, props)) {
             // If this is a transform prop, always create a MotionValue
             // to ensure we can reconcile them all together.
-            if (props["name"] === "Knob") {
-                console.log("motion style", key, value)
-            }
             if (!visualElement.hasValue(key)) {
                 visualElement.addValue(key, motionValue(value))
             } else if (value !== prev[key]) {
