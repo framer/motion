@@ -180,7 +180,7 @@ export abstract class VisualElement<E = any> {
     }
 
     scheduleUpdateLayoutDelta() {
-        sync.update(this.rootParent.updateLayoutDelta, false, true)
+        sync.preRender(this.rootParent.updateLayoutDelta, false, true)
     }
 
     private subscribeToValue(key: string, value: MotionValue) {

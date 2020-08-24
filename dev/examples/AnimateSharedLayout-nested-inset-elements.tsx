@@ -32,11 +32,17 @@ export const App = () => {
                     >
                         <motion.div
                             layoutId="b"
-                            style={{ ...container, background: "red" }}
+                            style={{
+                                ...container,
+                                background: isOn ? "#f00" : "#0f0",
+                            }}
                         >
                             <motion.div
                                 layoutId="c"
-                                style={{ ...container, background: "blue" }}
+                                style={{
+                                    ...container,
+                                    background: isOn ? "#0f0" : "#f00",
+                                }}
                             />
                         </motion.div>
                     </motion.div>

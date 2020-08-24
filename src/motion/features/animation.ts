@@ -68,9 +68,7 @@ export const getAnimationComponent = (
     props: MotionProps
 ): ComponentType<FeatureProps> | undefined => {
     let animatePropType: AnimatePropType | undefined = undefined
-    if (props["name"] === "knob") {
-        console.log(props)
-    }
+
     for (const key in AnimatePropType) {
         if (animatePropTypeTests[key](props)) {
             animatePropType = key as AnimatePropType

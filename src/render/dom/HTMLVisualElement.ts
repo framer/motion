@@ -29,6 +29,8 @@ import { buildLayoutProjectionTransform } from "./utils/build-transform"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 
+import { getFrameData } from "framesync"
+
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
     prev: AxisBox2D,
@@ -469,6 +471,7 @@ export class HTMLVisualElement<
      * Set new min/max boundaries to project an axis into
      */
     setAxisTarget(axis: "x" | "y", min: number, max: number) {
+        // RAther than set the targetBox, set a cache that gets flushed during updateLayoutDeltas
         const targetAxis = this.targetBox[axis]
         targetAxis.min = min
         targetAxis.max = max
@@ -580,6 +583,7 @@ export class HTMLVisualElement<
             this.treeScale
         )
         deltaTransform !== this.deltaTransform && this.scheduleRender()
+
         this.deltaTransform = deltaTransform
     }
 
