@@ -307,7 +307,7 @@ export class VisualElementAnimationControls<
         if (isTargetResolver(variant)) {
             // resolve current and velocity
             variant = variant(
-                custom !== undefined ? custom : this.props.custom,
+                custom ?? this.props.custom,
                 getCurrent(this.visualElement),
                 getVelocity(this.visualElement)
             )
