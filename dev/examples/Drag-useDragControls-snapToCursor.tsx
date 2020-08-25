@@ -27,7 +27,9 @@ export const App = () => {
         <>
             <div
                 style={container}
-                onMouseDown={e => dragControls.start(e, { snapToCursor: true })}
+                onPointerDown={e =>
+                    dragControls.start(e, { snapToCursor: true })
+                }
             />
             <motion.div
                 drag
