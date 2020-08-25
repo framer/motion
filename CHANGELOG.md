@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Fixed
+
+- Updating `useDragControls` documentation to reflect that triggering events should be `usePointerDown`, as mouse events work differently on touch screens.
+
 ## [2.6.0] 2020-08-24
 
 ### Fixed

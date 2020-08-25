@@ -396,7 +396,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * return (
      *   <>
-     *     <div onMouseDown={startDrag} />
+     *     <div onPointerDown={startDrag} />
      *     <motion.div drag="x" dragControls={dragControls} />
      *   </>
      * )
@@ -442,7 +442,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * return (
      *   <>
-     *     <div onMouseDown={startDrag} />
+     *     <div onPointerDown={startDrag} />
      *     <motion.div
      *       drag="x"
      *       dragControls={dragControls}
