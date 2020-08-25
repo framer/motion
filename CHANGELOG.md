@@ -2,12 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [2.6.1] 2020-08-26
 
 ### Fixed
 
 -   Updating `useDragControls` documentation to reflect that triggering events should be `usePointerDown`, as mouse events work differently on touch screens.
 -   `AnimatePresence.custom` is passed throughout the tree for all exit variants.
+-   Animating the `viewBox` attribute of `svg` elements now correctly sets the `viewBox` attribute instead of `view-box`.
 
 ### Upgrade
 
