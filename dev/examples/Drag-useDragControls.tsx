@@ -25,7 +25,7 @@ export const App = () => {
 
     return (
         <>
-            <div style={container} onMouseDown={e => dragControls.start(e)} />
+            <div style={container} onPointerDown={e => dragControls.start(e)} />
             <motion.div
                 drag
                 dragControls={dragControls}

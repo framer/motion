@@ -36,7 +36,7 @@ import {
  *
  * return (
  *   <>
- *     <div onMouseDown={startDrag} />
+ *     <div onPointerDown={startDrag} />
  *     <motion.div drag="x" dragControls={dragControls} />
  *   </>
  * )
@@ -130,7 +130,7 @@ const createDragControls = () => new DragControls()
  *
  * return (
  *   <>
- *     <div onMouseDown={startDrag} />
+ *     <div onPointerDown={startDrag} />
  *     <motion.div drag="x" dragControls={dragControls} />
  *   </>
  * )
