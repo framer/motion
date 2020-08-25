@@ -29,6 +29,7 @@ export const App = () => {
                             right: isOn ? 50 : undefined,
                             borderRadius: "50%",
                         }}
+                        transition={{ duration: 2 }}
                     >
                         <motion.div
                             layoutId="b"
@@ -36,6 +37,7 @@ export const App = () => {
                                 ...container,
                                 background: isOn ? "#f00" : "#0f0",
                             }}
+                            transition={{ duration: 2 }}
                         >
                             <motion.div
                                 layoutId="c"
@@ -43,6 +45,7 @@ export const App = () => {
                                     ...container,
                                     background: isOn ? "#0f0" : "#f00",
                                 }}
+                                transition={{ duration: 2 }}
                             />
                         </motion.div>
                     </motion.div>
