@@ -26,6 +26,7 @@ type AnimationOptions = {
     delay?: number
     priority?: number
     transitionOverride?: Transition
+    custom?: any
 }
 
 type SetterOptions = {
@@ -288,7 +289,8 @@ export class VisualElementAnimationControls<
      * @param variant -
      */
     private resolveVariant(
-        variant?: Variant
+        variant?: Variant,
+        { custom }: AnimationOptions = {}
     ): {
         target?: TargetWithKeyframes
         transition?: Transition
@@ -305,7 +307,7 @@ export class VisualElementAnimationControls<
         if (isTargetResolver(variant)) {
             // resolve current and velocity
             variant = variant(
-                this.props.custom,
+                custom !== undefined ? custom : this.props.custom,
                 getCurrent(this.visualElement),
                 getVelocity(this.visualElement)
             )
@@ -461,10 +463,16 @@ export class VisualElementAnimationControls<
 
     private animate(
         animationDefinition: Variant,
-        { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
+        {
+            delay = 0,
+            priority = 0,
+            transitionOverride,
+            ...opts
+        }: AnimationOptions = {}
     ): Promise<any> {
         let { target, transition, transitionEnd } = this.resolveVariant(
-            animationDefinition
+            animationDefinition,
+            opts
         )
 
         if (transitionOverride) {
@@ -554,7 +562,7 @@ export class VisualElementAnimationControls<
         const priority = (opts && opts.priority) || 0
         const variant = this.variants[variantLabel]
         const transition = variant
-            ? this.resolveVariant(variant).transition || {}
+            ? this.resolveVariant(variant, opts).transition || {}
             : {}
 
         /**
@@ -577,7 +585,8 @@ export class VisualElementAnimationControls<
                       delayChildren + forwardDelay,
                       transition.staggerChildren,
                       transition.staggerDirection,
-                      priority
+                      priority,
+                      opts?.custom
                   )
               }
             : () => Promise.resolve()
@@ -606,7 +615,8 @@ export class VisualElementAnimationControls<
         delayChildren: number = 0,
         staggerChildren: number = 0,
         staggerDirection: number = 1,
-        priority: number = 0
+        priority: number = 0,
+        custom?: any
     ) {
         if (!this.children) {
             return Promise.resolve()
@@ -623,6 +633,7 @@ export class VisualElementAnimationControls<
             const animation = childControls.animateVariant(variantLabel, {
                 priority,
                 delay: delayChildren + generateStaggerDuration(i),
+                custom,
             })
             animations.push(animation)
         })
