@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Fixing detection of transition definitions and application of default transitions.
+-   When animating to/from `0` and a unit type, `0` will be coerced to that unit type rather than needing unit conversion via DOM measurement.
 
 ## [2.6.1] 2020-08-26
 

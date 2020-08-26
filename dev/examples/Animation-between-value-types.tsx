@@ -1,9 +1,23 @@
 import * as React from "react"
-import { motion } from "@framer"
+import { motion, useCycle } from "@framer"
 
 /**
- * An example of animating between the detected value type (px) and the set one (%)
+ * An example of animating between different value types
  */
+
+export const App = () => {
+    const [width, nextWidth] = useCycle(0, "100%", "calc(50% + 100px)")
+    return (
+        <div style={stretch} onClick={() => nextWidth()}>
+            <motion.div
+                initial={false}
+                animate={{ width }}
+                transition={{ duration: 5 }}
+                style={style}
+            />
+        </div>
+    )
+}
 
 const style = {
     width: 100,
@@ -11,12 +25,10 @@ const style = {
     background: "white",
 }
 
-export const App = () => {
-    return (
-        <motion.div
-            animate={{ width: "100%" }}
-            transition={{ duration: 5, from: "50%" }}
-            style={style}
-        />
-    )
+const stretch: React.CSSProperties = {
+    position: "absolute",
+    inset: 0,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
 }

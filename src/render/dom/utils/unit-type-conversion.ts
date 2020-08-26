@@ -72,14 +72,14 @@ const getTranslateFromMatrix = (
 
 const transformKeys = new Set(["x", "y", "z"])
 const nonTranslationalTransformKeys = transformProps.filter(
-    key => !transformKeys.has(key)
+    (key) => !transformKeys.has(key)
 )
 
 type RemovedTransforms = [string, string | number][]
 function removeNonTranslationalTransform(visualElement: HTMLVisualElement) {
     const removedTransforms: RemovedTransforms = []
 
-    nonTranslationalTransformKeys.forEach(key => {
+    nonTranslationalTransformKeys.forEach((key) => {
         const value:
             | MotionValue<string | number>
             | undefined = visualElement.getValue(key)
@@ -141,7 +141,7 @@ const convertChangedValueTypes = (
 
     const targetBbox = visualElement.getBoundingBox()
 
-    changedKeys.forEach(key => {
+    changedKeys.forEach((key) => {
         // Restore styles to their **calculated computed style**, not their actual
         // originally set style. This allows us to animate between equivalent pixel units.
         const value = visualElement.getValue(key) as MotionValue
@@ -173,7 +173,7 @@ const checkAndConvertChangedValueTypes = (
 
     const changedValueTypeKeys: string[] = []
 
-    targetPositionalKeys.forEach(key => {
+    targetPositionalKeys.forEach((key) => {
         const value = visualElement.getValue(key) as MotionValue<
             number | string
         >
@@ -224,6 +224,14 @@ const checkAndConvertChangedValueTypes = (
                 } else if (Array.isArray(to) && toType === px) {
                     target[key] = to.map(parseFloat)
                 }
+            } else if (fromType && toType && (from === 0 || to === 0)) {
+                // If one or the other value is 0, it's safe to coerce it to the
+                // type of the other without measurement
+                if (from === 0) {
+                    value.set((toType as any).transform(from))
+                } else {
+                    target[key] = (fromType as any).transform(from)
+                }
             } else {
                 // If we're going to do value conversion via DOM measurements, we first
                 // need to remove non-positional transform values that could affect the bbox measurements.
@@ -239,6 +247,7 @@ const checkAndConvertChangedValueTypes = (
                     transitionEnd[key] !== undefined
                         ? transitionEnd[key]
                         : target[key]
+
                 setAndResetVelocity(value, to)
             }
         }
