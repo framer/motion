@@ -19,4 +19,5 @@ export const camelCaseAttributes = new Set([
     "specularExponent",
     "stdDeviation",
     "tableValues",
+    "viewBox",
 ])
