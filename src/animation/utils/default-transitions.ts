@@ -17,8 +17,10 @@ export const underDampedSpring = () => ({
 
 export const overDampedSpring = (to: SingleTarget) => ({
     type: "spring",
-    stiffness: 700,
-    damping: to === 0 ? 100 : 35,
+    stiffness: 550,
+    damping: to === 0 ? 100 : 30,
+    restDelta: 0.01,
+    restSpeed: 10,
 })
 
 export const linearTween = () => ({
