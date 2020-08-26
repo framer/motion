@@ -14,6 +14,7 @@ import { secondsToMilliseconds } from "../../utils/time-conversion"
 import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
 import { isAnimatable } from "./is-animatable"
+import { getDefaultTransition } from "./default-transitions"
 import { warning } from "hey-listen"
 
 type StopAnimation = { stop: () => void }
@@ -29,6 +30,10 @@ export function isTransitionDefined({
     delayChildren,
     staggerChildren,
     staggerDirection,
+    repeat,
+    repeatType,
+    repeatDelay,
+    from,
     ...transition
 }: Transition) {
     return !!Object.keys(transition).length
@@ -109,9 +114,21 @@ export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
 
 function startPopmotionAnimate(
     transition: PermissiveTransitionDefinition,
-    options: any
+    options: any,
+    key: string
 ): PlaybackControls {
     hydrateKeyframes(options)
+
+    /**
+     * Get a default transition if none is determined to be defined.
+     */
+    if (!isTransitionDefined(transition)) {
+        transition = {
+            ...transition,
+            ...getDefaultTransition(key, options.to),
+        }
+    }
+
     return animate({
         ...options,
         ...convertTransitionToAnimationOptions(transition),
@@ -158,7 +175,7 @@ function getAnimation(
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
             ? startPopmotionInertia(valueTransition, options)
-            : startPopmotionAnimate(valueTransition, options)
+            : startPopmotionAnimate(valueTransition, options, key)
     }
 
     function set(): StopAnimation {
@@ -186,7 +203,7 @@ export function startAnimation(
     target: ResolvedValueTarget,
     transition: Transition = {}
 ) {
-    return value.start(onComplete => {
+    return value.start((onComplete) => {
         let delayTimer: number
         let controls: StopAnimation
         const animation = getAnimation(
