@@ -8,6 +8,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 - Updating `useDragControls` documentation to reflect that triggering events should be `usePointerDown`, as mouse events work differently on touch screens.
 
+### Upgrade
+
+-  Typescript 4.
+
 ## [2.6.0] 2020-08-24
 
 ### Fixed

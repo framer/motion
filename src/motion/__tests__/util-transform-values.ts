@@ -52,9 +52,7 @@ export const transformValues = <T extends ResolvedValues>(values: T): T => {
             backgroundImage = `url(${image})`
         }
         remainingValues.backgroundImage = backgroundImage
-        if (remainingValues.backgroundSize === undefined) {
-            remainingValues.backgroundSize = "cover"
-        }
+        remainingValues.backgroundSize ??= "cover"
     }
 
     return remainingValues
