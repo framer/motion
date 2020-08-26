@@ -230,7 +230,7 @@ const checkAndConvertChangedValueTypes = (
                 if (from === 0) {
                     value.set((toType as any).transform(from))
                 } else {
-                    target[key] = (fromType as any).transform(from)
+                    target[key] = (fromType as any).transform(to)
                 }
             } else {
                 // If we're going to do value conversion via DOM measurements, we first

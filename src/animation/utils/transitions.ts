@@ -122,7 +122,10 @@ export function getPopmotionAnimationOptions(
             ...getDefaultTransition(key, options.to),
         }
     }
-
+    console.log({
+        ...options,
+        ...convertTransitionToAnimationOptions(transition),
+    })
     return {
         ...options,
         ...convertTransitionToAnimationOptions(transition),
