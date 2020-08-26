@@ -20,11 +20,7 @@ const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
     useEffect(() => {
         if (!isPresent) {
             if (!isPlayingExitAnimation.current && exit) {
-                controls.setProps({
-                    ...props,
-                    custom,
-                })
-                controls.start(exit).then(onExitComplete)
+                controls.start(exit, { custom }).then(onExitComplete)
             }
 
             isPlayingExitAnimation.current = true

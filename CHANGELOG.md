@@ -6,7 +6,8 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
-- Updating `useDragControls` documentation to reflect that triggering events should be `usePointerDown`, as mouse events work differently on touch screens.
+-   Updating `useDragControls` documentation to reflect that triggering events should be `usePointerDown`, as mouse events work differently on touch screens.
+-   `AnimatePresence.custom` is passed throughout the tree for all exit variants.
 
 ### Upgrade
 

@@ -564,6 +564,92 @@ describe("AnimatePresence with custom components", () => {
         expect(element).toBe(200)
     })
 
+    test("Exit variants are triggered with `AnimatePresence.custom` throughout the tree", async () => {
+        const variants = {
+            enter: { x: 0, transition: { type: false } },
+            exit: (i: number) => {
+                return { x: i * 100, transition: { type: false } }
+            },
+        }
+        const xParent = motionValue(0)
+        const xChild = motionValue(0)
+        const promise = new Promise(resolve => {
+            const CustomComponent = ({
+                children,
+                x,
+                initial,
+                animate,
+                exit,
+            }: {
+                children?: any
+                x: any
+                initial?: any
+                animate?: any
+                exit?: any
+            }) => (
+                <motion.div
+                    custom={1}
+                    variants={variants}
+                    style={{ x }}
+                    initial={initial}
+                    animate={animate}
+                    exit={exit}
+                >
+                    {children}
+                </motion.div>
+            )
+            const Component = ({
+                isVisible,
+                onAnimationComplete,
+            }: {
+                isVisible: boolean
+                onAnimationComplete?: () => void
+            }) => {
+                return (
+                    <AnimatePresence
+                        custom={2}
+                        onExitComplete={onAnimationComplete}
+                    >
+                        {isVisible && (
+                            <CustomComponent
+                                x={xParent}
+                                initial="exit"
+                                animate="enter"
+                                exit="exit"
+                            >
+                                <CustomComponent x={xChild} />
+                            </CustomComponent>
+                        )}
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender } = render(<Component isVisible />)
+            rerender(<Component isVisible />)
+
+            rerender(
+                <Component
+                    isVisible={false}
+                    onAnimationComplete={() =>
+                        resolve([xParent.get(), xChild.get()])
+                    }
+                />
+            )
+
+            rerender(
+                <Component
+                    isVisible={false}
+                    onAnimationComplete={() =>
+                        resolve([xParent.get(), xChild.get()])
+                    }
+                />
+            )
+        })
+
+        const latest = await promise
+        expect(latest).toEqual([200, 200])
+    })
+
     test("Exit propagates through variants", async () => {
         const variants = {
             enter: { opacity: 1 },
