@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.2] 2020-08-26
+
+### Fixed
+
+-   Fixing detection of transitions.
+
 ## [2.6.1] 2020-08-26
 
 ### Fixed
@@ -12,7 +18,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Upgrade
 
--  Typescript 4.
+-   Typescript 4.
 
 ## [2.6.0] 2020-08-24
 

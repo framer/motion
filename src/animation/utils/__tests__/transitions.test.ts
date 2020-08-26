@@ -3,7 +3,13 @@ import {
     convertTransitionToAnimationOptions,
     getDelayFromTransition,
     hydrateKeyframes,
+    getPopmotionAnimationOptions,
 } from "../transitions"
+import {
+    underDampedSpring,
+    overDampedSpring,
+    linearTween,
+} from "../default-transitions"
 import { linear, easeInOut, circIn } from "popmotion"
 
 describe("isTransitionDefined", () => {
@@ -140,6 +146,60 @@ describe("hydrateKeyframes", () => {
         expect(opts).toEqual({
             from: 1,
             to: [2, 2, 3],
+        })
+    })
+})
+
+describe("getPopmotionAnimationOptions", () => {
+    test("Correctly creates a Popmotion animate options object", () => {
+        expect(
+            getPopmotionAnimationOptions({}, { from: 0, to: 100 }, "x")
+        ).toEqual({
+            from: 0,
+            to: 100,
+            ...underDampedSpring(),
+        })
+        expect(
+            getPopmotionAnimationOptions({}, { from: 0, to: 1 }, "scale")
+        ).toEqual({
+            from: 0,
+            to: 1,
+            ...overDampedSpring(1),
+        })
+        expect(
+            getPopmotionAnimationOptions({}, { from: 0, to: 1 }, "opacity")
+        ).toEqual({
+            from: 0,
+            to: 1,
+            ...linearTween(),
+            ease: linear,
+            duration: 300,
+        })
+
+        expect(
+            getPopmotionAnimationOptions(
+                { duration: 0.4 },
+                { from: 0, to: 1 },
+                "opacity"
+            )
+        ).toEqual({
+            from: 0,
+            to: 1,
+            type: "keyframes",
+            duration: 400,
+        })
+
+        expect(
+            getPopmotionAnimationOptions(
+                { duration: 0.4 },
+                { from: 50, to: [null, 100] },
+                "x"
+            )
+        ).toEqual({
+            from: 50,
+            to: [50, 100],
+            type: "keyframes",
+            duration: 400,
         })
     })
 })
