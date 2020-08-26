@@ -22,6 +22,7 @@ export const overDampedSpring = (to: SingleTarget) => ({
 })
 
 export const linearTween = () => ({
+    type: "keyframes",
     ease: "linear",
     duration: 0.3,
 })

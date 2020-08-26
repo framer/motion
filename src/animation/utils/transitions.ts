@@ -3,13 +3,7 @@ import {
     PermissiveTransitionDefinition,
     ResolvedValueTarget,
 } from "../../types"
-import {
-    AnimationOptions,
-    Animatable,
-    PlaybackControls,
-    animate,
-    inertia,
-} from "popmotion"
+import { AnimationOptions, Animatable, animate, inertia } from "popmotion"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
@@ -112,11 +106,11 @@ export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
     return options
 }
 
-function startPopmotionAnimate(
+export function getPopmotionAnimationOptions(
     transition: PermissiveTransitionDefinition,
     options: any,
     key: string
-): PlaybackControls {
+) {
     hydrateKeyframes(options)
 
     /**
@@ -129,17 +123,10 @@ function startPopmotionAnimate(
         }
     }
 
-    return animate({
+    return {
         ...options,
         ...convertTransitionToAnimationOptions(transition),
-    })
-}
-
-function startPopmotionInertia(
-    transition: PermissiveTransitionDefinition,
-    options: any
-): { stop: () => void } {
-    return inertia({ ...options, ...transition })
+    }
 }
 
 /**
@@ -174,8 +161,10 @@ function getAnimation(
 
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
-            ? startPopmotionInertia(valueTransition, options)
-            : startPopmotionAnimate(valueTransition, options, key)
+            ? inertia({ ...options, ...valueTransition })
+            : animate(
+                  getPopmotionAnimationOptions(valueTransition, options, key)
+              )
     }
 
     function set(): StopAnimation {
