@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Fixing detection of transitions.
+-   Fixing detection of transition definitions and application of default transitions.
 
 ## [2.6.1] 2020-08-26
 
