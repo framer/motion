@@ -3,17 +3,12 @@ import {
     PermissiveTransitionDefinition,
     ResolvedValueTarget,
 } from "../../types"
-import {
-    AnimationOptions,
-    Animatable,
-    PlaybackControls,
-    animate,
-    inertia,
-} from "popmotion"
+import { AnimationOptions, Animatable, animate, inertia } from "popmotion"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
 import { isAnimatable } from "./is-animatable"
+import { getDefaultTransition } from "./default-transitions"
 import { warning } from "hey-listen"
 
 type StopAnimation = { stop: () => void }
@@ -29,6 +24,10 @@ export function isTransitionDefined({
     delayChildren,
     staggerChildren,
     staggerDirection,
+    repeat,
+    repeatType,
+    repeatDelay,
+    from,
     ...transition
 }: Transition) {
     return !!Object.keys(transition).length
@@ -107,22 +106,27 @@ export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
     return options
 }
 
-function startPopmotionAnimate(
+export function getPopmotionAnimationOptions(
     transition: PermissiveTransitionDefinition,
-    options: any
-): PlaybackControls {
+    options: any,
+    key: string
+) {
     hydrateKeyframes(options)
-    return animate({
+
+    /**
+     * Get a default transition if none is determined to be defined.
+     */
+    if (!isTransitionDefined(transition)) {
+        transition = {
+            ...transition,
+            ...getDefaultTransition(key, options.to),
+        }
+    }
+
+    return {
         ...options,
         ...convertTransitionToAnimationOptions(transition),
-    })
-}
-
-function startPopmotionInertia(
-    transition: PermissiveTransitionDefinition,
-    options: any
-): { stop: () => void } {
-    return inertia({ ...options, ...transition })
+    }
 }
 
 /**
@@ -157,8 +161,10 @@ function getAnimation(
 
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
-            ? startPopmotionInertia(valueTransition, options)
-            : startPopmotionAnimate(valueTransition, options)
+            ? inertia({ ...options, ...valueTransition })
+            : animate(
+                  getPopmotionAnimationOptions(valueTransition, options, key)
+              )
     }
 
     function set(): StopAnimation {
@@ -186,7 +192,7 @@ export function startAnimation(
     target: ResolvedValueTarget,
     transition: Transition = {}
 ) {
-    return value.start(onComplete => {
+    return value.start((onComplete) => {
         let delayTimer: number
         let controls: StopAnimation
         const animation = getAnimation(

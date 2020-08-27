@@ -57,4 +57,19 @@ describe("SVGVisualElement", () => {
         )
         expect(visualElement.vars["--a"]).toBe("#fff")
     })
+
+    it("updates viewBox in camelcase", () => {
+        const visualElement = getMounted()
+        const viewBox = motionValue("0 0 100 100")
+
+        visualElement.addValue("viewBox", viewBox)
+
+        visualElement.render()
+
+        expect(visualElement.attrs.viewBox).toBe("0 0 100 100")
+        expect(visualElement.getInstance()).toHaveAttribute(
+            "viewBox",
+            "0 0 100 100"
+        )
+    })
 })

@@ -28,6 +28,10 @@ export const App = () => {
         <motion.svg
             initial={false}
             animate={isChecked ? "checked" : "unchecked"}
+            variants={{
+                checked: { viewBox: "-220 -200 440 440" },
+                unchecked: { viewBox: "0 0 440 440" },
+            }}
             whileHover="hover"
             whileTap="pressed"
             width="440"

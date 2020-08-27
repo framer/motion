@@ -1681,8 +1681,8 @@ export type TransitionMap = Orchestration & {
  * @public
  */
 export type Transition =
-    | (Orchestration & TransitionDefinition)
-    | (Orchestration & TransitionMap)
+    | (Orchestration & Repeat & TransitionDefinition)
+    | (Orchestration & Repeat & TransitionMap)
 
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
 type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<

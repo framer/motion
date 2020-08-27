@@ -2,11 +2,30 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## [2.6.3] 2020-08-27
 
 ### Fixed
 
-- Updating `useDragControls` documentation to reflect that triggering events should be `usePointerDown`, as mouse events work differently on touch screens.
+-   Coercion to type `auto`.
+
+## [2.6.2] 2020-08-26
+
+### Fixed
+
+-   Fixing detection of transition definitions and application of default transitions.
+-   When animating to/from `0` and a unit type, `0` will be coerced to that unit type rather than needing unit conversion via DOM measurement.
+
+## [2.6.1] 2020-08-26
+
+### Fixed
+
+-   Updating `useDragControls` documentation to reflect that triggering events should be `usePointerDown`, as mouse events work differently on touch screens.
+-   `AnimatePresence.custom` is passed throughout the tree for all exit variants.
+-   Animating the `viewBox` attribute of `svg` elements now correctly sets the `viewBox` attribute instead of `view-box`.
+
+### Upgrade
+
+-   Typescript 4.
 
 ## [2.6.0] 2020-08-24
 

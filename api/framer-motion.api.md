@@ -660,7 +660,7 @@ export type TransformPoint2D = (point: Point2D) => Point2D;
 // Warning: (ae-forgotten-export) The symbol "TransitionMap" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export type Transition = (Orchestration & TransitionDefinition) | (Orchestration & TransitionMap);
+export type Transition = (Orchestration & Repeat & TransitionDefinition) | (Orchestration & Repeat & TransitionMap);
 
 // @public
 export interface Tween extends Repeat {
