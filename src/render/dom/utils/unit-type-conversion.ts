@@ -224,7 +224,11 @@ const checkAndConvertChangedValueTypes = (
                 } else if (Array.isArray(to) && toType === px) {
                     target[key] = to.map(parseFloat)
                 }
-            } else if (fromType && toType && (from === 0 || to === 0)) {
+            } else if (
+                fromType?.transform &&
+                toType?.transform &&
+                (from === 0 || to === 0)
+            ) {
                 // If one or the other value is 0, it's safe to coerce it to the
                 // type of the other without measurement
                 if (from === 0) {

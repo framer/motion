@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.3] 2020-08-27
+
+### Fixed
+
+-   Coercion to type `auto`.
+
 ## [2.6.2] 2020-08-26
 
 ### Fixed
