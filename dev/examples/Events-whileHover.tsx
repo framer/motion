@@ -1,25 +1,19 @@
-import * as React from "react"
+import React from "react"
 import { motion } from "@framer"
 
-/**
- * An example of the whileHover and whileTap event animators working together.
- */
-
-const style = {
-    width: 100,
-    height: 100,
-}
-
-export const App = () => {
+export function App() {
     return (
         <motion.div
-            initial={{ backgroundColor: "hsla(0  25.5%  50% / 1)" }}
             whileHover={{
-                scale: 1.5,
-                backgroundColor: "hsla(177 37.4978% 76.66804% / 0.5)",
+                scale: [1, 1.01, 1.05],
+                transition: {
+                    type: "spring", //uncomment out to work
+                    mass: 0.5,
+                    damping: 10,
+                    stiffness: 20,
+                },
             }}
-            whileTap={{ scale: 0.5 }}
-            style={style}
+            style={{ width: 100, height: 100, background: "white" }}
         />
     )
 }
