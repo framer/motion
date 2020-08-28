@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.5] 2020-08-28
+
+### Changed
+
+-   Tweaked `restSpeed` defaults for smoother halting of physical (px) springs.
+
+### Fixed
+
+-   Critical-damped spring equations in Popmotion.
+
 ## [2.6.4] 2020-08-28
 
 ### Fixed
