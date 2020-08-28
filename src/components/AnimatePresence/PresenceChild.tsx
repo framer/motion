@@ -27,29 +27,30 @@ export const PresenceChild = ({
     custom,
 }: PresenceChildProps) => {
     const presenceChildren = useConstant(newChildrenMap)
+    const id = useConstant(getPresenceId)
 
-    const context = {
-        id: useConstant(getPresenceId),
-        initial,
-        isPresent,
-        custom,
-        onExitComplete: (childId: number) => {
-            presenceChildren.set(childId, true)
-            let allComplete = true
-            presenceChildren.forEach(isComplete => {
-                if (!isComplete) allComplete = false
-            })
-
-            allComplete && onExitComplete?.()
-        },
-        register: (childId: number) => {
-            presenceChildren.set(childId, false)
-            return () => presenceChildren.delete(childId)
-        },
-    }
-
-    useMemo(() => {
+    const context = useMemo(() => {
         presenceChildren.forEach((_, key) => presenceChildren.set(key, false))
+
+        return {
+            id,
+            initial,
+            isPresent,
+            custom,
+            onExitComplete: (childId: number) => {
+                presenceChildren.set(childId, true)
+                let allComplete = true
+                presenceChildren.forEach((isComplete) => {
+                    if (!isComplete) allComplete = false
+                })
+
+                allComplete && onExitComplete?.()
+            },
+            register: (childId: number) => {
+                presenceChildren.set(childId, false)
+                return () => presenceChildren.delete(childId)
+            },
+        }
     }, [isPresent])
 
     return (
