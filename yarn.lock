@@ -7213,10 +7213,17 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
+<<<<<<< HEAD
 popmotion@9.0.0-rc.12:
   version "9.0.0-rc.12"
   resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-rc.12.tgz#c5db0d9bf7f314b7cc8789257f2902965ee9f0bf"
   integrity sha512-wfiXZHxG9GGwgsFuw1Ssw6ZYzwxaBcm/O+7qKmeGIokUEFgpIys3YyK7BQv9O58P6gK1Ys+psTfSt9lycrItaQ==
+=======
+popmotion@9.0.0-rc.10:
+  version "9.0.0-rc.10"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-rc.10.tgz#4a15b685604b8635789746d07cc0277051b2ac74"
+  integrity sha512-upb96jeBqGUCURgIZfDlyq0JL2t+oPcNtHRWLqLczSz8HLP+Q1KNOyWtRIqfuhh/QL8Y1iSAegBM7g5xMR2uKg==
+>>>>>>> Memoising PresenceChild context
   dependencies:
     framesync "^4.1.0"
     hey-listen "^1.0.8"
