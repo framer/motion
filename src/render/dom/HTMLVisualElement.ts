@@ -28,6 +28,7 @@ import { getBoundingBox } from "./layout/measure"
 import { buildLayoutProjectionTransform } from "./utils/build-transform"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
+import sync from "framesync"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -358,9 +359,22 @@ export class HTMLVisualElement<
          * Update targetBox to match the prevViewportBox. This is just to ensure
          * that targetBox is affected by scroll in the same way as the measured box
          */
+        this.rebaseTargetBox(false, this.prevViewportBox)
+    }
+    // TODO: Run this
+    rebaseTargetBox(force = false, box: AxisBox2D = this.box) {
         const { x, y } = this.axisProgress
-        if (!this.isTargetBoxLocked && !x.isAnimating() && !y.isAnimating()) {
-            this.targetBox = copyAxisBox(this.prevViewportBox)
+        const shouldRebase =
+            this.box &&
+            !this.isTargetBoxLocked &&
+            !x.isAnimating() &&
+            !y.isAnimating()
+
+        if (force || shouldRebase) {
+            eachAxis((axis) => {
+                const { min, max } = box[axis]
+                this.setAxisTarget(axis, min, max)
+            })
         }
     }
 
@@ -379,13 +393,8 @@ export class HTMLVisualElement<
             this.box,
             this.prevViewportBox || this.box
         )
-    }
 
-    /**
-     * Ensure the targetBox reflects the latest visual box on screen
-     */
-    refreshTargetBox() {
-        this.targetBox = this.getBoundingBoxWithoutTransforms()
+        sync.update(() => this.rebaseTargetBox())
     }
 
     isTargetBoxLocked = false
@@ -434,7 +443,7 @@ export class HTMLVisualElement<
         const resetValues: ResolvedValues = {}
 
         // Check the rotate value of all axes and reset to 0
-        transformAxes.forEach(axis => {
+        transformAxes.forEach((axis) => {
             const key = "rotate" + axis
 
             // If this rotation doesn't exist as a motion value, then we don't
@@ -499,13 +508,13 @@ export class HTMLVisualElement<
         progress.clearListeners()
         progress.set(min)
         progress.set(min) // Set twice to hard-reset velocity
-        progress.onChange(v => this.setAxisTarget(axis, v, v + length))
+        progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
         return startAnimation(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {
-        eachAxis(axis => this.axisProgress[axis].stop())
+        eachAxis((axis) => this.axisProgress[axis].stop())
     }
 
     updateLayoutDelta = () => {

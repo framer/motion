@@ -53,21 +53,10 @@ class Measure extends React.Component<SyncProps> {
          * If this axis isn't animating as a result of this render we want to reset the targetBox
          * to the measured box
          */
-        const { x, y } = visualElement.axisProgress
-        if (
-            visualElement.box &&
-            !visualElement.isTargetBoxLocked &&
-            !x.isAnimating() &&
-            !y.isAnimating()
-        ) {
-            eachAxis(axis => {
-                const { min, max } = visualElement.box[axis]
-                visualElement.setAxisTarget(axis, min, max)
-            })
-
-            // Force a render to ensure there's no flash of uncorrected bounding box.
-            visualElement.render()
-        }
+        visualElement.rebaseTargetBox()
+        //     // Force a render to ensure there's no flash of uncorrected bounding box.
+        //     visualElement.render()
+        // }
     }
 
     render() {
