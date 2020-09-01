@@ -7,7 +7,6 @@ import {
     isSharedLayout,
     SharedLayoutContext,
 } from "../../../components/AnimateSharedLayout/SharedLayoutContext"
-import { eachAxis } from "../../../utils/each-axis"
 
 interface SyncProps extends FeatureProps {
     syncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher
