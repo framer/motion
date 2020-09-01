@@ -49,7 +49,7 @@ class Animate extends React.Component<AnimateProps> {
 
     componentWillUnmount() {
         this.unsubLayoutReady()
-        eachAxis(axis => this.stopAxisAnimation[axis]?.())
+        eachAxis((axis) => this.stopAxisAnimation[axis]?.())
     }
 
     animate = (
@@ -79,7 +79,7 @@ class Animate extends React.Component<AnimateProps> {
 
         const boxHasMoved = hasMoved(origin, target)
 
-        const animations = eachAxis(axis => {
+        const animations = eachAxis((axis) => {
             /**
              * If layout is set to "position", we can resize the origin box based on the target
              * box and only animate its position.
