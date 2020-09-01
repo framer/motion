@@ -338,7 +338,8 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     reactStyle: ResolvedValues;
     read(key: string): number | string | null;
     readNativeValue(key: string): any;
-    refreshTargetBox(): void;
+    // (undocumented)
+    rebaseTargetBox(force?: boolean, box?: AxisBox2D): void;
     removeValue(key: string): void;
     render(): void;
     // @internal
