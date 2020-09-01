@@ -3,7 +3,7 @@ import {
     PermissiveTransitionDefinition,
     ResolvedValueTarget,
 } from "../../types"
-import { AnimationOptions, Animatable, animate, inertia } from "popmotion"
+import { AnimationOptions, animate, inertia } from "popmotion"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
@@ -37,7 +37,7 @@ export function isTransitionDefined({
 /**
  * Convert Framer Motion's Transition type into Popmotion-compatible options.
  */
-export function convertTransitionToAnimationOptions<T extends Animatable>({
+export function convertTransitionToAnimationOptions<T>({
     yoyo,
     loop,
     flip,
