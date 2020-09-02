@@ -54,7 +54,6 @@ export {
     useGestures,
 } from "./gestures"
 export { useCycle } from "./utils/use-cycle"
-export { useIsomorphicLayoutEffect } from "./utils/use-isomorphic-effect"
 export { transform } from "./utils/transform"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export {
