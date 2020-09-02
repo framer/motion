@@ -30,6 +30,12 @@ export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 
 /**
+ * Accessibility
+ */
+export { useReducedMotion } from "./utils/use-reduced-motion"
+export { ReducedMotion } from "./components/ReducedMotion"
+
+/**
  * Utils
  */
 export {
@@ -48,9 +54,8 @@ export {
     useGestures,
 } from "./gestures"
 export { useCycle } from "./utils/use-cycle"
+export { useIsomorphicLayoutEffect } from "./utils/use-isomorphic-effect"
 export { transform } from "./utils/transform"
-export { useReducedMotion } from "./utils/use-reduced-motion"
-export { ReducedMotion } from "./components/ReducedMotion"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export {
     usePresence,

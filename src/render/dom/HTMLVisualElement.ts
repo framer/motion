@@ -242,6 +242,7 @@ export class HTMLVisualElement<
      * This is considered mutable to avoid object creation on each frame.
      */
     treeScale: Point2D = { x: 1, y: 1 }
+    private prevTreeScale: Point2D = { x: 1, y: 1 }
 
     /**
      * The delta between the boxCorrected and the desired
@@ -545,6 +546,9 @@ export class HTMLVisualElement<
          * delta into its treeScale.
          */
         if (this.parent) {
+            this.prevTreeScale.x = this.treeScale.x
+            this.prevTreeScale.y = this.treeScale.y
+
             updateTreeScale(
                 this.treeScale,
                 (this.parent as any).treeScale,
@@ -588,7 +592,15 @@ export class HTMLVisualElement<
             this.delta,
             this.treeScale
         )
-        deltaTransform !== this.deltaTransform && this.scheduleRender()
+
+        if (
+            deltaTransform !== this.deltaTransform ||
+            // Also compare calculated treeScale, for values that rely on only this for scale correction.
+            this.prevTreeScale.x !== this.treeScale.x ||
+            this.prevTreeScale.y !== this.treeScale.y
+        ) {
+            this.scheduleRender()
+        }
 
         this.deltaTransform = deltaTransform
     }

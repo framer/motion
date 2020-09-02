@@ -12,6 +12,7 @@ import {
 import { isCSSVariable } from "./is-css-variable"
 import { valueScaleCorrection } from "../layout/scale-correction"
 import { Point2D, AxisBox2D, BoxDelta } from "../../../types/geometry"
+import { getFrameData } from "framesync"
 
 /**
  * Build style and CSS variables
