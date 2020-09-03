@@ -25,7 +25,10 @@ import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
-import { buildLayoutProjectionTransform } from "./utils/build-transform"
+import {
+    buildLayoutProjectionTransform,
+    identityProjection,
+} from "./utils/build-transform"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import sync from "framesync"
@@ -268,7 +271,7 @@ export class HTMLVisualElement<
      * being used to diff and decide whether to render on the current frame, but a minor optimisation
      * could be to provide this to the buildHTMLStyle function.
      */
-    deltaTransform: string
+    deltaTransform: string = identityProjection
 
     /**
      * If we've got a rotate motion value, we force layout projection calculations
