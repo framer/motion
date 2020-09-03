@@ -395,7 +395,11 @@ export class HTMLVisualElement<
             this.prevViewportBox || this.box
         )
 
-        sync.update(() => this.rebaseTargetBox())
+        sync.update(() => {
+            this.config.layoutId === "Page 1" &&
+                console.log("rebasing targetbox")
+            this.rebaseTargetBox()
+        })
     }
 
     isTargetBoxLocked = false
