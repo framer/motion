@@ -343,7 +343,7 @@ export class VisualElementAnimationControls<
         this.overrides[overrideIndex] = definition
 
         if (this.children) {
-            this.children.forEach(child =>
+            this.children.forEach((child) =>
                 child.setOverride(definition, overrideIndex)
             )
         }
@@ -368,7 +368,7 @@ export class VisualElementAnimationControls<
      */
     clearOverride(overrideIndex: number) {
         if (this.children) {
-            this.children.forEach(child => child.clearOverride(overrideIndex))
+            this.children.forEach((child) => child.clearOverride(overrideIndex))
         }
 
         const override = this.overrides[overrideIndex]
@@ -419,7 +419,7 @@ export class VisualElementAnimationControls<
         const isActive: Set<string> = new Set()
         const reversedList = [...variantLabelList].reverse()
 
-        reversedList.forEach(key => {
+        reversedList.forEach((key) => {
             const { target, transitionEnd } = this.resolveVariant(
                 this.variants[key]
             )
@@ -429,7 +429,7 @@ export class VisualElementAnimationControls<
             transitionEnd && this.setValues(transitionEnd, { isActive })
 
             if (this.children && this.children.size) {
-                this.children.forEach(child =>
+                this.children.forEach((child) =>
                     child.applyVariantLabels(variantLabelList)
                 )
             }
@@ -550,7 +550,7 @@ export class VisualElementAnimationControls<
     ) {
         const animations = [...variantLabels]
             .reverse()
-            .map(label => this.animateVariant(label, opts))
+            .map((label) => this.animateVariant(label, opts))
         return Promise.all(animations)
     }
 
@@ -670,12 +670,12 @@ export class VisualElementAnimationControls<
         }
 
         if (this.children) {
-            this.children.forEach(child => child.resetIsAnimating(priority))
+            this.children.forEach((child) => child.resetIsAnimating(priority))
         }
     }
 
     stop() {
-        this.visualElement.forEachValue(value => value.stop())
+        this.visualElement.forEachValue((value) => value.stop())
     }
 
     /**
