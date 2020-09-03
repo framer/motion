@@ -3,7 +3,13 @@ import {
     PermissiveTransitionDefinition,
     ResolvedValueTarget,
 } from "../../types"
-import { AnimationOptions, Animatable, animate, inertia } from "popmotion"
+import {
+    AnimationOptions,
+    KeyframeOptions,
+    Animatable,
+    animate,
+    inertia,
+} from "popmotion"
 import { secondsToMilliseconds } from "../../utils/time-conversion"
 import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
@@ -41,9 +47,14 @@ export function convertTransitionToAnimationOptions<T extends Animatable>({
     loop,
     flip,
     ease,
+    times,
     ...transition
 }: PermissiveTransitionDefinition): AnimationOptions<T> {
     const options: AnimationOptions<T> = { ...transition }
+
+    if (times) {
+        ;(options as KeyframeOptions<T>).offset = times
+    }
 
     /**
      * Convert any existing durations from seconds to milliseconds

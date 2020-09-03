@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.6] 2020-09-03
+
+### Fixed
+
+-   Keyframe `times` option.
+
 ## [2.6.5] 2020-08-28
 
 ### Changed
