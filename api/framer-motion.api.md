@@ -342,8 +342,6 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     rebaseTargetBox(force?: boolean, box?: AxisBox2D): void;
     removeValue(key: string): void;
     render(): void;
-    // @internal
-    resetRotate(): void;
     resetTransform(): void;
     setAxisTarget(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)

@@ -4,7 +4,7 @@ import { delta, copyAxisBox, axisBox } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
-import { isTransformProp, transformAxes } from "./utils/transform"
+import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
 import {
     Presence,
@@ -395,11 +395,7 @@ export class HTMLVisualElement<
             this.prevViewportBox || this.box
         )
 
-        sync.update(() => {
-            this.config.layoutId === "Page 1" &&
-                console.log("rebasing targetbox")
-            this.rebaseTargetBox()
-        })
+        sync.update(() => this.rebaseTargetBox())
     }
 
     isTargetBoxLocked = false
@@ -427,55 +423,6 @@ export class HTMLVisualElement<
             : "none"
 
         // Ensure that whatever happens next, we restore our transform
-        this.scheduleRender()
-    }
-
-    /**
-     * Reset rotate on this element. Doing so allows us to accurately measure the
-     * bounding box of the element.
-     *
-     * This function will only be called if _supportRotate is enabled in a parent
-     * AnimateSharedLayout. This is a private prop for use within Framer. It allows
-     * us to support rotation in Magic Motion.
-     *
-     * @internal
-     */
-    resetRotate() {
-        // If there's no detected rotation values, we can early return without a forced render.
-        let hasRotate = false
-
-        // Keep a record of all the values we've reset
-        const resetValues: ResolvedValues = {}
-
-        // Check the rotate value of all axes and reset to 0
-        transformAxes.forEach((axis) => {
-            const key = "rotate" + axis
-
-            // If this rotation doesn't exist as a motion value, then we don't
-            // need to reset it
-            if (!this.hasValue(key)) return
-
-            hasRotate = true
-
-            // Record the rotation and then temporarily set it to 0
-            resetValues[key] = this.latest[key]
-            this.latest[key] = 0
-        })
-
-        // If there's no rotation values, we don't need to do any more.
-        if (!hasRotate) return
-
-        // Force a render of this element to apply the transform with all rotations
-        // set to 0.
-        this.render()
-
-        // Put back all the values we reset
-        for (const key in resetValues) {
-            this.latest[key] = resetValues[key]
-        }
-
-        // Schedule a render for the next frame. This ensures we won't visually
-        // see the element with the reset rotate value applied.
         this.scheduleRender()
     }
 
