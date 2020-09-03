@@ -48,15 +48,15 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      */
     syncContext: SharedLayoutSyncMethods = {
         ...createBatcher(),
-        syncUpdate: force => this.scheduleUpdate(force),
+        syncUpdate: (force) => this.scheduleUpdate(force),
         forceUpdate: () => {
             // By copying syncContext to itself, when this component re-renders it'll also re-render
             // all children subscribed to the SharedLayout context.
             this.syncContext = { ...this.syncContext }
             this.scheduleUpdate(true)
         },
-        register: child => this.addChild(child),
-        remove: child => this.removeChild(child),
+        register: (child) => this.addChild(child),
+        remove: (child) => this.removeChild(child),
     }
 
     componentDidMount() {
@@ -85,7 +85,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Update presence metadata based on the latest AnimatePresence status.
          * This is a kind of goofy way of dealing with this, perhaps there's a better model to find.
          */
-        this.children.forEach(child => {
+        this.children.forEach((child) => {
             if (!child.isPresent) {
                 child.presence = Presence.Exiting
             } else if (child.presence !== Presence.Entering) {
@@ -114,8 +114,8 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Create a handler which we can use to flush the children animations
          */
         const handler: SyncLayoutLifecycles = {
-            measureLayout: child => child.measureLayout(),
-            layoutReady: child => {
+            measureLayout: (child) => child.measureLayout(),
+            layoutReady: (child) => {
                 const { layoutId } = child
 
                 child.layoutReady(
@@ -131,17 +131,17 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          *
          * Here we use that same mechanism of schedule/flush.
          */
-        this.children.forEach(child => this.syncContext.add(child))
+        this.children.forEach((child) => this.syncContext.add(child))
         this.syncContext.flush(handler)
 
         /**
          * Clear snapshots so subsequent rerenders don't retain memory of outgoing components
          */
-        this.stacks.forEach(stack => (stack.snapshot = undefined))
+        this.stacks.forEach((stack) => (stack.snapshot = undefined))
     }
 
     updateStacks() {
-        this.stacks.forEach(stack => stack.updateLeadAndFollow())
+        this.stacks.forEach((stack) => stack.updateLeadAndFollow())
     }
 
     scheduleUpdate(force = false) {
@@ -153,25 +153,16 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.updateScheduled = true
 
         /**
-         * Write: If we're supporting bounding box-distorting transforms, reset them before
-         * measuring the bounding box. This is currently only supported within Framer
-         * and introduces a write cycle.
-         */
-        if (this.props._supportRotate) {
-            this.children.forEach(child => child.resetRotate())
-        }
-
-        /**
          * Read: Snapshot children
          */
-        this.children.forEach(child => child.snapshotBoundingBox())
+        this.children.forEach((child) => child.snapshotBoundingBox())
 
         /**
          * Every child keeps a local snapshot, but we also want to record
          * snapshots of the visible children as, if they're are being removed
          * in this render, we can still access them.
          */
-        this.stacks.forEach(stack => stack.updateSnapshot())
+        this.stacks.forEach((stack) => stack.updateSnapshot())
 
         /**
          * Force a rerender by setting state if we aren't already going to render.
