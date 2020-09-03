@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Keyframe `times` option.
+-   Correctly mapping `times` option to Popmotion's `offset`.
 
 ## [2.6.5] 2020-08-28
 
