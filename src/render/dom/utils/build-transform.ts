@@ -3,6 +3,7 @@ import { ResolvedValues } from "../../types"
 import { sortTransformProps, boxDistortingKeys } from "./transform"
 import { Point2D, BoxDelta } from "../../../types/geometry"
 import { TransformOrigin } from "../types"
+import { delta } from "../../../utils/geometry"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -95,6 +96,11 @@ export function buildLayoutProjectionTransform(
 
     return `translate3d(${xTranslate}px, ${yTranslate}px, 0) scale(${x.scale}, ${y.scale})`
 }
+
+export const identityProjection = buildLayoutProjectionTransform(delta(), {
+    x: 1,
+    y: 1,
+})
 
 /**
  * Take the calculated delta origin and apply it as a transform string.

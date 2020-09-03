@@ -31,13 +31,13 @@ export abstract class VisualElement<E = any> {
     // only be hydrated by AnimateSharedLayout
     prevSnapshot?: Snapshot
 
+    // The latest resolved MotionValues
+    latest: ResolvedValues = {}
+
     private removeFromParent?: () => void
 
     // The actual element
     protected element: E
-
-    // The latest resolved MotionValues
-    protected latest: ResolvedValues = {}
 
     // A map of MotionValues used to animate this element
     private values = new Map<string, MotionValue>()
