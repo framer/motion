@@ -1,4 +1,5 @@
 import { Point2D, Axis, AxisBox2D, BoxDelta } from "../../../types/geometry"
+import { cssVariableRegex } from "../utils/css-variables-conversion"
 import { complex, px } from "style-value-types"
 import { mix } from "popmotion"
 
@@ -55,7 +56,7 @@ export function correctBorderRadius(
     return `${x}% ${y}%`
 }
 
-type BoxShadow = [string, number, number, number, number]
+const varToken = "_$css"
 
 export function correctBoxShadow(
     latest: string,
@@ -63,17 +64,33 @@ export function correctBoxShadow(
     delta: BoxDelta,
     treeScale: Point2D
 ) {
-    // GC Warning - this creates a function and object every frame
-    const shadow = complex.parse(latest) as BoxShadow
+    /**
+     * We need to first strip and store CSS variables from the string.
+     */
+    const containsCSSVariables = latest.includes("var(")
+    const cssVariables: string[] = []
+    if (containsCSSVariables) {
+        latest = latest.replace(cssVariableRegex, (match) => {
+            cssVariables.push(match)
+            return varToken
+        })
+    }
+
+    const shadow = complex.parse(latest)
+
+    // TODO: Doesn't support multiple shadows
+    if (shadow.length) return latest
+
     const template = complex.createTransformer(latest)
+    const offset = typeof shadow[0] !== "number" ? 1 : 0
 
     // Calculate the overall context scale
     const xScale = delta.x.scale * treeScale.x
     const yScale = delta.y.scale * treeScale.y
 
     // Scale x/y
-    shadow[1] /= xScale
-    shadow[2] /= yScale
+    ;(shadow[0 + offset] as number) /= xScale
+    ;(shadow[1 + offset] as number) /= yScale
 
     /**
      * Ideally we'd correct x and y scales individually, but because blur and
@@ -84,12 +101,25 @@ export function correctBoxShadow(
     const averageScale = mix(xScale, yScale, 0.5)
 
     // Blur
-    if (typeof shadow[3] === "number") shadow[3] /= averageScale
+    if (typeof shadow[2 + offset] === "number")
+        (shadow[2 + offset] as number) /= averageScale
 
     // Spread
-    if (typeof shadow[4] === "number") shadow[4] /= averageScale
+    if (typeof shadow[3 + offset] === "number")
+        (shadow[3 + offset] as number) /= averageScale
 
-    return template(shadow as any)
+    let output = template(shadow)
+
+    if (containsCSSVariables) {
+        let i = 0
+        output = output.replace(varToken, () => {
+            const cssVariable = cssVariables[i]
+            i++
+            return cssVariable
+        })
+    }
+
+    return output
 }
 
 const borderCorrectionDefinition = {
