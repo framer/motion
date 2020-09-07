@@ -16,7 +16,7 @@ export interface SyncLayoutLifecycles {
  */
 export interface SyncLayoutBatcher {
     add: (child: HTMLVisualElement) => void
-    flush: (handler?: SyncLayoutLifecycles, sortByDepth?: boolean) => void
+    flush: (handler?: SyncLayoutLifecycles) => void
 }
 
 /**
@@ -51,13 +51,11 @@ export function createBatcher(): SyncLayoutBatcher {
 
     const add = (child: HTMLVisualElement) => queue.add(child)
 
-    const flush = (
-        { measureLayout, layoutReady }: SyncLayoutLifecycles = defaultHandler,
-        sort = true
-    ) => {
-        const order = sort
-            ? Array.from(queue).sort(sortByDepth)
-            : Array.from(queue)
+    const flush = ({
+        measureLayout,
+        layoutReady,
+    }: SyncLayoutLifecycles = defaultHandler) => {
+        const order = Array.from(queue).sort(sortByDepth)
 
         /**
          * Write: Reset any transforms on children elements so we can read their actual layout
