@@ -49,9 +49,6 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
     transformTemplate?: MotionProps["transformTemplate"]
 
     transition?: MotionProps["transition"]
-
-    _shouldAnimateLayout?: () => boolean
-    _register?: () => void
 }
 
 export interface TransformOrigin {

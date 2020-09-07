@@ -68,18 +68,4 @@ export interface LayoutProps {
      * @public
      */
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
-
-    /**
-     * This is currently only intended for use within Framer.
-     *
-     * @internal
-     */
-    _shouldAnimateLayout?: () => boolean
-
-    /**
-     * This is currently only intended for use within Framer.
-     *
-     * @internal
-     */
-    _register?: () => void
 }
