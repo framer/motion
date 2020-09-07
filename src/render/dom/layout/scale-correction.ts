@@ -64,6 +64,8 @@ export function correctBoxShadow(
     delta: BoxDelta,
     treeScale: Point2D
 ) {
+    const original = latest
+
     /**
      * We need to first strip and store CSS variables from the string.
      */
@@ -79,7 +81,7 @@ export function correctBoxShadow(
     const shadow = complex.parse(latest)
 
     // TODO: Doesn't support multiple shadows
-    if (shadow.length) return latest
+    if (shadow.length > 5) return original
 
     const template = complex.createTransformer(latest)
     const offset = typeof shadow[0] !== "number" ? 1 : 0

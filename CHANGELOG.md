@@ -8,7 +8,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Scale correction for `borderRadius` and `boxShadow` found in `style`.
 -   Fixed conflict between `initial` and `style`. `initial` will now take precedence on initial render.
--	Support for CSS variables in scale-corrected `boxShadow` styles.
+-   Support for CSS variables in scale-corrected `boxShadow` styles.
 
 ## [2.6.6] 2020-09-03
 
