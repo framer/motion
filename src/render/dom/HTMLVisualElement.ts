@@ -365,7 +365,7 @@ export class HTMLVisualElement<
          */
         this.rebaseTargetBox(false, this.prevViewportBox)
     }
-    // TODO: Run this
+
     rebaseTargetBox(force = false, box: AxisBox2D = this.box) {
         const { x, y } = this.axisProgress
         const shouldRebase =
