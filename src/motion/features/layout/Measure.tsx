@@ -53,9 +53,6 @@ class Measure extends React.Component<SyncProps> {
          * to the measured box
          */
         visualElement.rebaseTargetBox()
-        //     // Force a render to ensure there's no flash of uncorrected bounding box.
-        //     visualElement.render()
-        // }
     }
 
     render() {
