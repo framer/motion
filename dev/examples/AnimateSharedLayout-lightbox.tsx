@@ -150,8 +150,8 @@ const child = {
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: "red",
-    //opacity: 0.5,
+    backgroundColor: "white",
+    opacity: 0.5,
 }
 
 const next = {
