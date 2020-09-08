@@ -33,8 +33,8 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
  * Default handlers for batching VisualElements
  */
 const defaultHandler: SyncLayoutLifecycles = {
-    measureLayout: child => child.measureLayout(),
-    layoutReady: child => child.layoutReady(),
+    measureLayout: (child) => child.measureLayout(),
+    layoutReady: (child) => child.layoutReady(),
 }
 
 /**
@@ -60,7 +60,7 @@ export function createBatcher(): SyncLayoutBatcher {
         /**
          * Write: Reset any transforms on children elements so we can read their actual layout
          */
-        order.forEach(child => child.resetTransform())
+        order.forEach((child) => child.resetTransform())
 
         /**
          * Read: Measure the actual layout
@@ -78,7 +78,7 @@ export function createBatcher(): SyncLayoutBatcher {
          * could be moved to the start loop. But it needs to happen after all the animations configs
          * are generated in AnimateSharedLayout as this relies on presence data
          */
-        order.forEach(child => {
+        order.forEach((child) => {
             if (child.isPresent) child.presence = Presence.Present
         })
 

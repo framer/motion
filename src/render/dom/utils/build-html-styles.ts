@@ -8,6 +8,7 @@ import {
     buildLayoutProjectionTransformOrigin,
     buildTransformOrigin,
     buildBoxDistortingTransforms,
+    identityProjection,
 } from "./build-transform"
 import { isCSSVariable } from "./is-css-variable"
 import { valueScaleCorrection } from "../layout/scale-correction"
@@ -137,6 +138,8 @@ export function buildHTMLStyles(
             deltaFinal!,
             treeScale!
         )
+
+        if (style.transform === identityProjection) style.transform = ""
 
         /**
          * If we have transform styles, build only those that distort bounding boxes (rotate/skew)

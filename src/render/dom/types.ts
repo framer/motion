@@ -49,8 +49,6 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
     transformTemplate?: MotionProps["transformTemplate"]
 
     transition?: MotionProps["transition"]
-
-    layoutOrder?: number
 }
 
 export interface TransformOrigin {

@@ -4,6 +4,7 @@
 export { motion, m } from "./render/dom"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+export { HTMLVisualElement } from "./render/dom/HTMLVisualElement"
 
 /**
  * Features
@@ -29,6 +30,12 @@ export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 
 /**
+ * Accessibility
+ */
+export { useReducedMotion } from "./utils/use-reduced-motion"
+export { ReducedMotion } from "./components/ReducedMotion"
+
+/**
  * Utils
  */
 export {
@@ -48,8 +55,6 @@ export {
 } from "./gestures"
 export { useCycle } from "./utils/use-cycle"
 export { transform } from "./utils/transform"
-export { useReducedMotion } from "./utils/use-reduced-motion"
-export { ReducedMotion } from "./components/ReducedMotion"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export {
     usePresence,
@@ -64,6 +69,7 @@ export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
 export { useAnimatedState } from "./animation/use-animated-state"
 export { addScaleCorrection } from "./render/dom/layout/scale-correction"
+export { startAnimation } from "./animation/utils/transitions"
 
 /**
  * Contexts
@@ -125,4 +131,14 @@ export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
+export {
+    SharedLayoutAnimationConfig,
+    VisibilityAction,
+} from "./components/AnimateSharedLayout/types"
+export {
+    SharedLayoutSyncMethods,
+    SharedLayoutContext,
+    SyncLayoutLifecycles,
+    createBatcher,
+} from "./components/AnimateSharedLayout/SharedLayoutContext"
 export * from "./types/geometry"
