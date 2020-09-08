@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.8] 2020-09-08
+
+### Fixed
+
+-   Ensure useTransform uses the latest handler.
+
 ## [2.6.7] 2020-09-08
 
 ### Added
