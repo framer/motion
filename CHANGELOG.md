@@ -2,6 +2,26 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.8] 2020-09-08
+
+### Fixed
+
+-   Ensure useTransform uses the latest handler.
+
+## [2.6.7] 2020-09-08
+
+### Added
+
+-   Scale correction for `borderRadius` and `boxShadow` found in `style`.
+-   Fixed conflict between `initial` and `style`. `initial` will now take precedence on initial render.
+-   Support for CSS variables in scale-corrected `boxShadow` styles.
+
+## [2.6.6] 2020-09-03
+
+### Fixed
+
+-   Correctly mapping `times` option to Popmotion's `offset`.
+
 ## [2.6.5] 2020-08-28
 
 ### Changed

@@ -7,6 +7,8 @@ import { AxisBox2D } from "../types/geometry"
 import { invariant } from "hey-listen"
 import { Snapshot } from "../components/AnimateSharedLayout/stack"
 
+type Subscriptions = Map<string, () => void>
+
 /**
  * VisualElement is an abstract class that provides a generic animation-optimised interface to the
  * underlying renderer.
@@ -29,19 +31,19 @@ export abstract class VisualElement<E = any> {
     // only be hydrated by AnimateSharedLayout
     prevSnapshot?: Snapshot
 
+    // The latest resolved MotionValues
+    latest: ResolvedValues = {}
+
     private removeFromParent?: () => void
 
     // The actual element
     protected element: E
 
-    // The latest resolved MotionValues
-    protected latest: ResolvedValues = {}
-
     // A map of MotionValues used to animate this element
     private values = new Map<string, MotionValue>()
 
-    // Unsubscription callbacks for each MotionValue
-    private valueSubscriptions = new Map<string, () => void>()
+    // Unsubscription callbacks for MotionValue subscriptions
+    private valueSubscriptions: Subscriptions = new Map()
 
     // An optional user-provided React ref
     private externalRef?: Ref<E>
@@ -91,19 +93,16 @@ export abstract class VisualElement<E = any> {
         if (this.hasValue(key)) this.removeValue(key)
 
         this.values.set(key, value)
-        this.latest[key] = value.get()
-
-        if (this.element) this.subscribeToValue(key, value)
+        this.setSingleStaticValue(key, value.get())
+        this.subscribeToValue(key, value)
     }
 
     // Remove a MotionValue
     removeValue(key: string) {
-        const unsubscribe = this.valueSubscriptions.get(key)
-        unsubscribe && unsubscribe()
-
+        this.valueSubscriptions.get(key)?.()
+        this.valueSubscriptions.delete(key)
         this.values.delete(key)
         delete this.latest[key]
-        this.valueSubscriptions.delete(key)
     }
 
     // Get a MotionValue. If provided a defaultValue, create and set to that
@@ -176,22 +175,30 @@ export abstract class VisualElement<E = any> {
     // Pre-bound version of render
     triggerRender = () => this.render()
 
-    scheduleRender = () => sync.render(this.triggerRender, false, true)
-
-    scheduleUpdateLayoutDelta() {
-        sync.update(this.rootParent.updateLayoutDelta, false, true)
+    scheduleRender() {
+        sync.render(this.triggerRender, false, true)
     }
 
-    // Subscribe to changes in a MotionValue
+    scheduleUpdateLayoutDelta() {
+        sync.preRender(this.rootParent.updateLayoutDelta, false, true)
+    }
+
     private subscribeToValue(key: string, value: MotionValue) {
         const onChange = (latest: string | number) => {
             this.setSingleStaticValue(key, latest)
-            this.latest[key] = latest
-            this.config.onUpdate && sync.update(this.update, false, true)
+
+            // Schedule onUpdate if we have an onUpdate listener and the component has mounted
+            this.element &&
+                this.config.onUpdate &&
+                sync.update(this.update, false, true)
+        }
+
+        const onRender = () => {
+            this.element && this.scheduleRender()
         }
 
         const unsubscribeOnChange = value.onChange(onChange)
-        const unsubscribeOnRender = value.onRenderRequest(this.scheduleRender)
+        const unsubscribeOnRender = value.onRenderRequest(onRender)
 
         this.valueSubscriptions.set(key, () => {
             unsubscribeOnChange()
@@ -215,9 +222,6 @@ export abstract class VisualElement<E = any> {
          * is compatible with existing RefObject APIs.
          */
         this.element = this.current = element
-
-        // Subscribe to any pre-existing MotionValues
-        this.forEachValue((value, key) => this.subscribeToValue(key, value))
     }
 
     // Unmount the VisualElement and cancel any scheduled updates

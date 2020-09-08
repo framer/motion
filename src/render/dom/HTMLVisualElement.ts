@@ -4,7 +4,7 @@ import { delta, copyAxisBox, axisBox } from "../../utils/geometry"
 import { ResolvedValues } from "../types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
-import { isTransformProp, transformAxes } from "./utils/transform"
+import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
 import {
     Presence,
@@ -25,9 +25,13 @@ import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
-import { buildLayoutProjectionTransform } from "./utils/build-transform"
+import {
+    buildLayoutProjectionTransform,
+    identityProjection,
+} from "./utils/build-transform"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
+import sync from "framesync"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -183,7 +187,7 @@ export class HTMLVisualElement<
 
     /**
      * Optional id. If set, and this is the child of an AnimateSharedLayout component,
-     * the targetBox can be transerred to a new component with the same ID.
+     * the targetBox can be transferred to a new component with the same ID.
      */
     layoutId?: string
 
@@ -241,6 +245,7 @@ export class HTMLVisualElement<
      * This is considered mutable to avoid object creation on each frame.
      */
     treeScale: Point2D = { x: 1, y: 1 }
+    private prevTreeScale: Point2D = { x: 1, y: 1 }
 
     /**
      * The delta between the boxCorrected and the desired
@@ -263,15 +268,15 @@ export class HTMLVisualElement<
 
     /**
      * The computed transform string to apply deltaFinal to the element. Currently this is only
-     * being used to diff and decide whether to render on the current frame, but a minor optmisation
+     * being used to diff and decide whether to render on the current frame, but a minor optimisation
      * could be to provide this to the buildHTMLStyle function.
      */
-    deltaTransform: string
+    deltaTransform: string = identityProjection
 
     /**
      * If we've got a rotate motion value, we force layout projection calculations
      * to use o layout origin of 0.5 rather than dynamically calculating one based
-     * on relative positioning. This is so the component always rotates around its center rather
+     * on relative positioning. This is so the component always rotates around its centre rather
      * than an arbitrarily computed point.
      */
     private layoutOrigin: number | undefined
@@ -358,9 +363,22 @@ export class HTMLVisualElement<
          * Update targetBox to match the prevViewportBox. This is just to ensure
          * that targetBox is affected by scroll in the same way as the measured box
          */
+        this.rebaseTargetBox(false, this.prevViewportBox)
+    }
+
+    rebaseTargetBox(force = false, box: AxisBox2D = this.box) {
         const { x, y } = this.axisProgress
-        if (!this.isTargetBoxLocked && !x.isAnimating() && !y.isAnimating()) {
-            this.targetBox = copyAxisBox(this.prevViewportBox)
+        const shouldRebase =
+            this.box &&
+            !this.isTargetBoxLocked &&
+            !x.isAnimating() &&
+            !y.isAnimating()
+
+        if (force || shouldRebase) {
+            eachAxis((axis) => {
+                const { min, max } = box[axis]
+                this.setAxisTarget(axis, min, max)
+            })
         }
     }
 
@@ -379,13 +397,8 @@ export class HTMLVisualElement<
             this.box,
             this.prevViewportBox || this.box
         )
-    }
 
-    /**
-     * Ensure the targetBox reflects the latest visual box on screen
-     */
-    refreshTargetBox() {
-        this.targetBox = this.getBoundingBoxWithoutTransforms()
+        sync.update(() => this.rebaseTargetBox())
     }
 
     isTargetBoxLocked = false
@@ -413,55 +426,6 @@ export class HTMLVisualElement<
             : "none"
 
         // Ensure that whatever happens next, we restore our transform
-        this.scheduleRender()
-    }
-
-    /**
-     * Reset rotate on this element. Doing so allows us to accurately measure the
-     * bounding box of the element.
-     *
-     * This function will only be called if _supportRotate is enabled in a parent
-     * AnimateSharedLayout. This is a private prop for use within Framer. It allows
-     * us to support rotation in Magic Motion.
-     *
-     * @internal
-     */
-    resetRotate() {
-        // If there's no detected rotation values, we can early return without a forced render.
-        let hasRotate = false
-
-        // Keep a record of all the values we've reset
-        const resetValues: ResolvedValues = {}
-
-        // Check the rotate value of all axes and reset to 0
-        transformAxes.forEach(axis => {
-            const key = "rotate" + axis
-
-            // If this rotation doesn't exist as a motion value, then we don't
-            // need to reset it
-            if (!this.hasValue(key)) return
-
-            hasRotate = true
-
-            // Record the rotation and then temporarily set it to 0
-            resetValues[key] = this.latest[key]
-            this.latest[key] = 0
-        })
-
-        // If there's no rotation values, we don't need to do any more.
-        if (!hasRotate) return
-
-        // Force a render of this element to apply the transform with all rotations
-        // set to 0.
-        this.render()
-
-        // Put back all the values we reset
-        for (const key in resetValues) {
-            this.latest[key] = resetValues[key]
-        }
-
-        // Schedule a render for the next frame. This ensures we won't visually
-        // see the element with the reset rotate value applied.
         this.scheduleRender()
     }
 
@@ -499,13 +463,13 @@ export class HTMLVisualElement<
         progress.clearListeners()
         progress.set(min)
         progress.set(min) // Set twice to hard-reset velocity
-        progress.onChange(v => this.setAxisTarget(axis, v, v + length))
+        progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
         return startAnimation(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {
-        eachAxis(axis => this.axisProgress[axis].stop())
+        eachAxis((axis) => this.axisProgress[axis].stop())
     }
 
     updateLayoutDelta = () => {
@@ -536,6 +500,9 @@ export class HTMLVisualElement<
          * delta into its treeScale.
          */
         if (this.parent) {
+            this.prevTreeScale.x = this.treeScale.x
+            this.prevTreeScale.y = this.treeScale.y
+
             updateTreeScale(
                 this.treeScale,
                 (this.parent as any).treeScale,
@@ -579,7 +546,16 @@ export class HTMLVisualElement<
             this.delta,
             this.treeScale
         )
-        deltaTransform !== this.deltaTransform && this.scheduleRender()
+
+        if (
+            deltaTransform !== this.deltaTransform ||
+            // Also compare calculated treeScale, for values that rely on only this for scale correction.
+            this.prevTreeScale.x !== this.treeScale.x ||
+            this.prevTreeScale.y !== this.treeScale.y
+        ) {
+            this.scheduleRender()
+        }
+
         this.deltaTransform = deltaTransform
     }
 

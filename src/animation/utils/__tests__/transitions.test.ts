@@ -201,5 +201,19 @@ describe("getPopmotionAnimationOptions", () => {
             type: "keyframes",
             duration: 400,
         })
+
+        expect(
+            getPopmotionAnimationOptions(
+                { duration: 0.4, times: [0, 0.4, 1] },
+                { from: 50, to: [null, 100] },
+                "x"
+            )
+        ).toEqual({
+            duration: 400,
+            type: "keyframes",
+            offset: [0, 0.4, 1],
+            from: 50,
+            to: [50, 100],
+        })
     })
 })

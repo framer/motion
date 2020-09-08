@@ -3,7 +3,7 @@ import { useState } from "react"
 import { motion } from "@framer"
 
 /**
- * Thie demonstrates the scale correction of box shadow
+ * This demonstrates the scale correction of box shadow
  */
 
 export const App = () => {

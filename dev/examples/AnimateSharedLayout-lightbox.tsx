@@ -90,7 +90,7 @@ export function App() {
 }
 
 const numColors = 4 * 4
-const makeColor = hue => `hsl(${hue}, 100%, 50%)`
+const makeColor = (hue) => `hsl(${hue}, 100%, 50%)`
 const colors = Array.from(Array(numColors)).map((_, i) =>
     makeColor(Math.round((360 / numColors) * i))
 )
@@ -152,7 +152,6 @@ const child = {
     borderRadius: 25,
     backgroundColor: "white",
     opacity: 0.5,
-    //opacity: 0.5,
 }
 
 const next = {

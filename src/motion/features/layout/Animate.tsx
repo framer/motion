@@ -49,7 +49,7 @@ class Animate extends React.Component<AnimateProps> {
 
     componentWillUnmount() {
         this.unsubLayoutReady()
-        eachAxis(axis => this.stopAxisAnimation[axis]?.())
+        eachAxis((axis) => this.stopAxisAnimation[axis]?.())
     }
 
     animate = (
@@ -59,10 +59,16 @@ class Animate extends React.Component<AnimateProps> {
             originBox,
             targetBox,
             visibilityAction,
+            shouldStackAnimate,
             ...config
         }: SharedLayoutAnimationConfig = {}
     ) => {
         const { visualElement, layout } = this.props
+
+        /**
+         * Early return if we've been instructed not to animate this render.
+         */
+        if (shouldStackAnimate === false) return this.safeToRemove()
 
         /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be
@@ -73,7 +79,7 @@ class Animate extends React.Component<AnimateProps> {
 
         const boxHasMoved = hasMoved(origin, target)
 
-        const animations = eachAxis(axis => {
+        const animations = eachAxis((axis) => {
             /**
              * If layout is set to "position", we can resize the origin box based on the target
              * box and only animate its position.
@@ -158,8 +164,12 @@ class Animate extends React.Component<AnimateProps> {
          * If this is a crossfade animation, create a function that updates both the opacity of this component
          * and the one being crossfaded out.
          */
-        const crossfade =
-            crossfadeOpacity && this.createCrossfadeAnimation(crossfadeOpacity)
+
+        let crossfade: (p: number) => void
+        if (crossfadeOpacity) {
+            crossfade = this.createCrossfadeAnimation(crossfadeOpacity)
+            visualElement.show()
+        }
 
         /**
          * Create an animation function to run once per frame. This will tween the visual bounding box from
@@ -171,6 +181,7 @@ class Animate extends React.Component<AnimateProps> {
 
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
+
             visualElement.setAxisTarget(axis, frameTarget.min, frameTarget.max)
 
             // If this is a crossfade animation, update both elements.
@@ -179,6 +190,9 @@ class Animate extends React.Component<AnimateProps> {
 
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
+
+        // Ensure that the layout delta is updated for this frame.
+        visualElement.updateLayoutDelta()
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)

@@ -15,7 +15,7 @@ function isCSSVariable(value: any): value is string {
  *
  * @param current
  */
-const cssVariableRegex = /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
+export const cssVariableRegex = /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
 export function parseCSSVariable(current: string) {
     const match = cssVariableRegex.exec(current)
     if (!match) return [,]
@@ -73,7 +73,7 @@ export function resolveCSSVariables(
     }
 
     // Go through existing `MotionValue`s and ensure any existing CSS variables are resolved
-    visualElement.forEachValue(value => {
+    visualElement.forEachValue((value) => {
         const current = value.get()
         if (!isCSSVariable(current)) return
 

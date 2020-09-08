@@ -118,29 +118,7 @@ export class LayoutStack {
     hasChildren: boolean = false
 
     add(child: HTMLVisualElement) {
-        const { layoutOrder } = child.config
-
-        if (layoutOrder === undefined) {
-            this.order.push(child)
-        } else {
-            let index = this.order.findIndex(
-                stackChild =>
-                    layoutOrder <= (stackChild.config.layoutOrder || 0)
-            )
-
-            if (index === -1) {
-                child.presence = this.hasChildren
-                    ? Presence.Entering
-                    : Presence.Present
-                index = this.order.length
-            }
-
-            this.order.splice(index, 0, child)
-        }
-
-        /**
-         *
-         */
+        this.order.push(child)
 
         // Load previous values from snapshot into this child
         // TODO Neaten up
@@ -210,17 +188,8 @@ export class LayoutStack {
         return this.lead && this.lead?.presence !== Presence.Exiting
     }
 
-    shouldStackAnimate() {
-        return true
-        // return this.lead && this.lead?.isPresent
-        //     ? this.lead?.props?._shouldAnimate === true
-        //     : this.follow && this.follow?.props._shouldAnimate === true
-    }
-
     getFollowOrigin(): AxisBox2D | undefined {
-        // This shouldAnimate check is quite specifically a fix for the optimisation made in Framer
-        // where components are kept in the tree ready to be re-used
-        return this.follow // && this.follow.shouldAnimate
+        return this.follow
             ? this.follow.prevViewportBox
             : this.snapshot?.boundingBox
     }

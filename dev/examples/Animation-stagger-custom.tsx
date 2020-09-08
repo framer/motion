@@ -7,8 +7,8 @@ import { motion } from "../../src"
 const count = 100
 const len = Math.floor(Math.sqrt(count))
 const max = Math.hypot(len, len)
-const col = wrap(0, len)
-const row = i => Math.floor(i / len)
+const col = (v) => wrap(0, len, v)
+const row = (i) => Math.floor(i / len)
 const stagger = 0.1
 
 let interval
@@ -16,7 +16,7 @@ let interval
 export const App = () => {
     const [center, setCenter] = React.useState({ x: len / 2, y: len / 2 })
 
-    const cells = Array.from(Array(count).keys()).map(i => {
+    const cells = Array.from(Array(count).keys()).map((i) => {
         return (
             <Cell
                 center={center}

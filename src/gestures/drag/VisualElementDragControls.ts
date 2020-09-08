@@ -96,6 +96,11 @@ export class VisualElementDragControls {
     private visualElement: HTMLVisualElement
 
     /**
+     * @internal
+     */
+    private hasMutatedConstraints: boolean = false
+
+    /**
      * Track the initial position of the cursor relative to the dragging element
      * when dragging starts as a value of 0-1 on each axis. We then use this to calculate
      * an ideal bounding box for the VisualElement renderer to project into every frame.
@@ -205,7 +210,7 @@ export class VisualElementDragControls {
              */
             const { point } = getViewportPointFromEvent(event)
 
-            eachAxis(axis => {
+            eachAxis((axis) => {
                 const { min, max } = this.visualElement.targetBox[axis]
 
                 this.cursorProgress[axis] = cursorProgress
@@ -284,7 +289,7 @@ export class VisualElementDragControls {
         this.visualElement.resetTransform()
         this.visualElement.measureLayout()
         element.style.transform = transform
-        this.visualElement.refreshTargetBox()
+        this.visualElement.rebaseTargetBox(true)
     }
 
     resolveDragConstraints() {
@@ -308,8 +313,8 @@ export class VisualElementDragControls {
          * If we're outputting to external MotionValues, we want to rebase the measured constraints
          * from viewport-relative to component-relative.
          */
-        if (this.constraints) {
-            eachAxis(axis => {
+        if (this.constraints && !this.hasMutatedConstraints) {
+            eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
                         this.visualElement.box[axis],
@@ -350,6 +355,9 @@ export class VisualElementDragControls {
             const userConstraints = onMeasureDragConstraints(
                 convertAxisBoxToBoundingBox(measuredConstraints)
             )
+
+            this.hasMutatedConstraints = !!userConstraints
+
             if (userConstraints) {
                 measuredConstraints = convertBoundingBoxToAxisBox(
                     userConstraints
@@ -394,7 +402,7 @@ export class VisualElementDragControls {
     snapToCursor(event: AnyPointerEvent) {
         this.prepareBoundingBox()
 
-        eachAxis(axis => {
+        eachAxis((axis) => {
             const axisValue = this.getAxisMotionValue(axis)
 
             if (axisValue) {
@@ -513,7 +521,7 @@ export class VisualElementDragControls {
     private animateDragEnd(velocity: Point) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
-        const momentumAnimations = eachAxis(axis => {
+        const momentumAnimations = eachAxis((axis) => {
             if (!shouldDrag(axis, drag, this.currentDirection)) {
                 return
             }
@@ -556,7 +564,7 @@ export class VisualElementDragControls {
     }
 
     stopMotion() {
-        eachAxis(axis => {
+        eachAxis((axis) => {
             const axisValue = this.getAxisMotionValue(axis)
             axisValue
                 ? axisValue.stop()
@@ -585,7 +593,7 @@ export class VisualElementDragControls {
 
         // Record the relative progress of the targetBox relative to the constraintsBox
         const boxProgress = { x: 0, y: 0 }
-        eachAxis(axis => {
+        eachAxis((axis) => {
             boxProgress[axis] = calcOrigin(
                 this.visualElement.targetBox[axis],
                 this.constraintsBox![axis]
@@ -600,7 +608,7 @@ export class VisualElementDragControls {
         this.prepareBoundingBox()
         this.resolveDragConstraints()
 
-        eachAxis(axis => {
+        eachAxis((axis) => {
             if (!shouldDrag(axis, drag, null)) return
 
             // Calculate the position of the targetBox relative to the constraintsBox using the
@@ -624,7 +632,7 @@ export class VisualElementDragControls {
         const stopPointerListener = addPointerEvent(
             element,
             "pointerdown",
-            event => {
+            (event) => {
                 const { drag, dragListener = true } = this.props
                 drag && dragListener && this.start(event)
             }

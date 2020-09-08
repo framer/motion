@@ -19,7 +19,7 @@ function Gallery({ items, setIndex }) {
                     initial={{ borderRadius: 10 }}
                     style={{ ...item, backgroundColor: color }}
                     layoutId={color}
-                    transition={{ duration: 5 }}
+                    //transition={{ duration: 5 }}
                     id={i === 0 && "list-red"}
                 >
                     <motion.div style={child} layoutId={`child-${color}`} />
@@ -81,7 +81,7 @@ export function App() {
 }
 
 const numColors = 4 * 4
-const makeColor = hue => `hsl(${hue}, 100%, 50%)`
+const makeColor = (hue) => `hsl(${hue}, 100%, 50%)`
 const colors = Array.from(Array(numColors)).map((_, i) =>
     makeColor(Math.round((360 / numColors) * i))
 )

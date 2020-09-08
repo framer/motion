@@ -77,4 +77,5 @@ export interface SharedLayoutAnimationConfig {
     targetBox?: AxisBox2D
     transition?: Transition
     crossfadeOpacity?: MotionValue<number>
+    shouldStackAnimate?: boolean
 }

@@ -7,9 +7,21 @@ import {
     isTransformProp,
     isTransformOriginProp,
 } from "../../render/dom/utils/transform"
+import { valueScaleCorrection } from "../../render/dom/layout/scale-correction"
 
 interface MotionValueSource {
     [key: string]: MotionValue | unknown
+}
+
+function isForcedMotionValue<P>(
+    key: string,
+    { layout, layoutId }: P & MotionProps
+) {
+    return (
+        isTransformProp(key) ||
+        isTransformOriginProp(key) ||
+        ((layout || layoutId !== undefined) && !!valueScaleCorrection[key])
+    )
 }
 
 /**
@@ -26,17 +38,16 @@ export function useMotionValues<P>(
      * Remove MotionValues that are no longer present
      */
     for (const key in prev) {
-        const isTransform = isTransformProp(key) || isTransformOriginProp(key)
-
+        const isForced = isForcedMotionValue(key, props)
         const existsAsProp = props[key]
         const existsAsStyle = props.style && props.style[key]
         const propIsMotionValue = existsAsProp && isMotionValue(props[key])
         const styleIsMotionValue =
             existsAsStyle && isMotionValue(props.style![key])
 
-        const transformRemoved = isTransform && !existsAsProp && !existsAsStyle
+        const transformRemoved = isForced && !existsAsProp && !existsAsStyle
         const motionValueRemoved =
-            !isTransform && !propIsMotionValue && !styleIsMotionValue
+            !isForced && !propIsMotionValue && !styleIsMotionValue
 
         if (transformRemoved || motionValueRemoved) {
             visualElement.removeValue(key)
@@ -47,8 +58,9 @@ export function useMotionValues<P>(
     /**
      * Add incoming MotionValues
      */
-    addMotionValues(visualElement, prev, props as any)
-    if (props.style) addMotionValues(visualElement, prev, props.style, true)
+    addMotionValues(visualElement, prev, props as any, false, props)
+    if (props.style)
+        addMotionValues(visualElement, prev, props.style, true, props)
 
     /**
      * Transform custom values if provided a handler, ie size -> width/height
@@ -66,11 +78,12 @@ export function useMotionValues<P>(
  *
  * TODO: Type the VisualElements properly
  */
-function addMotionValues(
+function addMotionValues<P>(
     visualElement: VisualElement<any>,
     prev: MotionValueSource,
     source: MotionValueSource,
-    isStyle: boolean = false
+    isStyle: boolean = false,
+    props: P & MotionProps
 ) {
     if (isStyle) (visualElement as any).reactStyle = {}
 
@@ -84,7 +97,7 @@ function addMotionValues(
                 visualElement.addValue(key, value)
                 foundMotionValue = true
             }
-        } else if (isTransformProp(key) || isTransformOriginProp(key)) {
+        } else if (isForcedMotionValue(key, props)) {
             // If this is a transform prop, always create a MotionValue
             // to ensure we can reconcile them all together.
             if (!visualElement.hasValue(key)) {

@@ -59,7 +59,7 @@ function Item({ onClick, i }: ItemProps) {
             isOpen={isOpen}
             id="container"
         >
-            <Image id="image" layout />
+            <Image id={`image-${i}`} layout />
             <AnimatePresence initial={false}>
                 {isOpen && (
                     <motion.div
@@ -81,7 +81,7 @@ function Item({ onClick, i }: ItemProps) {
 const Component = () => {
     return (
         <List initial={{ borderRadius: 25 }} layout>
-            {items.map(id => (
+            {items.map((id) => (
                 <Item key={id} i={id} />
             ))}
         </List>
