@@ -25,7 +25,7 @@ describe("as function", () => {
     test("sets initial value", async () => {
         const Component = () => {
             const x = useMotionValue(100)
-            const y = useTransform(x, v => -v)
+            const y = useTransform(x, (v) => -v)
             return <motion.div style={{ x, y }} />
         }
 
@@ -85,6 +85,32 @@ describe("as input/output range", () => {
         expect(container.firstChild).toHaveStyle("opacity: 0.1")
     })
 
+    test("updates when values change", async (resolve) => {
+        const x = motionValue(20)
+        let o = motionValue(0)
+        const Component = ({ a = 0, b = 100, c = 0, d = 1 }: any) => {
+            const opacity = useTransform(x, [a, b], [c, d])
+            o = opacity
+            return <motion.div style={{ x, opacity }} />
+        }
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+        expect(container.firstChild).toHaveStyle("opacity: 0.2")
+        rerender(<Component b={50} />)
+        rerender(<Component b={50} />)
+        expect(container.firstChild).toHaveStyle("opacity: 0.4")
+        rerender(<Component b={50} d={0.5} />)
+        rerender(<Component b={50} d={0.5} />)
+        expect(container.firstChild).toHaveStyle("opacity: 0.2")
+        x.set(40)
+
+        setTimeout(() => {
+            expect(o.get()).toBe(0.4)
+            resolve()
+        }, 20)
+    })
+
     test("detects custom mixer on value type", async () => {
         const Component = () => {
             const x = useMotionValue(100)
@@ -113,7 +139,7 @@ test("is correctly typed", async () => {
     const Component = () => {
         const x = useMotionValue(0)
         const y = useTransform(x, [0, 1], ["0px", "1px"])
-        const z = useTransform(x, v => v * 2)
+        const z = useTransform(x, (v) => v * 2)
         return <motion.div style={{ x, y, z }} />
     }
 
