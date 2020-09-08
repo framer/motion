@@ -29,7 +29,7 @@ function updateChildLookup(
     const seenChildren =
         process.env.NODE_ENV !== "production" ? new Set<ComponentKey>() : null
 
-    children.forEach(child => {
+    children.forEach((child) => {
         const key = getChildKey(child)
 
         if (process.env.NODE_ENV !== "production" && seenChildren) {
@@ -50,7 +50,7 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
     const filtered: ReactElement<any>[] = []
 
     // We use forEach here instead of map as map mutates the component key by preprending `.$`
-    Children.forEach(children, child => {
+    Children.forEach(children, (child) => {
         if (isValidElement(child)) filtered.push(child)
     })
 
@@ -160,7 +160,7 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 
         return (
             <>
-                {filteredChildren.map(child => (
+                {filteredChildren.map((child) => (
                     <PresenceChild
                         key={getChildKey(child)}
                         isPresent
@@ -201,7 +201,7 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 
     // Loop through all currently exiting components and clone them to overwrite `animate`
     // with any `exit` prop they might have defined.
-    exiting.forEach(key => {
+    exiting.forEach((key) => {
         // If this component is actually entering again, early return
         if (targetKeys.indexOf(key) !== -1) return
 
@@ -216,7 +216,7 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 
             // Remove this child from the present children
             const removeIndex = presentChildren.current.findIndex(
-                presentChild => presentChild.key === key
+                (presentChild) => presentChild.key === key
             )
             presentChildren.current.splice(removeIndex, 1)
 
@@ -244,7 +244,7 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 
     // Add `MotionContext` even to children that don't need it to ensure we're rendering
     // the same tree between renders
-    childrenToRender = childrenToRender.map(child => {
+    childrenToRender = childrenToRender.map((child) => {
         const key = child.key as string | number
         return exiting.has(key) ? (
             child
@@ -271,7 +271,7 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
         <>
             {exiting.size
                 ? childrenToRender
-                : childrenToRender.map(child => cloneElement(child))}
+                : childrenToRender.map((child) => cloneElement(child))}
         </>
     )
 }

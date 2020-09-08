@@ -181,6 +181,7 @@ class Animate extends React.Component<AnimateProps> {
 
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
+
             visualElement.setAxisTarget(axis, frameTarget.min, frameTarget.max)
 
             // If this is a crossfade animation, update both elements.
@@ -189,6 +190,9 @@ class Animate extends React.Component<AnimateProps> {
 
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
+
+        // Ensure that the layout delta is updated for this frame.
+        visualElement.updateLayoutDelta()
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
