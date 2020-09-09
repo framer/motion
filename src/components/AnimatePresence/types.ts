@@ -85,4 +85,12 @@ export interface AnimatePresenceProps {
      * @beta
      */
     exitBeforeEnter?: boolean
+
+    /**
+     * Used in Framer to flag that sibling children *shouldn't* re-render as a result of a
+     * child being removed.
+     *
+     * @internal
+     */
+    presenceAffectsLayout?: boolean
 }
