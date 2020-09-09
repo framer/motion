@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.10] 2020-09-10
+
+### Fixed
+
+-   `dragElastic={0}` gesture end animations now work correctly.
+
 ## [2.6.9] 2020-09-09
 
 ### Fixed
