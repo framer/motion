@@ -39,6 +39,8 @@ export interface AnimatePresenceProps {
     exitBeforeEnter?: boolean;
     initial?: boolean;
     onExitComplete?: () => void;
+    // @internal
+    presenceAffectsLayout?: boolean;
 }
 
 // @public (undocumented)
