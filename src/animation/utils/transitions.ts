@@ -117,6 +117,10 @@ export function getPopmotionAnimationOptions(
     options: any,
     key: string
 ) {
+    if (Array.isArray(options.to)) {
+        transition.duration ??= 0.8
+    }
+
     hydrateKeyframes(options)
 
     /**

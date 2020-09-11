@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.11] 2020-09-11
+
+### Fixed
+
+-   Reinstating default keyframes duration of `0.8` seconds.
+
 ## [2.6.10] 2020-09-10
 
 ### Fixed
