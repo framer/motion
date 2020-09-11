@@ -1,7 +1,39 @@
 import { invariant } from "hey-listen"
 import { cubicBezier } from "popmotion"
-import * as easingLookup from "popmotion"
+import {
+    linear,
+    easeIn,
+    easeInOut,
+    easeOut,
+    circIn,
+    circInOut,
+    circOut,
+    backIn,
+    backInOut,
+    backOut,
+    anticipate,
+    bounceIn,
+    bounceInOut,
+    bounceOut,
+} from "popmotion"
 import { Easing } from "../../types"
+
+const easingLookup = {
+    linear,
+    easeIn,
+    easeInOut,
+    easeOut,
+    circIn,
+    circInOut,
+    circOut,
+    backIn,
+    backInOut,
+    backOut,
+    anticipate,
+    bounceIn,
+    bounceInOut,
+    bounceOut,
+}
 
 export const easingDefinitionToFunction = (definition: Easing) => {
     if (Array.isArray(definition)) {

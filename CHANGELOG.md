@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.12] 2020-09-11
+
+### Change
+
+-   Reduced full bundle size by 0.8kb by replacing `import * from "popmotion"` with a named map of specifically just the easing functions.
+
 ## [2.6.11] 2020-09-11
 
 ### Fixed
