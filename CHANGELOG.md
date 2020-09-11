@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.13] 2020-09-12
+
+### Fix
+
+-   `drag` + `layout` components no longer reset position to center.
+
 ## [2.6.12] 2020-09-11
 
 ### Change

@@ -289,7 +289,7 @@ export class VisualElementDragControls {
         this.visualElement.resetTransform()
         this.visualElement.measureLayout()
         element.style.transform = transform
-        this.visualElement.rebaseTargetBox(true)
+        this.visualElement.targetBox = this.visualElement.getBoundingBoxWithoutTransforms()
     }
 
     resolveDragConstraints() {
