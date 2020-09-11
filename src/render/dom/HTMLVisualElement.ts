@@ -369,7 +369,7 @@ export class HTMLVisualElement<
     rebaseTargetBox(force = false, box: AxisBox2D = this.box) {
         const { x, y } = this.axisProgress
         const shouldRebase =
-            this.box &&
+            box &&
             !this.isTargetBoxLocked &&
             !x.isAnimating() &&
             !y.isAnimating()
