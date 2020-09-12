@@ -34,7 +34,7 @@ export function addDomEvent(
  * @public
  */
 export function useDomEvent(
-    ref: RefObject<Element>,
+    ref: RefObject<EventTarget>,
     eventName: string,
     handler?: EventListener | undefined,
     options?: AddEventListenerOptions
