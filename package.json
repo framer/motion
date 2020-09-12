@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "2.6.8",
+    "version": "2.6.13",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
     "types": "dist/framer-motion.d.ts",
@@ -92,7 +92,7 @@
     "dependencies": {
         "framesync": "^4.1.0",
         "hey-listen": "^1.0.8",
-        "popmotion": "9.0.0-rc.13",
+        "popmotion": "9.0.0-rc.14",
         "style-value-types": "^3.1.9",
         "tslib": "^1.10.0"
     },

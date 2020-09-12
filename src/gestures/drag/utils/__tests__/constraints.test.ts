@@ -22,6 +22,10 @@ describe("applyConstraints", () => {
     test("Applies elastic factor if defined", () => {
         expect(applyConstraints(25, { min: 0, max: 20 }, 0.5)).toBe(22.5)
         expect(applyConstraints(-5, { min: 0, max: 20 }, 0.5)).toBe(-2.5)
+        expect(applyConstraints(25, { min: 0, max: 20 }, 1)).toBe(25)
+        expect(applyConstraints(-5, { min: 0, max: 20 }, 1)).toBe(-5)
+        expect(applyConstraints(25, { min: 0, max: 20 }, 0)).toBe(20)
+        expect(applyConstraints(-5, { min: 0, max: 20 }, 0)).toBe(0)
     })
 })
 
@@ -29,6 +33,7 @@ describe("calcConstraintedMinPoint", () => {
     test("Correctly calculates a minimum point when no constraints are provided", () => {
         expect(calcConstrainedMinPoint(100, 100, 0.25)).toBe(75)
     })
+
     test("Correctly applies constraints", () => {
         expect(
             calcConstrainedMinPoint(100, 100, 0.25, { min: 100, max: 100 })

@@ -2,6 +2,36 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.13] 2020-09-12
+
+### Fix
+
+-   `drag` + `layout` components no longer reset position to center.
+
+## [2.6.12] 2020-09-11
+
+### Change
+
+-   Reduced full bundle size by 0.8kb by replacing `import * from "popmotion"` with a named map of specifically just the easing functions.
+
+## [2.6.11] 2020-09-11
+
+### Fixed
+
+-   Reinstating default keyframes duration of `0.8` seconds.
+
+## [2.6.10] 2020-09-10
+
+### Fixed
+
+-   `dragElastic={0}` gesture end animations now work correctly.
+
+## [2.6.9] 2020-09-09
+
+### Fixed
+
+-   Ensure `AnimatePresence` children re-render when children exit.
+
 ## [2.6.8] 2020-09-08
 
 ### Fixed

@@ -24,6 +24,7 @@ function Notification({ id, notifications, setNotifications }) {
             onDrag={(e, { offset }) => {
                 offset.x > 50 && setNotifications(remove(notifications, id))
             }}
+            onClick={() => setNotifications(remove(notifications, id))}
         />
     )
 }
@@ -35,7 +36,7 @@ export const App = () => {
         <div className="container">
             <ul>
                 <AnimatePresence initial={false}>
-                    {notifications.map(id => (
+                    {notifications.map((id) => (
                         <Notification
                             id={id}
                             key={id}
@@ -54,7 +55,7 @@ export const App = () => {
 }
 
 const remove = (arr: number[], item: number) => {
-    const itemIndex = arr.findIndex(i => i === item)
+    const itemIndex = arr.findIndex((i) => i === item)
 
     const newArr = [...arr]
     newArr.splice(itemIndex, 1)

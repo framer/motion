@@ -23,7 +23,8 @@ export const App = () => {
     return (
         <motion.div
             drag
-            dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+            dragConstraints={{ left: 0, right: 100, top: 0, bottom: 100 }}
+            dragElastic={0}
             whileTap={{ scale: 0.95 }}
             onTap={handleTap}
             onTapStart={handleTapStart}

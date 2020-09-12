@@ -19,6 +19,8 @@ describe("isTransitionDefined", () => {
         expect(isTransitionDefined({ delay: 0 })).toBe(false)
         expect(isTransitionDefined({ duration: 1 })).toBe(true)
         expect(isTransitionDefined({ delay: 0, duration: 1 })).toBe(true)
+        expect(isTransitionDefined({ type: "tween" })).toBe(true)
+        expect(isTransitionDefined({ ease: "linear" })).toBe(true)
     })
 })
 
@@ -200,6 +202,40 @@ describe("getPopmotionAnimationOptions", () => {
             to: [50, 100],
             type: "keyframes",
             duration: 400,
+        })
+
+        expect(
+            getPopmotionAnimationOptions({}, { from: 50, to: [null, 100] }, "x")
+        ).toEqual({
+            from: 50,
+            to: [50, 100],
+            type: "keyframes",
+            duration: 800,
+        })
+
+        expect(
+            getPopmotionAnimationOptions(
+                { duration: 0.9 },
+                { from: 50, to: [null, 100] },
+                "x"
+            )
+        ).toEqual({
+            from: 50,
+            to: [50, 100],
+            type: "keyframes",
+            duration: 900,
+        })
+
+        expect(
+            getPopmotionAnimationOptions(
+                { type: "tween" },
+                { from: 50, to: 100 },
+                "x"
+            )
+        ).toEqual({
+            from: 50,
+            to: 100,
+            type: "keyframes",
         })
 
         expect(

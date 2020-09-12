@@ -7209,10 +7209,10 @@ pn@^1.1.0:
   resolved "https://registry.yarnpkg.com/pn/-/pn-1.1.0.tgz#e2f4cef0e219f463c179ab37463e4e1ecdccbafb"
   integrity sha512-2qHaIQr2VLRFoxe2nASzsV6ef4yOOH+Fi9FBOVH6cqeSgUnoyySPZkxzLuzd+RYOQTRpROA0ztTMqxROKSb/nA==
 
-popmotion@9.0.0-rc.13:
-  version "9.0.0-rc.13"
-  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-rc.13.tgz#0280968fb0dc3bd273cc3dbd4da24b01b6cfbcce"
-  integrity sha512-M8Ksx2THYrAUrptE5Ydd3jazQAMoXxqpClR/K8xK87v4UrJUTCb39kNar/ucJ4Rs7qPqPdVu+iqPKOJhpMylXQ==
+popmotion@9.0.0-rc.14:
+  version "9.0.0-rc.14"
+  resolved "https://registry.yarnpkg.com/popmotion/-/popmotion-9.0.0-rc.14.tgz#e57351b7b85a3e42b7a16affbbd440138797c11f"
+  integrity sha512-zdMw1OSKjFBH+KKpZx7P+cGSUb3QCqg5QD12f6llucUeEFT+SDZYxvTY09JI23ZcJyzxgKFT1anbLq0eZ9bj3g==
   dependencies:
     framesync "^4.1.0"
     hey-listen "^1.0.8"
