@@ -28,6 +28,7 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
 
     visualElement.updateConfig({
         enableHardwareAcceleration: !isStatic,
+        ...visualElement.config,
         ...props,
     })
 
