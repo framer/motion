@@ -1,9 +1,20 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useRef, useEffect } from "react"
 
 export function useForceUpdate() {
+    const unloadingRef = useRef(false)
     const [forcedRenderCount, setForcedRenderCount] = useState(0)
 
-    return useCallback(() => setForcedRenderCount(forcedRenderCount + 1), [
-        forcedRenderCount,
-    ])
+    useEffect(() => {
+        return () => {
+            unloadingRef.current = true
+        }
+    }, [])
+
+    return useCallback(() => {
+        if (unloadingRef.current) {
+            return
+        }
+
+        setForcedRenderCount(forcedRenderCount + 1)
+    }, [forcedRenderCount])
 }
