@@ -45,6 +45,11 @@ class Animate extends React.Component<AnimateProps> {
         const { visualElement } = this.props
         visualElement.enableLayoutProjection()
         this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
+
+        visualElement.updateConfig({
+            ...visualElement.config,
+            safeToRemove: () => this.safeToRemove(),
+        })
     }
 
     componentWillUnmount() {

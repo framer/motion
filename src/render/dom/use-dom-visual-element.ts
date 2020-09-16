@@ -10,6 +10,7 @@ import { useEffect } from "react"
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
  * or SVGVisualElement for the component.
+ *
  */
 export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     Component,
@@ -27,6 +28,7 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     })
 
     visualElement.updateConfig({
+        ...visualElement.config,
         enableHardwareAcceleration: !isStatic,
         ...props,
     })

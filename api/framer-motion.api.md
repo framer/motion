@@ -843,7 +843,7 @@ export function useAnimation(): AnimationControls;
 export function useCycle<T>(...items: T[]): CycleState<T>;
 
 // @public
-export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
+export function useDomEvent(ref: RefObject<EventTarget>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
 
 // @public
 export function useDragControls(): DragControls;
