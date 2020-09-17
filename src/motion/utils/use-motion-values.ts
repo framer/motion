@@ -39,8 +39,8 @@ export function useMotionValues<P>(
      */
     for (const key in prev) {
         const isForced = isForcedMotionValue(key, props)
-        const existsAsProp = props[key]
-        const existsAsStyle = props.style && props.style[key]
+        const existsAsProp = props[key] !== undefined
+        const existsAsStyle = props.style && props.style[key] !== undefined
         const propIsMotionValue = existsAsProp && isMotionValue(props[key])
         const styleIsMotionValue =
             existsAsStyle && isMotionValue(props.style![key])
