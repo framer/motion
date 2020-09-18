@@ -38,7 +38,7 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
  * @public
  */
 
-function createMotionProxy(defaultFeatures: MotionFeature[]) {
+export function createMotionProxy(defaultFeatures: MotionFeature[]) {
     type CustomMotionComponent = { custom: typeof custom }
     type Motion = HTMLMotionComponents &
         SVGMotionComponents &
@@ -87,8 +87,3 @@ export const motion = /*@__PURE__*/ createMotionProxy([
     Exit,
     AnimateLayout,
 ])
-
-/**
- * @public
- */
-export const m = /*@__PURE__*/ createMotionProxy([MeasureLayout])
