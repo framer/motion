@@ -8,6 +8,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   No longer unsetting transform motion values from `style` if their current value is `0`.
 -   Correct `useDomEvent` types to allow any `EventTarget`.
+-   Fix memory leak error in `AnimatePresence`.
 
 ### Change
 
