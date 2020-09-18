@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.6.14] Unreleased
+## [2.6.15] 2020-09-18
+
+### Fix
+
+-   Fixing dynamic type imports in generated types.
+
+## [2.6.14] 2020-09-18
 
 ### Fix
 

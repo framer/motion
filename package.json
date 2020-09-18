@@ -1,9 +1,9 @@
 {
     "name": "framer-motion",
-    "version": "2.6.14",
+    "version": "2.6.15",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
-    "types": "dist/framer-motion.d.ts",
+    "types": "types/index.d.ts",
     "author": "Framer Motion",
     "license": "MIT",
     "repository": "https://github.com/framer/motion/",
