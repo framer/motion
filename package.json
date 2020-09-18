@@ -21,7 +21,7 @@
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
         "test": "yarn test-client && yarn test-server && yarn test-e2e",
-        "test-ci": "yarn test-client && yarn test-server",
+        "test-ci": "yarn test-client && yarn test-server && yarn build",
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
