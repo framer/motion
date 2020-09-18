@@ -447,14 +447,14 @@ export interface LayoutProps {
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
 }
 
+// @public (undocumented)
+export const m: import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>) => import(".").CustomDomComponent<Props>;
+};
+
 // Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "SVGMotionComponents" needs to be exported by the entry point index.d.ts
 // 
-// @public (undocumented)
-export const m: HTMLMotionComponents & SVGMotionComponents & {
-    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => CustomDomComponent<Props>;
-};
-
 // @public
 export const motion: HTMLMotionComponents & SVGMotionComponents & {
     custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => CustomDomComponent<Props>;
@@ -843,7 +843,7 @@ export function useAnimation(): AnimationControls;
 export function useCycle<T>(...items: T[]): CycleState<T>;
 
 // @public
-export function useDomEvent(ref: RefObject<Element>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
+export function useDomEvent(ref: RefObject<EventTarget>, eventName: string, handler?: EventListener | undefined, options?: AddEventListenerOptions): void;
 
 // @public
 export function useDragControls(): DragControls;

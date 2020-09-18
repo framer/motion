@@ -2,6 +2,18 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.6.14] Unreleased
+
+### Fix
+
+-   No longer unsetting transform motion values from `style` if their current value is `0`.
+-   Correct `useDomEvent` types to allow any `EventTarget`.
+
+### Change
+
+-   Added `sideEffects: false` to `package.json`.
+-   Added `bundlesize` bundle budgeting.
+
 ## [2.6.13] 2020-09-12
 
 ### Fix

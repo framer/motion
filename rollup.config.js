@@ -71,4 +71,11 @@ const es = Object.assign({}, config, {
     external,
 })
 
-export default [umd, umdProd, cjs, es]
+const m = Object.assign({}, umdProd, {
+    input: "tsc/render/dom/minimal-component.js",
+    output: Object.assign({}, umd.output, {
+        file: `dist/minimal-component.js`,
+    }),
+})
+
+export default [umd, umdProd, cjs, es, m]
