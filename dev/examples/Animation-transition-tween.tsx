@@ -15,9 +15,9 @@ const style = {
 export const App = () => {
     const [x, setX] = useState(0)
     const transition = {
-        type: "tween",
-        ease: "anticipate",
+        type: "spring",
         duration: 0.4,
+        dampingRatio: 0.4,
     }
 
     return (

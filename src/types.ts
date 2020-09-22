@@ -943,6 +943,72 @@ export interface Spring extends Repeat {
     mass?: number
 
     /**
+     * The duration of the animation, defined in seconds. Spring animations can be a maximum of 10 seconds.
+     *
+     * **Note:** `duration` and `dampingRatio` override all other spring options.
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   duration: 0.8
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ x: 100 }}
+     *   transition={{ type: "spring", duration: 0.8 }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    duration?: number
+
+    /**
+     * `dampingRatio` determines the amount of "springiness" of a spring animation.
+     *
+     * `0` is no damping, for maximum springiness. `1` is full damping, for no springiness.
+     *
+     * **Note:** `dampingRatio` and `duration` override all other spring options.
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   dampingRatio: 1
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ x: 100 }}
+     *   transition={{ type: "spring", dampingRatio: 1 }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    dampingRatio?: number
+
+    /**
      * End animation if absolute speed (in units per second) drops below this
      * value and delta is smaller than `restDelta`. Set to `0.01` by default.
      *
