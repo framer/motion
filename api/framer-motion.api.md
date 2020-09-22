@@ -728,8 +728,8 @@ export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
 export interface Spring extends Repeat {
+    bounce?: number;
     damping?: number;
-    dampingRatio?: number;
     // @internal (undocumented)
     delay?: number;
     duration?: number;

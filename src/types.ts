@@ -945,7 +945,7 @@ export interface Spring extends Repeat {
     /**
      * The duration of the animation, defined in seconds. Spring animations can be a maximum of 10 seconds.
      *
-     * **Note:** `duration` and `dampingRatio` override all other spring options.
+     * **Note:** `duration` and `bounce` override all other spring options.
      *
      * @library
      *
@@ -975,18 +975,18 @@ export interface Spring extends Repeat {
     duration?: number
 
     /**
-     * `dampingRatio` determines the amount of "springiness" of a spring animation.
+     * `bounce` determines the "bounciness" of a spring animation.
      *
-     * `0` is no damping, for maximum springiness. `1` is full damping, for no springiness.
+     * `0` is no bounce, and `1` is extremely bouncy.
      *
-     * **Note:** `dampingRatio` and `duration` override all other spring options.
+     * **Note:** `bounce` and `duration` override all other spring options.
      *
      * @library
      *
      * ```jsx
      * const transition = {
      *   type: "spring",
-     *   dampingRatio: 1
+     *   bounce: 0.25
      * }
      *
      * <Frame
@@ -1000,13 +1000,13 @@ export interface Spring extends Repeat {
      * ```jsx
      * <motion.div
      *   animate={{ x: 100 }}
-     *   transition={{ type: "spring", dampingRatio: 1 }}
+     *   transition={{ type: "spring", bounce: 0.25 }}
      * />
      * ```
      *
      * @public
      */
-    dampingRatio?: number
+    bounce?: number
 
     /**
      * End animation if absolute speed (in units per second) drops below this
