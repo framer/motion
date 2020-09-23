@@ -7,7 +7,6 @@
     "author": "Framer Motion",
     "license": "MIT",
     "repository": "https://github.com/framer/motion/",
-    "sideEffects": false,
     "keywords": [
         "react animation",
         "react",
