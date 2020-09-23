@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.1] 2020-09-23
+
+### Fixed
+
+-   Reverting `sideEffects: false`, as viewport touch scroll blocking is a side effect.
+
 ## [2.7.0] 2020-09-23
 
 ### Added
