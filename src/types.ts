@@ -943,6 +943,72 @@ export interface Spring extends Repeat {
     mass?: number
 
     /**
+     * The duration of the animation, defined in seconds. Spring animations can be a maximum of 10 seconds.
+     *
+     * Note: `duration` and `bounce` override all other spring options.
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   duration: 0.8
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ x: 100 }}
+     *   transition={{ type: "spring", duration: 0.8 }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    duration?: number
+
+    /**
+     * `bounce` determines the "bounciness" of a spring animation.
+     *
+     * `0` is no bounce, and `1` is extremely bouncy.
+     *
+     * Note: `bounce` and `duration` override all other spring options.
+     *
+     * @library
+     *
+     * ```jsx
+     * const transition = {
+     *   type: "spring",
+     *   bounce: 0.25
+     * }
+     *
+     * <Frame
+     *   animate={{ rotate: 180 }}
+     *   transition={transition}
+     * />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * <motion.div
+     *   animate={{ x: 100 }}
+     *   transition={{ type: "spring", bounce: 0.25 }}
+     * />
+     * ```
+     *
+     * @public
+     */
+    bounce?: number
+
+    /**
      * End animation if absolute speed (in units per second) drops below this
      * value and delta is smaller than `restDelta`. Set to `0.01` by default.
      *

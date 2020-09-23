@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.0] 2020-09-22
+
+### Added
+
+-   Duration-based springs.
+
 ## [2.6.15] 2020-09-18
 
 ### Fix
