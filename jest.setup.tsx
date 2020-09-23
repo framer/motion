@@ -11,19 +11,21 @@ export const click = (element: Element) =>
     })
 export const mouseEnter = (element: Element) =>
     act(() => {
-        fireEvent.mouseEnter(element)
+        fireEvent.pointerEnter(element)
+        // fireEvent.pointerOver(element)
     })
 export const mouseLeave = (element: Element) =>
     act(() => {
-        fireEvent.mouseLeave(element)
+        fireEvent.pointerLeave(element)
+        // fireEvent.pointerOut(element)
     })
 export const mouseDown = (element: Element) =>
     act(() => {
-        fireEvent.mouseDown(element)
+        fireEvent.pointerDown(element)
     })
 export const mouseUp = (element: Element) =>
     act(() => {
-        fireEvent.mouseUp(element)
+        fireEvent.pointerUp(element)
     })
 
 export const render = (children: any) => {

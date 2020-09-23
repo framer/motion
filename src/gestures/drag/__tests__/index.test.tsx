@@ -795,7 +795,7 @@ describe("dragging", () => {
         pointer.end()
 
         lastX = x.get()
-        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
         await sleep(20)
 
         expect(x.get()).toBe(lastX)

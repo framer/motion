@@ -5,7 +5,6 @@ import {
     unblockViewportScroll,
     blockViewportScroll,
 } from "./utils/block-viewport-scroll"
-import { Point } from "../../events/types"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
@@ -426,7 +425,7 @@ export class VisualElementDragControls {
     /**
      * Update the specified axis with the latest pointer information.
      */
-    updateAxis(axis: DragDirection, event: AnyPointerEvent, offset?: Point) {
+    updateAxis(axis: DragDirection, event: AnyPointerEvent, offset?: Point2D) {
         const { drag } = this.props
 
         // If we're not dragging this axis, do an early return.
@@ -437,7 +436,7 @@ export class VisualElementDragControls {
             : this.updateVisualElementAxis(axis, event)
     }
 
-    updateAxisMotionValue(axis: DragDirection, offset?: Point) {
+    updateAxisMotionValue(axis: DragDirection, offset?: Point2D) {
         const axisValue = this.getAxisMotionValue(axis)
 
         if (!offset || !axisValue) return
@@ -521,7 +520,7 @@ export class VisualElementDragControls {
         }
     }
 
-    private animateDragEnd(velocity: Point) {
+    private animateDragEnd(velocity: Point2D) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
         const momentumAnimations = eachAxis((axis) => {
@@ -698,7 +697,7 @@ function shouldDrag(
  * @param lockThreshold - (Optional) - the minimum absolute offset before we can determine a drag direction.
  */
 function getCurrentDirection(
-    offset: Point,
+    offset: Point2D,
     lockThreshold = 10
 ): DragDirection | null {
     let direction: DragDirection | null = null

@@ -36,8 +36,8 @@ describe("tap", () => {
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
 
-        fireEvent.mouseDown(container.firstChild as Element)
-        fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
+        fireEvent.pointerUp(container.firstChild as Element)
 
         expect(tap).toBeCalledTimes(1)
     })
@@ -46,12 +46,12 @@ describe("tap", () => {
         const [
             addEventListener,
             mockedAddMouseUpListener,
-        ] = mockWhenFirstArgumentIs(window.addEventListener, "mouseup")
+        ] = mockWhenFirstArgumentIs(window.addEventListener, "pointerup")
         window.addEventListener = addEventListener
         const [
             removeEventListener,
             mockedRemoveMouseUpListener,
-        ] = mockWhenFirstArgumentIs(window.removeEventListener, "mouseup")
+        ] = mockWhenFirstArgumentIs(window.removeEventListener, "pointerup")
         window.removeEventListener = removeEventListener
 
         const tap = jest.fn()
@@ -61,10 +61,10 @@ describe("tap", () => {
         rerender(<Component />)
         expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(0)
         expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
-        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
         expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
         expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
-        fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.pointerUp(container.firstChild as Element)
         expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
         expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(1)
 
@@ -81,8 +81,8 @@ describe("tap", () => {
     //     const { getByTestId, rerender } = render(<Component />)
     //     rerender(<Component />)
 
-    //     fireEvent.mouseDown(getByTestId("child"))
-    //     fireEvent.mouseUp(getByTestId("child"))
+    //     fireEvent.pointerDown(getByTestId("child"))
+    //     fireEvent.pointerUp(getByTestId("child"))
 
     //     expect(tap).toBeCalledTimes(1)
     // })
@@ -98,8 +98,8 @@ describe("tap", () => {
     //     const { container, getByTestId, rerender } = render(<Component />)
     //     rerender(<Component />)
 
-    //     fireEvent.mouseDown(getByTestId("child"))
-    //     fireEvent.mouseUp(container.firstChild as Element)
+    //     fireEvent.pointerDown(getByTestId("child"))
+    //     fireEvent.pointerUp(container.firstChild as Element)
 
     //     expect(tap).toBeCalledTimes(1)
     // })
@@ -115,8 +115,8 @@ describe("tap", () => {
     //     const { container, getByTestId, rerender } = render(<Component />)
     //     rerender(<Component />)
 
-    //     fireEvent.mouseDown(container.firstChild as Element)
-    //     fireEvent.mouseUp(getByTestId("child"))
+    //     fireEvent.pointerDown(container.firstChild as Element)
+    //     fireEvent.pointerUp(getByTestId("child"))
 
     //     expect(tap).toBeCalledTimes(1)
     // })
@@ -135,8 +135,8 @@ describe("tap", () => {
     //     const { container, getByTestId, rerender } = render(<Component />)
     //     rerender(<Component />)
 
-    //     fireEvent.mouseDown(getByTestId("child"))
-    //     fireEvent.mouseUp(container.firstChild as Element)
+    //     fireEvent.pointerDown(getByTestId("child"))
+    //     fireEvent.pointerUp(container.firstChild as Element)
 
     //     expect(tapCancel).toBeCalledTimes(1)
     // })
@@ -188,23 +188,23 @@ describe("tap", () => {
         rerender(<Component />)
         rerender(<Component />)
 
-        fireEvent.mouseDown(container.firstChild as Element)
-        fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
+        fireEvent.pointerUp(container.firstChild as Element)
 
         rerender(<Component />)
         rerender(<Component />)
 
-        fireEvent.mouseDown(container.firstChild as Element)
-        fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
+        fireEvent.pointerUp(container.firstChild as Element)
 
-        fireEvent.mouseDown(container.firstChild as Element)
-        fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.pointerDown(container.firstChild as Element)
+        fireEvent.pointerUp(container.firstChild as Element)
 
         expect(tap).toBeCalledTimes(3)
     })
 
     test("tap gesture variant applies and unapplies", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -237,7 +237,7 @@ describe("tap", () => {
     })
 
     test("tap gesture variant unapplies children", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -278,7 +278,7 @@ describe("tap", () => {
      * We want to add it in a way that maintains propagation of `animate`.
      */
     test.skip("tap gesture variants - children can override with own variant", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -304,11 +304,11 @@ describe("tap", () => {
             logOpacity() // 0.5
 
             // Trigger mouse down
-            fireEvent.mouseDown(getByTestId("child") as Element)
+            fireEvent.pointerDown(getByTestId("child") as Element)
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.mouseUp(getByTestId("child") as Element)
+            fireEvent.pointerUp(getByTestId("child") as Element)
             logOpacity() // 0.5
 
             resolve(opacityHistory)
@@ -318,7 +318,7 @@ describe("tap", () => {
     })
 
     test("tap gesture variant applies and unapplies with whileHover", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -342,11 +342,11 @@ describe("tap", () => {
             logOpacity() // 0.75
 
             // Trigger mouse down
-            fireEvent.mouseDown(container.firstChild as Element)
+            fireEvent.pointerDown(container.firstChild as Element)
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.mouseUp(container.firstChild as Element)
+            fireEvent.pointerUp(container.firstChild as Element)
             logOpacity() // 0.75
 
             // Trigger hover end
@@ -358,7 +358,7 @@ describe("tap", () => {
             logOpacity()
 
             // Trigger mouse down
-            fireEvent.mouseDown(container.firstChild as Element)
+            fireEvent.pointerDown(container.firstChild as Element)
             logOpacity()
 
             // Trigger hover end
@@ -366,7 +366,7 @@ describe("tap", () => {
             logOpacity()
 
             // Trigger mouse up
-            fireEvent.mouseUp(container.firstChild as Element)
+            fireEvent.pointerUp(container.firstChild as Element)
             logOpacity()
 
             resolve(opacityHistory)
@@ -386,7 +386,7 @@ describe("tap", () => {
     })
 
     test("tap gesture variant applies and unapplies as state changes", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
@@ -415,13 +415,13 @@ describe("tap", () => {
             logOpacity() // 0.75
 
             // Trigger mouse down
-            fireEvent.mouseDown(container.firstChild as Element)
+            fireEvent.pointerDown(container.firstChild as Element)
             logOpacity() // 1
             rerender(<Component isActive={true} />)
             rerender(<Component isActive={true} />)
 
             // Trigger mouse up
-            fireEvent.mouseUp(container.firstChild as Element)
+            fireEvent.pointerUp(container.firstChild as Element)
             logOpacity() // 1
 
             // Trigger hover end
@@ -433,7 +433,7 @@ describe("tap", () => {
             logOpacity() // 1
 
             // Trigger mouse down
-            fireEvent.mouseDown(container.firstChild as Element)
+            fireEvent.pointerDown(container.firstChild as Element)
             logOpacity() // 1
 
             // Trigger hover end
@@ -441,7 +441,7 @@ describe("tap", () => {
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.mouseUp(container.firstChild as Element)
+            fireEvent.pointerUp(container.firstChild as Element)
             logOpacity() // 1
 
             resolve(opacityHistory)

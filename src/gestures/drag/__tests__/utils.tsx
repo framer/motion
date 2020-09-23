@@ -15,7 +15,7 @@ const pos: Point = {
 }
 
 export const frame = {
-    postRender: () => new Promise(resolve => sync.postRender(resolve)),
+    postRender: () => new Promise((resolve) => sync.postRender(resolve)),
 }
 
 type Deferred<T> = {
@@ -25,7 +25,7 @@ type Deferred<T> = {
 
 export function deferred<T>(): Deferred<T> {
     const def = {} as Deferred<T>
-    def.promise = new Promise(resolve => {
+    def.promise = new Promise((resolve) => {
         def.resolve = resolve as any
     })
     return def
@@ -34,7 +34,7 @@ export function deferred<T>(): Deferred<T> {
 export const drag = (element: any, triggerElement?: any) => {
     pos.x = 0
     pos.y = 0
-    fireEvent.mouseDown(triggerElement || element)
+    fireEvent.pointerDown(triggerElement || element)
 
     const controls = {
         to: async (x: number, y: number) => {
@@ -42,14 +42,14 @@ export const drag = (element: any, triggerElement?: any) => {
             pos.y = y
 
             await act(async () => {
-                fireEvent.mouseMove(document.body, { buttons: 1 })
+                fireEvent.pointerMove(document.body, { buttons: 1 })
                 await frame.postRender()
             })
 
             return controls
         },
         end: () => {
-            fireEvent.mouseUp(element)
+            fireEvent.pointerUp(element)
         },
     }
 
@@ -57,7 +57,7 @@ export const drag = (element: any, triggerElement?: any) => {
 }
 
 export const sleep = (ms: number) =>
-    new Promise(resolve => setTimeout(resolve, ms))
+    new Promise((resolve) => setTimeout(resolve, ms))
 
 export const MockDrag = ({ children }: { children: React.ReactNode }) => (
     <MotionConfig transformPagePoint={() => pos}>{children}</MotionConfig>

@@ -1,5 +1,5 @@
 import { RefObject, useRef } from "react"
-import { EventInfo, Point, EventHandler } from "../events/types"
+import { EventInfo, EventHandler } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { getGesturePriority } from "./utils/gesture-priority"
@@ -7,6 +7,7 @@ import { ControlsProp, RemoveEvent } from "./types"
 import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
+import { Point2D } from "../types/geometry"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
@@ -63,7 +64,7 @@ export interface TapInfo {
      *
      * @public
      */
-    point: Point
+    point: Point2D
 }
 
 /**

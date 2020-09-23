@@ -235,10 +235,8 @@ export type EasingFunction = (v: number) => number;
 
 // @public (undocumented)
 export interface EventInfo {
-    // Warning: (ae-forgotten-export) The symbol "Point" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
-    point: Point;
+    point: Point2D;
 }
 
 // @public (undocumented)
@@ -596,10 +594,10 @@ export interface PanHandlers {
 
 // @public
 export interface PanInfo {
-    delta: Point;
-    offset: Point;
-    point: Point;
-    velocity: Point;
+    delta: Point2D;
+    offset: Point2D;
+    point: Point2D;
+    velocity: Point2D;
 }
 
 // @public (undocumented)
@@ -779,7 +777,7 @@ export interface TapHandlers {
 
 // @public
 export interface TapInfo {
-    point: Point;
+    point: Point2D;
 }
 
 // Warning: (ae-forgotten-export) The symbol "TargetWithKeyframes" needs to be exported by the entry point index.d.ts
