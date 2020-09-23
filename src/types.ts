@@ -945,7 +945,7 @@ export interface Spring extends Repeat {
     /**
      * The duration of the animation, defined in seconds. Spring animations can be a maximum of 10 seconds.
      *
-     * **Note:** `duration` and `bounce` override all other spring options.
+     * Note: `duration` and `bounce` override all other spring options.
      *
      * @library
      *
@@ -979,7 +979,7 @@ export interface Spring extends Repeat {
      *
      * `0` is no bounce, and `1` is extremely bouncy.
      *
-     * **Note:** `bounce` and `duration` override all other spring options.
+     * Note: `bounce` and `duration` override all other spring options.
      *
      * @library
      *
