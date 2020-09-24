@@ -67,7 +67,7 @@ export class DragControls {
      * })
      * ```
      *
-     * @param event - A mouse/touch/pointer event.
+     * @param event - PointerEvent
      * @param options - Options
      *
      * @public
@@ -82,7 +82,7 @@ export class DragControls {
             | PointerEvent,
         options?: DragControlOptions
     ) {
-        this.componentControls.forEach(controls => {
+        this.componentControls.forEach((controls) => {
             controls.start(
                 (event as React.MouseEvent).nativeEvent || event,
                 options
