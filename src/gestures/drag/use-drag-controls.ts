@@ -68,7 +68,7 @@ export class DragControls {
      * })
      * ```
      *
-     * @param event - A mouse/touch/pointer event.
+     * @param event - PointerEvent
      * @param options - Options
      *
      * @public
