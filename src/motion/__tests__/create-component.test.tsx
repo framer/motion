@@ -4,7 +4,8 @@ import * as React from "react"
 import { motionValue } from "../../value"
 
 const motion = { div: createDomMotionComponent("div") }
-describe("Legacy component", () => {
+
+describe("Create DOM Motion component", () => {
     test("Animates", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
