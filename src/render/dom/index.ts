@@ -73,17 +73,19 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
     return new Proxy({ custom }, { get }) as Motion
 }
 
-/**
- * HTML & SVG components, optimised for use with gestures and animation. These can be used as
- * drop-in replacements for any HTML & SVG component, all CSS & SVG properties are supported.
- *
- * @public
- */
-export const motion = /*@__PURE__*/ createMotionProxy([
+export const allMotionFeatures = [
     MeasureLayout,
     Animation,
     Drag,
     Gestures,
     Exit,
     AnimateLayout,
-])
+]
+
+/**
+ * HTML & SVG components, optimised for use with gestures and animation. These can be used as
+ * drop-in replacements for any HTML & SVG component, all CSS & SVG properties are supported.
+ *
+ * @public
+ */
+export const motion = /*@__PURE__*/ createMotionProxy(allMotionFeatures)
