@@ -4,7 +4,7 @@ import { extractEventInfo } from "../events/event-info"
 import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
-import { distance } from "popmotion"
+import { distance, pipe } from "popmotion"
 import { TransformPoint2D } from "../types/geometry"
 
 export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
@@ -197,7 +197,7 @@ export class PanSession {
     /**
      * @internal
      */
-    private removeListeners: () => void
+    private removeListeners: Function
 
     constructor(
         event: AnyPointerEvent,
@@ -222,21 +222,11 @@ export class PanSession {
         onSessionStart &&
             onSessionStart(event, getPanInfo(initialInfo, this.history))
 
-        const removeOnPointerMove = addPointerEvent(
-            window,
-            "pointermove",
-            (event, info) => this.handlePointerMove(event, info)
+        this.removeListeners = pipe(
+            addPointerEvent(window, "pointermove", this.handlePointerMove),
+            addPointerEvent(window, "pointerup", this.handlePointerUp),
+            addPointerEvent(window, "pointercancel", this.handlePointerUp)
         )
-        const removeOnPointerUp = addPointerEvent(
-            window,
-            "pointerup",
-            (event, info) => this.handlePointerUp(event, info)
-        )
-
-        this.removeListeners = () => {
-            removeOnPointerMove && removeOnPointerMove()
-            removeOnPointerUp && removeOnPointerUp()
-        }
     }
 
     private updatePoint = () => {
@@ -267,7 +257,7 @@ export class PanSession {
         onMove && onMove(this.lastMoveEvent, info)
     }
 
-    private handlePointerMove(event: AnyPointerEvent, info: EventInfo) {
+    private handlePointerMove = (event: AnyPointerEvent, info: EventInfo) => {
         this.lastMoveEvent = event
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)
 
@@ -281,7 +271,7 @@ export class PanSession {
         sync.update(this.updatePoint, true)
     }
 
-    private handlePointerUp(event: AnyPointerEvent, info: EventInfo) {
+    private handlePointerUp = (event: AnyPointerEvent, info: EventInfo) => {
         this.end()
 
         const { onEnd } = this.handlers

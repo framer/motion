@@ -14,7 +14,7 @@ const styleA = {
 export const App = () => {
     return (
         <div style={{ height: "500vh", paddingTop: 100 }}>
-            <motion.div dragDirectionLock drag="x" style={styleA} />
+            <motion.div whileTap={{ scale: 0.5 }} style={styleA} />
         </div>
     )
 }

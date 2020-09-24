@@ -5,9 +5,7 @@ import { isTouchEvent } from "../gestures/utils/event-type"
  * Filters out events not attached to the primary pointer (currently left mouse button)
  * @param eventHandler
  */
-function filterPrimaryPointer(eventHandler?: EventListener) {
-    if (!eventHandler) return undefined
-
+function filterPrimaryPointer(eventHandler: EventListener): EventListener {
     return (event: Event) => {
         const isMouseEvent = event instanceof MouseEvent
         const isPrimaryPointer =
@@ -65,12 +63,11 @@ export function getViewportPointFromEvent(
 }
 
 export const wrapHandler = (
-    handler?: EventListenerWithPointInfo,
+    handler: EventListenerWithPointInfo,
     shouldFilterPrimaryPointer = false
-): EventListener | undefined => {
-    if (!handler) return
-
-    const listener = (event: any) => handler(event, extractEventInfo(event))
+): EventListener => {
+    const listener: EventListener = (event: any) =>
+        handler(event, extractEventInfo(event))
 
     return shouldFilterPrimaryPointer
         ? filterPrimaryPointer(listener)
