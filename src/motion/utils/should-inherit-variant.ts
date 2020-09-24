@@ -1,14 +1,9 @@
 import { MotionProps } from "../types"
-import { AnimationControls } from "../../animation/AnimationControls"
 
-export const checkShouldInheritVariant = ({
+export function checkShouldInheritVariant({
     animate,
     variants,
-    inherit = true,
-}: MotionProps): boolean => {
-    return (
-        inherit &&
-        !!variants &&
-        (!animate || animate instanceof AnimationControls)
-    )
+    inherit,
+}: MotionProps): boolean {
+    return inherit === undefined ? !!variants && !animate : inherit
 }

@@ -8,7 +8,6 @@ import { MotionContext } from "../motion/context/MotionContext"
 import { useConstant } from "../utils/use-constant"
 import { PresenceContext } from "../components/AnimatePresence/PresenceContext"
 import { VisualElement } from "../render/VisualElement"
-import { checkShouldInheritVariant } from "../motion/utils/should-inherit-variant"
 
 /**
  * Creates an imperative set of controls to trigger animations.
@@ -20,9 +19,9 @@ import { checkShouldInheritVariant } from "../motion/utils/should-inherit-varian
 export function useVisualElementAnimation<P>(
     visualElement: VisualElement,
     props: P & MotionProps,
-    config: AnimationControlsConfig
+    config: AnimationControlsConfig,
+    subscribeToParentControls: boolean
 ) {
-    const subscribeToParentControls = checkShouldInheritVariant(props)
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
     const presenceContext = useContext(PresenceContext)
