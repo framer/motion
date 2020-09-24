@@ -166,6 +166,8 @@ function convertTouchToPointer(event: TouchEvent): PointerEvent {
  * `dragControls.start` can be started by an external event. Internally, we use PointerEvents.
  * This leaves us in the siutation where a user could provide a MouseEvent or TouchEvent so
  * here we convert them to a working version of a PointerEvent
+ *
+ * This is deprecated - in a 3.0 we can remove these converters.
  */
 function convertExternalPointerEvent(
     event: MouseEvent | TouchEvent | PointerEvent
