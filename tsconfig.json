@@ -11,7 +11,7 @@
         "emitDecoratorMetadata": true,
         "declaration": true,
         "declarationDir": "types",
-        "outDir": "tsc",
+        "outDir": "lib",
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,

@@ -4,7 +4,7 @@ import replace from "@rollup/plugin-replace"
 import pkg from "./package.json"
 
 const config = {
-    input: "tsc/index.js",
+    input: "lib/index.js",
 }
 
 const external = [
@@ -72,7 +72,7 @@ const es = Object.assign({}, config, {
 })
 
 const m = Object.assign({}, umdProd, {
-    input: "tsc/render/dom/minimal-component.js",
+    input: "lib/render/dom/minimal-component.js",
     output: Object.assign({}, umd.output, {
         file: `dist/minimal-component.js`,
     }),

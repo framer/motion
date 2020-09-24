@@ -5,7 +5,6 @@
 /lib
 /tsc
 /tmp
-/tsc
 yarn-error.log
 /coverage
 /test_reports
