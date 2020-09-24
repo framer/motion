@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.2] 2020-09-24
+
+### Added
+
+-   `createDomMotionComponent` for legacy browser support.
+
 ## [2.7.1] 2020-09-23
 
 ### Fixed
