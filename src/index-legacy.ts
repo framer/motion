@@ -19,6 +19,10 @@ import {
  * ```
  * import { legacyMotion as motion } from "framer-motion/tsc/index-legacy"
  * ```
+ *
+ * This isn't intended to be a publicsed API but something we can point users towards.
+ *
+ * @internal
  */
 
 const config: MotionComponentConfig<HTMLElement | SVGElement> = {
