@@ -4,7 +4,6 @@ import { extractEventInfo } from "../events/event-info"
 import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
-import { unblockViewportScroll } from "../gestures/drag/utils/block-viewport-scroll"
 import { distance } from "popmotion"
 import { TransformPoint2D } from "../types/geometry"
 
@@ -302,7 +301,6 @@ export class PanSession {
     end() {
         this.removeListeners && this.removeListeners()
         cancelSync.update(this.updatePoint)
-        unblockViewportScroll()
     }
 }
 

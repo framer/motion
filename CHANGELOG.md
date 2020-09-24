@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.3] 2020-09-25
+
+### Fixed
+
+-   Blocks touch viewport scrolling from draggable components on a per-axis basis.
+
 ## [2.7.2] 2020-09-24
 
 ### Added
