@@ -37,12 +37,10 @@ const config: MotionComponentConfig<HTMLElement | SVGElement> = {
 function createComponents<C>(
     componentKeys: typeof htmlElements | typeof svgElements
 ): C {
-    const components: Partial<C> = {}
-    for (const key in componentKeys) {
-        components[key] = createMotionComponent(key, config)
-    }
-
-    return components as C
+    return (componentKeys as any).reduce((acc: Partial<C>, key: string) => {
+        acc[key] = createMotionComponent(key, config)
+        return acc
+    }, {} as C)
 }
 
 export const legacyMotion = {
