@@ -28,6 +28,22 @@ function mockWhenFirstArgumentIs(
     ]
 }
 
+test("Element receives pointer enter events", () => {
+    const onPointerDown = jest.fn()
+    const onPointerEnter = jest.fn()
+    const { container } = render(<div />)
+    const element = container.firstChild as Element
+
+    element.addEventListener("pointerdown", onPointerDown)
+    element.addEventListener("pointerenter", onPointerEnter)
+
+    fireEvent.pointerDown(element)
+    fireEvent.pointerEnter(element)
+
+    expect(onPointerDown).toBeCalledTimes(1)
+    expect(onPointerEnter).toBeCalledTimes(1)
+})
+
 describe("tap", () => {
     test("tap event listeners fire", () => {
         const tap = jest.fn()
@@ -318,6 +334,7 @@ describe("tap", () => {
     })
 
     test("tap gesture variant applies and unapplies with whileHover", () => {
+        console.log("====== start test")
         const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
@@ -333,40 +350,42 @@ describe("tap", () => {
             )
 
             const { container, rerender } = render(<Component />)
+            const element = container.firstChild as Element
             rerender(<Component />)
 
             logOpacity() // 0.5
 
             // Trigger hover
-            mouseEnter(container.firstChild as Element)
+            fireEvent.pointerEnter(element)
+
             logOpacity() // 0.75
 
             // Trigger mouse down
-            fireEvent.pointerDown(container.firstChild as Element)
+            fireEvent.pointerDown(element)
             logOpacity() // 1
 
             // Trigger mouse up
-            fireEvent.pointerUp(container.firstChild as Element)
+            fireEvent.pointerUp(element)
             logOpacity() // 0.75
 
             // Trigger hover end
-            mouseLeave(container.firstChild as Element)
+            fireEvent.pointerLeave(element)
             logOpacity()
 
             // Trigger hover
-            mouseEnter(container.firstChild as Element)
+            fireEvent.pointerEnter(element)
             logOpacity()
 
             // Trigger mouse down
-            fireEvent.pointerDown(container.firstChild as Element)
+            fireEvent.pointerDown(element)
             logOpacity()
 
             // Trigger hover end
-            mouseLeave(container.firstChild as Element)
+            fireEvent.pointerLeave(element)
             logOpacity()
 
             // Trigger mouse up
-            fireEvent.pointerUp(container.firstChild as Element)
+            fireEvent.pointerUp(element)
             logOpacity()
 
             resolve(opacityHistory)

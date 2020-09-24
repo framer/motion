@@ -4,8 +4,9 @@ import { motion } from "@framer"
 export function App() {
     return (
         <motion.div
+            whileTap={{ scale: 0.5 }}
             whileHover={{
-                scale: [1, 1.01, 1.05],
+                scale: 1.5,
                 transition: {
                     type: "spring", //uncomment out to work
                     mass: 0.5,

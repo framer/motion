@@ -3,7 +3,7 @@ import { EventInfo } from "../events/types"
 import { MotionConfigContext } from "../motion/context/MotionConfigContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"
-import { PanSession, PanInfo, AnyPointerEvent } from "./PanSession"
+import { PanSession, PanInfo } from "./PanSession"
 import { VisualElement } from "../render/VisualElement"
 
 export type PanHandler = (event: Event, info: PanInfo) => void
@@ -43,7 +43,7 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPan?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void
+    onPan?(event: PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when the pan gesture begins on this element.
@@ -76,10 +76,7 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPanStart?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: PanInfo
-    ): void
+    onPanStart?(event: PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when we begin detecting a pan gesture. This
@@ -111,10 +108,7 @@ export interface PanHandlers {
      *   - `point`: Relative to the device or page.
      */
 
-    onPanSessionStart?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: EventInfo
-    ): void
+    onPanSessionStart?(event: PointerEvent, info: EventInfo): void
 
     /**
      * Callback function that fires when the pan gesture ends on this element.
@@ -147,10 +141,7 @@ export interface PanHandlers {
      *   - `offset`: Offset from the original pan event.
      *   - `velocity`: Current velocity of the pointer.
      */
-    onPanEnd?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: PanInfo
-    ): void
+    onPanEnd?(event: PointerEvent, info: PanInfo): void
 }
 
 /**
@@ -177,10 +168,7 @@ export function usePanGesture(
         onSessionStart: onPanSessionStart,
         onStart: onPanStart,
         onMove: onPan,
-        onEnd: (
-            event: MouseEvent | TouchEvent | PointerEvent,
-            info: PanInfo
-        ) => {
+        onEnd: (event: PointerEvent, info: PanInfo) => {
             panSession.current = null
             onPanEnd && onPanEnd(event, info)
         },
@@ -192,7 +180,7 @@ export function usePanGesture(
         }
     })
 
-    function onPointerDown(event: AnyPointerEvent) {
+    function onPointerDown(event: PointerEvent) {
         panSession.current = new PanSession(event, handlers, {
             transformPagePoint,
         })

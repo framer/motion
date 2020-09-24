@@ -224,9 +224,9 @@ export interface DraggableProps extends DragHandlers {
 // @public (undocumented)
 export interface DragHandlers {
     onDirectionLock?(axis: "x" | "y"): void;
-    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onDragEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onDragStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onDrag?(event: PointerEvent, info: PanInfo): void;
+    onDragEnd?(event: PointerEvent, info: PanInfo): void;
+    onDragStart?(event: PointerEvent, info: PanInfo): void;
     onDragTransitionEnd?(): void;
 }
 
@@ -269,8 +269,8 @@ export const GesturesFeature: MotionFeature;
 
 // @public (undocumented)
 export interface HoverHandlers {
-    onHoverEnd?(event: MouseEvent, info: EventInfo): void;
-    onHoverStart?(event: MouseEvent, info: EventInfo): void;
+    onHoverEnd?(event: PointerEvent, info: EventInfo): void;
+    onHoverStart?(event: PointerEvent, info: EventInfo): void;
     whileHover?: string | TargetAndTransition;
 }
 
@@ -586,10 +586,10 @@ export interface Orchestration {
 
 // @public (undocumented)
 export interface PanHandlers {
-    onPan?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onPanEnd?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
-    onPanSessionStart?(event: MouseEvent | TouchEvent | PointerEvent, info: EventInfo): void;
-    onPanStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void;
+    onPan?(event: PointerEvent, info: PanInfo): void;
+    onPanEnd?(event: PointerEvent, info: PanInfo): void;
+    onPanSessionStart?(event: PointerEvent, info: EventInfo): void;
+    onPanStart?(event: PointerEvent, info: PanInfo): void;
 }
 
 // @public
@@ -769,9 +769,9 @@ export interface SyncLayoutLifecycles {
 
 // @public (undocumented)
 export interface TapHandlers {
-    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
-    onTapCancel?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
-    onTapStart?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    onTap?(event: PointerEvent, info: TapInfo): void;
+    onTapCancel?(event: PointerEvent, info: TapInfo): void;
+    onTapStart?(event: PointerEvent, info: TapInfo): void;
     whileTap?: string | TargetAndTransition;
 }
 

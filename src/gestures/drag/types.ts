@@ -5,10 +5,7 @@ import { BoundingBox2D } from "../../types/geometry"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"
 
-export type DragHandler = (
-    event: MouseEvent | TouchEvent | PointerEvent,
-    info: PanInfo
-) => void
+export type DragHandler = (event: PointerEvent, info: PanInfo) => void
 
 /**
  * @public
@@ -40,10 +37,7 @@ export interface DragHandlers {
      *
      * @public
      */
-    onDragStart?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: PanInfo
-    ): void
+    onDragStart?(event: PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when dragging ends.
@@ -71,10 +65,7 @@ export interface DragHandlers {
      *
      * @public
      */
-    onDragEnd?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: PanInfo
-    ): void
+    onDragEnd?(event: PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires when the component is dragged.
@@ -102,7 +93,7 @@ export interface DragHandlers {
      *
      * @public
      */
-    onDrag?(event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo): void
+    onDrag?(event: PointerEvent, info: PanInfo): void
 
     /**
      * Callback function that fires a drag direction is determined.

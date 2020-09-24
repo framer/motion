@@ -7,7 +7,7 @@ import {
 } from "./utils/block-viewport-scroll"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
-import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
+import { PanSession, PanInfo } from "../../gestures/PanSession"
 import { invariant } from "hey-listen"
 import { progress } from "popmotion"
 import { addDomEvent } from "../../events/use-dom-event"
@@ -58,7 +58,7 @@ type DragDirection = "x" | "y"
 /**
  *
  */
-let lastPointerEvent: AnyPointerEvent
+let lastPointerEvent: PointerEvent
 
 export class VisualElementDragControls {
     /**
@@ -145,7 +145,7 @@ export class VisualElementDragControls {
      * @public
      */
     start(
-        originEvent: AnyPointerEvent,
+        originEvent: PointerEvent,
         { snapToCursor = false, cursorProgress }: DragControlOptions = {}
     ) {
         /**
@@ -169,7 +169,7 @@ export class VisualElementDragControls {
             this.stopMotion()
         }
 
-        const onStart = (event: AnyPointerEvent, info: PanInfo) => {
+        const onStart = (event: PointerEvent, info: PanInfo) => {
             // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
             const { drag, dragPropagation } = this.props
             if (drag && !dragPropagation) {
@@ -234,7 +234,7 @@ export class VisualElementDragControls {
             this.props.onDragStart?.(event, info)
         }
 
-        const onMove = (event: AnyPointerEvent, info: PanInfo) => {
+        const onMove = (event: PointerEvent, info: PanInfo) => {
             const { dragPropagation, dragDirectionLock } = this.props
 
             // If we didn't successfully receive the gesture lock, early return.
@@ -382,7 +382,7 @@ export class VisualElementDragControls {
         }
     }
 
-    stop(event: AnyPointerEvent, info: PanInfo) {
+    stop(event: PointerEvent, info: PanInfo) {
         this.visualElement.unlockTargetBox()
         this.panSession?.end()
         this.panSession = null
@@ -401,7 +401,7 @@ export class VisualElementDragControls {
         onDragEnd?.(event, info)
     }
 
-    snapToCursor(event: AnyPointerEvent) {
+    snapToCursor(event: PointerEvent) {
         this.prepareBoundingBox()
 
         eachAxis((axis) => {
@@ -425,7 +425,7 @@ export class VisualElementDragControls {
     /**
      * Update the specified axis with the latest pointer information.
      */
-    updateAxis(axis: DragDirection, event: AnyPointerEvent, offset?: Point2D) {
+    updateAxis(axis: DragDirection, event: PointerEvent, offset?: Point2D) {
         const { drag } = this.props
 
         // If we're not dragging this axis, do an early return.
@@ -454,7 +454,7 @@ export class VisualElementDragControls {
         axisValue.set(update)
     }
 
-    updateVisualElementAxis(axis: DragDirection, event: AnyPointerEvent) {
+    updateVisualElementAxis(axis: DragDirection, event: PointerEvent) {
         const { dragElastic } = this.props
 
         // Get the actual layout bounding box of the element

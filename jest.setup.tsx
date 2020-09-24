@@ -9,16 +9,16 @@ export const click = (element: Element) =>
     act(() => {
         fireEvent.click(element)
     })
-export const mouseEnter = (element: Element) =>
+export const mouseEnter = (element: Element) => {
     act(() => {
         fireEvent.pointerEnter(element)
-        // fireEvent.pointerOver(element)
     })
-export const mouseLeave = (element: Element) =>
+}
+export const mouseLeave = (element: Element) => {
     act(() => {
         fireEvent.pointerLeave(element)
-        // fireEvent.pointerOut(element)
     })
+}
 export const mouseDown = (element: Element) =>
     act(() => {
         fireEvent.pointerDown(element)

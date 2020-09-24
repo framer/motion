@@ -1,5 +1,5 @@
 import { EventInfo } from "../events/types"
-import { isTouchEvent, isMouseEvent } from "./utils/event-type"
+import { isLeftClick, isPrimaryPointer } from "./utils/event-type"
 import { extractEventInfo } from "../events/event-info"
 import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
@@ -7,9 +7,6 @@ import { addPointerEvent } from "../events/use-pointer-event"
 import { unblockViewportScroll } from "../gestures/drag/utils/block-viewport-scroll"
 import { distance } from "popmotion"
 import { Point2D, TransformPoint2D } from "../types/geometry"
-import { Point } from "popmotion/lib/types"
-
-export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
 
 /**
  * Passed in to pan event handlers like `onPan` the `PanInfo` object contains
@@ -174,12 +171,12 @@ export class PanSession {
     /**
      * @internal
      */
-    private startEvent: AnyPointerEvent | null = null
+    private startEvent: PointerEvent | null = null
 
     /**
      * @internal
      */
-    private lastMoveEvent: AnyPointerEvent | null = null
+    private lastMoveEvent: PointerEvent | null = null
 
     /**
      * @internal
@@ -202,12 +199,11 @@ export class PanSession {
     private removeListeners: () => void
 
     constructor(
-        event: AnyPointerEvent,
+        event: PointerEvent,
         handlers: Partial<PanSessionHandlers>,
         { transformPagePoint }: PanSessionOptions = {}
     ) {
-        // If we have more than one touch, don't start detecting this gesture
-        if (isTouchEvent(event) && event.touches.length > 1) return
+        if (!isPrimaryPointer(event)) return
 
         this.handlers = handlers
         this.transformPagePoint = transformPagePoint
@@ -227,12 +223,12 @@ export class PanSession {
         const removeOnPointerMove = addPointerEvent(
             window,
             "pointermove",
-            (event, info) => this.handlePointerMove(event, info)
+            this.handlePointerMove
         )
         const removeOnPointerUp = addPointerEvent(
             window,
             "pointerup",
-            (event, info) => this.handlePointerUp(event, info)
+            this.handlePointerUp
         )
 
         this.removeListeners = () => {
@@ -269,12 +265,12 @@ export class PanSession {
         onMove && onMove(this.lastMoveEvent, info)
     }
 
-    private handlePointerMove(event: AnyPointerEvent, info: EventInfo) {
+    private handlePointerMove = (event: PointerEvent, info: EventInfo) => {
         this.lastMoveEvent = event
         this.lastMoveEventInfo = transformPoint(info, this.transformPagePoint)
 
         // Because Safari doesn't trigger mouseup events when it's above a `<select>`
-        if (isMouseEvent(event) && event.buttons === 0) {
+        if (isLeftClick(event)) {
             this.handlePointerUp(event, info)
             return
         }
@@ -283,7 +279,7 @@ export class PanSession {
         sync.update(this.updatePoint, true)
     }
 
-    private handlePointerUp(event: AnyPointerEvent, info: EventInfo) {
+    private handlePointerUp = (event: PointerEvent, info: EventInfo) => {
         this.end()
 
         const { onEnd } = this.handlers
@@ -335,7 +331,7 @@ function lastDevicePoint(history: TimestampedPoint[]): TimestampedPoint {
     return history[history.length - 1]
 }
 
-function getVelocity(history: TimestampedPoint[], timeDelta: number): Point {
+function getVelocity(history: TimestampedPoint[], timeDelta: number): Point2D {
     if (history.length < 2) {
         return { x: 0, y: 0 }
     }

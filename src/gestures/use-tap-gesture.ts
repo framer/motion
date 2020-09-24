@@ -97,7 +97,7 @@ export interface TapHandlers {
      * @param event - The originating pointer event.
      * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void
+    onTap?(event: PointerEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture starts on this element.
@@ -125,10 +125,7 @@ export interface TapHandlers {
      * @param event - The originating pointer event.
      * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onTapStart?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: TapInfo
-    ): void
+    onTapStart?(event: PointerEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture ends outside this element.
@@ -156,10 +153,7 @@ export interface TapHandlers {
      * @param event - The originating pointer event.
      * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onTapCancel?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: TapInfo
-    ): void
+    onTapCancel?(event: PointerEvent, info: TapInfo): void
 
     /**
      * Properties or variant label to animate to while the component is pressed.
@@ -238,10 +232,7 @@ export function useTapGesture(
         }
     }
 
-    function onPointerDown(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: EventInfo
-    ) {
+    function onPointerDown(event: PointerEvent, info: EventInfo) {
         removePointerUp()
 
         cancelPointerEventListener.current = addPointerEvent(

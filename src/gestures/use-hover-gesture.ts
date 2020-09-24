@@ -46,7 +46,7 @@ export interface HoverHandlers {
      * <motion.div onHoverStart={() => console.log('Hover starts')} />
      * ```
      */
-    onHoverStart?(event: MouseEvent, info: EventInfo): void
+    onHoverStart?(event: PointerEvent, info: EventInfo): void
 
     /**
      * Callback function that fires when pointer stops hovering over the component.
@@ -67,18 +67,15 @@ export interface HoverHandlers {
      * <motion.div onHoverEnd={() => console.log("Hover ends")} />
      * ```
      */
-    onHoverEnd?(event: MouseEvent, info: EventInfo): void
+    onHoverEnd?(event: PointerEvent, info: EventInfo): void
 }
 
 const hoverPriority = getGesturePriority("whileHover")
 
-type FilteredTouchListener = (
-    event: MouseEvent | PointerEvent,
-    info: EventInfo
-) => void
+type FilteredTouchListener = (event: PointerEvent, info: EventInfo) => void
 
 const filterTouch = (listener: FilteredTouchListener) => (
-    event: MouseEvent | PointerEvent,
+    event: PointerEvent,
     info: EventInfo
 ) => {
     if (isMouseEvent(event)) listener(event, info)
@@ -106,7 +103,7 @@ export function useHoverGesture(
     usePointerEvent(
         ref,
         "pointerenter",
-        filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
+        filterTouch((event: PointerEvent, info: EventInfo) => {
             if (onHoverStart) onHoverStart(event, info)
 
             if (whileHover && controls) {
@@ -118,7 +115,7 @@ export function useHoverGesture(
     usePointerEvent(
         ref,
         "pointerleave",
-        filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
+        filterTouch((event: PointerEvent, info: EventInfo) => {
             if (onHoverEnd) onHoverEnd(event, info)
 
             if (whileHover && controls) {

@@ -1,3 +1,4 @@
+import { warning } from "hey-listen"
 import * as React from "react"
 import { useConstant } from "../../utils/use-constant"
 import {
@@ -82,11 +83,10 @@ export class DragControls {
             | PointerEvent,
         options?: DragControlOptions
     ) {
-        this.componentControls.forEach(controls => {
-            controls.start(
-                (event as React.MouseEvent).nativeEvent || event,
-                options
-            )
+        const originalEvent = (event as React.PointerEvent).nativeEvent || event
+
+        this.componentControls.forEach((controls) => {
+            controls.start(convertExternalPointerEvent(originalEvent), options)
         })
     }
 }
@@ -140,4 +140,39 @@ const createDragControls = () => new DragControls()
  */
 export function useDragControls() {
     return useConstant(createDragControls)
+}
+
+function convertMouseToPointer(event: MouseEvent): PointerEvent {
+    return {
+        ...event,
+        isPrimary: true,
+        pointerType: "mouse",
+    } as PointerEvent
+}
+
+function convertTouchToPointer(event: TouchEvent): PointerEvent {
+    const primaryTouch = event.touches[0] || event.changedTouches[0]
+    return {
+        pageX: primaryTouch.pageX,
+        pageY: primaryTouch.pageY,
+        clientX: primaryTouch.clientX,
+        clientY: primaryTouch.clientY,
+        isPrimary: true,
+        pointerType: "touch",
+    } as PointerEvent
+}
+
+function convertExternalPointerEvent(
+    event: MouseEvent | TouchEvent | PointerEvent
+): PointerEvent {
+    if (event instanceof PointerEvent) return event
+
+    warning(
+        true,
+        "Use of MouseEvent and TouchEvents is deprecated and will be removed in 3.0. Provide a PointerEvent instead."
+    )
+
+    return (event as TouchEvent).touches
+        ? convertTouchToPointer(event as TouchEvent)
+        : convertMouseToPointer(event as MouseEvent)
 }
