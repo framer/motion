@@ -2,5 +2,5 @@
 **/*
 !dist/**
 !types/**
-!lib/**
+!lib/index-legacy.js
 !LICENSE.md
