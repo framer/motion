@@ -28,22 +28,6 @@ function mockWhenFirstArgumentIs(
     ]
 }
 
-test("Element receives pointer enter events", () => {
-    const onPointerDown = jest.fn()
-    const onPointerEnter = jest.fn()
-    const { container } = render(<div />)
-    const element = container.firstChild as Element
-
-    element.addEventListener("pointerdown", onPointerDown)
-    element.addEventListener("pointerenter", onPointerEnter)
-
-    fireEvent.pointerDown(element)
-    fireEvent.pointerEnter(element)
-
-    expect(onPointerDown).toBeCalledTimes(1)
-    expect(onPointerEnter).toBeCalledTimes(1)
-})
-
 describe("tap", () => {
     test("tap event listeners fire", () => {
         const tap = jest.fn()
