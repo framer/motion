@@ -174,6 +174,9 @@ export interface BoxDelta {
 // @public
 export function createBatcher(): SyncLayoutBatcher;
 
+// @public
+export function createDomMotionComponent(key: string): React.ForwardRefExoticComponent<MotionProps & React.RefAttributes<unknown>>;
+
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
