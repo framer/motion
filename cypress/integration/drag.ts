@@ -12,7 +12,7 @@ describe("Drag", () => {
         cy.visit("?test=drag")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 300, { force: true })
@@ -31,7 +31,7 @@ describe("Drag", () => {
         cy.visit("?test=drag&axis=x")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .wait(50)
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
@@ -51,7 +51,7 @@ describe("Drag", () => {
         cy.visit("?test=drag&axis=y")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 300, { force: true })
@@ -96,7 +96,7 @@ describe("Drag", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5, { force: true })
+            .trigger("pointerdown", 5, 5, { force: true, isPrimary: true })
             .wait(50)
             .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
             .wait(100)
@@ -119,7 +119,7 @@ describe("Drag", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(100)
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 200, { force: true })
@@ -139,7 +139,7 @@ describe("Drag", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(100)
-            .trigger("pointerdown", 40, 40)
+            .trigger("pointerdown", 40, 40, { isPrimary: true })
             .trigger("pointermove", 30, 30) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 10, 10, { force: true })
@@ -158,7 +158,7 @@ describe("Drag", () => {
         cy.visit("?test=drag-ref-constraints")
             .wait(200)
             .get("[data-testid='draggable']")
-            .trigger("pointerdown", 10, 10)
+            .trigger("pointerdown", 10, 10, { isPrimary: true })
             .trigger("pointermove", 15, 15)
             .wait(50)
             .trigger("pointermove", 300, 300, { force: true })
@@ -179,7 +179,7 @@ describe("Drag & Layout", () => {
         cy.visit("?test=drag&layout=true")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 300, { force: true })
@@ -198,7 +198,7 @@ describe("Drag & Layout", () => {
         cy.visit("?test=drag&axis=x&layout=true")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 300, { force: true })
@@ -217,7 +217,7 @@ describe("Drag & Layout", () => {
         cy.visit("?test=drag&axis=y&layout=true")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 300, { force: true })
@@ -262,7 +262,7 @@ describe("Drag & Layout", () => {
             .wait(100)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 5, 5, { force: true })
+            .trigger("pointerdown", 5, 5, { force: true, isPrimary: true })
             .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
             .wait(100)
             .trigger("pointermove", 10, 200, { force: true })
@@ -283,7 +283,7 @@ describe("Drag & Layout", () => {
         cy.visit("?test=drag&right=100&bottom=100&layout=true")
             .wait(200)
             .get("[data-testid='draggable']")
-            .trigger("pointerdown", 5, 5)
+            .trigger("pointerdown", 5, 5, { isPrimary: true })
             .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 200, 200, { force: true })
@@ -302,7 +302,7 @@ describe("Drag & Layout", () => {
         cy.visit("?test=drag&left=-10&top=-10&layout=true")
             .wait(200)
             .get("[data-testid='draggable']")
-            .trigger("pointerdown", 40, 40)
+            .trigger("pointerdown", 40, 40, { isPrimary: true })
             .trigger("pointermove", 30, 30) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 10, 10, { force: true })
@@ -321,7 +321,7 @@ describe("Drag & Layout", () => {
         cy.visit("?test=drag-ref-constraints&layout=true")
             .wait(200)
             .get("[data-testid='draggable']")
-            .trigger("pointerdown", 10, 10)
+            .trigger("pointerdown", 10, 10, { isPrimary: true })
             .trigger("pointermove", 15, 15)
             .wait(50)
             .trigger("pointermove", 300, 300, { force: true })

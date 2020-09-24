@@ -4,8 +4,9 @@ import { EventInfo } from "./types"
 function filterPrimaryPointer(eventHandler?: EventListener) {
     if (!eventHandler) return
 
-    return (event: PointerEvent) =>
-        isPrimaryPointer(event) && eventHandler(event)
+    return (event: PointerEvent) => {
+        return isPrimaryPointer(event) && eventHandler(event)
+    }
 }
 
 export type EventListenerWithPointInfo = (

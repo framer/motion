@@ -334,7 +334,6 @@ describe("tap", () => {
     })
 
     test("tap gesture variant applies and unapplies with whileHover", () => {
-        console.log("====== start test")
         const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)

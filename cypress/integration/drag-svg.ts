@@ -13,12 +13,12 @@ describe("Drag SVG", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 0, 0, { force: true })
-            .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 0, 0, { force: true, isPrimary: true })
+            .trigger("pointermove", 10, 10, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 300, { force: true })
+            .trigger("pointermove", 200, 300, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -32,12 +32,12 @@ describe("Drag SVG", () => {
         cy.visit("?test=drag-svg&axis=x")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 300, { force: true })
+            .trigger("pointermove", 200, 300, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -51,12 +51,12 @@ describe("Drag SVG", () => {
         cy.visit("?test=drag-svg&axis=y")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 300, { force: true })
+            .trigger("pointermove", 200, 300, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -71,16 +71,16 @@ describe("Drag SVG", () => {
     //     cy.visit("?test=drag-svg&lock=true")
     //         .wait(200)
     //         .get("[data-testid='draggable']")
-    //         .trigger("pointerdown", 50, 50, { force: true })
+    //         .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
 
     //     cy.window()
-    //         .trigger("pointermove", 60, 50, { force: true }) // Gesture will start from first move past threshold
+    //         .trigger("pointermove", 60, 50, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
     //         .wait(100)
-    //         .trigger("pointermove", 200, 0, { force: true })
+    //         .trigger("pointermove", 200, 0, { force: true, isPrimary: true })
     //         .wait(50)
-    //         // .trigger("pointermove", 200, 200, { force: true })
+    //         // .trigger("pointermove", 200, 200, { force: true, isPrimary: true })
     //         // .wait(50)
-    //         .trigger("pointerup", { force: true })
+    //         .trigger("pointerup", { force: true, isPrimary: true })
     //     cy.get("[data-testid='draggable']").should(($draggable: any) => {
     //         const draggable = $draggable[0] as HTMLDivElement
     //         const { left, top } = draggable.getBoundingClientRect()
@@ -94,14 +94,14 @@ describe("Drag SVG", () => {
     //     cy.visit("?test=drag-svg&lock=true")
     //         .get("[data-testid='draggable']")
     //         .wait(200)
-    //         .trigger("pointerdown", 50, 50, { force: true })
-    //         .trigger("pointermove", 50, 60, { force: true }) // Gesture will start from first move past threshold
+    //         .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+    //         .trigger("pointermove", 50, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
     //         .wait(200)
-    //         .trigger("pointermove", 50, 200, { force: true })
+    //         .trigger("pointermove", 50, 200, { force: true, isPrimary: true })
     //         .wait(50)
-    //         .trigger("pointermove", 200, 50, { force: true })
+    //         .trigger("pointermove", 200, 50, { force: true, isPrimary: true })
     //         .wait(50)
-    //         .trigger("pointerup", { force: true })
+    //         .trigger("pointerup", { force: true, isPrimary: true })
     //         .should(($draggable: any) => {
     //             const draggable = $draggable[0] as HTMLDivElement
     //             const { left, top } = draggable.getBoundingClientRect()
@@ -115,12 +115,12 @@ describe("Drag SVG", () => {
         cy.visit("?test=drag-svg&right=100&bottom=100")
             .wait(200)
             .get("[data-testid='draggable']")
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 200, { force: true })
+            .trigger("pointermove", 200, 200, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -134,12 +134,12 @@ describe("Drag SVG", () => {
         cy.visit("?test=drag-svg&left=-10&top=-10")
             .wait(200)
             .get("[data-testid='draggable']")
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 10, 10, { force: true })
+            .trigger("pointermove", 10, 10, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -155,12 +155,12 @@ describe("Drag SVG & Layout", () => {
         cy.visit("?test=drag-svg&layout=true")
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 0, 0, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 0, 0, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 300, { force: true })
+            .trigger("pointermove", 200, 300, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -175,12 +175,12 @@ describe("Drag SVG & Layout", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 300, { force: true })
+            .trigger("pointermove", 200, 300, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -195,12 +195,12 @@ describe("Drag SVG & Layout", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 300, { force: true })
+            .trigger("pointermove", 200, 300, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -215,16 +215,16 @@ describe("Drag SVG & Layout", () => {
     //     cy.visit("?test=drag-svg&lock=true")
     //         .wait(200)
     //         .get("[data-testid='draggable']")
-    //         .trigger("pointerdown", 50, 50, { force: true })
+    //         .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
 
     //     cy.window()
-    //         .trigger("pointermove", 60, 50, { force: true }) // Gesture will start from first move past threshold
+    //         .trigger("pointermove", 60, 50, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
     //         .wait(100)
-    //         .trigger("pointermove", 200, 0, { force: true })
+    //         .trigger("pointermove", 200, 0, { force: true, isPrimary: true })
     //         .wait(50)
-    //         // .trigger("pointermove", 200, 200, { force: true })
+    //         // .trigger("pointermove", 200, 200, { force: true, isPrimary: true })
     //         // .wait(50)
-    //         .trigger("pointerup", { force: true })
+    //         .trigger("pointerup", { force: true, isPrimary: true })
     //     cy.get("[data-testid='draggable']").should(($draggable: any) => {
     //         const draggable = $draggable[0] as HTMLDivElement
     //         const { left, top } = draggable.getBoundingClientRect()
@@ -238,14 +238,14 @@ describe("Drag SVG & Layout", () => {
     //     cy.visit("?test=drag-svg&lock=true")
     //         .get("[data-testid='draggable']")
     //         .wait(200)
-    //         .trigger("pointerdown", 50, 50, { force: true })
-    //         .trigger("pointermove", 50, 60, { force: true }) // Gesture will start from first move past threshold
+    //         .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+    //         .trigger("pointermove", 50, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
     //         .wait(200)
-    //         .trigger("pointermove", 50, 200, { force: true })
+    //         .trigger("pointermove", 50, 200, { force: true, isPrimary: true })
     //         .wait(50)
-    //         .trigger("pointermove", 200, 50, { force: true })
+    //         .trigger("pointermove", 200, 50, { force: true, isPrimary: true })
     //         .wait(50)
-    //         .trigger("pointerup", { force: true })
+    //         .trigger("pointerup", { force: true, isPrimary: true })
     //         .should(($draggable: any) => {
     //             const draggable = $draggable[0] as HTMLDivElement
     //             const { left, top } = draggable.getBoundingClientRect()
@@ -260,12 +260,12 @@ describe("Drag SVG & Layout", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 200, 200, { force: true })
+            .trigger("pointermove", 200, 200, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
@@ -280,12 +280,12 @@ describe("Drag SVG & Layout", () => {
             .wait(200)
             .get("[data-testid='draggable']")
             .wait(200)
-            .trigger("pointerdown", 50, 50, { force: true })
-            .trigger("pointermove", 60, 60, { force: true }) // Gesture will start from first move past threshold
+            .trigger("pointerdown", 50, 50, { force: true, isPrimary: true })
+            .trigger("pointermove", 60, 60, { force: true, isPrimary: true }) // Gesture will start from first move past threshold
             .wait(50)
-            .trigger("pointermove", 10, 10, { force: true })
+            .trigger("pointermove", 10, 10, { force: true, isPrimary: true })
             .wait(50)
-            .trigger("pointerup", { force: true })
+            .trigger("pointerup", { force: true, isPrimary: true })
             .should(($draggable: any) => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
