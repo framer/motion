@@ -23,6 +23,23 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
         React.RefAttributes<SVGElement | HTMLElement>
 >
 
+const allMotionFeatures = [
+    MeasureLayout,
+    Animation,
+    Drag,
+    Gestures,
+    Exit,
+    AnimateLayout,
+]
+
+const domBaseConfig = {
+    useVisualElement: useDomVisualElement as any,
+    render: render as any,
+    animationControlsConfig: {
+        makeTargetAnimatable: parseDomVariant,
+    },
+}
+
 /**
  * Convert any React component into a `motion` component. The provided component
  * **must** use `React.forwardRef` to the underlying DOM component you want to animate.
@@ -37,7 +54,6 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
  *
  * @public
  */
-
 export function createMotionProxy(defaultFeatures: MotionFeature[]) {
     type CustomMotionComponent = { custom: typeof custom }
     type Motion = HTMLMotionComponents &
@@ -45,12 +61,8 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
         CustomMotionComponent
 
     const config: MotionComponentConfig<HTMLElement | SVGElement> = {
+        ...domBaseConfig,
         defaultFeatures,
-        useVisualElement: useDomVisualElement as any,
-        render: render as any,
-        animationControlsConfig: {
-            makeTargetAnimatable: parseDomVariant,
-        },
     }
 
     function custom<Props>(
@@ -79,11 +91,26 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
  *
  * @public
  */
-export const motion = /*@__PURE__*/ createMotionProxy([
-    MeasureLayout,
-    Animation,
-    Drag,
-    Gestures,
-    Exit,
-    AnimateLayout,
-])
+export const motion = /*@__PURE__*/ createMotionProxy(allMotionFeatures)
+
+/**
+ * Create a DOM `motion` component with the provided string. This is primarily intended
+ * as a full alternative to `motion` for consumers who have to support environments that don't
+ * support `Proxy`.
+ *
+ * ```javascript
+ * import { createDomMotionComponent } from "framer-motion"
+ *
+ * const motion = {
+ *   div: createDomMotionComponent('div')
+ * }
+ * ```
+ *
+ * @public
+ */
+export function createDomMotionComponent(key: string) {
+    return createMotionComponent(key, {
+        ...domBaseConfig,
+        defaultFeatures: allMotionFeatures,
+    })
+}

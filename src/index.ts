@@ -1,7 +1,7 @@
 /**
  * Components
  */
-export { motion } from "./render/dom"
+export { motion, createDomMotionComponent } from "./render/dom"
 export { m } from "./render/dom/minimal-component"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
