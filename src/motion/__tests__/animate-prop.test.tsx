@@ -89,7 +89,7 @@ describe("animate prop as object", () => {
                 <motion.div
                     initial={{ x: 100 }}
                     animate={{ x: 50 }}
-                    transition={{ duration: 100, from: 0, ease: "linear" }}
+                    transition={{ from: 0, ease: "linear" }}
                     onUpdate={(v: { x: number }) => output.push(v.x)}
                     onAnimationComplete={() => {
                         resolve(output.every((v) => v <= 50))
