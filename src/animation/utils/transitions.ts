@@ -151,7 +151,7 @@ function getAnimation(
 ) {
     const valueTransition =
         transition[key] || transition["default"] || transition
-    let origin = value.get()
+    let origin = valueTransition.from ?? value.get()
 
     const isTargetAnimatable = isAnimatable(key, target)
 

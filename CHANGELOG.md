@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.5] 2020-09-26
+
+### Fixed
+
+-   Manually setting a `from` in `transition`.
+
 ## [2.7.4] 2020-09-26
 
 ### Fixed
