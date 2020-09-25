@@ -1,12 +1,12 @@
 import * as React from "react"
-import { renderToString } from "react-dom/server"
+import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 
-describe("ssr", () => {
+function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
-        renderToString(
+        render(
             <motion.div
                 initial={{ x: 100 }}
                 whileTap={{ opacity: 0 }}
@@ -20,7 +20,7 @@ describe("ssr", () => {
 
     test("correctly renders HTML", () => {
         const y = motionValue(200)
-        const div = renderToString(
+        const div = render(
             <AnimatePresence>
                 <motion.div
                     initial={{ x: 100 }}
@@ -39,7 +39,7 @@ describe("ssr", () => {
     test("correctly renders custom HTML tag", () => {
         const y = motionValue(200)
         const CustomComponent = motion.custom("element-test")
-        const customElement = renderToString(
+        const customElement = render(
             <AnimatePresence>
                 <CustomComponent
                     initial={{ x: 100 }}
@@ -58,7 +58,7 @@ describe("ssr", () => {
     test("correctly renders SVG", () => {
         const cx = motionValue(100)
         const pathLength = motionValue(100)
-        const circle = renderToString(
+        const circle = render(
             <motion.circle
                 cx={cx}
                 initial={{ strokeWidth: 10 }}
@@ -73,10 +73,27 @@ describe("ssr", () => {
         expect(circle).toBe(
             '<circle cx="100" style="background:#fff" stroke-width="10"></circle>'
         )
+        const rect = render(
+            <motion.rect
+                initial={{ x: 0 }}
+                animate={{ x: 100 }}
+                exit={{ x: 0 }}
+                mask=""
+                style={{
+                    background: "#fff",
+                }}
+                className="test"
+                onMouseMove={() => {}}
+            />
+        )
+
+        expect(rect).toBe(
+            '<rect mask="" style="background:#fff" class="test"></rect>'
+        )
     })
 
     test("initial correctly overrides style", () => {
-        const div = renderToString(
+        const div = render(
             <motion.div initial={{ x: 100 }} style={{ x: 200 }} />
         )
 
@@ -84,4 +101,12 @@ describe("ssr", () => {
             `<div style="transform:translateX(100px) translateZ(0)"></div>`
         )
     })
+}
+
+describe("render", () => {
+    runTests(renderToString)
+})
+
+describe("renderToStaticMarkup", () => {
+    runTests(renderToStaticMarkup)
 })
