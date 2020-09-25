@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.4] 2020-09-26
+
+### Fixed
+
+-   Blocks propagation of variants from parent if a component's `animate` prop is set to `AnimationControls`. `inherit` can be used to force inheritence `true` or `false`.
+
 ## [2.7.3] 2020-09-25
 
 ### Fixed

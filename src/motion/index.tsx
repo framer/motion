@@ -78,7 +78,8 @@ export function createMotionComponent<P extends {}, E>(
         const controls = useVisualElementAnimation(
             visualElement,
             props,
-            animationControlsConfig
+            animationControlsConfig,
+            shouldInheritVariant
         )
 
         /**
