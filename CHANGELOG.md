@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Blocks touch viewport scrolling from draggable components on a per-axis basis.
+-   Reinstating `sideEffects: false` now that the `blockViewportScroll` method has been removed.
 
 ## [2.7.2] 2020-09-24
 

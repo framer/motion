@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "2.7.2",
+    "version": "2.7.3",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
     "types": "types/index.d.ts",
@@ -17,6 +17,7 @@
         "popmotion",
         "framer"
     ],
+    "sideEffects": false,
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
         "test": "yarn test-client && yarn test-server && yarn test-e2e",
