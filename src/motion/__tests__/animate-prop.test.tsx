@@ -4,7 +4,7 @@ import * as React from "react"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const Component = () => (
@@ -22,7 +22,7 @@ describe("animate prop as object", () => {
     })
 
     test("accepts custom transition prop", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const Component = () => (
@@ -41,7 +41,7 @@ describe("animate prop as object", () => {
     })
 
     test("fires onAnimationStart when animation begins", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const onStart = jest.fn()
             const onComplete = () => resolve(onStart)
             const Component = () => (
@@ -60,7 +60,7 @@ describe("animate prop as object", () => {
     })
 
     test("uses transition on subsequent renders", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => (
                 <motion.div animate={animate} style={{ x }} />
@@ -81,8 +81,31 @@ describe("animate prop as object", () => {
         return expect(promise).resolves.toBe(30)
     })
 
+    test("transition accepts manual from value", async () => {
+        const promise = new Promise((resolve) => {
+            const output: number[] = []
+
+            const Component = () => (
+                <motion.div
+                    initial={{ x: 100 }}
+                    animate={{ x: 50 }}
+                    transition={{ from: 0, ease: "linear" }}
+                    onUpdate={(v: { x: number }) => output.push(v.x)}
+                    onAnimationComplete={() => {
+                        resolve(output.every((v) => v <= 50))
+                    }}
+                />
+            )
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe(true)
+    })
+
     test("uses transitionEnd on subsequent renders", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = ({ animate }: any) => (
                 <motion.div animate={animate} style={{ x }} />
@@ -121,7 +144,7 @@ describe("animate prop as object", () => {
     })
 
     test("animates to set prop and preserves existing initial transform props", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const onComplete = () => {
                 // Animation complete currently fires when animation is complete, before the actual render
                 setTimeout(() => resolve(container.firstChild as any), 20)
@@ -147,7 +170,7 @@ describe("animate prop as object", () => {
     })
 
     test("style doesnt overwrite in subsequent renders", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const history: number[] = []
             const onAnimationComplete = () => {
                 setTimeout(() => {
@@ -192,7 +215,7 @@ describe("animate prop as object", () => {
     })
 
     test("applies custom transform", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const resolveContainer = () => {
                 requestAnimationFrame(() => {
                     resolve(container)
@@ -222,7 +245,7 @@ describe("animate prop as object", () => {
     })
 
     test("keyframes - accepts ease as an array", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const easingListener = jest.fn()
             const easing = (v: number) => {
@@ -246,7 +269,7 @@ describe("animate prop as object", () => {
     })
 
     test("will switch from non-animatable value to animatable value", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const onComplete = () => resolve(container.firstChild as Element)
             const Component = () => (
                 <motion.div
@@ -263,7 +286,7 @@ describe("animate prop as object", () => {
     })
 
     test("doesn't animate zIndex", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => <motion.div animate={{ zIndex: 100 }} />
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
@@ -276,7 +299,7 @@ describe("animate prop as object", () => {
     })
 
     test("respects repeatDelay prop", async () => {
-        const promise = new Promise<number>(resolve => {
+        const promise = new Promise<number>((resolve) => {
             const x = motionValue(0)
             x.onChange(() => {
                 setTimeout(() => resolve(x.get()), 50)
@@ -320,7 +343,7 @@ describe("animate prop as object", () => {
     })
 
     test("forces an animation if has been set to `null` in the interim", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const complete = () => resolve(true)
 
             const Component = ({ animate, onAnimationComplete }: any) => (
@@ -363,7 +386,7 @@ describe("animate prop as object", () => {
         const y = motionValue(0)
         const z = motionValue(0)
 
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => (
                 <motion.div
                     initial={false}
@@ -389,7 +412,7 @@ describe("animate prop as object", () => {
     })
 
     test("unmount cancels active animations", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const onComplete = jest.fn()
             const Component = ({ isVisible }: any) =>
                 isVisible && (
