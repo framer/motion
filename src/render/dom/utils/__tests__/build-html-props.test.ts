@@ -34,6 +34,7 @@ describe("buildHTMLProps", () => {
                 color: "#fff",
                 transform: "translateX(100px) translateZ(0)",
                 "--a": 100,
+                touchAction: "none",
                 userSelect: "none",
             },
             draggable: false,

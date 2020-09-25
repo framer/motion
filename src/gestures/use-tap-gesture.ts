@@ -7,6 +7,7 @@ import { ControlsProp, RemoveEvent } from "./types"
 import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
+import { pipe } from "popmotion"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
@@ -200,8 +201,7 @@ export function useTapGesture(
     )
 
     function removePointerUp() {
-        cancelPointerEventListener.current &&
-            cancelPointerEventListener.current()
+        cancelPointerEventListener.current?.()
         cancelPointerEventListener.current = null
     }
 
@@ -243,11 +243,14 @@ export function useTapGesture(
     ) {
         removePointerUp()
 
-        cancelPointerEventListener.current = addPointerEvent(
-            window,
-            "pointerup",
-            (event, info) => onPointerUp.current!(event, info)
-        )
+        cancelPointerEventListener.current = pipe(
+            addPointerEvent(window, "pointerup", (event, info) =>
+                onPointerUp.current?.(event, info)
+            ),
+            addPointerEvent(window, "pointercancel", (event, info) =>
+                onPointerUp.current?.(event, info)
+            )
+        ) as RemoveEvent
 
         const element = ref.current
         if (!element || isTapping.current) return

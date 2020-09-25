@@ -1,10 +1,6 @@
 import { RefObject } from "react"
 import { DraggableProps, DragHandler } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
-import {
-    unblockViewportScroll,
-    blockViewportScroll,
-} from "./utils/block-viewport-scroll"
 import { Point } from "../../events/types"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
@@ -157,14 +153,6 @@ export class VisualElementDragControls {
         snapToCursor && this.snapToCursor(originEvent)
 
         const onSessionStart = () => {
-            // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
-            // which has come out of the difficulty in us being able to do this once a scroll gesture
-            // has initiated in mobile browsers. This means if there's a horizontally-scrolling carousel
-            // on a page we can't let a user scroll the page itself from it. Ideally what we'd do is
-            // trigger this once we've got a scroll direction determined. This approach sort-of worked
-            // but if the component was dragged too far in a single frame page scrolling would initiate.
-            blockViewportScroll()
-
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
             this.stopMotion()
@@ -372,7 +360,6 @@ export class VisualElementDragControls {
     }
 
     cancelDrag() {
-        unblockViewportScroll()
         this.isDragging = false
         this.panSession && this.panSession.end()
         this.panSession = null
