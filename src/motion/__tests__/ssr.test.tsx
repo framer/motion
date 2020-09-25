@@ -74,17 +74,19 @@ function runTests(render: (components: any) => string) {
             '<circle cx="100" style="background:#fff" stroke-width="10"></circle>'
         )
         const rect = render(
-            <motion.rect
-                initial={{ x: 0 }}
-                animate={{ x: 100 }}
-                exit={{ x: 0 }}
-                mask=""
-                style={{
-                    background: "#fff",
-                }}
-                className="test"
-                onMouseMove={() => {}}
-            />
+            <AnimatePresence>
+                <motion.rect
+                    initial={{ x: 0 }}
+                    animate={{ x: 100 }}
+                    exit={{ x: 0 }}
+                    mask=""
+                    style={{
+                        background: "#fff",
+                    }}
+                    className="test"
+                    onMouseMove={() => {}}
+                />
+            </AnimatePresence>
         )
 
         expect(rect).toBe(
