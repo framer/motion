@@ -8,7 +8,7 @@ import { invariant } from "hey-listen"
 import { progress } from "popmotion"
 import { addDomEvent } from "../../events/use-dom-event"
 import { getViewportPointFromEvent } from "../../events/event-info"
-import type { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
+import { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     convertAxisBoxToBoundingBox,

@@ -8,7 +8,7 @@ import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
-import type { Point2D } from "../types/geometry"
+import { Point2D } from "../types/geometry"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
