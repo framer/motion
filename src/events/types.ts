@@ -1,50 +1,9 @@
 import { RefObject } from "react"
-
-/** @public */
-export interface Point {
-    x: number
-    y: number
-}
-
-/** @public */
-export namespace Point {
-    /** @beta */
-    export const subtract = (a: Point, b: Point): Point => {
-        return { x: a.x - b.x, y: a.y - b.y }
-    }
-
-    /** @beta */
-    export const relativeTo = (idOrElem: string | HTMLElement) => {
-        let elem: HTMLElement | null
-
-        const getElem = () => {
-            // Caching element here could be leaky because of React lifecycle
-            if (elem !== undefined) return elem
-            if (typeof idOrElem === "string") {
-                elem = document.getElementById(idOrElem)
-            } else {
-                elem = idOrElem
-            }
-            return elem
-        }
-
-        return ({ x, y }: Point): Point | undefined => {
-            const localElem = getElem()
-
-            if (!localElem) return undefined
-            const rect = localElem.getBoundingClientRect()
-
-            return {
-                x: x - rect.left - window.scrollX,
-                y: y - rect.top - window.scrollY,
-            }
-        }
-    }
-}
+import { Point2D } from "../types/geometry"
 
 /** @public */
 export interface EventInfo {
-    point: Point
+    point: Point2D
 }
 
 export type EventHandler = (
