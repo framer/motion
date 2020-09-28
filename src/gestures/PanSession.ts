@@ -1,11 +1,11 @@
-import { EventInfo } from "../events/types"
+import type { EventInfo } from "../events/types"
 import { isTouchEvent, isMouseEvent } from "./utils/event-type"
 import { extractEventInfo } from "../events/event-info"
 import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { distance, pipe } from "popmotion"
-import { Point2D, TransformPoint2D } from "../types/geometry"
+import type { Point2D, TransformPoint2D } from "../types/geometry"
 
 export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
 

@@ -7,11 +7,8 @@ import { ControlsProp, RemoveEvent } from "./types"
 import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
-<<<<<<< HEAD
 import { pipe } from "popmotion"
-=======
-import { Point2D } from "../types/geometry"
->>>>>>> Removing Point namespace
+import type { Point2D } from "../types/geometry"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
