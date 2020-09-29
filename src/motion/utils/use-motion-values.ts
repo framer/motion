@@ -103,11 +103,21 @@ function addMotionValues<P>(
             if (!visualElement.hasValue(key)) {
                 visualElement.addValue(key, motionValue(value))
             } else if (value !== prev[key]) {
-                // If the MotionValue already exists, update it with the
-                // latest incoming value
-                const motion = visualElement.getValue(key)
-                motion!.set(value)
+                if (isMotionValue(prev[key])) {
+                    /**
+                     * If the previous value was a MotionValue, and this value isn't,
+                     * we want to create a new MotionValue rather than update one that's been removed.
+                     */
+                    visualElement.addValue(key, motionValue(value))
+                } else {
+                    /**
+                     * Otherwise, we just want to ensure the MotionValue is of the latest value.
+                     */
+                    const motion = visualElement.getValue(key)
+                    motion!.set(value)
+                }
             }
+
             foundMotionValue = true
         } else if (isStyle) {
             ;(visualElement as any).reactStyle[key] = value
