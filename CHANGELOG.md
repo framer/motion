@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.6] 2020-09-29
+
+### Fixed
+
+-   When a `transform` is provided to `style` as a `MotionValue` and then replaced with a number on a subsequent render, we create a new `MotionValue` for it.
+
 ## [2.7.5] 2020-09-26
 
 ### Fixed
