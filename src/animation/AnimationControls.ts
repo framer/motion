@@ -60,7 +60,7 @@ export class AnimationControls {
      */
     setVariants(variants: Variants) {
         this.variants = variants
-        this.componentControls.forEach(controls =>
+        this.componentControls.forEach((controls) =>
             controls.setVariants(variants)
         )
     }
@@ -74,7 +74,7 @@ export class AnimationControls {
      */
     setDefaultTransition(transition: Transition) {
         this.defaultTransition = transition
-        this.componentControls.forEach(controls =>
+        this.componentControls.forEach((controls) =>
             controls.setDefaultTransition(transition)
         )
     }
@@ -121,7 +121,7 @@ export class AnimationControls {
     ): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
-            this.componentControls.forEach(controls => {
+            this.componentControls.forEach((controls) => {
                 const animation = controls.start(definition, {
                     transitionOverride,
                 })
@@ -130,7 +130,7 @@ export class AnimationControls {
 
             return Promise.all(animations)
         } else {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 this.pendingAnimations.push({
                     animation: [definition, transitionOverride],
                     resolve,
@@ -165,7 +165,9 @@ export class AnimationControls {
             "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."
         )
 
-        return this.componentControls.forEach(controls =>
+        // TODO Refactor to use pure functions
+
+        return this.componentControls.forEach((controls) =>
             controls.apply(definition)
         )
     }
@@ -180,7 +182,7 @@ export class AnimationControls {
      * @public
      */
     stop() {
-        this.componentControls.forEach(controls => controls.stop())
+        this.componentControls.forEach((controls) => controls.stop())
     }
 
     /**

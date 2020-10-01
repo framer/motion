@@ -23,7 +23,6 @@ import {
 import { Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
-// import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 import {
     buildLayoutProjectionTransform,
@@ -32,6 +31,7 @@ import {
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import sync from "framesync"
+import { parseDomVariant } from "./utils/parse-dom-variant"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -78,6 +78,10 @@ export class HTMLVisualElement<
      */
     presence?: Presence
     isPresent?: boolean
+
+    animationControlsConfig = {
+        makeTargetAnimatable: parseDomVariant,
+    }
 
     /**
      * A mutable record of transforms we want to apply directly to the rendered Element
@@ -454,7 +458,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    startLayoutAxisAnimation(axis: "x" | "y", _transition: Transition) {
+    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition) {
         const progress = this.axisProgress[axis]
 
         const { min, max } = this.targetBox[axis]
@@ -465,7 +469,7 @@ export class HTMLVisualElement<
         progress.set(min) // Set twice to hard-reset velocity
         progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
-        // return startAnimation(axis, progress, 0, transition)
+        return this.animation?.animateMotionValue(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {

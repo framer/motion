@@ -46,7 +46,7 @@ export function useAnimatedState(initialState: any) {
 
     visualElement.initialState = initialState
 
-    const controls = useVisualElementAnimation(visualElement, {}, {}, false)
+    const controls = useVisualElementAnimation(visualElement, {}, false)
 
     useEffect(() => {
         ;(visualElement as any).mount({})

@@ -5,7 +5,7 @@ import {
     resolveVariantLabels,
     asDependencyList,
 } from "./utils/variant-resolvers"
-import { MotionContext } from "../motion/context/MotionContext"
+import { MotionContext } from "../motion/context/VisualElementContext"
 
 const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
     return oldVariant.join(",") !== newVariant.join(",")
@@ -29,6 +29,8 @@ export function useVariants(
 ) {
     let targetVariants = resolveVariantLabels(animate)
     const context = useContext(MotionContext)
+
+    // TODO Replace with visualElement hasMounted check
     const parentAlreadyMounted =
         context.hasMounted && context.hasMounted.current
     const hasMounted = useRef(false)

@@ -1,6 +1,6 @@
-import { useEffect, useState, useContext } from "react"
+import { useState } from "react"
 import { motionValue } from "../value"
-import { MotionContext } from "../motion/context/MotionContext"
+import { useOnChange } from "../value/use-on-change"
 
 // Does this device prefer reduced motion? Returns `null` server-side.
 export const prefersReducedMotion = motionValue<boolean | null>(null)
@@ -12,21 +12,12 @@ if (typeof window !== "undefined") {
         const setReducedMotionPreferences = () =>
             prefersReducedMotion.set(motionMediaQuery.matches)
 
-        motionMediaQuery.addListener(setReducedMotionPreferences)
+        motionMediaQuery.addEventListener("change", setReducedMotionPreferences)
 
         setReducedMotionPreferences()
     } else {
         prefersReducedMotion.set(false)
     }
-}
-
-export function determineShouldReduceMotion(
-    prefersReduced: boolean | null,
-    isReducedMotion: boolean | undefined
-): boolean {
-    return typeof isReducedMotion === "boolean"
-        ? isReducedMotion
-        : Boolean(prefersReduced)
 }
 
 /**
@@ -56,18 +47,11 @@ export function determineShouldReduceMotion(
  * @public
  */
 export function useReducedMotion() {
-    const { isReducedMotion } = useContext(MotionContext)
     const [shouldReduceMotion, setShouldReduceMotion] = useState(
-        determineShouldReduceMotion(prefersReducedMotion.get(), isReducedMotion)
+        prefersReducedMotion.get()
     )
 
-    useEffect(() => {
-        return prefersReducedMotion.onChange(v => {
-            setShouldReduceMotion(
-                determineShouldReduceMotion(v, isReducedMotion)
-            )
-        })
-    }, [setShouldReduceMotion, isReducedMotion])
+    useOnChange(prefersReducedMotion, setShouldReduceMotion)
 
     return shouldReduceMotion
 }

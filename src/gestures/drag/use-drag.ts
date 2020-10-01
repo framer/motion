@@ -5,6 +5,7 @@ import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"
 import { VisualElement } from "../../render/VisualElement"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { useAnimationControls } from "../../motion/utils/use-animation-controls"
 
 /**
  * A hook that allows an element to be dragged.
@@ -14,6 +15,8 @@ import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 export function useDrag(props: DraggableProps, visualElement: VisualElement) {
     const { dragControls: groupDragControls } = props
     const { transformPagePoint } = useContext(MotionConfigContext)
+
+    useAnimationControls(visualElement)
 
     const dragControls = useConstant(() => {
         return new VisualElementDragControls({

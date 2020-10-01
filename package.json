@@ -17,7 +17,6 @@
         "popmotion",
         "framer"
     ],
-    "sideEffects": false,
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
         "test": "yarn test-client && yarn test-server && yarn test-e2e",
@@ -124,7 +123,7 @@
         },
         {
             "path": "./dist/minimal-component.js",
-            "maxSize": "10 kB"
+            "maxSize": "12.5 kB"
         }
     ]
 }

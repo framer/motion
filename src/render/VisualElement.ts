@@ -6,6 +6,10 @@ import { VisualElementConfig, ResolvedValues } from "./types"
 import { AxisBox2D } from "../types/geometry"
 import { invariant } from "hey-listen"
 import { Snapshot } from "../components/AnimateSharedLayout/stack"
+import {
+    AnimationControlsConfig,
+    VisualElementAnimationControls,
+} from "../animation/VisualElementAnimationControls"
 
 type Subscriptions = Map<string, () => void>
 
@@ -33,6 +37,15 @@ export abstract class VisualElement<E = any> {
 
     // The latest resolved MotionValues
     latest: ResolvedValues = {}
+
+    animationControlsConfig: AnimationControlsConfig = {}
+
+    /**
+     * A reference to the animation controls for this component. This is currently hydrated by
+     * useAnimationControls and is currently intended as temporary until further refactoring
+     * splits out layout projection code from HTMLVisualElement.
+     */
+    protected animation?: VisualElementAnimationControls
 
     private removeFromParent?: () => void
 

@@ -3,8 +3,8 @@ import { useContext } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from ".."
-import { MotionContextProps } from "../context/MotionContext"
 import { MotionFeature } from "./types"
+import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 
 /**
  * Load features via renderless components based on the provided MotionProps
@@ -13,10 +13,7 @@ export function useFeatures(
     defaultFeatures: MotionFeature[],
     isStatic: boolean,
     visualElement: VisualElement,
-    props: MotionProps,
-    context: MotionContextProps,
-    parentContext: MotionContextProps,
-    shouldInheritVariant: boolean
+    props: MotionProps
 ): null | JSX.Element[] {
     const plugins = useContext(MotionConfigContext)
 
@@ -32,17 +29,15 @@ export function useFeatures(
     for (let i = 0; i < numFeatures; i++) {
         const { shouldRender, key, getComponent } = allFeatures[i]
 
-        if (shouldRender(props, parentContext)) {
+        if (shouldRender(props)) {
             const Component = getComponent(props)
             Component &&
                 features.push(
                     <Component
                         key={key}
                         {...props}
-                        localContext={context}
-                        parentContext={parentContext}
                         visualElement={visualElement as any}
-                        inherit={shouldInheritVariant}
+                        inherit={checkShouldInheritVariant(props)}
                     />
                 )
         }
