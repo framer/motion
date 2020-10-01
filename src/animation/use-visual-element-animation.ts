@@ -8,6 +8,7 @@ import { MotionContext } from "../motion/context/MotionContext"
 import { useConstant } from "../utils/use-constant"
 import { PresenceContext } from "../components/AnimatePresence/PresenceContext"
 import { VisualElement } from "../render/VisualElement"
+import { useUnmountEffect } from "../utils/use-unmount-effect"
 
 /**
  * Creates an imperative set of controls to trigger animations.
@@ -45,17 +46,15 @@ export function useVisualElementAnimation<P>(
         }
     })
 
-    useEffect(() => {
-        return () => {
-            // Remove reference to onAnimationComplete from controls. All the MotionValues
-            // are unsubscribed from this component separately. We let animations run out
-            // as they might be animating other components.
-            const { onAnimationComplete, ...unmountProps } = props
-            controls.setProps(unmountProps as P & MotionProps)
+    useUnmountEffect(() => {
+        // Remove reference to onAnimationComplete from controls. All the MotionValues
+        // are unsubscribed from this component separately. We let animations run out
+        // as they might be animating other components.
+        const { onAnimationComplete, ...unmountProps } = props
+        controls.setProps(unmountProps as P & MotionProps)
 
-            parentControls && parentControls.removeChild(controls)
-        }
-    }, [])
+        parentControls && parentControls.removeChild(controls)
+    })
 
     return controls
 }

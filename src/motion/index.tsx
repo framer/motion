@@ -7,7 +7,6 @@ import { useMotionValues } from "./utils/use-motion-values"
 import { UseVisualElement } from "../render/types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { AnimationControlsConfig } from "../animation/VisualElementAnimationControls"
-import { useVisualElementAnimation } from "../animation/use-visual-element-animation"
 import { useFeatures } from "./features/use-features"
 import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
 export { MotionProps }
@@ -36,8 +35,8 @@ export function createMotionComponent<P extends {}, E>(
         defaultFeatures,
         useVisualElement,
         render,
-        animationControlsConfig,
-    }: MotionComponentConfig<E>
+    }: //animationControlsConfig,
+    MotionComponentConfig<E>
 ) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
         const parentContext = useContext(MotionContext)
@@ -75,19 +74,18 @@ export function createMotionComponent<P extends {}, E>(
          * Create animation controls for the VisualElement. It might be
          * interesting to try and combine this with VisualElement itself in a further refactor.
          */
-        const controls = useVisualElementAnimation(
-            visualElement,
-            props,
-            animationControlsConfig,
-            shouldInheritVariant
-        )
+        // const controls = useVisualElementAnimation(
+        //     visualElement,
+        //     props,
+        //     animationControlsConfig,
+        //     shouldInheritVariant
+        // )
 
         /**
          * Build the MotionContext to pass on to the next `motion` component.
          */
         const context = useMotionContext(
             parentContext,
-            controls,
             visualElement,
             isStatic,
             props
@@ -100,7 +98,6 @@ export function createMotionComponent<P extends {}, E>(
             defaultFeatures,
             isStatic,
             visualElement,
-            controls,
             props,
             context,
             parentContext,

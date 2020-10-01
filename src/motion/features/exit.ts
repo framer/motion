@@ -5,9 +5,11 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
+import { useAnimationControls } from "../utils/use-animation-controls"
 
 const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
-    const { animate, controls, exit } = props
+    const { animate, exit, visualElement } = props
+    const controls = useAnimationControls(visualElement)
     const [isPresent, onExitComplete] = usePresence()
     const presenceContext = useContext(PresenceContext)
     const isPlayingExitAnimation = useRef(false)
@@ -44,6 +46,6 @@ const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
  */
 export const Exit: MotionFeature = {
     key: "exit",
-    shouldRender: props => !!props.exit && !checkShouldInheritVariant(props),
+    shouldRender: (props) => !!props.exit && !checkShouldInheritVariant(props),
     getComponent: () => ExitComponent,
 }

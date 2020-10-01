@@ -2,7 +2,7 @@ import * as React from "react"
 import { useMemo, useRef, useEffect, RefObject, useContext } from "react"
 import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { VariantLabels, MotionProps } from "../types"
-import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
+// import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { Target } from "../../types"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
@@ -43,7 +43,6 @@ const isAnimationControls = (
  */
 export const useMotionContext = (
     parentContext: MotionContextProps,
-    controls: VisualElementAnimationControls,
     visualElement: VisualElement<any>,
     isStatic: boolean = false,
     { initial, animate, variants, whileTap, whileHover, layoutId }: MotionProps
@@ -111,9 +110,9 @@ export const useMotionContext = (
     // So all child motion components will re-render as a result.
     const context: MotionContextProps = useMemo(
         () => ({
-            controls: shouldPropagateControls
-                ? controls
-                : parentContext.controls,
+            // controls: shouldPropagateControls
+            //     ? controls
+            //     : parentContext.controls,
             initial: targetInitial,
             animate: targetAnimate,
             visualElement,
@@ -136,10 +135,10 @@ export const useMotionContext = (
 
     // Set initial state. If this is a static component (ie in Framer canvas), respond to updates
     // in `initial`.
-    useInitialOrEveryRender(() => {
-        const initialToApply = initialState || parentContext.initial
-        initialToApply && controls.apply(initialToApply)
-    }, !isStatic)
+    // useInitialOrEveryRender(() => {
+    //     const initialToApply = initialState || parentContext.initial
+    //     initialToApply && controls.apply(initialToApply)
+    // }, !isStatic)
 
     useEffect(() => {
         hasMounted.current = true

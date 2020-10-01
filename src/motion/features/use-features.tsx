@@ -4,7 +4,6 @@ import { MotionConfigContext } from "../context/MotionConfigContext"
 import { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from ".."
 import { MotionContextProps } from "../context/MotionContext"
-import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { MotionFeature } from "./types"
 
 /**
@@ -14,7 +13,6 @@ export function useFeatures(
     defaultFeatures: MotionFeature[],
     isStatic: boolean,
     visualElement: VisualElement,
-    controls: VisualElementAnimationControls,
     props: MotionProps,
     context: MotionContextProps,
     parentContext: MotionContextProps,
@@ -44,7 +42,6 @@ export function useFeatures(
                         localContext={context}
                         parentContext={parentContext}
                         visualElement={visualElement as any}
-                        controls={controls}
                         inherit={shouldInheritVariant}
                     />
                 )
