@@ -10,7 +10,6 @@ import { Ref } from "react"
 export type UseVisualElement<E, P = MotionProps> = (
     Component: string | React.ComponentType<P>,
     props: MotionProps & P,
-    parent?: VisualElement,
     isStatic?: boolean,
     ref?: Ref<E>
 ) => VisualElement

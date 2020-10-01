@@ -8,6 +8,7 @@ import { useIsPresent } from "../../components/AnimatePresence/use-presence"
 import { useContext, useEffect } from "react"
 import { VisualElementContext } from "../../motion/context/VisualElementContext"
 import { useUnmountEffect } from "../../utils/use-unmount-effect"
+import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
@@ -38,9 +39,21 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
 
     visualElement.layoutId = props.layoutId
 
-    const isPresent = useIsPresent()
+    const presenceContext = useContext(PresenceContext)
+
+    /**
+     * Update VisualElement with
+     */
+    const isPresent =
+        presenceContext === null ? true : presenceContext.isPresent
     visualElement.isPresent =
         props.isPresent !== undefined ? props.isPresent : isPresent
+
+    /**
+     *
+     */
+    const presenceId = presenceContext?.id
+    visualElement.isPresenceRoot = parent.presenceId !== presenceId
 
     /**
      * If this component is present, reset and resubscribe its variant children to
