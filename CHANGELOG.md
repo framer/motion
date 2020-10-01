@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.7] 2020-10-01
+
+### Fixed
+
+-   `duration` and `bounce` are now overridden by `damping`, `stiffness`, and `mass`. This fixes an issue in Framer where legacy transitions were breaking.
+
 ## [2.7.6] 2020-09-29
 
 ### Fixed
