@@ -947,7 +947,7 @@ export interface Spring extends Repeat {
      *
      * If `bounce` is set, this defaults to `0.8`.
      *
-     * Note: `duration` and `bounce` override all other spring options.
+     * Note: `duration` and `bounce` will be overridden if `stiffness`, `damping` or `mass` are set.
      *
      * @library
      *
@@ -983,7 +983,7 @@ export interface Spring extends Repeat {
      *
      * If `duration` is set, this defaults to `0.25`.
      *
-     * Note: `bounce` and `duration` override all other spring options.
+     * Note: `bounce` and `duration` will be overridden if `stiffness`, `damping` or `mass` are set.
      *
      * @library
      *
