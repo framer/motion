@@ -1,6 +1,5 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
 import { MotionContextProps } from "../context/MotionContext"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { VisualElement } from "../../render/VisualElement"
@@ -11,7 +10,6 @@ import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
  */
 export interface FeatureProps extends MotionProps {
     visualElement: HTMLVisualElement
-    controls: VisualElementAnimationControls
     localContext: MotionContextProps
     parentContext: MotionContextProps
 }
@@ -35,7 +33,6 @@ export type LoadMotionFeatures<P = {}> = (
     props: P & MotionProps,
     context: MotionContextProps,
     parentContext: MotionContextProps,
-    controls: VisualElementAnimationControls<P>,
     inherit: boolean,
     plugins: MotionConfigContext
 ) => React.ReactElement<FeatureProps>[]

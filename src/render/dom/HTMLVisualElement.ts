@@ -23,7 +23,7 @@ import {
 import { Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
-import { startAnimation } from "../../animation/utils/transitions"
+// import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 import {
     buildLayoutProjectionTransform,
@@ -454,7 +454,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition) {
+    startLayoutAxisAnimation(axis: "x" | "y", _transition: Transition) {
         const progress = this.axisProgress[axis]
 
         const { min, max } = this.targetBox[axis]
@@ -465,7 +465,7 @@ export class HTMLVisualElement<
         progress.set(min) // Set twice to hard-reset velocity
         progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
-        return startAnimation(axis, progress, 0, transition)
+        // return startAnimation(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {

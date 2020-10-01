@@ -7,34 +7,35 @@ import { useAnimationGroupSubscription } from "../../animation/use-animation-gro
 import { AnimationControls } from "../../animation/AnimationControls"
 import { TargetAndTransition } from "../../types"
 import { FeatureProps, MotionFeature } from "./types"
+import { useAnimationControls } from "../utils/use-animation-controls"
 
 export const AnimatePropComponents = {
     [AnimatePropType.Target]: makeRenderlessComponent<FeatureProps>(
-        ({ animate, controls, visualElement, transition }: FeatureProps) => {
+        ({ animate, visualElement, transition }: FeatureProps) => {
             return useAnimateProp(
                 animate as TargetAndTransition,
-                controls,
+                useAnimationControls(visualElement),
                 visualElement,
                 transition
             )
         }
     ),
     [AnimatePropType.VariantLabel]: makeRenderlessComponent<FeatureProps>(
-        ({ animate, inherit = true, controls, initial }: FeatureProps) => {
+        ({ animate, inherit = true, visualElement, initial }: FeatureProps) => {
             return useVariants(
                 initial as VariantLabels,
                 animate as VariantLabels,
                 inherit,
-                controls
+                useAnimationControls(visualElement)
             )
         }
     ),
     [AnimatePropType.AnimationSubscription]: makeRenderlessComponent<
         FeatureProps
-    >(({ animate, controls }: FeatureProps) => {
+    >(({ animate, visualElement }: FeatureProps) => {
         return useAnimationGroupSubscription(
             animate as AnimationControls,
-            controls
+            useAnimationControls(visualElement)
         )
     }),
 }
@@ -58,7 +59,7 @@ const animatePropTypeTests = {
     [AnimatePropType.VariantLabel]: (props: FeatureProps) => {
         return (
             props.variants !== undefined ||
-            animationProps.some(key => typeof props[key] === "string")
+            animationProps.some((key) => typeof props[key] === "string")
         )
     },
     [AnimatePropType.AnimationSubscription]: isAnimationSubscription,
