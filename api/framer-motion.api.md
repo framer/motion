@@ -187,7 +187,7 @@ export function createDomMotionComponent(key: string): React.ForwardRefExoticCom
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { defaultFeatures, useVisualElement, render, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
+export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { defaultFeatures, useVisualElement, render }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
 // @public
 export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>;
@@ -294,6 +294,10 @@ export type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWit
 export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement> extends VisualElement<E> {
     // (undocumented)
     addValue(key: string, value: MotionValue): void;
+    // (undocumented)
+    animationControlsConfig: {
+        makeTargetAnimatable: import("../../animation/VisualElementAnimationControls").MakeTargetAnimatable;
+    };
     // Warning: (ae-forgotten-export) The symbol "MotionPoint" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -355,7 +359,7 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     show(): void;
     snapshotBoundingBox(): void;
     // (undocumented)
-    startLayoutAxisAnimation(axis: "x" | "y", _transition: Transition): void;
+    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition): Promise<void> | undefined;
     // (undocumented)
     stopLayoutAnimation(): void;
     // (undocumented)
@@ -948,9 +952,10 @@ export enum VisibilityAction {
 // 
 // @internal
 export class VisualElementAnimationControls<P extends {} = {}, V extends {} = {}> {
-    // Warning: (ae-forgotten-export) The symbol "AnimationControlsConfig" needs to be exported by the entry point index.d.ts
-    constructor(visualElement: VisualElement, { makeTargetAnimatable }: AnimationControlsConfig);
+    constructor(visualElement: VisualElement);
     addChild(controls: VisualElementAnimationControls): void;
+    // (undocumented)
+    animateMotionValue: typeof startAnimation;
     apply(definition: AnimationDefinition): void;
     clearOverride(overrideIndex: number): void;
     // (undocumented)

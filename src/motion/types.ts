@@ -410,13 +410,6 @@ export interface MotionAdvancedProps {
      * Set to `false` to prevent inheriting variant changes from its parent.
      */
     inherit?: boolean
-
-    /**
-     * @internal
-     * Set to `true` to block rendering motion values (`animate`, gestures, etcetera)
-     * on the component. This can be used to temporarily disable animations for performance reasons.
-     */
-    static?: boolean
 }
 
 /**

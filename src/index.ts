@@ -34,7 +34,6 @@ export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
  * Accessibility
  */
 export { useReducedMotion } from "./utils/use-reduced-motion"
-export { ReducedMotion } from "./components/ReducedMotion"
 
 /**
  * Utils
@@ -80,7 +79,6 @@ export {
     MotionConfig,
     MotionConfigContext,
 } from "./motion/context/MotionConfigContext"
-export { MotionContext } from "./motion/context/MotionContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 
 /**

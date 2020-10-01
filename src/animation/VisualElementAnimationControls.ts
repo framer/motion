@@ -133,11 +133,6 @@ export class VisualElementAnimationControls<
     private activeOverrides: Set<number> = new Set()
 
     /**
-     * A Set of children component controls for variant propagation.
-     */
-    private children?: Set<VisualElementAnimationControls>
-
-    /**
      * A Set of value keys that are currently animating.
      */
     private isAnimating: Set<string> = new Set()
@@ -147,12 +142,10 @@ export class VisualElementAnimationControls<
      */
     private makeTargetAnimatable: MakeTargetAnimatable | undefined
 
-    constructor(
-        visualElement: VisualElement,
-        { makeTargetAnimatable }: AnimationControlsConfig
-    ) {
+    constructor(visualElement: VisualElement) {
         this.visualElement = visualElement
-        this.makeTargetAnimatable = makeTargetAnimatable
+        this.makeTargetAnimatable =
+            visualElement.animationControlsConfig.makeTargetAnimatable
 
         this.visualElement.forEachValue(
             (value, key) => (this.baseTarget[key] = value.get())
@@ -323,6 +316,11 @@ export class VisualElementAnimationControls<
     }
 
     /**
+     * @private
+     */
+    animateMotionValue = startAnimation
+
+    /**
      * Get the highest active override priority index
      */
     private getHighestPriority() {
@@ -342,11 +340,12 @@ export class VisualElementAnimationControls<
     setOverride(definition: AnimationDefinition, overrideIndex: number) {
         this.overrides[overrideIndex] = definition
 
-        if (this.children) {
-            this.children.forEach((child) =>
-                child.setOverride(definition, overrideIndex)
-            )
-        }
+        // TODO: Replace with variant traversal on VisualElement
+        // if (this.children) {
+        //     this.children.forEach((child) =>
+        //         child.setOverride(definition, overrideIndex)
+        //     )
+        // }
     }
 
     /**
@@ -367,9 +366,10 @@ export class VisualElementAnimationControls<
      * @param overrideIndex -
      */
     clearOverride(overrideIndex: number) {
-        if (this.children) {
-            this.children.forEach((child) => child.clearOverride(overrideIndex))
-        }
+        // TODO: Replace with variant traversal on VisualElement
+        // if (this.children) {
+        //     this.children.forEach((child) => child.clearOverride(overrideIndex))
+        // }
 
         const override = this.overrides[overrideIndex]
         if (!override) return
@@ -414,6 +414,8 @@ export class VisualElementAnimationControls<
 
     /**
      * Apply variant labels without animation
+     *
+     * TODO: Replace with pure functions
      */
     private applyVariantLabels(variantLabelList: string[]) {
         const isActive: Set<string> = new Set()
@@ -425,14 +427,14 @@ export class VisualElementAnimationControls<
             )
 
             target && this.setValues(target, { isActive })
-
             transitionEnd && this.setValues(transitionEnd, { isActive })
 
-            if (this.children && this.children.size) {
-                this.children.forEach((child) =>
-                    child.applyVariantLabels(variantLabelList)
-                )
-            }
+            // TODO: Replace with variant traversal
+            // if (this.children && this.children.size) {
+            //     this.children.forEach((child) =>
+            //         child.applyVariantLabels(variantLabelList)
+            //     )
+            // }
         })
     }
 
@@ -676,34 +678,6 @@ export class VisualElementAnimationControls<
 
     stop() {
         this.visualElement.forEachValue((value) => value.stop())
-    }
-
-    /**
-     * Add the controls of a child component.
-     * @param controls -
-     */
-    addChild(controls: VisualElementAnimationControls) {
-        if (!this.children) {
-            this.children = new Set()
-        }
-        this.children.add(controls)
-
-        // We set child overrides when `setOverride` is called, but also have to do it here
-        // as the first time `setOverride` is called all the children might not have been added yet.
-        this.overrides.forEach((override, i) => {
-            override && controls.setOverride(override, i)
-        })
-    }
-
-    removeChild(controls: VisualElementAnimationControls) {
-        if (!this.children) {
-            return
-        }
-        this.children.delete(controls)
-    }
-
-    resetChildren() {
-        if (this.children) this.children.clear()
     }
 }
 

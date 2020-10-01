@@ -1,12 +1,11 @@
 import * as React from "react"
 import { useContext, forwardRef, Ref } from "react"
-import { MotionContext, useMotionContext } from "./context/MotionContext"
+import { MotionContext, useMotionContext } from "./context/VisualElementContext"
 import { MotionProps } from "./types"
 import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { useMotionValues } from "./utils/use-motion-values"
 import { UseVisualElement } from "../render/types"
 import { RenderComponent, MotionFeature } from "./features/types"
-import { AnimationControlsConfig } from "../animation/VisualElementAnimationControls"
 import { useFeatures } from "./features/use-features"
 import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
 export { MotionProps }
@@ -15,7 +14,6 @@ export interface MotionComponentConfig<E> {
     defaultFeatures: MotionFeature[]
     useVisualElement: UseVisualElement<E>
     render: RenderComponent
-    animationControlsConfig: AnimationControlsConfig
 }
 
 /**
@@ -31,24 +29,16 @@ export interface MotionComponentConfig<E> {
  */
 export function createMotionComponent<P extends {}, E>(
     Component: string | React.ComponentType<P>,
-    {
-        defaultFeatures,
-        useVisualElement,
-        render,
-    }: //animationControlsConfig,
-    MotionComponentConfig<E>
+    { defaultFeatures, useVisualElement, render }: MotionComponentConfig<E>
 ) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
-        const parentContext = useContext(MotionContext)
-        const shouldInheritVariant = checkShouldInheritVariant(props)
-
         /**
          * If a component isStatic, we only visually update it as a
          * result of a React re-render, rather than any interactions or animations.
          * If this component or any ancestor isStatic, we disable hardware acceleration
          * and don't load any additional functionality.
          */
-        const isStatic = parentContext.static || props.static || false
+        const isStatic = false // Get from MotionConfigContext
 
         /**
          * Create a VisualElement for this component. A VisualElement provides a common
@@ -59,37 +49,14 @@ export function createMotionComponent<P extends {}, E>(
         const visualElement = useVisualElement(
             Component,
             props,
-            parentContext.visualElement as any,
             isStatic,
             externalRef
         )
 
         /**
-         * Scrape MotionValues from props and add/remove them to/from
-         * the VisualElement as necessary.
+         * Scrape MotionValues from props and add/remove them to/from the VisualElement.
          */
         useMotionValues(visualElement, props)
-
-        /**
-         * Create animation controls for the VisualElement. It might be
-         * interesting to try and combine this with VisualElement itself in a further refactor.
-         */
-        // const controls = useVisualElementAnimation(
-        //     visualElement,
-        //     props,
-        //     animationControlsConfig,
-        //     shouldInheritVariant
-        // )
-
-        /**
-         * Build the MotionContext to pass on to the next `motion` component.
-         */
-        const context = useMotionContext(
-            parentContext,
-            visualElement,
-            isStatic,
-            props
-        )
 
         /**
          * Load features as renderless components unless the component isStatic
@@ -98,10 +65,7 @@ export function createMotionComponent<P extends {}, E>(
             defaultFeatures,
             isStatic,
             visualElement,
-            props,
-            context,
-            parentContext,
-            shouldInheritVariant
+            props
         )
 
         const component = render(Component, props, visualElement)
@@ -117,7 +81,7 @@ export function createMotionComponent<P extends {}, E>(
         // all plugins and features has to execute.
         return (
             <>
-                <MotionContext.Provider value={context}>
+                <MotionContext.Provider value={visualElement}>
                     {component}
                 </MotionContext.Provider>
                 {features}

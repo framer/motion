@@ -1,7 +1,4 @@
-import {
-    VisualElementAnimationControls,
-    AnimationControlsConfig,
-} from "./VisualElementAnimationControls"
+import { VisualElementAnimationControls } from "./VisualElementAnimationControls"
 import { useContext, useEffect } from "react"
 import { MotionProps } from "../motion/types"
 import { MotionContext } from "../motion/context/MotionContext"
@@ -20,14 +17,13 @@ import { useUnmountEffect } from "../utils/use-unmount-effect"
 export function useVisualElementAnimation<P>(
     visualElement: VisualElement,
     props: P & MotionProps,
-    config: AnimationControlsConfig,
     subscribeToParentControls: boolean
 ) {
     const { variants, transition } = props
     const parentControls = useContext(MotionContext).controls
     const presenceContext = useContext(PresenceContext)
     const controls = useConstant(
-        () => new VisualElementAnimationControls<P>(visualElement, config)
+        () => new VisualElementAnimationControls<P>(visualElement)
     )
 
     // Reset and resubscribe children every render to ensure stagger order is correct

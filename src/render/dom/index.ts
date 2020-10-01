@@ -2,7 +2,6 @@ import * as React from "react"
 import { MotionComponentConfig, MotionProps } from "../../motion"
 import { useDomVisualElement } from "./use-dom-visual-element"
 import { render } from "./render"
-import { parseDomVariant } from "./utils/parse-dom-variant"
 import { createMotionComponent } from "../../motion"
 import { HTMLMotionComponents, SVGMotionComponents } from "./types"
 import { Drag } from "../../motion/features/drag"
@@ -35,9 +34,6 @@ const allMotionFeatures = [
 const domBaseConfig = {
     useVisualElement: useDomVisualElement as any,
     render: render as any,
-    animationControlsConfig: {
-        makeTargetAnimatable: parseDomVariant,
-    },
 }
 
 /**
