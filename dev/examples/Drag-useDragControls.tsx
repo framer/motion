@@ -25,10 +25,16 @@ export const App = () => {
 
     return (
         <>
-            <div style={container} onPointerDown={e => dragControls.start(e)} />
+            <div
+                style={container}
+                onPointerDown={(e) => dragControls.start(e)}
+            />
             <motion.div
                 drag
                 dragControls={dragControls}
+                onDrag={() => console.log("onDrag")}
+                onDragStart={() => console.log("onDragStart")}
+                onDragEnd={() => console.log("onDragEnd")}
                 whileTap={{ scale: 0.95 }}
                 style={child}
             />

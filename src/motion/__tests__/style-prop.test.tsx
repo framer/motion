@@ -43,12 +43,14 @@ describe("style prop", () => {
         const Component = ({ useX = false }) => {
             const x = useMotionValue(1)
             const y = useMotionValue(2)
+            const z = useMotionValue(3)
 
             return (
                 <motion.div
                     style={{
                         x: useX ? x : 0,
                         y: !useX ? y : 0,
+                        z: !useX ? z : 0,
                     }}
                 />
             )
@@ -57,19 +59,19 @@ describe("style prop", () => {
         const { container, rerender } = render(<Component />)
 
         expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(2px) translateZ(0)"
+            "transform: translateX(0px) translateY(2px) translateZ(3px)"
         )
 
         rerender(<Component useX />)
 
         expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(1px) translateY(0px) translateZ(0)"
+            "transform: translateX(1px) translateY(0px) translateZ(0px)"
         )
 
         rerender(<Component />)
 
         expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(0px) translateY(2px) translateZ(0)"
+            "transform: translateX(0px) translateY(2px) translateZ(3px)"
         )
     })
 })

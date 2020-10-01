@@ -16,18 +16,8 @@ export function isNear(value: number, target = 0, maxDistance = 0.01): boolean {
     return distance(value, target) < maxDistance
 }
 
-/**
- * Calculate the translate needed to be applied to source to get target
- */
-export function calcTranslate(
-    source: Axis,
-    target: Axis,
-    origin: number
-): number {
-    const sourcePoint = mix(source.min, source.max, origin)
-    const targetPoint = mix(target.min, target.max, origin)
-
-    return targetPoint - sourcePoint
+function calcLength(axis: Axis) {
+    return axis.max - axis.min
 }
 
 /**
@@ -36,8 +26,8 @@ export function calcTranslate(
  */
 export function calcOrigin(source: Axis, target: Axis): number {
     let origin = 0.5
-    const sourceLength = source.max - source.min
-    const targetLength = target.max - target.min
+    const sourceLength = calcLength(source)
+    const targetLength = calcLength(target)
 
     if (targetLength > sourceLength) {
         origin = progress(target.min, target.max - sourceLength, source.min)
@@ -60,16 +50,14 @@ export function updateAxisDelta(
     target: Axis,
     origin?: number
 ) {
-    const sourceLength = source.max - source.min
-    const targetLength = target.max - target.min
-
     delta.origin = origin === undefined ? calcOrigin(source, target) : origin
     delta.originPoint = mix(source.min, source.max, delta.origin)
 
-    delta.scale = targetLength / sourceLength
+    delta.scale = calcLength(target) / calcLength(source)
     if (isNear(delta.scale, 1, 0.0001)) delta.scale = 1
 
-    delta.translate = calcTranslate(source, target, delta.origin)
+    delta.translate =
+        mix(target.min, target.max, delta.origin) - delta.originPoint
     if (isNear(delta.translate)) delta.translate = 0
 }
 
