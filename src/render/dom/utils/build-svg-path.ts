@@ -1,5 +1,5 @@
 import { px } from "style-value-types"
-import { ResolvedValues } from "../../types"
+import { ResolvedValues } from "../../VisualElement/types"
 
 // Convert a progress 0-1 to a pixels value based on the provided length
 const progressToPixels = (progress: number, length: number) =>

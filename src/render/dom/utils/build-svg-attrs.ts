@@ -1,5 +1,5 @@
 import { Dimensions, TransformOrigin, DOMVisualElementConfig } from "../types"
-import { ResolvedValues } from "../../types"
+import { ResolvedValues } from "../../VisualElement/types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./build-svg-path"
 import { buildHTMLStyles } from "./build-html-styles"

@@ -1,13 +1,12 @@
 import * as React from "react"
-import { useContext, forwardRef, Ref } from "react"
-import { MotionContext, useMotionContext } from "./context/VisualElementContext"
+import { forwardRef, Ref } from "react"
 import { MotionProps } from "./types"
-import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
 import { useMotionValues } from "./utils/use-motion-values"
-import { UseVisualElement } from "../render/types"
+import { UseVisualElement } from "../render/VisualElement/types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
+import { useVariants, VariantContext } from "./utils/use-variants"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
@@ -38,7 +37,7 @@ export function createMotionComponent<P extends {}, E>(
          * If this component or any ancestor isStatic, we disable hardware acceleration
          * and don't load any additional functionality.
          */
-        const isStatic = false // Get from MotionConfigContext
+        const isStatic = false // TODO: Get this from MotionConfigContext
 
         /**
          * Create a VisualElement for this component. A VisualElement provides a common
@@ -57,6 +56,13 @@ export function createMotionComponent<P extends {}, E>(
          * Scrape MotionValues from props and add/remove them to/from the VisualElement.
          */
         useMotionValues(visualElement, props)
+
+        /**
+         * Add the visualElement as a node in the variant tree.
+         */
+        const variantContext = useVariants(visualElement, props, isStatic)
+
+        // TODO Set all VisualElement values as baseTarget on initial render
 
         /**
          * Load features as renderless components unless the component isStatic
@@ -81,9 +87,9 @@ export function createMotionComponent<P extends {}, E>(
         // all plugins and features has to execute.
         return (
             <>
-                <MotionContext.Provider value={visualElement}>
+                <VariantContext.Provider value={variantContext}>
                     {component}
-                </MotionContext.Provider>
+                </VariantContext.Provider>
                 {features}
             </>
         )

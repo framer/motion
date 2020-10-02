@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { MotionContext } from "../motion/context/VisualElementContext"
+import { VisualElementContext } from "../motion/context/VisualElementContext"
 import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
 import { invariant, warning } from "hey-listen"
@@ -54,7 +54,7 @@ export function useInvertedScale(
 ): ScaleMotionValues {
     let parentScaleX = useMotionValue(1)
     let parentScaleY = useMotionValue(1)
-    const { visualElement } = useContext(MotionContext)
+    const visualElement = useContext(VisualElementContext)
 
     invariant(
         !!(scale || visualElement),

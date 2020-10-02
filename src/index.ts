@@ -101,7 +101,6 @@ export {
     RelayoutInfo,
     ResolveLayoutTransition,
 } from "./motion/types"
-export { VisualElementAnimationControls } from "./animation/VisualElementAnimationControls"
 export {
     Orchestration,
     Repeat,

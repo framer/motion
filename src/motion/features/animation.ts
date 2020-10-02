@@ -2,31 +2,29 @@ import { ComponentType } from "react"
 import { MotionProps, AnimatePropType, VariantLabels } from "../types"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { useAnimateProp } from "../../animation/use-animate-prop"
-import { useVariants } from "../../animation/use-variants"
+import { useVariantAnimations } from "../../animation/use-variant-animations"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { TargetAndTransition } from "../../types"
 import { FeatureProps, MotionFeature } from "./types"
-import { useAnimationControls } from "../utils/use-animation-controls"
 
 export const AnimatePropComponents = {
     [AnimatePropType.Target]: makeRenderlessComponent<FeatureProps>(
         ({ animate, visualElement, transition }: FeatureProps) => {
             return useAnimateProp(
-                animate as TargetAndTransition,
-                useAnimationControls(visualElement),
                 visualElement,
+                animate as TargetAndTransition,
                 transition
             )
         }
     ),
     [AnimatePropType.VariantLabel]: makeRenderlessComponent<FeatureProps>(
         ({ animate, inherit = true, visualElement, initial }: FeatureProps) => {
-            return useVariants(
+            return useVariantAnimations(
+                visualElement,
                 initial as VariantLabels,
                 animate as VariantLabels,
-                inherit,
-                useAnimationControls(visualElement)
+                inherit
             )
         }
     ),
@@ -34,8 +32,8 @@ export const AnimatePropComponents = {
         FeatureProps
     >(({ animate, visualElement }: FeatureProps) => {
         return useAnimationGroupSubscription(
-            animate as AnimationControls,
-            useAnimationControls(visualElement)
+            visualElement,
+            animate as AnimationControls
         )
     }),
 }

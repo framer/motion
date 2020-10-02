@@ -1,11 +1,12 @@
 import { useEffect, useRef, useContext } from "react"
 import { VariantLabels } from "../motion/types"
-import { VisualElementAnimationControls } from "./VisualElementAnimationControls"
 import {
     resolveVariantLabels,
     asDependencyList,
 } from "./utils/variant-resolvers"
-import { MotionContext } from "../motion/context/VisualElementContext"
+import { VariantContext } from "../motion/utils/use-variants"
+import { VisualElement } from "../render/VisualElement"
+import { startVisualElementAnimation } from "../render/VisualElement/utils/animation"
 
 const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
     return oldVariant.join(",") !== newVariant.join(",")
@@ -21,18 +22,16 @@ const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
  *
  * @internal
  */
-export function useVariants(
+export function useVariantAnimations(
+    visualElement: VisualElement,
     initial: VariantLabels,
     animate: VariantLabels,
-    inherit: boolean,
-    controls: VisualElementAnimationControls
+    inherit: boolean
 ) {
     let targetVariants = resolveVariantLabels(animate)
-    const context = useContext(MotionContext)
+    const context = useContext(VariantContext)
 
-    // TODO Replace with visualElement hasMounted check
-    const parentAlreadyMounted =
-        context.hasMounted && context.hasMounted.current
+    const parentAlreadyMounted = context.parent?.isMounted
     const hasMounted = useRef(false)
 
     useEffect(() => {
@@ -50,7 +49,8 @@ export function useVariants(
                 hasVariantChanged(resolveVariantLabels(initial), targetVariants)
         }
 
-        shouldAnimate && controls.start(targetVariants)
+        shouldAnimate &&
+            startVisualElementAnimation(visualElement, targetVariants)
 
         hasMounted.current = true
     }, asDependencyList(targetVariants))
