@@ -13,7 +13,7 @@ import {
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
-import { ResolvedValues } from "../render/types"
+import { ResolvedValues } from "../render/VisualElement/types"
 
 export type MotionStyleProp = string | number | MotionValue
 

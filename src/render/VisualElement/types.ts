@@ -1,5 +1,5 @@
-import { VisualElement } from "./VisualElement"
-import { MotionProps } from "../motion/types"
+import { VisualElement } from "."
+import { MotionProps } from "../../motion/types"
 import { Ref } from "react"
 
 /**

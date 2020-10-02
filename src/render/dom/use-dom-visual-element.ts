@@ -2,12 +2,10 @@ import { HTMLVisualElement } from "./HTMLVisualElement"
 import { useConstant } from "../../utils/use-constant"
 import { MotionProps } from "../../motion/types"
 import { SVGVisualElement } from "./SVGVisualElement"
-import { UseVisualElement } from "../types"
+import { UseVisualElement } from "../VisualElement/types"
 import { isSVGComponent } from "./utils/is-svg-component"
-import { useIsPresent } from "../../components/AnimatePresence/use-presence"
 import { useContext, useEffect } from "react"
 import { VisualElementContext } from "../../motion/context/VisualElementContext"
-import { useUnmountEffect } from "../../utils/use-unmount-effect"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 
 /**
@@ -53,21 +51,7 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
      *
      */
     const presenceId = presenceContext?.id
-    visualElement.isPresenceRoot = parent.presenceId !== presenceId
-
-    /**
-     * If this component is present, reset and resubscribe its variant children to
-     * ensure a correct stagger order.
-     */
-    isPresent && visualElement.clearVariantChildren()
-
-    /**
-     * After every render, resubscribe this component to incoming variants from the parent.
-     */
-    useEffect(() => {
-        if (parent && shouldInheritVariant)
-            parent.subscribeToVariant(visualElement)
-    })
+    visualElement.isPresenceRoot = !parent || parent.presenceId !== presenceId
 
     /**
      * TODO: Investigate if we need this
@@ -77,15 +61,6 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
             return visualElement.onViewportBoxUpdate(props.onViewportBoxUpdate)
         }
     }, [props.onViewportBoxUpdate])
-
-    /**
-     * Track mount status so children can detect whether they were present during the
-     * component's initial mount.
-     */
-    useEffect(() => {
-        visualElement.isMounted = true
-        return () => (visualElement.isMounted = false)
-    }, [])
 
     return visualElement
 }

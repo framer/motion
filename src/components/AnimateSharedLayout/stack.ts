@@ -1,6 +1,6 @@
 import { Presence } from "./types"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
-import { ResolvedValues } from "../../render/types"
+import { ResolvedValues } from "../../render/VisualElement/types"
 import { AxisBox2D, Point2D } from "../../types/geometry"
 import { isTransformProp } from "../../render/dom/utils/transform"
 import { elementDragControls } from "../../gestures/drag/VisualElementDragControls"
@@ -95,7 +95,7 @@ export function findLeadAndFollow(
         lead !== prevLead &&
         !lastIsPresent &&
         follow === prevFollow &&
-        stack.find(stackChild => stackChild === prevLead)
+        stack.find((stackChild) => stackChild === prevLead)
     ) {
         lead = prevLead
     }
@@ -143,7 +143,7 @@ export class LayoutStack {
     }
 
     remove(child: HTMLVisualElement) {
-        const index = this.order.findIndex(stackChild => child === stackChild)
+        const index = this.order.findIndex((stackChild) => child === stackChild)
         if (index !== -1) this.order.splice(index, 1)
     }
 

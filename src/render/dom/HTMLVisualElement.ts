@@ -1,7 +1,7 @@
 import { VisualElement } from "../VisualElement"
 import { AxisBox2D, Point2D, BoxDelta } from "../../types/geometry"
 import { delta, copyAxisBox, axisBox } from "../../utils/geometry"
-import { ResolvedValues } from "../types"
+import { ResolvedValues } from "../VisualElement/types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
@@ -32,6 +32,7 @@ import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import sync from "framesync"
 import { parseDomVariant } from "./utils/parse-dom-variant"
+import { startAnimation } from "../../animation/utils/transitions"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -469,7 +470,7 @@ export class HTMLVisualElement<
         progress.set(min) // Set twice to hard-reset velocity
         progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
-        return this.animation?.animateMotionValue(axis, progress, 0, transition)
+        return startAnimation(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {

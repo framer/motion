@@ -17,9 +17,9 @@ export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers
  */
 export function useGestures<GestureHandlers>(
     props: GestureHandlers,
-    ref: VisualElement
+    visualElement: VisualElement
 ) {
-    usePanGesture(props, ref)
-    useTapGesture(props, ref)
-    useHoverGesture(props, ref)
+    usePanGesture(props, visualElement)
+    useTapGesture(props, visualElement)
+    useHoverGesture(props, visualElement)
 }
