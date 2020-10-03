@@ -32,7 +32,7 @@ import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import sync from "framesync"
 import { parseDomVariant } from "./utils/parse-dom-variant"
-import { startAnimation } from "../../animation/utils/transitions"
+// import { startAnimation } from "../../animation/utils/transitions"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -459,7 +459,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition) {
+    startLayoutAxisAnimation(axis: "x" | "y", _transition: Transition) {
         const progress = this.axisProgress[axis]
 
         const { min, max } = this.targetBox[axis]
@@ -470,7 +470,7 @@ export class HTMLVisualElement<
         progress.set(min) // Set twice to hard-reset velocity
         progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
-        return startAnimation(axis, progress, 0, transition)
+        return //startAnimation(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {
