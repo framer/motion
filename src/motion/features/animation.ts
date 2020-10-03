@@ -11,53 +11,44 @@ import { isVariantLabel } from "../../render/VisualElement/utils/variants"
 import { isAnimationControls } from "../utils/use-variants"
 
 const target = {
-    shouldRender: (props: FeatureProps) => {
-        return (
-            props.animate !== undefined &&
-            !isVariantLabel(props.animate) &&
-            !isAnimationControls(props.animate)
-        )
-    },
+    shouldRender: (props: FeatureProps) =>
+        props.animate !== undefined &&
+        !isVariantLabel(props.animate) &&
+        !isAnimationControls(props.animate),
     Component: makeRenderlessComponent<FeatureProps>(
-        ({ animate, visualElement, transition }: FeatureProps) => {
-            return useAnimateProp(
+        ({ animate, visualElement, transition }: FeatureProps) =>
+            useAnimateProp(
                 visualElement,
                 animate as TargetAndTransition,
                 transition
             )
-        }
     ),
 }
 
 const animationProps = ["initial", "animate", "whileTap", "whileHover"]
 const variant = {
-    shouldRender: (props: FeatureProps) => {
-        return (
-            props.variants !== undefined ||
-            animationProps.some((key) => typeof props[key] === "string")
-        )
-    },
+    shouldRender: (props: FeatureProps) =>
+        props.variants !== undefined ||
+        animationProps.some((key) => typeof props[key] === "string"),
     Component: makeRenderlessComponent<FeatureProps>(
-        ({ animate, inherit = true, visualElement, initial }: FeatureProps) => {
-            return useVariantAnimations(
+        ({ animate, inherit = true, visualElement, initial }: FeatureProps) =>
+            useVariantAnimations(
                 visualElement,
                 initial as VariantLabels,
                 animate as VariantLabels,
                 inherit
             )
-        }
     ),
 }
 
 const controls = {
     shouldRender: isAnimationControls,
     Component: makeRenderlessComponent<FeatureProps>(
-        ({ animate, visualElement }: FeatureProps) => {
-            return useAnimationGroupSubscription(
+        ({ animate, visualElement }: FeatureProps) =>
+            useAnimationGroupSubscription(
                 visualElement,
                 animate as AnimationControls
             )
-        }
     ),
 }
 
