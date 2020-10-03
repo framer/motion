@@ -1,5 +1,5 @@
 import { ComponentType } from "react"
-import { MotionProps, AnimatePropType, VariantLabels } from "../types"
+import { VariantLabels } from "../types"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { useAnimateProp } from "../../animation/use-animate-prop"
 import { useVariantAnimations } from "../../animation/use-variant-animations"
@@ -7,9 +7,18 @@ import { useAnimationGroupSubscription } from "../../animation/use-animation-gro
 import { AnimationControls } from "../../animation/AnimationControls"
 import { TargetAndTransition } from "../../types"
 import { FeatureProps, MotionFeature } from "./types"
+import { isVariantLabel } from "../../render/VisualElement/utils/variants"
+import { isAnimationControls } from "../utils/use-variants"
 
-export const AnimatePropComponents = {
-    [AnimatePropType.Target]: makeRenderlessComponent<FeatureProps>(
+const target = {
+    shouldRender: (props: FeatureProps) => {
+        return (
+            props.animate !== undefined &&
+            !isVariantLabel(props.animate) &&
+            !isAnimationControls(props.animate)
+        )
+    },
+    Component: makeRenderlessComponent<FeatureProps>(
         ({ animate, visualElement, transition }: FeatureProps) => {
             return useAnimateProp(
                 visualElement,
@@ -18,7 +27,17 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.VariantLabel]: makeRenderlessComponent<FeatureProps>(
+}
+
+const animationProps = ["initial", "animate", "whileTap", "whileHover"]
+const variant = {
+    shouldRender: (props: FeatureProps) => {
+        return (
+            props.variants !== undefined ||
+            animationProps.some((key) => typeof props[key] === "string")
+        )
+    },
+    Component: makeRenderlessComponent<FeatureProps>(
         ({ animate, inherit = true, visualElement, initial }: FeatureProps) => {
             return useVariantAnimations(
                 visualElement,
@@ -28,53 +47,30 @@ export const AnimatePropComponents = {
             )
         }
     ),
-    [AnimatePropType.AnimationSubscription]: makeRenderlessComponent<
-        FeatureProps
-    >(({ animate, visualElement }: FeatureProps) => {
-        return useAnimationGroupSubscription(
-            visualElement,
-            animate as AnimationControls
-        )
-    }),
 }
 
-const isVariantLabel = (prop?: any): prop is VariantLabels =>
-    Array.isArray(prop) || typeof prop === "string"
-
-const isAnimationSubscription = ({ animate }: FeatureProps) =>
-    animate instanceof AnimationControls
-
-const animationProps = ["initial", "animate", "whileTap", "whileHover"]
-
-const animatePropTypeTests = {
-    [AnimatePropType.Target]: (props: FeatureProps) => {
-        return (
-            props.animate !== undefined &&
-            !isVariantLabel(props.animate) &&
-            !isAnimationSubscription(props)
-        )
-    },
-    [AnimatePropType.VariantLabel]: (props: FeatureProps) => {
-        return (
-            props.variants !== undefined ||
-            animationProps.some((key) => typeof props[key] === "string")
-        )
-    },
-    [AnimatePropType.AnimationSubscription]: isAnimationSubscription,
+const controls = {
+    shouldRender: isAnimationControls,
+    Component: makeRenderlessComponent<FeatureProps>(
+        ({ animate, visualElement }: FeatureProps) => {
+            return useAnimationGroupSubscription(
+                visualElement,
+                animate as AnimationControls
+            )
+        }
+    ),
 }
 
 export const getAnimationComponent = (
-    props: MotionProps
+    props: FeatureProps
 ): ComponentType<FeatureProps> | undefined => {
-    let animatePropType: AnimatePropType | undefined = undefined
-
-    for (const key in AnimatePropType) {
-        if (animatePropTypeTests[key](props)) {
-            animatePropType = key as AnimatePropType
-        }
+    if (target.shouldRender(props)) {
+        return target.Component
+    } else if (variant.shouldRender(props)) {
+        return variant.Component
+    } else if (controls.shouldRender(props.animate)) {
+        return controls.Component
     }
-
-    return animatePropType ? AnimatePropComponents[animatePropType] : undefined
 }
 
 /**
