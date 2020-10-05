@@ -101,9 +101,10 @@ function animateVariant(
      * If we have children, create a callback that runs all their animations.
      * Otherwise, we resolve a Promise immediately for a composable no-op.
      */
-    const getChildrenAnimations = visualElement.variantChildren?.size
+    const getChildrenAnimations = visualElement.variantChildrenOrder?.size
         ? (forwardDelay: number = 0) => {
               const { delayChildren = 0 } = transition
+
               return animateChildren(
                   visualElement,
                   label,
@@ -146,13 +147,13 @@ function animateChildren(
 ) {
     const animations: Array<Promise<any>> = []
     const maxStaggerDuration =
-        (visualElement.variantChildren!.size - 1) * staggerChildren
+        (visualElement.variantChildrenOrder!.size - 1) * staggerChildren
     const generateStaggerDuration =
         staggerDirection === 1
             ? (i: number) => i * staggerChildren
             : (i: number) => maxStaggerDuration - i * staggerChildren
 
-    Array.from(visualElement.variantChildren!).forEach((child, i) => {
+    Array.from(visualElement.variantChildrenOrder!).forEach((child, i) => {
         const animation = animateVariant(child, variantLabel, {
             priority,
             delay: delayChildren + generateStaggerDuration(i),
@@ -220,7 +221,7 @@ export function animateTarget(
     const animations: Array<Promise<any>> = []
 
     for (const key in target) {
-        const value = visualElement.getValue(key)!
+        const value = visualElement.getValue(key)
 
         if (!value || !target || target[key] === undefined) continue
 

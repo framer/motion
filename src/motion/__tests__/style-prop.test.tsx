@@ -1,22 +1,27 @@
 import { render } from "../../../jest.setup"
 import { motion, useMotionValue } from "../.."
 import * as React from "react"
+import { MotionConfig } from "../context/MotionConfigContext"
 
 describe("style prop", () => {
     test("should remove non-set styles", () => {
-        const { container, rerender } = render(
-            <motion.div static style={{ position: "absolute" }} />
+        function Component({ style }: any) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div data-testid="child" style={style} />
+                </MotionConfig>
+            )
+        }
+
+        const { getByTestId, rerender } = render(
+            <Component style={{ position: "absolute" }} />
         )
 
-        expect(container.firstChild as Element).toHaveStyle(
-            "position: absolute"
-        )
+        expect(getByTestId("child")).toHaveStyle("position: absolute")
 
-        rerender(<motion.div static style={{}} />)
+        rerender(<Component style={{}} />)
 
-        expect(container.firstChild as Element).not.toHaveStyle(
-            "position: absolute"
-        )
+        expect(getByTestId("child")).not.toHaveStyle("position: absolute")
     })
 
     test("should updated transforms when passed a new value", () => {

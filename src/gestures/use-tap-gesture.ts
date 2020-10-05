@@ -206,9 +206,7 @@ export function useTapGesture(
         cancelPointerEventListener.current = null
     }
 
-    if (whileTap) {
-        setOverride(visualElement, whileTap, tapGesturePriority)
-    }
+    whileTap && setOverride(visualElement, whileTap, tapGesturePriority)
 
     // We load this event handler into a ref so we can later refer to
     // onPointerUp.current which will always have reference to the latest props
@@ -221,9 +219,7 @@ export function useTapGesture(
 
         isTapping.current = false
 
-        if (whileTap) {
-            clearOverride(visualElement, tapGesturePriority)
-        }
+        whileTap && clearOverride(visualElement, tapGesturePriority)
 
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
@@ -232,9 +228,9 @@ export function useTapGesture(
         openGestureLock()
 
         if (!isNodeOrChild(element, event.target as Element)) {
-            onTapCancel && onTapCancel(event, info)
+            onTapCancel?.(event, info)
         } else {
-            onTap && onTap(event, info)
+            onTap?.(event, info)
         }
     }
 
@@ -258,11 +254,9 @@ export function useTapGesture(
 
         isTapping.current = true
 
-        onTapStart && onTapStart(event, info)
+        onTapStart?.(event, info)
 
-        if (whileTap) {
-            startOverride(visualElement, tapGesturePriority)
-        }
+        whileTap && startOverride(visualElement, tapGesturePriority)
     }
 
     usePointerEvent(

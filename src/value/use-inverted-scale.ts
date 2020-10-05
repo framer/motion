@@ -1,9 +1,9 @@
 import { useContext } from "react"
-import { VisualElementContext } from "../motion/context/VisualElementContext"
 import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
 import { invariant, warning } from "hey-listen"
 import { useMotionValue } from "./use-motion-value"
+import { VisualElementContext } from "../motion/context/VisualElementContext"
 
 interface ScaleMotionValues {
     scaleX: MotionValue<number>

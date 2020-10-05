@@ -62,12 +62,18 @@ export abstract class VisualElement<E = any> {
     isAnimating: Set<string> = new Set()
 
     getVariant(label: string): Variants {
-        return (this.config as any).variants[label]
+        return (this.config as any).variants?.[label]
     }
 
     addVariantChild(visualElement: VisualElement<E>) {
         if (!this.variantChildren) this.variantChildren = new Set()
         this.variantChildren.add(visualElement)
+    }
+
+    variantChildrenOrder?: Set<VisualElement<E>>
+    addVariantChildOrder(visualElement: VisualElement<E>) {
+        if (!this.variantChildrenOrder) this.variantChildrenOrder = new Set()
+        this.variantChildrenOrder.add(visualElement)
     }
 
     onAnimationStart() {
@@ -76,6 +82,10 @@ export abstract class VisualElement<E = any> {
 
     onAnimationComplete() {
         ;(this.config as any).onAnimationComplete?.()
+    }
+
+    getDefaultTransition() {
+        return (this.config as any).transition
     }
 
     resetIsAnimating(priority = 0) {
