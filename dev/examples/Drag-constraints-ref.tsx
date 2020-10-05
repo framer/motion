@@ -25,9 +25,10 @@ export const App = () => {
     return (
         <div ref={ref} style={container}>
             <motion.div
-                drag
+                //drag
                 //dragElastic
                 dragConstraints={ref}
+                onMeasureDragConstraints={(v) => console.log(v)}
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.1 }}
                 style={child}

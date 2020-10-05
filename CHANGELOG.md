@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.7.8] 2020-10-05
+
+### Changed
+
+-   If `dragConstraints` is set to a ref on a non-draggable component, we resolve the constraints on mount in order to pass them to `onMeasureDragConstraints`.
+
 ## [2.7.7] 2020-10-01
 
 ### Fixed
