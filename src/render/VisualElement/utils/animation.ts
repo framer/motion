@@ -175,50 +175,20 @@ export function stopAnimation(visualElement: VisualElement) {
 
 export function animateTarget(
     visualElement: VisualElement,
-    animationDefinition: Variant,
+    definition: Variant,
     { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
 ): Promise<any> {
-    let { transition, transitionEnd, ...target } = resolveVariant(
-        visualElement,
-        animationDefinition
-    )
+    const targetAndTransition = resolveVariant(visualElement, definition)
 
-    if (transitionOverride) {
-        transition = transitionOverride
-    }
+    if (transitionOverride) targetAndTransition.transition = transitionOverride
 
-    if (!target) return Promise.resolve()
+    const {
+        transitionEnd,
+        transition,
+        ...target
+    } = visualElement.makeTargetAnimatable(targetAndTransition)
 
-    // TODO: Add transformValues back to Framer
-    // target = this.transformValues(target as any)
-    // if (transitionEnd) {
-    //     transitionEnd = this.transformValues(transitionEnd as any)
-    // }
-
-    checkTargetForNewValues(visualElement, target)
-
-    // TODO: Add transformValues back to Framwr
-    // const origin = transformValues(
-    //     getOrigin(target as any, transition as any, this.visualElement) as any
-    // )
-
-    //const origin = getOrigin(visualElement, target, transition)
-
-    // TODO: Reintroduce makeTargetAnimatable
-    // if (this.makeTargetAnimatable) {
-    //     const animatable = this.makeTargetAnimatable(
-    //         this.visualElement,
-    //         target,
-    //         origin,
-    //         transitionEnd as any
-    //     )
-    //     target = animatable.target
-    //     transitionEnd = animatable.transitionEnd
-    // }
-
-    if (priority) {
-        visualElement.resolvedOverrides[priority] = target
-    }
+    if (priority) visualElement.resolvedOverrides[priority] = target
 
     checkTargetForNewValues(visualElement, target)
 
@@ -256,33 +226,3 @@ export function animateTarget(
           )
         : allAnimations
 }
-
-// /**
-//  *
-//  */
-// function getOriginFromTransition(key: string, transition: Transition) {
-//     if (!transition) return
-//     const valueTransition =
-//         transition[key] || transition["default"] || transition
-//     return valueTransition.from
-// }
-
-// /**
-//  *
-//  */
-// function getOrigin(
-//     visualElement: VisualElement,
-
-//     target: Target,
-//     transition: Transition
-// ) {
-//     const origin: Target = {}
-
-//     for (const key in target) {
-//         origin[key] =
-//             getOriginFromTransition(key, transition) ??
-//             visualElement.getValue(key)?.get()
-//     }
-
-//     return origin
-// }

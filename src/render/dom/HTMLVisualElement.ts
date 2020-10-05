@@ -20,7 +20,7 @@ import {
     updateBoxDelta,
     updateTreeScale,
 } from "../../utils/geometry/delta-calc"
-import { Transition } from "../../types"
+import { TargetAndTransition, Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { getBoundingBox } from "./layout/measure"
@@ -154,6 +154,38 @@ export class HTMLVisualElement<
             return defaultValueType ? defaultValueType.default || 0 : 0
         } else {
             return this.read(key)
+        }
+    }
+
+    /**
+     * Ensure that HTML and Framer-specific value types like `px`->`%` and `Color`
+     * can be animated by Motion.
+     */
+    makeTargetAnimatable({
+        transition,
+        transitionEnd,
+        ...target
+    }: TargetAndTransition) {
+        const { transformValues } = this.config
+
+        /**
+         * If Framer has provided a function to convert `Color` etc value types, conver them
+         */
+        if (transformValues) {
+            transitionEnd ??= transformValues(transitionEnd as any)
+            target ??= transformValues(target as any)
+
+            // TODO Transform origin values
+        }
+
+        const parsed = parseDomVariant(this, target, {} as any, transitionEnd)
+        transitionEnd = parsed.transitionEnd
+        target = parsed.target
+
+        return {
+            transition,
+            transitionEnd,
+            ...target,
         }
     }
 
