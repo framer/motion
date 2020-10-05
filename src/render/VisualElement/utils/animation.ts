@@ -86,7 +86,11 @@ function animateVariant(
 ) {
     const priority = (opts && opts.priority) || 0
     const variantDefinition = visualElement.getVariant(label)
-    const variant = resolveVariant(visualElement, variantDefinition)
+    const variant = resolveVariant(
+        visualElement,
+        variantDefinition,
+        opts && opts.custom
+    )
     const transition = variant.transition || {}
 
     /**

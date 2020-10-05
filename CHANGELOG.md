@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.8.0] Unreleased
+
+### Added
+
+-   Refactor has reduced complete bundle size to 27kb and `m` component bundle size to 12kb.
+
 ## [2.7.6] 2020-09-29
 
 ### Fixed

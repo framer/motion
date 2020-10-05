@@ -47,7 +47,8 @@ function getVelocity(visualElement: VisualElement) {
  */
 export function resolveVariant(
     visualElement: VisualElement,
-    variant?: Variant
+    variant?: Variant,
+    custom?: any
 ): TargetAndTransition {
     let resolved = {}
 
@@ -55,7 +56,7 @@ export function resolveVariant(
         return resolved
     } else if (isVariantResolver(variant)) {
         resolved = variant(
-            visualElement.getVariantPayload(),
+            custom ?? visualElement.getVariantPayload(),
             getCurrent(visualElement),
             getVelocity(visualElement)
         )
