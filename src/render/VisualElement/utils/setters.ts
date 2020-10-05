@@ -38,7 +38,7 @@ export function setTarget(
     definition: Variant,
     { priority }: SetterOptions = {}
 ) {
-    let { target = {}, transitionEnd = {} } = resolveVariant(
+    let { transitionEnd = {}, transition, ...target } = resolveVariant(
         visualElement,
         definition
     )
@@ -91,9 +91,10 @@ export function checkTargetForNewValues(
     visualElement: VisualElement,
     target: TargetWithKeyframes
 ) {
-    const newValueKeys = Object.keys(target).filter((key) =>
-        visualElement.hasValue(key)
+    const newValueKeys = Object.keys(target).filter(
+        (key) => !visualElement.hasValue(key)
     )
+
     const numNewValues = newValueKeys.length
     if (!numNewValues) return
 

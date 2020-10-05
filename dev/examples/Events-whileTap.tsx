@@ -1,6 +1,5 @@
 import * as React from "react"
 import { motion } from "@framer"
-import { useAnimation } from "../../src"
 
 const style = {
     width: 100,
@@ -10,9 +9,16 @@ const style = {
 
 export const App = () => {
     return (
-        <motion.div
-            whileTap={{ scale: 0.5, backgroundColor: "rgba(0, 255, 0, .5)" }}
-            style={style}
-        />
+        <motion.div whileTap="pressed">
+            <motion.div
+                variants={{
+                    pressed: {
+                        scale: 0.5,
+                        backgroundColor: "rgba(0, 255, 0, .5)",
+                    },
+                }}
+                style={style}
+            />
+        </motion.div>
     )
 }

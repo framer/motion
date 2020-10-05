@@ -12,10 +12,9 @@ export function setOverride(
     index: number
 ) {
     visualElement.overrides[index] = definition
-
-    visualElement.variantChildren?.forEach((child) =>
+    visualElement.variantChildren?.forEach((child) => {
         setOverride(child, definition, index)
-    )
+    })
 }
 
 export function startOverride(visualElement: VisualElement, index: number) {
@@ -29,9 +28,10 @@ export function startOverride(visualElement: VisualElement, index: number) {
 }
 
 export function clearOverride(visualElement: VisualElement, index: number) {
-    visualElement.variantChildren?.forEach((child) =>
+    visualElement.variantChildrenOrder?.forEach((child) => {
         clearOverride(child, index)
-    )
+    })
+
     const override = visualElement.overrides[index]
     if (!override) return
 
@@ -58,9 +58,9 @@ export function clearOverride(visualElement: VisualElement, index: number) {
     }
 
     visualElement.onAnimationStart()
-    animateTarget(visualElement, remainingValues).then(() =>
+    animateTarget(visualElement, remainingValues).then(() => {
         visualElement.onAnimationComplete()
-    )
+    })
 }
 
 export function getHighestOverridePriortiy(visualElement: VisualElement) {

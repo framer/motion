@@ -49,15 +49,22 @@ export function resolveVariant(
     visualElement: VisualElement,
     variant?: Variant
 ): TargetAndTransition {
+    let resolved = {}
+
     if (!variant) {
-        return {}
+        return resolved
     } else if (isVariantResolver(variant)) {
-        return variant(
+        resolved = variant(
             visualElement.getVariantPayload(),
             getCurrent(visualElement),
             getVelocity(visualElement)
         )
     } else {
-        return variant
+        resolved = variant
+    }
+
+    return {
+        transition: visualElement.getDefaultTransition(),
+        ...resolved,
     }
 }

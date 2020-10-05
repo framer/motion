@@ -25,7 +25,11 @@ export function useVariants(
     { variants, initial, animate, whileTap, whileHover }: MotionProps,
     isStatic: boolean
 ): VariantContextProps {
-    const { parent, initial: parentInitial } = useContext(VariantContext)
+    const {
+        parent,
+        initial: parentInitial,
+        animate: parentAnimate,
+    } = useContext(VariantContext)
     const presenceContext = useContext(PresenceContext)
 
     /**
@@ -61,7 +65,7 @@ export function useVariants(
         (): VariantContextProps => ({
             parent: isVariantNode ? visualElement : parent,
             initial: isVariantLabel(initial) ? initial : parentInitial,
-            animate: animate as string | string[], // TODO
+            animate: isVariantLabel(animate) ? animate : parentAnimate,
         }),
         /**
          * Only create a new context value (thereby re-rendering children) if this
@@ -78,16 +82,21 @@ export function useVariants(
     }, !isStatic)
 
     /**
+     * Subscribe to the parent visualElement if this is a participant in the variant tree
+     */
+    isVariantNode && parent?.addVariantChild(visualElement)
+
+    /**
      * If this component isn't exiting the tree, clear all the children in the render phase.
      * This will allow children to resubscribe in the correct order to ensure the correct stagger order.
      */
-    isPresent(presenceContext) && visualElement.variantChildren?.clear()
+    isPresent(presenceContext) && visualElement.variantChildrenOrder?.clear()
 
     /**
      * Subscribe to the propagated parent.
      */
     useEffect(() => {
-        isVariantNode && parent?.addVariantChild(visualElement)
+        isVariantNode && parent?.addVariantChildOrder(visualElement)
     })
 
     /**
@@ -98,8 +107,18 @@ export function useVariants(
         visualElement.isMounted = true
         return () => {
             visualElement.isMounted = false
+            parent?.variantChildren?.delete(visualElement)
         }
     }, [])
+
+    /**
+     *
+     */
+    useInitialOrEveryRender(() => {
+        visualElement.forEachValue(
+            (value, key) => (visualElement.baseTarget[key] = value.get())
+        )
+    }, true)
 
     return context
 }

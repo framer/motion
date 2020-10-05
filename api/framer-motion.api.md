@@ -482,6 +482,8 @@ export function MotionConfig({ children, features, ...props }: MotionConfigProps
 // @public (undocumented)
 export interface MotionConfigContext {
     features: MotionFeature[];
+    // @internal
+    isStatic: boolean;
     // @internal (undocumented)
     transformPagePoint: TransformPoint2D;
 }

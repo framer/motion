@@ -106,11 +106,9 @@ export function useHoverGesture(
         visualElement,
         "pointerenter",
         filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
-            if (onHoverStart) onHoverStart(event, info)
+            onHoverStart?.(event, info)
 
-            if (whileHover) {
-                startOverride(visualElement, hoverPriority)
-            }
+            whileHover && startOverride(visualElement, hoverPriority)
         })
     )
 
@@ -118,11 +116,9 @@ export function useHoverGesture(
         visualElement,
         "pointerleave",
         filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
-            if (onHoverEnd) onHoverEnd(event, info)
+            onHoverEnd?.(event, info)
 
-            if (whileHover) {
-                clearOverride(visualElement, hoverPriority)
-            }
+            whileHover && clearOverride(visualElement, hoverPriority)
         })
     )
 }

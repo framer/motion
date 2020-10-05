@@ -1,5 +1,5 @@
 import * as React from "react"
-import { forwardRef, Ref } from "react"
+import { forwardRef, Ref, useContext } from "react"
 import { MotionProps } from "./types"
 import { useMotionValues } from "./utils/use-motion-values"
 import { UseVisualElement } from "../render/VisualElement/types"
@@ -7,6 +7,8 @@ import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
 import { useVariants, VariantContext } from "./utils/use-variants"
+import { MotionConfigContext } from "./context/MotionConfigContext"
+import { VisualElementContext } from "./context/VisualElementContext"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
@@ -32,12 +34,12 @@ export function createMotionComponent<P extends {}, E>(
 ) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
         /**
-         * If a component isStatic, we only visually update it as a
+         * If a component is static, we only visually update it as a
          * result of a React re-render, rather than any interactions or animations.
-         * If this component or any ancestor isStatic, we disable hardware acceleration
+         * If this component or any ancestor is static, we disable hardware acceleration
          * and don't load any additional functionality.
          */
-        const isStatic = false // TODO: Get this from MotionConfigContext
+        const { isStatic } = useContext(MotionConfigContext)
 
         /**
          * Create a VisualElement for this component. A VisualElement provides a common
@@ -62,8 +64,6 @@ export function createMotionComponent<P extends {}, E>(
          */
         const variantContext = useVariants(visualElement, props, isStatic)
 
-        // TODO Set all VisualElement values as baseTarget on initial render
-
         /**
          * Load features as renderless components unless the component isStatic
          */
@@ -87,9 +87,11 @@ export function createMotionComponent<P extends {}, E>(
         // all plugins and features has to execute.
         return (
             <>
-                <VariantContext.Provider value={variantContext}>
-                    {component}
-                </VariantContext.Provider>
+                <VisualElementContext.Provider value={visualElement}>
+                    <VariantContext.Provider value={variantContext}>
+                        {component}
+                    </VariantContext.Provider>
+                </VisualElementContext.Provider>
                 {features}
             </>
         )
