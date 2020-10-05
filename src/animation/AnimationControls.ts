@@ -125,9 +125,9 @@ export class AnimationControls {
             "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."
         )
 
-        return this.subscribers.forEach((visualElement) =>
+        return this.subscribers.forEach((visualElement) => {
             setValues(visualElement, definition)
-        )
+        })
     }
 
     /**
@@ -140,9 +140,9 @@ export class AnimationControls {
      * @public
      */
     stop() {
-        this.subscribers.forEach((visualElement) =>
+        this.subscribers.forEach((visualElement) => {
             stopAnimation(visualElement)
-        )
+        })
     }
 
     /**
@@ -152,9 +152,9 @@ export class AnimationControls {
      */
     mount() {
         this.hasMounted = true
-        this.pendingAnimations.forEach(({ animation, resolve }) =>
+        this.pendingAnimations.forEach(({ animation, resolve }) => {
             this.start(...animation).then(resolve)
-        )
+        })
     }
 
     /**

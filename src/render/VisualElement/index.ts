@@ -81,7 +81,7 @@ export abstract class VisualElement<E = any> {
     }
 
     onAnimationComplete() {
-        ;(this.config as any).onAnimationComplete?.()
+        this.isMounted && (this.config as any).onAnimationComplete?.()
     }
 
     getDefaultTransition() {

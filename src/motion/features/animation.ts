@@ -25,11 +25,9 @@ const target = {
     ),
 }
 
-const animationProps = ["initial", "animate", "whileTap", "whileHover"]
 const variant = {
     shouldRender: (props: FeatureProps) =>
-        props.variants !== undefined ||
-        animationProps.some((key) => typeof props[key] === "string"),
+        props.variants || isVariantLabel(props.animate),
     Component: makeRenderlessComponent<FeatureProps>(
         ({ animate, inherit = true, visualElement, initial }: FeatureProps) =>
             useVariantAnimations(
@@ -42,7 +40,7 @@ const variant = {
 }
 
 const controls = {
-    shouldRender: isAnimationControls,
+    shouldRender: (props: FeatureProps) => isAnimationControls(props.animate),
     Component: makeRenderlessComponent<FeatureProps>(
         ({ animate, visualElement }: FeatureProps) =>
             useAnimationGroupSubscription(
@@ -59,7 +57,7 @@ export const getAnimationComponent = (
         return target.Component
     } else if (variant.shouldRender(props)) {
         return variant.Component
-    } else if (controls.shouldRender(props.animate)) {
+    } else if (controls.shouldRender(props)) {
         return controls.Component
     }
 }
