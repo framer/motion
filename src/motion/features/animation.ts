@@ -27,7 +27,8 @@ const target = {
 
 const variant = {
     shouldRender: (props: FeatureProps) =>
-        props.variants || isVariantLabel(props.animate),
+        (props.variants && !isAnimationControls(props.animate)) ||
+        isVariantLabel(props.animate),
     Component: makeRenderlessComponent<FeatureProps>(
         ({ animate, inherit = true, visualElement, initial }: FeatureProps) =>
             useVariantAnimations(
