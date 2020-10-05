@@ -20,6 +20,10 @@ class StateVisualElement extends VisualElement {
 
     clean() {}
 
+    makeTargetAnimatable(v: any) {
+        return v as any
+    }
+
     getBoundingBox() {
         return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
     }

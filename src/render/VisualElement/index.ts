@@ -248,6 +248,10 @@ export abstract class VisualElement<E = any> {
 
     abstract updateLayoutDelta(): void
 
+    abstract makeTargetAnimatable(
+        targetAndTransition: TargetAndTransition
+    ): TargetAndTransition
+
     // Set a single `latest` value
     private setSingleStaticValue(key: string, value: string | number) {
         this.latest[key] = value

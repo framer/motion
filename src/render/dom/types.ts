@@ -48,6 +48,8 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
      */
     transformTemplate?: MotionProps["transformTemplate"]
 
+    transformValues?: MotionProps["transformValues"]
+
     transition?: MotionProps["transition"]
 
     safeToRemove?: () => void
