@@ -284,10 +284,6 @@ export type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWit
 export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement> extends VisualElement<E> {
     // (undocumented)
     addValue(key: string, value: MotionValue): void;
-    // (undocumented)
-    animationControlsConfig: {
-        makeTargetAnimatable: import("../VisualElement/utils/animation").MakeTargetAnimatable;
-    };
     // Warning: (ae-forgotten-export) The symbol "MotionPoint" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -1552,7 +1548,7 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     show(): void;
     snapshotBoundingBox(): void;
     // (undocumented)
-    startLayoutAxisAnimation(axis: "x" | "y", _transition: Transition): void;
+    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition): Promise<void> | undefined;
     // (undocumented)
     stopLayoutAnimation(): void;
     // (undocumented)

@@ -8,7 +8,7 @@ import {
     Variant,
 } from "../../../types"
 import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
-import { checkTargetForNewValues, setTarget } from "./setters"
+import { setTarget } from "./setters"
 import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
 
 export type AnimationDefinition =
@@ -30,7 +30,6 @@ export type MakeTargetAnimatable = (
     transitionEnd?: Target
 ) => {
     target: TargetWithKeyframes
-    origin?: Target
     transitionEnd?: Target
 }
 
@@ -176,9 +175,18 @@ export function stopAnimation(visualElement: VisualElement) {
 export function animateTarget(
     visualElement: VisualElement,
     definition: Variant,
-    { delay = 0, priority = 0, transitionOverride }: AnimationOptions = {}
+    {
+        delay = 0,
+        priority = 0,
+        transitionOverride,
+        custom,
+    }: AnimationOptions = {}
 ): Promise<any> {
-    const targetAndTransition = resolveVariant(visualElement, definition)
+    const targetAndTransition = resolveVariant(
+        visualElement,
+        definition,
+        custom
+    )
 
     if (transitionOverride) targetAndTransition.transition = transitionOverride
 
@@ -189,8 +197,6 @@ export function animateTarget(
     } = visualElement.makeTargetAnimatable(targetAndTransition)
 
     if (priority) visualElement.resolvedOverrides[priority] = target
-
-    checkTargetForNewValues(visualElement, target)
 
     const animations: Array<Promise<any>> = []
 
@@ -209,7 +215,7 @@ export function animateTarget(
 
         if (visualElement.isAnimating.has(key)) continue
         visualElement.isAnimating.add(key)
-
+        console.log(key, valueTarget, value)
         animations.push(
             startAnimation(key, value, valueTarget, {
                 delay,

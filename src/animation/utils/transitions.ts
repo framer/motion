@@ -149,8 +149,7 @@ function getAnimation(
     transition: PermissiveTransitionDefinition,
     onComplete: () => void
 ) {
-    const valueTransition =
-        transition[key] || transition["default"] || transition
+    const valueTransition = getValueTransition(transition, key)
     let origin = valueTransition.from ?? value.get()
 
     const isTargetAnimatable = isAnimatable(key, target)
@@ -211,6 +210,10 @@ function getAnimation(
         valueTransition.type === false
         ? set
         : start
+}
+
+export function getValueTransition(transition: Transition, key: string) {
+    return transition[key] || transition["default"] || transition
 }
 
 /**
