@@ -179,11 +179,11 @@ export class HTMLVisualElement<
             if (origin) origin = transformValues(origin as any)
         }
 
+        checkTargetForNewValues(this, target, origin as any)
+
         const parsed = parseDomVariant(this, target, origin, transitionEnd)
         transitionEnd = parsed.transitionEnd
         target = parsed.target
-
-        checkTargetForNewValues(this, target, origin as any)
 
         return {
             transition,
