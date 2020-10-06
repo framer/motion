@@ -1,12 +1,12 @@
-import { useEffect, useRef, useContext } from "react"
+import { useEffect, useRef } from "react"
 import { VariantLabels } from "../motion/types"
 import {
     resolveVariantLabels,
     asDependencyList,
 } from "./utils/variant-resolvers"
-import { VariantContext } from "../motion/utils/use-variants"
 import { VisualElement } from "../render/VisualElement"
 import { startVisualElementAnimation } from "../render/VisualElement/utils/animation"
+import { useVariantContext } from "../motion/context/MotionContext"
 
 const hasVariantChanged = (oldVariant: string[], newVariant: string[]) => {
     return oldVariant.join(",") !== newVariant.join(",")
@@ -29,7 +29,7 @@ export function useVariantAnimations(
     inherit: boolean
 ) {
     let targetVariants = resolveVariantLabels(animate)
-    const context = useContext(VariantContext)
+    const context = useVariantContext()
 
     const parentAlreadyMounted = context.parent?.isMounted
     const hasMounted = useRef(false)

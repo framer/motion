@@ -5,8 +5,8 @@ import { SVGVisualElement } from "./SVGVisualElement"
 import { UseVisualElement } from "../VisualElement/types"
 import { isSVGComponent } from "./utils/is-svg-component"
 import { useContext, useEffect } from "react"
-import { VisualElementContext } from "../../motion/context/VisualElementContext"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
+import { useVisualElementContext } from "../../motion/context/MotionContext"
 
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
@@ -19,7 +19,7 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     isStatic,
     ref
 ) => {
-    const parent = useContext(VisualElementContext)
+    const parent = useVisualElementContext()
 
     const visualElement = useConstant(() => {
         const DOMVisualElement = isSVGComponent(Component)
@@ -40,7 +40,7 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     const presenceContext = useContext(PresenceContext)
 
     /**
-     * Update VisualElement with
+     * Update VisualElement with presence data.
      */
     const isPresent =
         presenceContext === null ? true : presenceContext.isPresent

@@ -1,14 +1,14 @@
 import * as React from "react"
-import { forwardRef, Ref, useContext } from "react"
+import { forwardRef, Ref, useContext, useMemo } from "react"
 import { MotionProps } from "./types"
 import { useMotionValues } from "./utils/use-motion-values"
 import { UseVisualElement } from "../render/VisualElement/types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
-import { useVariants, VariantContext } from "./utils/use-variants"
+import { useVariants } from "./utils/use-variants"
 import { MotionConfigContext } from "./context/MotionConfigContext"
-import { VisualElementContext } from "./context/VisualElementContext"
+import { MotionContext } from "./context/MotionContext"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
@@ -74,6 +74,14 @@ export function createMotionComponent<P extends {}, E>(
             props
         )
 
+        /**
+         * Only create a new context value when the sub-contexts change.
+         */
+        const context = useMemo(() => ({ visualElement, variantContext }), [
+            visualElement,
+            variantContext,
+        ])
+
         const component = render(Component, props, visualElement)
 
         /**
@@ -87,11 +95,9 @@ export function createMotionComponent<P extends {}, E>(
         // all plugins and features has to execute.
         return (
             <>
-                <VisualElementContext.Provider value={visualElement}>
-                    <VariantContext.Provider value={variantContext}>
-                        {component}
-                    </VariantContext.Provider>
-                </VisualElementContext.Provider>
+                <MotionContext.Provider value={context}>
+                    {component}
+                </MotionContext.Provider>
                 {features}
             </>
         )

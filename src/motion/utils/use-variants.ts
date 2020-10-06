@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo } from "react"
+import { useContext, useEffect, useMemo } from "react"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
@@ -6,15 +6,11 @@ import { VisualElement } from "../../render/VisualElement"
 import { setValues } from "../../render/VisualElement/utils/setters"
 import { Target } from "../../types"
 import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
+import {
+    useVariantContext,
+    VariantContextProps,
+} from "../context/MotionContext"
 import { MotionProps, VariantLabels } from "../types"
-
-interface VariantContextProps {
-    parent?: VisualElement
-    initial?: string | string[]
-    animate?: string | string[]
-}
-
-export const VariantContext = createContext<VariantContextProps>({})
 
 /**
  * This hook is resonsible for creating the variant-propagation tree
@@ -29,7 +25,7 @@ export function useVariants(
         parent,
         initial: parentInitial,
         animate: parentAnimate,
-    } = useContext(VariantContext)
+    } = useVariantContext()
     const presenceContext = useContext(PresenceContext)
 
     /**
