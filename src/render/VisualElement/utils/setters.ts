@@ -138,6 +138,7 @@ export function checkTargetForNewValues(
         }
 
         visualElement.addValue(key, motionValue(value))
+        ;(origin as any)[key] ??= value
         visualElement.baseTarget[key] = value
     }
 }
