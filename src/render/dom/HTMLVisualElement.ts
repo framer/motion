@@ -164,7 +164,7 @@ export class HTMLVisualElement<
         transition,
         transitionEnd,
         ...target
-    }: TargetAndTransition) {
+    }: TargetAndTransition): TargetAndTransition {
         const { transformValues } = this.config
 
         let origin = getOrigin(target as any, transition || {}, this)
