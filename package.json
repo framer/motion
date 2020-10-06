@@ -19,7 +19,7 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn test-client && yarn test-server && yarn test-e2e",
+        "test": "yarn test-client && yarn test-server && yarn test-e2e && yarn build && yarn measure",
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
@@ -27,7 +27,7 @@
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
-        "build": "tsc -p . && rollup -c && make api && yarn measure",
+        "build": "tsc -p . && rollup -c && make api",
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
         "prepublishOnly": "yarn test && yarn build",
         "measure": "bundlesize",
