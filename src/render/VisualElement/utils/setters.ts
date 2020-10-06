@@ -35,22 +35,20 @@ function setMotionValue(
         visualElement.addValue(key, motionValue(value))
     }
 }
-
-/**
- *
- */
 export function setTarget(
     visualElement: VisualElement,
     definition: Variant,
     { priority }: SetterOptions = {}
 ) {
-    let { transitionEnd = {}, transition, ...target } = resolveVariant(
-        visualElement,
-        definition
+    let {
+        transitionEnd = {},
+        transition,
+        ...target
+    } = visualElement.makeTargetAnimatable(
+        resolveVariant(visualElement, definition),
+        false
     )
 
-    // TODO Reinstate Framer transform values functionality
-    // target = transformValues({...target, ...transitionEnd})
     target = { ...target, ...transitionEnd }
 
     for (const key in target) {
@@ -61,20 +59,13 @@ export function setTarget(
     }
 }
 
-/**
- *
-//  */
 function setVariants(visualElement: VisualElement, variantLabels: string[]) {
-    /**
-     *
-     */
     const reversedLabels = [...variantLabels].reverse()
 
     reversedLabels.forEach((key) => {
         setTarget(visualElement, visualElement.getVariant(key))
 
         visualElement.variantChildren?.forEach((child) => {
-            // TODO: Fish variants and custom from visualElement config
             setVariants(child, variantLabels)
         })
     })

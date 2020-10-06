@@ -160,11 +160,10 @@ export class HTMLVisualElement<
      * Ensure that HTML and Framer-specific value types like `px`->`%` and `Color`
      * can be animated by Motion.
      */
-    makeTargetAnimatable({
-        transition,
-        transitionEnd,
-        ...target
-    }: TargetAndTransition): TargetAndTransition {
+    makeTargetAnimatable(
+        { transition, transitionEnd, ...target }: TargetAndTransition,
+        parseDOMValues = true
+    ): TargetAndTransition {
         const { transformValues } = this.config
 
         let origin = getOrigin(target as any, transition || {}, this)
@@ -179,11 +178,13 @@ export class HTMLVisualElement<
             if (origin) origin = transformValues(origin as any)
         }
 
-        checkTargetForNewValues(this, target, origin as any)
+        if (parseDOMValues) {
+            checkTargetForNewValues(this, target, origin as any)
 
-        const parsed = parseDomVariant(this, target, origin, transitionEnd)
-        transitionEnd = parsed.transitionEnd
-        target = parsed.target
+            const parsed = parseDomVariant(this, target, origin, transitionEnd)
+            transitionEnd = parsed.transitionEnd
+            target = parsed.target
+        }
 
         return {
             transition,

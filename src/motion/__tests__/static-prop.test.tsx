@@ -160,7 +160,7 @@ describe("isStatic prop", () => {
         function Test() {
             return (
                 <MotionConfig isStatic>
-                    <motion.div transition={transition} />
+                    <motion.div data-testid="child" transition={transition} />
                 </MotionConfig>
             )
         }

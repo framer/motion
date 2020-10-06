@@ -254,7 +254,8 @@ export abstract class VisualElement<E = any> {
     abstract updateLayoutDelta(): void
 
     abstract makeTargetAnimatable(
-        targetAndTransition: TargetAndTransition
+        targetAndTransition: TargetAndTransition,
+        parseDOMValues?: boolean
     ): TargetAndTransition
 
     // Set a single `latest` value

@@ -319,7 +319,7 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     layoutReady(config?: SharedLayoutAnimationConfig): void;
     // (undocumented)
     lockTargetBox(): void;
-    makeTargetAnimatable({ transition, transitionEnd, ...target }: TargetAndTransition): TargetAndTransition;
+    makeTargetAnimatable({ transition, transitionEnd, ...target }: TargetAndTransition, parseDOMValues?: boolean): TargetAndTransition;
     // (undocumented)
     measureLayout(): void;
     // (undocumented)
