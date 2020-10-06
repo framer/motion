@@ -125,7 +125,8 @@ export abstract class VisualElement<E = any> {
 
     private removeFromParent?: () => void
 
-    // TODO
+    // TODO split this out again in a further refactor removing layout animations from
+    // HTMLVisualElement
     animateMotionValue?: typeof startAnimation
 
     // The actual element

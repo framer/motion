@@ -33,9 +33,6 @@ export type MakeTargetAnimatable = (
     transitionEnd?: Target
 }
 
-/**
- *
- */
 export function startVisualElementAnimation(
     visualElement: VisualElement,
     definition: AnimationDefinition,
@@ -61,9 +58,6 @@ export function startVisualElementAnimation(
     return animation.then(() => visualElement.onAnimationComplete())
 }
 
-/**
- *
- */
 function animateVariantLabels(
     visualElement: VisualElement,
     variantLabels: string[],
@@ -75,9 +69,6 @@ function animateVariantLabels(
     return Promise.all(animations)
 }
 
-/**
- *
- */
 function animateVariant(
     visualElement: VisualElement,
     label: string,
@@ -136,9 +127,6 @@ function animateVariant(
     }
 }
 
-/**
- *
- */
 function animateChildren(
     visualElement: VisualElement,
     variantLabel: string,
