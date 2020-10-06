@@ -20,7 +20,7 @@ import {
     updateBoxDelta,
     updateTreeScale,
 } from "../../utils/geometry/delta-calc"
-import { Target, TargetAndTransition, Transition } from "../../types"
+import { TargetAndTransition, Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { getBoundingBox } from "./layout/measure"
@@ -36,7 +36,6 @@ import {
     checkTargetForNewValues,
     getOrigin,
 } from "../VisualElement/utils/setters"
-//import { checkTargetForNewValues } from "../VisualElement/utils/setters"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,

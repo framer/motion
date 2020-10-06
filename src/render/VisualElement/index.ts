@@ -126,7 +126,7 @@ export abstract class VisualElement<E = any> {
     private removeFromParent?: () => void
 
     // TODO
-    protected animateMotionValue?: typeof startAnimation
+    animateMotionValue?: typeof startAnimation
 
     // The actual element
     protected element: E

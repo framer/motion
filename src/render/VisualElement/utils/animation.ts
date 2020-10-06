@@ -215,7 +215,7 @@ export function animateTarget(
 
         if (visualElement.isAnimating.has(key)) continue
         visualElement.isAnimating.add(key)
-        console.log(key, valueTarget, value)
+
         animations.push(
             startAnimation(key, value, valueTarget, {
                 delay,
