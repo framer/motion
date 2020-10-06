@@ -16,6 +16,5 @@ export const parseDomVariant: MakeTargetAnimatable = (
     const resolved = resolveCSSVariables(visualElement, target, transitionEnd)
     target = resolved.target
     transitionEnd = resolved.transitionEnd
-
     return unitConversion(visualElement, target, origin, transitionEnd)
 }

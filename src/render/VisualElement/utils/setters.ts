@@ -1,11 +1,17 @@
 import { invariant } from "hey-listen"
 import { complex } from "style-value-types"
 import { VisualElement } from "../"
-import { TargetWithKeyframes, Variant } from "../../../types"
+import {
+    Target,
+    TargetWithKeyframes,
+    Transition,
+    Variant,
+} from "../../../types"
 import { isNumericalString } from "../../../utils/is-numerical-string"
 import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
 import { motionValue } from "../../../value"
 import { findValueType } from "../../dom/utils/value-types"
+import { ResolvedValues } from "../types"
 import { AnimationDefinition } from "./animation"
 import { resolveVariant } from "./variants"
 
@@ -89,7 +95,8 @@ export function setValues(
 
 export function checkTargetForNewValues(
     visualElement: VisualElement,
-    target: TargetWithKeyframes
+    target: TargetWithKeyframes,
+    origin: ResolvedValues
 ) {
     const newValueKeys = Object.keys(target).filter(
         (key) => !visualElement.hasValue(key)
@@ -113,7 +120,8 @@ export function checkTargetForNewValues(
         // value from the DOM. It might be worth investigating whether to check props (for SVG)
         // or props.style (for HTML) if the value exists there before attempting to read.
         if (value === null) {
-            const readValue = visualElement.readNativeValue(key)
+            console.log(key, value)
+            const readValue = origin[key] ?? visualElement.readNativeValue(key)
             value = readValue !== undefined ? readValue : target[key]
 
             invariant(
@@ -133,4 +141,27 @@ export function checkTargetForNewValues(
         visualElement.addValue(key, motionValue(value))
         visualElement.baseTarget[key] = value
     }
+}
+
+export function getOriginFromTransition(key: string, transition: Transition) {
+    if (!transition) return
+    const valueTransition =
+        transition[key] || transition["default"] || transition
+    return valueTransition.from
+}
+
+export function getOrigin(
+    target: Target,
+    transition: Transition,
+    visualElement: VisualElement
+) {
+    const origin: Target = {}
+
+    for (const key in target) {
+        origin[key] =
+            getOriginFromTransition(key, transition) ??
+            visualElement.getValue(key)?.get()
+    }
+
+    return origin
 }

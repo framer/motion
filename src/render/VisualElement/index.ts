@@ -9,6 +9,7 @@ import { Snapshot } from "../../components/AnimateSharedLayout/stack"
 import { Target, TargetAndTransition, Variants } from "../../types"
 import { AnimationDefinition } from "./utils/animation"
 import { getHighestOverridePriortiy } from "./utils/overrides"
+import { startAnimation } from "../../animation/utils/transitions"
 
 type Subscriptions = Map<string, () => void>
 
@@ -123,6 +124,9 @@ export abstract class VisualElement<E = any> {
     latest: ResolvedValues = {}
 
     private removeFromParent?: () => void
+
+    // TODO
+    protected animateMotionValue?: typeof startAnimation
 
     // The actual element
     protected element: E

@@ -6,6 +6,11 @@ import {
     AnimationDefinition,
     startVisualElementAnimation,
 } from "../render/VisualElement/utils/animation"
+import {
+    checkTargetForNewValues,
+    getOrigin,
+} from "../render/VisualElement/utils/setters"
+import { TargetAndTransition } from "../types"
 
 /**
  * This is just a very basic VisualElement, more of a hack to keep supporting useAnimatedState with
@@ -20,8 +25,14 @@ class StateVisualElement extends VisualElement {
 
     clean() {}
 
-    makeTargetAnimatable(v: any) {
-        return v as any
+    makeTargetAnimatable({
+        transition,
+        transitionEnd,
+        ...target
+    }: TargetAndTransition) {
+        const origin = getOrigin(target as any, transition || {}, this)
+        checkTargetForNewValues(this, target, origin as any)
+        return { transition, transitionEnd, ...target }
     }
 
     getBoundingBox() {

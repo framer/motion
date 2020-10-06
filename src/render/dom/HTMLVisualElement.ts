@@ -20,7 +20,7 @@ import {
     updateBoxDelta,
     updateTreeScale,
 } from "../../utils/geometry/delta-calc"
-import { TargetAndTransition, Transition } from "../../types"
+import { Target, TargetAndTransition, Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
 import { getBoundingBox } from "./layout/measure"
@@ -32,7 +32,11 @@ import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import sync from "framesync"
 import { parseDomVariant } from "./utils/parse-dom-variant"
-// import { startAnimation } from "../../animation/utils/transitions"
+import {
+    checkTargetForNewValues,
+    getOrigin,
+} from "../VisualElement/utils/setters"
+//import { checkTargetForNewValues } from "../VisualElement/utils/setters"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -79,10 +83,6 @@ export class HTMLVisualElement<
      */
     presence?: Presence
     isPresent?: boolean
-
-    animationControlsConfig = {
-        makeTargetAnimatable: parseDomVariant,
-    }
 
     /**
      * A mutable record of transforms we want to apply directly to the rendered Element
@@ -168,19 +168,23 @@ export class HTMLVisualElement<
     }: TargetAndTransition) {
         const { transformValues } = this.config
 
+        let origin = getOrigin(target as any, transition || {}, this)
+
         /**
-         * If Framer has provided a function to convert `Color` etc value types, conver them
+         * If Framer has provided a function to convert `Color` etc value types, convert them
          */
         if (transformValues) {
-            transitionEnd ??= transformValues(transitionEnd as any)
-            target ??= transformValues(target as any)
-
-            // TODO Transform origin values
+            if (transitionEnd)
+                transitionEnd = transformValues(transitionEnd as any)
+            if (target) target = transformValues(target as any)
+            if (origin) origin = transformValues(origin as any)
         }
 
-        const parsed = parseDomVariant(this, target, {} as any, transitionEnd)
+        const parsed = parseDomVariant(this, target, origin, transitionEnd)
         transitionEnd = parsed.transitionEnd
         target = parsed.target
+
+        checkTargetForNewValues(this, target, origin as any)
 
         return {
             transition,
@@ -491,7 +495,7 @@ export class HTMLVisualElement<
     /**
      *
      */
-    startLayoutAxisAnimation(axis: "x" | "y", _transition: Transition) {
+    startLayoutAxisAnimation(axis: "x" | "y", transition: Transition) {
         const progress = this.axisProgress[axis]
 
         const { min, max } = this.targetBox[axis]
@@ -502,7 +506,7 @@ export class HTMLVisualElement<
         progress.set(min) // Set twice to hard-reset velocity
         progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
-        return //startAnimation(axis, progress, 0, transition)
+        return this.animateMotionValue?.(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {
