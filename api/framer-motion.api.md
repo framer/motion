@@ -202,6 +202,8 @@ export class DragControls {
     // 
     // @internal
     subscribe(controls: VisualElementDragControls): () => void;
+    // (undocumented)
+    updateConstraints(): void;
 }
 
 // @public (undocumented)
