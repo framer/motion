@@ -653,6 +653,11 @@ export class VisualElementDragControls {
                 cursorProgress: prevSnapshot.cursorProgress,
             })
 
+        if (expectsResolvedDragConstraints(this.props)) {
+            this.prepareBoundingBox()
+            this.resolveDragConstraints()
+        }
+
         /**
          * Return a function that will teardown the drag gesture
          */
@@ -696,4 +701,11 @@ function getCurrentDirection(
     }
 
     return direction
+}
+
+export function expectsResolvedDragConstraints({
+    dragConstraints,
+    onMeasureDragConstraints,
+}: MotionProps) {
+    return isRefObject(dragConstraints) && !!onMeasureDragConstraints
 }
