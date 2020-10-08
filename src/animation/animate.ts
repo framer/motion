@@ -1,4 +1,4 @@
-import { Transition } from "../types"
+import { Spring, Tween } from "../types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { startAnimation } from "./utils/transitions"
@@ -15,10 +15,19 @@ interface PlaybackLifecycles<V> {
     onStop?: () => void
 }
 
+type AnimationOptions<V> = (Tween | Spring) &
+    PlaybackLifecycles<V> & { delay?: number; type?: "tween" | "spring" }
+
 /**
- * Animate a value or a `MotionValue`.
+ * Animate a single value or a `MotionValue`.
  *
- * Returns `PlaybackControls`, currently a `stop` method.
+ * The first argument is either a `MotionValue` to animate, or an initial animation value.
+ *
+ * The second is either a value to animate to, or an array of keyframes to animate through.
+ *
+ * The third argument can be either tween or spring options, and optional lifecycle methods: `onUpdate`, `onPlay`, `onComplete`, `onRepeat` and `onStop`.
+ *
+ * Returns `PlaybackControls`, currently just a `stop` method.
  *
  * ```javascript
  * const x = useMotionValue(0)
@@ -33,30 +42,15 @@ interface PlaybackLifecycles<V> {
  *   return controls.stop
  * })
  * ```
+ *
+ * @public
  */
 export function animate<V>(
     from: MotionValue<V> | V,
     to: V | V[],
-    {
-        onStop,
-        onComplete,
-        ...transition
-    }: Transition & PlaybackLifecycles<V> = {},
-    onChange?: (v: V) => void
+    transition: AnimationOptions<V> = {}
 ): PlaybackControls {
     const value = isMotionValue(from) ? from : motionValue(from)
-    const unsubscribe = onChange && value.onChange(onChange)
-
-    transition.onStop = () => {
-        unsubscribe?.()
-        onStop?.()
-    }
-
-    transition.onComplete = () => {
-        unsubscribe?.()
-        onComplete?.()
-    }
-
     startAnimation("", value, to as any, transition)
 
     return {

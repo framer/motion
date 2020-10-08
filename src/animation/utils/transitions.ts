@@ -133,9 +133,19 @@ export function getPopmotionAnimationOptions(
         }
     }
 
+    const transitionOptions = convertTransitionToAnimationOptions(transition)
+
     return {
         ...options,
-        ...convertTransitionToAnimationOptions(transition),
+        ...transitionOptions,
+        onUpdate: (v: any) => {
+            options.onUpdate(v)
+            transitionOptions.onUpdate?.(v)
+        },
+        onComplete: () => {
+            options.onComplete()
+            transitionOptions.onComplete?.()
+        },
     }
 }
 
@@ -190,6 +200,7 @@ function getAnimation(
     function set(): StopAnimation {
         value.set(target)
         onComplete()
+        transition?.onComplete()
         return { stop: () => {} }
     }
 
