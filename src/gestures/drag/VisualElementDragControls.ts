@@ -653,11 +653,6 @@ export class VisualElementDragControls {
                 cursorProgress: prevSnapshot.cursorProgress,
             })
 
-        if (expectsResolvedDragConstraints(this.props)) {
-            this.prepareBoundingBox()
-            this.resolveDragConstraints()
-        }
-
         /**
          * Return a function that will teardown the drag gesture
          */
