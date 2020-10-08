@@ -133,19 +133,9 @@ export function getPopmotionAnimationOptions(
         }
     }
 
-    const transitionOptions = convertTransitionToAnimationOptions(transition)
-
     return {
         ...options,
-        ...transitionOptions,
-        onUpdate: (v: any) => {
-            options.onUpdate(v)
-            transitionOptions.onUpdate?.(v)
-        },
-        onComplete: () => {
-            options.onComplete()
-            transitionOptions.onComplete?.()
-        },
+        ...convertTransitionToAnimationOptions(transition),
     }
 }
 
@@ -192,15 +182,27 @@ function getAnimation(
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
             ? inertia({ ...options, ...valueTransition })
-            : animate(
-                  getPopmotionAnimationOptions(valueTransition, options, key)
-              )
+            : animate({
+                  ...getPopmotionAnimationOptions(
+                      valueTransition,
+                      options,
+                      key
+                  ),
+                  onUpdate: (v: any) => {
+                      options.onUpdate(v)
+                      valueTransition.onUpdate?.(v)
+                  },
+                  onComplete: () => {
+                      options.onComplete()
+                      valueTransition.onComplete?.()
+                  },
+              })
     }
 
     function set(): StopAnimation {
         value.set(target)
         onComplete()
-        transition?.onComplete()
+        valueTransition?.onComplete?.()
         return { stop: () => {} }
     }
 
