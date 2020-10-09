@@ -26,6 +26,12 @@ import { SVGAttributes } from 'react';
 // @internal (undocumented)
 export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): void;
 
+// Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "PlaybackControls" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions_2<V>): PlaybackControls;
+
 // @public (undocumented)
 export const AnimateLayoutFeature: MotionFeature;
 

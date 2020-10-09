@@ -44,6 +44,7 @@ export {
     animationControls,
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
+export { animate } from "./animation/animate"
 export {
     HoverHandlers,
     TapHandlers,

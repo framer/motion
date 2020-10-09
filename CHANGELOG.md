@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.8.0] 2020-10-08
+
+### Added
+
+-   `animate` function for low-level single `MotionValue` or arbitrary value animations.
+
 ## [2.7.8] 2020-10-07
 
 ### Changed
