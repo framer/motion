@@ -1,14 +1,20 @@
-import { RefObject, useRef } from "react"
+import { useRef } from "react"
 import { EventInfo, EventHandler } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { getGesturePriority } from "./utils/gesture-priority"
-import { ControlsProp, RemoveEvent } from "./types"
+import { RemoveEvent } from "./types"
 import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
 import { Point2D } from "../types/geometry"
+import {
+    clearOverride,
+    setOverride,
+    startOverride,
+} from "../render/VisualElement/utils/overrides"
+import { VisualElement } from "../render/VisualElement"
 
 const tapGesturePriority = getGesturePriority("whileTap")
 
@@ -185,14 +191,8 @@ export interface TapHandlers {
  * @internal
  */
 export function useTapGesture(
-    {
-        onTap,
-        onTapStart,
-        onTapCancel,
-        whileTap,
-        controls,
-    }: TapHandlers & ControlsProp,
-    ref: RefObject<Element>
+    { onTap, onTapStart, onTapCancel, whileTap }: TapHandlers,
+    visualElement: VisualElement
 ) {
     const hasTapListeners = onTap || onTapStart || onTapCancel || whileTap
     const isTapping = useRef(false)
@@ -206,24 +206,20 @@ export function useTapGesture(
         cancelPointerEventListener.current = null
     }
 
-    if (whileTap && controls) {
-        controls.setOverride(whileTap, tapGesturePriority)
-    }
+    whileTap && setOverride(visualElement, whileTap, tapGesturePriority)
 
     // We load this event handler into a ref so we can later refer to
     // onPointerUp.current which will always have reference to the latest props
     const onPointerUp = useRef<EventHandler | null>(null)
     onPointerUp.current = (event, info) => {
-        const element = ref.current
+        const element = visualElement.getInstance()
 
         removePointerUp()
         if (!isTapping.current || !element) return
 
         isTapping.current = false
 
-        if (controls && whileTap) {
-            controls.clearOverride(tapGesturePriority)
-        }
+        whileTap && clearOverride(visualElement, tapGesturePriority)
 
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
@@ -232,9 +228,9 @@ export function useTapGesture(
         openGestureLock()
 
         if (!isNodeOrChild(element, event.target as Element)) {
-            onTapCancel && onTapCancel(event, info)
+            onTapCancel?.(event, info)
         } else {
-            onTap && onTap(event, info)
+            onTap?.(event, info)
         }
     }
 
@@ -253,20 +249,18 @@ export function useTapGesture(
             )
         ) as RemoveEvent
 
-        const element = ref.current
+        const element = visualElement.getInstance()
         if (!element || isTapping.current) return
 
         isTapping.current = true
 
-        onTapStart && onTapStart(event, info)
+        onTapStart?.(event, info)
 
-        if (controls && whileTap) {
-            controls.startOverride(tapGesturePriority)
-        }
+        whileTap && startOverride(visualElement, tapGesturePriority)
     }
 
     usePointerEvent(
-        ref,
+        visualElement,
         "pointerdown",
         hasTapListeners ? onPointerDown : undefined
     )

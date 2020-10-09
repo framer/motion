@@ -1,7 +1,7 @@
 import { VisualElement } from "../VisualElement"
 import { AxisBox2D, Point2D, BoxDelta } from "../../types/geometry"
 import { delta, copyAxisBox, axisBox } from "../../utils/geometry"
-import { ResolvedValues } from "../types"
+import { ResolvedValues } from "../VisualElement/types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { DOMVisualElementConfig, TransformOrigin } from "./types"
 import { isTransformProp } from "./utils/transform"
@@ -20,10 +20,9 @@ import {
     updateBoxDelta,
     updateTreeScale,
 } from "../../utils/geometry/delta-calc"
-import { Transition } from "../../types"
+import { TargetAndTransition, Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
-import { startAnimation } from "../../animation/utils/transitions"
 import { getBoundingBox } from "./layout/measure"
 import {
     buildLayoutProjectionTransform,
@@ -32,6 +31,11 @@ import {
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import sync from "framesync"
+import { parseDomVariant } from "./utils/parse-dom-variant"
+import {
+    checkTargetForNewValues,
+    getOrigin,
+} from "../VisualElement/utils/setters"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -149,6 +153,43 @@ export class HTMLVisualElement<
             return defaultValueType ? defaultValueType.default || 0 : 0
         } else {
             return this.read(key)
+        }
+    }
+
+    /**
+     * Ensure that HTML and Framer-specific value types like `px`->`%` and `Color`
+     * can be animated by Motion.
+     */
+    makeTargetAnimatable(
+        { transition, transitionEnd, ...target }: TargetAndTransition,
+        parseDOMValues = true
+    ): TargetAndTransition {
+        const { transformValues } = this.config
+
+        let origin = getOrigin(target as any, transition || {}, this)
+
+        /**
+         * If Framer has provided a function to convert `Color` etc value types, convert them
+         */
+        if (transformValues) {
+            if (transitionEnd)
+                transitionEnd = transformValues(transitionEnd as any)
+            if (target) target = transformValues(target as any)
+            if (origin) origin = transformValues(origin as any)
+        }
+
+        if (parseDOMValues) {
+            checkTargetForNewValues(this, target, origin as any)
+
+            const parsed = parseDomVariant(this, target, origin, transitionEnd)
+            transitionEnd = parsed.transitionEnd
+            target = parsed.target
+        }
+
+        return {
+            transition,
+            transitionEnd,
+            ...target,
         }
     }
 
@@ -465,7 +506,7 @@ export class HTMLVisualElement<
         progress.set(min) // Set twice to hard-reset velocity
         progress.onChange((v) => this.setAxisTarget(axis, v, v + length))
 
-        return startAnimation(axis, progress, 0, transition)
+        return this.animateMotionValue?.(axis, progress, 0, transition)
     }
 
     stopLayoutAnimation() {

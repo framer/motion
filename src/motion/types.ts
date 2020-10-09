@@ -13,7 +13,7 @@ import {
 import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
-import { ResolvedValues } from "../render/types"
+import { ResolvedValues } from "../render/VisualElement/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -410,13 +410,6 @@ export interface MotionAdvancedProps {
      * Set to `false` to prevent inheriting variant changes from its parent.
      */
     inherit?: boolean
-
-    /**
-     * @internal
-     * Set to `true` to block rendering motion values (`animate`, gestures, etcetera)
-     * on the component. This can be used to temporarily disable animations for performance reasons.
-     */
-    static?: boolean
 }
 
 /**
@@ -549,9 +542,3 @@ export type TransformTemplate = (
     transform: TransformProperties,
     generatedTransform: string
 ) => string
-
-export enum AnimatePropType {
-    Target = "Target", // eslint-disable-line no-shadow
-    VariantLabel = "VariantLabel",
-    AnimationSubscription = "AnimationSubscription",
-}

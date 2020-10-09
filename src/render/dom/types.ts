@@ -10,7 +10,7 @@ import {
 import { MotionProps, MakeMotion } from "../../motion/types"
 import { TransformPoint2D } from "../../types/geometry"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
-import { VisualElementConfig } from "../types"
+import { VisualElementConfig } from "../VisualElement/types"
 
 /**
  * Configuration for the HTML and SVGVisualElement renderers.
@@ -47,6 +47,8 @@ export interface DOMVisualElementConfig extends VisualElementConfig {
      * ```
      */
     transformTemplate?: MotionProps["transformTemplate"]
+
+    transformValues?: MotionProps["transformValues"]
 
     transition?: MotionProps["transition"]
 

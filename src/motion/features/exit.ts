@@ -5,9 +5,10 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
+import { startVisualElementAnimation } from "../../render/VisualElement/utils/animation"
 
 const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
-    const { animate, controls, exit } = props
+    const { animate, exit, visualElement } = props
     const [isPresent, onExitComplete] = usePresence()
     const presenceContext = useContext(PresenceContext)
     const isPlayingExitAnimation = useRef(false)
@@ -20,7 +21,9 @@ const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
     useEffect(() => {
         if (!isPresent) {
             if (!isPlayingExitAnimation.current && exit) {
-                controls.start(exit, { custom }).then(onExitComplete)
+                startVisualElementAnimation(visualElement, exit, {
+                    custom,
+                }).then(onExitComplete)
             }
 
             isPlayingExitAnimation.current = true
@@ -30,13 +33,13 @@ const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
             typeof animate !== "boolean" &&
             !(animate instanceof AnimationControls)
         ) {
-            controls.start(animate)
+            startVisualElementAnimation(visualElement, animate)
         }
 
         if (isPresent) {
             isPlayingExitAnimation.current = false
         }
-    }, [animate, controls, custom, exit, isPresent, onExitComplete, props])
+    }, [animate, custom, exit, isPresent, onExitComplete, props])
 })
 
 /**
@@ -44,6 +47,6 @@ const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
  */
 export const Exit: MotionFeature = {
     key: "exit",
-    shouldRender: props => !!props.exit && !checkShouldInheritVariant(props),
+    shouldRender: (props) => !!props.exit && !checkShouldInheritVariant(props),
     getComponent: () => ExitComponent,
 }

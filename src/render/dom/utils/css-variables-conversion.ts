@@ -44,7 +44,7 @@ function getVariableValue(
     const resolved = window.getComputedStyle(element).getPropertyValue(token)
 
     if (resolved) {
-        return resolved
+        return resolved.trim()
     } else if (isCSSVariable(fallback)) {
         // The fallback might itself be a CSS variable, in which case we attempt to resolve it too.
         return getVariableValue(fallback, element, depth + 1)

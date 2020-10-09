@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react"
 import { VisualElement } from "../render/VisualElement"
 import { useConstant } from "../utils/use-constant"
-import { useVisualElementAnimation } from "./use-visual-element-animation"
-import { AnimationDefinition } from "./VisualElementAnimationControls"
-import { ResolvedValues } from "../render/types"
+import { ResolvedValues } from "../render/VisualElement/types"
+import {
+    AnimationDefinition,
+    startVisualElementAnimation,
+} from "../render/VisualElement/utils/animation"
+import {
+    checkTargetForNewValues,
+    getOrigin,
+} from "../render/VisualElement/utils/setters"
+import { TargetAndTransition } from "../types"
 
 /**
  * This is just a very basic VisualElement, more of a hack to keep supporting useAnimatedState with
@@ -17,6 +24,16 @@ class StateVisualElement extends VisualElement {
     build() {}
 
     clean() {}
+
+    makeTargetAnimatable({
+        transition,
+        transitionEnd,
+        ...target
+    }: TargetAndTransition) {
+        const origin = getOrigin(target as any, transition || {}, this)
+        checkTargetForNewValues(this, target, origin as any)
+        return { transition, transitionEnd, ...target }
+    }
 
     getBoundingBox() {
         return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
@@ -46,8 +63,6 @@ export function useAnimatedState(initialState: any) {
 
     visualElement.initialState = initialState
 
-    const controls = useVisualElementAnimation(visualElement, {}, {}, false)
-
     useEffect(() => {
         ;(visualElement as any).mount({})
         return () => (visualElement as any).unmount()
@@ -55,7 +70,10 @@ export function useAnimatedState(initialState: any) {
 
     const startAnimation = useConstant(
         () => (animationDefinition: AnimationDefinition) => {
-            return controls.start(animationDefinition)
+            return startVisualElementAnimation(
+                visualElement,
+                animationDefinition
+            )
         }
     )
 

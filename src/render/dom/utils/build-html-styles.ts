@@ -1,4 +1,4 @@
-import { ResolvedValues } from "../../types"
+import { ResolvedValues } from "../../VisualElement/types"
 import { DOMVisualElementConfig, TransformOrigin } from "../types"
 import { getDefaultValueType, getValueAsType } from "./value-types"
 import { isTransformProp, isTransformOriginProp } from "./transform"

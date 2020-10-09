@@ -1,9 +1,12 @@
-import { Variants, Transition } from "../types"
-import {
-    VisualElementAnimationControls,
-    AnimationDefinition,
-} from "./VisualElementAnimationControls"
+import { Transition } from "../types"
 import { invariant } from "hey-listen"
+import { VisualElement } from "../render/VisualElement"
+import {
+    AnimationDefinition,
+    startVisualElementAnimation,
+    stopAnimation,
+} from "../render/VisualElement/utils/animation"
+import { setValues } from "../render/VisualElement/utils/setters"
 
 type PendingAnimations = {
     animation: [AnimationDefinition, Transition | undefined]
@@ -24,13 +27,6 @@ export class AnimationControls {
     private hasMounted = false
 
     /**
-     * A default `Transition` to set on linked components.
-     *
-     * @internal
-     */
-    private defaultTransition: Transition
-
-    /**
      * Pending animations that are started before a component is mounted.
      *
      * @internal
@@ -42,42 +38,7 @@ export class AnimationControls {
      *
      * @internal
      */
-    private componentControls = new Set<VisualElementAnimationControls>()
-
-    /**
-     * A map of variants that can be later referenced via `start(variantLabel)`
-     *
-     * @internal
-     */
-    private variants: Variants
-
-    /**
-     * Set variants on this and all child components.
-     *
-     * @param variants - The variants to set
-     *
-     * @internal
-     */
-    setVariants(variants: Variants) {
-        this.variants = variants
-        this.componentControls.forEach(controls =>
-            controls.setVariants(variants)
-        )
-    }
-
-    /**
-     * Set a default transition on this and all child components
-     *
-     * @param transition - The default transition to set
-     *
-     * @internal
-     */
-    setDefaultTransition(transition: Transition) {
-        this.defaultTransition = transition
-        this.componentControls.forEach(controls =>
-            controls.setDefaultTransition(transition)
-        )
-    }
+    private subscribers = new Set<VisualElement>()
 
     /**
      * Subscribes a component's animation controls to this.
@@ -87,13 +48,10 @@ export class AnimationControls {
      *
      * @internal
      */
-    subscribe(controls: VisualElementAnimationControls) {
-        this.componentControls.add(controls)
-        if (this.variants) controls.setVariants(this.variants)
-        if (this.defaultTransition)
-            controls.setDefaultTransition(this.defaultTransition)
+    subscribe(visualElement: VisualElement) {
+        this.subscribers.add(visualElement)
 
-        return () => this.componentControls.delete(controls)
+        return () => this.subscribers.delete(visualElement)
     }
 
     /**
@@ -121,16 +79,18 @@ export class AnimationControls {
     ): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
-            this.componentControls.forEach(controls => {
-                const animation = controls.start(definition, {
-                    transitionOverride,
-                })
+            this.subscribers.forEach((visualElement) => {
+                const animation = startVisualElementAnimation(
+                    visualElement,
+                    definition,
+                    { transitionOverride }
+                )
                 animations.push(animation)
             })
 
             return Promise.all(animations)
         } else {
-            return new Promise(resolve => {
+            return new Promise((resolve) => {
                 this.pendingAnimations.push({
                     animation: [definition, transitionOverride],
                     resolve,
@@ -165,9 +125,9 @@ export class AnimationControls {
             "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."
         )
 
-        return this.componentControls.forEach(controls =>
-            controls.apply(definition)
-        )
+        return this.subscribers.forEach((visualElement) => {
+            setValues(visualElement, definition)
+        })
     }
 
     /**
@@ -180,7 +140,9 @@ export class AnimationControls {
      * @public
      */
     stop() {
-        this.componentControls.forEach(controls => controls.stop())
+        this.subscribers.forEach((visualElement) => {
+            stopAnimation(visualElement)
+        })
     }
 
     /**
@@ -190,9 +152,9 @@ export class AnimationControls {
      */
     mount() {
         this.hasMounted = true
-        this.pendingAnimations.forEach(({ animation, resolve }) =>
+        this.pendingAnimations.forEach(({ animation, resolve }) => {
             this.start(...animation).then(resolve)
-        )
+        })
     }
 
     /**

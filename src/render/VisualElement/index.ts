@@ -1,11 +1,15 @@
 import { Ref } from "react"
-import { isRefObject } from "../utils/is-ref-object"
-import { MotionValue } from "../value"
+import { isRefObject } from "../../utils/is-ref-object"
+import { MotionValue } from "../../value"
 import sync, { cancelSync } from "framesync"
 import { VisualElementConfig, ResolvedValues } from "./types"
-import { AxisBox2D } from "../types/geometry"
+import { AxisBox2D } from "../../types/geometry"
 import { invariant } from "hey-listen"
-import { Snapshot } from "../components/AnimateSharedLayout/stack"
+import { Snapshot } from "../../components/AnimateSharedLayout/stack"
+import { Target, TargetAndTransition, Variants } from "../../types"
+import { AnimationDefinition } from "./utils/animation"
+import { getHighestOverridePriortiy } from "./utils/overrides"
+import { startAnimation } from "../../animation/utils/transitions"
 
 type Subscriptions = Map<string, () => void>
 
@@ -27,6 +31,91 @@ export abstract class VisualElement<E = any> {
     // An iterable list of current children
     children: Set<VisualElement<E>> = new Set()
 
+    variantChildren?: Set<VisualElement<E>>
+
+    /**
+     * A set of values that we animate back to when a value is cleared of all overrides.
+     */
+    baseTarget: Target = {}
+
+    /**
+     * A series of target overrides that we can animate to/from when overrides are set/cleared.
+     */
+    overrides: Array<AnimationDefinition | undefined> = []
+
+    /**
+     * A series of target overrides as they were originally resolved.
+     */
+    resolvedOverrides: Array<TargetAndTransition | undefined> = []
+
+    /**
+     * A Set of currently active override indexes
+     */
+    activeOverrides: Set<number> = new Set()
+
+    getVariantPayload() {
+        return (this.config as any).custom
+    }
+
+    /**
+     * A Set of value keys that are currently animating.
+     */
+    isAnimating: Set<string> = new Set()
+
+    getVariant(label: string): Variants {
+        return (this.config as any).variants?.[label]
+    }
+
+    addVariantChild(visualElement: VisualElement<E>) {
+        if (!this.variantChildren) this.variantChildren = new Set()
+        this.variantChildren.add(visualElement)
+    }
+
+    variantChildrenOrder?: Set<VisualElement<E>>
+    addVariantChildOrder(visualElement: VisualElement<E>) {
+        if (!this.variantChildrenOrder) this.variantChildrenOrder = new Set()
+        this.variantChildrenOrder.add(visualElement)
+    }
+
+    onAnimationStart() {
+        ;(this.config as any).onAnimationStart?.()
+    }
+
+    onAnimationComplete() {
+        this.isMounted && (this.config as any).onAnimationComplete?.()
+    }
+
+    getDefaultTransition() {
+        return (this.config as any).transition
+    }
+
+    resetIsAnimating(priority = 0) {
+        this.isAnimating.clear()
+
+        // If this isn't the highest priority gesture, block the animation
+        // of anything that's currently being animated
+        if (priority < getHighestOverridePriortiy(this)) {
+            this.checkOverrideIsAnimating(priority)
+        }
+
+        this.variantChildren?.forEach((child) =>
+            child.resetIsAnimating(priority)
+        )
+    }
+
+    private checkOverrideIsAnimating(priority: number) {
+        const numOverrides = this.overrides.length
+        for (let i = priority + 1; i < numOverrides; i++) {
+            const resolvedOverride = this.resolvedOverrides[i]
+
+            if (resolvedOverride) {
+                for (const key in resolvedOverride) {
+                    this.isAnimating.add(key)
+                }
+            }
+        }
+    }
+
     // A snapshot of the previous component that shared a layoutId with this component. Will
     // only be hydrated by AnimateSharedLayout
     prevSnapshot?: Snapshot
@@ -35,6 +124,10 @@ export abstract class VisualElement<E = any> {
     latest: ResolvedValues = {}
 
     private removeFromParent?: () => void
+
+    // TODO split this out again in a further refactor removing layout animations from
+    // HTMLVisualElement
+    animateMotionValue?: typeof startAnimation
 
     // The actual element
     protected element: E
@@ -54,6 +147,10 @@ export abstract class VisualElement<E = any> {
     protected config: VisualElementConfig = {}
 
     isPresenceRoot?: boolean
+
+    isMounted = false
+
+    presenceId: number
 
     // An alias for element to allow VisualElement to be used
     // like a RefObject. This is a temporary measure to work with
@@ -155,6 +252,11 @@ export abstract class VisualElement<E = any> {
     abstract getBoundingBox(): AxisBox2D
 
     abstract updateLayoutDelta(): void
+
+    abstract makeTargetAnimatable(
+        targetAndTransition: TargetAndTransition,
+        parseDOMValues?: boolean
+    ): TargetAndTransition
 
     // Set a single `latest` value
     private setSingleStaticValue(key: string, value: string | number) {
