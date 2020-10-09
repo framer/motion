@@ -111,9 +111,9 @@ export function useVariants(
      * We want to update the "base" (or fallback) value on the initial render.
      */
     useInitialOrEveryRender(() => {
-        visualElement.forEachValue(
-            (value, key) => (visualElement.baseTarget[key] = value.get())
-        )
+        visualElement.forEachValue((value, key) => {
+            visualElement.baseTarget[key] = value.get()
+        })
     }, true)
 
     return context
