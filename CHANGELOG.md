@@ -2,7 +2,7 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.8.0] 2020-10-08
+## [2.8.0] 2020-10-09
 
 ### Added
 
