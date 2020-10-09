@@ -7,6 +7,7 @@ import { motion, useCycle } from "@framer"
 
 export const App = () => {
     const [width, nextWidth] = useCycle(0, "100%", "calc(50% + 100px)")
+
     return (
         <div style={stretch} onClick={() => nextWidth()}>
             <motion.div
@@ -27,6 +28,10 @@ const style = {
 
 const stretch: React.CSSProperties = {
     position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     inset: 0,
     display: "flex",
     justifyContent: "center",
