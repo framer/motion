@@ -30,7 +30,7 @@ export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): vo
 // Warning: (ae-forgotten-export) The symbol "PlaybackControls" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions_2<V>): PlaybackControls;
+export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions<V>): PlaybackControls;
 
 // @public (undocumented)
 export const AnimateLayoutFeature: MotionFeature;
