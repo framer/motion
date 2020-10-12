@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.9.0] 2020-10-11
+## [2.9.1] 2020-10-12
+
+### Fixed
+
+-   Reverting `matchMedia` listener to legacy `addListener` to fix in Safari.
+
+## [2.9.0] 2020-10-12
 
 ### Added
 

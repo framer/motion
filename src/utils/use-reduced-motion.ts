@@ -12,7 +12,7 @@ if (typeof window !== "undefined") {
         const setReducedMotionPreferences = () =>
             prefersReducedMotion.set(motionMediaQuery.matches)
 
-        motionMediaQuery.addEventListener("change", setReducedMotionPreferences)
+        motionMediaQuery.addListener(setReducedMotionPreferences)
 
         setReducedMotionPreferences()
     } else {
