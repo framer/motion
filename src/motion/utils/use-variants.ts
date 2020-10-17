@@ -37,12 +37,12 @@ export function useVariants(
      * to Framer which uses a `motion` component in every `Frame` and it might be if we change that
      * in the future that this restriction is removed.
      */
-    const isVariantNode =
-        variants ||
+    const controlsVariants =
         isVariantLabel(animate) ||
         isVariantLabel(whileTap) ||
         isVariantLabel(whileHover) ||
         isAnimationControls(animate)
+    const isVariantNode = variants || controlsVariants
 
     /**
      * Override initial with one from a parent `AnimatePresence`, if present
@@ -80,7 +80,7 @@ export function useVariants(
     /**
      * Subscribe to the parent visualElement if this is a participant in the variant tree
      */
-    isVariantNode && parent?.addVariantChild(visualElement)
+    isVariantNode && !controlsVariants && parent?.addVariantChild(visualElement)
 
     /**
      * If this component isn't exiting the tree, clear all the children in the render phase.
