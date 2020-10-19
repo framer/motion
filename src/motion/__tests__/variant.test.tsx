@@ -275,6 +275,50 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(1)
     })
 
+    test("doesn't propagate to a component with its own `animate` prop", async () => {
+        const promise = new Promise((resolve) => {
+            const opacity = motionValue(1)
+
+            const childVariants = {
+                initial: {
+                    opacity: 0,
+                },
+                animate: {
+                    opacity: 1,
+                },
+            }
+
+            const parentVariants = {
+                initial: {
+                    x: 0,
+                },
+                animate: {
+                    x: 100,
+                },
+            }
+
+            render(
+                <motion.div
+                    initial="initial"
+                    animate="animate"
+                    variants={parentVariants}
+                    transition={{ duration: 0.05 }}
+                >
+                    <motion.div
+                        animate="initial"
+                        variants={childVariants}
+                        style={{ opacity }}
+                        transition={{ duration: 0.05 }}
+                    />
+                </motion.div>
+            )
+
+            requestAnimationFrame(() => resolve(opacity.get()))
+        })
+
+        return expect(promise).resolves.toBe(0)
+    })
+
     test("when: beforeChildren works correctly", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(0.1)
