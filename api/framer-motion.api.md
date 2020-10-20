@@ -500,7 +500,6 @@ export interface MotionFeature {
 
 // @public
 export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
-    // Warning: (ae-forgotten-export) The symbol "Target" needs to be exported by the entry point index.d.ts
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
@@ -766,6 +765,11 @@ export interface TapHandlers {
 export interface TapInfo {
     point: Point2D;
 }
+
+// Warning: (ae-forgotten-export) The symbol "TargetProperties" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export type Target = MakeCustomValueType<TargetProperties>;
 
 // Warning: (ae-forgotten-export) The symbol "TargetWithKeyframes" needs to be exported by the entry point index.d.ts
 // 
