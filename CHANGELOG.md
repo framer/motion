@@ -2,13 +2,19 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.9.3] 2020-10-19
+## [2.9.4] 2020-10-20
+
+### Fixed
+
+-   Only starting a new layout animation on an axis when an animation isn't in progress, the target has changed, and the origin is different to the currently-calculated viewport box.
+
+## [2.9.3] 2020-10-20
 
 ### Added
 
 -   Exporting `Target` type.
 
-## [2.9.2] 2020-10-19
+## [2.9.2] 2020-10-20
 
 ### Fixed
 

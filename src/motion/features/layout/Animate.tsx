@@ -29,10 +29,21 @@ interface AnimateProps extends FeatureProps {
 const progressTarget = 1000
 
 class Animate extends React.Component<AnimateProps> {
-    private frameTarget = {
-        x: { min: 0, max: 0 },
-        y: { min: 0, max: 0 },
-    }
+    /**
+     * A mutable object containing the target visual box for the current animation frame
+     */
+    private frameTarget = axis()
+
+    /**
+     * An object containing the current target box for an animation. We use this to check whether
+     * to start a new animation or use an existing one.
+     */
+    private currentTarget = axis()
+
+    /**
+     * Track whether we're playing an animation on a given axis
+     */
+    private isAnimating = { x: false, y: false }
 
     private stopAxisAnimation: AxisLocks = {
         x: undefined,
@@ -152,11 +163,25 @@ class Animate extends React.Component<AnimateProps> {
         origin: Axis,
         { transition, crossfadeOpacity }: SharedLayoutAnimationConfig = {}
     ) {
-        this.stopAxisAnimation[axis]?.()
-
         const { visualElement } = this.props
         const frameTarget = this.frameTarget[axis]
         const layoutProgress = visualElement.axisProgress[axis]
+
+        if (this.isAnimating[axis]) {
+            /**
+             * We round the origin to the nearest pixel because we're comparing a measured element vs a
+             * calculated box. We just want to know if they're perceptually different.
+             */
+            const isSameOrigin = axisEquals(
+                roundAxis(origin),
+                roundAxis(frameTarget)
+            )
+            const isSameTarget = axisEquals(target, this.currentTarget[axis])
+
+            if (isSameOrigin && isSameTarget) return
+        }
+
+        this.stopAxisAnimation[axis]?.()
 
         /**
          * Set layout progress back to 0. We set it twice to hard-reset any velocity that might
@@ -170,12 +195,14 @@ class Animate extends React.Component<AnimateProps> {
          * If this is a crossfade animation, create a function that updates both the opacity of this component
          * and the one being crossfaded out.
          */
-
         let crossfade: (p: number) => void
         if (crossfadeOpacity) {
             crossfade = this.createCrossfadeAnimation(crossfadeOpacity)
             visualElement.show()
         }
+
+        this.currentTarget[axis] = target
+        this.isAnimating[axis] = true
 
         /**
          * Create an animation function to run once per frame. This will tween the visual bounding box from
@@ -202,6 +229,10 @@ class Animate extends React.Component<AnimateProps> {
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
+        const onAnimationEnd = () => {
+            unsubscribeProgress()
+            this.isAnimating[axis] = false
+        }
 
         // Start the animation on this axis
         const animation = startAnimation(
@@ -209,11 +240,11 @@ class Animate extends React.Component<AnimateProps> {
             layoutProgress,
             progressTarget,
             transition || this.props.transition || defaultTransition
-        ).then(unsubscribeProgress)
+        ).then(onAnimationEnd)
 
         this.stopAxisAnimation[axis] = () => {
             layoutProgress.stop()
-            unsubscribeProgress()
+            onAnimationEnd()
         }
 
         return animation
@@ -244,11 +275,11 @@ function AnimateLayoutContextProvider(props: FeatureProps) {
 }
 
 function hasMoved(a: AxisBox2D, b: AxisBox2D) {
-    return hasAxisMoved(a.x, b.x) || hasAxisMoved(a.y, b.y)
+    return !axisEquals(a.x, b.x) || !axisEquals(a.y, b.y)
 }
 
-function hasAxisMoved(a: Axis, b: Axis) {
-    return a.min !== b.min || a.max !== b.max
+function axisEquals(a: Axis, b: Axis) {
+    return a.min === b.min && a.max === b.max
 }
 
 const defaultTransition = {
@@ -279,4 +310,15 @@ export const AnimateLayout: MotionFeature = {
     key: "animate-layout",
     shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
     getComponent: () => AnimateLayoutContextProvider,
+}
+
+function roundAxis({ min, max }: Axis) {
+    return { min: Math.round(min), max: Math.round(max) }
+}
+
+function axis() {
+    return {
+        x: { min: 0, max: 0 },
+        y: { min: 0, max: 0 },
+    }
 }
