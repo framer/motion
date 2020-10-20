@@ -111,6 +111,7 @@ export {
     Inertia,
     None,
     EasingFunction,
+    Target,
     TargetAndTransition,
     Transition,
     ResolvedKeyframesTarget,

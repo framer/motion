@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.9.3] 2020-10-19
+
+### Added
+
+-   Exporting `Target` type.
+
 ## [2.9.2] 2020-10-19
 
 ### Fixed
