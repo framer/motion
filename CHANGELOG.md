@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.9.4] 2020-10-21
+
+### Added
+
+-   Exporting internal API `startVisualElementAnimation` for use in Framer.
+
 ## [2.9.3] 2020-10-19
 
 ### Added

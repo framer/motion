@@ -71,6 +71,7 @@ export { createMotionComponent } from "./motion"
 export { useAnimatedState } from "./animation/use-animated-state"
 export { addScaleCorrection } from "./render/dom/layout/scale-correction"
 export { startAnimation } from "./animation/utils/transitions"
+export { startVisualElementAnimation } from "./render/VisualElement/utils/animation"
 
 /**
  * Contexts

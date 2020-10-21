@@ -33,6 +33,9 @@ export type MakeTargetAnimatable = (
     transitionEnd?: Target
 }
 
+/**
+ * @internal
+ */
 export function startVisualElementAnimation(
     visualElement: VisualElement,
     definition: AnimationDefinition,
