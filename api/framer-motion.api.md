@@ -733,6 +733,12 @@ export interface Spring extends Repeat {
 // @internal
 export function startAnimation(key: string, value: MotionValue, target: ResolvedValueTarget, transition?: Transition): Promise<void>;
 
+// Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "startVisualElementAnimation" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export function startVisualElementAnimation(visualElement: VisualElement, definition: AnimationDefinition, opts?: AnimationOptions_2): Promise<void>;
+
 // @public (undocumented)
 export type Subscriber<T> = (v: T) => void;
 
