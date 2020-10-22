@@ -136,32 +136,32 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
         forceRender = layoutContext.forceUpdate
     }
 
-    const isInitialRender = useRef(true)
-
     // Filter out any children that aren't ReactElements. We can only track ReactElements with a props.key
     const filteredChildren = onlyElements(children)
+    let childrenToRender = filteredChildren
 
     // Keep a living record of the children we're actually rendering so we
     // can diff to figure out which are entering and exiting
-    const presentChildren = useRef(filteredChildren)
+    const presentChildren = useRef(childrenToRender)
 
     // A lookup table to quickly reference components by key
     const allChildren = useRef(new Map<ComponentKey, ReactElement<any>>())
         .current
 
-    // A living record of all currently exiting components.
-    const exiting = useRef(new Set<ComponentKey>()).current
+    const isInitialRender = useRef(true)
+    React.useLayoutEffect(() => {
+        isInitialRender.current = false
 
-    updateChildLookup(filteredChildren, allChildren)
+        updateChildLookup(filteredChildren, allChildren)
+        presentChildren.current = childrenToRender
+    })
 
     // If this is the initial component render, just deal with logic surrounding whether
     // we play onMount animations or not.
     if (isInitialRender.current) {
-        isInitialRender.current = false
-
         return (
             <>
-                {filteredChildren.map((child) => (
+                {childrenToRender.map((child) => (
                     <PresenceChild
                         key={getChildKey(child)}
                         isPresent
@@ -176,12 +176,13 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
     }
 
     // If this is a subsequent render, deal with entering and exiting children
-    let childrenToRender = [...filteredChildren]
+    childrenToRender = [...childrenToRender]
 
     // Diff the keys of the currently-present and target children to update our
     // exiting list.
     const presentKeys = presentChildren.current.map(getChildKey)
     const targetKeys = filteredChildren.map(getChildKey)
+    const exiting = new Set<ComponentKey>()
 
     // Diff the present children with our target children and mark those that are exiting
     const numPresent = presentKeys.length
@@ -189,9 +190,6 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
         const key = presentKeys[i]
         if (targetKeys.indexOf(key) === -1) {
             exiting.add(key)
-        } else {
-            // In case this key has re-entered, remove from the exiting list
-            exiting.delete(key)
         }
     }
 
@@ -261,8 +259,6 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
             </PresenceChild>
         )
     })
-
-    presentChildren.current = childrenToRender
 
     if (
         process.env.NODE_ENV !== "production" &&
