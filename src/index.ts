@@ -139,6 +139,7 @@ export {
 export {
     SharedLayoutSyncMethods,
     SharedLayoutContext,
+    FramerTreeContext,
     SyncLayoutLifecycles,
     createBatcher,
 } from "./components/AnimateSharedLayout/SharedLayoutContext"

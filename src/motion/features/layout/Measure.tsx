@@ -6,10 +6,12 @@ import {
     SharedLayoutSyncMethods,
     isSharedLayout,
     SharedLayoutContext,
+    FramerTreeContext,
 } from "../../../components/AnimateSharedLayout/SharedLayoutContext"
 
 interface SyncProps extends FeatureProps {
     syncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher
+    framerTreeSync: SharedLayoutSyncMethods | SyncLayoutBatcher
 }
 
 /**
@@ -20,8 +22,9 @@ class Measure extends React.Component<SyncProps> {
      * If this is a child of a SyncContext, register the VisualElement with it on mount.
      */
     componentDidMount() {
-        const { syncLayout, visualElement } = this.props
+        const { syncLayout, framerTreeSync, visualElement } = this.props
         isSharedLayout(syncLayout) && syncLayout.register(visualElement)
+        isSharedLayout(framerTreeSync) && framerTreeSync.register(visualElement)
     }
 
     /**
@@ -62,7 +65,14 @@ class Measure extends React.Component<SyncProps> {
 
 function MeasureContextProvider(props: FeatureProps) {
     const syncLayout = useContext(SharedLayoutContext)
-    return <Measure {...props} syncLayout={syncLayout} />
+    const framerTreeSync = useContext(FramerTreeContext)
+    return (
+        <Measure
+            {...props}
+            syncLayout={syncLayout}
+            framerTreeSync={framerTreeSync}
+        />
+    )
 }
 
 export const MeasureLayout: MotionFeature = {
