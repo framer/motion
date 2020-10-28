@@ -97,3 +97,10 @@ export function isSharedLayout(
 export const SharedLayoutContext = createContext<
     SyncLayoutBatcher | SharedLayoutSyncMethods
 >(createBatcher())
+
+/**
+ * @internal
+ */
+export const FramerTreeLayoutContext = createContext<
+    SyncLayoutBatcher | SharedLayoutSyncMethods
+>(createBatcher())
