@@ -2,14 +2,14 @@ import { VisualElement } from "../../../render/VisualElement"
 import { useContext } from "react"
 import {
     SharedLayoutContext,
-    FramerTreeContext,
+    FramerTreeLayoutContext,
     isSharedLayout,
 } from "../../../components/AnimateSharedLayout/SharedLayoutContext"
 import { useIsomorphicLayoutEffect } from "../../../utils/use-isomorphic-effect"
 
 export function useSnapshotOnUnmount(visualElement: VisualElement) {
     const syncLayout = useContext(SharedLayoutContext)
-    const framerTreeSync = useContext(FramerTreeContext)
+    const framerSyncLayout = useContext(FramerTreeLayoutContext)
 
     useIsomorphicLayoutEffect(
         () => () => {
@@ -17,8 +17,8 @@ export function useSnapshotOnUnmount(visualElement: VisualElement) {
                 syncLayout.remove(visualElement as any)
             }
 
-            if (isSharedLayout(framerTreeSync)) {
-                framerTreeSync.remove(visualElement as any)
+            if (isSharedLayout(framerSyncLayout)) {
+                framerSyncLayout.remove(visualElement as any)
             }
         },
         []

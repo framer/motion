@@ -101,6 +101,6 @@ export const SharedLayoutContext = createContext<
 /**
  * @internal
  */
-export const FramerTreeContext = createContext<
+export const FramerTreeLayoutContext = createContext<
     SyncLayoutBatcher | SharedLayoutSyncMethods
 >(createBatcher())

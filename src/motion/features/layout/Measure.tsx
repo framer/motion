@@ -6,12 +6,12 @@ import {
     SharedLayoutSyncMethods,
     isSharedLayout,
     SharedLayoutContext,
-    FramerTreeContext,
+    FramerTreeLayoutContext,
 } from "../../../components/AnimateSharedLayout/SharedLayoutContext"
 
 interface SyncProps extends FeatureProps {
     syncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher
-    framerTreeSync: SharedLayoutSyncMethods | SyncLayoutBatcher
+    framerSyncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher
 }
 
 /**
@@ -22,9 +22,10 @@ class Measure extends React.Component<SyncProps> {
      * If this is a child of a SyncContext, register the VisualElement with it on mount.
      */
     componentDidMount() {
-        const { syncLayout, framerTreeSync, visualElement } = this.props
+        const { syncLayout, framerSyncLayout, visualElement } = this.props
         isSharedLayout(syncLayout) && syncLayout.register(visualElement)
-        isSharedLayout(framerTreeSync) && framerTreeSync.register(visualElement)
+        isSharedLayout(framerSyncLayout) &&
+            framerSyncLayout.register(visualElement)
     }
 
     /**
@@ -65,12 +66,12 @@ class Measure extends React.Component<SyncProps> {
 
 function MeasureContextProvider(props: FeatureProps) {
     const syncLayout = useContext(SharedLayoutContext)
-    const framerTreeSync = useContext(FramerTreeContext)
+    const framerSyncLayout = useContext(FramerTreeLayoutContext)
     return (
         <Measure
             {...props}
             syncLayout={syncLayout}
-            framerTreeSync={framerTreeSync}
+            framerSyncLayout={framerSyncLayout}
         />
     )
 }
