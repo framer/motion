@@ -1,45 +1,32 @@
-import { useRef, useEffect, useContext } from "react"
+import { useEffect, useContext } from "react"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FeatureProps, MotionFeature } from "./types"
-import { AnimationControls } from "../../animation/AnimationControls"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { startVisualElementAnimation } from "../../render/VisualElement/utils/animation"
+import { AnimationType } from "../../animation/use-animation-state"
 
 const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
-    const { animate, exit, visualElement } = props
+    const { visualElement } = props
     const [isPresent, onExitComplete] = usePresence()
     const presenceContext = useContext(PresenceContext)
-    const isPlayingExitAnimation = useRef(false)
-
-    const custom =
-        presenceContext?.custom !== undefined
-            ? presenceContext.custom
-            : props.custom
 
     useEffect(() => {
+        const custom =
+            presenceContext?.custom !== undefined
+                ? presenceContext.custom
+                : props.custom
+
+        const animation = visualElement.animationState?.setActive(
+            AnimationType.Exit,
+            !isPresent
+            //TODO Pass custom
+        )
+
         if (!isPresent) {
-            if (!isPlayingExitAnimation.current && exit) {
-                startVisualElementAnimation(visualElement, exit, {
-                    custom,
-                }).then(onExitComplete)
-            }
-
-            isPlayingExitAnimation.current = true
-        } else if (
-            isPlayingExitAnimation.current &&
-            animate &&
-            typeof animate !== "boolean" &&
-            !(animate instanceof AnimationControls)
-        ) {
-            startVisualElementAnimation(visualElement, animate)
+            animation.then(onExitComplete)
         }
-
-        if (isPresent) {
-            isPlayingExitAnimation.current = false
-        }
-    }, [animate, custom, exit, isPresent, onExitComplete, props])
+    }, [isPresent])
 })
 
 /**

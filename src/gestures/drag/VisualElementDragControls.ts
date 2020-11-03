@@ -29,6 +29,7 @@ import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
+import { AnimationType } from "../../animation/use-animation-state"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,
@@ -220,6 +221,10 @@ export class VisualElementDragControls {
 
             // Fire onDragStart event
             this.props.onDragStart?.(event, info)
+            this.visualElement.animationState?.setActive(
+                AnimationType.Drag,
+                true
+            )
         }
 
         const onMove = (event: AnyPointerEvent, info: PanInfo) => {
@@ -367,6 +372,8 @@ export class VisualElementDragControls {
             this.openGlobalLock()
             this.openGlobalLock = null
         }
+
+        this.visualElement.animationState?.setActive(AnimationType.Drag, false)
     }
 
     stop(event: AnyPointerEvent, info: PanInfo) {

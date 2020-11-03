@@ -7,9 +7,8 @@ import { AxisBox2D } from "../../types/geometry"
 import { invariant } from "hey-listen"
 import { Snapshot } from "../../components/AnimateSharedLayout/stack"
 import { Target, TargetAndTransition, Variants } from "../../types"
-import { AnimationDefinition } from "./utils/animation"
-import { getHighestOverridePriortiy } from "./utils/overrides"
 import { startAnimation } from "../../animation/utils/transitions"
+import { AnimationList, AnimationState } from "./utils/animation-state"
 
 type Subscriptions = Map<string, () => void>
 
@@ -33,25 +32,13 @@ export abstract class VisualElement<E = any> {
 
     variantChildren?: Set<VisualElement<E>>
 
+    animationState?: AnimationState
+    animate?: (animations: AnimationList) => Promise<void>
+
     /**
      * A set of values that we animate back to when a value is cleared of all overrides.
      */
     baseTarget: Target = {}
-
-    /**
-     * A series of target overrides that we can animate to/from when overrides are set/cleared.
-     */
-    overrides: Array<AnimationDefinition | undefined> = []
-
-    /**
-     * A series of target overrides as they were originally resolved.
-     */
-    resolvedOverrides: Array<TargetAndTransition | undefined> = []
-
-    /**
-     * A Set of currently active override indexes
-     */
-    activeOverrides: Set<number> = new Set()
 
     getVariantPayload() {
         return (this.config as any).custom
@@ -87,33 +74,6 @@ export abstract class VisualElement<E = any> {
 
     getDefaultTransition() {
         return (this.config as any).transition
-    }
-
-    resetIsAnimating(priority = 0) {
-        this.isAnimating.clear()
-
-        // If this isn't the highest priority gesture, block the animation
-        // of anything that's currently being animated
-        if (priority < getHighestOverridePriortiy(this)) {
-            this.checkOverrideIsAnimating(priority)
-        }
-
-        this.variantChildren?.forEach((child) =>
-            child.resetIsAnimating(priority)
-        )
-    }
-
-    private checkOverrideIsAnimating(priority: number) {
-        const numOverrides = this.overrides.length
-        for (let i = priority + 1; i < numOverrides; i++) {
-            const resolvedOverride = this.resolvedOverrides[i]
-
-            if (resolvedOverride) {
-                for (const key in resolvedOverride) {
-                    this.isAnimating.add(key)
-                }
-            }
-        }
     }
 
     // A snapshot of the previous component that shared a layoutId with this component. Will

@@ -16,7 +16,7 @@ export type AnimationDefinition =
     | TargetAndTransition
     | TargetResolver
 
-type AnimationOptions = {
+export type AnimationOptions = {
     delay?: number
     priority?: number
     transitionOverride?: Transition
@@ -41,12 +41,6 @@ export function startVisualElementAnimation(
     definition: AnimationDefinition,
     opts: AnimationOptions = {}
 ) {
-    if (opts.priority) {
-        visualElement.activeOverrides.add(opts.priority)
-    }
-
-    visualElement.resetIsAnimating(opts.priority)
-
     let animation
 
     if (isVariantLabels(definition)) {
@@ -186,8 +180,6 @@ export function animateTarget(
         transition,
         ...target
     } = visualElement.makeTargetAnimatable(targetAndTransition)
-
-    if (priority) visualElement.resolvedOverrides[priority] = target
 
     const animations: Array<Promise<any>> = []
 

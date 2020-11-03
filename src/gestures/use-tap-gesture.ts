@@ -2,21 +2,14 @@ import { useRef } from "react"
 import { EventInfo, EventHandler } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
-import { getGesturePriority } from "./utils/gesture-priority"
 import { RemoveEvent } from "./types"
 import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
 import { Point2D } from "../types/geometry"
-import {
-    clearOverride,
-    setOverride,
-    startOverride,
-} from "../render/VisualElement/utils/overrides"
 import { VisualElement } from "../render/VisualElement"
-
-const tapGesturePriority = getGesturePriority("whileTap")
+import { AnimationType } from "../animation/use-animation-state"
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
@@ -206,8 +199,6 @@ export function useTapGesture(
         cancelPointerEventListener.current = null
     }
 
-    whileTap && setOverride(visualElement, whileTap, tapGesturePriority)
-
     // We load this event handler into a ref so we can later refer to
     // onPointerUp.current which will always have reference to the latest props
     const onPointerUp = useRef<EventHandler | null>(null)
@@ -219,7 +210,7 @@ export function useTapGesture(
 
         isTapping.current = false
 
-        whileTap && clearOverride(visualElement, tapGesturePriority)
+        visualElement.animationState?.setActive(AnimationType.Press, true)
 
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
@@ -256,7 +247,7 @@ export function useTapGesture(
 
         onTapStart?.(event, info)
 
-        whileTap && startOverride(visualElement, tapGesturePriority)
+        visualElement.animationState?.setActive(AnimationType.Press, false)
     }
 
     usePointerEvent(

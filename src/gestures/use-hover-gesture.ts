@@ -1,14 +1,9 @@
-import { getGesturePriority } from "./utils/gesture-priority"
 import { TargetAndTransition } from "../types"
 import { isMouseEvent } from "./utils/event-type"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { EventInfo } from "../events/types"
 import { VisualElement } from "../render/VisualElement"
-import {
-    clearOverride,
-    setOverride,
-    startOverride,
-} from "../render/VisualElement/utils/overrides"
+import { AnimationType } from "../animation/use-animation-state"
 
 /**
  * @public
@@ -74,8 +69,6 @@ export interface HoverHandlers {
     onHoverEnd?(event: MouseEvent, info: EventInfo): void
 }
 
-const hoverPriority = getGesturePriority("whileHover")
-
 type FilteredTouchListener = (
     event: MouseEvent | PointerEvent,
     info: EventInfo
@@ -95,20 +88,15 @@ const filterTouch = (listener: FilteredTouchListener) => (
  * @internal
  */
 export function useHoverGesture(
-    { whileHover, onHoverStart, onHoverEnd }: HoverHandlers,
+    { onHoverStart, onHoverEnd }: HoverHandlers,
     visualElement: VisualElement
 ) {
-    if (whileHover) {
-        setOverride(visualElement, whileHover, hoverPriority)
-    }
-
     usePointerEvent(
         visualElement,
         "pointerenter",
         filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
             onHoverStart?.(event, info)
-
-            whileHover && startOverride(visualElement, hoverPriority)
+            visualElement.animationState?.setActive(AnimationType.Hover, true)
         })
     )
 
@@ -117,8 +105,7 @@ export function useHoverGesture(
         "pointerleave",
         filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
             onHoverEnd?.(event, info)
-
-            whileHover && clearOverride(visualElement, hoverPriority)
+            visualElement.animationState?.setActive(AnimationType.Hover, false)
         })
     )
 }
