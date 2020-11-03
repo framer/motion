@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.0] Unreleased
+
+### Added
+
+-   Adding Safari-prefixed `userSelect` css to draggable elements.
+
+### Changed
+
+-   When the variant provided to `animate` changes, removed visual options will animate back to any defined in `style`.
+
 ## [2.9.5] 2020-11-16
 
 ### Added

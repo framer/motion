@@ -50,6 +50,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "onTapCancel",
     "whileHover",
     "whileTap",
+    "whileDrag",
     "onHoverEnd",
     "onHoverStart",
 ])
