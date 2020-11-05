@@ -123,8 +123,6 @@ function isVariantLabel(v?: MotionProps["animate"]): v is string | string[] {
     return typeof v === "string" || Array.isArray(v)
 }
 
-export function isAnimationControls(
-    v?: MotionProps["animate"]
-): v is AnimationControls {
+export function isAnimationControls(v?: unknown): v is AnimationControls {
     return typeof v === "object" && typeof (v as any).start === "function"
 }

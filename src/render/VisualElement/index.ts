@@ -33,7 +33,10 @@ export abstract class VisualElement<E = any> {
     variantChildren?: Set<VisualElement<E>>
 
     animationState?: AnimationState
-    animate?: (animations: AnimationList) => Promise<void>
+    animate?: (
+        animations: AnimationList,
+        protectedValues?: Set<string>
+    ) => Promise<void[]>
 
     /**
      * A set of values that we animate back to when a value is cleared of all overrides.
@@ -43,11 +46,6 @@ export abstract class VisualElement<E = any> {
     getVariantPayload() {
         return (this.config as any).custom
     }
-
-    /**
-     * A Set of value keys that are currently animating.
-     */
-    isAnimating: Set<string> = new Set()
 
     getVariant(label: string): Variants {
         return (this.config as any).variants?.[label]
