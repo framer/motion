@@ -1,8 +1,8 @@
 import { useRef, useEffect } from "react"
 import { Target, Transition, TargetAndTransition } from "../types"
-import { VisualElementAnimationControls } from "./VisualElementAnimationControls"
 import { shallowCompare } from "../utils/shallow-compare"
 import { VisualElement } from "../render/VisualElement"
+import { startVisualElementAnimation } from "../render/VisualElement/utils/animation"
 
 export const hasUpdated = (
     prev: string | number | any[],
@@ -47,9 +47,8 @@ function targetWithoutTransition(
  * @internal
  */
 export function useAnimateProp(
-    targetAndTransition: TargetAndTransition,
-    controls: VisualElementAnimationControls,
     visualElement: VisualElement,
+    targetAndTransition: TargetAndTransition,
     defaultTransition?: Transition
 ) {
     const isInitialRender = useRef(true)
@@ -95,7 +94,7 @@ export function useAnimateProp(
         }
 
         if (Object.keys(targetToAnimate).length) {
-            controls.start({
+            startVisualElementAnimation(visualElement, {
                 ...targetToAnimate,
                 transition: targetAndTransition.transition || defaultTransition,
                 transitionEnd: targetAndTransition.transitionEnd,

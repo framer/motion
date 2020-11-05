@@ -15,11 +15,15 @@ export function buildHTMLProps(
     }
 
     if (!!drag) {
+        // Disable the ghost element when a user drags
+        htmlProps.draggable = false
+
         // Disable text selection
         htmlProps.style.userSelect = "none"
 
-        // Disable the ghost element when a user drags
-        htmlProps.draggable = false
+        // Disable scrolling on the draggable direction
+        htmlProps.style.touchAction =
+            drag === true ? "none" : `pan-${drag === "x" ? "y" : "x"}`
     }
 
     return htmlProps

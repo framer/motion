@@ -1,7 +1,7 @@
 import { HTMLVisualElement } from "./HTMLVisualElement"
 import { buildSVGAttrs } from "./utils/build-svg-attrs"
 import { Dimensions, DOMVisualElementConfig } from "./types"
-import { ResolvedValues } from "../types"
+import { ResolvedValues } from "../VisualElement/types"
 import { camelCaseAttributes } from "./utils/svg-camel-case-attributes"
 import { camelToDash } from "./utils/camel-to-dash"
 

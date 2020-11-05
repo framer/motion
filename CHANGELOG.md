@@ -2,6 +2,126 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.9.4] 2020-10-21
+
+### Added
+
+-   Exporting internal API `startVisualElementAnimation` for use in Framer.
+
+## [2.9.3] 2020-10-19
+
+### Added
+
+-   Exporting `Target` type.
+
+## [2.9.2] 2020-10-19
+
+### Fixed
+
+-   Over-eager variant propagation.
+
+## [2.9.1] 2020-10-12
+
+### Fixed
+
+-   Reverting `matchMedia` listener to legacy `addListener` to fix in Safari.
+
+## [2.9.0] 2020-10-12
+
+### Added
+
+-   Refactor has reduced complete bundle size to 27kb and `m` component bundle size to 12.5kb.
+
+### Fixed
+
+-   Removing whitespace from resolved CSS variables.
+
+## [2.8.0] 2020-10-09
+
+### Added
+
+-   `animate` function for low-level single `MotionValue` or arbitrary value animations.
+
+## [2.7.8] 2020-10-07
+
+### Changed
+
+-   Reverting previous behaviour to allow manual triggering of updating drag constraints via `useDragControls`.
+
+## [2.7.8] 2020-10-07
+
+### Changed
+
+-   If `dragConstraints` is set to a ref on a non-draggable component, we resolve the constraints on mount in order to pass them to `onMeasureDragConstraints`.
+
+## [2.7.7] 2020-10-01
+
+### Fixed
+
+-   `duration` and `bounce` are now overridden by `damping`, `stiffness`, and `mass`. This fixes an issue in Framer where legacy transitions were breaking.
+
+## [2.7.6] 2020-09-29
+
+### Fixed
+
+-   When a `transform` is provided to `style` as a `MotionValue` and then replaced with a number on a subsequent render, we create a new `MotionValue` for it.
+
+## [2.7.5] 2020-09-26
+
+### Fixed
+
+-   Manually setting a `from` in `transition`.
+
+## [2.7.4] 2020-09-26
+
+### Fixed
+
+-   Blocks propagation of variants from parent if a component's `animate` prop is set to `AnimationControls`. `inherit` can be used to force inheritence `true` or `false`.
+
+## [2.7.3] 2020-09-25
+
+### Fixed
+
+-   Blocks touch viewport scrolling from draggable components on a per-axis basis.
+-   Reinstating `sideEffects: false` now that the `blockViewportScroll` method has been removed.
+
+## [2.7.2] 2020-09-24
+
+### Added
+
+-   `createDomMotionComponent` for legacy browser support.
+
+## [2.7.1] 2020-09-23
+
+### Fixed
+
+-   Reverting `sideEffects: false`, as viewport touch scroll blocking is a side effect.
+
+## [2.7.0] 2020-09-23
+
+### Added
+
+-   Duration-based springs.
+
+## [2.6.15] 2020-09-18
+
+### Fix
+
+-   Fixing dynamic type imports in generated types.
+
+## [2.6.14] 2020-09-18
+
+### Fix
+
+-   No longer unsetting transform motion values from `style` if their current value is `0`.
+-   Correct `useDomEvent` types to allow any `EventTarget`.
+-   Fix memory leak error in `AnimatePresence`.
+
+### Change
+
+-   Added `sideEffects: false` to `package.json`.
+-   Added `bundlesize` bundle budgeting.
+
 ## [2.6.13] 2020-09-12
 
 ### Fix

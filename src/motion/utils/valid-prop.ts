@@ -17,7 +17,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "transformValues",
     "custom",
     "inherit",
-    "static",
     "layout",
     "layoutId",
     "onLayoutAnimationComplete",

@@ -1,7 +1,7 @@
 import "../../../../jest.setup"
 import { HTMLVisualElement } from "../HTMLVisualElement"
 import { motionValue } from "../../../value"
-import { ResolvedValues } from "../../types"
+import { ResolvedValues } from "../../VisualElement/types"
 
 const div = () => document.createElement("div")
 
@@ -29,7 +29,7 @@ describe("HTMLVisualElement", () => {
     })
 
     it("fires provided onUpdate callbacks when values change", async () => {
-        const promise = new Promise<ResolvedValues>(resolve => {
+        const promise = new Promise<ResolvedValues>((resolve) => {
             const visualElement = getMounted()
             visualElement.updateConfig({ onUpdate: resolve })
             const x = motionValue(0)

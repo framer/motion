@@ -1,7 +1,7 @@
 import { resolveCSSVariables } from "./css-variables-conversion"
 import { unitConversion } from "./unit-type-conversion"
-import { MakeTargetAnimatable } from "../../../animation/VisualElementAnimationControls"
 import { HTMLVisualElement } from "../HTMLVisualElement"
+import { MakeTargetAnimatable } from "../../VisualElement/utils/animation"
 
 /**
  * Parse a DOM variant to make it animatable. This involves resolving CSS variables
@@ -16,6 +16,5 @@ export const parseDomVariant: MakeTargetAnimatable = (
     const resolved = resolveCSSVariables(visualElement, target, transitionEnd)
     target = resolved.target
     transitionEnd = resolved.transitionEnd
-
     return unitConversion(visualElement, target, origin, transitionEnd)
 }

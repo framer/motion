@@ -39,8 +39,8 @@ export function useMotionValues<P>(
      */
     for (const key in prev) {
         const isForced = isForcedMotionValue(key, props)
-        const existsAsProp = props[key]
-        const existsAsStyle = props.style && props.style[key]
+        const existsAsProp = props[key] !== undefined
+        const existsAsStyle = props.style && props.style[key] !== undefined
         const propIsMotionValue = existsAsProp && isMotionValue(props[key])
         const styleIsMotionValue =
             existsAsStyle && isMotionValue(props.style![key])
@@ -103,11 +103,21 @@ function addMotionValues<P>(
             if (!visualElement.hasValue(key)) {
                 visualElement.addValue(key, motionValue(value))
             } else if (value !== prev[key]) {
-                // If the MotionValue already exists, update it with the
-                // latest incoming value
-                const motion = visualElement.getValue(key)
-                motion!.set(value)
+                if (isMotionValue(prev[key])) {
+                    /**
+                     * If the previous value was a MotionValue, and this value isn't,
+                     * we want to create a new MotionValue rather than update one that's been removed.
+                     */
+                    visualElement.addValue(key, motionValue(value))
+                } else {
+                    /**
+                     * Otherwise, we just want to ensure the MotionValue is of the latest value.
+                     */
+                    const motion = visualElement.getValue(key)
+                    motion!.set(value)
+                }
             }
+
             foundMotionValue = true
         } else if (isStyle) {
             ;(visualElement as any).reactStyle[key] = value

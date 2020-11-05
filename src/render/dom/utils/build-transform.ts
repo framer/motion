@@ -1,5 +1,5 @@
 import { TransformTemplate } from "../../../motion/types"
-import { ResolvedValues } from "../../types"
+import { ResolvedValues } from "../../VisualElement/types"
 import { sortTransformProps, boxDistortingKeys } from "./transform"
 import { Point2D, BoxDelta } from "../../../types/geometry"
 import { TransformOrigin } from "../types"

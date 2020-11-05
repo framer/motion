@@ -14,6 +14,6 @@ const Component = makeRenderlessComponent(
  */
 export const Drag: MotionFeature = {
     key: "drag",
-    shouldRender: (props: MotionProps) => !!props.drag,
+    shouldRender: (props: MotionProps) => !!props.drag || !!props.dragControls,
     getComponent: () => Component,
 }

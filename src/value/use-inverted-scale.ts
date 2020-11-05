@@ -1,9 +1,8 @@
-import { useContext } from "react"
-import { MotionContext } from "../motion/context/MotionContext"
 import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
 import { invariant, warning } from "hey-listen"
 import { useMotionValue } from "./use-motion-value"
+import { useVisualElementContext } from "../motion/context/MotionContext"
 
 interface ScaleMotionValues {
     scaleX: MotionValue<number>
@@ -16,6 +15,8 @@ interface ScaleMotionValues {
 const maxScale = 100000
 export const invertScale = (scale: number) =>
     scale > 0.001 ? 1 / scale : maxScale
+
+let hasWarned = false
 
 /**
  * Returns a `MotionValue` each for `scaleX` and `scaleY` that update with the inverse
@@ -47,13 +48,12 @@ export const invertScale = (scale: number) =>
  *
  * @deprecated
  */
-let hasWarned = false
 export function useInvertedScale(
     scale?: Partial<ScaleMotionValues>
 ): ScaleMotionValues {
     let parentScaleX = useMotionValue(1)
     let parentScaleY = useMotionValue(1)
-    const { visualElement } = useContext(MotionContext)
+    const visualElement = useVisualElementContext()
 
     invariant(
         !!(scale || visualElement),

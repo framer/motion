@@ -1,6 +1,5 @@
 import {
     isNear,
-    calcTranslate,
     calcOrigin,
     updateAxisDelta,
     updateTreeScale,
@@ -13,48 +12,6 @@ describe("isNear", () => {
         expect(isNear(9.9, 10, 0.1)).toBe(true)
         expect(isNear(10.2, 10, 0.1)).toBe(false)
         expect(isNear(9.8, 10, 0.1)).toBe(false)
-    })
-})
-
-describe("calcTranslate", () => {
-    test("Calculates the translation needed to be applied to source axis to return target axis", () => {
-        // Same size, static
-        expect(
-            calcTranslate({ min: 0, max: 100 }, { min: 0, max: 100 }, 0.5)
-        ).toBe(0)
-        expect(
-            calcTranslate({ min: 0, max: 100 }, { min: 0, max: 100 }, 1)
-        ).toBe(0)
-        expect(
-            calcTranslate({ min: 0, max: 100 }, { min: 0, max: 100 }, 0)
-        ).toBe(0)
-
-        // Same size, translated
-        expect(
-            calcTranslate({ min: 0, max: 100 }, { min: 100, max: 200 }, 0)
-        ).toBe(100)
-        expect(
-            calcTranslate({ min: 0, max: 100 }, { min: 100, max: 200 }, 0.5)
-        ).toBe(100)
-        expect(
-            calcTranslate({ min: 0, max: 100 }, { min: 100, max: 200 }, 1)
-        ).toBe(100)
-
-        // Different size, static
-        expect(
-            calcTranslate({ min: 400, max: 500 }, { min: 400, max: 700 }, 0)
-        ).toBe(0)
-        expect(
-            calcTranslate({ min: 400, max: 500 }, { min: 200, max: 700 }, 0.5)
-        ).toBe(0)
-
-        // Different size, translated
-        expect(
-            calcTranslate({ min: 200, max: 400 }, { min: 400, max: 800 }, 0.5)
-        ).toBe(300)
-        expect(
-            calcTranslate({ min: 400, max: 800 }, { min: 200, max: 400 }, 0)
-        ).toBe(-200)
     })
 })
 

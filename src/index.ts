@@ -1,7 +1,8 @@
 /**
  * Components
  */
-export { motion, m } from "./render/dom"
+export { motion, createDomMotionComponent } from "./render/dom"
+export { m } from "./render/dom/minimal-component"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export { HTMLVisualElement } from "./render/dom/HTMLVisualElement"
@@ -33,7 +34,6 @@ export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
  * Accessibility
  */
 export { useReducedMotion } from "./utils/use-reduced-motion"
-export { ReducedMotion } from "./components/ReducedMotion"
 
 /**
  * Utils
@@ -43,6 +43,7 @@ export {
     animationControls,
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
+export { animate } from "./animation/animate"
 export {
     HoverHandlers,
     TapHandlers,
@@ -70,6 +71,7 @@ export { createMotionComponent } from "./motion"
 export { useAnimatedState } from "./animation/use-animated-state"
 export { addScaleCorrection } from "./render/dom/layout/scale-correction"
 export { startAnimation } from "./animation/utils/transitions"
+export { startVisualElementAnimation } from "./render/VisualElement/utils/animation"
 
 /**
  * Contexts
@@ -78,7 +80,6 @@ export {
     MotionConfig,
     MotionConfigContext,
 } from "./motion/context/MotionConfigContext"
-export { MotionContext } from "./motion/context/MotionContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 
 /**
@@ -102,7 +103,6 @@ export {
     RelayoutInfo,
     ResolveLayoutTransition,
 } from "./motion/types"
-export { VisualElementAnimationControls } from "./animation/VisualElementAnimationControls"
 export {
     Orchestration,
     Repeat,
@@ -112,6 +112,7 @@ export {
     Inertia,
     None,
     EasingFunction,
+    Target,
     TargetAndTransition,
     Transition,
     ResolvedKeyframesTarget,
@@ -138,6 +139,7 @@ export {
 export {
     SharedLayoutSyncMethods,
     SharedLayoutContext,
+    FramerTreeLayoutContext,
     SyncLayoutLifecycles,
     createBatcher,
 } from "./components/AnimateSharedLayout/SharedLayoutContext"

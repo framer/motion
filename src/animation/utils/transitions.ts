@@ -149,9 +149,8 @@ function getAnimation(
     transition: PermissiveTransitionDefinition,
     onComplete: () => void
 ) {
-    const valueTransition =
-        transition[key] || transition["default"] || transition
-    let origin = value.get()
+    const valueTransition = getValueTransition(transition, key)
+    let origin = valueTransition.from ?? value.get()
 
     const isTargetAnimatable = isAnimatable(key, target)
 
@@ -182,14 +181,27 @@ function getAnimation(
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
             ? inertia({ ...options, ...valueTransition })
-            : animate(
-                  getPopmotionAnimationOptions(valueTransition, options, key)
-              )
+            : animate({
+                  ...getPopmotionAnimationOptions(
+                      valueTransition,
+                      options,
+                      key
+                  ),
+                  onUpdate: (v: any) => {
+                      options.onUpdate(v)
+                      valueTransition.onUpdate?.(v)
+                  },
+                  onComplete: () => {
+                      options.onComplete()
+                      valueTransition.onComplete?.()
+                  },
+              })
     }
 
     function set(): StopAnimation {
         value.set(target)
         onComplete()
+        valueTransition?.onComplete?.()
         return { stop: () => {} }
     }
 
@@ -198,6 +210,10 @@ function getAnimation(
         valueTransition.type === false
         ? set
         : start
+}
+
+export function getValueTransition(transition: Transition, key: string) {
+    return transition[key] || transition["default"] || transition
 }
 
 /**

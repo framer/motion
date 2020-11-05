@@ -1,7 +1,7 @@
 import { Axis, AxisBox2D, BoxDelta } from "../../types/geometry"
 import { mix } from "popmotion"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
-import { ResolvedValues } from "../../render/types"
+import { ResolvedValues } from "../../render/VisualElement/types"
 
 /**
  * Reset an axis to the provided origin box.

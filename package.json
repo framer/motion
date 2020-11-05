@@ -1,9 +1,9 @@
 {
     "name": "framer-motion",
-    "version": "2.6.13",
+    "version": "2.9.4",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
-    "types": "dist/framer-motion.d.ts",
+    "types": "types/index.d.ts",
     "author": "Framer Motion",
     "license": "MIT",
     "repository": "https://github.com/framer/motion/",
@@ -19,7 +19,7 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn test-client && yarn test-server && yarn test-e2e",
+        "test": "yarn test-client && yarn test-server && yarn test-e2e && yarn build && yarn measure",
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
@@ -27,10 +27,10 @@
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
-        "build": "tsc -p . && rollup -c && make api && yarn measure",
+        "build": "tsc -p . && rollup -c && make api",
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
         "prepublishOnly": "yarn test && yarn build",
-        "measure": "gzip -c dist/framer-motion.js | wc -c",
+        "measure": "bundlesize",
         "deduplicate": "yarn-deduplicate yarn.lock",
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
     },
@@ -53,6 +53,7 @@
         "@typescript-eslint/eslint-plugin": "^1.5.0",
         "@typescript-eslint/parser": "^1.5.0",
         "array-move": "^2.1.0",
+        "bundlesize": "^0.18.0",
         "cache-loader": "^1.2.5",
         "concurrently": "^5.2.0",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
@@ -92,7 +93,7 @@
     "dependencies": {
         "framesync": "^4.1.0",
         "hey-listen": "^1.0.8",
-        "popmotion": "9.0.0-rc.14",
+        "popmotion": "9.0.0-rc.20",
         "style-value-types": "^3.1.9",
         "tslib": "^1.10.0"
     },
@@ -114,5 +115,15 @@
         "ignore": [
             "**/api/*.api.ts"
         ]
-    }
+    },
+    "bundlesize": [
+        {
+            "path": "./dist/framer-motion.js",
+            "maxSize": "28 kB"
+        },
+        {
+            "path": "./dist/minimal-component.js",
+            "maxSize": "13 kB"
+        }
+    ]
 }

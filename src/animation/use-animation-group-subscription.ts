@@ -1,6 +1,7 @@
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
+import { VisualElement } from "../render/VisualElement"
+import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { AnimationControls } from "./AnimationControls"
-import { VisualElementAnimationControls } from "./VisualElementAnimationControls"
 
 /**
  * `useAnimationGroupSubscription` allows a component to subscribe to an
@@ -12,16 +13,12 @@ import { VisualElementAnimationControls } from "./VisualElementAnimationControls
  * @internal
  */
 export function useAnimationGroupSubscription(
-    animation: AnimationControls,
-    controls: VisualElementAnimationControls
+    visualElement: VisualElement,
+    animation: AnimationControls
 ) {
-    const unsubscribe = useMemo(() => animation.subscribe(controls), [
+    const unsubscribe = useMemo(() => animation.subscribe(visualElement), [
         animation,
     ])
-    useEffect(
-        () => () => {
-            unsubscribe && unsubscribe()
-        },
-        [unsubscribe]
-    )
+
+    useUnmountEffect(() => unsubscribe?.())
 }

@@ -18,6 +18,14 @@ export interface MotionConfigContext {
      * @public
      */
     features: MotionFeature[]
+
+    /**
+     * Determines whether this is a static context ie the Framer canvas. If so,
+     * it'll disable all dynamic functionality.
+     *
+     * @internal
+     */
+    isStatic: boolean
 }
 
 export interface MotionConfigProps extends Partial<MotionConfigContext> {
@@ -28,8 +36,9 @@ export interface MotionConfigProps extends Partial<MotionConfigContext> {
  * @public
  */
 export const MotionConfigContext = createContext<MotionConfigContext>({
-    transformPagePoint: p => p,
+    transformPagePoint: (p) => p,
     features: [],
+    isStatic: false,
 })
 
 /**

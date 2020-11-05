@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react"
-import { PresenceContext } from "./PresenceContext"
+import { PresenceContext, PresenceContextProps } from "./PresenceContext"
 import { useConstant } from "../../utils/use-constant"
 
 export type SafeToRemove = () => void
@@ -73,7 +73,10 @@ export function usePresence(): AlwaysPresent | Present | NotPresent {
  * @public
  */
 export function useIsPresent() {
-    const context = useContext(PresenceContext)
+    return isPresent(useContext(PresenceContext))
+}
+
+export function isPresent(context: PresenceContextProps | null) {
     return context === null ? true : context.isPresent
 }
 

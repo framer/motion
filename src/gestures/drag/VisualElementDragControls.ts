@@ -1,11 +1,6 @@
 import { RefObject } from "react"
 import { DraggableProps, DragHandler } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
-import {
-    unblockViewportScroll,
-    blockViewportScroll,
-} from "./utils/block-viewport-scroll"
-import { Point } from "../../events/types"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
 import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
@@ -157,14 +152,6 @@ export class VisualElementDragControls {
         snapToCursor && this.snapToCursor(originEvent)
 
         const onSessionStart = () => {
-            // Initiate viewport scroll blocking on touch start. This is a very aggressive approach
-            // which has come out of the difficulty in us being able to do this once a scroll gesture
-            // has initiated in mobile browsers. This means if there's a horizontally-scrolling carousel
-            // on a page we can't let a user scroll the page itself from it. Ideally what we'd do is
-            // trigger this once we've got a scroll direction determined. This approach sort-of worked
-            // but if the component was dragged too far in a single frame page scrolling would initiate.
-            blockViewportScroll()
-
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
             this.stopMotion()
@@ -372,7 +359,6 @@ export class VisualElementDragControls {
     }
 
     cancelDrag() {
-        unblockViewportScroll()
         this.isDragging = false
         this.panSession && this.panSession.end()
         this.panSession = null
@@ -426,7 +412,7 @@ export class VisualElementDragControls {
     /**
      * Update the specified axis with the latest pointer information.
      */
-    updateAxis(axis: DragDirection, event: AnyPointerEvent, offset?: Point) {
+    updateAxis(axis: DragDirection, event: AnyPointerEvent, offset?: Point2D) {
         const { drag } = this.props
 
         // If we're not dragging this axis, do an early return.
@@ -437,7 +423,7 @@ export class VisualElementDragControls {
             : this.updateVisualElementAxis(axis, event)
     }
 
-    updateAxisMotionValue(axis: DragDirection, offset?: Point) {
+    updateAxisMotionValue(axis: DragDirection, offset?: Point2D) {
         const axisValue = this.getAxisMotionValue(axis)
 
         if (!offset || !axisValue) return
@@ -521,7 +507,7 @@ export class VisualElementDragControls {
         }
     }
 
-    private animateDragEnd(velocity: Point) {
+    private animateDragEnd(velocity: Point2D) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
         const momentumAnimations = eachAxis((axis) => {
@@ -698,7 +684,7 @@ function shouldDrag(
  * @param lockThreshold - (Optional) - the minimum absolute offset before we can determine a drag direction.
  */
 function getCurrentDirection(
-    offset: Point,
+    offset: Point2D,
     lockThreshold = 10
 ): DragDirection | null {
     let direction: DragDirection | null = null
@@ -710,4 +696,11 @@ function getCurrentDirection(
     }
 
     return direction
+}
+
+export function expectsResolvedDragConstraints({
+    dragConstraints,
+    onMeasureDragConstraints,
+}: MotionProps) {
+    return isRefObject(dragConstraints) && !!onMeasureDragConstraints
 }

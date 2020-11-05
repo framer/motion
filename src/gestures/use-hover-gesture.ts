@@ -1,10 +1,14 @@
-import { RefObject } from "react"
 import { getGesturePriority } from "./utils/gesture-priority"
 import { TargetAndTransition } from "../types"
-import { ControlsProp } from "./types"
 import { isMouseEvent } from "./utils/event-type"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { EventInfo } from "../events/types"
+import { VisualElement } from "../render/VisualElement"
+import {
+    clearOverride,
+    setOverride,
+    startOverride,
+} from "../render/VisualElement/utils/overrides"
 
 /**
  * @public
@@ -91,39 +95,30 @@ const filterTouch = (listener: FilteredTouchListener) => (
  * @internal
  */
 export function useHoverGesture(
-    {
-        whileHover,
-        onHoverStart,
-        onHoverEnd,
-        controls,
-    }: HoverHandlers & ControlsProp,
-    ref: RefObject<Element>
+    { whileHover, onHoverStart, onHoverEnd }: HoverHandlers,
+    visualElement: VisualElement
 ) {
-    if (whileHover && controls) {
-        controls.setOverride(whileHover, hoverPriority)
+    if (whileHover) {
+        setOverride(visualElement, whileHover, hoverPriority)
     }
 
     usePointerEvent(
-        ref,
+        visualElement,
         "pointerenter",
         filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
-            if (onHoverStart) onHoverStart(event, info)
+            onHoverStart?.(event, info)
 
-            if (whileHover && controls) {
-                controls.startOverride(hoverPriority)
-            }
+            whileHover && startOverride(visualElement, hoverPriority)
         })
     )
 
     usePointerEvent(
-        ref,
+        visualElement,
         "pointerleave",
         filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
-            if (onHoverEnd) onHoverEnd(event, info)
+            onHoverEnd?.(event, info)
 
-            if (whileHover && controls) {
-                controls.clearOverride(hoverPriority)
-            }
+            whileHover && clearOverride(visualElement, hoverPriority)
         })
     )
 }
