@@ -4,7 +4,7 @@ import { FeatureProps, MotionFeature } from "./types"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { AnimationType } from "../../animation/use-animation-state"
+import { AnimationType } from "../../render/VisualElement/utils/animation-state"
 
 const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
     const { visualElement } = props
