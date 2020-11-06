@@ -3,7 +3,6 @@ import { invariant } from "hey-listen"
 import { VisualElement } from "../render/VisualElement"
 import {
     AnimationDefinition,
-    startVisualElementAnimation,
     stopAnimation,
 } from "../render/VisualElement/utils/animation"
 import { setValues } from "../render/VisualElement/utils/setters"
@@ -79,13 +78,9 @@ export class AnimationControls {
     ): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
-            this.subscribers.forEach((visualElement) => {
-                const animation = startVisualElementAnimation(
-                    visualElement,
-                    definition,
-                    { transitionOverride }
-                )
-                animations.push(animation)
+            this.subscribers.forEach((_visualElement) => {
+                // const animation = visualElement.animationState?.setProps()
+                // animations.push(animation)
             })
 
             return Promise.all(animations)

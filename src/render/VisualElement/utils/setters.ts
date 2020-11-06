@@ -3,9 +3,9 @@ import { complex } from "style-value-types"
 import { VisualElement } from "../"
 import {
     Target,
+    TargetAndTransition,
     TargetWithKeyframes,
     Transition,
-    Variant,
 } from "../../../types"
 import { isNumericalString } from "../../../utils/is-numerical-string"
 import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
@@ -37,17 +37,13 @@ function setMotionValue(
 }
 export function setTarget(
     visualElement: VisualElement,
-    definition: Variant,
+    definition: string | TargetAndTransition,
     { priority }: SetterOptions = {}
 ) {
-    let {
-        transitionEnd = {},
-        transition,
-        ...target
-    } = visualElement.makeTargetAnimatable(
-        resolveVariant(visualElement, definition),
-        false
-    )
+    const resolved = resolveVariant(visualElement, definition)
+    let { transitionEnd = {}, transition = {}, ...target } = resolved
+        ? visualElement.makeTargetAnimatable(resolved, false)
+        : {}
 
     target = { ...target, ...transitionEnd }
 
@@ -80,7 +76,7 @@ export function setValues(
     } else if (typeof definition === "string") {
         return setVariants(visualElement, [definition])
     } else {
-        setTarget(visualElement, definition)
+        setTarget(visualElement, definition as any)
     }
 }
 

@@ -1,7 +1,6 @@
 import { VisualElement } from "../.."
-// import { AnimationType } from "../../../../animation/use-animation-state"
 import { ResolvedValues } from "../../types"
-import { createAnimationState } from "../animation-state"
+import { AnimationType, createAnimationState } from "../animation-state"
 
 class StateVisualElement extends VisualElement {
     initialState: ResolvedValues = {}
@@ -95,149 +94,149 @@ describe("Animation state - Animate prop only.", () => {
         expect(element.animate).toBeCalledWith([{ x: 2 }])
     })
 
-    // test("Prop change: Removing values", () => {
-    //     const element = createTest()
+    test("Prop change: Removing values", () => {
+        const element = createTest()
 
-    //     element.animationState!.setProps({
-    //         animate: { x: 1 },
-    //     })
+        element.animationState!.setProps({
+            animate: { x: 1 },
+        })
 
-    //     expect(element.animate).toBeCalledWith([{ x: 1 }])
-    //     element.animate = jest.fn()
+        expect(element.animate).toBeCalledWith([{ x: 1 }])
+        element.animate = jest.fn()
 
-    //     element.animationState!.setProps({
-    //         style: { x: 0 },
-    //         animate: { opacity: 1 },
-    //     })
+        element.animationState!.setProps({
+            style: { x: 0 },
+            animate: { opacity: 1 },
+        })
 
-    //     expect(element.animate).toBeCalledWith([{ opacity: 1 }, { x: 0 }])
-    //     element.animate = jest.fn()
+        expect(element.animate).toBeCalledWith([{ opacity: 1 }, { x: 0 }])
+        element.animate = jest.fn()
 
-    //     element.animationState!.setProps({
-    //         animate: { x: 2 },
-    //     })
+        element.animationState!.setProps({
+            animate: { x: 2 },
+        })
 
-    //     expect(element.animate).toBeCalledWith([{ x: 2 }, { opacity: 0 }])
-    // })
+        expect(element.animate).toBeCalledWith([{ x: 2 }, { opacity: 0 }])
+    })
 
-    // test("Prop change: Removing prop", () => {
-    //     const element = createTest()
+    test("Prop change: Removing prop", () => {
+        const element = createTest()
 
-    //     element.animationState!.setProps({
-    //         animate: { x: 1 },
-    //     })
+        element.animationState!.setProps({
+            animate: { x: 1 },
+        })
 
-    //     expect(element.animate).toBeCalledWith([{ x: 1 }])
+        expect(element.animate).toBeCalledWith([{ x: 1 }])
 
-    //     element.animationState!.setProps({})
+        element.animationState!.setProps({})
 
-    //     expect(element.animate).toBeCalledWith([{ x: 0 }])
-    // })
+        expect(element.animate).toBeCalledWith([{ x: 0 }])
+    })
 })
 
 describe("Animation state - Active states", () => {
-    // test("Setting active state with consistent props", () => {
-    //     const element = createTest()
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0 },
-    //         animate: { opacity: 1 },
-    //         whileHover: { opacity: 0.5 },
-    //         whileTap: { opacity: 0.8 },
-    //     })
-    //     element.animationState!.setActive(AnimationType.Hover, true)
-    //     element.animationState!.setActive(AnimationType.Hover, false)
-    //     element.animationState!.setActive(AnimationType.Hover, true)
-    //     element.animationState!.setActive(AnimationType.Press, true)
-    //     element.animationState!.setActive(AnimationType.Hover, false)
-    //     element.animationState!.setActive(AnimationType.Press, false)
-    //     expect(element.animate).toBeCalledWith(
-    //         [{ opacity: 1 }], // initial
-    //         [{ opacity: 0.5 }], // hover true
-    //         [{ opacity: 1 }], // hover false
-    //         [{ opacity: 0.5 }], // hover true
-    //         [{ opacity: 0.8 }], // press true
-    //         // hover false - no animation
-    //         [{ opacity: 1 }] // press false
-    //     )
-    // })
-    // test("Setting active state with some variants", () => {
-    //     const element = createTest()
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0 },
-    //         animate: "test",
-    //         whileHover: { opacity: 0.5 },
-    //         whileTap: { opacity: 0.8 },
-    //         variants: { test: { opacity: 1 } },
-    //     })
-    //     element.animationState!.setActive(AnimationType.Hover, true)
-    //     element.animationState!.setActive(AnimationType.Hover, false)
-    //     element.animationState!.setActive(AnimationType.Hover, true)
-    //     element.animationState!.setActive(AnimationType.Press, true)
-    //     element.animationState!.setActive(AnimationType.Hover, false)
-    //     element.animationState!.setActive(AnimationType.Press, false)
-    //     expect(element.animate).toBeCalledWith(
-    //         [{ opacity: 1 }], // initial
-    //         [{ opacity: 0.5 }], // hover true
-    //         [{ opacity: 1 }], // hover false
-    //         [{ opacity: 0.5 }], // hover true
-    //         [{ opacity: 0.8 }], // press true
-    //         // hover false - no animation
-    //         [{ opacity: 1 }] // press false
-    //     )
-    // })
-    // test("Setting props while props are active", () => {
-    //     const element = createTest()
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0, x: 0 },
-    //         animate: { opacity: 1, x: 100 },
-    //         whileHover: { opacity: 0.5 },
-    //     })
-    //     element.animationState!.setActive(AnimationType.Hover, true)
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0, x: 0 },
-    //         animate: { opacity: 1, x: 50 },
-    //         whileHover: { opacity: 0.8 },
-    //     })
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0, x: 0 },
-    //         animate: { x: 50 },
-    //         whileHover: undefined,
-    //     })
-    //     expect(element.animate).toBeCalledWith(
-    //         [{ opacity: 1, x: 100 }], // initial
-    //         [{ opacity: 0.5 }], // hover: true
-    //         [{ opacity: 0.8 }, { x: 50 }], // set props
-    //         [{ opacity: 0 }] // set props
-    //     )
-    // })
-    // test("Setting props while props are active with some variants", () => {
-    //     const element = createTest()
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0, x: 0 },
-    //         animate: "test",
-    //         whileHover: "hover",
-    //         variants: { test: { opacity: 1, x: 100 }, hover: { opacity: 0.5 } },
-    //     })
-    //     element.animationState!.setActive(AnimationType.Hover, true)
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0, x: 0 },
-    //         animate: "test",
-    //         whileHover: "hover",
-    //         variants: { test: { opacity: 1, x: 50 }, hover: { opacity: 0.8 } },
-    //     })
-    //     element.animationState!.setProps({
-    //         style: { opacity: 0, x: 0 },
-    //         animate: "test",
-    //         whileHover: "hover",
-    //         variants: { test: { x: 50 } },
-    //     })
-    //     expect(element.animate).toBeCalledWith(
-    //         [{ opacity: 1, x: 100 }], // initial
-    //         [{ opacity: 0.5 }], // hover: true
-    //         [{ opacity: 0.8 }, { x: 50 }], // set props
-    //         [{ opacity: 0 }] // set props
-    //     )
-    // })
+    test("Setting active state with consistent props", () => {
+        const element = createTest()
+        element.animationState!.setProps({
+            style: { opacity: 0 },
+            animate: { opacity: 1 },
+            whileHover: { opacity: 0.5 },
+            whileTap: { opacity: 0.8 },
+        })
+        element.animationState!.setActive(AnimationType.Hover, true)
+        element.animationState!.setActive(AnimationType.Hover, false)
+        element.animationState!.setActive(AnimationType.Hover, true)
+        element.animationState!.setActive(AnimationType.Press, true)
+        element.animationState!.setActive(AnimationType.Hover, false)
+        element.animationState!.setActive(AnimationType.Press, false)
+        expect(element.animate).toBeCalledWith(
+            [{ opacity: 1 }], // initial
+            [{ opacity: 0.5 }], // hover true
+            [{ opacity: 1 }], // hover false
+            [{ opacity: 0.5 }], // hover true
+            [{ opacity: 0.8 }], // press true
+            // hover false - no animation
+            [{ opacity: 1 }] // press false
+        )
+    })
+    test("Setting active state with some variants", () => {
+        const element = createTest()
+        element.animationState!.setProps({
+            style: { opacity: 0 },
+            animate: "test",
+            whileHover: { opacity: 0.5 },
+            whileTap: { opacity: 0.8 },
+            variants: { test: { opacity: 1 } },
+        })
+        element.animationState!.setActive(AnimationType.Hover, true)
+        element.animationState!.setActive(AnimationType.Hover, false)
+        element.animationState!.setActive(AnimationType.Hover, true)
+        element.animationState!.setActive(AnimationType.Press, true)
+        element.animationState!.setActive(AnimationType.Hover, false)
+        element.animationState!.setActive(AnimationType.Press, false)
+        expect(element.animate).toBeCalledWith(
+            [{ opacity: 1 }], // initial
+            [{ opacity: 0.5 }], // hover true
+            [{ opacity: 1 }], // hover false
+            [{ opacity: 0.5 }], // hover true
+            [{ opacity: 0.8 }], // press true
+            // hover false - no animation
+            [{ opacity: 1 }] // press false
+        )
+    })
+    test("Setting props while props are active", () => {
+        const element = createTest()
+        element.animationState!.setProps({
+            style: { opacity: 0, x: 0 },
+            animate: { opacity: 1, x: 100 },
+            whileHover: { opacity: 0.5 },
+        })
+        element.animationState!.setActive(AnimationType.Hover, true)
+        element.animationState!.setProps({
+            style: { opacity: 0, x: 0 },
+            animate: { opacity: 1, x: 50 },
+            whileHover: { opacity: 0.8 },
+        })
+        element.animationState!.setProps({
+            style: { opacity: 0, x: 0 },
+            animate: { x: 50 },
+            whileHover: undefined,
+        })
+        expect(element.animate).toBeCalledWith(
+            [{ opacity: 1, x: 100 }], // initial
+            [{ opacity: 0.5 }], // hover: true
+            [{ opacity: 0.8 }, { x: 50 }], // set props
+            [{ opacity: 0 }] // set props
+        )
+    })
+    test("Setting props while props are active with some variants", () => {
+        const element = createTest()
+        element.animationState!.setProps({
+            style: { opacity: 0, x: 0 },
+            animate: "test",
+            whileHover: "hover",
+            variants: { test: { opacity: 1, x: 100 }, hover: { opacity: 0.5 } },
+        })
+        element.animationState!.setActive(AnimationType.Hover, true)
+        element.animationState!.setProps({
+            style: { opacity: 0, x: 0 },
+            animate: "test",
+            whileHover: "hover",
+            variants: { test: { opacity: 1, x: 50 }, hover: { opacity: 0.8 } },
+        })
+        element.animationState!.setProps({
+            style: { opacity: 0, x: 0 },
+            animate: "test",
+            whileHover: "hover",
+            variants: { test: { x: 50 } },
+        })
+        expect(element.animate).toBeCalledWith(
+            [{ opacity: 1, x: 100 }], // initial
+            [{ opacity: 0.5 }], // hover: true
+            [{ opacity: 0.8 }, { x: 50 }], // set props
+            [{ opacity: 0 }] // set props
+        )
+    })
 })
 
 describe("Animation state - Variant propagation", () => {})
