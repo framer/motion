@@ -1,6 +1,6 @@
 import { VisualElement } from "../"
 import { MotionProps } from "../../../motion/types"
-import { TargetAndTransition, TargetResolver, Variant } from "../../../types"
+import { TargetAndTransition } from "../../../types"
 
 /**
  * Decides if the supplied variable is an array of variant labels

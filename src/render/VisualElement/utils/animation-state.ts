@@ -1,8 +1,10 @@
 import { VisualElement } from ".."
+import { AnimationControls } from "../../../animation/AnimationControls"
 import { MotionProps } from "../../../motion"
 import { TargetAndTransition } from "../../../types"
+import { shallowCompare } from "../../../utils/shallow-compare"
 import { ResolvedValues } from "../types"
-import { resolveVariant } from "./variants"
+import { isVariantLabels, resolveVariant } from "./variants"
 
 export interface AnimationState {
     setProps: (props: MotionProps) => void
@@ -100,93 +102,105 @@ export function createAnimationState(
              * If there's neither an animation definition, nor was there one, there's
              * nothing for us to do here and can skip to the next lower priority.
              */
-            if (!definition && !prevDefinition) continue
+            if (
+                (!definition && !prevDefinition) ||
+                typeof definition === "boolean" ||
+                definition instanceof AnimationControls
+            ) {
+                continue
+            }
 
             const prevResolvedTarget = prevResolvedValues[type]
-            const resolvedDefinition = resolveVariant(
-                visualElement,
-                definition || {},
-                props
-            )
-            const { transition, transitionEnd, ...target } =
-                resolvedDefinition || {}
+            const definitionList = Array.isArray(definition)
+                ? [...definition].reverse()
+                : [definition]
 
-            let definitionHasChanged = false
+            let shouldAnimate =
+                // We should animate if this definition has been made undefined
+                !definition ||
+                // Or if we previously resolved no target values
+                !prevResolvedTarget ||
+                // Or if the prev definition was explicitly false - this will only trigger for initial={false}
+                prevDefinition === false ||
+                // Or if these are variant labels that have changed
+                variantsHaveChanged(prevDefinition, definition)
 
-            // If either is undefined, consider the definition changed
-            if (!definition || !prevResolvedTarget) {
-                definitionHasChanged = true
-            }
+            const resolvedDefinitions: any[] = []
+            let resolvedValues = {}
+            definitionList.forEach((thisDefinition) => {
+                const resolved = resolveVariant(
+                    visualElement,
+                    thisDefinition,
+                    props
+                )
+                resolved && resolvedDefinitions.push(resolved)
 
-            /**
-             *
-             */
-            if (removedValues.size && definition) {
-                for (const key in target) {
-                    if (removedValues.has(key)) {
-                        // TODO: Ensure values in this target that are controlled
-                        // by a higher priority arent animated here
-                        definitionHasChanged = true
-                        removedValues.delete(key)
+                const { transition, transitionEnd, ...target } = resolved || {}
+                resolvedValues = { ...resolvedValues, ...target }
+
+                /**
+                 * If there's any removedValues from higher-priority animations,
+                 * we need to check to see if they've been defined here.
+                 */
+                if (thisDefinition && removedValues.size) {
+                    for (const key in target) {
+                        if (removedValues.has(key)) {
+                            shouldAnimate = true
+                            removedValues.delete(key)
+                        }
                     }
                 }
-            }
-
-            const targetKeys = Object.keys(target)
+            })
 
             /**
              * Loop through the previous definition. If a value has changed,
              * consider the definition changed. If a value no longer exists,
              * mark it as one that needs animating.
              */
-            if (prevResolvedTarget) {
+            if (prevResolvedValues) {
                 const allKeys = Array.from(
-                    new Set([...targetKeys, ...Object.keys(prevResolvedTarget)])
+                    new Set([
+                        ...Object.keys(resolvedValues),
+                        ...Object.keys(prevResolvedValues),
+                    ])
                 )
 
                 for (let keyIndex = 0; keyIndex < allKeys.length; keyIndex++) {
                     const key = allKeys[keyIndex]
 
                     if (
-                        prevResolvedTarget[key] !== target[key] &&
-                        target[key] !== undefined &&
+                        !shouldAnimate &&
+                        prevResolvedValues[key] !== resolvedValues[key] &&
+                        resolvedValues[key] !== undefined &&
                         !handledValues.has(key)
                     ) {
-                        definitionHasChanged = true
+                        shouldAnimate = true
                     }
 
-                    if (target[key] === undefined && !handledValues.has(key)) {
+                    if (
+                        resolvedValues[key] === undefined &&
+                        !handledValues.has(key)
+                    ) {
                         removedValues.add(key)
-                    } else if (target[key] !== undefined) {
+                    } else if (resolvedValues[key] !== undefined) {
                         handledValues.add(key)
                         if (!active[type]) protectedValues.push(key)
                     }
                 }
             }
 
-            // If initial===false. This can only happen on initial render.
-            if (prevDefinition === false) {
-                definitionHasChanged = false
-            }
+            shouldAnimate && animations.push(...resolvedDefinitions)
 
-            if (definitionHasChanged) {
-                if (definition) {
-                    /**
-                     * If the definition has changed, and there is now a new definition
-                     */
-                    animations.push(definition)
-                } else if (!definition && prevDefinition) {
-                    /**
-                     *
-                     */
-                }
-            }
-
-            prevResolvedValues[type] = target
+            prevResolvedValues[type] = resolvedValues
         }
 
         const finalProtectedValues = new Set(protectedValues)
 
+        /**
+         * If there are some removed values that haven't been dealt with, we
+         * need to create a new animation that falls back either to the value
+         * defined in the style prop, or the last recorded base target.
+         */
         if (removedValues.size) {
             const fallbackAnimation = {}
             removedValues.forEach((key) => {
@@ -227,6 +241,16 @@ export function createAnimationState(
     }
 
     return { setProps, setActive }
+}
+
+function variantsHaveChanged(prev: any, next: any) {
+    if (typeof next === "string" && typeof prev === "string") {
+        return next !== prev
+    } else if (isVariantLabels(prev) && isVariantLabels(next)) {
+        return shallowCompare(prev, next)
+    }
+
+    return false
 }
 
 function initialActiveState() {
