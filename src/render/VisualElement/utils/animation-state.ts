@@ -93,7 +93,8 @@ export function createAnimationState(
                 }
             }
 
-            const definition = active[type] ? props[type] : false
+            const definition =
+                active[type] || switchedActive === type ? props[type] : false
             const prevDefinition = currentProps
                 ? currentProps[type]
                 : props.initial
@@ -120,14 +121,18 @@ export function createAnimationState(
                 !definition ||
                 // Or if we previously resolved no target values
                 !prevResolvedTarget ||
-                // Or if the prev definition was explicitly false - this will only trigger for initial={false}
-                prevDefinition === false ||
                 // Or if these are variant labels that have changed
                 variantsHaveChanged(prevDefinition, definition)
 
             const resolvedDefinitions: any[] = []
             let resolvedValues = {}
-            definitionList.forEach((thisDefinition) => {
+
+            for (
+                let definitionIndex = 0;
+                definitionIndex < definitionList.length;
+                definitionIndex++
+            ) {
+                const thisDefinition = definitionList[definitionIndex]
                 const resolved = resolveVariant(
                     visualElement,
                     thisDefinition,
@@ -150,18 +155,20 @@ export function createAnimationState(
                         }
                     }
                 }
-            })
+            }
 
             /**
              * Loop through the previous definition. If a value has changed,
              * consider the definition changed. If a value no longer exists,
              * mark it as one that needs animating.
              */
-            if (prevResolvedValues) {
+            const prevTypeResolvedValues = prevResolvedValues[type]
+
+            if (prevTypeResolvedValues || switchedActive === type) {
                 const allKeys = Array.from(
                     new Set([
                         ...Object.keys(resolvedValues),
-                        ...Object.keys(prevResolvedValues),
+                        ...Object.keys(prevTypeResolvedValues || {}),
                     ])
                 )
 
@@ -170,16 +177,18 @@ export function createAnimationState(
 
                     if (
                         !shouldAnimate &&
-                        prevResolvedValues[key] !== resolvedValues[key] &&
+                        prevTypeResolvedValues?.[key] !== resolvedValues[key] &&
                         resolvedValues[key] !== undefined &&
                         !handledValues.has(key)
                     ) {
                         shouldAnimate = true
                     }
-
+                    switchedActive === type &&
+                        console.log(switchedActive === type, active[type])
                     if (
-                        resolvedValues[key] === undefined &&
-                        !handledValues.has(key)
+                        (switchedActive === type && active[type] === false) ||
+                        (resolvedValues[key] === undefined &&
+                            !handledValues.has(key))
                     ) {
                         removedValues.add(key)
                     } else if (resolvedValues[key] !== undefined) {
@@ -188,6 +197,8 @@ export function createAnimationState(
                     }
                 }
             }
+
+            if (prevDefinition === false) shouldAnimate = false
 
             shouldAnimate && animations.push(...resolvedDefinitions)
 
@@ -223,6 +234,7 @@ export function createAnimationState(
     }
 
     function setActive(type: AnimationType, isActive: boolean) {
+        console.log("setting", type, "to", isActive)
         // No-op if active state hasn't changed
         if (isActive === active[type]) return
 
