@@ -19,11 +19,9 @@ export enum AnimationType {
     Exit = "exit",
 }
 
-type AnimationDefinition = string | TargetAndTransition
+export type AnimationList = string[] | TargetAndTransition[]
 
-export type AnimationList = AnimationDefinition[]
-
-const priorityOrder = [
+export const variantPriorityOrder = [
     AnimationType.Animate,
     AnimationType.Hover,
     AnimationType.Press,
@@ -31,8 +29,8 @@ const priorityOrder = [
     AnimationType.Exit,
 ]
 
-const reversePriorityOrder = [...priorityOrder].reverse()
-const numAnimationTypes = priorityOrder.length
+const reversePriorityOrder = [...variantPriorityOrder].reverse()
+const numAnimationTypes = variantPriorityOrder.length
 
 export function createAnimationState(
     visualElement: VisualElement

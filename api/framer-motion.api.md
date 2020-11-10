@@ -82,9 +82,8 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
 export class AnimationControls {
     // @internal
     mount(): void;
-    set(definition: AnimationDefinition_2): void;
-    // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
-    start(definition: AnimationDefinition_2, transitionOverride?: Transition): Promise<any>;
+    set(definition: string | string[] | TargetAndTransition): void;
+    start(definition: string | string[] | TargetAndTransition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
     // 
@@ -742,7 +741,7 @@ export function startAnimation(key: string, value: MotionValue, target: Resolved
 // Warning: (ae-internal-missing-underscore) The name "startVisualElementAnimation" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function startVisualElementAnimation(visualElement: VisualElement, definition: TargetAndTransition, { delay, transitionOverride, setValueBase }?: AnimationOptions_2): Promise<any>;
+export function startVisualElementAnimation(visualElement: VisualElement, definition: string | TargetAndTransition, { delay, transitionOverride, setValueBase, custom, protectedValues, }?: AnimationOptions_2): Promise<any>;
 
 // @public (undocumented)
 export type Subscriber<T> = (v: T) => void;

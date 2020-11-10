@@ -3,8 +3,12 @@ import { VisualElement } from "../../render/VisualElement"
 
 export interface VariantContextProps {
     parent?: VisualElement
-    initial?: string | string[]
+    initial?: string | string[] | false
     animate?: string | string[]
+    whileHover?: string | string[]
+    whileTap?: string | string[]
+    whileDrag?: string | string[]
+    exit?: string | string[]
 }
 
 interface MotionContextProps {
