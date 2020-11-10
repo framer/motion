@@ -82,9 +82,9 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
 export class AnimationControls {
     // @internal
     mount(): void;
-    set(definition: AnimationDefinition): void;
+    set(definition: AnimationDefinition_2): void;
     // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
-    start(definition: AnimationDefinition, transitionOverride?: Transition): Promise<any>;
+    start(definition: AnimationDefinition_2, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
     // 
@@ -105,8 +105,7 @@ export const AnimationFeature: MotionFeature;
 // @public (undocumented)
 export interface AnimationProps {
     animate?: AnimationControls | TargetAndTransition | VariantLabels | boolean;
-    // Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
-    exit?: TargetAndTransition | VariantLabels | TargetResolver;
+    exit?: TargetAndTransition | VariantLabels;
     transition?: Transition;
     variants?: Variants;
 }
@@ -228,6 +227,7 @@ export interface DraggableProps extends DragHandlers {
     _dragX?: MotionValue<number>;
     _dragY?: MotionValue<number>;
     onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
+    whileDrag?: string | TargetAndTransition;
 }
 
 // @public (undocumented)
@@ -742,7 +742,7 @@ export function startAnimation(key: string, value: MotionValue, target: Resolved
 // Warning: (ae-internal-missing-underscore) The name "startVisualElementAnimation" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function startVisualElementAnimation(visualElement: VisualElement, definition: AnimationDefinition, opts?: AnimationOptions_2): Promise<void>;
+export function startVisualElementAnimation(visualElement: VisualElement, definition: TargetAndTransition, { delay, transitionOverride, setValueBase }?: AnimationOptions_2): Promise<any>;
 
 // @public (undocumented)
 export type Subscriber<T> = (v: T) => void;
@@ -919,6 +919,8 @@ export function useViewportScroll(): ScrollMotionValues;
 // @public (undocumented)
 export type ValueTarget = SingleTarget | KeyframesTarget;
 
+// Warning: (ae-forgotten-export) The symbol "TargetResolver" needs to be exported by the entry point index.d.ts
+// 
 // @public (undocumented)
 export type Variant = TargetAndTransition | TargetResolver;
 

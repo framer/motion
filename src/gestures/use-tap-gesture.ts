@@ -9,7 +9,7 @@ import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
 import { Point2D } from "../types/geometry"
 import { VisualElement } from "../render/VisualElement"
-import { AnimationType } from "../animation/use-animation-state"
+import { AnimationType } from "../render/VisualElement/utils/animation-state"
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains

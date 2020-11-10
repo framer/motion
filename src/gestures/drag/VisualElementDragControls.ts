@@ -29,7 +29,7 @@ import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
-import { AnimationType } from "../../animation/use-animation-state"
+import { AnimationType } from "../../render/VisualElement/utils/animation-state"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,

@@ -20,12 +20,11 @@ const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
         const animation = visualElement.animationState?.setActive(
             AnimationType.Exit,
             !isPresent
-            //TODO Pass custom
+            // custom
         )
 
-        if (!isPresent) {
-            animation.then(onExitComplete)
-        }
+        // TODO: Don't need to check for custom here
+        !isPresent && custom && animation?.then(onExitComplete)
     }, [isPresent])
 })
 

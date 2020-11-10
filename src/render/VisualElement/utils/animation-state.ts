@@ -7,8 +7,8 @@ import { ResolvedValues } from "../types"
 import { isVariantLabels, resolveVariant } from "./variants"
 
 export interface AnimationState {
-    setProps: (props: MotionProps) => void
-    setActive: (type: AnimationType, isActive: boolean) => void
+    setProps: (props: MotionProps) => Promise<any>
+    setActive: (type: AnimationType, isActive: boolean) => Promise<any>
 }
 
 export enum AnimationType {
@@ -227,16 +227,16 @@ export function createAnimationState(
             animations.push(fallbackAnimation)
         }
 
-        if (animations.length)
-            visualElement.animate?.(animations, finalProtectedValues)
-
         currentProps = props
+
+        return animations.length && visualElement.animate
+            ? visualElement.animate(animations, finalProtectedValues)
+            : Promise.resolve()
     }
 
     function setActive(type: AnimationType, isActive: boolean) {
-        console.log("setting", type, "to", isActive)
         // No-op if active state hasn't changed
-        if (isActive === active[type]) return
+        if (isActive === active[type]) return Promise.resolve()
 
         // Update state
         active[type] = isActive
@@ -245,11 +245,9 @@ export function createAnimationState(
          * If we're changing from inactive to active, we can delete the prev
          * resolved values
          */
-        if (isActive) {
-            prevResolvedValues[type] = undefined
-        }
+        if (isActive) prevResolvedValues[type] = undefined
 
-        setProps(currentProps, type)
+        return setProps(currentProps, type)
     }
 
     return { setProps, setActive }

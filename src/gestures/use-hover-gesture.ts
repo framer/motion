@@ -3,7 +3,7 @@ import { isMouseEvent } from "./utils/event-type"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { EventInfo } from "../events/types"
 import { VisualElement } from "../render/VisualElement"
-import { AnimationType } from "../animation/use-animation-state"
+import { AnimationType } from "../render/VisualElement/utils/animation-state"
 
 /**
  * @public
