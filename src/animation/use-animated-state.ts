@@ -2,10 +2,7 @@ import { useEffect, useState } from "react"
 import { VisualElement } from "../render/VisualElement"
 import { useConstant } from "../utils/use-constant"
 import { ResolvedValues } from "../render/VisualElement/types"
-import {
-    AnimationDefinition,
-    startVisualElementAnimation,
-} from "../render/VisualElement/utils/animation"
+import { startVisualElementAnimation } from "../render/VisualElement/utils/animation"
 import {
     checkTargetForNewValues,
     getOrigin,
@@ -69,7 +66,7 @@ export function useAnimatedState(initialState: any) {
     }, [])
 
     const startAnimation = useConstant(
-        () => (animationDefinition: AnimationDefinition) => {
+        () => (animationDefinition: TargetAndTransition) => {
             return startVisualElementAnimation(
                 visualElement,
                 animationDefinition

@@ -36,7 +36,7 @@ export abstract class VisualElement<E = any> {
     animate?: (
         animations: AnimationList,
         protectedValues?: Set<string>
-    ) => Promise<void[]>
+    ) => Promise<any>
 
     /**
      * A set of values that we animate back to when a value is cleared of all overrides.

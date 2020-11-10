@@ -6,7 +6,6 @@ import {
     Target,
     Transition,
     TargetAndTransition,
-    TargetResolver,
     Omit,
     MakeCustomValueType,
 } from "../types"
