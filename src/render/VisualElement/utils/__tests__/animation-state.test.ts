@@ -211,6 +211,14 @@ describe("Animation state - Active states", () => {
         expect(element.animate).toBeCalledWith([{ opacity: 0.5 }], new Set())
 
         element.animate = jest.fn()
+        element.animationState!.setActive(AnimationType.Hover, false)
+        expect(element.animate).toBeCalledWith([{ opacity: 1 }], new Set())
+
+        element.animate = jest.fn()
+        element.animationState!.setActive(AnimationType.Hover, true)
+        expect(element.animate).toBeCalledWith([{ opacity: 0.5 }], new Set())
+
+        element.animate = jest.fn()
         element.animationState!.setActive(AnimationType.Press, true)
         expect(element.animate).toBeCalledWith([{ opacity: 0.8 }], new Set())
 
@@ -261,6 +269,30 @@ describe("Animation state - Active states", () => {
             whileTap: { opacity: 0.9 },
         })
         expect(element.animate).toBeCalledWith([{ opacity: 0.9 }], new Set())
+
+        element.animate = jest.fn()
+        element.animationState!.setProps({
+            style: { opacity: 0 },
+            animate: { x: 50, opacity: 1 },
+            whileHover: { x: 100, opacity: 0.5 },
+            whileTap: { opacity: 0.9 },
+        })
+        expect(element.animate).toBeCalledWith(
+            [{ x: 100, opacity: 0.5 }],
+            new Set(["opacity"])
+        )
+
+        element.animate = jest.fn()
+        element.animationState!.setProps({
+            style: { opacity: 0 },
+            animate: { x: 50, opacity: 1 },
+            whileHover: { opacity: 0.5 },
+            whileTap: { opacity: 0.9 },
+        })
+        expect(element.animate).toBeCalledWith(
+            [{ x: 50, opacity: 1 }],
+            new Set(["opacity"])
+        )
     })
 })
 

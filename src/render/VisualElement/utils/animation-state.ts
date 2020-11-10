@@ -183,8 +183,7 @@ export function createAnimationState(
                     ) {
                         shouldAnimate = true
                     }
-                    switchedActive === type &&
-                        console.log(switchedActive === type, active[type])
+
                     if (
                         (switchedActive === type && active[type] === false) ||
                         (resolvedValues[key] === undefined &&
@@ -192,8 +191,14 @@ export function createAnimationState(
                     ) {
                         removedValues.add(key)
                     } else if (resolvedValues[key] !== undefined) {
+                        if (
+                            active[type] &&
+                            !shouldAnimate &&
+                            !handledValues.has(key)
+                        ) {
+                            protectedValues.push(key)
+                        }
                         handledValues.add(key)
-                        if (!active[type]) protectedValues.push(key)
                     }
                 }
             }
