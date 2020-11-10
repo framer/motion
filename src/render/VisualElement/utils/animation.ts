@@ -4,6 +4,7 @@ import { startAnimation } from "../../../animation/utils/transitions"
 import { Target, TargetResolver, TargetWithKeyframes } from "../../../types"
 import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
 import { setTarget } from "./setters"
+import { resolveVariant } from "./variants"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -14,6 +15,8 @@ export type AnimationOptions = {
     delay?: number
     transitionOverride?: Transition
     setValueBase?: boolean
+    custom?: any
+    protectedValues?: Set<string>
 }
 
 export type MakeTargetAnimatable = (
@@ -31,14 +34,27 @@ export type MakeTargetAnimatable = (
  */
 export function startVisualElementAnimation(
     visualElement: VisualElement,
-    definition: TargetAndTransition,
-    { delay = 0, transitionOverride, setValueBase }: AnimationOptions = {}
+    definition: string | TargetAndTransition,
+    {
+        delay = 0,
+        transitionOverride,
+        setValueBase,
+        custom,
+        protectedValues,
+    }: AnimationOptions = {}
 ): Promise<any> {
+    const resolvedDefinition = resolveVariant(visualElement, definition, {
+        // TODO: Pass variants here
+        custom,
+    })
+
+    if (!resolvedDefinition) return Promise.resolve()
+
     let {
         transition = visualElement.getDefaultTransition(),
         transitionEnd,
         ...target
-    } = visualElement.makeTargetAnimatable(definition)
+    } = visualElement.makeTargetAnimatable(resolvedDefinition)
 
     if (transitionOverride) transition = transitionOverride
 
@@ -48,7 +64,14 @@ export function startVisualElementAnimation(
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
 
-        if (!value || valueTarget === undefined) continue
+        if (
+            !value ||
+            valueTarget === undefined ||
+            (protectedValues && protectedValues.has(key))
+        )
+            continue
+
+        protectedValues?.add(key)
 
         if (setValueBase) {
             visualElement.baseTarget[key] = resolveFinalValueInKeyframes(

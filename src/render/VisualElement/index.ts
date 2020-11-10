@@ -34,7 +34,7 @@ export abstract class VisualElement<E = any> {
 
     animationState?: AnimationState
     animate?: (
-        animations: AnimationList,
+        animations: AnimationList | string | TargetAndTransition,
         protectedValues?: Set<string>
     ) => Promise<any>
 
@@ -54,6 +54,8 @@ export abstract class VisualElement<E = any> {
     addVariantChild(visualElement: VisualElement<E>) {
         if (!this.variantChildren) this.variantChildren = new Set()
         this.variantChildren.add(visualElement)
+
+        return () => this.variantChildren!.delete(visualElement)
     }
 
     variantChildrenOrder?: Set<VisualElement<E>>
