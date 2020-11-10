@@ -57,6 +57,13 @@ export function useVariants(
 
         if (name === "initial" && presenceContext?.initial !== undefined) {
             context.initial = presenceContext.initial
+
+            if (
+                context.initial === false &&
+                !isAnimationControls(props.animate)
+            ) {
+                context.initial === props.animate
+            }
         }
 
         contextDependencies.push(
@@ -110,14 +117,6 @@ export function useVariants(
 
     return nextContext
 }
-
-//     /**TODODODODOODO
-//      * If initial is false, and animate isn't animation controls, we assign animate
-//      * to initial and set our values to that for the initial render.
-//      */
-//     if (initial === false && !isAnimationControls(animate)) {
-//         initial = animate as Target | VariantLabels
-//     }
 
 const variantProps = ["initial", ...variantPriorityOrder]
 const numVariantProps = variantProps.length
