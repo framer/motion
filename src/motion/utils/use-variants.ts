@@ -110,6 +110,7 @@ export function useVariants(
         isPresent(presenceContext) &&
             visualElement.variantChildrenOrder?.clear()
     })
+
     useEffect(() => {
         isVariantNode &&
             variantContext.parent?.addVariantChildOrder(visualElement)

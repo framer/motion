@@ -4,6 +4,7 @@ import { MotionProps } from "../../../motion"
 import { TargetAndTransition } from "../../../types"
 import { shallowCompare } from "../../../utils/shallow-compare"
 import { ResolvedValues } from "../types"
+import { animateVisualElement } from "./animation"
 import { isVariantLabels, resolveVariant } from "./variants"
 
 export interface AnimationState {
@@ -134,7 +135,7 @@ export function createAnimationState(
                 const resolved = resolveVariant(
                     visualElement,
                     thisDefinition,
-                    props
+                    props.custom
                 )
                 resolved && resolvedDefinitions.push(resolved)
 
@@ -232,8 +233,8 @@ export function createAnimationState(
 
         currentProps = props
 
-        return animations.length && visualElement.animate
-            ? visualElement.animate(animations, finalProtectedValues)
+        return animations.length
+            ? animateVisualElement(visualElement, animations)
             : Promise.resolve()
     }
 
@@ -256,7 +257,7 @@ export function createAnimationState(
     return { setProps, setActive }
 }
 
-function variantsHaveChanged(prev: any, next: any) {
+export function variantsHaveChanged(prev: any, next: any) {
     if (typeof next === "string" && typeof prev === "string") {
         return next !== prev
     } else if (isVariantLabels(prev) && isVariantLabels(next)) {

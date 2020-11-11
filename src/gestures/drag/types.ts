@@ -4,6 +4,7 @@ import { Inertia, TargetAndTransition } from "../../types"
 import { BoundingBox2D } from "../../types/geometry"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"
+import { VariantLabels } from "../../motion/types"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,
@@ -200,7 +201,7 @@ export interface DraggableProps extends DragHandlers {
      * <motion.div whileDrag={{ scale: 1.2 }} />
      * ```
      */
-    whileDrag?: string | TargetAndTransition
+    whileDrag?: VariantLabels | TargetAndTransition
 
     /**
      * If `true`, this will lock dragging to the initially-detected direction. Defaults to `false`.
