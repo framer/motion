@@ -1,11 +1,20 @@
-import { TargetAndTransition, Transition } from "../types"
+import { TargetAndTransition, TargetResolver, Transition } from "../types"
 import { invariant } from "hey-listen"
 import { VisualElement } from "../render/VisualElement"
-import { stopAnimation } from "../render/VisualElement/utils/animation"
+import {
+    animateVisualElement,
+    stopAnimation,
+} from "../render/VisualElement/utils/animation"
 import { setValues } from "../render/VisualElement/utils/setters"
 
+type ControlsAnimationDefinition =
+    | string
+    | string[]
+    | TargetAndTransition
+    | TargetResolver
+
 type PendingAnimations = {
-    animation: [string | string[] | TargetAndTransition, Transition | undefined]
+    animation: [ControlsAnimationDefinition, Transition | undefined]
     resolve: () => void
 }
 
@@ -70,14 +79,13 @@ export class AnimationControls {
      * @public
      */
     start(
-        definition: string | string[] | TargetAndTransition,
+        definition: ControlsAnimationDefinition,
         transitionOverride?: Transition
     ): Promise<any> {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
             this.subscribers.forEach((visualElement) => {
-                const animation = visualElement.animate?.(definition)
-                animation && animations.push(animation)
+                animations.push(animateVisualElement(visualElement, definition))
             })
 
             return Promise.all(animations)
@@ -111,7 +119,7 @@ export class AnimationControls {
      *
      * @public
      */
-    set(definition: string | string[] | TargetAndTransition) {
+    set(definition: ControlsAnimationDefinition) {
         invariant(
             this.hasMounted,
             "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."

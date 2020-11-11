@@ -19,6 +19,8 @@ export const invertScale = (scale: number) =>
 let hasWarned = false
 
 /**
+ * TODO: This can be removed at any point now we're in 3.0, as long as internal Framer use is fixed.
+ *
  * Returns a `MotionValue` each for `scaleX` and `scaleY` that update with the inverse
  * of their respective parent scales.
  *

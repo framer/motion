@@ -10,6 +10,7 @@ import { pipe } from "popmotion"
 import { Point2D } from "../types/geometry"
 import { VisualElement } from "../render/VisualElement"
 import { AnimationType } from "../render/VisualElement/utils/animation-state"
+import { VariantLabels } from "../motion/types"
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
@@ -176,7 +177,7 @@ export interface TapHandlers {
      * <motion.div whileTap={{ scale: 0.8 }} />
      * ```
      */
-    whileTap?: string | TargetAndTransition
+    whileTap?: VariantLabels | TargetAndTransition
 }
 
 /**

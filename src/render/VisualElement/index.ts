@@ -8,7 +8,7 @@ import { invariant } from "hey-listen"
 import { Snapshot } from "../../components/AnimateSharedLayout/stack"
 import { Target, TargetAndTransition, Variants } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
-import { AnimationList, AnimationState } from "./utils/animation-state"
+import { AnimationState } from "./utils/animation-state"
 
 type Subscriptions = Map<string, () => void>
 
@@ -33,10 +33,6 @@ export abstract class VisualElement<E = any> {
     variantChildren?: Set<VisualElement<E>>
 
     animationState?: AnimationState
-    animate?: (
-        animations: AnimationList | string | TargetAndTransition,
-        protectedValues?: Set<string>
-    ) => Promise<any>
 
     /**
      * A set of values that we animate back to when a value is cleared of all overrides.
@@ -284,6 +280,8 @@ export abstract class VisualElement<E = any> {
          * is compatible with existing RefObject APIs.
          */
         this.element = this.current = element
+
+        this.isMounted = true
     }
 
     // Unmount the VisualElement and cancel any scheduled updates

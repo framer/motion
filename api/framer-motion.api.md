@@ -82,8 +82,9 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
 export class AnimationControls {
     // @internal
     mount(): void;
-    set(definition: string | string[] | TargetAndTransition): void;
-    start(definition: string | string[] | TargetAndTransition, transitionOverride?: Transition): Promise<any>;
+    set(definition: ControlsAnimationDefinition): void;
+    // Warning: (ae-forgotten-export) The symbol "ControlsAnimationDefinition" needs to be exported by the entry point index.d.ts
+    start(definition: ControlsAnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
     // 
@@ -226,7 +227,7 @@ export interface DraggableProps extends DragHandlers {
     _dragX?: MotionValue<number>;
     _dragY?: MotionValue<number>;
     onMeasureDragConstraints?: (constraints: BoundingBox2D) => BoundingBox2D | void;
-    whileDrag?: string | TargetAndTransition;
+    whileDrag?: VariantLabels | TargetAndTransition;
 }
 
 // @public (undocumented)
@@ -274,7 +275,7 @@ export const GesturesFeature: MotionFeature;
 export interface HoverHandlers {
     onHoverEnd?(event: MouseEvent, info: EventInfo): void;
     onHoverStart?(event: MouseEvent, info: EventInfo): void;
-    whileHover?: string | TargetAndTransition;
+    whileHover?: VariantLabels | TargetAndTransition;
 }
 
 // Warning: (ae-forgotten-export) The symbol "HTMLAttributesWithoutMotionProps" needs to be exported by the entry point index.d.ts
@@ -732,17 +733,6 @@ export interface Spring extends Repeat {
     velocity?: number;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "startAnimation" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export function startAnimation(key: string, value: MotionValue, target: ResolvedValueTarget, transition?: Transition): Promise<void>;
-
-// Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
-// Warning: (ae-internal-missing-underscore) The name "startVisualElementAnimation" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function startVisualElementAnimation(visualElement: VisualElement, definition: string | TargetAndTransition, { delay, transitionOverride, setValueBase, custom, protectedValues, }?: AnimationOptions_2): Promise<any>;
-
 // @public (undocumented)
 export type Subscriber<T> = (v: T) => void;
 
@@ -768,7 +758,7 @@ export interface TapHandlers {
     onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
     onTapCancel?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
     onTapStart?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
-    whileTap?: string | TargetAndTransition;
+    whileTap?: VariantLabels | TargetAndTransition;
 }
 
 // @public

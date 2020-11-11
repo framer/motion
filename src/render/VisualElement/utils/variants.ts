@@ -1,6 +1,5 @@
 import { VisualElement } from "../"
-import { MotionProps } from "../../../motion/types"
-import { TargetAndTransition } from "../../../types"
+import { TargetAndTransition, TargetResolver } from "../../../types"
 
 /**
  * Decides if the supplied variable is an array of variant labels
@@ -41,20 +40,18 @@ function getVelocity(visualElement: VisualElement) {
  */
 export function resolveVariant(
     visualElement: VisualElement,
-    definition?: string | TargetAndTransition,
-    { variants, custom }: MotionProps = {}
+    definition?: string | TargetAndTransition | TargetResolver,
+    custom?: any
 ) {
     if (typeof definition === "string") {
-        const variant = variants?.[definition]
-
-        return typeof variant === "function"
-            ? variant(
-                  custom ?? visualElement.getVariantPayload(),
-                  getCurrent(visualElement),
-                  getVelocity(visualElement)
-              )
-            : variant
-    } else {
-        return definition
+        definition = visualElement.getVariant(definition)
     }
+
+    return typeof definition === "function"
+        ? definition(
+              custom ?? visualElement.getVariantPayload(),
+              getCurrent(visualElement),
+              getVelocity(visualElement)
+          )
+        : definition
 }

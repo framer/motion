@@ -4,6 +4,7 @@ import { usePointerEvent } from "../events/use-pointer-event"
 import { EventInfo } from "../events/types"
 import { VisualElement } from "../render/VisualElement"
 import { AnimationType } from "../render/VisualElement/utils/animation-state"
+import { VariantLabels } from "../motion/types"
 
 /**
  * @public
@@ -24,7 +25,7 @@ export interface HoverHandlers {
      * <motion.div whileHover={{ scale: 1.2 }} />
      * ```
      */
-    whileHover?: string | TargetAndTransition
+    whileHover?: VariantLabels | TargetAndTransition
 
     /**
      * Callback function that fires when pointer starts hovering over the component.
