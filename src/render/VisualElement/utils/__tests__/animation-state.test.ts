@@ -1,6 +1,10 @@
 import { VisualElement } from "../.."
 import { ResolvedValues } from "../../types"
-import { AnimationType, createAnimationState } from "../animation-state"
+import {
+    AnimationState,
+    AnimationType,
+    createAnimationState,
+} from "../animation-state"
 
 class StateVisualElement extends VisualElement {
     initialState: ResolvedValues = {}
@@ -27,276 +31,544 @@ class StateVisualElement extends VisualElement {
 }
 
 let count = 0
-function createTest() {
+function createTest(): { element: VisualElement; state: AnimationState } {
     console.log(count, "Test =========")
     count++
 
     const visualElement = new StateVisualElement()
     visualElement.animationState = createAnimationState(visualElement)
-    visualElement.animate = jest.fn()
-    return visualElement
+
+    return {
+        element: visualElement,
+        state: visualElement.animationState,
+    }
 }
 
-describe("Animation state - Animate prop only.", () => {
-    test("Initial animation: animate prop", () => {
-        const element = createTest()
+function mockAnimate(state: AnimationState) {
+    const mocked = jest.fn()
+    state.setAnimateFunction(() => mocked)
+    return mocked
+}
 
-        element.animationState!.setProps({
+describe("Animation state - Initiating props", () => {
+    test("Initial animation", () => {
+        const { state } = createTest()
+
+        const animate = mockAnimate(state)
+        state.setProps({
             animate: { opacity: 1 },
         })
 
-        expect(element.animate).toBeCalledWith([{ opacity: 1 }], new Set())
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(animate).toBeCalledWith([{ opacity: 1 }])
     })
 
-    test("Initial animation: animate as variant", () => {
-        const element = createTest()
+    test("Initial animation with prop as variant", () => {
+        const { state } = createTest()
 
-        element.animationState!.setProps({
+        const animate = mockAnimate(state)
+        state.setProps({
             animate: "test",
-            variants: { test: { opacity: 1 } },
+            variants: {
+                test: { opacity: 1 },
+            },
         })
 
-        expect(element.animate).toBeCalledWith([{ opacity: 1 }], new Set())
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(animate).toBeCalledWith(["test"])
     })
 
-    test("Initial animation: initial false", () => {
-        const element = createTest()
+    test("Initial animation with prop as variant list", () => {
+        const { state } = createTest()
 
-        element.animationState!.setProps({
+        const animate = mockAnimate(state)
+        state.setProps({
+            animate: ["test", "heyoo"],
+            variants: {
+                test: { opacity: 1 },
+            },
+        })
+
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(animate).toBeCalledWith(["test", "heyoo"])
+    })
+
+    test("Initial animation with prop as inherited variant", () => {
+        const { state } = createTest()
+
+        const animate = mockAnimate(state)
+        state.setProps(
+            {
+                variants: {
+                    test: { opacity: 1 },
+                },
+            },
+            {
+                animate: "test",
+            }
+        )
+
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(animate).not.toBeCalled()
+    })
+
+    test("Initial animation with initial=false", () => {
+        const { state } = createTest()
+
+        const animate = mockAnimate(state)
+        state.setProps({
             initial: false,
             animate: { opacity: 1 },
         })
 
-        expect(element.animate).not.toBeCalled()
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(animate).not.toBeCalled()
     })
 
-    test("Prop change: Like for like", () => {
-        const element = createTest()
+    test("Initial animation with prop as variant with initial=false", () => {
+        const { state } = createTest()
 
-        element.animationState!.setProps({
-            animate: { x: 1 },
+        const animate = mockAnimate(state)
+        state.setProps({
+            initial: false,
+            animate: "test",
+            variants: {
+                test: { opacity: 1 },
+            },
         })
 
-        expect(element.animate).toBeCalledWith([{ x: 1 }], new Set())
-
-        element.animate = jest.fn()
-
-        element.animationState!.setProps({
-            animate: { x: 1 },
-        })
-
-        expect(element.animate).not.toBeCalled()
-        element.animate = jest.fn()
-
-        element.animationState!.setProps({
-            animate: { x: 2 },
-        })
-
-        expect(element.animate).toBeCalledWith([{ x: 2 }], new Set())
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(animate).not.toBeCalled()
     })
 
-    test("Prop change: Variants", () => {
-        const element = createTest()
+    test("Initial animation with prop as variant list with initial=false", () => {
+        const { state } = createTest()
 
-        element.animationState!.setProps({
-            variants: { a: { x: 1 }, b: { y: 2 } },
-            animate: ["a", "b"],
-        })
-        expect(element.animate).toBeCalledWith([{ y: 2 }, { x: 1 }], new Set())
-
-        element.animate = jest.fn()
-        element.animationState!.setProps({
-            variants: { a: { x: 2 }, b: { y: 3 } },
-            animate: ["a", "b"],
-        })
-        expect(element.animate).toBeCalledWith([{ y: 3 }, { x: 2 }], new Set())
-
-        element.animate = jest.fn()
-        element.animationState!.setProps({
-            variants: { a: { x: 2 }, b: { y: 3 }, c: { y: 4 } },
-            animate: ["a", "c"],
-        })
-        expect(element.animate).toBeCalledWith([{ y: 4 }, { x: 2 }], new Set())
-
-        element.animate = jest.fn()
-        element.animationState!.setProps({
-            style: { x: 0 },
-            variants: { c: { y: 4 } },
-            animate: ["a", "c"],
-        })
-        expect(element.animate).toBeCalledWith([{ y: 4 }, { x: 0 }], new Set())
-    })
-
-    test("Prop change: Removing values", () => {
-        const element = createTest()
-
-        element.animationState!.setProps({
-            animate: { x: 1 },
+        const animate = mockAnimate(state)
+        state.setProps({
+            initial: false,
+            animate: ["test", "heyoo"],
+            variants: {
+                test: { opacity: 1 },
+            },
         })
 
-        expect(element.animate).toBeCalledWith([{ x: 1 }], new Set())
-        element.animate = jest.fn()
-
-        element.animationState!.setProps({
-            style: { x: 0 },
-            animate: { opacity: 1 },
-        })
-
-        expect(element.animate).toBeCalledWith(
-            [{ opacity: 1 }, { x: 0 }],
-            new Set()
-        )
-        element.animate = jest.fn()
-        element.baseTarget.opacity = 0
-        element.animationState!.setProps({
-            animate: { x: 2 },
-        })
-
-        expect(element.animate).toBeCalledWith(
-            [{ x: 2 }, { opacity: 0 }],
-            new Set()
-        )
-    })
-
-    test("Prop change: Removing prop => baseTarget", () => {
-        const element = createTest()
-
-        element.animationState!.setProps({
-            animate: { x: 1 },
-        })
-
-        expect(element.animate).toBeCalledWith([{ x: 1 }], new Set())
-
-        element.baseTarget.x = 0
-        element.animationState!.setProps({})
-
-        expect(element.animate).toBeCalledWith([{ x: 0 }], new Set())
-    })
-
-    test("Prop change: Removing prop => style", () => {
-        const element = createTest()
-
-        element.animationState!.setProps({
-            animate: { x: 1 },
-        })
-
-        expect(element.animate).toBeCalledWith([{ x: 1 }], new Set())
-
-        element.animationState!.setProps({ style: { x: 0 } })
-
-        expect(element.animate).toBeCalledWith([{ x: 0 }], new Set())
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(animate).not.toBeCalled()
     })
 })
 
-describe("Animation state - Active states", () => {
-    test("Changing active state while props are the same", () => {
-        const element = createTest()
+describe("Animation state - Setting props", () => {
+    test("No change, target", () => {
+        const { state } = createTest()
 
-        element.animationState!.setProps({
-            style: { opacity: 0 },
+        state.setProps({
             animate: { opacity: 1 },
-            whileHover: { opacity: 0.5 },
-            whileTap: { opacity: 0.8 },
         })
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Hover, true)
-        expect(element.animate).toBeCalledWith([{ opacity: 0.5 }], new Set())
 
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Hover, false)
-        expect(element.animate).toBeCalledWith([{ opacity: 1 }], new Set())
+        const animate = mockAnimate(state)
 
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Hover, true)
-        expect(element.animate).toBeCalledWith([{ opacity: 0.5 }], new Set())
+        state.setProps({
+            animate: { opacity: 1 },
+        })
 
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Hover, false)
-        expect(element.animate).toBeCalledWith([{ opacity: 1 }], new Set())
-
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Hover, true)
-        expect(element.animate).toBeCalledWith([{ opacity: 0.5 }], new Set())
-
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Press, true)
-        expect(element.animate).toBeCalledWith([{ opacity: 0.8 }], new Set())
-
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Hover, false)
-        expect(element.animate).not.toBeCalledWith()
-
-        element.animate = jest.fn()
-        element.animationState!.setActive(AnimationType.Press, false)
-        expect(element.animate).toBeCalledWith([{ opacity: 1 }], new Set())
+        expect(animate).not.toBeCalled()
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
     })
 
-    test("Changing props while higher priorities are active", () => {
-        const element = createTest()
+    test("No change, variant", () => {
+        const { state } = createTest()
 
-        element.animationState!.setProps({
-            style: { opacity: 0 },
+        state.setProps({
+            animate: "test",
+            variants: {
+                test: { opacity: 1 },
+            },
+        })
+
+        const animate = mockAnimate(state)
+
+        state.setProps({
+            animate: "test",
+            variants: {
+                test: { opacity: 1 },
+            },
+        })
+
+        expect(animate).not.toBeCalled()
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+    })
+
+    test("No change, variant list", () => {
+        const { state } = createTest()
+
+        state.setProps({
+            animate: ["test", "test2"],
+            variants: {
+                test: { opacity: 1 },
+            },
+        })
+
+        const animate = mockAnimate(state)
+
+        state.setProps({
+            animate: ["test", "test2"],
+            variants: {
+                test: { opacity: 1 },
+            },
+        })
+
+        expect(animate).not.toBeCalled()
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+    })
+
+    test("Change single value, target", () => {
+        const { state } = createTest()
+
+        state.setProps({
             animate: { opacity: 1 },
-            whileHover: { opacity: 0.5 },
-            whileTap: { opacity: 0.8 },
         })
-        element.animationState!.setActive(AnimationType.Hover, true)
-        element.animationState!.setActive(AnimationType.Press, true)
 
-        element.animate = jest.fn()
-        element.animationState!.setProps({
-            style: { opacity: 0 },
+        const animate = mockAnimate(state)
+
+        state.setProps({
+            animate: { opacity: 0 },
+        })
+
+        expect(animate).toBeCalledWith([{ opacity: 0 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
+    test("Change single value, variant", () => {
+        const { state } = createTest()
+
+        state.setProps({
+            animate: "a",
+            variants: {
+                a: { opacity: 0 },
+                b: { opacity: 1 },
+            },
+        })
+
+        const animate = mockAnimate(state)
+
+        state.setProps({
+            animate: "b",
+            variants: {
+                a: { opacity: 0 },
+                b: { opacity: 1 },
+            },
+        })
+
+        expect(animate).toBeCalledWith(["b"])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
+    test("Change single value, variant list", () => {
+        const { state } = createTest()
+
+        state.setProps({
+            animate: ["a"],
+            variants: {
+                a: { opacity: 0 },
+                b: { opacity: 1 },
+            },
+        })
+
+        const animate = mockAnimate(state)
+
+        state.setProps({
+            animate: ["b"],
+            variants: {
+                a: { opacity: 0 },
+                b: { opacity: 1 },
+            },
+        })
+
+        expect(animate).toBeCalledWith(["b"])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
+    test("Change single value, target, with unchanging values", () => {
+        const { state } = createTest()
+
+        state.setProps({
+            animate: { opacity: 1, x: 0 },
+        })
+
+        let animate = mockAnimate(state)
+
+        state.setProps({
+            animate: { opacity: 0, x: 0 },
+        })
+
+        expect(animate).toBeCalledWith([{ opacity: 0, x: 0 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            x: true,
+        })
+
+        animate = mockAnimate(state)
+
+        state.setProps({
+            animate: { opacity: 0, x: 100 },
+        })
+
+        expect(animate).toBeCalledWith([{ opacity: 0, x: 100 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+    })
+
+    test("Removing values, target changed", () => {
+        const { state } = createTest()
+
+        state.setProps({
             animate: { opacity: 1 },
-            whileHover: undefined,
-            whileTap: { opacity: 0.8 },
         })
-        expect(element.animate).not.toBeCalled()
 
-        element.animate = jest.fn()
-        element.animationState!.setProps({
+        const animate = mockAnimate(state)
+
+        state.setProps({
             style: { opacity: 0 },
+            animate: {},
+        })
+
+        expect(animate).toBeCalledWith([{ opacity: 0 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
+    test("Removing values, target undefined", () => {
+        const { state } = createTest()
+
+        state.setProps({
             animate: { opacity: 1 },
-            whileHover: { opacity: 0.5 },
-            whileTap: { opacity: 0.8 },
         })
-        expect(element.animate).not.toBeCalled()
 
-        element.animate = jest.fn()
-        element.animationState!.setProps({
-            style: { opacity: 0 },
-            animate: { opacity: 1 },
-            whileHover: { opacity: 0.5 },
-            whileTap: { opacity: 0.9 },
-        })
-        expect(element.animate).toBeCalledWith([{ opacity: 0.9 }], new Set())
+        const animate = mockAnimate(state)
 
-        element.animate = jest.fn()
-        element.animationState!.setProps({
+        state.setProps({
             style: { opacity: 0 },
-            animate: { x: 50, opacity: 1 },
-            whileHover: { x: 100, opacity: 0.5 },
-            whileTap: { opacity: 0.9 },
+            animate: undefined,
         })
-        expect(element.animate).toBeCalledWith(
-            [{ x: 100, opacity: 0.5 }],
-            new Set(["opacity"])
+
+        expect(animate).toBeCalledWith([{ opacity: 0 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
+    test("Removing values, variant changed", () => {
+        const { state } = createTest()
+
+        state.setProps({
+            animate: "a",
+            variants: {
+                a: { opacity: 0 },
+                b: { x: 1 },
+            },
+        })
+
+        const animate = mockAnimate(state)
+
+        state.setProps({
+            style: { opacity: 1 },
+            animate: "b",
+            variants: {
+                a: { opacity: 0 },
+                b: { x: 1 },
+            },
+        })
+
+        expect(animate).toBeCalledWith(["b", { opacity: 1 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
+    test("Removing values, inherited variant changed", () => {
+        const { state } = createTest()
+
+        state.setProps(
+            {
+                variants: {
+                    a: { opacity: 0 },
+                    b: { x: 1 },
+                },
+            },
+            { animate: "a" }
         )
 
-        element.animate = jest.fn()
-        element.animationState!.setProps({
-            style: { opacity: 0 },
-            animate: { x: 50, opacity: 1 },
-            whileHover: { opacity: 0.5 },
-            whileTap: { opacity: 0.9 },
-        })
-        expect(element.animate).toBeCalledWith(
-            [{ x: 50, opacity: 1 }],
-            new Set(["opacity"])
+        const animate = mockAnimate(state)
+
+        state.setProps(
+            {
+                style: { opacity: 1 },
+                variants: {
+                    a: { opacity: 0 },
+                    b: { x: 1 },
+                },
+            },
+            { animate: "b" }
         )
+
+        expect(animate).toBeCalledWith([{ opacity: 1 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
     })
 })
 
-describe("Animation state - Variant propagation", () => {
-    // 1. initial render gets correct props
-    // 2.
+describe("Animation state - Set active", () => {
+    test("Change active state while props are the same", () => {
+        const { state } = createTest()
+
+        state.setProps({
+            style: { opacity: 0 },
+            animate: { opacity: 1 },
+            whileHover: { opacity: 0.5 },
+            whileTap: { opacity: 0.8 },
+        })
+
+        // Set hover to true
+        let animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, true)
+        expect(animate).toBeCalledWith([{ opacity: 0.5 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
+
+        // Set hover to false
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, false)
+        expect(animate).toBeCalledWith([{ opacity: 1 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
+
+        // Set hover to true
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, true)
+        expect(animate).toBeCalledWith([{ opacity: 0.5 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
+
+        // Set hover to false
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, false)
+        expect(animate).toBeCalledWith([{ opacity: 1 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
+
+        // Set hover to true
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, true)
+        expect(animate).toBeCalledWith([{ opacity: 0.5 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
+
+        // Set press to true
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Press, true)
+        expect(animate).toBeCalledWith([{ opacity: 0.8 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({
+            opacity: true,
+        })
+        expect(state.getProtectedKeys(AnimationType.Press)).toEqual({})
+
+        // Set hover to false
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, false)
+        expect(animate).not.toBeCalled()
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
+            opacity: true,
+        })
+        expect(state.getProtectedKeys(AnimationType.Press)).toEqual({
+            opacity: true,
+        })
+
+        // Set press to false
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Press, false)
+        expect(animate).toBeCalledWith([{ opacity: 1 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
+    // Test propagation of isActive
 })
+
+//     test("Changing props while higher priorities are active", () => {
+//         const element = createTest()
+
+//         element.animationState!.setProps({
+//             style: { opacity: 0 },
+//             animate: { opacity: 1 },
+//             whileHover: { opacity: 0.5 },
+//             whileTap: { opacity: 0.8 },
+//         })
+//         element.animationState!.setActive(AnimationType.Hover, true)
+//         element.animationState!.setActive(AnimationType.Press, true)
+
+//         element.animate = jest.fn()
+//         element.animationState!.setProps({
+//             style: { opacity: 0 },
+//             animate: { opacity: 1 },
+//             whileHover: undefined,
+//             whileTap: { opacity: 0.8 },
+//         })
+//         expect(element.animate).not.toBeCalled()
+
+//         element.animate = jest.fn()
+//         element.animationState!.setProps({
+//             style: { opacity: 0 },
+//             animate: { opacity: 1 },
+//             whileHover: { opacity: 0.5 },
+//             whileTap: { opacity: 0.8 },
+//         })
+//         expect(element.animate).not.toBeCalled()
+
+//         element.animate = jest.fn()
+//         element.animationState!.setProps({
+//             style: { opacity: 0 },
+//             animate: { opacity: 1 },
+//             whileHover: { opacity: 0.5 },
+//             whileTap: { opacity: 0.9 },
+//         })
+//         expect(element.animate).toBeCalledWith([{ opacity: 0.9 }], new Set())
+
+//         element.animate = jest.fn()
+//         element.animationState!.setProps({
+//             style: { opacity: 0 },
+//             animate: { x: 50, opacity: 1 },
+//             whileHover: { x: 100, opacity: 0.5 },
+//             whileTap: { opacity: 0.9 },
+//         })
+//         expect(element.animate).toBeCalledWith(
+//             [{ x: 100, opacity: 0.5 }],
+//             new Set(["opacity"])
+//         )
+
+//         element.animate = jest.fn()
+//         element.animationState!.setProps({
+//             style: { opacity: 0 },
+//             animate: { x: 50, opacity: 1 },
+//             whileHover: { opacity: 0.5 },
+//             whileTap: { opacity: 0.9 },
+//         })
+//         expect(element.animate).toBeCalledWith(
+//             [{ x: 50, opacity: 1 }],
+//             new Set(["opacity"])
+//         )
+//     })
+// })
+
+// describe("Animation state - Variant propagation", () => {
+//     // 1. initial render gets correct props
+//     // 2.
+// })

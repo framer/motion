@@ -3,6 +3,7 @@ import { VariantLabels, TargetAndTransition, Transition } from "../../.."
 import { startAnimation } from "../../../animation/utils/transitions"
 import { Target, TargetResolver, TargetWithKeyframes } from "../../../types"
 import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
+import { AnimationType } from "./animation-state"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
 
@@ -16,6 +17,7 @@ export type AnimationOptions = {
     transitionOverride?: Transition
     setValueBase?: boolean
     custom?: any
+    type?: AnimationType
 }
 
 export type MakeTargetAnimatable = (
@@ -69,7 +71,7 @@ function animateVariant(
      */
     const getAnimation = resolved
         ? () => animateTarget(visualElement, resolved, options)
-        : Promise.resolve
+        : () => Promise.resolve()
 
     /**
      * If we have children, create a callback that runs all their animations.
@@ -92,7 +94,7 @@ function animateVariant(
                   options
               )
           }
-        : Promise.resolve
+        : () => Promise.resolve()
 
     /**
      * If the transition explicitly defines a "when" option, we need to resolve either
@@ -117,7 +119,7 @@ function animateVariant(
 function animateTarget(
     visualElement: VisualElement,
     definition: TargetAndTransition,
-    { delay = 0, transitionOverride, setValueBase }: AnimationOptions = {}
+    { delay = 0, transitionOverride, setValueBase, type }: AnimationOptions = {}
 ): Promise<any> {
     let {
         transition = visualElement.getDefaultTransition(),
@@ -129,8 +131,8 @@ function animateTarget(
 
     const animations: Promise<any>[] = []
 
-    // TODO: Get protectedValues for this priority
-    const protectedValues = new Set()
+    const protectedValues =
+        type && visualElement.animationState?.getProtectedKeys(type)
 
     for (const key in target) {
         const value = visualElement.getValue(key)
@@ -140,10 +142,9 @@ function animateTarget(
             !value ||
             valueTarget === undefined ||
             (protectedValues && protectedValues.has(key))
-        )
+        ) {
             continue
-
-        protectedValues?.add(key)
+        }
 
         if (setValueBase) {
             visualElement.baseTarget[key] = resolveFinalValueInKeyframes(

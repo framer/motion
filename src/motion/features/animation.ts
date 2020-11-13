@@ -16,12 +16,7 @@ const AnimationState = makeRenderlessComponent((props: FeatureProps) => {
     const variantContext = useVariantContext()
 
     useEffect(() => {
-        const { children, visualElement: ve, ...remainingProps } = {
-            ...variantContext,
-            ...props,
-        } as any
-        console.log("setting props as ", remainingProps)
-        visualElement.animationState!.setProps({ ...variantContext, ...props })
+        visualElement.animationState!.setProps(props, variantContext)
     })
 
     if (animate instanceof AnimationControls) {
