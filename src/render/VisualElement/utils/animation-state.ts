@@ -55,6 +55,24 @@ export function createAnimationState(
     const state = createState()
     let isInitialRender = true
 
+    /**
+     * This function will be used to reduce the animation definitions for
+     * each active animation type into an object of resolved values for it.
+     */
+    const buildResolvedTypeValues = (
+        acc: { [key: string]: any },
+        definition: string | TargetAndTransition | undefined
+    ) => {
+        const resolved = resolveVariant(visualElement, definition)
+
+        if (resolved) {
+            const { transition, transitionEnd, ...target } = resolved
+            acc = { ...acc, ...target }
+        }
+
+        return acc
+    }
+
     function getProtectedKeys(type: AnimationType) {
         return state[type].protectedKeys
     }
@@ -110,25 +128,6 @@ export function createAnimationState(
          */
         let encounteredKeys = {}
 
-        /**
-         * This function will be used to reduce the animation definitions for
-         * each active animation type into an object of resolved values for it.
-         */
-        const buildResolvedTypeValues = (
-            acc: { [key: string]: any },
-            definition: string | TargetAndTransition | undefined
-        ) => {
-            const resolved = resolveVariant(visualElement, definition)
-
-            if (resolved) {
-                const { transition, transitionEnd, ...target } = resolved
-                encounteredKeys = { ...encounteredKeys, ...target }
-                acc = { ...acc, ...target }
-            }
-
-            return acc
-        }
-
         // TODO Reconcile with other update config
         if (props.variants) {
             visualElement.updateConfig({
@@ -148,8 +147,12 @@ export function createAnimationState(
             const typeState = state[type]
             const prop = props[type] ?? context[type]
 
-            const isDisablingType =
-                type === changedActiveType && !typeState.isActive
+            /**
+             * If this type has *just* changed isActive status, set activeDelta
+             * to that status. Otherwise set to null.
+             */
+            const activeDelta =
+                type === changedActiveType ? typeState.isActive : null
 
             /**
              * If this prop is an inherited variant, rather than been set directly on the
@@ -166,7 +169,7 @@ export function createAnimationState(
             // Check if we can skip analysing this prop early
             if (
                 // If it isn't active and hasn't *just* been set as inactive
-                (!typeState.isActive && !isDisablingType) ||
+                (!typeState.isActive && activeDelta === null) ||
                 // If we didn't and don't have any defined prop for this animation type
                 (!prop && !typeState.prevProp) ||
                 // Or if the prop doesn't define an animation
@@ -196,9 +199,12 @@ export function createAnimationState(
              * Build an object of all the resolved values. We'll use this in the subsequent
              * setProps calls to determine whether a value has changed.
              */
-            const resolvedValues = !isDisablingType
-                ? definitionList.reduce(buildResolvedTypeValues, {})
-                : {}
+            let resolvedValues = definitionList.reduce(
+                buildResolvedTypeValues,
+                {}
+            )
+
+            if (activeDelta === false) resolvedValues = {}
 
             /**
              * Now we need to loop through all the keys in the prev prop and this prop,
@@ -218,6 +224,9 @@ export function createAnimationState(
             for (const key in allKeys) {
                 const next = resolvedValues[key]
                 const prev = prevResolvedValues[key]
+
+                // If we've already handled this we can just skip ahead
+                if (encounteredKeys.hasOwnProperty(key)) continue
 
                 if (next !== prev) {
                     if (next !== undefined) {
@@ -246,6 +255,13 @@ export function createAnimationState(
              */
             typeState.prevProp = prop
             typeState.prevResolvedValues = resolvedValues
+
+            /**
+             *
+             */
+            if (typeState.isActive) {
+                encounteredKeys = { ...encounteredKeys, ...resolvedValues }
+            }
 
             /**
              * If this is an inherited prop we want to hard-block animations

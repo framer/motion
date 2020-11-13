@@ -433,9 +433,9 @@ describe("Animation state - Set active", () => {
         let animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
-        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
-            opacity: true,
-        })
+        expect(state.getProtectedKeys(AnimationType.Animate)).toHaveProperty(
+            "opacity"
+        )
         expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
 
         // Set hover to false
@@ -449,9 +449,9 @@ describe("Animation state - Set active", () => {
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
-        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
-            opacity: true,
-        })
+        expect(state.getProtectedKeys(AnimationType.Animate)).toHaveProperty(
+            "opacity"
+        )
         expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
 
         // Set hover to false
@@ -465,33 +465,33 @@ describe("Animation state - Set active", () => {
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
-        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
-            opacity: true,
-        })
+        expect(state.getProtectedKeys(AnimationType.Animate)).toHaveProperty(
+            "opacity"
+        )
         expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
 
         // Set press to true
         animate = mockAnimate(state)
         state.setActive(AnimationType.Press, true)
         expect(animate).toBeCalledWith([{ opacity: 0.8 }])
-        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
-            opacity: true,
-        })
-        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({
-            opacity: true,
-        })
+        expect(state.getProtectedKeys(AnimationType.Animate)).toHaveProperty(
+            "opacity"
+        )
+        expect(state.getProtectedKeys(AnimationType.Hover)).toHaveProperty(
+            "opacity"
+        )
         expect(state.getProtectedKeys(AnimationType.Press)).toEqual({})
 
         // Set hover to false
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, false)
+        expect(state.getProtectedKeys(AnimationType.Animate)).toHaveProperty(
+            "opacity"
+        )
+        expect(state.getProtectedKeys(AnimationType.Press)).toHaveProperty(
+            "opacity"
+        )
         expect(animate).not.toBeCalled()
-        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({
-            opacity: true,
-        })
-        expect(state.getProtectedKeys(AnimationType.Press)).toEqual({
-            opacity: true,
-        })
 
         // Set press to false
         animate = mockAnimate(state)
@@ -566,9 +566,4 @@ describe("Animation state - Set active", () => {
 //             new Set(["opacity"])
 //         )
 //     })
-// })
-
-// describe("Animation state - Variant propagation", () => {
-//     // 1. initial render gets correct props
-//     // 2.
 // })
