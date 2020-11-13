@@ -13,6 +13,7 @@ import {
     VariantContextProps,
 } from "../context/MotionContext"
 import { MotionProps } from "../types"
+import { checkShouldInheritVariant } from "./should-inherit-variant"
 
 /**
  * This hook is resonsible for creating the variant-propagation tree
@@ -33,6 +34,7 @@ export function useVariants(
      * 3. Or being passed AnimationControls, which we have to assume may control variants.
      * Otherwise this component should be "invisible" to variant propagation.
      */
+    const shouldInheritVariants = checkShouldInheritVariant(props)
     let isControllingVariants = false
     const contextDependencies = []
     const context: VariantContextProps = {}
@@ -96,7 +98,7 @@ export function useVariants(
      * Subscribe to the parent visualElement if this is a participant in the variant tree
      */
     let remove: undefined | (() => void)
-    if (isVariantNode && !isControllingVariants) {
+    if (isVariantNode && shouldInheritVariants && !isControllingVariants) {
         remove = variantContext.parent?.addVariantChild(visualElement)
     }
     useUnmountEffect(() => remove?.())
