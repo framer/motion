@@ -260,10 +260,10 @@ export interface FeatureProps extends MotionProps {
 // @public (undocumented)
 export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
 
-// Warning: (ae-internal-missing-underscore) The name "FramerTreeContext" should be prefixed with an underscore because the declaration is marked as @internal
+// Warning: (ae-internal-missing-underscore) The name "FramerTreeLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const FramerTreeContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
+export const FramerTreeLayoutContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
 
 // @public (undocumented)
 export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
@@ -911,7 +911,7 @@ export function useTransform<I, O>(input: MotionValue<I>, transformer: SingleTra
 // Warning: (ae-forgotten-export) The symbol "MultiTransformer" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useTransform<I, O>(input: MotionValue<string | number>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
+export function useTransform<I, O>(input: MotionValue<string>[] | MotionValue<number>[] | MotionValue<string | number>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
 
 // @public
 export function useViewportScroll(): ScrollMotionValues;
