@@ -15,11 +15,6 @@ import { ResolvedValues } from "../types"
 import { AnimationDefinition } from "./animation"
 import { resolveVariant } from "./variants"
 
-type SetterOptions = {
-    priority?: number
-    custom?: any
-}
-
 /**
  * Set VisualElement's MotionValue, creating a new MotionValue for it if
  * it doesn't exist.
@@ -37,8 +32,7 @@ function setMotionValue(
 }
 export function setTarget(
     visualElement: VisualElement,
-    definition: string | TargetAndTransition,
-    { priority }: SetterOptions = {}
+    definition: string | TargetAndTransition
 ) {
     const resolved = resolveVariant(visualElement, definition)
     let { transitionEnd = {}, transition = {}, ...target } = resolved
@@ -50,8 +44,6 @@ export function setTarget(
     for (const key in target) {
         const value = resolveFinalValueInKeyframes(target[key])
         setMotionValue(visualElement, key, value as string | number)
-
-        if (!priority) visualElement.baseTarget[key] = value
     }
 }
 

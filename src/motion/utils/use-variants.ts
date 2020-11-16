@@ -3,11 +3,14 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { VisualElement } from "../../render/VisualElement"
-import { variantPriorityOrder } from "../../render/VisualElement/utils/animation-state"
+import { animateVisualElement } from "../../render/VisualElement/utils/animation"
+import {
+    AnimationType,
+    variantPriorityOrder,
+} from "../../render/VisualElement/utils/animation-state"
 import { setValues } from "../../render/VisualElement/utils/setters"
 import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
-import { useUnmountEffect } from "../../utils/use-unmount-effect"
 import {
     useVariantContext,
     VariantContextProps,
@@ -24,7 +27,7 @@ export function useVariants(
     props: MotionProps,
     isStatic: boolean
 ) {
-    const variantContext = useVariantContext()
+    let variantContext = useVariantContext()
     const presenceContext = useContext(PresenceContext)
 
     /**
@@ -39,6 +42,17 @@ export function useVariants(
     const contextDependencies = []
     const context: VariantContextProps = {}
 
+    if (
+        isVariantLabel(props.animate) ||
+        isVariantLabel(props.whileHover) ||
+        isVariantLabel(props.whileDrag) ||
+        isVariantLabel(props.whileTap) ||
+        isVariantLabel(props.exit)
+    ) {
+        isControllingVariants = true
+        variantContext = {}
+    }
+    console.log("received variant context", variantContext)
     /**
      * Loop through each animation prop. Create context dependencies.
      */
@@ -48,9 +62,7 @@ export function useVariants(
         const contextProp = variantContext[name]
 
         if (isVariantLabel(prop)) {
-            isControllingVariants = true
             context[name] = prop
-
             contextDependencies.push(prop)
         } else {
             if (isVariantLabel(contextProp)) context[name] = contextProp
@@ -73,16 +85,22 @@ export function useVariants(
         )
     }
 
+    if (isControllingVariants) {
+        variantContext = {}
+    }
+
     const isVariantNode = isControllingVariants || props.variants
 
     context.parent = isVariantNode ? visualElement : variantContext.parent
 
     // Set initial state. If this is a static component (ie in Framer canvas), respond to updates
     // in `initial`.
+    const initial = props.initial ?? context.initial
+    const animate = props.animate ?? context.animate
     useInitialOrEveryRender(() => {
-        const initialToSet = props.initial ?? context.initial
+        const initialToSet = initial === false ? animate : initial
         if (initialToSet && typeof initialToSet !== "boolean") {
-            setValues(visualElement, initialToSet)
+            setValues(visualElement, initialToSet as any)
         }
     }, !isStatic)
 
@@ -104,7 +122,34 @@ export function useVariants(
     if (isVariantNode && shouldInheritVariants && !isControllingVariants) {
         remove = variantContext.parent?.addVariantChild(visualElement)
     }
-    useUnmountEffect(() => remove?.())
+
+    useEffect(() => {
+        /**
+         * If this component is being added to an already-mounted component,
+         * we need to trigger the first intiial -> animate animation manually.
+         *
+         * TODO: This might be better implemented in animationState, where
+         * on initial render if we have an inherited animation we do animate
+         */
+        if (
+            !isControllingVariants &&
+            shouldInheritVariants &&
+            visualElement.parent?.isMounted &&
+            initial !== false &&
+            animate
+        ) {
+            animateVisualElement(visualElement, animate as any, {
+                type: AnimationType.Animate,
+            })
+        }
+
+        visualElement.isMounted = true
+
+        return () => {
+            visualElement.isMounted = false
+            remove?.()
+        }
+    }, [])
 
     /**
      * What we want here is to clear the order of variant children in useLayoutEffect

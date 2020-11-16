@@ -46,7 +46,11 @@ function createTest(): { element: VisualElement; state: AnimationState } {
 
 function mockAnimate(state: AnimationState) {
     const mocked = jest.fn()
-    state.setAnimateFunction(() => mocked)
+    state.setAnimateFunction(() => {
+        return (animations: any) => {
+            mocked(animations.map(({ animation }: any) => animation))
+        }
+    })
     return mocked
 }
 

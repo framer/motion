@@ -280,8 +280,6 @@ export abstract class VisualElement<E = any> {
          * is compatible with existing RefObject APIs.
          */
         this.element = this.current = element
-
-        this.isMounted = true
     }
 
     // Unmount the VisualElement and cancel any scheduled updates

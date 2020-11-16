@@ -6,7 +6,11 @@ import { VariantLabels } from "../../../motion/types"
 import { TargetAndTransition } from "../../../types"
 import { shallowCompare } from "../../../utils/shallow-compare"
 import { isMotionValue } from "../../../value/utils/is-motion-value"
-import { animateVisualElement, AnimationDefinition } from "./animation"
+import {
+    animateVisualElement,
+    AnimationDefinition,
+    AnimationOptions,
+} from "./animation"
 import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
 
 export interface AnimationState {
@@ -17,6 +21,11 @@ export interface AnimationState {
     setActive: (type: AnimationType, isActive: boolean) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getProtectedKeys: (type: AnimationType) => { [key: string]: any }
+}
+
+interface DefinitionAndOptions {
+    animation: AnimationDefinition
+    options?: AnimationOptions
 }
 
 export enum AnimationType {
@@ -41,10 +50,10 @@ const reversePriorityOrder = [...variantPriorityOrder].reverse()
 const numAnimationTypes = variantPriorityOrder.length
 
 function animateList(visualElement: VisualElement) {
-    return (animations: AnimationDefinition[]) =>
+    return (animations: DefinitionAndOptions[]) =>
         Promise.all(
-            animations.map((animation) =>
-                animateVisualElement(visualElement, animation)
+            animations.map(({ animation, options }) =>
+                animateVisualElement(visualElement, animation, options)
             )
         )
 }
@@ -114,7 +123,7 @@ export function createAnimationState(
          * A list of animations that we'll build into as we iterate through the animation
          * types. This will get executed at the end of the function.
          */
-        const animations: AnimationDefinition[] = []
+        const animations: DefinitionAndOptions[] = []
 
         /**
          * Keep track of which values have been removed. Then, as we hit lower priority
@@ -270,7 +279,12 @@ export function createAnimationState(
              * by removed values?
              */
             if (shouldAnimateType && !isInherited) {
-                animations.push(...(definitionList as any))
+                animations.push(
+                    ...definitionList.map((animation) => ({
+                        animation: animation as AnimationDefinition,
+                        options: { type },
+                    }))
+                )
             }
         }
 
@@ -283,7 +297,6 @@ export function createAnimationState(
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
                 const styleValue = props.style?.[key]
-
                 const fallbackTarget =
                     styleValue !== undefined && !isMotionValue(styleValue)
                         ? styleValue
@@ -294,7 +307,7 @@ export function createAnimationState(
                 }
             })
 
-            animations.push(fallbackAnimation)
+            animations.push({ animation: fallbackAnimation })
         }
 
         let shouldAnimate = Boolean(animations.length)
