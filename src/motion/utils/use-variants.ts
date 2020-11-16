@@ -43,6 +43,7 @@ export function useVariants(
     const context: VariantContextProps = {}
 
     if (
+        typeof (props.animate as AnimationControls)?.start === "function" ||
         isVariantLabel(props.animate) ||
         isVariantLabel(props.whileHover) ||
         isVariantLabel(props.whileDrag) ||
