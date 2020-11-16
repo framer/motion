@@ -2,7 +2,6 @@ import { VisualElement } from ".."
 import { VariantLabels, TargetAndTransition, Transition } from "../../.."
 import { startAnimation } from "../../../animation/utils/transitions"
 import { Target, TargetResolver, TargetWithKeyframes } from "../../../types"
-import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
 import { AnimationType } from "./animation-state"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
@@ -15,7 +14,6 @@ export type AnimationDefinition =
 export type AnimationOptions = {
     delay?: number
     transitionOverride?: Transition
-    setValueBase?: boolean
     custom?: any
     type?: AnimationType
 }
@@ -62,10 +60,11 @@ function animateVariant(
     variant: string,
     options: AnimationOptions = {}
 ) {
-    console.log("Animating", variant)
+    console.log("Animating", variant, (visualElement as any).config.variants)
     const resolved = resolveVariant(visualElement, variant, options.custom)
-    const { transition = {} } = resolved || {}
-
+    const { transition = visualElement.getDefaultTransition() || {} } =
+        resolved || {}
+    console.log("Resolved variant as ", resolved)
     /**
      * If we have a variant, create a callback that runs it as an animation.
      * Otherwise, we resolve a Promise immediately for a composable no-op.
@@ -120,7 +119,7 @@ function animateVariant(
 function animateTarget(
     visualElement: VisualElement,
     definition: TargetAndTransition,
-    { delay = 0, transitionOverride, setValueBase, type }: AnimationOptions = {}
+    { delay = 0, transitionOverride, type }: AnimationOptions = {}
 ): Promise<any> {
     let {
         transition = visualElement.getDefaultTransition(),
@@ -131,7 +130,7 @@ function animateTarget(
     if (transitionOverride) transition = transitionOverride
 
     const animations: Promise<any>[] = []
-
+    console.log(type)
     const protectedValues =
         type && visualElement.animationState?.getProtectedKeys(type)
 
@@ -142,17 +141,11 @@ function animateTarget(
         if (
             !value ||
             valueTarget === undefined ||
-            (protectedValues && protectedValues.has(key))
+            protectedValues?.[key] !== undefined
         ) {
             continue
         }
-
-        if (setValueBase) {
-            visualElement.baseTarget[key] = resolveFinalValueInKeyframes(
-                valueTarget
-            )
-        }
-
+        console.log("Animating", key, "from", value.get(), "to", valueTarget)
         const animation = startAnimation(key, value, valueTarget, {
             delay,
             ...transition,
@@ -172,7 +165,7 @@ function animateChildren(
     delayChildren = 0,
     staggerChildren = 0,
     staggerDirection = 1,
-    { custom }: AnimationOptions
+    options: AnimationOptions
 ) {
     const animations: Promise<any>[] = []
 
@@ -186,8 +179,8 @@ function animateChildren(
 
     Array.from(visualElement.variantChildrenOrder!).forEach((child, i) => {
         const animation = animateVariant(child, variant, {
+            ...options,
             delay: delayChildren + generateStaggerDuration(i),
-            custom,
         })
         animations.push(animation)
     })
