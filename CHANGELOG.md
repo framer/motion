@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [2.9.5] 2020-11-16
+
+### Added
+
+-   Updating `package.json` to be compatible with React 17.
+
 ## [2.9.4] 2020-10-21
 
 ### Added
