@@ -62,6 +62,7 @@ function animateVariant(
     variant: string,
     options: AnimationOptions = {}
 ) {
+    console.log("Animating", variant)
     const resolved = resolveVariant(visualElement, variant, options.custom)
     const { transition = {} } = resolved || {}
 

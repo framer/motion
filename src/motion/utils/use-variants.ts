@@ -80,7 +80,10 @@ export function useVariants(
     // Set initial state. If this is a static component (ie in Framer canvas), respond to updates
     // in `initial`.
     useInitialOrEveryRender(() => {
-        context.initial && setValues(visualElement, context.initial)
+        const initialToSet = props.initial ?? context.initial
+        if (initialToSet && typeof initialToSet !== "boolean") {
+            setValues(visualElement, initialToSet)
+        }
     }, !isStatic)
 
     /**

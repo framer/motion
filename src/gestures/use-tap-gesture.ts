@@ -211,7 +211,7 @@ export function useTapGesture(
 
         isTapping.current = false
 
-        visualElement.animationState?.setActive(AnimationType.Press, true)
+        visualElement.animationState?.setActive(AnimationType.Press, false)
 
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
@@ -248,7 +248,7 @@ export function useTapGesture(
 
         onTapStart?.(event, info)
 
-        visualElement.animationState?.setActive(AnimationType.Press, false)
+        visualElement.animationState?.setActive(AnimationType.Press, true)
     }
 
     usePointerEvent(
