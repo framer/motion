@@ -5,6 +5,7 @@ import { VariantContextProps } from "../../../motion/context/MotionContext"
 import { VariantLabels } from "../../../motion/types"
 import { TargetAndTransition } from "../../../types"
 import { shallowCompare } from "../../../utils/shallow-compare"
+import { isMotionValue } from "../../../value/utils/is-motion-value"
 import { animateVisualElement, AnimationDefinition } from "./animation"
 import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
 
@@ -281,8 +282,12 @@ export function createAnimationState(
         if (removedKeys.size) {
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
+                const styleValue = props.style?.[key]
+
                 const fallbackTarget =
-                    props.style?.[key] ?? visualElement.baseTarget[key]
+                    styleValue !== undefined && !isMotionValue(styleValue)
+                        ? styleValue
+                        : visualElement.baseTarget[key]
 
                 if (fallbackTarget !== undefined) {
                     fallbackAnimation[key] = fallbackTarget
@@ -299,7 +304,7 @@ export function createAnimationState(
         }
 
         isInitialRender = false
-
+        console.log(animations)
         return shouldAnimate ? animate(animations) : Promise.resolve()
     }
 
@@ -309,6 +314,11 @@ export function createAnimationState(
     function setActive(type: AnimationType, isActive: boolean) {
         // If the active state hasn't changed, we can safely do nothing here
         if (state[type].isActive === isActive) return Promise.resolve()
+        console.log("setting", type, "to", isActive)
+        // Propagate active change to children
+        visualElement.variantChildrenOrder?.forEach((child) =>
+            child.animationState?.setActive(type, isActive)
+        )
 
         state[type].isActive = isActive
 

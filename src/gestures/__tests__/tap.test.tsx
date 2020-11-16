@@ -1,240 +1,234 @@
 import * as React from "react"
 import { motion } from "../../"
-// import { fireEvent } from "@testing-library/dom"
+import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
-import {
-    // mouseEnter,
-    // mouseLeave,
-    mouseDown,
-    mouseUp,
-    render,
-} from "../../../jest.setup"
-// import { drag, MockDrag } from "../../gestures/drag/__tests__/utils"
+import { mouseDown, mouseUp, render } from "../../../jest.setup"
+import { drag, MockDrag } from "../../gestures/drag/__tests__/utils"
 
-// function mockWhenFirstArgumentIs(
-//     original: (...args: any[]) => any,
-//     firstArg: any
-// ) {
-//     const mocked = jest.fn(original)
-//     return [
-//         (...args: any[]) => {
-//             if (args[0] === firstArg) {
-//                 return mocked(...args)
-//             } else {
-//                 return original(...args)
-//             }
-//         },
-//         mocked,
-//     ]
-// }
+function mockWhenFirstArgumentIs(
+    original: (...args: any[]) => any,
+    firstArg: any
+) {
+    const mocked = jest.fn(original)
+    return [
+        (...args: any[]) => {
+            if (args[0] === firstArg) {
+                return mocked(...args)
+            } else {
+                return original(...args)
+            }
+        },
+        mocked,
+    ]
+}
 
 describe("tap", () => {
-    // test("tap event listeners fire", () => {
-    //     const tap = jest.fn()
-    //     const Component = () => <motion.div onTap={() => tap()} />
+    test("tap event listeners fire", () => {
+        const tap = jest.fn()
+        const Component = () => <motion.div onTap={() => tap()} />
 
-    //     const { container, rerender } = render(<Component />)
-    //     rerender(<Component />)
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
 
-    //     fireEvent.mouseDown(container.firstChild as Element)
-    //     fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.mouseUp(container.firstChild as Element)
 
-    //     expect(tap).toBeCalledTimes(1)
-    // })
+        expect(tap).toBeCalledTimes(1)
+    })
 
-    // test("tap event listeners are cleaned up when mouse up", () => {
-    //     const [
-    //         addEventListener,
-    //         mockedAddMouseUpListener,
-    //     ] = mockWhenFirstArgumentIs(window.addEventListener, "mouseup")
-    //     window.addEventListener = addEventListener
-    //     const [
-    //         removeEventListener,
-    //         mockedRemoveMouseUpListener,
-    //     ] = mockWhenFirstArgumentIs(window.removeEventListener, "mouseup")
-    //     window.removeEventListener = removeEventListener
+    test("tap event listeners are cleaned up when mouse up", () => {
+        const [
+            addEventListener,
+            mockedAddMouseUpListener,
+        ] = mockWhenFirstArgumentIs(window.addEventListener, "mouseup")
+        window.addEventListener = addEventListener
+        const [
+            removeEventListener,
+            mockedRemoveMouseUpListener,
+        ] = mockWhenFirstArgumentIs(window.removeEventListener, "mouseup")
+        window.removeEventListener = removeEventListener
 
-    //     const tap = jest.fn()
-    //     const Component = () => <motion.div onTap={() => tap()} />
+        const tap = jest.fn()
+        const Component = () => <motion.div onTap={() => tap()} />
 
-    //     const { container, rerender } = render(<Component />)
-    //     rerender(<Component />)
-    //     expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(0)
-    //     expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
-    //     fireEvent.mouseDown(container.firstChild as Element)
-    //     expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
-    //     expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
-    //     fireEvent.mouseUp(container.firstChild as Element)
-    //     expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
-    //     expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(1)
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(0)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
+        fireEvent.mouseDown(container.firstChild as Element)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
+        fireEvent.mouseUp(container.firstChild as Element)
+        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
+        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(1)
 
-    //     expect(tap).toBeCalledTimes(1)
-    // })
-    // // test("tap event listeners fire if triggered by child", () => {
-    // //     const tap = jest.fn()
-    // //     const Component = () => (
-    // //         <motion.div onTap={() => tap()}>
-    // //             <motion.div data-testid="child" />
-    // //         </motion.div>
-    // //     )
+        expect(tap).toBeCalledTimes(1)
+    })
+    test("tap event listeners fire if triggered by child", () => {
+        const tap = jest.fn()
+        const Component = () => (
+            <motion.div onTap={() => tap()}>
+                <motion.div data-testid="child" />
+            </motion.div>
+        )
 
-    // //     const { getByTestId, rerender } = render(<Component />)
-    // //     rerender(<Component />)
+        const { getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
 
-    // //     fireEvent.mouseDown(getByTestId("child"))
-    // //     fireEvent.mouseUp(getByTestId("child"))
+        fireEvent.mouseDown(getByTestId("child"))
+        fireEvent.mouseUp(getByTestId("child"))
 
-    // //     expect(tap).toBeCalledTimes(1)
-    // // })
+        expect(tap).toBeCalledTimes(1)
+    })
 
-    // // test("tap event listeners fire if triggered by child and released on bound element", () => {
-    // //     const tap = jest.fn()
-    // //     const Component = () => (
-    // //         <motion.div onTap={() => tap()}>
-    // //             <motion.div data-testid="child" />
-    // //         </motion.div>
-    // //     )
+    test("tap event listeners fire if triggered by child and released on bound element", () => {
+        const tap = jest.fn()
+        const Component = () => (
+            <motion.div onTap={() => tap()}>
+                <motion.div data-testid="child" />
+            </motion.div>
+        )
 
-    // //     const { container, getByTestId, rerender } = render(<Component />)
-    // //     rerender(<Component />)
+        const { container, getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
 
-    // //     fireEvent.mouseDown(getByTestId("child"))
-    // //     fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.mouseDown(getByTestId("child"))
+        fireEvent.mouseUp(container.firstChild as Element)
 
-    // //     expect(tap).toBeCalledTimes(1)
-    // // })
+        expect(tap).toBeCalledTimes(1)
+    })
 
-    // // test("tap event listeners fire if triggered by bound element and released on child", () => {
-    // //     const tap = jest.fn()
-    // //     const Component = () => (
-    // //         <motion.div onTap={() => tap()}>
-    // //             <motion.div data-testid="child" />
-    // //         </motion.div>
-    // //     )
+    test("tap event listeners fire if triggered by bound element and released on child", () => {
+        const tap = jest.fn()
+        const Component = () => (
+            <motion.div onTap={() => tap()}>
+                <motion.div data-testid="child" />
+            </motion.div>
+        )
 
-    // //     const { container, getByTestId, rerender } = render(<Component />)
-    // //     rerender(<Component />)
+        const { container, getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
 
-    // //     fireEvent.mouseDown(container.firstChild as Element)
-    // //     fireEvent.mouseUp(getByTestId("child"))
+        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.mouseUp(getByTestId("child"))
 
-    // //     expect(tap).toBeCalledTimes(1)
-    // // })
+        expect(tap).toBeCalledTimes(1)
+    })
 
-    // // test("tap cancel fires if tap released outside element", () => {
-    // //     const tapCancel = jest.fn()
-    // //     const Component = () => (
-    // //         <motion.div>
-    // //             <motion.div
-    // //                 onTapCancel={() => tapCancel()}
-    // //                 data-testid="child"
-    // //             />
-    // //         </motion.div>
-    // //     )
+    test("tap cancel fires if tap released outside element", () => {
+        const tapCancel = jest.fn()
+        const Component = () => (
+            <motion.div>
+                <motion.div
+                    onTapCancel={() => tapCancel()}
+                    data-testid="child"
+                />
+            </motion.div>
+        )
 
-    // //     const { container, getByTestId, rerender } = render(<Component />)
-    // //     rerender(<Component />)
+        const { container, getByTestId, rerender } = render(<Component />)
+        rerender(<Component />)
 
-    // //     fireEvent.mouseDown(getByTestId("child"))
-    // //     fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.mouseDown(getByTestId("child"))
+        fireEvent.mouseUp(container.firstChild as Element)
 
-    // //     expect(tapCancel).toBeCalledTimes(1)
-    // // })
+        expect(tapCancel).toBeCalledTimes(1)
+    })
 
-    // test("tap event listeners doesn't fire if parent is being dragged", async () => {
-    //     const tap = jest.fn()
-    //     const Component = () => (
-    //         <MockDrag>
-    //             <motion.div drag>
-    //                 <motion.div data-testid="tapTarget" onTap={() => tap()} />
-    //             </motion.div>
-    //         </MockDrag>
-    //     )
+    test("tap event listeners doesn't fire if parent is being dragged", async () => {
+        const tap = jest.fn()
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag>
+                    <motion.div data-testid="tapTarget" onTap={() => tap()} />
+                </motion.div>
+            </MockDrag>
+        )
 
-    //     const { rerender, getByTestId } = render(<Component />)
-    //     rerender(<Component />)
+        const { rerender, getByTestId } = render(<Component />)
+        rerender(<Component />)
 
-    //     const pointer = await drag(getByTestId("tapTarget")).to(1, 1)
-    //     await pointer.to(10, 10)
-    //     pointer.end()
+        const pointer = await drag(getByTestId("tapTarget")).to(1, 1)
+        await pointer.to(10, 10)
+        pointer.end()
 
-    //     expect(tap).toBeCalledTimes(0)
-    // })
+        expect(tap).toBeCalledTimes(0)
+    })
 
-    // test("tap event listeners do fire if parent is being dragged only a little bit", async () => {
-    //     const tap = jest.fn()
-    //     const Component = () => (
-    //         <MockDrag>
-    //             <motion.div drag>
-    //                 <motion.div data-testid="tapTarget" onTap={() => tap()} />
-    //             </motion.div>
-    //         </MockDrag>
-    //     )
+    test("tap event listeners do fire if parent is being dragged only a little bit", async () => {
+        const tap = jest.fn()
+        const Component = () => (
+            <MockDrag>
+                <motion.div drag>
+                    <motion.div data-testid="tapTarget" onTap={() => tap()} />
+                </motion.div>
+            </MockDrag>
+        )
 
-    //     const { rerender, getByTestId } = render(<Component />)
-    //     rerender(<Component />)
+        const { rerender, getByTestId } = render(<Component />)
+        rerender(<Component />)
 
-    //     const pointer = await drag(getByTestId("tapTarget")).to(0.5, 0.5)
-    //     pointer.end()
+        const pointer = await drag(getByTestId("tapTarget")).to(0.5, 0.5)
+        pointer.end()
 
-    //     expect(tap).toBeCalledTimes(1)
-    // })
+        expect(tap).toBeCalledTimes(1)
+    })
 
-    // test("tap event listeners unset", () => {
-    //     const tap = jest.fn()
-    //     const Component = () => <motion.div onTap={() => tap()} />
+    test("tap event listeners unset", () => {
+        const tap = jest.fn()
+        const Component = () => <motion.div onTap={() => tap()} />
 
-    //     const { container, rerender } = render(<Component />)
-    //     rerender(<Component />)
-    //     rerender(<Component />)
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+        rerender(<Component />)
 
-    //     fireEvent.mouseDown(container.firstChild as Element)
-    //     fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.mouseUp(container.firstChild as Element)
 
-    //     rerender(<Component />)
-    //     rerender(<Component />)
+        rerender(<Component />)
+        rerender(<Component />)
 
-    //     fireEvent.mouseDown(container.firstChild as Element)
-    //     fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.mouseUp(container.firstChild as Element)
 
-    //     fireEvent.mouseDown(container.firstChild as Element)
-    //     fireEvent.mouseUp(container.firstChild as Element)
+        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.mouseUp(container.firstChild as Element)
 
-    //     expect(tap).toBeCalledTimes(3)
-    // })
+        expect(tap).toBeCalledTimes(3)
+    })
 
-    // test("tap gesture variant applies and unapplies", () => {
-    //     const promise = new Promise(resolve => {
-    //         const opacityHistory: number[] = []
-    //         const opacity = motionValue(0.5)
-    //         const logOpacity = () => opacityHistory.push(opacity.get())
-    //         const Component = () => (
-    //             <motion.div
-    //                 initial={{ opacity: 0.5 }}
-    //                 transition={{ type: false }}
-    //                 whileTap={{ opacity: 1 }}
-    //                 style={{ opacity }}
-    //             />
-    //         )
+    test("tap gesture variant applies and unapplies", () => {
+        const promise = new Promise((resolve) => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 0.5 }}
+                    transition={{ type: false }}
+                    whileTap={{ opacity: 1 }}
+                    style={{ opacity }}
+                />
+            )
 
-    //         const { container } = render(<Component />)
+            const { container } = render(<Component />)
 
-    //         logOpacity() // 0.5
+            logOpacity() // 0.5
 
-    //         // Trigger mouse down
-    //         mouseDown(container.firstChild as Element)
+            // Trigger mouse down
+            mouseDown(container.firstChild as Element)
 
-    //         logOpacity() // 1
+            logOpacity() // 1
 
-    //         // Trigger mouse up
-    //         mouseUp(container.firstChild as Element)
-    //         logOpacity() // 0.5
+            // Trigger mouse up
+            mouseUp(container.firstChild as Element)
+            logOpacity() // 0.5
 
-    //         resolve(opacityHistory)
-    //     })
+            resolve(opacityHistory)
+        })
 
-    //     return expect(promise).resolves.toEqual([0.5, 1, 0.5])
-    // })
+        return expect(promise).resolves.toEqual([0.5, 1, 0.5])
+    })
 
     test("tap gesture variant unapplies children", () => {
         const promise = new Promise((resolve) => {
@@ -264,7 +258,7 @@ describe("tap", () => {
             // Trigger mouse up
             mouseUp(getByTestId("child") as Element)
             logOpacity() // 0.5
-
+            console.log(opacityHistory)
             resolve(opacityHistory)
         })
 
