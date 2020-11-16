@@ -62,9 +62,13 @@ function animateVariant(
 ) {
     console.log("Animating", variant, (visualElement as any).config.variants)
     const resolved = resolveVariant(visualElement, variant, options.custom)
-    const { transition = visualElement.getDefaultTransition() || {} } =
+    let { transition = visualElement.getDefaultTransition() || {} } =
         resolved || {}
-    console.log("Resolved variant as ", resolved)
+
+    if (options.transitionOverride) {
+        transition = options.transitionOverride
+    }
+
     /**
      * If we have a variant, create a callback that runs it as an animation.
      * Otherwise, we resolve a Promise immediately for a composable no-op.

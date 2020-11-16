@@ -85,7 +85,11 @@ export class AnimationControls {
         if (this.hasMounted) {
             const animations: Array<Promise<any>> = []
             this.subscribers.forEach((visualElement) => {
-                animations.push(animateVisualElement(visualElement, definition))
+                animations.push(
+                    animateVisualElement(visualElement, definition, {
+                        transitionOverride,
+                    })
+                )
             })
 
             return Promise.all(animations)
