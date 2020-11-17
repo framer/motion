@@ -23,7 +23,7 @@ export const App = () => {
             <motion.div
                 drag
                 dragConstraints={ref}
-                whileTap={{ scale: 0.95 }}
+                whilePress={{ scale: 0.95 }}
                 style={child}
             />
         </div>

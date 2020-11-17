@@ -1,12 +1,12 @@
 import { PanHandlers, usePanGesture } from "./use-pan-gesture"
-import { TapHandlers, useTapGesture } from "./use-tap-gesture"
+import { PressHandlers, usePressGesture } from "./use-press-gesture"
 import { HoverHandlers, useHoverGesture } from "./use-hover-gesture"
 import { VisualElement } from "../render/VisualElement"
 
 /**
  * @public
  */
-export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers
+export type GestureHandlers = PanHandlers & PressHandlers & HoverHandlers
 
 /**
  * Add pan and tap gesture recognition to an element.
@@ -20,6 +20,6 @@ export function useGestures<GestureHandlers>(
     visualElement: VisualElement
 ) {
     usePanGesture(props, visualElement)
-    useTapGesture(props, visualElement)
+    usePressGesture(props, visualElement)
     useHoverGesture(props, visualElement)
 }

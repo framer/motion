@@ -14,7 +14,7 @@ export const App = () => {
             drag
             dragElastic
             dragConstraints={{ top: -100, left: -100, right: 300, bottom: 300 }}
-            whileTap={{ scale: 0.95 }}
+            whilePress={{ scale: 0.95 }}
             whileHover={{ scale: 1.1 }}
             style={styleA}
         />

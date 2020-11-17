@@ -37,7 +37,7 @@ interface DefinitionAndOptions {
 export enum AnimationType {
     Animate = "animate",
     Hover = "whileHover",
-    Press = "whileTap",
+    Press = "whilePress",
     Drag = "whileDrag",
     Exit = "exit",
 }

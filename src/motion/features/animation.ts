@@ -33,14 +33,14 @@ export const Animation: MotionFeature = {
     getComponent: ({
         animate,
         whileHover,
-        whileTap,
+        whilePress,
         whileDrag,
         exit,
         variants,
     }) => {
         return animate ||
             whileHover ||
-            whileTap ||
+            whilePress ||
             whileDrag ||
             exit ||
             variants

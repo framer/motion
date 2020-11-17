@@ -151,7 +151,7 @@ describe("hover", () => {
             const Component = () => (
                 <motion.div
                     whileHover="hovering"
-                    whileTap="tapping"
+                    whilePress="tapping"
                     variants={variant}
                     transition={{ type: false }}
                     style={{ opacity, scale }}

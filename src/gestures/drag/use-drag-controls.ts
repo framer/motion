@@ -19,7 +19,7 @@ import {
  *
  * return (
  *   <>
- *     <Frame onTapStart={startDrag} />
+ *     <Frame onPressStart={startDrag} />
  *     <Frame drag="x" dragControls={dragControls} />
  *   </>
  * )
@@ -120,7 +120,7 @@ const createDragControls = () => new DragControls()
  *
  * return (
  *   <>
- *     <Frame onTapStart={startDrag} />
+ *     <Frame onPressStart={startDrag} />
  *     <Frame drag="x" dragControls={dragControls} />
  *   </>
  * )

@@ -8,10 +8,10 @@ export const gestureProps = [
     "onPanStart",
     "onPanEnd",
     "onPanSessionStart",
-    "onTap",
-    "onTapStart",
-    "onTapCancel",
-    "whileTap",
+    "onPress",
+    "onPressStart",
+    "onPressCancel",
+    "whilePress",
     "whileHover",
     "onHoverStart",
     "onHoverEnd",
@@ -29,7 +29,7 @@ const GestureComponent = makeRenderlessComponent(
 export const Gestures: MotionFeature = {
     key: "gestures",
     shouldRender: (props: MotionProps) => {
-        return gestureProps.some(key => props.hasOwnProperty(key))
+        return gestureProps.some((key) => props.hasOwnProperty(key))
     },
     getComponent: () => GestureComponent,
 }

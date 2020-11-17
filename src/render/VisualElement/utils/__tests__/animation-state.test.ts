@@ -426,7 +426,7 @@ describe("Animation state - Set active", () => {
             style: { opacity: 0 },
             animate: { opacity: 1 },
             whileHover: { opacity: 0.5 },
-            whileTap: { opacity: 0.8 },
+            whilePress: { opacity: 0.8 },
         })
 
         // Set hover to true
@@ -510,7 +510,7 @@ describe("Animation state - Set active", () => {
 //             style: { opacity: 0 },
 //             animate: { opacity: 1 },
 //             whileHover: { opacity: 0.5 },
-//             whileTap: { opacity: 0.8 },
+//             whilePress: { opacity: 0.8 },
 //         })
 //         element.animationState!.setActive(AnimationType.Hover, true)
 //         element.animationState!.setActive(AnimationType.Press, true)
@@ -520,7 +520,7 @@ describe("Animation state - Set active", () => {
 //             style: { opacity: 0 },
 //             animate: { opacity: 1 },
 //             whileHover: undefined,
-//             whileTap: { opacity: 0.8 },
+//             whilePress: { opacity: 0.8 },
 //         })
 //         expect(element.animate).not.toBeCalled()
 
@@ -529,7 +529,7 @@ describe("Animation state - Set active", () => {
 //             style: { opacity: 0 },
 //             animate: { opacity: 1 },
 //             whileHover: { opacity: 0.5 },
-//             whileTap: { opacity: 0.8 },
+//             whilePress: { opacity: 0.8 },
 //         })
 //         expect(element.animate).not.toBeCalled()
 
@@ -538,7 +538,7 @@ describe("Animation state - Set active", () => {
 //             style: { opacity: 0 },
 //             animate: { opacity: 1 },
 //             whileHover: { opacity: 0.5 },
-//             whileTap: { opacity: 0.9 },
+//             whilePress: { opacity: 0.9 },
 //         })
 //         expect(element.animate).toBeCalledWith([{ opacity: 0.9 }], new Set())
 
@@ -547,7 +547,7 @@ describe("Animation state - Set active", () => {
 //             style: { opacity: 0 },
 //             animate: { x: 50, opacity: 1 },
 //             whileHover: { x: 100, opacity: 0.5 },
-//             whileTap: { opacity: 0.9 },
+//             whilePress: { opacity: 0.9 },
 //         })
 //         expect(element.animate).toBeCalledWith(
 //             [{ x: 100, opacity: 0.5 }],
@@ -559,7 +559,7 @@ describe("Animation state - Set active", () => {
 //             style: { opacity: 0 },
 //             animate: { x: 50, opacity: 1 },
 //             whileHover: { opacity: 0.5 },
-//             whileTap: { opacity: 0.9 },
+//             whilePress: { opacity: 0.9 },
 //         })
 //         expect(element.animate).toBeCalledWith(
 //             [{ x: 50, opacity: 1 }],

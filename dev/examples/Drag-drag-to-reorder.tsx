@@ -49,7 +49,7 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                     scale: 1.03,
                     boxShadow: "0px 3px 3px rgba(0,0,0,0.15)",
                 }}
-                whileTap={{
+                whilePress={{
                     scale: 1.12,
                     boxShadow: "0px 5px 5px rgba(0,0,0,0.1)",
                 }}

@@ -33,7 +33,7 @@ export const App = () => {
                 unchecked: { viewBox: "0 0 440 440" },
             }}
             whileHover="hover"
-            whileTap="pressed"
+            whilePress="pressed"
             width="440"
             height="440"
             onClick={() => setIsChecked(!isChecked)}

@@ -389,7 +389,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * return (
      *   <>
-     *     <Frame onTapStart={startDrag} />
+     *     <Frame onPressStart={startDrag} />
      *     <Frame drag="x" dragControls={dragControls} />
      *   </>
      * )
@@ -431,7 +431,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * return (
      *   <>
-     *     <Frame onTapStart={startDrag} />
+     *     <Frame onPressStart={startDrag} />
      *     <Frame
      *       drag="x"
      *       dragControls={dragControls}

@@ -25,10 +25,10 @@ export const App = () => {
             drag
             dragConstraints={{ left: 0, right: 100, top: 0, bottom: 100 }}
             dragElastic={0}
-            whileTap={{ scale: 0.95 }}
-            onTap={handleTap}
-            onTapStart={handleTapStart}
-            onTapCancel={handleTapCancel}
+            whilePress={{ scale: 0.95 }}
+            onPress={handleTap}
+            onPressStart={handleTapStart}
+            onPressCancel={handleTapCancel}
             onDrag={handleDrag}
             onDragStart={handleDragStart}
             onDragEnd={handleDragEnd}

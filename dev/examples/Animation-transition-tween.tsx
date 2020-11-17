@@ -27,7 +27,7 @@ export const App = () => {
             whileHover={{ x: 100, opacity: 0.5 }}
             transition={transition}
             style={style}
-            onTap={() => setCount(count + 1)}
+            onPress={() => setCount(count + 1)}
         />
     )
 }

@@ -27,14 +27,14 @@ export const App = () => {
         <>
             <div
                 style={container}
-                onPointerDown={e =>
+                onPointerDown={(e) =>
                     dragControls.start(e, { snapToCursor: true })
                 }
             />
             <motion.div
                 drag
                 dragControls={dragControls}
-                whileTap={{ scale: 0.95 }}
+                whilePress={{ scale: 0.95 }}
                 style={child}
             />
         </>

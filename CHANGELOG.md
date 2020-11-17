@@ -6,11 +6,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
+-   `whileDrag`
 -   Adding Safari-prefixed `userSelect` css to draggable elements.
 
 ### Changed
 
--   When the variant provided to `animate` changes, removed visual options will animate back to any defined in `style`.
+-   Tap -> Press. ie `whileTap` -> `whilePress`, `onTap` -> `onPress` etc.
+-   New behaviour for when values are removed from animation props (`animate`, `whileHover`, `exit` etc). The value will be searched for in active props of a lower priority running (`style` <- `animate` <- `whileHover` <- `whilePress` <- `whileDrag` <- `exit`)
 
 ### Removed
 

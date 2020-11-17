@@ -25,7 +25,7 @@ function mockWhenFirstArgumentIs(
 describe("tap", () => {
     test("tap event listeners fire", () => {
         const tap = jest.fn()
-        const Component = () => <motion.div onTap={() => tap()} />
+        const Component = () => <motion.div onPress={() => tap()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -49,7 +49,7 @@ describe("tap", () => {
         window.removeEventListener = removeEventListener
 
         const tap = jest.fn()
-        const Component = () => <motion.div onTap={() => tap()} />
+        const Component = () => <motion.div onPress={() => tap()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -67,7 +67,7 @@ describe("tap", () => {
     test("tap event listeners fire if triggered by child", () => {
         const tap = jest.fn()
         const Component = () => (
-            <motion.div onTap={() => tap()}>
+            <motion.div onPress={() => tap()}>
                 <motion.div data-testid="child" />
             </motion.div>
         )
@@ -84,7 +84,7 @@ describe("tap", () => {
     test("tap event listeners fire if triggered by child and released on bound element", () => {
         const tap = jest.fn()
         const Component = () => (
-            <motion.div onTap={() => tap()}>
+            <motion.div onPress={() => tap()}>
                 <motion.div data-testid="child" />
             </motion.div>
         )
@@ -101,7 +101,7 @@ describe("tap", () => {
     test("tap event listeners fire if triggered by bound element and released on child", () => {
         const tap = jest.fn()
         const Component = () => (
-            <motion.div onTap={() => tap()}>
+            <motion.div onPress={() => tap()}>
                 <motion.div data-testid="child" />
             </motion.div>
         )
@@ -120,7 +120,7 @@ describe("tap", () => {
         const Component = () => (
             <motion.div>
                 <motion.div
-                    onTapCancel={() => tapCancel()}
+                    onPressCancel={() => tapCancel()}
                     data-testid="child"
                 />
             </motion.div>
@@ -140,7 +140,7 @@ describe("tap", () => {
         const Component = () => (
             <MockDrag>
                 <motion.div drag>
-                    <motion.div data-testid="tapTarget" onTap={() => tap()} />
+                    <motion.div data-testid="tapTarget" onPress={() => tap()} />
                 </motion.div>
             </MockDrag>
         )
@@ -160,7 +160,7 @@ describe("tap", () => {
         const Component = () => (
             <MockDrag>
                 <motion.div drag>
-                    <motion.div data-testid="tapTarget" onTap={() => tap()} />
+                    <motion.div data-testid="tapTarget" onPress={() => tap()} />
                 </motion.div>
             </MockDrag>
         )
@@ -176,7 +176,7 @@ describe("tap", () => {
 
     test("tap event listeners unset", () => {
         const tap = jest.fn()
-        const Component = () => <motion.div onTap={() => tap()} />
+        const Component = () => <motion.div onPress={() => tap()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -206,7 +206,7 @@ describe("tap", () => {
                 <motion.div
                     initial={{ opacity: 0.5 }}
                     transition={{ type: false }}
-                    whileTap={{ opacity: 1 }}
+                    whilePress={{ opacity: 1 }}
                     style={{ opacity }}
                 />
             )
@@ -236,7 +236,7 @@ describe("tap", () => {
             const opacity = motionValue(0.5)
             const logOpacity = () => opacityHistory.push(opacity.get())
             const Component = () => (
-                <motion.div whileTap="pressed">
+                <motion.div whilePress="pressed">
                     <motion.div
                         data-testid="child"
                         variants={{ pressed: { opacity: 1 } }}
@@ -277,7 +277,7 @@ describe("tap", () => {
     //         const logOpacity = () => opacityHistory.push(opacity.get())
 
     //         const Component = () => (
-    //             <motion.div whileTap="pressed">
+    //             <motion.div whilePress="pressed">
     //                 <motion.div
     //                     data-testid="child"
     //                     variants={{
@@ -286,7 +286,7 @@ describe("tap", () => {
     //                     }}
     //                     style={{ opacity }}
     //                     transition={{ type: false }}
-    //                     whileTap="childPressed"
+    //                     whilePress="childPressed"
     //                 />
     //             </motion.div>
     //         )
@@ -320,7 +320,7 @@ describe("tap", () => {
     //                 initial={{ opacity: 0.5 }}
     //                 transition={{ type: false }}
     //                 whileHover={{ opacity: 0.75 }}
-    //                 whileTap={{ opacity: 1 }}
+    //                 whilePress={{ opacity: 1 }}
     //                 style={{ opacity }}
     //             />
     //         )
@@ -389,7 +389,7 @@ describe("tap", () => {
     //                     initial={{ opacity: isActive ? 1 : 0.5 }}
     //                     animate={{ opacity: isActive ? 1 : 0.5 }}
     //                     whileHover={{ opacity: isActive ? 1 : 0.75 }}
-    //                     whileTap={{ opacity: 1 }}
+    //                     whilePress={{ opacity: 1 }}
     //                     transition={{ type: false }}
     //                     style={{ opacity }}
     //                 />

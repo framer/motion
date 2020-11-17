@@ -45,11 +45,11 @@ export { useAnimation } from "./animation/use-animation"
 export { animate } from "./animation/animate"
 export {
     HoverHandlers,
-    TapHandlers,
+    PressHandlers,
     PanHandlers,
-    TapInfo,
+    PressInfo,
     PanInfo,
-    useTapGesture,
+    usePressGesture,
     usePanGesture,
     useGestures,
 } from "./gestures"

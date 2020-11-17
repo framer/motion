@@ -15,14 +15,14 @@ const styleB = {
 
 export const App = () => {
     const [drag, setDragEnabled] = useState(true)
-    const onTap = () => setDragEnabled(!drag)
+    const onPress = () => setDragEnabled(!drag)
     return (
         <>
             <motion.div
                 drag={drag}
                 style={{ ...styleA, background: drag ? "green" : "yellow" }}
             />
-            <motion.div onTap={onTap} style={styleB} />
+            <motion.div onPress={onPress} style={styleB} />
         </>
     )
 }
