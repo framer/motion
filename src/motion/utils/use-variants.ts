@@ -3,11 +3,7 @@ import { AnimationControls } from "../../animation/AnimationControls"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { VisualElement } from "../../render/VisualElement"
-import { animateVisualElement } from "../../render/VisualElement/utils/animation"
-import {
-    AnimationType,
-    variantPriorityOrder,
-} from "../../render/VisualElement/utils/animation-state"
+import { variantPriorityOrder } from "../../render/VisualElement/utils/animation-state"
 import { setValues } from "../../render/VisualElement/utils/setters"
 import { useInitialOrEveryRender } from "../../utils/use-initial-or-every-render"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
@@ -38,22 +34,16 @@ export function useVariants(
      * Otherwise this component should be "invisible" to variant propagation.
      */
     const shouldInheritVariants = checkShouldInheritVariant(props)
-    let isControllingVariants = false
     const contextDependencies = []
     const context: VariantContextProps = {}
 
-    if (
-        typeof (props.animate as AnimationControls)?.start === "function" ||
-        isVariantLabel(props.animate) ||
-        isVariantLabel(props.whileHover) ||
-        isVariantLabel(props.whileDrag) ||
-        isVariantLabel(props.whileTap) ||
-        isVariantLabel(props.exit)
-    ) {
+    let isControllingVariants = false
+    if (checkIfControllingVariants(props)) {
         isControllingVariants = true
         variantContext = {}
     }
-    console.log("received variant context", variantContext)
+    const isVariantNode = isControllingVariants || props.variants
+
     /**
      * Loop through each animation prop. Create context dependencies.
      */
@@ -70,36 +60,26 @@ export function useVariants(
             contextDependencies.push(null)
         }
 
-        if (name === "initial" && presenceContext?.initial !== undefined) {
-            context.initial = presenceContext.initial
-
-            if (
-                context.initial === false &&
-                !isAnimationControls(props.animate)
-            ) {
-                context.initial === props.animate
-            }
-        }
-
         contextDependencies.push(
             isVariantLabel(contextProp) ? contextProp : null
         )
     }
 
-    if (isControllingVariants) {
-        variantContext = {}
+    if (presenceContext?.initial === false) {
+        context.initial = false
     }
 
-    const isVariantNode = isControllingVariants || props.variants
+    /**
+     *
+     */
+    const initial = context.initial ?? props.initial
+    const animate = props.animate ?? context.animate
 
     context.parent = isVariantNode ? visualElement : variantContext.parent
 
-    // Set initial state. If this is a static component (ie in Framer canvas), respond to updates
-    // in `initial`.
-    const initial = props.initial ?? context.initial
-    const animate = props.animate ?? context.animate
     useInitialOrEveryRender(() => {
         const initialToSet = initial === false ? animate : initial
+
         if (initialToSet && typeof initialToSet !== "boolean") {
             setValues(visualElement, initialToSet as any)
         }
@@ -124,26 +104,20 @@ export function useVariants(
         remove = variantContext.parent?.addVariantChild(visualElement)
     }
 
-    useEffect(() => {
-        /**
-         * If this component is being added to an already-mounted component,
-         * we need to trigger the first intiial -> animate animation manually.
-         *
-         * TODO: This might be better implemented in animationState, where
-         * on initial render if we have an inherited animation we do animate
-         */
-        if (
-            !isControllingVariants &&
-            shouldInheritVariants &&
-            visualElement.parent?.isMounted &&
-            initial !== false &&
-            animate
-        ) {
-            animateVisualElement(visualElement, animate as any, {
-                type: AnimationType.Animate,
-            })
-        }
+    /**
+     *
+     */
+    if (
+        !isControllingVariants &&
+        shouldInheritVariants &&
+        visualElement.parent?.isMounted &&
+        initial !== false &&
+        animate
+    ) {
+        visualElement.manuallyAnimateOnMount = true
+    }
 
+    useEffect(() => {
         visualElement.isMounted = true
 
         return () => {
@@ -179,4 +153,15 @@ function isVariantLabel(v?: MotionProps["animate"]): v is string | string[] {
 
 export function isAnimationControls(v?: unknown): v is AnimationControls {
     return typeof v === "object" && typeof (v as any).start === "function"
+}
+
+function checkIfControllingVariants(props: MotionProps) {
+    return (
+        typeof (props.animate as AnimationControls)?.start === "function" ||
+        isVariantLabel(props.animate) ||
+        isVariantLabel(props.whileHover) ||
+        isVariantLabel(props.whileDrag) ||
+        isVariantLabel(props.whileTap) ||
+        isVariantLabel(props.exit)
+    )
 }

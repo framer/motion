@@ -624,7 +624,6 @@ describe("animate prop as variant", () => {
     })
 
     test("style is used as fallback when a variant changes to not contain that style", async () => {
-        console.log("test 3")
         const Component = ({ animate }: { animate?: string }) => {
             return (
                 <motion.div

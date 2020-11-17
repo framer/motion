@@ -16,9 +16,15 @@ import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
 export interface AnimationState {
     setProps: (
         props: MotionProps,
-        context?: VariantContextProps
+        context?: VariantContextProps,
+        options?: AnimationOptions,
+        type?: AnimationType
     ) => Promise<any>
-    setActive: (type: AnimationType, isActive: boolean) => Promise<any>
+    setActive: (
+        type: AnimationType,
+        isActive: boolean,
+        options?: AnimationOptions
+    ) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getProtectedKeys: (type: AnimationType) => { [key: string]: any }
 }
@@ -110,6 +116,7 @@ export function createAnimationState(
     function setProps(
         props: MotionProps,
         context: VariantContextProps = {},
+        options?: AnimationOptions,
         changedActiveType?: AnimationType
     ) {
         /**
@@ -168,7 +175,18 @@ export function createAnimationState(
              * If this prop is an inherited variant, rather than been set directly on the
              * component itself, we want to make sure we allow the parent to trigger animations.
              */
-            const isInherited = prop === context[type] && isVariantLabel(prop)
+            let isInherited = prop === context[type] && isVariantLabel(prop)
+
+            /**
+             *
+             */
+            if (
+                isInherited &&
+                isInitialRender &&
+                visualElement.manuallyAnimateOnMount
+            ) {
+                isInherited = false
+            }
 
             /**
              * Set all encountered keys so far as the protected keys for this type. This will
@@ -282,7 +300,7 @@ export function createAnimationState(
                 animations.push(
                     ...definitionList.map((animation) => ({
                         animation: animation as AnimationDefinition,
-                        options: { type },
+                        options: { type, ...options },
                     }))
                 )
             }
@@ -312,22 +330,29 @@ export function createAnimationState(
 
         let shouldAnimate = Boolean(animations.length)
 
-        if (isInitialRender && props.initial === false) {
+        if (
+            isInitialRender &&
+            props.initial === false &&
+            !visualElement.manuallyAnimateOnMount
+        ) {
             shouldAnimate = false
         }
 
         isInitialRender = false
-        console.log(animations)
         return shouldAnimate ? animate(animations) : Promise.resolve()
     }
 
     /**
      * Change whether a certain animation type is active.
      */
-    function setActive(type: AnimationType, isActive: boolean) {
+    function setActive(
+        type: AnimationType,
+        isActive: boolean,
+        options?: AnimationOptions
+    ) {
         // If the active state hasn't changed, we can safely do nothing here
         if (state[type].isActive === isActive) return Promise.resolve()
-        console.log("setting", type, "to", isActive)
+
         // Propagate active change to children
         visualElement.variantChildrenOrder?.forEach((child) =>
             child.animationState?.setActive(type, isActive)
@@ -335,7 +360,7 @@ export function createAnimationState(
 
         state[type].isActive = isActive
 
-        return setProps(currentProps, currentContext, type)
+        return setProps(currentProps, currentContext, options, type)
     }
 
     return { getProtectedKeys, setProps, setActive, setAnimateFunction }

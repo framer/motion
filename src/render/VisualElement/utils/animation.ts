@@ -60,7 +60,6 @@ function animateVariant(
     variant: string,
     options: AnimationOptions = {}
 ) {
-    console.log("Animating", variant, (visualElement as any).config.variants)
     const resolved = resolveVariant(visualElement, variant, options.custom)
     let { transition = visualElement.getDefaultTransition() || {} } =
         resolved || {}
@@ -134,7 +133,7 @@ function animateTarget(
     if (transitionOverride) transition = transitionOverride
 
     const animations: Promise<any>[] = []
-    console.log(type)
+
     const protectedValues =
         type && visualElement.animationState?.getProtectedKeys(type)
 
@@ -149,7 +148,7 @@ function animateTarget(
         ) {
             continue
         }
-        console.log("Animating", key, "from", value.get(), "to", valueTarget)
+
         const animation = startAnimation(key, value, valueTarget, {
             delay,
             ...transition,
