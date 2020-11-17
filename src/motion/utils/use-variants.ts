@@ -65,15 +65,12 @@ export function useVariants(
         )
     }
 
-    if (presenceContext?.initial === false) {
-        context.initial = false
-    }
-
-    /**
-     *
-     */
-    const initial = context.initial ?? props.initial
+    let initial = props.initial ?? context.initial
     const animate = props.animate ?? context.animate
+
+    if (presenceContext?.initial === false) {
+        initial = context.initial = false
+    }
 
     context.parent = isVariantNode ? visualElement : variantContext.parent
 
