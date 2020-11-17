@@ -1,9 +1,9 @@
 import * as React from "react"
-import { motion } from "../../"
+import { motion } from "../.."
 import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
 import { mouseDown, mouseUp, render } from "../../../jest.setup"
-import { drag, MockDrag } from "../../gestures/drag/__tests__/utils"
+import { drag, MockDrag } from "../drag/__tests__/utils"
 
 function mockWhenFirstArgumentIs(
     original: (...args: any[]) => any,
@@ -22,10 +22,10 @@ function mockWhenFirstArgumentIs(
     ]
 }
 
-describe("tap", () => {
-    test("tap event listeners fire", () => {
-        const tap = jest.fn()
-        const Component = () => <motion.div onPress={() => tap()} />
+describe("press", () => {
+    test("press event listeners fire", () => {
+        const press = jest.fn()
+        const Component = () => <motion.div onPress={() => press()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -33,10 +33,10 @@ describe("tap", () => {
         fireEvent.mouseDown(container.firstChild as Element)
         fireEvent.mouseUp(container.firstChild as Element)
 
-        expect(tap).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(1)
     })
 
-    test("tap event listeners are cleaned up when mouse up", () => {
+    test("press event listeners are cleaned up when mouse up", () => {
         const [
             addEventListener,
             mockedAddMouseUpListener,
@@ -48,8 +48,8 @@ describe("tap", () => {
         ] = mockWhenFirstArgumentIs(window.removeEventListener, "mouseup")
         window.removeEventListener = removeEventListener
 
-        const tap = jest.fn()
-        const Component = () => <motion.div onPress={() => tap()} />
+        const press = jest.fn()
+        const Component = () => <motion.div onPress={() => press()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -62,12 +62,12 @@ describe("tap", () => {
         expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
         expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(1)
 
-        expect(tap).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(1)
     })
-    test("tap event listeners fire if triggered by child", () => {
-        const tap = jest.fn()
+    test("press event listeners fire if triggered by child", () => {
+        const press = jest.fn()
         const Component = () => (
-            <motion.div onPress={() => tap()}>
+            <motion.div onPress={() => press()}>
                 <motion.div data-testid="child" />
             </motion.div>
         )
@@ -78,13 +78,13 @@ describe("tap", () => {
         fireEvent.mouseDown(getByTestId("child"))
         fireEvent.mouseUp(getByTestId("child"))
 
-        expect(tap).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(1)
     })
 
-    test("tap event listeners fire if triggered by child and released on bound element", () => {
-        const tap = jest.fn()
+    test("press event listeners fire if triggered by child and released on bound element", () => {
+        const press = jest.fn()
         const Component = () => (
-            <motion.div onPress={() => tap()}>
+            <motion.div onPress={() => press()}>
                 <motion.div data-testid="child" />
             </motion.div>
         )
@@ -95,13 +95,13 @@ describe("tap", () => {
         fireEvent.mouseDown(getByTestId("child"))
         fireEvent.mouseUp(container.firstChild as Element)
 
-        expect(tap).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(1)
     })
 
-    test("tap event listeners fire if triggered by bound element and released on child", () => {
-        const tap = jest.fn()
+    test("press event listeners fire if triggered by bound element and released on child", () => {
+        const press = jest.fn()
         const Component = () => (
-            <motion.div onPress={() => tap()}>
+            <motion.div onPress={() => press()}>
                 <motion.div data-testid="child" />
             </motion.div>
         )
@@ -112,15 +112,15 @@ describe("tap", () => {
         fireEvent.mouseDown(container.firstChild as Element)
         fireEvent.mouseUp(getByTestId("child"))
 
-        expect(tap).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(1)
     })
 
-    test("tap cancel fires if tap released outside element", () => {
-        const tapCancel = jest.fn()
+    test("press cancel fires if press released outside element", () => {
+        const pressCancel = jest.fn()
         const Component = () => (
             <motion.div>
                 <motion.div
-                    onPressCancel={() => tapCancel()}
+                    onPressCancel={() => pressCancel()}
                     data-testid="child"
                 />
             </motion.div>
@@ -132,15 +132,18 @@ describe("tap", () => {
         fireEvent.mouseDown(getByTestId("child"))
         fireEvent.mouseUp(container.firstChild as Element)
 
-        expect(tapCancel).toBeCalledTimes(1)
+        expect(pressCancel).toBeCalledTimes(1)
     })
 
-    test("tap event listeners doesn't fire if parent is being dragged", async () => {
-        const tap = jest.fn()
+    test("press event listeners doesn't fire if parent is being dragged", async () => {
+        const press = jest.fn()
         const Component = () => (
             <MockDrag>
                 <motion.div drag>
-                    <motion.div data-testid="tapTarget" onPress={() => tap()} />
+                    <motion.div
+                        data-testid="pressTarget"
+                        onPress={() => press()}
+                    />
                 </motion.div>
             </MockDrag>
         )
@@ -148,19 +151,22 @@ describe("tap", () => {
         const { rerender, getByTestId } = render(<Component />)
         rerender(<Component />)
 
-        const pointer = await drag(getByTestId("tapTarget")).to(1, 1)
+        const pointer = await drag(getByTestId("pressTarget")).to(1, 1)
         await pointer.to(10, 10)
         pointer.end()
 
-        expect(tap).toBeCalledTimes(0)
+        expect(press).toBeCalledTimes(0)
     })
 
-    test("tap event listeners do fire if parent is being dragged only a little bit", async () => {
-        const tap = jest.fn()
+    test("press event listeners do fire if parent is being dragged only a little bit", async () => {
+        const press = jest.fn()
         const Component = () => (
             <MockDrag>
                 <motion.div drag>
-                    <motion.div data-testid="tapTarget" onPress={() => tap()} />
+                    <motion.div
+                        data-testid="pressTarget"
+                        onPress={() => press()}
+                    />
                 </motion.div>
             </MockDrag>
         )
@@ -168,15 +174,15 @@ describe("tap", () => {
         const { rerender, getByTestId } = render(<Component />)
         rerender(<Component />)
 
-        const pointer = await drag(getByTestId("tapTarget")).to(0.5, 0.5)
+        const pointer = await drag(getByTestId("pressTarget")).to(0.5, 0.5)
         pointer.end()
 
-        expect(tap).toBeCalledTimes(1)
+        expect(press).toBeCalledTimes(1)
     })
 
-    test("tap event listeners unset", () => {
-        const tap = jest.fn()
-        const Component = () => <motion.div onPress={() => tap()} />
+    test("press event listeners unset", () => {
+        const press = jest.fn()
+        const Component = () => <motion.div onPress={() => press()} />
 
         const { container, rerender } = render(<Component />)
         rerender(<Component />)
@@ -194,10 +200,10 @@ describe("tap", () => {
         fireEvent.mouseDown(container.firstChild as Element)
         fireEvent.mouseUp(container.firstChild as Element)
 
-        expect(tap).toBeCalledTimes(3)
+        expect(press).toBeCalledTimes(3)
     })
 
-    test("tap gesture variant applies and unapplies", () => {
+    test("press gesture variant applies and unapplies", () => {
         const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
@@ -230,7 +236,7 @@ describe("tap", () => {
         return expect(promise).resolves.toEqual([0.5, 1, 0.5])
     })
 
-    test("tap gesture variant unapplies children", () => {
+    test("press gesture variant unapplies children", () => {
         const promise = new Promise((resolve) => {
             const opacityHistory: number[] = []
             const opacity = motionValue(0.5)
@@ -270,7 +276,7 @@ describe("tap", () => {
      *
      * We want to add it in a way that maintains propagation of `animate`.
      */
-    // test.skip("tap gesture variants - children can override with own variant", () => {
+    // test.skip("press gesture variants - children can override with own variant", () => {
     //     const promise = new Promise(resolve => {
     //         const opacityHistory: number[] = []
     //         const opacity = motionValue(0.5)
@@ -310,7 +316,7 @@ describe("tap", () => {
     //     return expect(promise).resolves.toEqual([0.5, 0.1, 0.5])
     // })
 
-    // test("tap gesture variant applies and unapplies with whileHover", () => {
+    // test("press gesture variant applies and unapplies with whileHover", () => {
     //     const promise = new Promise(resolve => {
     //         const opacityHistory: number[] = []
     //         const opacity = motionValue(0.5)
@@ -378,7 +384,7 @@ describe("tap", () => {
     //     ])
     // })
 
-    // test("tap gesture variant applies and unapplies as state changes", () => {
+    // test("press gesture variant applies and unapplies as state changes", () => {
     //     const promise = new Promise(resolve => {
     //         const opacityHistory: number[] = []
     //         const opacity = motionValue(0.5)
