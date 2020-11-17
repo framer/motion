@@ -258,7 +258,6 @@ describe("tap", () => {
             // Trigger mouse up
             mouseUp(getByTestId("child") as Element)
             logOpacity() // 0.5
-            console.log(opacityHistory)
             resolve(opacityHistory)
         })
 

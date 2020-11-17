@@ -32,7 +32,6 @@ class StateVisualElement extends VisualElement {
 
 let count = 0
 function createTest(): { element: VisualElement; state: AnimationState } {
-    console.log(count, "Test =========")
     count++
 
     const visualElement = new StateVisualElement()
