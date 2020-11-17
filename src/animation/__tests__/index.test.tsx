@@ -181,6 +181,7 @@ describe("useAnimation", () => {
     })
 
     it("respects initial even if passed controls", () => {
+        console.log("=== Test start")
         const Component = () => {
             const controls = useAnimation()
             return (
