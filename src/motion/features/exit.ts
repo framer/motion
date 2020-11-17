@@ -6,21 +6,20 @@ import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { AnimationType } from "../../render/VisualElement/utils/animation-state"
 
+/**
+ * TODO: This component is quite small and no longer directly imports animation code.
+ * It could be a candidate for folding back into the main `motion` component.
+ */
 const ExitComponent = makeRenderlessComponent((props: FeatureProps) => {
-    const { visualElement } = props
+    const { custom, visualElement } = props
     const [isPresent, onExitComplete] = usePresence()
     const presenceContext = useContext(PresenceContext)
 
     useEffect(() => {
-        const custom =
-            presenceContext?.custom !== undefined
-                ? presenceContext.custom
-                : props.custom
-
         const animation = visualElement.animationState?.setActive(
             AnimationType.Exit,
             !isPresent,
-            { custom }
+            { custom: presenceContext?.custom ?? custom }
         )
 
         !isPresent && animation?.then(onExitComplete)

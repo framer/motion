@@ -8,6 +8,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `whileDrag`
 -   Adding Safari-prefixed `userSelect` css to draggable elements.
+-   `whileHover`, `whileTap` and `exit` all now accept variant lists.
 
 ### Changed
 

@@ -2,7 +2,13 @@ import * as React from "react"
 import { motion } from "../.."
 import { fireEvent } from "@testing-library/dom"
 import { motionValue } from "../../value"
-import { mouseDown, mouseUp, render } from "../../../jest.setup"
+import {
+    mouseDown,
+    mouseEnter,
+    mouseLeave,
+    mouseUp,
+    render,
+} from "../../../jest.setup"
 import { drag, MockDrag } from "../drag/__tests__/utils"
 
 function mockWhenFirstArgumentIs(
@@ -316,146 +322,146 @@ describe("press", () => {
     //     return expect(promise).resolves.toEqual([0.5, 0.1, 0.5])
     // })
 
-    // test("press gesture variant applies and unapplies with whileHover", () => {
-    //     const promise = new Promise(resolve => {
-    //         const opacityHistory: number[] = []
-    //         const opacity = motionValue(0.5)
-    //         const logOpacity = () => opacityHistory.push(opacity.get())
-    //         const Component = () => (
-    //             <motion.div
-    //                 initial={{ opacity: 0.5 }}
-    //                 transition={{ type: false }}
-    //                 whileHover={{ opacity: 0.75 }}
-    //                 whilePress={{ opacity: 1 }}
-    //                 style={{ opacity }}
-    //             />
-    //         )
+    test("press gesture variant applies and unapplies with whileHover", () => {
+        const promise = new Promise((resolve) => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = () => (
+                <motion.div
+                    initial={{ opacity: 0.5 }}
+                    transition={{ type: false }}
+                    whileHover={{ opacity: 0.75 }}
+                    whilePress={{ opacity: 1 }}
+                    style={{ opacity }}
+                />
+            )
 
-    //         const { container, rerender } = render(<Component />)
-    //         rerender(<Component />)
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
 
-    //         logOpacity() // 0.5
+            logOpacity() // 0.5
 
-    //         // Trigger hover
-    //         mouseEnter(container.firstChild as Element)
-    //         logOpacity() // 0.75
+            // Trigger hover
+            mouseEnter(container.firstChild as Element)
+            logOpacity() // 0.75
 
-    //         // Trigger mouse down
-    //         fireEvent.mouseDown(container.firstChild as Element)
-    //         logOpacity() // 1
+            // Trigger mouse down
+            fireEvent.mouseDown(container.firstChild as Element)
+            logOpacity() // 1
 
-    //         // Trigger mouse up
-    //         fireEvent.mouseUp(container.firstChild as Element)
-    //         logOpacity() // 0.75
+            // Trigger mouse up
+            fireEvent.mouseUp(container.firstChild as Element)
+            logOpacity() // 0.75
 
-    //         // Trigger hover end
-    //         mouseLeave(container.firstChild as Element)
-    //         logOpacity()
+            // Trigger hover end
+            mouseLeave(container.firstChild as Element)
+            logOpacity()
 
-    //         // Trigger hover
-    //         mouseEnter(container.firstChild as Element)
-    //         logOpacity()
+            // Trigger hover
+            mouseEnter(container.firstChild as Element)
+            logOpacity()
 
-    //         // Trigger mouse down
-    //         fireEvent.mouseDown(container.firstChild as Element)
-    //         logOpacity()
+            // Trigger mouse down
+            fireEvent.mouseDown(container.firstChild as Element)
+            logOpacity()
 
-    //         // Trigger hover end
-    //         mouseLeave(container.firstChild as Element)
-    //         logOpacity()
+            // Trigger hover end
+            mouseLeave(container.firstChild as Element)
+            logOpacity()
 
-    //         // Trigger mouse up
-    //         fireEvent.mouseUp(container.firstChild as Element)
-    //         logOpacity()
+            // Trigger mouse up
+            fireEvent.mouseUp(container.firstChild as Element)
+            logOpacity()
 
-    //         resolve(opacityHistory)
-    //     })
+            resolve(opacityHistory)
+        })
 
-    //     return expect(promise).resolves.toEqual([
-    //         0.5,
-    //         0.75,
-    //         1,
-    //         0.75,
-    //         0.5,
-    //         0.75,
-    //         1,
-    //         1,
-    //         0.5,
-    //     ])
-    // })
+        return expect(promise).resolves.toEqual([
+            0.5,
+            0.75,
+            1,
+            0.75,
+            0.5,
+            0.75,
+            1,
+            1,
+            0.5,
+        ])
+    })
 
-    // test("press gesture variant applies and unapplies as state changes", () => {
-    //     const promise = new Promise(resolve => {
-    //         const opacityHistory: number[] = []
-    //         const opacity = motionValue(0.5)
-    //         const logOpacity = () => opacityHistory.push(opacity.get())
-    //         const Component = ({ isActive }: { isActive: boolean }) => {
-    //             return (
-    //                 <motion.div
-    //                     initial={{ opacity: isActive ? 1 : 0.5 }}
-    //                     animate={{ opacity: isActive ? 1 : 0.5 }}
-    //                     whileHover={{ opacity: isActive ? 1 : 0.75 }}
-    //                     whilePress={{ opacity: 1 }}
-    //                     transition={{ type: false }}
-    //                     style={{ opacity }}
-    //                 />
-    //             )
-    //         }
+    test("press gesture variant applies and unapplies as state changes", () => {
+        const promise = new Promise((resolve) => {
+            const opacityHistory: number[] = []
+            const opacity = motionValue(0.5)
+            const logOpacity = () => opacityHistory.push(opacity.get())
+            const Component = ({ isActive }: { isActive: boolean }) => {
+                return (
+                    <motion.div
+                        initial={{ opacity: isActive ? 1 : 0.5 }}
+                        animate={{ opacity: isActive ? 1 : 0.5 }}
+                        whileHover={{ opacity: isActive ? 1 : 0.75 }}
+                        whilePress={{ opacity: 1 }}
+                        transition={{ type: false }}
+                        style={{ opacity }}
+                    />
+                )
+            }
 
-    //         const { container, rerender } = render(
-    //             <Component isActive={false} />
-    //         )
-    //         rerender(<Component isActive={false} />)
+            const { container, rerender } = render(
+                <Component isActive={false} />
+            )
+            rerender(<Component isActive={false} />)
 
-    //         logOpacity() // 0.5
+            logOpacity() // 0.5
 
-    //         // Trigger hover
-    //         mouseEnter(container.firstChild as Element)
-    //         logOpacity() // 0.75
+            // Trigger hover
+            mouseEnter(container.firstChild as Element)
+            logOpacity() // 0.75
 
-    //         // Trigger mouse down
-    //         fireEvent.mouseDown(container.firstChild as Element)
-    //         logOpacity() // 1
-    //         rerender(<Component isActive={true} />)
-    //         rerender(<Component isActive={true} />)
+            // Trigger mouse down
+            fireEvent.mouseDown(container.firstChild as Element)
+            logOpacity() // 1
+            rerender(<Component isActive={true} />)
+            rerender(<Component isActive={true} />)
 
-    //         // Trigger mouse up
-    //         fireEvent.mouseUp(container.firstChild as Element)
-    //         logOpacity() // 1
+            // Trigger mouse up
+            fireEvent.mouseUp(container.firstChild as Element)
+            logOpacity() // 1
 
-    //         // Trigger hover end
-    //         mouseLeave(container.firstChild as Element)
-    //         logOpacity() // 1
+            // Trigger hover end
+            mouseLeave(container.firstChild as Element)
+            logOpacity() // 1
 
-    //         // Trigger hover
-    //         mouseEnter(container.firstChild as Element)
-    //         logOpacity() // 1
+            // Trigger hover
+            mouseEnter(container.firstChild as Element)
+            logOpacity() // 1
 
-    //         // Trigger mouse down
-    //         fireEvent.mouseDown(container.firstChild as Element)
-    //         logOpacity() // 1
+            // Trigger mouse down
+            fireEvent.mouseDown(container.firstChild as Element)
+            logOpacity() // 1
 
-    //         // Trigger hover end
-    //         mouseLeave(container.firstChild as Element)
-    //         logOpacity() // 1
+            // Trigger hover end
+            mouseLeave(container.firstChild as Element)
+            logOpacity() // 1
 
-    //         // Trigger mouse up
-    //         fireEvent.mouseUp(container.firstChild as Element)
-    //         logOpacity() // 1
+            // Trigger mouse up
+            fireEvent.mouseUp(container.firstChild as Element)
+            logOpacity() // 1
 
-    //         resolve(opacityHistory)
-    //     })
+            resolve(opacityHistory)
+        })
 
-    //     return expect(promise).resolves.toEqual([
-    //         0.5,
-    //         0.75,
-    //         1,
-    //         1,
-    //         1,
-    //         1,
-    //         1,
-    //         1,
-    //         1,
-    //     ])
-    // })
+        return expect(promise).resolves.toEqual([
+            0.5,
+            0.75,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+            1,
+        ])
+    })
 })

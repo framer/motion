@@ -9,16 +9,29 @@ import { FeatureProps, MotionFeature } from "./types"
 const AnimationState = makeRenderlessComponent((props: FeatureProps) => {
     const { visualElement, animate } = props
 
+    /**
+     * We dynamically generate the AnimationState manager as it contains a reference
+     * to the underlying animation library. We only want to load that if we load this,
+     * so people can optionally code split it out using the `m` component.
+     */
     if (!visualElement.animationState) {
         visualElement.animationState = createAnimationState(visualElement)
     }
 
     const variantContext = useVariantContext()
 
+    /**
+     * Every render, we want to update the AnimationState with the latest props
+     * and context. We could add these to the dependency list but as many of these
+     * props can be objects or arrays it's not clear that we'd gain much performance.
+     */
     useEffect(() => {
         visualElement.animationState!.setProps(props, variantContext)
     })
 
+    /**
+     * Subscribe any provided AnimationControls to the component's VisualElement
+     */
     if (animate instanceof AnimationControls) {
         useAnimationGroupSubscription(visualElement, animate)
     }
