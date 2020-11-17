@@ -30,10 +30,7 @@ class StateVisualElement extends VisualElement {
     render() {}
 }
 
-let count = 0
 function createTest(): { element: VisualElement; state: AnimationState } {
-    count++
-
     const visualElement = new StateVisualElement()
     visualElement.animationState = createAnimationState(visualElement)
 
