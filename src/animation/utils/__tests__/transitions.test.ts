@@ -49,41 +49,10 @@ describe("convertTransitionToAnimationOptions", () => {
 
         expect(
             convertTransitionToAnimationOptions({
-                loop: Infinity,
-            })
-        ).toEqual({
-            repeat: Infinity,
-            repeatType: "loop",
-            type: "keyframes",
-        })
-
-        expect(
-            convertTransitionToAnimationOptions({
                 repeat: Infinity,
             })
         ).toEqual({
             repeat: Infinity,
-            type: "keyframes",
-        })
-
-        expect(
-            convertTransitionToAnimationOptions({
-                yoyo: Infinity,
-                type: "spring",
-            })
-        ).toEqual({
-            repeat: Infinity,
-            repeatType: "reverse",
-            type: "spring",
-        })
-
-        expect(
-            convertTransitionToAnimationOptions({
-                flip: Infinity,
-            })
-        ).toEqual({
-            repeat: Infinity,
-            repeatType: "mirror",
             type: "keyframes",
         })
 

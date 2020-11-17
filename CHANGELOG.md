@@ -12,6 +12,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   When the variant provided to `animate` changes, removed visual options will animate back to any defined in `style`.
 
+### Removed
+
+-   The deprecated `useInvertedScale` hook. Use the `layout` prop instead.
+-   The deprecated `yoyo`, `flip` and `loop` options. Use `repeat` and `repeatType` options instead.
+
 ## [2.9.5] 2020-11-16
 
 ### Added

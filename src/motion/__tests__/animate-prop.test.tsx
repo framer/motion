@@ -278,7 +278,8 @@ describe("animate prop as object", () => {
                             to: 50,
                             duration: 0,
                             repeatDelay: 0.1,
-                            yoyo: 1,
+                            repeat: 1,
+                            repeatType: "reverse",
                         },
                     }}
                     style={{ x }}

@@ -416,12 +416,8 @@ export interface Keyframes {
     easings?: Easing | Easing[];
     // (undocumented)
     elapsed?: number;
-    // @public
-    flip?: number;
     // (undocumented)
     from?: number | string;
-    // @public
-    loop?: number;
     // @public (undocumented)
     repeatDelay?: number;
     // @public
@@ -433,8 +429,6 @@ export interface Keyframes {
     values: KeyframesTarget;
     // (undocumented)
     velocity?: number;
-    // @public
-    yoyo?: number;
 }
 
 // @public (undocumented)
@@ -805,19 +799,13 @@ export interface Tween extends Repeat {
     easings?: Easing[];
     // @internal
     elapsed?: number;
-    // @deprecated
-    flip?: number;
     from?: number | string;
-    // @deprecated
-    loop?: number;
     times?: number[];
     // @internal (undocumented)
     to?: number | string | ValueTarget;
     type?: "tween";
     // @internal (undocumented)
     velocity?: number;
-    // @deprecated
-    yoyo?: number;
 }
 
 // Warning: (ae-internal-missing-underscore) The name "useAnimatedState" should be prefixed with an underscore because the declaration is marked as @internal
@@ -849,11 +837,6 @@ export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, visualElement: VisualElement): void;
-
-// Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
-// 
-// @public @deprecated
-export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
 // @public
 export function useIsPresent(): boolean;
