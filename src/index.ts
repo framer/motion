@@ -43,6 +43,7 @@ export {
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
 export { animate } from "./animation/animate"
+export { animateVisualElement } from "./render/VisualElement/utils/animation"
 export {
     HoverHandlers,
     PressHandlers,
