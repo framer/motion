@@ -78,6 +78,14 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     updateStacks(): void;
 }
 
+// Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "animateVisualElement" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export function animateVisualElement(visualElement: VisualElement, definition: AnimationDefinition, options?: AnimationOptions): Promise<void>;
+
 // @public
 export class AnimationControls {
     // @internal
@@ -86,8 +94,6 @@ export class AnimationControls {
     // Warning: (ae-forgotten-export) The symbol "ControlsAnimationDefinition" needs to be exported by the entry point index.d.ts
     start(definition: ControlsAnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
-    // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
     subscribe(visualElement: VisualElement): () => boolean;
     // @internal
