@@ -28,6 +28,7 @@ export { useSpring } from "./value/use-spring"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
+export { useInvertedScale } from "./value/use-inverted-scale"
 
 /**
  * Accessibility
