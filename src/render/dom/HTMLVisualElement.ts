@@ -131,7 +131,17 @@ export class HTMLVisualElement<
      * Read a value directly from the HTMLElement style.
      */
     read(key: string): number | string | null {
-        return this.getComputedStyle()[key] || 0
+        return (
+            /**
+             * First attempt to read the value from the provided style prop.
+             * TODO: We need to clear this up as part of future concurrent work.
+             */
+            (this.config as any).style?.[key] ??
+            /**
+             * Otherwise read the style directly from the DOM
+             */
+            (this.getComputedStyle()[key] || 0)
+        )
     }
 
     addValue(key: string, value: MotionValue) {
