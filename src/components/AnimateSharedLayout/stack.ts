@@ -125,6 +125,7 @@ export class LayoutStack {
         // TODO Double check when reimplementing move
         // TODO Add isDragging status and
         if (this.snapshot) {
+            console.log(this.snapshot)
             child.prevSnapshot = this.snapshot
             // TODO Remove in favour of above
             child.prevViewportBox = this.snapshot.boundingBox

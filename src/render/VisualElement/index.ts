@@ -282,6 +282,8 @@ export abstract class VisualElement<E = any> {
          * is compatible with existing RefObject APIs.
          */
         this.element = this.current = element
+
+        console.log("mounting this bitch")
     }
 
     // Unmount the VisualElement and cancel any scheduled updates
