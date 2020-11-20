@@ -224,10 +224,13 @@ export function createAnimationState(
              * a changed value or a value that was removed in a higher priority, we set
              * this to true and add this prop to the animation list.
              */
-            let shouldAnimateType = variantsHaveChanged(
-                typeState.prevProp,
-                prop
-            )
+            let shouldAnimateType =
+                variantsHaveChanged(typeState.prevProp, prop) ||
+                // If we're making this variant active, we want to always make it active
+                (type === changedActiveType &&
+                    typeState.isActive &&
+                    !isInherited &&
+                    isVariantLabel(prop))
 
             /**
              * As animations can be set as variant lists, variants or target objects, we
