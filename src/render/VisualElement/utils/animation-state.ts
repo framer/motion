@@ -154,6 +154,12 @@ export function createAnimationState(
         }
 
         /**
+         * If a variant has been removed at a given index, and this component is controlling
+         * variant animations, we want to ensure lower-priority variants are forced to animate.
+         */
+        let removedVariantIndex = Infinity
+
+        /**
          * Iterate through all animation types in reverse priority order. For each, we want to
          * detect which values it's handling and whether or not they've changed (and therefore
          * need to be animated). If any values have been removed, we want to detect those in
@@ -163,6 +169,7 @@ export function createAnimationState(
             const type = reversePriorityOrder[i]
             const typeState = state[type]
             const prop = props[type] ?? context[type]
+            const propIsVariant = isVariantLabel(prop)
 
             /**
              * If this type has *just* changed isActive status, set activeDelta
@@ -171,11 +178,13 @@ export function createAnimationState(
             const activeDelta =
                 type === changedActiveType ? typeState.isActive : null
 
+            if (activeDelta === false) removedVariantIndex = i
+
             /**
              * If this prop is an inherited variant, rather than been set directly on the
              * component itself, we want to make sure we allow the parent to trigger animations.
              */
-            let isInherited = prop === context[type] && isVariantLabel(prop)
+            let isInherited = prop === context[type] && propIsVariant
 
             /**
              *
@@ -230,7 +239,9 @@ export function createAnimationState(
                 (type === changedActiveType &&
                     typeState.isActive &&
                     !isInherited &&
-                    isVariantLabel(prop))
+                    propIsVariant) ||
+                // If we removed a higher-priority variant (i is in reverse order)
+                (i > removedVariantIndex && propIsVariant)
 
             /**
              * As animations can be set as variant lists, variants or target objects, we

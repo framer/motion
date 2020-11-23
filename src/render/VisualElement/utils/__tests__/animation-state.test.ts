@@ -500,70 +500,29 @@ describe("Animation state - Set active", () => {
         expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
     })
 
-    // Test propagation of isActive
+    test("Change active variant where no variants are defined", () => {
+        /**
+         * We should still animate back to lower-priority variants in case children need animating to
+         */
+        const { state } = createTest()
+
+        state.setProps({
+            animate: "a",
+            whileHover: "b",
+        })
+
+        // Set hover to true
+        let animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, true)
+        expect(animate).toBeCalledWith(["b"])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
+
+        // Set hover to false
+        animate = mockAnimate(state)
+        state.setActive(AnimationType.Hover, false)
+        expect(animate).toBeCalledWith(["a"])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+        expect(state.getProtectedKeys(AnimationType.Hover)).toEqual({})
+    })
 })
-
-//     test("Changing props while higher priorities are active", () => {
-//         const element = createTest()
-
-//         element.animationState!.setProps({
-//             style: { opacity: 0 },
-//             animate: { opacity: 1 },
-//             whileHover: { opacity: 0.5 },
-//             whilePress: { opacity: 0.8 },
-//         })
-//         element.animationState!.setActive(AnimationType.Hover, true)
-//         element.animationState!.setActive(AnimationType.Press, true)
-
-//         element.animate = jest.fn()
-//         element.animationState!.setProps({
-//             style: { opacity: 0 },
-//             animate: { opacity: 1 },
-//             whileHover: undefined,
-//             whilePress: { opacity: 0.8 },
-//         })
-//         expect(element.animate).not.toBeCalled()
-
-//         element.animate = jest.fn()
-//         element.animationState!.setProps({
-//             style: { opacity: 0 },
-//             animate: { opacity: 1 },
-//             whileHover: { opacity: 0.5 },
-//             whilePress: { opacity: 0.8 },
-//         })
-//         expect(element.animate).not.toBeCalled()
-
-//         element.animate = jest.fn()
-//         element.animationState!.setProps({
-//             style: { opacity: 0 },
-//             animate: { opacity: 1 },
-//             whileHover: { opacity: 0.5 },
-//             whilePress: { opacity: 0.9 },
-//         })
-//         expect(element.animate).toBeCalledWith([{ opacity: 0.9 }], new Set())
-
-//         element.animate = jest.fn()
-//         element.animationState!.setProps({
-//             style: { opacity: 0 },
-//             animate: { x: 50, opacity: 1 },
-//             whileHover: { x: 100, opacity: 0.5 },
-//             whilePress: { opacity: 0.9 },
-//         })
-//         expect(element.animate).toBeCalledWith(
-//             [{ x: 100, opacity: 0.5 }],
-//             new Set(["opacity"])
-//         )
-
-//         element.animate = jest.fn()
-//         element.animationState!.setProps({
-//             style: { opacity: 0 },
-//             animate: { x: 50, opacity: 1 },
-//             whileHover: { opacity: 0.5 },
-//             whilePress: { opacity: 0.9 },
-//         })
-//         expect(element.animate).toBeCalledWith(
-//             [{ x: 50, opacity: 1 }],
-//             new Set(["opacity"])
-//         )
-//     })
-// })
