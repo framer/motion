@@ -3,7 +3,12 @@ import { AxisBox2D, Point2D, BoxDelta } from "../../types/geometry"
 import { delta, copyAxisBox, axisBox } from "../../utils/geometry"
 import { ResolvedValues } from "../VisualElement/types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
-import { DOMVisualElementConfig, TransformOrigin } from "./types"
+import {
+    DOMVisualElementConfig,
+    TransformOrigin,
+    Transform,
+    TransformKey,
+} from "./types"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
 import {
@@ -27,6 +32,7 @@ import { getBoundingBox } from "./layout/measure"
 import {
     buildLayoutProjectionTransform,
     identityProjection,
+    buildTransform,
 } from "./utils/build-transform"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
@@ -87,7 +93,7 @@ export class HTMLVisualElement<
      * A mutable record of transforms we want to apply directly to the rendered Element
      * every frame. We use a mutable data structure to reduce GC during animations.
      */
-    protected transform: ResolvedValues = {}
+    protected transform: Transform = {}
 
     /**
      * A mutable record of transform origins we want to apply directly to the rendered Element
@@ -99,7 +105,7 @@ export class HTMLVisualElement<
      * A mutable record of transform keys we want to apply to the rendered Element. We order
      * this to order transforms in the desired order. We use a mutable data structure to reduce GC during animations.
      */
-    protected transformKeys: string[] = []
+    protected transformKeys: TransformKey[] = []
 
     config = this.defaultConfig
 
@@ -465,6 +471,35 @@ export class HTMLVisualElement<
         this.element.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
+
+        // Ensure that whatever happens next, we restore our transform
+        this.scheduleRender()
+    }
+
+    /**
+     * Reset specified properties of the transform on the current Element.
+     */
+    resetSomeTransform(props: TransformKey[]) {
+        if (!props.length) return // No props needed to be reset
+        const resetTransform: Transform = {}
+        const resetTransformKeys: TransformKey[] = []
+        this.transformKeys.forEach((key) => {
+            if (props.includes(key)) return // Skip. i.e. reset transform
+            resetTransform[key] = this.transform[key]
+            resetTransformKeys.push(key)
+        })
+        if (!resetTransformKeys.length) {
+            this.resetTransform() // Reset whole transform
+            return
+        }
+        this.element.style.transform = buildTransform(
+            resetTransform,
+            resetTransformKeys,
+            this.config.transformTemplate,
+            !resetTransformKeys.length,
+            this.config.enableHardwareAcceleration,
+            this.config.allowTransformNone
+        )
 
         // Ensure that whatever happens next, we restore our transform
         this.scheduleRender()

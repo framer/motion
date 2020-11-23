@@ -345,6 +345,7 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     rebaseTargetBox(force?: boolean, box?: AxisBox2D): void;
     removeValue(key: string): void;
     render(): void;
+    resetSomeTransform(props: TransformKey[]): void;
     resetTransform(): void;
     setAxisTarget(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)
@@ -363,8 +364,10 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     style: ResolvedValues;
     targetBox: AxisBox2D;
     protected targetBoxFinal: AxisBox2D;
-    protected transform: ResolvedValues;
-    protected transformKeys: string[];
+    // Warning: (ae-forgotten-export) The symbol "Transform" needs to be exported by the entry point index.d.ts
+    protected transform: Transform;
+    // Warning: (ae-forgotten-export) The symbol "TransformKey" needs to be exported by the entry point index.d.ts
+    protected transformKeys: TransformKey[];
     // Warning: (ae-forgotten-export) The symbol "TransformOrigin" needs to be exported by the entry point index.d.ts
     protected transformOrigin: TransformOrigin;
     treeScale: Point2D;

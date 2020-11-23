@@ -11,6 +11,7 @@ import { MotionProps, MakeMotion } from "../../motion/types"
 import { TransformPoint2D } from "../../types/geometry"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
 import { VisualElementConfig } from "../VisualElement/types"
+import { TransformProperties } from "../../motion/types"
 
 /**
  * Configuration for the HTML and SVGVisualElement renderers.
@@ -60,6 +61,10 @@ export interface TransformOrigin {
     originY?: number | string
     originZ?: number | string
 }
+
+export type Transform = Omit<TransformProperties, keyof TransformOrigin>
+
+export type TransformKey = keyof Transform
 
 /**
  * Measured dimensions of an SVG component.

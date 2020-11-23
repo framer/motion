@@ -1,5 +1,10 @@
 import { ResolvedValues } from "../../VisualElement/types"
-import { DOMVisualElementConfig, TransformOrigin } from "../types"
+import {
+    DOMVisualElementConfig,
+    TransformOrigin,
+    Transform,
+    TransformKey,
+} from "../types"
 import { getDefaultValueType, getValueAsType } from "./value-types"
 import { isTransformProp, isTransformOriginProp } from "./transform"
 import {
@@ -38,9 +43,9 @@ export function buildHTMLStyles(
     latest: ResolvedValues,
     style: ResolvedValues,
     vars: ResolvedValues,
-    transform: ResolvedValues,
+    transform: Transform,
     transformOrigin: TransformOrigin,
-    transformKeys: string[],
+    transformKeys: TransformKey[],
     {
         enableHardwareAcceleration,
         transformTemplate,
@@ -80,7 +85,7 @@ export function buildHTMLStyles(
             // If this is a transform, flag and enable further transform processing
             hasTransform = true
             transform[key] = valueAsType
-            transformKeys.push(key)
+            transformKeys.push(key as TransformKey)
 
             if (!transformIsNone) continue
 

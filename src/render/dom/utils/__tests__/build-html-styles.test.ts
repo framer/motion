@@ -1,6 +1,11 @@
 import "../../../../../jest.setup"
 import { buildHTMLStyles } from "../build-html-styles"
-import { TransformOrigin, DOMVisualElementConfig } from "../../types"
+import {
+    DOMVisualElementConfig,
+    TransformOrigin,
+    Transform,
+    TransformKey,
+} from "../../types"
 import { BoxDelta, Point2D, AxisBox2D } from "../../../../types/geometry"
 import { ResolvedValues } from "../../../VisualElement/types"
 
@@ -214,9 +219,9 @@ describe("buildHTMLStyles", () => {
 interface BuildProps {
     style: ResolvedValues
     vars: ResolvedValues
-    transform: ResolvedValues
+    transform: Transform
     transformOrigin: TransformOrigin
-    transformKeys: string[]
+    transformKeys: TransformKey[]
     config: DOMVisualElementConfig
     isLayoutProjectionEnabled: boolean
     delta?: BoxDelta

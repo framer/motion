@@ -273,7 +273,13 @@ export class VisualElementDragControls {
     prepareBoundingBox() {
         const element = this.visualElement.getInstance()
         const transform = element.style.transform
-        this.visualElement.resetTransform()
+        this.visualElement.resetSomeTransform([
+            "x",
+            "y",
+            "scale",
+            "scaleX",
+            "scaleY",
+        ])
         this.visualElement.measureLayout()
         element.style.transform = transform
         this.visualElement.rebaseTargetBox(

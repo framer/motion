@@ -1,4 +1,10 @@
-import { Dimensions, TransformOrigin, DOMVisualElementConfig } from "../types"
+import {
+    Dimensions,
+    TransformOrigin,
+    DOMVisualElementConfig,
+    Transform,
+    TransformKey,
+} from "../types"
 import { ResolvedValues } from "../../VisualElement/types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./build-svg-path"
@@ -25,9 +31,9 @@ export function buildSVGAttrs(
     style: ResolvedValues,
     vars: ResolvedValues,
     attrs: ResolvedValues,
-    transform: ResolvedValues,
+    transform: Transform,
     transformOrigin: TransformOrigin,
-    transformKeys: string[],
+    transformKeys: TransformKey[],
     config: DOMVisualElementConfig,
     dimensions: Dimensions,
     totalPathLength: number,

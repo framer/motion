@@ -1,8 +1,7 @@
 import { TransformTemplate } from "../../../motion/types"
-import { ResolvedValues } from "../../VisualElement/types"
 import { sortTransformProps, boxDistortingKeys } from "./transform"
 import { Point2D, BoxDelta } from "../../../types/geometry"
-import { TransformOrigin } from "../types"
+import { TransformOrigin, Transform, TransformKey } from "../types"
 import { delta } from "../../../utils/geometry"
 
 const translateAlias: { [key: string]: string } = {
@@ -19,8 +18,8 @@ const translateAlias: { [key: string]: string } = {
  * providing a transformTemplate function.
  */
 export function buildTransform(
-    transform: ResolvedValues,
-    transformKeys: string[],
+    transform: Transform,
+    transformKeys: TransformKey[],
     transformTemplate: TransformTemplate | undefined,
     transformIsDefault: boolean,
     enableHardwareAcceleration = true,
@@ -114,8 +113,8 @@ export function buildLayoutProjectionTransformOrigin({ x, y }: BoxDelta) {
  * (rotate and skew)
  */
 export function buildBoxDistortingTransforms(
-    transform: ResolvedValues,
-    transformKeys: string[]
+    transform: Transform,
+    transformKeys: TransformKey[]
 ) {
     let transformString = ""
 
