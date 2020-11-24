@@ -91,7 +91,7 @@ export abstract class VisualElement<E = any> {
     protected element: E
 
     // A map of MotionValues used to animate this element
-    private values = new Map<string, MotionValue>()
+    values = new Map<string, MotionValue>()
 
     // Unsubscription callbacks for MotionValue subscriptions
     private valueSubscriptions: Subscriptions = new Map()

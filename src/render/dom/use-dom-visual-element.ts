@@ -29,6 +29,17 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
         return new DOMVisualElement(parent, ref as any)
     })
 
+    /**
+     * If this is a static component, for instance on the Framer canvas, we essentially want to
+     * treat it as a new component every render.
+     * TODO: This shouldn't live in a DOM-specific hook but there'll be a better sense of where this
+     * and much of this hook should live when creating a new type of VisualElement (e.g Three.js).
+     */
+    if (isStatic) {
+        visualElement.values.clear()
+        visualElement.latest = {}
+    }
+
     visualElement.updateConfig({
         ...visualElement.config,
         enableHardwareAcceleration: !isStatic,
