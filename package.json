@@ -124,7 +124,7 @@
         },
         {
             "path": "./dist/minimal-component.js",
-            "maxSize": "13 kB"
+            "maxSize": "13.1 kB"
         }
     ]
 }
