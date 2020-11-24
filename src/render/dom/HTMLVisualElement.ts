@@ -140,7 +140,7 @@ export class HTMLVisualElement<
              * have a transformValues defined we need to pass it through that first in
              * order to support named colors in Framer.
              *
-             * TODO: The way this is being set isn't currently concurrent-safe.
+             * TODO: The way style is being set isn't currently concurrent-safe.
              */
             return transformValues
                 ? transformValues({ [key]: value })[key]
