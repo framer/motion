@@ -34,7 +34,7 @@ export const App = () => {
     return (
         <motion.div
             style={{ x, ...style }}
-            onPress={() => setTarget(target + 100)}
+            onTap={() => setTarget(target + 100)}
         />
     )
 }

@@ -23,7 +23,7 @@ export const App = () => {
         <motion.div
             animate={elevation}
             transition={{ duration: 2 }}
-            onPress={() => cycle()}
+            onTap={() => cycle()}
             style={style}
         />
     )

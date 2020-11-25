@@ -216,7 +216,7 @@ export interface AnimationProps {
      * @library
      *
      * After passing variants to one or more `Frame`'s `variants` prop, these variants
-     * can be used in place of values on the `animate`, `initial`, `whilePress` and `whileHover` props.
+     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
      *
      * ```jsx
      * const variants = {
@@ -235,7 +235,7 @@ export interface AnimationProps {
      * @motion
      *
      * After passing variants to one or more `motion` component's `variants` prop, these variants
-     * can be used in place of values on the `animate`, `initial`, `whilePress` and `whileHover` props.
+     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
      *
      * ```jsx
      * const variants = {

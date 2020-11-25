@@ -21,7 +21,7 @@ type CycleState<T> = [T, Cycle]
  *   return (
  *     <Frame
  *       animate={{ x: x }}
- *       onPress={() => cycleX()}
+ *       onTap={() => cycleX()}
  *      />
  *    )
  * }
@@ -41,7 +41,7 @@ type CycleState<T> = [T, Cycle]
  *   return (
  *     <motion.div
  *       animate={{ x: x }}
- *       onPress={() => cycleX()}
+ *       onTap={() => cycleX()}
  *      />
  *    )
  * }

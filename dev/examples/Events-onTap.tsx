@@ -3,7 +3,7 @@ import { useState } from "react"
 import { motion } from "@framer"
 
 /**
- * An example of the onPress event
+ * An example of the onTap event
  */
 
 const style = {
@@ -15,10 +15,6 @@ const style = {
 export const App = () => {
     const [x, setX] = useState(0)
     return (
-        <motion.div
-            animate={{ x }}
-            style={style}
-            onPress={() => setX(x + 45)}
-        />
+        <motion.div animate={{ x }} style={style} onTap={() => setX(x + 45)} />
     )
 }

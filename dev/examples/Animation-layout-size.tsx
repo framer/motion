@@ -19,7 +19,7 @@ export const App = () => {
             layout
             transition={{ duration: 2 }}
             initial={{ borderRadius: 20 }}
-            onPress={() => cycle()}
+            onTap={() => cycle()}
             style={{ ...style, height: open ? 300 : 100 }}
         />
     )

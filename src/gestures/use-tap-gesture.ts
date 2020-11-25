@@ -3,7 +3,7 @@ import { EventInfo, EventHandler } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { RemoveEvent } from "./types"
-import { getGlobalLock } from "../gestures/drag/utils/lock"
+import { getGlobalLock } from "./drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
@@ -13,32 +13,32 @@ import { AnimationType } from "../render/VisualElement/utils/animation-state"
 import { VariantLabels } from "../motion/types"
 
 /**
- * Passed in to tap event handlers like `onPress` the `PressInfo` object contains
+ * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
  * information about the tap gesture such as it‘s location.
  *
  * @library
  *
  * ```jsx
- * function onPress(event, info) {
+ * function onTap(event, info) {
  *   console.log(info.point.x, info.point.y)
  * }
  *
- * <Frame onPress={onPress} />
+ * <Frame onTap={onTap} />
  * ```
  *
  * @motion
  *
  * ```jsx
- * function onPress(event, info) {
+ * function onTap(event, info) {
  *   console.log(info.point.x, info.point.y)
  * }
  *
- * <motion.div onPress={onPress} />
+ * <motion.div onTap={onTap} />
  * ```
  *
  * @public
  */
-export interface PressInfo {
+export interface TapInfo {
     /**
      * Contains `x` and `y` values for the tap gesture relative to the
      * device or page.
@@ -46,21 +46,21 @@ export interface PressInfo {
      * @library
      *
      * ```jsx
-     * function onPressStart(event, info) {
+     * function onTapStart(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <Frame onPressStart={onPressStart} />
+     * <Frame onTapStart={onTapStart} />
      * ```
      *
      * @motion
      *
      * ```jsx
-     * function onPressStart(event, info) {
+     * function onTapStart(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <motion.div onPressStart={onPressStart} />
+     * <motion.div onTapStart={onTapStart} />
      * ```
      *
      * @public
@@ -71,37 +71,34 @@ export interface PressInfo {
 /**
  * @public
  */
-export interface PressHandlers {
+export interface TapHandlers {
     /**
      * Callback when the tap gesture successfully ends on this element.
      *
      * @library
      *
      * ```jsx
-     * function onPress(event, info) {
+     * function onTap(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <Frame onPress={onPress} />
+     * <Frame onTap={onTap} />
      * ```
      *
      * @motion
      *
      * ```jsx
-     * function onPress(event, info) {
+     * function onTap(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <motion.div onPress={onPress} />
+     * <motion.div onTap={onTap} />
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link PressInfo} object containing `x` and `y` values for the `point` relative to the device or page.
+     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onPress?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: PressInfo
-    ): void
+    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void
 
     /**
      * Callback when the tap gesture starts on this element.
@@ -109,29 +106,29 @@ export interface PressHandlers {
      * @library
      *
      * ```jsx
-     * function onPressStart(event, info) {
+     * function onTapStart(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <Frame onPressStart={onPressStart} />
+     * <Frame onTapStart={onTapStart} />
      * ```
      *
      * @motion
      *
      * ```jsx
-     * function onPressStart(event, info) {
+     * function onTapStart(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <motion.div onPressStart={onPressStart} />
+     * <motion.div onTapStart={onTapStart} />
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link PressInfo} object containing `x` and `y` values for the `point` relative to the device or page.
+     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onPressStart?(
+    onTapStart?(
         event: MouseEvent | TouchEvent | PointerEvent,
-        info: PressInfo
+        info: TapInfo
     ): void
 
     /**
@@ -140,29 +137,29 @@ export interface PressHandlers {
      * @library
      *
      * ```jsx
-     * function onPressCancel(event, info) {
+     * function onTapCancel(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <Frame onPressCancel={onPressCancel} />
+     * <Frame onTapCancel={onTapCancel} />
      * ```
      *
      * @motion
      *
      * ```jsx
-     * function onPressCancel(event, info) {
+     * function onTapCancel(event, info) {
      *   console.log(info.point.x, info.point.y)
      * }
      *
-     * <motion.div onPressCancel={onPressCancel} />
+     * <motion.div onTapCancel={onTapCancel} />
      * ```
      *
      * @param event - The originating pointer event.
-     * @param info - An {@link PressInfo} object containing `x` and `y` values for the `point` relative to the device or page.
+     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
      */
-    onPressCancel?(
+    onTapCancel?(
         event: MouseEvent | TouchEvent | PointerEvent,
-        info: PressInfo
+        info: TapInfo
     ): void
 
     /**
@@ -171,28 +168,27 @@ export interface PressHandlers {
      * @library
      *
      * ```jsx
-     * <Frame whilePress={{ scale: 0.8 }} />
+     * <Frame whileTap={{ scale: 0.8 }} />
      * ```
      *
      * @motion
      *
      * ```jsx
-     * <motion.div whilePress={{ scale: 0.8 }} />
+     * <motion.div whileTap={{ scale: 0.8 }} />
      * ```
      */
-    whilePress?: VariantLabels | TargetAndTransition
+    whileTap?: VariantLabels | TargetAndTransition
 }
 
 /**
  * @param handlers -
  * @internal
  */
-export function usePressGesture(
-    { onPress, onPressStart, onPressCancel, whilePress }: PressHandlers,
+export function useTapGesture(
+    { onTap, onTapStart, onTapCancel, whileTap }: TapHandlers,
     visualElement: VisualElement
 ) {
-    const hasPressListeners =
-        onPress || onPressStart || onPressCancel || whilePress
+    const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
     const isPressing = useRef(false)
 
     const cancelPointerEventListener = useRef<RemoveEvent | undefined | null>(
@@ -215,7 +211,7 @@ export function usePressGesture(
 
         isPressing.current = false
 
-        visualElement.animationState?.setActive(AnimationType.Press, false)
+        visualElement.animationState?.setActive(AnimationType.Tap, false)
 
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
@@ -224,9 +220,9 @@ export function usePressGesture(
         openGestureLock()
 
         if (!isNodeOrChild(element, event.target as Element)) {
-            onPressCancel?.(event, info)
+            onTapCancel?.(event, info)
         } else {
-            onPress?.(event, info)
+            onTap?.(event, info)
         }
     }
 
@@ -250,9 +246,9 @@ export function usePressGesture(
 
         isPressing.current = true
 
-        onPressStart?.(event, info)
+        onTapStart?.(event, info)
 
-        visualElement.animationState?.setActive(AnimationType.Press, true)
+        visualElement.animationState?.setActive(AnimationType.Tap, true)
     }
 
     usePointerEvent(

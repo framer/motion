@@ -47,11 +47,11 @@ export { animate } from "./animation/animate"
 export { animateVisualElement } from "./render/VisualElement/utils/animation"
 export {
     HoverHandlers,
-    PressHandlers,
+    TapHandlers,
     PanHandlers,
-    PressInfo,
+    TapInfo,
     PanInfo,
-    usePressGesture,
+    useTapGesture,
     usePanGesture,
     useGestures,
 } from "./gestures"

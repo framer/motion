@@ -426,7 +426,7 @@ describe("Animation state - Set active", () => {
             style: { opacity: 0 },
             animate: { opacity: 1 },
             whileHover: { opacity: 0.5 },
-            whilePress: { opacity: 0.8 },
+            whileTap: { opacity: 0.8 },
         })
 
         // Set hover to true
@@ -472,7 +472,7 @@ describe("Animation state - Set active", () => {
 
         // Set press to true
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Press, true)
+        state.setActive(AnimationType.Tap, true)
         expect(animate).toBeCalledWith([{ opacity: 0.8 }])
         expect(state.getProtectedKeys(AnimationType.Animate)).toHaveProperty(
             "opacity"
@@ -480,7 +480,7 @@ describe("Animation state - Set active", () => {
         expect(state.getProtectedKeys(AnimationType.Hover)).toHaveProperty(
             "opacity"
         )
-        expect(state.getProtectedKeys(AnimationType.Press)).toEqual({})
+        expect(state.getProtectedKeys(AnimationType.Tap)).toEqual({})
 
         // Set hover to false
         animate = mockAnimate(state)
@@ -488,14 +488,14 @@ describe("Animation state - Set active", () => {
         expect(state.getProtectedKeys(AnimationType.Animate)).toHaveProperty(
             "opacity"
         )
-        expect(state.getProtectedKeys(AnimationType.Press)).toHaveProperty(
+        expect(state.getProtectedKeys(AnimationType.Tap)).toHaveProperty(
             "opacity"
         )
         expect(animate).not.toBeCalled()
 
         // Set press to false
         animate = mockAnimate(state)
-        state.setActive(AnimationType.Press, false)
+        state.setActive(AnimationType.Tap, false)
         expect(animate).toBeCalledWith([{ opacity: 1 }])
         expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
     })

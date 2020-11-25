@@ -37,7 +37,7 @@ interface DefinitionAndOptions {
 export enum AnimationType {
     Animate = "animate",
     Hover = "whileHover",
-    Press = "whilePress",
+    Tap = "whileTap",
     Drag = "whileDrag",
     Exit = "exit",
 }
@@ -47,7 +47,7 @@ export type AnimationList = string[] | TargetAndTransition[]
 export const variantPriorityOrder = [
     AnimationType.Animate,
     AnimationType.Hover,
-    AnimationType.Press,
+    AnimationType.Tap,
     AnimationType.Drag,
     AnimationType.Exit,
 ]
@@ -421,7 +421,7 @@ function createState() {
     return {
         [AnimationType.Animate]: createTypeState(true),
         [AnimationType.Hover]: createTypeState(),
-        [AnimationType.Press]: createTypeState(),
+        [AnimationType.Tap]: createTypeState(),
         [AnimationType.Drag]: createTypeState(),
         [AnimationType.Exit]: createTypeState(),
     }

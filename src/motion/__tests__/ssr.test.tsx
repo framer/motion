@@ -9,7 +9,7 @@ function runTests(render: (components: any) => string) {
         render(
             <motion.div
                 initial={{ x: 100 }}
-                whilePress={{ opacity: 0 }}
+                whileTap={{ opacity: 0 }}
                 drag
                 style={{ opacity: 1 }}
             />

@@ -24,7 +24,7 @@ export const App = () => {
                 drag
                 dragConstraints={ref}
                 layout
-                whilePress={{ scale: 0.95 }}
+                whileTap={{ scale: 0.95 }}
                 style={child}
             />
         </div>

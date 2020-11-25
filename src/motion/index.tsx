@@ -9,7 +9,6 @@ import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
 import { useVariants } from "./utils/use-variants"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext } from "./context/MotionContext"
-import { warning } from "hey-listen"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
@@ -34,8 +33,6 @@ export function createMotionComponent<P extends {}, E>(
     { defaultFeatures, useVisualElement, render }: MotionComponentConfig<E>
 ) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
-        props = supportDeprecatedProps(props)
-
         /**
          * If a component is static, we only visually update it as a
          * result of a React re-render, rather than any interactions or animations.
@@ -107,26 +104,4 @@ export function createMotionComponent<P extends {}, E>(
     }
 
     return forwardRef(MotionComponent)
-}
-
-let hasWarned = false
-function supportDeprecatedProps<P>(props: P & MotionProps): P & MotionProps {
-    if (
-        props["whileTap"] ||
-        props["onTap"] ||
-        props["onTapCancel"] ||
-        props["onTapStart"]
-    ) {
-        warning(
-            !hasWarned,
-            `The Tap event has been replaced by Press. Rename "Tap" to "Press" to remove this warning.`
-        )
-        hasWarned = true
-        props.whilePress = props["whileTap"]
-        props.onPress = props["onTap"]
-        props.onPressCancel = props["onTapCancel"]
-        props.onPressStart = props["onTapStart"]
-    }
-
-    return props
 }

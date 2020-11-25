@@ -7,7 +7,7 @@ export interface VariantContextProps {
     initial?: VariantLabels | false
     animate?: VariantLabels
     whileHover?: VariantLabels
-    whilePress?: VariantLabels
+    whileTap?: VariantLabels
     whileDrag?: VariantLabels
     exit?: VariantLabels
 }

@@ -1,5 +1,5 @@
 export { usePanGesture, PanHandlers, PanHandler } from "./use-pan-gesture"
-export { usePressGesture, PressInfo, PressHandlers } from "./use-press-gesture"
+export { useTapGesture, TapInfo, TapHandlers } from "./use-tap-gesture"
 export { useHoverGesture, HoverHandlers } from "./use-hover-gesture"
 export { useGestures, GestureHandlers } from "./use-gestures"
 export { PanInfo } from "./PanSession"

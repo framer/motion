@@ -35,7 +35,7 @@ export const App = () => {
                 onDrag={() => console.log("onDrag")}
                 onDragStart={() => console.log("onDragStart")}
                 onDragEnd={() => console.log("onDragEnd")}
-                whilePress={{ scale: 0.95 }}
+                whileTap={{ scale: 0.95 }}
                 style={child}
             />
         </>

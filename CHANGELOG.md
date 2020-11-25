@@ -12,8 +12,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   Tap -> Press. ie `whileTap` -> `whilePress`, `onTap` -> `onPress` etc.
--   New behaviour for when values are removed from animation props (`animate`, `whileHover`, `exit` etc). The value will be searched for in active props of a lower priority running (`style` <- `animate` <- `whileHover` <- `whilePress` <- `whileDrag` <- `exit`)
+-   New behaviour for when values are removed from animation props (`animate`, `whileHover`, `exit` etc). The value will be searched for in active props of a lower priority running (`style` <- `animate` <- `whileHover` <- `whileTap` <- `whileDrag` <- `exit`)
 
 ### Removed
 

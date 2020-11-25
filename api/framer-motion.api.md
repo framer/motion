@@ -272,7 +272,7 @@ export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRe
 export const FramerTreeLayoutContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
 
 // @public (undocumented)
-export type GestureHandlers = PanHandlers & PressHandlers & HoverHandlers;
+export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers;
 
 // @public (undocumented)
 export const GesturesFeature: MotionFeature;
@@ -620,19 +620,6 @@ export interface Point3D extends Point2D {
 export const PresenceContext: import("react").Context<PresenceContextProps | null>;
 
 // @public (undocumented)
-export interface PressHandlers {
-    onPress?(event: MouseEvent | TouchEvent | PointerEvent, info: PressInfo): void;
-    onPressCancel?(event: MouseEvent | TouchEvent | PointerEvent, info: PressInfo): void;
-    onPressStart?(event: MouseEvent | TouchEvent | PointerEvent, info: PressInfo): void;
-    whilePress?: VariantLabels | TargetAndTransition;
-}
-
-// @public
-export interface PressInfo {
-    point: Point2D;
-}
-
-// @public (undocumented)
 export interface RelayoutInfo {
     // (undocumented)
     delta: {
@@ -766,6 +753,19 @@ export interface SyncLayoutLifecycles {
     measureLayout: (child: HTMLVisualElement) => void;
 }
 
+// @public (undocumented)
+export interface TapHandlers {
+    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    onTapCancel?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    onTapStart?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void;
+    whileTap?: VariantLabels | TargetAndTransition;
+}
+
+// @public
+export interface TapInfo {
+    point: Point2D;
+}
+
 // Warning: (ae-forgotten-export) The symbol "TargetProperties" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
@@ -870,16 +870,16 @@ export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }
 // @public
 export function usePresence(): AlwaysPresent | Present | NotPresent;
 
-// Warning: (ae-internal-missing-underscore) The name "usePressGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function usePressGesture({ onPress, onPressStart, onPressCancel, whilePress }: PressHandlers, visualElement: VisualElement): void;
-
 // @public
 export function useReducedMotion(): boolean | null;
 
 // @public
 export function useSpring(source: MotionValue | number, config?: SpringOptions): MotionValue<any>;
+
+// Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap }: TapHandlers, visualElement: VisualElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "InputRange" needs to be exported by the entry point index.d.ts
 // 

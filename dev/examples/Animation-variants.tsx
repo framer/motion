@@ -104,7 +104,7 @@ export function App() {
                         backgroundColor: "hsla(204, 60%, 52%, 0.5)",
                     },
                 }}
-                onPress={() =>
+                onTap={() =>
                     setTopLevelVariant(
                         topLevelVariant === "ceHYlSTfo" ? variant : "ceHYlSTfo"
                     )
