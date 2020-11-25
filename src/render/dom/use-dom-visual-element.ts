@@ -7,6 +7,7 @@ import { isSVGComponent } from "./utils/is-svg-component"
 import { useContext, useEffect } from "react"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
+import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
 
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
@@ -46,7 +47,10 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
         ...props,
     })
 
-    visualElement.layoutId = props.layoutId
+    const layoutGroupId = useContext(LayoutGroupContext)
+    visualElement.layoutId = layoutGroupId
+        ? `${layoutGroupId}-${props.layoutId}`
+        : props.layoutId
 
     const presenceContext = useContext(PresenceContext)
 
