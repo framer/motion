@@ -21,7 +21,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Applying `transform` on SVG elements.
+-   Correctly applying `transform` on SVG elements.
 
 ## [2.9.5] 2020-11-16
 
