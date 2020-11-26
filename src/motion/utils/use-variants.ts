@@ -52,11 +52,11 @@ export function useVariants(
         const prop = props[name]
         const contextProp = variantContext[name]
 
-        if (shouldPropagate(prop, isControllingVariants)) {
+        if (isVariantLabel(prop) || prop === false) {
             context[name] = prop
             contextDependencies.push(prop)
         } else {
-            if (shouldPropagate(contextProp, isControllingVariants)) {
+            if (isVariantLabel(contextProp) || contextProp === false) {
                 context[name] = contextProp
             }
             contextDependencies.push(null)
@@ -67,13 +67,18 @@ export function useVariants(
         )
     }
 
-    let initial = props.initial ?? context.initial
     const animate = props.animate ?? context.animate
+    let { initial } = props
+    if (
+        initial === undefined &&
+        (isVariantLabel(animate) || context.initial !== false)
+    ) {
+        initial = context.initial
+    }
 
     if (presenceContext?.initial === false) {
         initial = context.initial = false
     }
-
     context.parent = isVariantNode ? visualElement : variantContext.parent
 
     useInitialOrEveryRender(() => {
@@ -101,6 +106,7 @@ export function useVariants(
     let remove: undefined | (() => void)
     if (isVariantNode && shouldInheritVariants && !isControllingVariants) {
         remove = variantContext.parent?.addVariantChild(visualElement)
+        visualElement.inheritsVariants = true
     }
 
     /**
@@ -163,8 +169,4 @@ function checkIfControllingVariants(props: MotionProps) {
         isVariantLabel(props.whileTap) ||
         isVariantLabel(props.exit)
     )
-}
-
-function shouldPropagate(prop: any, isControllingVariants: boolean) {
-    return isVariantLabel(prop) || (prop === false && isControllingVariants)
 }

@@ -26,7 +26,10 @@ const AnimationState = makeRenderlessComponent((props: FeatureProps) => {
      * props can be objects or arrays it's not clear that we'd gain much performance.
      */
     useEffect(() => {
-        visualElement.animationState!.setProps(props, variantContext)
+        visualElement.animationState!.setProps(
+            props,
+            visualElement.inheritsVariants ? variantContext : undefined
+        )
     })
 
     /**

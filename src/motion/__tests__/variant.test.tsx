@@ -403,6 +403,63 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(0.9)
     })
 
+    test("initial=false doesn't propagate to props", async () => {
+        const { getByTestId } = render(
+            <motion.div initial={false} animate="test">
+                <motion.div data-testid="child" animate={{ opacity: 0.4 }} />
+            </motion.div>
+        )
+
+        expect(getByTestId("child")).not.toHaveStyle("opacity: 0.4")
+    })
+
+    test("nested controlled variants switch correctly", async () => {
+        const promise = new Promise((resolve) => {
+            const parentOpacity = motionValue(0.2)
+            const childOpacity = motionValue(0.1)
+
+            const Component = ({ isOpen }: { isOpen: boolean }) => {
+                return (
+                    <motion.div
+                        variants={{
+                            visible: { opacity: 0.3 },
+                            hidden: { opacity: 0.4 },
+                        }}
+                        initial="hidden"
+                        animate={isOpen ? "visible" : "hidden"}
+                        transition={{ type: false }}
+                        style={{ opacity: parentOpacity }}
+                    >
+                        <motion.div
+                            variants={{
+                                visible: { opacity: 0.5 },
+                                hidden: { opacity: 0.6 },
+                            }}
+                            initial="hidden"
+                            transition={{ type: false }}
+                            animate={isOpen ? "visible" : "hidden"}
+                            style={{ opacity: childOpacity }}
+                        />
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component isOpen={false} />)
+            setTimeout(() => {
+                expect(parentOpacity.get()).toBe(0.4)
+                expect(childOpacity.get()).toBe(0.6)
+
+                rerender(<Component isOpen />)
+
+                setTimeout(() => {
+                    resolve([parentOpacity.get(), childOpacity.get()])
+                }, 0)
+            }, 0)
+        })
+
+        return expect(promise).resolves.toEqual([0.3, 0.5])
+    })
+
     test("components without variants are transparent to stagger order", async () => {
         const [recordedOrder, staggeredEqually] = await new Promise(
             (resolve) => {

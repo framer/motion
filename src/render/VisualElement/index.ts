@@ -36,6 +36,8 @@ export abstract class VisualElement<E = any> {
 
     manuallyAnimateOnMount?: boolean
 
+    inheritsVariants?: boolean
+
     /**
      * A set of values that we animate back to when a value is cleared of all overrides.
      */
