@@ -440,6 +440,11 @@ export interface Keyframes {
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
+// Warning: (ae-internal-missing-underscore) The name "LayoutGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export const LayoutGroupContext: import("react").Context<string | null>;
+
 // @public (undocumented)
 export interface LayoutProps {
     layout?: boolean | "position";

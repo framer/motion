@@ -131,26 +131,7 @@ export class HTMLVisualElement<
      * Read a value directly from the HTMLElement style.
      */
     read(key: string): number | string | null {
-        const { style, transformValues } = this.config as any
-        const value = style?.[key]
-
-        if (value !== undefined) {
-            /**
-             * First attempt to read the value from the provided style prop. If we
-             * have a transformValues defined we need to pass it through that first in
-             * order to support named colors in Framer.
-             *
-             * TODO: The way style is being set isn't currently concurrent-safe.
-             */
-            return transformValues
-                ? transformValues({ [key]: value })[key]
-                : value
-        } else {
-            /**
-             * Otherwise read the style directly from the DOM
-             */
-            return this.getComputedStyle()[key] || 0
-        }
+        return this.getComputedStyle()[key] || 0
     }
 
     addValue(key: string, value: MotionValue) {
