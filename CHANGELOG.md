@@ -19,6 +19,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   The deprecated `useInvertedScale` hook. Use the `layout` prop instead.
 -   The deprecated `yoyo`, `flip` and `loop` options. Use `repeat` and `repeatType` options instead.
 
+### Fixed
+
+-   Correctly applying `transform` on SVG elements.
+
 ## [2.9.5] 2020-11-16
 
 ### Added
