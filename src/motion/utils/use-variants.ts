@@ -52,11 +52,11 @@ export function useVariants(
         const prop = props[name]
         const contextProp = variantContext[name]
 
-        if (shouldPropagate(prop)) {
+        if (isControllingVariants && shouldPropagate(prop)) {
             context[name] = prop
             contextDependencies.push(prop)
         } else {
-            if (shouldPropagate(contextProp)) {
+            if (isControllingVariants && shouldPropagate(contextProp)) {
                 context[name] = contextProp
             }
             contextDependencies.push(null)
