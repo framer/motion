@@ -52,11 +52,11 @@ export function useVariants(
         const prop = props[name]
         const contextProp = variantContext[name]
 
-        if (isControllingVariants && shouldPropagate(prop)) {
+        if (shouldPropagate(prop, isControllingVariants)) {
             context[name] = prop
             contextDependencies.push(prop)
         } else {
-            if (isControllingVariants && shouldPropagate(contextProp)) {
+            if (shouldPropagate(contextProp, isControllingVariants)) {
                 context[name] = contextProp
             }
             contextDependencies.push(null)
@@ -165,6 +165,6 @@ function checkIfControllingVariants(props: MotionProps) {
     )
 }
 
-function shouldPropagate(prop: any) {
-    return isVariantLabel(prop) || prop === false
+function shouldPropagate(prop: any, isControllingVariants: boolean) {
+    return isVariantLabel(prop) || (prop === false && isControllingVariants)
 }
