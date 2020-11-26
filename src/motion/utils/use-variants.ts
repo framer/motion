@@ -52,11 +52,13 @@ export function useVariants(
         const prop = props[name]
         const contextProp = variantContext[name]
 
-        if (isVariantLabel(prop)) {
+        if (shouldPropagate(prop)) {
             context[name] = prop
             contextDependencies.push(prop)
         } else {
-            if (isVariantLabel(contextProp)) context[name] = contextProp
+            if (shouldPropagate(contextProp)) {
+                context[name] = contextProp
+            }
             contextDependencies.push(null)
         }
 
@@ -161,4 +163,8 @@ function checkIfControllingVariants(props: MotionProps) {
         isVariantLabel(props.whileTap) ||
         isVariantLabel(props.exit)
     )
+}
+
+function shouldPropagate(prop: any) {
+    return isVariantLabel(prop) || prop === false
 }

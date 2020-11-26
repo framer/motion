@@ -379,6 +379,30 @@ describe("animate prop as variant", () => {
         return expect(promise).resolves.toBe(0.1)
     })
 
+    test("initial: false correctly propagates", async () => {
+        const promise = new Promise((resolve) => {
+            const opacity = motionValue(0.5)
+
+            render(
+                <motion.div initial={false} animate="visible">
+                    <motion.div>
+                        <motion.div
+                            variants={{
+                                visible: { opacity: 0.9 },
+                                hidden: { opacity: 0 },
+                            }}
+                            style={{ opacity }}
+                        />
+                    </motion.div>
+                </motion.div>
+            )
+
+            setTimeout(() => resolve(opacity.get()), 200)
+        })
+
+        return expect(promise).resolves.toBe(0.9)
+    })
+
     test("components without variants are transparent to stagger order", async () => {
         const [recordedOrder, staggeredEqually] = await new Promise(
             (resolve) => {
