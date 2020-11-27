@@ -48,9 +48,10 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
     })
 
     const layoutGroupId = useContext(LayoutGroupContext)
-    visualElement.layoutId = layoutGroupId
-        ? `${layoutGroupId}-${props.layoutId}`
-        : props.layoutId
+    visualElement.layoutId =
+        layoutGroupId && props.layoutId
+            ? `${layoutGroupId}-${props.layoutId}`
+            : props.layoutId
 
     const presenceContext = useContext(PresenceContext)
 
