@@ -295,6 +295,34 @@ describe("Animation state - Setting props", () => {
         expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
     })
 
+    test("Swap between value in target and transitionEnd, target", () => {
+        const { state } = createTest()
+
+        state.setProps({
+            style: { opacity: 0.1 },
+            animate: { opacity: 0.2 },
+        })
+
+        let animate = mockAnimate(state)
+
+        state.setProps({
+            style: { opacity: 0.1 },
+            animate: { transitionEnd: { opacity: 0.3 } },
+        })
+
+        expect(animate).toBeCalledWith([{ transitionEnd: { opacity: 0.3 } }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+
+        animate = mockAnimate(state)
+
+        state.setProps({
+            style: { opacity: 0.1 },
+            animate: { opacity: 0.2 },
+        })
+        expect(animate).toBeCalledWith([{ opacity: 0.2 }])
+        expect(state.getProtectedKeys(AnimationType.Animate)).toEqual({})
+    })
+
     test("Change single value, target, with unchanging values", () => {
         const { state } = createTest()
 
