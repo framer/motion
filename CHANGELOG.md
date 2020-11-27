@@ -22,6 +22,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Correctly applying `transform` on SVG elements.
+-   Lazy-initialising viewport scroll, VisualElement.axisProgress, and reduced motion `MotionValue`s, for increased startup performance.
 
 ## [2.9.5] 2020-11-16
 

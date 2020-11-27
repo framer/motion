@@ -408,7 +408,7 @@ export class HTMLVisualElement<
     }
 
     rebaseTargetBox(force = false, box: AxisBox2D = this.box) {
-        const { x, y } = this.axisProgress
+        const { x, y } = this.getAxisProgress()
         const shouldRebase =
             this.box &&
             !this.isTargetBoxLocked &&
@@ -484,19 +484,23 @@ export class HTMLVisualElement<
         this.rootParent.scheduleUpdateLayoutDelta()
     }
 
-    /**
-     *
-     */
-    axisProgress: MotionPoint = {
-        x: motionValue(0),
-        y: motionValue(0),
+    private axisProgress?: MotionPoint
+    getAxisProgress(): MotionPoint {
+        if (!this.axisProgress) {
+            this.axisProgress = {
+                x: motionValue(0),
+                y: motionValue(0),
+            }
+        }
+
+        return this.axisProgress as MotionPoint
     }
 
     /**
      *
      */
     startLayoutAxisAnimation(axis: "x" | "y", transition: Transition) {
-        const progress = this.axisProgress[axis]
+        const progress = this.getAxisProgress()[axis]
 
         const { min, max } = this.targetBox[axis]
         const length = max - min
@@ -510,7 +514,7 @@ export class HTMLVisualElement<
     }
 
     stopLayoutAnimation() {
-        eachAxis((axis) => this.axisProgress[axis].stop())
+        eachAxis((axis) => this.getAxisProgress()[axis].stop())
     }
 
     updateLayoutDelta = () => {

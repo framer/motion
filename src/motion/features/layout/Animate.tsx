@@ -156,7 +156,7 @@ class Animate extends React.Component<AnimateProps> {
 
         const { visualElement } = this.props
         const frameTarget = this.frameTarget[axis]
-        const layoutProgress = visualElement.axisProgress[axis]
+        const layoutProgress = visualElement.getAxisProgress()[axis]
 
         /**
          * Set layout progress back to 0. We set it twice to hard-reset any velocity that might

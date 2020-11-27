@@ -295,10 +295,6 @@ export type HTMLMotionProps<TagName extends keyof ReactHTML> = HTMLAttributesWit
 export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement> extends VisualElement<E> {
     // (undocumented)
     addValue(key: string, value: MotionValue): void;
-    // Warning: (ae-forgotten-export) The symbol "MotionPoint" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    axisProgress: MotionPoint;
     box: AxisBox2D;
     build(): void;
     clean(): void;
@@ -313,6 +309,10 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     deltaTransform: string;
     // (undocumented)
     enableLayoutProjection(): void;
+    // Warning: (ae-forgotten-export) The symbol "MotionPoint" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    getAxisProgress(): MotionPoint;
     getBoundingBox(): AxisBox2D;
     // (undocumented)
     getBoundingBoxWithoutTransforms(): AxisBox2D;
