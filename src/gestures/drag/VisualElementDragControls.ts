@@ -392,6 +392,11 @@ export class VisualElementDragControls {
         this.prepareBoundingBox()
 
         eachAxis((axis) => {
+            const { drag } = this.props
+
+            // If we're not dragging this axis, do an early return.
+            if (!shouldDrag(axis, drag, this.currentDirection)) return
+
             const axisValue = this.getAxisMotionValue(axis)
 
             if (axisValue) {
