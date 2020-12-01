@@ -529,6 +529,18 @@ export class HTMLVisualElement<
         this.children.forEach(fireUpdateLayoutDelta)
     }
 
+    withoutTransform(callback: () => void) {
+        this.resetTransform()
+
+        if (this.parent) {
+            ;(this.parent as any).withoutTransform(callback)
+        } else {
+            callback()
+        }
+
+        this.element.style.transform = this.style.transform as string
+    }
+
     /**
      * Update the layout deltas to reflect the relative positions of the layout
      * and the desired target box
