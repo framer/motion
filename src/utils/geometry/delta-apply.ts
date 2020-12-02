@@ -1,4 +1,4 @@
-import { Axis, AxisBox2D, BoxDelta } from "../../types/geometry"
+import { Axis, AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { mix } from "popmotion"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import { ResolvedValues } from "../../render/VisualElement/types"
@@ -217,9 +217,19 @@ export function removeBoxTransforms(
  *
  * This is the final nested loop within HTMLVisualElement.updateLayoutDelta
  */
-export function applyTreeDeltas(box: AxisBox2D, treePath: HTMLVisualElement[]) {
+export function applyTreeDeltas(
+    box: AxisBox2D,
+    treeScale: Point2D,
+    treePath: HTMLVisualElement[]
+) {
     const treeLength = treePath.length
+    if (!treeLength) return
+
+    treeScale.x = treeScale.y = 1
     for (let i = 0; i < treeLength; i++) {
-        applyBoxDelta(box, treePath[i].delta)
+        const { delta } = treePath[i]
+        treeScale.x *= delta.x.scale
+        treeScale.y *= delta.y.scale
+        applyBoxDelta(box, delta)
     }
 }

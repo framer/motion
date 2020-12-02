@@ -16,10 +16,7 @@ import {
     applyBoxTransforms,
     removeBoxTransforms,
 } from "../../utils/geometry/delta-apply"
-import {
-    updateBoxDelta,
-    updateTreeScale,
-} from "../../utils/geometry/delta-calc"
+import { updateBoxDelta } from "../../utils/geometry/delta-calc"
 import { TargetAndTransition, Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
@@ -286,7 +283,6 @@ export class HTMLVisualElement<
      * This is considered mutable to avoid object creation on each frame.
      */
     treeScale: Point2D = { x: 1, y: 1 }
-    private prevTreeScale: Point2D = { x: 1, y: 1 }
 
     /**
      * The delta between the boxCorrected and the desired
@@ -552,26 +548,14 @@ export class HTMLVisualElement<
          */
         resetBox(this.boxCorrected, this.box)
 
-        /**
-         * If this component has a parent, update this treeScale by incorporating the parent's
-         * delta into its treeScale.
-         */
-        if (this.parent) {
-            this.prevTreeScale.x = this.treeScale.x
-            this.prevTreeScale.y = this.treeScale.y
-
-            updateTreeScale(
-                this.treeScale,
-                (this.parent as any).treeScale,
-                (this.parent as any).delta
-            )
-        }
+        const prevTreeScaleX = this.treeScale.x
+        const prevTreeScaleY = this.treeScale.y
 
         /**
          * Apply all the parent deltas to this box to produce the corrected box. This
          * is the layout box, as it will appear on screen as a result of the transforms of its parents.
          */
-        applyTreeDeltas(this.boxCorrected, this.treePath as any)
+        applyTreeDeltas(this.boxCorrected, this.treeScale, this.treePath as any)
 
         /**
          * Update the delta between the corrected box and the target box before user-set transforms were applied.
@@ -607,8 +591,8 @@ export class HTMLVisualElement<
         if (
             deltaTransform !== this.deltaTransform ||
             // Also compare calculated treeScale, for values that rely on only this for scale correction.
-            this.prevTreeScale.x !== this.treeScale.x ||
-            this.prevTreeScale.y !== this.treeScale.y
+            prevTreeScaleX !== this.treeScale.x ||
+            prevTreeScaleY !== this.treeScale.y
         ) {
             this.scheduleRender()
         }
