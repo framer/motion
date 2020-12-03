@@ -59,6 +59,8 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
+    // (undocumented)
+    static contextType: React.Context<import("../../motion/context/MotionContext").MotionContextProps>;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id?: string): LayoutStack | undefined;
     // (undocumented)
@@ -387,6 +389,8 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     updateTransformDeltas(): void;
     vars: ResolvedValues;
     viewportScroll: Point2D;
+    // (undocumented)
+    withoutTransform(callback: () => void): void;
 }
 
 // @public
@@ -758,6 +762,8 @@ export interface SyncLayoutLifecycles {
     layoutReady: (child: HTMLVisualElement) => void;
     // (undocumented)
     measureLayout: (child: HTMLVisualElement) => void;
+    // (undocumented)
+    parent?: HTMLVisualElement;
 }
 
 // @public (undocumented)

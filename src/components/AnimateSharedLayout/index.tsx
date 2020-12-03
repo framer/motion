@@ -9,11 +9,14 @@ import {
     SyncLayoutLifecycles,
     SharedLayoutContext,
 } from "./SharedLayoutContext"
+import { MotionContext } from "../../motion/context/MotionContext"
 
 /**
  * @public
  */
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
+    static contextType = MotionContext
+
     /**
      * A list of all the children in the shared layout
      */
@@ -122,6 +125,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
                     createAnimation(child, this.getStack(layoutId))
                 )
             },
+            parent: this.context.visualElement,
         }
 
         /**

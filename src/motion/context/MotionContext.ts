@@ -12,7 +12,7 @@ export interface VariantContextProps {
     exit?: VariantLabels
 }
 
-interface MotionContextProps {
+export interface MotionContextProps {
     visualElement?: VisualElement
     variantContext: VariantContextProps
 }
