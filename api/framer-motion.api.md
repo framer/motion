@@ -313,6 +313,8 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     // 
     // (undocumented)
     getAxisProgress(): MotionPoint;
+    // (undocumented)
+    getBaseValue(key: string, props: MotionProps): any;
     getBoundingBox(): AxisBox2D;
     // (undocumented)
     getBoundingBoxWithoutTransforms(): AxisBox2D;

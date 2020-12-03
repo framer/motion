@@ -5,7 +5,6 @@ import { VariantContextProps } from "../../../motion/context/MotionContext"
 import { VariantLabels } from "../../../motion/types"
 import { TargetAndTransition } from "../../../types"
 import { shallowCompare } from "../../../utils/shallow-compare"
-import { isMotionValue } from "../../../value/utils/is-motion-value"
 import {
     animateVisualElement,
     AnimationDefinition,
@@ -340,11 +339,7 @@ export function createAnimationState(
         if (removedKeys.size) {
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
-                const styleValue = props.style?.[key]
-                const fallbackTarget =
-                    styleValue !== undefined && !isMotionValue(styleValue)
-                        ? styleValue
-                        : visualElement.baseTarget[key]
+                const fallbackTarget = visualElement.getBaseValue(key, props)
 
                 if (fallbackTarget !== undefined) {
                     fallbackAnimation[key] = fallbackTarget

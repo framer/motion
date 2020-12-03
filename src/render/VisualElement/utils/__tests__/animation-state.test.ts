@@ -1,4 +1,6 @@
 import { VisualElement } from "../.."
+import { MotionProps } from "../../../../motion/types"
+import { isMotionValue } from "../../../../value/utils/is-motion-value"
 import { ResolvedValues } from "../../types"
 import {
     AnimationState,
@@ -21,6 +23,13 @@ class StateVisualElement extends VisualElement {
 
     getBoundingBox() {
         return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
+    }
+
+    getBaseValue(key: string, props: MotionProps) {
+        const style = props.style?.[key]
+        return style !== undefined && !isMotionValue(style)
+            ? style
+            : super.getBaseValue(key, props)
     }
 
     readNativeValue(key: string) {
