@@ -25,11 +25,11 @@ class StateVisualElement extends VisualElement {
         return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
     }
 
-    getFallbackValue(key: string, props: MotionProps) {
+    getBaseValue(key: string, props: MotionProps) {
         const style = props.style?.[key]
         return style !== undefined && !isMotionValue(style)
             ? style
-            : super.getFallbackValue(key, props)
+            : super.getBaseValue(key, props)
     }
 
     readNativeValue(key: string) {

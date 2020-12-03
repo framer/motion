@@ -219,7 +219,7 @@ export abstract class VisualElement<E = any> {
         parseDOMValues?: boolean
     ): TargetAndTransition
 
-    getFallbackValue(key: string, _props: MotionProps) {
+    getBaseValue(key: string, _props: MotionProps) {
         return this.baseTarget[key]
     }
 

@@ -339,10 +339,7 @@ export function createAnimationState(
         if (removedKeys.size) {
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
-                const fallbackTarget = visualElement.getFallbackValue(
-                    key,
-                    props
-                )
+                const fallbackTarget = visualElement.getBaseValue(key, props)
 
                 if (fallbackTarget !== undefined) {
                     fallbackAnimation[key] = fallbackTarget

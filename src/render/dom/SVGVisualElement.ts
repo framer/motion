@@ -80,11 +80,11 @@ export class SVGVisualElement extends HTMLVisualElement<
         sync.render(() => this.render())
     }
 
-    getFallbackValue(key: string, props: MotionProps) {
+    getBaseValue(key: string, props: MotionProps) {
         const prop = props[key]
         return prop !== undefined && !isMotionValue(prop)
             ? prop
-            : super.getFallbackValue(key, props)
+            : super.getBaseValue(key, props)
     }
 
     /**

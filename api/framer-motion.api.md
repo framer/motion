@@ -313,12 +313,12 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     // 
     // (undocumented)
     getAxisProgress(): MotionPoint;
+    // (undocumented)
+    getBaseValue(key: string, props: MotionProps): any;
     getBoundingBox(): AxisBox2D;
     // (undocumented)
     getBoundingBoxWithoutTransforms(): AxisBox2D;
     getComputedStyle(): CSSStyleDeclaration;
-    // (undocumented)
-    getFallbackValue(key: string, props: MotionProps): any;
     // (undocumented)
     hide(): void;
     isLayoutProjectionEnabled: boolean;

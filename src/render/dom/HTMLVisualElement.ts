@@ -158,11 +158,11 @@ export class HTMLVisualElement<
         }
     }
 
-    getFallbackValue(key: string, props: MotionProps) {
+    getBaseValue(key: string, props: MotionProps) {
         const style = props.style?.[key]
         return style !== undefined && !isMotionValue(style)
             ? style
-            : super.getFallbackValue(key, props)
+            : super.getBaseValue(key, props)
     }
 
     /**
