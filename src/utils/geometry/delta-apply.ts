@@ -225,11 +225,17 @@ export function applyTreeDeltas(
     const treeLength = treePath.length
     if (!treeLength) return
 
+    // Reset the treeScale
     treeScale.x = treeScale.y = 1
+
     for (let i = 0; i < treeLength; i++) {
         const { delta } = treePath[i]
+
+        // Incoporate each ancestor's scale into a culmulative treeScale for this component
         treeScale.x *= delta.x.scale
         treeScale.y *= delta.y.scale
+
+        // Apply each ancestor's calculated delta into this component's recorded layout box
         applyBoxDelta(box, delta)
     }
 }
