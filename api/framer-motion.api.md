@@ -318,6 +318,8 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     getBoundingBoxWithoutTransforms(): AxisBox2D;
     getComputedStyle(): CSSStyleDeclaration;
     // (undocumented)
+    getFallbackValue(key: string, props: MotionProps): any;
+    // (undocumented)
     hide(): void;
     isLayoutProjectionEnabled: boolean;
     // (undocumented)

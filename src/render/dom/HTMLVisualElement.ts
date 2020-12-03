@@ -36,6 +36,8 @@ import {
     checkTargetForNewValues,
     getOrigin,
 } from "../VisualElement/utils/setters"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { MotionProps } from "../../motion"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -154,6 +156,13 @@ export class HTMLVisualElement<
         } else {
             return this.read(key)
         }
+    }
+
+    getFallbackValue(key: string, props: MotionProps) {
+        const style = props.style?.[key]
+        return style !== undefined && !isMotionValue(style)
+            ? style
+            : super.getFallbackValue(key, props)
     }
 
     /**

@@ -9,6 +9,7 @@ import { Snapshot } from "../../components/AnimateSharedLayout/stack"
 import { Target, TargetAndTransition, Variants } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
 import { AnimationState } from "./utils/animation-state"
+import { MotionProps } from "../../motion/types"
 
 type Subscriptions = Map<string, () => void>
 
@@ -217,6 +218,10 @@ export abstract class VisualElement<E = any> {
         targetAndTransition: TargetAndTransition,
         parseDOMValues?: boolean
     ): TargetAndTransition
+
+    getFallbackValue(key: string, _props: MotionProps) {
+        return this.baseTarget[key]
+    }
 
     // Set a single `latest` value
     private setSingleStaticValue(key: string, value: string | number) {
