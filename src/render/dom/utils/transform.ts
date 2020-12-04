@@ -11,20 +11,13 @@ const transformAxes = ["", "X", "Y", "Z"]
 const order = ["perspective", "translate", "scale", "rotate", "skew"]
 
 /**
- * Used to store the keys of all transforms that will distorted a measured bounding box.
- */
-export const boxDistortingKeys: Set<string> = new Set()
-
-/**
  * Generate a list of every possible transform key.
  */
 export const transformProps = ["transformPerspective", "x", "y", "z"]
 order.forEach((operationKey) => {
-    const isDistorting = new Set(["rotate", "skew"]).has(operationKey)
     transformAxes.forEach((axesKey) => {
         const key = operationKey + axesKey
         transformProps.push(key)
-        isDistorting && boxDistortingKeys.add(key)
     })
 })
 

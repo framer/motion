@@ -7,8 +7,6 @@ import {
     buildLayoutProjectionTransform,
     buildLayoutProjectionTransformOrigin,
     buildTransformOrigin,
-    buildBoxDistortingTransforms,
-    identityProjection,
 } from "./build-transform"
 import { isCSSVariable } from "./is-css-variable"
 import { valueScaleCorrection } from "../layout/scale-correction"
@@ -136,20 +134,9 @@ export function buildHTMLStyles(
     if (isLayoutProjectionEnabled) {
         style.transform = buildLayoutProjectionTransform(
             deltaFinal!,
-            treeScale!
+            treeScale!,
+            hasTransform ? transform : undefined
         )
-
-        if (style.transform === identityProjection) style.transform = ""
-
-        /**
-         * If we have transform styles, build only those that distort bounding boxes (rotate/skew)
-         * as translations and scales will already have been used to calculate deltaFinal.
-         */
-        if (hasTransform) {
-            style.transform +=
-                " " + buildBoxDistortingTransforms(transform, transformKeys)
-            style.transform = style.transform.trim()
-        }
 
         if (transformTemplate) {
             style.transform = transformTemplate(transform, style.transform)
