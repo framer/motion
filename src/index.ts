@@ -25,10 +25,8 @@ export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { resolveMotionValue } from "./value/utils/resolve-motion-value"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
-export { ScrollMotionValues } from "./value/scroll/utils"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
-export { useInvertedScale } from "./value/use-inverted-scale"
 
 /**
  * Accessibility
@@ -69,7 +67,6 @@ export {
 export { useDomEvent } from "./events/use-dom-event"
 export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
-export { useAnimatedState } from "./animation/use-animated-state"
 export { addScaleCorrection } from "./render/dom/layout/scale-correction"
 
 /**
@@ -92,6 +89,7 @@ export {
     ForwardRefComponent,
 } from "./render/dom/types"
 export { CustomDomComponent } from "./render/dom"
+export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,
     MotionProps,

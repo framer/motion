@@ -827,11 +827,6 @@ export interface Tween extends Repeat {
     velocity?: number;
 }
 
-// Warning: (ae-internal-missing-underscore) The name "useAnimatedState" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export function useAnimatedState(initialState: any): any[];
-
 // @public
 export function useAnimation(): AnimationControls;
 
@@ -856,11 +851,6 @@ export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
 
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, visualElement: VisualElement): void;
-
-// Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
-// 
-// @public @deprecated
-export function useInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
 // @public
 export function useIsPresent(): boolean;
