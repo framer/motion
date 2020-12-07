@@ -1,6 +1,6 @@
 *
 **/*
 !dist/**
-!lib/**
+!lib/**/*.js
 !types/**
 !LICENSE.md
