@@ -142,3 +142,9 @@ export {
     createBatcher,
 } from "./components/AnimateSharedLayout/SharedLayoutContext"
 export * from "./types/geometry"
+
+/**
+ * Deprecated
+ */
+export { useAnimatedState as deprecatedUseAnimatedState } from "./animation/use-animated-state"
+export { useInvertedScale as deprecatedUseInvertedScale } from "./value/use-inverted-scale"

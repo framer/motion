@@ -535,7 +535,9 @@ export class HTMLVisualElement<
     }
 
     withoutTransform(callback: () => void) {
-        this.resetTransform()
+        if (this.isLayoutProjectionEnabled) {
+            this.resetTransform()
+        }
 
         if (this.parent) {
             ;(this.parent as any).withoutTransform(callback)
@@ -543,7 +545,9 @@ export class HTMLVisualElement<
             callback()
         }
 
-        this.element.style.transform = this.style.transform as string
+        if (this.isLayoutProjectionEnabled) {
+            this.element.style.transform = this.style.transform as string
+        }
     }
 
     /**
