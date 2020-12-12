@@ -702,12 +702,6 @@ export interface SharedLayoutProps {
     // 
     // (undocumented)
     children: React_2.ReactNode;
-    // @internal
-    _dependency?: any;
-    // @internal
-    _supportRotate?: boolean;
-    // @internal
-    _transition?: Transition;
     type?: "switch" | "crossfade";
 }
 

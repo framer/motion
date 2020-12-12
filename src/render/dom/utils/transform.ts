@@ -2,7 +2,7 @@
  * A list of all transformable axes. We'll use this list to generated a version
  * of each axes for each transform.
  */
-const transformAxes = ["", "X", "Y", "Z"]
+export const transformAxes = ["", "X", "Y", "Z"]
 
 /**
  * An ordered array of each transformable value. By default, transform values
