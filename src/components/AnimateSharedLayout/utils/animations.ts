@@ -2,10 +2,10 @@ import {
     Presence,
     VisibilityAction,
     SharedLayoutAnimationConfig,
-} from "./types"
+} from "../types"
 import { LayoutStack } from "./stack"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
-import { AxisBox2D } from "../../types/geometry"
+import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
+import { AxisBox2D } from "../../../types/geometry"
 
 export function createSwitchAnimation(
     child: HTMLVisualElement,
