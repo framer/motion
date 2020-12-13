@@ -15,6 +15,9 @@ export const gestureProps = [
     "whileHover",
     "onHoverStart",
     "onHoverEnd",
+    "whileFocus",
+    "onFocusStart",
+    "onFocusEnd",
 ]
 
 const GestureComponent = makeRenderlessComponent(

@@ -47,8 +47,10 @@ export {
     HoverHandlers,
     TapHandlers,
     PanHandlers,
+    FocusHandlers,
     TapInfo,
     PanInfo,
+    GestureHandlers,
     useTapGesture,
     usePanGesture,
     useGestures,
@@ -125,7 +127,6 @@ export {
 } from "./types"
 export { EventInfo } from "./events/types"
 export { MotionFeature, FeatureProps } from "./motion/features/types"
-export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"

@@ -53,6 +53,9 @@ const validMotionProps = new Set<keyof MotionProps>([
     "whileDrag",
     "onHoverEnd",
     "onHoverStart",
+    "whileFocus",
+    "onFocusStart",
+    "onFocusEnd",
 ])
 
 /**
