@@ -50,32 +50,34 @@ describe("focus", () => {
         return expect(promise).resolves.toBe(0.1)
     })
 
-    // test("whileHover applied as variant", async () => {
-    //     const target = 0.5
-    //     const promise = new Promise((resolve) => {
-    //         const variant = {
-    //             hidden: { opacity: target },
-    //         }
-    //         const opacity = motionValue(1)
-    //         const Component = () => (
-    //             <motion.div
-    //                 whileHover="hidden"
-    //                 variants={variant}
-    //                 transition={{ type: false }}
-    //                 style={{ opacity }}
-    //             />
-    //         )
+    test("whileHover applied as variant", async () => {
+        const target = 0.5
+        const promise = new Promise((resolve) => {
+            const variant = {
+                hidden: { opacity: target },
+            }
+            const opacity = motionValue(1)
+            const Component = () => (
+                <motion.a
+                    data-testid="myAnchorElement"
+                    href="#"
+                    whileFocus="hidden"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                ></motion.a>
+            )
 
-    //         const { container, rerender } = render(<Component />)
-    //         rerender(<Component />)
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
 
-    //         mouseEnter(container.firstChild as Element)
+            focus(container, "myAnchorElement")
 
-    //         resolve(opacity.get())
-    //     })
+            resolve(opacity.get())
+        })
 
-    //     return expect(promise).resolves.toBe(target)
-    // })
+        return expect(promise).resolves.toBe(target)
+    })
 
     // test("whileHover propagates to children", async () => {
     //     const target = 0.2
