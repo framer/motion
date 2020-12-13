@@ -1,7 +1,7 @@
 import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
-// import { motionValue } from "../../value"
+import { motionValue } from "../../value"
 // import { transformValues } from "../../motion/__tests__/util-transform-values"
 // import sync from "framesync"
 
@@ -15,9 +15,7 @@ describe("focus", () => {
                 href="#"
                 onFocusStart={focusHandler}
                 onFocusEnd={blurHandler}
-            >
-                some website
-            </motion.a>
+            />
         )
         const { container } = render(<Component />)
 
@@ -28,27 +26,29 @@ describe("focus", () => {
         expect(blurHandler).toBeCalledTimes(1)
     })
 
-    // test("whileHover applied", async () => {
-    //     const promise = new Promise((resolve) => {
-    //         const opacity = motionValue(1)
-    //         const Component = () => (
-    //             <motion.div
-    //                 whileHover={{ opacity: 0 }}
-    //                 transition={{ type: false }}
-    //                 style={{ opacity }}
-    //             />
-    //         )
+    test("whileFocus applied", async () => {
+        const promise = new Promise((resolve) => {
+            const opacity = motionValue(1)
+            const Component = () => (
+                <motion.a
+                    data-testid="myAnchorElement"
+                    href="#"
+                    whileFocus={{ opacity: 0.1 }}
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                ></motion.a>
+            )
 
-    //         const { container, rerender } = render(<Component />)
-    //         rerender(<Component />)
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
 
-    //         mouseEnter(container.firstChild as Element)
+            focus(container, "myAnchorElement")
 
-    //         resolve(opacity.get())
-    //     })
+            resolve(opacity.get())
+        })
 
-    //     return expect(promise).resolves.toBe(0)
-    // })
+        return expect(promise).resolves.toBe(0.1)
+    })
 
     // test("whileHover applied as variant", async () => {
     //     const target = 0.5
