@@ -50,7 +50,7 @@ describe("focus", () => {
         return expect(promise).resolves.toBe(0.1)
     })
 
-    test("whileHover applied as variant", async () => {
+    test("whileFocus applied as variant", async () => {
         const target = 0.5
         const promise = new Promise((resolve) => {
             const variant = {
@@ -114,39 +114,41 @@ describe("focus", () => {
     //     return expect(promise).resolves.toBe(target)
     // })
 
-    // test("whileHover is unapplied when hover ends", () => {
-    //     const promise = new Promise((resolve) => {
-    //         const variant = {
-    //             hidden: { opacity: 0.5, transitionEnd: { opacity: 0.75 } },
-    //         }
-    //         const opacity = motionValue(1)
+    test("whileFocus is unapplied when blur", () => {
+        const promise = new Promise((resolve) => {
+            const variant = {
+                hidden: { opacity: 0.5, transitionEnd: { opacity: 0.75 } },
+            }
+            const opacity = motionValue(1)
 
-    //         let hasMousedOut = false
-    //         const onComplete = () => hasMousedOut && resolve(opacity.get())
+            let blurred = false
+            const onComplete = () => blurred && resolve(opacity.get())
 
-    //         const Component = ({ onAnimationComplete }: any) => (
-    //             <motion.div
-    //                 whileHover="hidden"
-    //                 variants={variant}
-    //                 transition={{ type: false }}
-    //                 style={{ opacity }}
-    //                 onAnimationComplete={onAnimationComplete}
-    //             />
-    //         )
+            const Component = ({ onAnimationComplete }: any) => (
+                <motion.a
+                    data-testid="myAnchorElement"
+                    href="#"
+                    whileFocus="hidden"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                    onAnimationComplete={onAnimationComplete}
+                ></motion.a>
+            )
 
-    //         const { container } = render(
-    //             <Component onAnimationComplete={onComplete} />
-    //         )
+            const { container } = render(
+                <Component onAnimationComplete={onComplete} />
+            )
 
-    //         mouseEnter(container.firstChild as Element)
-    //         setTimeout(() => {
-    //             hasMousedOut = true
-    //             mouseLeave(container.firstChild as Element)
-    //         }, 10)
-    //     })
+            focus(container, "myAnchorElement")
+            setTimeout(() => {
+                blurred = true
+                blur(container, "myAnchorElement")
+            }, 10)
+        })
 
-    //     return expect(promise).resolves.toBe(1)
-    // })
+        return expect(promise).resolves.toBe(1)
+    })
 
     // test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
     //     const promise = new Promise((resolve) => {
