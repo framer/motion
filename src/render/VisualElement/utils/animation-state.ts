@@ -38,6 +38,7 @@ export enum AnimationType {
     Hover = "whileHover",
     Tap = "whileTap",
     Drag = "whileDrag",
+    Focus = "whileFocus",
     Exit = "exit",
 }
 
