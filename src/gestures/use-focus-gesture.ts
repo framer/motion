@@ -78,12 +78,12 @@ export function useFocusGesture(
     { onFocusStart, onFocusEnd }: FocusHandlers,
     visualElement: VisualElement
 ) {
-    useDomEvent(visualElement, "focus", () => (event: FocusEvent) => {
+    useDomEvent(visualElement, "focus", (event: FocusEvent) => {
         onFocusStart?.(event)
         visualElement.animationState?.setActive(AnimationType.Focus, true)
     })
 
-    useDomEvent(visualElement, "blur", () => (event: FocusEvent) => {
+    useDomEvent(visualElement, "blur", (event: FocusEvent) => {
         onFocusEnd?.(event)
         visualElement.animationState?.setActive(AnimationType.Focus, false)
     })
