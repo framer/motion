@@ -13,6 +13,7 @@ export const gestureProps = [
     "onTapCancel",
     "whileTap",
     "whileHover",
+    "whileFocus",
     "onHoverStart",
     "onHoverEnd",
 ]

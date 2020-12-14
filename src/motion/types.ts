@@ -412,6 +412,10 @@ export interface MotionAdvancedProps {
     inherit?: boolean
 }
 
+export interface DomHandlers {
+    whileFocus?: any
+}
+
 /**
  * Props for `motion` components.
  *
@@ -421,6 +425,7 @@ export interface MotionProps
     extends AnimationProps,
         MotionCallbacks,
         GestureHandlers,
+        DomHandlers,
         DraggableProps,
         LayoutProps,
         MotionAdvancedProps {

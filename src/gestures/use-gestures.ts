@@ -1,6 +1,7 @@
 import { PanHandlers, usePanGesture } from "./use-pan-gesture"
 import { TapHandlers, useTapGesture } from "./use-tap-gesture"
 import { HoverHandlers, useHoverGesture } from "./use-hover-gesture"
+import { useFocusGesture } from "./use-focus-gesture"
 import { VisualElement } from "../render/VisualElement"
 
 /**
@@ -22,4 +23,5 @@ export function useGestures<GestureHandlers>(
     usePanGesture(props, visualElement)
     useTapGesture(props, visualElement)
     useHoverGesture(props, visualElement)
+    useFocusGesture(props, visualElement)
 }

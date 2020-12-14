@@ -18,7 +18,14 @@ import { MotionProps, VariantLabels } from "../types"
  */
 export function useVariants(
     visualElement: VisualElement,
-    { variants, initial, animate, whileTap, whileHover }: MotionProps,
+    {
+        variants,
+        initial,
+        animate,
+        whileTap,
+        whileHover,
+        whileFocus,
+    }: MotionProps,
     isStatic: boolean
 ): VariantContextProps {
     const {
@@ -41,6 +48,7 @@ export function useVariants(
         isVariantLabel(animate) ||
         isVariantLabel(whileTap) ||
         isVariantLabel(whileHover) ||
+        isVariantLabel(whileFocus) ||
         isAnimationControls(animate)
     const isVariantNode = variants || controlsVariants
 
