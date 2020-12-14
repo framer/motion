@@ -48,6 +48,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "onTap",
     "onTapStart",
     "onTapCancel",
+    "whileDisable",
     "whileFocus",
     "whileHover",
     "whileTap",
