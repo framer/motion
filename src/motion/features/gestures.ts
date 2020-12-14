@@ -13,6 +13,7 @@ export const gestureProps = [
     "onTapCancel",
     "whileTap",
     "whileHover",
+    "whileDisable",
     "whileFocus",
     "onHoverStart",
     "onHoverEnd",
@@ -30,7 +31,7 @@ const GestureComponent = makeRenderlessComponent(
 export const Gestures: MotionFeature = {
     key: "gestures",
     shouldRender: (props: MotionProps) => {
-        return gestureProps.some(key => props.hasOwnProperty(key))
+        return gestureProps.some((key) => props.hasOwnProperty(key))
     },
     getComponent: () => GestureComponent,
 }

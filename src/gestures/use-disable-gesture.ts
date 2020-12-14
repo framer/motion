@@ -20,7 +20,6 @@ export function useDisableGesture(
     { whileDisable }: DomHandlers,
     visualElement: VisualElement
 ) {
-    console.log("useDisableGesture")
     if (whileDisable) {
         setOverride(visualElement, whileDisable, hoverPriority)
     }
@@ -29,18 +28,10 @@ export function useDisableGesture(
     const [disabled, setDisabled] = useState(visualElement.element.disabled)
 
     useEffect(() => {
-        console.log("HOOK")
         // Create new mutation observer
         const mutationObserver = new MutationObserver((mutations) => {
             // @ts-ignore
             setDisabled(mutations[0].target.disabled)
-
-            mutations
-                .filter(({ attributeName }) => attributeName === "disabled")
-                .forEach(({ target }) => {
-                    // @ts-ignore
-                    setDisabled(target.disabled)
-                })
         })
 
         // @ts-ignore
