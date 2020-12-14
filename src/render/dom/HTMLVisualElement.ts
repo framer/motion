@@ -35,6 +35,7 @@ import {
 } from "../VisualElement/utils/setters"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { MotionProps } from "../../motion"
+import { isCSSVariable } from "./utils/is-css-variable"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -130,7 +131,13 @@ export class HTMLVisualElement<
      * Read a value directly from the HTMLElement style.
      */
     read(key: string): number | string | null {
-        return this.getComputedStyle()[key] || 0
+        const computedStyle = this.getComputedStyle()
+
+        return (
+            (isCSSVariable(key)
+                ? computedStyle.getPropertyValue(key)
+                : computedStyle[key]) || 0
+        )
     }
 
     addValue(key: string, value: MotionValue) {
