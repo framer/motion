@@ -25,6 +25,7 @@ export function useVariants(
         whileTap,
         whileHover,
         whileFocus,
+        whileDisable,
     }: MotionProps,
     isStatic: boolean
 ): VariantContextProps {
@@ -49,6 +50,7 @@ export function useVariants(
         isVariantLabel(whileTap) ||
         isVariantLabel(whileHover) ||
         isVariantLabel(whileFocus) ||
+        isVariantLabel(whileDisable) ||
         isAnimationControls(animate)
     const isVariantNode = variants || controlsVariants
 

@@ -3,6 +3,7 @@ import { TapHandlers, useTapGesture } from "./use-tap-gesture"
 import { HoverHandlers, useHoverGesture } from "./use-hover-gesture"
 import { useFocusGesture } from "./use-focus-gesture"
 import { VisualElement } from "../render/VisualElement"
+import { useDisableGesture } from "./use-disable-gesture"
 
 /**
  * @public
@@ -24,4 +25,5 @@ export function useGestures<GestureHandlers>(
     useTapGesture(props, visualElement)
     useHoverGesture(props, visualElement)
     useFocusGesture(props, visualElement)
+    useDisableGesture(props, visualElement)
 }

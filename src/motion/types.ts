@@ -413,7 +413,8 @@ export interface MotionAdvancedProps {
 }
 
 export interface DomHandlers {
-    whileFocus?: any
+    whileFocus?: string | TargetAndTransition
+    whileDisable?: string | TargetAndTransition
 }
 
 /**
