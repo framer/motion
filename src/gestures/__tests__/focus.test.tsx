@@ -2,8 +2,8 @@ import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
 import { motion } from "../../"
 import { motionValue } from "../../value"
-// import { transformValues } from "../../motion/__tests__/util-transform-values"
-// import sync from "framesync"
+import { transformValues } from "../../motion/__tests__/util-transform-values"
+import sync from "framesync"
 
 describe("focus", () => {
     test("focus event listeners fire", () => {
@@ -79,41 +79,6 @@ describe("focus", () => {
         return expect(promise).resolves.toBe(target)
     })
 
-    // test("whileHover propagates to children", async () => {
-    //     const target = 0.2
-    //     const promise = new Promise((resolve) => {
-    //         const parent = {
-    //             hidden: { opacity: 0.8 },
-    //         }
-    //         const child = {
-    //             hidden: { opacity: target },
-    //         }
-    //         const opacity = motionValue(1)
-    //         const Component = () => (
-    //             <motion.div
-    //                 whileHover="hidden"
-    //                 variants={parent}
-    //                 transition={{ type: false }}
-    //                 data-id="hoverparent"
-    //             >
-    //                 <motion.div
-    //                     variants={child}
-    //                     style={{ opacity }}
-    //                     transition={{ type: false }}
-    //                     data-id="hoverchild"
-    //                 />
-    //             </motion.div>
-    //         )
-
-    //         const { container } = render(<Component />)
-
-    //         mouseEnter(container.firstChild as Element)
-    //         resolve(opacity.get())
-    //     })
-
-    //     return expect(promise).resolves.toBe(target)
-    // })
-
     test("whileFocus is unapplied when blur", () => {
         const promise = new Promise((resolve) => {
             const variant = {
@@ -150,64 +115,37 @@ describe("focus", () => {
         return expect(promise).resolves.toBe(1)
     })
 
-    // test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
-    //     const promise = new Promise((resolve) => {
-    //         const variant = {
-    //             hovering: { opacity: 0.5, scale: 0.5 },
-    //             tapping: { scale: 2 },
-    //         }
-    //         const opacity = motionValue(1)
-    //         const scale = motionValue(1)
-    //         const Component = () => (
-    //             <motion.div
-    //                 whileHover="hovering"
-    //                 whileTap="tapping"
-    //                 variants={variant}
-    //                 transition={{ type: false }}
-    //                 style={{ opacity, scale }}
-    //             />
-    //         )
+    test("special transform values are unapplied when focus ends", () => {
+        const promise = new Promise((resolve) => {
+            const variant = {
+                hidden: { size: 50 },
+            }
 
-    //         const { container, rerender } = render(<Component />)
-    //         rerender(<Component />)
+            const Component = () => (
+                <motion.a
+                    transformValues={transformValues}
+                    data-testid="myAnchorElement"
+                    href="#"
+                    whileFocus="hidden"
+                    variants={variant}
+                    transition={{ type: false }}
+                    style={{ size: 100 }}
+                ></motion.a>
+            )
 
-    //         fireEvent.mouseDown(container.firstChild as Element)
-    //         mouseEnter(container.firstChild as Element)
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
 
-    //         resolve([opacity.get(), scale.get()])
-    //     })
+            focus(container, "myAnchorElement")
 
-    //     return expect(promise).resolves.toEqual([0.5, 2])
-    // })
+            sync.postRender(() => {
+                blur(container, "myAnchorElement")
+                sync.postRender(() => resolve(container.firstChild as Element))
+            })
+        })
 
-    // test("special transform values are unapplied when hover ends", () => {
-    //     const promise = new Promise((resolve) => {
-    //         const variant = {
-    //             hidden: { size: 50 },
-    //         }
-    //         const Component = () => (
-    //             <motion.div
-    //                 transformValues={transformValues}
-    //                 whileHover="hidden"
-    //                 variants={variant}
-    //                 transition={{ type: false }}
-    //                 style={{ size: 100 }}
-    //             />
-    //         )
-
-    //         const { container, rerender } = render(<Component />)
-    //         rerender(<Component />)
-
-    //         mouseEnter(container.firstChild as Element)
-
-    //         sync.postRender(() => {
-    //             mouseLeave(container.firstChild as Element)
-    //             sync.postRender(() => resolve(container.firstChild as Element))
-    //         })
-    //     })
-
-    //     return expect(promise).resolves.toHaveStyle(
-    //         "width: 100px; height: 100px;"
-    //     )
-    // })
+        return expect(promise).resolves.toHaveStyle(
+            "width: 100px; height: 100px;"
+        )
+    })
 })
