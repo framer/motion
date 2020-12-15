@@ -331,7 +331,7 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     // (undocumented)
     isVisible?: boolean;
     layoutId?: string;
-    layoutReady(config?: SharedLayoutAnimationConfig): void;
+    layoutReady(config?: SharedLayoutAnimationConfig): Promise<void>;
     // (undocumented)
     lockTargetBox(): void;
     makeTargetAnimatable({ transition, transitionEnd, ...target }: TargetAndTransition, parseDOMValues?: boolean): TargetAndTransition;
@@ -360,6 +360,8 @@ export class HTMLVisualElement<E extends HTMLElement | SVGElement = HTMLElement>
     // (undocumented)
     show(): void;
     snapshotBoundingBox(): void;
+    // (undocumented)
+    startLayoutAnimation: (_target: AxisBox2D, _origin: AxisBox2D, _config?: SharedLayoutAnimationConfig | undefined) => Promise<void>;
     // (undocumented)
     startLayoutAxisAnimation(axis: "x" | "y", transition: Transition): Promise<void> | undefined;
     // (undocumented)
@@ -753,7 +755,7 @@ export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Motio
 // @public
 export interface SyncLayoutLifecycles {
     // (undocumented)
-    layoutReady: (child: HTMLVisualElement) => void;
+    layoutReady: (child: HTMLVisualElement) => Promise<void>;
     // (undocumented)
     measureLayout: (child: HTMLVisualElement) => void;
     // (undocumented)
