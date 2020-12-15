@@ -37,6 +37,8 @@ import { isMotionValue } from "../../value/utils/is-motion-value"
 import { MotionProps } from "../../motion"
 import { isCSSVariable } from "./utils/is-css-variable"
 
+const sharedTargetBoxes = new Map<string, AxisBox2D>()
+
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
     prev: AxisBox2D,
@@ -444,7 +446,31 @@ export class HTMLVisualElement<
         this.box = this.getBoundingBox()
         this.boxCorrected = copyAxisBox(this.box)
 
-        if (!this.targetBox) this.targetBox = copyAxisBox(this.box)
+        if (!this.targetBox) {
+            /**
+             * Create a target box for this component. If it has a layoutId, check to see
+             * if there's a shared targetBox we can use.
+             *
+             * TODO: Currently we're animating each component's targetBox, and now we've added this
+             * ability to share the actual targetBox object between components to ensure components
+             * with the same layoutId always project into the same targetBox.
+             *
+             * This means that in many instances we're running two, possibly conflicting animations
+             * for the same targetBox. In the medium term it'd be preferable to run just one animation/gesture
+             * per targetBox.
+             */
+            this.targetBox = copyAxisBox(this.box)
+
+            if (this.layoutId) {
+                if (sharedTargetBoxes.has(this.layoutId)) {
+                    this.targetBox = sharedTargetBoxes.get(
+                        this.layoutId
+                    ) as AxisBox2D
+                } else {
+                    sharedTargetBoxes.set(this.layoutId, this.targetBox)
+                }
+            }
+        }
 
         this.layoutMeasureListeners.notify(
             this.box,
