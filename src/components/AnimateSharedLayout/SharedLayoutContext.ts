@@ -17,7 +17,7 @@ export interface SyncLayoutLifecycles {
  */
 export interface SyncLayoutBatcher {
     add: (child: HTMLVisualElement) => void
-    flush: (handler?: SyncLayoutLifecycles) => void
+    flush: (handler?: SyncLayoutLifecycles) => Promise<any>
 }
 
 /**
