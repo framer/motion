@@ -10,7 +10,6 @@ import { Target, TargetAndTransition, Variants } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
 import { AnimationState } from "./utils/animation-state"
 import { MotionProps } from "../../motion/types"
-import { SharedLayoutAnimationConfig } from "../../components/AnimateSharedLayout/types"
 
 type Subscriptions = Map<string, () => void>
 
