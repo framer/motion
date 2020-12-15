@@ -125,7 +125,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
             layoutReady: (child) => {
                 const { layoutId } = child
 
-                child.layoutReady(
+                return child.layoutReady(
                     createAnimation(child, this.getStack(layoutId))
                 )
             },
