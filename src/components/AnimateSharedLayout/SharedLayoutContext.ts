@@ -8,7 +8,7 @@ import { Presence } from "./types"
  */
 export interface SyncLayoutLifecycles {
     measureLayout: (child: HTMLVisualElement) => void
-    layoutReady: (child: HTMLVisualElement) => void
+    layoutReady: (child: HTMLVisualElement) => Promise<void>
     parent?: HTMLVisualElement
 }
 
@@ -57,6 +57,7 @@ export function createBatcher(): SyncLayoutBatcher {
         layoutReady,
         parent,
     }: SyncLayoutLifecycles = defaultHandler) => {
+        const animations: Promise<void>[] = []
         const order = Array.from(queue).sort(sortByDepth)
 
         const resetAndMeasure = () => {
@@ -76,7 +77,7 @@ export function createBatcher(): SyncLayoutBatcher {
         /**
          * Write: Notify the VisualElements they're ready for further write operations.
          */
-        order.forEach(layoutReady)
+        order.forEach((child) => animations.push(layoutReady(child)))
 
         /**
          * After all children have started animating, ensure any Entering components are set to Present.
@@ -89,6 +90,8 @@ export function createBatcher(): SyncLayoutBatcher {
         })
 
         queue.clear()
+
+        return Promise.all(animations)
     }
 
     return { add, flush }

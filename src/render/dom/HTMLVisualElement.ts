@@ -378,12 +378,24 @@ export class HTMLVisualElement<
      * To be called when all layouts are successfully updated. In turn we can notify layoutUpdate
      * subscribers.
      */
-    layoutReady(config?: SharedLayoutAnimationConfig) {
+    layoutReady(config?: SharedLayoutAnimationConfig): Promise<void> {
         this.layoutUpdateListeners.notify(
             this.box,
             this.prevViewportBox || this.box,
             config
         )
+
+        /**
+         * TODO Because we're hydrating startLayoutAnimation from Animate.tsx, we can
+         * in a future pass look at ditching layoutReady
+         */
+        return this.startLayoutAnimation
+            ? this.startLayoutAnimation(
+                  this.box,
+                  this.prevViewportBox || this.box,
+                  config
+              )
+            : Promise.resolve()
     }
 
     /**

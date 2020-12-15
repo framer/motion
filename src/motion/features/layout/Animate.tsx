@@ -39,13 +39,11 @@ class Animate extends React.Component<AnimateProps> {
         y: undefined,
     }
 
-    private unsubLayoutReady: () => void
-
     componentDidMount() {
         const { visualElement } = this.props
         visualElement.animateMotionValue = startAnimation
         visualElement.enableLayoutProjection()
-        this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
+        visualElement.startLayoutAnimation = this.animate
 
         visualElement.updateConfig({
             ...visualElement.config,
@@ -54,7 +52,6 @@ class Animate extends React.Component<AnimateProps> {
     }
 
     componentWillUnmount() {
-        this.unsubLayoutReady()
         eachAxis((axis) => this.stopAxisAnimation[axis]?.())
     }
 
@@ -68,13 +65,16 @@ class Animate extends React.Component<AnimateProps> {
             shouldStackAnimate,
             ...config
         }: SharedLayoutAnimationConfig = {}
-    ) => {
+    ): Promise<void> => {
         const { visualElement, layout } = this.props
 
         /**
          * Early return if we've been instructed not to animate this render.
          */
-        if (shouldStackAnimate === false) return this.safeToRemove()
+        if (shouldStackAnimate === false) {
+            this.safeToRemove()
+            return Promise.resolve()
+        }
 
         /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be

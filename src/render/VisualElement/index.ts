@@ -10,6 +10,7 @@ import { Target, TargetAndTransition, Variants } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
 import { AnimationState } from "./utils/animation-state"
 import { MotionProps } from "../../motion/types"
+import { SharedLayoutAnimationConfig } from "../../components/AnimateSharedLayout/types"
 
 type Subscriptions = Map<string, () => void>
 
@@ -218,6 +219,15 @@ export abstract class VisualElement<E = any> {
         targetAndTransition: TargetAndTransition,
         parseDOMValues?: boolean
     ): TargetAndTransition
+
+    /**
+     *
+     */
+    abstract startLayoutAnimation?: (
+        target: AxisBox2D,
+        origin: AxisBox2D,
+        config?: SharedLayoutAnimationConfig
+    ) => Promise<void>
 
     getBaseValue(key: string, _props: MotionProps) {
         return this.baseTarget[key]
