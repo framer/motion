@@ -399,6 +399,17 @@ export class HTMLVisualElement<
     }
 
     /**
+     *
+     */
+    startLayoutAnimation = (
+        _target: AxisBox2D,
+        _origin: AxisBox2D,
+        _config?: SharedLayoutAnimationConfig
+    ) => {
+        return Promise.resolve()
+    }
+
+    /**
      * Measure and return the Element's bounding box. We convert it to a AxisBox2D
      * structure to make it easier to work on each individual axis generically.
      */

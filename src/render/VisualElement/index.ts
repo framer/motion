@@ -220,15 +220,6 @@ export abstract class VisualElement<E = any> {
         parseDOMValues?: boolean
     ): TargetAndTransition
 
-    /**
-     *
-     */
-    abstract startLayoutAnimation?: (
-        target: AxisBox2D,
-        origin: AxisBox2D,
-        config?: SharedLayoutAnimationConfig
-    ) => Promise<void>
-
     getBaseValue(key: string, _props: MotionProps) {
         return this.baseTarget[key]
     }
