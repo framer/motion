@@ -26,10 +26,7 @@ export interface FocusHandlers {
  * @param ref
  * @internal
  */
-export function useFocusGesture(
-    { whileFocus }: FocusHandlers,
-    visualElement: VisualElement
-) {
+export function useFocusGesture(visualElement: VisualElement) {
     useDomEvent(visualElement, "focus", () => {
         visualElement.animationState?.setActive(AnimationType.Focus, true)
     })
