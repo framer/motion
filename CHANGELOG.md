@@ -2,7 +2,7 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [3.0.0] Unreleased
+## [3.0.0] 2020-12-16
 
 ### Added
 
@@ -12,7 +12,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   New behaviour for when values are removed from animation props (`animate`, `whileHover`, `exit` etc). The value will be searched for in active props of a lower priority running (`style` <- `animate` <- `whileHover` <- `whileTap` <- `whileDrag` <- `exit`)
+-   New behaviour for when values are removed from animation props (`animate`, `whileHover`, `exit` etc). The value will be searched for in active props of a lower priority running (`style` <- `animate` <- `whileHover` <- `whileTap` <- `whileDrag` <- `exit`). This may introduce subtle behavioural changes, hence the major.
 
 ### Removed
 
