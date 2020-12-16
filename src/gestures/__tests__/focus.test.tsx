@@ -6,26 +6,6 @@ import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"
 
 describe("focus", () => {
-    test("focus event listeners fire", () => {
-        const focusHandler = jest.fn()
-        const blurHandler = jest.fn()
-        const Component = () => (
-            <motion.a
-                data-testid="myAnchorElement"
-                href="#"
-                onFocusStart={focusHandler}
-                onFocusEnd={blurHandler}
-            />
-        )
-        const { container } = render(<Component />)
-
-        focus(container, "myAnchorElement")
-        blur(container, "myAnchorElement")
-
-        expect(focusHandler).toBeCalledTimes(1)
-        expect(blurHandler).toBeCalledTimes(1)
-    })
-
     test("whileFocus applied", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(1)
