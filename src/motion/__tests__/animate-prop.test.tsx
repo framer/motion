@@ -304,6 +304,24 @@ describe("animate prop as object", () => {
             "transform: translateX(0px) translateY(100px) translateZ(0)"
         )
     })
+
+    test("animates previously unseen CSS variables", async () => {
+        const promise = new Promise<string>((resolve) => {
+            const Component = () => (
+                <motion.div
+                    style={{ "--foo": "#fff" } as any}
+                    animate={{ "--foo": "#000" } as any}
+                    onUpdate={(latest) => resolve(latest["--foo"] as string)}
+                    transition={{ type: false }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        expect(promise).resolves.toBe("#000")
+    })
+
     test("forces an animation to fallback if has been set to `null`", async () => {
         const promise = new Promise((resolve) => {
             const complete = () => resolve(true)

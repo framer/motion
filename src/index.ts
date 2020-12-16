@@ -147,5 +147,5 @@ export * from "./types/geometry"
 /**
  * Deprecated
  */
-export { useAnimatedState } from "./animation/use-animated-state"
-export { useInvertedScale } from "./value/use-inverted-scale"
+export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/use-animated-state"
+export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"

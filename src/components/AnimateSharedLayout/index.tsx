@@ -1,7 +1,10 @@
 import * as React from "react"
 import { SharedLayoutProps, Presence } from "./types"
-import { createCrossfadeAnimation, createSwitchAnimation } from "./animations"
-import { LayoutStack } from "./stack"
+import {
+    createCrossfadeAnimation,
+    createSwitchAnimation,
+} from "./utils/animations"
+import { LayoutStack } from "./utils/stack"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 import {
     SharedLayoutSyncMethods,
@@ -10,6 +13,7 @@ import {
     SharedLayoutContext,
 } from "./SharedLayoutContext"
 import { MotionContext } from "../../motion/context/MotionContext"
+import { resetRotate } from "./utils/rotate"
 
 /**
  * @public
@@ -155,6 +159,11 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Flag we've scheduled an update
          */
         this.updateScheduled = true
+
+        /**
+         * Write: Reset rotation transforms so bounding boxes can be accurately measured.
+         */
+        this.children.forEach((child) => resetRotate(child))
 
         /**
          * Read: Snapshot children
