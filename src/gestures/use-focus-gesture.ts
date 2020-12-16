@@ -11,61 +11,13 @@ export interface FocusHandlers {
     /**
      * Properties or variant label to animate to while the focus gesture is recognised.
      *
-     * @library
-     *
-     * ```jsx
-     * <Frame whileFocus={{ scale: 1.2 }} />
-     * ```
-     *
      * @motion
      *
      * ```jsx
-     * <motion.div whileFocus={{ scale: 1.2 }} />
+     * <motion.input whileFocus={{ scale: 1.2 }} />
      * ```
      */
     whileFocus?: VariantLabels | TargetAndTransition
-
-    /**
-     * Callback function that fires when the component receives focus.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onFocusStart(event) {
-     *   console.log("Focus starts")
-     * }
-     *
-     * <Frame onFocusStart={onFocusStart} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.div onFocusStart={() => console.log('Focus starts')} />
-     * ```
-     */
-    onFocusStart?(event: FocusEvent): void
-
-    /**
-     * Callback function that fires when the component loses focus.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onFocusEnd(event) {
-     *   console.log("Focus ends")
-     * }
-     *
-     * <Frame onFocusEnd={onFocusEnd} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.div onFocusEnd={() => console.log("Focus ends")} />
-     * ```
-     */
-    onFocusEnd?(event: FocusEvent): void
 }
 
 /**
@@ -75,16 +27,14 @@ export interface FocusHandlers {
  * @internal
  */
 export function useFocusGesture(
-    { onFocusStart, onFocusEnd }: FocusHandlers,
+    { whileFocus }: FocusHandlers,
     visualElement: VisualElement
 ) {
-    useDomEvent(visualElement, "focus", (event: FocusEvent) => {
-        onFocusStart?.(event)
+    useDomEvent(visualElement, "focus", () => {
         visualElement.animationState?.setActive(AnimationType.Focus, true)
     })
 
-    useDomEvent(visualElement, "blur", (event: FocusEvent) => {
-        onFocusEnd?.(event)
+    useDomEvent(visualElement, "blur", () => {
         visualElement.animationState?.setActive(AnimationType.Focus, false)
     })
 }
