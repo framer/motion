@@ -5,7 +5,7 @@ import { motionValue } from "../../../value"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => {
                 setTimeout(() => resolve(x.get()), 75)
@@ -30,7 +30,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Suppresses initial animation if `initial={false}`", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 return (
                     <AnimatePresence initial={false}>
@@ -58,7 +58,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Animates out a component when its removed", async () => {
-        const promise = new Promise<Element | null>(resolve => {
+        const promise = new Promise<Element | null>((resolve) => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
@@ -96,7 +96,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Animates a component back in if it's re-added before animating out", async () => {
-        const promise = new Promise<Element | null>(resolve => {
+        const promise = new Promise<Element | null>((resolve) => {
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
                     <AnimatePresence>
@@ -134,7 +134,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Animates a component out after having an animation cancelled", async () => {
-        const promise = new Promise<Element | null>(resolve => {
+        const promise = new Promise<Element | null>((resolve) => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
@@ -176,7 +176,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Can cycle through multiple components", async () => {
-        const promise = new Promise<number>(resolve => {
+        const promise = new Promise<number>((resolve) => {
             const Component = ({ i }: { i: number }) => {
                 return (
                     <AnimatePresence>
@@ -207,7 +207,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Only renders one child at a time if exitBeforeEnter={true}", async () => {
-        const promise = new Promise<number>(resolve => {
+        const promise = new Promise<number>((resolve) => {
             const Component = ({ i }: { i: number }) => {
                 return (
                     <AnimatePresence exitBeforeEnter>
@@ -242,7 +242,7 @@ describe("AnimatePresence", () => {
             enter: { x: 0, transition: { type: false } },
             exit: (i: number) => ({ x: i * 100, transition: { type: false } }),
         }
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = ({
                 isVisible,
@@ -298,7 +298,7 @@ describe("AnimatePresence", () => {
             exit: { opacity: 0, transition: { type: false } },
         }
 
-        const promise = new Promise<number>(resolve => {
+        const promise = new Promise<number>((resolve) => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (
@@ -333,7 +333,7 @@ describe("AnimatePresence", () => {
     })
 
     test("Handles external refs on a single child", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const ref = React.createRef<HTMLDivElement>()
             const Component = ({ id }: { id: number }) => {
                 return (
@@ -370,7 +370,7 @@ describe("AnimatePresence", () => {
 
 describe("AnimatePresence with custom components", () => {
     test("Does nothing on initial render by default", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
 
             const CustomComponent = () => (
@@ -400,7 +400,7 @@ describe("AnimatePresence with custom components", () => {
     })
 
     test("Suppresses initial animation if `initial={false}`", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const CustomComponent = () => (
                 <motion.div
                     initial={{ x: 0 }}
@@ -432,7 +432,7 @@ describe("AnimatePresence with custom components", () => {
     })
 
     test("Animates out a component when its removed", async () => {
-        const promise = new Promise<Element | null>(resolve => {
+        const promise = new Promise<Element | null>((resolve) => {
             const opacity = motionValue(1)
 
             const CustomComponent = () => (
@@ -472,7 +472,7 @@ describe("AnimatePresence with custom components", () => {
     })
 
     test("Can cycle through multiple components", async () => {
-        const promise = new Promise<number>(resolve => {
+        const promise = new Promise<number>((resolve) => {
             const CustomComponent = ({ i }: any) => (
                 <motion.div
                     key={i}
@@ -514,7 +514,7 @@ describe("AnimatePresence with custom components", () => {
             exit: (i: number) => ({ x: i * 100, transition: { type: false } }),
         }
         const x = motionValue(0)
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const CustomComponent = () => (
                 <motion.div
                     custom={1}
@@ -573,7 +573,7 @@ describe("AnimatePresence with custom components", () => {
         }
         const xParent = motionValue(0)
         const xChild = motionValue(0)
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const CustomComponent = ({
                 children,
                 x,
@@ -656,7 +656,7 @@ describe("AnimatePresence with custom components", () => {
             exit: { opacity: 0 },
         }
 
-        const promise = new Promise<number>(resolve => {
+        const promise = new Promise<number>((resolve) => {
             const opacity = motionValue(1)
             const Component = ({ isVisible }: { isVisible: boolean }) => {
                 return (

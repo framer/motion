@@ -2,21 +2,15 @@ import { useRef } from "react"
 import { EventInfo, EventHandler } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
-import { getGesturePriority } from "./utils/gesture-priority"
 import { RemoveEvent } from "./types"
-import { getGlobalLock } from "../gestures/drag/utils/lock"
+import { getGlobalLock } from "./drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
 import { Point2D } from "../types/geometry"
-import {
-    clearOverride,
-    setOverride,
-    startOverride,
-} from "../render/VisualElement/utils/overrides"
 import { VisualElement } from "../render/VisualElement"
-
-const tapGesturePriority = getGesturePriority("whileTap")
+import { AnimationType } from "../render/VisualElement/utils/animation-state"
+import { VariantLabels } from "../motion/types"
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
@@ -183,7 +177,7 @@ export interface TapHandlers {
      * <motion.div whileTap={{ scale: 0.8 }} />
      * ```
      */
-    whileTap?: string | TargetAndTransition
+    whileTap?: VariantLabels | TargetAndTransition
 }
 
 /**
@@ -194,8 +188,8 @@ export function useTapGesture(
     { onTap, onTapStart, onTapCancel, whileTap }: TapHandlers,
     visualElement: VisualElement
 ) {
-    const hasTapListeners = onTap || onTapStart || onTapCancel || whileTap
-    const isTapping = useRef(false)
+    const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
+    const isPressing = useRef(false)
 
     const cancelPointerEventListener = useRef<RemoveEvent | undefined | null>(
         null
@@ -206,8 +200,6 @@ export function useTapGesture(
         cancelPointerEventListener.current = null
     }
 
-    whileTap && setOverride(visualElement, whileTap, tapGesturePriority)
-
     // We load this event handler into a ref so we can later refer to
     // onPointerUp.current which will always have reference to the latest props
     const onPointerUp = useRef<EventHandler | null>(null)
@@ -215,11 +207,11 @@ export function useTapGesture(
         const element = visualElement.getInstance()
 
         removePointerUp()
-        if (!isTapping.current || !element) return
+        if (!isPressing.current || !element) return
 
-        isTapping.current = false
+        isPressing.current = false
 
-        whileTap && clearOverride(visualElement, tapGesturePriority)
+        visualElement.animationState?.setActive(AnimationType.Tap, false)
 
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
@@ -250,19 +242,19 @@ export function useTapGesture(
         ) as RemoveEvent
 
         const element = visualElement.getInstance()
-        if (!element || isTapping.current) return
+        if (!element || isPressing.current) return
 
-        isTapping.current = true
+        isPressing.current = true
 
         onTapStart?.(event, info)
 
-        whileTap && startOverride(visualElement, tapGesturePriority)
+        visualElement.animationState?.setActive(AnimationType.Tap, true)
     }
 
     usePointerEvent(
         visualElement,
         "pointerdown",
-        hasTapListeners ? onPointerDown : undefined
+        hasPressListeners ? onPointerDown : undefined
     )
 
     useUnmountEffect(removePointerUp)

@@ -6,7 +6,6 @@ import {
     Target,
     Transition,
     TargetAndTransition,
-    TargetResolver,
     Omit,
     MakeCustomValueType,
 } from "../types"
@@ -205,7 +204,7 @@ export interface AnimationProps {
      * }
      * ```
      */
-    exit?: TargetAndTransition | VariantLabels | TargetResolver
+    exit?: TargetAndTransition | VariantLabels
 
     /**
      * Variants allow you to define animation states and organise them by name. They allow

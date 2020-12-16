@@ -57,7 +57,9 @@ describe("useAnimation", () => {
 
                 const x = useMotionValue(0)
 
-                animation.start({ x: 100 })
+                React.useEffect(() => {
+                    animation.start({ x: 100 })
+                }, [])
 
                 return (
                     <motion.div

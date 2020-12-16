@@ -14,7 +14,7 @@ export { MotionProps }
 export interface MotionComponentConfig<E> {
     defaultFeatures: MotionFeature[]
     useVisualElement: UseVisualElement<E>
-    render: RenderComponent
+    useRender: RenderComponent
 }
 
 /**
@@ -30,7 +30,7 @@ export interface MotionComponentConfig<E> {
  */
 export function createMotionComponent<P extends {}, E>(
     Component: string | React.ComponentType<P>,
-    { defaultFeatures, useVisualElement, render }: MotionComponentConfig<E>
+    { defaultFeatures, useVisualElement, useRender }: MotionComponentConfig<E>
 ) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
         /**
@@ -82,7 +82,7 @@ export function createMotionComponent<P extends {}, E>(
             variantContext,
         ])
 
-        const component = render(Component, props, visualElement)
+        const component = useRender(Component, props, visualElement)
 
         /**
          * If this component is a child of AnimateSharedLayout, we need to snapshot the component

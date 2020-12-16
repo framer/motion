@@ -36,6 +36,8 @@ describe("buildHTMLProps", () => {
                 "--a": 100,
                 touchAction: "none",
                 userSelect: "none",
+                WebkitTouchCallout: "none",
+                WebkitUserSelect: "none",
             },
             draggable: false,
         })
