@@ -7,6 +7,7 @@ import { isSVGComponent } from "./utils/is-svg-component"
 import { useContext, useEffect } from "react"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
+import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
 
 /**
  * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
@@ -29,13 +30,28 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
         return new DOMVisualElement(parent, ref as any)
     })
 
+    /**
+     * If this is a static component, for instance on the Framer canvas, we essentially want to
+     * treat it as a new component every render.
+     * TODO: This shouldn't live in a DOM-specific hook but there'll be a better sense of where this
+     * and much of this hook should live when creating a new type of VisualElement (e.g Three.js).
+     */
+    if (isStatic) {
+        visualElement.values.clear()
+        visualElement.latest = {}
+    }
+
     visualElement.updateConfig({
         ...visualElement.config,
         enableHardwareAcceleration: !isStatic,
         ...props,
     })
 
-    visualElement.layoutId = props.layoutId
+    const layoutGroupId = useContext(LayoutGroupContext)
+    visualElement.layoutId =
+        layoutGroupId && props.layoutId
+            ? `${layoutGroupId}-${props.layoutId}`
+            : props.layoutId
 
     const presenceContext = useContext(PresenceContext)
 

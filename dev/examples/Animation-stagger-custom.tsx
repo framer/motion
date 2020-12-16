@@ -70,7 +70,8 @@ const Cell = ({ center, i, onClick }) => {
                 type: "tween",
                 ease: "easeInOut",
                 duration: 0.5,
-                yoyo: Infinity,
+                repeat: Infinity,
+                repeatType: "reverse",
             },
         })
     }

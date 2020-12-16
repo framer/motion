@@ -3,9 +3,9 @@ import { complex } from "style-value-types"
 import { VisualElement } from "../"
 import {
     Target,
+    TargetAndTransition,
     TargetWithKeyframes,
     Transition,
-    Variant,
 } from "../../../types"
 import { isNumericalString } from "../../../utils/is-numerical-string"
 import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
@@ -14,11 +14,6 @@ import { findValueType } from "../../dom/utils/value-types"
 import { ResolvedValues } from "../types"
 import { AnimationDefinition } from "./animation"
 import { resolveVariant } from "./variants"
-
-type SetterOptions = {
-    priority?: number
-    custom?: any
-}
 
 /**
  * Set VisualElement's MotionValue, creating a new MotionValue for it if
@@ -37,25 +32,18 @@ function setMotionValue(
 }
 export function setTarget(
     visualElement: VisualElement,
-    definition: Variant,
-    { priority }: SetterOptions = {}
+    definition: string | TargetAndTransition
 ) {
-    let {
-        transitionEnd = {},
-        transition,
-        ...target
-    } = visualElement.makeTargetAnimatable(
-        resolveVariant(visualElement, definition),
-        false
-    )
+    const resolved = resolveVariant(visualElement, definition)
+    let { transitionEnd = {}, transition = {}, ...target } = resolved
+        ? visualElement.makeTargetAnimatable(resolved, false)
+        : {}
 
     target = { ...target, ...transitionEnd }
 
     for (const key in target) {
         const value = resolveFinalValueInKeyframes(target[key])
         setMotionValue(visualElement, key, value as string | number)
-
-        if (!priority) visualElement.baseTarget[key] = value
     }
 }
 
@@ -80,7 +68,7 @@ export function setValues(
     } else if (typeof definition === "string") {
         return setVariants(visualElement, [definition])
     } else {
-        setTarget(visualElement, definition)
+        setTarget(visualElement, definition as any)
     }
 }
 

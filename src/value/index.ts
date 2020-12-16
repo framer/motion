@@ -104,7 +104,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     constructor(init: V) {
-        this.set(init, false)
+        this.current = init
         this.canTrackVelocity = isFloat(this.current)
     }
 
@@ -340,7 +340,7 @@ export class MotionValue<V = any> {
     start(animation: StartAnimation) {
         this.stop()
 
-        return new Promise(resolve => {
+        return new Promise((resolve) => {
             this.stopAnimation = animation(resolve)
         }).then(() => this.clearAnimation())
     }

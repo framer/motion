@@ -6,12 +6,12 @@ export function buildHTMLProps(
     { drag }: MotionProps
 ) {
     // The `any` isn't ideal but it is the type of createElement props argument
-    const htmlProps: any = {
-        style: {
-            ...visualElement.reactStyle,
-            ...visualElement.style,
-            ...visualElement.vars,
-        },
+    const htmlProps: any = {}
+
+    const style = {
+        ...visualElement.reactStyle,
+        ...visualElement.style,
+        ...visualElement.vars,
     }
 
     if (!!drag) {
@@ -19,12 +19,15 @@ export function buildHTMLProps(
         htmlProps.draggable = false
 
         // Disable text selection
-        htmlProps.style.userSelect = "none"
+        style.userSelect = style.WebkitUserSelect = style.WebkitTouchCallout =
+            "none"
 
         // Disable scrolling on the draggable direction
-        htmlProps.style.touchAction =
+        style.touchAction =
             drag === true ? "none" : `pan-${drag === "x" ? "y" : "x"}`
     }
+
+    htmlProps.style = style
 
     return htmlProps
 }

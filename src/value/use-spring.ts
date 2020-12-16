@@ -1,9 +1,10 @@
-import { useRef, useMemo } from "react"
+import { useRef, useMemo, useContext } from "react"
 import { animate, PlaybackControls, SpringOptions } from "popmotion"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
 import { useOnChange } from "./use-on-change"
+import { MotionConfigContext } from "../motion/context/MotionConfigContext"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.
@@ -28,11 +29,18 @@ export function useSpring(
     source: MotionValue | number,
     config: SpringOptions = {}
 ) {
+    const { isStatic } = useContext(MotionConfigContext)
     const activeSpringAnimation = useRef<PlaybackControls | null>(null)
     const value = useMotionValue(isMotionValue(source) ? source.get() : source)
 
     useMemo(() => {
         return value.attach((v, set) => {
+            /**
+             * A more hollistic approach to this might be to use isStatic to fix VisualElement animations
+             * at that level, but this will work for now
+             */
+            if (isStatic) return set(v)
+
             if (activeSpringAnimation.current) {
                 activeSpringAnimation.current.stop()
             }
@@ -49,7 +57,7 @@ export function useSpring(
         })
     }, Object.values(config))
 
-    useOnChange(source, v => value.set(parseFloat(v)))
+    useOnChange(source, (v) => value.set(parseFloat(v)))
 
     return value
 }

@@ -34,22 +34,21 @@ export function isTransitionDefined({
     return !!Object.keys(transition).length
 }
 
+let legacyRepeatWarning = false
 /**
  * Convert Framer Motion's Transition type into Popmotion-compatible options.
  */
 export function convertTransitionToAnimationOptions<T>({
-    yoyo,
-    loop,
-    flip,
     ease,
     times,
+    yoyo,
+    flip,
+    loop,
     ...transition
 }: PermissiveTransitionDefinition): AnimationOptions<T> {
     const options: AnimationOptions<T> = { ...transition }
 
-    if (times) {
-        ;(options as any).offset = times
-    }
+    if (times) options["offset"] = times
 
     /**
      * Convert any existing durations from seconds to milliseconds
@@ -72,14 +71,25 @@ export function convertTransitionToAnimationOptions<T>({
      * Support legacy transition API
      */
     if (transition.type === "tween") options.type = "keyframes"
-    if (yoyo) {
-        options.repeatType = "reverse"
-    } else if (loop) {
-        options.repeatType = "loop"
-    } else if (flip) {
-        options.repeatType = "mirror"
+
+    /**
+     * TODO: These options are officially removed from the API.
+     */
+    if (yoyo || loop || flip) {
+        warning(
+            !legacyRepeatWarning,
+            "yoyo, loop and flip have been removed from the API. Replace with repeat and repeatType options."
+        )
+        legacyRepeatWarning = true
+        if (yoyo) {
+            options.repeatType = "reverse"
+        } else if (loop) {
+            options.repeatType = "loop"
+        } else if (flip) {
+            options.repeatType = "mirror"
+        }
+        options.repeat = loop || yoyo || flip || transition.repeat
     }
-    options.repeat = loop || yoyo || flip || transition.repeat
 
     /**
      * TODO: Popmotion 9 has the ability to automatically detect whether to use

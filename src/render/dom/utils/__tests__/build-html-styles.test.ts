@@ -141,7 +141,7 @@ describe("buildHTMLStyles", () => {
         })
     })
 
-    test("Adds skew and rotate transforms if present, but not translation and rotate", () => {
+    test("Adds rotate transforms if present, but not translation, scale and skew", () => {
         /**
          * Translation and rotate are already baked into deltaFinal
          */
@@ -166,8 +166,7 @@ describe("buildHTMLStyles", () => {
         })
 
         expect(style).toEqual({
-            transform:
-                "translate3d(1px, 2px, 0) scale(0.5, 2) rotate(90deg) skew(3deg)",
+            transform: "translate3d(1px, 2px, 0) rotate(90deg) scale(0.5, 2)",
             transformOrigin: "80% 20% 0",
         })
     })
