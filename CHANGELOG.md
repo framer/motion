@@ -2,6 +2,10 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.0] 2020-12-18
+
+-   `whileFocus`
+
 ## [3.0.1] 2020-12-18
 
 ### Fixed
