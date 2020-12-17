@@ -49,6 +49,7 @@ export const Animation: MotionFeature = {
     getComponent: ({
         animate,
         whileHover,
+        whileFocus,
         whileTap,
         whileDrag,
         exit,
@@ -56,6 +57,7 @@ export const Animation: MotionFeature = {
     }) => {
         return animate ||
             whileHover ||
+            whileFocus ||
             whileTap ||
             whileDrag ||
             exit ||

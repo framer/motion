@@ -38,6 +38,7 @@ export enum AnimationType {
     Hover = "whileHover",
     Tap = "whileTap",
     Drag = "whileDrag",
+    Focus = "whileFocus",
     Exit = "exit",
 }
 
@@ -48,6 +49,7 @@ export const variantPriorityOrder = [
     AnimationType.Hover,
     AnimationType.Tap,
     AnimationType.Drag,
+    AnimationType.Focus,
     AnimationType.Exit,
 ]
 
@@ -418,6 +420,7 @@ function createState() {
         [AnimationType.Hover]: createTypeState(),
         [AnimationType.Tap]: createTypeState(),
         [AnimationType.Drag]: createTypeState(),
+        [AnimationType.Focus]: createTypeState(),
         [AnimationType.Exit]: createTypeState(),
     }
 }

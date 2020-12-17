@@ -167,6 +167,7 @@ function checkIfControllingVariants(props: MotionProps) {
         isVariantLabel(props.whileHover) ||
         isVariantLabel(props.whileDrag) ||
         isVariantLabel(props.whileTap) ||
+        isVariantLabel(props.whileFocus) ||
         isVariantLabel(props.exit)
     )
 }
