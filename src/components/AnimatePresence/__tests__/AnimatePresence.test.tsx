@@ -1,6 +1,6 @@
 import { render } from "../../../../jest.setup"
 import * as React from "react"
-import { AnimatePresence, motion, useAnimation } from "../../.."
+import { AnimatePresence, motion, MotionConfig, useAnimation } from "../../.."
 import { motionValue } from "../../../value"
 
 describe("AnimatePresence", () => {
@@ -436,9 +436,11 @@ describe("AnimatePresence with custom components", () => {
             const Component = () => {
                 const controls = useAnimation()
                 return (
-                    <AnimatePresence initial={false}>
-                        <motion.div animate={controls} />
-                    </AnimatePresence>
+                    <MotionConfig isStatic>
+                        <AnimatePresence initial={false}>
+                            <motion.div animate={controls} />
+                        </AnimatePresence>
+                    </MotionConfig>
                 )
             }
 
