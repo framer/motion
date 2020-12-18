@@ -26,5 +26,5 @@ export function useGestures<GestureHandlers>(
     usePanGesture(props, visualElement)
     useTapGesture(props, visualElement)
     useHoverGesture(props, visualElement)
-    useFocusGesture(visualElement)
+    useFocusGesture(props, visualElement)
 }

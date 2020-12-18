@@ -1,7 +1,7 @@
 import { TargetAndTransition } from "../types"
 import { VisualElement } from "../render/VisualElement"
 import { AnimationType } from "../render/VisualElement/utils/animation-state"
-import { VariantLabels } from "../motion/types"
+import { MotionProps, VariantLabels } from "../motion/types"
 import { useDomEvent } from "../events/use-dom-event"
 
 /**
@@ -26,12 +26,18 @@ export interface FocusHandlers {
  * @param ref
  * @internal
  */
-export function useFocusGesture(visualElement: VisualElement) {
-    useDomEvent(visualElement, "focus", () => {
+export function useFocusGesture(
+    { whileFocus }: MotionProps,
+    visualElement: VisualElement
+) {
+    const onFocus = () => {
         visualElement.animationState?.setActive(AnimationType.Focus, true)
-    })
+    }
 
-    useDomEvent(visualElement, "blur", () => {
+    const onBlur = () => {
         visualElement.animationState?.setActive(AnimationType.Focus, false)
-    })
+    }
+
+    useDomEvent(visualElement, "focus", whileFocus ? onFocus : undefined)
+    useDomEvent(visualElement, "blur", whileFocus ? onBlur : undefined)
 }

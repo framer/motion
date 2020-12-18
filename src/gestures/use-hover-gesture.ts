@@ -89,24 +89,32 @@ const filterTouch = (listener: FilteredTouchListener) => (
  * @internal
  */
 export function useHoverGesture(
-    { onHoverStart, onHoverEnd }: HoverHandlers,
+    { onHoverStart, onHoverEnd, whileHover }: HoverHandlers,
     visualElement: VisualElement
 ) {
+    const onPointerEnter = filterTouch(
+        (event: MouseEvent | PointerEvent, info: EventInfo) => {
+            onHoverStart?.(event, info)
+            visualElement.animationState?.setActive(AnimationType.Hover, true)
+        }
+    )
+
+    const onPointerLeave = filterTouch(
+        (event: MouseEvent | PointerEvent, info: EventInfo) => {
+            onHoverEnd?.(event, info)
+            visualElement.animationState?.setActive(AnimationType.Hover, false)
+        }
+    )
+
     usePointerEvent(
         visualElement,
         "pointerenter",
-        filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
-            onHoverStart?.(event, info)
-            visualElement.animationState?.setActive(AnimationType.Hover, true)
-        })
+        onHoverStart || whileHover ? onPointerEnter : undefined
     )
 
     usePointerEvent(
         visualElement,
         "pointerleave",
-        filterTouch((event: MouseEvent | PointerEvent, info: EventInfo) => {
-            onHoverEnd?.(event, info)
-            visualElement.animationState?.setActive(AnimationType.Hover, false)
-        })
+        onHoverEnd || whileHover ? onPointerLeave : undefined
     )
 }
