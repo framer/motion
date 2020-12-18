@@ -120,11 +120,11 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "28.5 kB"
+            "maxSize": "28.6 kB"
         },
         {
             "path": "./dist/minimal-component.js",
-            "maxSize": "13.15 kB"
+            "maxSize": "13.2 kB"
         }
     ]
 }

@@ -1,6 +1,6 @@
 import { render } from "../../../../jest.setup"
 import * as React from "react"
-import { AnimatePresence, motion } from "../../.."
+import { AnimatePresence, motion, useAnimation } from "../../.."
 import { motionValue } from "../../../value"
 
 describe("AnimatePresence", () => {
@@ -429,6 +429,26 @@ describe("AnimatePresence with custom components", () => {
         expect(element).toHaveStyle(
             "transform: translateX(100px) translateZ(0)"
         )
+    })
+
+    test("Animation controls children of initial={false} don't throw`", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const controls = useAnimation()
+                return (
+                    <AnimatePresence initial={false}>
+                        <motion.div animate={controls} />
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+
+            resolve(true)
+        })
+
+        expect(promise).resolves.not.toThrowError()
     })
 
     test("Animates out a component when its removed", async () => {

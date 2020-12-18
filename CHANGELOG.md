@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.0.1] 2020-12-18
+
+### Fixed
+
+-   Error when mixing `initial={false}` and `animate={controls}`.
+
 ## [3.0.0] 2020-12-16
 
 ### Added
