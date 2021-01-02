@@ -16,10 +16,7 @@ import {
     applyBoxTransforms,
     removeBoxTransforms,
 } from "../../utils/geometry/delta-apply"
-import {
-    updateBoxDelta,
-    updateTreeScale,
-} from "../../utils/geometry/delta-calc"
+import { updateBoxDelta } from "../../utils/geometry/delta-calc"
 import { TargetAndTransition, Transition } from "../../types"
 import { eachAxis } from "../../utils/each-axis"
 import { motionValue, MotionValue } from "../../value"
@@ -36,6 +33,9 @@ import {
     checkTargetForNewValues,
     getOrigin,
 } from "../VisualElement/utils/setters"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { MotionProps } from "../../motion"
+import { isCSSVariable } from "./utils/is-css-variable"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -131,7 +131,13 @@ export class HTMLVisualElement<
      * Read a value directly from the HTMLElement style.
      */
     read(key: string): number | string | null {
-        return this.getComputedStyle()[key] || 0
+        const computedStyle = this.getComputedStyle()
+
+        return (
+            (isCSSVariable(key)
+                ? computedStyle.getPropertyValue(key)
+                : computedStyle[key]) || 0
+        )
     }
 
     addValue(key: string, value: MotionValue) {
@@ -154,6 +160,13 @@ export class HTMLVisualElement<
         } else {
             return this.read(key)
         }
+    }
+
+    getBaseValue(key: string, props: MotionProps) {
+        const style = props.style?.[key]
+        return style !== undefined && !isMotionValue(style)
+            ? style
+            : super.getBaseValue(key, props)
     }
 
     /**
@@ -286,7 +299,6 @@ export class HTMLVisualElement<
      * This is considered mutable to avoid object creation on each frame.
      */
     treeScale: Point2D = { x: 1, y: 1 }
-    private prevTreeScale: Point2D = { x: 1, y: 1 }
 
     /**
      * The delta between the boxCorrected and the desired
@@ -408,7 +420,7 @@ export class HTMLVisualElement<
     }
 
     rebaseTargetBox(force = false, box: AxisBox2D = this.box) {
-        const { x, y } = this.axisProgress
+        const { x, y } = this.getAxisProgress()
         const shouldRebase =
             this.box &&
             !this.isTargetBoxLocked &&
@@ -484,19 +496,23 @@ export class HTMLVisualElement<
         this.rootParent.scheduleUpdateLayoutDelta()
     }
 
-    /**
-     *
-     */
-    axisProgress: MotionPoint = {
-        x: motionValue(0),
-        y: motionValue(0),
+    private axisProgress?: MotionPoint
+    getAxisProgress(): MotionPoint {
+        if (!this.axisProgress) {
+            this.axisProgress = {
+                x: motionValue(0),
+                y: motionValue(0),
+            }
+        }
+
+        return this.axisProgress as MotionPoint
     }
 
     /**
      *
      */
     startLayoutAxisAnimation(axis: "x" | "y", transition: Transition) {
-        const progress = this.axisProgress[axis]
+        const progress = this.getAxisProgress()[axis]
 
         const { min, max } = this.targetBox[axis]
         const length = max - min
@@ -510,7 +526,7 @@ export class HTMLVisualElement<
     }
 
     stopLayoutAnimation() {
-        eachAxis((axis) => this.axisProgress[axis].stop())
+        eachAxis((axis) => this.getAxisProgress()[axis].stop())
     }
 
     updateLayoutDelta = () => {
@@ -525,6 +541,22 @@ export class HTMLVisualElement<
         this.children.forEach(fireUpdateLayoutDelta)
     }
 
+    withoutTransform(callback: () => void) {
+        if (this.isLayoutProjectionEnabled) {
+            this.resetTransform()
+        }
+
+        if (this.parent) {
+            ;(this.parent as any).withoutTransform(callback)
+        } else {
+            callback()
+        }
+
+        if (this.isLayoutProjectionEnabled) {
+            this.element.style.transform = this.style.transform as string
+        }
+    }
+
     /**
      * Update the layout deltas to reflect the relative positions of the layout
      * and the desired target box
@@ -536,26 +568,14 @@ export class HTMLVisualElement<
          */
         resetBox(this.boxCorrected, this.box)
 
-        /**
-         * If this component has a parent, update this treeScale by incorporating the parent's
-         * delta into its treeScale.
-         */
-        if (this.parent) {
-            this.prevTreeScale.x = this.treeScale.x
-            this.prevTreeScale.y = this.treeScale.y
-
-            updateTreeScale(
-                this.treeScale,
-                (this.parent as any).treeScale,
-                (this.parent as any).delta
-            )
-        }
+        const prevTreeScaleX = this.treeScale.x
+        const prevTreeScaleY = this.treeScale.y
 
         /**
          * Apply all the parent deltas to this box to produce the corrected box. This
          * is the layout box, as it will appear on screen as a result of the transforms of its parents.
          */
-        applyTreeDeltas(this.boxCorrected, this.treePath as any)
+        applyTreeDeltas(this.boxCorrected, this.treeScale, this.treePath as any)
 
         /**
          * Update the delta between the corrected box and the target box before user-set transforms were applied.
@@ -591,8 +611,8 @@ export class HTMLVisualElement<
         if (
             deltaTransform !== this.deltaTransform ||
             // Also compare calculated treeScale, for values that rely on only this for scale correction.
-            this.prevTreeScale.x !== this.treeScale.x ||
-            this.prevTreeScale.y !== this.treeScale.y
+            prevTreeScaleX !== this.treeScale.x ||
+            prevTreeScaleY !== this.treeScale.y
         ) {
             this.scheduleRender()
         }

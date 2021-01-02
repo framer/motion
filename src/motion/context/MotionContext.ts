@@ -1,13 +1,19 @@
 import { createContext, useContext } from "react"
 import { VisualElement } from "../../render/VisualElement"
+import { VariantLabels } from "../types"
 
 export interface VariantContextProps {
     parent?: VisualElement
-    initial?: string | string[]
-    animate?: string | string[]
+    initial?: VariantLabels | false
+    animate?: VariantLabels
+    whileHover?: VariantLabels
+    whileTap?: VariantLabels
+    whileDrag?: VariantLabels
+    whileFocus?: VariantLabels
+    exit?: VariantLabels
 }
 
-interface MotionContextProps {
+export interface MotionContextProps {
     visualElement?: VisualElement
     variantContext: VariantContextProps
 }

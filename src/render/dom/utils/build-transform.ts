@@ -1,6 +1,6 @@
 import { TransformTemplate } from "../../../motion/types"
 import { ResolvedValues } from "../../VisualElement/types"
-import { sortTransformProps, boxDistortingKeys } from "./transform"
+import { sortTransformProps } from "./transform"
 import { Point2D, BoxDelta } from "../../../types/geometry"
 import { TransformOrigin } from "../types"
 import { delta } from "../../../utils/geometry"
@@ -83,8 +83,9 @@ export function buildTransformOrigin({
  */
 export function buildLayoutProjectionTransform(
     { x, y }: BoxDelta,
-    treeScale: Point2D
-) {
+    treeScale: Point2D,
+    latestTransform?: ResolvedValues
+): string {
     /**
      * The translations we use to calculate are always relative to the viewport coordinate space.
      * But when we apply scales, we also scale the coordinate space of an element and its children.
@@ -94,7 +95,18 @@ export function buildLayoutProjectionTransform(
     const xTranslate = x.translate / treeScale.x
     const yTranslate = y.translate / treeScale.y
 
-    return `translate3d(${xTranslate}px, ${yTranslate}px, 0) scale(${x.scale}, ${y.scale})`
+    let transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `
+
+    if (latestTransform) {
+        const { rotate, rotateX, rotateY } = latestTransform
+        if (rotate) transform += `rotate(${rotate}) `
+        if (rotateX) transform += `rotateX(${rotateX}) `
+        if (rotateY) transform += `rotateY(${rotateY}) `
+    }
+
+    transform += `scale(${x.scale}, ${y.scale})`
+
+    return !latestTransform && transform === identityProjection ? "" : transform
 }
 
 export const identityProjection = buildLayoutProjectionTransform(delta(), {
@@ -107,27 +119,4 @@ export const identityProjection = buildLayoutProjectionTransform(delta(), {
  */
 export function buildLayoutProjectionTransformOrigin({ x, y }: BoxDelta) {
     return `${x.origin * 100}% ${y.origin * 100}% 0`
-}
-
-/**
- * Build a transform string only from the properties that distort bounding box measurements
- * (rotate and skew)
- */
-export function buildBoxDistortingTransforms(
-    transform: ResolvedValues,
-    transformKeys: string[]
-) {
-    let transformString = ""
-
-    transformKeys.sort(sortTransformProps)
-
-    const numTransformKeys = transformKeys.length
-    for (let i = 0; i < numTransformKeys; i++) {
-        const key = transformKeys[i]
-        if (boxDistortingKeys.has(key)) {
-            transformString += `${key}(${transform[key]}) `
-        }
-    }
-
-    return transformString
 }

@@ -6,7 +6,7 @@ import {
 import { addDomEvent } from "../../events/use-dom-event"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
-const viewportScrollValues = createScrollMotionValues()
+let viewportScrollValues: ScrollMotionValues
 
 function getViewportScrollOffsets() {
     return {
@@ -68,6 +68,13 @@ function addEventListeners() {
  * @public
  */
 export function useViewportScroll(): ScrollMotionValues {
+    /**
+     * Lazy-initialise the viewport scroll values
+     */
+    if (!viewportScrollValues) {
+        viewportScrollValues = createScrollMotionValues()
+    }
+
     useIsomorphicLayoutEffect(() => {
         !hasListeners && addEventListeners()
     }, [])

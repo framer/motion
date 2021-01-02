@@ -4,7 +4,6 @@ import { MotionConfigContext } from "../context/MotionConfigContext"
 import { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from ".."
 import { MotionFeature } from "./types"
-import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 
 /**
  * Load features via renderless components based on the provided MotionProps
@@ -37,7 +36,6 @@ export function useFeatures(
                         key={key}
                         {...props}
                         visualElement={visualElement as any}
-                        inherit={checkShouldInheritVariant(props)}
                     />
                 )
         }

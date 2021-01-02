@@ -1,9 +1,9 @@
 import { MotionProps } from "../types"
-import { useGestures } from "../../gestures"
+import { GestureHandlers, useGestures } from "../../gestures"
 import { FeatureProps, MotionFeature } from "./types"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 
-export const gestureProps = [
+export const gestureProps: Array<keyof GestureHandlers> = [
     "onPan",
     "onPanStart",
     "onPanEnd",
@@ -11,10 +11,11 @@ export const gestureProps = [
     "onTap",
     "onTapStart",
     "onTapCancel",
-    "whileTap",
-    "whileHover",
     "onHoverStart",
     "onHoverEnd",
+    "whileFocus",
+    "whileTap",
+    "whileHover",
 ]
 
 const GestureComponent = makeRenderlessComponent(
@@ -29,7 +30,7 @@ const GestureComponent = makeRenderlessComponent(
 export const Gestures: MotionFeature = {
     key: "gestures",
     shouldRender: (props: MotionProps) => {
-        return gestureProps.some(key => props.hasOwnProperty(key))
+        return gestureProps.some((key) => props.hasOwnProperty(key))
     },
     getComponent: () => GestureComponent,
 }

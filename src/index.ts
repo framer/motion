@@ -23,10 +23,8 @@ export { useMotionValue } from "./value/use-motion-value"
 export { useMotionTemplate } from "./value/use-motion-template"
 export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { resolveMotionValue } from "./value/utils/resolve-motion-value"
-export { useInvertedScale } from "./value/use-inverted-scale"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
-export { ScrollMotionValues } from "./value/scroll/utils"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 
@@ -44,12 +42,15 @@ export {
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
 export { animate } from "./animation/animate"
+export { animateVisualElement } from "./render/VisualElement/utils/animation"
 export {
     HoverHandlers,
     TapHandlers,
     PanHandlers,
+    FocusHandlers,
     TapInfo,
     PanInfo,
+    GestureHandlers,
     useTapGesture,
     usePanGesture,
     useGestures,
@@ -68,10 +69,7 @@ export {
 export { useDomEvent } from "./events/use-dom-event"
 export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
-export { useAnimatedState } from "./animation/use-animated-state"
 export { addScaleCorrection } from "./render/dom/layout/scale-correction"
-export { startAnimation } from "./animation/utils/transitions"
-export { startVisualElementAnimation } from "./render/VisualElement/utils/animation"
 
 /**
  * Contexts
@@ -81,6 +79,7 @@ export {
     MotionConfigContext,
 } from "./motion/context/MotionConfigContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
+export { LayoutGroupContext } from "./components/AnimateSharedLayout/LayoutGroupContext"
 
 /**
  * Types
@@ -92,6 +91,7 @@ export {
     ForwardRefComponent,
 } from "./render/dom/types"
 export { CustomDomComponent } from "./render/dom"
+export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,
     MotionProps,
@@ -127,7 +127,6 @@ export {
 } from "./types"
 export { EventInfo } from "./events/types"
 export { MotionFeature, FeatureProps } from "./motion/features/types"
-export { GestureHandlers } from "./gestures"
 export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
@@ -144,3 +143,9 @@ export {
     createBatcher,
 } from "./components/AnimateSharedLayout/SharedLayoutContext"
 export * from "./types/geometry"
+
+/**
+ * Deprecated
+ */
+export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/use-animated-state"
+export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"

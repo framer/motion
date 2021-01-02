@@ -3,14 +3,11 @@ import { VisualElement } from "../render/VisualElement"
 import { useConstant } from "../utils/use-constant"
 import { ResolvedValues } from "../render/VisualElement/types"
 import {
-    AnimationDefinition,
-    startVisualElementAnimation,
-} from "../render/VisualElement/utils/animation"
-import {
     checkTargetForNewValues,
     getOrigin,
 } from "../render/VisualElement/utils/setters"
 import { TargetAndTransition } from "../types"
+import { animateVisualElement } from "../render/VisualElement/utils/animation"
 
 /**
  * This is just a very basic VisualElement, more of a hack to keep supporting useAnimatedState with
@@ -69,11 +66,8 @@ export function useAnimatedState(initialState: any) {
     }, [])
 
     const startAnimation = useConstant(
-        () => (animationDefinition: AnimationDefinition) => {
-            return startVisualElementAnimation(
-                visualElement,
-                animationDefinition
-            )
+        () => (animationDefinition: TargetAndTransition) => {
+            return animateVisualElement(visualElement, animationDefinition)
         }
     )
 

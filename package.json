@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "2.9.4",
+    "version": "3.1.1",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/framer-motion.es.js",
     "types": "types/index.d.ts",
@@ -35,8 +35,8 @@
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
     },
     "peerDependencies": {
-        "react": "^16.8",
-        "react-dom": "^16.8"
+        "react": ">=16.8",
+        "react-dom": ">=16.8"
     },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
@@ -91,10 +91,10 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
-        "framesync": "^4.1.0",
+        "framesync": "^5.0.0",
         "hey-listen": "^1.0.8",
-        "popmotion": "9.0.0-rc.20",
-        "style-value-types": "^3.1.9",
+        "popmotion": "^9.0.2",
+        "style-value-types": "^3.2.0",
         "tslib": "^1.10.0"
     },
     "optionalDependencies": {
@@ -119,11 +119,11 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "28 kB"
+            "maxSize": "28.6 kB"
         },
         {
             "path": "./dist/minimal-component.js",
-            "maxSize": "13 kB"
+            "maxSize": "13.2 kB"
         }
     ]
 }

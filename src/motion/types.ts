@@ -6,7 +6,6 @@ import {
     Target,
     Transition,
     TargetAndTransition,
-    TargetResolver,
     Omit,
     MakeCustomValueType,
 } from "../types"
@@ -205,7 +204,7 @@ export interface AnimationProps {
      * }
      * ```
      */
-    exit?: TargetAndTransition | VariantLabels | TargetResolver
+    exit?: TargetAndTransition | VariantLabels
 
     /**
      * Variants allow you to define animation states and organise them by name. They allow
@@ -217,7 +216,7 @@ export interface AnimationProps {
      * @library
      *
      * After passing variants to one or more `Frame`'s `variants` prop, these variants
-     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
+     * can be used in place of values on the `animate`, `initial`, `whileFocus`, `whileTap` and `whileHover` props.
      *
      * ```jsx
      * const variants = {
@@ -236,7 +235,7 @@ export interface AnimationProps {
      * @motion
      *
      * After passing variants to one or more `motion` component's `variants` prop, these variants
-     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
+     * can be used in place of values on the `animate`, `initial`, `whileFocus`, `whileTap` and `whileHover` props.
      *
      * ```jsx
      * const variants = {

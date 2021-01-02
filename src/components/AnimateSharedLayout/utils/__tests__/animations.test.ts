@@ -1,8 +1,8 @@
 import { createSwitchAnimation, createCrossfadeAnimation } from "../animations"
 import { LayoutStack } from "../stack"
-import { Presence, VisibilityAction } from "../types" //, StackPosition, VisibilityAction } from "../types"
+import { Presence, VisibilityAction } from "../../types" //, StackPosition, VisibilityAction } from "../types"
 import { makeChild } from "./utils"
-import { motionValue } from "../../../value"
+import { motionValue } from "../../../../value"
 
 function update(stack: LayoutStack) {
     stack.updateLeadAndFollow()

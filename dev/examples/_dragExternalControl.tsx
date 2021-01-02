@@ -20,13 +20,13 @@ export const App = () => {
         >
             <motion.div
                 style={style}
-                onTapStart={e => setDragOriginEvent(e)}
+                onTapStart={(e) => setDragOriginEvent(e)}
                 onTapCancel={() => setDragOriginEvent(null)}
                 onTap={() => setDragOriginEvent(null)}
             />
             <motion.div
                 style={style}
-                onTapStart={e => setDragOriginEvent(e)}
+                onTapStart={(e) => setDragOriginEvent(e)}
                 onTapCancel={() => setDragOriginEvent(null)}
                 onTap={() => setDragOriginEvent(null)}
             />

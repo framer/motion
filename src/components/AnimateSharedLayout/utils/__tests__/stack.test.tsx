@@ -1,7 +1,7 @@
 import { LayoutStack, findLeadAndFollow, LeadAndFollow } from "../stack"
 import { makeChild } from "./utils"
-import { Presence } from "../types"
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
+import { Presence } from "../../types"
+import { HTMLVisualElement } from "../../../../render/dom/HTMLVisualElement"
 
 function testFindLead(
     stack: HTMLVisualElement[],
