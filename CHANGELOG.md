@@ -2,6 +2,48 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.1] 2020-12-18
+
+### Updated
+
+-   Updated dependencies.
+
+## [3.1.0] 2020-12-18
+
+### Added
+
+-   `whileFocus`
+
+## [3.0.1] 2020-12-18
+
+### Fixed
+
+-   Error when mixing `initial={false}` and `animate={controls}`.
+
+## [3.0.0] 2020-12-16
+
+### Added
+
+-   `whileDrag`
+-   Adding Safari-prefixed `userSelect` css to draggable elements.
+-   `whileHover`, `whileTap` and `exit` all now accept variant lists.
+
+### Changed
+
+-   New behaviour for when values are removed from animation props (`animate`, `whileHover`, `exit` etc). The value will be searched for in active props of a lower priority running (`style` <- `animate` <- `whileHover` <- `whileTap` <- `whileDrag` <- `exit`). This may introduce subtle behavioural changes, hence the major.
+
+### Removed
+
+-   The deprecated `useInvertedScale` hook. Use the `layout` prop instead.
+-   The deprecated `yoyo`, `flip` and `loop` options. Use `repeat` and `repeatType` options instead.
+
+### Fixed
+
+-   Correctly applying `transform` on SVG elements.
+-   Lazy-initialising viewport scroll, VisualElement.axisProgress, and reduced motion `MotionValue`s, for increased startup performance.
+-   Improved measurement scheduling for `drag` components and nested `AnimateSharedLayout` trees.
+-   Robust calculation of `treeScale`.
+
 ## [2.9.5] 2020-11-16
 
 ### Added

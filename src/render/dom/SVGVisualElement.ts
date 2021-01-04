@@ -4,6 +4,9 @@ import { Dimensions, DOMVisualElementConfig } from "./types"
 import { ResolvedValues } from "../VisualElement/types"
 import { camelCaseAttributes } from "./utils/svg-camel-case-attributes"
 import { camelToDash } from "./utils/camel-to-dash"
+import sync from "framesync"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { MotionProps } from "../../motion"
 
 /**
  * A VisualElement for SVGElements. Inherits from and extends HTMLVisualElement as the two
@@ -69,6 +72,19 @@ export class SVGVisualElement extends HTMLVisualElement<
         if (isPath(this.element)) {
             this.totalPathLength = this.element.getTotalLength()
         }
+
+        /**
+         * Ensure we render the element as soon as possible to reflect the measured dimensions.
+         * Preferably this would happen synchronously but we put it in rAF to prevent layout thrashing.
+         */
+        sync.render(() => this.render())
+    }
+
+    getBaseValue(key: string, props: MotionProps) {
+        const prop = props[key]
+        return prop !== undefined && !isMotionValue(prop)
+            ? prop
+            : super.getBaseValue(key, props)
     }
 
     /**

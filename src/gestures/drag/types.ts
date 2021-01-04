@@ -1,9 +1,10 @@
 import { RefObject } from "react"
 import { PanInfo } from "../PanSession"
-import { Inertia } from "../../types"
+import { Inertia, TargetAndTransition } from "../../types"
 import { BoundingBox2D } from "../../types/geometry"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"
+import { VariantLabels } from "../../motion/types"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,
@@ -192,6 +193,15 @@ export interface DraggableProps extends DragHandlers {
      * ```
      */
     drag?: boolean | "x" | "y"
+
+    /**
+     * Properties or variant label to animate to while the drag gesture is recognised.
+     *
+     * ```jsx
+     * <motion.div whileDrag={{ scale: 1.2 }} />
+     * ```
+     */
+    whileDrag?: VariantLabels | TargetAndTransition
 
     /**
      * If `true`, this will lock dragging to the initially-detected direction. Defaults to `false`.

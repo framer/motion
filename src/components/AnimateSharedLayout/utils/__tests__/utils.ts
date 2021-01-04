@@ -1,6 +1,6 @@
-import { Presence } from "../types"
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
-import { MotionValue, motionValue } from "../../../value"
+import { Presence } from "../../types"
+import { HTMLVisualElement } from "../../../../render/dom/HTMLVisualElement"
+import { MotionValue, motionValue } from "../../../../value"
 
 export function makeChild(
     presence = Presence.Present,

@@ -458,6 +458,30 @@ describe("dragging", () => {
         })
     })
 
+    test("whileDrag applies animation state", async () => {
+        const opacity = motionValue(0)
+        const Component = () => (
+            <MockDrag>
+                <motion.div
+                    drag
+                    whileDrag={{ opacity: 0.5 }}
+                    transition={{ type: false }}
+                    style={{ opacity }}
+                />
+            </MockDrag>
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(container.firstChild).to(0, 100)
+        await pointer.to(4, 50)
+        expect(opacity.get()).toBe(0.5)
+        await pointer.to(10, 200)
+        pointer.end()
+        expect(opacity.get()).toBe(0)
+    })
+
     test("enable drag propagation", async () => {
         const childX = motionValue(0)
         const parentX = motionValue(0)

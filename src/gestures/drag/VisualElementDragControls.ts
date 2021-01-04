@@ -29,6 +29,7 @@ import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
+import { AnimationType } from "../../render/VisualElement/utils/animation-state"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,
@@ -220,6 +221,10 @@ export class VisualElementDragControls {
 
             // Fire onDragStart event
             this.props.onDragStart?.(event, info)
+            this.visualElement.animationState?.setActive(
+                AnimationType.Drag,
+                true
+            )
         }
 
         const onMove = (event: AnyPointerEvent, info: PanInfo) => {
@@ -271,14 +276,13 @@ export class VisualElementDragControls {
      * Ensure the component's layout and target bounding boxes are up-to-date.
      */
     prepareBoundingBox() {
-        const element = this.visualElement.getInstance()
-        const transform = element.style.transform
-        this.visualElement.resetTransform()
-        this.visualElement.measureLayout()
-        element.style.transform = transform
-        this.visualElement.rebaseTargetBox(
+        const { visualElement } = this
+        visualElement.withoutTransform(() => {
+            visualElement.measureLayout()
+        })
+        visualElement.rebaseTargetBox(
             true,
-            this.visualElement.getBoundingBoxWithoutTransforms()
+            visualElement.getBoundingBoxWithoutTransforms()
         )
     }
 
@@ -367,6 +371,8 @@ export class VisualElementDragControls {
             this.openGlobalLock()
             this.openGlobalLock = null
         }
+
+        this.visualElement.animationState?.setActive(AnimationType.Drag, false)
     }
 
     stop(event: AnyPointerEvent, info: PanInfo) {

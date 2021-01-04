@@ -7,7 +7,7 @@ import { buildSVGProps } from "./utils/build-svg-props"
 import { SVGVisualElement } from "./SVGVisualElement"
 import { isSVGComponent } from "./utils/is-svg-component"
 
-export function render<Props>(
+export function useRender<Props>(
     Component: string | React.ComponentType<Props>,
     props: MotionProps,
     visualElement: HTMLVisualElement | SVGVisualElement

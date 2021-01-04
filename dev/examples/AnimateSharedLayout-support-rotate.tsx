@@ -10,7 +10,7 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <AnimateSharedLayout _supportRotate>
+        <AnimateSharedLayout>
             <motion.div
                 layout
                 initial={false}

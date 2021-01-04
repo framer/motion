@@ -97,6 +97,33 @@ describe("isStatic prop", () => {
         )
     })
 
+    test("it doesn't override defined styles if values are removed", () => {
+        function Component({
+            initial,
+        }: {
+            initial?: { [key: string]: number }
+        }) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div
+                        data-testid="child"
+                        initial={initial}
+                        style={{ opacity: 0.5 }}
+                    />
+                </MotionConfig>
+            )
+        }
+        const { getByTestId, rerender } = render(
+            <Component initial={{ opacity: 0.8 }} />
+        )
+
+        expect(getByTestId("child") as Element).toHaveStyle("opacity: 0.8")
+
+        rerender(<Component />)
+
+        expect(getByTestId("child") as Element).toHaveStyle("opacity: 0.5")
+    })
+
     test("it propagates changes in `initial` if isStatic", () => {
         const variants = {
             visible: { opacity: 1 },
