@@ -333,6 +333,19 @@ describe("useAnimation", () => {
         return await expect(promise).resolves.toEqual([1, 2])
     })
 
+    test("pathOffset types are inferred correctly", async () => {
+        const Component = () => {
+            const controls = useAnimation()
+
+            useEffect(() => {
+                controls.start({ pathOffset: 1 })
+            })
+
+            return <motion.div animate={controls} />
+        }
+        render(<Component />)
+    })
+
     test(".set updates variants throughout a tree", async () => {
         const promise = new Promise((resolve) => {
             const Component = () => {
