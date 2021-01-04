@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.2] 2020-01-04
+
+### Fixed
+
+-   `snapToCursor` respects drag axis.
+
 ## [3.1.1] 2020-12-18
 
 ### Updated
