@@ -1,8 +1,7 @@
 import { useRef } from "react"
-import { EventInfo, EventHandler } from "../events/types"
+import { EventInfo } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
-import { RemoveEvent } from "./types"
 import { getGlobalLock } from "./drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
@@ -190,61 +189,53 @@ export function useTapGesture(
 ) {
     const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
     const isPressing = useRef(false)
+    const cancelPointerEndListeners = useRef<Function | null>(null)
 
-    const cancelPointerEventListener = useRef<RemoveEvent | undefined | null>(
-        null
-    )
-
-    function removePointerUp() {
-        cancelPointerEventListener.current?.()
-        cancelPointerEventListener.current = null
+    function removePointerEndListener() {
+        cancelPointerEndListeners.current?.()
+        cancelPointerEndListeners.current = null
     }
 
-    // We load this event handler into a ref so we can later refer to
-    // onPointerUp.current which will always have reference to the latest props
-    const onPointerUp = useRef<EventHandler | null>(null)
-    onPointerUp.current = (event, info) => {
-        const element = visualElement.getInstance()
-
-        removePointerUp()
-        if (!isPressing.current || !element) return
-
+    function checkPointerEnd() {
         isPressing.current = false
-
         visualElement.animationState?.setActive(AnimationType.Tap, false)
 
         // Check the gesture lock - if we get it, it means no drag gesture is active
         // and we can safely fire the tap gesture.
         const openGestureLock = getGlobalLock(true)
-        if (!openGestureLock) return
+        if (!openGestureLock) return false
         openGestureLock()
-
-        if (!isNodeOrChild(element, event.target as Element)) {
-            onTapCancel?.(event, info)
-        } else {
-            onTap?.(event, info)
-        }
+        return true
     }
 
-    function onPointerDown(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: EventInfo
-    ) {
-        removePointerUp()
+    function onPointerUp(event: PointerEvent, info: EventInfo) {
+        if (!checkPointerEnd()) return
 
-        cancelPointerEventListener.current = pipe(
-            addPointerEvent(window, "pointerup", (event, info) =>
-                onPointerUp.current?.(event, info)
-            ),
-            addPointerEvent(window, "pointercancel", (event, info) =>
-                onPointerUp.current?.(event, info)
-            )
-        ) as RemoveEvent
+        /**
+         * We only count this as a tap gesture if the event.target is the same
+         * as, or a child of, this component's element
+         */
+        !isNodeOrChild(visualElement.getInstance(), event.target as Element)
+            ? onTapCancel?.(event, info)
+            : onTap?.(event, info)
+    }
 
-        const element = visualElement.getInstance()
-        if (!element || isPressing.current) return
+    function onPointerCancel(event: PointerEvent, info: EventInfo) {
+        if (!checkPointerEnd()) return
 
+        onTapCancel?.(event, info)
+    }
+
+    function onPointerDown(event: PointerEvent, info: EventInfo) {
+        removePointerEndListener()
+
+        if (isPressing.current) return
         isPressing.current = true
+
+        cancelPointerEndListeners.current = pipe(
+            addPointerEvent(window, "pointerup", onPointerUp),
+            addPointerEvent(window, "pointercancel", onPointerCancel)
+        )
 
         onTapStart?.(event, info)
 
@@ -257,5 +248,5 @@ export function useTapGesture(
         hasPressListeners ? onPointerDown : undefined
     )
 
-    useUnmountEffect(removePointerUp)
+    useUnmountEffect(removePointerEndListener)
 }
