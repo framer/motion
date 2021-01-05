@@ -1,5 +1,5 @@
 import * as React from "react"
-import { render } from "../../../../jest.setup"
+import { mouseEnter, mouseLeave, render } from "../../../../jest.setup"
 import { BoundingBox2D, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, frame, Point, sleep } from "./utils"
 import { fireEvent } from "@testing-library/dom"
@@ -174,6 +174,33 @@ describe("dragging", () => {
         pointer.end()
 
         expect(onDragEnd.promise).resolves.toEqual(p)
+    })
+
+    test("hover events doesn't fire until drag finishes", async () => {
+        const onHoverStart = jest.fn()
+        const onHoverEnd = jest.fn()
+        const Component = () => (
+            <MockDrag>
+                <motion.div
+                    drag
+                    onHoverStart={onHoverStart}
+                    onHoverEnd={onHoverEnd}
+                />
+            </MockDrag>
+        )
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        mouseEnter(container.firstChild as Element)
+        expect(onHoverStart).toBeCalledTimes(1)
+        expect(onHoverEnd).toBeCalledTimes(0)
+        const pointer = await drag(container.firstChild).to(100, 100)
+        mouseLeave(container.firstChild as Element)
+        expect(onHoverStart).toBeCalledTimes(1)
+        expect(onHoverEnd).toBeCalledTimes(0)
+        pointer.end()
+        expect(onHoverEnd).toBeCalledTimes(1)
     })
 
     test("panSessionStart fires", async () => {

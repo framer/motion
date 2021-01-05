@@ -30,9 +30,10 @@ import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
 import { AnimationType } from "../../render/VisualElement/utils/animation-state"
+import { VisualElement } from "../../render/VisualElement"
 
 export const elementDragControls = new WeakMap<
-    HTMLVisualElement,
+    VisualElement,
     VisualElementDragControls
 >()
 
@@ -95,6 +96,12 @@ export class VisualElementDragControls {
      * @internal
      */
     private hasMutatedConstraints: boolean = false
+
+    /**
+     * A reference to the most recent hover event received on this element while the
+     * drag gesture was active
+     */
+    hoverEventToFlush?: () => void
 
     /**
      * Track the initial position of the cursor relative to the dragging element
@@ -381,6 +388,9 @@ export class VisualElementDragControls {
         this.panSession = null
         const isDragging = this.isDragging
         this.cancelDrag()
+
+        this.hoverEventToFlush?.()
+        delete this.hoverEventToFlush
 
         if (!isDragging) return
 
