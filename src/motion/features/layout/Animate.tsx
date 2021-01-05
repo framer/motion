@@ -244,11 +244,20 @@ function AnimateLayoutContextProvider(props: FeatureProps) {
 }
 
 function hasMoved(a: AxisBox2D, b: AxisBox2D) {
-    return hasAxisMoved(a.x, b.x) || hasAxisMoved(a.y, b.y)
+    return (
+        !isZeroBox(a) &&
+        !isZeroBox(b) &&
+        (!axisIsEqual(a.x, b.x) || !axisIsEqual(a.y, b.y))
+    )
 }
 
-function hasAxisMoved(a: Axis, b: Axis) {
-    return a.min !== b.min || a.max !== b.max
+const zeroAxis = { min: 0, max: 0 }
+function isZeroBox(a: AxisBox2D) {
+    return axisIsEqual(a.x, zeroAxis) && axisIsEqual(a.y, zeroAxis)
+}
+
+function axisIsEqual(a: Axis, b: Axis) {
+    return a.min === b.min && a.max === b.max
 }
 
 const defaultTransition = {
