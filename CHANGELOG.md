@@ -12,6 +12,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+-   `onTapCancel` now fires correctly on touch screens.
 -   Fixed types for `pathSpacing` and `pathOffset`.
 
 ## [3.1.2] 2020-01-04

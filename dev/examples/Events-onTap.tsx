@@ -1,5 +1,4 @@
 import * as React from "react"
-import { useState } from "react"
 import { motion } from "@framer"
 
 /**
@@ -13,8 +12,12 @@ const style = {
 }
 
 export const App = () => {
-    const [x, setX] = useState(0)
     return (
-        <motion.div animate={{ x }} style={style} onTap={() => setX(x + 45)} />
+        <motion.div
+            style={style}
+            onTapStart={() => console.log("onTapStart")}
+            onTap={() => console.log("onTap")}
+            onTapCancel={() => console.log("onTapCancel")}
+        />
     )
 }
