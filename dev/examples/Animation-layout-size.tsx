@@ -15,12 +15,29 @@ export const App = () => {
     const [open, cycle] = useCycle(false, true)
 
     return (
-        <motion.div
-            layout
-            transition={{ duration: 2 }}
-            initial={{ borderRadius: 20 }}
-            onTap={() => cycle()}
-            style={{ ...style, height: open ? 300 : 100 }}
-        />
+        <div
+            onClick={() => cycle()}
+            style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+            }}
+        >
+            <motion.div
+                layout
+                transition={{ duration: 2 }}
+                initial={{ borderRadius: 20 }}
+                style={{
+                    ...style,
+                    height: open ? 300 : 100,
+                    display: open ? "none" : "block",
+                }}
+            />
+        </div>
     )
 }
