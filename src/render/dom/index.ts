@@ -11,6 +11,7 @@ import { Animation } from "../../motion/features/animation"
 import { AnimateLayout } from "../../motion/features/layout/Animate"
 import { MeasureLayout } from "../../motion/features/layout/Measure"
 import { MotionFeature } from "../../motion/features/types"
+import { HTMLElements, SVGElements } from "./utils/supported-elements"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -21,6 +22,8 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
     React.PropsWithoutRef<Props & MotionProps> &
         React.RefAttributes<SVGElement | HTMLElement>
 >
+
+type MotionComponents = HTMLMotionComponents & SVGMotionComponents
 
 const allMotionFeatures = [
     MeasureLayout,
@@ -51,10 +54,10 @@ const domBaseConfig = {
  * @public
  */
 export function createMotionProxy(defaultFeatures: MotionFeature[]) {
-    type CustomMotionComponent = { custom: typeof custom }
-    type Motion = HTMLMotionComponents &
-        SVGMotionComponents &
-        CustomMotionComponent
+    type CustomMotionComponent = {
+        custom: typeof custom
+    }
+    type Motion = MotionComponents & CustomMotionComponent
 
     const config: MotionComponentConfig<HTMLElement | SVGElement> = {
         ...domBaseConfig,
@@ -104,9 +107,15 @@ export const motion = /*@__PURE__*/ createMotionProxy(allMotionFeatures)
  *
  * @public
  */
-export function createDomMotionComponent(key: string) {
-    return createMotionComponent(key, {
+export function createDomMotionComponent(
+    key: HTMLElements | SVGElements | string
+) {
+    const config: MotionComponentConfig<HTMLElement | SVGElement> = {
         ...domBaseConfig,
         defaultFeatures: allMotionFeatures,
-    })
+    }
+    return createMotionComponent(
+        key,
+        config
+    ) as MotionComponents[keyof MotionComponents]
 }

@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
-import { motion } from "../../"
+import { motion, createDomMotionComponent } from "../../"
 import * as React from "react"
 import styled from "styled-components"
 
@@ -8,6 +8,20 @@ describe("motion component rendering and styles", () => {
     it("renders", () => {
         const { container } = render(<motion.div />)
         expect(container.firstChild).toBeTruthy()
+    })
+
+    it("renders motion div component (using createDomMotionComponent) without type errors ", () => {
+        // onTap is a motion component specific prop
+        const MotionDiv = createDomMotionComponent("div")
+        render(
+            <MotionDiv
+                id={"myCreatedMotionDiv"}
+                onTap={() => {
+                    console.log("Just tapping on div")
+                }}
+            />
+        )
+        expect(true).toBe(true)
     })
 
     it("renders HTML and SVG attributes without type errors", () => {
@@ -94,9 +108,9 @@ describe("motion component rendering and styles", () => {
         )
         const MotionComponent = motion.custom(Component)
 
-        const promise = new Promise<Element>(resolve => {
+        const promise = new Promise<Element>((resolve) => {
             const { rerender } = render(
-                <MotionComponent ref={ref => resolve(ref as Element)} />
+                <MotionComponent ref={(ref) => resolve(ref as Element)} />
             )
             rerender(<Component />)
         })
@@ -105,7 +119,7 @@ describe("motion component rendering and styles", () => {
     })
 
     it("accepts createref", async () => {
-        const promise = new Promise<Element>(resolve => {
+        const promise = new Promise<Element>((resolve) => {
             const ref = React.createRef<HTMLButtonElement>()
             const Component = () => {
                 React.useEffect(() => {
