@@ -11,23 +11,6 @@ import {
 } from "../../../jest.setup"
 import { drag, MockDrag } from "../drag/__tests__/utils"
 
-function mockWhenFirstArgumentIs(
-    original: (...args: any[]) => any,
-    firstArg: any
-) {
-    const mocked = jest.fn(original)
-    return [
-        (...args: any[]) => {
-            if (args[0] === firstArg) {
-                return mocked(...args)
-            } else {
-                return original(...args)
-            }
-        },
-        mocked,
-    ]
-}
-
 describe("press", () => {
     test("press event listeners fire", () => {
         const press = jest.fn()
@@ -42,34 +25,21 @@ describe("press", () => {
         expect(press).toBeCalledTimes(1)
     })
 
-    test("press event listeners are cleaned up when mouse up", () => {
-        const [
-            addEventListener,
-            mockedAddMouseUpListener,
-        ] = mockWhenFirstArgumentIs(window.addEventListener, "mouseup")
-        window.addEventListener = addEventListener
-        const [
-            removeEventListener,
-            mockedRemoveMouseUpListener,
-        ] = mockWhenFirstArgumentIs(window.removeEventListener, "mouseup")
-        window.removeEventListener = removeEventListener
-
+    test("press event listeners are cleaned up", () => {
         const press = jest.fn()
-        const Component = () => <motion.div onTap={() => press()} />
-
-        const { container, rerender } = render(<Component />)
-        rerender(<Component />)
-        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(0)
-        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
+        const { container, rerender } = render(
+            <motion.div onTap={() => press()} />
+        )
+        rerender(<motion.div onTap={() => press()} />)
         fireEvent.mouseDown(container.firstChild as Element)
-        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
-        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(0)
         fireEvent.mouseUp(container.firstChild as Element)
-        expect(mockedAddMouseUpListener).toHaveBeenCalledTimes(1)
-        expect(mockedRemoveMouseUpListener).toHaveBeenCalledTimes(1)
-
+        expect(press).toBeCalledTimes(1)
+        rerender(<motion.div />)
+        fireEvent.mouseDown(container.firstChild as Element)
+        fireEvent.mouseUp(container.firstChild as Element)
         expect(press).toBeCalledTimes(1)
     })
+
     test("press event listeners fire if triggered by child", () => {
         const press = jest.fn()
         const Component = () => (
