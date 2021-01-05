@@ -114,14 +114,14 @@ export function useVariants(
     }
 
     /**
-     *
+     * Manually animate to the animate prop on mount if the parent is already mounted
      */
     if (
-        !isControllingVariants &&
         shouldInheritVariants &&
         visualElement.parent?.isMounted &&
         initial !== false &&
-        animate
+        animate &&
+        !isVariantLabel(animate)
     ) {
         visualElement.manuallyAnimateOnMount = true
     }
