@@ -1,5 +1,9 @@
 import { CSSProperties, SVGAttributes } from "react"
-import { TransformProperties, CustomStyles } from "./motion/types"
+import {
+    TransformProperties,
+    CustomStyles,
+    SVGPathProperties,
+} from "./motion/types"
 
 /**
  * @public
@@ -1616,7 +1620,8 @@ type CSSPropertiesWithoutTransitionOrSingleTransforms = Omit<
 type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
     SVGAttributes<SVGElement> &
     TransformProperties &
-    CustomStyles
+    CustomStyles &
+    SVGPathProperties
 
 export type MakeCustomValueType<T> = { [K in keyof T]: T[K] | CustomValueType }
 
