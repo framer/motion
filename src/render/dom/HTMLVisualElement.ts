@@ -36,6 +36,7 @@ import {
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { MotionProps } from "../../motion"
 import { isCSSVariable } from "./utils/is-css-variable"
+import prefixer from "./utils/prefixer"
 
 export type LayoutUpdateHandler = (
     layout: AxisBox2D,
@@ -683,13 +684,22 @@ export class HTMLVisualElement<
         // Rebuild the latest animated values into style and vars caches.
         this.build()
 
+        const tempStyle = {}
+        for (const unprefixedStyleKey in this.style) {
+            tempStyle[
+                prefixer(unprefixedStyleKey, false, this.element as HTMLElement)
+            ] = this.style[unprefixedStyleKey]
+        }
         // Directly assign style into the Element's style prop. In tests Object.assign is the
         // fastest way to assign styles.
-        Object.assign(this.element.style, this.style)
+        Object.assign(this.element.style, tempStyle)
 
         // Loop over any CSS variables and assign those.
         for (const key in this.vars) {
-            this.element.style.setProperty(key, this.vars[key] as string)
+            this.element.style.setProperty(
+                prefixer(key, false, this.element as HTMLElement),
+                this.vars[key] as string
+            )
         }
     }
 }
