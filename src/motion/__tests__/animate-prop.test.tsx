@@ -405,4 +405,11 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.not.toBeCalled()
     })
+
+    test("animate prop accepts pathOffset", () => {
+        const Component = () => (
+            <motion.div animate={{ pathOffset: 1, pathSpacing: 1 }} />
+        )
+        render(<Component />)
+    })
 })
