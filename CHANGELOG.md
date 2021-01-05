@@ -7,12 +7,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Blocking layout animations to/from zero bounding boxes.
+-   `onTapCancel` now fires correctly on touch screens.
+-   `createDomMotionComponent` types.
 
 ## [3.1.3] 2020-01-04
 
 ### Fixed
 
--   `onTapCancel` now fires correctly on touch screens.
 -   Fixed types for `pathSpacing` and `pathOffset`.
 
 ## [3.1.2] 2020-01-04
