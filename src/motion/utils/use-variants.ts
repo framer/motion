@@ -121,7 +121,7 @@ export function useVariants(
         visualElement.parent?.isMounted &&
         initial !== false &&
         animate &&
-        !isVariantLabel(animate)
+        !isVariantLabel(props.animate)
     ) {
         visualElement.manuallyAnimateOnMount = true
     }

@@ -666,7 +666,7 @@ describe("animate prop as variant", () => {
 
             return (
                 <motion.div initial="hidden" animate="visible">
-                    <motion.div>{items}</motion.div>
+                    {items}
                 </motion.div>
             )
         }
