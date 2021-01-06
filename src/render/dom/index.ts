@@ -114,8 +114,5 @@ export function createDomMotionComponent(
         ...domBaseConfig,
         defaultFeatures: allMotionFeatures,
     }
-    return createMotionComponent(
-        key,
-        config
-    ) as MotionComponents[keyof MotionComponents]
+    return createMotionComponent(key, config)
 }
