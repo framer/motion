@@ -70,28 +70,16 @@ export interface HoverHandlers {
     onHoverEnd?(event: MouseEvent, info: EventInfo): void
 }
 
-type FilteredTouchListener = (
-    event: MouseEvent | PointerEvent,
-    info: EventInfo
-) => void
-
-const filterTouch = (listener: FilteredTouchListener) => (
-    event: MouseEvent | PointerEvent,
-    info: EventInfo
-) => {
-    if (isMouseEvent(event)) listener(event, info)
-}
-
 function createHoverEvent(
     visualElement: VisualElement,
     isActive: boolean,
     callback?: (event: MouseEvent, info: EventInfo) => void
 ) {
-    return filterTouch((event, info) => {
-        if (visualElement.isHoverEventsEnabled) return
+    return (event: MouseEvent, info: EventInfo) => {
+        if (!isMouseEvent(event) || !visualElement.isHoverEventsEnabled) return
         callback?.(event, info)
         visualElement.animationState?.setActive(AnimationType.Hover, isActive)
-    })
+    }
 }
 
 export function useHoverGesture(
