@@ -43,16 +43,9 @@ export abstract class VisualElement<E = any> {
 
     suspendHoverEvents() {
         this.isHoverEventsEnabled = false
-        let frameCounter = 0
-        const checkRestoreHoverEvents = () => {
-            frameCounter++
-            if (frameCounter >= 2) {
-                cancelSync.postRender(checkRestoreHoverEvents)
-                this.isHoverEventsEnabled = true
-            }
-        }
-
-        sync.postRender(checkRestoreHoverEvents, true)
+        sync.preRender(() => {
+            sync.preRender(() => (this.isHoverEventsEnabled = true))
+        })
     }
 
     /**
