@@ -101,7 +101,7 @@ function createHoverEvent(
         if (controls?.isDragging) {
             controls!.hoverEventToFlush = handler
         } else {
-            visualElement.isPointerEventsEnabled && handler()
+            visualElement.isHoverEventsEnabled && handler()
         }
     })
 }

@@ -39,12 +39,20 @@ export abstract class VisualElement<E = any> {
 
     inheritsVariants?: boolean
 
-    isPointerEventsEnabled = true
+    isHoverEventsEnabled = true
 
-    scheduleRestorePointerEvents() {
-        sync.postRender(() =>
-            sync.postRender(() => (this.isPointerEventsEnabled = true))
-        )
+    suspendHoverEvents() {
+        this.isHoverEventsEnabled = false
+        let frameCounter = 0
+        const checkRestoreHoverEvents = () => {
+            frameCounter++
+            if (frameCounter >= 2) {
+                cancelSync.postRender(checkRestoreHoverEvents)
+                this.isHoverEventsEnabled = true
+            }
+        }
+
+        sync.postRender(checkRestoreHoverEvents, true)
     }
 
     /**
