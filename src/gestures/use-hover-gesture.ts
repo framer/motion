@@ -89,20 +89,9 @@ function createHoverEvent(
     callback?: (event: MouseEvent, info: EventInfo) => void
 ) {
     return filterTouch((event, info) => {
-        const handler = () => {
-            callback?.(event, info)
-            visualElement.animationState?.setActive(
-                AnimationType.Hover,
-                isActive
-            )
-        }
-
-        const controls = elementDragControls.get(visualElement)
-        if (controls?.isDragging) {
-            controls!.hoverEventToFlush = handler
-        } else {
-            visualElement.isHoverEventsEnabled && handler()
-        }
+        if (visualElement.isHoverEventsEnabled) return
+        callback?.(event, info)
+        visualElement.animationState?.setActive(AnimationType.Hover, isActive)
     })
 }
 

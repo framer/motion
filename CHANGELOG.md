@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Hover events are now blocked until active drag gesture finishes, and while layout is being measured.
+-   Hover events are now blocked while layout is being measured.
 
 ## [3.1.4] 2020-01-05
 
