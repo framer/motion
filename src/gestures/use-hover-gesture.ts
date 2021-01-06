@@ -4,7 +4,6 @@ import { EventInfo } from "../events/types"
 import { VisualElement } from "../render/VisualElement"
 import { AnimationType } from "../render/VisualElement/utils/animation-state"
 import { VariantLabels } from "../motion/types"
-import { elementDragControls } from "./drag/VisualElementDragControls"
 import { usePointerEvent } from "../events/use-pointer-event"
 
 /**
