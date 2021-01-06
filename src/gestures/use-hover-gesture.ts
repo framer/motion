@@ -76,10 +76,6 @@ function createHoverEvent(
     callback?: (event: MouseEvent, info: EventInfo) => void
 ) {
     return (event: MouseEvent, info: EventInfo) => {
-        console.log(
-            isActive ? "enter" : "leave",
-            visualElement.isHoverEventsEnabled
-        )
         if (!isMouseEvent(event) || !visualElement.isHoverEventsEnabled) return
         callback?.(event, info)
         visualElement.animationState?.setActive(AnimationType.Hover, isActive)

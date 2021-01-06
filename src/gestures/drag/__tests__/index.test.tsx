@@ -1,5 +1,5 @@
 import * as React from "react"
-import { mouseEnter, mouseLeave, render } from "../../../../jest.setup"
+import { render } from "../../../../jest.setup"
 import { BoundingBox2D, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, frame, Point, sleep } from "./utils"
 import { fireEvent } from "@testing-library/dom"
