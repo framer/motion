@@ -59,6 +59,8 @@ export function createBatcher(): SyncLayoutBatcher {
     }: SyncLayoutLifecycles = defaultHandler) => {
         const order = Array.from(queue).sort(sortByDepth)
 
+        order.forEach((child) => (child.isPointerEventsEnabled = false))
+
         const resetAndMeasure = () => {
             /**
              * Write: Reset any transforms on children elements so we can read their actual layout
@@ -85,6 +87,7 @@ export function createBatcher(): SyncLayoutBatcher {
          * are generated in AnimateSharedLayout as this relies on presence data
          */
         order.forEach((child) => {
+            child.scheduleRestorePointerEvents()
             if (child.isPresent) child.presence = Presence.Present
         })
 

@@ -4,6 +4,12 @@ import { BoundingBox2D, motion, motionValue, MotionValue } from "../../../"
 import { MockDrag, drag, deferred, frame, Point, sleep } from "./utils"
 import { fireEvent } from "@testing-library/dom"
 
+async function delay(duration: number) {
+    return new Promise((resolve) => {
+        setTimeout(resolve, duration)
+    })
+}
+
 describe("drag", () => {
     test("onDragStart fires", async () => {
         const onDragStart = jest.fn()

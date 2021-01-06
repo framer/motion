@@ -49,7 +49,7 @@ class Measure extends React.Component<SyncProps> {
 
     componentDidUpdate() {
         const { syncLayout, visualElement } = this.props
-
+        console.log("did update")
         if (!isSharedLayout(syncLayout)) syncLayout.flush()
 
         /**

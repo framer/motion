@@ -39,6 +39,14 @@ export abstract class VisualElement<E = any> {
 
     inheritsVariants?: boolean
 
+    isPointerEventsEnabled = true
+
+    scheduleRestorePointerEvents() {
+        sync.postRender(() =>
+            sync.postRender(() => (this.isPointerEventsEnabled = true))
+        )
+    }
+
     /**
      * A set of values that we animate back to when a value is cleared of all overrides.
      */

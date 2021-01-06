@@ -1,11 +1,11 @@
 import { TargetAndTransition } from "../types"
 import { isMouseEvent } from "./utils/event-type"
-import { usePointerEvent } from "../events/use-pointer-event"
 import { EventInfo } from "../events/types"
 import { VisualElement } from "../render/VisualElement"
 import { AnimationType } from "../render/VisualElement/utils/animation-state"
 import { VariantLabels } from "../motion/types"
 import { elementDragControls } from "./drag/VisualElementDragControls"
+import { usePointerEvent } from "../events/use-pointer-event"
 
 /**
  * @public
@@ -101,7 +101,7 @@ function createHoverEvent(
         if (controls?.isDragging) {
             controls!.hoverEventToFlush = handler
         } else {
-            handler()
+            visualElement.isPointerEventsEnabled && handler()
         }
     })
 }
