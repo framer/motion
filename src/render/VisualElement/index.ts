@@ -43,9 +43,9 @@ export abstract class VisualElement<E = any> {
 
     suspendHoverEvents() {
         this.isHoverEventsEnabled = false
-        sync.preRender(() => {
-            sync.preRender(() => (this.isHoverEventsEnabled = true))
-        })
+        sync.postRender(() =>
+            setTimeout(() => (this.isHoverEventsEnabled = true), 10)
+        )
     }
 
     /**
