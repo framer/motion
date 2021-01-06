@@ -80,6 +80,7 @@ export {
 } from "./motion/context/MotionConfigContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 export { LayoutGroupContext } from "./components/AnimateSharedLayout/LayoutGroupContext"
+export { MotionContext } from "./motion/context/MotionContext"
 
 /**
  * Types
