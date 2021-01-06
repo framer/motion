@@ -11,7 +11,6 @@ import { Animation } from "../../motion/features/animation"
 import { AnimateLayout } from "../../motion/features/layout/Animate"
 import { MeasureLayout } from "../../motion/features/layout/Measure"
 import { MotionFeature } from "../../motion/features/types"
-import { HTMLElements, SVGElements } from "./utils/supported-elements"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -107,12 +106,12 @@ export const motion = /*@__PURE__*/ createMotionProxy(allMotionFeatures)
  *
  * @public
  */
-export function createDomMotionComponent(
-    key: HTMLElements | SVGElements | string
+export function createDomMotionComponent<T extends keyof MotionComponents>(
+    key: T
 ) {
     const config: MotionComponentConfig<HTMLElement | SVGElement> = {
         ...domBaseConfig,
         defaultFeatures: allMotionFeatures,
     }
-    return createMotionComponent(key, config)
+    return createMotionComponent(key, config) as MotionComponents[T]
 }

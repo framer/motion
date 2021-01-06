@@ -185,11 +185,10 @@ export interface BoxDelta {
 // @public
 export function createBatcher(): SyncLayoutBatcher;
 
-// Warning: (ae-forgotten-export) The symbol "HTMLElements" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "SVGElements" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function createDomMotionComponent(key: HTMLElements | SVGElements | string): React.ForwardRefExoticComponent<MotionProps & React.RefAttributes<SVGElement | HTMLElement>>;
+export function createDomMotionComponent<T extends keyof MotionComponents>(key: T): MotionComponents[T];
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
