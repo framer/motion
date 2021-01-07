@@ -31,6 +31,7 @@
         "build": "tsc -p . && rollup -c && make api",
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
         "prepublishOnly": "yarn test && yarn build",
+        "postpublish": "git push --tags",
         "measure": "bundlesize",
         "deduplicate": "yarn-deduplicate yarn.lock",
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
