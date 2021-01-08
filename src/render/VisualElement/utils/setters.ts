@@ -10,7 +10,7 @@ import {
 import { isNumericalString } from "../../../utils/is-numerical-string"
 import { resolveFinalValueInKeyframes } from "../../../utils/resolve-value"
 import { motionValue } from "../../../value"
-import { findValueType } from "../../dom/utils/value-types"
+import { findValueType, getAnimatableNone } from "../../dom/utils/value-types"
 import { ResolvedValues } from "../types"
 import { AnimationDefinition } from "./animation"
 import { resolveVariant } from "./variants"
@@ -112,8 +112,7 @@ export function checkTargetForNewValues(
             // If this is a number read as a string, ie "0" or "200", convert it to a number
             value = parseFloat(value)
         } else if (!findValueType(value) && complex.test(targetValue)) {
-            // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
-            value = complex.getAnimatableNone(targetValue as string)
+            value = getAnimatableNone(key, targetValue)
         }
 
         visualElement.addValue(key, motionValue(value))

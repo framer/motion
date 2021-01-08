@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.2.0] Unreleased
+
+### Added
+
+-   Support for hex `alpha`, ie `#FFF0` and `#FFFFFF00`.
+-   Support for default `filter` values. For example, when animating from `brightness(50%)`, the animation will start from `brightness(100%)`rather than`brightness(0%)`.
+
 ## [3.1.5] 2020-01-08
 
 ### Fixed
