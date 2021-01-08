@@ -11,6 +11,7 @@ import {
     vw,
     vh,
     complex,
+    filter,
 } from "style-value-types"
 
 interface ValueTypeMap {
@@ -22,7 +23,7 @@ interface ValueTypeMap {
  */
 export const auto: ValueType = {
     test: (v: any) => v === "auto",
-    parse: v => v,
+    parse: (v) => v,
 }
 
 /**
@@ -113,6 +114,8 @@ const defaultValueTypes: ValueTypeMap = {
 
     // Misc
     zIndex: int,
+    filter,
+    WebkitFilter: filter,
 
     // SVG
     fillOpacity: alpha,
@@ -158,4 +161,11 @@ export const getValueAsType = (value: any, type?: ValueType) => {
     return type && typeof value === "number"
         ? (type as any).transform(value)
         : value
+}
+
+export function getAnimatableNone(key: string, value: string) {
+    let defaultValueType = getDefaultValueType(key)
+    if (defaultValueType !== filter) defaultValueType = complex
+    // If value is not recognised as animatable, ie "none", create an animatable version origin based on the target
+    return defaultValueType.getAnimatableNone?.(value)
 }

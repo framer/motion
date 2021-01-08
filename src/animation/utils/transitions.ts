@@ -9,8 +9,8 @@ import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
 import { isAnimatable } from "./is-animatable"
 import { getDefaultTransition } from "./default-transitions"
-import { complex } from "style-value-types"
 import { warning } from "hey-listen"
+import { getAnimatableNone } from "../../render/dom/utils/value-types"
 
 type StopAnimation = { stop: () => void }
 
@@ -169,7 +169,7 @@ function getAnimation(
      * of the target. This could be improved to work both ways.
      */
     if (origin === "none" && isTargetAnimatable && typeof target === "string") {
-        origin = complex.getAnimatableNone(target as string)
+        origin = getAnimatableNone(key, target)
     }
 
     const isOriginAnimatable = isAnimatable(key, origin)

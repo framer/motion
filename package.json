@@ -95,8 +95,8 @@
     "dependencies": {
         "framesync": "^5.0.0",
         "hey-listen": "^1.0.8",
-        "popmotion": "^9.0.2",
-        "style-value-types": "^3.2.0",
+        "popmotion": "^9.1.0",
+        "style-value-types": "^4.0.1",
         "tslib": "^1.10.0"
     },
     "optionalDependencies": {
@@ -121,11 +121,11 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "28.6 kB"
+            "maxSize": "28.8 kB"
         },
         {
             "path": "./dist/minimal-component.js",
-            "maxSize": "13.2 kB"
+            "maxSize": "13.3 kB"
         }
     ]
 }
