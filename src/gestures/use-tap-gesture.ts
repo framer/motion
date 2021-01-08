@@ -2,7 +2,6 @@ import { useRef } from "react"
 import { EventInfo } from "../events/types"
 import { TargetAndTransition } from "../types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
-import { getGlobalLock } from "./drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
@@ -10,6 +9,7 @@ import { Point2D } from "../types/geometry"
 import { VisualElement } from "../render/VisualElement"
 import { AnimationType } from "../render/VisualElement/utils/animation-state"
 import { VariantLabels } from "../motion/types"
+import { isDragActive } from "./drag/utils/lock"
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
@@ -199,13 +199,7 @@ export function useTapGesture(
     function checkPointerEnd() {
         isPressing.current = false
         visualElement.animationState?.setActive(AnimationType.Tap, false)
-
-        // Check the gesture lock - if we get it, it means no drag gesture is active
-        // and we can safely fire the tap gesture.
-        const openGestureLock = getGlobalLock(true)
-        if (!openGestureLock) return false
-        openGestureLock()
-        return true
+        return !isDragActive()
     }
 
     function onPointerUp(event: PointerEvent, info: EventInfo) {

@@ -39,6 +39,25 @@ export abstract class VisualElement<E = any> {
 
     inheritsVariants?: boolean
 
+    isHoverEventsEnabled = true
+
+    /**
+     * Temporarily suspend hover events while we remove transforms in order to measure the layout.
+     *
+     * This seems like an odd bit of scheduling but what we're doing is saying after
+     * the next render, wait 10 milliseconds before reenabling hover events. Waiting until
+     * the next frame results in missed, valid hover events. But triggering on the postRender
+     * frame is too soon to avoid triggering events with layout measurements.
+     *
+     * Note: If we figure out a way of measuring layout while transforms remain applied, this can be removed.
+     */
+    suspendHoverEvents() {
+        this.isHoverEventsEnabled = false
+        sync.postRender(() =>
+            setTimeout(() => (this.isHoverEventsEnabled = true), 10)
+        )
+    }
+
     /**
      * A set of values that we animate back to when a value is cleared of all overrides.
      */

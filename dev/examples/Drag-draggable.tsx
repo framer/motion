@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { motion } from "../../src"
 
 const styleA = {
@@ -10,28 +10,33 @@ const styleA = {
 }
 
 export const App = () => {
+    const ref = useRef(null)
     const [isTap, setTap] = useState(false)
     const [isDrag, setDrag] = useState(false)
+    const [isHover, setHover] = useState(false)
     const [dragCount, setDragCount] = useState(0)
-    const handleTap = () => setTap(true)
-    const handleTapStart = () => setTap(true)
-    const handleTapCancel = () => setTap(false)
-    const handleDrag = () => setDragCount(dragCount + 1)
-    const handleDragEnd = () => setDrag(false)
-    const handleDragStart = () => setDrag(true)
 
     return (
         <motion.div
             drag
             dragConstraints={{ left: 0, right: 100, top: 0, bottom: 100 }}
+            ref={ref}
             dragElastic={0}
             whileTap={{ scale: 0.95 }}
-            onTap={handleTap}
-            onTapStart={handleTapStart}
-            onTapCancel={handleTapCancel}
-            onDrag={handleDrag}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
+            onTap={() => setTap(false)}
+            onTapStart={() => setTap(true)}
+            onTapCancel={() => setTap(false)}
+            onDrag={() => setDragCount(dragCount + 1)}
+            onDragStart={() => setDrag(true)}
+            onDragEnd={() => setDrag(false)}
+            onHoverStart={() => {
+                console.log("hover start")
+                setHover(true)
+            }}
+            onHoverEnd={() => {
+                console.log("hover end")
+                setHover(false)
+            }}
             style={styleA}
         />
     )

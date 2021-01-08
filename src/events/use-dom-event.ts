@@ -7,6 +7,7 @@ export function addDomEvent(
     options?: AddEventListenerOptions
 ) {
     target.addEventListener(eventName, handler, options)
+
     return () => target.removeEventListener(eventName, handler, options)
 }
 

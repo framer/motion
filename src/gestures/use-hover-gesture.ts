@@ -1,10 +1,10 @@
 import { TargetAndTransition } from "../types"
 import { isMouseEvent } from "./utils/event-type"
-import { usePointerEvent } from "../events/use-pointer-event"
 import { EventInfo } from "../events/types"
 import { VisualElement } from "../render/VisualElement"
 import { AnimationType } from "../render/VisualElement/utils/animation-state"
 import { VariantLabels } from "../motion/types"
+import { usePointerEvent } from "../events/use-pointer-event"
 
 /**
  * @public
@@ -70,51 +70,35 @@ export interface HoverHandlers {
     onHoverEnd?(event: MouseEvent, info: EventInfo): void
 }
 
-type FilteredTouchListener = (
-    event: MouseEvent | PointerEvent,
-    info: EventInfo
-) => void
-
-const filterTouch = (listener: FilteredTouchListener) => (
-    event: MouseEvent | PointerEvent,
-    info: EventInfo
-) => {
-    if (isMouseEvent(event)) listener(event, info)
+function createHoverEvent(
+    visualElement: VisualElement,
+    isActive: boolean,
+    callback?: (event: MouseEvent, info: EventInfo) => void
+) {
+    return (event: MouseEvent, info: EventInfo) => {
+        if (!isMouseEvent(event) || !visualElement.isHoverEventsEnabled) return
+        callback?.(event, info)
+        visualElement.animationState?.setActive(AnimationType.Hover, isActive)
+    }
 }
 
-/**
- *
- * @param props
- * @param ref
- * @internal
- */
 export function useHoverGesture(
     { onHoverStart, onHoverEnd, whileHover }: HoverHandlers,
     visualElement: VisualElement
 ) {
-    const onPointerEnter = filterTouch(
-        (event: MouseEvent | PointerEvent, info: EventInfo) => {
-            onHoverStart?.(event, info)
-            visualElement.animationState?.setActive(AnimationType.Hover, true)
-        }
-    )
-
-    const onPointerLeave = filterTouch(
-        (event: MouseEvent | PointerEvent, info: EventInfo) => {
-            onHoverEnd?.(event, info)
-            visualElement.animationState?.setActive(AnimationType.Hover, false)
-        }
-    )
-
     usePointerEvent(
         visualElement,
         "pointerenter",
-        onHoverStart || whileHover ? onPointerEnter : undefined
+        onHoverStart || whileHover
+            ? createHoverEvent(visualElement, true, onHoverStart)
+            : undefined
     )
 
     usePointerEvent(
         visualElement,
         "pointerleave",
-        onHoverEnd || whileHover ? onPointerLeave : undefined
+        onHoverEnd || whileHover
+            ? createHoverEvent(visualElement, false, onHoverEnd)
+            : undefined
     )
 }

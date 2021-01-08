@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.1.5] 2020-01-05
+
+### Fixed
+
+-   Hover events are now blocked while layout is being measured.
+
 ## [3.1.4] 2020-01-05
 
 ### Fixed
