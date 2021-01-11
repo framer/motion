@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.2.1] 2020-01-11
+
+### Added
+
+-   Exporting `useVariantContext` for internal Framer use.
+
 ## [3.2.0] 2020-01-08
 
 ### Added

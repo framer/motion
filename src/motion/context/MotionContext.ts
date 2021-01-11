@@ -22,6 +22,9 @@ export const MotionContext = createContext<MotionContextProps>({
     variantContext: {},
 })
 
+/**
+ * @internal
+ */
 export function useVariantContext() {
     return useContext(MotionContext).variantContext
 }
