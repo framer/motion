@@ -1,4 +1,4 @@
-import { VisualElement } from "../"
+import { VisualElement } from ".."
 import { TargetAndTransition, TargetResolver } from "../../../types"
 
 /**

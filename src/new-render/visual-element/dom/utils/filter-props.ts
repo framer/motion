@@ -1,5 +1,5 @@
-import { MotionProps } from "../../../motion/types"
-import { isValidMotionProp } from "../../../motion/utils/valid-prop"
+import { MotionProps } from "../../../../motion/types"
+import { isValidMotionProp } from "../../../../motion/utils/valid-prop"
 
 let isPropValid = (key: string) => !isValidMotionProp(key)
 

@@ -1,5 +1,5 @@
 import { MeasureLayout } from "../../motion/features/layout/Measure"
-import { createMotionProxy } from "./"
+import { createMotionProxy } from "."
 
 /**
  * @public

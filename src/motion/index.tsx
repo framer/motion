@@ -1,12 +1,10 @@
 import * as React from "react"
-import { forwardRef, Ref, useContext, useMemo } from "react"
+import { forwardRef, Ref, useContext } from "react"
 import { MotionProps } from "./types"
-import { useMotionValues } from "./utils/use-motion-values"
-import { UseVisualElement } from "../render/VisualElement/types"
+import { UseVisualElement } from "../new-render/visual-element/types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
-import { useVariants } from "./utils/use-variants"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext } from "./context/MotionContext"
 export { MotionProps }
@@ -43,7 +41,7 @@ export function createMotionComponent<P extends {}, E>(
 
         /**
          * Create a VisualElement for this component. A VisualElement provides a common
-         * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
+         * interface to renderer-specific APIs (ie DOM/Three. js etc) as well as
          * providing a way of rendering to these APIs outside of the React render loop
          * for more performant animations and interactions
          */
@@ -54,15 +52,10 @@ export function createMotionComponent<P extends {}, E>(
             externalRef
         )
 
-        /**
-         * Scrape MotionValues from props and add/remove them to/from the VisualElement.
-         */
-        useMotionValues(visualElement, props)
-
-        /**
-         * Add the visualElement as a node in the variant tree.
-         */
-        const variantContext = useVariants(visualElement, props, isStatic)
+        // /**
+        //  * Add the visualElement as a node in the variant tree.
+        //  */
+        // const variantContext = useVariants(visualElement, props, isStatic)
 
         /**
          * Load features as renderless components unless the component isStatic
@@ -77,10 +70,10 @@ export function createMotionComponent<P extends {}, E>(
         /**
          * Only create a new context value when the sub-contexts change.
          */
-        const context = useMemo(() => ({ visualElement, variantContext }), [
-            visualElement,
-            variantContext,
-        ])
+        // const context = useMemo(() => ({ visualElement, variantContext }), [
+        //     visualElement,
+        //     variantContext,
+        // ])
 
         const component = useRender(Component, props, visualElement)
 
@@ -95,7 +88,7 @@ export function createMotionComponent<P extends {}, E>(
         // all plugins and features has to execute.
         return (
             <>
-                <MotionContext.Provider value={context}>
+                <MotionContext.Provider value={{ visualElement }}>
                     {component}
                 </MotionContext.Provider>
                 {features}
