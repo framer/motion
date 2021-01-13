@@ -1,9 +1,9 @@
 import { createElement } from "react"
 import { MotionProps } from "../../motion/types"
+import { buildHTMLProps } from "../../new-render/visual-element/dom/utils/build-html-props"
+import { buildSVGProps } from "../../new-render/visual-element/dom/utils/build-svg-props"
+import { filterProps } from "../../new-render/visual-element/dom/utils/filter-props"
 import { HTMLVisualElement } from "./HTMLVisualElement"
-import { filterProps } from "./utils/filter-props"
-import { buildHTMLProps } from "./utils/build-html-props"
-import { buildSVGProps } from "./utils/build-svg-props"
 import { SVGVisualElement } from "./SVGVisualElement"
 import { isSVGComponent } from "./utils/is-svg-component"
 

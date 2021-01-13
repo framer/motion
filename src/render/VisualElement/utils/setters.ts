@@ -1,6 +1,6 @@
 import { invariant } from "hey-listen"
 import { complex } from "style-value-types"
-import { VisualElement } from "../"
+import { VisualElement } from ".."
 import {
     Target,
     TargetAndTransition,
