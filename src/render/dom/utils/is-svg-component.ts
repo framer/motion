@@ -1,4 +1,4 @@
-import { svgElements } from "./supported-elements"
+import { svgElements } from "../../../new-render/visual-element/dom/utils/supported-elements"
 
 const svgTagNames = new Set(svgElements)
 

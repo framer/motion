@@ -1,6 +1,6 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { VisualElement } from "../../render/VisualElement"
+import { VisualElement } from "../../new-render/visual-element/types"
 import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
 
 /**

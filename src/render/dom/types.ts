@@ -8,8 +8,11 @@ import {
     ForwardRefExoticComponent,
 } from "react"
 import { MotionProps, MakeMotion } from "../../motion/types"
+import {
+    HTMLElements,
+    SVGElements,
+} from "../../new-render/visual-element/dom/utils/supported-elements"
 import { TransformPoint2D } from "../../types/geometry"
-import { HTMLElements, SVGElements } from "./utils/supported-elements"
 import { VisualElementConfig } from "../VisualElement/types"
 
 /**

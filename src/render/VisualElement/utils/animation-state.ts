@@ -26,6 +26,7 @@ export interface AnimationState {
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getProtectedKeys: (type: AnimationType) => { [key: string]: any }
+    getState: () => { [key: string]: TypeState }
 }
 
 interface DefinitionAndOptions {
@@ -386,7 +387,13 @@ export function createAnimationState(
         return setProps(currentProps, currentContext, options, type)
     }
 
-    return { getProtectedKeys, setProps, setActive, setAnimateFunction }
+    return {
+        getProtectedKeys,
+        setProps,
+        setActive,
+        setAnimateFunction,
+        getState: () => state,
+    }
 }
 
 export function variantsHaveChanged(prev: any, next: any) {
