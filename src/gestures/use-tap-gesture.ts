@@ -6,10 +6,10 @@ import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
 import { Point2D } from "../types/geometry"
-import { VisualElement } from "../render/VisualElement"
-import { AnimationType } from "../render/VisualElement/utils/animation-state"
+import { AnimationType } from "../render/utils/animation-state"
 import { VariantLabels } from "../motion/types"
 import { isDragActive } from "./drag/utils/lock"
+import { VisualElement } from "../render/types"
 
 /**
  * Passed in to tap event handlers like `onTap` the `TapInfo` object contains

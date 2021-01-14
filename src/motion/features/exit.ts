@@ -4,7 +4,7 @@ import { FeatureProps, MotionFeature } from "./types"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { AnimationType } from "../../render/VisualElement/utils/animation-state"
+import { AnimationType } from "../../render/utils/animation-state"
 
 /**
  * TODO: This component is quite small and no longer directly imports animation code.

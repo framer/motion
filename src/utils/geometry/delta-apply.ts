@@ -1,7 +1,8 @@
 import { Axis, AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { mix } from "popmotion"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
-import { ResolvedValues } from "../../render/VisualElement/types"
+import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
+import { ResolvedValues } from "../../_render/VisualElement/types"
+import { VisualElement } from "../../render/types"
 
 /**
  * Reset an axis to the provided origin box.
@@ -220,7 +221,7 @@ export function removeBoxTransforms(
 export function applyTreeDeltas(
     box: AxisBox2D,
     treeScale: Point2D,
-    treePath: HTMLVisualElement[]
+    treePath: VisualElement[]
 ) {
     const treeLength = treePath.length
     if (!treeLength) return

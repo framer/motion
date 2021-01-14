@@ -5,7 +5,7 @@ import {
     createSwitchAnimation,
 } from "./utils/animations"
 import { LayoutStack } from "./utils/stack"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
 import {
     SharedLayoutSyncMethods,
     createBatcher,

@@ -4,7 +4,7 @@ import {
     SharedLayoutAnimationConfig,
 } from "../types"
 import { LayoutStack } from "./stack"
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
+import { HTMLVisualElement } from "../../../_render/dom/HTMLVisualElement"
 import { AxisBox2D } from "../../../types/geometry"
 
 export function createSwitchAnimation(

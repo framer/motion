@@ -1,100 +1,56 @@
-import { HTMLVisualElement } from "./HTMLVisualElement"
-import { useConstant } from "../../utils/use-constant"
-import { MotionProps } from "../../motion/types"
-import { SVGVisualElement } from "./SVGVisualElement"
-import { UseVisualElement } from "../VisualElement/types"
-import { isSVGComponent } from "./utils/is-svg-component"
-import { useContext, useEffect } from "react"
-import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
-import { useVisualElementContext } from "../../motion/context/MotionContext"
+import { ComponentType, Ref, useContext, useEffect } from "react"
 import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
+import { MotionProps } from "../../motion"
+import { useVisualElementContext } from "../../motion/context/MotionContext"
+import { useConstant } from "../../utils/use-constant"
+import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
+import { useUnmountEffect } from "../../utils/use-unmount-effect"
+import { htmlVisualElement } from "./html-visual-element"
+import { svgVisualElement } from "./svg-visual-element"
+import { isSVGComponent } from "./utils/is-svg-component"
 
-/**
- * DOM-flavoured variation of the useVisualElement hook. Used to create either a HTMLVisualElement
- * or SVGVisualElement for the component.
- *
- */
-export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
-    Component,
-    props,
-    isStatic,
-    ref
-) => {
+export function useDomVisualElement<E>(
+    Component: string | ComponentType,
+    { layoutId }: MotionProps,
+    isStatic: boolean,
+    ref: Ref<E>
+) {
     const parent = useVisualElementContext()
+    const layoutGroupId = useContext(LayoutGroupContext)
 
     const visualElement = useConstant(() => {
-        const DOMVisualElement = isSVGComponent(Component)
-            ? SVGVisualElement
-            : HTMLVisualElement
+        // TODO: I believe this is the only DOM-specific line here, change useVisualElement to getVisualElementFactory
+        const factory = isSVGComponent(Component)
+            ? svgVisualElement
+            : htmlVisualElement
 
-        return new DOMVisualElement(parent, ref as any)
+        const projectionId =
+            layoutGroupId && layoutId
+                ? layoutGroupId + "-" + layoutId
+                : layoutId
+
+        return factory({
+            projectionId,
+            enableHardwareAcceleration: !isStatic,
+            parent,
+            ref,
+        })
     })
 
     /**
-     * If this is a static component, for instance on the Framer canvas, we essentially want to
-     * treat it as a new component every render.
-     * TODO: This shouldn't live in a DOM-specific hook but there'll be a better sense of where this
-     * and much of this hook should live when creating a new type of VisualElement (e.g Three.js).
-     */
-    if (isStatic) {
-        visualElement.values.clear()
-        visualElement.latest = {}
-    }
-
-    visualElement.updateConfig({
-        ...visualElement.config,
-        enableHardwareAcceleration: !isStatic,
-        ...props,
-    })
-
-    const layoutGroupId = useContext(LayoutGroupContext)
-    visualElement.layoutId =
-        layoutGroupId && props.layoutId
-            ? `${layoutGroupId}-${props.layoutId}`
-            : props.layoutId
-
-    const presenceContext = useContext(PresenceContext)
-
-    /**
-     * Update VisualElement with presence data.
-     */
-    const isPresent =
-        presenceContext === null ? true : presenceContext.isPresent
-    visualElement.isPresent =
-        props.isPresent !== undefined ? props.isPresent : isPresent
-
-    /**
+     * My good plan
      *
+     * - Every render, create motion values from style
+     * - On initial render, create a style tag from style and initial. Never change this.
+     * - On subsequent renders, respond to changes in style and update those motion values
+     * - Every VE should control its own style
      */
-    const presenceId = presenceContext?.id
-    visualElement.isPresenceRoot = !parent || parent.presenceId !== presenceId
 
-    /**
-     * TODO: Investigate if we need this
-     */
+    useIsomorphicLayoutEffect(() => {})
+
     useEffect(() => {
-        let cancelViewportBoxUpdate: undefined | (() => void)
-        let cancelLayoutMeasureUpdate: undefined | (() => void)
-
-        if (props.onViewportBoxUpdate) {
-            cancelViewportBoxUpdate = visualElement.onViewportBoxUpdate(
-                props.onViewportBoxUpdate
-            )
-        }
-
-        if (props._onLayoutMeasure) {
-            cancelLayoutMeasureUpdate = visualElement.onLayoutMeasure(
-                props._onLayoutMeasure
-            )
-        }
-
-        if (cancelViewportBoxUpdate || cancelLayoutMeasureUpdate) {
-            return () => {
-                cancelViewportBoxUpdate?.()
-                cancelLayoutMeasureUpdate?.()
-            }
-        }
-    }, [props.onViewportBoxUpdate, props._onLayoutMeasure])
+        // update settings
+    })
 
     return visualElement
 }

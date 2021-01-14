@@ -1,4 +1,3 @@
-import { VisualElement } from "../../render/VisualElement"
 import { MotionProps } from "../types"
 import { useConstant } from "../../utils/use-constant"
 import { isMotionValue } from "../../value/utils/is-motion-value"
@@ -7,7 +6,8 @@ import {
     isTransformProp,
     isTransformOriginProp,
 } from "../../render/dom/utils/transform"
-import { valueScaleCorrection } from "../../render/dom/layout/scale-correction"
+import { valueScaleCorrection } from "../../render/dom/projection/scale-correction"
+import { VisualElement } from "../../render/types"
 
 interface MotionValueSource {
     [key: string]: MotionValue | unknown

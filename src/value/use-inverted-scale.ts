@@ -70,8 +70,8 @@ export function useInvertedScale(
         parentScaleX = scale.scaleX || parentScaleX
         parentScaleY = scale.scaleY || parentScaleY
     } else if (visualElement) {
-        parentScaleX = visualElement.style.getValue("scaleX", 1)
-        parentScaleY = visualElement.style.getValue("scaleY", 1)
+        parentScaleX = visualElement.getValue("scaleX", 1)
+        parentScaleY = visualElement.getValue("scaleY", 1)
     }
 
     const scaleX = useTransform(parentScaleX, invertScale)

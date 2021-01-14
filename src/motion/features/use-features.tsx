@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useContext } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
-import { VisualElement } from "../../new-render/visual-element/types"
+import { VisualElement } from "../../render/types"
 import { MotionProps } from ".."
 import { MotionFeature } from "./types"
 
