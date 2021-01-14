@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { VisualElement } from "../render/VisualElement"
+import { VisualElement } from "../_render/VisualElement"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { AnimationControls } from "./AnimationControls"
 

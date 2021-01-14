@@ -1,7 +1,7 @@
 import * as React from "react"
 import { forwardRef, Ref, useContext } from "react"
 import { MotionProps } from "./types"
-import { UseVisualElement } from "../new-render/visual-element/types"
+import { UseVisualElement } from "../render/types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
@@ -60,12 +60,12 @@ export function createMotionComponent<P extends {}, E>(
         /**
          * Load features as renderless components unless the component isStatic
          */
-        const features = useFeatures(
-            defaultFeatures,
-            isStatic,
-            visualElement,
-            props
-        )
+        // const features = useFeatures(
+        //     defaultFeatures,
+        //     isStatic,
+        //     visualElement,
+        //     props
+        // )
 
         /**
          * Only create a new context value when the sub-contexts change.
@@ -91,7 +91,7 @@ export function createMotionComponent<P extends {}, E>(
                 <MotionContext.Provider value={{ visualElement }}>
                     {component}
                 </MotionContext.Provider>
-                {features}
+                {}
             </>
         )
     }

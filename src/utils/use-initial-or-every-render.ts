@@ -1,6 +1,14 @@
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 
 type Callback = () => void
+
+export function useIsInitialRender() {
+    const isInitialRender = useRef(true)
+    useEffect(() => {
+        isInitialRender.current = false
+    }, [])
+    return isInitialRender.current
+}
 
 /**
  * Use callback either only on the initial render or on all renders. In concurrent mode
@@ -15,11 +23,9 @@ export function useInitialOrEveryRender(
     callback: Callback,
     isInitialOnly = false
 ) {
-    const isInitialRender = useRef(true)
+    const isInitialRender = useIsInitialRender()
 
-    if (!isInitialOnly || (isInitialOnly && isInitialRender.current)) {
+    if (!isInitialOnly || (isInitialOnly && isInitialRender)) {
         callback()
     }
-
-    isInitialRender.current = false
 }

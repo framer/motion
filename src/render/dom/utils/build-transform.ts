@@ -1,9 +1,12 @@
 import { TransformTemplate } from "../../../motion/types"
-import { ResolvedValues } from "../../VisualElement/types"
 import { sortTransformProps } from "./transform"
-import { Point2D, BoxDelta } from "../../../types/geometry"
-import { TransformOrigin } from "../types"
 import { delta } from "../../../utils/geometry"
+import { Projection, ResolvedValues } from "../../types"
+import {
+    DOMVisualElementOptions,
+    HTMLMutableState,
+    TransformOrigin,
+} from "../types"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -19,12 +22,13 @@ const translateAlias: { [key: string]: string } = {
  * providing a transformTemplate function.
  */
 export function buildTransform(
-    transform: ResolvedValues,
-    transformKeys: string[],
-    transformTemplate: TransformTemplate | undefined,
-    transformIsDefault: boolean,
-    enableHardwareAcceleration = true,
-    allowTransformNone = true
+    { transform, transformKeys }: HTMLMutableState,
+    {
+        transformTemplate,
+        enableHardwareAcceleration,
+        allowTransformNone,
+    }: DOMVisualElementOptions,
+    transformIsDefault: boolean
 ) {
     // The transform string we're going to build into.
     let transformString = ""
@@ -82,10 +86,11 @@ export function buildTransformOrigin({
  * space on screen and projects it into the desired space.
  */
 export function buildLayoutProjectionTransform(
-    { x, y }: BoxDelta,
-    treeScale: Point2D,
+    { deltaFinal, treeScale }: Projection,
     latestTransform?: ResolvedValues
 ): string {
+    const { x, y } = deltaFinal
+
     /**
      * The translations we use to calculate are always relative to the viewport coordinate space.
      * But when we apply scales, we also scale the coordinate space of an element and its children.
@@ -117,6 +122,8 @@ export const identityProjection = buildLayoutProjectionTransform(delta(), {
 /**
  * Take the calculated delta origin and apply it as a transform string.
  */
-export function buildLayoutProjectionTransformOrigin({ x, y }: BoxDelta) {
-    return `${x.origin * 100}% ${y.origin * 100}% 0`
+export function buildLayoutProjectionTransformOrigin({
+    deltaFinal,
+}: Projection) {
+    return `${deltaFinal.x.origin * 100}% ${deltaFinal.y.origin * 100}% 0`
 }

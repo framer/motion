@@ -1,8 +1,8 @@
 import { TargetAndTransition } from "../types"
-import { VisualElement } from "../render/VisualElement"
-import { AnimationType } from "../render/VisualElement/utils/animation-state"
+import { AnimationType } from "../render/utils/animation-state"
 import { MotionProps, VariantLabels } from "../motion/types"
 import { useDomEvent } from "../events/use-dom-event"
+import { VisualElement } from "../render/types"
 
 /**
  * @public

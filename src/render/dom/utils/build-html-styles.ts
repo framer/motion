@@ -1,55 +1,24 @@
-import { ResolvedValues } from "../../VisualElement/types"
-import { DOMVisualElementConfig, TransformOrigin } from "../types"
-import { getDefaultValueType, getValueAsType } from "./value-types"
-import { isTransformProp, isTransformOriginProp } from "./transform"
+import { Projection, ResolvedValues } from "../../types"
+import { valueScaleCorrection } from "../projection/scale-correction"
+import { DOMVisualElementOptions, HTMLMutableState } from "../types"
 import {
-    buildTransform,
     buildLayoutProjectionTransform,
     buildLayoutProjectionTransformOrigin,
+    buildTransform,
     buildTransformOrigin,
 } from "./build-transform"
 import { isCSSVariable } from "./is-css-variable"
-import { valueScaleCorrection } from "../layout/scale-correction"
-import { Point2D, AxisBox2D, BoxDelta } from "../../../types/geometry"
+import { isTransformOriginProp, isTransformProp } from "./transform"
+import { getDefaultValueType, getValueAsType } from "./value-types"
 
-/**
- * Build style and CSS variables
- *
- * This function converts a Motion style prop:
- *
- * { x: 100, width: 100, originX: 0.5 }
- *
- * Into an object with default value types applied and default
- * transform order set:
- *
- * {
- *   transform: 'translateX(100px) translateZ(0)`,
- *   width: '100px',
- *   transformOrigin: '50% 50%'
- * }
- *
- * Styles are saved to `style` and CSS vars to `vars`.
- *
- * This function works with mutative data structures.
- */
 export function buildHTMLStyles(
+    state: HTMLMutableState,
     latest: ResolvedValues,
-    style: ResolvedValues,
-    vars: ResolvedValues,
-    transform: ResolvedValues,
-    transformOrigin: TransformOrigin,
-    transformKeys: string[],
-    {
-        enableHardwareAcceleration,
-        transformTemplate,
-        allowTransformNone,
-    }: DOMVisualElementConfig,
-    isLayoutProjectionEnabled?: boolean,
-    delta?: BoxDelta,
-    deltaFinal?: BoxDelta,
-    treeScale?: Point2D,
-    targetBox?: AxisBox2D
-): void {
+    projection: Projection,
+    options: DOMVisualElementOptions
+) {
+    const { style, vars, transform, transformKeys, transformOrigin } = state
+
     // Empty the transformKeys array. As we're throwing out refs to its items
     // this might not be as cheap as suspected. Maybe using the array as a buffer
     // with a manual incrementation would be better.
@@ -64,49 +33,52 @@ export function buildHTMLStyles(
 
     /**
      * Loop over all our latest animated values and decide whether to handle them
-     * as a style or CSS variable. Transforms and transform origins are kept seperately
-     * for further processing
+     * as a style or CSS variable.
+     *
+     * Transforms and transform origins are kept seperately for further processing.
      */
     for (const key in latest) {
         const value = latest[key]
+
+        /**
+         * If this is a CSS variable we don't do any further processing.
+         */
+        if (isCSSVariable(key)) {
+            vars[key] = value
+            continue
+        }
 
         // Convert the value to its default value type, ie 0 -> "0px"
         const valueType = getDefaultValueType(key)
         const valueAsType = getValueAsType(value, valueType)
 
         if (isTransformProp(key)) {
-            // If this is a transform, flag and enable further transform processing
+            // If this is a transform, flag to enable further transform processing
             hasTransform = true
             transform[key] = valueAsType
             transformKeys.push(key)
 
+            // If we already know we have a non-default transform, early return
             if (!transformIsNone) continue
 
-            // If all the transform keys we've so far encountered are their default value
-            // then check to see if this one isn't
-            const defaultValue =
-                valueType.default !== undefined ? valueType.default : 0
-
-            if (value !== defaultValue) transformIsNone = false
+            // Otherwise check to see if this is a default transform
+            if (value !== (valueType.default ?? 0)) transformIsNone = false
         } else if (isTransformOriginProp(key)) {
-            // If this is a transform origin, flag and enable further transform-origin processing
             transformOrigin[key] = valueAsType
+
+            // If this is a transform origin, flag and enable further transform-origin processing
             hasTransformOrigin = true
-        } else if (key !== "transform" || typeof value !== "function") {
-            // Handle all remaining values. Decide which map to save to depending
-            // on whether this is a CSS variable
-            const bucket = isCSSVariable(key) ? vars : style
-
-            // If we need to perform scale correction, and we have a handler for this
-            // value type (ie borderRadius), perform it
-
-            if (isLayoutProjectionEnabled && valueScaleCorrection[key]) {
-                const corrected = valueScaleCorrection[key].process(
+        } else {
+            /**
+             * If layout projection is on, and we need to perform scale correction for this
+             * value type, perform it.
+             */
+            if (projection.isEnabled && valueScaleCorrection[key]) {
+                const correctedValue = valueScaleCorrection[key].process(
                     value,
-                    targetBox!,
-                    delta!,
-                    treeScale!
+                    projection
                 )
+
                 /**
                  * Scale-correctable values can define a number of other values to break
                  * down into. For instance borderRadius needs applying to borderBottomLeftRadius etc
@@ -115,46 +87,34 @@ export function buildHTMLStyles(
                 if (applyTo) {
                     const num = applyTo.length
                     for (let i = 0; i < num; i++) {
-                        bucket[applyTo[i]] = corrected
+                        style[applyTo[i]] = correctedValue
                     }
                 } else {
-                    bucket[key] = corrected
+                    style[key] = correctedValue
                 }
             } else {
-                bucket[key] = valueAsType
+                style[key] = valueAsType
             }
         }
     }
 
-    /**
-     * Build transform and transformOrigin. If we're performing layout projection these need
-     * to be based off the deltaFinal data. Any user-set origins will have been pre-baked
-     * into the deltaFinal.
-     */
-    if (isLayoutProjectionEnabled) {
+    if (projection.isEnabled) {
         style.transform = buildLayoutProjectionTransform(
-            deltaFinal!,
-            treeScale!,
+            projection,
             hasTransform ? transform : undefined
         )
 
-        if (transformTemplate) {
-            style.transform = transformTemplate(transform, style.transform)
+        if (options.transformTemplate) {
+            style.transform = options.transformTemplate(
+                transform,
+                style.transform
+            )
         }
 
-        style.transformOrigin = buildLayoutProjectionTransformOrigin(
-            deltaFinal!
-        )
+        style.transformOrigin = buildLayoutProjectionTransformOrigin(projection)
     } else {
         if (hasTransform) {
-            style.transform = buildTransform(
-                transform,
-                transformKeys,
-                transformTemplate,
-                transformIsNone,
-                enableHardwareAcceleration,
-                allowTransformNone
-            )
+            style.transform = buildTransform(state, options, transformIsNone)
         }
 
         if (hasTransformOrigin) {

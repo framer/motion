@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { AnimationControls } from "../../animation/AnimationControls"
 import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
-import { createAnimationState } from "../../render/VisualElement/utils/animation-state"
+import { createAnimationState } from "../../render/utils/animation-state"
 import { useVariantContext } from "../context/MotionContext"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FeatureProps, MotionFeature } from "./types"

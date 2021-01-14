@@ -1,4 +1,4 @@
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
+import { HTMLVisualElement } from "../../../_render/dom/HTMLVisualElement"
 import { transformAxes } from "../../../render/dom/utils/transform"
 
 export function resetRotate(child: HTMLVisualElement) {
