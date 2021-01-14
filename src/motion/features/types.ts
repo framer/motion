@@ -1,13 +1,12 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { VisualElement } from "../../new-render/visual-element/types"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { VisualElement } from "../../render/types"
 
 /**
  * @public
  */
 export interface FeatureProps extends MotionProps {
-    visualElement: HTMLVisualElement
+    visualElement: VisualElement
 }
 
 /**

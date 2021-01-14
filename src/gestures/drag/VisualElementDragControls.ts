@@ -13,7 +13,7 @@ import {
     convertBoundingBoxToAxisBox,
     convertAxisBoxToBoundingBox,
 } from "../../utils/geometry"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
 import { eachAxis } from "../../utils/each-axis"
 import {
     calcRelativeConstraints,
@@ -24,12 +24,12 @@ import {
     applyConstraints,
     rebaseAxisConstraints,
 } from "./utils/constraints"
-import { getBoundingBox } from "../../render/dom/layout/measure"
+import { getBoundingBox } from "../../_render/dom/layout/measure"
 import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
-import { AnimationType } from "../../render/VisualElement/utils/animation-state"
+import { AnimationType } from "../../render/utils/animation-state"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,

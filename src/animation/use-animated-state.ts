@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react"
-import { VisualElement } from "../render/VisualElement"
+import { VisualElement } from "../_render/VisualElement"
 import { useConstant } from "../utils/use-constant"
-import { ResolvedValues } from "../render/VisualElement/types"
-import {
-    checkTargetForNewValues,
-    getOrigin,
-} from "../render/VisualElement/utils/setters"
+import { ResolvedValues } from "../_render/VisualElement/types"
+import { checkTargetForNewValues, getOrigin } from "../render/utils/setters"
 import { TargetAndTransition } from "../types"
-import { animateVisualElement } from "../render/VisualElement/utils/animation"
+import { animateVisualElement } from "../_render/VisualElement/utils/animation"
 
 /**
  * This is just a very basic VisualElement, more of a hack to keep supporting useAnimatedState with

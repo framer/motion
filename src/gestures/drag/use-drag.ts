@@ -3,8 +3,8 @@ import { MotionConfigContext } from "../../motion/context/MotionConfigContext"
 import { DraggableProps } from "./types"
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"
-import { VisualElement } from "../../render/VisualElement"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { VisualElement } from "../../_render/VisualElement"
+import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
 
 /**
  * A hook that allows an element to be dragged.

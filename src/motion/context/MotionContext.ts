@@ -1,5 +1,5 @@
 import { createContext, useContext } from "react"
-import { VisualElement } from "../../new-render/visual-element/types"
+import { VisualElement } from "../../render/types"
 import { VariantLabels } from "../types"
 
 export interface VariantContextProps {

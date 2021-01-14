@@ -1,14 +1,10 @@
 /**
  * Components
  */
-export {
-    motion,
-    createDomMotionComponent,
-} from "./new-render/visual-element/dom/motion"
-export { m } from "./render/dom/minimal-component"
+export { motion, createDomMotionComponent } from "./render/dom/motion"
+export { m } from "./render/dom/motion-minimal"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
-export { HTMLVisualElement } from "./render/dom/HTMLVisualElement"
 
 /**
  * Features
@@ -45,7 +41,7 @@ export {
 } from "./animation/AnimationControls"
 export { useAnimation } from "./animation/use-animation"
 export { animate } from "./animation/animate"
-export { animateVisualElement } from "./render/VisualElement/utils/animation"
+export { animateVisualElement } from "./render/utils/animation"
 export {
     HoverHandlers,
     TapHandlers,
@@ -72,7 +68,7 @@ export {
 export { useDomEvent } from "./events/use-dom-event"
 export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
-export { addScaleCorrection } from "./render/dom/layout/scale-correction"
+export { addScaleCorrection } from "./render/dom/projection/scale-correction"
 
 /**
  * Contexts
@@ -94,7 +90,7 @@ export {
     SVGAttributesAsMotionValues,
     ForwardRefComponent,
 } from "./render/dom/types"
-export { CustomDomComponent } from "./render/dom"
+export { CustomDomComponent } from "./render/dom/motion"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,

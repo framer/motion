@@ -1,10 +1,10 @@
 import { TargetAndTransition } from "../types"
 import { isMouseEvent } from "./utils/event-type"
 import { EventInfo } from "../events/types"
-import { VisualElement } from "../render/VisualElement"
-import { AnimationType } from "../render/VisualElement/utils/animation-state"
+import { AnimationType } from "../render/utils/animation-state"
 import { VariantLabels } from "../motion/types"
 import { usePointerEvent } from "../events/use-pointer-event"
+import { VisualElement } from "../render/types"
 
 /**
  * @public

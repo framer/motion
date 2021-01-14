@@ -1,5 +1,5 @@
 import { createContext } from "react"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
 import { Presence } from "./types"
 
 /**

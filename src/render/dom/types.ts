@@ -1,78 +1,58 @@
 import {
-    ReactHTML,
     DetailedHTMLFactory,
+    ForwardRefExoticComponent,
     HTMLAttributes,
     PropsWithoutRef,
+    ReactHTML,
     RefAttributes,
     SVGAttributes,
-    ForwardRefExoticComponent,
 } from "react"
-import { MotionProps, MakeMotion } from "../../motion/types"
-import {
-    HTMLElements,
-    SVGElements,
-} from "../../new-render/visual-element/dom/utils/supported-elements"
-import { TransformPoint2D } from "../../types/geometry"
-import { VisualElementConfig } from "../VisualElement/types"
+import { MakeMotion, MotionProps } from "../../motion/types"
+import { InitialVisualElementOptions, ResolvedValues } from "../types"
+import { HTMLElements, SVGElements } from "./utils/supported-elements"
 
-/**
- * Configuration for the HTML and SVGVisualElement renderers.
- */
-export interface DOMVisualElementConfig extends VisualElementConfig {
-    /**
-     * Whether to permit `transform: none` if the calculated transform equals zero.
-     */
-    allowTransformNone?: boolean
-
-    /**
-     * Whether to enable hardware acceleration. This will force the layer to the GPU
-     * by setting `translateZ(0)` to the transform style.
-     */
-    enableHardwareAcceleration?: boolean
-
-    /**
-     * An optional function that can take a page point and return a new one.
-     * Used to enable drag and layout animations in the scaled canvases of Framer Desktop preview.
-     */
-    transformPagePoint?: TransformPoint2D
-
-    /**
-     * A function that can accept the generated transform property and return a new one.
-     * Used for custom transform property orders. In the medium-term I'd like to ditch this
-     * and replace with a template function that can scoop up other animated values so
-     * we can do, for instance:
-     *
-     * ```jsx
-     * <motion.div
-     *   animate={{ blur: 20 }}
-     *   style={{ filter: combine`blur(${"blur"}px)` }}
-     * />
-     * ```
-     */
+export interface DOMVisualElementOptions extends InitialVisualElementOptions {
     transformTemplate?: MotionProps["transformTemplate"]
+    allowTransformNone: boolean
+    enableHardwareAcceleration: boolean
+}
 
-    transformValues?: MotionProps["transformValues"]
+export interface HTMLMutableState {
+    /**
+     * A mutable record of transforms we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    transform: ResolvedValues
 
-    transition?: MotionProps["transition"]
+    /**
+     * A mutable record of transform keys we want to apply to the rendered Element. We order
+     * this to order transforms in the desired order. We use a mutable data structure to reduce GC during animations.
+     */
+    transformKeys: string[]
 
-    safeToRemove?: () => void
+    /**
+     * A mutable record of transform origins we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    transformOrigin: TransformOrigin
+
+    /**
+     * A mutable record of styles we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    style: ResolvedValues
+
+    /**
+     * A mutable record of CSS variables we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    vars: ResolvedValues
 }
 
 export interface TransformOrigin {
     originX?: number | string
     originY?: number | string
     originZ?: number | string
-}
-
-/**
- * Measured dimensions of an SVG component.
- * TODO: Look into replacing this with AxisBox2D when we port over magic motion
- */
-export type Dimensions = {
-    x: number
-    y: number
-    width: number
-    height: number
 }
 
 /**

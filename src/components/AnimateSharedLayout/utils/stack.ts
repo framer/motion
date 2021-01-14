@@ -1,6 +1,6 @@
 import { Presence } from "../types"
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
-import { ResolvedValues } from "../../../render/VisualElement/types"
+import { HTMLVisualElement } from "../../../_render/dom/HTMLVisualElement"
+import { ResolvedValues } from "../../../_render/VisualElement/types"
 import { AxisBox2D, Point2D } from "../../../types/geometry"
 import { isTransformProp } from "../../../render/dom/utils/transform"
 import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
