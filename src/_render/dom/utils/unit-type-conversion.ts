@@ -2,7 +2,6 @@ import { Target, TargetWithKeyframes } from "../../../types"
 import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { number, px, ValueType } from "style-value-types"
-import { HTMLVisualElement } from "../HTMLVisualElement"
 import { MotionValue } from "../../../value"
 import { transformProps } from "../../../render/dom/utils/transform"
 import { AxisBox2D } from "../../../types/geometry"
@@ -77,7 +76,7 @@ const nonTranslationalTransformKeys = transformProps.filter(
 )
 
 type RemovedTransforms = [string, string | number][]
-function removeNonTranslationalTransform(visualElement: HTMLVisualElement) {
+function removeNonTranslationalTransform(visualElement: VisualElement) {
     const removedTransforms: RemovedTransforms = []
 
     nonTranslationalTransformKeys.forEach((key) => {
@@ -91,7 +90,7 @@ function removeNonTranslationalTransform(visualElement: HTMLVisualElement) {
     })
 
     // Apply changes to element before measurement
-    if (removedTransforms.length) visualElement.render()
+    if (removedTransforms.length) visualElement.syncRender()
 
     return removedTransforms
 }
@@ -116,8 +115,9 @@ const convertChangedValueTypes = (
     visualElement: VisualElement,
     changedKeys: string[]
 ) => {
-    const originBbox = visualElement.getBoundingBox()
-    const elementComputedStyle = visualElement.getComputedStyle()
+    const element = visualElement.getInstance()
+    const originBbox = visualElement.measureViewportBox()
+    const elementComputedStyle = getComputedStyle(element)
     const {
         display,
         top,
@@ -131,16 +131,16 @@ const convertChangedValueTypes = (
     // If the element is currently set to display: "none", make it visible before
     // measuring the target bounding box
     if (display === "none") {
-        visualElement.setStaticValues(
+        visualElement.setStaticValue(
             "display",
             (target.display as string) || "block"
         )
     }
 
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)
-    visualElement.render()
+    visualElement.syncRender()
 
-    const targetBbox = visualElement.getBoundingBox()
+    const targetBbox = visualElement.measureViewportBox()
 
     changedKeys.forEach((key) => {
         // Restore styles to their **calculated computed style**, not their actual
@@ -157,7 +157,7 @@ const convertChangedValueTypes = (
 }
 
 const checkAndConvertChangedValueTypes = (
-    visualElement: HTMLVisualElement,
+    visualElement: VisualElement,
     target: TargetWithKeyframes,
     origin: Target = {},
     transitionEnd: Target = {}
@@ -273,7 +273,7 @@ const checkAndConvertChangedValueTypes = (
         }
 
         // Reapply original values
-        visualElement.render()
+        visualElement.syncRender()
 
         return { target: convertedTarget, transitionEnd }
     } else {
@@ -289,7 +289,7 @@ const checkAndConvertChangedValueTypes = (
  * @internal
  */
 export function unitConversion(
-    visualElement: HTMLVisualElement,
+    visualElement: VisualElement,
     target: TargetWithKeyframes,
     origin?: Target,
     transitionEnd?: Target

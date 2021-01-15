@@ -1,12 +1,15 @@
 import { visualElement } from ".."
 import { ResolvedValues } from "../types"
+import { checkTargetForNewValues, getOrigin } from "../utils/setters"
+import { getBoundingBox } from "./projection/measure"
 import { DOMVisualElementOptions, HTMLMutableState } from "./types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
 import { isCSSVariable } from "./utils/is-css-variable"
+import { parseDomVariant } from "./utils/parse-dom-variant"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
 
-function getComputedStyle(element: HTMLElement) {
+export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
 }
 
@@ -30,6 +33,10 @@ export const htmlVisualElement = visualElement<HTMLElement, HTMLMutableState>({
         transformOrigin: {},
         vars: {},
     }),
+
+    measureViewportBox(element, { transformPagePoint }) {
+        return getBoundingBox(element, transformPagePoint)
+    },
 
     /**
      * Reset the transform on the current Element. This is called as part
@@ -59,9 +66,43 @@ export const htmlVisualElement = visualElement<HTMLElement, HTMLMutableState>({
         instance.style.transform = mutableState.style.transform as string
     },
 
-    onRemoveValue(key, { vars, style }) {
+    removeValueFromMutableState(key, { vars, style }) {
         delete vars[key]
         delete style[key]
+    },
+
+    /**
+     * Ensure that HTML and Framer-specific value types like `px`->`%` and `Color`
+     * can be animated by Motion.
+     */
+    makeTargetAnimatable(
+        element,
+        { transition, transitionEnd, ...target },
+        { transformValues }
+    ) {
+        let origin = getOrigin(target as any, transition || {}, element)
+
+        /**
+         * If Framer has provided a function to convert `Color` etc value types, convert them
+         */
+        if (transformValues) {
+            if (transitionEnd)
+                transitionEnd = transformValues(transitionEnd as any)
+            if (target) target = transformValues(target as any)
+            if (origin) origin = transformValues(origin as any)
+        }
+
+        checkTargetForNewValues(element, target, origin as any)
+
+        const parsed = parseDomVariant(element, target, origin, transitionEnd)
+        transitionEnd = parsed.transitionEnd
+        target = parsed.target
+
+        return {
+            transition,
+            transitionEnd,
+            ...target,
+        }
     },
 
     build(latest, mutableState, projection, options) {

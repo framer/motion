@@ -1,17 +1,29 @@
 import { Ref } from "react"
 import { MotionProps } from "../motion/types"
-import { Transition, Variant, Variants } from "../types"
+import { TargetAndTransition, Transition, Variant, Variants } from "../types"
 import { AxisBox2D, BoxDelta, Point2D } from "../types/geometry"
 import { MotionValue } from "../value"
-import { DOMVisualElementOptions } from "./dom/types"
 
-export interface VisualElement<E = any> {
+export interface MotionPoint {
+    x: MotionValue<number>
+    y: MotionValue<number>
+}
+
+export interface VisualElement<Instance = any, Options = any> {
     depth: number
-    current: E | null
-    getInstance(): E | null
+    current: Instance | null
+    getInstance(): Instance | null
     path: VisualElement[]
-    addChild(child: VisualElement<unknown>): () => void
-    ref: Ref<E>
+    addChild(child: VisualElement): () => void
+    ref: Ref<Instance>
+
+    /**
+     * Visibility
+     */
+    isVisible: boolean
+    show(): void
+    hide(): void
+
     hasValue(key: string): boolean
     addValue(key: string, value: MotionValue<any>): void
     removeValue(key: string): void
@@ -23,42 +35,68 @@ export interface VisualElement<E = any> {
     ): undefined | MotionValue
     forEachValue(callback: (value: MotionValue, key: string) => void): void
     readValue(key: string): string | number | undefined | null
+    setStaticValue(key: string, value: number | string): void
     scheduleRender(): void
-    updateOptions(options: VisualElementOptions): void
+    updateOptions(options: Options): void
     getVariant(name: string): Variant | undefined
     getVariantData(): any
     getDefaultTransition(): Transition | undefined
-    scheduleUpdateLayoutProjection(): void
+    isHoverEventsEnabled: boolean
     suspendHoverEvents(): void
     withoutTransform(callback: () => void): void
     updateLayoutProjection(): void
     notifyAnimationStart(): void
     notifyAnimationComplete(): void
+    syncRender(): void
+
+    /**
+     * Layout projection - perhaps a candidate for lazy-loading
+     * or an external interface. Move into Projection?
+     */
+    enableLayoutProjection(): void
+    lockProjectionTarget(): void
+    unlockProjectionTarget(): void
+    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void
+    measureViewportBox(withTransform?: boolean): AxisBox2D
+    updateLayoutMeasurement(): void
+    getMeasuredLayout(): AxisBox2D
+    getProjectionTarget(): AxisBox2D
+    getProjectionAnimationProgress(): MotionPoint
+    setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void
+    startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>
+    stopLayoutAnimation(): void
 }
 
-export interface VisualElementConfig<E, MutableState> {
+export interface VisualElementConfig<Instance, MutableState, Options> {
     initMutableState(): MutableState
     build(
         latest: ResolvedValues,
         mutableState: MutableState,
         projection: Projection,
-        options: DOMVisualElementOptions
+        options: Options
     ): void
+    makeTargetAnimatable(
+        element: VisualElement<Instance>,
+        target: TargetAndTransition,
+        options: Options
+    ): TargetAndTransition
+    measureViewportBox(instance: Instance, options: Options): AxisBox2D
     readNativeValue(
-        instance: E,
-        key: string
+        instance: Instance,
+        key: string,
+        options: Options
     ): string | number | null | undefined
     resetTransform(
-        element: VisualElement<E>,
-        instance: E,
-        options: DOMVisualElementOptions
+        element: VisualElement<Instance>,
+        instance: Instance,
+        options: Options
     ): void
-    restoreTransform(instance: E, mutableState: MutableState): void
-    render(instance: E, mutableState: MutableState): void
-    onRemoveValue(key: string, mutableState: MutableState): void
+    restoreTransform(instance: Instance, mutableState: MutableState): void
+    render(instance: Instance, mutableState: MutableState): void
+    removeValueFromMutableState(key: string, mutableState: MutableState): void
 }
 
-export interface VisualElementOptions {
+export type VisualElementOptions<Options> = Options & {
     defaultTransition?: Transition
     onAnimationStart?: MotionProps["onAnimationStart"]
     onAnimationComplete?: MotionProps["onAnimationComplete"]
@@ -68,6 +106,8 @@ export interface VisualElementOptions {
 
 export interface Projection {
     isEnabled: boolean
+
+    isTargetLocked: boolean
 
     /**
      * The measured bounding box as it exists on the page with no transforms applied.
@@ -138,9 +178,11 @@ export interface Projection {
     deltaFinal: BoxDelta
 }
 
-export interface InitialVisualElementOptions<E = any>
-    extends VisualElementOptions {
-    ref: Ref<E>
+export type InitialVisualElementOptions<
+    Instance,
+    Options
+> = VisualElementOptions<Options> & {
+    ref?: Ref<Instance>
     parent?: VisualElement<unknown>
 }
 

@@ -31,56 +31,15 @@ export abstract class VisualElement<E = any> {
     isHoverEventsEnabled = true
 
     /**
-     * Temporarily suspend hover events while we remove transforms in order to measure the layout.
-     *
-     * This seems like an odd bit of scheduling but what we're doing is saying after
-     * the next render, wait 10 milliseconds before reenabling hover events. Waiting until
-     * the next frame results in missed, valid hover events. But triggering on the postRender
-     * frame is too soon to avoid triggering events with layout measurements.
-     *
-     * Note: If we figure out a way of measuring layout while transforms remain applied, this can be removed.
-     */
-    suspendHoverEvents() {
-        this.isHoverEventsEnabled = false
-        sync.postRender(() =>
-            setTimeout(() => (this.isHoverEventsEnabled = true), 10)
-        )
-    }
-
-    /**
      * A set of values that we animate back to when a value is cleared of all overrides.
      */
     baseTarget: Target = {}
-
-    getVariantPayload() {
-        return (this.config as any).custom
-    }
-
-    getVariant(label: string): Variants {
-        return (this.config as any).variants?.[label]
-    }
 
     variantChildrenOrder?: Set<VisualElement<E>>
     addVariantChildOrder(visualElement: VisualElement<E>) {
         if (!this.variantChildrenOrder) this.variantChildrenOrder = new Set()
         this.variantChildrenOrder.add(visualElement)
     }
-
-    onAnimationStart() {
-        ;(this.config as any).onAnimationStart?.()
-    }
-
-    onAnimationComplete() {
-        this.isMounted && (this.config as any).onAnimationComplete?.()
-    }
-
-    getDefaultTransition() {
-        return (this.config as any).transition
-    }
-
-    // A snapshot of the previous component that shared a layoutId with this component. Will
-    // only be hydrated by AnimateSharedLayout
-    prevSnapshot?: Snapshot
 
     // The latest resolved MotionValues
     latest: ResolvedValues = {}

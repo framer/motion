@@ -34,7 +34,7 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
  * Default handlers for batching VisualElements
  */
 const defaultHandler: SyncLayoutLifecycles = {
-    measureLayout: (child) => child.measureLayout(),
+    measureLayout: (child) => child.updateLayoutMeasurement(),
     layoutReady: (child) => child.layoutReady(),
 }
 

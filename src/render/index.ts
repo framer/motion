@@ -1,6 +1,8 @@
 import sync, { cancelSync } from "framesync"
 import { pipe } from "popmotion"
-import { delta } from "../utils/geometry"
+import { eachAxis } from "../utils/each-axis"
+import { copyAxisBox, delta } from "../utils/geometry"
+import { removeBoxTransforms } from "../utils/geometry/delta-apply"
 import { isRefObject } from "../utils/is-ref-object"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
@@ -14,6 +16,7 @@ import {
     InitialVisualElementOptions,
     VisualElementOptions,
     VisualElementConfig,
+    MotionPoint,
 } from "./types"
 import {
     initProjection,
@@ -21,22 +24,24 @@ import {
     updateTransformDeltas,
 } from "./utils/projection"
 
-export const visualElement = <E, MutableState>({
+export const visualElement = <Instance, MutableState, Options>({
     initMutableState,
     build,
+    measureViewportBox,
     render,
     readNativeValue,
     resetTransform,
     restoreTransform,
-    onRemoveValue,
-}: VisualElementConfig<E, MutableState>) => ({
+    removeValueFromMutableState,
+}: VisualElementConfig<Instance, MutableState, Options>) => ({
     parent,
     ref: externalRef,
     ...initialOptions
-}: InitialVisualElementOptions) => {
-    let instance: E
-    let mutableState = initMutableState()
-    let options: VisualElementOptions = initialOptions
+}: InitialVisualElementOptions<Instance, Options> = {}) => {
+    let instance: Instance
+    const mutableState = initMutableState()
+    let projectionTargetProgress: MotionPoint
+    let options = initialOptions
 
     /**
      * Keep track of whether the viewport box has been updated since the last render.
@@ -86,16 +91,54 @@ export const visualElement = <E, MutableState>({
         ? parent.scheduleUpdateLayoutProjection
         : () => sync.preRender(element.updateLayoutProjection, false, true)
 
-    const element: VisualElement = {
+    const element: VisualElement<Instance, Options> = {
         current: null,
         depth: parent ? parent.depth + 1 : 0,
         path: parent ? [...parent.path, parent] : [],
+
+        isVisible: true,
+
+        show() {
+            if (!element.isVisible) {
+                element.isVisible = true
+                element.scheduleRender()
+            }
+        },
+
+        hide() {
+            if (element.isVisible) {
+                element.isVisible = false
+                element.scheduleRender()
+            }
+        },
 
         addChild: (child) => {
             children.add(child)
             return () => children.delete(child)
         },
+
         getInstance: () => instance,
+
+        setStaticValue: (key, value) => (latest[key] = value),
+
+        isHoverEventsEnabled: false,
+
+        /**
+         * Temporarily suspend hover events while we remove transforms in order to measure the layout.
+         *
+         * This seems like an odd bit of scheduling but what we're doing is saying after
+         * the next render, wait 10 milliseconds before reenabling hover events. Waiting until
+         * the next frame results in missed, valid hover events. But triggering on the postRender
+         * frame is too soon to avoid triggering events with layout measurements.
+         *
+         * Note: If we figure out a way of measuring layout while transforms remain applied, this can be removed.
+         */
+        suspendHoverEvents() {
+            element.isHoverEventsEnabled = false
+            sync.postRender(() =>
+                setTimeout(() => (element.isHoverEventsEnabled = true), 10)
+            )
+        },
 
         /**
          * Motion values
@@ -115,7 +158,7 @@ export const visualElement = <E, MutableState>({
             valueSubscriptions.get(key)?.()
             valueSubscriptions.delete(key)
             delete latest[key]
-            onRemoveValue(key, mutableState)
+            removeValueFromMutableState(key, mutableState)
         },
 
         hasValue: (key) => values.has(key),
@@ -146,6 +189,7 @@ export const visualElement = <E, MutableState>({
                 // TODO: Remove from attached projection here, perhaps add snapshot if this is
                 // a shared projection
                 // element.style.forEachValue((_, key) => element.remove)
+                element.stopLayoutAnimation()
                 cancelSync.update(update)
                 cancelSync.render(render)
                 removeFromParent?.()
@@ -179,17 +223,111 @@ export const visualElement = <E, MutableState>({
             options = { ...newOptions }
         },
 
-        getVariant(name: string) {
-            return options.variants?.[name]
-        },
+        getVariant: (name: string) => options.variants?.[name],
 
-        getVariantData() {
-            return options.variantData
-        },
+        getVariantData: () => options.variantData,
+
+        getDefaultTransition: () => options.defaultTransition,
 
         /**
          * Layout projection
          */
+        enableLayoutProjection() {
+            projection.isEnabled = true
+        },
+
+        lockProjectionTarget() {
+            projection.isTargetLocked = true
+        },
+
+        unlockProjectionTarget() {
+            element.stopLayoutAnimation()
+            projection.isTargetLocked = false
+        },
+
+        getProjectionTarget: () => projection.target,
+
+        startLayoutAnimation(axis, transition) {
+            const progress = element.getProjectionAnimationProgress()[axis]
+            const { min, max } = projection.target[axis]
+            const length = max - min
+
+            progress.clearListeners()
+            progress.set(min)
+            progress.set(min) // Set twice to hard-reset velocity
+            progress.onChange((v) =>
+                element.setProjectionTargetAxis(axis, v, v + length)
+            )
+
+            return this.animateMotionValue?.(axis, progress, 0, transition)
+        },
+
+        stopLayoutAnimation() {
+            eachAxis((axis) =>
+                element.getProjectionAnimationProgress()[axis].stop()
+            )
+        },
+
+        measureViewportBox(withTransform = true) {
+            const viewportBox = measureViewportBox(instance, options)
+            if (!withTransform) removeBoxTransforms(viewportBox, latest)
+            return viewportBox
+        },
+
+        updateLayoutMeasurement() {
+            projection.layout = element.measureViewportBox()
+            projection.layoutCorrected = copyAxisBox(projection.layout)
+
+            // if (!this.targetBox) this.targetBox = copyAxisBox(this.box)
+
+            // this.layoutMeasureListeners.notify(
+            //     this.box,
+            //     this.prevViewportBox || this.box
+            // )
+
+            sync.update(() => element.rebaseProjectionTarget())
+        },
+
+        getMeasuredLayout: () => projection.layout,
+
+        getProjectionAnimationProgress() {
+            if (!projectionTargetProgress) {
+                projectionTargetProgress = {
+                    x: motionValue(0),
+                    y: motionValue(0),
+                }
+            }
+
+            return projectionTargetProgress as MotionPoint
+        },
+
+        setProjectionTargetAxis(axis, min, max) {
+            const target = projection.target[axis]
+            target.min = min
+            target.max = max
+
+            // Flag that we want to fire the onViewportBoxUpdate event handler
+            hasViewportBoxUpdated = true
+
+            scheduleUpdateLayoutProjection()
+        },
+
+        rebaseProjectionTarget(force, box = projection.layout) {
+            const { x, y } = element.getProjectionAnimationProgress()
+
+            const shouldRebase =
+                !projection.isTargetLocked &&
+                !x.isAnimating() &&
+                !y.isAnimating()
+
+            if (force || shouldRebase) {
+                eachAxis((axis) => {
+                    const { min, max } = box[axis]
+                    element.setProjectionTargetAxis(axis, min, max)
+                })
+            }
+        },
+
         withoutTransform(callback) {
             if (projection.isEnabled) resetTransform(element, instance, options)
 
@@ -232,6 +370,8 @@ export const visualElement = <E, MutableState>({
             // TODO: Currently we iterate over the tree, explore iterating over a flat set in the root node
             children.forEach(fireUpdateLayoutProjection)
         },
+
+        syncRender: onRender,
     }
 
     const removeFromParent = parent?.addChild(element)
