@@ -1,11 +1,11 @@
 import { RefObject } from "react"
+import { invariant } from "hey-listen"
+import { progress } from "popmotion"
+import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
 import { DraggableProps, DragHandler } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
-import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
-import { invariant } from "hey-listen"
-import { progress } from "popmotion"
 import { addDomEvent } from "../../events/use-dom-event"
 import { getViewportPointFromEvent } from "../../events/event-info"
 import { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
@@ -13,7 +13,6 @@ import {
     convertBoundingBoxToAxisBox,
     convertAxisBoxToBoundingBox,
 } from "../../utils/geometry"
-import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
 import { eachAxis } from "../../utils/each-axis"
 import {
     calcRelativeConstraints,
@@ -24,21 +23,21 @@ import {
     applyConstraints,
     rebaseAxisConstraints,
 } from "./utils/constraints"
-import { getBoundingBox } from "../../_render/dom/layout/measure"
+import { getBoundingBox } from "../../render/dom/projection/measure"
 import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
 import { AnimationType } from "../../render/utils/animation-state"
+import { VisualElement } from "../../render/types"
 
 export const elementDragControls = new WeakMap<
-    HTMLVisualElement,
+    VisualElement,
     VisualElementDragControls
 >()
 
 interface DragControlConfig {
-    // TODO: I'd like to work towards making this work generically with VisualElement
-    visualElement: HTMLVisualElement
+    visualElement: VisualElement
 }
 
 export interface DragControlOptions {
@@ -89,7 +88,7 @@ export class VisualElementDragControls {
     /**
      * @internal
      */
-    private visualElement: HTMLVisualElement
+    private visualElement: VisualElement
 
     /**
      * @internal
@@ -176,7 +175,7 @@ export class VisualElementDragControls {
              * stick to the correct place under the pointer.
              */
             this.prepareBoundingBox()
-            this.visualElement.lockTargetBox()
+            this.visualElement.lockProjectionTarget()
 
             /**
              * Resolve the drag constraints. These are either set as top/right/bottom/left constraints
@@ -199,7 +198,9 @@ export class VisualElementDragControls {
             const { point } = getViewportPointFromEvent(event)
 
             eachAxis((axis) => {
-                const { min, max } = this.visualElement.targetBox[axis]
+                const { min, max } = this.visualElement.getProjectionTarget()[
+                    axis
+                ]
 
                 this.cursorProgress[axis] = cursorProgress
                     ? cursorProgress[axis]
@@ -278,11 +279,11 @@ export class VisualElementDragControls {
     prepareBoundingBox() {
         const { visualElement } = this
         visualElement.withoutTransform(() => {
-            visualElement.measureLayout()
+            visualElement.updateLayoutMeasurement()
         })
-        visualElement.rebaseTargetBox(
+        visualElement.rebaseProjectionTarget(
             true,
-            visualElement.getBoundingBoxWithoutTransforms()
+            visualElement.measureViewportBox(false)
         )
     }
 
@@ -292,11 +293,11 @@ export class VisualElementDragControls {
         if (dragConstraints) {
             this.constraints = isRefObject(dragConstraints)
                 ? this.resolveRefConstraints(
-                      this.visualElement.box,
+                      this.visualElement.getMeasuredLayout(),
                       dragConstraints
                   )
                 : calcRelativeConstraints(
-                      this.visualElement.box,
+                      this.visualElement.getMeasuredLayout(),
                       dragConstraints
                   )
         } else {
@@ -311,7 +312,7 @@ export class VisualElementDragControls {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        this.visualElement.box[axis],
+                        this.visualElement.getMeasuredLayout()[axis],
                         this.constraints[axis]
                     )
                 }
@@ -376,7 +377,7 @@ export class VisualElementDragControls {
     }
 
     stop(event: AnyPointerEvent, info: PanInfo) {
-        this.visualElement.unlockTargetBox()
+        this.visualElement.unlockProjectionTarget()
         this.panSession?.end()
         this.panSession = null
         const isDragging = this.isDragging
@@ -407,7 +408,7 @@ export class VisualElementDragControls {
 
             if (axisValue) {
                 const { point } = getViewportPointFromEvent(event)
-                const { box } = this.visualElement
+                const box = this.visualElement.getMeasuredLayout()
                 const length = box[axis].max - box[axis].min
                 const center = box[axis].min + length / 2
                 const offset = point[axis] - center
@@ -456,7 +457,7 @@ export class VisualElementDragControls {
         const { dragElastic } = this.props
 
         // Get the actual layout bounding box of the element
-        const axisLayout = this.visualElement.box[axis]
+        const axisLayout = this.visualElement.getMeasuredLayout()[axis]
 
         // Calculate its current length. In the future we might want to lerp this to animate
         // between lengths if the layout changes as we change the DOM
@@ -476,7 +477,7 @@ export class VisualElementDragControls {
         )
 
         // Update the axis viewport target with this new min and the length
-        this.visualElement.setAxisTarget(axis, min, min + axisLength)
+        this.visualElement.setProjectionTargetAxis(axis, min, min + axisLength)
     }
 
     updateProps({
@@ -554,7 +555,7 @@ export class VisualElementDragControls {
             // otherwise we just have to animate the `MotionValue` itself.
             return this.getAxisMotionValue(axis)
                 ? this.startAxisValueAnimation(axis, inertia)
-                : this.visualElement.startLayoutAxisAnimation(axis, inertia)
+                : this.visualElement.startLayoutAnimation(axis, inertia)
         })
 
         // Run all animations and then resolve the new drag constraints.
@@ -595,7 +596,7 @@ export class VisualElementDragControls {
         const boxProgress = { x: 0, y: 0 }
         eachAxis((axis) => {
             boxProgress[axis] = calcOrigin(
-                this.visualElement.targetBox[axis],
+                this.visualElement.getProjectionTarget()[axis],
                 this.constraintsBox![axis]
             )
         })
@@ -614,16 +615,16 @@ export class VisualElementDragControls {
             // Calculate the position of the targetBox relative to the constraintsBox using the
             // previously calculated progress
             const { min, max } = calcPositionFromProgress(
-                this.visualElement.targetBox[axis],
+                this.visualElement.getProjectionTarget()[axis],
                 this.constraintsBox![axis],
                 boxProgress[axis]
             )
 
-            this.visualElement.setAxisTarget(axis, min, max)
+            this.visualElement.setProjectionTargetAxis(axis, min, max)
         })
     }
 
-    mount(visualElement: HTMLVisualElement) {
+    mount(visualElement: VisualElement) {
         const element = visualElement.getInstance()
 
         /**

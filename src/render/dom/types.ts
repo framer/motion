@@ -8,11 +8,13 @@ import {
     SVGAttributes,
 } from "react"
 import { MakeMotion, MotionProps } from "../../motion/types"
+import { TransformPoint2D } from "../../types/geometry"
 import { InitialVisualElementOptions, ResolvedValues } from "../types"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
 
 export interface DOMVisualElementOptions extends InitialVisualElementOptions {
     transformTemplate?: MotionProps["transformTemplate"]
+    transformPagePoint?: TransformPoint2D
     allowTransformNone: boolean
     enableHardwareAcceleration: boolean
 }

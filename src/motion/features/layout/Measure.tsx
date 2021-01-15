@@ -56,7 +56,7 @@ class Measure extends React.Component<SyncProps> {
          * If this axis isn't animating as a result of this render we want to reset the targetBox
          * to the measured box
          */
-        visualElement.rebaseTargetBox()
+        visualElement.rebaseProjectionTarget()
     }
 
     render() {

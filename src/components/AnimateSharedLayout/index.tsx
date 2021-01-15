@@ -121,7 +121,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Create a handler which we can use to flush the children animations
          */
         const handler: SyncLayoutLifecycles = {
-            measureLayout: (child) => child.measureLayout(),
+            measureLayout: (child) => child.updateLayoutMeasurement(),
             layoutReady: (child) => {
                 const { layoutId } = child
 
