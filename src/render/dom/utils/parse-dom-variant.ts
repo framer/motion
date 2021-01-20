@@ -1,6 +1,6 @@
 import { resolveCSSVariables } from "./css-variables-conversion"
-import { unitConversion } from "../../../_render/dom/utils/unit-type-conversion"
 import { MakeTargetAnimatable } from "../../utils/animation"
+import { unitConversion } from "./unit-conversion"
 
 /**
  * Parse a DOM variant to make it animatable. This involves resolving CSS variables

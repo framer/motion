@@ -1,8 +1,16 @@
 import { Ref } from "react"
+import { LayoutUpdateHandler } from "."
+import {
+    Presence,
+    SharedLayoutAnimationConfig,
+} from "../components/AnimateSharedLayout/types"
+import { Snapshot } from "../components/AnimateSharedLayout/utils/stack"
+import { OnViewportBoxUpdate } from "../motion/features/layout/types"
 import { MotionProps } from "../motion/types"
-import { TargetAndTransition, Transition, Variant, Variants } from "../types"
+import { TargetAndTransition, Transition, Variant } from "../types"
 import { AxisBox2D, BoxDelta, Point2D } from "../types/geometry"
 import { MotionValue } from "../value"
+import { AnimationState } from "./utils/animation-state"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -12,10 +20,13 @@ export interface MotionPoint {
 export interface VisualElement<Instance = any, Options = any> {
     depth: number
     current: Instance | null
+    manuallyAnimateOnMount: boolean
+    variantChildren?: Set<VisualElement>
+    subscribeToVariantParent(): void
     getInstance(): Instance | null
     path: VisualElement[]
     addChild(child: VisualElement): () => void
-    ref: Ref<Instance>
+    ref: Ref<Instance | null>
 
     /**
      * Visibility
@@ -35,16 +46,30 @@ export interface VisualElement<Instance = any, Options = any> {
     ): undefined | MotionValue
     forEachValue(callback: (value: MotionValue, key: string) => void): void
     readValue(key: string): string | number | undefined | null
+    setBaseTarget(key: string, value: string | number | null): void
+    getBaseTarget(key: string): number | string | undefined | null
+    getStaticValue(key: string): number | string | undefined
     setStaticValue(key: string, value: number | string): void
+    getLatestValues(): ResolvedValues
     scheduleRender(): void
     updateOptions(options: Options): void
+    updateProps(props: MotionProps): void
     getVariant(name: string): Variant | undefined
     getVariantData(): any
     getDefaultTransition(): Transition | undefined
-    isHoverEventsEnabled: boolean
-    suspendHoverEvents(): void
-    withoutTransform(callback: () => void): void
-    updateLayoutProjection(): void
+    getVariantContext(
+        startAtParent?: boolean
+    ):
+        | undefined
+        | {
+              initial?: string | string[]
+              animate?: string | string[]
+              exit?: string | string[]
+              whileHover?: string | string[]
+              whileDrag?: string | string[]
+              whileFocus?: string | string[]
+              whileTap?: string | string[]
+          }
     notifyAnimationStart(): void
     notifyAnimationComplete(): void
     syncRender(): void
@@ -53,6 +78,9 @@ export interface VisualElement<Instance = any, Options = any> {
      * Layout projection - perhaps a candidate for lazy-loading
      * or an external interface. Move into Projection?
      */
+    isHoverEventsEnabled: boolean
+    suspendHoverEvents(): void
+    withoutTransform(callback: () => void): void
     enableLayoutProjection(): void
     lockProjectionTarget(): void
     unlockProjectionTarget(): void
@@ -60,11 +88,36 @@ export interface VisualElement<Instance = any, Options = any> {
     measureViewportBox(withTransform?: boolean): AxisBox2D
     updateLayoutMeasurement(): void
     getMeasuredLayout(): AxisBox2D
+    getProjection(): Projection
     getProjectionTarget(): AxisBox2D
     getProjectionAnimationProgress(): MotionPoint
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void
     startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>
     stopLayoutAnimation(): void
+    snapshotViewportBox(): void
+    updateLayoutProjection(): void
+    makeTargetAnimatable(
+        target: TargetAndTransition,
+        isLive?: boolean
+    ): TargetAndTransition
+    scheduleUpdateLayoutProjection(): void
+    // TODO: notifyLayoutMeasurementsUpdated ?
+    notifyLayoutReady(config?: SharedLayoutAnimationConfig): void
+    resetTransform(): void
+
+    onLayoutUpdate(callback: LayoutUpdateHandler): () => void
+    onLayoutMeasure(callback: LayoutUpdateHandler): () => void
+    onViewportBoxUpdate(callback: OnViewportBoxUpdate): () => void
+
+    // TODO save this somewhere else
+    isPresent: boolean
+    presence: Presence
+    isPresenceRoot?: boolean
+    prevSnapshot?: Snapshot
+    prevViewportBox?: AxisBox2D
+    layoutId?: string
+
+    animationState?: AnimationState
 }
 
 export interface VisualElementConfig<Instance, MutableState, Options> {
@@ -78,7 +131,8 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
     makeTargetAnimatable(
         element: VisualElement<Instance>,
         target: TargetAndTransition,
-        options: Options
+        props: MotionProps,
+        isLive: boolean
     ): TargetAndTransition
     measureViewportBox(instance: Instance, options: Options): AxisBox2D
     readNativeValue(
@@ -96,12 +150,12 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
     removeValueFromMutableState(key: string, mutableState: MutableState): void
 }
 
-export type VisualElementOptions<Options> = Options & {
-    defaultTransition?: Transition
-    onAnimationStart?: MotionProps["onAnimationStart"]
-    onAnimationComplete?: MotionProps["onAnimationComplete"]
-    variants?: Variants
-    variantData?: any
+export type VisualElementOptions<Instance> = {
+    ref?: Ref<Instance>
+    parent?: VisualElement<unknown>
+    isStatic?: boolean
+    props: MotionProps
+    blockInitialAnimation?: boolean
 }
 
 export interface Projection {
@@ -176,14 +230,6 @@ export interface Projection {
      * This is considered mutable to avoid object creation on each frame.
      */
     deltaFinal: BoxDelta
-}
-
-export type InitialVisualElementOptions<
-    Instance,
-    Options
-> = VisualElementOptions<Options> & {
-    ref?: Ref<Instance>
-    parent?: VisualElement<unknown>
 }
 
 export type ExtendVisualElement<

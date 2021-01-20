@@ -52,28 +52,15 @@ export function createMotionComponent<P extends {}, E>(
             externalRef
         )
 
-        // /**
-        //  * Add the visualElement as a node in the variant tree.
-        //  */
-        // const variantContext = useVariants(visualElement, props, isStatic)
-
         /**
          * Load features as renderless components unless the component isStatic
          */
-        // const features = useFeatures(
-        //     defaultFeatures,
-        //     isStatic,
-        //     visualElement,
-        //     props
-        // )
-
-        /**
-         * Only create a new context value when the sub-contexts change.
-         */
-        // const context = useMemo(() => ({ visualElement, variantContext }), [
-        //     visualElement,
-        //     variantContext,
-        // ])
+        const features = useFeatures(
+            defaultFeatures,
+            isStatic,
+            visualElement,
+            props
+        )
 
         const component = useRender(Component, props, visualElement)
 
@@ -88,10 +75,10 @@ export function createMotionComponent<P extends {}, E>(
         // all plugins and features has to execute.
         return (
             <>
-                <MotionContext.Provider value={{ visualElement }}>
+                <MotionContext.Provider value={visualElement}>
                     {component}
                 </MotionContext.Provider>
-                {}
+                {features}
             </>
         )
     }

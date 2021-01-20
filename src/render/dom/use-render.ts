@@ -18,7 +18,7 @@ export function useRender<Props>(
 
     // Generate props to visually render this component
     const visualProps = isSVGComponent(Component)
-        ? buildSVGProps(visualElement)
+        ? buildSVGProps()
         : useHTMLProps(visualElement, props)
 
     return createElement<any>(Component, {

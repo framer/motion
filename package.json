@@ -20,7 +20,7 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn test-client && yarn test-server && yarn test-e2e && yarn build && yarn measure",
+        "test": "rm -rf types && yarn test-client && yarn test-server && yarn test-e2e && yarn build && yarn measure",
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",

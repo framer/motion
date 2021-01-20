@@ -1,8 +1,8 @@
-import { Point2D, Axis, AxisBox2D, BoxDelta } from "../../../types/geometry"
-import { cssVariableRegex } from "../utils/css-variables-conversion"
+import { Axis } from "../../../types/geometry"
 import { complex, px } from "style-value-types"
 import { mix } from "popmotion"
 import { Projection } from "../../types"
+import { cssVariableRegex } from "../utils/css-variables-conversion"
 
 type ScaleCorrection = (
     latest: string | number,
@@ -31,7 +31,7 @@ export function pixelsToPercent(pixels: number, axis: Axis): number {
  */
 export function correctBorderRadius(
     latest: string | number,
-    viewportBox: AxisBox2D
+    { target }: Projection
 ) {
     /**
      * If latest is a string, if it's a percentage we can return immediately as it's
@@ -49,8 +49,8 @@ export function correctBorderRadius(
      * If latest is a number, it's a pixel value. We use the current viewportBox to calculate that
      * pixel value as a percentage of each axis
      */
-    const x = pixelsToPercent(latest, viewportBox.x)
-    const y = pixelsToPercent(latest, viewportBox.y)
+    const x = pixelsToPercent(latest, target.x)
+    const y = pixelsToPercent(latest, target.y)
 
     return `${x}% ${y}%`
 }
@@ -59,9 +59,7 @@ const varToken = "_$css"
 
 export function correctBoxShadow(
     latest: string,
-    _viewportBox: AxisBox2D,
-    delta: BoxDelta,
-    treeScale: Point2D
+    { delta, treeScale }: Projection
 ) {
     const original = latest
 

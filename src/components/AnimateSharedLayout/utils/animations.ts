@@ -4,11 +4,11 @@ import {
     SharedLayoutAnimationConfig,
 } from "../types"
 import { LayoutStack } from "./stack"
-import { HTMLVisualElement } from "../../../_render/dom/HTMLVisualElement"
 import { AxisBox2D } from "../../../types/geometry"
+import { VisualElement } from "../../../render/types"
 
 export function createSwitchAnimation(
-    child: HTMLVisualElement,
+    child: VisualElement,
     stack?: LayoutStack
 ): SharedLayoutAnimationConfig {
     if (stack && child !== stack.lead) {
@@ -35,7 +35,7 @@ export function createSwitchAnimation(
 }
 
 export function createCrossfadeAnimation(
-    child: HTMLVisualElement,
+    child: VisualElement,
     stack?: LayoutStack
 ): SharedLayoutAnimationConfig {
     const config: SharedLayoutAnimationConfig = {}

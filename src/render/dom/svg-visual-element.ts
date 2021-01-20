@@ -1,6 +1,3 @@
-import { visualElement } from ".."
-import { DOMVisualElementOptions } from "./types"
+import { htmlVisualElement } from "./html-visual-element"
 
-export function svgVisualElement(options: DOMVisualElementOptions) {
-    return visualElement(options)
-}
+export const svgVisualElement = htmlVisualElement

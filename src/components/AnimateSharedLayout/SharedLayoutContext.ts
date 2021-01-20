@@ -1,5 +1,5 @@
 import { createContext } from "react"
-import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
+import { VisualElement } from "../../render/types"
 import { Presence } from "./types"
 
 /**
@@ -7,16 +7,16 @@ import { Presence } from "./types"
  * down on layout thrashing
  */
 export interface SyncLayoutLifecycles {
-    measureLayout: (child: HTMLVisualElement) => void
-    layoutReady: (child: HTMLVisualElement) => void
-    parent?: HTMLVisualElement
+    measureLayout: (child: VisualElement) => void
+    layoutReady: (child: VisualElement) => void
+    parent?: VisualElement
 }
 
 /**
  * The exposed API for children to add themselves to the batcher and to flush it.
  */
 export interface SyncLayoutBatcher {
-    add: (child: HTMLVisualElement) => void
+    add: (child: VisualElement) => void
     flush: (handler?: SyncLayoutLifecycles) => void
 }
 
@@ -26,8 +26,8 @@ export interface SyncLayoutBatcher {
 export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
     syncUpdate: (force?: boolean) => void
     forceUpdate: () => void
-    register: (child: HTMLVisualElement) => void
-    remove: (child: HTMLVisualElement) => void
+    register: (child: VisualElement) => void
+    remove: (child: VisualElement) => void
 }
 
 /**
@@ -35,22 +35,21 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
  */
 const defaultHandler: SyncLayoutLifecycles = {
     measureLayout: (child) => child.updateLayoutMeasurement(),
-    layoutReady: (child) => child.layoutReady(),
+    layoutReady: (child) => child.notifyLayoutReady(),
 }
 
 /**
  * Sort VisualElements by tree depth, so we process the highest elements first.
  */
-const sortByDepth = (a: HTMLVisualElement, b: HTMLVisualElement) =>
-    a.depth - b.depth
+const sortByDepth = (a: VisualElement, b: VisualElement) => a.depth - b.depth
 
 /**
  * Create a batcher to process VisualElements
  */
 export function createBatcher(): SyncLayoutBatcher {
-    const queue = new Set<HTMLVisualElement>()
+    const queue = new Set<VisualElement>()
 
-    const add = (child: HTMLVisualElement) => queue.add(child)
+    const add = (child: VisualElement) => queue.add(child)
 
     const flush = ({
         measureLayout,

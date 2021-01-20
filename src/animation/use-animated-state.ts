@@ -24,7 +24,7 @@ const stateVisualElement = visualElement<
     removeValueFromMutableState() {},
     render() {},
 
-    readNativeValue(state, key, options) {
+    readNativeValue(_state, key, options) {
         return options.initialState[key] || 0
     },
 
@@ -42,9 +42,11 @@ const stateVisualElement = visualElement<
  */
 export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)
-    const element = useConstant(() => stateVisualElement({ initialState }))
+    const element = useConstant(() =>
+        stateVisualElement({ props: {} }, { initialState })
+    )
 
-    element.updateOptions({
+    element.updateProps({
         onUpdate: (v) => setAnimationState({ ...v }),
     })
 

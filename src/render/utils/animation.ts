@@ -1,8 +1,15 @@
-import { VariantLabels, TargetAndTransition, Transition } from "../../.."
 import { startAnimation } from "../../animation/utils/transitions"
-import { Target, TargetResolver, TargetWithKeyframes } from "../../types"
+import { VariantLabels } from "../../motion/types"
+import {
+    Target,
+    TargetAndTransition,
+    TargetResolver,
+    TargetWithKeyframes,
+    Transition,
+} from "../../types"
 import { VisualElement } from "../types"
 import { AnimationType } from "./animation-state"
+import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
 
 export type AnimationDefinition =
@@ -36,7 +43,6 @@ export function animateVisualElement(
     options?: AnimationOptions
 ) {
     visualElement.notifyAnimationStart()
-
     let animation: Promise<any>
 
     if (Array.isArray(definition)) {
@@ -79,7 +85,7 @@ function animateVariant(
      * If we have children, create a callback that runs all their animations.
      * Otherwise, we resolve a Promise immediately for a composable no-op.
      */
-    const getChildAnimations = visualElement.variantChildrenOrder?.size
+    const getChildAnimations = visualElement.variantChildren?.size
         ? (forwardDelay = 0) => {
               const {
                   delayChildren = 0,
@@ -172,14 +178,14 @@ function animateChildren(
     const animations: Promise<any>[] = []
 
     const maxStaggerDuration =
-        (visualElement.variantChildrenOrder!.size - 1) * staggerChildren
+        (visualElement.variantChildren!.size - 1) * staggerChildren
 
     const generateStaggerDuration =
         staggerDirection === 1
             ? (i = 0) => i * staggerChildren
             : (i = 0) => maxStaggerDuration - i * staggerChildren
 
-    Array.from(visualElement.variantChildrenOrder!).forEach((child, i) => {
+    Array.from(visualElement.variantChildren!).forEach((child, i) => {
         const animation = animateVariant(child, variant, {
             ...options,
             delay: delayChildren + generateStaggerDuration(i),
