@@ -9,14 +9,14 @@ import {
 } from "react"
 import { MakeMotion, MotionProps } from "../../motion/types"
 import { TransformPoint2D } from "../../types/geometry"
-import { InitialVisualElementOptions, ResolvedValues } from "../types"
+import { ResolvedValues } from "../types"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
 
-export interface DOMVisualElementOptions extends InitialVisualElementOptions {
+export interface DOMVisualElementOptions {
     transformTemplate?: MotionProps["transformTemplate"]
     transformPagePoint?: TransformPoint2D
-    allowTransformNone: boolean
-    enableHardwareAcceleration: boolean
+    allowTransformNone?: boolean
+    enableHardwareAcceleration?: boolean
 }
 
 export interface HTMLMutableState {

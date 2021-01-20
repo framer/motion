@@ -43,14 +43,14 @@ class Animate extends React.Component<AnimateProps> {
 
     componentDidMount() {
         const { visualElement } = this.props
-        visualElement.animateMotionValue = startAnimation
+        ;(visualElement as any).animateMotionValue = startAnimation
         visualElement.enableLayoutProjection()
         this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
 
-        visualElement.updateConfig({
-            ...visualElement.config,
-            safeToRemove: () => this.safeToRemove(),
-        })
+        // visualElement.updateConfig({
+        //     ...visualElement.config,
+        //     safeToRemove: () => this.safeToRemove(),
+        // })
     }
 
     componentWillUnmount() {
@@ -95,7 +95,7 @@ class Animate extends React.Component<AnimateProps> {
                 origin[axis].max = origin[axis].min + targetLength
             }
 
-            if (visualElement.isTargetBoxLocked) {
+            if (visualElement.getProjection().isTargetLocked) {
                 return
             } else if (visibilityAction !== undefined) {
                 // If we're meant to show/hide the visualElement, do so
@@ -114,7 +114,7 @@ class Animate extends React.Component<AnimateProps> {
             } else {
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
-                return visualElement.setAxisTarget(
+                return visualElement.setProjectionTargetAxis(
                     axis,
                     target[axis].min,
                     target[axis].max
@@ -123,7 +123,7 @@ class Animate extends React.Component<AnimateProps> {
         })
 
         // Force a render to ensure there's no flash of uncorrected bounding box.
-        visualElement.render()
+        visualElement.syncRender()
 
         /**
          * If this visualElement isn't present (ie it's been removed from the tree by the user but
@@ -143,7 +143,7 @@ class Animate extends React.Component<AnimateProps> {
 
     /**
      * TODO: This manually performs animations on the visualElement's layout progress
-     * values. It'd be preferable to amend the HTMLVisualElement.startLayoutAxisAnimation
+     * values. It'd be preferable to amend the startLayoutAxisAnimation
      * API to accept more custom animations like this.
      */
     animateAxis(
@@ -190,7 +190,11 @@ class Animate extends React.Component<AnimateProps> {
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
 
-            visualElement.setAxisTarget(axis, frameTarget.min, frameTarget.max)
+            visualElement.setProjectionTargetAxis(
+                axis,
+                frameTarget.min,
+                frameTarget.max
+            )
 
             // If this is a crossfade animation, update both elements.
             crossfade?.(p)
@@ -200,7 +204,8 @@ class Animate extends React.Component<AnimateProps> {
         frame()
 
         // Ensure that the layout delta is updated for this frame.
-        visualElement.updateLayoutDelta()
+        // TODO do we need this?
+        visualElement.updateLayoutProjection()
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)

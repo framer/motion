@@ -12,7 +12,6 @@ import {
     removeBoxTransforms,
     applyTreeDeltas,
 } from "../delta-apply"
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
 
 describe("resetAxis", () => {
     test("resets axis a using the values in axis b", () => {

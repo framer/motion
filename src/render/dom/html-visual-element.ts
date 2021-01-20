@@ -1,5 +1,4 @@
 import { visualElement } from ".."
-import { ResolvedValues } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
 import { getBoundingBox } from "./projection/measure"
 import { DOMVisualElementOptions, HTMLMutableState } from "./types"
@@ -13,7 +12,19 @@ export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
 }
 
-export const htmlVisualElement = visualElement<HTMLElement, HTMLMutableState>({
+export const htmlMutableState = () => ({
+    style: {},
+    transform: {},
+    transformKeys: [],
+    transformOrigin: {},
+    vars: {},
+})
+
+export const htmlVisualElement = visualElement<
+    HTMLElement,
+    HTMLMutableState,
+    DOMVisualElementOptions
+>({
     readNativeValue(domElement, key) {
         if (isTransformProp(key)) {
             return getDefaultValueType(key)?.default || 0
@@ -26,13 +37,7 @@ export const htmlVisualElement = visualElement<HTMLElement, HTMLMutableState>({
         }
     },
 
-    initMutableState: () => ({
-        style: {},
-        transform: {},
-        transformKeys: [],
-        transformOrigin: {},
-        vars: {},
-    }),
+    initMutableState: htmlMutableState,
 
     measureViewportBox(element, { transformPagePoint }) {
         return getBoundingBox(element, transformPagePoint)
@@ -78,7 +83,8 @@ export const htmlVisualElement = visualElement<HTMLElement, HTMLMutableState>({
     makeTargetAnimatable(
         element,
         { transition, transitionEnd, ...target },
-        { transformValues }
+        { transformValues },
+        isMounted = true
     ) {
         let origin = getOrigin(target as any, transition || {}, element)
 
@@ -92,11 +98,17 @@ export const htmlVisualElement = visualElement<HTMLElement, HTMLMutableState>({
             if (origin) origin = transformValues(origin as any)
         }
 
-        checkTargetForNewValues(element, target, origin as any)
-
-        const parsed = parseDomVariant(element, target, origin, transitionEnd)
-        transitionEnd = parsed.transitionEnd
-        target = parsed.target
+        if (isMounted) {
+            checkTargetForNewValues(element, target, origin as any)
+            const parsed = parseDomVariant(
+                element,
+                target,
+                origin,
+                transitionEnd
+            )
+            transitionEnd = parsed.transitionEnd
+            target = parsed.target
+        }
 
         return {
             transition,

@@ -1,46 +1,50 @@
-import { MotionProps, MotionStyle } from "../../../motion/types"
+import { MotionProps } from "../../../motion/types"
+import { isForcedMotionValue } from "../../../motion/utils/use-motion-values"
 import { useConstant } from "../../../utils/use-constant"
-import { useIsInitialRender } from "../../../utils/use-initial-or-every-render"
-import { isMotionValue } from "../../../value/utils/is-motion-value"
-import { VisualElement } from "../../types"
+import { ResolvedValues, VisualElement } from "../../types"
+import { initProjection } from "../../utils/projection"
+import { htmlMutableState } from "../html-visual-element"
+import { buildHTMLStyles } from "./build-html-styles"
 
-const empty = () => ({})
+function useInitialMotionValues(visualElement: VisualElement) {
+    return useConstant(() => {
+        const initialState = htmlMutableState()
+        buildHTMLStyles(
+            initialState,
+            visualElement.getLatestValues(),
+            initProjection(),
+            {}
+        )
+        return { ...initialState.vars, ...initialState.style }
+    })
+}
 
-function useStyle(visualElement: VisualElement, styleProp?: MotionStyle) {
-    const isInitialRender = useIsInitialRender()
-    const initialMotionValues = useConstant(empty)
+function useStyle(
+    visualElement: VisualElement,
+    props: MotionProps
+): ResolvedValues {
+    const styleProp = props.style || {}
     const style = {}
 
-    if (styleProp) {
-        for (const key in styleProp) {
-            if (!isMotionValue(styleProp[key])) style[key] = styleProp[key]
+    /**
+     * Copy non-Motion Values straight into style
+     */
+    for (const key in styleProp) {
+        // TODO We might want this to be a hasValue check? Although this could be impure
+        if (!isForcedMotionValue(key, props)) {
+            style[key] = styleProp[key]
         }
     }
 
-    /**
-     * We only want to add the MotionValues on initial render to support SSR
-     * By keeping them the same on subsequent renders React won't recommit and
-     * we'll keep the component pure while allowing the values to be updated
-     * outside of React.
-     */
-    if (isInitialRender) {
-        // for (const key in visualElement.style.latest) {
-        //     initialMotionValues[key] = visualElement.style.latest[key]
-        // }
-    }
-
-    return { ...initialMotionValues, ...style }
+    return { ...style, ...useInitialMotionValues(visualElement) }
 }
 
-export function useHTMLProps(
-    visualElement: VisualElement,
-    { drag, style }: MotionProps
-) {
+export function useHTMLProps(visualElement: VisualElement, props: MotionProps) {
     // The `any` isn't ideal but it is the type of createElement props argument
     const htmlProps: any = {}
-    style = useStyle(visualElement, style)
+    const style = useStyle(visualElement, props)
 
-    if (Boolean(drag)) {
+    if (Boolean(props.drag)) {
         // Disable the ghost element when a user drags
         htmlProps.draggable = false
 
@@ -50,7 +54,9 @@ export function useHTMLProps(
 
         // Disable scrolling on the draggable direction
         style.touchAction =
-            drag === true ? "none" : `pan-${drag === "x" ? "y" : "x"}`
+            props.drag === true
+                ? "none"
+                : `pan-${props.drag === "x" ? "y" : "x"}`
     }
 
     htmlProps.style = style

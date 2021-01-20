@@ -32,27 +32,25 @@ export const PresenceChild = ({
     const id = useConstant(getPresenceId)
 
     const context = useMemo(
-        () => {
-            return {
-                id,
-                initial,
-                isPresent,
-                custom,
-                onExitComplete: (childId: number) => {
-                    presenceChildren.set(childId, true)
-                    let allComplete = true
-                    presenceChildren.forEach((isComplete) => {
-                        if (!isComplete) allComplete = false
-                    })
+        () => ({
+            id,
+            initial,
+            isPresent,
+            custom,
+            onExitComplete: (childId: number) => {
+                presenceChildren.set(childId, true)
+                let allComplete = true
+                presenceChildren.forEach((isComplete) => {
+                    if (!isComplete) allComplete = false
+                })
 
-                    allComplete && onExitComplete?.()
-                },
-                register: (childId: number) => {
-                    presenceChildren.set(childId, false)
-                    return () => presenceChildren.delete(childId)
-                },
-            }
-        },
+                allComplete && onExitComplete?.()
+            },
+            register: (childId: number) => {
+                presenceChildren.set(childId, false)
+                return () => presenceChildren.delete(childId)
+            },
+        }),
         /**
          * If the presence of a child affects the layout of the components around it,
          * we want to make a new context value to ensure they get re-rendered

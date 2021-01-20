@@ -1,12 +1,12 @@
+import { number, px, ValueType } from "style-value-types"
 import { Target, TargetWithKeyframes } from "../../../types"
 import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
-import { number, px, ValueType } from "style-value-types"
 import { MotionValue } from "../../../value"
-import { transformProps } from "../../../render/dom/utils/transform"
+import { transformProps } from "./transform"
 import { AxisBox2D } from "../../../types/geometry"
-import { findDimensionValueType } from "../../../render/dom/utils/value-types"
-import { VisualElement } from "../../../render/types"
+import { findDimensionValueType } from "./value-types"
+import { VisualElement } from "../../types"
 
 const positionalKeys = new Set([
     "width",
@@ -115,8 +115,8 @@ const convertChangedValueTypes = (
     visualElement: VisualElement,
     changedKeys: string[]
 ) => {
-    const element = visualElement.getInstance()
     const originBbox = visualElement.measureViewportBox()
+    const element = visualElement.getInstance()
     const elementComputedStyle = getComputedStyle(element)
     const {
         display,

@@ -1,11 +1,10 @@
 import { Presence } from "../types"
-import { HTMLVisualElement } from "../../../_render/dom/HTMLVisualElement"
-import { ResolvedValues } from "../../../_render/VisualElement/types"
 import { AxisBox2D, Point2D } from "../../../types/geometry"
 import { isTransformProp } from "../../../render/dom/utils/transform"
 import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
 import { motionValue } from "../../../value"
 import { Transition } from "../../../types"
+import { ResolvedValues, VisualElement } from "../../../render/types"
 
 export interface Snapshot {
     isDragging?: boolean
@@ -15,8 +14,8 @@ export interface Snapshot {
 }
 
 export type LeadAndFollow = [
-    HTMLVisualElement | undefined,
-    HTMLVisualElement | undefined
+    VisualElement | undefined,
+    VisualElement | undefined
 ]
 
 /**
@@ -37,12 +36,12 @@ export type LeadAndFollow = [
  *  - If the last child is exiting, the last *encountered* exiting component
  */
 export function findLeadAndFollow(
-    stack: HTMLVisualElement[],
+    stack: VisualElement[],
     [prevLead, prevFollow]: LeadAndFollow
 ): LeadAndFollow {
-    let lead: HTMLVisualElement | undefined = undefined
+    let lead: VisualElement | undefined = undefined
     let leadIndex = 0
-    let follow: HTMLVisualElement | undefined = undefined
+    let follow: VisualElement | undefined = undefined
 
     // Find the lead child first
     const numInStack = stack.length
@@ -104,20 +103,20 @@ export function findLeadAndFollow(
 }
 
 export class LayoutStack {
-    order: HTMLVisualElement[] = []
+    order: VisualElement[] = []
 
-    lead?: HTMLVisualElement | undefined
-    follow?: HTMLVisualElement | undefined
+    lead?: VisualElement | undefined
+    follow?: VisualElement | undefined
 
-    prevLead?: HTMLVisualElement | undefined
-    prevFollow?: HTMLVisualElement | undefined
+    prevLead?: VisualElement | undefined
+    prevFollow?: VisualElement | undefined
 
     snapshot?: Snapshot
 
     // Track whether we've ever had a child
     hasChildren: boolean = false
 
-    add(child: HTMLVisualElement) {
+    add(child: VisualElement) {
         this.order.push(child)
 
         // Load previous values from snapshot into this child
@@ -142,7 +141,7 @@ export class LayoutStack {
         this.hasChildren = true
     }
 
-    remove(child: HTMLVisualElement) {
+    remove(child: VisualElement) {
         const index = this.order.findIndex((stackChild) => child === stackChild)
         if (index !== -1) this.order.splice(index, 1)
     }
@@ -195,7 +194,7 @@ export class LayoutStack {
     }
 
     getFollowTarget(): AxisBox2D | undefined {
-        return this.follow?.box
+        return this.follow?.getProjection().layout
     }
 
     getLeadOrigin(): AxisBox2D | undefined {
@@ -203,10 +202,10 @@ export class LayoutStack {
     }
 
     getLeadTarget(): AxisBox2D | undefined {
-        return this.lead?.box
+        return this.lead?.getProjection().layout
     }
 
     getLeadTransition(): Transition | undefined {
-        return this.lead?.config.transition
+        return this.lead?.getDefaultTransition()
     }
 }

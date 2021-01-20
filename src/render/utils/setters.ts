@@ -3,6 +3,7 @@ import { complex } from "style-value-types"
 import {
     Target,
     TargetAndTransition,
+    TargetResolver,
     TargetWithKeyframes,
     Transition,
 } from "../../types"
@@ -29,9 +30,10 @@ function setMotionValue(
         visualElement.addValue(key, motionValue(value))
     }
 }
+
 export function setTarget(
     visualElement: VisualElement,
-    definition: string | TargetAndTransition
+    definition: string | TargetAndTransition | TargetResolver
 ) {
     const resolved = resolveVariant(visualElement, definition)
     let { transitionEnd = {}, transition = {}, ...target } = resolved
@@ -50,11 +52,13 @@ function setVariants(visualElement: VisualElement, variantLabels: string[]) {
     const reversedLabels = [...variantLabels].reverse()
 
     reversedLabels.forEach((key) => {
-        setTarget(visualElement, visualElement.getVariant(key))
+        const variant = visualElement.getVariant(key)
+        variant && setTarget(visualElement, variant)
 
-        visualElement.variantChildren?.forEach((child) => {
-            setVariants(child, variantLabels)
-        })
+        // TODO: Fix with variants
+        // visualElement.variantChildren?.forEach((child) => {
+        //     setVariants(child, variantLabels)
+        // })
     })
 }
 
@@ -116,7 +120,7 @@ export function checkTargetForNewValues(
 
         visualElement.addValue(key, motionValue(value))
         ;(origin as any)[key] ??= value
-        visualElement.baseTarget[key] = value
+        visualElement.setBaseTarget(key, value)
     }
 }
 

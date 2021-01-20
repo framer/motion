@@ -1,6 +1,5 @@
-import { AnimationControls } from "../../animation/AnimationControls"
+import { isAnimationControls } from "../../animation/AnimationControls"
 import { MotionProps } from "../../motion"
-import { VariantContextProps } from "../../motion/context/MotionContext"
 import { VariantLabels } from "../../motion/types"
 import { TargetAndTransition } from "../../types"
 import { shallowCompare } from "../../utils/shallow-compare"
@@ -15,7 +14,6 @@ import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
 export interface AnimationState {
     setProps: (
         props: MotionProps,
-        context?: VariantContextProps,
         options?: AnimationOptions,
         type?: AnimationType
     ) => Promise<any>
@@ -104,7 +102,7 @@ export function createAnimationState(
     }
 
     let currentProps: MotionProps
-    let currentContext: VariantContextProps
+
     /**
      * When we receive new props, we need to:
      * 1. Create a list of protected keys for each type. This is a directory of
@@ -117,16 +115,16 @@ export function createAnimationState(
      */
     function setProps(
         props: MotionProps,
-        context: VariantContextProps = {},
         options?: AnimationOptions,
         changedActiveType?: AnimationType
     ) {
+        const context = visualElement.getVariantContext(true) || {}
+
         /**
          * Keep track of the most recent props and contexts. setActive can pass these
          * straight through rather than requiring external callers to have access to these.
          */
         currentProps = props
-        currentContext = context
 
         /**
          * A list of animations that we'll build into as we iterate through the animation
@@ -146,14 +144,6 @@ export function createAnimationState(
          * keys - the keys its not allowed to animate - to the latest version of this object.
          */
         let encounteredKeys = {}
-
-        // TODO Reconcile with other update config
-        if (props.variants) {
-            visualElement.updateOptions({
-                ...(visualElement as any).config,
-                variants: props.variants,
-            } as any)
-        }
 
         /**
          * If a variant has been removed at a given index, and this component is controlling
@@ -201,15 +191,16 @@ export function createAnimationState(
 
             /**
              * Resume from previous snapshot if it's the first render
+             * TODO: Figure out snapshot resumption
              */
-            if (
-                isInitialRender &&
-                type === AnimationType.Animate &&
-                visualElement.prevSnapshot
-            ) {
-                isInitialRender = false
-                typeState.prevResolvedValues = visualElement.prevSnapshot
-            }
+            // if (
+            //     isInitialRender &&
+            //     type === AnimationType.Animate &&
+            //     visualElement.prevSnapshot
+            // ) {
+            //     isInitialRender = false
+            //     typeState.prevResolvedValues = visualElement.prevSnapshot
+            // }
 
             /**
              * Set all encountered keys so far as the protected keys for this type. This will
@@ -224,7 +215,7 @@ export function createAnimationState(
                 // If we didn't and don't have any defined prop for this animation type
                 (!prop && !typeState.prevProp) ||
                 // Or if the prop doesn't define an animation
-                prop instanceof AnimationControls ||
+                isAnimationControls(prop) ||
                 typeof prop === "boolean"
             ) {
                 continue
@@ -342,7 +333,7 @@ export function createAnimationState(
         if (removedKeys.size) {
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
-                const fallbackTarget = visualElement.getBaseValue(key, props)
+                const fallbackTarget = visualElement.getBaseTarget(key)
 
                 if (fallbackTarget !== undefined) {
                     fallbackAnimation[key] = fallbackTarget
@@ -378,13 +369,13 @@ export function createAnimationState(
         if (state[type].isActive === isActive) return Promise.resolve()
 
         // Propagate active change to children
-        visualElement.variantChildrenOrder?.forEach((child) =>
+        visualElement.variantChildren?.forEach((child) =>
             child.animationState?.setActive(type, isActive)
         )
 
         state[type].isActive = isActive
 
-        return setProps(currentProps, currentContext, options, type)
+        return setProps(currentProps, options, type)
     }
 
     return {

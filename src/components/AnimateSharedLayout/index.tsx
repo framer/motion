@@ -5,7 +5,6 @@ import {
     createSwitchAnimation,
 } from "./utils/animations"
 import { LayoutStack } from "./utils/stack"
-import { HTMLVisualElement } from "../../_render/dom/HTMLVisualElement"
 import {
     SharedLayoutSyncMethods,
     createBatcher,
@@ -14,6 +13,7 @@ import {
 } from "./SharedLayoutContext"
 import { MotionContext } from "../../motion/context/MotionContext"
 import { resetRotate } from "./utils/rotate"
+import { VisualElement } from "../../render/types"
 
 /**
  * @public
@@ -24,7 +24,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     /**
      * A list of all the children in the shared layout
      */
-    private children = new Set<HTMLVisualElement>()
+    private children = new Set<VisualElement>()
 
     /**
      * As animate components with a defined `layoutId` are added/removed to the tree,
@@ -125,7 +125,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
             layoutReady: (child) => {
                 const { layoutId } = child
 
-                child.layoutReady(
+                child.notifyLayoutReady(
                     createAnimation(child, this.getStack(layoutId))
                 )
             },
@@ -168,7 +168,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         /**
          * Read: Snapshot children
          */
-        this.children.forEach((child) => child.snapshotBoundingBox())
+        this.children.forEach((child) => child.snapshotViewportBox())
 
         /**
          * Every child keeps a local snapshot, but we also want to record
@@ -186,25 +186,25 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         }
     }
 
-    addChild(child: HTMLVisualElement) {
+    addChild(child: VisualElement) {
         this.children.add(child)
         this.addToStack(child)
 
         child.presence = this.hasMounted ? Presence.Entering : Presence.Present
     }
 
-    removeChild(child: HTMLVisualElement) {
+    removeChild(child: VisualElement) {
         this.scheduleUpdate()
         this.children.delete(child)
         this.removeFromStack(child)
     }
 
-    addToStack(child: HTMLVisualElement) {
+    addToStack(child: VisualElement) {
         const stack = this.getStack(child.layoutId)
         stack?.add(child)
     }
 
-    removeFromStack(child: HTMLVisualElement) {
+    removeFromStack(child: VisualElement) {
         const stack = this.getStack(child.layoutId)
         stack?.remove(child)
     }
