@@ -1,12 +1,12 @@
 import { LayoutStack, findLeadAndFollow, LeadAndFollow } from "../stack"
 import { makeChild } from "./utils"
 import { Presence } from "../../types"
-import { HTMLVisualElement } from "../../../../render/dom/HTMLVisualElement"
+import { VisualElement } from "../../../../render/types"
 
 function testFindLead(
-    stack: HTMLVisualElement[],
-    previous: Array<HTMLVisualElement | undefined>,
-    expected: Array<HTMLVisualElement | undefined>
+    stack: VisualElement[],
+    previous: Array<VisualElement | undefined>,
+    expected: Array<VisualElement | undefined>
 ) {
     const [lead, prev] = findLeadAndFollow(stack, previous as LeadAndFollow)
     expect(lead).toBe(expected[0])

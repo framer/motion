@@ -1,11 +1,24 @@
 import sync, { cancelSync } from "framesync"
 import { pipe } from "popmotion"
+import {
+    AnimationControls,
+    isAnimationControls,
+} from "../animation/AnimationControls"
+import {
+    Presence,
+    SharedLayoutAnimationConfig,
+} from "../components/AnimateSharedLayout/types"
+import { MotionProps } from "../motion/types"
+import { isForcedMotionValue } from "../motion/utils/use-motion-values"
+import { TargetAndTransition, TargetResolver } from "../types"
+import { AxisBox2D } from "../types/geometry"
 import { eachAxis } from "../utils/each-axis"
-import { copyAxisBox, delta } from "../utils/geometry"
+import { copyAxisBox } from "../utils/geometry"
 import { removeBoxTransforms } from "../utils/geometry/delta-apply"
 import { isRefObject } from "../utils/is-ref-object"
 import { SubscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
+import { isMotionValue } from "../value/utils/is-motion-value"
 import {
     buildLayoutProjectionTransformOrigin,
     identityProjection,
@@ -13,41 +26,54 @@ import {
 import {
     ResolvedValues,
     VisualElement,
-    InitialVisualElementOptions,
-    VisualElementOptions,
     VisualElementConfig,
     MotionPoint,
+    VisualElementOptions,
 } from "./types"
+import { variantPriorityOrder } from "./utils/animation-state"
 import {
     initProjection,
     updateLayoutDeltas,
     updateTransformDeltas,
 } from "./utils/projection"
+import { isVariantLabel } from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
     initMutableState,
     build,
+    makeTargetAnimatable,
     measureViewportBox,
     render,
     readNativeValue,
     resetTransform,
     restoreTransform,
     removeValueFromMutableState,
-}: VisualElementConfig<Instance, MutableState, Options>) => ({
-    parent,
-    ref: externalRef,
-    ...initialOptions
-}: InitialVisualElementOptions<Instance, Options> = {}) => {
+}: VisualElementConfig<Instance, MutableState, Options>) => (
+    {
+        parent,
+        ref: externalRef,
+        props,
+        blockInitialAnimation,
+    }: VisualElementOptions<Instance>,
+    options: Options
+) => {
     let instance: Instance
     const mutableState = initMutableState()
     let projectionTargetProgress: MotionPoint
-    let options = initialOptions
+
+    const isControllingVariants = checkIfControllingVariants(props)
+    const isVariantNode = Boolean(isControllingVariants || props.variants)
+
+    // TODO See if we can ditch
+    const baseTarget: { [key: string]: string | number | null } = {}
 
     /**
      * Keep track of whether the viewport box has been updated since the last render.
      * If it has, we want to fire the onViewportBoxUpdate listener.
      */
     let hasViewportBoxUpdated = false
+
+    let prevViewportBox: AxisBox2D
 
     /**
      * The computed transform string to apply deltaFinal to the element. Currently this is only
@@ -60,12 +86,18 @@ export const visualElement = <Instance, MutableState, Options>({
     const children = new Set<VisualElement>()
     const values = new Map<string, MotionValue>()
     const valueSubscriptions = new Map<string, () => void>()
-    const renderSubscriptions = new SubscriptionManager()
-    const latest: ResolvedValues = {}
+    // const renderSubscriptions = new SubscriptionManager()
+    const layoutUpdateListeners = new SubscriptionManager()
+    const layoutMeasureListeners = new SubscriptionManager()
+    const viewportBoxUpdateListeners = new SubscriptionManager()
+    const latest = getInitialStaticValues(props, parent, blockInitialAnimation)
 
-    function update() {}
+    function onUpdate() {
+        props.onUpdate?.(latest)
+    }
 
     function onRender() {
+        if (!instance) return
         updateTransformDeltas(latest, projection)
         build(latest, mutableState, projection, options)
         render(instance, mutableState)
@@ -75,28 +107,29 @@ export const visualElement = <Instance, MutableState, Options>({
     function subscribeToValue(key: string, value: MotionValue) {
         valueSubscriptions.set(
             key,
-            pipe(
+            (pipe as any)(
                 value.onChange((latestValue: string | number) => {
                     latest[key] = latestValue
 
-                    // if theres an onUpdate listener, fire it
-                    // sync.update(, false, true) - fire onUpdate listener with latest
+                    props.onUpdate && sync.update(onUpdate, false, true)
                 }),
                 value.onRenderRequest(element.scheduleRender)
             )
         )
     }
 
-    const scheduleUpdateLayoutProjection = parent
-        ? parent.scheduleUpdateLayoutProjection
-        : () => sync.preRender(element.updateLayoutProjection, false, true)
-
     const element: VisualElement<Instance, Options> = {
         current: null,
         depth: parent ? parent.depth + 1 : 0,
         path: parent ? [...parent.path, parent] : [],
 
+        variantChildren: isVariantNode ? new Set() : undefined,
+        subscribeToVariantParent() {
+            if (!isVariantNode) return
+        },
+
         isVisible: true,
+        manuallyAnimateOnMount: false,
 
         show() {
             if (!element.isVisible) {
@@ -117,11 +150,21 @@ export const visualElement = <Instance, MutableState, Options>({
             return () => children.delete(child)
         },
 
+        scheduleUpdateLayoutProjection: parent
+            ? parent.scheduleUpdateLayoutProjection
+            : () => sync.preRender(element.updateLayoutProjection, false, true),
+
         getInstance: () => instance,
 
+        getStaticValue: (key) => latest[key],
         setStaticValue: (key, value) => (latest[key] = value),
+        getLatestValues: () => latest,
 
         isHoverEventsEnabled: false,
+
+        makeTargetAnimatable(target, canMutate = true) {
+            return makeTargetAnimatable(element, target, props, canMutate)
+        },
 
         /**
          * Temporarily suspend hover events while we remove transforms in order to measure the layout.
@@ -176,13 +219,17 @@ export const visualElement = <Instance, MutableState, Options>({
 
         forEachValue: (callback) => values.forEach(callback),
 
-        readValue: (key: string) => readNativeValue(instance, key),
+        readValue: (key: string) => readNativeValue(instance, key, options),
+
+        setBaseTarget: (key, value) => (baseTarget[key] = value),
+
+        getBaseTarget: (key) => baseTarget[key],
 
         /**
          * Lifecycles
          */
 
-        ref: (mountingElement: E) => {
+        ref: (mountingElement: any) => {
             instance = element.current = mountingElement
             if (mountingElement) {
             } else {
@@ -190,8 +237,8 @@ export const visualElement = <Instance, MutableState, Options>({
                 // a shared projection
                 // element.style.forEachValue((_, key) => element.remove)
                 element.stopLayoutAnimation()
-                cancelSync.update(update)
-                cancelSync.render(render)
+                cancelSync.update(onUpdate)
+                cancelSync.render(onRender)
                 removeFromParent?.()
             }
 
@@ -199,16 +246,16 @@ export const visualElement = <Instance, MutableState, Options>({
             if (typeof externalRef === "function") {
                 externalRef(mountingElement)
             } else if (isRefObject(externalRef)) {
-                externalRef.current = mountingElement
+                ;(externalRef as any).current = mountingElement
             }
         },
 
         notifyAnimationStart() {
-            return options.onAnimationStart?.()
+            return props.onAnimationStart?.()
         },
 
         notifyAnimationComplete() {
-            return instance && options.onAnimationComplete?.()
+            return instance && props.onAnimationComplete?.()
         },
 
         scheduleRender() {
@@ -223,11 +270,35 @@ export const visualElement = <Instance, MutableState, Options>({
             options = { ...newOptions }
         },
 
-        getVariant: (name: string) => options.variants?.[name],
+        updateProps(newProps) {
+            props = newProps
+        },
 
-        getVariantData: () => options.variantData,
+        getVariant: (name) => props.variants?.[name],
 
-        getDefaultTransition: () => options.defaultTransition,
+        getVariantData: () => props.custom,
+
+        getDefaultTransition: () => props.transition,
+
+        getVariantContext(startAtParent = false) {
+            if (startAtParent) return parent?.getVariantContext()
+
+            if (!isControllingVariants) {
+                return parent?.getVariantContext()
+            }
+
+            const context = {}
+            for (let i = 0; i < numVariantProps; i++) {
+                const name = variantProps[i]
+                const prop = props[name]
+
+                if (isVariantLabel(prop) || prop === false) {
+                    context[name] = prop
+                }
+            }
+
+            return context
+        },
 
         /**
          * Layout projection
@@ -245,6 +316,22 @@ export const visualElement = <Instance, MutableState, Options>({
             projection.isTargetLocked = false
         },
 
+        /**
+         * Record the viewport box as it was before an expected mutation/re-render
+         */
+        snapshotViewportBox() {
+            prevViewportBox = element.measureViewportBox(false)
+
+            /**
+             * Update targetBox to match the prevViewportBox. This is just to ensure
+             * that targetBox is affected by scroll in the same way as the measured box
+             */
+            element.rebaseProjectionTarget(false, prevViewportBox)
+        },
+
+        // TODO Replace other projection getters with this
+        getProjection: () => projection,
+
         getProjectionTarget: () => projection.target,
 
         startLayoutAnimation(axis, transition) {
@@ -259,7 +346,13 @@ export const visualElement = <Instance, MutableState, Options>({
                 element.setProjectionTargetAxis(axis, v, v + length)
             )
 
-            return this.animateMotionValue?.(axis, progress, 0, transition)
+            // TODO: This is loaded in by Animate.tsx
+            return (element as any).animateMotionValue?.(
+                axis,
+                progress,
+                0,
+                transition
+            )
         },
 
         stopLayoutAnimation() {
@@ -309,7 +402,7 @@ export const visualElement = <Instance, MutableState, Options>({
             // Flag that we want to fire the onViewportBoxUpdate event handler
             hasViewportBoxUpdated = true
 
-            scheduleUpdateLayoutProjection()
+            element.scheduleUpdateLayoutProjection()
         },
 
         rebaseProjectionTarget(force, box = projection.layout) {
@@ -328,6 +421,28 @@ export const visualElement = <Instance, MutableState, Options>({
             }
         },
 
+        notifyLayoutReady(config) {
+            layoutUpdateListeners.notify(
+                projection.layout,
+                prevViewportBox || projection.layout,
+                config
+            )
+        },
+
+        onLayoutUpdate(callback) {
+            return layoutUpdateListeners.add(callback)
+        },
+
+        onLayoutMeasure(callback) {
+            return layoutMeasureListeners.add(callback)
+        },
+
+        onViewportBoxUpdate(callback) {
+            return viewportBoxUpdateListeners.add(callback)
+        },
+
+        resetTransform: () => resetTransform(element, instance, options),
+
         withoutTransform(callback) {
             if (projection.isEnabled) resetTransform(element, instance, options)
 
@@ -345,7 +460,8 @@ export const visualElement = <Instance, MutableState, Options>({
 
                 updateLayoutDeltas(projection, element.path)
 
-                // hasViewportBoxUpdated && viewportBoxUpdateListeners.notify(projection)
+                hasViewportBoxUpdated &&
+                    viewportBoxUpdateListeners.notify(projection)
                 hasViewportBoxUpdated = false
 
                 /**
@@ -371,6 +487,10 @@ export const visualElement = <Instance, MutableState, Options>({
             children.forEach(fireUpdateLayoutProjection)
         },
 
+        // TODO: Remove this
+        isPresent: true,
+        presence: Presence.Entering,
+
         syncRender: onRender,
     }
 
@@ -382,3 +502,90 @@ export const visualElement = <Instance, MutableState, Options>({
 function fireUpdateLayoutProjection(child: VisualElement) {
     child.updateLayoutProjection()
 }
+
+function getInitialStaticValues(
+    props: MotionProps,
+    parent?: VisualElement,
+    blockInitialAnimation?: boolean
+) {
+    const { style } = props
+    const values: ResolvedValues = {}
+
+    for (const key in style) {
+        if (isMotionValue(style[key])) {
+            values[key] = style[key].get()
+        } else if (isForcedMotionValue(key, props)) {
+            values[key] = style[key]
+        }
+    }
+
+    let { initial, animate } = props
+    const isControllingVariants = checkIfControllingVariants(props)
+    const isVariantNode = isControllingVariants || props.variants
+
+    if (isVariantNode && !isControllingVariants && props.inherit !== false) {
+        const context = parent?.getVariantContext()
+        if (context) {
+            initial ??= context.initial
+            animate ??= context.animate
+        }
+    }
+
+    const initialToSet =
+        blockInitialAnimation || initial === false ? animate : initial
+
+    if (
+        initialToSet &&
+        typeof initialToSet !== "boolean" &&
+        !isAnimationControls(initialToSet)
+    ) {
+        const list = Array.isArray(initialToSet) ? initialToSet : [initialToSet]
+        list.forEach((definition) => {
+            const resolved = resolveVariant(props, definition)
+            if (!resolved) return
+
+            const { transitionEnd, transition, ...target } = resolved
+
+            for (const key in target) {
+                values[key] = target[key]
+            }
+        })
+    }
+
+    return values
+}
+
+const variantProps = ["initial", ...variantPriorityOrder]
+const numVariantProps = variantProps.length
+function resolveVariant(
+    props: MotionProps,
+    definition?: string | TargetAndTransition | TargetResolver,
+    custom?: any
+) {
+    if (typeof definition === "string") {
+        definition = props.variants?.[definition]
+    }
+
+    return typeof definition === "function"
+        ? definition(custom ?? props.custom, {}, {})
+        : definition
+}
+
+function checkIfControllingVariants(props: MotionProps) {
+    return (
+        typeof (props.animate as AnimationControls)?.start === "function" ||
+        isVariantLabel(props.animate) ||
+        isVariantLabel(props.whileHover) ||
+        isVariantLabel(props.whileDrag) ||
+        isVariantLabel(props.whileTap) ||
+        isVariantLabel(props.whileFocus) ||
+        isVariantLabel(props.exit) ||
+        isVariantLabel(props.initial)
+    )
+}
+
+export type LayoutUpdateHandler = (
+    layout: AxisBox2D,
+    prev: AxisBox2D,
+    config?: SharedLayoutAnimationConfig
+) => void

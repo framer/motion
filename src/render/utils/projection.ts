@@ -1,4 +1,4 @@
-import { axisBox, delta } from "../../utils/geometry"
+import { axisBox, delta as initDelta } from "../../utils/geometry"
 import {
     applyBoxTransforms,
     applyTreeDeltas,
@@ -10,13 +10,14 @@ import { Projection, ResolvedValues, VisualElement } from "../types"
 export function initProjection(): Projection {
     return {
         isEnabled: false,
+        isTargetLocked: false,
         layout: axisBox(),
         layoutCorrected: axisBox(),
         target: axisBox(),
         targetFinal: axisBox(),
         treeScale: { x: 1, y: 1 },
-        delta: delta(),
-        deltaFinal: delta(),
+        delta: initDelta(),
+        deltaFinal: initDelta(),
     }
 }
 

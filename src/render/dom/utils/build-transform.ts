@@ -1,12 +1,11 @@
-import { TransformTemplate } from "../../../motion/types"
 import { sortTransformProps } from "./transform"
-import { delta } from "../../../utils/geometry"
 import { Projection, ResolvedValues } from "../../types"
 import {
     DOMVisualElementOptions,
     HTMLMutableState,
     TransformOrigin,
 } from "../types"
+import { initProjection } from "../../utils/projection"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -25,8 +24,8 @@ export function buildTransform(
     { transform, transformKeys }: HTMLMutableState,
     {
         transformTemplate,
-        enableHardwareAcceleration,
-        allowTransformNone,
+        enableHardwareAcceleration = true,
+        allowTransformNone = true,
     }: DOMVisualElementOptions,
     transformIsDefault: boolean
 ) {
@@ -114,10 +113,13 @@ export function buildLayoutProjectionTransform(
     return !latestTransform && transform === identityProjection ? "" : transform
 }
 
-export const identityProjection = buildLayoutProjectionTransform(delta(), {
-    x: 1,
-    y: 1,
-})
+export const identityProjection = buildLayoutProjectionTransform(
+    initProjection(),
+    {
+        x: 1,
+        y: 1,
+    }
+)
 
 /**
  * Take the calculated delta origin and apply it as a transform string.

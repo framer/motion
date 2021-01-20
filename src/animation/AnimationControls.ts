@@ -15,33 +15,7 @@ type PendingAnimations = {
     resolve: () => void
 }
 
-/**
- * Control animations on one or more components.
- *
- * @public
- */
-export class AnimationControls {
-    /**
-     * Track whether the host component has mounted.
-     *
-     * @internal
-     */
-    private hasMounted = false
-
-    /**
-     * Pending animations that are started before a component is mounted.
-     *
-     * @internal
-     */
-    private pendingAnimations: PendingAnimations[] = []
-
-    /**
-     * A collection of linked component animation controls.
-     *
-     * @internal
-     */
-    private subscribers = new Set<VisualElement>()
-
+export interface AnimationControls {
     /**
      * Subscribes a component's animation controls to this.
      *
@@ -50,11 +24,7 @@ export class AnimationControls {
      *
      * @internal
      */
-    subscribe(visualElement: VisualElement) {
-        this.subscribers.add(visualElement)
-
-        return () => this.subscribers.delete(visualElement)
-    }
+    subscribe(visualElement: VisualElement): () => void
 
     /**
      * Starts an animation on all linked components.
@@ -78,27 +48,7 @@ export class AnimationControls {
     start(
         definition: ControlsAnimationDefinition,
         transitionOverride?: Transition
-    ): Promise<any> {
-        if (this.hasMounted) {
-            const animations: Array<Promise<any>> = []
-            this.subscribers.forEach((visualElement) => {
-                animations.push(
-                    animateVisualElement(visualElement, definition, {
-                        transitionOverride,
-                    })
-                )
-            })
-
-            return Promise.all(animations)
-        } else {
-            return new Promise((resolve) => {
-                this.pendingAnimations.push({
-                    animation: [definition, transitionOverride],
-                    resolve,
-                })
-            })
-        }
-    }
+    ): Promise<any>
 
     /**
      * Instantly set to a set of properties or a variant.
@@ -120,16 +70,7 @@ export class AnimationControls {
      *
      * @public
      */
-    set(definition: ControlsAnimationDefinition) {
-        invariant(
-            this.hasMounted,
-            "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."
-        )
-
-        return this.subscribers.forEach((visualElement) => {
-            setValues(visualElement, definition)
-        })
-    }
+    set(definition: ControlsAnimationDefinition): void
 
     /**
      * Stops animations on all linked components.
@@ -140,36 +81,89 @@ export class AnimationControls {
      *
      * @public
      */
-    stop() {
-        this.subscribers.forEach((visualElement) => {
-            stopAnimation(visualElement)
-        })
-    }
-
-    /**
-     * Initialises the animation controls.
-     *
-     * @internal
-     */
-    mount() {
-        this.hasMounted = true
-        this.pendingAnimations.forEach(({ animation, resolve }) => {
-            this.start(...animation).then(resolve)
-        })
-    }
-
-    /**
-     * Stops all child animations when the host component unmounts.
-     *
-     * @internal
-     */
-    unmount() {
-        this.hasMounted = false
-        this.stop()
-    }
+    stop(): void
+    mount(): void
+    unmount(): void
 }
 
-/**
- * @internal
- */
-export const animationControls = () => new AnimationControls()
+export function animationControls(): AnimationControls {
+    /**
+     * Track whether the host component has mounted.
+     */
+    let hasMounted = false
+
+    /**
+     * Pending animations that are started before a component is mounted.
+     * TODO: Remove this as animations should only run in effects
+     */
+    const pendingAnimations: PendingAnimations[] = []
+
+    /**
+     * A collection of linked component animation controls.
+     */
+    const subscribers = new Set<VisualElement>()
+
+    const controls: AnimationControls = {
+        subscribe(visualElement) {
+            subscribers.add(visualElement)
+            return () => void subscribers.delete(visualElement)
+        },
+
+        start(definition, transitionOverride) {
+            if (hasMounted) {
+                const animations: Array<Promise<any>> = []
+                subscribers.forEach((visualElement) => {
+                    animations.push(
+                        animateVisualElement(visualElement, definition, {
+                            transitionOverride,
+                        })
+                    )
+                })
+
+                return Promise.all(animations)
+            } else {
+                return new Promise((resolve) => {
+                    pendingAnimations.push({
+                        animation: [definition, transitionOverride],
+                        resolve,
+                    })
+                })
+            }
+        },
+
+        set(definition) {
+            invariant(
+                hasMounted,
+                "controls.set() should only be called after a component has mounted. Consider calling within a useEffect hook."
+            )
+
+            return subscribers.forEach((visualElement) => {
+                setValues(visualElement, definition)
+            })
+        },
+
+        stop() {
+            subscribers.forEach((visualElement) => {
+                stopAnimation(visualElement)
+            })
+        },
+
+        mount() {
+            hasMounted = true
+            pendingAnimations.forEach(({ animation, resolve }) => {
+                controls.start(...animation).then(resolve)
+            })
+        },
+
+        unmount() {
+            hasMounted = false
+            stop()
+        },
+    }
+
+    return controls
+}
+
+export function isAnimationControls(v?: unknown): v is AnimationControls {
+    return typeof v === "object" && typeof (v as any).start === "function"
+}

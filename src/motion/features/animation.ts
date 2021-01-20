@@ -1,8 +1,6 @@
 import { useEffect } from "react"
-import { AnimationControls } from "../../animation/AnimationControls"
-import { useAnimationGroupSubscription } from "../../animation/use-animation-group-subscription"
+import { isAnimationControls } from "../../animation/AnimationControls"
 import { createAnimationState } from "../../render/utils/animation-state"
-import { useVariantContext } from "../context/MotionContext"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FeatureProps, MotionFeature } from "./types"
 
@@ -16,25 +14,11 @@ const AnimationState = makeRenderlessComponent((props: FeatureProps) => {
      */
     visualElement.animationState ||= createAnimationState(visualElement)
 
-    const variantContext = useVariantContext()
-
-    /**
-     * Every render, we want to update the AnimationState with the latest props
-     * and context. We could add these to the dependency list but as many of these
-     * props can be objects or arrays it's not clear that we'd gain much performance.
-     */
-    useEffect(() => {
-        visualElement.animationState!.setProps(
-            props,
-            visualElement.inheritsVariants ? variantContext : undefined
-        )
-    })
-
     /**
      * Subscribe any provided AnimationControls to the component's VisualElement
      */
-    if (animate instanceof AnimationControls) {
-        useAnimationGroupSubscription(visualElement, animate)
+    if (isAnimationControls(animate)) {
+        useEffect(() => animate.subscribe(visualElement), [animate])
     }
 })
 

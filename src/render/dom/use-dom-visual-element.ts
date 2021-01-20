@@ -1,22 +1,44 @@
 import { ComponentType, Ref, useContext, useEffect } from "react"
-import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
+import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
+import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
-import { useUnmountEffect } from "../../utils/use-unmount-effect"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { VisualElement } from "../types"
 import { htmlVisualElement } from "./html-visual-element"
 import { svgVisualElement } from "./svg-visual-element"
 import { isSVGComponent } from "./utils/is-svg-component"
 
+function useVisualState(visualElement: VisualElement, props: MotionProps) {
+    const { style } = props
+    useEffect(() => {
+        // Update Motion Value subscriptions
+        for (const key in style) {
+            if (isMotionValue(style[key])) {
+                visualElement.hasValue(key) && visualElement.removeValue(key)
+                visualElement.addValue(key, style[key])
+            }
+        }
+    })
+}
+
 export function useDomVisualElement<E>(
     Component: string | ComponentType,
-    { layoutId }: MotionProps,
+    props: MotionProps,
     isStatic: boolean,
     ref: Ref<E>
 ) {
     const parent = useVisualElementContext()
-    const layoutGroupId = useContext(LayoutGroupContext)
+    const presenceContext = useContext(PresenceContext)
+
+    // const layoutGroupId = useContext(LayoutGroupContext)
+
+    // const projectionId =
+    //     layoutGroupId && layoutId
+    //         ? layoutGroupId + "-" + layoutId
+    //         : layoutId
 
     const visualElement = useConstant(() => {
         // TODO: I believe this is the only DOM-specific line here, change useVisualElement to getVisualElementFactory
@@ -24,33 +46,42 @@ export function useDomVisualElement<E>(
             ? svgVisualElement
             : htmlVisualElement
 
-        const projectionId =
-            layoutGroupId && layoutId
-                ? layoutGroupId + "-" + layoutId
-                : layoutId
-
-        return factory({
-            projectionId,
-            enableHardwareAcceleration: !isStatic,
-            parent,
-            ref,
-        })
+        return factory(
+            {
+                parent,
+                ref: ref as Ref<HTMLElement>,
+                isStatic,
+                props,
+                blockInitialAnimation: presenceContext?.initial === false,
+            },
+            { enableHardwareAcceleration: !isStatic }
+        )
     })
 
-    /**
-     * My good plan
-     *
-     * - Every render, create motion values from style
-     * - On initial render, create a style tag from style and initial. Never change this.
-     * - On subsequent renders, respond to changes in style and update those motion values
-     * - Every VE should control its own style
-     */
+    useIsomorphicLayoutEffect(() => {
+        visualElement.updateProps(props)
 
-    useIsomorphicLayoutEffect(() => {})
+        /**
+         * What we want here is to clear the order of variant children in useLayoutEffect
+         * then children can re-add themselves in useEffect. This should add them in the intended order
+         * for staggerChildren to work correctly.
+         */
+        isPresent(presenceContext) && visualElement.variantChildren?.clear()
+
+        // TODO: Fire visualElement layout listeners
+    })
 
     useEffect(() => {
-        // update settings
+        visualElement.subscribeToVariantParent()
+
+        // TODO: visualElement aalready has props, we can do better here
+        visualElement.animationState?.setProps(props)
+
+        // TODO: Fire visualElement effect listeners
     })
+
+    // TODO: Move this to feature to prevent conditional rendering?
+    !isStatic && useVisualState(visualElement, props)
 
     return visualElement
 }

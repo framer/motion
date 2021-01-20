@@ -13,9 +13,9 @@ interface MotionValueSource {
     [key: string]: MotionValue | unknown
 }
 
-function isForcedMotionValue<P>(
+export function isForcedMotionValue(
     key: string,
-    { layout, layoutId }: P & MotionProps
+    { layout, layoutId }: MotionProps
 ) {
     return (
         isTransformProp(key) ||

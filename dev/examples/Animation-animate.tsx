@@ -1,6 +1,7 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
 import { motion, useMotionValue, animate } from "@framer"
+import { motionValue } from "../../src/value"
 
 /**
  * An example of the tween transition type
@@ -13,6 +14,7 @@ const style = {
 }
 
 export const App = () => {
+    const [width, setWidth] = useState(100)
     const x = useMotionValue(0)
     const [target, setTarget] = useState(0)
     const transition = {
@@ -33,8 +35,12 @@ export const App = () => {
 
     return (
         <motion.div
-            style={{ x, ...style }}
-            onTap={() => setTarget(target + 100)}
+            style={{ x, ...style, width: motionValue(width), y: width / 10 }}
+            onClick={() => {
+                setTarget(target + 100)
+                setWidth(width + 100)
+            }}
+            initial={{ borderRadius: 10 }}
         />
     )
 }
