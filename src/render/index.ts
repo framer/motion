@@ -100,7 +100,6 @@ export const visualElement = <Instance, MutableState, Options>({
         updateTransformDeltas(latest, projection)
         build(latest, mutableState, projection, options)
         render(instance, mutableState)
-        // renderSubscriptions.notify()
     }
 
     function subscribeToValue(key: string, value: MotionValue) {
@@ -199,7 +198,6 @@ export const visualElement = <Instance, MutableState, Options>({
 
         addValue(key, value) {
             // Remove existing value
-
             if (element.hasValue(key)) element.removeValue(key)
 
             values.set(key, value)
@@ -274,6 +272,7 @@ export const visualElement = <Instance, MutableState, Options>({
         },
 
         scheduleRender() {
+            console.log("schedule")
             sync.render(onRender, false, true)
         },
 
@@ -282,6 +281,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         updateProps(newProps) {
             props = newProps
+
             const motionValues = scrapeMotionValuesFromProps(props)
             for (const key in motionValues) {
                 const value = motionValues[key]
@@ -289,6 +289,12 @@ export const visualElement = <Instance, MutableState, Options>({
                 if (isMotionValue(value)) {
                     element.addValue(key, value)
                 } else {
+                    console.log(
+                        "setting",
+                        key,
+                        "which has motion value",
+                        values.has(key)
+                    )
                     if (values.has(key)) {
                         values.get(key)!.set(value)
                     } else {

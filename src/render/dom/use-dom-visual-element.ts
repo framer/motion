@@ -54,6 +54,8 @@ export function useDomVisualElement<E>(
         isPresent(presenceContext) && visualElement.variantChildren?.clear()
 
         // TODO: Fire visualElement layout listeners
+
+        visualElement.syncRender()
     })
 
     useEffect(() => {
