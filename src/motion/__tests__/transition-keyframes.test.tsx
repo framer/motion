@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../.."
 import * as React from "react"
-import { variantsHaveChanged } from "../../render/VisualElement/utils/animation-state"
+import { variantsHaveChanged } from "../../render/utils/animation-state"
 
 describe("keyframes transition", () => {
     test("keyframes as target", async () => {

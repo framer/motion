@@ -157,7 +157,7 @@ export function animationControls(): AnimationControls {
 
         unmount() {
             hasMounted = false
-            stop()
+            controls.stop()
         },
     }
 

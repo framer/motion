@@ -62,7 +62,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
-    static contextType: React.Context<VisualElement<any, any> | undefined>;
+    static contextType: React.Context<VisualElement<any> | undefined>;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id?: string): LayoutStack | undefined;
     // (undocumented)
@@ -460,7 +460,7 @@ export class MotionValue<V = any> {
     isAnimating(): boolean;
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
-    onRenderRequest(subscription: Subscriber<V>): () => undefined;
+    onRenderRequest(subscription: Subscriber<V>): () => boolean;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
     // 
@@ -469,10 +469,6 @@ export class MotionValue<V = any> {
     stop(): void;
     // (undocumented)
     updateAndNotify: (v: V, render?: boolean) => void;
-    // Warning: (ae-forgotten-export) The symbol "SubscriptionManager" needs to be exported by the entry point index.d.ts
-    // 
-    // @internal
-    updateSubscribers: SubscriptionManager<Subscriber<V>>;
     }
 
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
