@@ -72,6 +72,7 @@ export const visualElement = <Instance, MutableState, Options>({
      */
     let hasViewportBoxUpdated = false
     let prevViewportBox: AxisBox2D
+    let prevMotionValues: { [key: string]: MotionValue | string | number } = {}
 
     /**
      * The computed transform string to apply deltaFinal to the element. Currently this is only
@@ -272,7 +273,6 @@ export const visualElement = <Instance, MutableState, Options>({
         },
 
         scheduleRender() {
-            console.log("schedule")
             sync.render(onRender, false, true)
         },
 
@@ -285,23 +285,21 @@ export const visualElement = <Instance, MutableState, Options>({
             const motionValues = scrapeMotionValuesFromProps(props)
             for (const key in motionValues) {
                 const value = motionValues[key]
-
                 if (isMotionValue(value)) {
                     element.addValue(key, value)
                 } else {
-                    console.log(
-                        "setting",
-                        key,
-                        "which has motion value",
-                        values.has(key)
-                    )
-                    if (values.has(key)) {
+                    if (
+                        values.has(key) &&
+                        !isMotionValue(prevMotionValues[key])
+                    ) {
                         values.get(key)!.set(value)
                     } else {
                         element.addValue(key, motionValue(value))
                     }
                 }
             }
+
+            prevMotionValues = motionValues
         },
 
         getVariant: (name) => props.variants?.[name],

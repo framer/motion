@@ -61,7 +61,6 @@ describe("style prop", () => {
         }
 
         const { container, rerender } = render(<Component />)
-
         expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(0px) translateY(2px) translateZ(3px)"
         )
