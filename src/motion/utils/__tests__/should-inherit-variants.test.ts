@@ -1,4 +1,4 @@
-import { AnimationControls } from "../../../animation/AnimationControls"
+import { animationControls } from "../../../animation/AnimationControls"
 import { checkShouldInheritVariant } from "../should-inherit-variant"
 
 describe("checkShouldInheritVariant", () => {
@@ -16,13 +16,13 @@ describe("checkShouldInheritVariant", () => {
         ).toBe(false)
         expect(
             checkShouldInheritVariant({
-                animate: new AnimationControls(),
+                animate: animationControls(),
                 variants: {},
             })
         ).toBe(false)
         expect(
             checkShouldInheritVariant({
-                animate: new AnimationControls(),
+                animate: animationControls(),
                 variants: {},
                 inherit: true,
             })

@@ -5,24 +5,9 @@ import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
-import { isMotionValue } from "../../value/utils/is-motion-value"
-import { VisualElement } from "../types"
 import { htmlVisualElement } from "./html-visual-element"
 import { svgVisualElement } from "./svg-visual-element"
 import { isSVGComponent } from "./utils/is-svg-component"
-
-function useVisualState(visualElement: VisualElement, props: MotionProps) {
-    const { style } = props
-    useEffect(() => {
-        // Update Motion Value subscriptions
-        for (const key in style) {
-            if (isMotionValue(style[key])) {
-                visualElement.hasValue(key) && visualElement.removeValue(key)
-                visualElement.addValue(key, style[key])
-            }
-        }
-    })
-}
 
 export function useDomVisualElement<E>(
     Component: string | ComponentType,
@@ -49,7 +34,7 @@ export function useDomVisualElement<E>(
         return factory(
             {
                 parent,
-                ref: ref as Ref<HTMLElement>,
+                ref: ref as any,
                 isStatic,
                 props,
                 blockInitialAnimation: presenceContext?.initial === false,
@@ -79,9 +64,6 @@ export function useDomVisualElement<E>(
 
         // TODO: Fire visualElement effect listeners
     })
-
-    // TODO: Move this to feature to prevent conditional rendering?
-    !isStatic && useVisualState(visualElement, props)
 
     return visualElement
 }

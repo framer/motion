@@ -175,8 +175,11 @@ export function createAnimationState(
             /**
              * If this prop is an inherited variant, rather than been set directly on the
              * component itself, we want to make sure we allow the parent to trigger animations.
+             *
+             * TODO: Can probably change this to a !isControllingVariants check
              */
-            let isInherited = prop === context[type] && propIsVariant
+            let isInherited =
+                prop === context[type] && prop !== props[type] && propIsVariant
 
             /**
              *

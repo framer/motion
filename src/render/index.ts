@@ -1,5 +1,4 @@
 import sync, { cancelSync } from "framesync"
-import { pipe } from "popmotion"
 import {
     AnimationControls,
     isAnimationControls,
@@ -16,7 +15,7 @@ import { eachAxis } from "../utils/each-axis"
 import { copyAxisBox } from "../utils/geometry"
 import { removeBoxTransforms } from "../utils/geometry/delta-apply"
 import { isRefObject } from "../utils/is-ref-object"
-import { SubscriptionManager } from "../utils/subscription-manager"
+import { subscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
@@ -43,11 +42,13 @@ export const visualElement = <Instance, MutableState, Options>({
     build,
     makeTargetAnimatable,
     measureViewportBox,
+    onMount,
     render,
     readNativeValue,
     resetTransform,
     restoreTransform,
     removeValueFromMutableState,
+    scrapeMotionValuesFromProps,
 }: VisualElementConfig<Instance, MutableState, Options>) => (
     {
         parent,
@@ -58,21 +59,18 @@ export const visualElement = <Instance, MutableState, Options>({
     options: Options
 ) => {
     let instance: Instance
+
     const mutableState = initMutableState()
     let projectionTargetProgress: MotionPoint
 
     const isControllingVariants = checkIfControllingVariants(props)
     const isVariantNode = Boolean(isControllingVariants || props.variants)
 
-    // TODO See if we can ditch
-    const baseTarget: { [key: string]: string | number | null } = {}
-
     /**
      * Keep track of whether the viewport box has been updated since the last render.
      * If it has, we want to fire the onViewportBoxUpdate listener.
      */
     let hasViewportBoxUpdated = false
-
     let prevViewportBox: AxisBox2D
 
     /**
@@ -87,10 +85,11 @@ export const visualElement = <Instance, MutableState, Options>({
     const values = new Map<string, MotionValue>()
     const valueSubscriptions = new Map<string, () => void>()
     // const renderSubscriptions = new SubscriptionManager()
-    const layoutUpdateListeners = new SubscriptionManager()
-    const layoutMeasureListeners = new SubscriptionManager()
-    const viewportBoxUpdateListeners = new SubscriptionManager()
+    const layoutUpdateListeners = subscriptionManager()
+    const layoutMeasureListeners = subscriptionManager()
+    const viewportBoxUpdateListeners = subscriptionManager()
     const latest = getInitialStaticValues(props, parent, blockInitialAnimation)
+    const baseTarget: { [key: string]: string | number | null } = { ...latest }
 
     function onUpdate() {
         props.onUpdate?.(latest)
@@ -105,28 +104,39 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     function subscribeToValue(key: string, value: MotionValue) {
-        valueSubscriptions.set(
-            key,
-            (pipe as any)(
-                value.onChange((latestValue: string | number) => {
-                    latest[key] = latestValue
-
-                    props.onUpdate && sync.update(onUpdate, false, true)
-                }),
-                value.onRenderRequest(element.scheduleRender)
-            )
+        const removeOnChange = value.onChange(
+            (latestValue: string | number) => {
+                latest[key] = latestValue
+                props.onUpdate && sync.update(onUpdate, false, true)
+            }
         )
+
+        const removeOnRenderRequest = value.onRenderRequest(
+            element.scheduleRender
+        )
+
+        valueSubscriptions.set(key, () => {
+            removeOnChange()
+            removeOnRenderRequest()
+        })
     }
 
-    const element: VisualElement<Instance, Options> = {
+    const element: VisualElement<Instance> = {
         current: null,
         depth: parent ? parent.depth + 1 : 0,
         path: parent ? [...parent.path, parent] : [],
 
         variantChildren: isVariantNode ? new Set() : undefined,
+
         subscribeToVariantParent() {
-            if (!isVariantNode) return
+            if (!isVariantNode || !parent || isControllingVariants) return
+
+            const variantParent = parent.getVariantParent()
+            variantParent?.variantChildren?.add(element)
         },
+
+        getVariantParent: () =>
+            isVariantNode ? element : parent?.getVariantParent(),
 
         isVisible: true,
         manuallyAnimateOnMount: false,
@@ -189,6 +199,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
         addValue(key, value) {
             // Remove existing value
+
             if (element.hasValue(key)) element.removeValue(key)
 
             values.set(key, value)
@@ -232,10 +243,14 @@ export const visualElement = <Instance, MutableState, Options>({
         ref: (mountingElement: any) => {
             instance = element.current = mountingElement
             if (mountingElement) {
+                onMount?.(element, instance, mutableState)
             } else {
                 // TODO: Remove from attached projection here, perhaps add snapshot if this is
                 // a shared projection
                 // element.style.forEachValue((_, key) => element.remove)
+                element.forEachValue((_, key) =>
+                    valueSubscriptions.get(key)?.()
+                )
                 element.stopLayoutAnimation()
                 cancelSync.update(onUpdate)
                 cancelSync.render(onRender)
@@ -265,13 +280,22 @@ export const visualElement = <Instance, MutableState, Options>({
         /**
          * Options
          */
-
-        updateOptions(newOptions) {
-            options = { ...newOptions }
-        },
-
         updateProps(newProps) {
             props = newProps
+            const motionValues = scrapeMotionValuesFromProps(props)
+            for (const key in motionValues) {
+                const value = motionValues[key]
+
+                if (isMotionValue(value)) {
+                    element.addValue(key, value)
+                } else {
+                    if (values.has(key)) {
+                        values.get(key)!.set(value)
+                    } else {
+                        element.addValue(key, motionValue(value))
+                    }
+                }
+            }
         },
 
         getVariant: (name) => props.variants?.[name],
@@ -496,6 +520,14 @@ export const visualElement = <Instance, MutableState, Options>({
 
     const removeFromParent = parent?.addChild(element)
 
+    const initialMotionValues = scrapeMotionValuesFromProps(props)
+    for (const key in initialMotionValues) {
+        const value = initialMotionValues[key]
+        if (latest[key] !== undefined && isMotionValue(value)) {
+            value.set(latest[key], false)
+        }
+    }
+
     return element
 }
 
@@ -546,9 +578,8 @@ function getInitialStaticValues(
 
             const { transitionEnd, transition, ...target } = resolved
 
-            for (const key in target) {
-                values[key] = target[key]
-            }
+            for (const key in target) values[key] = target[key]
+            for (const key in transitionEnd) values[key] = transitionEnd[key]
         })
     }
 

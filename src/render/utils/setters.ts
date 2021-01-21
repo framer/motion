@@ -55,10 +55,9 @@ function setVariants(visualElement: VisualElement, variantLabels: string[]) {
         const variant = visualElement.getVariant(key)
         variant && setTarget(visualElement, variant)
 
-        // TODO: Fix with variants
-        // visualElement.variantChildren?.forEach((child) => {
-        //     setVariants(child, variantLabels)
-        // })
+        visualElement.variantChildren?.forEach((child) => {
+            setVariants(child, variantLabels)
+        })
     })
 }
 

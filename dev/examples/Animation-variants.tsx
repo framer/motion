@@ -1,7 +1,8 @@
 import React from "react"
-import { motion } from "@framer"
+import { motion, useMotionValue } from "@framer"
 
 export function App() {
+    const backgroundColor = useMotionValue("#f00")
     return (
         <motion.div initial="initial" animate="to">
             <motion.div>
@@ -12,9 +13,10 @@ export function App() {
                         },
                         to: {
                             backgroundColor: "#00f",
+                            transition: { type: false },
                         },
                     }}
-                    style={box}
+                    style={{ ...box, backgroundColor }}
                 />
             </motion.div>
         </motion.div>

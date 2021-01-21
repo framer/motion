@@ -17,12 +17,13 @@ export interface MotionPoint {
     y: MotionValue<number>
 }
 
-export interface VisualElement<Instance = any, Options = any> {
+export interface VisualElement<Instance = any> {
     depth: number
     current: Instance | null
     manuallyAnimateOnMount: boolean
     variantChildren?: Set<VisualElement>
     subscribeToVariantParent(): void
+    getVariantParent(): undefined | VisualElement
     getInstance(): Instance | null
     path: VisualElement[]
     addChild(child: VisualElement): () => void
@@ -52,7 +53,6 @@ export interface VisualElement<Instance = any, Options = any> {
     setStaticValue(key: string, value: number | string): void
     getLatestValues(): ResolvedValues
     scheduleRender(): void
-    updateOptions(options: Options): void
     updateProps(props: MotionProps): void
     getVariant(name: string): Variant | undefined
     getVariantData(): any
@@ -122,6 +122,11 @@ export interface VisualElement<Instance = any, Options = any> {
 
 export interface VisualElementConfig<Instance, MutableState, Options> {
     initMutableState(): MutableState
+    onMount?: (
+        element: VisualElement<Instance>,
+        instance: Instance,
+        mutableState: MutableState
+    ) => void
     build(
         latest: ResolvedValues,
         mutableState: MutableState,
@@ -148,6 +153,9 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
     restoreTransform(instance: Instance, mutableState: MutableState): void
     render(instance: Instance, mutableState: MutableState): void
     removeValueFromMutableState(key: string, mutableState: MutableState): void
+    scrapeMotionValuesFromProps(
+        props: MotionProps
+    ): { [key: string]: MotionValue | string | number }
 }
 
 export type VisualElementOptions<Instance> = {

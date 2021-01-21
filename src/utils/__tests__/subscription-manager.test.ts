@@ -1,8 +1,8 @@
-import { SubscriptionManager } from "../subscription-manager"
+import { subscriptionManager } from "../subscription-manager"
 
-describe("SubscriptionManager", () => {
+describe("subscriptionManager", () => {
     test("Adds a subscription", () => {
-        const manager = new SubscriptionManager()
+        const manager = subscriptionManager()
         const callback = jest.fn()
         manager.add(callback)
         manager.notify(2)
@@ -11,7 +11,7 @@ describe("SubscriptionManager", () => {
     })
 
     test("Removes a subscription", () => {
-        const manager = new SubscriptionManager()
+        const manager = subscriptionManager()
         const callback = jest.fn()
         const remove = manager.add(callback)
         remove()
@@ -20,7 +20,7 @@ describe("SubscriptionManager", () => {
     })
 
     test("Clears all subscription", () => {
-        const manager = new SubscriptionManager()
+        const manager = subscriptionManager()
         const callback = jest.fn()
         manager.add(callback)
         manager.clear()
