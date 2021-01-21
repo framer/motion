@@ -55,13 +55,13 @@ export const visualElement = <Instance, MutableState, Options>({
         parent,
         ref: externalRef,
         props,
+        isStatic,
         blockInitialAnimation,
     }: VisualElementOptions<Instance>,
     options: Options
 ) => {
     let instance: Instance
-
-    const mutableState = initMutableState()
+    let mutableState = initMutableState()
     let projectionTargetProgress: MotionPoint
 
     const isControllingVariants = checkIfControllingVariants(props)
@@ -90,7 +90,7 @@ export const visualElement = <Instance, MutableState, Options>({
     const layoutUpdateListeners = subscriptionManager()
     const layoutMeasureListeners = subscriptionManager()
     const viewportBoxUpdateListeners = subscriptionManager()
-    const latest = getInitialStaticValues(props, parent, blockInitialAnimation)
+    let latest = getInitialStaticValues(props, parent, blockInitialAnimation)
     const baseTarget: { [key: string]: string | number | null } = { ...latest }
 
     function onUpdate() {
@@ -129,7 +129,9 @@ export const visualElement = <Instance, MutableState, Options>({
 
         isVisible: true,
         isMounted: false,
+        isStatic,
         manuallyAnimateOnMount: Boolean(parent?.isMounted),
+        blockInitialAnimation,
 
         variantChildren: isVariantNode ? new Set() : undefined,
 
@@ -138,6 +140,16 @@ export const visualElement = <Instance, MutableState, Options>({
 
             const variantParent = parent.getVariantParent()
             variantParent?.variantChildren?.add(element)
+        },
+
+        clearState(newProps) {
+            props = newProps
+            latest = getInitialStaticValues(
+                props,
+                parent,
+                blockInitialAnimation
+            )
+            mutableState = initMutableState()
         },
 
         getVariantParent: () =>
