@@ -299,6 +299,11 @@ export const visualElement = <Instance, MutableState, Options>({
                 }
             }
 
+            // Handle removed values
+            for (const key in prevMotionValues) {
+                if (motionValues[key] === undefined) element.removeValue(key)
+            }
+
             prevMotionValues = motionValues
         },
 
