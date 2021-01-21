@@ -23,6 +23,9 @@ const stateVisualElement = visualElement<
     restoreTransform() {},
     removeValueFromMutableState() {},
     render() {},
+    scrapeMotionValuesFromProps() {
+        return {}
+    },
 
     readNativeValue(_state, key, options) {
         return options.initialState[key] || 0
@@ -51,8 +54,8 @@ export function useAnimatedState(initialState: any) {
     })
 
     useEffect(() => {
-        ;(element as any).mount({})
-        return () => (element as any).unmount()
+        ;(element.ref as any)({})
+        return () => (element.ref as any)(null)
     }, [])
 
     const startAnimation = useConstant(

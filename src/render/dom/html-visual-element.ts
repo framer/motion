@@ -1,4 +1,7 @@
 import { visualElement } from ".."
+import { isForcedMotionValue } from "../../motion/utils/use-motion-values"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { VisualElementConfig } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
 import { getBoundingBox } from "./projection/measure"
 import { DOMVisualElementOptions, HTMLMutableState } from "./types"
@@ -20,11 +23,11 @@ export const htmlMutableState = () => ({
     vars: {},
 })
 
-export const htmlVisualElement = visualElement<
+export const htmlConfig: VisualElementConfig<
     HTMLElement,
     HTMLMutableState,
     DOMVisualElementOptions
->({
+> = {
     readNativeValue(domElement, key) {
         if (isTransformProp(key)) {
             return getDefaultValueType(key)?.default || 0
@@ -117,6 +120,19 @@ export const htmlVisualElement = visualElement<
         }
     },
 
+    scrapeMotionValuesFromProps(props) {
+        const { style } = props
+        const newValues = {}
+
+        for (const key in style) {
+            if (isMotionValue(style[key]) || isForcedMotionValue(key, props)) {
+                newValues[key] = style[key]
+            }
+        }
+
+        return newValues
+    },
+
     build(latest, mutableState, projection, options) {
         // if (isVisible !== undefined) {
         //     mutableState.style.visibility = isVisible ? "visible" : "hidden"
@@ -135,4 +151,6 @@ export const htmlVisualElement = visualElement<
             element.style.setProperty(key, vars[key] as string)
         }
     },
-})
+}
+
+export const htmlVisualElement = visualElement(htmlConfig)

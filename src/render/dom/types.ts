@@ -51,6 +51,31 @@ export interface HTMLMutableState {
     vars: ResolvedValues
 }
 
+export interface SVGMutableState extends HTMLMutableState {
+    /**
+     * Measured dimensions of the SVG element to be used to calculate a transform-origin.
+     */
+    dimensions: SVGDimensions
+
+    /**
+     * A mutable record of attributes we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    attrs: ResolvedValues
+
+    /**
+     * Measured path length if this is a SVGPathElement
+     */
+    totalPathLength?: number
+}
+
+export type SVGDimensions = {
+    x: number
+    y: number
+    width: number
+    height: number
+}
+
 export interface TransformOrigin {
     originX?: number | string
     originY?: number | string
