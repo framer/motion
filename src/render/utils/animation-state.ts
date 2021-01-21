@@ -313,6 +313,10 @@ export function createAnimationState(
                 encounteredKeys = { ...encounteredKeys, ...resolvedValues }
             }
 
+            if (isInitialRender && visualElement.blockInitialAnimation) {
+                shouldAnimateType = false
+            }
+
             /**
              * If this is an inherited prop we want to hard-block animations
              * TODO: Test as this should probably still handle animations triggered

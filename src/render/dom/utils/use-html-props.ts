@@ -4,10 +4,12 @@ import { useConstant } from "../../../utils/use-constant"
 import { ResolvedValues, VisualElement } from "../../types"
 
 function useInitialMotionValues(visualElement: VisualElement) {
-    return useConstant(() => {
+    const createStyle = () => {
         const { vars, style } = visualElement.build()
         return { ...vars, ...style }
-    })
+    }
+
+    return visualElement.isStatic ? createStyle() : useConstant(createStyle)
 }
 
 function useStyle(

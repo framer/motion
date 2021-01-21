@@ -21,8 +21,11 @@ export interface VisualElement<Instance = any, MutableState = any> {
     depth: number
     current: Instance | null
     manuallyAnimateOnMount: boolean
+    blockInitialAnimation?: boolean
     variantChildren?: Set<VisualElement>
     isMounted: boolean
+    isStatic?: boolean
+    clearState(props: MotionProps): void
     subscribeToVariantParent(): void
     getVariantParent(): undefined | VisualElement
     getInstance(): Instance | null
