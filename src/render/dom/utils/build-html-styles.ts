@@ -1,3 +1,4 @@
+import { MotionProps } from "../../../motion"
 import { Projection, ResolvedValues } from "../../types"
 import { valueScaleCorrection } from "../projection/scale-correction"
 import { DOMVisualElementOptions, HTMLMutableState } from "../types"
@@ -15,7 +16,8 @@ export function buildHTMLStyles(
     state: HTMLMutableState,
     latest: ResolvedValues,
     projection: Projection,
-    options: DOMVisualElementOptions
+    options: DOMVisualElementOptions,
+    transformTemplate: MotionProps["transformTemplate"]
 ) {
     const { style, vars, transform, transformKeys, transformOrigin } = state
 
@@ -104,17 +106,19 @@ export function buildHTMLStyles(
             hasTransform ? transform : undefined
         )
 
-        if (options.transformTemplate) {
-            style.transform = options.transformTemplate(
-                transform,
-                style.transform
-            )
+        if (transformTemplate) {
+            style.transform = transformTemplate(transform, style.transform)
         }
 
         style.transformOrigin = buildLayoutProjectionTransformOrigin(projection)
     } else {
         if (hasTransform) {
-            style.transform = buildTransform(state, options, transformIsNone)
+            style.transform = buildTransform(
+                state,
+                options,
+                transformIsNone,
+                transformTemplate
+            )
         }
 
         if (hasTransformOrigin) {

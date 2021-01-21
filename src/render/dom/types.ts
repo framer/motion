@@ -13,7 +13,6 @@ import { ResolvedValues } from "../types"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
 
 export interface DOMVisualElementOptions {
-    transformTemplate?: MotionProps["transformTemplate"]
     transformPagePoint?: TransformPoint2D
     allowTransformNone?: boolean
     enableHardwareAcceleration?: boolean

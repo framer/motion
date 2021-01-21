@@ -311,11 +311,12 @@ describe("press", () => {
             rerender(<Component />)
 
             logOpacity() // 0.5
-
+            console.log("mouse enter")
             // Trigger hover
             mouseEnter(container.firstChild as Element)
             logOpacity() // 0.75
 
+            console.log("mouse down")
             // Trigger mouse down
             fireEvent.mouseDown(container.firstChild as Element)
             logOpacity() // 1

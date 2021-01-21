@@ -47,13 +47,23 @@ export const svgVisualElement = visualElement<
         element.scheduleRender()
     },
 
+    getBaseTarget(props, key) {
+        return props[key]
+    },
+
     readNativeValue(domElement, key) {
         key = !camelCaseAttributes.has(key) ? camelToDash(key) : key
         return domElement.getAttribute(key)
     },
 
-    build(latest, mutableState, projection, options) {
-        buildSVGAttrs(mutableState, latest, projection, options)
+    build(latest, mutableState, projection, options, props) {
+        buildSVGAttrs(
+            mutableState,
+            latest,
+            projection,
+            options,
+            props.transformTemplate
+        )
     },
 
     render(element, mutableState) {

@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion, motionValue } from "../../"
+import { motion } from "../../"
 import * as React from "react"
 
 describe("animate prop as object", () => {
