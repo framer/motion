@@ -62,7 +62,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
-    static contextType: React.Context<VisualElement<any> | undefined>;
+    static contextType: React.Context<VisualElement<any, any> | undefined>;
     // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
     getStack(id?: string): LayoutStack | undefined;
     // (undocumented)

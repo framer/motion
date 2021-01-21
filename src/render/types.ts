@@ -17,11 +17,12 @@ export interface MotionPoint {
     y: MotionValue<number>
 }
 
-export interface VisualElement<Instance = any> {
+export interface VisualElement<Instance = any, MutableState = any> {
     depth: number
     current: Instance | null
     manuallyAnimateOnMount: boolean
     variantChildren?: Set<VisualElement>
+    isMounted: boolean
     subscribeToVariantParent(): void
     getVariantParent(): undefined | VisualElement
     getInstance(): Instance | null
@@ -72,6 +73,8 @@ export interface VisualElement<Instance = any> {
           }
     notifyAnimationStart(): void
     notifyAnimationComplete(): void
+
+    build(): MutableState
     syncRender(): void
 
     /**
@@ -127,11 +130,16 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
         instance: Instance,
         mutableState: MutableState
     ) => void
+    getBaseTarget?(
+        props: MotionProps,
+        key: string
+    ): string | number | undefined | MotionValue
     build(
         latest: ResolvedValues,
         mutableState: MutableState,
         projection: Projection,
-        options: Options
+        options: Options,
+        props: MotionProps
     ): void
     makeTargetAnimatable(
         element: VisualElement<Instance>,
@@ -148,7 +156,7 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
     resetTransform(
         element: VisualElement<Instance>,
         instance: Instance,
-        options: Options
+        props: MotionProps
     ): void
     restoreTransform(instance: Instance, mutableState: MutableState): void
     render(instance: Instance, mutableState: MutableState): void
