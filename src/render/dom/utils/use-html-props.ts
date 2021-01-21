@@ -24,7 +24,7 @@ function useStyle(
     props: MotionProps
 ): ResolvedValues {
     const styleProp = props.style || {}
-    const style = {}
+    let style = {}
 
     /**
      * Copy non-Motion Values straight into style
@@ -36,7 +36,13 @@ function useStyle(
         }
     }
 
-    return { ...style, ...useInitialMotionValues(visualElement) }
+    style = { ...style, ...useInitialMotionValues(visualElement) }
+
+    if (props.transformValues) {
+        style = props.transformValues(style)
+    }
+
+    return style
 }
 
 export function useHTMLProps(visualElement: VisualElement, props: MotionProps) {
