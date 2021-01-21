@@ -6,6 +6,7 @@ import {
     TransformOrigin,
 } from "../types"
 import { initProjection } from "../../utils/projection"
+import { MotionProps } from "../../../motion/types"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -23,11 +24,11 @@ const translateAlias: { [key: string]: string } = {
 export function buildTransform(
     { transform, transformKeys }: HTMLMutableState,
     {
-        transformTemplate,
         enableHardwareAcceleration = true,
         allowTransformNone = true,
     }: DOMVisualElementOptions,
-    transformIsDefault: boolean
+    transformIsDefault: boolean,
+    transformTemplate?: MotionProps["transformTemplate"]
 ) {
     // The transform string we're going to build into.
     let transformString = ""

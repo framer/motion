@@ -15,14 +15,6 @@ export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
 }
 
-export const htmlMutableState = () => ({
-    style: {},
-    transform: {},
-    transformKeys: [],
-    transformOrigin: {},
-    vars: {},
-})
-
 export const htmlConfig: VisualElementConfig<
     HTMLElement,
     HTMLMutableState,
@@ -40,7 +32,17 @@ export const htmlConfig: VisualElementConfig<
         }
     },
 
-    initMutableState: htmlMutableState,
+    initMutableState: () => ({
+        style: {},
+        transform: {},
+        transformKeys: [],
+        transformOrigin: {},
+        vars: {},
+    }),
+
+    getBaseTarget(props, key) {
+        return props.style?.[key]
+    },
 
     measureViewportBox(element, { transformPagePoint }) {
         return getBoundingBox(element, transformPagePoint)
@@ -53,7 +55,7 @@ export const htmlConfig: VisualElementConfig<
      * layout transforms up the tree in the same way this.getBoundingBoxWithoutTransforms
      * works
      */
-    resetTransform(element, domElement, options) {
+    resetTransform(element, domElement, props) {
         /**
          * When we reset the transform of an element, there's a fair possibility that
          * the element will visually move from underneath the pointer, triggering attached
@@ -61,7 +63,7 @@ export const htmlConfig: VisualElementConfig<
          */
         element.suspendHoverEvents()
 
-        const { transformTemplate } = options
+        const { transformTemplate } = props
         domElement.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
@@ -133,12 +135,18 @@ export const htmlConfig: VisualElementConfig<
         return newValues
     },
 
-    build(latest, mutableState, projection, options) {
+    build(latest, mutableState, projection, options, props) {
         // if (isVisible !== undefined) {
         //     mutableState.style.visibility = isVisible ? "visible" : "hidden"
         // }
 
-        buildHTMLStyles(mutableState, latest, projection, options)
+        buildHTMLStyles(
+            mutableState,
+            latest,
+            projection,
+            options,
+            props.transformTemplate
+        )
     },
 
     render(element, { style, vars }) {

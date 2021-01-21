@@ -3,6 +3,7 @@ import { buildHTMLStyles } from "./build-html-styles"
 import { Projection, ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./svg-path"
+import { MotionProps } from "../../../motion/types"
 
 const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
 
@@ -23,9 +24,10 @@ export function buildSVGAttrs(
         ...latest
     }: ResolvedValues,
     projection: Projection,
-    options: DOMVisualElementOptions
+    options: DOMVisualElementOptions,
+    transformTemplate?: MotionProps["transformTemplate"]
 ) {
-    buildHTMLStyles(state, latest, projection, options)
+    buildHTMLStyles(state, latest, projection, options, transformTemplate)
 
     const { attrs, dimensions, style, totalPathLength } = state
 

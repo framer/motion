@@ -2,20 +2,11 @@ import { MotionProps } from "../../../motion/types"
 import { isForcedMotionValue } from "../../../motion/utils/use-motion-values"
 import { useConstant } from "../../../utils/use-constant"
 import { ResolvedValues, VisualElement } from "../../types"
-import { initProjection } from "../../utils/projection"
-import { htmlMutableState } from "../html-visual-element"
-import { buildHTMLStyles } from "./build-html-styles"
 
 function useInitialMotionValues(visualElement: VisualElement) {
     return useConstant(() => {
-        const initialState = htmlMutableState()
-        buildHTMLStyles(
-            initialState,
-            visualElement.getLatestValues(),
-            initProjection(),
-            {}
-        )
-        return { ...initialState.vars, ...initialState.style }
+        const { vars, style } = visualElement.build()
+        return { ...vars, ...style }
     })
 }
 

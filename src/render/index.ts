@@ -40,6 +40,7 @@ import { isVariantLabel } from "./utils/variants"
 export const visualElement = <Instance, MutableState, Options>({
     initMutableState,
     build,
+    getBaseTarget,
     makeTargetAnimatable,
     measureViewportBox,
     onMount,
@@ -99,7 +100,7 @@ export const visualElement = <Instance, MutableState, Options>({
     function onRender() {
         if (!instance) return
         updateTransformDeltas(latest, projection)
-        build(latest, mutableState, projection, options)
+        build(latest, mutableState, projection, options, props)
         render(instance, mutableState)
     }
 
@@ -126,6 +127,10 @@ export const visualElement = <Instance, MutableState, Options>({
         depth: parent ? parent.depth + 1 : 0,
         path: parent ? [...parent.path, parent] : [],
 
+        isVisible: true,
+        isMounted: false,
+        manuallyAnimateOnMount: Boolean(parent?.isMounted),
+
         variantChildren: isVariantNode ? new Set() : undefined,
 
         subscribeToVariantParent() {
@@ -137,9 +142,6 @@ export const visualElement = <Instance, MutableState, Options>({
 
         getVariantParent: () =>
             isVariantNode ? element : parent?.getVariantParent(),
-
-        isVisible: true,
-        manuallyAnimateOnMount: false,
 
         show() {
             if (!element.isVisible) {
@@ -170,7 +172,7 @@ export const visualElement = <Instance, MutableState, Options>({
         setStaticValue: (key, value) => (latest[key] = value),
         getLatestValues: () => latest,
 
-        isHoverEventsEnabled: false,
+        isHoverEventsEnabled: true,
 
         makeTargetAnimatable(target, canMutate = true) {
             return makeTargetAnimatable(element, target, props, canMutate)
@@ -233,7 +235,14 @@ export const visualElement = <Instance, MutableState, Options>({
 
         setBaseTarget: (key, value) => (baseTarget[key] = value),
 
-        getBaseTarget: (key) => baseTarget[key],
+        getBaseTarget: (key) => {
+            if (getBaseTarget) {
+                const target = getBaseTarget(props, key)
+                if (target !== undefined && !isMotionValue(target))
+                    return target
+            }
+            return baseTarget[key]
+        },
 
         /**
          * Lifecycles
@@ -242,6 +251,7 @@ export const visualElement = <Instance, MutableState, Options>({
         ref: (mountingElement: any) => {
             instance = element.current = mountingElement
             if (mountingElement) {
+                element.isMounted = true
                 onMount?.(element, instance, mutableState)
             } else {
                 // TODO: Remove from attached projection here, perhaps add snapshot if this is
@@ -292,7 +302,8 @@ export const visualElement = <Instance, MutableState, Options>({
                         values.has(key) &&
                         !isMotionValue(prevMotionValues[key])
                     ) {
-                        values.get(key)!.set(value)
+                        prevMotionValues[key] !== value &&
+                            values.get(key)!.set(value)
                     } else {
                         element.addValue(key, motionValue(value))
                     }
@@ -474,14 +485,19 @@ export const visualElement = <Instance, MutableState, Options>({
             return viewportBoxUpdateListeners.add(callback)
         },
 
-        resetTransform: () => resetTransform(element, instance, options),
+        resetTransform: () => resetTransform(element, instance, props),
 
         withoutTransform(callback) {
-            if (projection.isEnabled) resetTransform(element, instance, options)
+            if (projection.isEnabled) resetTransform(element, instance, props)
 
             parent ? parent.withoutTransform(callback) : callback()
 
             if (projection.isEnabled) restoreTransform(instance, mutableState)
+        },
+
+        build() {
+            build(latest, mutableState, projection, options, props)
+            return mutableState
         },
 
         updateLayoutProjection() {
