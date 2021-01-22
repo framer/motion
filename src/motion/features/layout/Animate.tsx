@@ -70,7 +70,7 @@ class Animate extends React.Component<AnimateProps> {
         }: SharedLayoutAnimationConfig = {}
     ) => {
         const { visualElement, layout } = this.props
-
+        console.log(target.y, origin.y)
         /**
          * Early return if we've been instructed not to animate this render.
          */
@@ -189,7 +189,6 @@ class Animate extends React.Component<AnimateProps> {
 
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
-
             visualElement.setProjectionTargetAxis(
                 axis,
                 frameTarget.min,
@@ -205,7 +204,7 @@ class Animate extends React.Component<AnimateProps> {
 
         // Ensure that the layout delta is updated for this frame.
         // TODO do we need this?
-        visualElement.updateLayoutProjection()
+        // visualElement.updateLayoutProjection()
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
