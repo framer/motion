@@ -73,10 +73,28 @@ export const useDomVisualElement: UseVisualElement<MotionProps, any> = (
      * TODO: Investigate if we need this
      */
     useEffect(() => {
+        let cancelViewportBoxUpdate: () => void
+        let cancelLayoutMeasureUpdate: () => void
+
         if (props.onViewportBoxUpdate) {
-            return visualElement.onViewportBoxUpdate(props.onViewportBoxUpdate)
+            cancelViewportBoxUpdate = visualElement.onViewportBoxUpdate(
+                props.onViewportBoxUpdate
+            )
         }
-    }, [props.onViewportBoxUpdate])
+
+        if (props._onLayoutMeasure) {
+            cancelLayoutMeasureUpdate = visualElement.onLayoutMeasure(
+                props._onLayoutMeasure
+            )
+        }
+
+        if (cancelViewportBoxUpdate || cancelLayoutMeasureUpdate) {
+            return () => {
+                cancelViewportBoxUpdate?.()
+                cancelLayoutMeasureUpdate?.()
+            }
+        }
+    }, [props.onViewportBoxUpdate, props._onLayoutMeasure])
 
     return visualElement
 }

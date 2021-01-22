@@ -68,4 +68,9 @@ export interface LayoutProps {
      * @public
      */
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
+
+    /**
+     * @internal
+     */
+    _onLayoutMeasure?(box: AxisBox2D, prevViewportBox: AxisBox2D): void
 }
