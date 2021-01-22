@@ -30,7 +30,7 @@ import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
 import { AnimationType } from "../../render/VisualElement/utils/animation-state"
-import { isBoundingBoxRefObject } from "utils/is-bounding-box-ref"
+import { isBoundingBoxRefObject } from "../../utils/is-bounding-box-ref"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,
