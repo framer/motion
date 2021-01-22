@@ -1,9 +1,12 @@
 import { visualElement } from ".."
+import { isMotionValue } from "../../value/utils/is-motion-value"
 import { htmlConfig } from "./html-visual-element"
 import { DOMVisualElementOptions, SVGMutableState } from "./types"
 import { buildSVGAttrs } from "./utils/build-svg-attrs"
 import { camelToDash } from "./utils/camel-to-dash"
 import { camelCaseAttributes } from "./utils/svg-camel-case-attrs"
+import { isTransformProp } from "./utils/transform"
+import { getDefaultValueType } from "./utils/value-types"
 
 const zeroDimensions = {
     x: 0,
@@ -52,8 +55,23 @@ export const svgVisualElement = visualElement<
     },
 
     readNativeValue(domElement, key) {
+        if (isTransformProp(key)) {
+            return getDefaultValueType(key)?.default || 0
+        }
         key = !camelCaseAttributes.has(key) ? camelToDash(key) : key
         return domElement.getAttribute(key)
+    },
+
+    scrapeMotionValuesFromProps(props) {
+        const newValues = htmlConfig.scrapeMotionValuesFromProps(props)
+
+        for (const key in props) {
+            if (isMotionValue(props[key])) {
+                newValues[key] = props[key]
+            }
+        }
+
+        return newValues
     },
 
     build(latest, mutableState, projection, options, props) {

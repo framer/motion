@@ -427,12 +427,10 @@ export const visualElement = <Instance, MutableState, Options>({
             projection.layout = element.measureViewportBox()
             projection.layoutCorrected = copyAxisBox(projection.layout)
 
-            // if (!this.targetBox) this.targetBox = copyAxisBox(this.box)
-
-            // this.layoutMeasureListeners.notify(
-            //     this.box,
-            //     this.prevViewportBox || this.box
-            // )
+            layoutMeasureListeners.notify(
+                projection.layout,
+                prevViewportBox || projection.layout
+            )
 
             sync.update(() => element.rebaseProjectionTarget())
         },

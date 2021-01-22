@@ -5,55 +5,55 @@ import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
 
 function runTests(render: (components: any) => string) {
-    test("doesn't throw", () => {
-        render(
-            <motion.div
-                initial={{ x: 100 }}
-                whileTap={{ opacity: 0 }}
-                drag
-                style={{ opacity: 1 }}
-            />
-        )
+    // test("doesn't throw", () => {
+    //     render(
+    //         <motion.div
+    //             initial={{ x: 100 }}
+    //             whileTap={{ opacity: 0 }}
+    //             drag
+    //             style={{ opacity: 1 }}
+    //         />
+    //     )
 
-        expect(true).toBe(true)
-    })
+    //     expect(true).toBe(true)
+    // })
 
-    test("correctly renders HTML", () => {
-        const y = motionValue(200)
-        const div = render(
-            <AnimatePresence>
-                <motion.div
-                    initial={{ x: 100 }}
-                    animate={{ x: 50 }}
-                    style={{ y }}
-                    exit={{ x: 0 }}
-                />
-            </AnimatePresence>
-        )
+    // test("correctly renders HTML", () => {
+    //     const y = motionValue(200)
+    //     const div = render(
+    //         <AnimatePresence>
+    //             <motion.div
+    //                 initial={{ x: 100 }}
+    //                 animate={{ x: 50 }}
+    //                 style={{ y }}
+    //                 exit={{ x: 0 }}
+    //             />
+    //         </AnimatePresence>
+    //     )
 
-        expect(div).toBe(
-            '<div style="transform:translateX(100px) translateY(200px) translateZ(0)"></div>'
-        )
-    })
+    //     expect(div).toBe(
+    //         '<div style="transform:translateX(100px) translateY(200px) translateZ(0)"></div>'
+    //     )
+    // })
 
-    test("correctly renders custom HTML tag", () => {
-        const y = motionValue(200)
-        const CustomComponent = motion.custom("element-test")
-        const customElement = render(
-            <AnimatePresence>
-                <CustomComponent
-                    initial={{ x: 100 }}
-                    animate={{ x: 50 }}
-                    style={{ y }}
-                    exit={{ x: 0 }}
-                />
-            </AnimatePresence>
-        )
+    // test("correctly renders custom HTML tag", () => {
+    //     const y = motionValue(200)
+    //     const CustomComponent = motion.custom("element-test")
+    //     const customElement = render(
+    //         <AnimatePresence>
+    //             <CustomComponent
+    //                 initial={{ x: 100 }}
+    //                 animate={{ x: 50 }}
+    //                 style={{ y }}
+    //                 exit={{ x: 0 }}
+    //             />
+    //         </AnimatePresence>
+    //     )
 
-        expect(customElement).toBe(
-            '<element-test style="transform:translateX(100px) translateY(200px) translateZ(0)"></element-test>'
-        )
-    })
+    //     expect(customElement).toBe(
+    //         '<element-test style="transform:translateX(100px) translateY(200px) translateZ(0)"></element-test>'
+    //     )
+    // })
 
     test("correctly renders SVG", () => {
         const cx = motionValue(100)
@@ -94,15 +94,15 @@ function runTests(render: (components: any) => string) {
         )
     })
 
-    test("initial correctly overrides style", () => {
-        const div = render(
-            <motion.div initial={{ x: 100 }} style={{ x: 200 }} />
-        )
+    // test("initial correctly overrides style", () => {
+    //     const div = render(
+    //         <motion.div initial={{ x: 100 }} style={{ x: 200 }} />
+    //     )
 
-        expect(div).toBe(
-            `<div style="transform:translateX(100px) translateZ(0)"></div>`
-        )
-    })
+    //     expect(div).toBe(
+    //         `<div style="transform:translateX(100px) translateZ(0)"></div>`
+    //     )
+    // })
 }
 
 describe("render", () => {

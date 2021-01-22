@@ -2,9 +2,9 @@ import { createElement } from "react"
 import { MotionProps } from "../../motion/types"
 import { VisualElement } from "../types"
 import { useHTMLProps } from "./utils/use-html-props"
-import { buildSVGProps } from "./utils/build-svg-props"
 import { filterProps } from "./utils/filter-props"
 import { isSVGComponent } from "./utils/is-svg-component"
+import { useSVGProps } from "./utils/use-svg-props"
 
 export function useRender<Props>(
     Component: string | React.ComponentType<Props>,
@@ -17,9 +17,8 @@ export function useRender<Props>(
         typeof Component === "string" ? filterProps(props) : props
 
     // Generate props to visually render this component
-    const visualProps = isSVGComponent(Component)
-        ? buildSVGProps()
-        : useHTMLProps(visualElement, props)
+    const useProps = isSVGComponent(Component) ? useSVGProps : useHTMLProps
+    const visualProps = useProps(visualElement, props)
 
     return createElement<any>(Component, {
         ...forwardedProps,

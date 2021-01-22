@@ -41,10 +41,9 @@ export function useDomVisualElement<E>(
     }
 
     if (!visualElementRef.current) {
+        const isSVG = isSVGComponent(Component)
         // TODO: I believe this is the only DOM-specific line here, change useVisualElement to getVisualElementFactory
-        const factory = isSVGComponent(Component)
-            ? svgVisualElement
-            : htmlVisualElement
+        const factory = isSVG ? svgVisualElement : htmlVisualElement
 
         visualElementRef.current = factory(
             {
@@ -54,7 +53,7 @@ export function useDomVisualElement<E>(
                 props,
                 blockInitialAnimation: presenceContext?.initial === false,
             },
-            { enableHardwareAcceleration: !isStatic }
+            { enableHardwareAcceleration: !isStatic && !isSVG }
         )
     }
 

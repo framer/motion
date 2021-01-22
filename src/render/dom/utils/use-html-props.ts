@@ -1,6 +1,7 @@
 import { MotionProps } from "../../../motion/types"
 import { isForcedMotionValue } from "../../../motion/utils/use-motion-values"
 import { useConstant } from "../../../utils/use-constant"
+import { isMotionValue } from "../../../value/utils/is-motion-value"
 import { ResolvedValues, VisualElement } from "../../types"
 
 function useInitialMotionValues(visualElement: VisualElement) {
@@ -12,7 +13,7 @@ function useInitialMotionValues(visualElement: VisualElement) {
     return visualElement.isStatic ? createStyle() : useConstant(createStyle)
 }
 
-function useStyle(
+export function useStyle(
     visualElement: VisualElement,
     props: MotionProps
 ): ResolvedValues {
@@ -24,7 +25,10 @@ function useStyle(
      */
     for (const key in styleProp) {
         // TODO We might want this to be a hasValue check? Although this could be impure
-        if (!isForcedMotionValue(key, props)) {
+        if (
+            !isMotionValue(styleProp[key]) &&
+            !isForcedMotionValue(key, props)
+        ) {
             style[key] = styleProp[key]
         }
     }
