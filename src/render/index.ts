@@ -19,7 +19,7 @@ import { subscriptionManager } from "../utils/subscription-manager"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
-    buildLayoutProjectionTransformOrigin,
+    buildLayoutProjectionTransform,
     identityProjection,
 } from "./dom/utils/build-transform"
 import {
@@ -63,6 +63,7 @@ export const visualElement = <Instance, MutableState, Options>({
     let instance: Instance
     let mutableState = initMutableState()
     let projectionTargetProgress: MotionPoint
+    let removeFromParent: undefined | (() => void)
 
     const isControllingVariants = checkIfControllingVariants(props)
     const isVariantNode = Boolean(isControllingVariants || props.variants)
@@ -264,6 +265,7 @@ export const visualElement = <Instance, MutableState, Options>({
             instance = element.current = mountingElement
             if (mountingElement) {
                 element.isMounted = true
+                removeFromParent = parent?.addChild(element)
                 onMount?.(element, instance, mutableState)
             } else {
                 // TODO: Remove from attached projection here, perhaps add snapshot if this is
@@ -512,9 +514,9 @@ export const visualElement = <Instance, MutableState, Options>({
         },
 
         updateLayoutProjection() {
-            const { treeScale, isEnabled } = projection
+            const { treeScale, isEnabled, isHydrated } = projection
 
-            if (isEnabled) {
+            if (isEnabled && isHydrated) {
                 const prevTreeScaleX = treeScale.x
                 const prevTreeScaleY = treeScale.y
 
@@ -528,7 +530,7 @@ export const visualElement = <Instance, MutableState, Options>({
                  * Ensure this element renders on the next frame if the projection
                  * transform has changed
                  */
-                const deltaTransform = buildLayoutProjectionTransformOrigin(
+                const deltaTransform = buildLayoutProjectionTransform(
                     projection
                 )
 
@@ -553,8 +555,6 @@ export const visualElement = <Instance, MutableState, Options>({
 
         syncRender: onRender,
     }
-
-    const removeFromParent = parent?.addChild(element)
 
     const initialMotionValues = scrapeMotionValuesFromProps(props)
     for (const key in initialMotionValues) {

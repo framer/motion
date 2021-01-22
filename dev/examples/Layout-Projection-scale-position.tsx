@@ -16,8 +16,9 @@ export function App() {
     return (
         <motion.div
             layout
+            id="parent"
             transition={transition}
-            onClick={() => setC(i => -1 * i)}
+            onClick={() => setC((i) => -1 * i)}
             style={{
                 backgroundColor: "#fff",
                 padding: 40,
@@ -27,6 +28,7 @@ export function App() {
         >
             <motion.div
                 layout="position"
+                id="child"
                 transition={transition}
                 style={{ backgroundColor: "#ccc" }}
             >
