@@ -94,6 +94,22 @@ export const visualElement = <Instance, MutableState, Options>({
     let latest = getInitialStaticValues(props, parent, blockInitialAnimation)
     const baseTarget: { [key: string]: string | number | null } = { ...latest }
 
+    // TODO Abstract pattern to subscription manager
+    let removeOnLayoutMeasureProp: undefined | (() => void)
+    let removeOnViewportUpdateProp: undefined | (() => void)
+    function updateSubscriptions() {
+        removeOnLayoutMeasureProp?.()
+        if (props._onLayoutMeasure)
+            removeOnLayoutMeasureProp = element.onLayoutMeasure(
+                props._onLayoutMeasure
+            )
+        removeOnViewportUpdateProp?.()
+        if (props.onViewportBoxUpdate)
+            removeOnViewportUpdateProp = element.onViewportBoxUpdate(
+                props.onViewportBoxUpdate
+            )
+    }
+
     function onUpdate() {
         props.onUpdate?.(latest)
     }
@@ -121,6 +137,22 @@ export const visualElement = <Instance, MutableState, Options>({
             removeOnChange()
             removeOnRenderRequest()
         })
+    }
+
+    function unmount() {
+        // TODO: Remove from attached projection here, perhaps add snapshot if this is
+        // a shared projection
+        // element.style.forEachValue((_, key) => element.remove)
+        element.forEachValue((_, key) => valueSubscriptions.get(key)?.())
+        element.stopLayoutAnimation()
+        cancelSync.update(onUpdate)
+        cancelSync.render(onRender)
+        ;[
+            layoutUpdateListeners,
+            layoutMeasureListeners,
+            viewportBoxUpdateListeners,
+        ].forEach((subscription) => subscription.clear())
+        removeFromParent?.()
     }
 
     const element: VisualElement<Instance> = {
@@ -244,7 +276,8 @@ export const visualElement = <Instance, MutableState, Options>({
 
         forEachValue: (callback) => values.forEach(callback),
 
-        readValue: (key: string) => readNativeValue(instance, key, options),
+        readValue: (key: string) =>
+            latest[key] ?? readNativeValue(instance, key, options),
 
         setBaseTarget: (key, value) => (baseTarget[key] = value),
 
@@ -268,16 +301,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 removeFromParent = parent?.addChild(element)
                 onMount?.(element, instance, mutableState)
             } else {
-                // TODO: Remove from attached projection here, perhaps add snapshot if this is
-                // a shared projection
-                // element.style.forEachValue((_, key) => element.remove)
-                element.forEachValue((_, key) =>
-                    valueSubscriptions.get(key)?.()
-                )
-                element.stopLayoutAnimation()
-                cancelSync.update(onUpdate)
-                cancelSync.render(onRender)
-                removeFromParent?.()
+                unmount()
             }
 
             if (!externalRef) return
@@ -305,6 +329,8 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         updateProps(newProps) {
             props = newProps
+
+            updateSubscriptions()
 
             const motionValues = scrapeMotionValuesFromProps(props)
             for (const key in motionValues) {

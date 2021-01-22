@@ -129,7 +129,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
                     createAnimation(child, this.getStack(layoutId))
                 )
             },
-            parent: this.context.visualElement,
+            parent: this.context,
         }
 
         /**
