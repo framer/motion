@@ -75,7 +75,7 @@ export function buildHTMLStyles(
              * If layout projection is on, and we need to perform scale correction for this
              * value type, perform it.
              */
-            if (projection.isEnabled && valueScaleCorrection[key]) {
+            if (projection.isHydrated && valueScaleCorrection[key]) {
                 const correctedValue = valueScaleCorrection[key].process(
                     value,
                     projection
@@ -100,7 +100,7 @@ export function buildHTMLStyles(
         }
     }
 
-    if (projection.isEnabled) {
+    if (projection.isEnabled && projection.isHydrated) {
         style.transform = buildLayoutProjectionTransform(
             projection,
             hasTransform ? transform : undefined

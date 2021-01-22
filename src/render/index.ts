@@ -99,7 +99,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
     function onRender() {
         if (!instance) return
-        updateTransformDeltas(latest, projection)
+        projection.isHydrated && updateTransformDeltas(latest, projection)
         build(latest, mutableState, projection, options, props)
         render(instance, mutableState)
     }
@@ -424,6 +424,7 @@ export const visualElement = <Instance, MutableState, Options>({
         },
 
         updateLayoutMeasurement() {
+            projection.isHydrated = true
             projection.layout = element.measureViewportBox()
             projection.layoutCorrected = copyAxisBox(projection.layout)
 
