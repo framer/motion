@@ -225,7 +225,7 @@ export const DragFeature: MotionFeature;
 // @public (undocumented)
 export interface DraggableProps extends DragHandlers {
     drag?: boolean | "x" | "y";
-    dragConstraints?: false | Partial<BoundingBox2D> | RefObject<Element>;
+    dragConstraints?: false | Partial<BoundingBox2D> | RefObject<BoundingBox2D> | RefObject<Element>;
     dragControls?: DragControls;
     dragDirectionLock?: boolean;
     dragElastic?: boolean | number;
