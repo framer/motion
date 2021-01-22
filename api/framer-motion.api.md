@@ -362,6 +362,8 @@ export interface LayoutProps {
     layout?: boolean | "position";
     layoutId?: string;
     onLayoutAnimationComplete?(): void;
+    // @internal (undocumented)
+    _onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void;
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
 }
 
