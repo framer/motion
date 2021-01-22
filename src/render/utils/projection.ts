@@ -10,6 +10,7 @@ import { Projection, ResolvedValues, VisualElement } from "../types"
 export function initProjection(): Projection {
     return {
         isEnabled: false,
+        isHydrated: false,
         isTargetLocked: false,
         layout: axisBox(),
         layoutCorrected: axisBox(),

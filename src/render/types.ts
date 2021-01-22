@@ -182,6 +182,8 @@ export interface Projection {
 
     isTargetLocked: boolean
 
+    isHydrated: boolean
+
     /**
      * The measured bounding box as it exists on the page with no transforms applied.
      *
