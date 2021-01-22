@@ -17,7 +17,7 @@ export function buildHTMLStyles(
     latest: ResolvedValues,
     projection: Projection,
     options: DOMVisualElementOptions,
-    transformTemplate: MotionProps["transformTemplate"]
+    transformTemplate?: MotionProps["transformTemplate"]
 ) {
     const { style, vars, transform, transformKeys, transformOrigin } = state
 

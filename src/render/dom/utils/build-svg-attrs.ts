@@ -29,8 +29,9 @@ export function buildSVGAttrs(
 ) {
     buildHTMLStyles(state, latest, projection, options, transformTemplate)
 
-    const { attrs, dimensions, style, totalPathLength } = state
-
+    state.attrs = state.style
+    state.style = {}
+    const { attrs, style, dimensions, totalPathLength } = state
     /**
      * However, we apply transforms as CSS transforms. So if we detect a transform we take it from attrs
      * and copy it into style.
