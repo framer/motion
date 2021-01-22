@@ -28,7 +28,7 @@ const Container = styled(motion.div)<{ isOn: boolean }>`
 `
 
 const borderWidth = (axis: "x" | "y") => ({
-    process: (latest: any, viewportBox: any, delta: any, treeScale: any) => {
+    process: (latest: any, { delta, treeScale }: any) => {
         return latest / delta[axis].scale / treeScale[axis] + "px"
     },
 })
