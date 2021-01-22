@@ -8,7 +8,12 @@ import { invariant } from "hey-listen"
 import { progress } from "popmotion"
 import { addDomEvent } from "../../events/use-dom-event"
 import { getViewportPointFromEvent } from "../../events/event-info"
-import { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
+import {
+    TransformPoint2D,
+    AxisBox2D,
+    Point2D,
+    BoundingBox2D,
+} from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     convertAxisBoxToBoundingBox,
@@ -30,6 +35,8 @@ import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
 import { AnimationType } from "../../render/VisualElement/utils/animation-state"
+import { isBoundingBoxRefObject } from "utils/is-bounding-box-ref"
+import { VisualElement } from "render/VisualElement"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,
@@ -287,21 +294,7 @@ export class VisualElementDragControls {
     }
 
     resolveDragConstraints() {
-        const { dragConstraints } = this.props
-
-        if (dragConstraints) {
-            this.constraints = isRefObject(dragConstraints)
-                ? this.resolveRefConstraints(
-                      this.visualElement.box,
-                      dragConstraints
-                  )
-                : calcRelativeConstraints(
-                      this.visualElement.box,
-                      dragConstraints
-                  )
-        } else {
-            this.constraints = false
-        }
+        this.constraints = this.resolveConstraints()
 
         /**
          * If we're outputting to external MotionValues, we want to rebase the measured constraints
@@ -317,6 +310,28 @@ export class VisualElementDragControls {
                 }
             })
         }
+    }
+
+    resolveConstraints() {
+        const { dragConstraints } = this.props
+
+        if (!dragConstraints) return false
+
+        if (isBoundingBoxRefObject(dragConstraints)) {
+            return calcRelativeConstraints(
+                this.visualElement.box,
+                dragConstraints.current!
+            )
+        }
+
+        if (isRefObject(dragConstraints)) {
+            return this.resolveRefConstraints(
+                this.visualElement.box,
+                dragConstraints
+            )
+        }
+
+        return calcRelativeConstraints(this.visualElement.box, dragConstraints)
     }
 
     resolveRefConstraints(
