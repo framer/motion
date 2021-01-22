@@ -8,12 +8,7 @@ import { invariant } from "hey-listen"
 import { progress } from "popmotion"
 import { addDomEvent } from "../../events/use-dom-event"
 import { getViewportPointFromEvent } from "../../events/event-info"
-import {
-    TransformPoint2D,
-    AxisBox2D,
-    Point2D,
-    BoundingBox2D,
-} from "../../types/geometry"
+import { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     convertAxisBoxToBoundingBox,
@@ -36,7 +31,6 @@ import { Transition } from "../../types"
 import { MotionProps } from "../../motion"
 import { AnimationType } from "../../render/VisualElement/utils/animation-state"
 import { isBoundingBoxRefObject } from "utils/is-bounding-box-ref"
-import { VisualElement } from "render/VisualElement"
 
 export const elementDragControls = new WeakMap<
     HTMLVisualElement,
