@@ -198,9 +198,8 @@ export class VisualElementDragControls {
             const { point } = getViewportPointFromEvent(event)
 
             eachAxis((axis) => {
-                const { min, max } = this.visualElement.getProjectionTarget()[
-                    axis
-                ]
+                const projection = this.visualElement.getProjection()
+                const { min, max } = projection.target[axis]
 
                 this.cursorProgress[axis] = cursorProgress
                     ? cursorProgress[axis]
@@ -293,11 +292,11 @@ export class VisualElementDragControls {
         if (dragConstraints) {
             this.constraints = isRefObject(dragConstraints)
                 ? this.resolveRefConstraints(
-                      this.visualElement.getMeasuredLayout(),
+                      this.visualElement.getLayoutState().layout,
                       dragConstraints
                   )
                 : calcRelativeConstraints(
-                      this.visualElement.getMeasuredLayout(),
+                      this.visualElement.getLayoutState().layout,
                       dragConstraints
                   )
         } else {
@@ -312,7 +311,7 @@ export class VisualElementDragControls {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        this.visualElement.getMeasuredLayout()[axis],
+                        this.visualElement.getLayoutState().layout[axis],
                         this.constraints[axis]
                     )
                 }
@@ -408,7 +407,7 @@ export class VisualElementDragControls {
 
             if (axisValue) {
                 const { point } = getViewportPointFromEvent(event)
-                const box = this.visualElement.getMeasuredLayout()
+                const box = this.visualElement.getLayoutState().layout
                 const length = box[axis].max - box[axis].min
                 const center = box[axis].min + length / 2
                 const offset = point[axis] - center
@@ -457,7 +456,7 @@ export class VisualElementDragControls {
         const { dragElastic } = this.props
 
         // Get the actual layout bounding box of the element
-        const axisLayout = this.visualElement.getMeasuredLayout()[axis]
+        const axisLayout = this.visualElement.getLayoutState().layout[axis]
 
         // Calculate its current length. In the future we might want to lerp this to animate
         // between lengths if the layout changes as we change the DOM
@@ -596,7 +595,7 @@ export class VisualElementDragControls {
         const boxProgress = { x: 0, y: 0 }
         eachAxis((axis) => {
             boxProgress[axis] = calcOrigin(
-                this.visualElement.getProjectionTarget()[axis],
+                this.visualElement.getProjection().target[axis],
                 this.constraintsBox![axis]
             )
         })
@@ -615,7 +614,7 @@ export class VisualElementDragControls {
             // Calculate the position of the targetBox relative to the constraintsBox using the
             // previously calculated progress
             const { min, max } = calcPositionFromProgress(
-                this.visualElement.getProjectionTarget()[axis],
+                this.visualElement.getProjection().target[axis],
                 this.constraintsBox![axis],
                 boxProgress[axis]
             )

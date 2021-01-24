@@ -4,7 +4,7 @@ import {
     createCrossfadeAnimation,
     createSwitchAnimation,
 } from "./utils/animations"
-import { LayoutStack } from "./utils/stack"
+import { LayoutStack, layoutStack } from "./utils/stack"
 import {
     SharedLayoutSyncMethods,
     createBatcher,
@@ -37,7 +37,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      * Track whether the component has mounted. If it hasn't, the presence of added children
      * are set to Present, whereas if it has they're considered Entering
      */
-    private hasMounted = false
+    // private hasMounted = false
 
     /**
      * Track whether we already have an update scheduled. If we don't, we'll run snapshots
@@ -64,12 +64,14 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         },
         register: (child) => this.addChild(child),
         remove: (child) => this.removeChild(child),
+        getLeadVisualElement: (layoutId: string) =>
+            this.stacks.get(layoutId)?.getLead(),
     }
 
-    componentDidMount() {
-        this.hasMounted = true
-        this.updateStacks()
-    }
+    // componentDidMount() {
+    //     this.hasMounted = true
+    //     this.updateStacks()
+    // }
 
     componentDidUpdate() {
         this.startLayoutAnimation()
@@ -80,7 +82,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         return true
     }
 
-    startLayoutAnimation() {
+    private startLayoutAnimation() {
         /**
          * Reset update and render scheduled status
          */
@@ -92,30 +94,30 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Update presence metadata based on the latest AnimatePresence status.
          * This is a kind of goofy way of dealing with this, perhaps there's a better model to find.
          */
-        this.children.forEach((child) => {
-            if (!child.isPresent) {
-                child.presence = Presence.Exiting
-            } else if (child.presence !== Presence.Entering) {
-                child.presence =
-                    child.presence === Presence.Exiting
-                        ? Presence.Entering
-                        : Presence.Present
-            }
-        })
+        // this.children.forEach((child) => {
+        //     if (!child.isPresent) {
+        //         child.presence = Presence.Exiting
+        //     } else if (child.presence !== Presence.Entering) {
+        //         child.presence =
+        //             child.presence === Presence.Exiting
+        //                 ? Presence.Entering
+        //                 : Presence.Present
+        //     }
+        // })
 
         /**
          * In every layoutId stack, nominate a component to lead the animation and another
          * to follow
          */
-        this.updateStacks()
+        // this.updateStacks()
 
         /**
          * Decide which animation to use between shared layoutId components
          */
-        const createAnimation =
-            type === "crossfade"
-                ? createCrossfadeAnimation
-                : createSwitchAnimation
+        // const createAnimation =
+        //     type === "crossfade"
+        //         ? createCrossfadeAnimation
+        //         : createSwitchAnimation
 
         /**
          * Create a handler which we can use to flush the children animations
@@ -123,11 +125,12 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         const handler: SyncLayoutLifecycles = {
             measureLayout: (child) => child.updateLayoutMeasurement(),
             layoutReady: (child) => {
-                const { layoutId } = child
-
-                child.notifyLayoutReady(
-                    createAnimation(child, this.getStack(layoutId))
-                )
+                if (child.getLayoutId()) {
+                    const stack = this.getStack(child)!
+                    stack.animate(child, type === "crossfade")
+                } else {
+                    child.notifyLayoutReady()
+                }
             },
             parent: this.context,
         }
@@ -148,11 +151,11 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.stacks.forEach((stack) => (stack.snapshot = undefined))
     }
 
-    updateStacks() {
-        this.stacks.forEach((stack) => stack.updateLeadAndFollow())
-    }
+    // updateStacks() {
+    //     this.stacks.forEach((stack) => stack.updateLeadAndFollow())
+    // }
 
-    scheduleUpdate(force = false) {
+    private scheduleUpdate(force = false) {
         if (!(force || !this.updateScheduled)) return
 
         /**
@@ -174,6 +177,9 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Every child keeps a local snapshot, but we also want to record
          * snapshots of the visible children as, if they're are being removed
          * in this render, we can still access them.
+         *
+         * TODO: What would be better here is doing a single loop where we
+         * only snapshotViewportBoxes of undefined layoutIds and then one for each stack
          */
         this.stacks.forEach((stack) => stack.updateSnapshot())
 
@@ -186,26 +192,27 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         }
     }
 
-    addChild(child: VisualElement) {
+    private addChild(child: VisualElement) {
         this.children.add(child)
         this.addToStack(child)
 
-        child.presence = this.hasMounted ? Presence.Entering : Presence.Present
+        // child.presence = this.hasMounted ? Presence.Entering : Presence.Present
     }
 
-    removeChild(child: VisualElement) {
+    private removeChild(child: VisualElement) {
         this.scheduleUpdate()
         this.children.delete(child)
         this.removeFromStack(child)
     }
 
-    addToStack(child: VisualElement) {
-        const stack = this.getStack(child.layoutId)
+    private addToStack(child: VisualElement) {
+        const stack = this.getStack(child)
+        console.log("adding", child.getLayoutId(), "to stack")
         stack?.add(child)
     }
 
-    removeFromStack(child: VisualElement) {
-        const stack = this.getStack(child.layoutId)
+    private removeFromStack(child: VisualElement) {
+        const stack = this.getStack(child)
         stack?.remove(child)
     }
 
@@ -213,11 +220,12 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      * Return a stack of animate children based on the provided layoutId.
      * Will create a stack if none currently exists with that layoutId.
      */
-    getStack(id?: string): LayoutStack | undefined {
+    private getStack(child: VisualElement): LayoutStack | undefined {
+        const id = child.getLayoutId()
         if (id === undefined) return
 
         // Create stack if it doesn't already exist
-        !this.stacks.has(id) && this.stacks.set(id, new LayoutStack())
+        !this.stacks.has(id) && this.stacks.set(id, layoutStack())
 
         return this.stacks.get(id) as LayoutStack
     }

@@ -1,33 +1,35 @@
 import { Ref } from "react"
-import { LayoutUpdateHandler } from "."
 import {
     Presence,
     SharedLayoutAnimationConfig,
 } from "../components/AnimateSharedLayout/types"
 import { Snapshot } from "../components/AnimateSharedLayout/utils/stack"
-import { OnViewportBoxUpdate } from "../motion/features/layout/types"
 import { MotionProps } from "../motion/types"
 import { TargetAndTransition, Transition, Variant } from "../types"
-import { AxisBox2D, BoxDelta, Point2D } from "../types/geometry"
+import { AxisBox2D } from "../types/geometry"
 import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
+import { LifecycleManager } from "./utils/lifecycles"
+import { LayoutState, TargetProjection, VisualState } from "./utils/state"
 
 export interface MotionPoint {
     x: MotionValue<number>
     y: MotionValue<number>
 }
 
-export interface VisualElement<Instance = any, MutableState = any> {
+export interface VisualElement<Instance = any, MutableState = any>
+    extends LifecycleManager {
     depth: number
     current: Instance | null
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
     variantChildren?: Set<VisualElement>
-    isMounted: boolean
+    isMounted(): boolean
     isStatic?: boolean
+    isResumingFromSnapshot: boolean
     clearState(props: MotionProps): void
     subscribeToVariantParent(): void
-    getVariantParent(): undefined | VisualElement
+    getClosestVariantNode(): undefined | VisualElement
     getInstance(): Instance | null
     path: VisualElement[]
     addChild(child: VisualElement): () => void
@@ -36,9 +38,8 @@ export interface VisualElement<Instance = any, MutableState = any> {
     /**
      * Visibility
      */
-    isVisible: boolean
-    show(): void
-    hide(): void
+    isVisible?: boolean
+    setVisibility(visibility: boolean): void
 
     hasValue(key: string): boolean
     addValue(key: string, value: MotionValue<any>): void
@@ -50,6 +51,8 @@ export interface VisualElement<Instance = any, MutableState = any> {
         defaultValue?: string | number
     ): undefined | MotionValue
     forEachValue(callback: (value: MotionValue, key: string) => void): void
+    getVisualState(): VisualState
+
     readValue(key: string): string | number | undefined | null
     setBaseTarget(key: string, value: string | number | null): void
     getBaseTarget(key: string): number | string | undefined | null
@@ -57,6 +60,7 @@ export interface VisualElement<Instance = any, MutableState = any> {
     setStaticValue(key: string, value: number | string): void
     getLatestValues(): ResolvedValues
     scheduleRender(): void
+
     updateProps(props: MotionProps): void
     getVariant(name: string): Variant | undefined
     getVariantData(): any
@@ -93,9 +97,8 @@ export interface VisualElement<Instance = any, MutableState = any> {
     rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void
     measureViewportBox(withTransform?: boolean): AxisBox2D
     updateLayoutMeasurement(): void
-    getMeasuredLayout(): AxisBox2D
-    getProjection(): Projection
-    getProjectionTarget(): AxisBox2D
+    getProjection(): TargetProjection
+    getLayoutState: () => LayoutState
     getProjectionAnimationProgress(): MotionPoint
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void
     startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>
@@ -107,13 +110,9 @@ export interface VisualElement<Instance = any, MutableState = any> {
         isLive?: boolean
     ): TargetAndTransition
     scheduleUpdateLayoutProjection(): void
-    // TODO: notifyLayoutMeasurementsUpdated ?
     notifyLayoutReady(config?: SharedLayoutAnimationConfig): void
+    pointTo(element: VisualElement): void
     resetTransform(): void
-
-    onLayoutUpdate(callback: LayoutUpdateHandler): () => void
-    onLayoutMeasure(callback: LayoutUpdateHandler): () => void
-    onViewportBoxUpdate(callback: OnViewportBoxUpdate): () => void
 
     // TODO save this somewhere else
     isPresent: boolean
@@ -121,13 +120,16 @@ export interface VisualElement<Instance = any, MutableState = any> {
     isPresenceRoot?: boolean
     prevSnapshot?: Snapshot
     prevViewportBox?: AxisBox2D
-    layoutId?: string
+    getLayoutId(): string | undefined
 
+    /**
+     * TODO Is this the best way to load in extra functionality?
+     */
     animationState?: AnimationState
 }
 
 export interface VisualElementConfig<Instance, MutableState, Options> {
-    initMutableState(): MutableState
+    createRenderState(): MutableState
     onMount?: (
         element: VisualElement<Instance>,
         instance: Instance,
@@ -138,9 +140,10 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
         key: string
     ): string | number | undefined | MotionValue
     build(
-        latest: ResolvedValues,
-        mutableState: MutableState,
-        projection: Projection,
+        visualElement: VisualElement<Instance>,
+        renderState: MutableState,
+        visualState: VisualState,
+        layoutState: LayoutState,
         options: Options,
         props: MotionProps
     ): void
@@ -151,7 +154,7 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
         isLive: boolean
     ): TargetAndTransition
     measureViewportBox(instance: Instance, options: Options): AxisBox2D
-    readNativeValue(
+    readValueFromInstance(
         instance: Instance,
         key: string,
         options: Options
@@ -172,85 +175,10 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
 export type VisualElementOptions<Instance> = {
     ref?: Ref<Instance>
     parent?: VisualElement<unknown>
+    snapshot?: ResolvedValues
     isStatic?: boolean
     props: MotionProps
     blockInitialAnimation?: boolean
-}
-
-export interface Projection {
-    isEnabled: boolean
-
-    isTargetLocked: boolean
-
-    isHydrated: boolean
-
-    /**
-     * The measured bounding box as it exists on the page with no transforms applied.
-     *
-     * To calculate the visual output of a component in any given frame, we:
-     *
-     *   1. box -> boxCorrected
-     *      Apply the delta between the tree transform when the box was measured and
-     *      the tree transform in this frame to the box
-     *   2. targetBox -> targetBoxFinal
-     *      Apply the VisualElement's `transform` properties to the targetBox
-     *   3. Calculate the delta between boxCorrected and targetBoxFinal and apply
-     *      it as a transform style.
-     */
-    layout: AxisBox2D
-
-    /**
-     * The `box` layout with transforms applied from up the
-     * tree. We use this as the final bounding box from which we calculate a transform
-     * delta to our desired visual position on any given frame.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    layoutCorrected: AxisBox2D
-
-    /**
-     * The visual target we want to project our component into on a given frame
-     * before applying transforms defined in `animate` or `style`.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    target: AxisBox2D
-
-    /**
-     * The visual target we want to project our component into on a given frame
-     * before applying transforms defined in `animate` or `style`.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    targetFinal: AxisBox2D
-
-    /**
-     * The overall scale of the local coordinate system as transformed by all parents
-     * of this component. We use this for scale correction on our calculated layouts
-     * and scale-affected values like `boxShadow`.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    treeScale: Point2D
-
-    /**
-     * The delta between the boxCorrected and the desired
-     * targetBox (before user-set transforms are applied). The calculated output will be
-     * handed to the renderer and used as part of the style correction calculations, for
-     * instance calculating how to display the desired border-radius correctly.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    delta: BoxDelta
-
-    /**
-     * The delta between the boxCorrected and the desired targetBoxFinal. The calculated
-     * output will be handed to the renderer and used to project the boxCorrected into
-     * the targetBoxFinal.
-     *
-     * This is considered mutable to avoid object creation on each frame.
-     */
-    deltaFinal: BoxDelta
 }
 
 export type ExtendVisualElement<

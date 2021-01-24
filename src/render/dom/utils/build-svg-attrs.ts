@@ -1,9 +1,10 @@
 import { SVGMutableState, DOMVisualElementOptions } from "../types"
 import { buildHTMLStyles } from "./build-html-styles"
-import { Projection, ResolvedValues } from "../../types"
+import { ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./svg-path"
 import { MotionProps } from "../../../motion/types"
+import { LayoutState, VisualState } from "../../utils/state"
 
 const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
 
@@ -12,7 +13,12 @@ const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
  */
 export function buildSVGAttrs(
     state: SVGMutableState,
-    {
+    { values, projection }: VisualState,
+    layoutState: LayoutState,
+    options: DOMVisualElementOptions,
+    transformTemplate?: MotionProps["transformTemplate"]
+) {
+    const {
         attrX,
         attrY,
         originX,
@@ -22,12 +28,14 @@ export function buildSVGAttrs(
         pathOffset = 0,
         // This is object creation, which we try to avoid per-frame.
         ...latest
-    }: ResolvedValues,
-    projection: Projection,
-    options: DOMVisualElementOptions,
-    transformTemplate?: MotionProps["transformTemplate"]
-) {
-    buildHTMLStyles(state, latest, projection, options, transformTemplate)
+    }: ResolvedValues = values
+    buildHTMLStyles(
+        state,
+        { values: latest, projection },
+        layoutState,
+        options,
+        transformTemplate
+    )
 
     state.attrs = state.style
     state.style = {}

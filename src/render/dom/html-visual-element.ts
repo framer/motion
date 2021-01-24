@@ -20,7 +20,7 @@ export const htmlConfig: VisualElementConfig<
     HTMLMutableState,
     DOMVisualElementOptions
 > = {
-    readNativeValue(domElement, key) {
+    readValueFromInstance(domElement, key) {
         if (isTransformProp(key)) {
             return getDefaultValueType(key)?.default || 0
         } else {
@@ -32,7 +32,7 @@ export const htmlConfig: VisualElementConfig<
         }
     },
 
-    initMutableState: () => ({
+    createRenderState: () => ({
         style: {},
         transform: {},
         transformKeys: [],
@@ -135,15 +135,17 @@ export const htmlConfig: VisualElementConfig<
         return newValues
     },
 
-    build(latest, mutableState, projection, options, props) {
-        // if (isVisible !== undefined) {
-        //     mutableState.style.visibility = isVisible ? "visible" : "hidden"
-        // }
+    build(element, renderState, visualState, layoutState, options, props) {
+        if (element.isVisible !== undefined) {
+            renderState.style.visibility = element.isVisible
+                ? "visible"
+                : "hidden"
+        }
 
         buildHTMLStyles(
-            mutableState,
-            latest,
-            projection,
+            renderState,
+            visualState,
+            layoutState,
             options,
             props.transformTemplate
         )

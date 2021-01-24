@@ -194,16 +194,14 @@ export function createAnimationState(
 
             /**
              * Resume from previous snapshot if it's the first render
-             * TODO: Figure out snapshot resumption
              */
-            // if (
-            //     isInitialRender &&
-            //     type === AnimationType.Animate &&
-            //     visualElement.prevSnapshot
-            // ) {
-            //     isInitialRender = false
-            //     typeState.prevResolvedValues = visualElement.prevSnapshot
-            // }
+            if (
+                isInitialRender &&
+                type === AnimationType.Animate &&
+                visualElement.isResumingFromSnapshot
+            ) {
+                isInitialRender = false
+            }
 
             /**
              * Set all encountered keys so far as the protected keys for this type. This will

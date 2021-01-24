@@ -13,6 +13,7 @@ export function useSnapshotOnUnmount(visualElement: VisualElement) {
 
     useIsomorphicLayoutEffect(
         () => () => {
+            console.log("unmount")
             if (isSharedLayout(syncLayout)) {
                 syncLayout.remove(visualElement as any)
             }
