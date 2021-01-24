@@ -15,7 +15,7 @@ interface PlaybackLifecycles<V> {
     onStop?: () => void
 }
 
-type AnimationOptions<V> = (Tween | Spring) &
+export type AnimationOptions<V> = (Tween | Spring) &
     PlaybackLifecycles<V> & { delay?: number; type?: "tween" | "spring" }
 
 /**
