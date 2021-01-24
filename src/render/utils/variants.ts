@@ -1,3 +1,5 @@
+import { AnimationControls } from "../../animation/AnimationControls"
+import { MotionProps } from "../../motion/types"
 import { TargetAndTransition, TargetResolver } from "../../types"
 import { VisualElement } from "../types"
 
@@ -54,4 +56,17 @@ export function resolveVariant(
               getVelocity(visualElement)
           )
         : definition
+}
+
+export function checkIfControllingVariants(props: MotionProps) {
+    return (
+        typeof (props.animate as AnimationControls)?.start === "function" ||
+        isVariantLabel(props.animate) ||
+        isVariantLabel(props.whileHover) ||
+        isVariantLabel(props.whileDrag) ||
+        isVariantLabel(props.whileTap) ||
+        isVariantLabel(props.whileFocus) ||
+        isVariantLabel(props.exit) ||
+        isVariantLabel(props.initial)
+    )
 }

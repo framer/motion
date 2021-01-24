@@ -187,7 +187,7 @@ function getAnimation(
             onComplete,
             onUpdate: (v: Animatable) => value.set(v),
         }
-        console.log(options.from, options.to)
+
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
             ? inertia({ ...options, ...valueTransition })

@@ -1,12 +1,13 @@
 import { sortTransformProps } from "./transform"
-import { Projection, ResolvedValues } from "../../types"
+import { ResolvedValues } from "../../types"
 import {
     DOMVisualElementOptions,
     HTMLMutableState,
     TransformOrigin,
 } from "../types"
-import { initProjection } from "../../utils/projection"
 import { MotionProps } from "../../../motion/types"
+import { createLayoutState, LayoutState } from "../../utils/state"
+import { BoxDelta, Point2D } from "../../../types/geometry"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -86,11 +87,10 @@ export function buildTransformOrigin({
  * space on screen and projects it into the desired space.
  */
 export function buildLayoutProjectionTransform(
-    { deltaFinal, treeScale }: Projection,
+    { x, y }: BoxDelta,
+    treeScale: Point2D,
     latestTransform?: ResolvedValues
 ): string {
-    const { x, y } = deltaFinal
-
     /**
      * The translations we use to calculate are always relative to the viewport coordinate space.
      * But when we apply scales, we also scale the coordinate space of an element and its children.
@@ -114,12 +114,11 @@ export function buildLayoutProjectionTransform(
     return !latestTransform && transform === identityProjection ? "" : transform
 }
 
+const zeroLayout = createLayoutState()
 export const identityProjection = buildLayoutProjectionTransform(
-    initProjection(),
-    {
-        x: 1,
-        y: 1,
-    }
+    zeroLayout.delta,
+    zeroLayout.treeScale,
+    { x: 1, y: 1 }
 )
 
 /**
@@ -127,6 +126,6 @@ export const identityProjection = buildLayoutProjectionTransform(
  */
 export function buildLayoutProjectionTransformOrigin({
     deltaFinal,
-}: Projection) {
+}: LayoutState) {
     return `${deltaFinal.x.origin * 100}% ${deltaFinal.y.origin * 100}% 0`
 }

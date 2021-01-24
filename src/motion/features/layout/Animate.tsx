@@ -70,7 +70,6 @@ class Animate extends React.Component<AnimateProps> {
         }: SharedLayoutAnimationConfig = {}
     ) => {
         const { visualElement, layout } = this.props
-        console.log(target.y, origin.y)
         /**
          * Early return if we've been instructed not to animate this render.
          */
@@ -83,6 +82,8 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
+        this.props.layoutId === "hsl(0, 100%, 50%)" &&
+            console.log(target.y, origin.y)
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis((axis) => {
@@ -98,10 +99,9 @@ class Animate extends React.Component<AnimateProps> {
             if (visualElement.getProjection().isTargetLocked) {
                 return
             } else if (visibilityAction !== undefined) {
-                // If we're meant to show/hide the visualElement, do so
-                visibilityAction === VisibilityAction.Hide
-                    ? visualElement.hide()
-                    : visualElement.show()
+                visualElement.setVisibility(
+                    visibilityAction === VisibilityAction.Show
+                )
             } else if (boxHasMoved) {
                 // If the box has moved, animate between it's current visual state and its
                 // final state
@@ -176,7 +176,7 @@ class Animate extends React.Component<AnimateProps> {
         let crossfade: (p: number) => void
         if (crossfadeOpacity) {
             crossfade = this.createCrossfadeAnimation(crossfadeOpacity)
-            visualElement.show()
+            visualElement.setVisibility(true)
         }
 
         /**

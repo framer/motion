@@ -1,12 +1,11 @@
 import * as React from "react"
 import { forwardRef, Ref, useContext } from "react"
 import { MotionProps } from "./types"
-import { UseVisualElement } from "../render/types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
-import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext } from "./context/MotionContext"
+import { UseVisualElement } from "../render/types"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
@@ -63,13 +62,6 @@ export function createMotionComponent<P extends {}, E>(
         )
 
         const component = useRender(Component, props, visualElement)
-
-        /**
-         * If this component is a child of AnimateSharedLayout, we need to snapshot the component
-         * before it's unmounted. This lives here rather than in features/layout/Measure because
-         * as a child component its unmount effect runs after this component has been unmounted.
-         */
-        useSnapshotOnUnmount(visualElement)
 
         // The mount order and hierarchy is specific to ensure our element ref is hydrated by the time
         // all plugins and features has to execute.
