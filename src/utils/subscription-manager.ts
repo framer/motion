@@ -1,30 +1,32 @@
 type GenericHandler = (...args: any) => void
 
-export function subscriptionManager<Handler extends GenericHandler>() {
+export interface SubscriptionManager<Handler extends GenericHandler> {
+    add(handler: Handler): () => void
+    notify(
+        a?: Parameters<Handler>[0],
+        b?: Parameters<Handler>[1],
+        c?: Parameters<Handler>[2]
+    ): void
+    clear(): void
+}
+
+export function subscriptionManager<
+    Handler extends GenericHandler
+>(): SubscriptionManager<Handler> {
     const subscriptions = new Set<Handler>()
 
     return {
-        add(handler: Handler) {
+        add(handler) {
             subscriptions.add(handler)
             return () => subscriptions.delete(handler)
         },
 
-        notify(
-            /**
-             * Using ...args would be preferable but it's array creation and this
-             * might be fired every frame.
-             */
-            a?: Parameters<Handler>[0],
-            b?: Parameters<Handler>[1],
-            c?: Parameters<Handler>[2]
-        ) {
+        notify(a, b, c) {
             if (!subscriptions.size) return
             for (const handler of subscriptions) {
                 handler(a, b, c)
             }
         },
-
-        getSize: () => subscriptions.size,
 
         clear() {
             subscriptions.clear()

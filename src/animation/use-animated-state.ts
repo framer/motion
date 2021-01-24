@@ -16,7 +16,7 @@ const stateVisualElement = visualElement<
     {},
     AnimatedStateOptions
 >({
-    initMutableState: () => ({}),
+    createRenderState: () => ({}),
     build() {},
     measureViewportBox: axisBox,
     resetTransform() {},
@@ -27,7 +27,7 @@ const stateVisualElement = visualElement<
         return {}
     },
 
-    readNativeValue(_state, key, options) {
+    readValueFromInstance(_state, key, options) {
         return options.initialState[key] || 0
     },
 

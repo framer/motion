@@ -16,7 +16,7 @@ const zeroDimensions = {
 }
 
 export const svgMutableState = () => ({
-    ...htmlConfig.initMutableState(),
+    ...htmlConfig.createRenderState(),
     attrs: {},
     dimensions: zeroDimensions,
 })
@@ -27,7 +27,7 @@ export const svgVisualElement = visualElement<
     DOMVisualElementOptions
 >({
     ...(htmlConfig as any),
-    initMutableState: svgMutableState,
+    createRenderState: svgMutableState,
     onMount(element, instance, mutableState) {
         try {
             mutableState.dimensions =
@@ -54,7 +54,7 @@ export const svgVisualElement = visualElement<
         return props[key]
     },
 
-    readNativeValue(domElement, key) {
+    readValueFromInstance(domElement, key) {
         if (isTransformProp(key)) {
             return getDefaultValueType(key)?.default || 0
         }
@@ -74,11 +74,11 @@ export const svgVisualElement = visualElement<
         return newValues
     },
 
-    build(latest, mutableState, projection, options, props) {
+    build(_element, renderState, visualState, layoutState, options, props) {
         buildSVGAttrs(
-            mutableState,
-            latest,
-            projection,
+            renderState,
+            visualState,
+            layoutState,
             options,
             props.transformTemplate
         )

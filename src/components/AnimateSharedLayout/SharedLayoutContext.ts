@@ -28,6 +28,7 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
     forceUpdate: () => void
     register: (child: VisualElement) => void
     remove: (child: VisualElement) => void
+    getLeadVisualElement: (layoutId?: string) => VisualElement | undefined
 }
 
 /**

@@ -1,5 +1,5 @@
 import { MotionProps } from "../../../motion"
-import { Projection, ResolvedValues } from "../../types"
+import { LayoutState, VisualState } from "../../utils/state"
 import { valueScaleCorrection } from "../projection/scale-correction"
 import { DOMVisualElementOptions, HTMLMutableState } from "../types"
 import {
@@ -14,8 +14,8 @@ import { getDefaultValueType, getValueAsType } from "./value-types"
 
 export function buildHTMLStyles(
     state: HTMLMutableState,
-    latest: ResolvedValues,
-    projection: Projection,
+    { values: latest, projection }: VisualState,
+    layoutState: LayoutState,
     options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
@@ -75,7 +75,7 @@ export function buildHTMLStyles(
              * If layout projection is on, and we need to perform scale correction for this
              * value type, perform it.
              */
-            if (projection.isHydrated && valueScaleCorrection[key]) {
+            if (layoutState.isHydrated && valueScaleCorrection[key]) {
                 const correctedValue = valueScaleCorrection[key].process(
                     value,
                     projection
@@ -100,9 +100,10 @@ export function buildHTMLStyles(
         }
     }
 
-    if (projection.isEnabled && projection.isHydrated) {
+    if (projection.isEnabled && layoutState.isHydrated) {
         style.transform = buildLayoutProjectionTransform(
-            projection,
+            layoutState.deltaFinal,
+            layoutState.treeScale,
             hasTransform ? transform : undefined
         )
 
@@ -110,7 +111,9 @@ export function buildHTMLStyles(
             style.transform = transformTemplate(transform, style.transform)
         }
 
-        style.transformOrigin = buildLayoutProjectionTransformOrigin(projection)
+        style.transformOrigin = buildLayoutProjectionTransformOrigin(
+            layoutState
+        )
     } else {
         if (hasTransform) {
             style.transform = buildTransform(
