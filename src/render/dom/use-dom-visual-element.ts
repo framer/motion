@@ -81,6 +81,16 @@ export function useDomVisualElement<E>(
 
     if (visualElement.isStatic) return visualElement
 
+    /**
+     * Update VisualElement with presence data
+     * TODO: This isn't concurrent safe, putting it back in for now to get
+     * AnimateSharedLayout exit animations working
+     */
+    visualElement.isPresent = props.isPresent ?? isPresent(presenceContext)
+    console.log(parent?.presenceId, presenceContext?.id)
+    visualElement.isPresenceRoot =
+        !parent || parent.presenceId !== presenceContext?.id
+
     useIsomorphicLayoutEffect(() => {
         visualElement.updateProps({ ...props, layoutId })
 

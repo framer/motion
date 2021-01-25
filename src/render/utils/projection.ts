@@ -1,11 +1,7 @@
-import {
-    applyBoxTransforms,
-    applyTreeDeltas,
-    resetBox,
-} from "../../utils/geometry/delta-apply"
+import { applyTreeDeltas, resetBox } from "../../utils/geometry/delta-apply"
 import { updateBoxDelta } from "../../utils/geometry/delta-calc"
 import { VisualElement } from "../types"
-import { LayoutState, TargetProjection, VisualState } from "./state"
+import { LayoutState, TargetProjection } from "./state"
 
 export function updateLayoutDeltas(
     { delta, layout, layoutCorrected, treeScale }: LayoutState,
@@ -28,7 +24,7 @@ export function updateLayoutDeltas(
      * Update the delta between the corrected box and the target box before user-set transforms were applied.
      * This will allow us to calculate the corrected borderRadius and boxShadow to compensate
      * for our layout reprojection, but still allow them to be scaled correctly by the user.
-     * It might be that to simplify this we may want to accept that user-set scale is also corrected
+     * It might be that to simplify this we may want to accept that user-set scale1 is also corrected
      * and we wouldn't have to keep and calc both deltas, OR we could support a user setting
      * to allow people to choose whether these styles are corrected based on just the
      * layout reprojection or the final bounding box.

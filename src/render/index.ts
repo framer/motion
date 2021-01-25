@@ -22,7 +22,7 @@ import {
 import { variantPriorityOrder } from "./utils/animation-state"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
-import { updateLayoutDeltas, updateTransformDeltas } from "./utils/projection"
+import { updateLayoutDeltas } from "./utils/projection"
 import { createLayoutState, createVisualState } from "./utils/state"
 import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
 
