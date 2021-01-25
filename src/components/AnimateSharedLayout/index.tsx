@@ -1,9 +1,5 @@
 import * as React from "react"
-import { SharedLayoutProps, Presence } from "./types"
-import {
-    createCrossfadeAnimation,
-    createSwitchAnimation,
-} from "./utils/animations"
+import { SharedLayoutProps } from "./types"
 import { LayoutStack, layoutStack } from "./utils/stack"
 import {
     SharedLayoutSyncMethods,
@@ -148,7 +144,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         /**
          * Clear snapshots so subsequent rerenders don't retain memory of outgoing components
          */
-        this.stacks.forEach((stack) => (stack.snapshot = undefined))
+        this.stacks.forEach((stack) => stack.clearSnapshot())
     }
 
     // updateStacks() {

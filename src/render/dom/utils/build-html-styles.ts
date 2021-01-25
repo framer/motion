@@ -78,6 +78,7 @@ export function buildHTMLStyles(
             if (layoutState.isHydrated && valueScaleCorrection[key]) {
                 const correctedValue = valueScaleCorrection[key].process(
                     value,
+                    layoutState,
                     projection
                 )
 
