@@ -1,12 +1,13 @@
 import { Axis } from "../../../types/geometry"
 import { complex, px } from "style-value-types"
 import { mix } from "popmotion"
-import { Projection } from "../../types"
 import { cssVariableRegex } from "../utils/css-variables-conversion"
+import { LayoutState, TargetProjection } from "../../utils/state"
 
 type ScaleCorrection = (
     latest: string | number,
-    projection: Projection
+    layoutState: LayoutState,
+    projection: TargetProjection
 ) => string | number
 
 interface ScaleCorrectionDefinition {
@@ -31,7 +32,8 @@ export function pixelsToPercent(pixels: number, axis: Axis): number {
  */
 export function correctBorderRadius(
     latest: string | number,
-    { target }: Projection
+    _layoutState: LayoutState,
+    { target }: TargetProjection
 ) {
     /**
      * If latest is a string, if it's a percentage we can return immediately as it's
@@ -59,7 +61,7 @@ const varToken = "_$css"
 
 export function correctBoxShadow(
     latest: string,
-    { delta, treeScale }: Projection
+    { delta, treeScale }: LayoutState
 ) {
     const original = latest
 

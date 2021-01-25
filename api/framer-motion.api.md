@@ -52,35 +52,17 @@ export interface AnimatePresenceProps {
 // @public (undocumented)
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // (undocumented)
-    addChild(child: VisualElement): void;
-    // (undocumented)
-    addToStack(child: VisualElement): void;
-    // (undocumented)
-    componentDidMount(): void;
-    // (undocumented)
     componentDidUpdate(): void;
     // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
     static contextType: React.Context<VisualElement<any, any> | undefined>;
-    // Warning: (ae-forgotten-export) The symbol "LayoutStack" needs to be exported by the entry point index.d.ts
-    getStack(id?: string): LayoutStack | undefined;
-    // (undocumented)
-    removeChild(child: VisualElement): void;
-    // (undocumented)
-    removeFromStack(child: VisualElement): void;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
-    scheduleUpdate(force?: boolean): void;
-    // (undocumented)
     shouldComponentUpdate(): boolean;
-    // (undocumented)
-    startLayoutAnimation(): void;
     syncContext: SharedLayoutSyncMethods;
-    // (undocumented)
-    updateStacks(): void;
-}
+    }
 
 // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
@@ -462,7 +444,7 @@ export class MotionValue<V = any> {
     isAnimating(): boolean;
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
-    onRenderRequest(subscription: Subscriber<V>): () => boolean;
+    onRenderRequest(subscription: Subscriber<V>): () => void;
     set(v: V, render?: boolean): void;
     // Warning: (ae-forgotten-export) The symbol "StartAnimation" needs to be exported by the entry point index.d.ts
     // 

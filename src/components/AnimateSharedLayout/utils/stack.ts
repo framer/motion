@@ -1,13 +1,6 @@
 import { Presence, SharedLayoutAnimationConfig } from "../types"
 import { AxisBox2D, Point2D } from "../../../types/geometry"
-import { isTransformProp } from "../../../render/dom/utils/transform"
-import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
-import { Transition } from "../../../types"
-import {
-    ResolvedValues,
-    VisualElement,
-    VisualElementOptions,
-} from "../../../render/types"
+import { ResolvedValues, VisualElement } from "../../../render/types"
 
 export interface Snapshot {
     isDragging?: boolean
@@ -110,6 +103,7 @@ export interface LayoutStack {
     remove(element: VisualElement): void
     getLead(): VisualElement | undefined
     updateSnapshot(): void
+    clearSnapshot(): void
     animate(element: VisualElement, crossfade: boolean): void
 }
 
@@ -146,6 +140,9 @@ export function layoutStack(): LayoutStack {
         updateSnapshot() {
             prevViewportBox = lead.prevViewportBox
         },
+        clearSnapshot() {
+            prevViewportBox = undefined
+        },
         animate(child, crossfade = false) {
             if (child === lead) {
                 if (crossfade) {
@@ -155,7 +152,7 @@ export function layoutStack(): LayoutStack {
                 }
 
                 const config: SharedLayoutAnimationConfig = {}
-
+                console.log(child.presence === Presence.Exiting)
                 if (child.presence === Presence.Entering) {
                     config.originBox = getFollowViewportBox()
                 } else if (child.presence === Presence.Exiting) {
