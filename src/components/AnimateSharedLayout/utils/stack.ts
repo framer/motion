@@ -123,7 +123,10 @@ export interface CrossfadeState {
 }
 
 // TODO: This whole file can do with rewriting
-export function createCrossfadeState(state: StackState): CrossfadeState {
+export function createCrossfadeState(
+    state: StackState,
+    forceCrossfade: boolean = false
+): CrossfadeState {
     let followValues = createVisualState({})
     let leadValues = createVisualState({})
     const crossfadeProgress = motionValue(1)
@@ -148,7 +151,7 @@ export function createCrossfadeState(state: StackState): CrossfadeState {
 
         const { follow, lead } = state
         if (!follow || !lead) return
-        if (follow.isPresenceRoot || lead.isPresenceRoot) {
+        if (forceCrossfade || follow.isPresenceRoot || lead.isPresenceRoot) {
             const followTargetOpacity = follow.getStaticValue("opacity") ?? 1
             const leadTargetOpacity = lead.getStaticValue("opacity") ?? 1
 
