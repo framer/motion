@@ -168,6 +168,12 @@ export interface BoxDelta {
 // @public
 export function createBatcher(): SyncLayoutBatcher;
 
+// Warning: (ae-forgotten-export) The symbol "StackState" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "CrossfadeState" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export function createCrossfadeState(state: StackState): CrossfadeState;
+
 // Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
@@ -958,8 +964,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     scheduleUpdateLayoutProjection(): void;
     // (undocumented)
     setBaseTarget(key: string, value: string | number | null): void;
-    // Warning: (ae-forgotten-export) The symbol "CrossfadeState" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     setCrossfadeState(state: CrossfadeState): void;
     // (undocumented)
