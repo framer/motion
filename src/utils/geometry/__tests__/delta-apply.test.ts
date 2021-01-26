@@ -201,7 +201,7 @@ describe("applyTreeDeltas", () => {
         }
 
         const element = htmlVisualElement({ props: {} }, {})
-        element.getProjection().delta = delta
+        element.getLayoutState().delta = delta
 
         const treeScale = { x: 1, y: 1 }
         applyTreeDeltas(box, treeScale, [element, element])
