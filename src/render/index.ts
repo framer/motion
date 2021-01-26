@@ -492,7 +492,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         clearState(newProps) {
             props = newProps
-            visualState = createVisualState(
+            leadVisualState = visualState = createVisualState(
                 props,
                 parent,
                 blockInitialAnimation

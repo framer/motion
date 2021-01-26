@@ -5,7 +5,6 @@ import { TargetAndTransition, TargetResolver } from "../../types"
 import { AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { axisBox, delta } from "../../utils/geometry"
 import { isMotionValue } from "../../value/utils/is-motion-value"
-import { identityProjection } from "../dom/utils/build-transform"
 import { ResolvedValues, VisualElement } from "../types"
 import { checkIfControllingVariants } from "./variants"
 
@@ -192,6 +191,8 @@ export function createLayoutState(): LayoutState {
         treeScale: { x: 1, y: 1 },
         delta: delta(),
         deltaFinal: delta(),
-        deltaTransform: identityProjection,
+        deltaTransform: "",
     }
 }
+
+export const zeroLayout = createLayoutState()

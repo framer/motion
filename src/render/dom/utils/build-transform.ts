@@ -6,8 +6,8 @@ import {
     TransformOrigin,
 } from "../types"
 import { MotionProps } from "../../../motion/types"
-import { createLayoutState, LayoutState } from "../../utils/state"
 import { BoxDelta, Point2D } from "../../../types/geometry"
+import { LayoutState, zeroLayout } from "../../utils/state"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -114,13 +114,6 @@ export function buildLayoutProjectionTransform(
     return !latestTransform && transform === identityProjection ? "" : transform
 }
 
-const zeroLayout = createLayoutState()
-export const identityProjection = buildLayoutProjectionTransform(
-    zeroLayout.delta,
-    zeroLayout.treeScale,
-    { x: 1, y: 1 }
-)
-
 /**
  * Take the calculated delta origin and apply it as a transform string.
  */
@@ -129,3 +122,9 @@ export function buildLayoutProjectionTransformOrigin({
 }: LayoutState) {
     return `${deltaFinal.x.origin * 100}% ${deltaFinal.y.origin * 100}% 0`
 }
+
+export const identityProjection = buildLayoutProjectionTransform(
+    zeroLayout.delta,
+    zeroLayout.treeScale,
+    { x: 1, y: 1 }
+)
