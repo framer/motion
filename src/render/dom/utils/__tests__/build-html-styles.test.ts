@@ -251,13 +251,20 @@ function build(
             transformOrigin,
             transformKeys,
         },
-        latest,
+        {
+            values: latest,
+            projection: {
+                target: targetBox,
+                isEnabled: isLayoutProjectionEnabled,
+                isTargetLocked: false,
+                targetFinal: targetBox,
+            },
+        } as any,
         {
             delta,
             deltaFinal,
             treeScale,
-            target: targetBox,
-            isEnabled: isLayoutProjectionEnabled,
+            isHydrated: true,
         } as any,
         config,
         config.transformTemplate
