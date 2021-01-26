@@ -41,7 +41,7 @@ export interface VisualElement<Instance = any, MutableState = any>
 
     setCrossfadeState(state: CrossfadeState): void
     setLayoutSafeToRemove(callback: () => void): void
-    notifyLayoutSafeToRemmove(): void
+    notifyLayoutSafeToRemove(): void
 
     /**
      * Visibility
