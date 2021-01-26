@@ -11,9 +11,9 @@ describe("SVG", () => {
                     right,
                     bottom,
                 } = rotate.getBoundingClientRect()
-                expect(Math.round(top)).to.equal(79)
+                expect(Math.round(top)).to.equal(29)
                 expect(Math.round(left)).to.equal(79)
-                expect(Math.round(right)).to.equal(221)
+                expect(Math.round(right)).to.equal(171)
                 expect(Math.round(bottom)).to.equal(221)
             })
             .get("[data-testid='scale']")

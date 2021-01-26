@@ -65,8 +65,11 @@ export const svgVisualElement = visualElement<
     scrapeMotionValuesFromProps(props) {
         const newValues = htmlConfig.scrapeMotionValuesFromProps(props)
 
-        for (const key in props) {
+        for (let key in props) {
             if (isMotionValue(props[key])) {
+                if (key === "x" || key === "y") {
+                    key = "attr" + key.toUpperCase()
+                }
                 newValues[key] = props[key]
             }
         }
