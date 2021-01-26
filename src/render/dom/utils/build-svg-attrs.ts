@@ -6,8 +6,6 @@ import { buildSVGPath } from "./svg-path"
 import { MotionProps } from "../../../motion/types"
 import { LayoutState, VisualState } from "../../utils/state"
 
-const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
-
 /**
  * Build SVG visual attrbutes, like cx and style.transform
  */
@@ -52,7 +50,7 @@ export function buildSVGAttrs(
     // Parse transformOrigin
     if (originX !== undefined || originY !== undefined || style.transform) {
         style.transformOrigin = calcSVGTransformOrigin(
-            dimensions || unmeasured,
+            dimensions,
             originX !== undefined ? originX : 0.5,
             originY !== undefined ? originY : 0.5
         )
