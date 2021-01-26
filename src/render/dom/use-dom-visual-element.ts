@@ -71,6 +71,7 @@ export function useDomVisualElement<E>(
                 isStatic,
                 props: { ...props, layoutId },
                 snapshot,
+                presenceId: presenceContext?.id,
                 blockInitialAnimation: presenceContext?.initial === false,
             },
             { enableHardwareAcceleration: !isStatic && !isSVG }
@@ -81,19 +82,17 @@ export function useDomVisualElement<E>(
 
     if (visualElement.isStatic) return visualElement
 
-    /**
-     * Update VisualElement with presence data
-     * TODO: This isn't concurrent safe, putting it back in for now to get
-     * AnimateSharedLayout exit animations working
-     */
-    visualElement.isPresent = props.isPresent ?? isPresent(presenceContext)
-    console.log(parent?.presenceId, presenceContext?.id)
-    visualElement.isPresenceRoot =
-        !parent || parent.presenceId !== presenceContext?.id
-
     useIsomorphicLayoutEffect(() => {
         visualElement.updateProps({ ...props, layoutId })
 
+        /**
+         * Update VisualElement with presence data
+         */
+        visualElement.isPresent = isPresent(presenceContext)
+        visualElement.isPresenceRoot =
+            !parent || parent.presenceId !== presenceContext?.id
+        // visualElement.getLayoutId() === "hsl(0, 100%, 50%)" &&
+        //     console.log(visualElement.isPresenceRoot, visualElement.isPresent)
         /**
          * What we want here is to clear the order of variant children in useLayoutEffect
          * then children can re-add themselves in useEffect. This should add them in the intended order

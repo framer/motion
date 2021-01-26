@@ -1,6 +1,7 @@
 import sync, { cancelSync } from "framesync"
 import { pipe } from "popmotion"
 import { Presence } from "../components/AnimateSharedLayout/types"
+import { CrossfadeState } from "../components/AnimateSharedLayout/utils/stack"
 import { MotionStyle } from "../motion/types"
 import { eachAxis } from "../utils/each-axis"
 import { copyAxisBox } from "../utils/geometry"
@@ -46,6 +47,7 @@ export const visualElement = <Instance, MutableState, Options>({
         props,
         isStatic,
         snapshot,
+        presenceId,
         blockInitialAnimation,
     }: VisualElementOptions<Instance>,
     options: Options
@@ -105,6 +107,11 @@ export const visualElement = <Instance, MutableState, Options>({
      * which allows renderer-specific calculations to occur while reducing GC.
      */
     let renderState = createRenderState()
+
+    /**
+     *
+     */
+    let crossfadeState: CrossfadeState
 
     /**
      * Keep track of whether the viewport box has been updated since the
@@ -219,8 +226,8 @@ export const visualElement = <Instance, MutableState, Options>({
             updateBoxDelta(
                 layoutState.deltaFinal,
                 layoutState.layoutCorrected,
-                projection.targetFinal
-                // projection.layoutOrigin - Use latest.originX/originY
+                projection.targetFinal,
+                0.5
             )
         }
 
@@ -229,6 +236,7 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     function triggerBuild() {
+        // TODO: Cut this down to one build, passing through crossfaded values
         build(
             element,
             renderState,
@@ -241,6 +249,17 @@ export const visualElement = <Instance, MutableState, Options>({
             options,
             props
         )
+
+        if (crossfadeState && crossfadeState.isCrossfading()) {
+            build(
+                element,
+                renderState,
+                crossfadeState.getValues(element),
+                layoutState,
+                options,
+                props
+            )
+        }
     }
 
     /**
@@ -340,6 +359,11 @@ export const visualElement = <Instance, MutableState, Options>({
          * by layout projection to quickly recurse back up the tree.
          */
         path: parent ? [...parent.path, parent] : [],
+
+        /**
+         *
+         */
+        presenceId,
 
         /**
          * If this component is part of the variant tree, it should track
@@ -669,7 +693,6 @@ export const visualElement = <Instance, MutableState, Options>({
          * Returns the defined default transition on this component.
          */
         getDefaultTransition: () => props.transition,
-
         /**
          * Used by child variant nodes to get the closest ancestor variant props.
          */
@@ -734,6 +757,10 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         getProjection: () => visualState.projection,
         getLayoutState: () => layoutState,
+
+        setCrossfadeState(stackCrossfadeState) {
+            crossfadeState = stackCrossfadeState
+        },
 
         /**
          * Start a layout animation on a given axis.
@@ -887,7 +914,7 @@ export const visualElement = <Instance, MutableState, Options>({
         /**
          *
          */
-        pointTo(newLead: VisualElement) {
+        pointTo(newLead) {
             leadVisualState = newLead.getVisualState()
             unsubscribeFromLeadVisualElement?.()
             unsubscribeFromLeadVisualElement = pipe(

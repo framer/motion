@@ -16,8 +16,7 @@ function Gallery({ items, setIndex }) {
                 <motion.li
                     key={color}
                     onClick={() => setIndex(i)}
-                    initial={{ borderRadius: 10 }}
-                    style={{ ...item, backgroundColor: color }}
+                    style={{ ...item, backgroundColor: color, borderRadius: 0 }}
                     layoutId={color}
                     //transition={{ duration: 5 }}
                     id={i === 0 && "list-red"}
@@ -38,19 +37,25 @@ function SingleImage({ color, setIndex }) {
                 exit={{ opacity: 0 }}
                 style={overlay}
                 id="overlay"
+                transition={{ duration: 2 }}
                 onClick={() => setIndex(false)}
             />
             <div style={singleImageContainer}>
                 <motion.div
                     id="color"
                     layoutId={color}
-                    initial={{ borderRadius: 20 }}
-                    style={{ ...singleImage, backgroundColor: color }}
+                    style={{
+                        ...singleImage,
+                        backgroundColor: "#fff",
+                        borderRadius: 50,
+                    }}
+                    transition={{ duration: 2 }}
                 >
                     <motion.div
-                        style={child}
+                        style={{ ...child, backgroundColor: "black" }}
                         id="child"
                         layoutId={`child-${color}`}
+                        transition={{ duration: 2 }}
                     />
                 </motion.div>
             </div>
@@ -61,14 +66,14 @@ function SingleImage({ color, setIndex }) {
 export function Component() {
     const [index, setIndex] = useState<false | number>(false)
     return (
-        <>
+        <div style={background}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
                     <SingleImage color={colors[index]} setIndex={setIndex} />
                 )}
             </AnimatePresence>
-        </>
+        </div>
     )
 }
 
@@ -80,11 +85,23 @@ export function App() {
     )
 }
 
-const numColors = 4 * 4
+const numColors = 3 // 4 * 4
 const makeColor = (hue) => `hsl(${hue}, 100%, 50%)`
 const colors = Array.from(Array(numColors)).map((_, i) =>
     makeColor(Math.round((360 / numColors) * i))
 )
+
+const background = {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    bottom: "0",
+    right: "0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#ccc",
+}
 
 const container = {
     backgroundColor: "#eeeeee",
@@ -112,7 +129,7 @@ const item = {
 
 const overlay = {
     background: "rgba(0,0,0,0.6)",
-    position: "absolute",
+    position: "fixed",
     top: "0",
     left: "0",
     bottom: "0",
