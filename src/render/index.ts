@@ -166,13 +166,6 @@ export const visualElement = <Instance, MutableState, Options>({
     let removeFromParent: undefined | (() => void)
 
     /**
-     * This is an AnimatePresence safeToRemove hydrated by Animate.tsx
-     * This is in service of AnimateLayoutTrees in Framer library and should
-     * be refactored.
-     */
-    let layoutSafeToRemove: () => void
-
-    /**
      *
      */
     function mount() {
@@ -930,14 +923,6 @@ export const visualElement = <Instance, MutableState, Options>({
                 newLead.onSetAxisTarget(element.scheduleUpdateLayoutProjection),
                 newLead.onRender(render)
             )
-        },
-
-        setLayoutSafeToRemove(callback) {
-            layoutSafeToRemove = callback
-        },
-
-        notifyLayoutSafeToRemove() {
-            layoutSafeToRemove?.()
         },
 
         // TODO: Clean this up

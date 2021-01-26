@@ -873,11 +873,11 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -925,6 +925,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     notifyLayoutReady(config?: SharedLayoutAnimationConfig): void;
     // (undocumented)
+    notifyLayoutSafeToRemove(): void;
+    // (undocumented)
     path: VisualElement[];
     // (undocumented)
     pointTo(element: VisualElement): void;
@@ -960,6 +962,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // 
     // (undocumented)
     setCrossfadeState(state: CrossfadeState): void;
+    // (undocumented)
+    setLayoutSafeToRemove(callback: () => void): void;
     // (undocumented)
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)
