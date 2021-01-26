@@ -9,7 +9,6 @@ function useInitialMotionValues(visualElement: VisualElement) {
         const { vars, style } = visualElement.build()
         return { ...vars, ...style }
     }
-
     return visualElement.isStatic ? createStyle() : useConstant(createStyle)
 }
 

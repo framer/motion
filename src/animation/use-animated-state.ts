@@ -49,14 +49,16 @@ export function useAnimatedState(initialState: any) {
         stateVisualElement({ props: {} }, { initialState })
     )
 
-    element.updateProps({
-        onUpdate: (v) => setAnimationState({ ...v }),
-    })
-
     useEffect(() => {
         ;(element.ref as any)({})
         return () => (element.ref as any)(null)
     }, [])
+
+    useEffect(() => {
+        element.updateProps({
+            onUpdate: (v) => setAnimationState({ ...v }),
+        })
+    })
 
     const startAnimation = useConstant(
         () => (animationDefinition: TargetAndTransition) => {
