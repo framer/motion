@@ -66,7 +66,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
 
     componentDidMount() {
         this.hasMounted = true
-        // this.updateStacks()
     }
 
     componentDidUpdate() {
