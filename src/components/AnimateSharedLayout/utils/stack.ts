@@ -1,6 +1,12 @@
 import { Presence, SharedLayoutAnimationConfig } from "../types"
 import { AxisBox2D, Point2D } from "../../../types/geometry"
 import { ResolvedValues, VisualElement } from "../../../render/types"
+import { motionValue } from "../../../value"
+import { animate } from "../../../animation/animate"
+import { createVisualState, VisualState } from "../../../render/utils/state"
+import { circOut, linear, mix, progress } from "popmotion"
+import { getFrameData } from "framesync"
+import { EasingFunction } from "../../../types"
 
 export interface Snapshot {
     isDragging?: boolean
@@ -105,64 +111,196 @@ export interface LayoutStack {
     updateSnapshot(): void
     clearSnapshot(): void
     animate(element: VisualElement, crossfade: boolean): void
+    updateLeadAndFollow(): void
+}
+
+export interface CrossfadeState {
+    isCrossfading(): boolean
+    getValues(element: VisualElement): VisualState
+    crossfadeFromLead(): void
+    crossfadeToLead(): void
+    reset(): void
+}
+
+// TODO: This whole file can do with rewriting
+function createCrossfadeState(state: StackState): CrossfadeState {
+    let followValues = createVisualState({})
+    let leadValues = createVisualState({})
+    const crossfadeProgress = motionValue(1)
+    let lastUpdate = 0
+
+    function animateProgress(to: number) {
+        animate(
+            crossfadeProgress,
+            to,
+            state.lead?.getDefaultTransition() as any
+        )
+    }
+
+    function updateValues() {
+        const { timestamp } = getFrameData()
+        if (timestamp === lastUpdate) return
+        lastUpdate = timestamp
+
+        const p = crossfadeProgress.get()
+
+        const { follow, lead } = state
+        if (!follow || !lead) return
+        if (follow.isPresenceRoot || lead.isPresenceRoot) {
+            const followTargetOpacity = follow.getStaticValue("opacity") ?? 1
+            const leadTargetOpacity = lead.getStaticValue("opacity") ?? 1
+
+            // TODO Make this configurable by crossfade
+            followValues.values.opacity = mix(
+                followTargetOpacity as number,
+                0,
+                easeCrossfadeOut(p)
+            )
+            leadValues.values.opacity = mix(
+                0,
+                leadTargetOpacity as number,
+                easeCrossfadeIn(p)
+            )
+        }
+
+        // TODO handle percentages and individual border radius
+        followValues.values.borderRadius = leadValues.values.borderRadius = mix(
+            (follow.getStaticValue("borderRadius") as number) ?? 0,
+            (lead.getStaticValue("borderRadius") as number) ?? 0,
+            p
+        )
+
+        followValues.projection = lead.getProjection()
+        leadValues.projection = lead.getProjection()
+    }
+
+    return {
+        crossfadeFromLead() {
+            animateProgress(0)
+            followValues = createVisualState({})
+            leadValues = createVisualState({})
+        },
+        crossfadeToLead() {
+            crossfadeProgress.set(1 - crossfadeProgress.get())
+            animateProgress(1)
+            followValues = createVisualState({})
+            leadValues = createVisualState({})
+        },
+        isCrossfading() {
+            return Boolean(
+                state.lead && state.follow && crossfadeProgress.get() !== 1
+            )
+        },
+        getValues(element) {
+            updateValues()
+            return element === state.lead ? leadValues : followValues
+        },
+        reset() {
+            crossfadeProgress.set(1)
+        },
+    }
+}
+
+interface StackState {
+    lead?: VisualElement
+    follow?: VisualElement
+    leadIsExiting: boolean
 }
 
 export function layoutStack(): LayoutStack {
     const stack = new Set<VisualElement>()
-    let lead: VisualElement
-    let follow: VisualElement
-    let prevViewportBox: AxisBox2D | undefined
+    const state: StackState = { leadIsExiting: false }
+    let prevState: StackState = { ...state }
 
-    function setLead(newLead: VisualElement) {
-        follow = lead
-        lead = newLead
-    }
+    let prevViewportBox: AxisBox2D | undefined
+    let crossfadeState = createCrossfadeState(state)
+    let needsCrossfadeAnimation = false
 
     function getFollowViewportBox() {
-        return follow ? follow.prevViewportBox : prevViewportBox
+        return state.follow ? state.follow.prevViewportBox : prevViewportBox
     }
 
     function getFollowLayout() {
-        return follow?.getLayoutState().layout
+        return state.follow?.getLayoutState().layout
     }
 
     return {
         add(element) {
+            element.setCrossfadeState(crossfadeState)
             stack.add(element)
-            setLead(element)
+            if (!state.lead) state.lead = element
         },
         remove(element) {
             stack.delete(element)
         },
         getLead() {
-            return lead
+            return state.lead
         },
         updateSnapshot() {
-            prevViewportBox = lead.prevViewportBox
+            prevViewportBox = state.lead?.prevViewportBox
         },
         clearSnapshot() {
             prevViewportBox = undefined
         },
-        animate(child, crossfade = false) {
-            if (child === lead) {
-                if (crossfade) {
-                    child.pointTo(lead)
+        // TODO We might not need this
+        updateLeadAndFollow() {
+            prevState = { ...state }
+
+            let lead: VisualElement | undefined
+            let follow: VisualElement | undefined
+            const order = Array.from(stack)
+            for (let i = order.length; i--; i >= 0) {
+                const element = order[i]
+                if (lead) follow ??= element
+                lead ??= element
+                if (lead && follow) break
+            }
+            state.lead = lead
+            state.follow = follow
+            state.leadIsExiting = state.lead?.presence === Presence.Exiting
+            state.lead?.getLayoutId() === "hsl(0, 100%, 50%)" &&
+                console.log(
+                    state.lead?.getLayoutId(),
+                    !!state.follow,
+                    !!state.lead
+                )
+            if (
+                prevState.lead !== state.lead ||
+                prevState.leadIsExiting !== state.leadIsExiting
+            ) {
+                if (!state.follow) {
+                    crossfadeState.reset()
+                } else {
+                    needsCrossfadeAnimation = true
+                }
+            }
+        },
+        animate(child, shouldCrossfade = false) {
+            if (child === state.lead) {
+                if (shouldCrossfade) {
+                    child.pointTo(state.lead)
                 } else {
                     child.setVisibility(true)
                 }
 
                 const config: SharedLayoutAnimationConfig = {}
-                console.log(child.presence === Presence.Exiting)
                 if (child.presence === Presence.Entering) {
                     config.originBox = getFollowViewportBox()
                 } else if (child.presence === Presence.Exiting) {
                     config.targetBox = getFollowLayout()
                 }
 
+                if (needsCrossfadeAnimation) {
+                    needsCrossfadeAnimation = false
+                    child.presence === Presence.Entering
+                        ? crossfadeState.crossfadeToLead()
+                        : crossfadeState.crossfadeFromLead()
+                }
+
                 child.notifyLayoutReady(config)
             } else {
-                if (crossfade) {
-                    child.pointTo(lead)
+                if (shouldCrossfade) {
+                    state.lead && child.pointTo(state.lead)
                 } else {
                     child.setVisibility(false)
                 }
@@ -171,6 +309,21 @@ export function layoutStack(): LayoutStack {
     }
 }
 
+const easeCrossfadeIn = compress(0, 0.5, circOut)
+const easeCrossfadeOut = compress(0.5, 0.95, linear)
+
+function compress(
+    min: number,
+    max: number,
+    easing: EasingFunction
+): EasingFunction {
+    return (p: number) => {
+        // Could replace ifs with clamp
+        if (p < min) return 0
+        if (p > max) return 1
+        return easing(progress(min, max, p))
+    }
+}
 // export class LayoutStack {
 //     order: VisualElement[] = []
 

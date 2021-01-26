@@ -37,11 +37,13 @@ function SingleImage({ color, index, setIndex }) {
                 layoutId={color}
                 initial={{ borderRadius: 20 }}
                 style={{ ...singleImage, backgroundColor: color }}
+                transition={{ duration: 2 }}
             >
                 <motion.div
                     style={child}
                     id="child"
                     layoutId={`child-${color}`}
+                    transition={{ duration: 2 }}
                 />
             </motion.div>
             <div onClick={() => setIndex(index + 1)} style={next} />
@@ -89,7 +91,7 @@ export function App() {
     )
 }
 
-const numColors = 4 * 4
+const numColors = 3 //4 * 4
 const makeColor = (hue) => `hsl(${hue}, 100%, 50%)`
 const colors = Array.from(Array(numColors)).map((_, i) =>
     makeColor(Math.round((360 / numColors) * i))

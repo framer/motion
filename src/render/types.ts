@@ -3,7 +3,10 @@ import {
     Presence,
     SharedLayoutAnimationConfig,
 } from "../components/AnimateSharedLayout/types"
-import { Snapshot } from "../components/AnimateSharedLayout/utils/stack"
+import {
+    CrossfadeState,
+    Snapshot,
+} from "../components/AnimateSharedLayout/utils/stack"
 import { MotionProps } from "../motion/types"
 import { TargetAndTransition, Transition, Variant } from "../types"
 import { AxisBox2D } from "../types/geometry"
@@ -23,6 +26,7 @@ export interface VisualElement<Instance = any, MutableState = any>
     current: Instance | null
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
+    presenceId: number | undefined
     variantChildren?: Set<VisualElement>
     isMounted(): boolean
     isStatic?: boolean
@@ -34,6 +38,8 @@ export interface VisualElement<Instance = any, MutableState = any>
     path: VisualElement[]
     addChild(child: VisualElement): () => void
     ref: Ref<Instance | null>
+
+    setCrossfadeState(state: CrossfadeState): void
 
     /**
      * Visibility
@@ -177,6 +183,7 @@ export type VisualElementOptions<Instance> = {
     parent?: VisualElement<unknown>
     snapshot?: ResolvedValues
     isStatic?: boolean
+    presenceId?: number | undefined
     props: MotionProps
     blockInitialAnimation?: boolean
 }
