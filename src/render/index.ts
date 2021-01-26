@@ -385,8 +385,10 @@ export const visualElement = <Instance, MutableState, Options>({
          * rely on that ancestor to trigger animations further down the tree.
          * However, if a component is created after its parent is mounted, the parent
          * won't trigger that mount animation so the child needs to.
+         *
+         * TODO: This might be better replaced with a method isParentMounted
          */
-        manuallyAnimateOnMount: Boolean(parent?.isMounted),
+        manuallyAnimateOnMount: Boolean(parent?.isMounted()),
 
         /**
          * This can be set by AnimatePresence to force components that mount
@@ -421,7 +423,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * by variant children to determine whether they need to trigger their
          * own animations on mount.
          */
-        isMounted: () => !!instance,
+        isMounted: () => Boolean(instance),
 
         /**
          * Add a child visual element to our set of children.
@@ -505,7 +507,7 @@ export const visualElement = <Instance, MutableState, Options>({
         setVisibility(visibility) {
             if (element.isVisible === visibility) return
             element.isVisible = visibility
-            console.log("changing visibility to", element.isVisible)
+
             element.scheduleRender()
         },
 
