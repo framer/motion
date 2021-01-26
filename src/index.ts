@@ -70,6 +70,9 @@ export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
 export { addScaleCorrection } from "./render/dom/projection/scale-correction"
 
+export { visualElement } from "./render"
+export { VisualElement } from "./render/types"
+
 /**
  * Contexts
  */
