@@ -6,12 +6,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   Internal refactor saving ~1kb from bundle size.
 -   Main `motion` component concurrent-safe.
 
 ### Fixed
 
 -   Crossfading elements can never fall out of positional/style sync.
+-   SVG double translation transform.
 
 ## [3.3.0] 2020-02-03
 
