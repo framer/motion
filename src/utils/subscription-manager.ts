@@ -7,6 +7,7 @@ export interface SubscriptionManager<Handler extends GenericHandler> {
         b?: Parameters<Handler>[1],
         c?: Parameters<Handler>[2]
     ): void
+    getSize(): number
     clear(): void
 }
 
@@ -27,6 +28,8 @@ export function subscriptionManager<
                 handler(a, b, c)
             }
         },
+
+        getSize: () => subscriptions.size,
 
         clear() {
             subscriptions.clear()
