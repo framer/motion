@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "@framer"
+import { motion, motionValue } from "@framer"
 
 /**
  * An example of providing a MotionValue to an SVG component via its props
@@ -16,7 +16,7 @@ export const App = () => {
             <motion.rect
                 height="100"
                 width="100"
-                x={50}
+                x={motionValue(50)}
                 y={50}
                 data-testid="rotate"
                 style={{ rotate: 45 }}
