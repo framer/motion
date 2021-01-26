@@ -130,11 +130,13 @@ export function createCrossfadeState(state: StackState): CrossfadeState {
     let lastUpdate = 0
 
     function animateProgress(to: number) {
-        animate(
-            crossfadeProgress,
-            to,
-            state.lead?.getDefaultTransition() as any
-        )
+        animate(crossfadeProgress, to, {
+            ...(state.lead?.getDefaultTransition() as any),
+            onUpdate: () => {
+                state.lead?.scheduleRender()
+                state.follow?.scheduleRender()
+            },
+        })
     }
 
     function updateValues() {
