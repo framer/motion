@@ -123,7 +123,7 @@ export interface CrossfadeState {
 }
 
 // TODO: This whole file can do with rewriting
-function createCrossfadeState(state: StackState): CrossfadeState {
+export function createCrossfadeState(state: StackState): CrossfadeState {
     let followValues = createVisualState({})
     let leadValues = createVisualState({})
     const crossfadeProgress = motionValue(1)
