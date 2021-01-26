@@ -186,11 +186,12 @@ function animateChildren(
             : (i = 0) => maxStaggerDuration - i * staggerChildren
 
     Array.from(visualElement.variantChildren!).forEach((child, i) => {
-        const animation = animateVariant(child, variant, {
-            ...options,
-            delay: delayChildren + generateStaggerDuration(i),
-        })
-        animations.push(animation)
+        animations.push(
+            animateVariant(child, variant, {
+                ...options,
+                delay: delayChildren + generateStaggerDuration(i),
+            })
+        )
     })
 
     return Promise.all(animations)
