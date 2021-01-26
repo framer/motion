@@ -52,6 +52,8 @@ export interface AnimatePresenceProps {
 // @public (undocumented)
 export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // (undocumented)
+    componentDidMount(): void;
+    // (undocumented)
     componentDidUpdate(): void;
     // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
     // 
@@ -62,7 +64,9 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // (undocumented)
     shouldComponentUpdate(): boolean;
     syncContext: SharedLayoutSyncMethods;
-    }
+    // (undocumented)
+    updateStacks(): void;
+}
 
 // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts

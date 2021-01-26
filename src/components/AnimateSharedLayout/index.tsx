@@ -1,5 +1,5 @@
 import * as React from "react"
-import { SharedLayoutProps } from "./types"
+import { Presence, SharedLayoutProps } from "./types"
 import { LayoutStack, layoutStack } from "./utils/stack"
 import {
     SharedLayoutSyncMethods,
@@ -33,7 +33,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
      * Track whether the component has mounted. If it hasn't, the presence of added children
      * are set to Present, whereas if it has they're considered Entering
      */
-    // private hasMounted = false
+    private hasMounted = false
 
     /**
      * Track whether we already have an update scheduled. If we don't, we'll run snapshots
@@ -64,10 +64,10 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
             this.stacks.get(layoutId)?.getLead(),
     }
 
-    // componentDidMount() {
-    //     this.hasMounted = true
-    //     this.updateStacks()
-    // }
+    componentDidMount() {
+        this.hasMounted = true
+        // this.updateStacks()
+    }
 
     componentDidUpdate() {
         this.startLayoutAnimation()
@@ -90,30 +90,18 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
          * Update presence metadata based on the latest AnimatePresence status.
          * This is a kind of goofy way of dealing with this, perhaps there's a better model to find.
          */
-        // this.children.forEach((child) => {
-        //     if (!child.isPresent) {
-        //         child.presence = Presence.Exiting
-        //     } else if (child.presence !== Presence.Entering) {
-        //         child.presence =
-        //             child.presence === Presence.Exiting
-        //                 ? Presence.Entering
-        //                 : Presence.Present
-        //     }
-        // })
+        this.children.forEach((child) => {
+            if (!child.isPresent) {
+                child.presence = Presence.Exiting
+            } else if (child.presence !== Presence.Entering) {
+                child.presence =
+                    child.presence === Presence.Exiting
+                        ? Presence.Entering
+                        : Presence.Present
+            }
+        })
 
-        /**
-         * In every layoutId stack, nominate a component to lead the animation and another
-         * to follow
-         */
-        // this.updateStacks()
-
-        /**
-         * Decide which animation to use between shared layoutId components
-         */
-        // const createAnimation =
-        //     type === "crossfade"
-        //         ? createCrossfadeAnimation
-        //         : createSwitchAnimation
+        this.updateStacks()
 
         /**
          * Create a handler which we can use to flush the children animations
@@ -147,9 +135,9 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.stacks.forEach((stack) => stack.clearSnapshot())
     }
 
-    // updateStacks() {
-    //     this.stacks.forEach((stack) => stack.updateLeadAndFollow())
-    // }
+    updateStacks() {
+        this.stacks.forEach((stack) => stack.updateLeadAndFollow())
+    }
 
     private scheduleUpdate(force = false) {
         if (!(force || !this.updateScheduled)) return
@@ -192,7 +180,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
         this.children.add(child)
         this.addToStack(child)
 
-        // child.presence = this.hasMounted ? Presence.Entering : Presence.Present
+        child.presence = this.hasMounted ? Presence.Entering : Presence.Present
     }
 
     private removeChild(child: VisualElement) {

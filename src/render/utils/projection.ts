@@ -29,10 +29,5 @@ export function updateLayoutDeltas(
      * to allow people to choose whether these styles are corrected based on just the
      * layout reprojection or the final bounding box.
      */
-    updateBoxDelta(
-        delta,
-        layoutCorrected,
-        target
-        // layoutOrigin replace with latest
-    )
+    updateBoxDelta(delta, layoutCorrected, target, 0.5)
 }

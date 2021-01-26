@@ -2,17 +2,14 @@ import * as React from "react"
 import { MotionProps } from "../../types"
 import { FeatureProps, MotionFeature } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
-import { MotionValue } from "../../../value"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
 import { tweenAxis } from "./utils"
-import { EasingFunction } from "../../../types"
 import {
     SharedLayoutAnimationConfig,
     VisibilityAction,
     Presence,
 } from "../../../components/AnimateSharedLayout/types"
-import { mix, circOut, linear, progress } from "popmotion"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
 
@@ -82,8 +79,6 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
-        this.props.layoutId === "hsl(0, 100%, 50%)" &&
-            console.log(target.y, origin.y)
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis((axis) => {
@@ -150,7 +145,7 @@ class Animate extends React.Component<AnimateProps> {
         axis: "x" | "y",
         target: Axis,
         origin: Axis,
-        { transition, crossfadeOpacity }: SharedLayoutAnimationConfig = {}
+        { transition }: SharedLayoutAnimationConfig = {}
     ) {
         this.stopAxisAnimation[axis]?.()
 
@@ -169,17 +164,6 @@ class Animate extends React.Component<AnimateProps> {
         layoutProgress.set(0)
 
         /**
-         * If this is a crossfade animation, create a function that updates both the opacity of this component
-         * and the one being crossfaded out.
-         */
-
-        let crossfade: (p: number) => void
-        if (crossfadeOpacity) {
-            crossfade = this.createCrossfadeAnimation(crossfadeOpacity)
-            visualElement.setVisibility(true)
-        }
-
-        /**
          * Create an animation function to run once per frame. This will tween the visual bounding box from
          * origin to target using the latest progress value.
          */
@@ -194,17 +178,13 @@ class Animate extends React.Component<AnimateProps> {
                 frameTarget.min,
                 frameTarget.max
             )
-
-            // If this is a crossfade animation, update both elements.
-            crossfade?.(p)
         }
 
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
 
         // Ensure that the layout delta is updated for this frame.
-        // TODO do we need this?
-        // visualElement.updateLayoutProjection()
+        visualElement.updateLayoutProjection()
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
@@ -223,16 +203,6 @@ class Animate extends React.Component<AnimateProps> {
         }
 
         return animation
-    }
-
-    createCrossfadeAnimation(crossfadeOpacity: MotionValue<number>) {
-        const { visualElement } = this.props
-        const opacity = visualElement.getValue("opacity", 0)
-
-        return (p: number) => {
-            opacity.set(easeCrossfadeIn(mix(0, 1, p)))
-            crossfadeOpacity.set(easeCrossfadeOut(mix(1, 0, p)))
-        }
     }
 
     safeToRemove() {
@@ -270,22 +240,6 @@ const defaultTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
 }
-
-function compress(
-    min: number,
-    max: number,
-    easing: EasingFunction
-): EasingFunction {
-    return (p: number) => {
-        // Could replace ifs with clamp
-        if (p < min) return 0
-        if (p > max) return 1
-        return easing(progress(min, max, p))
-    }
-}
-
-const easeCrossfadeIn = compress(0, 0.5, circOut)
-const easeCrossfadeOut = compress(0.5, 0.95, linear)
 
 /**
  * @public
