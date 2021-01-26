@@ -12,9 +12,9 @@ describe("SVG", () => {
                     bottom,
                 } = rotate.getBoundingClientRect()
                 expect(Math.round(top)).to.equal(29)
-                expect(Math.round(left)).to.equal(79)
+                expect(Math.round(left)).to.equal(29)
                 expect(Math.round(right)).to.equal(171)
-                expect(Math.round(bottom)).to.equal(221)
+                expect(Math.round(bottom)).to.equal(171)
             })
             .get("[data-testid='scale']")
             .should(($scale: any) => {
@@ -25,10 +25,10 @@ describe("SVG", () => {
                     right,
                     bottom,
                 } = scale.getBoundingClientRect()
-                expect(top).to.equal(350)
-                expect(left).to.equal(50)
-                expect(right).to.equal(250)
-                expect(bottom).to.equal(550)
+                expect(top).to.equal(150)
+                expect(left).to.equal(0)
+                expect(right).to.equal(200)
+                expect(bottom).to.equal(350)
             })
             .get("[data-testid='translate']")
             .should(($translate: any) => {
@@ -39,10 +39,10 @@ describe("SVG", () => {
                     right,
                     bottom,
                 } = translate.getBoundingClientRect()
-                expect(top).to.equal(700)
+                expect(top).to.equal(350)
                 expect(left).to.equal(150)
                 expect(right).to.equal(250)
-                expect(bottom).to.equal(800)
+                expect(bottom).to.equal(450)
             })
     })
 })
