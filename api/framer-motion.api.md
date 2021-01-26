@@ -55,8 +55,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
-    // Warning: (ae-forgotten-export) The symbol "VisualElement" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     static contextType: React.Context<VisualElement<any, any> | undefined>;
     // (undocumented)
@@ -823,6 +821,182 @@ export enum VisibilityAction {
     // (undocumented)
     Show = 1
 }
+
+// Warning: (ae-forgotten-export) The symbol "LifecycleManager" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export interface VisualElement<Instance = any, MutableState = any> extends LifecycleManager {
+    // (undocumented)
+    addChild(child: VisualElement): () => void;
+    // (undocumented)
+    addValue(key: string, value: MotionValue<any>): void;
+    // Warning: (ae-forgotten-export) The symbol "AnimationState" needs to be exported by the entry point index.d.ts
+    animationState?: AnimationState;
+    // (undocumented)
+    blockInitialAnimation?: boolean;
+    // (undocumented)
+    build(): MutableState;
+    // (undocumented)
+    clearState(props: MotionProps): void;
+    // (undocumented)
+    current: Instance | null;
+    // (undocumented)
+    depth: number;
+    // (undocumented)
+    enableLayoutProjection(): void;
+    // (undocumented)
+    forEachValue(callback: (value: MotionValue, key: string) => void): void;
+    // (undocumented)
+    getBaseTarget(key: string): number | string | undefined | null;
+    // (undocumented)
+    getClosestVariantNode(): undefined | VisualElement;
+    // (undocumented)
+    getDefaultTransition(): Transition | undefined;
+    // (undocumented)
+    getInstance(): Instance | null;
+    // (undocumented)
+    getLatestValues(): ResolvedValues;
+    // (undocumented)
+    getLayoutId(): string | undefined;
+    // Warning: (ae-forgotten-export) The symbol "LayoutState" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    getLayoutState: () => LayoutState;
+    // Warning: (ae-forgotten-export) The symbol "TargetProjection" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    getProjection(): TargetProjection;
+    // Warning: (ae-forgotten-export) The symbol "MotionPoint" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    getProjectionAnimationProgress(): MotionPoint;
+    // (undocumented)
+    getStaticValue(key: string): number | string | undefined;
+    // (undocumented)
+    getValue(key: string): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue: string | number): MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
+    // (undocumented)
+    getVariant(name: string): Variant | undefined;
+    // (undocumented)
+    getVariantContext(startAtParent?: boolean): undefined | {
+        initial?: string | string[];
+        animate?: string | string[];
+        exit?: string | string[];
+        whileHover?: string | string[];
+        whileDrag?: string | string[];
+        whileFocus?: string | string[];
+        whileTap?: string | string[];
+    };
+    // (undocumented)
+    getVariantData(): any;
+    // Warning: (ae-forgotten-export) The symbol "VisualState" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    getVisualState(): VisualState;
+    // (undocumented)
+    hasValue(key: string): boolean;
+    isHoverEventsEnabled: boolean;
+    // (undocumented)
+    isMounted(): boolean;
+    // (undocumented)
+    isPresenceRoot?: boolean;
+    // (undocumented)
+    isPresent: boolean;
+    // (undocumented)
+    isResumingFromSnapshot: boolean;
+    // (undocumented)
+    isStatic?: boolean;
+    isVisible?: boolean;
+    // (undocumented)
+    lockProjectionTarget(): void;
+    // (undocumented)
+    makeTargetAnimatable(target: TargetAndTransition, isLive?: boolean): TargetAndTransition;
+    // (undocumented)
+    manuallyAnimateOnMount: boolean;
+    // (undocumented)
+    measureViewportBox(withTransform?: boolean): AxisBox2D;
+    // (undocumented)
+    notifyAnimationComplete(): void;
+    // (undocumented)
+    notifyAnimationStart(): void;
+    // (undocumented)
+    notifyLayoutReady(config?: SharedLayoutAnimationConfig): void;
+    // (undocumented)
+    path: VisualElement[];
+    // (undocumented)
+    pointTo(element: VisualElement): void;
+    // Warning: (ae-forgotten-export) The symbol "Presence" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    presence: Presence;
+    // (undocumented)
+    presenceId: number | undefined;
+    // Warning: (ae-forgotten-export) The symbol "Snapshot" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    prevSnapshot?: Snapshot;
+    // (undocumented)
+    prevViewportBox?: AxisBox2D;
+    // (undocumented)
+    readValue(key: string): string | number | undefined | null;
+    // (undocumented)
+    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void;
+    // (undocumented)
+    ref: Ref<Instance | null>;
+    // (undocumented)
+    removeValue(key: string): void;
+    // (undocumented)
+    resetTransform(): void;
+    // (undocumented)
+    scheduleRender(): void;
+    // (undocumented)
+    scheduleUpdateLayoutProjection(): void;
+    // (undocumented)
+    setBaseTarget(key: string, value: string | number | null): void;
+    // Warning: (ae-forgotten-export) The symbol "CrossfadeState" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    setCrossfadeState(state: CrossfadeState): void;
+    // (undocumented)
+    setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void;
+    // (undocumented)
+    setStaticValue(key: string, value: number | string): void;
+    // (undocumented)
+    setVisibility(visibility: boolean): void;
+    // (undocumented)
+    snapshotViewportBox(): void;
+    // (undocumented)
+    startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>;
+    // (undocumented)
+    stopLayoutAnimation(): void;
+    // (undocumented)
+    subscribeToVariantParent(): void;
+    // (undocumented)
+    suspendHoverEvents(): void;
+    // (undocumented)
+    syncRender(): void;
+    // (undocumented)
+    unlockProjectionTarget(): void;
+    // (undocumented)
+    updateLayoutMeasurement(): void;
+    // (undocumented)
+    updateLayoutProjection(): void;
+    // (undocumented)
+    updateProps(props: MotionProps): void;
+    // (undocumented)
+    variantChildren?: Set<VisualElement>;
+    // (undocumented)
+    withoutTransform(callback: () => void): void;
+}
+
+// Warning: (ae-forgotten-export) The symbol "VisualElementConfig" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "VisualElementOptions" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export const visualElement: <Instance, MutableState, Options>({ createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, snapshot, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
 
 
 // (No @packageDocumentation comment for this package)
