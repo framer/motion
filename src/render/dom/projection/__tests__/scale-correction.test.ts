@@ -1,4 +1,4 @@
-import { initProjection } from "../../../utils/projection"
+import { createLayoutState, createVisualState } from "../../../utils/state"
 import {
     pixelsToPercent,
     correctBoxShadow,
@@ -13,35 +13,35 @@ describe("pixelsToPercent", () => {
 
 describe("correctBoxShadow", () => {
     test("Correctly scales box shadow", () => {
-        const projection = initProjection()
-        projection.delta = {
+        const layoutState = createLayoutState()
+        layoutState.delta = {
             x: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
             y: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
         }
-        projection.treeScale = {
+        layoutState.treeScale = {
             x: 1,
             y: 1,
         }
-        expect(correctBoxShadow("5px 10px 20px 40px #000", projection)).toBe(
+        expect(correctBoxShadow("5px 10px 20px 40px #000", layoutState)).toBe(
             "10px 20px 40px 80px rgba(0, 0, 0, 1)"
         )
 
-        projection.treeScale = {
+        layoutState.treeScale = {
             x: 0.5,
             y: 0.5,
         }
-        expect(correctBoxShadow("10px 10px 10px 10px #000", projection)).toBe(
+        expect(correctBoxShadow("10px 10px 10px 10px #000", layoutState)).toBe(
             "40px 40px 40px 40px rgba(0, 0, 0, 1)"
         )
 
-        projection.treeScale = {
+        layoutState.treeScale = {
             x: 1,
             y: 1,
         }
         expect(
             correctBoxShadow(
                 "10px 10px 10px 10px var(--token-c8953278-7b3-4177-a0fa-f3cda39afd50, rgba(0, 0, 0, 1))",
-                projection
+                layoutState
             )
         ).toBe(
             "20px 20px 20px 20px var(--token-c8953278-7b3-4177-a0fa-f3cda39afd50, rgba(0, 0, 0, 1))"
@@ -51,7 +51,7 @@ describe("correctBoxShadow", () => {
         expect(
             correctBoxShadow(
                 "10px 10px 10px 10px rgba(0, 0, 0, 1), 0px 0px 0px 4px var(--token-c8953278-7b3-4177-a0fa-f3cda39afd50, #333)",
-                projection
+                layoutState
             )
         ).toBe(
             "10px 10px 10px 10px rgba(0, 0, 0, 1), 0px 0px 0px 4px var(--token-c8953278-7b3-4177-a0fa-f3cda39afd50, #333)"
@@ -61,20 +61,26 @@ describe("correctBoxShadow", () => {
 
 describe("correctBorderRadius", () => {
     test("Leaves non-pixel values alone", () => {
-        const projection = initProjection()
+        const visualState = createVisualState({})
+        const { projection } = visualState
         projection.target = {
             x: { min: 0, max: 0 },
             y: { min: 0, max: 0 },
         }
-        expect(correctBorderRadius("20%", projection)).toBe("20%")
+        expect(
+            correctBorderRadius("20%", createLayoutState(), projection)
+        ).toBe("20%")
     })
 
     test("Correctly scales pixel values by converting them to percentage of the viewport box", () => {
-        const projection = initProjection()
+        const visualState = createVisualState({})
+        const { projection } = visualState
         projection.target = {
             x: { min: 0, max: 100 },
             y: { min: 0, max: 200 },
         }
-        expect(correctBorderRadius(20, projection)).toBe("20% 10%")
+        expect(correctBorderRadius(20, createLayoutState(), projection)).toBe(
+            "20% 10%"
+        )
     })
 })
