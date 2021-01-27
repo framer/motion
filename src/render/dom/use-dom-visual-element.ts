@@ -91,8 +91,7 @@ export function useDomVisualElement<E>(
         visualElement.isPresent = isPresent(presenceContext)
         visualElement.isPresenceRoot =
             !parent || parent.presenceId !== presenceContext?.id
-        // visualElement.getLayoutId() === "hsl(0, 100%, 50%)" &&
-        //     console.log(visualElement.isPresenceRoot, visualElement.isPresent)
+
         /**
          * What we want here is to clear the order of variant children in useLayoutEffect
          * then children can re-add themselves in useEffect. This should add them in the intended order
