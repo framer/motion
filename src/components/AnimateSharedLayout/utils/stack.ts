@@ -6,7 +6,7 @@ import { animate } from "../../../animation/animate"
 import { createVisualState, VisualState } from "../../../render/utils/state"
 import { circOut, linear, mix, progress } from "popmotion"
 import { getFrameData } from "framesync"
-import { EasingFunction } from "../../../types"
+import { EasingFunction, Transition } from "../../../types"
 
 export interface Snapshot {
     isDragging?: boolean
@@ -132,14 +132,15 @@ export function createCrossfadeState(
     const crossfadeProgress = motionValue(1)
     let lastUpdate = 0
 
-    function animateProgress(to: number) {
+    function animateProgress(to: number, transition?: Transition) {
         const update = () => {
             state.lead && state.lead.scheduleRender()
             state.follow && state.follow.scheduleRender()
         }
 
         animate(crossfadeProgress, to, {
-            ...(state.lead ? state.lead.getDefaultTransition() : {}),
+            ...(transition ||
+                (state.lead ? state.lead.getDefaultTransition() : {})),
             onUpdate: update,
             onComplete: update,
         })
@@ -177,14 +178,14 @@ export function createCrossfadeState(
     }
 
     return {
-        crossfadeFromLead() {
-            animateProgress(0)
+        crossfadeFromLead(transition?: Transition) {
+            animateProgress(0, transition)
             followValues = createVisualState({})
             leadValues = createVisualState({})
         },
-        crossfadeToLead() {
+        crossfadeToLead(transition?: Transition) {
             crossfadeProgress.set(1 - crossfadeProgress.get())
-            animateProgress(1)
+            animateProgress(1, transition)
             followValues = createVisualState({})
             leadValues = createVisualState({})
         },
@@ -260,12 +261,7 @@ export function layoutStack(): LayoutStack {
             state.lead = lead
             state.follow = follow
             state.leadIsExiting = state.lead?.presence === Presence.Exiting
-            state.lead?.getLayoutId() === "hsl(0, 100%, 50%)" &&
-                console.log(
-                    state.lead?.getLayoutId(),
-                    !!state.follow,
-                    !!state.lead
-                )
+
             if (
                 prevState.lead !== state.lead ||
                 prevState.leadIsExiting !== state.leadIsExiting
@@ -354,6 +350,13 @@ function mixBorderRadius(
                 p
             )
         }
+    }
+    if (fromLatest.rotate || toLatest.rotate) {
+        fromValues.rotate = toValues.rotate = mix(
+            (fromLatest.rotate as number) || 0,
+            (toLatest.rotate as number) || 0,
+            p
+        )
     }
 }
 
