@@ -133,12 +133,15 @@ export function createCrossfadeState(
     let lastUpdate = 0
 
     function animateProgress(to: number) {
+        const update = () => {
+            state.lead && state.lead.scheduleRender()
+            state.follow && state.follow.scheduleRender()
+        }
+
         animate(crossfadeProgress, to, {
             ...(state.lead ? state.lead.getDefaultTransition() : {}),
-            onUpdate: () => {
-                state.lead && state.lead.scheduleRender()
-                state.follow && state.follow.scheduleRender()
-            },
+            onUpdate: update,
+            onComplete: update,
         })
     }
 
@@ -168,15 +171,9 @@ export function createCrossfadeState(
             )
         }
 
-        // TODO handle percentages and individual border radius
-        followValues.values.borderRadius = leadValues.values.borderRadius = mix(
-            (follow.getStaticValue("borderRadius") as number) ?? 0,
-            (lead.getStaticValue("borderRadius") as number) ?? 0,
-            p
-        )
+        mixBorderRadius(follow, lead, followValues.values, leadValues.values, p)
 
-        followValues.projection = lead.getProjection()
-        leadValues.projection = lead.getProjection()
+        leadValues.projection = followValues.projection = lead.getProjection()
     }
 
     return {
@@ -329,6 +326,37 @@ function compress(
         return easing(progress(min, max, p))
     }
 }
+
+const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
+const numBorders = borders.length
+function mixBorderRadius(
+    from: VisualElement,
+    to: VisualElement,
+    fromValues: ResolvedValues,
+    toValues: ResolvedValues,
+    p: number
+) {
+    const fromLatest = from.getLatestValues()
+    const toLatest = to.getLatestValues()
+    for (let i = 0; i < numBorders; i++) {
+        const borderLabel = "border" + borders[i] + "Radius"
+        const fromRadius = fromLatest[borderLabel] ?? fromLatest.border ?? 0
+        const toRadius = toLatest[borderLabel] ?? toLatest.border ?? 0
+        if (
+            fromRadius ||
+            toRadius ||
+            typeof fromRadius !== "number" ||
+            typeof toRadius !== "number"
+        ) {
+            fromValues[borderLabel] = toValues[borderLabel] = mix(
+                fromRadius as number,
+                toRadius as number,
+                p
+            )
+        }
+    }
+}
+
 // export class LayoutStack {
 //     order: VisualElement[] = []
 
