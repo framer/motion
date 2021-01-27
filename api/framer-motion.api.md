@@ -172,7 +172,7 @@ export function createBatcher(): SyncLayoutBatcher;
 // Warning: (ae-forgotten-export) The symbol "CrossfadeState" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export function createCrossfadeState(state: StackState): CrossfadeState;
+export function createCrossfadeState(state: StackState, forceCrossfade?: boolean): CrossfadeState;
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
 // 
