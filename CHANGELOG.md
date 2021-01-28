@@ -12,6 +12,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Crossfading elements can never fall out of positional/style sync.
 -   SVG double translation transform.
+-   `animate` `onComplete` now firing correctly.
 
 ## [3.3.0] 2020-02-03
 

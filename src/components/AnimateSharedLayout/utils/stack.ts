@@ -120,6 +120,7 @@ export interface CrossfadeState {
     crossfadeFromLead(transition?: Transition): void
     crossfadeToLead(transition?: Transition): void
     reset(): void
+    stopAnimation(): void
 }
 
 // TODO: This whole file can do with rewriting
@@ -191,7 +192,7 @@ export function createCrossfadeState(
         },
         isCrossfading() {
             return Boolean(
-                state.lead && state.follow && crossfadeProgress.get() !== 1
+                state.lead && state.follow // && crossfadeProgress.get() !== 1
             )
         },
         getValues(element) {
@@ -200,6 +201,9 @@ export function createCrossfadeState(
         },
         reset() {
             crossfadeProgress.set(1)
+        },
+        stopAnimation() {
+            crossfadeProgress.stop()
         },
     }
 }
