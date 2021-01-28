@@ -190,7 +190,6 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
 
     private addToStack(child: VisualElement) {
         const stack = this.getStack(child)
-        console.log("adding", child.getLayoutId(), "to stack")
         stack?.add(child)
     }
 

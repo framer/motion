@@ -3,7 +3,6 @@ import { MotionProps } from "../../motion/types"
 import { AxisBox2D } from "../../types/geometry"
 import { subscriptionManager } from "../../utils/subscription-manager"
 import { ResolvedValues } from "../types"
-import { TargetProjection } from "./state"
 
 const names = [
     "LayoutMeasure",
@@ -25,7 +24,7 @@ export type LayoutUpdateListener = (
     prevLayout: AxisBox2D,
     config?: SharedLayoutAnimationConfig
 ) => void
-export type ViewportBoxListener = (projection: TargetProjection) => void
+export type ViewportBoxListener = (box: AxisBox2D) => void
 export type UpdateListener = (latest: ResolvedValues) => void
 export type AnimationStartListener = () => void
 export type AnimationCompleteListener = () => void
