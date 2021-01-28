@@ -117,8 +117,8 @@ export interface LayoutStack {
 export interface CrossfadeState {
     isCrossfading(): boolean
     getValues(element: VisualElement): VisualState
-    crossfadeFromLead(): void
-    crossfadeToLead(): void
+    crossfadeFromLead(transition?: Transition): void
+    crossfadeToLead(transition?: Transition): void
     reset(): void
 }
 
@@ -178,12 +178,12 @@ export function createCrossfadeState(
     }
 
     return {
-        crossfadeFromLead(transition?: Transition) {
+        crossfadeFromLead(transition) {
             animateProgress(0, transition)
             followValues = createVisualState({})
             leadValues = createVisualState({})
         },
-        crossfadeToLead(transition?: Transition) {
+        crossfadeToLead(transition) {
             crossfadeProgress.set(1 - crossfadeProgress.get())
             animateProgress(1, transition)
             followValues = createVisualState({})
