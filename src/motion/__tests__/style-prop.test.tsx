@@ -43,6 +43,22 @@ describe("style prop", () => {
         expect(container.firstChild as Element).toHaveStyle("transform: none")
     })
 
+    test.skip("doesn't update transforms that are handled by animation props", () => {
+        const Component = ({ x = 0 }) => {
+            return <motion.div animate={{ x: 200 }} style={{ x }} />
+        }
+
+        const { container, rerender } = render(<Component />)
+
+        expect(container.firstChild as Element).toHaveStyle("transform: none")
+
+        rerender(<Component x={1} />)
+
+        expect(container.firstChild as Element).not.toHaveStyle(
+            "transform: translateX(1px) translateZ(0)"
+        )
+    })
+
     test("should update when passed new MotionValue", async () => {
         const Component = ({ useX = false }) => {
             const x = useMotionValue(1)

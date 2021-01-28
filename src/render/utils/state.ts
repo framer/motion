@@ -102,6 +102,7 @@ function createInitialValues(
 
     if (isVariantNode && !isControllingVariants && props.inherit !== false) {
         const context = parent?.getVariantContext()
+
         if (context) {
             initial ??= context.initial
             animate ??= context.animate

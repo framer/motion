@@ -25,6 +25,7 @@ export interface AnimationState {
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
     getProtectedKeys: (type: AnimationType) => { [key: string]: any }
+    isAnimated(key: string): boolean
     getState: () => { [key: string]: TypeState }
 }
 
@@ -70,6 +71,7 @@ export function createAnimationState(
 ): AnimationState {
     let animate = animateList(visualElement)
     const state = createState()
+    let allAnimatedKeys = {}
     let isInitialRender = true
 
     /**
@@ -92,6 +94,10 @@ export function createAnimationState(
 
     function getProtectedKeys(type: AnimationType) {
         return state[type].protectedKeys
+    }
+
+    function isAnimated(key: string) {
+        return allAnimatedKeys[key] !== undefined
     }
 
     /**
@@ -338,6 +344,8 @@ export function createAnimationState(
             }
         }
 
+        allAnimatedKeys = { ...encounteredKeys }
+
         /**
          * If there are some removed value that haven't been dealt with,
          * we need to create a new animation that falls back either to the value
@@ -391,6 +399,7 @@ export function createAnimationState(
 
     return {
         getProtectedKeys,
+        isAnimated,
         setProps,
         setActive,
         setAnimateFunction,

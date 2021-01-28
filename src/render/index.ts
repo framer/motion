@@ -343,7 +343,10 @@ export const visualElement = <Instance, MutableState, Options>({
      * Determine what role this visual element should take in the variant tree.
      */
     const isControllingVariants = checkIfControllingVariants(props)
-    const isVariantNode = Boolean(isControllingVariants || props.variants)
+    const definesInitialVariant = isVariantLabel(props.initial)
+    const isVariantNode = Boolean(
+        definesInitialVariant || isControllingVariants || props.variants
+    )
 
     const element: VisualElement<Instance> = {
         /**
@@ -706,7 +709,11 @@ export const visualElement = <Instance, MutableState, Options>({
             if (startAtParent) return parent?.getVariantContext()
 
             if (!isControllingVariants) {
-                return parent?.getVariantContext()
+                const context = parent?.getVariantContext() || {}
+                if (props.initial !== undefined) {
+                    context.initial = props.initial as any
+                }
+                return context
             }
 
             const context = {}
