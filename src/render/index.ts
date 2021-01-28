@@ -241,10 +241,12 @@ export const visualElement = <Instance, MutableState, Options>({
             element,
             renderState,
             /**
-             * Notice we're passing the leadVisualState here, not neccessarily
-             * the visual state of *this* visual element
+             * TODO: This used to build leadVisualState and is now visualState
+             * Look into ditching visualState and just leading projection, allowing
+             * crossfade to blend between elements
+             * DO NOT MERGE before this is finalised
              */
-            leadVisualState,
+            visualState,
             layoutState,
             options,
             props
