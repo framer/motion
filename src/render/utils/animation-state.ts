@@ -1,4 +1,5 @@
 import { isAnimationControls } from "../../animation/AnimationControls"
+import { isKeyframesTarget } from "../../animation/utils/is-keyframes-target"
 import { MotionProps } from "../../motion"
 import { VariantLabels } from "../../motion/types"
 import { TargetAndTransition } from "../../types"
@@ -277,7 +278,14 @@ export function createAnimationState(
                 if (encounteredKeys.hasOwnProperty(key)) continue
 
                 if (next !== prev) {
-                    if (next !== undefined) {
+                    if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
+                        if (!shallowCompare(next, prev)) {
+                            shouldAnimateType = true
+                            removedKeys.delete(key)
+                        } else {
+                            typeState.protectedKeys[key] = true
+                        }
+                    } else if (next !== undefined) {
                         // If next is defined and doesn't equal prev, it needs animating
                         shouldAnimateType = true
                         removedKeys.delete(key)
