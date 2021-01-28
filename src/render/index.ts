@@ -494,6 +494,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * render we can just make fresh state.
          */
         clearState(newProps) {
+            values.clear()
             props = newProps
             leadVisualState = visualState = createVisualState(
                 props,
