@@ -77,7 +77,7 @@ function DragDrop() {
             <Zone>
                 {is && (
                     <Target
-                        onViewportBoxUpdate={box => {
+                        onViewportBoxUpdate={(box) => {
                             if (box.x.min > viewportWidth.current / 2 + 100) {
                                 setIs(false)
                             }
@@ -88,7 +88,7 @@ function DragDrop() {
             <Zone>
                 {!is && (
                     <Target
-                        onViewportBoxUpdate={box => {
+                        onViewportBoxUpdate={(box) => {
                             if (box.x.min < viewportWidth.current / 2 - 100) {
                                 setIs(true)
                             }
