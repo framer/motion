@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.2.2] Unreleased
+
+### Fixed
+
+-   De-duplicating features in nested `MotionConfig`s to avoid key error
+
 ## [3.2.1] 2020-01-11
 
 ### Added
