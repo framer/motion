@@ -63,6 +63,7 @@ export interface LayoutProps {
     onLayoutAnimationComplete?(): void
 
     /**
+     * TODO" Replace with lifecycles
      * A callback that fires whenever the viewport-relative bounding box updates.
      *
      * @public
@@ -72,5 +73,5 @@ export interface LayoutProps {
     /**
      * @internal
      */
-    _onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void
+    onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void
 }
