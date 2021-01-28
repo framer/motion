@@ -15,7 +15,10 @@ export function updateMotionValuesFromProps(
         } else {
             if (element.hasValue(key) && !isMotionValue(prev[key])) {
                 prev[key] !== value && element.getValue(key)!.set(value)
-            } else {
+            } else if (
+                !element.animationState ||
+                !element.animationState.isAnimated(key)
+            ) {
                 element.addValue(key, motionValue(value))
             }
         }
