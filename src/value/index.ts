@@ -324,6 +324,7 @@ export class MotionValue<V = any> {
         }
     }
 
+    hasAnimated = false
     /**
      * Registers a new animation to control this `MotionValue`. Only one
      * animation can drive a `MotionValue` at one time.
@@ -340,6 +341,7 @@ export class MotionValue<V = any> {
         this.stop()
 
         return new Promise((resolve) => {
+            this.hasAnimated = true
             this.stopAnimation = animation(resolve)
         }).then(() => this.clearAnimation())
     }
