@@ -61,6 +61,7 @@ class Animate extends React.Component<AnimateProps> {
             targetBox,
             visibilityAction,
             shouldStackAnimate,
+            onComplete,
             ...config
         }: SharedLayoutAnimationConfig = {}
     ) => {
@@ -137,6 +138,7 @@ class Animate extends React.Component<AnimateProps> {
          */
         return Promise.all(animations).then(() => {
             this.props.onLayoutAnimationComplete?.()
+            onComplete && onComplete()
             this.isAnimatingTree = false
 
             if (visualElement.isPresent) {

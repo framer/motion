@@ -41,4 +41,5 @@ export interface SharedLayoutAnimationConfig {
     transition?: Transition
     crossfadeOpacity?: MotionValue<number>
     shouldStackAnimate?: boolean
+    onComplete?: () => void
 }
