@@ -43,19 +43,27 @@ describe("style prop", () => {
         expect(container.firstChild as Element).toHaveStyle("transform: none")
     })
 
-    test.skip("doesn't update transforms that are handled by animation props", () => {
+    test("doesn't update transforms that are handled by animation props", () => {
         const Component = ({ x = 0 }) => {
-            return <motion.div animate={{ x: 200 }} style={{ x }} />
+            return (
+                <motion.div
+                    initial={{ x: 1 }}
+                    animate={{ x: 200 }}
+                    style={{ x }}
+                />
+            )
         }
 
         const { container, rerender } = render(<Component />)
 
-        expect(container.firstChild as Element).toHaveStyle("transform: none")
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(1px) translateZ(0)"
+        )
 
-        rerender(<Component x={1} />)
+        rerender(<Component x={2} />)
 
         expect(container.firstChild as Element).not.toHaveStyle(
-            "transform: translateX(1px) translateZ(0)"
+            "transform: translateX(2px) translateZ(0)"
         )
     })
 
