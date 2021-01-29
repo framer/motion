@@ -449,6 +449,8 @@ export class MotionValue<V = any> {
     // (undocumented)
     getPrevious(): V;
     getVelocity(): number;
+    // (undocumented)
+    hasAnimated: boolean;
     isAnimating(): boolean;
     onChange(subscription: Subscriber<V>): () => void;
     // @internal
