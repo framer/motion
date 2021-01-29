@@ -38,6 +38,8 @@ class Animate extends React.Component<AnimateProps> {
 
     private unsubLayoutReady: () => void
 
+    private isAnimatingTree = false
+
     componentDidMount() {
         const { visualElement } = this.props
         ;(visualElement as any).animateMotionValue = startAnimation
@@ -66,7 +68,19 @@ class Animate extends React.Component<AnimateProps> {
         /**
          * Early return if we've been instructed not to animate this render.
          */
-        if (shouldStackAnimate === false) return this.safeToRemove()
+        if (shouldStackAnimate === false) {
+            this.isAnimatingTree = false
+            return this.safeToRemove()
+        }
+
+        /**
+         * Prioritise tree animations
+         */
+        if (this.isAnimatingTree && shouldStackAnimate !== true) {
+            return
+        } else if (shouldStackAnimate) {
+            this.isAnimatingTree = true
+        }
 
         /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be
@@ -123,6 +137,7 @@ class Animate extends React.Component<AnimateProps> {
          */
         return Promise.all(animations).then(() => {
             this.props.onLayoutAnimationComplete?.()
+            this.isAnimatingTree = false
 
             if (visualElement.isPresent) {
                 visualElement.presence = Presence.Present
