@@ -80,8 +80,6 @@ export function useDomVisualElement<E>(
 
     const visualElement = visualElementRef.current
 
-    if (visualElement.isStatic) return visualElement
-
     useIsomorphicLayoutEffect(() => {
         visualElement.updateProps({ ...props, layoutId })
 
@@ -100,9 +98,11 @@ export function useDomVisualElement<E>(
         isPresent(presenceContext) && visualElement.variantChildren?.clear()
 
         // TODO: Fire visualElement layout listeners
-
-        visualElement.syncRender()
+        // TODO: Do we need this at all?
+        if (!visualElement.isStatic) visualElement.syncRender()
     })
+
+    if (visualElement.isStatic) return visualElement
 
     useEffect(() => {
         visualElement.subscribeToVariantParent()
