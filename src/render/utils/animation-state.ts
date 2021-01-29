@@ -97,7 +97,6 @@ export function createAnimationState(
     }
 
     function isAnimated(key: string) {
-        console.log("all animated keys", allAnimatedKeys)
         return allAnimatedKeys[key] !== undefined
     }
 

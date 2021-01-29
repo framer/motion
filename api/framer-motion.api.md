@@ -580,6 +580,8 @@ export interface SharedLayoutAnimationConfig {
     // (undocumented)
     crossfadeOpacity?: MotionValue<number>;
     // (undocumented)
+    onComplete?: () => void;
+    // (undocumented)
     originBox?: AxisBox2D;
     // (undocumented)
     shouldStackAnimate?: boolean;
