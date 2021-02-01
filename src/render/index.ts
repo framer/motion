@@ -43,6 +43,7 @@ export const visualElement = <Instance, MutableState, Options>({
 }: VisualElementConfig<Instance, MutableState, Options>) => (
     {
         parent,
+        variantParent,
         ref: externalRef,
         props,
         isStatic,
@@ -456,17 +457,8 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         subscribeToVariantParent() {
             if (!isVariantNode || !parent || isControllingVariants) return
-
-            const variantParent = parent.getClosestVariantNode()
             variantParent?.variantChildren!.add(element)
         },
-
-        /**
-         * Returns the closest variant node in the tree starting from
-         * this visual element.
-         */
-        getClosestVariantNode: () =>
-            isVariantNode ? element : parent?.getClosestVariantNode(),
 
         /**
          * Expose the latest layoutId prop.
