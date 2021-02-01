@@ -36,7 +36,7 @@ export interface CrossfadeState {
     crossfadeFromLead(transition?: Transition): void
     crossfadeToLead(
         transition?: Transition,
-        maintainFollowOpacity: boolean
+        maintainFollowOpacity?: boolean
     ): void
     reset(): void
     stopAnimation(): void
