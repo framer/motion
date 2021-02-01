@@ -56,7 +56,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
     // (undocumented)
     componentDidUpdate(): void;
     // (undocumented)
-    static contextType: React.Context<VisualElement<any, any> | undefined>;
+    static contextType: React.Context<import("../../motion/context/MotionContext").VisualElementTree>;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
@@ -859,8 +859,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getBaseTarget(key: string): number | string | undefined | null;
     // (undocumented)
-    getClosestVariantNode(): undefined | VisualElement;
-    // (undocumented)
     getDefaultTransition(): Transition | undefined;
     // (undocumented)
     getInstance(): Instance | null;
@@ -883,11 +881,11 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -1006,7 +1004,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
 // Warning: (ae-forgotten-export) The symbol "VisualElementOptions" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export const visualElement: <Instance, MutableState, Options>({ createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, snapshot, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
+export const visualElement: <Instance, MutableState, Options>({ createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, variantParent, ref: externalRef, props, isStatic, snapshot, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
 
 
 // (No @packageDocumentation comment for this package)

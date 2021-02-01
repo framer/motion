@@ -7,6 +7,7 @@ import {
     CrossfadeState,
     Snapshot,
 } from "../components/AnimateSharedLayout/utils/stack"
+import { VisualElementTree } from "../motion/context/MotionContext"
 import { MotionProps } from "../motion/types"
 import { TargetAndTransition, Transition, Variant } from "../types"
 import { AxisBox2D } from "../types/geometry"
@@ -33,7 +34,6 @@ export interface VisualElement<Instance = any, MutableState = any>
     isResumingFromSnapshot: boolean
     clearState(props: MotionProps): void
     subscribeToVariantParent(): void
-    getClosestVariantNode(): undefined | VisualElement
     getInstance(): Instance | null
     path: VisualElement[]
     addChild(child: VisualElement): () => void
@@ -182,6 +182,7 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
 export type VisualElementOptions<Instance> = {
     ref?: Ref<Instance>
     parent?: VisualElement<unknown>
+    variantParent?: VisualElement<unknown>
     snapshot?: ResolvedValues
     isStatic?: boolean
     presenceId?: number | undefined
@@ -199,7 +200,7 @@ export type UseVisualElement<E, P = MotionProps> = (
     props: MotionProps & P,
     isStatic?: boolean,
     ref?: Ref<E>
-) => VisualElement
+) => VisualElementTree
 
 /**
  * A generic set of string/number values

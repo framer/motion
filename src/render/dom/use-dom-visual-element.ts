@@ -4,6 +4,7 @@ import {
     Ref,
     useContext,
     useEffect,
+    useMemo,
     useRef,
 } from "react"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
@@ -14,11 +15,15 @@ import {
     SharedLayoutContext,
 } from "../../components/AnimateSharedLayout/SharedLayoutContext"
 import { MotionProps } from "../../motion"
-import { useVisualElementContext } from "../../motion/context/MotionContext"
+import {
+    MotionContext,
+    VisualElementTree,
+} from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualElement } from "../types"
+import { checkIfControllingVariants } from "../utils/variants"
 import { htmlVisualElement } from "./html-visual-element"
 import { svgVisualElement } from "./svg-visual-element"
 import { isSVGComponent } from "./utils/is-svg-component"
@@ -45,8 +50,9 @@ export function useDomVisualElement<E>(
     props: MotionProps,
     isStatic: boolean,
     ref: Ref<E>
-) {
-    const parent = useVisualElementContext()
+): VisualElementTree {
+    const motionContext = useContext(MotionContext)
+    const { parent, variantParent } = motionContext
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
     const snapshot = useSnapshotOfLeadVisualElement(layoutId)
@@ -67,6 +73,7 @@ export function useDomVisualElement<E>(
         visualElementRef.current = factory(
             {
                 parent,
+                variantParent,
                 ref: ref as any,
                 isStatic,
                 props: { ...props, layoutId },
@@ -78,7 +85,25 @@ export function useDomVisualElement<E>(
         )
     }
 
+    /**
+     * Create motion context for children to ensure children re-render if new variants
+     * are being passed
+     */
     const visualElement = visualElementRef.current
+    const isControllingVariants = checkIfControllingVariants(props)
+    const isVariantNode = isControllingVariants || props.variants
+
+    const context = useMemo(
+        () => ({
+            parent: visualElement,
+            variantParent: isVariantNode ? visualElement : variantParent,
+        }),
+        /**
+         * If this is a variant context, we ideally only want to create a new context if
+         * we're defining or passing through new variant labels.
+         */
+        [isVariantNode ? {} : motionContext]
+    )
 
     useIsomorphicLayoutEffect(() => {
         visualElement.updateProps({ ...props, layoutId })
@@ -102,7 +127,7 @@ export function useDomVisualElement<E>(
         if (!visualElement.isStatic) visualElement.syncRender()
     })
 
-    if (visualElement.isStatic) return visualElement
+    if (visualElement.isStatic) return context
 
     useEffect(() => {
         visualElement.subscribeToVariantParent()
@@ -122,5 +147,5 @@ export function useDomVisualElement<E>(
      */
     useSnapshotOnUnmount(visualElement)
 
-    return visualElement
+    return context
 }
