@@ -73,7 +73,8 @@ export function useDomVisualElement<E>(
         visualElementRef.current = factory(
             {
                 parent,
-                variantParent,
+                variantParent:
+                    props.inherit !== false ? variantParent : undefined,
                 ref: ref as any,
                 isStatic,
                 props: { ...props, layoutId },
@@ -87,7 +88,10 @@ export function useDomVisualElement<E>(
 
     /**
      * Create motion context for children to ensure children re-render if new variants
-     * are being passed
+     * are being passed. This is quite a blunt instrument and will lead to a ton of
+     * unneccessary rerenders. In the future we might prefer something like AnimateSharedLayout
+     * where incoming or re-rendering children trigger a rerender in the immediate
+     * variant parent.
      */
     const visualElement = visualElementRef.current
     const isControllingVariants = checkIfControllingVariants(props)
@@ -99,10 +103,9 @@ export function useDomVisualElement<E>(
             variantParent: isVariantNode ? visualElement : variantParent,
         }),
         /**
-         * If this is a variant context, we ideally only want to create a new context if
-         * we're defining or passing through new variant labels.
+         * If this is a variant node, always create a new context
          */
-        [isVariantNode ? {} : motionContext]
+        [isVariantNode && !isStatic ? {} : motionContext]
     )
 
     useIsomorphicLayoutEffect(() => {
