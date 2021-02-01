@@ -340,8 +340,9 @@ function mixBorderRadius(
     const toLatest = to.getLatestValues()
     for (let i = 0; i < numBorders; i++) {
         const borderLabel = "border" + borders[i] + "Radius"
-        const fromRadius = fromLatest[borderLabel] ?? fromLatest.border ?? 0
-        const toRadius = toLatest[borderLabel] ?? toLatest.border ?? 0
+        const fromRadius =
+            fromLatest[borderLabel] ?? fromLatest.borderRadius ?? 0
+        const toRadius = toLatest[borderLabel] ?? toLatest.borderRadius ?? 0
         // TODO We should only do this if we have border radius
         // But not doing it at all isn't correctly animating 0 -> 0 that have
         // previously encountered a crossfade to/from a radius
