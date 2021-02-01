@@ -11,6 +11,9 @@ import { MotionContext } from "../../motion/context/MotionContext"
 import { resetRotate } from "./utils/rotate"
 import { VisualElement } from "../../render/types"
 
+// Simply to make api-extractor happy
+export { VisualElementTree } from "../../motion/context/MotionContext"
+
 /**
  * @public
  */
