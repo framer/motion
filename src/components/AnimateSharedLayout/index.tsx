@@ -7,17 +7,21 @@ import {
     SyncLayoutLifecycles,
     SharedLayoutContext,
 } from "./SharedLayoutContext"
-import { MotionContext } from "../../motion/context/MotionContext"
+import {
+    MotionContext,
+    VisualElementTree,
+} from "../../motion/context/MotionContext"
 import { resetRotate } from "./utils/rotate"
 import { VisualElement } from "../../render/types"
-
-// Simply to make api-extractor happy
-export { VisualElementTree } from "../../motion/context/MotionContext"
 
 /**
  * @public
  */
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
+export class AnimateSharedLayout extends React.Component<
+    SharedLayoutProps,
+    {},
+    VisualElementTree
+> {
     static contextType = MotionContext
 
     /**
@@ -118,7 +122,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
                     child.notifyLayoutReady()
                 }
             },
-            parent: this.context,
+            parent: this.context.parent,
         }
 
         /**
