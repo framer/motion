@@ -28,6 +28,7 @@ import { createLayoutState, createVisualState } from "./utils/state"
 import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
+    treeType = "",
     createRenderState,
     build,
     getBaseTarget,
@@ -39,6 +40,7 @@ export const visualElement = <Instance, MutableState, Options>({
     resetTransform,
     restoreTransform,
     removeValueFromMutableState,
+    sortNodePosition,
     scrapeMotionValuesFromProps,
 }: VisualElementConfig<Instance, MutableState, Options>) => (
     {
@@ -356,6 +358,8 @@ export const visualElement = <Instance, MutableState, Options>({
     )
 
     const element: VisualElement<Instance> = {
+        treeType,
+
         /**
          * This is a mirror of the internal instance prop, which keeps
          * VisualElement type-compatible with React's RefObject.
@@ -455,6 +459,17 @@ export const visualElement = <Instance, MutableState, Options>({
                 closestVariantNode.variantChildren?.add(child)
                 return () => closestVariantNode.variantChildren!.delete(child)
             }
+        },
+
+        sortNodePosition(other: VisualElement) {
+            /**
+             * If these nodes aren't even of the same type we can't compare their depth.
+             */
+            if (!sortNodePosition || treeType !== other.treeType) return 0
+            return sortNodePosition(
+                element.getInstance() as Instance,
+                other.getInstance()
+            )
         },
 
         /**

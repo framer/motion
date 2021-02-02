@@ -14,10 +14,7 @@ import {
     SharedLayoutContext,
 } from "../../components/AnimateSharedLayout/SharedLayoutContext"
 import { MotionProps } from "../../motion"
-import {
-    useVisualElementContext,
-    VisualElementTree,
-} from "../../motion/context/MotionContext"
+import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
@@ -48,7 +45,7 @@ export function useDomVisualElement<E>(
     props: MotionProps,
     isStatic: boolean,
     ref: Ref<E>
-): VisualElementTree {
+): VisualElement {
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
