@@ -49,14 +49,16 @@ export interface AnimatePresenceProps {
     presenceAffectsLayout?: boolean;
 }
 
+// Warning: (ae-forgotten-export) The symbol "VisualElementTree" needs to be exported by the entry point index.d.ts
+// 
 // @public (undocumented)
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps> {
+export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, VisualElementTree> {
     // (undocumented)
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
     // (undocumented)
-    static contextType: React.Context<import("../../motion/context/MotionContext").VisualElementTree>;
+    static contextType: React.Context<VisualElementTree>;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
