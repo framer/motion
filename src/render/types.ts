@@ -33,11 +33,13 @@ export interface VisualElement<Instance = any, MutableState = any>
     isStatic?: boolean
     isResumingFromSnapshot: boolean
     clearState(props: MotionProps): void
-    subscribeToVariantParent(): void
     getInstance(): Instance | null
     path: VisualElement[]
     addChild(child: VisualElement): () => void
     ref: Ref<Instance | null>
+
+    addVariantChild(child: VisualElement): undefined | (() => void)
+    getClosestVariantNode(): VisualElement | undefined
 
     setCrossfadeState(state: CrossfadeState): void
     layoutSafeToRemove?: () => void
@@ -200,7 +202,7 @@ export type UseVisualElement<E, P = MotionProps> = (
     props: MotionProps & P,
     isStatic?: boolean,
     ref?: Ref<E>
-) => VisualElementTree
+) => VisualElement<E>
 
 /**
  * A generic set of string/number values

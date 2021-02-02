@@ -43,7 +43,6 @@ export const visualElement = <Instance, MutableState, Options>({
 }: VisualElementConfig<Instance, MutableState, Options>) => (
     {
         parent,
-        variantParent,
         ref: externalRef,
         props,
         isStatic,
@@ -164,14 +163,20 @@ export const visualElement = <Instance, MutableState, Options>({
      * On mount, this will be hydrated with a callback to disconnect
      * this visual element from its parent on unmount.
      */
-    let removeFromParent: undefined | (() => void)
+    let removeFromMotionTree: undefined | (() => void)
+    let removeFromVariantTree: undefined | (() => void)
 
     /**
      *
      */
     function mount() {
         element.pointTo(element)
-        removeFromParent = parent?.addChild(element)
+        removeFromMotionTree = parent?.addChild(element)
+
+        if (isVariantNode && parent && !isControllingVariants) {
+            removeFromVariantTree = parent?.addVariantChild(element)
+        }
+
         onMount?.(element, instance, renderState)
     }
 
@@ -184,7 +189,8 @@ export const visualElement = <Instance, MutableState, Options>({
         cancelSync.preRender(element.updateLayoutProjection)
         valueSubscriptions.forEach((remove) => remove())
         element.stopLayoutAnimation()
-        removeFromParent?.()
+        removeFromMotionTree?.()
+        removeFromVariantTree?.()
         lifecycles.clearAllListeners()
     }
 
@@ -440,6 +446,24 @@ export const visualElement = <Instance, MutableState, Options>({
             return () => children.delete(child)
         },
 
+        /**
+         * Add a child visual element to our set of children.
+         */
+        addVariantChild(child) {
+            const closestVariantNode = element.getClosestVariantNode()
+            if (closestVariantNode) {
+                closestVariantNode.variantChildren?.add(child)
+                return () => closestVariantNode.variantChildren!.delete(child)
+            }
+        },
+
+        /**
+         * Returns the closest variant node in the tree starting from
+         * this visual element.
+         */
+        getClosestVariantNode: () =>
+            isVariantNode ? element : parent?.getClosestVariantNode(),
+
         getVisualState: () => visualState,
 
         /**
@@ -450,15 +474,6 @@ export const visualElement = <Instance, MutableState, Options>({
         scheduleUpdateLayoutProjection: parent
             ? parent.scheduleUpdateLayoutProjection
             : () => sync.preRender(element.updateLayoutProjection, false, true),
-
-        /**
-         * Subscribe this component to receive variant animations from its
-         * closest ancestor variant node.
-         */
-        subscribeToVariantParent() {
-            if (!isVariantNode || !parent || isControllingVariants) return
-            variantParent?.variantChildren!.add(element)
-        },
 
         /**
          * Expose the latest layoutId prop.

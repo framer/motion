@@ -1,13 +1,8 @@
 import { createContext, useContext } from "react"
 import { VisualElement } from "../../render/types"
 
-export interface VisualElementTree {
-    parent?: VisualElement
-    variantParent?: VisualElement
-}
-
-export const MotionContext = createContext<VisualElementTree>({})
+export const MotionContext = createContext<VisualElement | undefined>(undefined)
 
 export function useVisualElementContext() {
-    return useContext(MotionContext).parent
+    return useContext(MotionContext)
 }
