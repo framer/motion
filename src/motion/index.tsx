@@ -44,13 +44,12 @@ export function createMotionComponent<P extends {}, E>(
          * providing a way of rendering to these APIs outside of the React render loop
          * for more performant animations and interactions
          */
-        const motionContext = useVisualElement(
+        const visualElement = useVisualElement(
             Component,
             props,
             isStatic,
             externalRef
         )
-        const visualElement = motionContext.parent!
 
         /**
          * Load features as renderless components unless the component isStatic
@@ -68,7 +67,7 @@ export function createMotionComponent<P extends {}, E>(
         // all plugins and features has to execute.
         return (
             <>
-                <MotionContext.Provider value={motionContext}>
+                <MotionContext.Provider value={visualElement}>
                     {component}
                 </MotionContext.Provider>
                 {features}

@@ -7,10 +7,7 @@ import {
     SyncLayoutLifecycles,
     SharedLayoutContext,
 } from "./SharedLayoutContext"
-import {
-    MotionContext,
-    VisualElementTree,
-} from "../../motion/context/MotionContext"
+import { MotionContext } from "../../motion/context/MotionContext"
 import { resetRotate } from "./utils/rotate"
 import { VisualElement } from "../../render/types"
 
@@ -20,7 +17,7 @@ import { VisualElement } from "../../render/types"
 export class AnimateSharedLayout extends React.Component<
     SharedLayoutProps,
     {},
-    VisualElementTree
+    VisualElement
 > {
     static contextType = MotionContext
 
@@ -122,7 +119,7 @@ export class AnimateSharedLayout extends React.Component<
                     child.notifyLayoutReady()
                 }
             },
-            parent: this.context.parent,
+            parent: this.context,
         }
 
         /**

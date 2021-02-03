@@ -185,18 +185,24 @@ function animateChildren(
             ? (i = 0) => i * staggerChildren
             : (i = 0) => maxStaggerDuration - i * staggerChildren
 
-    Array.from(visualElement.variantChildren!).forEach((child, i) => {
-        animations.push(
-            animateVariant(child, variant, {
-                ...options,
-                delay: delayChildren + generateStaggerDuration(i),
-            })
-        )
-    })
+    Array.from(visualElement.variantChildren!)
+        .sort(sortByTreeOrder)
+        .forEach((child, i) => {
+            animations.push(
+                animateVariant(child, variant, {
+                    ...options,
+                    delay: delayChildren + generateStaggerDuration(i),
+                })
+            )
+        })
 
     return Promise.all(animations)
 }
 
 export function stopAnimation(visualElement: VisualElement) {
     visualElement.forEachValue((value) => value.stop())
+}
+
+export function sortByTreeOrder(a: VisualElement, b: VisualElement) {
+    return a.sortNodePosition(b)
 }

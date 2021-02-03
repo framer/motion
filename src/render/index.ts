@@ -28,6 +28,7 @@ import { createLayoutState, createVisualState } from "./utils/state"
 import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
+    treeType = "",
     createRenderState,
     build,
     getBaseTarget,
@@ -39,11 +40,11 @@ export const visualElement = <Instance, MutableState, Options>({
     resetTransform,
     restoreTransform,
     removeValueFromMutableState,
+    sortNodePosition,
     scrapeMotionValuesFromProps,
 }: VisualElementConfig<Instance, MutableState, Options>) => (
     {
         parent,
-        variantParent,
         ref: externalRef,
         props,
         isStatic,
@@ -164,14 +165,20 @@ export const visualElement = <Instance, MutableState, Options>({
      * On mount, this will be hydrated with a callback to disconnect
      * this visual element from its parent on unmount.
      */
-    let removeFromParent: undefined | (() => void)
+    let removeFromMotionTree: undefined | (() => void)
+    let removeFromVariantTree: undefined | (() => void)
 
     /**
      *
      */
     function mount() {
         element.pointTo(element)
-        removeFromParent = parent?.addChild(element)
+        removeFromMotionTree = parent?.addChild(element)
+
+        if (isVariantNode && parent && !isControllingVariants) {
+            removeFromVariantTree = parent?.addVariantChild(element)
+        }
+
         onMount?.(element, instance, renderState)
     }
 
@@ -184,7 +191,8 @@ export const visualElement = <Instance, MutableState, Options>({
         cancelSync.preRender(element.updateLayoutProjection)
         valueSubscriptions.forEach((remove) => remove())
         element.stopLayoutAnimation()
-        removeFromParent?.()
+        removeFromMotionTree?.()
+        removeFromVariantTree?.()
         lifecycles.clearAllListeners()
     }
 
@@ -350,6 +358,8 @@ export const visualElement = <Instance, MutableState, Options>({
     )
 
     const element: VisualElement<Instance> = {
+        treeType,
+
         /**
          * This is a mirror of the internal instance prop, which keeps
          * VisualElement type-compatible with React's RefObject.
@@ -440,6 +450,35 @@ export const visualElement = <Instance, MutableState, Options>({
             return () => children.delete(child)
         },
 
+        /**
+         * Add a child visual element to our set of children.
+         */
+        addVariantChild(child) {
+            const closestVariantNode = element.getClosestVariantNode()
+            if (closestVariantNode) {
+                closestVariantNode.variantChildren?.add(child)
+                return () => closestVariantNode.variantChildren!.delete(child)
+            }
+        },
+
+        sortNodePosition(other: VisualElement) {
+            /**
+             * If these nodes aren't even of the same type we can't compare their depth.
+             */
+            if (!sortNodePosition || treeType !== other.treeType) return 0
+            return sortNodePosition(
+                element.getInstance() as Instance,
+                other.getInstance()
+            )
+        },
+
+        /**
+         * Returns the closest variant node in the tree starting from
+         * this visual element.
+         */
+        getClosestVariantNode: () =>
+            isVariantNode ? element : parent?.getClosestVariantNode(),
+
         getVisualState: () => visualState,
 
         /**
@@ -450,15 +489,6 @@ export const visualElement = <Instance, MutableState, Options>({
         scheduleUpdateLayoutProjection: parent
             ? parent.scheduleUpdateLayoutProjection
             : () => sync.preRender(element.updateLayoutProjection, false, true),
-
-        /**
-         * Subscribe this component to receive variant animations from its
-         * closest ancestor variant node.
-         */
-        subscribeToVariantParent() {
-            if (!isVariantNode || !parent || isControllingVariants) return
-            variantParent?.variantChildren!.add(element)
-        },
 
         /**
          * Expose the latest layoutId prop.

@@ -20,6 +20,8 @@ export const htmlConfig: VisualElementConfig<
     HTMLMutableState,
     DOMVisualElementOptions
 > = {
+    treeType: "dom",
+
     readValueFromInstance(domElement, key) {
         if (isTransformProp(key)) {
             return getDefaultValueType(key)?.default || 0
@@ -39,6 +41,10 @@ export const htmlConfig: VisualElementConfig<
         transformOrigin: {},
         vars: {},
     }),
+
+    sortNodePosition(a, b) {
+        return a.compareDocumentPosition(b) & 2 ? 1 : -1
+    },
 
     getBaseTarget(props, key) {
         return props.style?.[key]
