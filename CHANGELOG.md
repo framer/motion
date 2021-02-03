@@ -2,6 +2,10 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.3.0] 2020-02-03
+
+-   Fixing errant publish.
+
 ## [3.2.1] 2020-01-11
 
 ### Added
