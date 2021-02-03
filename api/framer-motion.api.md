@@ -49,16 +49,14 @@ export interface AnimatePresenceProps {
     presenceAffectsLayout?: boolean;
 }
 
-// Warning: (ae-forgotten-export) The symbol "VisualElementTree" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, VisualElementTree> {
+export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, VisualElement> {
     // (undocumented)
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
     // (undocumented)
-    static contextType: React.Context<VisualElementTree>;
+    static contextType: React.Context<VisualElement<any, any> | undefined>;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
@@ -842,6 +840,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     addChild(child: VisualElement): () => void;
     // (undocumented)
     addValue(key: string, value: MotionValue<any>): void;
+    // (undocumented)
+    addVariantChild(child: VisualElement): undefined | (() => void);
     // Warning: (ae-forgotten-export) The symbol "AnimationState" needs to be exported by the entry point index.d.ts
     animationState?: AnimationState;
     // (undocumented)
@@ -860,6 +860,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     forEachValue(callback: (value: MotionValue, key: string) => void): void;
     // (undocumented)
     getBaseTarget(key: string): number | string | undefined | null;
+    // (undocumented)
+    getClosestVariantNode(): VisualElement | undefined;
     // (undocumented)
     getDefaultTransition(): Transition | undefined;
     // (undocumented)
@@ -883,9 +885,9 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
+    // (undocumented)
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
@@ -979,15 +981,17 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     snapshotViewportBox(): void;
     // (undocumented)
+    sortNodePosition(element: VisualElement): number;
+    // (undocumented)
     startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>;
     // (undocumented)
     stopLayoutAnimation(): void;
     // (undocumented)
-    subscribeToVariantParent(): void;
-    // (undocumented)
     suspendHoverEvents(): void;
     // (undocumented)
     syncRender(): void;
+    // (undocumented)
+    treeType: string;
     // (undocumented)
     unlockProjectionTarget(): void;
     // (undocumented)
@@ -1006,7 +1010,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
 // Warning: (ae-forgotten-export) The symbol "VisualElementOptions" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export const visualElement: <Instance, MutableState, Options>({ createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, variantParent, ref: externalRef, props, isStatic, snapshot, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
+export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, snapshot, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
 
 
 // (No @packageDocumentation comment for this package)
