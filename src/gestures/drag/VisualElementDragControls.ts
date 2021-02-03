@@ -277,12 +277,14 @@ export class VisualElementDragControls {
      */
     prepareBoundingBox() {
         const { visualElement } = this
+        const { layout, layoutId } = this.props
+
         visualElement.withoutTransform(() => {
             visualElement.updateLayoutMeasurement()
         })
         visualElement.rebaseProjectionTarget(
             true,
-            visualElement.measureViewportBox(false)
+            visualElement.measureViewportBox(Boolean(!layoutId && !layout))
         )
     }
 
