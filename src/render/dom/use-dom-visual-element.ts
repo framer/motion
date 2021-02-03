@@ -4,7 +4,6 @@ import {
     Ref,
     useContext,
     useEffect,
-    useMemo,
     useRef,
 } from "react"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
@@ -15,15 +14,11 @@ import {
     SharedLayoutContext,
 } from "../../components/AnimateSharedLayout/SharedLayoutContext"
 import { MotionProps } from "../../motion"
-import {
-    MotionContext,
-    VisualElementTree,
-} from "../../motion/context/MotionContext"
+import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualElement } from "../types"
-import { checkIfControllingVariants } from "../utils/variants"
 import { htmlVisualElement } from "./html-visual-element"
 import { svgVisualElement } from "./svg-visual-element"
 import { isSVGComponent } from "./utils/is-svg-component"
@@ -50,9 +45,8 @@ export function useDomVisualElement<E>(
     props: MotionProps,
     isStatic: boolean,
     ref: Ref<E>
-): VisualElementTree {
-    const motionContext = useContext(MotionContext)
-    const { parent, variantParent } = motionContext
+): VisualElement {
+    const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
     const snapshot = useSnapshotOfLeadVisualElement(layoutId)
@@ -73,8 +67,6 @@ export function useDomVisualElement<E>(
         visualElementRef.current = factory(
             {
                 parent,
-                variantParent:
-                    props.inherit !== false ? variantParent : undefined,
                 ref: ref as any,
                 isStatic,
                 props: { ...props, layoutId },
@@ -86,27 +78,7 @@ export function useDomVisualElement<E>(
         )
     }
 
-    /**
-     * Create motion context for children to ensure children re-render if new variants
-     * are being passed. This is quite a blunt instrument and will lead to a ton of
-     * unneccessary rerenders. In the future we might prefer something like AnimateSharedLayout
-     * where incoming or re-rendering children trigger a rerender in the immediate
-     * variant parent.
-     */
     const visualElement = visualElementRef.current
-    const isControllingVariants = checkIfControllingVariants(props)
-    const isVariantNode = isControllingVariants || props.variants
-
-    const context = useMemo(
-        () => ({
-            parent: visualElement,
-            variantParent: isVariantNode ? visualElement : variantParent,
-        }),
-        /**
-         * If this is a variant node, always create a new context
-         */
-        [isVariantNode && !isStatic ? {} : motionContext]
-    )
 
     useIsomorphicLayoutEffect(() => {
         visualElement.updateProps({ ...props, layoutId })
@@ -118,23 +90,17 @@ export function useDomVisualElement<E>(
         visualElement.isPresenceRoot =
             !parent || parent.presenceId !== presenceContext?.id
 
-        /**
-         * What we want here is to clear the order of variant children in useLayoutEffect
-         * then children can re-add themselves in useEffect. This should add them in the intended order
-         * for staggerChildren to work correctly.
-         */
-        isPresent(presenceContext) && visualElement.variantChildren?.clear()
-
         // TODO: Fire visualElement layout listeners
         // TODO: Do we need this at all?
         if (!visualElement.isStatic) visualElement.syncRender()
     })
 
-    if (visualElement.isStatic) return context
+    /**
+     * Don't fire unnecessary effects if this is a static component.
+     */
+    if (visualElement.isStatic) return visualElement
 
     useEffect(() => {
-        visualElement.subscribeToVariantParent()
-
         // TODO: visualElement aalready has props, we can do better here
         visualElement.animationState?.setProps(props)
 
@@ -150,5 +116,5 @@ export function useDomVisualElement<E>(
      */
     useSnapshotOnUnmount(visualElement)
 
-    return context
+    return visualElement
 }
