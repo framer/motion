@@ -43,6 +43,11 @@ export const htmlConfig: VisualElementConfig<
     }),
 
     sortNodePosition(a, b) {
+        /**
+         * compareDocumentPosition returns a bitmask, by using the bitwise &
+         * we're returning true if 2 in that bitmask is set to true. 2 is set
+         * to true if b preceeds a.
+         */
         return a.compareDocumentPosition(b) & 2 ? 1 : -1
     },
 
