@@ -7,7 +7,7 @@ import {
 } from "../transitions"
 import {
     underDampedSpring,
-    overDampedSpring,
+    criticallyDampedSpring,
     linearTween,
 } from "../default-transitions"
 import { linear, easeInOut, circIn } from "popmotion"
@@ -135,7 +135,7 @@ describe("getPopmotionAnimationOptions", () => {
         ).toEqual({
             from: 0,
             to: 1,
-            ...overDampedSpring(1),
+            ...criticallyDampedSpring(1),
         })
         expect(
             getPopmotionAnimationOptions({}, { from: 0, to: 1 }, "opacity")
