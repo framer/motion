@@ -290,11 +290,11 @@ export const visualElement = <Instance, MutableState, Options>({
         const prevTreeScaleY = treeScale.x
         const prevDeltaTransform = layoutState.deltaTransform
 
-        hasViewportBoxUpdated &&
-            element.notifyViewportBoxUpdate(projection.target)
-        hasViewportBoxUpdated = false
-
         updateLayoutDeltas(layoutState, projection, element.path)
+
+        hasViewportBoxUpdated &&
+            element.notifyViewportBoxUpdate(projection.target, delta)
+        hasViewportBoxUpdated = false
 
         const deltaTransform = buildLayoutProjectionTransform(delta, treeScale)
 
