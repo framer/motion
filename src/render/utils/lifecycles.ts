@@ -1,4 +1,5 @@
 import { SharedLayoutAnimationConfig } from "../../components/AnimateSharedLayout/types"
+import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import { MotionProps } from "../../motion/types"
 import { AxisBox2D } from "../../types/geometry"
 import { subscriptionManager } from "../../utils/subscription-manager"
@@ -24,7 +25,6 @@ export type LayoutUpdateListener = (
     prevLayout: AxisBox2D,
     config?: SharedLayoutAnimationConfig
 ) => void
-export type ViewportBoxListener = (box: AxisBox2D) => void
 export type UpdateListener = (latest: ResolvedValues) => void
 export type AnimationStartListener = () => void
 export type AnimationCompleteListener = () => void
@@ -36,8 +36,8 @@ export interface LifecycleManager {
     notifyLayoutMeasure: LayoutMeasureListener
     onLayoutUpdate: (callback: LayoutUpdateListener) => () => void
     notifyLayoutUpdate: LayoutUpdateListener
-    onViewportBoxUpdate: (callback: ViewportBoxListener) => () => void
-    notifyViewportBoxUpdate: ViewportBoxListener
+    onViewportBoxUpdate: (callback: OnViewportBoxUpdate) => () => void
+    notifyViewportBoxUpdate: OnViewportBoxUpdate
     onUpdate: (callback: UpdateListener) => () => void
     notifyUpdate: UpdateListener
     onAnimationStart: (callback: AnimationStartListener) => () => void
