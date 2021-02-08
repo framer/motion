@@ -1,5 +1,4 @@
 import sync, { cancelSync } from "framesync"
-import { pipe } from "popmotion"
 import { Presence } from "../components/AnimateSharedLayout/types"
 import { CrossfadeState } from "../components/AnimateSharedLayout/utils/stack"
 import { MotionStyle } from "../motion/types"
@@ -952,9 +951,8 @@ export const visualElement = <Instance, MutableState, Options>({
         pointTo(newLead) {
             leadVisualState = newLead.getVisualState()
             unsubscribeFromLeadVisualElement?.()
-            unsubscribeFromLeadVisualElement = pipe(
-                newLead.onSetAxisTarget(element.scheduleUpdateLayoutProjection),
-                newLead.onRender(render)
+            unsubscribeFromLeadVisualElement = newLead.onSetAxisTarget(
+                element.scheduleUpdateLayoutProjection
             )
         },
 
