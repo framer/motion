@@ -1,3 +1,5 @@
+import { addUniqueItem, removeItem } from "./array"
+
 type GenericHandler = (...args: any) => void
 
 export interface SubscriptionManager<Handler extends GenericHandler> {
@@ -14,25 +16,32 @@ export interface SubscriptionManager<Handler extends GenericHandler> {
 export function subscriptionManager<
     Handler extends GenericHandler
 >(): SubscriptionManager<Handler> {
-    const subscriptions = new Set<Handler>()
+    const subscriptions: Handler[] = []
 
     return {
         add(handler) {
-            subscriptions.add(handler)
-            return () => subscriptions.delete(handler)
+            addUniqueItem(subscriptions, handler)
+            return () => removeItem(subscriptions, handler)
         },
 
         notify(a, b, c) {
-            if (!subscriptions.size) return
-            for (const handler of subscriptions) {
-                handler(a, b, c)
+            const numSubscriptions = subscriptions.length
+
+            if (!numSubscriptions) {
+                return
+            } else if (numSubscriptions === 1) {
+                subscriptions[0](a, b, c)
+            } else {
+                for (let i = 0; i < numSubscriptions; i++) {
+                    subscriptions[i](a, b, c)
+                }
             }
         },
 
-        getSize: () => subscriptions.size,
+        getSize: () => subscriptions.length,
 
         clear() {
-            subscriptions.clear()
+            subscriptions.length = 0
         },
     }
 }
