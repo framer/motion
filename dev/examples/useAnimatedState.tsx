@@ -9,7 +9,7 @@ export const App = () => {
     const [state, animate] = useDeprecatedAnimatedState({
         foo: 0,
     })
-
+    console.log(state.foo)
     React.useEffect(() => {
         animate({ foo: 100 }, { duration: 3 })
     }, [])

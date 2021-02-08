@@ -1,7 +1,6 @@
 import { SharedLayoutAnimationConfig } from "../../components/AnimateSharedLayout/types"
-import { OnViewportBoxUpdate } from "../../motion/features/layout/types"
 import { MotionProps } from "../../motion/types"
-import { AxisBox2D } from "../../types/geometry"
+import { AxisBox2D, BoxDelta } from "../../types/geometry"
 import { subscriptionManager } from "../../utils/subscription-manager"
 import { ResolvedValues } from "../types"
 
@@ -30,6 +29,46 @@ export type AnimationStartListener = () => void
 export type AnimationCompleteListener = () => void
 export type SetAxisTargetListener = () => void
 export type RenderListener = () => void
+export type OnViewportBoxUpdate = (box: AxisBox2D, delta: BoxDelta) => void
+
+/**
+ * TODO: Make more of these lifecycle events available as props
+ */
+export interface VisualElementLifecycles {
+    /**
+     * A callback that fires whenever the viewport-relative bounding box updates.
+     *
+     * @public
+     */
+    onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
+
+    onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void
+
+    /**
+     * Callback with latest motion values, fired max once per frame.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onUpdate(latest) {
+     *   console.log(latest.x, latest.opacity)
+     * }
+     *
+     * <Frame animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * function onUpdate(latest) {
+     *   console.log(latest.x, latest.opacity)
+     * }
+     *
+     * <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
+     * ```
+     */
+    onUpdate?(latest: ResolvedValues): void
+}
 
 export interface LifecycleManager {
     onLayoutMeasure: (callback: LayoutMeasureListener) => () => void
