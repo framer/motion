@@ -76,15 +76,13 @@ export function animateVisualElement(visualElement: VisualElement, definition: A
 // @public (undocumented)
 export interface AnimationControls {
     // (undocumented)
-    mount(): void;
+    mount(): () => void;
     set(definition: ControlsAnimationDefinition): void;
     // Warning: (ae-forgotten-export) The symbol "ControlsAnimationDefinition" needs to be exported by the entry point index.d.ts
     start(definition: ControlsAnimationDefinition, transitionOverride?: Transition): Promise<any>;
     stop(): void;
     // @internal
     subscribe(visualElement: VisualElement): () => void;
-    // (undocumented)
-    unmount(): void;
 }
 
 // @public (undocumented)
@@ -724,7 +722,7 @@ export interface Tween extends Repeat {
 }
 
 // @public
-export function useAnimation(): import("./AnimationControls").AnimationControls;
+export function useAnimation(): import("./animation-controls").AnimationControls;
 
 // Warning: (ae-forgotten-export) The symbol "CycleState" needs to be exported by the entry point index.d.ts
 // 

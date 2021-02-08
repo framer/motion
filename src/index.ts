@@ -38,7 +38,7 @@ export { useReducedMotion } from "./utils/use-reduced-motion"
 export {
     AnimationControls,
     animationControls,
-} from "./animation/AnimationControls"
+} from "./animation/animation-controls"
 export { useAnimation } from "./animation/use-animation"
 export { animate } from "./animation/animate"
 export { animateVisualElement } from "./render/utils/animation"

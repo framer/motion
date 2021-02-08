@@ -1,4 +1,4 @@
-import { isAnimationControls } from "../../animation/AnimationControls"
+import { isAnimationControls } from "../../animation/animation-controls"
 import { MotionProps } from "../../motion"
 import { isForcedMotionValue } from "../../motion/utils/use-motion-values"
 import { TargetAndTransition, TargetResolver } from "../../types"

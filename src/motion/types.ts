@@ -1,6 +1,6 @@
 import { CSSProperties } from "react"
 import { MotionValue } from "../value"
-import { AnimationControls } from "../animation/AnimationControls"
+import { AnimationControls } from "../animation/animation-controls"
 import {
     Variants,
     Target,
@@ -13,6 +13,10 @@ import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
 import { ResolvedValues } from "../render/types"
+import {
+    LifecycleManager,
+    VisualElementLifecycles,
+} from "../render/utils/lifecycles"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -286,32 +290,7 @@ export interface AnimationProps {
 /**
  * @public
  */
-export interface MotionCallbacks {
-    /**
-     * Callback with latest motion values, fired max once per frame.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onUpdate(latest) {
-     *   console.log(latest.x, latest.opacity)
-     * }
-     *
-     * <Frame animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onUpdate(latest) {
-     *   console.log(latest.x, latest.opacity)
-     * }
-     *
-     * <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
-     * ```
-     */
-    onUpdate?(latest: { [key: string]: string | number }): void
-
+export interface MotionCallbacks extends VisualElementLifecycles {
     /**
      * Callback when animation defined in `animate` begins.
      *
@@ -422,7 +401,8 @@ export interface MotionProps
         GestureHandlers,
         DraggableProps,
         LayoutProps,
-        MotionAdvancedProps {
+        MotionAdvancedProps,
+        LifecycleManager {
     /**
      * Properties, variant label or array of variant labels to start in.
      *

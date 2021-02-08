@@ -6,7 +6,8 @@ import { MotionProps } from ".."
 import { MotionFeature } from "./types"
 
 /**
- * Load features via renderless components based on the provided MotionProps
+ * Load features via renderless components based on the provided MotionProps.
+ * TODO: Look into porting this to a component-less appraoch.
  */
 export function useFeatures(
     defaultFeatures: MotionFeature[],

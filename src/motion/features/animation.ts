@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { isAnimationControls } from "../../animation/AnimationControls"
+import { isAnimationControls } from "../../animation/animation-controls"
 import { createAnimationState } from "../../render/utils/animation-state"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FeatureProps, MotionFeature } from "./types"

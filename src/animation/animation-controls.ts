@@ -82,8 +82,7 @@ export interface AnimationControls {
      * @public
      */
     stop(): void
-    mount(): void
-    unmount(): void
+    mount(): () => void
 }
 
 export function animationControls(): AnimationControls {
@@ -110,6 +109,12 @@ export function animationControls(): AnimationControls {
         },
 
         start(definition, transitionOverride) {
+            /**
+             * TODO: We only perform this hasMounted check because in Framer we used to
+             * encourage the ability to start an animation within the render phase. This
+             * isn't behaviour concurrent-safe so when we make Framer concurrent-safe
+             * we can ditch this.
+             */
             if (hasMounted) {
                 const animations: Array<Promise<any>> = []
                 subscribers.forEach((visualElement) => {
@@ -153,11 +158,11 @@ export function animationControls(): AnimationControls {
             pendingAnimations.forEach(({ animation, resolve }) => {
                 controls.start(...animation).then(resolve)
             })
-        },
 
-        unmount() {
-            hasMounted = false
-            controls.stop()
+            return () => {
+                hasMounted = false
+                controls.stop()
+            }
         },
     }
 
