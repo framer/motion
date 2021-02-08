@@ -1,4 +1,4 @@
-import { animationControls } from "../../../animation/AnimationControls"
+import { animationControls } from "../../../animation/animation-controls"
 import { checkShouldInheritVariant } from "../should-inherit-variant"
 
 describe("checkShouldInheritVariant", () => {

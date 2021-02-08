@@ -1,4 +1,5 @@
 import { Ref } from "react"
+import { startAnimation } from "../animation/utils/transitions"
 import {
     Presence,
     SharedLayoutAnimationConfig,
@@ -44,6 +45,8 @@ export interface VisualElement<Instance = any, MutableState = any>
 
     setCrossfadeState(state: CrossfadeState): void
     layoutSafeToRemove?: () => void
+
+    animateMotionValue?: typeof startAnimation
 
     /**
      * Visibility

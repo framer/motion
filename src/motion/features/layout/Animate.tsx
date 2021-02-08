@@ -42,7 +42,7 @@ class Animate extends React.Component<AnimateProps> {
 
     componentDidMount() {
         const { visualElement } = this.props
-        ;(visualElement as any).animateMotionValue = startAnimation
+        visualElement.animateMotionValue = startAnimation
         visualElement.enableLayoutProjection()
         this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
         visualElement.layoutSafeToRemove = () => this.safeToRemove()

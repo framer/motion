@@ -812,13 +812,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 element.setProjectionTargetAxis(axis, v, v + length)
             )
 
-            // TODO: This is loaded in by Animate.tsx
-            return (element as any).animateMotionValue?.(
-                axis,
-                progress,
-                0,
-                transition
-            )
+            return element.animateMotionValue!(axis, progress, 0, transition)
         },
 
         /**
