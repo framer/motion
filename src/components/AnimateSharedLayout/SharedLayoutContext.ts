@@ -40,58 +40,48 @@ const defaultHandler: SyncLayoutLifecycles = {
 }
 
 /**
- * Sort VisualElements by tree depth, so we process the highest elements first.
- */
-const sortByDepth = (a: VisualElement, b: VisualElement) => a.depth - b.depth
-
-/**
  * Create a batcher to process VisualElements
  */
 export function createBatcher(): SyncLayoutBatcher {
     const queue = new Set<VisualElement>()
 
-    const add = (child: VisualElement) => queue.add(child)
+    return {
+        add: (child) => queue.add(child),
+        flush: ({ measureLayout, layoutReady, parent } = defaultHandler) => {
+            const resetAndMeasure = () => {
+                /**
+                 * Write: Reset any transforms on children elements so we can read their actual layout
+                 */
+                queue.forEach((child) => child.resetTransform())
 
-    const flush = ({
-        measureLayout,
-        layoutReady,
-        parent,
-    }: SyncLayoutLifecycles = defaultHandler) => {
-        const order = Array.from(queue).sort(sortByDepth)
+                /**
+                 * Read: Measure the actual layout
+                 */
+                queue.forEach(measureLayout)
+            }
 
-        const resetAndMeasure = () => {
+            parent
+                ? parent.withoutTransform(resetAndMeasure)
+                : resetAndMeasure()
+
             /**
-             * Write: Reset any transforms on children elements so we can read their actual layout
+             * Write: Notify the VisualElements they're ready for further write operations.
              */
-            order.forEach((child) => child.resetTransform())
+            queue.forEach(layoutReady)
 
             /**
-             * Read: Measure the actual layout
+             * After all children have started animating, ensure any Entering components are set to Present.
+             * If we add deferred animations (set up all animations and then start them in two loops) this
+             * could be moved to the start loop. But it needs to happen after all the animations configs
+             * are generated in AnimateSharedLayout as this relies on presence data
              */
-            order.forEach(measureLayout)
-        }
+            queue.forEach((child) => {
+                if (child.isPresent) child.presence = Presence.Present
+            })
 
-        parent ? parent.withoutTransform(resetAndMeasure) : resetAndMeasure()
-
-        /**
-         * Write: Notify the VisualElements they're ready for further write operations.
-         */
-        order.forEach(layoutReady)
-
-        /**
-         * After all children have started animating, ensure any Entering components are set to Present.
-         * If we add deferred animations (set up all animations and then start them in two loops) this
-         * could be moved to the start loop. But it needs to happen after all the animations configs
-         * are generated in AnimateSharedLayout as this relies on presence data
-         */
-        order.forEach((child) => {
-            if (child.isPresent) child.presence = Presence.Present
-        })
-
-        queue.clear()
+            queue.clear()
+        },
     }
-
-    return { add, flush }
 }
 
 export function isSharedLayout(
