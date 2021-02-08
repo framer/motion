@@ -23,7 +23,6 @@ import { htmlVisualElement } from "./html-visual-element"
 import { svgVisualElement } from "./svg-visual-element"
 import { isSVGComponent } from "./utils/is-svg-component"
 
-// TODO We can use a get snapshpt hook instead here
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
     return layoutGroupId && layoutId ? layoutGroupId + "-" + layoutId : layoutId
