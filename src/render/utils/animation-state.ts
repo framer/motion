@@ -1,6 +1,5 @@
 import { isAnimationControls } from "../../animation/animation-controls"
 import { isKeyframesTarget } from "../../animation/utils/is-keyframes-target"
-import { MotionProps } from "../../motion"
 import { VariantLabels } from "../../motion/types"
 import { TargetAndTransition } from "../../types"
 import { shallowCompare } from "../../utils/shallow-compare"
@@ -13,8 +12,7 @@ import {
 import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
 
 export interface AnimationState {
-    setProps: (
-        props: MotionProps,
+    animateChanges: (
         options?: AnimationOptions,
         type?: AnimationType
     ) => Promise<any>
@@ -108,8 +106,6 @@ export function createAnimationState(
         animate = makeAnimator(visualElement)
     }
 
-    let currentProps: MotionProps
-
     /**
      * When we receive new props, we need to:
      * 1. Create a list of protected keys for each type. This is a directory of
@@ -120,18 +116,12 @@ export function createAnimationState(
      * 3. Determine if any values have been removed from a type and figure out
      *    what to animate those to.
      */
-    function setProps(
-        props: MotionProps,
+    function animateChanges(
         options?: AnimationOptions,
         changedActiveType?: AnimationType
     ) {
+        const props = visualElement.getProps()
         const context = visualElement.getVariantContext(true) || {}
-
-        /**
-         * Keep track of the most recent props and contexts. setActive can pass these
-         * straight through rather than requiring external callers to have access to these.
-         */
-        currentProps = props
 
         /**
          * A list of animations that we'll build into as we iterate through the animation
@@ -252,7 +242,7 @@ export function createAnimationState(
 
             /**
              * Build an object of all the resolved values. We'll use this in the subsequent
-             * setProps calls to determine whether a value has changed.
+             * animateChanges calls to determine whether a value has changed.
              */
             let resolvedValues = definitionList.reduce(
                 buildResolvedTypeValues,
@@ -312,7 +302,7 @@ export function createAnimationState(
             }
 
             /**
-             * Update the typeState so next time setProps is called we can compare the
+             * Update the typeState so next time animateChanges is called we can compare the
              * latest prop and resolvedValues to these.
              */
             typeState.prevProp = prop
@@ -394,13 +384,13 @@ export function createAnimationState(
         )
 
         state[type].isActive = isActive
-        return setProps(currentProps, options, type)
+        return animateChanges(options, type)
     }
 
     return {
         getProtectedKeys,
         isAnimated,
-        setProps,
+        animateChanges,
         setActive,
         setAnimateFunction,
         getState: () => state,

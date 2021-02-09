@@ -5,12 +5,13 @@ import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext } from "./context/MotionContext"
-import { UseVisualElement } from "../render/types"
+import { CreateVisualElement } from "../render/types"
+import { useVisualElement } from "./utils/use-visual-element"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
     defaultFeatures: MotionFeature[]
-    useVisualElement: UseVisualElement<E>
+    createVisualElement: CreateVisualElement<E>
     useRender: RenderComponent
 }
 
@@ -27,7 +28,11 @@ export interface MotionComponentConfig<E> {
  */
 export function createMotionComponent<P extends {}, E>(
     Component: string | React.ComponentType<P>,
-    { defaultFeatures, useVisualElement, useRender }: MotionComponentConfig<E>
+    {
+        defaultFeatures,
+        createVisualElement,
+        useRender,
+    }: MotionComponentConfig<E>
 ) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
         /**
@@ -45,6 +50,7 @@ export function createMotionComponent<P extends {}, E>(
          * for more performant animations and interactions
          */
         const visualElement = useVisualElement(
+            createVisualElement,
             Component,
             props,
             isStatic,

@@ -4,13 +4,10 @@ import {
     Presence,
     SharedLayoutAnimationConfig,
 } from "../components/AnimateSharedLayout/types"
-import {
-    CrossfadeState,
-    Snapshot,
-} from "../components/AnimateSharedLayout/utils/stack"
+import { CrossfadeState } from "../components/AnimateSharedLayout/utils/stack"
 import { MotionProps } from "../motion/types"
 import { TargetAndTransition, Transition, Variant } from "../types"
-import { AxisBox2D } from "../types/geometry"
+import { AxisBox2D, Point2D } from "../types/geometry"
 import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
@@ -127,17 +124,12 @@ export interface VisualElement<Instance = any, MutableState = any>
     pointTo(element: VisualElement): void
     resetTransform(): void
 
-    // TODO save this somewhere else
     isPresent: boolean
     presence: Presence
     isPresenceRoot?: boolean
-    prevSnapshot?: Snapshot
+    prevDragCursor?: Point2D
     prevViewportBox?: AxisBox2D
     getLayoutId(): string | undefined
-
-    /**
-     * TODO Is this the best way to load in extra functionality?
-     */
     animationState?: AnimationState
 }
 
@@ -203,11 +195,10 @@ export type ExtendVisualElement<
     Element = any
 > = (element: VisualElement<Element>) => Extended
 
-export type UseVisualElement<E, P = MotionProps> = (
+export type CreateVisualElement<E, P = MotionProps> = (
     Component: string | React.ComponentType<P>,
-    props: MotionProps & P,
-    isStatic?: boolean,
-    ref?: Ref<E>
+    isStatic: boolean,
+    options: VisualElementOptions<E>
 ) => VisualElement<E>
 
 /**

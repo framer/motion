@@ -16,12 +16,9 @@ import {
 import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
+import { CreateVisualElement, VisualElement } from "../../render/types"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
-import { VisualElement } from "../types"
-import { htmlVisualElement } from "./html-visual-element"
-import { svgVisualElement } from "./svg-visual-element"
-import { isSVGComponent } from "./utils/is-svg-component"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
@@ -39,79 +36,69 @@ function useSnapshotOfLeadVisualElement(layoutId?: string) {
     })
 }
 
-export function useDomVisualElement<E>(
+type VisualElementRef = MutableRefObject<VisualElement | null>
+
+export function useVisualElement<E>(
+    createVisualElement: CreateVisualElement<E>,
     Component: string | ComponentType,
     props: MotionProps,
     isStatic: boolean,
-    ref: Ref<E>
-): VisualElement {
+    ref?: Ref<E>
+): VisualElement<E> {
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
     const snapshot = useSnapshotOfLeadVisualElement(layoutId)
 
-    const visualElementRef: MutableRefObject<VisualElement | null> = useRef(
-        null
-    )
+    const visualElementRef: VisualElementRef = useRef(null)
 
     if (isStatic && visualElementRef.current) {
+        /**
+         * Clear the VisualElement state in static mode after the initial render.
+         * This will allow the VisualElement to render every render as if its the first,
+         * with no history. This is basically a cheaper way of reinstantiating the VisualElement
+         * every render.
+         */
         visualElementRef.current.clearState(props)
-    }
-
-    if (!visualElementRef.current) {
-        const isSVG = isSVGComponent(Component)
-        // TODO: I believe this is the only DOM-specific line here, change useVisualElement to getVisualElementFactory
-        const factory = isSVG ? svgVisualElement : htmlVisualElement
-
-        visualElementRef.current = factory(
-            {
-                parent,
-                ref: ref as any,
-                isStatic,
-                props: { ...props, layoutId },
-                snapshot,
-                presenceId: presenceContext?.id,
-                blockInitialAnimation: presenceContext?.initial === false,
-            },
-            { enableHardwareAcceleration: !isStatic && !isSVG }
-        )
+    } else if (!visualElementRef.current) {
+        visualElementRef.current = createVisualElement(Component, isStatic, {
+            parent,
+            ref,
+            isStatic,
+            props: { ...props, layoutId },
+            snapshot,
+            presenceId: presenceContext?.id,
+            blockInitialAnimation: presenceContext?.initial === false,
+        })
     }
 
     const visualElement = visualElementRef.current
 
     useIsomorphicLayoutEffect(() => {
         visualElement.setProps({ ...props, layoutId })
-
-        /**
-         * Update VisualElement with presence data
-         */
         visualElement.isPresent = isPresent(presenceContext)
         visualElement.isPresenceRoot =
             !parent || parent.presenceId !== presenceContext?.id
 
-        // TODO: Fire visualElement layout listeners
-        // TODO: Do we need this at all?
+        /**
+         * Fire a render to ensure the latest state is reflected on-screen.
+         */
         if (!visualElement.isStatic) visualElement.syncRender()
     })
 
     /**
      * Don't fire unnecessary effects if this is a static component.
      */
-    if (visualElement.isStatic) return visualElement
+    if (isStatic) return visualElement
 
     useEffect(() => {
-        // TODO: visualElement aalready has props, we can do better here
-        visualElement.animationState?.setProps(props)
-
-        // TODO: Fire visualElement effect listeners
+        visualElement.animationState?.animateChanges()
     })
 
     /**
      * If this component is a child of AnimateSharedLayout, we need to snapshot the component
      * before it's unmounted. This lives here rather than in features/layout/Measure because
      * as a child component its unmount effect runs after this component has been unmounted.
-     *
-     * TODO: Fire visualElement unmount listeners
      */
     useSnapshotOnUnmount(visualElement)
 
