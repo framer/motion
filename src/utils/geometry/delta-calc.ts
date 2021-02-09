@@ -1,5 +1,6 @@
 import { Axis, AxisDelta, BoxDelta, AxisBox2D } from "../../types/geometry"
-import { mix, progress, clamp, distance } from "popmotion"
+import { mix, distance, progress, clamp } from "popmotion"
+import { ResolvedValues } from "../../render/types"
 
 const clampProgress = (v: number) => clamp(0, 1, v)
 
@@ -42,9 +43,9 @@ export function updateAxisDelta(
     delta: AxisDelta,
     source: Axis,
     target: Axis,
-    origin?: number
+    origin: number = 0.5
 ) {
-    delta.origin = origin === undefined ? calcOrigin(source, target) : origin
+    delta.origin = origin
     delta.originPoint = mix(source.min, source.max, delta.origin)
 
     delta.scale = calcLength(target) / calcLength(source)
@@ -65,8 +66,16 @@ export function updateBoxDelta(
     delta: BoxDelta,
     source: AxisBox2D,
     target: AxisBox2D,
-    origin?: number
+    origin: ResolvedValues
 ): void {
-    updateAxisDelta(delta.x, source.x, target.x, origin)
-    updateAxisDelta(delta.y, source.y, target.y, origin)
+    updateAxisDelta(delta.x, source.x, target.x, defaultOrigin(origin.originX))
+    updateAxisDelta(delta.y, source.y, target.y, defaultOrigin(origin.originY))
+}
+
+/**
+ * Currently this only accepts numerical origins, measured as 0-1, but could
+ * accept pixel values by comparing to the target axis.
+ */
+function defaultOrigin(origin: number | string | null) {
+    return typeof origin === "number" ? origin : 0.5
 }
