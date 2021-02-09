@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useDomVisualElement } from "./use-dom-visual-element"
+import { createDomVisualElement } from "./create-dom-visual-element"
 import { useRender } from "./use-render"
 import { HTMLMotionComponents, SVGMotionComponents } from "./types"
 import {
@@ -37,7 +37,7 @@ const allMotionFeatures = [
 ]
 
 const domBaseConfig = {
-    useVisualElement: useDomVisualElement as any,
+    createVisualElement: createDomVisualElement as any,
     useRender,
 }
 

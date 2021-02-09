@@ -1,5 +1,5 @@
 import { visualElement } from ".."
-import { isForcedMotionValue } from "../../motion/utils/use-motion-values"
+import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { VisualElementConfig } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
