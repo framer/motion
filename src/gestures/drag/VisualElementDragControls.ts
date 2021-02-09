@@ -480,7 +480,7 @@ export class VisualElementDragControls {
         this.visualElement.setProjectionTargetAxis(axis, min, min + axisLength)
     }
 
-    updateProps({
+    setProps({
         drag = false,
         dragDirectionLock = false,
         dragPropagation = false,

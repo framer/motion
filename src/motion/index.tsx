@@ -40,7 +40,7 @@ export function createMotionComponent<P extends {}, E>(
 
         /**
          * Create a VisualElement for this component. A VisualElement provides a common
-         * interface to renderer-specific APIs (ie DOM/Three. js etc) as well as
+         * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
          * providing a way of rendering to these APIs outside of the React render loop
          * for more performant animations and interactions
          */

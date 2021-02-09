@@ -80,7 +80,7 @@ export function useDomVisualElement<E>(
     const visualElement = visualElementRef.current
 
     useIsomorphicLayoutEffect(() => {
-        visualElement.updateProps({ ...props, layoutId })
+        visualElement.setProps({ ...props, layoutId })
 
         /**
          * Update VisualElement with presence data
