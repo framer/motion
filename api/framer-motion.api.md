@@ -181,7 +181,7 @@ export function createDomMotionComponent<T extends keyof MotionComponents>(key: 
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { defaultFeatures, useVisualElement, useRender }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
+export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { defaultFeatures, createVisualElement, useRender, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
 // @public
 export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>;
@@ -738,11 +738,6 @@ export function useDragControls(): DragControls;
 // @public
 export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValues;
 
-// Warning: (ae-internal-missing-underscore) The name "useExternalRef" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal
-export function useExternalRef<E = Element>(externalRef?: Ref<E>): RefObject<E>;
-
 // @public
 export function useGestures<GestureHandlers>(props: GestureHandlers, visualElement: VisualElement): void;
 
@@ -835,6 +830,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     animateMotionValue?: typeof startAnimation;
     // Warning: (ae-forgotten-export) The symbol "AnimationState" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
     animationState?: AnimationState;
     // (undocumented)
     blockInitialAnimation?: boolean;
@@ -940,10 +937,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     presence: Presence;
     // (undocumented)
     presenceId: number | undefined;
-    // Warning: (ae-forgotten-export) The symbol "Snapshot" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
-    prevSnapshot?: Snapshot;
+    prevDragCursor?: Point2D;
     // (undocumented)
     prevViewportBox?: AxisBox2D;
     // (undocumented)

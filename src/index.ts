@@ -66,7 +66,6 @@ export {
     DragControls,
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
-export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
 export { addScaleCorrection } from "./render/dom/projection/scale-correction"
 export { createCrossfadeState } from "./components/AnimateSharedLayout/utils/stack"

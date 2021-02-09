@@ -1,5 +1,5 @@
 import { MotionProps } from "../../../motion/types"
-import { isForcedMotionValue } from "../../../motion/utils/use-motion-values"
+import { isForcedMotionValue } from "../../../motion/utils/is-forced-motion-value"
 import { useConstant } from "../../../utils/use-constant"
 import { isMotionValue } from "../../../value/utils/is-motion-value"
 import { ResolvedValues, VisualElement } from "../../types"

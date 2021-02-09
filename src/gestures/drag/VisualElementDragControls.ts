@@ -659,11 +659,10 @@ export class VisualElementDragControls {
          * If the previous component with this same layoutId was dragging at the time
          * it was unmounted, we want to continue the same gesture on this component.
          */
-        const { prevSnapshot } = visualElement
-        prevSnapshot?.isDragging &&
-            this.start(lastPointerEvent, {
-                cursorProgress: prevSnapshot.cursorProgress,
-            })
+        const { prevDragCursor } = visualElement
+        if (prevDragCursor) {
+            this.start(lastPointerEvent, { cursorProgress: prevDragCursor })
+        }
 
         /**
          * Return a function that will teardown the drag gesture

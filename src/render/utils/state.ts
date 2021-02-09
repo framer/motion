@@ -1,6 +1,6 @@
 import { isAnimationControls } from "../../animation/animation-controls"
 import { MotionProps } from "../../motion"
-import { isForcedMotionValue } from "../../motion/utils/use-motion-values"
+import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
 import { AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { axisBox, delta } from "../../utils/geometry"
 import { isMotionValue } from "../../value/utils/is-motion-value"

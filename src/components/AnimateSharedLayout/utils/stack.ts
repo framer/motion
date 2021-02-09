@@ -7,13 +7,7 @@ import { createVisualState, VisualState } from "../../../render/utils/state"
 import { circOut, linear, mix, progress } from "popmotion"
 import { getFrameData } from "framesync"
 import { EasingFunction, Transition } from "../../../types"
-
-export interface Snapshot {
-    isDragging?: boolean
-    cursorProgress?: Point2D
-    latestMotionValues: ResolvedValues
-    boundingBox?: AxisBox2D
-}
+import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
 
 export type LeadAndFollow = [
     VisualElement | undefined,
@@ -139,6 +133,7 @@ export function layoutStack(): LayoutStack {
     let prevState: StackState = { ...state }
 
     let prevViewportBox: AxisBox2D | undefined
+    let prevDragCursor: Point2D | undefined
     let crossfadeState = createCrossfadeState(state)
     let needsCrossfadeAnimation = false
 
@@ -154,19 +149,30 @@ export function layoutStack(): LayoutStack {
         add(element) {
             element.setCrossfadeState(crossfadeState)
             stack.add(element)
+
+            /**
+             * Hydrate new element with previous drag position if we have one
+             */
+            if (prevDragCursor) element.prevDragCursor = prevDragCursor
+
             if (!state.lead) state.lead = element
         },
         remove(element) {
             stack.delete(element)
         },
-        getLead() {
-            return state.lead
-        },
+        getLead: () => state.lead,
         updateSnapshot() {
-            prevViewportBox = state.lead?.prevViewportBox
+            if (!state.lead) return
+
+            prevViewportBox = state.lead.prevViewportBox
+
+            const dragControls = elementDragControls.get(state.lead)
+            if (dragControls && dragControls.isDragging) {
+                prevDragCursor = dragControls.cursorProgress
+            }
         },
         clearSnapshot() {
-            prevViewportBox = undefined
+            prevDragCursor = prevViewportBox = undefined
         },
         // TODO We might not need this
         updateLeadAndFollow() {
