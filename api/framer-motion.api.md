@@ -350,9 +350,6 @@ export interface LayoutProps {
     layout?: boolean | "position";
     layoutId?: string;
     onLayoutAnimationComplete?(): void;
-    // @internal (undocumented)
-    onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void;
-    onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
 }
 
 // @public (undocumented)
@@ -372,15 +369,6 @@ export const motion: HTMLMotionComponents & SVGMotionComponents & {
 export interface MotionAdvancedProps {
     custom?: any;
     inherit?: boolean;
-}
-
-// @public (undocumented)
-export interface MotionCallbacks {
-    onAnimationComplete?(): void;
-    onAnimationStart?(): void;
-    onUpdate?(latest: {
-        [key: string]: string | number;
-    }): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "MotionConfigProps" needs to be exported by the entry point index.d.ts
@@ -410,8 +398,10 @@ export interface MotionFeature {
     shouldRender: (props: MotionProps) => boolean;
 }
 
+// Warning: (ae-forgotten-export) The symbol "VisualElementLifecycles" needs to be exported by the entry point index.d.ts
+// 
 // @public
-export interface MotionProps extends AnimationProps, MotionCallbacks, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
+export interface MotionProps extends AnimationProps, VisualElementLifecycles, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
@@ -840,6 +830,10 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     addValue(key: string, value: MotionValue<any>): void;
     // (undocumented)
     addVariantChild(child: VisualElement): undefined | (() => void);
+    // Warning: (ae-forgotten-export) The symbol "startAnimation" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    animateMotionValue?: typeof startAnimation;
     // Warning: (ae-forgotten-export) The symbol "AnimationState" needs to be exported by the entry point index.d.ts
     animationState?: AnimationState;
     // (undocumented)
@@ -881,11 +875,13 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getProjectionAnimationProgress(): MotionPoint;
     // (undocumented)
+    getProps(): MotionProps;
+    // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string, defaultValue: string | number): MotionValue;
-    // (undocumented)
     getValue(key: string): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
@@ -900,8 +896,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
         whileFocus?: string | string[];
         whileTap?: string | string[];
     };
-    // (undocumented)
-    getVariantData(): any;
     // Warning: (ae-forgotten-export) The symbol "VisualState" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -973,6 +967,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)
+    setProps(props: MotionProps): void;
+    // (undocumented)
     setStaticValue(key: string, value: number | string): void;
     // (undocumented)
     setVisibility(visibility: boolean): void;
@@ -996,8 +992,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     updateLayoutMeasurement(): void;
     // (undocumented)
     updateLayoutProjection(): void;
-    // (undocumented)
-    updateProps(props: MotionProps): void;
     // (undocumented)
     variantChildren?: Set<VisualElement>;
     // (undocumented)

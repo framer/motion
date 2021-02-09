@@ -74,9 +74,9 @@ export interface VisualElement<Instance = any, MutableState = any>
     getLatestValues(): ResolvedValues
     scheduleRender(): void
 
-    updateProps(props: MotionProps): void
+    setProps(props: MotionProps): void
+    getProps(): MotionProps
     getVariant(name: string): Variant | undefined
-    getVariantData(): any
     getDefaultTransition(): Transition | undefined
     getVariantContext(
         startAtParent?: boolean

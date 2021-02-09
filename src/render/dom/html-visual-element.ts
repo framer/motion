@@ -24,12 +24,14 @@ export const htmlConfig: VisualElementConfig<
 
     readValueFromInstance(domElement, key) {
         if (isTransformProp(key)) {
-            return getDefaultValueType(key)?.default || 0
+            const defaultType = getDefaultValueType(key)
+            return defaultType ? defaultType.default || 0 : 0
         } else {
+            const computedStyle = getComputedStyle(domElement)
             return (
                 (isCSSVariable(key)
-                    ? getComputedStyle(domElement).getPropertyValue(key)
-                    : getComputedStyle(domElement)[key]) || 0
+                    ? computedStyle.getPropertyValue(key)
+                    : computedStyle[key]) || 0
             )
         }
     },

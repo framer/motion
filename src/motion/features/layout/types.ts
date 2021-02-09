@@ -1,5 +1,3 @@
-import { AxisBox2D, BoxDelta } from "../../../types/geometry"
-
 /**
  * @public
  */

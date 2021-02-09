@@ -13,10 +13,7 @@ import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
 import { ResolvedValues } from "../render/types"
-import {
-    LifecycleManager,
-    VisualElementLifecycles,
-} from "../render/utils/lifecycles"
+import { VisualElementLifecycles } from "../render/utils/lifecycles"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -290,61 +287,6 @@ export interface AnimationProps {
 /**
  * @public
  */
-export interface MotionCallbacks extends VisualElementLifecycles {
-    /**
-     * Callback when animation defined in `animate` begins.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onStart() {
-     *   console.log("Animation started")
-     * }
-     *
-     * <Frame animate={{ x: 100 }} onAnimationStart={onStart} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onStart() {
-     *   console.log("Animation started")
-     * }
-     *
-     * <motion.div animate={{ x: 100 }} onAnimationStart={onStart} />
-     * ```
-     */
-    onAnimationStart?(): void
-
-    /**
-     * Callback when animation defined in `animate` is complete.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onComplete() {
-     *   console.log("Animation completed")
-     * }
-     *
-     * <Frame animate={{ x: 100 }} onAnimationComplete={onComplete} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onComplete() {
-     *   console.log("Animation completed")
-     * }
-     *
-     * <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />
-     * ```
-     */
-    onAnimationComplete?(): void
-}
-
-/**
- * @public
- */
 export interface MotionAdvancedProps {
     /**
      * Custom data to use to resolve dynamic variants differently for each animating component.
@@ -397,12 +339,11 @@ export interface MotionAdvancedProps {
  */
 export interface MotionProps
     extends AnimationProps,
-        MotionCallbacks,
+        VisualElementLifecycles,
         GestureHandlers,
         DraggableProps,
         LayoutProps,
-        MotionAdvancedProps,
-        LifecycleManager {
+        MotionAdvancedProps {
     /**
      * Properties, variant label or array of variant labels to start in.
      *

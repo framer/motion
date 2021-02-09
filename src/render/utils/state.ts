@@ -1,27 +1,11 @@
 import { isAnimationControls } from "../../animation/animation-controls"
 import { MotionProps } from "../../motion"
 import { isForcedMotionValue } from "../../motion/utils/use-motion-values"
-import { TargetAndTransition, TargetResolver } from "../../types"
 import { AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { axisBox, delta } from "../../utils/geometry"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { ResolvedValues, VisualElement } from "../types"
-import { checkIfControllingVariants } from "./variants"
-
-// TODO: This is a duplicate
-function resolveVariant(
-    props: MotionProps,
-    definition?: string | TargetAndTransition | TargetResolver,
-    custom?: any
-) {
-    if (typeof definition === "string") {
-        definition = props.variants?.[definition]
-    }
-
-    return typeof definition === "function"
-        ? definition(custom ?? props.custom, {}, {})
-        : definition
-}
+import { checkIfControllingVariants, resolveVariantFromProps } from "./variants"
 
 /**
  * Represents the size and position we want to project a given visual
@@ -119,7 +103,7 @@ function createInitialValues(
     ) {
         const list = Array.isArray(initialToSet) ? initialToSet : [initialToSet]
         list.forEach((definition) => {
-            const resolved = resolveVariant(props, definition)
+            const resolved = resolveVariantFromProps(props, definition)
             if (!resolved) return
 
             const { transitionEnd, transition, ...target } = resolved

@@ -53,7 +53,7 @@ function createTest(
         state: {
             ...element.animationState,
             setProps(newProps, options, type): any {
-                element.updateProps(newProps)
+                element.setProps(newProps)
                 return element.animationState?.setProps(newProps, options, type)
             },
         },
@@ -483,7 +483,7 @@ describe("Animation state - Setting props", () => {
         })
 
         const animate = mockAnimate(state)
-        parent.updateProps({ animate: "b" })
+        parent.setProps({ animate: "b" })
         state.setProps({
             style: { opacity: 1 },
             variants: {

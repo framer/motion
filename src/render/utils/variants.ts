@@ -1,7 +1,7 @@
 import { AnimationControls } from "../../animation/animation-controls"
 import { MotionProps } from "../../motion/types"
 import { TargetAndTransition, TargetResolver } from "../../types"
-import { VisualElement } from "../types"
+import { ResolvedValues, VisualElement } from "../types"
 
 /**
  * Decides if the supplied variable is an array of variant labels
@@ -37,6 +37,22 @@ function getVelocity(visualElement: VisualElement) {
     return velocity
 }
 
+export function resolveVariantFromProps(
+    props: MotionProps,
+    definition?: string | TargetAndTransition | TargetResolver,
+    custom?: any,
+    currentValues: ResolvedValues = {},
+    currentVelocity: ResolvedValues = {}
+) {
+    if (typeof definition === "string") {
+        definition = props.variants?.[definition]
+    }
+
+    return typeof definition === "function"
+        ? definition(custom ?? props.custom, currentValues, currentVelocity)
+        : definition
+}
+
 /**
  * Resovles a variant if it's a variant resolver
  */
@@ -45,17 +61,14 @@ export function resolveVariant(
     definition?: string | TargetAndTransition | TargetResolver,
     custom?: any
 ) {
-    if (typeof definition === "string") {
-        definition = visualElement.getVariant(definition)
-    }
-
-    return typeof definition === "function"
-        ? definition(
-              custom ?? visualElement.getVariantData(),
-              getCurrent(visualElement),
-              getVelocity(visualElement)
-          )
-        : definition
+    const props = visualElement.getProps()
+    return resolveVariantFromProps(
+        props,
+        definition,
+        custom ?? props.custom,
+        getCurrent(visualElement),
+        getVelocity(visualElement)
+    )
 }
 
 export function checkIfControllingVariants(props: MotionProps) {
