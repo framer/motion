@@ -235,7 +235,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 layoutState.deltaFinal,
                 layoutState.layoutCorrected,
                 projection.targetFinal,
-                0.5
+                visualState.values
             )
         }
 
@@ -245,20 +245,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
     function triggerBuild() {
         // TODO: Cut this down to one build, passing through crossfaded values
-        build(
-            element,
-            renderState,
-            /**
-             * TODO: This used to build leadVisualState and is now visualState
-             * Look into ditching visualState and just leading projection, allowing
-             * crossfade to blend between elements
-             * DO NOT MERGE before this is finalised
-             */
-            visualState,
-            layoutState,
-            options,
-            props
-        )
+        build(element, renderState, visualState, layoutState, options, props)
 
         if (crossfadeState && crossfadeState.isCrossfading()) {
             build(
@@ -289,7 +276,12 @@ export const visualElement = <Instance, MutableState, Options>({
         const prevTreeScaleY = treeScale.x
         const prevDeltaTransform = layoutState.deltaTransform
 
-        updateLayoutDeltas(layoutState, projection, element.path)
+        updateLayoutDeltas(
+            layoutState,
+            projection,
+            element.path,
+            visualState.values
+        )
 
         hasViewportBoxUpdated &&
             element.notifyViewportBoxUpdate(projection.target, delta)

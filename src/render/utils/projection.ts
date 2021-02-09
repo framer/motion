@@ -1,12 +1,13 @@
 import { applyTreeDeltas, resetBox } from "../../utils/geometry/delta-apply"
 import { updateBoxDelta } from "../../utils/geometry/delta-calc"
-import { VisualElement } from "../types"
+import { ResolvedValues, VisualElement } from "../types"
 import { LayoutState, TargetProjection } from "./state"
 
 export function updateLayoutDeltas(
     { delta, layout, layoutCorrected, treeScale }: LayoutState,
     { target }: TargetProjection,
-    treePath: VisualElement[]
+    treePath: VisualElement[],
+    transformOrigin: ResolvedValues
 ) {
     /**
      * Reset the corrected box with the latest values from box, as we're then going
@@ -29,5 +30,5 @@ export function updateLayoutDeltas(
      * to allow people to choose whether these styles are corrected based on just the
      * layout reprojection or the final bounding box.
      */
-    updateBoxDelta(delta, layoutCorrected, target, 0.5)
+    updateBoxDelta(delta, layoutCorrected, target, transformOrigin)
 }

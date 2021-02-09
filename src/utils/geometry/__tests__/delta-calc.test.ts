@@ -31,13 +31,14 @@ describe("updateAxisDelta", () => {
         updateAxisDelta(
             axisDelta,
             { min: 100, max: 200 },
-            { min: 300, max: 500 }
+            { min: 300, max: 500 },
+            0.5
         )
         expect(axisDelta).toEqual({
-            origin: 0,
-            originPoint: 100,
+            origin: 0.5,
+            originPoint: 150,
             scale: 2,
-            translate: 200,
+            translate: 250,
         })
     })
     test("Correctly updates the axis delta with a delta that will, when applied, project source onto delta with a defined origin", () => {
