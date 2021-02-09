@@ -696,7 +696,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * Update the provided props. Ensure any newly-added motion values are
          * added to our map, old ones removed, and listeners updated.
          */
-        updateProps(newProps) {
+        setProps(newProps) {
             props = newProps
             lifecycles.updatePropListeners(newProps)
 
@@ -707,17 +707,14 @@ export const visualElement = <Instance, MutableState, Options>({
             )
         },
 
+        getProps: () => props,
+
         // Variants ==============================
 
         /**
          * Returns the variant definition with a given name.
          */
         getVariant: (name) => props.variants?.[name],
-
-        /**
-         * Returns the data that should be used to resolve a variant resolver.
-         */
-        getVariantData: () => props.custom,
 
         /**
          * Returns the defined default transition on this component.

@@ -68,6 +68,56 @@ export interface VisualElementLifecycles {
      * ```
      */
     onUpdate?(latest: ResolvedValues): void
+
+    /**
+     * Callback when animation defined in `animate` begins.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onStart() {
+     *   console.log("Animation started")
+     * }
+     *
+     * <Frame animate={{ x: 100 }} onAnimationStart={onStart} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * function onStart() {
+     *   console.log("Animation started")
+     * }
+     *
+     * <motion.div animate={{ x: 100 }} onAnimationStart={onStart} />
+     * ```
+     */
+    onAnimationStart?(): void
+
+    /**
+     * Callback when animation defined in `animate` is complete.
+     *
+     * @library
+     *
+     * ```jsx
+     * function onComplete() {
+     *   console.log("Animation completed")
+     * }
+     *
+     * <Frame animate={{ x: 100 }} onAnimationComplete={onComplete} />
+     * ```
+     *
+     * @motion
+     *
+     * ```jsx
+     * function onComplete() {
+     *   console.log("Animation completed")
+     * }
+     *
+     * <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />
+     * ```
+     */
+    onAnimationComplete?(): void
 }
 
 export interface LifecycleManager {

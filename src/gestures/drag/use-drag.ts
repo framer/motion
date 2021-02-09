@@ -20,7 +20,7 @@ export function useDrag(props: DraggableProps, visualElement: VisualElement) {
         })
     })
 
-    dragControls.updateProps({ ...props, transformPagePoint })
+    dragControls.setProps({ ...props, transformPagePoint })
 
     // If we've been provided a DragControls for manual control over the drag gesture,
     // subscribe this component to it on mount.

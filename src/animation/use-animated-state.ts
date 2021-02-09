@@ -55,7 +55,7 @@ export function useAnimatedState(initialState: any) {
     }, [])
 
     useEffect(() => {
-        element.updateProps({
+        element.setProps({
             onUpdate: (v) => setAnimationState({ ...v }),
         })
     })

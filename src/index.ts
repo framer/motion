@@ -98,7 +98,6 @@ export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,
     MotionProps,
-    MotionCallbacks,
     MotionAdvancedProps,
     MotionStyle,
     MotionTransform,
