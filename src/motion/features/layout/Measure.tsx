@@ -79,6 +79,6 @@ function MeasureContextProvider(props: FeatureProps) {
 export const MeasureLayout: MotionFeature = {
     key: "measure-layout",
     shouldRender: (props: MotionProps) =>
-        !!props.drag || !!props.layout || !!props.layoutId,
+        !!props.drag || !!props.layout || props.layoutId !== undefined,
     getComponent: () => MeasureContextProvider,
 }

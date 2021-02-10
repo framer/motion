@@ -15,16 +15,16 @@ interface ListProps {
 
 const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul animate style={styles.list}>
+        <motion.ul layout style={styles.list} transition={{ duration: 3 }}>
             <AnimatePresence>
-                {list.map(id => (
+                {list.map((id) => (
                     <motion.li
                         style={{ ...styles.item, backgroundColor, z: 2 }}
                         key={id}
                         layoutId={id}
-                        animate
                         id={"list-" + id}
                         onClick={() => onItemClick(id)}
+                        transition={{ duration: 3 }}
                         //  drag
                     />
                 ))}
@@ -48,12 +48,12 @@ export const App = () => {
             <div style={styles.container}>
                 <List
                     list={lists[0]}
-                    onItemClick={id => moveItem(id, 1, lists, setLists)}
+                    onItemClick={(id) => moveItem(id, 1, lists, setLists)}
                     backgroundColor="red"
                 />
                 <List
                     list={lists[1]}
-                    onItemClick={id => moveItem(id, 0, lists, setLists)}
+                    onItemClick={(id) => moveItem(id, 0, lists, setLists)}
                     backgroundColor="blue"
                 />
             </div>

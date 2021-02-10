@@ -8,7 +8,6 @@ import { tweenAxis } from "./utils"
 import {
     SharedLayoutAnimationConfig,
     VisibilityAction,
-    Presence,
 } from "../../../components/AnimateSharedLayout/types"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
@@ -66,6 +65,7 @@ class Animate extends React.Component<AnimateProps> {
         }: SharedLayoutAnimationConfig = {}
     ) => {
         const { visualElement, layout } = this.props
+
         /**
          * Early return if we've been instructed not to animate this render.
          */
@@ -137,15 +137,9 @@ class Animate extends React.Component<AnimateProps> {
          * have successfully finished.
          */
         return Promise.all(animations).then(() => {
-            this.props.onLayoutAnimationComplete?.()
-            onComplete && onComplete()
             this.isAnimatingTree = false
-
-            if (visualElement.isPresent) {
-                visualElement.presence = Presence.Present
-            } else {
-                this.safeToRemove()
-            }
+            onComplete && onComplete()
+            visualElement.notifyLayoutAnimationComplete()
         })
     }
 
@@ -259,6 +253,7 @@ const defaultTransition = {
  */
 export const AnimateLayout: MotionFeature = {
     key: "animate-layout",
-    shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
+    shouldRender: (props: MotionProps) =>
+        !!props.layout || props.layoutId !== undefined,
     getComponent: () => AnimateLayoutContextProvider,
 }

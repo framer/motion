@@ -27,13 +27,18 @@ export function subscriptionManager<
         notify(a, b, c) {
             const numSubscriptions = subscriptions.length
 
-            if (!numSubscriptions) {
-                return
-            } else if (numSubscriptions === 1) {
+            if (!numSubscriptions) return
+
+            if (numSubscriptions === 1) {
                 subscriptions[0](a, b, c)
             } else {
                 for (let i = 0; i < numSubscriptions; i++) {
-                    subscriptions[i](a, b, c)
+                    /**
+                     * Check whether the handler exists before firing as it's possible
+                     * the subscriptions were modified during this loop running.
+                     */
+                    const handler = subscriptions[i]
+                    handler && handler(a, b, c)
                 }
             }
         },
