@@ -676,9 +676,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * synchronously. However in those instances other measures should be taken
          * to batch reads/writes.
          */
-        syncRender() {
-            render()
-        },
+        syncRender: render,
 
         /**
          * Update the provided props. Ensure any newly-added motion values are

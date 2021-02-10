@@ -28,6 +28,7 @@ export const App = () => {
                 </motion.div>
                 {isOn && (
                     <motion.div
+                        id="parent-2"
                         layoutId="parent"
                         transition={{ duration: 1 }}
                         style={bigParent}

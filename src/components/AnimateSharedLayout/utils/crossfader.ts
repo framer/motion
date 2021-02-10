@@ -54,7 +54,7 @@ export function createCrossfader(): Crossfader {
     /**
      *
      */
-    let hasRenderedFinalCrossfade = false
+    let hasRenderedFinalCrossfade = true
 
     /**
      * Framestamp of the last frame we updated values at.
