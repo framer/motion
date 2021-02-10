@@ -4,14 +4,14 @@ import {
     Presence,
     SharedLayoutAnimationConfig,
 } from "../components/AnimateSharedLayout/types"
-import { CrossfadeState } from "../components/AnimateSharedLayout/utils/stack"
+import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionProps } from "../motion/types"
 import { TargetAndTransition, Transition, Variant } from "../types"
 import { AxisBox2D, Point2D } from "../types/geometry"
 import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
-import { LayoutState, TargetProjection, VisualState } from "./utils/state"
+import { LayoutState, TargetProjection } from "./utils/state"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -40,7 +40,7 @@ export interface VisualElement<Instance = any, MutableState = any>
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
 
-    setCrossfadeState(state: CrossfadeState): void
+    setCrossfader(crossfader: Crossfader): void
     layoutSafeToRemove?: () => void
 
     animateMotionValue?: typeof startAnimation
@@ -61,8 +61,6 @@ export interface VisualElement<Instance = any, MutableState = any>
         defaultValue?: string | number
     ): undefined | MotionValue
     forEachValue(callback: (value: MotionValue, key: string) => void): void
-    getVisualState(): VisualState
-
     readValue(key: string): string | number | undefined | null
     setBaseTarget(key: string, value: string | number | null): void
     getBaseTarget(key: string): number | string | undefined | null
@@ -148,7 +146,8 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
     build(
         visualElement: VisualElement<Instance>,
         renderState: MutableState,
-        visualState: VisualState,
+        latestValues: ResolvedValues,
+        projection: TargetProjection,
         layoutState: LayoutState,
         options: Options,
         props: MotionProps

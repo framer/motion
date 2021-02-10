@@ -39,7 +39,7 @@ const stateVisualElement = visualElement<
 function createTest(
     props: MotionProps = {},
     parent: VisualElement<any> | undefined = undefined
-): { element: VisualElement; state: AnimationState } {
+): { element: VisualElement; state: any } {
     const element = stateVisualElement(
         { props, parent },
         {
@@ -52,9 +52,9 @@ function createTest(
         element: element,
         state: {
             ...element.animationState,
-            setProps(newProps, options, type): any {
+            setProps(newProps: any, options: any, type: any): any {
                 element.setProps(newProps)
-                return element.animationState?.setProps(newProps, options, type)
+                return element.animationState?.animateChanges(options, type)
             },
         },
     }

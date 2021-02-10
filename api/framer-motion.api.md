@@ -10,6 +10,7 @@ import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from 'popmotion';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { PlaybackControls } from 'popmotion';
 import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
@@ -30,7 +31,7 @@ export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): vo
 // Warning: (ae-forgotten-export) The symbol "PlaybackControls" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions_2<V>): PlaybackControls;
+export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions_2<V>): PlaybackControls_2;
 
 // @public (undocumented)
 export const AnimateLayoutFeature: MotionFeature;
@@ -166,11 +167,10 @@ export interface BoxDelta {
 // @public
 export function createBatcher(): SyncLayoutBatcher;
 
-// Warning: (ae-forgotten-export) The symbol "StackState" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "CrossfadeState" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "Crossfader" needs to be exported by the entry point index.d.ts
 // 
-// @public (undocumented)
-export function createCrossfadeState(state: StackState, forceCrossfade?: boolean): CrossfadeState;
+// @public
+export function createCrossfader(): Crossfader;
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
 // 
@@ -893,10 +893,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
         whileFocus?: string | string[];
         whileTap?: string | string[];
     };
-    // Warning: (ae-forgotten-export) The symbol "VisualState" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    getVisualState(): VisualState;
     // (undocumented)
     hasValue(key: string): boolean;
     isHoverEventsEnabled: boolean;
@@ -958,7 +954,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     setBaseTarget(key: string, value: string | number | null): void;
     // (undocumented)
-    setCrossfadeState(state: CrossfadeState): void;
+    setCrossfader(crossfader: Crossfader): void;
     // (undocumented)
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)
