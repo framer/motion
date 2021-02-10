@@ -11,6 +11,7 @@ const names = [
     "Update",
     "Render",
     "AnimationComplete",
+    "LayoutAnimationComplete",
     "AnimationStart",
     "SetAxisTarget",
 ]
@@ -118,6 +119,11 @@ export interface VisualElementLifecycles {
      * ```
      */
     onAnimationComplete?(): void
+
+    /**
+     * @internal
+     */
+    onLayoutAnimationComplete?(): void
 }
 
 export interface LifecycleManager {
@@ -133,6 +139,10 @@ export interface LifecycleManager {
     notifyAnimationStart: AnimationStartListener
     onAnimationComplete: (callback: AnimationCompleteListener) => () => void
     notifyAnimationComplete: AnimationCompleteListener
+    onLayoutAnimationComplete: (
+        callback: AnimationCompleteListener
+    ) => () => void
+    notifyLayoutAnimationComplete: AnimationCompleteListener
     onSetAxisTarget: (callback: SetAxisTargetListener) => () => void
     notifySetAxisTarget: SetAxisTargetListener
     onRender: (callback: RenderListener) => () => void
