@@ -251,14 +251,12 @@ function build(
             transformOrigin,
             transformKeys,
         },
+        latest,
         {
-            values: latest,
-            projection: {
-                target: targetBox,
-                isEnabled: isLayoutProjectionEnabled,
-                isTargetLocked: false,
-                targetFinal: targetBox,
-            },
+            target: targetBox,
+            isEnabled: isLayoutProjectionEnabled,
+            isTargetLocked: false,
+            targetFinal: targetBox,
         } as any,
         {
             delta,

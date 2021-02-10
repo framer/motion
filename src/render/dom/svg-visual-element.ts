@@ -77,10 +77,19 @@ export const svgVisualElement = visualElement<
         return newValues
     },
 
-    build(_element, renderState, visualState, layoutState, options, props) {
+    build(
+        _element,
+        renderState,
+        latestValues,
+        projection,
+        layoutState,
+        options,
+        props
+    ) {
         buildSVGAttrs(
             renderState,
-            visualState,
+            latestValues,
+            projection,
             layoutState,
             options,
             props.transformTemplate

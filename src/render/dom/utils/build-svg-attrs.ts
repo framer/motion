@@ -4,19 +4,14 @@ import { ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./svg-transform-origin"
 import { buildSVGPath } from "./svg-path"
 import { MotionProps } from "../../../motion/types"
-import { LayoutState, VisualState } from "../../utils/state"
+import { LayoutState, TargetProjection } from "../../utils/state"
 
 /**
  * Build SVG visual attrbutes, like cx and style.transform
  */
 export function buildSVGAttrs(
     state: SVGMutableState,
-    { values, projection }: VisualState,
-    layoutState: LayoutState,
-    options: DOMVisualElementOptions,
-    transformTemplate?: MotionProps["transformTemplate"]
-) {
-    const {
+    {
         attrX,
         attrY,
         originX,
@@ -26,10 +21,16 @@ export function buildSVGAttrs(
         pathOffset = 0,
         // This is object creation, which we try to avoid per-frame.
         ...latest
-    }: ResolvedValues = values
+    }: ResolvedValues,
+    projection: TargetProjection,
+    layoutState: LayoutState,
+    options: DOMVisualElementOptions,
+    transformTemplate?: MotionProps["transformTemplate"]
+) {
     buildHTMLStyles(
         state,
-        { values: latest, projection },
+        latest,
+        projection,
         layoutState,
         options,
         transformTemplate

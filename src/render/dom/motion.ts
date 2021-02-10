@@ -37,7 +37,7 @@ const allMotionFeatures = [
 ]
 
 const domBaseConfig = {
-    createVisualElement: createDomVisualElement as any,
+    createVisualElement: createDomVisualElement,
     useRender,
 }
 

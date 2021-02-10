@@ -148,7 +148,15 @@ export const htmlConfig: VisualElementConfig<
         return newValues
     },
 
-    build(element, renderState, visualState, layoutState, options, props) {
+    build(
+        element,
+        renderState,
+        latestValues,
+        projection,
+        layoutState,
+        options,
+        props
+    ) {
         if (element.isVisible !== undefined) {
             renderState.style.visibility = element.isVisible
                 ? "visible"
@@ -157,7 +165,8 @@ export const htmlConfig: VisualElementConfig<
 
         buildHTMLStyles(
             renderState,
-            visualState,
+            latestValues,
+            projection,
             layoutState,
             options,
             props.transformTemplate

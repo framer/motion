@@ -1,4 +1,4 @@
-import { createLayoutState, createVisualState } from "../../../utils/state"
+import { createLayoutState, createProjectionState } from "../../../utils/state"
 import {
     pixelsToPercent,
     correctBoxShadow,
@@ -61,8 +61,7 @@ describe("correctBoxShadow", () => {
 
 describe("correctBorderRadius", () => {
     test("Leaves non-pixel values alone", () => {
-        const visualState = createVisualState({})
-        const { projection } = visualState
+        const projection = createProjectionState()
         projection.target = {
             x: { min: 0, max: 0 },
             y: { min: 0, max: 0 },
@@ -73,8 +72,7 @@ describe("correctBorderRadius", () => {
     })
 
     test("Correctly scales pixel values by converting them to percentage of the viewport box", () => {
-        const visualState = createVisualState({})
-        const { projection } = visualState
+        const projection = createProjectionState()
         projection.target = {
             x: { min: 0, max: 100 },
             y: { min: 0, max: 200 },

@@ -36,33 +36,19 @@ export interface TargetProjection {
     targetFinal: AxisBox2D
 }
 
-/**
- * The visual state of a visual element. Contains the latest resolved
- * motion values and the target projection data.
- */
-export interface VisualState {
-    values: ResolvedValues
-    projection: TargetProjection
-}
+export const createProjectionState = () => ({
+    isEnabled: false,
+    isTargetLocked: false,
+    target: axisBox(),
+    targetFinal: axisBox(),
+})
 
-export function createVisualState(
+export const createVisualState = (
     props: MotionProps,
     parent?: VisualElement,
     blockInitialAnimation?: boolean,
     snapshot?: ResolvedValues
-): VisualState {
-    return {
-        values:
-            snapshot ||
-            createInitialValues(props, parent, blockInitialAnimation),
-        projection: {
-            isEnabled: false,
-            isTargetLocked: false,
-            target: axisBox(),
-            targetFinal: axisBox(),
-        },
-    }
-}
+) => snapshot || createInitialValues(props, parent, blockInitialAnimation)
 
 function createInitialValues(
     props: MotionProps,
