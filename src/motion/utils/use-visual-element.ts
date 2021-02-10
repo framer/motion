@@ -22,14 +22,16 @@ import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
-    return layoutGroupId && layoutId ? layoutGroupId + "-" + layoutId : layoutId
+    return layoutGroupId && layoutId !== undefined
+        ? layoutGroupId + "-" + layoutId
+        : layoutId
 }
 
 function useSnapshotOfLeadVisualElement(layoutId?: string) {
     const syncLayout = useContext(SharedLayoutContext)
 
     return useConstant(() => {
-        if (!isSharedLayout(syncLayout) || !layoutId) return
+        if (!isSharedLayout(syncLayout) || layoutId === undefined) return
 
         const lead = syncLayout.getLeadVisualElement(layoutId)
         return lead ? { ...lead.getLatestValues() } : undefined

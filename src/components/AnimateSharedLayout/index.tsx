@@ -112,7 +112,7 @@ export class AnimateSharedLayout extends React.Component<
         const handler: SyncLayoutLifecycles = {
             measureLayout: (child) => child.updateLayoutMeasurement(),
             layoutReady: (child) => {
-                if (child.getLayoutId()) {
+                if (child.getLayoutId() !== undefined) {
                     const stack = this.getStack(child)!
                     stack.animate(child, type === "crossfade")
                 } else {

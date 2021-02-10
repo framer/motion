@@ -1,4 +1,5 @@
 import sync, { cancelSync } from "framesync"
+import { pipe } from "popmotion"
 import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionStyle } from "../motion/types"
@@ -199,6 +200,7 @@ export const visualElement = <Instance, MutableState, Options>({
         element.stopLayoutAnimation()
         removeFromMotionTree?.()
         removeFromVariantTree?.()
+        unsubscribeFromLeadVisualElement?.()
         lifecycles.clearAllListeners()
     }
 
@@ -928,9 +930,20 @@ export const visualElement = <Instance, MutableState, Options>({
         pointTo(newLead) {
             leadProjection = newLead.getProjection()
             leadLatestValues = newLead.getLatestValues()
+
+            /**
+             * Subscribe to lead component's layout animations
+             */
             unsubscribeFromLeadVisualElement?.()
-            unsubscribeFromLeadVisualElement = newLead.onSetAxisTarget(
-                element.scheduleUpdateLayoutProjection
+            unsubscribeFromLeadVisualElement = pipe(
+                newLead.onSetAxisTarget(element.scheduleUpdateLayoutProjection),
+                newLead.onLayoutAnimationComplete(() => {
+                    if (element.isPresent) {
+                        element.presence = Presence.Present
+                    } else {
+                        element.layoutSafeToRemove?.()
+                    }
+                })
             )
         },
 
