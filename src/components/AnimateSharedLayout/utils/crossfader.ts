@@ -1,7 +1,6 @@
 import { getFrameData } from "framesync"
 import {
     circOut,
-    clamp,
     linear,
     mix,
     PlaybackControls,
@@ -10,7 +9,6 @@ import {
 import { animate } from "../../../animation/animate"
 import { ResolvedValues, VisualElement } from "../../../render/types"
 import { EasingFunction, Transition } from "../../../types"
-import { subscriptionManager } from "../../../utils/subscription-manager"
 import { motionValue } from "../../../value"
 
 export interface Crossfader {
@@ -63,15 +61,17 @@ export function createCrossfader(): Crossfader {
      */
     let prevUpdate = 0
 
-    const subscribers = subscriptionManager()
-
     function startCrossfadeAnimation(target: number, transition?: Transition) {
+        const { lead, follow } = options
         isActive = true
         hasRenderedFinalCrossfade = false
 
         return animate(progress, target, {
             ...transition,
-            onUpdate: subscribers.notify,
+            onUpdate: () => {
+                lead && lead.scheduleRender()
+                follow && follow.scheduleRender()
+            },
             onComplete: () => (isActive = false),
         } as any)
     }
@@ -116,10 +116,10 @@ export function createCrossfader(): Crossfader {
             const followTargetOpacity =
                 (follow?.getStaticValue("opacity") as number) ?? 1
 
-            leadState.opacity = mix(leadTargetOpacity, 0, easeCrossfadeOut(p))
+            leadState.opacity = mix(0, leadTargetOpacity, easeCrossfadeIn(p))
             followState.opacity = options.preserveFollowOpacity
                 ? followTargetOpacity
-                : mix(0, followTargetOpacity, easeCrossfadeIn(p))
+                : mix(followTargetOpacity, 0, easeCrossfadeOut(p))
         }
     }
 
@@ -148,8 +148,17 @@ export function createCrossfader(): Crossfader {
 const easeCrossfadeIn = compress(0, 0.5, circOut)
 const easeCrossfadeOut = compress(0.5, 0.95, linear)
 
-function compress(min: number, max: number, easing: EasingFunction) {
-    return (p: number) => clamp(0, 1, easing(calcProgress(min, max, p)))
+function compress(
+    min: number,
+    max: number,
+    easing: EasingFunction
+): EasingFunction {
+    return (p: number) => {
+        // Could replace ifs with clamp
+        if (p < min) return 0
+        if (p > max) return 1
+        return easing(calcProgress(min, max, p))
+    }
 }
 
 // const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
