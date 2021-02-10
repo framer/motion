@@ -48,16 +48,18 @@ export function createBatcher(): SyncLayoutBatcher {
     return {
         add: (child) => queue.add(child),
         flush: ({ measureLayout, layoutReady, parent } = defaultHandler) => {
+            const order = Array.from(queue).sort((a, b) => a.depth - b.depth)
+
             const resetAndMeasure = () => {
                 /**
                  * Write: Reset any transforms on children elements so we can read their actual layout
                  */
-                queue.forEach((child) => child.resetTransform())
+                order.forEach((child) => child.resetTransform())
 
                 /**
                  * Read: Measure the actual layout
                  */
-                queue.forEach(measureLayout)
+                order.forEach(measureLayout)
             }
 
             parent
@@ -67,7 +69,7 @@ export function createBatcher(): SyncLayoutBatcher {
             /**
              * Write: Notify the VisualElements they're ready for further write operations.
              */
-            queue.forEach(layoutReady)
+            order.forEach(layoutReady)
 
             /**
              * After all children have started animating, ensure any Entering components are set to Present.
@@ -75,7 +77,7 @@ export function createBatcher(): SyncLayoutBatcher {
              * could be moved to the start loop. But it needs to happen after all the animations configs
              * are generated in AnimateSharedLayout as this relies on presence data
              */
-            queue.forEach((child) => {
+            order.forEach((child) => {
                 if (child.isPresent) child.presence = Presence.Present
             })
 
