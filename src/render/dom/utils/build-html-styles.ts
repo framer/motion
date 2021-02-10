@@ -1,5 +1,6 @@
 import { MotionProps } from "../../../motion"
-import { LayoutState, VisualState } from "../../utils/state"
+import { ResolvedValues } from "../../types"
+import { LayoutState, TargetProjection } from "../../utils/state"
 import { valueScaleCorrection } from "../projection/scale-correction"
 import { DOMVisualElementOptions, HTMLMutableState } from "../types"
 import {
@@ -14,7 +15,8 @@ import { getDefaultValueType, getValueAsType } from "./value-types"
 
 export function buildHTMLStyles(
     state: HTMLMutableState,
-    { values: latest, projection }: VisualState,
+    latestValues: ResolvedValues,
+    projection: TargetProjection,
     layoutState: LayoutState,
     options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
@@ -39,8 +41,8 @@ export function buildHTMLStyles(
      *
      * Transforms and transform origins are kept seperately for further processing.
      */
-    for (const key in latest) {
-        const value = latest[key]
+    for (const key in latestValues) {
+        const value = latestValues[key]
 
         /**
          * If this is a CSS variable we don't do any further processing.

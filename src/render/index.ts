@@ -1,6 +1,6 @@
 import sync, { cancelSync } from "framesync"
 import { Presence } from "../components/AnimateSharedLayout/types"
-import { CrossfadeState } from "../components/AnimateSharedLayout/utils/stack"
+import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionStyle } from "../motion/types"
 import { eachAxis } from "../utils/each-axis"
 import { copyAxisBox } from "../utils/geometry"
@@ -23,7 +23,11 @@ import { variantPriorityOrder } from "./utils/animation-state"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
-import { createLayoutState, createVisualState } from "./utils/state"
+import {
+    createLayoutState,
+    createProjectionState,
+    createVisualState,
+} from "./utils/state"
 import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
@@ -74,10 +78,14 @@ export const visualElement = <Instance, MutableState, Options>({
     const lifecycles = createLifecycles()
 
     /**
-     * The latest resolved motion values and target projection.
-     * It's from this state that a specific renderer can compute its appearance.
+     *
      */
-    let visualState = createVisualState(
+    const projection = createProjectionState()
+
+    /**
+     * The latest resolved motion values.
+     */
+    let latestValues = createVisualState(
         props,
         parent,
         blockInitialAnimation,
@@ -91,7 +99,8 @@ export const visualElement = <Instance, MutableState, Options>({
      * AnimateSharedLayout. All the other visual elements will take on the visual
      * appearance of the lead while they crossfade to it.
      */
-    let leadVisualState = visualState
+    let leadProjection = projection
+    let leadLatestValues = latestValues
     let unsubscribeFromLeadVisualElement: Function
 
     /**
@@ -112,7 +121,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      *
      */
-    let crossfadeState: CrossfadeState
+    let crossfader: Crossfader
 
     /**
      * Keep track of whether the viewport box has been updated since the
@@ -151,11 +160,9 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      * When values are removed from all animation props we need to search
      * for a fallback value to animate to. These values are tracked in baseTarget.
-     *
-     * TODO: Maybe put in visualState?
      */
     const baseTarget: { [key: string]: string | number | null } = {
-        ...visualState.values,
+        ...latestValues,
     }
 
     // Internal methods ========================
@@ -199,7 +206,7 @@ export const visualElement = <Instance, MutableState, Options>({
      *
      */
     function isProjecting() {
-        return visualState.projection.isEnabled && layoutState.isHydrated
+        return projection.isEnabled && layoutState.isHydrated
     }
 
     /**
@@ -212,8 +219,6 @@ export const visualElement = <Instance, MutableState, Options>({
          * This is duplicated work during crossfades
          */
         if (isProjecting()) {
-            const { projection } = leadVisualState
-
             /**
              * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
              * This is the final box that we will then project into by calculating a transform delta and
@@ -222,7 +227,7 @@ export const visualElement = <Instance, MutableState, Options>({
             applyBoxTransforms(
                 projection.targetFinal,
                 projection.target,
-                leadVisualState.values
+                leadLatestValues
             )
 
             /**
@@ -235,7 +240,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 layoutState.deltaFinal,
                 layoutState.layoutCorrected,
                 projection.targetFinal,
-                visualState.values
+                latestValues
             )
         }
 
@@ -244,44 +249,33 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     function triggerBuild() {
-        // TODO: Cut this down to one build, passing through crossfaded values
-        build(element, renderState, visualState, layoutState, options, props)
-
-        if (crossfadeState && crossfadeState.isCrossfading()) {
-            build(
-                element,
-                renderState,
-                crossfadeState.getValues(element),
-                layoutState,
-                options,
-                props
-            )
+        let valuesToRender = latestValues
+        if (crossfader && crossfader.isActive()) {
+            valuesToRender = crossfader.getCrossfadeState(element)
         }
+
+        build(
+            element,
+            renderState,
+            valuesToRender,
+            leadProjection,
+            layoutState,
+            options,
+            props
+        )
     }
 
-    /**
-     *
-     */
     function update() {
-        lifecycles.notifyUpdate(visualState.values)
+        lifecycles.notifyUpdate(latestValues)
     }
 
-    /**
-     *
-     */
     function updateLayoutProjection() {
-        const { projection } = leadVisualState
         const { delta, treeScale } = layoutState
         const prevTreeScaleX = treeScale.x
         const prevTreeScaleY = treeScale.x
         const prevDeltaTransform = layoutState.deltaTransform
 
-        updateLayoutDeltas(
-            layoutState,
-            projection,
-            element.path,
-            visualState.values
-        )
+        updateLayoutDeltas(layoutState, projection, element.path, latestValues)
 
         hasViewportBoxUpdated &&
             element.notifyViewportBoxUpdate(projection.target, delta)
@@ -306,7 +300,7 @@ export const visualElement = <Instance, MutableState, Options>({
     function bindToMotionValue(key: string, value: MotionValue) {
         const removeOnChange = value.onChange(
             (latestValue: string | number) => {
-                visualState.values[key] = latestValue
+                latestValues[key] = latestValue
                 props.onUpdate && sync.update(update, false, true)
             }
         )
@@ -334,8 +328,8 @@ export const visualElement = <Instance, MutableState, Options>({
     const initialMotionValues = scrapeMotionValuesFromProps(props)
     for (const key in initialMotionValues) {
         const value = initialMotionValues[key]
-        if (visualState.values[key] !== undefined && isMotionValue(value)) {
-            value.set(visualState.values[key], false)
+        if (latestValues[key] !== undefined && isMotionValue(value)) {
+            value.set(latestValues[key], false)
         }
     }
 
@@ -470,8 +464,6 @@ export const visualElement = <Instance, MutableState, Options>({
         getClosestVariantNode: () =>
             isVariantNode ? element : parent?.getClosestVariantNode(),
 
-        getVisualState: () => visualState,
-
         /**
          * A method that schedules an update to layout projections throughout
          * the tree. We inherit from the parent so there's only ever one
@@ -494,15 +486,15 @@ export const visualElement = <Instance, MutableState, Options>({
         /**
          * Get/set the latest static values.
          */
-        getStaticValue: (key) => visualState.values[key],
-        setStaticValue: (key, value) => (visualState.values[key] = value),
+        getStaticValue: (key) => latestValues[key],
+        setStaticValue: (key, value) => (latestValues[key] = value),
 
         /**
          * Returns the latest motion value state. Currently only used to take
          * a snapshot of the visual element - perhaps this can return the whole
          * visual state
          */
-        getLatestValues: () => visualState.values,
+        getLatestValues: () => latestValues,
 
         /**
          * Replaces the current mutable states with fresh ones. This is used
@@ -512,7 +504,7 @@ export const visualElement = <Instance, MutableState, Options>({
         clearState(newProps) {
             values.clear()
             props = newProps
-            leadVisualState = visualState = createVisualState(
+            leadLatestValues = latestValues = createVisualState(
                 props,
                 parent,
                 blockInitialAnimation
@@ -569,7 +561,7 @@ export const visualElement = <Instance, MutableState, Options>({
             if (element.hasValue(key)) element.removeValue(key)
 
             values.set(key, value)
-            visualState.values[key] = value.get()
+            latestValues[key] = value.get()
             bindToMotionValue(key, value)
         },
 
@@ -580,7 +572,7 @@ export const visualElement = <Instance, MutableState, Options>({
             values.delete(key)
             valueSubscriptions.get(key)?.()
             valueSubscriptions.delete(key)
-            delete visualState.values[key]
+            delete latestValues[key]
             removeValueFromMutableState(key, renderState)
         },
 
@@ -615,8 +607,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * directly from the instance (which might have performance implications).
          */
         readValue: (key: string) =>
-            visualState.values[key] ??
-            readValueFromInstance(instance, key, options),
+            latestValues[key] ?? readValueFromInstance(instance, key, options),
 
         /**
          * Set the base target to later animate back to. This is currently
@@ -712,6 +703,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * Returns the defined default transition on this component.
          */
         getDefaultTransition: () => props.transition,
+
         /**
          * Used by child variant nodes to get the closest ancestor variant props.
          */
@@ -746,7 +738,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * occur until we also have hydrated layout measurements.
          */
         enableLayoutProjection() {
-            visualState.projection.isEnabled = true
+            projection.isEnabled = true
         },
 
         /**
@@ -754,11 +746,11 @@ export const visualElement = <Instance, MutableState, Options>({
          * nothing else can try and animate it.
          */
         lockProjectionTarget() {
-            visualState.projection.isTargetLocked = true
+            projection.isTargetLocked = true
         },
         unlockProjectionTarget() {
             element.stopLayoutAnimation()
-            visualState.projection.isTargetLocked = false
+            projection.isTargetLocked = false
         },
 
         /**
@@ -778,11 +770,11 @@ export const visualElement = <Instance, MutableState, Options>({
         /**
          * Get the projection state.
          */
-        getProjection: () => visualState.projection,
+        getProjection: () => projection,
         getLayoutState: () => layoutState,
 
-        setCrossfadeState(stackCrossfadeState) {
-            crossfadeState = stackCrossfadeState
+        setCrossfader(newCrossfader) {
+            crossfader = newCrossfader
         },
 
         /**
@@ -791,7 +783,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         startLayoutAnimation(axis, transition) {
             const progress = element.getProjectionAnimationProgress()[axis]
-            const { min, max } = visualState.projection.target[axis]
+            const { min, max } = projection.target[axis]
             const length = max - min
 
             progress.clearListeners()
@@ -820,8 +812,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         measureViewportBox(withTransform = true) {
             const viewportBox = measureViewportBox(instance, options)
-            if (!withTransform)
-                removeBoxTransforms(viewportBox, visualState.values)
+            if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
             return viewportBox
         },
 
@@ -860,7 +851,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * the tree layout projection.
          */
         setProjectionTargetAxis(axis, min, max) {
-            const target = visualState.projection.target[axis]
+            const target = projection.target[axis]
             target.min = min
             target.max = max
 
@@ -880,7 +871,7 @@ export const visualElement = <Instance, MutableState, Options>({
             const { x, y } = element.getProjectionAnimationProgress()
 
             const shouldRebase =
-                !visualState.projection.isTargetLocked &&
+                !projection.isTargetLocked &&
                 !x.isAnimating() &&
                 !y.isAnimating()
 
@@ -915,7 +906,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * upwards through the tree.
          */
         withoutTransform(callback) {
-            const { isEnabled } = visualState.projection
+            const { isEnabled } = projection
             isEnabled && element.resetTransform()
 
             parent ? parent.withoutTransform(callback) : callback()
@@ -932,7 +923,8 @@ export const visualElement = <Instance, MutableState, Options>({
          *
          */
         pointTo(newLead) {
-            leadVisualState = newLead.getVisualState()
+            leadProjection = newLead.getProjection()
+            leadLatestValues = newLead.getLatestValues()
             unsubscribeFromLeadVisualElement?.()
             unsubscribeFromLeadVisualElement = newLead.onSetAxisTarget(
                 element.scheduleUpdateLayoutProjection
