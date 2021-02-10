@@ -225,8 +225,8 @@ export const visualElement = <Instance, MutableState, Options>({
              * applying it to the corrected box.
              */
             applyBoxTransforms(
-                projection.targetFinal,
-                projection.target,
+                leadProjection.targetFinal,
+                leadProjection.target,
                 leadLatestValues
             )
 
@@ -239,7 +239,7 @@ export const visualElement = <Instance, MutableState, Options>({
             updateBoxDelta(
                 layoutState.deltaFinal,
                 layoutState.layoutCorrected,
-                projection.targetFinal,
+                leadProjection.targetFinal,
                 latestValues
             )
         }
@@ -275,10 +275,15 @@ export const visualElement = <Instance, MutableState, Options>({
         const prevTreeScaleY = treeScale.x
         const prevDeltaTransform = layoutState.deltaTransform
 
-        updateLayoutDeltas(layoutState, projection, element.path, latestValues)
+        updateLayoutDeltas(
+            layoutState,
+            leadProjection,
+            element.path,
+            latestValues
+        )
 
         hasViewportBoxUpdated &&
-            element.notifyViewportBoxUpdate(projection.target, delta)
+            element.notifyViewportBoxUpdate(leadProjection.target, delta)
         hasViewportBoxUpdated = false
 
         const deltaTransform = buildLayoutProjectionTransform(delta, treeScale)
