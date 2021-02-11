@@ -3,6 +3,7 @@ import {
     circOut,
     linear,
     mix,
+    mixColor,
     PlaybackControls,
     progress as calcProgress,
 } from "popmotion"
@@ -18,11 +19,13 @@ export interface Crossfader {
     to(transition?: Transition): PlaybackControls
     setOptions(options: CrossfadeAnimationOptions): void
     reset(): void
+    getLatestValues(): ResolvedValues
 }
 
 export interface CrossfadeAnimationOptions {
     lead?: VisualElement
     follow?: VisualElement
+    prevValues?: ResolvedValues
     crossfadeOpacity?: boolean
     preserveFollowOpacity?: boolean
 }
@@ -65,7 +68,6 @@ export function createCrossfader(): Crossfader {
         const { lead, follow } = options
         isActive = true
         hasRenderedFinalCrossfade = false
-
         return animate(progress, target, {
             ...transition,
             onUpdate: () => {
@@ -93,8 +95,10 @@ export function createCrossfader(): Crossfader {
          */
         const latestLeadValues = lead.getLatestValues()
         Object.assign(leadState, latestLeadValues)
-        const latestFollowValues = follow?.getLatestValues()
-        follow && Object.assign(followState, latestFollowValues)
+        const latestFollowValues = follow
+            ? follow.getLatestValues()
+            : options.prevValues
+        Object.assign(followState, latestFollowValues)
 
         /**
          * If the crossfade animation is no longer active, flag that we've
@@ -112,27 +116,15 @@ export function createCrossfader(): Crossfader {
          * Crossfade the opacity between the two components. This will result
          * in a different opacity for each component.
          */
-        if (options.crossfadeOpacity) {
-            const leadTargetOpacity = (latestLeadValues.opacity as number) ?? 1
-            const followTargetOpacity =
-                (latestFollowValues?.opacity as number) ?? 1
-
-            if (follow) {
-                leadState.opacity = mix(
-                    0,
-                    leadTargetOpacity,
-                    easeCrossfadeIn(p)
-                )
-                followState.opacity = options.preserveFollowOpacity
-                    ? followTargetOpacity
-                    : mix(followTargetOpacity, 0, easeCrossfadeOut(p))
-            } else {
-                leadState.opacity = mix(
-                    followTargetOpacity,
-                    leadTargetOpacity,
-                    p
-                )
-            }
+        const leadTargetOpacity = (latestLeadValues.opacity as number) ?? 1
+        const followTargetOpacity = (latestFollowValues?.opacity as number) ?? 1
+        if (options.crossfadeOpacity && follow) {
+            leadState.opacity = mix(0, leadTargetOpacity, easeCrossfadeIn(p))
+            followState.opacity = options.preserveFollowOpacity
+                ? followTargetOpacity
+                : mix(followTargetOpacity, 0, easeCrossfadeOut(p))
+        } else if (!follow) {
+            leadState.opacity = mix(followTargetOpacity, leadTargetOpacity, p)
         }
 
         mixValues(
@@ -140,6 +132,7 @@ export function createCrossfader(): Crossfader {
             followState,
             latestLeadValues,
             latestFollowValues || {},
+            Boolean(follow),
             p
         )
     }
@@ -150,7 +143,7 @@ export function createCrossfader(): Crossfader {
             return startCrossfadeAnimation(0, transition)
         },
         to(transition) {
-            progress.set(1 - progress.get())
+            progress.set(options.follow ? 1 - progress.get() : 0)
             return startCrossfadeAnimation(1, transition)
         },
         reset: () => progress.set(1),
@@ -162,6 +155,9 @@ export function createCrossfader(): Crossfader {
             options = newOptions
             leadState = {}
             followState = {}
+        },
+        getLatestValues() {
+            return leadState
         },
     }
 }
@@ -190,6 +186,7 @@ function mixValues(
     followState: ResolvedValues,
     latestLeadValues: ResolvedValues,
     latestFollowValues: ResolvedValues,
+    hasFollowElement: boolean,
     p: number
 ): void {
     /**
@@ -224,6 +221,30 @@ function mixValues(
             p
         )
         leadState.rotate = followState.rotate = rotate
+    }
+
+    /**
+     * We only want to mix the background color if there's a follow element
+     * that we're not crossfading opacity between. For instance with switch
+     * AnimateSharedLayout animations, this helps the illusion of a continuous
+     * element being animated but also cuts down on the number of paints triggered
+     * for elements where opacity is doing that work for us.
+     */
+    if (
+        !hasFollowElement &&
+        latestLeadValues.backgroundColor &&
+        latestFollowValues.backgroundColor
+    ) {
+        /**
+         * This isn't ideal performance-wise as mixColor is creating a new function every frame.
+         * We could probably create a mixer that runs at the start of the animation but
+         * the idea behind the crossfader is that it runs dynamically between two potentially
+         * changing targets (ie opacity or borderRadius may be animating independently via variants)
+         */
+        leadState.backgroundColor = followState.backgroundColor = mixColor(
+            latestFollowValues.backgroundColor as string,
+            latestLeadValues.backgroundColor as string
+        )(p)
     }
 }
 

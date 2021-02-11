@@ -901,8 +901,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     isPresent: boolean;
     // (undocumented)
-    isResumingFromSnapshot: boolean;
-    // (undocumented)
     isStatic?: boolean;
     isVisible?: boolean;
     // (undocumented)
@@ -991,7 +989,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
 // Warning: (ae-forgotten-export) The symbol "VisualElementOptions" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, snapshot, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
+export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
 
 
 // (No @packageDocumentation comment for this package)
