@@ -29,7 +29,6 @@ export interface VisualElement<Instance = any, MutableState = any>
     variantChildren?: Set<VisualElement>
     isMounted(): boolean
     isStatic?: boolean
-    isResumingFromSnapshot: boolean
     clearState(props: MotionProps): void
     getInstance(): Instance | null
     path: VisualElement[]

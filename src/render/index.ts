@@ -52,7 +52,6 @@ export const visualElement = <Instance, MutableState, Options>({
         ref: externalRef,
         props,
         isStatic,
-        snapshot,
         presenceId,
         blockInitialAnimation,
     }: VisualElementOptions<Instance>,
@@ -86,12 +85,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      * The latest resolved motion values.
      */
-    let latestValues = createVisualState(
-        props,
-        parent,
-        blockInitialAnimation,
-        snapshot
-    )
+    let latestValues = createVisualState(props, parent, blockInitialAnimation)
 
     /**
      * This is a reference to the visual state of the "lead" visual element.
@@ -404,13 +398,6 @@ export const visualElement = <Instance, MutableState, Options>({
          * at the same time as it to mount as if they have initial={false} set.
          */
         blockInitialAnimation,
-
-        /**
-         * Used by animation state to determine whether to treat this component's
-         * initial animation like an initial animation or a subsequent one, as if
-         * its resuming from a previous component.
-         */
-        isResumingFromSnapshot: !!snapshot,
 
         /**
          * If a visual element is static, it's essentially in "pure" mode with
