@@ -3,8 +3,13 @@ import { motion, useMotionValue } from "@framer"
 
 export function App() {
     const backgroundColor = useMotionValue("#f00")
+    const [isActive, setIsActive] = React.useState(true)
     return (
-        <motion.div initial="initial" animate="to">
+        <motion.div
+            initial="initial"
+            animate={isActive ? "to" : "initial"}
+            onClick={() => setIsActive(!isActive)}
+        >
             <motion.div>
                 <motion.div
                     variants={{
@@ -13,7 +18,6 @@ export function App() {
                         },
                         to: {
                             backgroundColor: "#00f",
-                            transition: { type: false },
                         },
                     }}
                     style={{ ...box, backgroundColor }}
