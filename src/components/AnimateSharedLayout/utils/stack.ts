@@ -1,6 +1,6 @@
 import { Presence, SharedLayoutAnimationConfig } from "../types"
 import { AxisBox2D, Point2D } from "../../../types/geometry"
-import { VisualElement } from "../../../render/types"
+import { ResolvedValues, VisualElement } from "../../../render/types"
 import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
 import { createCrossfader } from "./crossfader"
 
@@ -30,6 +30,7 @@ export function layoutStack(): LayoutStack {
     const state: StackState = { leadIsExiting: false }
     let prevState: StackState = { ...state }
 
+    let prevValues: ResolvedValues | undefined
     let prevViewportBox: AxisBox2D | undefined
     let prevDragCursor: Point2D | undefined
     const crossfader = createCrossfader()
@@ -62,6 +63,9 @@ export function layoutStack(): LayoutStack {
         updateSnapshot() {
             if (!state.lead) return
 
+            prevValues = crossfader.isActive()
+                ? crossfader.getLatestValues()
+                : state.lead.getLatestValues()
             prevViewportBox = state.lead.prevViewportBox
 
             const dragControls = elementDragControls.get(state.lead)
@@ -89,23 +93,19 @@ export function layoutStack(): LayoutStack {
             state.follow = follow
             state.leadIsExiting = state.lead?.presence === Presence.Exiting
 
-            lead &&
-                crossfader.setOptions({
-                    lead,
-                    follow,
-                    crossfadeOpacity:
-                        follow?.isPresenceRoot || lead?.isPresenceRoot,
-                })
+            crossfader.setOptions({
+                lead,
+                follow,
+                prevValues,
+                crossfadeOpacity:
+                    follow?.isPresenceRoot || lead?.isPresenceRoot,
+            })
 
             if (
                 prevState.lead !== state.lead ||
                 prevState.leadIsExiting !== state.leadIsExiting
             ) {
-                if (!state.follow) {
-                    crossfader.reset()
-                } else {
-                    needsCrossfadeAnimation = true
-                }
+                needsCrossfadeAnimation = true
             }
         },
         animate(child, shouldCrossfade = false) {
