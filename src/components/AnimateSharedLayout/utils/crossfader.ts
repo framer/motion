@@ -57,7 +57,7 @@ export function createCrossfader(): Crossfader {
     /**
      *
      */
-    let hasRenderedFinalCrossfade = true
+    let finalCrossfadeFrame: number | null = null
 
     /**
      * Framestamp of the last frame we updated values at.
@@ -67,7 +67,7 @@ export function createCrossfader(): Crossfader {
     function startCrossfadeAnimation(target: number, transition?: Transition) {
         const { lead, follow } = options
         isActive = true
-        hasRenderedFinalCrossfade = false
+        finalCrossfadeFrame = null
         return animate(progress, target, {
             ...transition,
             onUpdate: () => {
@@ -108,7 +108,7 @@ export function createCrossfader(): Crossfader {
          * for the first component to render the frame. Perhaps change
          * this to recording the timestamp of the final frame.
          */
-        if (!isActive) hasRenderedFinalCrossfade = true
+        if (!isActive) finalCrossfadeFrame = timestamp
 
         const p = progress.get()
 
@@ -138,7 +138,9 @@ export function createCrossfader(): Crossfader {
     }
 
     return {
-        isActive: () => leadState && (isActive || !hasRenderedFinalCrossfade),
+        isActive: () =>
+            leadState &&
+            (isActive || getFrameData().timestamp === finalCrossfadeFrame),
         from(transition) {
             return startCrossfadeAnimation(0, transition)
         },
