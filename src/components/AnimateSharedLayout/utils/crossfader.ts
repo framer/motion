@@ -91,8 +91,10 @@ export function createCrossfader(): Crossfader {
          * Merge each component's latest values into our crossfaded state
          * before crossfading.
          */
-        Object.assign(leadState, lead.getLatestValues())
-        follow && Object.assign(followState, follow.getLatestValues())
+        const latestLeadValues = lead.getLatestValues()
+        Object.assign(leadState, latestLeadValues)
+        const latestFollowValues = follow?.getLatestValues()
+        follow && Object.assign(followState, latestFollowValues)
 
         /**
          * If the crossfade animation is no longer active, flag that we've
@@ -111,16 +113,35 @@ export function createCrossfader(): Crossfader {
          * in a different opacity for each component.
          */
         if (options.crossfadeOpacity) {
-            const leadTargetOpacity =
-                (lead.getStaticValue("opacity") as number) ?? 1
+            const leadTargetOpacity = (latestLeadValues.opacity as number) ?? 1
             const followTargetOpacity =
-                (follow?.getStaticValue("opacity") as number) ?? 1
+                (latestFollowValues?.opacity as number) ?? 1
 
-            leadState.opacity = mix(0, leadTargetOpacity, easeCrossfadeIn(p))
-            followState.opacity = options.preserveFollowOpacity
-                ? followTargetOpacity
-                : mix(followTargetOpacity, 0, easeCrossfadeOut(p))
+            if (follow) {
+                leadState.opacity = mix(
+                    0,
+                    leadTargetOpacity,
+                    easeCrossfadeIn(p)
+                )
+                followState.opacity = options.preserveFollowOpacity
+                    ? followTargetOpacity
+                    : mix(followTargetOpacity, 0, easeCrossfadeOut(p))
+            } else {
+                leadState.opacity = mix(
+                    followTargetOpacity,
+                    leadTargetOpacity,
+                    p
+                )
+            }
         }
+
+        mixValues(
+            leadState,
+            followState,
+            latestLeadValues,
+            latestFollowValues || {},
+            p
+        )
     }
 
     return {
@@ -161,38 +182,51 @@ function compress(
     }
 }
 
-// const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
-// const numBorders = borders.length
-// function mixBorderRadius(
-//     from: VisualElement,
-//     to: VisualElement,
-//     fromValues: ResolvedValues,
-//     toValues: ResolvedValues,
-//     p: number
-// ) {
-//     const fromLatest = from.getLatestValues()
-//     const toLatest = to.getLatestValues()
-//     for (let i = 0; i < numBorders; i++) {
-//         const borderLabel = "border" + borders[i] + "Radius"
-//         const fromRadius =
-//             fromLatest[borderLabel] ?? fromLatest.borderRadius ?? 0
-//         const toRadius = toLatest[borderLabel] ?? toLatest.borderRadius ?? 0
-//         // TODO We should only do this if we have border radius
-//         // But not doing it at all isn't correctly animating 0 -> 0 that have
-//         // previously encountered a crossfade to/from a radius
-//         if (typeof fromRadius === "number" && typeof toRadius === "number") {
-//             fromValues[borderLabel] = toValues[borderLabel] = mix(
-//                 fromRadius as number,
-//                 toRadius as number,
-//                 p
-//             )
-//         }
-//     }
-//     if (fromLatest.rotate || toLatest.rotate) {
-//         fromValues.rotate = toValues.rotate = mix(
-//             (fromLatest.rotate as number) || 0,
-//             (toLatest.rotate as number) || 0,
-//             p
-//         )
-//     }
-// }
+const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
+const numBorders = borders.length
+
+function mixValues(
+    leadState: ResolvedValues,
+    followState: ResolvedValues,
+    latestLeadValues: ResolvedValues,
+    latestFollowValues: ResolvedValues,
+    p: number
+): void {
+    /**
+     * Mix border radius
+     */
+    for (let i = 0; i < numBorders; i++) {
+        const borderLabel = `border${borders[i]}Radius`
+        const followRadius = getRadius(latestFollowValues, borderLabel)
+        const leadRadius = getRadius(latestLeadValues, borderLabel)
+
+        /**
+         * Currently we're only crossfading between numerical border radius.
+         * It would be possible to crossfade between percentages for a little
+         * extra bundle size.
+         */
+        if (
+            typeof followRadius === "number" &&
+            typeof leadRadius === "number"
+        ) {
+            const radius = mix(followRadius, leadRadius, p)
+            leadState[borderLabel] = followState[borderLabel] = radius
+        }
+    }
+
+    /**
+     * Mix rotation
+     */
+    if (latestFollowValues.rotate || latestLeadValues.rotate) {
+        const rotate = mix(
+            (latestFollowValues.rotate as number) || 0,
+            (latestLeadValues.rotate as number) || 0,
+            p
+        )
+        leadState.rotate = followState.rotate = rotate
+    }
+}
+
+function getRadius(values: ResolvedValues, radiusName: string) {
+    return values[radiusName] ?? values.borderRadius ?? 0
+}

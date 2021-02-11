@@ -43,14 +43,7 @@ export const createProjectionState = () => ({
     targetFinal: axisBox(),
 })
 
-export const createVisualState = (
-    props: MotionProps,
-    parent?: VisualElement,
-    blockInitialAnimation?: boolean,
-    snapshot?: ResolvedValues
-) => snapshot || createInitialValues(props, parent, blockInitialAnimation)
-
-function createInitialValues(
+export function createVisualState(
     props: MotionProps,
     parent?: VisualElement,
     blockInitialAnimation?: boolean

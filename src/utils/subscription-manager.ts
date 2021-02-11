@@ -30,6 +30,9 @@ export function subscriptionManager<
             if (!numSubscriptions) return
 
             if (numSubscriptions === 1) {
+                /**
+                 * If there's only a single handler we can just call it without invoking a loop.
+                 */
                 subscriptions[0](a, b, c)
             } else {
                 for (let i = 0; i < numSubscriptions; i++) {
