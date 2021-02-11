@@ -75,7 +75,15 @@ export function createCrossfader(): Crossfader {
                 lead && lead.scheduleRender()
                 follow && follow.scheduleRender()
             },
-            onComplete: () => (isActive = false),
+            onComplete: () => {
+                isActive = false
+
+                /**
+                 * If the crossfade animation is no longer active, flag a frame
+                 * that we're still allowed to crossfade
+                 */
+                finalCrossfadeFrame = getFrameData().timestamp
+            },
         } as any)
     }
 
@@ -100,16 +108,6 @@ export function createCrossfader(): Crossfader {
             ? follow.getLatestValues()
             : options.prevValues
         Object.assign(followState, latestFollowValues)
-
-        /**
-         * If the crossfade animation is no longer active, flag that we've
-         * rendered the final frame of animation.
-         *
-         * TODO: This will result in the final frame being rendered only
-         * for the first component to render the frame. Perhaps change
-         * this to recording the timestamp of the final frame.
-         */
-        if (!isActive) finalCrossfadeFrame = timestamp
 
         const p = progress.get()
 
