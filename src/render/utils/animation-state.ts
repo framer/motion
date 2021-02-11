@@ -190,17 +190,6 @@ export function createAnimationState(
             }
 
             /**
-             * Resume from previous snapshot if it's the first render
-             */
-            if (
-                isInitialRender &&
-                type === AnimationType.Animate &&
-                visualElement.isResumingFromSnapshot
-            ) {
-                isInitialRender = false
-            }
-
-            /**
              * Set all encountered keys so far as the protected keys for this type. This will
              * be any key that has been animated or otherwise handled by active, higher-priortiy types.
              */

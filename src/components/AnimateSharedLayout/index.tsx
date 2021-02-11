@@ -64,8 +64,6 @@ export class AnimateSharedLayout extends React.Component<
         },
         register: (child) => this.addChild(child),
         remove: (child) => this.removeChild(child),
-        getLeadVisualElement: (layoutId: string) =>
-            this.stacks.get(layoutId)?.getLead(),
     }
 
     componentDidMount() {

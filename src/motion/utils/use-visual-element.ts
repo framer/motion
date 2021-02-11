@@ -9,15 +9,10 @@ import {
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
-import {
-    isSharedLayout,
-    SharedLayoutContext,
-} from "../../components/AnimateSharedLayout/SharedLayoutContext"
 import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { CreateVisualElement, VisualElement } from "../../render/types"
-import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
 function useLayoutId({ layoutId }: MotionProps) {
@@ -25,17 +20,6 @@ function useLayoutId({ layoutId }: MotionProps) {
     return layoutGroupId && layoutId !== undefined
         ? layoutGroupId + "-" + layoutId
         : layoutId
-}
-
-function useSnapshotOfLeadVisualElement(layoutId?: string) {
-    const syncLayout = useContext(SharedLayoutContext)
-
-    return useConstant(() => {
-        if (!isSharedLayout(syncLayout) || layoutId === undefined) return
-
-        const lead = syncLayout.getLeadVisualElement(layoutId)
-        return lead ? { ...lead.getLatestValues() } : undefined
-    })
 }
 
 type VisualElementRef = MutableRefObject<VisualElement | null>
@@ -50,7 +34,6 @@ export function useVisualElement<E>(
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
-    const snapshot = useSnapshotOfLeadVisualElement(layoutId)
 
     const visualElementRef: VisualElementRef = useRef(null)
 
@@ -68,7 +51,6 @@ export function useVisualElement<E>(
             ref,
             isStatic,
             props: { ...props, layoutId },
-            snapshot,
             presenceId: presenceContext?.id,
             blockInitialAnimation: presenceContext?.initial === false,
         })
@@ -94,6 +76,10 @@ export function useVisualElement<E>(
     if (isStatic) return visualElement
 
     useEffect(() => {
+        /**
+         * In a future refactor we can replace the features-as-components and
+         * have this loop through them all firing "effect" listeners
+         */
         visualElement.animationState?.animateChanges()
     })
 
