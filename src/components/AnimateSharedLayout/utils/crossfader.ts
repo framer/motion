@@ -19,6 +19,7 @@ export interface Crossfader {
     to(transition?: Transition): PlaybackControls
     setOptions(options: CrossfadeAnimationOptions): void
     reset(): void
+    stop(): void
     getLatestValues(): ResolvedValues
 }
 
@@ -149,6 +150,7 @@ export function createCrossfader(): Crossfader {
             return startCrossfadeAnimation(1, transition)
         },
         reset: () => progress.set(1),
+        stop: () => progress.stop(),
         getCrossfadeState(element) {
             updateCrossfade()
             return element === options.lead ? leadState : followState
