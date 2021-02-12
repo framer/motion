@@ -192,8 +192,8 @@ describe("crossfader", () => {
 
         return new Promise<void>((resolve) => {
             setTimeout(() => {
-                expect(latestLeadValues.opacity).toBe(0.4)
-                expect(latestFollowValues.opacity).toBe(1)
+                expect(latestLeadValues.opacity).toBe(0.3464101615137755)
+                expect(latestFollowValues.opacity).toBe(0.4)
                 crossfader.stop()
                 resolve()
             }, 50)
