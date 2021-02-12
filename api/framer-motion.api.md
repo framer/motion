@@ -861,10 +861,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // 
     // (undocumented)
     getLayoutState: () => LayoutState;
-    // Warning: (ae-forgotten-export) The symbol "TargetProjection" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    getProjection(): TargetProjection;
     // Warning: (ae-forgotten-export) The symbol "MotionPoint" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -933,6 +929,10 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     prevDragCursor?: Point2D;
     // (undocumented)
     prevViewportBox?: AxisBox2D;
+    // Warning: (ae-forgotten-export) The symbol "TargetProjection" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    projection: TargetProjection;
     // (undocumented)
     readValue(key: string): string | number | undefined | null;
     // (undocumented)
@@ -989,7 +989,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
 // Warning: (ae-forgotten-export) The symbol "VisualElementOptions" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options: Options) => VisualElement<Instance, any>;
+export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options?: Options) => VisualElement<Instance, any>;
 
 
 // (No @packageDocumentation comment for this package)
