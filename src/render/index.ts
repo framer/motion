@@ -368,6 +368,8 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         presenceId,
 
+        projection,
+
         /**
          * If this component is part of the variant tree, it should track
          * any children that are also part of the tree. This is essentially
