@@ -915,7 +915,7 @@ export const visualElement = <Instance, MutableState, Options>({
          *
          */
         pointTo(newLead) {
-            leadProjection = newLead.getProjection()
+            leadProjection = newLead.projection
             leadLatestValues = newLead.getLatestValues()
 
             /**

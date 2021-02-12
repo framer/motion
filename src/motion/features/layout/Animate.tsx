@@ -102,7 +102,7 @@ class Animate extends React.Component<AnimateProps> {
                 origin[axis].max = origin[axis].min + targetLength
             }
 
-            if (visualElement.getProjection().isTargetLocked) {
+            if (visualElement.projection.isTargetLocked) {
                 return
             } else if (visibilityAction !== undefined) {
                 visualElement.setVisibility(

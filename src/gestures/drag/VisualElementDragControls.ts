@@ -198,8 +198,7 @@ export class VisualElementDragControls {
             const { point } = getViewportPointFromEvent(event)
 
             eachAxis((axis) => {
-                const projection = this.visualElement.getProjection()
-                const { min, max } = projection.target[axis]
+                const { min, max } = this.visualElement.projection.target[axis]
 
                 this.cursorProgress[axis] = cursorProgress
                     ? cursorProgress[axis]
@@ -596,7 +595,7 @@ export class VisualElementDragControls {
         const boxProgress = { x: 0, y: 0 }
         eachAxis((axis) => {
             boxProgress[axis] = calcOrigin(
-                this.visualElement.getProjection().target[axis],
+                this.visualElement.projection.target[axis],
                 this.constraintsBox![axis]
             )
         })
@@ -615,7 +614,7 @@ export class VisualElementDragControls {
             // Calculate the position of the targetBox relative to the constraintsBox using the
             // previously calculated progress
             const { min, max } = calcPositionFromProgress(
-                this.visualElement.getProjection().target[axis],
+                this.visualElement.projection.target[axis],
                 this.constraintsBox![axis],
                 boxProgress[axis]
             )
