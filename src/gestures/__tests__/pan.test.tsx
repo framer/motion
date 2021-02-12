@@ -13,7 +13,7 @@ describe("pan", () => {
         let count = 0
         const onPanEnd = deferred()
         const Component = () => {
-            const [increment, setIncrement] = React.useState(1)
+            const [increment, setIncrement] = React.useState(0)
             return (
                 <MockDrag>
                     <motion.div
@@ -41,6 +41,6 @@ describe("pan", () => {
         pointer.end()
         await onPanEnd.promise
 
-        expect(count).toBe(10)
+        expect(count).toBeGreaterThan(10)
     })
 })
