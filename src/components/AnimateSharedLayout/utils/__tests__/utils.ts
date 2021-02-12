@@ -15,7 +15,7 @@ export function makeChild(
     element.isPresenceRoot = isPresenceRoot
     element.presence = presence
     element.prevViewportBox = prevViewportBox
-    element.getProjection().layout = box
+    element.projection.layout = box
     element.addValue("opacity", opacity)
 
     return element

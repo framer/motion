@@ -26,6 +26,7 @@ export interface VisualElement<Instance = any, MutableState = any>
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
     presenceId: number | undefined
+    projection: TargetProjection
     variantChildren?: Set<VisualElement>
     isMounted(): boolean
     isStatic?: boolean
@@ -104,7 +105,6 @@ export interface VisualElement<Instance = any, MutableState = any>
     rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void
     measureViewportBox(withTransform?: boolean): AxisBox2D
     updateLayoutMeasurement(): void
-    getProjection(): TargetProjection
     getLayoutState: () => LayoutState
     getProjectionAnimationProgress(): MotionPoint
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void
