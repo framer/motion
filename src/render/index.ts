@@ -55,7 +55,7 @@ export const visualElement = <Instance, MutableState, Options>({
         presenceId,
         blockInitialAnimation,
     }: VisualElementOptions<Instance>,
-    options: Options
+    options: Options = {} as Options
 ) => {
     /**
      * The instance of the render-specific node that will be hydrated by the

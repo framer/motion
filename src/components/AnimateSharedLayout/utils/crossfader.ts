@@ -15,8 +15,8 @@ import { motionValue } from "../../../value"
 export interface Crossfader {
     isActive(): boolean
     getCrossfadeState(element: VisualElement): ResolvedValues
-    from(transition?: Transition): PlaybackControls
-    to(transition?: Transition): PlaybackControls
+    toLead(transition?: Transition): PlaybackControls
+    fromLead(transition?: Transition): PlaybackControls
     setOptions(options: CrossfadeAnimationOptions): void
     reset(): void
     stop(): void
@@ -140,10 +140,10 @@ export function createCrossfader(): Crossfader {
         isActive: () =>
             leadState &&
             (isActive || getFrameData().timestamp === finalCrossfadeFrame),
-        from(transition) {
+        fromLead(transition) {
             return startCrossfadeAnimation(0, transition)
         },
-        to(transition) {
+        toLead(transition) {
             progress.set(options.follow ? 1 - progress.get() : 0)
             return startCrossfadeAnimation(1, transition)
         },
