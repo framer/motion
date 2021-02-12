@@ -759,10 +759,6 @@ export const visualElement = <Instance, MutableState, Options>({
             element.rebaseProjectionTarget(false, element.prevViewportBox)
         },
 
-        /**
-         * Get the projection state.
-         */
-        getProjection: () => projection,
         getLayoutState: () => layoutState,
 
         setCrossfader(newCrossfader) {
