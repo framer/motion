@@ -127,8 +127,8 @@ export function layoutStack(): LayoutStack {
                     needsCrossfadeAnimation = false
                     const transition = child.getDefaultTransition()
                     child.presence === Presence.Entering
-                        ? crossfader.to(transition)
-                        : crossfader.from(transition)
+                        ? crossfader.toLead(transition)
+                        : crossfader.fromLead(transition)
                 }
 
                 child.notifyLayoutReady(config)
