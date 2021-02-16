@@ -6,6 +6,7 @@ import { ResolvedValues } from "../types"
 
 const names = [
     "LayoutMeasure",
+    "BeforeLayoutMeasure",
     "LayoutUpdate",
     "ViewportBoxUpdate",
     "Update",
@@ -20,6 +21,7 @@ export type LayoutMeasureListener = (
     layout: AxisBox2D,
     prevLayout: AxisBox2D
 ) => void
+export type BeforeLayoutMeasureListener = (layout: AxisBox2D) => void
 export type LayoutUpdateListener = (
     layout: AxisBox2D,
     prevLayout: AxisBox2D,
@@ -42,6 +44,8 @@ export interface VisualElementLifecycles {
      * @public
      */
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
+
+    onBeforeLayoutMeasure?(box: AxisBox2D): void
 
     onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void
 
@@ -129,6 +133,8 @@ export interface VisualElementLifecycles {
 export interface LifecycleManager {
     onLayoutMeasure: (callback: LayoutMeasureListener) => () => void
     notifyLayoutMeasure: LayoutMeasureListener
+    onBeforeLayoutMeasure: (callback: BeforeLayoutMeasureListener) => () => void
+    notifyBeforeLayoutMeasure: BeforeLayoutMeasureListener
     onLayoutUpdate: (callback: LayoutUpdateListener) => () => void
     notifyLayoutUpdate: LayoutUpdateListener
     onViewportBoxUpdate: (callback: OnViewportBoxUpdate) => () => void
