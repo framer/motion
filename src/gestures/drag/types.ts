@@ -11,7 +11,7 @@ export type DragHandler = (
     info: PanInfo
 ) => void
 
-export type DragElastic = false | number | Partial<BoundingBox2D>
+export type DragElastic = boolean | number | Partial<BoundingBox2D>
 
 export interface ResolvedConstraints {
     x: Partial<Axis>
