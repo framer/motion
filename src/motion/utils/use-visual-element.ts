@@ -62,10 +62,11 @@ export function useVisualElement<E>(
 
     useIsomorphicLayoutEffect(() => {
         visualElement.setProps({
+            ...config,
             ...props,
             layoutId,
-            transition: props.transition || config.transition,
         })
+
         visualElement.isPresent = isPresent(presenceContext)
         visualElement.isPresenceRoot =
             !parent || parent.presenceId !== presenceContext?.id
