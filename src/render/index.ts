@@ -211,9 +211,6 @@ export const visualElement = <Instance, MutableState, Options>({
     function render() {
         if (!instance) return
 
-        /**
-         * This is duplicated work during crossfades
-         */
         if (isProjecting()) {
             /**
              * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.

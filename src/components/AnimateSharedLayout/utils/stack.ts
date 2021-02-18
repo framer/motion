@@ -76,7 +76,6 @@ export function layoutStack(): LayoutStack {
         clearSnapshot() {
             prevDragCursor = prevViewportBox = undefined
         },
-        // TODO We might not need this
         updateLeadAndFollow() {
             prevState = { ...state }
 
@@ -111,6 +110,10 @@ export function layoutStack(): LayoutStack {
         animate(child, shouldCrossfade = false) {
             if (child === state.lead) {
                 if (shouldCrossfade) {
+                    /**
+                     * Point a lead to itself in case it was previously pointing
+                     * to a different visual element
+                     */
                     child.pointTo(state.lead)
                 } else {
                     child.setVisibility(true)
