@@ -6,11 +6,7 @@ import {
 } from "../../../types/geometry"
 import { mix } from "popmotion"
 import { calcOrigin } from "../../../utils/geometry/delta-calc"
-
-export interface ResolvedConstraints {
-    x: Partial<Axis>
-    y: Partial<Axis>
-}
+import { DragElastic, ResolvedConstraints } from "../types"
 
 /**
  * Apply constraints to a point. These constraints are both physical along an
@@ -20,14 +16,14 @@ export interface ResolvedConstraints {
 export function applyConstraints(
     point: number,
     { min, max }: Partial<Axis>,
-    elastic?: number
+    elastic?: Axis
 ): number {
     if (min !== undefined && point < min) {
         // If we have a min point defined, and this is outside of that, constrain
-        point = elastic ? mix(min, point, elastic) : Math.max(point, min)
+        point = elastic ? mix(min, point, elastic.min) : Math.max(point, min)
     } else if (max !== undefined && point > max) {
         // If we have a max point defined, and this is outside of that, constrain
-        point = elastic ? mix(max, point, elastic) : Math.min(point, max)
+        point = elastic ? mix(max, point, elastic.max) : Math.min(point, max)
     }
 
     return point
@@ -46,7 +42,7 @@ export function calcConstrainedMinPoint(
     length: number,
     progress: number,
     constraints?: Partial<Axis>,
-    elastic?: number
+    elastic?: Axis
 ): number {
     // Calculate a min point for this axis and apply it to the current pointer
     const min = point - length * progress
@@ -174,4 +170,37 @@ export function rebaseAxisConstraints(
     }
 
     return relativeConstraints
+}
+
+export const defaultElastic = 0.35
+/**
+ * Accepts a dragElastic prop and returns resolved elastic values for each axis.
+ */
+export function resolveDragElastic(dragElastic: DragElastic): AxisBox2D {
+    if (dragElastic === false) dragElastic = 0
+
+    return {
+        x: resolveAxisElastic(dragElastic, "left", "right"),
+        y: resolveAxisElastic(dragElastic, "top", "bottom"),
+    }
+}
+
+export function resolveAxisElastic(
+    dragElastic: DragElastic,
+    minLabel: string,
+    maxLabel: string
+): Axis {
+    return {
+        min: resolvePointElastic(dragElastic, minLabel),
+        max: resolvePointElastic(dragElastic, maxLabel),
+    }
+}
+
+export function resolvePointElastic(
+    dragElastic: DragElastic,
+    label: string
+): number {
+    return typeof dragElastic === "number"
+        ? dragElastic
+        : dragElastic[label] ?? defaultElastic
 }

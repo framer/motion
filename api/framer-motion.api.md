@@ -218,7 +218,8 @@ export interface DraggableProps extends DragHandlers {
     dragConstraints?: false | Partial<BoundingBox2D> | RefObject<Element>;
     dragControls?: DragControls;
     dragDirectionLock?: boolean;
-    dragElastic?: boolean | number;
+    // Warning: (ae-forgotten-export) The symbol "DragElastic" needs to be exported by the entry point index.d.ts
+    dragElastic?: DragElastic;
     dragListener?: boolean;
     dragMomentum?: boolean;
     dragPropagation?: boolean;
