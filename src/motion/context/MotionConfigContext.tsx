@@ -2,6 +2,7 @@ import * as React from "react"
 import { createContext, useContext, useMemo } from "react"
 import { MotionFeature } from "../features/types"
 import { TransformPoint2D } from "../../types/geometry"
+import { Transition } from "../../types"
 
 /**
  * @public
@@ -26,6 +27,13 @@ export interface MotionConfigContext {
      * @internal
      */
     isStatic: boolean
+
+    /**
+     * Defines a new default transition for the entire tree.
+     *
+     * @public
+     */
+    transition?: Transition
 }
 
 export interface MotionConfigProps extends Partial<MotionConfigContext> {
@@ -66,6 +74,7 @@ export const MotionConfigContext = createContext<MotionConfigContext>({
 export function MotionConfig({
     children,
     features = [],
+    transition,
     ...props
 }: MotionConfigProps) {
     const pluginContext = useContext(MotionConfigContext)
@@ -74,9 +83,13 @@ export function MotionConfig({
     ]
 
     // We do want to rerender children when the number of loaded features changes
-    const value = useMemo(() => ({ features: loadedFeatures }), [
-        loadedFeatures.length,
-    ]) as MotionConfigContext
+    const value = useMemo(
+        () => ({
+            features: loadedFeatures,
+            transition: transition || pluginContext.transition,
+        }),
+        [loadedFeatures.length, transition]
+    ) as MotionConfigContext
 
     // Mutative to prevent triggering rerenders in all listening
     // components every time this component renders

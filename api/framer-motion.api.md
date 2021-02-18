@@ -374,7 +374,7 @@ export interface MotionAdvancedProps {
 // Warning: (ae-forgotten-export) The symbol "MotionConfigProps" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function MotionConfig({ children, features, ...props }: MotionConfigProps): JSX.Element;
+export function MotionConfig({ children, features, transition, ...props }: MotionConfigProps): JSX.Element;
 
 // @public (undocumented)
 export interface MotionConfigContext {
@@ -383,6 +383,7 @@ export interface MotionConfigContext {
     isStatic: boolean;
     // @internal (undocumented)
     transformPagePoint: TransformPoint2D;
+    transition?: Transition;
 }
 
 // @public (undocumented)
