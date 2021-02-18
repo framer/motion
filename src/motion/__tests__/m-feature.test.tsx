@@ -45,4 +45,27 @@ describe("Dynamic feature loading", () => {
 
         return expect(promise).resolves.toBe(20)
     })
+
+    test("Does support duplicate features in nested contexts", async () => {
+        const promise = new Promise(resolve => {
+            const x = motionValue(0)
+            const onComplete = () => resolve(x.get())
+            const Component = () => (
+                <MotionConfig features={[AnimationFeature]}>
+                    <MotionConfig features={[AnimationFeature]}>
+                        <m.div
+                            animate={{ x: 20 }}
+                            transition={{ duration: 0.01 }}
+                            style={{ x }}
+                            onAnimationComplete={onComplete}
+                        />
+                    </MotionConfig>
+                </MotionConfig>
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe(20)
+    })
 })

@@ -69,7 +69,9 @@ export function MotionConfig({
     ...props
 }: MotionConfigProps) {
     const pluginContext = useContext(MotionConfigContext)
-    const loadedFeatures = [...pluginContext.features, ...features]
+    const loadedFeatures = [
+        ...new Set([...pluginContext.features, ...features]),
+    ]
 
     // We do want to rerender children when the number of loaded features changes
     const value = useMemo(() => ({ features: loadedFeatures }), [
