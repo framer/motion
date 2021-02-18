@@ -206,5 +206,5 @@ export function resolvePointElastic(
 ): number {
     return typeof dragElastic === "number"
         ? dragElastic
-        : dragElastic[label] ?? defaultElastic
+        : dragElastic[label] ?? 0
 }
