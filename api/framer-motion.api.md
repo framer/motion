@@ -169,7 +169,7 @@ export function createBatcher(): SyncLayoutBatcher;
 
 // Warning: (ae-forgotten-export) The symbol "Crossfader" needs to be exported by the entry point index.d.ts
 // 
-// @public
+// @public (undocumented)
 export function createCrossfader(): Crossfader;
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
