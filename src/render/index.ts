@@ -808,6 +808,8 @@ export const visualElement = <Instance, MutableState, Options>({
          * should be called after resetting any layout-affecting transforms.
          */
         updateLayoutMeasurement() {
+            element.notifyBeforeLayoutMeasure(layoutState.layout)
+
             layoutState.isHydrated = true
             layoutState.layout = element.measureViewportBox()
             layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
