@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.5.1] 2021-02-18
+
+### Fixed
+
+-   `onTapCancel` is now being correctly cleaned up.
+
 ## [3.5.0] 2021-02-18
 
 ### Added
