@@ -1,9 +1,13 @@
-import { TransformTemplate } from "../../../motion/types"
-import { ResolvedValues } from "../../VisualElement/types"
 import { sortTransformProps } from "./transform"
-import { Point2D, BoxDelta } from "../../../types/geometry"
-import { TransformOrigin } from "../types"
-import { delta } from "../../../utils/geometry"
+import { ResolvedValues } from "../../types"
+import {
+    DOMVisualElementOptions,
+    HTMLMutableState,
+    TransformOrigin,
+} from "../types"
+import { MotionProps } from "../../../motion/types"
+import { BoxDelta, Point2D } from "../../../types/geometry"
+import { LayoutState, zeroLayout } from "../../utils/state"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -19,12 +23,13 @@ const translateAlias: { [key: string]: string } = {
  * providing a transformTemplate function.
  */
 export function buildTransform(
-    transform: ResolvedValues,
-    transformKeys: string[],
-    transformTemplate: TransformTemplate | undefined,
+    { transform, transformKeys }: HTMLMutableState,
+    {
+        enableHardwareAcceleration = true,
+        allowTransformNone = true,
+    }: DOMVisualElementOptions,
     transformIsDefault: boolean,
-    enableHardwareAcceleration = true,
-    allowTransformNone = true
+    transformTemplate?: MotionProps["transformTemplate"]
 ) {
     // The transform string we're going to build into.
     let transformString = ""
@@ -109,14 +114,17 @@ export function buildLayoutProjectionTransform(
     return !latestTransform && transform === identityProjection ? "" : transform
 }
 
-export const identityProjection = buildLayoutProjectionTransform(delta(), {
-    x: 1,
-    y: 1,
-})
-
 /**
  * Take the calculated delta origin and apply it as a transform string.
  */
-export function buildLayoutProjectionTransformOrigin({ x, y }: BoxDelta) {
-    return `${x.origin * 100}% ${y.origin * 100}% 0`
+export function buildLayoutProjectionTransformOrigin({
+    deltaFinal,
+}: LayoutState) {
+    return `${deltaFinal.x.origin * 100}% ${deltaFinal.y.origin * 100}% 0`
 }
+
+export const identityProjection = buildLayoutProjectionTransform(
+    zeroLayout.delta,
+    zeroLayout.treeScale,
+    { x: 1, y: 1 }
+)

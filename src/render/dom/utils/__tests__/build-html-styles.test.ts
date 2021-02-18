@@ -1,8 +1,8 @@
 import "../../../../../jest.setup"
 import { buildHTMLStyles } from "../build-html-styles"
-import { TransformOrigin, DOMVisualElementConfig } from "../../types"
+import { DOMVisualElementOptions, TransformOrigin } from "../../types"
 import { BoxDelta, Point2D, AxisBox2D } from "../../../../types/geometry"
-import { ResolvedValues } from "../../../VisualElement/types"
+import { ResolvedValues } from "../../../types"
 
 describe("buildHTMLStyles", () => {
     test("Builds basic styles", () => {
@@ -89,7 +89,7 @@ describe("buildHTMLStyles", () => {
         build(latest, {
             style,
             config: {
-                transformTemplate: ({ x }, gen) =>
+                transformTemplate: ({ x }: any, gen: any) =>
                     `translateY(${parseFloat(x as string) * 2}) ${gen}`,
             },
         })
@@ -105,7 +105,7 @@ describe("buildHTMLStyles", () => {
         build(latest, {
             style,
             config: {
-                transformTemplate: ({ x }, gen) =>
+                transformTemplate: ({ x }: any, gen: any) =>
                     `translateY(${parseFloat(x as string) * 2}) ${gen}`,
             },
         })
@@ -216,7 +216,7 @@ interface BuildProps {
     transform: ResolvedValues
     transformOrigin: TransformOrigin
     transformKeys: string[]
-    config: DOMVisualElementConfig
+    config: DOMVisualElementOptions & { transformTemplate?: any }
     isLayoutProjectionEnabled: boolean
     delta?: BoxDelta
     deltaFinal?: BoxDelta
@@ -244,17 +244,27 @@ function build(
     }: Partial<BuildProps> = {}
 ) {
     buildHTMLStyles(
+        {
+            style,
+            vars,
+            transform,
+            transformOrigin,
+            transformKeys,
+        },
         latest,
-        style,
-        vars,
-        transform,
-        transformOrigin,
-        transformKeys,
+        {
+            target: targetBox,
+            isEnabled: isLayoutProjectionEnabled,
+            isTargetLocked: false,
+            targetFinal: targetBox,
+        } as any,
+        {
+            delta,
+            deltaFinal,
+            treeScale,
+            isHydrated: true,
+        } as any,
         config,
-        isLayoutProjectionEnabled,
-        delta,
-        deltaFinal,
-        treeScale,
-        targetBox
+        config.transformTemplate
     )
 }

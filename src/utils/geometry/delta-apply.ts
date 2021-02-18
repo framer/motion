@@ -1,7 +1,6 @@
 import { Axis, AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { mix } from "popmotion"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
-import { ResolvedValues } from "../../render/VisualElement/types"
+import { ResolvedValues, VisualElement } from "../../render/types"
 
 /**
  * Reset an axis to the provided origin box.
@@ -215,12 +214,12 @@ export function removeBoxTransforms(
  * Apply a tree of deltas to a box. We do this to calculate the effect of all the transforms
  * in a tree upon our box before then calculating how to project it into our desired viewport-relative box
  *
- * This is the final nested loop within HTMLVisualElement.updateLayoutDelta
+ * This is the final nested loop within updateLayoutDelta for future refactoring
  */
 export function applyTreeDeltas(
     box: AxisBox2D,
     treeScale: Point2D,
-    treePath: HTMLVisualElement[]
+    treePath: VisualElement[]
 ) {
     const treeLength = treePath.length
     if (!treeLength) return
@@ -229,7 +228,7 @@ export function applyTreeDeltas(
     treeScale.x = treeScale.y = 1
 
     for (let i = 0; i < treeLength; i++) {
-        const { delta } = treePath[i]
+        const { delta } = treePath[i].getLayoutState()
 
         // Incoporate each ancestor's scale into a culmulative treeScale for this component
         treeScale.x *= delta.x.scale

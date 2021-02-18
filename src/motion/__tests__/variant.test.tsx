@@ -5,10 +5,12 @@ import { Variants } from "../../types"
 import { motionValue } from "../../value"
 
 describe("animate prop as variant", () => {
+    // @ts-ignore
     const variants: Variants = {
         hidden: { opacity: 0, x: -100, transition: { type: false } },
         visible: { opacity: 1, x: 100, transition: { type: false } },
     }
+    // @ts-ignore
     const childVariants: Variants = {
         hidden: { opacity: 0, x: -100, transition: { type: false } },
         visible: { opacity: 1, x: 50, transition: { type: false } },
@@ -171,34 +173,41 @@ describe("animate prop as variant", () => {
     test("respects orchestration props in transition prop", async () => {
         const promise = new Promise((resolve) => {
             const opacity = motionValue(0)
-            const variants: Variants = {
-                visible: {
-                    opacity: 1,
-                },
-                hidden: {
-                    opacity: 0,
-                },
-            }
 
-            render(
+            const { getByTestId } = render(
                 <motion.div
-                    variants={variants}
+                    variants={{
+                        visible: {
+                            opacity: 1,
+                        },
+                        hidden: {
+                            opacity: 0,
+                        },
+                    }}
                     initial="hidden"
                     animate="visible"
                     transition={{ type: false, delayChildren: 1 }}
                 >
                     <motion.div
-                        variants={variants}
+                        data-testid="test"
+                        variants={{
+                            visible: {
+                                opacity: 0.9,
+                            },
+                            hidden: {
+                                opacity: 0,
+                            },
+                        }}
                         transition={{ type: false }}
                         style={{ opacity }}
                     />
                 </motion.div>
             )
 
-            requestAnimationFrame(() => resolve(opacity.get()))
+            requestAnimationFrame(() => resolve(getByTestId("test")))
         })
 
-        return expect(promise).resolves.toBe(0)
+        return expect(promise).resolves.toHaveStyle("opacity: 0")
     })
 
     test("delay propagates throughout children", async () => {

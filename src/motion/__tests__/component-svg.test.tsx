@@ -1,22 +1,20 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../../"
-import { useMotionValue, useTransform } from "../../"
+import { motion, motionValue, useMotionValue, useTransform } from "../../"
 import * as React from "react"
-import { motionValue } from "../../value"
 
 describe("SVG", () => {
-    // We can't offer SSR support for transforms as the sanitisation (as in mental
-    // sanity) of the SVG transform model relies on measuring the dimensions
-    // of the SVG element. So we prevent the setting of initial CSS properties
-    // that may be in conflict.
-    test("sets initial attributes", () => {
+    test("doesn't add translateZ", () => {
         const { getByTestId } = render(
             <svg>
                 <motion.g data-testid="g" initial={{ x: 100 }} />
+                <motion.g data-testid="h" style={{ x: 100 }} />
             </svg>
         )
 
         expect(getByTestId("g")).not.toHaveStyle(
+            "transform: translateX(100px) translateZ(0)"
+        )
+        expect(getByTestId("h")).not.toHaveStyle(
             "transform: translateX(100px) translateZ(0)"
         )
     })
@@ -62,7 +60,7 @@ describe("SVG", () => {
         render(<Component />)
     })
 
-    // https://github.com/framer/motion/issues/216
+    // // https://github.com/framer/motion/issues/216
     test("doesn't throw if animating unencounterd value", () => {
         const animation = {
             strokeDasharray: ["1px, 200px", "100px, 200px", "100px, 200px"],

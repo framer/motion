@@ -1,16 +1,16 @@
-import { Dimensions, TransformOrigin, DOMVisualElementConfig } from "../types"
-import { ResolvedValues } from "../../VisualElement/types"
-import { calcSVGTransformOrigin } from "./svg-transform-origin"
-import { buildSVGPath } from "./build-svg-path"
+import { SVGMutableState, DOMVisualElementOptions } from "../types"
 import { buildHTMLStyles } from "./build-html-styles"
-import { BoxDelta, Point2D, AxisBox2D } from "../../../types/geometry"
-
-const unmeasured = { x: 0, y: 0, width: 0, height: 0 }
+import { ResolvedValues } from "../../types"
+import { calcSVGTransformOrigin } from "./svg-transform-origin"
+import { buildSVGPath } from "./svg-path"
+import { MotionProps } from "../../../motion/types"
+import { LayoutState, TargetProjection } from "../../utils/state"
 
 /**
  * Build SVG visual attrbutes, like cx and style.transform
  */
 export function buildSVGAttrs(
+    state: SVGMutableState,
     {
         attrX,
         attrY,
@@ -22,39 +22,23 @@ export function buildSVGAttrs(
         // This is object creation, which we try to avoid per-frame.
         ...latest
     }: ResolvedValues,
-    style: ResolvedValues,
-    vars: ResolvedValues,
-    attrs: ResolvedValues,
-    transform: ResolvedValues,
-    transformOrigin: TransformOrigin,
-    transformKeys: string[],
-    config: DOMVisualElementConfig,
-    dimensions: Dimensions,
-    totalPathLength: number,
-    isLayoutProjectionEnabled?: boolean,
-    delta?: BoxDelta,
-    deltaFinal?: BoxDelta,
-    treeScale?: Point2D,
-    targetBox?: AxisBox2D
-): ResolvedValues {
-    /**
-     * With SVG we treat all animated values as attributes rather than CSS, so we build into attrs
-     */
+    projection: TargetProjection,
+    layoutState: LayoutState,
+    options: DOMVisualElementOptions,
+    transformTemplate?: MotionProps["transformTemplate"]
+) {
     buildHTMLStyles(
+        state,
         latest,
-        attrs,
-        vars,
-        transform,
-        transformOrigin,
-        transformKeys,
-        config,
-        isLayoutProjectionEnabled,
-        delta,
-        deltaFinal,
-        treeScale,
-        targetBox
+        projection,
+        layoutState,
+        options,
+        transformTemplate
     )
 
+    state.attrs = state.style
+    state.style = {}
+    const { attrs, style, dimensions, totalPathLength } = state
     /**
      * However, we apply transforms as CSS transforms. So if we detect a transform we take it from attrs
      * and copy it into style.
@@ -67,7 +51,7 @@ export function buildSVGAttrs(
     // Parse transformOrigin
     if (originX !== undefined || originY !== undefined || style.transform) {
         style.transformOrigin = calcSVGTransformOrigin(
-            dimensions || unmeasured,
+            dimensions,
             originX !== undefined ? originX : 0.5,
             originY !== undefined ? originY : 0.5
         )
@@ -88,6 +72,4 @@ export function buildSVGAttrs(
             false
         )
     }
-
-    return attrs
 }

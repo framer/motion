@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useAnimation } from "@framer"
+import { motion, useAnimation, useMotionValue } from "@framer"
 
 /**
  * An example of firing an animation onMount using the useAnimation hook
@@ -19,14 +19,16 @@ export const App = () => {
         visible: { opacity: 1 },
         hidden: { opacity: 0 },
     }
-
+    const x = useMotionValue(0)
     React.useEffect(() => {
         controls.start("visible")
+
+        setTimeout(() => x.set(100), 2000)
     })
 
     return (
         <motion.div animate={controls} initial="hidden">
-            <motion.div variants={variants} style={style} />
+            <motion.div variants={variants} drag style={{ ...style, x }} />
         </motion.div>
     )
 }

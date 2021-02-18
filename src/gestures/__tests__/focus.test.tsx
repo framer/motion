@@ -1,7 +1,6 @@
 import { focus, blur, render } from "../../../jest.setup"
 import * as React from "react"
-import { motion } from "../../"
-import { motionValue } from "../../value"
+import { motion, motionValue } from "../../"
 import { transformValues } from "../../motion/__tests__/util-transform-values"
 import sync from "framesync"
 

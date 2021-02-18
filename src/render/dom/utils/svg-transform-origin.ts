@@ -1,5 +1,5 @@
 import { px } from "style-value-types"
-import { Dimensions } from "../types"
+import { SVGDimensions } from "../types"
 
 function calcOrigin(origin: number | string, offset: number, size: number) {
     return typeof origin === "string"
@@ -12,7 +12,7 @@ function calcOrigin(origin: number | string, offset: number, size: number) {
  * so we use the measured dimensions of the SVG to reconcile these.
  */
 export function calcSVGTransformOrigin(
-    dimensions: Dimensions,
+    dimensions: SVGDimensions,
     originX: number | string,
     originY: number | string
 ) {

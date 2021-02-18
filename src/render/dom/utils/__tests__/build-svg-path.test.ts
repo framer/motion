@@ -1,5 +1,5 @@
 import "../../../../../jest.setup"
-import { buildSVGPath } from "../build-svg-path"
+import { buildSVGPath } from "../svg-path"
 
 describe("buildSVGPath", () => {
     it("correctly generates SVG path props", () => {

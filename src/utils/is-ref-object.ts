@@ -1,5 +1,8 @@
-import { RefObject } from "react"
+import { MutableRefObject } from "react"
 
-export const isRefObject = (ref: any): ref is RefObject<Element> => {
-    return typeof ref === "object" && ref.hasOwnProperty("current")
+export function isRefObject<E = any>(ref: any): ref is MutableRefObject<E> {
+    return (
+        typeof ref === "object" &&
+        Object.prototype.hasOwnProperty.call(ref, "current")
+    )
 }

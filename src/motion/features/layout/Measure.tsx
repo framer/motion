@@ -40,7 +40,7 @@ class Measure extends React.Component<SyncProps> {
         if (isSharedLayout(syncLayout)) {
             syncLayout.syncUpdate()
         } else {
-            visualElement.snapshotBoundingBox()
+            visualElement.snapshotViewportBox()
             syncLayout.add(visualElement)
         }
 
@@ -56,7 +56,7 @@ class Measure extends React.Component<SyncProps> {
          * If this axis isn't animating as a result of this render we want to reset the targetBox
          * to the measured box
          */
-        visualElement.rebaseTargetBox()
+        visualElement.rebaseProjectionTarget()
     }
 
     render() {
@@ -79,6 +79,6 @@ function MeasureContextProvider(props: FeatureProps) {
 export const MeasureLayout: MotionFeature = {
     key: "measure-layout",
     shouldRender: (props: MotionProps) =>
-        !!props.drag || !!props.layout || !!props.layoutId,
+        !!props.drag || !!props.layout || props.layoutId !== undefined,
     getComponent: () => MeasureContextProvider,
 }

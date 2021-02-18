@@ -1,12 +1,13 @@
 import * as React from "react"
 import { useContext } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
-import { VisualElement } from "../../render/VisualElement"
+import { VisualElement } from "../../render/types"
 import { MotionProps } from ".."
 import { MotionFeature } from "./types"
 
 /**
- * Load features via renderless components based on the provided MotionProps
+ * Load features via renderless components based on the provided MotionProps.
+ * TODO: Look into porting this to a component-less appraoch.
  */
 export function useFeatures(
     defaultFeatures: MotionFeature[],

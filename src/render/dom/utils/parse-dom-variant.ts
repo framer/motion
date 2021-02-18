@@ -1,14 +1,13 @@
 import { resolveCSSVariables } from "./css-variables-conversion"
-import { unitConversion } from "./unit-type-conversion"
-import { HTMLVisualElement } from "../HTMLVisualElement"
-import { MakeTargetAnimatable } from "../../VisualElement/utils/animation"
+import { MakeTargetAnimatable } from "../../utils/animation"
+import { unitConversion } from "./unit-conversion"
 
 /**
  * Parse a DOM variant to make it animatable. This involves resolving CSS variables
  * and ensuring animations like "20%" => "calc(50vw)" are performed in pixels.
  */
 export const parseDomVariant: MakeTargetAnimatable = (
-    visualElement: HTMLVisualElement,
+    visualElement,
     target,
     origin,
     transitionEnd

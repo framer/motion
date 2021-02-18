@@ -1,75 +1,105 @@
 import {
-    ReactHTML,
     DetailedHTMLFactory,
+    ForwardRefExoticComponent,
     HTMLAttributes,
     PropsWithoutRef,
+    ReactHTML,
     RefAttributes,
     SVGAttributes,
-    ForwardRefExoticComponent,
 } from "react"
-import { MotionProps, MakeMotion } from "../../motion/types"
+import { MakeMotion, MotionProps } from "../../motion/types"
 import { TransformPoint2D } from "../../types/geometry"
+import { ResolvedValues } from "../types"
 import { HTMLElements, SVGElements } from "./utils/supported-elements"
-import { VisualElementConfig } from "../VisualElement/types"
 
-/**
- * Configuration for the HTML and SVGVisualElement renderers.
- */
-export interface DOMVisualElementConfig extends VisualElementConfig {
+export interface DOMVisualElementOptions {
     /**
-     * Whether to permit `transform: none` if the calculated transform equals zero.
-     */
-    allowTransformNone?: boolean
-
-    /**
-     * Whether to enable hardware acceleration. This will force the layer to the GPU
-     * by setting `translateZ(0)` to the transform style.
-     */
-    enableHardwareAcceleration?: boolean
-
-    /**
-     * An optional function that can take a page point and return a new one.
-     * Used to enable drag and layout animations in the scaled canvases of Framer Desktop preview.
+     * A function that can map a page point between spaces. Used by Framer
+     * to support dragging and layout animations within scaled space.
+     *
+     * @public
      */
     transformPagePoint?: TransformPoint2D
 
     /**
-     * A function that can accept the generated transform property and return a new one.
-     * Used for custom transform property orders. In the medium-term I'd like to ditch this
-     * and replace with a template function that can scoop up other animated values so
-     * we can do, for instance:
+     * Allow `transform` to be set as `"none"` if all transforms are their default
+     * values. Switching to this removes the element as a GPU layer which can lead to subtle
+     * graphical shifts.
      *
-     * ```jsx
-     * <motion.div
-     *   animate={{ blur: 20 }}
-     *   style={{ filter: combine`blur(${"blur"}px)` }}
-     * />
-     * ```
+     * @public
      */
-    transformTemplate?: MotionProps["transformTemplate"]
+    allowTransformNone?: boolean
 
-    transformValues?: MotionProps["transformValues"]
+    /**
+     * Allow this element to be GPU-accelerated. We currently enable this by
+     * adding a `translateZ(0)`.
+     *
+     * @public
+     */
+    enableHardwareAcceleration?: boolean
+}
 
-    transition?: MotionProps["transition"]
+export interface HTMLMutableState {
+    /**
+     * A mutable record of transforms we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    transform: ResolvedValues
 
-    safeToRemove?: () => void
+    /**
+     * A mutable record of transform keys we want to apply to the rendered Element. We order
+     * this to order transforms in the desired order. We use a mutable data structure to reduce GC during animations.
+     */
+    transformKeys: string[]
+
+    /**
+     * A mutable record of transform origins we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    transformOrigin: TransformOrigin
+
+    /**
+     * A mutable record of styles we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    style: ResolvedValues
+
+    /**
+     * A mutable record of CSS variables we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    vars: ResolvedValues
+}
+
+export interface SVGMutableState extends HTMLMutableState {
+    /**
+     * Measured dimensions of the SVG element to be used to calculate a transform-origin.
+     */
+    dimensions: SVGDimensions
+
+    /**
+     * A mutable record of attributes we want to apply directly to the rendered Element
+     * every frame. We use a mutable data structure to reduce GC during animations.
+     */
+    attrs: ResolvedValues
+
+    /**
+     * Measured path length if this is a SVGPathElement
+     */
+    totalPathLength?: number
+}
+
+export type SVGDimensions = {
+    x: number
+    y: number
+    width: number
+    height: number
 }
 
 export interface TransformOrigin {
     originX?: number | string
     originY?: number | string
     originZ?: number | string
-}
-
-/**
- * Measured dimensions of an SVG component.
- * TODO: Look into replacing this with AxisBox2D when we port over magic motion
- */
-export type Dimensions = {
-    x: number
-    y: number
-    width: number
-    height: number
 }
 
 /**

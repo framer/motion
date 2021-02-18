@@ -1,7 +1,7 @@
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
 import { transformAxes } from "../../../render/dom/utils/transform"
+import { VisualElement } from "../../../render/types"
 
-export function resetRotate(child: HTMLVisualElement) {
+export function resetRotate(child: VisualElement) {
     // If there's no detected rotation values, we can early return without a forced render.
     let hasRotate = false
 
@@ -15,13 +15,13 @@ export function resetRotate(child: HTMLVisualElement) {
 
         // If this rotation doesn't exist as a motion value, then we don't
         // need to reset it
-        if (!child.hasValue(key) || child.latest[key] === 0) continue
+        if (!child.hasValue(key) || child.getStaticValue(key) === 0) continue
 
         hasRotate = true
 
         // Record the rotation and then temporarily set it to 0
-        resetValues[key] = child.latest[key]
-        child.latest[key] = 0
+        resetValues[key] = child.getStaticValue(key)
+        child.setStaticValue(key, 0)
     }
 
     // If there's no rotation values, we don't need to do any more.
@@ -29,11 +29,11 @@ export function resetRotate(child: HTMLVisualElement) {
 
     // Force a render of this element to apply the transform with all rotations
     // set to 0.
-    child.render()
+    child.syncRender()
 
     // Put back all the values we reset
     for (const key in resetValues) {
-        child.latest[key] = resetValues[key]
+        child.setStaticValue(key, resetValues[key])
     }
 
     // Schedule a render for the next frame. This ensures we won't visually

@@ -1,7 +1,6 @@
 import { render } from "../../../jest.setup"
-import { motion, useMotionValue } from "../.."
+import { motion, MotionConfig, useMotionValue } from "../.."
 import * as React from "react"
-import { MotionConfig } from "../context/MotionConfigContext"
 
 describe("style prop", () => {
     test("should remove non-set styles", () => {
@@ -24,7 +23,7 @@ describe("style prop", () => {
         expect(getByTestId("child")).not.toHaveStyle("position: absolute")
     })
 
-    test("should updated transforms when passed a new value", () => {
+    test("should update transforms when passed a new value", () => {
         const Component = ({ x = 0 }) => {
             return <motion.div style={{ x }} />
         }
@@ -44,7 +43,31 @@ describe("style prop", () => {
         expect(container.firstChild as Element).toHaveStyle("transform: none")
     })
 
-    test("should update when passed new MotionValue", () => {
+    test("doesn't update transforms that are handled by animation props", () => {
+        const Component = ({ x = 0 }) => {
+            return (
+                <motion.div
+                    initial={{ x: 1 }}
+                    animate={{ x: 200 }}
+                    style={{ x }}
+                />
+            )
+        }
+
+        const { container, rerender } = render(<Component />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(1px) translateZ(0)"
+        )
+
+        rerender(<Component x={2} />)
+
+        expect(container.firstChild as Element).not.toHaveStyle(
+            "transform: translateX(2px) translateZ(0)"
+        )
+    })
+
+    test("should update when passed new MotionValue", async () => {
         const Component = ({ useX = false }) => {
             const x = useMotionValue(1)
             const y = useMotionValue(2)
@@ -62,7 +85,6 @@ describe("style prop", () => {
         }
 
         const { container, rerender } = render(<Component />)
-
         expect(container.firstChild as Element).toHaveStyle(
             "transform: translateX(0px) translateY(2px) translateZ(3px)"
         )

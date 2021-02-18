@@ -1,11 +1,10 @@
 /**
  * Components
  */
-export { motion, createDomMotionComponent } from "./render/dom"
-export { m } from "./render/dom/minimal-component"
+export { motion, createDomMotionComponent } from "./render/dom/motion"
+export { m } from "./render/dom/motion-minimal"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
-export { HTMLVisualElement } from "./render/dom/HTMLVisualElement"
 
 /**
  * Features
@@ -39,10 +38,10 @@ export { useReducedMotion } from "./utils/use-reduced-motion"
 export {
     AnimationControls,
     animationControls,
-} from "./animation/AnimationControls"
+} from "./animation/animation-controls"
 export { useAnimation } from "./animation/use-animation"
 export { animate } from "./animation/animate"
-export { animateVisualElement } from "./render/VisualElement/utils/animation"
+export { animateVisualElement } from "./render/utils/animation"
 export {
     HoverHandlers,
     TapHandlers,
@@ -67,9 +66,12 @@ export {
     DragControls,
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
-export { useExternalRef } from "./motion/utils/use-external-ref"
 export { createMotionComponent } from "./motion"
-export { addScaleCorrection } from "./render/dom/layout/scale-correction"
+export { addScaleCorrection } from "./render/dom/projection/scale-correction"
+export { createCrossfader } from "./components/AnimateSharedLayout/utils/crossfader"
+
+export { visualElement } from "./render"
+export { VisualElement } from "./render/types"
 
 /**
  * Contexts
@@ -80,7 +82,6 @@ export {
 } from "./motion/context/MotionConfigContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 export { LayoutGroupContext } from "./components/AnimateSharedLayout/LayoutGroupContext"
-export { useVariantContext } from "./motion/context/MotionContext"
 
 /**
  * Types
@@ -91,12 +92,11 @@ export {
     SVGAttributesAsMotionValues,
     ForwardRefComponent,
 } from "./render/dom/types"
-export { CustomDomComponent } from "./render/dom"
+export { CustomDomComponent } from "./render/dom/motion"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,
     MotionProps,
-    MotionCallbacks,
     MotionAdvancedProps,
     MotionStyle,
     MotionTransform,

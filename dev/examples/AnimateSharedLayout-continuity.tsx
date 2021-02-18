@@ -26,30 +26,44 @@ function Component() {
 
 export const App = () => {
     return (
-        <AnimateSharedLayout>
-            <Component />
-        </AnimateSharedLayout>
+        <div
+            style={{
+                position: "fixed",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: "white",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <AnimateSharedLayout>
+                <Component />
+            </AnimateSharedLayout>
+        </div>
     )
 }
 
 const animate = [
     {
-        backgroundColor: "#fff",
+        backgroundColor: "#09f",
         borderRadius: 10,
         opacity: 1,
     },
     {
-        backgroundColor: "#fff",
+        backgroundColor: "#90f",
         borderRadius: 100,
         opacity: 0.5,
     },
     {
-        backgroundColor: "#fff",
+        backgroundColor: "#f09",
         borderRadius: 0,
         opacity: 1,
     },
     {
-        backgroundColor: "#fff",
+        backgroundColor: "#9f0",
         borderRadius: 50,
         opacity: 0.5,
     },

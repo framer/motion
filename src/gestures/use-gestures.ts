@@ -2,7 +2,7 @@ import { PanHandlers, usePanGesture } from "./use-pan-gesture"
 import { TapHandlers, useTapGesture } from "./use-tap-gesture"
 import { HoverHandlers, useHoverGesture } from "./use-hover-gesture"
 import { FocusHandlers, useFocusGesture } from "./use-focus-gesture"
-import { VisualElement } from "../render/VisualElement"
+import { VisualElement } from "../render/types"
 
 /**
  * @public

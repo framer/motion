@@ -1,19 +1,17 @@
 import * as React from "react"
-import { forwardRef, Ref, useContext, useMemo } from "react"
+import { forwardRef, Ref, useContext } from "react"
 import { MotionProps } from "./types"
-import { useMotionValues } from "./utils/use-motion-values"
-import { UseVisualElement } from "../render/VisualElement/types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
-import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
-import { useVariants } from "./utils/use-variants"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext } from "./context/MotionContext"
+import { CreateVisualElement } from "../render/types"
+import { useVisualElement } from "./utils/use-visual-element"
 export { MotionProps }
 
 export interface MotionComponentConfig<E> {
     defaultFeatures: MotionFeature[]
-    useVisualElement: UseVisualElement<E>
+    createVisualElement: CreateVisualElement<E>
     useRender: RenderComponent
 }
 
@@ -30,7 +28,11 @@ export interface MotionComponentConfig<E> {
  */
 export function createMotionComponent<P extends {}, E>(
     Component: string | React.ComponentType<P>,
-    { defaultFeatures, useVisualElement, useRender }: MotionComponentConfig<E>
+    {
+        defaultFeatures,
+        createVisualElement,
+        useRender,
+    }: MotionComponentConfig<E>
 ) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
         /**
@@ -48,21 +50,12 @@ export function createMotionComponent<P extends {}, E>(
          * for more performant animations and interactions
          */
         const visualElement = useVisualElement(
+            createVisualElement,
             Component,
             props,
             isStatic,
             externalRef
         )
-
-        /**
-         * Scrape MotionValues from props and add/remove them to/from the VisualElement.
-         */
-        useMotionValues(visualElement, props)
-
-        /**
-         * Add the visualElement as a node in the variant tree.
-         */
-        const variantContext = useVariants(visualElement, props, isStatic)
 
         /**
          * Load features as renderless components unless the component isStatic
@@ -74,28 +67,13 @@ export function createMotionComponent<P extends {}, E>(
             props
         )
 
-        /**
-         * Only create a new context value when the sub-contexts change.
-         */
-        const context = useMemo(() => ({ visualElement, variantContext }), [
-            visualElement,
-            variantContext,
-        ])
-
         const component = useRender(Component, props, visualElement)
-
-        /**
-         * If this component is a child of AnimateSharedLayout, we need to snapshot the component
-         * before it's unmounted. This lives here rather than in features/layout/Measure because
-         * as a child component its unmount effect runs after this component has been unmounted.
-         */
-        useSnapshotOnUnmount(visualElement)
 
         // The mount order and hierarchy is specific to ensure our element ref is hydrated by the time
         // all plugins and features has to execute.
         return (
             <>
-                <MotionContext.Provider value={context}>
+                <MotionContext.Provider value={visualElement}>
                     {component}
                 </MotionContext.Provider>
                 {features}

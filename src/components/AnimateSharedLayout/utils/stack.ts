@@ -1,212 +1,147 @@
-import { Presence } from "../types"
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
-import { ResolvedValues } from "../../../render/VisualElement/types"
+import { Presence, SharedLayoutAnimationConfig } from "../types"
 import { AxisBox2D, Point2D } from "../../../types/geometry"
-import { isTransformProp } from "../../../render/dom/utils/transform"
+import { ResolvedValues, VisualElement } from "../../../render/types"
 import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
-import { motionValue } from "../../../value"
-import { Transition } from "../../../types"
-
-export interface Snapshot {
-    isDragging?: boolean
-    cursorProgress?: Point2D
-    latestMotionValues: ResolvedValues
-    boundingBox?: AxisBox2D
-}
+import { createCrossfader } from "./crossfader"
 
 export type LeadAndFollow = [
-    HTMLVisualElement | undefined,
-    HTMLVisualElement | undefined
+    VisualElement | undefined,
+    VisualElement | undefined
 ]
 
-/**
- * For each layout animation, we want to identify two components
- * within a stack that will serve as the "lead" and "follow" components.
- *
- * In the switch animation, the lead component performs the entire animation.
- * It uses the follow bounding box to animate out from and back to. The follow
- * component is hidden.
- *
- * In the crossfade animation, both the lead and follow components perform
- * the entire animation, animating from the follow origin bounding box to the lead
- * target bounding box.
- *
- * Generalising a stack as First In Last Out, *searching from the end* we can
- * generally consider the lead component to be:
- *  - If the last child is present, the last child
- *  - If the last child is exiting, the last *encountered* exiting component
- */
-export function findLeadAndFollow(
-    stack: HTMLVisualElement[],
-    [prevLead, prevFollow]: LeadAndFollow
-): LeadAndFollow {
-    let lead: HTMLVisualElement | undefined = undefined
-    let leadIndex = 0
-    let follow: HTMLVisualElement | undefined = undefined
-
-    // Find the lead child first
-    const numInStack = stack.length
-    let lastIsPresent: boolean | undefined = false
-
-    for (let i = numInStack - 1; i >= 0; i--) {
-        const child = stack[i]
-
-        const isLastInStack = i === numInStack - 1
-        if (isLastInStack) lastIsPresent = child.isPresent
-
-        if (lastIsPresent) {
-            lead = child
-        } else {
-            // If the child before this will be present, make this the
-            // lead.
-            const prev = stack[i - 1]
-            if (prev && prev.isPresent) lead = child
-        }
-
-        if (lead) {
-            leadIndex = i
-            break
-        }
-    }
-
-    if (!lead) lead = stack[0]
-
-    // Find the follow child
-    follow = stack[leadIndex - 1]
-
-    // If the lead component is exiting, find the closest follow
-    // present component
-    if (lead) {
-        for (let i = leadIndex - 1; i >= 0; i--) {
-            const child = stack[i]
-            if (child.isPresent) {
-                follow = child
-                break
-            }
-        }
-    }
-
-    // If the lead has changed and the previous lead still exists in the
-    // stack, set it to the previous lead. This allows us to differentiate between
-    // a, b, c(exit) -> a, b(exit), c(exit)
-    // and
-    // a, b(exit), c -> a, b(exit), c(exit)
-    if (
-        lead !== prevLead &&
-        !lastIsPresent &&
-        follow === prevFollow &&
-        stack.find((stackChild) => stackChild === prevLead)
-    ) {
-        lead = prevLead
-    }
-
-    return [lead, follow]
+export interface LayoutStack {
+    add(element: VisualElement): void
+    remove(element: VisualElement): void
+    getLead(): VisualElement | undefined
+    updateSnapshot(): void
+    clearSnapshot(): void
+    animate(element: VisualElement, crossfade: boolean): void
+    updateLeadAndFollow(): void
 }
 
-export class LayoutStack {
-    order: HTMLVisualElement[] = []
+interface StackState {
+    lead?: VisualElement
+    follow?: VisualElement
+    leadIsExiting: boolean
+}
 
-    lead?: HTMLVisualElement | undefined
-    follow?: HTMLVisualElement | undefined
+export function layoutStack(): LayoutStack {
+    const stack = new Set<VisualElement>()
+    const state: StackState = { leadIsExiting: false }
+    let prevState: StackState = { ...state }
 
-    prevLead?: HTMLVisualElement | undefined
-    prevFollow?: HTMLVisualElement | undefined
+    let prevValues: ResolvedValues | undefined
+    let prevViewportBox: AxisBox2D | undefined
+    let prevDragCursor: Point2D | undefined
+    const crossfader = createCrossfader()
+    let needsCrossfadeAnimation = false
 
-    snapshot?: Snapshot
+    function getFollowViewportBox() {
+        return state.follow ? state.follow.prevViewportBox : prevViewportBox
+    }
 
-    // Track whether we've ever had a child
-    hasChildren: boolean = false
+    function getFollowLayout() {
+        return state.follow?.getLayoutState().layout
+    }
 
-    add(child: HTMLVisualElement) {
-        this.order.push(child)
+    return {
+        add(element) {
+            element.setCrossfader(crossfader)
+            stack.add(element)
 
-        // Load previous values from snapshot into this child
-        // TODO Neaten up
-        // TODO Double check when reimplementing move
-        // TODO Add isDragging status and
-        if (this.snapshot) {
-            child.prevSnapshot = this.snapshot
-            // TODO Remove in favour of above
-            child.prevViewportBox = this.snapshot.boundingBox
+            /**
+             * Hydrate new element with previous drag position if we have one
+             */
+            if (prevDragCursor) element.prevDragCursor = prevDragCursor
 
-            const latest = this.snapshot.latestMotionValues
-            for (const key in latest) {
-                if (!child.hasValue(key)) {
-                    child.addValue(key, motionValue(latest[key]))
+            if (!state.lead) state.lead = element
+        },
+        remove(element) {
+            stack.delete(element)
+        },
+        getLead: () => state.lead,
+        updateSnapshot() {
+            if (!state.lead) return
+
+            prevValues = crossfader.isActive()
+                ? crossfader.getLatestValues()
+                : state.lead.getLatestValues()
+            prevViewportBox = state.lead.prevViewportBox
+
+            const dragControls = elementDragControls.get(state.lead)
+            if (dragControls && dragControls.isDragging) {
+                prevDragCursor = dragControls.cursorProgress
+            }
+        },
+        clearSnapshot() {
+            prevDragCursor = prevViewportBox = undefined
+        },
+        updateLeadAndFollow() {
+            prevState = { ...state }
+
+            let lead: VisualElement | undefined
+            let follow: VisualElement | undefined
+            const order = Array.from(stack)
+            for (let i = order.length; i--; i >= 0) {
+                const element = order[i]
+                if (lead) follow ??= element
+                lead ??= element
+                if (lead && follow) break
+            }
+            state.lead = lead
+            state.follow = follow
+            state.leadIsExiting = state.lead?.presence === Presence.Exiting
+
+            crossfader.setOptions({
+                lead,
+                follow,
+                prevValues,
+                crossfadeOpacity:
+                    follow?.isPresenceRoot || lead?.isPresenceRoot,
+            })
+
+            if (
+                prevState.lead !== state.lead ||
+                prevState.leadIsExiting !== state.leadIsExiting
+            ) {
+                needsCrossfadeAnimation = true
+            }
+        },
+        animate(child, shouldCrossfade = false) {
+            if (child === state.lead) {
+                if (shouldCrossfade) {
+                    /**
+                     * Point a lead to itself in case it was previously pointing
+                     * to a different visual element
+                     */
+                    child.pointTo(state.lead)
                 } else {
-                    child.getValue(key)?.set(latest[key])
+                    child.setVisibility(true)
+                }
+
+                const config: SharedLayoutAnimationConfig = {}
+                if (child.presence === Presence.Entering) {
+                    config.originBox = getFollowViewportBox()
+                } else if (child.presence === Presence.Exiting) {
+                    config.targetBox = getFollowLayout()
+                }
+
+                if (needsCrossfadeAnimation) {
+                    needsCrossfadeAnimation = false
+                    const transition = child.getDefaultTransition()
+                    child.presence === Presence.Entering
+                        ? crossfader.toLead(transition)
+                        : crossfader.fromLead(transition)
+                }
+
+                child.notifyLayoutReady(config)
+            } else {
+                if (shouldCrossfade) {
+                    state.lead && child.pointTo(state.lead)
+                } else {
+                    child.setVisibility(false)
                 }
             }
-        }
-
-        this.hasChildren = true
-    }
-
-    remove(child: HTMLVisualElement) {
-        const index = this.order.findIndex((stackChild) => child === stackChild)
-        if (index !== -1) this.order.splice(index, 1)
-    }
-
-    updateLeadAndFollow() {
-        this.prevLead = this.lead
-        this.prevFollow = this.follow
-
-        const [lead, follow] = findLeadAndFollow(this.order, [
-            this.lead,
-            this.follow,
-        ])
-
-        this.lead = lead
-        this.follow = follow
-    }
-
-    updateSnapshot() {
-        if (!this.lead) return
-
-        const snapshot: Snapshot = {
-            boundingBox: this.lead.prevViewportBox,
-            latestMotionValues: {},
-        }
-
-        this.lead.forEachValue((value, key) => {
-            const latest = value.get()
-            if (!isTransformProp(latest)) {
-                snapshot.latestMotionValues[key] = latest
-            }
-        })
-
-        const dragControls = elementDragControls.get(this.lead)
-        if (dragControls && dragControls.isDragging) {
-            snapshot.isDragging = true
-            snapshot.cursorProgress = dragControls.cursorProgress
-        }
-
-        this.snapshot = snapshot
-    }
-
-    isLeadPresent() {
-        return this.lead && this.lead?.presence !== Presence.Exiting
-    }
-
-    getFollowOrigin(): AxisBox2D | undefined {
-        return this.follow
-            ? this.follow.prevViewportBox
-            : this.snapshot?.boundingBox
-    }
-
-    getFollowTarget(): AxisBox2D | undefined {
-        return this.follow?.box
-    }
-
-    getLeadOrigin(): AxisBox2D | undefined {
-        return this.lead?.prevViewportBox
-    }
-
-    getLeadTarget(): AxisBox2D | undefined {
-        return this.lead?.box
-    }
-
-    getLeadTransition(): Transition | undefined {
-        return this.lead?.config.transition
+        },
     }
 }

@@ -1,6 +1,6 @@
 import sync, { getFrameData, FrameData } from "framesync"
 import { velocityPerSecond } from "popmotion"
-import { SubscriptionManager } from "../utils/subscription-manager"
+import { subscriptionManager } from "../utils/subscription-manager"
 
 export type Transformer<T> = (v: T) => T
 
@@ -59,14 +59,14 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    updateSubscribers = new SubscriptionManager<Subscriber<V>>()
+    private updateSubscribers = subscriptionManager<Subscriber<V>>()
 
     /**
      * Functions to notify when the `MotionValue` updates and `render` is set to `true`.
      *
      * @internal
      */
-    private renderSubscribers = new SubscriptionManager<Subscriber<V>>()
+    private renderSubscribers = subscriptionManager<Subscriber<V>>()
 
     /**
      * Add a passive effect to this `MotionValue`.
@@ -205,7 +205,6 @@ export class MotionValue<V = any> {
     onRenderRequest(subscription: Subscriber<V>) {
         // Render immediately
         subscription(this.get())
-
         return this.renderSubscribers.add(subscription)
     }
 
@@ -325,6 +324,7 @@ export class MotionValue<V = any> {
         }
     }
 
+    hasAnimated = false
     /**
      * Registers a new animation to control this `MotionValue`. Only one
      * animation can drive a `MotionValue` at one time.
@@ -341,6 +341,7 @@ export class MotionValue<V = any> {
         this.stop()
 
         return new Promise((resolve) => {
+            this.hasAnimated = true
             this.stopAnimation = animation(resolve)
         }).then(() => this.clearAnimation())
     }

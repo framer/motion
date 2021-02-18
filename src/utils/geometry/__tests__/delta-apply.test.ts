@@ -1,3 +1,4 @@
+import { htmlVisualElement } from "../../../render/dom/html-visual-element"
 import {
     resetAxis,
     resetBox,
@@ -12,7 +13,6 @@ import {
     removeBoxTransforms,
     applyTreeDeltas,
 } from "../delta-apply"
-import { HTMLVisualElement } from "../../../render/dom/HTMLVisualElement"
 
 describe("resetAxis", () => {
     test("resets axis a using the values in axis b", () => {
@@ -200,8 +200,8 @@ describe("applyTreeDeltas", () => {
             y: { translate: -100, scale: 0.5, origin: 0.5, originPoint: 350 },
         }
 
-        const element = new HTMLVisualElement()
-        element.delta = delta
+        const element = htmlVisualElement({ props: {} }, {})
+        element.getLayoutState().delta = delta
 
         const treeScale = { x: 1, y: 1 }
         applyTreeDeltas(box, treeScale, [element, element])

@@ -2,6 +2,22 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.4.0] Unreleased
+
+### Changed
+
+-   Main `motion` component concurrent-safe.
+
+### Fixed
+
+-   Crossfading elements can now never fall out of positional/style sync due to mismatched animations or framelag.
+-   Fixing SVG double translation transform (props + transform style).
+-   `animate` `onComplete` now firing correctly.
+-   Only firing keyframe animation when all values have changed.
+-   Removing forced re-renders for variant trees.
+-   Variant stagger order now determined by DOM APIs.
+-   Fixed default spring for `scale`, `opacity` etc from being overdamped to being critically damped when animating to `0`.
+
 ## [3.3.0] 2020-02-03
 
 -   Fixing errant publish.

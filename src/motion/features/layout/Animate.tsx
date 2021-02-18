@@ -2,17 +2,13 @@ import * as React from "react"
 import { MotionProps } from "../../types"
 import { FeatureProps, MotionFeature } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
-import { MotionValue } from "../../../value"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
 import { tweenAxis } from "./utils"
-import { EasingFunction } from "../../../types"
 import {
     SharedLayoutAnimationConfig,
     VisibilityAction,
-    Presence,
 } from "../../../components/AnimateSharedLayout/types"
-import { mix, circOut, linear, progress } from "popmotion"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
 
@@ -41,16 +37,14 @@ class Animate extends React.Component<AnimateProps> {
 
     private unsubLayoutReady: () => void
 
+    private isAnimatingTree = false
+
     componentDidMount() {
         const { visualElement } = this.props
         visualElement.animateMotionValue = startAnimation
         visualElement.enableLayoutProjection()
         this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
-
-        visualElement.updateConfig({
-            ...visualElement.config,
-            safeToRemove: () => this.safeToRemove(),
-        })
+        visualElement.layoutSafeToRemove = () => this.safeToRemove()
     }
 
     componentWillUnmount() {
@@ -66,6 +60,7 @@ class Animate extends React.Component<AnimateProps> {
             targetBox,
             visibilityAction,
             shouldStackAnimate,
+            onComplete,
             ...config
         }: SharedLayoutAnimationConfig = {}
     ) => {
@@ -74,7 +69,19 @@ class Animate extends React.Component<AnimateProps> {
         /**
          * Early return if we've been instructed not to animate this render.
          */
-        if (shouldStackAnimate === false) return this.safeToRemove()
+        if (shouldStackAnimate === false) {
+            this.isAnimatingTree = false
+            return this.safeToRemove()
+        }
+
+        /**
+         * Prioritise tree animations
+         */
+        if (this.isAnimatingTree && shouldStackAnimate !== true) {
+            return
+        } else if (shouldStackAnimate) {
+            this.isAnimatingTree = true
+        }
 
         /**
          * Allow the measured origin (prev bounding box) and target (actual layout) to be
@@ -95,13 +102,12 @@ class Animate extends React.Component<AnimateProps> {
                 origin[axis].max = origin[axis].min + targetLength
             }
 
-            if (visualElement.isTargetBoxLocked) {
+            if (visualElement.projection.isTargetLocked) {
                 return
             } else if (visibilityAction !== undefined) {
-                // If we're meant to show/hide the visualElement, do so
-                visibilityAction === VisibilityAction.Hide
-                    ? visualElement.hide()
-                    : visualElement.show()
+                visualElement.setVisibility(
+                    visibilityAction === VisibilityAction.Show
+                )
             } else if (boxHasMoved) {
                 // If the box has moved, animate between it's current visual state and its
                 // final state
@@ -114,7 +120,7 @@ class Animate extends React.Component<AnimateProps> {
             } else {
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
-                return visualElement.setAxisTarget(
+                return visualElement.setProjectionTargetAxis(
                     axis,
                     target[axis].min,
                     target[axis].max
@@ -123,7 +129,7 @@ class Animate extends React.Component<AnimateProps> {
         })
 
         // Force a render to ensure there's no flash of uncorrected bounding box.
-        visualElement.render()
+        visualElement.syncRender()
 
         /**
          * If this visualElement isn't present (ie it's been removed from the tree by the user but
@@ -131,32 +137,30 @@ class Animate extends React.Component<AnimateProps> {
          * have successfully finished.
          */
         return Promise.all(animations).then(() => {
-            this.props.onLayoutAnimationComplete?.()
-
-            if (visualElement.isPresent) {
-                visualElement.presence = Presence.Present
-            } else {
-                this.safeToRemove()
-            }
+            this.isAnimatingTree = false
+            onComplete && onComplete()
+            visualElement.notifyLayoutAnimationComplete()
         })
     }
 
     /**
      * TODO: This manually performs animations on the visualElement's layout progress
-     * values. It'd be preferable to amend the HTMLVisualElement.startLayoutAxisAnimation
+     * values. It'd be preferable to amend the startLayoutAxisAnimation
      * API to accept more custom animations like this.
      */
     animateAxis(
         axis: "x" | "y",
         target: Axis,
         origin: Axis,
-        { transition, crossfadeOpacity }: SharedLayoutAnimationConfig = {}
+        { transition }: SharedLayoutAnimationConfig = {}
     ) {
         this.stopAxisAnimation[axis]?.()
 
         const { visualElement } = this.props
         const frameTarget = this.frameTarget[axis]
-        const layoutProgress = visualElement.getAxisProgress()[axis]
+        const layoutProgress = visualElement.getProjectionAnimationProgress()[
+            axis
+        ]
 
         /**
          * Set layout progress back to 0. We set it twice to hard-reset any velocity that might
@@ -165,17 +169,6 @@ class Animate extends React.Component<AnimateProps> {
         layoutProgress.clearListeners()
         layoutProgress.set(0)
         layoutProgress.set(0)
-
-        /**
-         * If this is a crossfade animation, create a function that updates both the opacity of this component
-         * and the one being crossfaded out.
-         */
-
-        let crossfade: (p: number) => void
-        if (crossfadeOpacity) {
-            crossfade = this.createCrossfadeAnimation(crossfadeOpacity)
-            visualElement.show()
-        }
 
         /**
          * Create an animation function to run once per frame. This will tween the visual bounding box from
@@ -187,18 +180,18 @@ class Animate extends React.Component<AnimateProps> {
 
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
-
-            visualElement.setAxisTarget(axis, frameTarget.min, frameTarget.max)
-
-            // If this is a crossfade animation, update both elements.
-            crossfade?.(p)
+            visualElement.setProjectionTargetAxis(
+                axis,
+                frameTarget.min,
+                frameTarget.max
+            )
         }
 
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
 
         // Ensure that the layout delta is updated for this frame.
-        visualElement.updateLayoutDelta()
+        visualElement.updateLayoutProjection()
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
@@ -217,16 +210,6 @@ class Animate extends React.Component<AnimateProps> {
         }
 
         return animation
-    }
-
-    createCrossfadeAnimation(crossfadeOpacity: MotionValue<number>) {
-        const { visualElement } = this.props
-        const opacity = visualElement.getValue("opacity", 0)
-
-        return (p: number) => {
-            opacity.set(easeCrossfadeIn(mix(0, 1, p)))
-            crossfadeOpacity.set(easeCrossfadeOut(mix(1, 0, p)))
-        }
     }
 
     safeToRemove() {
@@ -265,27 +248,12 @@ const defaultTransition = {
     ease: [0.4, 0, 0.1, 1],
 }
 
-function compress(
-    min: number,
-    max: number,
-    easing: EasingFunction
-): EasingFunction {
-    return (p: number) => {
-        // Could replace ifs with clamp
-        if (p < min) return 0
-        if (p > max) return 1
-        return easing(progress(min, max, p))
-    }
-}
-
-const easeCrossfadeIn = compress(0, 0.5, circOut)
-const easeCrossfadeOut = compress(0.5, 0.95, linear)
-
 /**
  * @public
  */
 export const AnimateLayout: MotionFeature = {
     key: "animate-layout",
-    shouldRender: (props: MotionProps) => !!props.layout || !!props.layoutId,
+    shouldRender: (props: MotionProps) =>
+        !!props.layout || props.layoutId !== undefined,
     getComponent: () => AnimateLayoutContextProvider,
 }

@@ -72,7 +72,7 @@ const es = Object.assign({}, config, {
 })
 
 const m = Object.assign({}, umdProd, {
-    input: "lib/render/dom/minimal-component.js",
+    input: "lib/render/dom/motion-minimal.js",
     output: Object.assign({}, umd.output, {
         file: `dist/minimal-component.js`,
     }),

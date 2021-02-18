@@ -1,4 +1,4 @@
-import { VisualElement } from "../../../render/VisualElement"
+import { VisualElement } from "../../../render/types"
 import { useContext } from "react"
 import {
     SharedLayoutContext,
