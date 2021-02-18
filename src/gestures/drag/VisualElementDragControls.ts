@@ -2,7 +2,7 @@ import { RefObject } from "react"
 import { invariant } from "hey-listen"
 import { progress } from "popmotion"
 import { PanSession, AnyPointerEvent, PanInfo } from "../../gestures/PanSession"
-import { DraggableProps, DragHandler } from "./types"
+import { DraggableProps, DragHandler, ResolvedConstraints } from "./types"
 import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
@@ -12,16 +12,18 @@ import { TransformPoint2D, AxisBox2D, Point2D } from "../../types/geometry"
 import {
     convertBoundingBoxToAxisBox,
     convertAxisBoxToBoundingBox,
+    axisBox,
 } from "../../utils/geometry"
 import { eachAxis } from "../../utils/each-axis"
 import {
     calcRelativeConstraints,
     calcConstrainedMinPoint,
-    ResolvedConstraints,
     calcViewportConstraints,
     calcPositionFromProgress,
     applyConstraints,
     rebaseAxisConstraints,
+    resolveDragElastic,
+    defaultElastic,
 } from "./utils/constraints"
 import { getBoundingBox } from "../../render/dom/projection/measure"
 import { calcOrigin } from "../../utils/geometry/delta-calc"
@@ -77,6 +79,13 @@ export class VisualElementDragControls {
      * @internal
      */
     private constraints: ResolvedConstraints | false = false
+
+    /**
+     * The per-axis resolved elastic values.
+     *
+     * @internal
+     */
+    private elastic: AxisBox2D = axisBox()
 
     /**
      * A reference to the host component's latest props.
@@ -287,7 +296,7 @@ export class VisualElementDragControls {
     }
 
     resolveDragConstraints() {
-        const { dragConstraints } = this.props
+        const { dragConstraints, dragElastic } = this.props
 
         if (dragConstraints) {
             this.constraints = isRefObject(dragConstraints)
@@ -302,6 +311,8 @@ export class VisualElementDragControls {
         } else {
             this.constraints = false
         }
+
+        this.elastic = resolveDragElastic(dragElastic!)
 
         /**
          * If we're outputting to external MotionValues, we want to rebase the measured constraints
@@ -384,9 +395,9 @@ export class VisualElementDragControls {
 
         if (!isDragging) return
 
-        const { dragMomentum, dragElastic, onDragEnd } = this.props
+        const { dragMomentum, onDragEnd } = this.props
 
-        if (dragMomentum || dragElastic) {
+        if (dragMomentum || this.elastic) {
             const { velocity } = info
             this.animateDragEnd(velocity)
         }
@@ -439,13 +450,12 @@ export class VisualElementDragControls {
 
         if (!offset || !axisValue) return
 
-        const { dragElastic } = this.props
         const nextValue = this.originPoint[axis]! + offset[axis]
         const update = this.constraints
             ? applyConstraints(
                   nextValue,
                   this.constraints[axis],
-                  dragElastic as number
+                  this.elastic[axis]
               )
             : nextValue
 
@@ -453,8 +463,6 @@ export class VisualElementDragControls {
     }
 
     updateVisualElementAxis(axis: DragDirection, event: AnyPointerEvent) {
-        const { dragElastic } = this.props
-
         // Get the actual layout bounding box of the element
         const axisLayout = this.visualElement.getLayoutState().layout[axis]
 
@@ -472,7 +480,7 @@ export class VisualElementDragControls {
             axisLength,
             axisProgress,
             this.constraints?.[axis],
-            dragElastic as number
+            this.elastic[axis]
         )
 
         // Update the axis viewport target with this new min and the length
@@ -484,7 +492,7 @@ export class VisualElementDragControls {
         dragDirectionLock = false,
         dragPropagation = false,
         dragConstraints = false,
-        dragElastic = 0.35,
+        dragElastic = defaultElastic,
         dragMomentum = true,
         ...remainingProps
     }: DragControlsProps & MotionProps) {
