@@ -311,7 +311,7 @@ export interface DraggableProps extends DragHandlers {
      * Set to `0.5` by default. Can also be set as `false` to disable movement.
      *
      * By passing an object of `top`/`right`/`bottom`/`left`, individual values can be set
-     * per constraint.
+     * per constraint. Any missing values will be set to `0`.
      *
      * @library
      *
