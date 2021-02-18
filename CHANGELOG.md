@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.5.0] 2021-02-18
+
+### Added
+
+-   Adding `transition` prop to `MotionConfig` to set a default `transition` for an entire tree.
+
 ## [3.4.2] 2021-02-18
 
 ### Added

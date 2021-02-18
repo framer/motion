@@ -14,6 +14,7 @@ import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { CreateVisualElement, VisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
+import { MotionConfigContext } from "../context/MotionConfigContext"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
@@ -31,6 +32,7 @@ export function useVisualElement<E>(
     isStatic: boolean,
     ref?: Ref<E>
 ): VisualElement<E> {
+    const config = useContext(MotionConfigContext)
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
@@ -59,7 +61,12 @@ export function useVisualElement<E>(
     const visualElement = visualElementRef.current
 
     useIsomorphicLayoutEffect(() => {
-        visualElement.setProps({ ...props, layoutId })
+        visualElement.setProps({
+            ...config,
+            ...props,
+            layoutId,
+        })
+
         visualElement.isPresent = isPresent(presenceContext)
         visualElement.isPresenceRoot =
             !parent || parent.presenceId !== presenceContext?.id
