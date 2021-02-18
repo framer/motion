@@ -37,8 +37,8 @@ describe("resolveDragElastic", () => {
             y: { min: 0.1, max: 0.3 },
         })
         expect(resolveDragElastic({ top: 0.1, right: 0.4 })).toEqual({
-            x: { min: 0.35, max: 0.4 },
-            y: { min: 0.1, max: 0.35 },
+            x: { min: 0, max: 0.4 },
+            y: { min: 0.1, max: 0 },
         })
     })
 })
