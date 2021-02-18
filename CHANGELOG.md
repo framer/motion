@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.4.2] 2021-02-18
+
+### Added
+
+-   `onBeforeLayoutMeasure` prop, currently a Framer internal.
+
 ## [3.4.1] 2021-02-18
 
 ### Fixed
