@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.5.2] 2021-02-18
+
+### Added
+
+-   Setting `sideEffects: false` in `package.json` to help code splitting in Webpack.
+
 ## [3.5.1] 2021-02-18
 
 ### Fixed
