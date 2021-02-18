@@ -31,9 +31,6 @@ export interface CrossfadeAnimationOptions {
     preserveFollowOpacity?: boolean
 }
 
-/**
- * TODO: Test crossfadder
- */
 export function createCrossfader(): Crossfader {
     /**
      * The current state of the crossfade as a value between 0 and 1
