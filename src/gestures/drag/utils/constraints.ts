@@ -177,7 +177,11 @@ export const defaultElastic = 0.35
  * Accepts a dragElastic prop and returns resolved elastic values for each axis.
  */
 export function resolveDragElastic(dragElastic: DragElastic): AxisBox2D {
-    if (dragElastic === false) dragElastic = 0
+    if (dragElastic === false) {
+        dragElastic = 0
+    } else if (dragElastic === true) {
+        dragElastic = defaultElastic
+    }
 
     return {
         x: resolveAxisElastic(dragElastic, "left", "right"),

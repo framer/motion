@@ -15,6 +15,12 @@ describe("resolveDragElastic", () => {
             y: { min: 0, max: 0 },
         })
     })
+    test("Resolves true as default", () => {
+        expect(resolveDragElastic(true)).toEqual({
+            x: { min: 0.35, max: 0.35 },
+            y: { min: 0.35, max: 0.35 },
+        })
+    })
 
     test("Resolves number as object filled with number", () => {
         expect(resolveDragElastic(0.5)).toEqual({
