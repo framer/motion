@@ -40,6 +40,35 @@ describe("press", () => {
         expect(press).toBeCalledTimes(1)
     })
 
+    test("onTapCancel is correctly removed from a component", () => {
+        const cancelA = jest.fn()
+
+        const Component = () => (
+            <>
+                <motion.div
+                    data-testid="a"
+                    onTap={() => {}}
+                    onTapCancel={cancelA}
+                />
+                <motion.div data-testid="b" onTap={() => {}} />
+            </>
+        )
+
+        const { getByTestId } = render(<Component />)
+
+        const a = getByTestId("a")
+        const b = getByTestId("b")
+
+        fireEvent.mouseDown(a)
+        fireEvent.mouseUp(a)
+
+        expect(cancelA).not.toHaveBeenCalled()
+
+        fireEvent.mouseDown(b)
+        fireEvent.mouseUp(b)
+        expect(cancelA).not.toHaveBeenCalled()
+    })
+
     test("press event listeners fire if triggered by child", () => {
         const press = jest.fn()
         const Component = () => (

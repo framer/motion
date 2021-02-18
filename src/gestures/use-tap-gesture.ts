@@ -197,6 +197,7 @@ export function useTapGesture(
     }
 
     function checkPointerEnd() {
+        removePointerEndListener()
         isPressing.current = false
         visualElement.animationState?.setActive(AnimationType.Tap, false)
         return !isDragActive()
