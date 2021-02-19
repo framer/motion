@@ -57,7 +57,9 @@ export function animateVisualElement(
         animation = animateTarget(visualElement, definition as any, options)
     }
 
-    return animation.then(() => visualElement.notifyAnimationComplete())
+    return animation.then(() =>
+        visualElement.notifyAnimationComplete(definition)
+    )
 }
 
 function animateVariant(
