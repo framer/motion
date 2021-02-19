@@ -3,6 +3,7 @@ import { MotionProps } from "../../motion/types"
 import { AxisBox2D, BoxDelta } from "../../types/geometry"
 import { subscriptionManager } from "../../utils/subscription-manager"
 import { ResolvedValues } from "../types"
+import { AnimationDefinition } from "./animation"
 
 const names = [
     "LayoutMeasure",
@@ -29,7 +30,10 @@ export type LayoutUpdateListener = (
 ) => void
 export type UpdateListener = (latest: ResolvedValues) => void
 export type AnimationStartListener = () => void
-export type AnimationCompleteListener = () => void
+export type AnimationCompleteListener = (
+    definition: AnimationDefinition
+) => void
+export type LayoutAnimationCompleteListener = () => void
 export type SetAxisTargetListener = () => void
 export type RenderListener = () => void
 export type OnViewportBoxUpdate = (box: AxisBox2D, delta: BoxDelta) => void
@@ -102,6 +106,12 @@ export interface VisualElementLifecycles {
     /**
      * Callback when animation defined in `animate` is complete.
      *
+     * The provided callback will be called the triggering animation definition.
+     * If this is a variant, it'll be the variant name, and if a target object
+     * then it'll be the target object.
+     *
+     * This way, it's possible to figure out which animation has completed.
+     *
      * @library
      *
      * ```jsx
@@ -109,7 +119,12 @@ export interface VisualElementLifecycles {
      *   console.log("Animation completed")
      * }
      *
-     * <Frame animate={{ x: 100 }} onAnimationComplete={onComplete} />
+     * <Frame
+     *   animate={{ x: 100 }}
+     *   onAnimationComplete={definition => {
+     *     console.log('Completed animating', definition)
+     *   }}
+     * />
      * ```
      *
      * @motion
@@ -119,10 +134,15 @@ export interface VisualElementLifecycles {
      *   console.log("Animation completed")
      * }
      *
-     * <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />
+     * <motion.div
+     *   animate={{ x: 100 }}
+     *   onAnimationComplete={definition => {
+     *     console.log('Completed animating', definition)
+     *   }}
+     * />
      * ```
      */
-    onAnimationComplete?(): void
+    onAnimationComplete?(definition: AnimationDefinition): void
 
     /**
      * @internal
@@ -146,9 +166,9 @@ export interface LifecycleManager {
     onAnimationComplete: (callback: AnimationCompleteListener) => () => void
     notifyAnimationComplete: AnimationCompleteListener
     onLayoutAnimationComplete: (
-        callback: AnimationCompleteListener
+        callback: LayoutAnimationCompleteListener
     ) => () => void
-    notifyLayoutAnimationComplete: AnimationCompleteListener
+    notifyLayoutAnimationComplete: LayoutAnimationCompleteListener
     onSetAxisTarget: (callback: SetAxisTargetListener) => () => void
     notifySetAxisTarget: SetAxisTargetListener
     onRender: (callback: RenderListener) => () => void

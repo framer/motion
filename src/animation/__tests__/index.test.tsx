@@ -77,6 +77,35 @@ describe("useAnimation", () => {
         await expect(promise).resolves.toBe(100)
     })
 
+    test("fire's a component's onAnimationComplete with the animation definition", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const animation = useAnimation()
+
+                const x = useMotionValue(0)
+
+                React.useEffect(() => {
+                    animation.start({ x: 100 })
+                }, [])
+
+                return (
+                    <motion.div
+                        animate={animation}
+                        style={{ x }}
+                        onAnimationComplete={(definition) =>
+                            resolve(definition)
+                        }
+                    />
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toEqual({ x: 100 })
+    })
+
     test("animates to named variants", async () => {
         const promise = new Promise((resolve) => {
             const Component = () => {

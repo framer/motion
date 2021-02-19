@@ -86,8 +86,6 @@ export interface VisualElement<Instance = any, MutableState = any>
               whileFocus?: string | string[]
               whileTap?: string | string[]
           }
-    notifyAnimationStart(): void
-    notifyAnimationComplete(): void
 
     build(): MutableState
     syncRender(): void
