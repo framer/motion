@@ -127,6 +127,7 @@ export {
     Variants,
 } from "./types"
 export { EventInfo } from "./events/types"
+export { VisualElementLifecycles } from "./render/utils/lifecycles"
 export { MotionFeature, FeatureProps } from "./motion/features/types"
 export { DraggableProps, DragHandlers } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
