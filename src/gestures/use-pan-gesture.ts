@@ -15,6 +15,10 @@ export interface PanHandlers {
     /**
      * Callback function that fires when the pan gesture is recognised on this element.
      *
+     * **Note:** For pan gestures to work correctly with touch input, the element needs
+     * touch scrolling to be disabled on either x/y or both axis with the
+     * [touch-action](https://developer.mozilla.org/en-US/docs/Web/CSS/touch-action) CSS rule.
+     *
      * @library
      *
      * ```jsx
