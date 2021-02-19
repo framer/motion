@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.1] 2021-02-19
+
+### Fixed
+
+-   `onAnimationComplete` on child variant components now fire as expected.
+
 ## [3.6.0] 2021-02-19
 
 ### Added
