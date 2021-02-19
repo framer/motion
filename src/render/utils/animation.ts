@@ -196,7 +196,7 @@ function animateChildren(
                 animateVariant(child, variant, {
                     ...options,
                     delay: delayChildren + generateStaggerDuration(i),
-                })
+                }).then(() => child.notifyAnimationComplete(variant))
             )
         })
 
