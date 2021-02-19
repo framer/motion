@@ -8,7 +8,7 @@ import {
     Transition,
 } from "../../types"
 import { VisualElement } from "../types"
-import { AnimationType } from "./animation-state"
+import { AnimationType, AnimationTypeState } from "./animation-state"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
 
@@ -77,6 +77,7 @@ function animateVariant(
      * If we have a variant, create a callback that runs it as an animation.
      * Otherwise, we resolve a Promise immediately for a composable no-op.
      */
+
     const getAnimation = resolved
         ? () => animateTarget(visualElement, resolved, options)
         : () => Promise.resolve()
@@ -139,9 +140,9 @@ function animateTarget(
 
     const animations: Promise<any>[] = []
 
-    const protectedValues =
-        type && visualElement.animationState?.getProtectedKeys(type)
-
+    const animationTypeState =
+        type && visualElement.animationState?.getState()[type]
+    console.log("animation type:", type)
     for (const key in target) {
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
@@ -149,7 +150,8 @@ function animateTarget(
         if (
             !value ||
             valueTarget === undefined ||
-            protectedValues?.[key] !== undefined
+            (animationTypeState &&
+                shouldBlockAnimation(animationTypeState, key))
         ) {
             continue
         }
@@ -205,4 +207,28 @@ export function stopAnimation(visualElement: VisualElement) {
 
 export function sortByTreeOrder(a: VisualElement, b: VisualElement) {
     return a.sortNodePosition(b)
+}
+
+/**
+ * Decide whether we should block this animation. Previously, we achieved this
+ * just by checking whether the key was listed in protectedKeys, but this
+ * posed problems if an animation was triggered by afterChildren and protectedKeys
+ * had been set to true in the meantime.
+ */
+function shouldBlockAnimation(
+    { protectedKeys, needsAnimating }: AnimationTypeState,
+    key: string
+) {
+    const shouldBlock =
+        protectedKeys[key] === true && needsAnimating[key] !== true
+
+    console.log(
+        key,
+        "should block:",
+        shouldBlock,
+        "is in protected keys",
+        protectedKeys[key] === true
+    )
+    needsAnimating[key] = false
+    return shouldBlock
 }

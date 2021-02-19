@@ -22,9 +22,8 @@ export interface AnimationState {
         options?: AnimationOptions
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
-    getProtectedKeys: (type: AnimationType) => { [key: string]: any }
     isAnimated(key: string): boolean
-    getState: () => { [key: string]: TypeState }
+    getState: () => { [key: string]: AnimationTypeState }
 }
 
 interface DefinitionAndOptions {
@@ -88,10 +87,6 @@ export function createAnimationState(
         }
 
         return acc
-    }
-
-    function getProtectedKeys(type: AnimationType) {
-        return state[type].protectedKeys
     }
 
     function isAnimated(key: string) {
@@ -255,6 +250,12 @@ export function createAnimationState(
                 ...resolvedValues,
             }
 
+            const markToAnimate = (key: string) => {
+                shouldAnimateType = true
+                removedKeys.delete(key)
+                typeState.needsAnimating[key] = true
+            }
+
             for (const key in allKeys) {
                 const next = resolvedValues[key]
                 const prev = prevResolvedValues[key]
@@ -262,18 +263,27 @@ export function createAnimationState(
                 // If we've already handled this we can just skip ahead
                 if (encounteredKeys.hasOwnProperty(key)) continue
 
+                /**
+                 * If the value has changed, we probably want to animate it.
+                 */
                 if (next !== prev) {
+                    /**
+                     * If both values are keyframes, we need to shallow compare them to
+                     * detect whether any value has changed. If it has, we animate it.
+                     */
                     if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
                         if (!shallowCompare(next, prev)) {
-                            shouldAnimateType = true
-                            removedKeys.delete(key)
+                            markToAnimate(key)
                         } else {
+                            /**
+                             * If it hasn't changed, we want to ensure it doesn't animate by
+                             * adding it to the list of protected keys.
+                             */
                             typeState.protectedKeys[key] = true
                         }
                     } else if (next !== undefined) {
                         // If next is defined and doesn't equal prev, it needs animating
-                        shouldAnimateType = true
-                        removedKeys.delete(key)
+                        markToAnimate(key)
                     } else {
                         // If it's undefined, it's been removed.
                         removedKeys.add(key)
@@ -283,9 +293,12 @@ export function createAnimationState(
                      * If next hasn't changed and it isn't undefined, we want to check if it's
                      * been removed by a higher priority
                      */
-                    shouldAnimateType = true
-                    removedKeys.delete(key)
+                    markToAnimate(key)
                 } else {
+                    /**
+                     * If it hasn't changed, we add it to the list of protected values
+                     * to ensure it doesn't get animated.
+                     */
                     typeState.protectedKeys[key] = true
                 }
             }
@@ -377,7 +390,6 @@ export function createAnimationState(
     }
 
     return {
-        getProtectedKeys,
         isAnimated,
         animateChanges,
         setActive,
@@ -396,17 +408,19 @@ export function variantsHaveChanged(prev: any, next: any) {
     return false
 }
 
-interface TypeState {
+export interface AnimationTypeState {
     isActive: boolean
     protectedKeys: { [key: string]: true }
+    needsAnimating: { [key: string]: boolean }
     prevResolvedValues: { [key: string]: any }
     prevProp?: VariantLabels | TargetAndTransition
 }
 
-function createTypeState(isActive = false): TypeState {
+function createTypeState(isActive = false): AnimationTypeState {
     return {
         isActive,
         protectedKeys: {},
+        needsAnimating: {},
         prevResolvedValues: {},
     }
 }
