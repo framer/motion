@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.0] 2021-02-19
+
+### Added
+
+-   `onAnimationComplete` now provides the definition of the triggering animation.
+
 ## [3.5.3] 2021-02-19
 
 ### Fixed
