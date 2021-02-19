@@ -48,7 +48,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   `onAnimationComplete` on child variant components now fire as expected.
+<<<<<<< HEAD
+
+-   # `onAnimationComplete` on child variant components now fire as expected.
+-   `motion.custom` now filters `MotionProps`.
+    > > > > > > > Filtering MotionProps from motion.custom
 
 ## [3.6.0] 2021-02-19
 

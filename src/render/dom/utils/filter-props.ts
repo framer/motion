@@ -1,7 +1,8 @@
 import { MotionProps } from "../../../motion/types"
 import { isValidMotionProp } from "../../../motion/utils/valid-prop"
 
-let isPropValid = (key: string) => !isValidMotionProp(key)
+const filterValidMotionProps = (key: string) => !isValidMotionProp(key)
+let filterAllProps = filterValidMotionProps
 
 /**
  * Emotion and Styled Components both allow users to pass through arbitrary props to their components
@@ -19,7 +20,7 @@ let isPropValid = (key: string) => !isValidMotionProp(key)
 try {
     const emotionIsPropValid = require("@emotion/is-prop-valid").default
 
-    isPropValid = (key: string) => {
+    filterAllProps = (key: string) => {
         // Handle events explicitly as Emotion validates them all as true
         if (key.startsWith("on")) {
             return !isValidMotionProp(key)
@@ -31,11 +32,17 @@ try {
     // We don't need to actually do anything here - the fallback is the existing `isPropValid`.
 }
 
-export function filterProps(props: MotionProps) {
+export function filterProps(
+    props: MotionProps,
+    shouldFilterAllProps: boolean = true
+) {
+    const filter = shouldFilterAllProps
+        ? filterAllProps
+        : filterValidMotionProps
     const domProps = {}
 
     for (const key in props) {
-        if (isPropValid(key)) domProps[key] = props[key]
+        if (filter(key)) domProps[key] = props[key]
     }
 
     return domProps
