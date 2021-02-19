@@ -1,4 +1,4 @@
-import { animationControls } from "./animation-controls"
+import { AnimationControls, animationControls } from "./animation-controls"
 import { useEffect } from "react"
 import { useConstant } from "../utils/use-constant"
 
@@ -51,7 +51,7 @@ import { useConstant } from "../utils/use-constant"
  *
  * @public
  */
-export function useAnimation() {
+export function useAnimation(): AnimationControls {
     const controls = useConstant(animationControls)
 
     useEffect(controls.mount, [])

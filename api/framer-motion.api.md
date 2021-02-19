@@ -709,7 +709,7 @@ export interface Tween extends Repeat {
 }
 
 // @public
-export function useAnimation(): import("./animation-controls").AnimationControls;
+export function useAnimation(): AnimationControls;
 
 // Warning: (ae-forgotten-export) The symbol "CycleState" needs to be exported by the entry point index.d.ts
 // 
