@@ -77,7 +77,7 @@ describe("useAnimation", () => {
         await expect(promise).resolves.toBe(100)
     })
 
-    test("fire's a component's onAnimationComplete with the animation definition", async () => {
+    test("fires a component's onAnimationComplete with the animation definition", async () => {
         const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
@@ -104,6 +104,38 @@ describe("useAnimation", () => {
         })
 
         await expect(promise).resolves.toEqual({ x: 100 })
+    })
+
+    test("variants fire a child's onAnimationComplete", async () => {
+        const promise = new Promise((resolve) => {
+            const variants = {
+                hidden: { opacity: 0 },
+                visible: { opacity: 1 },
+            }
+            const Component = () => {
+                return (
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        variants={variants}
+                        transition={{ transition: false }}
+                    >
+                        <motion.div
+                            onAnimationComplete={(definition) =>
+                                resolve(definition)
+                            }
+                            transition={{ transition: false }}
+                            variants={variants}
+                        />
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe("visible")
     })
 
     test("animates to named variants", async () => {
