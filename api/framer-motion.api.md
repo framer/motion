@@ -869,9 +869,9 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
+    // (undocumented)
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
@@ -908,10 +908,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     manuallyAnimateOnMount: boolean;
     // (undocumented)
     measureViewportBox(withTransform?: boolean): AxisBox2D;
-    // (undocumented)
-    notifyAnimationComplete(): void;
-    // (undocumented)
-    notifyAnimationStart(): void;
     // (undocumented)
     notifyLayoutReady(config?: SharedLayoutAnimationConfig): void;
     // (undocumented)
@@ -992,12 +988,14 @@ export const visualElement: <Instance, MutableState, Options>({ treeType, create
 
 // @public
 export interface VisualElementLifecycles {
-    onAnimationComplete?(): void;
+    onAnimationComplete?(definition: AnimationDefinition): void;
     onAnimationStart?(): void;
     // (undocumented)
     onBeforeLayoutMeasure?(box: AxisBox2D): void;
+    // Warning: (ae-forgotten-export) The symbol "LayoutAnimationCompleteListener" needs to be exported by the entry point index.d.ts
+    // 
     // @internal (undocumented)
-    onLayoutAnimationComplete?(): void;
+    onLayoutAnimationComplete?: LayoutAnimationCompleteListener;
     // (undocumented)
     onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void;
     onUpdate?(latest: ResolvedValues): void;

@@ -33,6 +33,7 @@ export type AnimationStartListener = () => void
 export type AnimationCompleteListener = (
     definition: AnimationDefinition
 ) => void
+export type LayoutAnimationCompleteListener = () => void
 export type SetAxisTargetListener = () => void
 export type RenderListener = () => void
 export type OnViewportBoxUpdate = (box: AxisBox2D, delta: BoxDelta) => void
@@ -146,7 +147,7 @@ export interface VisualElementLifecycles {
     /**
      * @internal
      */
-    onLayoutAnimationComplete?(): void
+    onLayoutAnimationComplete?: LayoutAnimationCompleteListener
 }
 
 export interface LifecycleManager {
@@ -164,8 +165,10 @@ export interface LifecycleManager {
     notifyAnimationStart: AnimationStartListener
     onAnimationComplete: (callback: AnimationCompleteListener) => () => void
     notifyAnimationComplete: AnimationCompleteListener
-    onLayoutAnimationComplete: (callback: () => {}) => () => void
-    notifyLayoutAnimationComplete: () => {}
+    onLayoutAnimationComplete: (
+        callback: LayoutAnimationCompleteListener
+    ) => () => void
+    notifyLayoutAnimationComplete: LayoutAnimationCompleteListener
     onSetAxisTarget: (callback: SetAxisTargetListener) => () => void
     notifySetAxisTarget: SetAxisTargetListener
     onRender: (callback: RenderListener) => () => void
