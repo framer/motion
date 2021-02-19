@@ -22,11 +22,13 @@ describe("motion.custom", () => {
         render(<Component />)
     })
 
-    test("doesn't forward motion props", () => {
+    test("doesn't forward motion props but does forward custom props", () => {
         let animate: any
+        let foo: boolean = false
         const BaseComponent = React.forwardRef(
             (props: Props, ref: RefObject<HTMLDivElement>) => {
                 animate = (props as any).animate
+                foo = props.foo
                 return <div ref={ref} />
             }
         )
@@ -38,5 +40,6 @@ describe("motion.custom", () => {
         render(<Component />)
 
         expect(animate).toBeUndefined()
+        expect(foo).toBe(true)
     })
 })
