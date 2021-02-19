@@ -2,6 +2,7 @@ import { render } from "../../../../jest.setup"
 import * as React from "react"
 import { AnimatePresence, motion, MotionConfig, useAnimation } from "../../.."
 import { motionValue } from "../../../value"
+import { ResolvedValues } from "../../../render/types"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -93,6 +94,53 @@ describe("AnimatePresence", () => {
 
         const child = await promise
         expect(child).toBeFalsy()
+    })
+
+    test("when: afterChildren fires correctly", async () => {
+        const promise = new Promise<number>((resolve) => {
+            const parentOpacityOutput: ResolvedValues[] = []
+
+            const variants = {
+                visible: { opacity: 1 },
+                hidden: { opacity: 0 },
+            }
+
+            const Component = ({ isVisible }: { isVisible: boolean }) => {
+                return (
+                    <AnimatePresence>
+                        {isVisible && (
+                            <motion.div
+                                initial={false}
+                                animate="visible"
+                                exit="hidden"
+                                transition={{
+                                    duration: 0.2,
+                                    when: "afterChildren",
+                                }}
+                                variants={variants}
+                                onUpdate={(v) => parentOpacityOutput.push(v)}
+                                onAnimationComplete={() =>
+                                    resolve(parentOpacityOutput.length)
+                                }
+                            >
+                                <motion.div
+                                    variants={variants}
+                                    transition={{ type: false }}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender } = render(<Component isVisible />)
+            rerender(<Component isVisible />)
+            rerender(<Component isVisible={false} />)
+            rerender(<Component isVisible={false} />)
+        })
+
+        const child = await promise
+        expect(child).toBeGreaterThan(1)
     })
 
     test("Animates a component back in if it's re-added before animating out", async () => {

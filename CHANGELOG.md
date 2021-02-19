@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.5.3] 2021-02-19
+
+### Fixed
+
+-   Fixing bug with `afterChildren` and `exit` animations.
+
 ## [3.5.2] 2021-02-18
 
 ### Added
