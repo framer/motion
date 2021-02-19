@@ -147,7 +147,7 @@ export interface VisualElementLifecycles {
     /**
      * @internal
      */
-    onLayoutAnimationComplete?: LayoutAnimationCompleteListener
+    onLayoutAnimationComplete?(): void
 }
 
 export interface LifecycleManager {

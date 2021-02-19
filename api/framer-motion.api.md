@@ -992,10 +992,8 @@ export interface VisualElementLifecycles {
     onAnimationStart?(): void;
     // (undocumented)
     onBeforeLayoutMeasure?(box: AxisBox2D): void;
-    // Warning: (ae-forgotten-export) The symbol "LayoutAnimationCompleteListener" needs to be exported by the entry point index.d.ts
-    // 
     // @internal (undocumented)
-    onLayoutAnimationComplete?: LayoutAnimationCompleteListener;
+    onLayoutAnimationComplete?(): void;
     // (undocumented)
     onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void;
     onUpdate?(latest: ResolvedValues): void;
