@@ -157,7 +157,7 @@ describe("hover", () => {
                     style={{ opacity, scale }}
                 />
             )
-            console.log("hover testt")
+
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
 

@@ -142,7 +142,7 @@ function animateTarget(
 
     const animationTypeState =
         type && visualElement.animationState?.getState()[type]
-    console.log("animation type:", type)
+
     for (const key in target) {
         const value = visualElement.getValue(key)
         const valueTarget = target[key]
@@ -220,15 +220,8 @@ function shouldBlockAnimation(
     key: string
 ) {
     const shouldBlock =
-        protectedKeys[key] === true && needsAnimating[key] !== true
+        protectedKeys.hasOwnProperty(key) && needsAnimating[key] !== true
 
-    console.log(
-        key,
-        "should block:",
-        shouldBlock,
-        "is in protected keys",
-        protectedKeys[key] === true
-    )
     needsAnimating[key] = false
     return shouldBlock
 }
