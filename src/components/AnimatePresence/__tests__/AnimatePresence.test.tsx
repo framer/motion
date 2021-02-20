@@ -223,6 +223,25 @@ describe("AnimatePresence", () => {
         expect(child).toBeFalsy()
     })
 
+    test("Removes a child with no animations", async () => {
+        const promise = new Promise<Element | null>((resolve) => {
+            const Component = ({ isVisible }: { isVisible: boolean }) => {
+                return <AnimatePresence>{isVisible && <div />}</AnimatePresence>
+            }
+
+            const { container, rerender } = render(<Component isVisible />)
+            rerender(<Component isVisible />)
+            rerender(<Component isVisible={false} />)
+            rerender(<Component isVisible={false} />)
+
+            // Check it's gone
+            resolve(container.firstChild as Element | null)
+        })
+
+        const child = await promise
+        expect(child).toBeFalsy()
+    })
+
     test("Can cycle through multiple components", async () => {
         const promise = new Promise<number>((resolve) => {
             const Component = ({ i }: { i: number }) => {

@@ -63,6 +63,14 @@ export const PresenceChild = ({
         presenceChildren.forEach((_, key) => presenceChildren.set(key, false))
     }, [isPresent])
 
+    /**
+     * If there's no `motion` components to fire exit animations, we want to remove this
+     * component immediately.
+     */
+    React.useEffect(() => {
+        !isPresent && !presenceChildren.size && onExitComplete?.()
+    }, [isPresent])
+
     return (
         <PresenceContext.Provider value={context}>
             {children}
