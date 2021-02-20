@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.2] 2021-02-20
+
+### Fixed
+
+-   `AnimatePresence` now correctly unmounts children if it contains no `motion` components.
+
 ## [3.6.1] 2021-02-19
 
 ### Fixed
