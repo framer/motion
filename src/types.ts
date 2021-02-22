@@ -568,7 +568,9 @@ export interface Tween extends Repeat {
      * The easing function to use. Set as one of the below.
      *
      * - The name of an existing easing function.
+     *
      * - An array of four numbers to define a cubic bezier curve.
+     *
      * - An easing function, that accepts and returns a value `0-1`.
      *
      * If the animating value is set as an array of multiple values for a keyframes

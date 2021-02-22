@@ -38,8 +38,8 @@
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
     },
     "peerDependencies": {
-        "react": ">=16.8",
-        "react-dom": ">=16.8"
+        "react": ">=16.8 || ^17.0.0",
+        "react-dom": ">=16.8 || ^17.0.0"
     },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
