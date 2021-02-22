@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.3] 2021-02-22
+
+### Fixed
+
+-   Only crossfading defined `borderRadius` borders during shared element transitions.
+
 ## [3.6.2] 2021-02-20
 
 ### Fixed
