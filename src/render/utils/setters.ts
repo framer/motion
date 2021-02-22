@@ -91,23 +91,21 @@ export function checkTargetForNewValues(
         const targetValue = target[key]
         let value: string | number | null = null
 
-        // If this is a keyframes value, we can attempt to use the first value in the
-        // array as that's going to be the first value of the animation anyway
+        /**
+         * If the target is a series of keyframes, we can use the first value
+         * in the array. If this first value is null, we'll still need to read from the DOM.
+         */
         if (Array.isArray(targetValue)) {
             value = targetValue[0]
         }
 
-        // If it isn't a keyframes or the first keyframes value was set as `null`, read the
-        // value from the DOM. It might be worth investigating whether to check props (for SVG)
-        // or props.style (for HTML) if the value exists there before attempting to read.
+        /**
+         * If the target isn't keyframes, or the first keyframe was null, we need to
+         * first check if an origin value was explicitly defined in the transition as "from",
+         * if not read the value from the DOM. As an absolute fallback, take the defined target value.
+         */
         if (value === null) {
-            const readValue = origin[key] ?? visualElement.readValue(key)
-            value = readValue !== undefined ? readValue : target[key]
-
-            invariant(
-                value !== null,
-                `No initial value for "${key}" can be inferred. Ensure an initial value for "${key}" is defined on the component.`
-            )
+            value = origin[key] ?? visualElement.readValue(key) ?? target[key]
         }
 
         if (typeof value === "string" && isNumericalString(value)) {
