@@ -8981,14 +8981,6 @@ strip-json-comments@^2.0.1, strip-json-comments@~2.0.1:
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-2.0.1.tgz#3c531942e908c2697c0ec344858c286c7ca0a60a"
   integrity sha1-PFMZQukIwml8DsNEhYwobHygpgo=
 
-style-value-types@4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-4.0.2.tgz#0f3362a20ce061a9be4347492295fc9dce7ef4fd"
-  integrity sha512-vD2tBBjEuqHebSDy9Lmly81p4AtSZ+UVzWMxrdCudaPyUp2AKmAGyfkkQKaPNvIzzhqsV/incddg0sEnTeoSdw==
-  dependencies:
-    hey-listen "^1.0.8"
-    tslib "^1.10.0"
-
 style-value-types@4.0.3:
   version "4.0.3"
   resolved "https://registry.yarnpkg.com/style-value-types/-/style-value-types-4.0.3.tgz#3e2e46c50e876757cba02f442c8a0b0dd970c118"
