@@ -275,7 +275,7 @@ export class PanSession {
         this.end()
 
         const { onEnd } = this.handlers
-        if (!onEnd) return
+        if (!onEnd || !this.startEvent) return
 
         const panInfo = getPanInfo(
             transformPoint(info, this.transformPagePoint),

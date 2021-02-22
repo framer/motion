@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.5] 2021-02-22
+
+### Fixed
+
+-   Only fire `onPanEnd` if `onPanStart` has triggered.
+
 ## [3.6.4] 2021-02-22
 
 ### Fixed
