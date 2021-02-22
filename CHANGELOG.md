@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.6] 2021-02-22
+
+### Fixed
+
+-   Safer `hasOwnProperty` check for `null` values.
+
 ## [3.6.5] 2021-02-22
 
 ### Fixed
