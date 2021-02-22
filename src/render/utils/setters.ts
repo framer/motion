@@ -108,6 +108,12 @@ export function checkTargetForNewValues(
             value = origin[key] ?? visualElement.readValue(key) ?? target[key]
         }
 
+        /**
+         * If value is still undefined or null, ignore it. Preferably this would throw,
+         * but this was causing issues in Framer.
+         */
+        if (value === undefined || value === null) continue
+
         if (typeof value === "string" && isNumericalString(value)) {
             // If this is a number read as a string, ie "0" or "200", convert it to a number
             value = parseFloat(value)
