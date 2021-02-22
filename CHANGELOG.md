@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.6.7] 2021-02-22
+
+### Fixed
+
+-   More permissive check for previously-unencountered values.
+
 ## [3.6.6] 2021-02-22
 
 ### Fixed
