@@ -96,6 +96,38 @@ describe("AnimatePresence", () => {
         expect(child).toBeFalsy()
     })
 
+    test("Allows nested exit animations", async () => {
+        const promise = new Promise((resolve) => {
+            const opacity = motionValue(0)
+            const Component = ({ isOpen }: any) => {
+                return (
+                    <AnimatePresence>
+                        {isOpen && (
+                            <motion.div exit={{ x: 100 }}>
+                                <motion.div
+                                    animate={{ opacity: 0.9 }}
+                                    style={{ opacity }}
+                                    exit={{ opacity: 0.1 }}
+                                    transition={{ type: false }}
+                                />
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender } = render(<Component isOpen />)
+            rerender(<Component isOpen />)
+            expect(opacity.get()).toBe(0.9)
+            rerender(<Component isOpen={false} />)
+            rerender(<Component isOpen={false} />)
+            setTimeout(() => resolve(opacity.get()), 50)
+        })
+
+        const opacity = await promise
+        expect(opacity).toEqual(0.1)
+    })
+
     test("when: afterChildren fires correctly", async () => {
         const promise = new Promise<number>((resolve) => {
             const parentOpacityOutput: ResolvedValues[] = []
