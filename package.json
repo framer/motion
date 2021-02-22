@@ -94,9 +94,9 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
-        "framesync": "^5.0.0",
+        "framesync": "^5.1.0",
         "hey-listen": "^1.0.8",
-        "popmotion": "^9.1.0",
+        "popmotion": "9.2.0",
         "style-value-types": "^4.0.1",
         "tslib": "^1.10.0"
     },
