@@ -1,4 +1,3 @@
-import { invariant } from "hey-listen"
 import { complex } from "style-value-types"
 import {
     Target,
