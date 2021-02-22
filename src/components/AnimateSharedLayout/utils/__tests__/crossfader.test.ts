@@ -104,20 +104,72 @@ describe("crossfader", () => {
         })
     })
 
-    test("Correctly crossfades from follow to lead with opacity", async () => {
+    test("Correctly only crossfades defined borderRadius", async () => {
         const crossfader = createCrossfader()
 
         const lead = mockVisualElement({
             props: {
-                initial: { opacity: 0.4 },
+                initial: {
+                    borderTopLeftRadius: 40,
+                    backgroundColor: "#fff",
+                },
             },
         })
 
         const follow = mockVisualElement({
             props: {
                 initial: {
-                    opacity: 1,
+                    borderTopLeftRadius: 20,
+                    backgroundColor: "#000",
                 },
+            },
+        })
+
+        let latestLeadValues: ResolvedValues = {}
+        let latestFollowValues: ResolvedValues = {}
+
+        ;(lead.ref as any)((latest: ResolvedValues) => {
+            latestLeadValues = latest
+        })
+        ;(follow.ref as any)(
+            (latest: ResolvedValues) => (latestFollowValues = latest)
+        )
+
+        crossfader.setOptions({ lead, follow })
+        lead.setCrossfader(crossfader)
+        follow.setCrossfader(crossfader)
+
+        crossfader.toLead({
+            duration: 1000,
+            ease: () => 0.25,
+        })
+
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                expect(latestLeadValues.borderTopLeftRadius).toBe(25)
+                expect(latestFollowValues.borderTopLeftRadius).toBe(25)
+                expect(latestLeadValues.borderBottomRightRadius).toBeUndefined()
+                expect(
+                    latestFollowValues.borderBottomRightRadius
+                ).toBeUndefined()
+                crossfader.stop()
+                resolve()
+            }, 50)
+        })
+    })
+
+    test("Correctly crossfades from follow to lead with opacity", async () => {
+        const crossfader = createCrossfader()
+
+        const lead = mockVisualElement({
+            props: {
+                initial: { backgroundColor: "red", opacity: 0.4 },
+            },
+        })
+
+        const follow = mockVisualElement({
+            props: {
+                initial: { backgroundColor: "green", opacity: 1 },
             },
         })
 

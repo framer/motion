@@ -193,8 +193,13 @@ function mixValues(
      */
     for (let i = 0; i < numBorders; i++) {
         const borderLabel = `border${borders[i]}Radius`
-        const followRadius = getRadius(latestFollowValues, borderLabel)
-        const leadRadius = getRadius(latestLeadValues, borderLabel)
+        let followRadius = getRadius(latestFollowValues, borderLabel)
+        let leadRadius = getRadius(latestLeadValues, borderLabel)
+
+        if (followRadius === undefined && leadRadius === undefined) continue
+
+        followRadius ||= 0
+        leadRadius ||= 0
 
         /**
          * Currently we're only crossfading between numerical border radius.
@@ -248,5 +253,5 @@ function mixValues(
 }
 
 function getRadius(values: ResolvedValues, radiusName: string) {
-    return values[radiusName] ?? values.borderRadius ?? 0
+    return values[radiusName] ?? values.borderRadius
 }
