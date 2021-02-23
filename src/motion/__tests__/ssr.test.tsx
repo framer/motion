@@ -38,7 +38,7 @@ function runTests(render: (components: any) => string) {
 
     test("correctly renders custom HTML tag", () => {
         const y = motionValue(200)
-        const CustomComponent = motion.custom("element-test")
+        const CustomComponent = motion("element-test")
         const customElement = render(
             <AnimatePresence>
                 <CustomComponent

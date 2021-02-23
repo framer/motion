@@ -353,7 +353,7 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>) => import("./motion").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
     custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>) => import("./motion").CustomDomComponent<Props>;
 };
 
@@ -361,13 +361,14 @@ export const m: import("./types").HTMLMotionComponents & import("./types").SVGMo
 // Warning: (ae-forgotten-export) The symbol "SVGMotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export const motion: HTMLMotionComponents & SVGMotionComponents & {
+export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents & {
     custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>) => CustomDomComponent<Props>;
 };
 
 // @public (undocumented)
 export interface MotionAdvancedProps {
     custom?: any;
+    forwardMotionProps?: boolean;
     inherit?: boolean;
 }
 

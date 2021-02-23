@@ -44,6 +44,21 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `AnimatePresence` now correctly unmounts children if it contains no `motion` components.
 
+## [4.0.0] 2021-02-23
+
+### Added
+
+-   `motion()` creates custom `motion` components.
+-   `forwardMotionProps` boolean to optionally forward `MotionProps` to custom components.
+
+### Changed
+
+-   Custom `motion` components no longer forward `MotionProps` by default.
+
+### Deprecated
+
+-   `motion.custom`
+
 ## [3.6.1] 2021-02-19
 
 ### Fixed
