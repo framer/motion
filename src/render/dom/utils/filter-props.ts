@@ -1,7 +1,7 @@
 import { MotionProps } from "../../../motion/types"
 import { isValidMotionProp } from "../../../motion/utils/valid-prop"
 
-let isPropValid = (key: string) => !isValidMotionProp(key)
+let shouldForward = (key: string) => !isValidMotionProp(key)
 
 /**
  * Emotion and Styled Components both allow users to pass through arbitrary props to their components
@@ -19,7 +19,7 @@ let isPropValid = (key: string) => !isValidMotionProp(key)
 try {
     const emotionIsPropValid = require("@emotion/is-prop-valid").default
 
-    isPropValid = (key: string) => {
+    shouldForward = (key: string) => {
         // Handle events explicitly as Emotion validates them all as true
         if (key.startsWith("on")) {
             return !isValidMotionProp(key)
@@ -31,12 +31,18 @@ try {
     // We don't need to actually do anything here - the fallback is the existing `isPropValid`.
 }
 
-export function filterProps(props: MotionProps) {
-    const domProps = {}
+export function filterProps(props: MotionProps, isDom: boolean) {
+    const filteredProps = {}
 
     for (const key in props) {
-        if (isPropValid(key)) domProps[key] = props[key]
+        if (
+            shouldForward(key) ||
+            (props.forwardMotionProps === true && isValidMotionProp(key)) ||
+            (!isDom && !isValidMotionProp(key))
+        ) {
+            filteredProps[key] = props[key]
+        }
     }
 
-    return domProps
+    return filteredProps
 }

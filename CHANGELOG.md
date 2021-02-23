@@ -2,6 +2,21 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0] 2021-02-23
+
+### Added
+
+-   `motion()` creates custom `motion` components.
+-   `forwardMotionProps` boolean to optionally forward `MotionProps` to custom components.
+
+### Changed
+
+-   Custom `motion` components no longer forward `MotionProps` by default.
+
+### Deprecated
+
+-   `motion.custom`
+
 ## [3.6.8] 2021-02-23
 
 ### Fixed

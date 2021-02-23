@@ -106,7 +106,7 @@ describe("motion component rendering and styles", () => {
                 <button type="submit" disabled ref={ref} />
             )
         )
-        const MotionComponent = motion.custom(Component)
+        const MotionComponent = motion(Component)
 
         const promise = new Promise<Element>((resolve) => {
             const { rerender } = render(
@@ -250,7 +250,7 @@ describe("motion component rendering and styles", () => {
             background-color: #fff;
         `
 
-        const MotionBox = motion.custom(Box)
+        const MotionBox = motion(Box)
         const { container } = render(
             <MotionBox style={{ backgroundColor: "#f00" }} />
         )

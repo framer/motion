@@ -330,6 +330,33 @@ export interface MotionAdvancedProps {
      * Set to `false` to prevent inheriting variant changes from its parent.
      */
     inherit?: boolean
+
+    /**
+     * Can be used to forward `motion` props to a custom `motion` component.
+     *
+     * Defaults to `false`.
+     *
+     * ```jsx
+     * const Component = React.forwardRef((props, ref) => {
+     *   console.log(props.animate) // { x: 100 }
+     *
+     *   return <div ref={ref} />
+     * })
+     *
+     * const MotionComponent = motion(Component)
+     *
+     * function Parent() {
+     *   return (
+     *     <MotionComponent
+     *       forwardMotionProps
+     *       animate={{ x: 100 }}
+     *     />
+     * }
+     * ```
+     *
+     * @public
+     */
+    forwardMotionProps?: boolean
 }
 
 /**

@@ -14,6 +14,7 @@ import { Animation } from "../../motion/features/animation"
 import { AnimateLayout } from "../../motion/features/layout/Animate"
 import { MeasureLayout } from "../../motion/features/layout/Measure"
 import { MotionFeature } from "../../motion/features/types"
+import { warning } from "hey-listen"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -50,16 +51,19 @@ const domBaseConfig = {
  *   return <div ref={ref} />
  * })
  *
- * const MotionComponent = motion.custom(Component)
+ * const MotionComponent = motion(Component)
  * ```
  *
  * @public
  */
 export function createMotionProxy(defaultFeatures: MotionFeature[]) {
-    type CustomMotionComponent = {
+    type DeprecatedCustomMotionComponent = {
         custom: typeof custom
     }
-    type Motion = MotionComponents & CustomMotionComponent
+
+    type Motion = typeof custom &
+        MotionComponents &
+        DeprecatedCustomMotionComponent
 
     const config: MotionComponentConfig<HTMLElement | SVGElement> = {
         ...domBaseConfig,
@@ -72,18 +76,41 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
         return createMotionComponent(Component, config)
     }
 
-    const componentCache = new Map<string, any>()
-    function get(target: CustomMotionComponent, key: string) {
-        if (key === "custom") return target.custom
-
-        if (!componentCache.has(key)) {
-            componentCache.set(key, createMotionComponent(key, config))
-        }
-
-        return componentCache.get(key)
+    function deprecatedCustom<Props>(
+        Component: string | React.ComponentType<Props>
+    ) {
+        warning(false, "motion.custom() is deprecated. Use motion() instead.")
+        return custom(Component)
     }
 
-    return new Proxy({ custom }, { get }) as Motion
+    /**
+     * A cache of generated `motion` components, e.g `motion.div`, `motion.input` etc.
+     * Rather than generating them anew every render.
+     */
+    const componentCache = new Map<string, any>()
+
+    return new Proxy(custom, {
+        /**
+         * Called when `motion` is referenced with a prop: `motion.div`, `motion.input` etc.
+         * The prop name is passed through as `key` and we can use that to generate a `motion`
+         * DOM component with that name.
+         */
+        get: (_target, key: string) => {
+            /**
+             * Can be removed in 5.0
+             */
+            if (key === "custom") return deprecatedCustom
+
+            /**
+             * If this element doesn't exist in the component cache, create it and cache.
+             */
+            if (!componentCache.has(key)) {
+                componentCache.set(key, createMotionComponent(key, config))
+            }
+
+            return componentCache.get(key)!
+        },
+    }) as Motion
 }
 
 /**

@@ -11,17 +11,12 @@ export function useRender<Props>(
     props: MotionProps,
     visualElement: VisualElement
 ) {
-    // Only filter props from components we control, ie `motion.div`. If this
-    // is a custom component pass along everything provided to it.
-    const forwardedProps =
-        typeof Component === "string" ? filterProps(props) : props
-
     // Generate props to visually render this component
     const useProps = isSVGComponent(Component) ? useSVGProps : useHTMLProps
     const visualProps = useProps(visualElement, props)
 
     return createElement<any>(Component, {
-        ...forwardedProps,
+        ...filterProps(props, typeof Component === "string"),
         ref: visualElement.ref,
         ...visualProps,
     })
