@@ -31,13 +31,14 @@ try {
     // We don't need to actually do anything here - the fallback is the existing `isPropValid`.
 }
 
-export function filterProps(props: MotionProps) {
+export function filterProps(props: MotionProps, isDom: boolean) {
     const filteredProps = {}
 
     for (const key in props) {
         if (
             shouldForward(key) ||
-            (props.forwardMotionProps === true && isValidMotionProp(key))
+            (props.forwardMotionProps === true && isValidMotionProp(key)) ||
+            (!isDom && !isValidMotionProp(key))
         ) {
             filteredProps[key] = props[key]
         }

@@ -16,7 +16,7 @@ export function useRender<Props>(
     const visualProps = useProps(visualElement, props)
 
     return createElement<any>(Component, {
-        ...filterProps(props),
+        ...filterProps(props, typeof Component === "string"),
         ref: visualElement.ref,
         ...visualProps,
     })
