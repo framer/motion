@@ -6,7 +6,6 @@ import * as React from "react"
  */
 
 export const App = () => {
-    console.log(motion)
     const CustomComponent = motion("global")
 
     return (
