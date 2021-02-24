@@ -26,14 +26,11 @@ export interface MotionComponentConfig<E> {
  *
  * @internal
  */
-export function createMotionComponent<P extends {}, E>(
-    Component: string | React.ComponentType<P>,
-    {
-        defaultFeatures,
-        createVisualElement,
-        useRender,
-    }: MotionComponentConfig<E>
-) {
+export function createMotionComponent<P extends {}, E>({
+    defaultFeatures,
+    createVisualElement,
+    useRender,
+}: MotionComponentConfig<E>) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
         /**
          * If a component is static, we only visually update it as a
@@ -51,7 +48,6 @@ export function createMotionComponent<P extends {}, E>(
          */
         const visualElement = useVisualElement(
             createVisualElement,
-            Component,
             props,
             isStatic,
             externalRef
@@ -67,7 +63,7 @@ export function createMotionComponent<P extends {}, E>(
             props
         )
 
-        const component = useRender(Component, props, visualElement)
+        const component = useRender(props, visualElement)
 
         // The mount order and hierarchy is specific to ensure our element ref is hydrated by the time
         // all plugins and features has to execute.

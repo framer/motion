@@ -67,14 +67,14 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
     function custom<Props>(
         Component: string | React.ComponentType<Props>,
         { forwardMotionProps = false }: DomMotionComponentConfig = {}
-    ): CustomDomComponent<Props> {
+    ) {
         const config: MotionComponentConfig<HTMLElement | SVGElement> = {
             defaultFeatures,
-            createVisualElement: createDomVisualElement,
-            useRender: createUseRender(forwardMotionProps),
+            createVisualElement: createDomVisualElement(Component),
+            useRender: createUseRender(Component, forwardMotionProps),
         }
 
-        return createMotionComponent(Component, config)
+        return createMotionComponent<Props, HTMLElement | SVGElement>(config)
     }
 
     function deprecatedCustom<Props>(
@@ -141,9 +141,9 @@ export function createDomMotionComponent<T extends keyof MotionComponents>(
     key: T
 ) {
     const config: MotionComponentConfig<HTMLElement | SVGElement> = {
-        createVisualElement: createDomVisualElement,
-        useRender: createUseRender(false),
+        createVisualElement: createDomVisualElement(key),
+        useRender: createUseRender(key, false),
         defaultFeatures: allMotionFeatures,
     }
-    return createMotionComponent(key, config) as MotionComponents[T]
+    return createMotionComponent(config) as MotionComponents[T]
 }

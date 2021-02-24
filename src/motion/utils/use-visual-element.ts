@@ -1,11 +1,4 @@
-import {
-    ComponentType,
-    MutableRefObject,
-    Ref,
-    useContext,
-    useEffect,
-    useRef,
-} from "react"
+import { MutableRefObject, Ref, useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
@@ -27,7 +20,6 @@ type VisualElementRef = MutableRefObject<VisualElement | null>
 
 export function useVisualElement<E>(
     createVisualElement: CreateVisualElement<E>,
-    Component: string | ComponentType,
     props: MotionProps,
     isStatic: boolean,
     ref?: Ref<E>
@@ -48,7 +40,7 @@ export function useVisualElement<E>(
          */
         visualElementRef.current.clearState(props)
     } else if (!visualElementRef.current) {
-        visualElementRef.current = createVisualElement(Component, isStatic, {
+        visualElementRef.current = createVisualElement(isStatic, {
             parent,
             ref,
             isStatic,

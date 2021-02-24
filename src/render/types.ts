@@ -191,8 +191,7 @@ export type ExtendVisualElement<
     Element = any
 > = (element: VisualElement<Element>) => Extended
 
-export type CreateVisualElement<E, P = MotionProps> = (
-    Component: string | React.ComponentType<P>,
+export type CreateVisualElement<E> = (
     isStatic: boolean,
     options: VisualElementOptions<E>
 ) => VisualElement<E>

@@ -181,7 +181,7 @@ export function createDomMotionComponent<T extends keyof MotionComponents>(key: 
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function createMotionComponent<P extends {}, E>(Component: string | React.ComponentType<P>, { defaultFeatures, createVisualElement, useRender, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
+export function createMotionComponent<P extends {}, E>({ defaultFeatures, createVisualElement, useRender, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
 // @public
 export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>;
@@ -353,8 +353,8 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("./motion").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
-    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("./motion").CustomDomComponent<Props>;
+export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("react").ForwardRefExoticComponent<import("react").PropsWithoutRef<Props & import("../..").MotionProps> & import("react").RefAttributes<SVGElement | HTMLElement>>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("react").ForwardRefExoticComponent<import("react").PropsWithoutRef<Props & import("../..").MotionProps> & import("react").RefAttributes<SVGElement | HTMLElement>>;
 };
 
 // Warning: (ae-forgotten-export) The symbol "DomMotionComponentConfig" needs to be exported by the entry point index.d.ts
@@ -362,8 +362,8 @@ export const m: (<Props>(Component: string | import("react").ComponentClass<Prop
 // Warning: (ae-forgotten-export) The symbol "SVGMotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents & {
-    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => CustomDomComponent<Props>;
+export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>) & HTMLMotionComponents & SVGMotionComponents & {
+    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>;
 };
 
 // @public (undocumented)

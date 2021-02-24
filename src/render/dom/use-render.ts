@@ -6,12 +6,11 @@ import { filterProps } from "./utils/filter-props"
 import { isSVGComponent } from "./utils/is-svg-component"
 import { useSVGProps } from "./utils/use-svg-props"
 
-export function createUseRender(forwardMotionProps = false) {
-    const useRender = <Props>(
-        Component: string | React.ComponentType<Props>,
-        props: MotionProps,
-        visualElement: VisualElement
-    ) => {
+export function createUseRender<Props>(
+    Component: string | React.ComponentType<Props>,
+    forwardMotionProps = false
+) {
+    const useRender = (props: MotionProps, visualElement: VisualElement) => {
         // Generate props to visually render this component
         const useProps = isSVGComponent(Component) ? useSVGProps : useHTMLProps
         const visualProps = useProps(visualElement, props)
