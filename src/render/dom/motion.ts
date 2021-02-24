@@ -67,7 +67,7 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
     function custom<Props>(
         Component: string | React.ComponentType<Props>,
         { forwardMotionProps = false }: DomMotionComponentConfig = {}
-    ) {
+    ): CustomDomComponent<Props> {
         const config: MotionComponentConfig<HTMLElement | SVGElement> = {
             defaultFeatures,
             createVisualElement: createDomVisualElement(Component),

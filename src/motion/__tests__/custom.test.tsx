@@ -2,6 +2,7 @@ import { render } from "../../../jest.setup"
 import { motion } from "../.."
 import * as React from "react"
 import { RefObject } from "react"
+import { MotionProps } from ".."
 
 interface Props {
     foo: boolean
@@ -47,8 +48,8 @@ describe("motion()", () => {
         let animate: any
         let foo: boolean = false
         const BaseComponent = React.forwardRef(
-            (props: Props, ref: RefObject<HTMLDivElement>) => {
-                animate = (props as any).animate
+            (props: Props & MotionProps, ref: RefObject<HTMLDivElement>) => {
+                animate = props.animate
                 foo = props.foo
                 return <div ref={ref} />
             }
@@ -70,8 +71,8 @@ describe("motion()", () => {
         let animate: any
         let foo: boolean = false
         const BaseComponent = React.forwardRef(
-            (props: Props, ref: RefObject<HTMLDivElement>) => {
-                animate = (props as any).animate
+            (props: Props & MotionProps, ref: RefObject<HTMLDivElement>) => {
+                animate = props.animate
                 foo = props.foo
                 return <div ref={ref} />
             }
