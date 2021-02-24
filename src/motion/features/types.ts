@@ -20,8 +20,7 @@ export interface MotionFeature {
     ) => React.ComponentType<FeatureProps> | undefined
 }
 
-export type RenderComponent<P = {}> = (
-    Component: string | React.ComponentType<P>,
+export type RenderComponent = (
     props: MotionProps,
     visualElement: VisualElement
 ) => any

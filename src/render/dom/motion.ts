@@ -1,6 +1,6 @@
 import * as React from "react"
 import { createDomVisualElement } from "./create-dom-visual-element"
-import { useRender } from "./use-render"
+import { createUseRender } from "./use-render"
 import { HTMLMotionComponents, SVGMotionComponents } from "./types"
 import {
     MotionComponentConfig,
@@ -26,6 +26,10 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
         React.RefAttributes<SVGElement | HTMLElement>
 >
 
+export interface DomMotionComponentConfig {
+    forwardMotionProps?: boolean
+}
+
 type MotionComponents = HTMLMotionComponents & SVGMotionComponents
 
 const allMotionFeatures = [
@@ -36,11 +40,6 @@ const allMotionFeatures = [
     Exit,
     AnimateLayout,
 ]
-
-const domBaseConfig = {
-    createVisualElement: createDomVisualElement,
-    useRender,
-}
 
 /**
  * Convert any React component into a `motion` component. The provided component
@@ -65,22 +64,24 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
         MotionComponents &
         DeprecatedCustomMotionComponent
 
-    const config: MotionComponentConfig<HTMLElement | SVGElement> = {
-        ...domBaseConfig,
-        defaultFeatures,
-    }
-
     function custom<Props>(
-        Component: string | React.ComponentType<Props>
+        Component: string | React.ComponentType<Props>,
+        { forwardMotionProps = false }: DomMotionComponentConfig = {}
     ): CustomDomComponent<Props> {
-        return createMotionComponent(Component, config)
+        const config: MotionComponentConfig<HTMLElement | SVGElement> = {
+            defaultFeatures,
+            createVisualElement: createDomVisualElement(Component),
+            useRender: createUseRender(Component, forwardMotionProps),
+        }
+
+        return createMotionComponent<Props, HTMLElement | SVGElement>(config)
     }
 
     function deprecatedCustom<Props>(
         Component: string | React.ComponentType<Props>
     ) {
         warning(false, "motion.custom() is deprecated. Use motion() instead.")
-        return custom(Component)
+        return custom(Component, { forwardMotionProps: true })
     }
 
     /**
@@ -97,7 +98,7 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
          */
         get: (_target, key: string) => {
             /**
-             * Can be removed in 5.0
+             * Can be removed in 4.0
              */
             if (key === "custom") return deprecatedCustom
 
@@ -105,7 +106,7 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
              * If this element doesn't exist in the component cache, create it and cache.
              */
             if (!componentCache.has(key)) {
-                componentCache.set(key, createMotionComponent(key, config))
+                componentCache.set(key, custom(key))
             }
 
             return componentCache.get(key)!
@@ -140,8 +141,9 @@ export function createDomMotionComponent<T extends keyof MotionComponents>(
     key: T
 ) {
     const config: MotionComponentConfig<HTMLElement | SVGElement> = {
-        ...domBaseConfig,
+        createVisualElement: createDomVisualElement(key),
+        useRender: createUseRender(key, false),
         defaultFeatures: allMotionFeatures,
     }
-    return createMotionComponent(key, config) as MotionComponents[T]
+    return createMotionComponent(config) as MotionComponents[T]
 }
