@@ -17,8 +17,6 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   `motion.custom`
 
-## [3.6.8] 2021-02-23
-
 ### Fixed
 
 -   Listing React 17 as a `peerDependency`.
