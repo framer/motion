@@ -54,11 +54,11 @@ describe("motion()", () => {
             }
         )
 
-        const MotionComponent = motion<Props>(BaseComponent)
+        const MotionComponent = motion<Props>(BaseComponent, {
+            forwardMotionProps: true,
+        })
 
-        const Component = () => (
-            <MotionComponent foo forwardMotionProps animate={{ x: 100 }} />
-        )
+        const Component = () => <MotionComponent foo animate={{ x: 100 }} />
 
         render(<Component />)
 
