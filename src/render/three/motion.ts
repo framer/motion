@@ -3,8 +3,15 @@ import { Animation } from "../../motion/features/animation"
 import { createMotionProxy } from "../../motion/proxy"
 import { createThreeUseRender } from "./create-use-render"
 import { threeVisualElement } from "./three-visual-element"
+import { ReactThreeFibreComponents } from "./types"
 
-interface ThreeMotionComponents {}
+type ThreeMotionComponentNames = keyof ReactThreeFibreComponents
+
+type ThreeMotionComponents = {
+    [K in ThreeMotionComponentNames]: React.Component<
+        ReactThreeFibreComponents[K]
+    >
+}
 
 const threeFeatures = [
     Animation,
