@@ -13,15 +13,10 @@ type ThreeMotionComponents = {
     >
 }
 
-const threeFeatures = [
-    Animation,
-    // Drag,
-    // Gestures,
-    Exit,
-]
+const threeFeatures = [Animation, Exit]
 
 /**
- * Components to be used with
+ * Create `react-three-fiber` motion components.
  *
  * @public
  */
