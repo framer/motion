@@ -9,6 +9,8 @@ export interface ThreeRenderState {
     position?: [number, number, number]
     rotation?: [number, number, number]
     scale?: [number, number, number]
+    color?: Three.Color
+    opacity?: number
 }
 
 export interface ThreeVisualElementOptions {}
@@ -86,7 +88,20 @@ const config: VisualElementConfig<
     build(
         _element,
         renderState,
-        { x, y, z, scaleX, scaleY, scaleZ, scale, rotateX, rotateY, rotateZ },
+        {
+            x,
+            y,
+            z,
+            scaleX,
+            scaleY,
+            scaleZ,
+            scale,
+            rotateX,
+            rotateY,
+            rotateZ,
+            color,
+            opacity,
+        },
         _projection,
         _layoutState,
         _options,
@@ -103,6 +118,12 @@ const config: VisualElementConfig<
             scale ?? 1
         )
         makeVector3(renderState, "rotation", rotateX, rotateY, rotateZ, props)
+
+        if (color) {
+            renderState.color = new Three.Color(color)
+        }
+
+        if (opacity !== undefined) renderState.opacity = opacity as number
     },
 
     /**
@@ -116,6 +137,8 @@ const config: VisualElementConfig<
         renderState.scale && threeObject.scale.set(...renderState.scale)
         renderState.rotation &&
             threeObject.rotation.set(...renderState.rotation)
+        threeObject.material?.color = renderState.color
+        threeObject.material?.opacity = renderState.opacity
     },
 }
 

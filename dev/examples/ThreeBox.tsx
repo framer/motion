@@ -31,8 +31,9 @@ export const App = () => {
                 <mesh position={[2, 0, 0]} onClick={() => setShow(!show)}>
                     <meshBasicMaterial attach="material" />
                     <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-                </mesh>
-
+                </mesh>{" "}
+                <ambientLight />
+                <pointLight position={[150, 150, 150]} intensity={0.55} />
                 <AnimatePresence>
                     {show && (
                         <motion.group>
