@@ -1,10 +1,8 @@
-import { createElement, useCallback } from "react"
-import * as Three from "three"
-import * as ReactThreeFiber from "react-three-fiber"
+import { createElement } from "react"
 import { MotionProps } from "../../motion/types"
 import { VisualElement } from "../types"
-import { AnimationType } from "../utils/animation-state"
 import { isValidMotionProp } from "../../motion/utils/valid-prop"
+import { useGestures } from "./utils/use-gestures"
 
 type Object3DProps = ReactThreeFiber.Object3DNode<
     Three.Object3D,
@@ -17,12 +15,14 @@ export function createThreeUseRender<Props>(
     Component: string | React.ComponentType<Props>,
     forwardMotionProps = false
 ) {
-    const useRender = (props: MotionProps, visualElement: VisualElement) => {
-        const hoverProps = useHoverGesture(props, visualElement)
-
+    const useRender = (
+        props: Object3DMotionProps,
+        visualElement: VisualElement
+    ) => {
         return createElement(Component, {
             ...filterProps(props, forwardMotionProps),
-            ...hoverProps,
+            ...props,
+            ...useGestures(props, visualElement),
             ref: visualElement.ref,
         } as any)
     }
@@ -46,19 +46,4 @@ function filterProps(props: MotionProps, forwardMotionProps: boolean) {
     }
 
     return filteredProps
-}
-
-function useHoverGesture(
-    { whileHover }: MotionProps,
-    visualElement: VisualElement
-): Object3DMotionProps {
-    const onPointerOver = useCallback(() => {
-        visualElement.animationState?.setActive(AnimationType.Hover, true)
-    }, [visualElement])
-
-    const onPointerOut = useCallback(() => {
-        visualElement.animationState?.setActive(AnimationType.Hover, false)
-    }, [visualElement])
-
-    return whileHover ? { onPointerOver, onPointerOut } : {}
 }

@@ -19,6 +19,7 @@ const variants = {
         rotateY: -1,
         opacity: 0.0,
         color: "#FFFFFF",
+        transition: { duration: 3 },
     },
 }
 
@@ -28,10 +29,15 @@ export const App = () => {
     return (
         <div style={{ position: "fixed", inset: 0, background: "white" }}>
             <Canvas colorManagement style={{ width: "100vw", height: "100vh" }}>
-                <mesh position={[2, 0, 0]} onClick={() => setShow(!show)}>
+                <mesh
+                    // initial={{ scale: 1 }}
+                    // whileTap={{ scale: 0.8 }}
+                    position={[2, 0, 0]}
+                    onClick={() => setShow(!show)}
+                >
                     <meshBasicMaterial attach="material" />
                     <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-                </mesh>{" "}
+                </mesh>
                 <ambientLight />
                 <pointLight position={[150, 150, 150]} intensity={0.55} />
                 <AnimatePresence>
@@ -43,16 +49,14 @@ export const App = () => {
                                 exit={"gone"}
                                 animate={"small"}
                                 whileHover={"big"}
+                                whileTap={"small"}
                                 transition={{
                                     duration: 0.5,
                                     type: "spring",
                                     bounce: 0.3,
                                 }}
                             >
-                                <meshBasicMaterial
-                                    attach="material"
-                                    transparent
-                                />
+                                <meshPhongMaterial attach="material" />
                                 <boxBufferGeometry
                                     attach="geometry"
                                     args={[1, 1, 1]}

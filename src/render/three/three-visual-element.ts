@@ -135,6 +135,7 @@ const config: VisualElementConfig<
         renderState.position &&
             threeObject.position.set(...renderState.position)
         renderState.scale && threeObject.scale.set(...renderState.scale)
+        console.log(renderState.scale)
         renderState.rotation &&
             threeObject.rotation.set(...renderState.rotation)
         threeObject.material?.color = renderState.color
