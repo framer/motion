@@ -131,7 +131,12 @@ function makeVector3(
     /**
      * If none of these values exist, delete the renderState (if it exists)
      */
-    if (a === undefined && b === undefined && c === undefined) {
+    if (
+        a === undefined &&
+        b === undefined &&
+        c === undefined &&
+        defaultValue === undefined
+    ) {
         delete renderState[name]
         return
     }

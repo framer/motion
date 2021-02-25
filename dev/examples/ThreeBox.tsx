@@ -68,7 +68,7 @@ export const App = () => {
                             initial={"gone"}
                             exit={"gone"}
                             animate={hovered ? "big" : "small"}
-                            transition={{ duration: 10 }}
+                            transition={{ duration: 3 }}
                         >
                             <meshBasicMaterial attach="material" transparent />
                             <boxBufferGeometry
