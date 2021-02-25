@@ -50,7 +50,7 @@ const variants = {
 export const App = () => {
     const [hovered, setHover] = React.useState(false)
     const [show, setShow] = useState(true)
-
+    console.log(hovered)
     return (
         <Canvas colorManagement style={{ width: "100vw", height: "100vh" }}>
             <mesh position={[2, 0, 0]} onClick={() => setShow(!show)}>

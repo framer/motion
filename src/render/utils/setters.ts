@@ -143,7 +143,8 @@ export function getOrigin(
     for (const key in target) {
         origin[key] =
             getOriginFromTransition(key, transition) ??
-            visualElement.getValue(key)?.get()
+            visualElement.getValue(key)?.get() ??
+            visualElement.getLatestValues()[key]
     }
 
     return origin

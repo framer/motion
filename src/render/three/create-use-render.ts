@@ -6,8 +6,11 @@ export function createThreeUseRender<Props>(
     Component: string | React.ComponentType<Props>,
     _forwardMotionProps = false
 ) {
-    const useRender = (props: MotionProps, _visualElement: VisualElement) => {
-        return createElement(Component, props)
+    const useRender = (props: MotionProps, visualElement: VisualElement) => {
+        return createElement(Component, {
+            ...props,
+            ref: visualElement.ref,
+        } as any)
     }
     return useRender
 }

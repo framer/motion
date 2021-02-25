@@ -2,6 +2,7 @@ import { visualElement } from ".."
 import { VisualElementConfig } from "../types"
 import * as Three from "three"
 import { axisBox } from "../../utils/geometry"
+import { checkTargetForNewValues, getOrigin } from "../utils/setters"
 
 export interface ThreeRenderState {}
 
@@ -44,6 +45,14 @@ const config: VisualElementConfig<
         { transformValues },
         isMounted = true
     ) {
+        isMounted &&
+            checkTargetForNewValues(
+                element,
+                target,
+                (getOrigin(target as any, transition || {}, element) as any) ||
+                    {}
+            )
+
         return { transition, transitionEnd, ...target }
     },
 
