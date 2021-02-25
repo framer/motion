@@ -1,3 +1,4 @@
+import { ComponentType } from "react"
 import { Exit } from "../../motion/features/exit"
 import { Animation } from "../../motion/features/animation"
 import { createMotionProxy } from "../../motion/proxy"
@@ -6,10 +7,8 @@ import { threeVisualElement } from "./three-visual-element"
 import { ReactThreeFibreComponents } from "./types"
 import { MotionProps } from "../../motion/types"
 
-type ThreeMotionComponentNames = keyof ReactThreeFibreComponents
-
 type ThreeMotionComponents = {
-    [K in ThreeMotionComponentNames]: React.Component<
+    [K in keyof ReactThreeFibreComponents]: ComponentType<
         ReactThreeFibreComponents[K] & MotionProps
     >
 }
