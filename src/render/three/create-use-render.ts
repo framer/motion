@@ -5,6 +5,7 @@ import { isValidMotionProp } from "../../motion/utils/valid-prop"
 import { useGestures } from "./utils/use-gestures"
 import * as Three from "three"
 import * as ReactThreeFiber from "react-three-fiber"
+import { useConstant } from "../../utils/use-constant"
 
 type Object3DProps = ReactThreeFiber.Object3DNode<
     Three.Object3D,
@@ -23,12 +24,29 @@ export function createThreeUseRender<Props>(
     ) => {
         return createElement(Component, {
             ...filterProps(props, forwardMotionProps),
-            ...props,
+            ...useVisualProps(visualElement),
             ...useGestures(props, visualElement),
             ref: visualElement.ref,
         } as any)
     }
     return useRender
+}
+
+function useVisualProps(visualElement: VisualElement) {
+    const createVisualProps = () => {
+        const { position, rotation, scale, latest } = visualElement.build()
+
+        return {
+            position,
+            rotation,
+            scale,
+            ...latest,
+        }
+    }
+
+    return visualElement.isStatic
+        ? createVisualProps()
+        : useConstant(createVisualProps)
 }
 
 function shouldForward(key: string) {
