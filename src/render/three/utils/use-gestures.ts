@@ -1,4 +1,6 @@
-import { useCallback } from "react"
+import { pipe } from "popmotion"
+import { useCallback, useRef } from "react"
+import { addPointerEvent } from "../../../events/use-pointer-event"
 import { MotionProps } from "../../../motion/types"
 import { VisualElement } from "../../types"
 import { AnimationType } from "../../utils/animation-state"
@@ -44,20 +46,32 @@ function useTapGesture(
     { whileTap, onPointerDown, onPointerUp }: MotionProps,
     visualElement: VisualElement
 ) {
+    const isPressing = useRef(false)
+    const cancelPointerEndListeners = useRef<Function | null>(null)
+
+    function removePointerEndListener() {
+        cancelPointerEndListeners.current?.()
+        cancelPointerEndListeners.current = null
+    }
+
+    function onPointerEnd() {
+        removePointerEndListener()
+        isPressing.current = false
+        visualElement.animationState?.setActive(AnimationType.Tap, false)
+    }
+
     const handlePointerDown = useCallback(
         (e) => {
+            removePointerEndListener()
+            if (isPressing.current) return
+            isPressing.current = true
             visualElement.animationState?.setActive(AnimationType.Tap, true)
+            cancelPointerEndListeners.current = pipe(
+                addPointerEvent(window, "pointerup", onPointerEnd),
+                addPointerEvent(window, "pointercancel", onPointerEnd)
+            )
             // onHoverStart?.()
             onPointerDown?.(e)
-        },
-        [visualElement]
-    )
-
-    const handlePointerUp = useCallback(
-        (e) => {
-            visualElement.animationState?.setActive(AnimationType.Tap, false)
-            // onHoverEnd?.()
-            onPointerUp?.(e)
         },
         [visualElement]
     )
@@ -65,7 +79,6 @@ function useTapGesture(
     return whileTap
         ? {
               onPointerDown: handlePointerDown,
-              onPointerUp: handlePointerUp,
           }
         : {}
 }

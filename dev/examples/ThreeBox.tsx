@@ -13,6 +13,13 @@ const variants = {
         opacity: 1.0,
         color: "#0099FF",
     },
+    med: {
+        scale: 1.5,
+        rotateX: 0.2,
+        rotateY: 0.2,
+        opacity: 1.0,
+        color: "#0066FF",
+    },
     gone: {
         scale: 0,
         rotateX: -1,
@@ -49,7 +56,7 @@ export const App = () => {
                                 exit={"gone"}
                                 animate={"small"}
                                 whileHover={"big"}
-                                whileTap={"small"}
+                                whileTap={"med"}
                                 transition={{
                                     duration: 0.5,
                                     type: "spring",
