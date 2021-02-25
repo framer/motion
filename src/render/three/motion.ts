@@ -4,6 +4,7 @@ import { createMotionProxy } from "../../motion/proxy"
 import { createThreeUseRender } from "./create-use-render"
 import { threeVisualElement } from "./three-visual-element"
 import { ReactThreeFibreComponents } from "./types"
+import { MotionProps } from "../../motion/types"
 
 type ThreeMotionComponentNames = keyof ReactThreeFibreComponents
 
