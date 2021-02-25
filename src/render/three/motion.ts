@@ -9,7 +9,7 @@ type ThreeMotionComponentNames = keyof ReactThreeFibreComponents
 
 type ThreeMotionComponents = {
     [K in ThreeMotionComponentNames]: React.Component<
-        ReactThreeFibreComponents[K]
+        ReactThreeFibreComponents[K] & MotionProps
     >
 }
 
