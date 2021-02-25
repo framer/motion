@@ -3,6 +3,7 @@ import { VisualElementConfig } from "../types"
 import * as Three from "three"
 import { axisBox } from "../../utils/geometry"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
+import { getChildIndex } from "./utils/get-child-index"
 
 export interface ThreeRenderState {}
 
@@ -25,13 +26,8 @@ const config: VisualElementConfig<
     // TODO
     createRenderState: () => ({}),
 
-    sortNodePosition() {
-        /**
-         * TODO: This determines stagger order based on the node position
-         * in the tree. The DOM has a method for this, Element.compareDocumentPosition
-         * I wonder if Three has similar.
-         */
-        return 0
+    sortNodePosition(a, b) {
+        return getChildIndex(a) > getChildIndex(b) ? 1 : -1
     },
 
     // TODO
