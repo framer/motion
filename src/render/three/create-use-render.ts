@@ -25,10 +25,7 @@ function useHoverGesture(
     { whileHover }: MotionProps,
     visualElement: VisualElement
 ): Partial<
-    ReactThreeFiber.Object3DNode<
-        Three.AudioListener,
-        typeof Three.AudioListener
-    >
+    ReactThreeFiber.Object3DNode<Three.Object3D, typeof Three.Object3D>
 > {
     const onPointerOver = useCallback(() => {
         visualElement.animationState?.setActive(AnimationType.Hover, true)
