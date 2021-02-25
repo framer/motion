@@ -4,8 +4,22 @@ import { motion } from "../../src/render/three/motion"
 import { AnimatePresence } from "@framer"
 import { Canvas } from "react-three-fiber"
 
+const GRID_SIZE = 3
+
+function getGridPosition(index: number, size: number, factor: number) {
+    const row = Math.floor(index / size)
+    const column = index % size
+
+    return [(row - size / 2) * factor, (column - size / 2) * factor]
+}
+
 const variants = {
-    big: { scale: 2, rotateX: 0, rotateY: 0, color: "#0066FF" },
+    big: {
+        scale: 2,
+        rotateX: 0,
+        rotateY: 0,
+        color: "#0066FF",
+    },
     small: {
         scale: 1,
         rotateX: 1,
@@ -49,27 +63,72 @@ export const App = () => {
                 <pointLight position={[150, 150, 150]} intensity={0.55} />
                 <AnimatePresence>
                     {show && (
-                        <motion.group>
-                            <motion.mesh
-                                variants={variants}
+                        <>
+                            <motion.group>
+                                <motion.mesh
+                                    variants={variants}
+                                    initial={"gone"}
+                                    exit={"gone"}
+                                    animate={"small"}
+                                    whileHover={"big"}
+                                    whileTap={"med"}
+                                    transition={{
+                                        duration: 0.5,
+                                        type: "spring",
+                                        bounce: 0.3,
+                                    }}
+                                >
+                                    <meshPhongMaterial attach="material" />
+                                    <boxBufferGeometry
+                                        attach="geometry"
+                                        args={[1, 1, 1]}
+                                    />
+                                </motion.mesh>
+                            </motion.group>
+                            <motion.group
+                                position={[-2, 0, 0]}
+                                rotation={[0, 0, -Math.PI / 2]}
+                                transition={{
+                                    staggerChildren: 0.1,
+                                }}
                                 initial={"gone"}
                                 exit={"gone"}
                                 animate={"small"}
-                                whileHover={"big"}
-                                whileTap={"med"}
-                                transition={{
-                                    duration: 0.5,
-                                    type: "spring",
-                                    bounce: 0.3,
-                                }}
                             >
-                                <meshPhongMaterial attach="material" />
-                                <boxBufferGeometry
-                                    attach="geometry"
-                                    args={[1, 1, 1]}
-                                />
-                            </motion.mesh>
-                        </motion.group>
+                                {[...Array(GRID_SIZE * GRID_SIZE).keys()].map(
+                                    (index) => {
+                                        const [x, y] = getGridPosition(
+                                            index,
+                                            GRID_SIZE,
+                                            0.5
+                                        )
+
+                                        return (
+                                            <motion.mesh
+                                                key={index}
+                                                variants={variants}
+                                                position={[
+                                                    x + 0.25,
+                                                    y + 0.25,
+                                                    0,
+                                                ]}
+                                                transition={{
+                                                    duration: 0.5,
+                                                    type: "spring",
+                                                    bounce: 0.3,
+                                                }}
+                                            >
+                                                <meshPhongMaterial attach="material" />
+                                                <boxBufferGeometry
+                                                    attach="geometry"
+                                                    args={[0.2, 0.2, 0.2]}
+                                                />
+                                            </motion.mesh>
+                                        )
+                                    }
+                                )}
+                            </motion.group>
+                        </>
                     )}
                 </AnimatePresence>
             </Canvas>
