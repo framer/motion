@@ -3,6 +3,8 @@ import { MotionProps } from "../../motion/types"
 import { VisualElement } from "../types"
 import { isValidMotionProp } from "../../motion/utils/valid-prop"
 import { useGestures } from "./utils/use-gestures"
+import * as Three from "three"
+import * as ReactThreeFiber from "react-three-fiber"
 
 type Object3DProps = ReactThreeFiber.Object3DNode<
     Three.Object3D,
