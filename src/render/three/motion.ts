@@ -1,8 +1,8 @@
 import { Exit } from "../../motion/features/exit"
 import { Animation } from "../../motion/features/animation"
 import { createMotionProxy } from "../../motion/proxy"
-import { createThreeVisualElement } from "./create-visual-element"
 import { createThreeUseRender } from "./create-use-render"
+import { threeVisualElement } from "./three-visual-element"
 
 interface ThreeMotionComponents {}
 
@@ -21,7 +21,8 @@ const threeFeatures = [
 export const motion = /*@__PURE__*/ createMotionProxy<ThreeMotionComponents>(
     (Component, { forwardMotionProps }) => ({
         defaultFeatures: threeFeatures,
-        createVisualElement: createThreeVisualElement(Component),
+        createVisualElement: (_isStatic, options) =>
+            threeVisualElement(options, {}),
         useRender: createThreeUseRender(Component, forwardMotionProps),
     })
 )
