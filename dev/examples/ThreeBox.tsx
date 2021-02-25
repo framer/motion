@@ -26,6 +26,7 @@ const variants = {
         rotateY: 1,
         opacity: 1.0,
         color: "#0099FF",
+        transition: { duration: 5 },
     },
     med: {
         scale: 1.5,
@@ -48,9 +49,9 @@ export const App = () => {
     const [show, setShow] = useState(true)
 
     return (
-        <div style={{ position: "fixed", inset: 0, background: "white" }}>
+        <div style={{ position: "fixed", inset: 0, background: "black" }}>
             <Canvas colorManagement style={{ width: "100vw", height: "100vh" }}>
-                <mesh
+                {/* <mesh
                     // initial={{ scale: 1 }}
                     // whileTap={{ scale: 0.8 }}
                     position={[2, 0, 0]}
@@ -58,9 +59,13 @@ export const App = () => {
                 >
                     <meshBasicMaterial attach="material" />
                     <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-                </mesh>
-                <ambientLight />
-                <pointLight position={[150, 150, 150]} intensity={0.55} />
+                </mesh> */}
+                <motion.pointLight
+                    position={[150, 150, 150]}
+                    initial={{ intensity: 1 }}
+                    animate={{ intensity: 2 }}
+                    transition={{ duration: 3 }}
+                />
                 <AnimatePresence>
                     {show && (
                         <>

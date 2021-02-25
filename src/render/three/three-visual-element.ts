@@ -1,5 +1,5 @@
 import { visualElement } from ".."
-import { VisualElementConfig } from "../types"
+import { ResolvedValues, VisualElementConfig } from "../types"
 import * as Three from "three"
 import { axisBox } from "../../utils/geometry"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
@@ -9,8 +9,7 @@ export interface ThreeRenderState {
     position?: [number, number, number]
     rotation?: [number, number, number]
     scale?: [number, number, number]
-    color?: Three.Color
-    opacity?: number
+    latest: ResolvedValues
 }
 
 export interface ThreeVisualElementOptions {}
@@ -30,7 +29,9 @@ const config: VisualElementConfig<
     },
 
     // TODO
-    createRenderState: () => ({}),
+    createRenderState: () => ({
+        latest: {},
+    }),
 
     sortNodePosition(a, b) {
         return getChildIndex(a) > getChildIndex(b) ? 1 : -1
@@ -81,10 +82,6 @@ const config: VisualElementConfig<
     resetTransform() {},
     restoreTransform() {},
 
-    /**
-     * TODO:
-     * Take the latest motion values and build them into the render state
-     */
     build(
         _element,
         renderState,
@@ -99,8 +96,7 @@ const config: VisualElementConfig<
             rotateX,
             rotateY,
             rotateZ,
-            color,
-            opacity,
+            ...latest
         },
         _projection,
         _layoutState,
@@ -119,11 +115,7 @@ const config: VisualElementConfig<
         )
         makeVector3(renderState, "rotation", rotateX, rotateY, rotateZ, props)
 
-        if (color) {
-            renderState.color = new Three.Color(color)
-        }
-
-        if (opacity !== undefined) renderState.opacity = opacity as number
+        for (const key in latest) renderState.latest[key] = latest[key]
     },
 
     /**
@@ -131,42 +123,34 @@ const config: VisualElementConfig<
      * Take the latest values as built into renderState and apply them directly
      * to the threeObject
      */
-    render(threeObject, renderState) {
-        renderState.position &&
-            threeObject.position.set(...renderState.position)
-        renderState.scale && threeObject.scale.set(...renderState.scale)
-        renderState.rotation &&
-            threeObject.rotation.set(...renderState.rotation)
-        threeObject.material?.color = renderState.color
-        threeObject.material?.opacity = renderState.opacity
+    render(threeObject, { position, scale, rotation, latest }) {
+        if (position) threeObject.position.set(...position)
+        if (scale) threeObject.scale.set(...scale)
+        if (rotation) threeObject.rotation.set(...rotation)
+
+        for (const key in latest) {
+            if (setter[key]) {
+                setter[key](threeObject, key, latest[key])
+            } else {
+                threeObject[key] = latest[key]
+            }
+        }
     },
 }
 
-export const applyValue = {
-    x: (element: any, value: any) => (element.position.x = value),
-    y: (element: any, value: any) => (element.position.y = value),
-    z: (element: any, value: any) => (element.position.z = value),
-    position: (element: any, value: [number, number, number]) => {
-        element.position.x = value[0]
-        element.position.y = value[1]
-        element.position.z = value[2]
-    },
-    scale: (element: any, value: any) => {
-        element.scale.x = value
-        element.scale.y = value
-        element.scale.z = value
-    },
-    scaleX: (element: any, value: any) => (element.scale.x = value),
-    scaleY: (element: any, value: any) => (element.scale.y = value),
-    scaleZ: (element: any, value: any) => (element.scale.z = value),
-    rotateX: (element: any, value: any) => (element.rotation.x = value),
-    rotateY: (element: any, value: any) => (element.rotation.y = value),
-    rotateZ: (element: any, value: any) => (element.rotation.z = value),
-    rotate: (element: any, value: any) => (element.rotation.z = value),
-    // drilling into the material from the mesh
-    // motion.material doesn't seem to work since they're not components?
-    color: (element: any, value: any) => element.material.color.set(value),
-    opacity: (element: any, value: any) => (element.material.opacity = value),
+function setOnMaterial(threeObject: any, key: string, value: number) {
+    if (threeObject.material) {
+        if (key === "color") {
+            threeObject.material[key] = new Three.Color(value)
+        } else {
+            threeObject.material[key] = value
+        }
+    }
+}
+
+const setter = {
+    color: setOnMaterial,
+    opacity: setOnMaterial,
 }
 
 function makeVector3(
