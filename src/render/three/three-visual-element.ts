@@ -4,6 +4,7 @@ import * as Three from "three"
 import { axisBox } from "../../utils/geometry"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
 import { getChildIndex } from "./utils/get-child-index"
+import { isMotionValue } from "../../value/utils/is-motion-value"
 
 export interface ThreeRenderState {
     position?: [number, number, number]
@@ -13,6 +14,14 @@ export interface ThreeRenderState {
 }
 
 export interface ThreeVisualElementOptions {}
+
+const threeProperties = {
+    position: ["x", "y", "z"],
+    rotation: ["rotateX", "rotateY", "rotateZ"],
+    scale: ["scaleX", "scaleY", "scaleZ"],
+}
+
+const threePropertyNames = Object.keys(threeProperties)
 
 const config: VisualElementConfig<
     Three.Object3D,
@@ -59,12 +68,26 @@ const config: VisualElementConfig<
         return { transition, transitionEnd, ...target }
     },
 
-    /**
-     * TODO. Look through the props and return a map of motion values
-     * or values that should be
-     */
     scrapeMotionValuesFromProps(props) {
-        return {}
+        const newValues = {}
+
+        for (let key in props) {
+            const prop = props[key]
+
+            if (isMotionValue(prop)) {
+                newValues[key] = prop
+            } else if (Array.isArray(prop)) {
+                if (threePropertyNames.some((property) => key === property)) {
+                    for (const [index, value] of prop.entries()) {
+                        if (isMotionValue(value)) {
+                            newValues[threeProperties[key][index]] = value
+                        }
+                    }
+                }
+            }
+        }
+
+        return newValues
     },
 
     /**
