@@ -104,7 +104,8 @@
         "tslib": "^1.10.0"
     },
     "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2"
+        "@emotion/is-prop-valid": "^0.8.2",
+        "react-three-fiber": "^5.3.19"
     },
     "husky": {
         "hooks": {

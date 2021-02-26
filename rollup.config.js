@@ -71,6 +71,17 @@ const es = Object.assign({}, config, {
     external,
 })
 
+const three = Object.assign({}, config, {
+    input: "lib/render/three/index.js",
+    output: {
+        file: `dist/${pkg.name}-three.es.js`,
+        format: "es",
+        exports: "named",
+    },
+    plugins: [resolve()],
+    external: [...umd.external, "react-three-fiber", "three"],
+})
+
 const m = Object.assign({}, umdProd, {
     input: "lib/render/dom/motion-minimal.js",
     output: Object.assign({}, umd.output, {
@@ -78,4 +89,4 @@ const m = Object.assign({}, umdProd, {
     }),
 })
 
-export default [umd, umdProd, cjs, es, m]
+export default [umd, umdProd, cjs, es, m, three]
