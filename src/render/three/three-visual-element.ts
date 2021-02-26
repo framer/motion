@@ -51,14 +51,14 @@ const config: VisualElementConfig<
     },
 
     // TODO
-    getBaseTarget(props, key) {
+    getBaseTarget(_props, _key) {
         return undefined
     },
 
     makeTargetAnimatable(
         element,
         { transition, transitionEnd, ...target },
-        { transformValues },
+        _,
         isMounted = true
     ) {
         isMounted &&
@@ -98,7 +98,7 @@ const config: VisualElementConfig<
      * TODO:
      * Delete references of this key from the render state
      */
-    removeValueFromMutableState(key, renderState) {},
+    removeValueFromMutableState(_key, _renderState) {},
 
     /**
      * Layout projection methods - currently unused
@@ -124,7 +124,7 @@ const config: VisualElementConfig<
             rotateY,
             rotateZ,
             ...latest
-        },
+        }: { [key: string]: number },
         _projection,
         _layoutState,
         _options,

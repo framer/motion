@@ -1,5 +1,6 @@
 import * as ReactThreeFiber from "react-three-fiber"
 import * as Three from "three"
+import { MotionProps } from "../../motion/types"
 
 export type Object3DProps = ReactThreeFiber.Object3DNode<
     Three.Object3D,
