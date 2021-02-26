@@ -173,7 +173,9 @@ const config: VisualElementConfig<
 function setOnMaterial(threeObject: any, key: string, value: number) {
     if (threeObject.material) {
         if (key === "color") {
-            threeObject.material[key] = new Three.Color(value)
+            threeObject.material[key] = new Three.Color(
+                value
+            ).convertSRGBToLinear()
         } else {
             threeObject.material[key] = value
         }

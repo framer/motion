@@ -18,10 +18,7 @@ const COLOR = [
     "#e4b",
     "#85f",
 ]
-const COLOR_LINEAR = COLOR.map((color) =>
-    new Three.Color(color).convertSRGBToLinear()
-)
-const COLORS = [...COLOR_LINEAR, ...COLOR_LINEAR, ...COLOR_LINEAR]
+const COLORS = [...COLOR, ...COLOR, ...COLOR]
 
 function getGridPosition(index: number, size: number, factor: number) {
     const row = Math.floor(index / size)
