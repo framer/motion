@@ -126,17 +126,26 @@ const config: VisualElementConfig<
         _options,
         props
     ) {
-        makeVector3(renderState, "position", x, y, z, props)
+        makeVector3(renderState, "position", 0, x, y, z, props)
         makeVector3(
             renderState,
             "scale",
+            1,
             scaleX,
             scaleY,
             scaleZ,
             props,
             scale ?? 1
         )
-        makeVector3(renderState, "rotation", rotateX, rotateY, rotateZ, props)
+        makeVector3(
+            renderState,
+            "rotation",
+            0,
+            rotateX,
+            rotateY,
+            rotateZ,
+            props
+        )
 
         for (const key in latest) renderState.latest[key] = latest[key]
     },
@@ -179,6 +188,7 @@ const setter = {
 function makeVector3(
     renderState: ThreeRenderState,
     name: string,
+    fallbackValue: number,
     a?: number,
     b?: number,
     c?: number,
@@ -203,9 +213,9 @@ function makeVector3(
     }
 
     const value = renderState[name]
-    value[0] = a ?? props[name]?.[0] ?? defaultValue
-    value[1] = a ?? props[name]?.[1] ?? defaultValue
-    value[2] = a ?? props[name]?.[2] ?? defaultValue
+    value[0] = a ?? props[name]?.[0] ?? defaultValue ?? fallbackValue
+    value[1] = b ?? props[name]?.[1] ?? defaultValue ?? fallbackValue
+    value[2] = c ?? props[name]?.[2] ?? defaultValue ?? fallbackValue
 }
 
 export const threeVisualElement = visualElement(config)
