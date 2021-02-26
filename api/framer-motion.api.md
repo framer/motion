@@ -172,10 +172,10 @@ export function createBatcher(): SyncLayoutBatcher;
 // @public (undocumented)
 export function createCrossfader(): Crossfader;
 
-// Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "DomMotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function createDomMotionComponent<T extends keyof MotionComponents>(key: T): MotionComponents[T];
+export function createDomMotionComponent<T extends keyof DomMotionComponents>(key: T): DomMotionComponents[T];
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
@@ -353,17 +353,16 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("./motion").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
-    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("./motion").CustomDomComponent<Props>;
+export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, options?: import("../../motion/proxy").MotionComponentOptions) => import("react").ForwardRefExoticComponent<import("../..").MotionProps & import("react").RefAttributes<any>>) & {
+    custom: <Props_1>(Component: string | import("react").ComponentClass<Props_1, any> | import("react").FunctionComponent<Props_1>) => import("react").ForwardRefExoticComponent<import("../..").MotionProps & import("react").RefAttributes<any>>;
 };
 
-// Warning: (ae-forgotten-export) The symbol "DomMotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "SVGMotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents & {
-    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => CustomDomComponent<Props>;
+export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, options?: import("../../motion/proxy").MotionComponentOptions) => React.ForwardRefExoticComponent<MotionProps & React.RefAttributes<any>>) & HTMLMotionComponents & SVGMotionComponents & {
+    custom: <Props_1>(Component: string | React.ComponentClass<Props_1, any> | React.FunctionComponent<Props_1>) => React.ForwardRefExoticComponent<MotionProps & React.RefAttributes<any>>;
 };
 
 // @public (undocumented)
