@@ -1,10 +1,27 @@
+/* eslint-disable react/jsx-pascal-case */
 import * as React from "react"
+import * as Three from "three"
 import { useState } from "react"
 import { motion } from "../../src/render/three/motion"
 import { AnimatePresence } from "@framer"
 import { Canvas } from "react-three-fiber"
 
 const GRID_SIZE = 3
+const COLOR = [
+    "#06f",
+    "#09f",
+    "#0c8",
+    "#9c2",
+    "#fb0",
+    "#f81",
+    "#e14",
+    "#e4b",
+    "#85f",
+]
+const COLOR_LINEAR = COLOR.map((color) =>
+    new Three.Color(color).convertSRGBToLinear()
+)
+const COLORS = [...COLOR_LINEAR, ...COLOR_LINEAR, ...COLOR_LINEAR]
 
 function getGridPosition(index: number, size: number, factor: number) {
     const row = Math.floor(index / size)
@@ -13,65 +30,77 @@ function getGridPosition(index: number, size: number, factor: number) {
     return [(row - size / 2) * factor, (column - size / 2) * factor]
 }
 
-const variants = {
-    big: {
-        scale: 2,
-        rotateX: 0,
-        rotateY: 0,
-        color: "#0066FF",
-    },
-    small: {
-        scale: 1,
-        rotateX: 1,
-        rotateY: 1,
-        opacity: 1.0,
-        color: "#0099FF",
-        transition: { duration: 5 },
-    },
-    med: {
-        scale: 1.5,
-        rotateX: 0.2,
-        rotateY: 0.2,
-        opacity: 1.0,
-        color: "#0066FF",
-    },
-    gone: {
-        scale: 0,
-        rotateX: -1,
-        rotateY: -1,
-        opacity: 0.0,
-        color: "#FFFFFF",
-        transition: { duration: 3 },
-    },
+function createVariants(index = 0) {
+    return {
+        big: {
+            scale: 1.6,
+            rotateX: 0,
+            rotateY: 0,
+            color: COLORS[index],
+        },
+        small: {
+            scale: 1,
+            rotateX: 1,
+            rotateY: 1,
+            opacity: 1,
+            color: COLORS[index + 1],
+        },
+        med: {
+            scale: 1.3,
+            rotateX: 0.2,
+            rotateY: 0.2,
+            opacity: 1,
+            color: COLORS[index + 2],
+        },
+        gone: {
+            scale: 0,
+            rotateX: -1,
+            rotateY: -1,
+            opacity: 0,
+            color: "#fff",
+            transition: { duration: 3 },
+        },
+    }
 }
+
+const variants = [...Array(1 + GRID_SIZE * GRID_SIZE).keys()].map(
+    createVariants
+)
 
 export const App = () => {
     const [show, setShow] = useState(true)
 
     return (
-        <div style={{ position: "fixed", inset: 0, background: "black" }}>
+        <div style={{ position: "fixed", inset: 0, background: "#fff" }}>
             <Canvas colorManagement style={{ width: "100vw", height: "100vh" }}>
-                {/* <mesh
-                    // initial={{ scale: 1 }}
-                    // whileTap={{ scale: 0.8 }}
-                    position={[2, 0, 0]}
-                    onClick={() => setShow(!show)}
-                >
-                    <meshBasicMaterial attach="material" />
-                    <boxBufferGeometry attach="geometry" args={[1, 1, 1]} />
-                </mesh> */}
-                <motion.pointLight
-                    position={[150, 150, 150]}
-                    initial={{ intensity: 1 }}
-                    animate={{ intensity: 2 }}
-                    transition={{ duration: 3 }}
+                <ambientLight intensity={1} color="#fff" />
+                <pointLight
+                    position={[100, 100, 100]}
+                    intensity={1.2}
+                    color="#fff"
                 />
+                <motion.group
+                    position={[2, 0, 0]}
+                    initial={{ scale: 1 }}
+                    animate={{ scale: 1 }}
+                    whileTap={{ scale: 0.9 }}
+                >
+                    <motion.group>
+                        <mesh onClick={() => setShow(!show)}>
+                            <meshStandardMaterial attach="material" />
+                            <boxBufferGeometry
+                                attach="geometry"
+                                args={[1, 1, 1]}
+                            />
+                        </mesh>
+                    </motion.group>
+                </motion.group>
                 <AnimatePresence>
                     {show && (
                         <>
                             <motion.group>
                                 <motion.mesh
-                                    variants={variants}
+                                    variants={variants[0]}
                                     initial={"gone"}
                                     exit={"gone"}
                                     animate={"small"}
@@ -83,7 +112,7 @@ export const App = () => {
                                         bounce: 0.3,
                                     }}
                                 >
-                                    <meshPhongMaterial attach="material" />
+                                    <meshStandardMaterial attach="material" />
                                     <boxBufferGeometry
                                         attach="geometry"
                                         args={[1, 1, 1]}
@@ -111,7 +140,7 @@ export const App = () => {
                                         return (
                                             <motion.mesh
                                                 key={index}
-                                                variants={variants}
+                                                variants={variants[1 + index]}
                                                 position={[
                                                     x + 0.25,
                                                     y + 0.25,
@@ -123,7 +152,7 @@ export const App = () => {
                                                     bounce: 0.3,
                                                 }}
                                             >
-                                                <meshPhongMaterial attach="material" />
+                                                <meshStandardMaterial attach="material" />
                                                 <boxBufferGeometry
                                                     attach="geometry"
                                                     args={[0.2, 0.2, 0.2]}
