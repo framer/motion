@@ -353,16 +353,13 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, options?: import("../../motion/proxy").MotionComponentOptions) => import("react").ForwardRefExoticComponent<import("../..").MotionProps & import("react").RefAttributes<any>>) & {
-    custom: <Props_1>(Component: string | import("react").ComponentClass<Props_1, any> | import("react").FunctionComponent<Props_1>) => import("react").ForwardRefExoticComponent<import("../..").MotionProps & import("react").RefAttributes<any>>;
+export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, options?: import("../../motion/proxy").MotionComponentOptions) => import("./motion").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+    custom: <Props_1>(Component: string | import("react").ComponentClass<Props_1, any> | import("react").FunctionComponent<Props_1>) => import("./motion").CustomDomComponent<Props_1>;
 };
 
-// Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "SVGMotionComponents" needs to be exported by the entry point index.d.ts
-// 
 // @public
-export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, options?: import("../../motion/proxy").MotionComponentOptions) => React.ForwardRefExoticComponent<MotionProps & React.RefAttributes<any>>) & HTMLMotionComponents & SVGMotionComponents & {
-    custom: <Props_1>(Component: string | React.ComponentClass<Props_1, any> | React.FunctionComponent<Props_1>) => React.ForwardRefExoticComponent<MotionProps & React.RefAttributes<any>>;
+export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, options?: import("../../motion/proxy").MotionComponentOptions) => CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+    custom: <Props_1>(Component: string | React.ComponentClass<Props_1, any> | React.FunctionComponent<Props_1>) => CustomDomComponent<Props_1>;
 };
 
 // @public (undocumented)

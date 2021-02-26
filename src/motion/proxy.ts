@@ -1,5 +1,6 @@
 import { warning } from "hey-listen"
 import { createMotionComponent, MotionComponentConfig } from "."
+import { CustomDomComponent } from "../render/dom/motion"
 
 export interface MotionComponentOptions {
     forwardMotionProps?: boolean
@@ -34,7 +35,11 @@ export function createMotionProxy<MotionComponents>(
     const create = <Props>(
         Component: string | React.ComponentType<Props>,
         options: MotionComponentOptions = {}
-    ) => createMotionComponent(createConfig(Component, options))
+    ): CustomDomComponent<Props> => {
+        return createMotionComponent<Props, HTMLElement | SVGElement>(
+            createConfig(Component, options)
+        )
+    }
 
     /**
      * Currently accessed with the deprecated `motion.custom` which has

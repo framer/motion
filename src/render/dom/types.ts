@@ -180,3 +180,5 @@ export type SVGMotionComponents = {
         SVGMotionProps<UnwrapSVGFactoryElement<JSX.IntrinsicElements[K]>>
     >
 }
+
+export type DomMotionComponents = HTMLMotionComponents & SVGMotionComponents

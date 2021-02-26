@@ -1,7 +1,7 @@
 import * as React from "react"
 import { createDomVisualElement } from "./create-dom-visual-element"
 import { createUseRender } from "./use-render"
-import { HTMLMotionComponents, SVGMotionComponents } from "./types"
+import { DomMotionComponents } from "./types"
 import {
     MotionComponentConfig,
     MotionProps,
@@ -24,8 +24,6 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
     React.PropsWithoutRef<Props & MotionProps> &
         React.RefAttributes<SVGElement | HTMLElement>
 >
-
-type DomMotionComponents = HTMLMotionComponents & SVGMotionComponents
 
 const domMotionFeatures = [
     MeasureLayout,
