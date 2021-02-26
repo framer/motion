@@ -2,17 +2,9 @@ import { createElement } from "react"
 import { MotionProps } from "../../motion/types"
 import { VisualElement } from "../types"
 import { isValidMotionProp } from "../../motion/utils/valid-prop"
-import { useGestures } from "./utils/use-gestures"
-import * as Three from "three"
-import * as ReactThreeFiber from "react-three-fiber"
+import { useGestures } from "./gestures/use-gestures"
 import { useConstant } from "../../utils/use-constant"
-
-type Object3DProps = ReactThreeFiber.Object3DNode<
-    Three.Object3D,
-    typeof Three.Object3D
->
-
-type Object3DMotionProps = Object3DProps & MotionProps
+import { Object3DMotionProps } from "./types"
 
 export function createThreeUseRender<Props>(
     Component: string | React.ComponentType<Props>,
@@ -35,7 +27,12 @@ export function createThreeUseRender<Props>(
 function useVisualProps(visualElement: VisualElement) {
     const createVisualProps = () => {
         const { position, rotation, scale, latest } = visualElement.build()
-
+        console.log({
+            position,
+            rotation,
+            scale,
+            ...latest,
+        })
         return {
             position,
             rotation,

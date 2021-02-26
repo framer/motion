@@ -1,4 +1,12 @@
 import * as ReactThreeFiber from "react-three-fiber"
+import * as Three from "three"
+
+export type Object3DProps = ReactThreeFiber.Object3DNode<
+    Three.Object3D,
+    typeof Three.Object3D
+>
+
+export type Object3DMotionProps = Object3DProps & MotionProps
 
 export type ReactThreeFibreComponents = {
     // audio: ReactThreeFiber.AudioProps

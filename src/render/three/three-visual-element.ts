@@ -34,7 +34,11 @@ const config: VisualElementConfig<
      *
      */
     readValueFromInstance(threeObject, key) {
-        return 0
+        if (reader[key]) {
+            return reader[key](threeObject, key)
+        } else {
+            return 0
+        }
     },
 
     // TODO
@@ -48,7 +52,7 @@ const config: VisualElementConfig<
 
     // TODO
     getBaseTarget(props, key) {
-        return 0
+        return undefined
     },
 
     makeTargetAnimatable(
@@ -185,6 +189,17 @@ function setOnMaterial(threeObject: any, key: string, value: number) {
 const setter = {
     color: setOnMaterial,
     opacity: setOnMaterial,
+}
+
+function readMaterial(threeObject: any, key: string) {
+    if (threeObject.material) {
+        return threeObject.material[key]
+    }
+}
+
+const reader = {
+    color: readMaterial,
+    opacity: readMaterial,
 }
 
 function makeVector3(
