@@ -27,18 +27,14 @@ export function createThreeUseRender<Props>(
 function useVisualProps(visualElement: VisualElement) {
     const createVisualProps = () => {
         const { position, rotation, scale, latest } = visualElement.build()
-        console.log({
-            position,
-            rotation,
-            scale,
-            ...latest,
-        })
-        return {
-            position,
-            rotation,
-            scale,
-            ...latest,
-        }
+
+        const props = { ...latest }
+
+        if (position) props.position = position
+        if (rotation) props.rotation = rotation
+        if (scale) props.scale = scale
+
+        return props
     }
 
     return visualElement.isStatic
