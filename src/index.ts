@@ -92,7 +92,7 @@ export {
     SVGAttributesAsMotionValues,
     ForwardRefComponent,
 } from "./render/dom/types"
-export { CustomDomComponent } from "./render/dom/motion"
+export { CustomDomComponent } from "./render/dom/motion-proxy"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {
     AnimationProps,
