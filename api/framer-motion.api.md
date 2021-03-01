@@ -867,9 +867,9 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
+    // (undocumented)
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
