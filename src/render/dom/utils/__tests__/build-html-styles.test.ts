@@ -32,6 +32,17 @@ describe("buildHTMLStyles", () => {
         })
     })
 
+    test("Builds perspective into the CSS perspective style", () => {
+        const latest = { perspective: 100, transform: "translateX(100px)" }
+        const style = {}
+        build(latest, { style })
+
+        expect(style).toEqual({
+            perspective: "100px",
+            transform: "translateX(100px)",
+        })
+    })
+
     test("Builds transform with defined value types", () => {
         const latest = { x: "1vw", y: "2%", rotateX: "90turn" }
         const style = {}

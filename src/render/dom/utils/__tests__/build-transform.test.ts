@@ -1,5 +1,17 @@
 import "../../../../../jest.setup"
 import { buildTransform } from "../build-transform"
+import { isTransformProp } from "../transform"
+
+describe("isTransformProp", () => {
+    it("Correctly identifies only transformPerspective as a transform prop", () => {
+        expect(isTransformProp("perspective")).toBe(false)
+        expect(isTransformProp("transformPerspective")).toBe(true)
+    })
+    it("Correctly identifies translate and alias to be true", () => {
+        expect(isTransformProp("x")).toBe(true)
+        expect(isTransformProp("translateX")).toBe(true)
+    })
+})
 
 describe("buildTransform", () => {
     it("Outputs 'none' when transformIsDefault is true", () => {
