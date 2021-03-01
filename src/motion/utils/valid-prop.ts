@@ -1,4 +1,4 @@
-import { gestureProps } from "../features/gestures"
+import { gestureProps } from "../../gestures/types"
 import { MotionProps } from "../types"
 
 /**

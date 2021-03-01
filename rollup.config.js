@@ -63,9 +63,10 @@ const cjs = Object.assign({}, config, {
 
 const es = Object.assign({}, config, {
     output: {
-        file: `dist/${pkg.name}.es.js`,
         format: "es",
         exports: "named",
+        preserveModules: true,
+        dir: "dist/es",
     },
     plugins: [resolve()],
     external,

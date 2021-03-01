@@ -183,8 +183,11 @@ export function createDomMotionComponent<T extends keyof MotionComponents>(key: 
 // @internal
 export function createMotionComponent<P extends {}, E>({ defaultFeatures, createVisualElement, useRender, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
-// @public
-export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>;
+// Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "CustomDomComponent" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal
+export type CustomDomComponent<Props> = React_2.ForwardRefExoticComponent<React_2.PropsWithoutRef<Props & MotionProps> & React_2.RefAttributes<SVGElement | HTMLElement>>;
 
 // @public (undocumented)
 export interface CustomValueType {
@@ -353,17 +356,13 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("./motion").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
-    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion").DomMotionComponentConfig) => import("./motion").CustomDomComponent<Props>;
+export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
 };
 
-// Warning: (ae-forgotten-export) The symbol "DomMotionComponentConfig" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "HTMLMotionComponents" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "SVGMotionComponents" needs to be exported by the entry point index.d.ts
-// 
 // @public
-export const motion: (<Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => CustomDomComponent<Props>) & HTMLMotionComponents & SVGMotionComponents & {
-    custom: <Props>(Component: string | React.ComponentClass<Props, any> | React.FunctionComponent<Props>, { forwardMotionProps }?: DomMotionComponentConfig) => CustomDomComponent<Props>;
+export const motion: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
 };
 
 // @public (undocumented)
@@ -586,8 +585,6 @@ export const SharedLayoutContext: import("react").Context<SyncLayoutBatcher | Sh
 
 // @public (undocumented)
 export interface SharedLayoutProps {
-    // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     children: React_2.ReactNode;
     type?: "switch" | "crossfade";
@@ -870,9 +867,9 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string, defaultValue: string | number): MotionValue;
-    // (undocumented)
     getValue(key: string): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
