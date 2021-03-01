@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.8.2] 2021-03-01
+
+### Fixed
+
+-   `perspective` now correctly set as its own `style`. `transformPerspective` still builds into `transform`.
+
 ## [3.8.1] 2021-03-01
 
 ### Changed

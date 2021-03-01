@@ -8,17 +8,18 @@ export const transformAxes = ["", "X", "Y", "Z"]
  * An ordered array of each transformable value. By default, transform values
  * will be sorted to this order.
  */
-const order = ["perspective", "translate", "scale", "rotate", "skew"]
+const order = ["translate", "scale", "rotate", "skew"]
 
 /**
  * Generate a list of every possible transform key.
  */
-export const transformProps = ["transformPerspective", "x", "y", "z"]
+export const transformProps = ["x", "y", "z"]
 order.forEach((operationKey) => {
     transformAxes.forEach((axesKey) => {
         const key = operationKey + axesKey
         transformProps.push(key)
     })
+    transformProps.unshift("transformPerspective")
 })
 
 /**
