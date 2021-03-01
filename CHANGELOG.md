@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.8.1] 2021-03-01
+
+### Changed
+
+-   Refactoring `AnimationType` is improve bundle-splitting.
+
 ## [3.8.0] 2021-03-01
 
 ### Fixed
