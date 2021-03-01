@@ -1,7 +1,7 @@
 import { RefObject } from "react"
 import { PanInfo } from "../PanSession"
 import { Inertia, TargetAndTransition } from "../../types"
-import { BoundingBox2D } from "../../types/geometry"
+import { Axis, BoundingBox2D } from "../../types/geometry"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"
 import { VariantLabels } from "../../motion/types"
@@ -10,6 +10,18 @@ export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
 ) => void
+
+export type DragElastic = boolean | number | Partial<BoundingBox2D>
+
+export interface ResolvedConstraints {
+    x: Partial<Axis>
+    y: Partial<Axis>
+}
+
+export interface ResolvedElastic {
+    x: Axis
+    y: Axis
+}
 
 /**
  * @public
@@ -294,7 +306,12 @@ export interface DraggableProps extends DragHandlers {
 
     /**
      * The degree of movement allowed outside constraints. 0 = no movement, 1 =
-     * full movement. Set to `0.5` by default.
+     * full movement.
+     *
+     * Set to `0.5` by default. Can also be set as `false` to disable movement.
+     *
+     * By passing an object of `top`/`right`/`bottom`/`left`, individual values can be set
+     * per constraint. Any missing values will be set to `0`.
      *
      * @library
      *
@@ -316,7 +333,7 @@ export interface DraggableProps extends DragHandlers {
      * />
      * ```
      */
-    dragElastic?: boolean | number
+    dragElastic?: DragElastic
 
     /**
      * Apply momentum from the pan gesture to the component when dragging

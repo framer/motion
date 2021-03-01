@@ -129,7 +129,11 @@ export {
 export { EventInfo } from "./events/types"
 export { VisualElementLifecycles } from "./render/utils/lifecycles"
 export { MotionFeature, FeatureProps } from "./motion/features/types"
-export { DraggableProps, DragHandlers } from "./gestures/drag/types"
+export {
+    DraggableProps,
+    DragHandlers,
+    DragElastic,
+} from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"

@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.9.0] 2021-03-02
+
+### Added
+
+-   `dragElastic` now accepts per-axis elastic settings.
+
 ## [3.8.2] 2021-03-01
 
 ### Fixed
