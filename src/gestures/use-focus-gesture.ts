@@ -1,5 +1,5 @@
 import { TargetAndTransition } from "../types"
-import { AnimationType } from "../render/utils/animation-state"
+import { AnimationType } from "../render/utils/types"
 import { MotionProps, VariantLabels } from "../motion/types"
 import { useDomEvent } from "../events/use-dom-event"
 import { VisualElement } from "../render/types"
