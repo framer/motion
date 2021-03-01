@@ -1,7 +1,7 @@
 {
     "name": "framer-motion",
-    "version": "3.7.0",
-    "description": "An open source and production-ready motion library for React on the web",
+    "version": "3.8.0",
+    "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.js",
     "types": "types/index.d.ts",
