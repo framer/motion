@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.8.0] 2021-03-01
+
+### Fixed
+
+-   Code-splitting for Webpack.
+
 ## [3.7.0] 2021-02-23
 
 ### Added
