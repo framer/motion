@@ -9,6 +9,7 @@ import {
     AnimationDefinition,
     AnimationOptions,
 } from "./animation"
+import { AnimationType } from "./types"
 import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
 
 export interface AnimationState {
@@ -29,15 +30,6 @@ export interface AnimationState {
 interface DefinitionAndOptions {
     animation: AnimationDefinition
     options?: AnimationOptions
-}
-
-export enum AnimationType {
-    Animate = "animate",
-    Hover = "whileHover",
-    Tap = "whileTap",
-    Drag = "whileDrag",
-    Focus = "whileFocus",
-    Exit = "exit",
 }
 
 export type AnimationList = string[] | TargetAndTransition[]

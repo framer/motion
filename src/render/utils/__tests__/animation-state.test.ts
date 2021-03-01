@@ -1,10 +1,7 @@
 import { axisBox } from "../../../utils/geometry"
 import { ResolvedValues, VisualElement } from "../../types"
-import {
-    AnimationState,
-    AnimationType,
-    createAnimationState,
-} from "../animation-state"
+import { AnimationState, createAnimationState } from "../animation-state"
+import { AnimationType } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../setters"
 import { visualElement } from "../../"
 import { MotionProps } from "../../../motion"

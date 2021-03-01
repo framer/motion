@@ -1,7 +1,7 @@
 import { TargetAndTransition } from "../types"
 import { isMouseEvent } from "./utils/event-type"
 import { EventInfo } from "../events/types"
-import { AnimationType } from "../render/utils/animation-state"
+import { AnimationType } from "../render/utils/types"
 import { VariantLabels } from "../motion/types"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { VisualElement } from "../render/types"

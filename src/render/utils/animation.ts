@@ -8,7 +8,8 @@ import {
     Transition,
 } from "../../types"
 import { VisualElement } from "../types"
-import { AnimationType, AnimationTypeState } from "./animation-state"
+import { AnimationTypeState } from "./animation-state"
+import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
 
