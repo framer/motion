@@ -4,7 +4,7 @@ import {
     MotionComponentConfig,
     MotionProps,
 } from "../../motion"
-import { MotionFeature } from "motion/features/types"
+import { MotionFeature } from "../../motion/features/types"
 import { createDomVisualElement } from "./create-dom-visual-element"
 import { MotionComponents } from "./types"
 import { createUseRender } from "./use-render"
