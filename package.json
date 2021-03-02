@@ -98,7 +98,7 @@
     "dependencies": {
         "framesync": "5.2.0",
         "hey-listen": "^1.0.8",
-        "popmotion": "9.3.0",
+        "popmotion": "9.3.1",
         "style-value-types": "4.1.1",
         "tslib": "^1.10.0"
     },

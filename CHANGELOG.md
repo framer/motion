@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.9.1] 2021-03-02
+
+### Fixed
+
+-   Drag now passing velocity to `useSpring` correctly.
+
 ## [3.9.0] 2021-03-02
 
 ### Added
