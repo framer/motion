@@ -244,7 +244,8 @@ export const visualElement = <Instance, MutableState, Options>({
     function triggerBuild() {
         let valuesToRender = latestValues
         if (crossfader && crossfader.isActive()) {
-            valuesToRender = crossfader.getCrossfadeState(element)
+            const crossfadedValues = crossfader.getCrossfadeState(element)
+            if (crossfadedValues) valuesToRender = crossfadedValues
         }
 
         build(

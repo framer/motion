@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.9.2] 2021-03-02
+
+### Fixed
+
+-   Crossfader now only returns values for the lead and follow components.
+
 ## [3.9.1] 2021-03-02
 
 ### Fixed

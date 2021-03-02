@@ -61,6 +61,8 @@ describe("crossfader", () => {
             },
         })
 
+        const third = mockVisualElement({ props: {} })
+
         let latestLeadValues: ResolvedValues = {}
         let latestFollowValues: ResolvedValues = {}
 
@@ -82,6 +84,15 @@ describe("crossfader", () => {
 
         return new Promise<void>((resolve) => {
             setTimeout(() => {
+                expect(crossfader.isActive()).toBe(true)
+                expect(crossfader.getCrossfadeState(lead)).toEqual(
+                    latestLeadValues
+                )
+                expect(crossfader.getCrossfadeState(follow)).toEqual(
+                    latestFollowValues
+                )
+                expect(crossfader.getCrossfadeState(third)).toBeUndefined()
+
                 expect(latestLeadValues.borderTopLeftRadius).toBe(25)
                 expect(latestFollowValues.borderTopLeftRadius).toBe(25)
                 expect(latestLeadValues.borderBottomRightRadius).toBe(10)
