@@ -62,6 +62,13 @@ export class MotionValue<V = any> {
     private updateSubscribers = subscriptionManager<Subscriber<V>>()
 
     /**
+     * Functions to notify when the velocity updates.
+     *
+     * @internal
+     */
+    public velocityUpdateSubscribers = subscriptionManager<Subscriber<V>>()
+
+    /**
      * Functions to notify when the `MotionValue` updates and `render` is set to `true`.
      *
      * @internal
@@ -246,6 +253,7 @@ export class MotionValue<V = any> {
 
         if (this.prev !== this.current) {
             this.updateSubscribers.notify(this.current)
+            this.velocityUpdateSubscribers.notify(this.getVelocity())
         }
 
         if (render) {
@@ -321,6 +329,7 @@ export class MotionValue<V = any> {
     private velocityCheck = ({ timestamp }: FrameData) => {
         if (timestamp !== this.lastUpdated) {
             this.prev = this.current
+            this.velocityUpdateSubscribers.notify(this.getVelocity())
         }
     }
 
