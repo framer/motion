@@ -24,6 +24,7 @@ export { MotionValue, motionValue, PassiveEffect, Subscriber } from "./value"
 export { resolveMotionValue } from "./value/utils/resolve-motion-value"
 export { useTransform } from "./value/use-transform"
 export { useSpring } from "./value/use-spring"
+export { useVelocity } from "./value/use-velocity"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 
