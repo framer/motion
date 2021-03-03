@@ -14,7 +14,7 @@ import { motionValue } from "../../../value"
 
 export interface Crossfader {
     isActive(): boolean
-    getCrossfadeState(element: VisualElement): ResolvedValues
+    getCrossfadeState(element: VisualElement): ResolvedValues | undefined
     toLead(transition?: Transition): PlaybackControls
     fromLead(transition?: Transition): PlaybackControls
     setOptions(options: CrossfadeAnimationOptions): void
@@ -148,7 +148,11 @@ export function createCrossfader(): Crossfader {
         stop: () => progress.stop(),
         getCrossfadeState(element) {
             updateCrossfade()
-            return element === options.lead ? leadState : followState
+            if (element === options.lead) {
+                return leadState
+            } else if (element === options.follow) {
+                return followState
+            }
         },
         setOptions(newOptions) {
             options = newOptions
