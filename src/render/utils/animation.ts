@@ -41,7 +41,7 @@ export type MakeTargetAnimatable = (
 export function animateVisualElement(
     visualElement: VisualElement,
     definition: AnimationDefinition,
-    options?: AnimationOptions
+    options: AnimationOptions = {}
 ) {
     visualElement.notifyAnimationStart()
     let animation: Promise<any>
@@ -54,8 +54,15 @@ export function animateVisualElement(
     } else if (typeof definition === "string") {
         animation = animateVariant(visualElement, definition, options)
     } else {
-        // TODO: Remove any and handle TargetResolver
-        animation = animateTarget(visualElement, definition as any, options)
+        const resolvedDefinition =
+            typeof definition === "function"
+                ? (resolveVariant(
+                      visualElement,
+                      definition,
+                      options.custom
+                  ) as TargetAndTransition)
+                : definition
+        animation = animateTarget(visualElement, resolvedDefinition, options)
     }
 
     return animation.then(() =>
