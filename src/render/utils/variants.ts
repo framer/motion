@@ -39,6 +39,20 @@ function getVelocity(visualElement: VisualElement) {
 
 export function resolveVariantFromProps(
     props: MotionProps,
+    definition: TargetAndTransition | TargetResolver,
+    custom?: any,
+    currentValues?: ResolvedValues,
+    currentVelocity?: ResolvedValues
+): TargetAndTransition
+export function resolveVariantFromProps(
+    props: MotionProps,
+    definition?: string | TargetAndTransition | TargetResolver,
+    custom?: any,
+    currentValues?: ResolvedValues,
+    currentVelocity?: ResolvedValues
+): undefined | TargetAndTransition
+export function resolveVariantFromProps(
+    props: MotionProps,
     definition?: string | TargetAndTransition | TargetResolver,
     custom?: any,
     currentValues: ResolvedValues = {},
@@ -56,6 +70,16 @@ export function resolveVariantFromProps(
 /**
  * Resovles a variant if it's a variant resolver
  */
+export function resolveVariant(
+    visualElement: VisualElement,
+    definition: TargetAndTransition | TargetResolver,
+    custom?: any
+): TargetAndTransition
+export function resolveVariant(
+    visualElement: VisualElement,
+    definition?: string | TargetAndTransition | TargetResolver,
+    custom?: any
+): TargetAndTransition | undefined
 export function resolveVariant(
     visualElement: VisualElement,
     definition?: string | TargetAndTransition | TargetResolver,
