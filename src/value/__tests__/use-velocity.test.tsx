@@ -21,7 +21,6 @@ const syncDriver = (interval = 10) => (update: (v: number) => void) => {
                 while (isRunning) {
                     time += interval
                     setFrameData(interval, time)
-                    console.log(interval, time)
                     update(interval)
                 }
             }, 0)
