@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.9.3] 2021-03-03
+
+### Fixed
+
+-   Exporting `AnimationPlaybackControls` and `AnimationOptions` for `animate()`.
+-   Fixed passing dynamic function to `controls.start()`.
+
 ## [3.9.2] 2021-03-02
 
 ### Fixed

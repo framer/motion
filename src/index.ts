@@ -92,6 +92,10 @@ export {
     SVGAttributesAsMotionValues,
     ForwardRefComponent,
 } from "./render/dom/types"
+export {
+    AnimationOptions,
+    AnimationPlaybackControls,
+} from "./animation/animate"
 export { CustomDomComponent } from "./render/dom/motion-proxy"
 export { ScrollMotionValues } from "./value/scroll/utils"
 export {

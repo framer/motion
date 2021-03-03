@@ -3,11 +3,11 @@ import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { startAnimation } from "./utils/transitions"
 
-interface PlaybackControls {
+export interface AnimationPlaybackControls {
     stop: () => void
 }
 
-interface PlaybackLifecycles<V> {
+export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
     onPlay?: () => void
     onComplete?: () => void
@@ -15,8 +15,11 @@ interface PlaybackLifecycles<V> {
     onStop?: () => void
 }
 
-type AnimationOptions<V> = (Tween | Spring) &
-    PlaybackLifecycles<V> & { delay?: number; type?: "tween" | "spring" }
+export type AnimationOptions<V> = (Tween | Spring) &
+    AnimationPlaybackLifecycles<V> & {
+        delay?: number
+        type?: "tween" | "spring"
+    }
 
 /**
  * Animate a single value or a `MotionValue`.
@@ -27,7 +30,7 @@ type AnimationOptions<V> = (Tween | Spring) &
  *
  * The third argument can be either tween or spring options, and optional lifecycle methods: `onUpdate`, `onPlay`, `onComplete`, `onRepeat` and `onStop`.
  *
- * Returns `PlaybackControls`, currently just a `stop` method.
+ * Returns `AnimationPlaybackControls`, currently just a `stop` method.
  *
  * ```javascript
  * const x = useMotionValue(0)
@@ -49,7 +52,7 @@ export function animate<V>(
     from: MotionValue<V> | V,
     to: V | V[],
     transition: AnimationOptions<V> = {}
-): PlaybackControls {
+): AnimationPlaybackControls {
     const value = isMotionValue(from) ? from : motionValue(from)
     startAnimation("", value, to as any, transition)
 
