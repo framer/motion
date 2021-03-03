@@ -464,7 +464,9 @@ export class MotionValue<V = any> {
     stop(): void;
     // (undocumented)
     updateAndNotify: (v: V, render?: boolean) => void;
-    }
+    // @internal
+    velocityUpdateSubscribers: import("../utils/subscription-manager").SubscriptionManager<Subscriber<number>>;
+}
 
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal
 // 
@@ -796,6 +798,9 @@ export function useTransform<I, O>(input: MotionValue<I>, transformer: SingleTra
 // 
 // @public
 export function useTransform<I, O>(input: MotionValue<string | number>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
+
+// @public
+export function useVelocity(value: MotionValue<number>): MotionValue<number>;
 
 // @public
 export function useViewportScroll(): ScrollMotionValues;
