@@ -56,11 +56,7 @@ export function animateVisualElement(
     } else {
         const resolvedDefinition =
             typeof definition === "function"
-                ? (resolveVariant(
-                      visualElement,
-                      definition,
-                      options.custom
-                  ) as TargetAndTransition)
+                ? resolveVariant(visualElement, definition, options.custom)
                 : definition
         animation = animateTarget(visualElement, resolvedDefinition, options)
     }
