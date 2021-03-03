@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.10.0] 2021-03-03
+
+### Added
+
+-   `useVelocity`.
+
 ## [3.9.3] 2021-03-03
 
 ### Fixed
