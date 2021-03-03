@@ -394,6 +394,46 @@ describe("useAnimation", () => {
         return await expect(promise).resolves.toEqual([1, 2])
     })
 
+    test(".start accepts state depending on custom attribute", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const xa = useMotionValue(0)
+                const xb = useMotionValue(0)
+                const controls = useAnimation()
+
+                useEffect(() => {
+                    controls
+                        .start((custom) => {
+                            return { x: 1 * custom }
+                        })
+                        .then(() => {
+                            resolve([xa.get(), xb.get()])
+                        })
+                })
+
+                return (
+                    <>
+                        <motion.div
+                            animate={controls}
+                            custom={1}
+                            style={{ x: xa }}
+                        />
+                        <motion.div
+                            animate={controls}
+                            custom={2}
+                            style={{ x: xb }}
+                        />
+                    </>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return await expect(promise).resolves.toEqual([1, 2])
+    })
+
     test("pathOffset types are inferred correctly", async () => {
         const Component = () => {
             const controls = useAnimation()
