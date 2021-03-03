@@ -27,11 +27,8 @@ import { SVGAttributes } from 'react';
 // @internal (undocumented)
 export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): void;
 
-// Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "PlaybackControls" needs to be exported by the entry point index.d.ts
-// 
 // @public
-export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions_2<V>): PlaybackControls_2;
+export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions<V>): AnimationPlaybackControls;
 
 // @public (undocumented)
 export const AnimateLayoutFeature: MotionFeature;
@@ -72,7 +69,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, 
 // Warning: (ae-internal-missing-underscore) The name "animateVisualElement" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export function animateVisualElement(visualElement: VisualElement, definition: AnimationDefinition, options?: AnimationOptions): Promise<void>;
+export function animateVisualElement(visualElement: VisualElement, definition: AnimationDefinition, options?: AnimationOptions_2): Promise<void>;
 
 // @public (undocumented)
 export interface AnimationControls {
@@ -91,6 +88,20 @@ export function animationControls(): AnimationControls;
 
 // @public (undocumented)
 export const AnimationFeature: MotionFeature;
+
+// Warning: (ae-forgotten-export) The symbol "AnimationPlaybackLifecycles" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export type AnimationOptions<V> = (Tween | Spring) & AnimationPlaybackLifecycles<V> & {
+    delay?: number;
+    type?: "tween" | "spring";
+};
+
+// @public (undocumented)
+export interface AnimationPlaybackControls {
+    // (undocumented)
+    stop: () => void;
+}
 
 // @public (undocumented)
 export interface AnimationProps {
