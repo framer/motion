@@ -66,7 +66,7 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    public velocityUpdateSubscribers = subscriptionManager<Subscriber<V>>()
+    public velocityUpdateSubscribers = subscriptionManager<Subscriber<number>>()
 
     /**
      * Functions to notify when the `MotionValue` updates and `render` is set to `true`.
@@ -111,7 +111,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     constructor(init: V) {
-        this.current = init
+        this.prev = this.current = init
         this.canTrackVelocity = isFloat(this.current)
     }
 
@@ -251,22 +251,27 @@ export class MotionValue<V = any> {
         this.prev = this.current
         this.current = v
 
-        if (this.prev !== this.current) {
-            this.updateSubscribers.notify(this.current)
-            this.velocityUpdateSubscribers.notify(this.getVelocity())
-        }
-
-        if (render) {
-            this.renderSubscribers.notify(this.current)
-        }
-
         // Update timestamp
         const { delta, timestamp } = getFrameData()
-
         if (this.lastUpdated !== timestamp) {
             this.timeDelta = delta
             this.lastUpdated = timestamp
             sync.postRender(this.scheduleVelocityCheck)
+        }
+
+        // Update update subscribers
+        if (this.prev !== this.current) {
+            this.updateSubscribers.notify(this.current)
+        }
+
+        // Update velocity subscribers
+        if (this.velocityUpdateSubscribers.getSize()) {
+            this.velocityUpdateSubscribers.notify(this.getVelocity())
+        }
+
+        // Update render subscribers
+        if (render) {
+            this.renderSubscribers.notify(this.current)
         }
     }
 
@@ -296,6 +301,8 @@ export class MotionValue<V = any> {
      * @public
      */
     getVelocity() {
+        // console.log(this.current, this.prev)
+
         // This could be isFloat(this.prev) && isFloat(this.current), but that would be wasteful
         return this.canTrackVelocity
             ? // These casts could be avoided if parseFloat would be typed better
@@ -334,6 +341,7 @@ export class MotionValue<V = any> {
     }
 
     hasAnimated = false
+
     /**
      * Registers a new animation to control this `MotionValue`. Only one
      * animation can drive a `MotionValue` at one time.
