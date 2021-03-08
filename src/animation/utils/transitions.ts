@@ -105,12 +105,8 @@ export function convertTransitionToAnimationOptions<T>({
  * Get the delay for a value by checking Transition with decreasing specificity.
  */
 export function getDelayFromTransition(transition: Transition, key: string) {
-    return (
-        transition[key]?.delay ??
-        transition["default"]?.delay ??
-        transition.delay ??
-        0
-    )
+    const valueTransition = getValueTransition(transition, key) || {}
+    return valueTransition.delay ?? 0
 }
 
 export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
