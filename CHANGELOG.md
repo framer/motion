@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.10.2] 2021-03-09
+
+### Fixed
+
+-   Improved memory consumption of `SubscriptionManager`.
+
 ## [3.10.1] 2021-03-09
 
 ### Fixed
