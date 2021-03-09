@@ -1,23 +1,36 @@
+import { useMemo } from "react"
 import { MotionProps } from "../../../motion/types"
 import { isForcedMotionValue } from "../../../motion/utils/is-forced-motion-value"
-import { useConstant } from "../../../utils/use-constant"
 import { isMotionValue } from "../../../value/utils/is-motion-value"
-import { ResolvedValues, VisualElement } from "../../types"
+import { ResolvedValues } from "../../types"
+import { createLayoutState, createProjectionState } from "../../utils/state"
+import { buildHTMLStyles } from "./build-html-styles"
 import { createHtmlRenderState } from "./create-html-render-state"
 
-function useInitialMotionValues(visualElement: VisualElement) {
-    const createStyle = () => {
+function useInitialMotionValues(
+    { transformTemplate }: MotionProps,
+    visualState: ResolvedValues
+) {
+    return useMemo(() => {
         const state = createHtmlRenderState()
+
+        buildHTMLStyles(
+            state,
+            visualState,
+            createProjectionState(),
+            createLayoutState(),
+            {},
+            transformTemplate
+        )
 
         const { vars, style } = state
         return { ...vars, ...style }
-    }
-    return visualElement ? createStyle() : useConstant(createStyle)
+    }, [visualState])
 }
 
 export function useStyle(
     props: MotionProps,
-    visualElement?: VisualElement
+    visualState: ResolvedValues
 ): ResolvedValues {
     const styleProp = props.style || {}
     let style = {}
@@ -35,7 +48,7 @@ export function useStyle(
         }
     }
 
-    style = { ...style, ...useInitialMotionValues(visualElement) }
+    style = { ...style, ...useInitialMotionValues(props, visualState) }
 
     if (props.transformValues) {
         style = props.transformValues(style)
@@ -44,13 +57,10 @@ export function useStyle(
     return style
 }
 
-export function useHTMLProps(
-    props: MotionProps,
-    visualElement?: VisualElement
-) {
+export function useHTMLProps(props: MotionProps, visualState: ResolvedValues) {
     // The `any` isn't ideal but it is the type of createElement props argument
     const htmlProps: any = {}
-    const style = useStyle(props, visualElement)
+    const style = useStyle(props, visualState)
 
     if (Boolean(props.drag)) {
         // Disable the ghost element when a user drags

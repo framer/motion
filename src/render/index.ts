@@ -24,11 +24,7 @@ import { variantPriorityOrder } from "./utils/animation-state"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
-import {
-    createLayoutState,
-    createProjectionState,
-    createVisualState,
-} from "./utils/state"
+import { createLayoutState, createProjectionState } from "./utils/state"
 import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
@@ -53,6 +49,7 @@ export const visualElement = <Instance, MutableState, Options>({
         props,
         presenceId,
         blockInitialAnimation,
+        initialVisualState,
     }: VisualElementOptions<Instance>,
     options: Options = {} as Options
 ) => {
@@ -84,7 +81,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      * The latest resolved motion values.
      */
-    const latestValues = createVisualState(props, parent, blockInitialAnimation)
+    const latestValues = initialVisualState
 
     /**
      * This is a reference to the visual state of the "lead" visual element.

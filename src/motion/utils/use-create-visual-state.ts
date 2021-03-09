@@ -19,9 +19,9 @@ export function useCreateVisualState(
     context: MotionContextProps,
     isStatic: boolean
 ): ResolvedValues {
+    const presenceContext = useContext(PresenceContext)
     const createVisualState = () => {
         const values: ResolvedValues = {}
-        const presenceContext = useContext(PresenceContext)
         const blockInitialAnimation = presenceContext?.initial === false
 
         /**

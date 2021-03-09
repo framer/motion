@@ -54,7 +54,7 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, 
     // (undocumented)
     componentDidUpdate(): void;
     // (undocumented)
-    static contextType: React.Context<VisualElement<any, any> | undefined>;
+    static contextType: React.Context<import("../../motion/context/MotionContext").MotionContextProps>;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
@@ -854,8 +854,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     build(): MutableState;
     // (undocumented)
-    clearState(props: MotionProps): void;
-    // (undocumented)
     current: Instance | null;
     // (undocumented)
     depth: number;
@@ -1003,7 +1001,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
 // Warning: (ae-forgotten-export) The symbol "VisualElementOptions" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options?: Options) => VisualElement<Instance, any>;
+export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, presenceId, blockInitialAnimation, initialVisualState, }: VisualElementOptions<Instance>, options?: Options) => VisualElement<Instance, any>;
 
 // @public
 export interface VisualElementLifecycles {

@@ -46,7 +46,10 @@ const stateVisualElement = visualElement<
 export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)
     const element = useConstant(() =>
-        stateVisualElement({ props: {} }, { initialState })
+        stateVisualElement(
+            { props: {}, initialVisualState: initialState },
+            { initialState }
+        )
     )
 
     useEffect(() => {

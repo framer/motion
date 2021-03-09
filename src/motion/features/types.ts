@@ -1,6 +1,6 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { VisualElement } from "../../render/types"
+import { ResolvedValues, VisualElement } from "../../render/types"
 
 /**
  * @public
@@ -22,5 +22,6 @@ export interface MotionFeature {
 
 export type RenderComponent = (
     props: MotionProps,
+    visualState: ResolvedValues,
     visualElement?: VisualElement
 ) => any

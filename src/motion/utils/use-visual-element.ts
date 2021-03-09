@@ -5,7 +5,11 @@ import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutG
 import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
-import { CreateVisualElement, VisualElement } from "../../render/types"
+import {
+    CreateVisualElement,
+    ResolvedValues,
+    VisualElement,
+} from "../../render/types"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../context/MotionConfigContext"
@@ -18,6 +22,7 @@ function useLayoutId({ layoutId }: MotionProps) {
 }
 
 export function useVisualElement<E>(
+    initialVisualState: ResolvedValues,
     createVisualElement: CreateVisualElement<E>,
     props: MotionProps,
     ref?: Ref<E>
@@ -29,6 +34,7 @@ export function useVisualElement<E>(
 
     const visualElement = useConstant(() =>
         createVisualElement({
+            initialVisualState,
             parent,
             ref,
             props: { ...props, layoutId },

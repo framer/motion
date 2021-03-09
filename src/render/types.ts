@@ -176,6 +176,7 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
 
 export type VisualElementOptions<Instance> = {
     ref?: Ref<Instance>
+    initialVisualState: ResolvedValues
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
     snapshot?: ResolvedValues

@@ -66,6 +66,7 @@ export function createMotionComponent<P extends {}, E>({
              * for more performant animations and interactions
              */
             visualElement = useVisualElement(
+                visualState,
                 createVisualElement,
                 props,
                 externalRef
@@ -93,7 +94,7 @@ export function createMotionComponent<P extends {}, E>({
         return (
             <>
                 <MotionContext.Provider value={context}>
-                    {useRender(props, visualElement)}
+                    {useRender(props, visualState, visualElement)}
                 </MotionContext.Provider>
                 {features}
             </>
