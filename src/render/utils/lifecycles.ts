@@ -1,7 +1,7 @@
 import { SharedLayoutAnimationConfig } from "../../components/AnimateSharedLayout/types"
 import { MotionProps } from "../../motion/types"
 import { AxisBox2D, BoxDelta } from "../../types/geometry"
-import { subscriptionManager } from "../../utils/subscription-manager"
+import { SubscriptionManager } from "../../utils/subscription-manager"
 import { ResolvedValues } from "../types"
 import { AnimationDefinition } from "./animation"
 
@@ -177,8 +177,12 @@ export interface LifecycleManager {
     updatePropListeners: (props: MotionProps) => void
 }
 
+function createSubscriptionManager() {
+    return new SubscriptionManager()
+}
+
 export function createLifecycles() {
-    const managers = names.map(subscriptionManager)
+    const managers = names.map(createSubscriptionManager)
     const propSubscriptions: { [key: string]: () => {} } = {}
     const lifecycles: Partial<LifecycleManager> = {
         clearAllListeners: () => managers.forEach((manager) => manager.clear()),

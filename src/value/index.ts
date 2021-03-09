@@ -1,6 +1,6 @@
 import sync, { getFrameData, FrameData } from "framesync"
 import { velocityPerSecond } from "popmotion"
-import { subscriptionManager } from "../utils/subscription-manager"
+import { SubscriptionManager } from "../utils/subscription-manager"
 
 export type Transformer<T> = (v: T) => T
 
@@ -59,21 +59,23 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    private updateSubscribers = subscriptionManager<Subscriber<V>>()
+    private updateSubscribers = new SubscriptionManager<Subscriber<V>>()
 
     /**
      * Functions to notify when the velocity updates.
      *
      * @internal
      */
-    public velocityUpdateSubscribers = subscriptionManager<Subscriber<number>>()
+    public velocityUpdateSubscribers = new SubscriptionManager<
+        Subscriber<number>
+    >()
 
     /**
      * Functions to notify when the `MotionValue` updates and `render` is set to `true`.
      *
      * @internal
      */
-    private renderSubscribers = subscriptionManager<Subscriber<V>>()
+    private renderSubscribers = new SubscriptionManager<Subscriber<V>>()
 
     /**
      * Add a passive effect to this `MotionValue`.
