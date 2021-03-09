@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.10.1] 2021-03-09
+
+### Fixed
+
+-   New layout animations now only trigger when the target viewport box has changed.
+
 ## [3.10.0] 2021-03-03
 
 ### Added
