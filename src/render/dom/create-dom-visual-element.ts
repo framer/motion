@@ -6,7 +6,6 @@ import { isSVGComponent } from "./utils/is-svg-component"
 
 export function createDomVisualElement(Component: string | ComponentType) {
     return (
-        isStatic: boolean,
         options:
             | VisualElementOptions<SVGElement>
             | VisualElementOptions<HTMLElement>
@@ -15,7 +14,7 @@ export function createDomVisualElement(Component: string | ComponentType) {
         const factory = isSVG ? svgVisualElement : htmlVisualElement
 
         return factory(options as VisualElementOptions<any>, {
-            enableHardwareAcceleration: !isStatic && !isSVG,
+            enableHardwareAcceleration: !isSVG,
         })
     }
 }

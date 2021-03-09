@@ -6,6 +6,7 @@ import { checkTargetForNewValues, getOrigin } from "../utils/setters"
 import { getBoundingBox } from "./projection/measure"
 import { DOMVisualElementOptions, HTMLMutableState } from "./types"
 import { buildHTMLStyles } from "./utils/build-html-styles"
+import { createHtmlRenderState } from "./utils/create-html-render-state"
 import { isCSSVariable } from "./utils/is-css-variable"
 import { parseDomVariant } from "./utils/parse-dom-variant"
 import { isTransformProp } from "./utils/transform"
@@ -36,13 +37,7 @@ export const htmlConfig: VisualElementConfig<
         }
     },
 
-    createRenderState: () => ({
-        style: {},
-        transform: {},
-        transformKeys: [],
-        transformOrigin: {},
-        vars: {},
-    }),
+    createRenderState: createHtmlRenderState,
 
     sortNodePosition(a, b) {
         /**

@@ -11,15 +11,10 @@ import { MotionFeature } from "./types"
  */
 export function useFeatures(
     defaultFeatures: MotionFeature[],
-    isStatic: boolean,
     visualElement: VisualElement,
     props: MotionProps
 ): null | JSX.Element[] {
     const plugins = useContext(MotionConfigContext)
-
-    // If this is a static component, or we're rendering on the server, we don't load
-    // any feature components
-    if (isStatic || typeof window === "undefined") return null
 
     const allFeatures = [...defaultFeatures, ...plugins.features]
     const numFeatures = allFeatures.length

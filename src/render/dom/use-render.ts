@@ -10,20 +10,23 @@ export function createUseRender<Props>(
     Component: string | React.ComponentType<Props>,
     forwardMotionProps = false
 ) {
-    const useRender = (props: MotionProps, visualElement: VisualElement) => {
-        // Generate props to visually render this component
-        const useProps = isSVGComponent(Component) ? useSVGProps : useHTMLProps
-        const visualProps = useProps(visualElement, props)
+    const useRender = (props: MotionProps, visualElement?: VisualElement) => {
+        const useVisualProps = isSVGComponent(Component)
+            ? useSVGProps
+            : useHTMLProps
+        const visualProps = useVisualProps(props)
+        const filteredProps = filterProps(
+            props,
+            typeof Component === "string",
+            forwardMotionProps
+        )
+        const elementProps = { ...filteredProps, ...visualProps }
 
-        return createElement<any>(Component, {
-            ...filterProps(
-                props,
-                typeof Component === "string",
-                forwardMotionProps
-            ),
-            ref: visualElement.ref,
-            ...visualProps,
-        })
+        if (visualElement) {
+            elementProps.ref = visualElement.ref
+        }
+
+        return createElement<any>(Component, elementProps)
     }
 
     return useRender

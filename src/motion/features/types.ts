@@ -22,5 +22,5 @@ export interface MotionFeature {
 
 export type RenderComponent = (
     props: MotionProps,
-    visualElement: VisualElement
+    visualElement?: VisualElement
 ) => any

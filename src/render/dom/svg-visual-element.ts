@@ -4,22 +4,11 @@ import { htmlConfig } from "./html-visual-element"
 import { DOMVisualElementOptions, SVGMutableState } from "./types"
 import { buildSVGAttrs } from "./utils/build-svg-attrs"
 import { camelToDash } from "./utils/camel-to-dash"
+import { createSvgRenderState } from "./utils/create-svg-render-state"
 import { camelCaseAttributes } from "./utils/svg-camel-case-attrs"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "./utils/value-types"
-
-const zeroDimensions = {
-    x: 0,
-    y: 0,
-    width: 0,
-    height: 0,
-}
-
-export const svgMutableState = () => ({
-    ...htmlConfig.createRenderState(),
-    attrs: {},
-    dimensions: zeroDimensions,
-})
+import { zeroDimensions } from "./utils/zero-dimensions"
 
 export const svgVisualElement = visualElement<
     SVGElement,
@@ -27,7 +16,7 @@ export const svgVisualElement = visualElement<
     DOMVisualElementOptions
 >({
     ...(htmlConfig as any),
-    createRenderState: svgMutableState,
+    createRenderState: createSvgRenderState,
     onMount(element, instance, mutableState) {
         try {
             mutableState.dimensions =

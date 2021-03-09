@@ -3,18 +3,21 @@ import { isForcedMotionValue } from "../../../motion/utils/is-forced-motion-valu
 import { useConstant } from "../../../utils/use-constant"
 import { isMotionValue } from "../../../value/utils/is-motion-value"
 import { ResolvedValues, VisualElement } from "../../types"
+import { createHtmlRenderState } from "./create-html-render-state"
 
 function useInitialMotionValues(visualElement: VisualElement) {
     const createStyle = () => {
-        const { vars, style } = visualElement.build()
+        const state = createHtmlRenderState()
+
+        const { vars, style } = state
         return { ...vars, ...style }
     }
-    return visualElement.isStatic ? createStyle() : useConstant(createStyle)
+    return visualElement ? createStyle() : useConstant(createStyle)
 }
 
 export function useStyle(
-    visualElement: VisualElement,
-    props: MotionProps
+    props: MotionProps,
+    visualElement?: VisualElement
 ): ResolvedValues {
     const styleProp = props.style || {}
     let style = {}
@@ -41,10 +44,13 @@ export function useStyle(
     return style
 }
 
-export function useHTMLProps(visualElement: VisualElement, props: MotionProps) {
+export function useHTMLProps(
+    props: MotionProps,
+    visualElement?: VisualElement
+) {
     // The `any` isn't ideal but it is the type of createElement props argument
     const htmlProps: any = {}
-    const style = useStyle(visualElement, props)
+    const style = useStyle(props, visualElement)
 
     if (Boolean(props.drag)) {
         // Disable the ghost element when a user drags

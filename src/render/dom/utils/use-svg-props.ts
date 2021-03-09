@@ -5,8 +5,8 @@ import { VisualElement } from "../../types"
 import { useStyle } from "./use-html-props"
 
 function useInitialMotionProps(
-    visualElement: VisualElement,
-    props: MotionProps
+    props: MotionProps,
+    visualElement?: VisualElement
 ) {
     const createAttrs = () => {
         const { attrs } = visualElement.build()
@@ -24,9 +24,9 @@ function useInitialMotionProps(
     return visualElement.isStatic ? createAttrs() : useConstant(createAttrs)
 }
 
-export function useSVGProps(visualElement: VisualElement, props: MotionProps) {
-    const svgProps = useInitialMotionProps(visualElement, props)
-    const style = useStyle(visualElement, props)
+export function useSVGProps(props: MotionProps, visualElement?: VisualElement) {
+    const svgProps = useInitialMotionProps(props, visualElement)
+    const style = useStyle(props, visualElement)
 
     // TODO: Figure out why these aren't being removed
     delete style.transform

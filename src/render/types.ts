@@ -30,7 +30,6 @@ export interface VisualElement<Instance = any, MutableState = any>
     variantChildren?: Set<VisualElement>
     isMounted(): boolean
     isStatic?: boolean
-    clearState(props: MotionProps): void
     getInstance(): Instance | null
     path: VisualElement[]
     addChild(child: VisualElement): () => void
@@ -180,7 +179,6 @@ export type VisualElementOptions<Instance> = {
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
     snapshot?: ResolvedValues
-    isStatic?: boolean
     presenceId?: number | undefined
     props: MotionProps
     blockInitialAnimation?: boolean
@@ -192,7 +190,6 @@ export type ExtendVisualElement<
 > = (element: VisualElement<Element>) => Extended
 
 export type CreateVisualElement<E> = (
-    isStatic: boolean,
     options: VisualElementOptions<E>
 ) => VisualElement<E>
 

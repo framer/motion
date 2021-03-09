@@ -51,7 +51,6 @@ export const visualElement = <Instance, MutableState, Options>({
         parent,
         ref: externalRef,
         props,
-        isStatic,
         presenceId,
         blockInitialAnimation,
     }: VisualElementOptions<Instance>,
@@ -85,7 +84,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      * The latest resolved motion values.
      */
-    let latestValues = createVisualState(props, parent, blockInitialAnimation)
+    const latestValues = createVisualState(props, parent, blockInitialAnimation)
 
     /**
      * This is a reference to the visual state of the "lead" visual element.
@@ -111,7 +110,7 @@ export const visualElement = <Instance, MutableState, Options>({
      * Each visual element creates a pool of renderer-specific mutable state
      * which allows renderer-specific calculations to occur while reducing GC.
      */
-    let renderState = createRenderState()
+    const renderState = createRenderState()
 
     /**
      *
@@ -400,13 +399,6 @@ export const visualElement = <Instance, MutableState, Options>({
         blockInitialAnimation,
 
         /**
-         * If a visual element is static, it's essentially in "pure" mode with
-         * no additional functionality like animations or gestures loaded in.
-         * This can be considered Framer canvas mode.
-         */
-        isStatic,
-
-        /**
          * A boolean that can be used to determine whether to respect hover events.
          * For layout measurements we often have to reposition the instance by
          * removing its transform. This can trigger hover events, which is
@@ -489,22 +481,6 @@ export const visualElement = <Instance, MutableState, Options>({
          * visual state
          */
         getLatestValues: () => latestValues,
-
-        /**
-         * Replaces the current mutable states with fresh ones. This is used
-         * in static mode where rather than creating a new visual element every
-         * render we can just make fresh state.
-         */
-        clearState(newProps) {
-            values.clear()
-            props = newProps
-            leadLatestValues = latestValues = createVisualState(
-                props,
-                parent,
-                blockInitialAnimation
-            )
-            renderState = createRenderState()
-        },
 
         /**
          * Set the visiblity of the visual element. If it's changed, schedule
