@@ -69,7 +69,7 @@ describe("Layout animation", () => {
             })
     })
 
-    it.skip("Doesn't initiate a new animation if the viewport box hasn't updated between renders", () => {
+    it("Doesn't initiate a new animation if the viewport box hasn't updated between renders", () => {
         cy.visit("?test=layout-interrupt")
             .wait(50)
             .get("#box")

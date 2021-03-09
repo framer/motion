@@ -11,6 +11,7 @@ import {
 } from "../../../components/AnimateSharedLayout/types"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
+import { axisBox } from "../../../utils/geometry"
 
 interface AxisLocks {
     x?: () => void
@@ -25,9 +26,24 @@ interface AnimateProps extends FeatureProps {
 const progressTarget = 1000
 
 class Animate extends React.Component<AnimateProps> {
-    private frameTarget = {
-        x: { min: 0, max: 0 },
-        y: { min: 0, max: 0 },
+    /**
+     * A mutable object that tracks the target viewport box
+     * for the current animation frame.
+     */
+    private frameTarget = axisBox()
+
+    /**
+     * The current animation target, we use this to check whether to start
+     * a new animation or continue the existing one.
+     */
+    private currentAnimationTarget = axisBox()
+
+    /**
+     * Track whether we're animating this axis.
+     */
+    private isAnimating = {
+        x: false,
+        y: false,
     }
 
     private stopAxisAnimation: AxisLocks = {
@@ -154,7 +170,18 @@ class Animate extends React.Component<AnimateProps> {
         origin: Axis,
         { transition }: SharedLayoutAnimationConfig = {}
     ) {
+        /**
+         * If we're not animating to a new target, don't run this animation
+         */
+        if (
+            this.isAnimating[axis] &&
+            axisIsEqual(target, this.currentAnimationTarget[axis])
+        ) {
+            return
+        }
+
         this.stopAxisAnimation[axis]?.()
+        this.isAnimating[axis] = true
 
         const { visualElement } = this.props
         const frameTarget = this.frameTarget[axis]
@@ -196,18 +223,21 @@ class Animate extends React.Component<AnimateProps> {
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
 
+        this.stopAxisAnimation[axis] = () => {
+            this.isAnimating[axis] = false
+            layoutProgress.stop()
+            unsubscribeProgress()
+        }
+
+        this.currentAnimationTarget[axis] = target
+
         // Start the animation on this axis
         const animation = startAnimation(
             axis === "x" ? "layoutX" : "layoutY",
             layoutProgress,
             progressTarget,
             transition || this.props.transition || defaultTransition
-        ).then(unsubscribeProgress)
-
-        this.stopAxisAnimation[axis] = () => {
-            layoutProgress.stop()
-            unsubscribeProgress()
-        }
+        ).then(this.stopAxisAnimation[axis])
 
         return animation
     }
