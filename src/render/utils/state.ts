@@ -63,8 +63,13 @@ export function createVisualState(
     const isControllingVariants = checkIfControllingVariants(props)
     const isVariantNode = isControllingVariants || props.variants
 
-    if (isVariantNode && !isControllingVariants && props.inherit !== false) {
-        const context = parent?.getVariantContext()
+    if (
+        parent &&
+        isVariantNode &&
+        !isControllingVariants &&
+        props.inherit !== false
+    ) {
+        const context = parent.getVariantContext()
 
         if (context) {
             initial ??= context.initial

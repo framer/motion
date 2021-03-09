@@ -1,3 +1,4 @@
 {
-    "baseUrl": "http://0.0.0.0:9990"
+    "baseUrl": "http://0.0.0.0:9990",
+    "video": false
 }
