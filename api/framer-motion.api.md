@@ -464,8 +464,10 @@ export class MotionValue<V = any> {
     stop(): void;
     // (undocumented)
     updateAndNotify: (v: V, render?: boolean) => void;
+    // Warning: (ae-forgotten-export) The symbol "SubscriptionManager" needs to be exported by the entry point index.d.ts
+    // 
     // @internal
-    velocityUpdateSubscribers: import("../utils/subscription-manager").SubscriptionManager<Subscriber<number>>;
+    velocityUpdateSubscribers: SubscriptionManager<Subscriber<number>>;
 }
 
 // Warning: (ae-internal-missing-underscore) The name "motionValue" should be prefixed with an underscore because the declaration is marked as @internal

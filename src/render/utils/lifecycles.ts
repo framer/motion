@@ -177,12 +177,8 @@ export interface LifecycleManager {
     updatePropListeners: (props: MotionProps) => void
 }
 
-function createSubscriptionManager() {
-    return new SubscriptionManager()
-}
-
 export function createLifecycles() {
-    const managers = names.map(createSubscriptionManager)
+    const managers = names.map(() => new SubscriptionManager())
     const propSubscriptions: { [key: string]: () => {} } = {}
     const lifecycles: Partial<LifecycleManager> = {
         clearAllListeners: () => managers.forEach((manager) => manager.clear()),
@@ -198,8 +194,9 @@ export function createLifecycles() {
     }
 
     managers.forEach((manager, i) => {
-        lifecycles["on" + names[i]] = manager.add
-        lifecycles["notify" + names[i]] = manager.notify
+        lifecycles["on" + names[i]] = (handler: any) => manager.add(handler)
+        lifecycles["notify" + names[i]] = (...args: any) =>
+            manager.notify(...args)
     })
 
     return lifecycles as LifecycleManager
