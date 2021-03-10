@@ -5,7 +5,7 @@ import { scrapeMotionValuesFromProps as scrapeHTMLMotionValuesFromProps } from "
 export function scrapeMotionValuesFromProps(props: MotionProps) {
     const newValues = scrapeHTMLMotionValuesFromProps(props)
 
-    for (let key in props) {
+    for (const key in props) {
         if (isMotionValue(props[key])) {
             const targetKey =
                 key === "x" || key === "y" ? "attr" + key.toUpperCase() : key

@@ -21,7 +21,7 @@ export const App = () => {
                 data-testid="rotate"
                 style={{ rotate: 45 }}
             />
-            {/* <motion.rect
+            <motion.rect
                 height="100"
                 width="100"
                 x={50}
@@ -36,7 +36,7 @@ export const App = () => {
                 y={350}
                 data-testid="translate"
                 style={{ x: 100 }}
-            /> */}
+            />
         </svg>
     )
 }

@@ -35,7 +35,7 @@ describe("SVG useProps", () => {
 
     test("should correctly remove props as motionvalues", () => {
         const { result } = renderHook(() =>
-            useSVGProps({ y: motionValue(2) } as any, { y: 3 })
+            useSVGProps({ y: motionValue(2) } as any, { attrY: 3 })
         )
 
         expect(result.current).toStrictEqual({
