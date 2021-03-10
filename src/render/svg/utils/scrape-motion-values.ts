@@ -7,10 +7,9 @@ export function scrapeMotionValuesFromProps(props: MotionProps) {
 
     for (let key in props) {
         if (isMotionValue(props[key])) {
-            if (key === "x" || key === "y") {
-                key = "attr" + key.toUpperCase()
-            }
-            newValues[key] = props[key]
+            const targetKey =
+                key === "x" || key === "y" ? "attr" + key.toUpperCase() : key
+            newValues[targetKey] = props[key]
         }
     }
 

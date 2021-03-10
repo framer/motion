@@ -53,8 +53,10 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, 
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
+    // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
-    static contextType: React.Context<import("../../motion/context/MotionContext").MotionContextProps>;
+    static contextType: React.Context<MotionContextProps>;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
