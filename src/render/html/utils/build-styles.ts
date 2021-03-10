@@ -1,20 +1,24 @@
 import { MotionProps } from "../../../motion"
+import { HTMLRenderState } from "../types"
 import { ResolvedValues } from "../../types"
 import { LayoutState, TargetProjection } from "../../utils/state"
-import { valueScaleCorrection } from "../projection/scale-correction"
-import { DOMVisualElementOptions, HTMLMutableState } from "../types"
+import { valueScaleCorrection } from "../../dom/projection/scale-correction"
+import { DOMVisualElementOptions } from "../../dom/types"
 import {
     buildLayoutProjectionTransform,
     buildLayoutProjectionTransformOrigin,
     buildTransform,
     buildTransformOrigin,
 } from "./build-transform"
-import { isCSSVariable } from "./is-css-variable"
+import { isCSSVariable } from "../../dom/utils/is-css-variable"
 import { isTransformOriginProp, isTransformProp } from "./transform"
-import { getDefaultValueType, getValueAsType } from "./value-types"
+import {
+    getDefaultValueType,
+    getValueAsType,
+} from "../../dom/utils/value-types"
 
 export function buildHTMLStyles(
-    state: HTMLMutableState,
+    state: HTMLRenderState,
     latestValues: ResolvedValues,
     projection: TargetProjection,
     layoutState: LayoutState,

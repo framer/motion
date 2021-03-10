@@ -1,13 +1,10 @@
 import { sortTransformProps } from "./transform"
 import { ResolvedValues } from "../../types"
-import {
-    DOMVisualElementOptions,
-    HTMLMutableState,
-    TransformOrigin,
-} from "../types"
+import { DOMVisualElementOptions } from "../../dom/types"
 import { MotionProps } from "../../../motion/types"
 import { BoxDelta, Point2D } from "../../../types/geometry"
 import { LayoutState, zeroLayout } from "../../utils/state"
+import { HTMLRenderState, TransformOrigin } from "../types"
 
 const translateAlias: { [key: string]: string } = {
     x: "translateX",
@@ -23,7 +20,7 @@ const translateAlias: { [key: string]: string } = {
  * providing a transformTemplate function.
  */
 export function buildTransform(
-    { transform, transformKeys }: HTMLMutableState,
+    { transform, transformKeys }: HTMLRenderState,
     {
         enableHardwareAcceleration = true,
         allowTransformNone = true,

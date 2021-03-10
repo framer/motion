@@ -1,18 +1,19 @@
 import { visualElement } from ".."
 import { isMotionValue } from "../../value/utils/is-motion-value"
-import { htmlConfig } from "./html-visual-element"
-import { DOMVisualElementOptions, SVGMutableState } from "./types"
-import { buildSVGAttrs } from "./utils/build-svg-attrs"
-import { camelToDash } from "./utils/camel-to-dash"
-import { createSvgRenderState } from "./utils/create-svg-render-state"
-import { camelCaseAttributes } from "./utils/svg-camel-case-attrs"
-import { isTransformProp } from "./utils/transform"
-import { getDefaultValueType } from "./utils/value-types"
+import { SVGRenderState } from "./types"
+import { htmlConfig } from "../html/visual-element"
+import { DOMVisualElementOptions } from "../dom/types"
+import { buildSVGAttrs } from "./utils/build-attrs"
+import { camelToDash } from "../dom/utils/camel-to-dash"
+import { createSvgRenderState } from "./utils/create-render-state"
+import { camelCaseAttributes } from "./utils/camel-case-attrs"
+import { isTransformProp } from "../html/utils/transform"
+import { getDefaultValueType } from "../dom/utils/value-types"
 import { zeroDimensions } from "./utils/zero-dimensions"
 
 export const svgVisualElement = visualElement<
     SVGElement,
-    SVGMutableState,
+    SVGRenderState,
     DOMVisualElementOptions
 >({
     ...(htmlConfig as any),

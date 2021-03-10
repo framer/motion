@@ -3,7 +3,7 @@ import { valueScaleCorrection } from "../../render/dom/projection/scale-correcti
 import {
     isTransformOriginProp,
     isTransformProp,
-} from "../../render/dom/utils/transform"
+} from "../../render/html/utils/transform"
 
 export function isForcedMotionValue(
     key: string,

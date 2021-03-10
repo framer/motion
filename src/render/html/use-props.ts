@@ -1,11 +1,11 @@
 import { useMemo } from "react"
-import { MotionProps } from "../../../motion/types"
-import { isForcedMotionValue } from "../../../motion/utils/is-forced-motion-value"
-import { isMotionValue } from "../../../value/utils/is-motion-value"
-import { ResolvedValues } from "../../types"
-import { createLayoutState, createProjectionState } from "../../utils/state"
-import { buildHTMLStyles } from "./build-html-styles"
-import { createHtmlRenderState } from "./create-html-render-state"
+import { MotionProps } from "../../motion/types"
+import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
+import { isMotionValue } from "../../value/utils/is-motion-value"
+import { ResolvedValues } from "../types"
+import { createLayoutState, createProjectionState } from "../utils/state"
+import { buildHTMLStyles } from "./utils/build-styles"
+import { createHtmlRenderState } from "./utils/create-render-state"
 
 function useInitialMotionValues(
     { transformTemplate }: MotionProps,

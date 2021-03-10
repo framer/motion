@@ -1,10 +1,10 @@
 import { useMemo } from "react"
-import { MotionProps } from "../../../motion"
-import { ResolvedValues } from "../../types"
-import { createLayoutState, createProjectionState } from "../../utils/state"
-import { buildSVGAttrs } from "./build-svg-attrs"
-import { createSvgRenderState } from "./create-svg-render-state"
-import { useStyle } from "./use-html-props"
+import { MotionProps } from "../../motion"
+import { ResolvedValues } from "../types"
+import { createLayoutState, createProjectionState } from "../utils/state"
+import { buildSVGAttrs } from "./utils/build-attrs"
+import { createSvgRenderState } from "./utils/create-render-state"
+import { useStyle } from "../html/use-props"
 
 function useInitialMotionProps(
     props: MotionProps,

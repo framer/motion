@@ -1,5 +1,5 @@
 import { ComponentType } from "react"
-import { lowercaseSVGElements } from "./supported-elements"
+import { lowercaseSVGElements } from "../../svg/supported-elements"
 
 export function isSVGComponent(Component: string | ComponentType) {
     /**

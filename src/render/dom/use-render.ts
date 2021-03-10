@@ -1,10 +1,10 @@
 import { createElement } from "react"
 import { MotionProps } from "../../motion/types"
 import { ResolvedValues, VisualElement } from "../types"
-import { useHTMLProps } from "./utils/use-html-props"
+import { useHTMLProps } from "../html/use-props"
 import { filterProps } from "./utils/filter-props"
 import { isSVGComponent } from "./utils/is-svg-component"
-import { useSVGProps } from "./utils/use-svg-props"
+import { useSVGProps } from "../svg/use-props"
 
 export function createUseRender<Props>(
     Component: string | React.ComponentType<Props>,

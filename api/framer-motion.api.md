@@ -183,10 +183,10 @@ export function createBatcher(): SyncLayoutBatcher;
 // @public (undocumented)
 export function createCrossfader(): Crossfader;
 
-// Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "DOMMotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function createDomMotionComponent<T extends keyof MotionComponents>(key: T): MotionComponents[T];
+export function createDomMotionComponent<T extends keyof DOMMotionComponents>(key: T): DOMMotionComponents[T];
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
@@ -370,12 +370,12 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents & {
     custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
 };
 
 // @public
-export const motion: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+export const motion: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents & {
     custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
 };
 

@@ -6,7 +6,7 @@ import {
 } from "../../motion"
 import { MotionFeature } from "../../motion/features/types"
 import { createDomVisualElement } from "./create-dom-visual-element"
-import { MotionComponents } from "./types"
+import { DOMMotionComponents } from "./types"
 import { createUseRender } from "./use-render"
 
 /**
@@ -45,7 +45,7 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
     }
 
     type Motion = typeof custom &
-        MotionComponents &
+        DOMMotionComponents &
         DeprecatedCustomMotionComponent
 
     function custom<Props>(

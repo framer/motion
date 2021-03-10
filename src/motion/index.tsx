@@ -54,7 +54,7 @@ export function createMotionComponent<P extends {}, E>({
          */
         const visualState = useCreateVisualState(props, isStatic)
 
-        if (!isStatic) {
+        if (!isStatic && typeof window !== "undefined") {
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
              * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as

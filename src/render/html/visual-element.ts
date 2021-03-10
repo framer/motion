@@ -1,16 +1,17 @@
 import { visualElement } from ".."
 import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
+import { HTMLRenderState } from "./types"
 import { VisualElementConfig } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
-import { getBoundingBox } from "./projection/measure"
-import { DOMVisualElementOptions, HTMLMutableState } from "./types"
-import { buildHTMLStyles } from "./utils/build-html-styles"
-import { createHtmlRenderState } from "./utils/create-html-render-state"
-import { isCSSVariable } from "./utils/is-css-variable"
-import { parseDomVariant } from "./utils/parse-dom-variant"
+import { getBoundingBox } from "../dom/projection/measure"
+import { DOMVisualElementOptions } from "../dom/types"
+import { buildHTMLStyles } from "./utils/build-styles"
+import { createHtmlRenderState } from "./utils/create-render-state"
+import { isCSSVariable } from "../dom/utils/is-css-variable"
+import { parseDomVariant } from "../dom/utils/parse-dom-variant"
 import { isTransformProp } from "./utils/transform"
-import { getDefaultValueType } from "./utils/value-types"
+import { getDefaultValueType } from "../dom/utils/value-types"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -18,7 +19,7 @@ export function getComputedStyle(element: HTMLElement) {
 
 export const htmlConfig: VisualElementConfig<
     HTMLElement,
-    HTMLMutableState,
+    HTMLRenderState,
     DOMVisualElementOptions
 > = {
     treeType: "dom",

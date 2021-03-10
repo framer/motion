@@ -46,7 +46,7 @@ export interface MotionConfigProps extends Partial<MotionConfigContext> {
 export const MotionConfigContext = createContext<MotionConfigContext>({
     transformPagePoint: (p) => p,
     features: [],
-    isStatic: typeof window === "undefined",
+    isStatic: false,
 })
 
 /**

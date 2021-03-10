@@ -87,12 +87,8 @@ export { LayoutGroupContext } from "./components/AnimateSharedLayout/LayoutGroup
 /**
  * Types
  */
-export {
-    HTMLMotionProps,
-    SVGMotionProps,
-    SVGAttributesAsMotionValues,
-    ForwardRefComponent,
-} from "./render/dom/types"
+export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
+export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export {
     AnimationOptions,
     AnimationPlaybackControls,

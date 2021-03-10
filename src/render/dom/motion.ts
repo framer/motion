@@ -1,6 +1,6 @@
 import { createDomVisualElement } from "./create-dom-visual-element"
 import { createUseRender } from "./use-render"
-import { MotionComponents } from "./types"
+import { DOMMotionComponents } from "./types"
 import { MotionComponentConfig, createMotionComponent } from "../../motion"
 import { Drag } from "../../motion/features/drag"
 import { Gestures } from "../../motion/features/gestures"
@@ -42,7 +42,7 @@ export const motion = /*@__PURE__*/ createMotionProxy(allMotionFeatures)
  *
  * @public
  */
-export function createDomMotionComponent<T extends keyof MotionComponents>(
+export function createDomMotionComponent<T extends keyof DOMMotionComponents>(
     key: T
 ) {
     const config: MotionComponentConfig<HTMLElement | SVGElement> = {
@@ -50,5 +50,5 @@ export function createDomMotionComponent<T extends keyof MotionComponents>(
         useRender: createUseRender(key, false),
         defaultFeatures: allMotionFeatures,
     }
-    return createMotionComponent(config) as MotionComponents[T]
+    return createMotionComponent(config) as DOMMotionComponents[T]
 }

@@ -1,16 +1,17 @@
-import { SVGMutableState, DOMVisualElementOptions } from "../types"
-import { buildHTMLStyles } from "./build-html-styles"
+import { DOMVisualElementOptions } from "../../dom/types"
+import { buildHTMLStyles } from "../../html/utils/build-styles"
 import { ResolvedValues } from "../../types"
-import { calcSVGTransformOrigin } from "./svg-transform-origin"
-import { buildSVGPath } from "./svg-path"
+import { calcSVGTransformOrigin } from "./transform-origin"
+import { buildSVGPath } from "./path"
 import { MotionProps } from "../../../motion/types"
 import { LayoutState, TargetProjection } from "../../utils/state"
+import { SVGRenderState } from "../types"
 
 /**
  * Build SVG visual attrbutes, like cx and style.transform
  */
 export function buildSVGAttrs(
-    state: SVGMutableState,
+    state: SVGRenderState,
     {
         attrX,
         attrY,

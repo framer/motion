@@ -1,4 +1,4 @@
-import { transformAxes } from "../../../render/dom/utils/transform"
+import { transformAxes } from "../../../render/html/utils/transform"
 import { VisualElement } from "../../../render/types"
 
 export function resetRotate(child: VisualElement) {

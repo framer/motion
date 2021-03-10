@@ -13,7 +13,7 @@ import { updateBoxDelta } from "../utils/geometry/delta-calc"
 import { isRefObject } from "../utils/is-ref-object"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
-import { buildLayoutProjectionTransform } from "./dom/utils/build-transform"
+import { buildLayoutProjectionTransform } from "./html/utils/build-transform"
 import {
     VisualElement,
     VisualElementConfig,
