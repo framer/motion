@@ -4,37 +4,27 @@ import {
     PresenceContext,
     PresenceContextProps,
 } from "../../components/AnimatePresence/PresenceContext"
-import { ResolvedValues } from "../../render/types"
+import { ResolvedValues, ScrapeMotionValuesFromProps } from "../../render/types"
 import {
     checkIfControllingVariants,
     resolveVariantFromProps,
 } from "../../render/utils/variants"
-import { isMotionValue } from "../../value/utils/is-motion-value"
+import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionContext, MotionContextProps } from "../context/MotionContext"
 import { MotionProps } from "../types"
-import { isForcedMotionValue } from "./is-forced-motion-value"
 
 export const makeCreateVisualState = (
     props: MotionProps,
     context: MotionContextProps,
-    presenceContext: PresenceContextProps | null
+    presenceContext: PresenceContextProps | null,
+    scrapeMotionValues: ScrapeMotionValuesFromProps
 ) => () => {
     const values: ResolvedValues = {}
     const blockInitialAnimation = presenceContext?.initial === false
 
-    /**
-     * TODO: Make this renderer specific using the scrapMotionProps
-     *
-     * const motionValues = scrapeMotionValues()
-     *
-     */
-    const { style } = props
-    for (const key in style) {
-        if (isMotionValue(style[key])) {
-            values[key] = style[key].get()
-        } else if (isForcedMotionValue(key, props)) {
-            values[key] = style[key]
-        }
+    const motionValues = scrapeMotionValues(props)
+    for (const key in motionValues) {
+        values[key] = resolveMotionValue(motionValues[key])
     }
 
     let { initial, animate } = props
@@ -79,12 +69,14 @@ export const makeCreateVisualState = (
  */
 export function useCreateVisualState(
     props: MotionProps,
-    isStatic: boolean
+    isStatic: boolean,
+    scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
 ): ResolvedValues {
     const createVisualState = makeCreateVisualState(
         props,
         useContext(MotionContext),
-        useContext(PresenceContext)
+        useContext(PresenceContext),
+        scrapeMotionValuesFromProps
     )
 
     return isStatic ? createVisualState() : useMemo(createVisualState, [])

@@ -5,7 +5,10 @@ import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext, useCreateMotionContext } from "./context/MotionContext"
-import { CreateVisualElement } from "../render/types"
+import {
+    CreateVisualElement,
+    ScrapeMotionValuesFromProps,
+} from "../render/types"
 import { useVisualElement } from "./utils/use-visual-element"
 import { useCreateVisualState } from "./utils/use-create-visual-state"
 export { MotionProps }
@@ -14,6 +17,7 @@ export interface MotionComponentConfig<E> {
     defaultFeatures: MotionFeature[]
     createVisualElement: CreateVisualElement<E>
     useRender: RenderComponent
+    scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
 }
 
 /**
@@ -31,6 +35,7 @@ export function createMotionComponent<P extends {}, E>({
     defaultFeatures,
     createVisualElement,
     useRender,
+    scrapeMotionValuesFromProps,
 }: MotionComponentConfig<E>) {
     function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
         /**
@@ -52,7 +57,11 @@ export function createMotionComponent<P extends {}, E>({
         /**
          *
          */
-        const visualState = useCreateVisualState(props, isStatic)
+        const visualState = useCreateVisualState(
+            props,
+            isStatic,
+            scrapeMotionValuesFromProps
+        )
 
         if (!isStatic && typeof window !== "undefined") {
             /**

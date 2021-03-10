@@ -8,6 +8,9 @@ import { MotionFeature } from "../../motion/features/types"
 import { createDomVisualElement } from "./create-dom-visual-element"
 import { DOMMotionComponents } from "./types"
 import { createUseRender } from "./use-render"
+import { isSVGComponent } from "./utils/is-svg-component"
+import { scrapeMotionValuesFromProps as scrapeHTMLMotionValues } from "../html/utils/scrape-motion-values"
+import { scrapeMotionValuesFromProps as scrapeSVGMotionValues } from "../svg/utils/scrape-motion-values"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -56,6 +59,9 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
             defaultFeatures,
             createVisualElement: createDomVisualElement(Component),
             useRender: createUseRender(Component, forwardMotionProps),
+            scrapeMotionValuesFromProps: isSVGComponent(Component)
+                ? scrapeSVGMotionValues
+                : scrapeHTMLMotionValues,
         }
 
         return createMotionComponent<Props, HTMLElement | SVGElement>(config)

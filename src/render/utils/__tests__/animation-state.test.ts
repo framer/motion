@@ -42,7 +42,12 @@ function createTest(
         {
             props,
             parent,
-            initialVisualState: makeCreateVisualState(props, {}, null)(),
+            initialVisualState: makeCreateVisualState(
+                props,
+                {},
+                null,
+                () => ({})
+            )(),
         },
         {
             initialState: {},

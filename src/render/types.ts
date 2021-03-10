@@ -169,10 +169,12 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
     restoreTransform(instance: Instance, mutableState: MutableState): void
     render(instance: Instance, mutableState: MutableState): void
     removeValueFromMutableState(key: string, mutableState: MutableState): void
-    scrapeMotionValuesFromProps(
-        props: MotionProps
-    ): { [key: string]: MotionValue | string | number }
+    scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
 }
+
+export type ScrapeMotionValuesFromProps = (
+    props: MotionProps
+) => { [key: string]: MotionValue | string | number }
 
 export type VisualElementOptions<Instance> = {
     ref?: Ref<Instance>

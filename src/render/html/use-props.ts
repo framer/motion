@@ -1,11 +1,23 @@
 import { useMemo } from "react"
 import { MotionProps } from "../../motion/types"
 import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
+import { MotionValue } from "../../value"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 import { ResolvedValues } from "../types"
-import { createLayoutState, createProjectionState } from "../utils/state"
 import { buildHTMLStyles } from "./utils/build-styles"
 import { createHtmlRenderState } from "./utils/create-render-state"
+
+export function copyRawValuesOnly(
+    target: ResolvedValues,
+    source: { [key: string]: string | number | MotionValue },
+    props: MotionProps
+) {
+    for (const key in source) {
+        if (!isMotionValue(source[key]) && !isForcedMotionValue(key, props)) {
+            target[key] = source[key] as string | number
+        }
+    }
+}
 
 function useInitialMotionValues(
     { transformTemplate }: MotionProps,
@@ -18,8 +30,8 @@ function useInitialMotionValues(
         buildHTMLStyles(
             state,
             visualState,
-            createProjectionState(),
-            createLayoutState(),
+            undefined,
+            undefined,
             { enableHardwareAcceleration: !isStatic },
             transformTemplate
         )
@@ -40,15 +52,7 @@ export function useStyle(
     /**
      * Copy non-Motion Values straight into style
      */
-    for (const key in styleProp) {
-        // TODO We might want this to be a hasValue check? Although this could be impure
-        if (
-            !isMotionValue(styleProp[key]) &&
-            !isForcedMotionValue(key, props)
-        ) {
-            style[key] = styleProp[key]
-        }
-    }
+    copyRawValuesOnly(style, styleProp as any, props)
 
     Object.assign(style, useInitialMotionValues(props, visualState, isStatic))
 

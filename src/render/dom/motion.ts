@@ -9,6 +9,7 @@ import { Animation } from "../../motion/features/animation"
 import { AnimateLayout } from "../../motion/features/layout/Animate"
 import { MeasureLayout } from "../../motion/features/layout/Measure"
 import { createMotionProxy } from "./motion-proxy"
+import { scrapeMotionValuesFromProps as scrapeHTMLMotionValues } from "../html/utils/scrape-motion-values"
 
 const allMotionFeatures = [
     MeasureLayout,
@@ -49,6 +50,7 @@ export function createDomMotionComponent<T extends keyof DOMMotionComponents>(
         createVisualElement: createDomVisualElement(key),
         useRender: createUseRender(key, false),
         defaultFeatures: allMotionFeatures,
+        scrapeMotionValuesFromProps: scrapeHTMLMotionValues,
     }
     return createMotionComponent(config) as DOMMotionComponents[T]
 }

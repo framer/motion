@@ -26,10 +26,7 @@ describe("SVG useProps", () => {
         expect(result.current).toStrictEqual({
             x: 6,
             cx: 7,
-            style: {
-                transform: "translateX(8px) scale(9)",
-                transformOrigin: "0px 0px",
-            },
+            style: {},
         })
     })
 })

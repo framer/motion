@@ -20,8 +20,8 @@ import {
 export function buildHTMLStyles(
     state: HTMLRenderState,
     latestValues: ResolvedValues,
-    projection: TargetProjection,
-    layoutState: LayoutState,
+    projection: TargetProjection | undefined,
+    layoutState: LayoutState | undefined,
     options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
@@ -81,7 +81,12 @@ export function buildHTMLStyles(
              * If layout projection is on, and we need to perform scale correction for this
              * value type, perform it.
              */
-            if (layoutState.isHydrated && valueScaleCorrection[key]) {
+            if (
+                layoutState &&
+                projection &&
+                layoutState.isHydrated &&
+                valueScaleCorrection[key]
+            ) {
                 const correctedValue = valueScaleCorrection[key].process(
                     value,
                     layoutState,
@@ -107,7 +112,12 @@ export function buildHTMLStyles(
         }
     }
 
-    if (projection.isEnabled && layoutState.isHydrated) {
+    if (
+        layoutState &&
+        projection &&
+        projection.isEnabled &&
+        layoutState.isHydrated
+    ) {
         style.transform = buildLayoutProjectionTransform(
             layoutState.deltaFinal,
             layoutState.treeScale,

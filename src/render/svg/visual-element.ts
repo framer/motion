@@ -1,5 +1,5 @@
 import { visualElement } from ".."
-import { isMotionValue } from "../../value/utils/is-motion-value"
+import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { SVGRenderState } from "./types"
 import { htmlConfig } from "../html/visual-element"
 import { DOMVisualElementOptions } from "../dom/types"
@@ -52,20 +52,7 @@ export const svgVisualElement = visualElement<
         return domElement.getAttribute(key)
     },
 
-    scrapeMotionValuesFromProps(props) {
-        const newValues = htmlConfig.scrapeMotionValuesFromProps(props)
-
-        for (let key in props) {
-            if (isMotionValue(props[key])) {
-                if (key === "x" || key === "y") {
-                    key = "attr" + key.toUpperCase()
-                }
-                newValues[key] = props[key]
-            }
-        }
-
-        return newValues
-    },
+    scrapeMotionValuesFromProps,
 
     build(
         _element,

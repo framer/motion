@@ -192,7 +192,7 @@ export function createDomMotionComponent<T extends keyof DOMMotionComponents>(ke
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function createMotionComponent<P extends {}, E>({ defaultFeatures, createVisualElement, useRender, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
+export function createMotionComponent<P extends {}, E>({ defaultFeatures, createVisualElement, useRender, scrapeMotionValuesFromProps, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
 
 // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "CustomDomComponent" should be prefixed with an underscore because the declaration is marked as @internal

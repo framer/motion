@@ -1,6 +1,4 @@
 import { visualElement } from ".."
-import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
-import { isMotionValue } from "../../value/utils/is-motion-value"
 import { HTMLRenderState } from "./types"
 import { VisualElementConfig } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
@@ -12,6 +10,7 @@ import { isCSSVariable } from "../dom/utils/is-css-variable"
 import { parseDomVariant } from "../dom/utils/parse-dom-variant"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "../dom/utils/value-types"
+import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -131,18 +130,7 @@ export const htmlConfig: VisualElementConfig<
         }
     },
 
-    scrapeMotionValuesFromProps(props) {
-        const { style } = props
-        const newValues = {}
-
-        for (const key in style) {
-            if (isMotionValue(style[key]) || isForcedMotionValue(key, props)) {
-                newValues[key] = style[key]
-            }
-        }
-
-        return newValues
-    },
+    scrapeMotionValuesFromProps,
 
     build(
         element,
