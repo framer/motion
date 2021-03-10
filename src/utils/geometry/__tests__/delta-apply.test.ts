@@ -1,4 +1,4 @@
-import { htmlVisualElement } from "../../../render/dom/html-visual-element"
+import { htmlVisualElement } from "../../../render/html/visual-element"
 import {
     resetAxis,
     resetBox,

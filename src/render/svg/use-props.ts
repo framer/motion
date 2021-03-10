@@ -4,13 +4,9 @@ import { ResolvedValues } from "../types"
 import { createLayoutState, createProjectionState } from "../utils/state"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { createSvgRenderState } from "./utils/create-render-state"
-import { useStyle } from "../html/use-props"
 
-function useInitialMotionProps(
-    props: MotionProps,
-    visualState: ResolvedValues
-) {
-    return useMemo(() => {
+export function useSVGProps(props: MotionProps, visualState: ResolvedValues) {
+    const visualProps = useMemo(() => {
         const state = createSvgRenderState()
 
         buildSVGAttrs(
@@ -22,23 +18,11 @@ function useInitialMotionProps(
             props.transformTemplate
         )
 
-        return state.attrs
+        return {
+            ...state.attrs,
+            style: state.style,
+        }
     }, [visualState])
-}
 
-export function useSVGProps(
-    props: MotionProps,
-    visualState: ResolvedValues,
-    isStatic: boolean
-) {
-    const svgProps = useInitialMotionProps(props, visualState)
-    // TODO: This is calling both SVG and HTML useInitialMotioNprops
-    const style = useStyle(props, visualState, isStatic)
-
-    // TODO: Figure out why these aren't being removed
-    delete style.transform
-    delete style.transformOrigin
-    ;(svgProps as any).style = style
-
-    return svgProps
+    return visualProps
 }

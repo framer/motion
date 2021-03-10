@@ -1,8 +1,9 @@
 import "../../../../../jest.setup"
-import { buildHTMLStyles } from "../build-html-styles"
-import { DOMVisualElementOptions, TransformOrigin } from "../../types"
+import { buildHTMLStyles } from "../build-styles"
+import { DOMVisualElementOptions } from "../../../dom/types"
 import { BoxDelta, Point2D, AxisBox2D } from "../../../../types/geometry"
 import { ResolvedValues } from "../../../types"
+import { TransformOrigin } from "../../types"
 
 describe("buildHTMLStyles", () => {
     test("Builds basic styles", () => {

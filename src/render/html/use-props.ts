@@ -50,10 +50,7 @@ export function useStyle(
         }
     }
 
-    style = {
-        ...style,
-        ...useInitialMotionValues(props, visualState, isStatic),
-    }
+    Object.assign(style, useInitialMotionValues(props, visualState, isStatic))
 
     if (props.transformValues) {
         style = props.transformValues(style)
