@@ -200,7 +200,10 @@ describe("applyTreeDeltas", () => {
             y: { translate: -100, scale: 0.5, origin: 0.5, originPoint: 350 },
         }
 
-        const element = htmlVisualElement({ props: {} }, {})
+        const element = htmlVisualElement(
+            { props: {}, initialVisualState: {} },
+            {}
+        )
         element.getLayoutState().delta = delta
 
         const treeScale = { x: 1, y: 1 }
