@@ -18,33 +18,22 @@ function useInitialMotionProps(
             visualState,
             createProjectionState(),
             createLayoutState(),
-            {},
+            { enableHardwareAcceleration: false },
             props.transformTemplate
         )
 
         return state.attrs
     }, [visualState])
-
-    // const createAttrs = () => {
-    //     const { attrs } = visualElement.build()
-    //     const resolvedMotionValueProps = {}
-
-    //     for (const key in props) {
-    //         if (isMotionValue(props[key])) {
-    //             resolvedMotionValueProps[key] = props[key].get()
-    //         }
-    //     }
-
-    //     return { ...attrs, ...resolvedMotionValueProps }
-    // }
-
-    // return visualElement.isStatic ? createAttrs() : useConstant(createAttrs)
 }
 
-export function useSVGProps(props: MotionProps, visualState: ResolvedValues) {
+export function useSVGProps(
+    props: MotionProps,
+    visualState: ResolvedValues,
+    isStatic: boolean
+) {
     const svgProps = useInitialMotionProps(props, visualState)
     // TODO: This is calling both SVG and HTML useInitialMotioNprops
-    const style = useStyle(props, visualState)
+    const style = useStyle(props, visualState, isStatic)
 
     // TODO: Figure out why these aren't being removed
     delete style.transform

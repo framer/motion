@@ -13,12 +13,13 @@ export function createUseRender<Props>(
     const useRender = (
         props: MotionProps,
         visualState: ResolvedValues,
+        isStatic: boolean,
         visualElement?: VisualElement
     ) => {
         const useVisualProps = isSVGComponent(Component)
             ? useSVGProps
             : useHTMLProps
-        const visualProps = useVisualProps(props, visualState)
+        const visualProps = useVisualProps(props, visualState, isStatic)
         const filteredProps = filterProps(
             props,
             typeof Component === "string",

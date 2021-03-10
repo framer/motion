@@ -5,6 +5,7 @@ import { AnimationType } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../setters"
 import { visualElement } from "../../"
 import { MotionProps } from "../../../motion"
+import { makeCreateVisualState } from "../../../motion/utils/use-create-visual-state"
 
 const stateVisualElement = visualElement<
     ResolvedValues,
@@ -38,7 +39,11 @@ function createTest(
     parent: VisualElement<any> | undefined = undefined
 ): { element: VisualElement; state: any } {
     const element = stateVisualElement(
-        { props, parent },
+        {
+            props,
+            parent,
+            initialVisualState: makeCreateVisualState(props, {}, null)(),
+        },
         {
             initialState: {},
         }

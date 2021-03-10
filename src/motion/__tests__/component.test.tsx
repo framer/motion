@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
-import { motion, createDomMotionComponent } from "../../"
+import { createDomMotionComponent, motion } from "../../"
 import * as React from "react"
 import styled from "styled-components"
 
@@ -180,7 +180,7 @@ describe("motion component rendering and styles", () => {
         const childVariants = { foo: (i: number) => ({ x: i * 10 }) }
 
         const { getByTestId } = render(
-            <motion.div initial="foo" variants={variants}>
+            <motion.div initial="foo" custom={0} variants={variants}>
                 <motion.div
                     variants={childVariants}
                     data-testid="a"

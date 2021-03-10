@@ -23,5 +23,6 @@ export interface MotionFeature {
 export type RenderComponent = (
     props: MotionProps,
     visualState: ResolvedValues,
+    isStatic: boolean,
     visualElement?: VisualElement
 ) => any

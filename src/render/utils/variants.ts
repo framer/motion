@@ -98,6 +98,7 @@ export function resolveVariant(
 export function checkIfControllingVariants(props: MotionProps) {
     return (
         typeof (props.animate as AnimationControls)?.start === "function" ||
+        isVariantLabel(props.initial) ||
         isVariantLabel(props.animate) ||
         isVariantLabel(props.whileHover) ||
         isVariantLabel(props.whileDrag) ||

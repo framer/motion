@@ -9,7 +9,8 @@ import { createHtmlRenderState } from "./create-html-render-state"
 
 function useInitialMotionValues(
     { transformTemplate }: MotionProps,
-    visualState: ResolvedValues
+    visualState: ResolvedValues,
+    isStatic: boolean
 ) {
     return useMemo(() => {
         const state = createHtmlRenderState()
@@ -19,7 +20,7 @@ function useInitialMotionValues(
             visualState,
             createProjectionState(),
             createLayoutState(),
-            {},
+            { enableHardwareAcceleration: !isStatic },
             transformTemplate
         )
 
@@ -30,7 +31,8 @@ function useInitialMotionValues(
 
 export function useStyle(
     props: MotionProps,
-    visualState: ResolvedValues
+    visualState: ResolvedValues,
+    isStatic: boolean
 ): ResolvedValues {
     const styleProp = props.style || {}
     let style = {}
@@ -48,7 +50,10 @@ export function useStyle(
         }
     }
 
-    style = { ...style, ...useInitialMotionValues(props, visualState) }
+    style = {
+        ...style,
+        ...useInitialMotionValues(props, visualState, isStatic),
+    }
 
     if (props.transformValues) {
         style = props.transformValues(style)
@@ -57,10 +62,14 @@ export function useStyle(
     return style
 }
 
-export function useHTMLProps(props: MotionProps, visualState: ResolvedValues) {
+export function useHTMLProps(
+    props: MotionProps,
+    visualState: ResolvedValues,
+    isStatic: boolean
+) {
     // The `any` isn't ideal but it is the type of createElement props argument
     const htmlProps: any = {}
-    const style = useStyle(props, visualState)
+    const style = useStyle(props, visualState, isStatic)
 
     if (Boolean(props.drag)) {
         // Disable the ghost element when a user drags

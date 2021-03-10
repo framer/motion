@@ -6,6 +6,38 @@ describe("getCurrentTreeVariants", () => {
         expect(
             getCurrentTreeVariants(
                 {
+                    initial: false,
+                },
+                {}
+            )
+        ).toEqual({})
+
+        expect(
+            getCurrentTreeVariants(
+                {
+                    initial: false,
+                    animate: { opacity: 0 },
+                },
+                { animate: "hello" }
+            )
+        ).toEqual({ animate: "hello" })
+
+        expect(
+            getCurrentTreeVariants(
+                {
+                    initial: false,
+                    animate: "hello",
+                },
+                {}
+            )
+        ).toEqual({
+            initial: false,
+            animate: "hello",
+        })
+
+        expect(
+            getCurrentTreeVariants(
+                {
                     initial: { opacity: 0 },
                     animate: { opacity: 1 },
                 },

@@ -5,7 +5,7 @@ import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext, useCreateMotionContext } from "./context/MotionContext"
-import { CreateVisualElement, VisualElement } from "../render/types"
+import { CreateVisualElement } from "../render/types"
 import { useVisualElement } from "./utils/use-visual-element"
 import { useCreateVisualState } from "./utils/use-create-visual-state"
 export { MotionProps }
@@ -41,10 +41,6 @@ export function createMotionComponent<P extends {}, E>({
          */
         const { isStatic } = useContext(MotionConfigContext)
 
-        /**
-         * We don't hyrdrate the VisualElement in static contexts.
-         */
-        let visualElement: VisualElement | undefined = undefined
         let features: JSX.Element[] | null = null
 
         /**
@@ -56,7 +52,7 @@ export function createMotionComponent<P extends {}, E>({
         /**
          *
          */
-        const visualState = useCreateVisualState(props, context, isStatic)
+        const visualState = useCreateVisualState(props, isStatic)
 
         if (!isStatic) {
             /**
@@ -65,7 +61,7 @@ export function createMotionComponent<P extends {}, E>({
              * providing a way of rendering to these APIs outside of the React render loop
              * for more performant animations and interactions
              */
-            visualElement = useVisualElement(
+            context.visualElement = useVisualElement(
                 visualState,
                 createVisualElement,
                 props,
@@ -79,12 +75,11 @@ export function createMotionComponent<P extends {}, E>({
              * TODO: The intention is to move these away from a React-centric to a
              * VisualElement-centric lifecycle scheme.
              */
-            features = useFeatures(defaultFeatures, visualElement, props)
-
-            /**
-             * This can be mutative because visualElement will never change between re-renders.
-             */
-            context.visualElement = visualElement
+            features = useFeatures(
+                defaultFeatures,
+                context.visualElement,
+                props
+            )
         }
 
         /**
@@ -94,7 +89,12 @@ export function createMotionComponent<P extends {}, E>({
         return (
             <>
                 <MotionContext.Provider value={context}>
-                    {useRender(props, visualState, visualElement)}
+                    {useRender(
+                        props,
+                        visualState,
+                        isStatic,
+                        context.visualElement
+                    )}
                 </MotionContext.Provider>
                 {features}
             </>
