@@ -1,5 +1,5 @@
 import { useEffect, useContext } from "react"
-import { MotionConfigContext } from "../../motion/context/MotionConfigContext"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { DraggableProps } from "./types"
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"

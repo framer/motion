@@ -80,7 +80,7 @@ export { VisualElement } from "./render/types"
 export {
     MotionConfig,
     MotionConfigContext,
-} from "./motion/context/MotionConfigContext"
+} from "./context/MotionConfigContext"
 export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
 export { LayoutGroupContext } from "./components/AnimateSharedLayout/LayoutGroupContext"
 

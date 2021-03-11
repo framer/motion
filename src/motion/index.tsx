@@ -3,12 +3,13 @@ import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
-import { MotionConfigContext } from "./context/MotionConfigContext"
-import { MotionContext, useCreateMotionContext } from "./context/MotionContext"
+import { MotionConfigContext } from "../context/MotionConfigContext"
+import { MotionContext } from "../context/MotionContext"
 import { CreateVisualElement } from "../render/types"
 import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
+import { useCreateMotionContext } from "../context/MotionContext/create"
 export { MotionProps }
 
 export interface MotionComponentConfig<Instance, RenderState> {

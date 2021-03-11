@@ -2,7 +2,7 @@ import { useTransform } from "../value/use-transform"
 import { MotionValue } from "./"
 import { invariant, warning } from "hey-listen"
 import { useMotionValue } from "./use-motion-value"
-import { useVisualElementContext } from "../motion/context/MotionContext"
+import { useVisualElementContext } from "../context/MotionContext"
 
 interface ScaleMotionValues {
     scaleX: MotionValue<number>

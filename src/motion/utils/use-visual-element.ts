@@ -3,12 +3,12 @@ import { PresenceContext } from "../../components/AnimatePresence/PresenceContex
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
 import { MotionProps } from "../../motion"
-import { useVisualElementContext } from "../../motion/context/MotionContext"
+import { useVisualElementContext } from "../../context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { CreateVisualElement, VisualElement } from "../../render/types"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
-import { MotionConfigContext } from "../context/MotionConfigContext"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualState } from "./use-visual-state"
 
 function useLayoutId({ layoutId }: MotionProps) {

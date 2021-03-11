@@ -1,6 +1,6 @@
 import { RefObject, useRef, useContext, useEffect } from "react"
 import { EventInfo } from "../events/types"
-import { MotionConfigContext } from "../motion/context/MotionConfigContext"
+import { MotionConfigContext } from "../context/MotionConfigContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { PanSession, PanInfo, AnyPointerEvent } from "./PanSession"

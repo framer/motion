@@ -1,5 +1,5 @@
 import { animationControls } from "../../../animation/animation-controls"
-import { getCurrentTreeVariants } from "../MotionContext"
+import { getCurrentTreeVariants } from "../utils"
 
 describe("getCurrentTreeVariants", () => {
     test("It returns the correct variant to render currently", () => {

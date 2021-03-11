@@ -7,10 +7,7 @@ import {
     SyncLayoutLifecycles,
     SharedLayoutContext,
 } from "./SharedLayoutContext"
-import {
-    MotionContext,
-    MotionContextProps,
-} from "../../motion/context/MotionContext"
+import { MotionContext, MotionContextProps } from "../../context/MotionContext"
 import { resetRotate } from "./utils/rotate"
 import { VisualElement } from "../../render/types"
 

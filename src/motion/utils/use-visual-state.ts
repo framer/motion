@@ -11,7 +11,7 @@ import {
 } from "../../render/utils/variants"
 import { useConstant } from "../../utils/use-constant"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
-import { MotionContext, MotionContextProps } from "../context/MotionContext"
+import { MotionContext, MotionContextProps } from "../../context/MotionContext"
 import { MotionProps } from "../types"
 
 export interface VisualState<Instance, RenderState> {
