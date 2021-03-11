@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useMemo } from "react"
-import { PresenceContext } from "./PresenceContext"
+import { PresenceContext } from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
 

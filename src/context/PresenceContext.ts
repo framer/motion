@@ -1,5 +1,5 @@
 import { createContext } from "react"
-import { VariantLabels } from "../../motion/types"
+import { VariantLabels } from "../motion/types"
 
 /**
  * @public

@@ -81,8 +81,8 @@ export {
     MotionConfig,
     MotionConfigContext,
 } from "./context/MotionConfigContext"
-export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
-export { LayoutGroupContext } from "./components/AnimateSharedLayout/LayoutGroupContext"
+export { PresenceContext } from "./context/PresenceContext"
+export { LayoutGroupContext } from "./context/LayoutGroupContext"
 
 /**
  * Types
@@ -141,14 +141,14 @@ export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
 export {
     SharedLayoutAnimationConfig,
     VisibilityAction,
+    SharedLayoutSyncMethods,
+    SyncLayoutLifecycles,
 } from "./components/AnimateSharedLayout/types"
 export {
-    SharedLayoutSyncMethods,
     SharedLayoutContext,
     FramerTreeLayoutContext,
-    SyncLayoutLifecycles,
-    createBatcher,
-} from "./components/AnimateSharedLayout/SharedLayoutContext"
+} from "./context/SharedLayoutContext"
+export { createBatcher } from "./components/AnimateSharedLayout/utils/batcher"
 export * from "./types/geometry"
 
 /**

@@ -1,34 +1,5 @@
-import { createContext } from "react"
-import { VisualElement } from "../../render/types"
-import { Presence } from "./types"
-
-/**
- * Handlers for batching sync layout lifecycles. We batches these processes to cut
- * down on layout thrashing
- */
-export interface SyncLayoutLifecycles {
-    measureLayout: (child: VisualElement) => void
-    layoutReady: (child: VisualElement) => void
-    parent?: VisualElement
-}
-
-/**
- * The exposed API for children to add themselves to the batcher and to flush it.
- */
-export interface SyncLayoutBatcher {
-    add: (child: VisualElement) => void
-    flush: (handler?: SyncLayoutLifecycles) => void
-}
-
-/**
- * Extra API methods available to children if they're a descendant of AnimateSharedLayout
- */
-export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
-    syncUpdate: (force?: boolean) => void
-    forceUpdate: () => void
-    register: (child: VisualElement) => void
-    remove: (child: VisualElement) => void
-}
+import { VisualElement } from "../../../render/types"
+import { Presence, SyncLayoutBatcher, SyncLayoutLifecycles } from "../types"
 
 /**
  * Default handlers for batching VisualElements
@@ -84,20 +55,3 @@ export function createBatcher(): SyncLayoutBatcher {
         },
     }
 }
-
-export function isSharedLayout(
-    context: SyncLayoutBatcher | SharedLayoutSyncMethods
-): context is SharedLayoutSyncMethods {
-    return !!(context as any).forceUpdate
-}
-
-export const SharedLayoutContext = createContext<
-    SyncLayoutBatcher | SharedLayoutSyncMethods
->(createBatcher())
-
-/**
- * @internal
- */
-export const FramerTreeLayoutContext = createContext<
-    SyncLayoutBatcher | SharedLayoutSyncMethods
->(createBatcher())

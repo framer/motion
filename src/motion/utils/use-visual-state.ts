@@ -3,7 +3,7 @@ import { isAnimationControls } from "../../animation/animation-controls"
 import {
     PresenceContext,
     PresenceContextProps,
-} from "../../components/AnimatePresence/PresenceContext"
+} from "../../context/PresenceContext"
 import { ResolvedValues, ScrapeMotionValuesFromProps } from "../../render/types"
 import {
     checkIfControllingVariants,

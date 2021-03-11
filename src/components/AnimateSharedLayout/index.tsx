@@ -1,15 +1,16 @@
 import * as React from "react"
-import { Presence, SharedLayoutProps } from "./types"
-import { LayoutStack, layoutStack } from "./utils/stack"
 import {
+    Presence,
+    SharedLayoutProps,
     SharedLayoutSyncMethods,
-    createBatcher,
     SyncLayoutLifecycles,
-    SharedLayoutContext,
-} from "./SharedLayoutContext"
+} from "./types"
+import { LayoutStack, layoutStack } from "./utils/stack"
+import { SharedLayoutContext } from "../../context/SharedLayoutContext"
 import { MotionContext, MotionContextProps } from "../../context/MotionContext"
 import { resetRotate } from "./utils/rotate"
 import { VisualElement } from "../../render/types"
+import { createBatcher } from "./utils/batcher"
 
 /**
  * @public
