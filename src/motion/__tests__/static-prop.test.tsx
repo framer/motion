@@ -2,7 +2,7 @@ import { render } from "../../../jest.setup"
 import { motion } from "../.."
 import * as React from "react"
 import { motionValue } from "../../value"
-import { MotionConfig } from "../context/MotionConfigContext"
+import { MotionConfig } from "../../context/MotionConfigContext"
 
 describe("isStatic prop", () => {
     test("it prevents rendering of animated values", async () => {
