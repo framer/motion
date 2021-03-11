@@ -5,7 +5,6 @@ import { checkTargetForNewValues, getOrigin } from "../utils/setters"
 import { getBoundingBox } from "../dom/projection/measure"
 import { DOMVisualElementOptions } from "../dom/types"
 import { buildHTMLStyles } from "./utils/build-styles"
-import { createHtmlRenderState } from "./utils/create-render-state"
 import { isCSSVariable } from "../dom/utils/is-css-variable"
 import { parseDomVariant } from "../dom/utils/parse-dom-variant"
 import { isTransformProp } from "./utils/transform"
@@ -36,8 +35,6 @@ export const htmlConfig: VisualElementConfig<
             )
         }
     },
-
-    createRenderState: createHtmlRenderState,
 
     sortNodePosition(a, b) {
         /**
@@ -84,7 +81,7 @@ export const htmlConfig: VisualElementConfig<
         instance.style.transform = mutableState.style.transform as string
     },
 
-    removeValueFromMutableState(key, { vars, style }) {
+    removeValueFromRenderState(key, { vars, style }) {
         delete vars[key]
         delete style[key]
     },

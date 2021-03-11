@@ -1,18 +1,15 @@
-import { Ref, useContext, useEffect } from "react"
+import { useContext, useEffect } from "react"
 import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../components/AnimateSharedLayout/LayoutGroupContext"
 import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../motion/context/MotionContext"
 import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
-import {
-    CreateVisualElement,
-    ResolvedValues,
-    VisualElement,
-} from "../../render/types"
+import { CreateVisualElement, VisualElement } from "../../render/types"
 import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../context/MotionConfigContext"
+import { VisualState } from "./use-visual-state"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
@@ -21,22 +18,21 @@ function useLayoutId({ layoutId }: MotionProps) {
         : layoutId
 }
 
-export function useVisualElement<E>(
-    initialVisualState: ResolvedValues,
-    createVisualElement: CreateVisualElement<E>,
-    props: MotionProps,
-    ref?: Ref<E>
-): VisualElement<E> {
+export function useVisualElement<Instance, RenderState>(
+    isStatic: boolean,
+    visualState: VisualState<Instance, RenderState>,
+    createVisualElement: CreateVisualElement<Instance>,
+    props: MotionProps
+): VisualElement<Instance> {
     const config = useContext(MotionConfigContext)
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
 
     const visualElement = useConstant(() =>
-        createVisualElement({
-            initialVisualState,
+        createVisualElement(isStatic, {
+            visualState,
             parent,
-            ref,
             props: { ...props, layoutId },
             presenceId: presenceContext?.id,
             blockInitialAnimation: presenceContext?.initial === false,

@@ -9,13 +9,10 @@ interface MockState {
     latest: ResolvedValues
 }
 
+const createRenderState = () => ({ latest: {} })
+
 const mockVisualElement = visualElement<MockInstance, MockState, {}>({
     treeType: "mock",
-    createRenderState() {
-        return {
-            latest: {},
-        }
-    },
     build(_element, renderState, valuesToRender) {
         renderState.latest = valuesToRender
     },
@@ -33,11 +30,18 @@ const mockVisualElement = visualElement<MockInstance, MockState, {}>({
     render(instance, state) {
         instance(state.latest)
     },
-    removeValueFromMutableState() {},
+    removeValueFromRenderState() {},
     scrapeMotionValuesFromProps(props) {
         return props.style as ResolvedValues
     },
 })
+
+function makeVisualState(latestValues: any) {
+    return {
+        latestValues,
+        renderState: createRenderState(),
+    }
+}
 
 describe("crossfader", () => {
     test("Correctly crossfades from follow to lead", async () => {
@@ -48,7 +52,7 @@ describe("crossfader", () => {
             backgroundColor: "#fff",
         }
         const lead = mockVisualElement({
-            initialVisualState: leadValues,
+            visualState: makeVisualState(leadValues),
             props: {
                 initial: leadValues,
             },
@@ -59,23 +63,24 @@ describe("crossfader", () => {
             backgroundColor: "#000",
         }
         const follow = mockVisualElement({
-            initialVisualState: followValues,
+            visualState: makeVisualState(followValues),
             props: {
                 initial: followValues,
             },
         })
 
-        const third = mockVisualElement({ props: {}, initialVisualState: {} })
+        const third = mockVisualElement({
+            props: {},
+            visualState: makeVisualState({}),
+        })
 
         let latestLeadValues: ResolvedValues = {}
         let latestFollowValues: ResolvedValues = {}
 
-        ;(lead.ref as any)((latest: ResolvedValues) => {
+        lead.mount((latest: ResolvedValues) => {
             latestLeadValues = latest
         })
-        ;(follow.ref as any)(
-            (latest: ResolvedValues) => (latestFollowValues = latest)
-        )
+        follow.mount((latest: ResolvedValues) => (latestFollowValues = latest))
 
         crossfader.setOptions({ lead, follow })
         lead.setCrossfader(crossfader)
@@ -127,7 +132,7 @@ describe("crossfader", () => {
             backgroundColor: "#fff",
         }
         const lead = mockVisualElement({
-            initialVisualState: leadValues,
+            visualState: makeVisualState(leadValues),
             props: {
                 initial: leadValues,
             },
@@ -138,7 +143,7 @@ describe("crossfader", () => {
             backgroundColor: "#000",
         }
         const follow = mockVisualElement({
-            initialVisualState: followValues,
+            visualState: makeVisualState(followValues),
             props: {
                 initial: followValues,
             },
@@ -147,12 +152,10 @@ describe("crossfader", () => {
         let latestLeadValues: ResolvedValues = {}
         let latestFollowValues: ResolvedValues = {}
 
-        ;(lead.ref as any)((latest: ResolvedValues) => {
+        lead.mount((latest: ResolvedValues) => {
             latestLeadValues = latest
         })
-        ;(follow.ref as any)(
-            (latest: ResolvedValues) => (latestFollowValues = latest)
-        )
+        follow.mount((latest: ResolvedValues) => (latestFollowValues = latest))
 
         crossfader.setOptions({ lead, follow })
         lead.setCrossfader(crossfader)
@@ -182,7 +185,7 @@ describe("crossfader", () => {
 
         const leadValues = { backgroundColor: "red", opacity: 0.4 }
         const lead = mockVisualElement({
-            initialVisualState: leadValues,
+            visualState: makeVisualState(leadValues),
             props: {
                 initial: leadValues,
             },
@@ -190,7 +193,7 @@ describe("crossfader", () => {
 
         const followValues = { backgroundColor: "green", opacity: 1 }
         const follow = mockVisualElement({
-            initialVisualState: followValues,
+            visualState: makeVisualState(followValues),
             props: {
                 initial: followValues,
             },
@@ -199,12 +202,10 @@ describe("crossfader", () => {
         let latestLeadValues: ResolvedValues = {}
         let latestFollowValues: ResolvedValues = {}
 
-        ;(lead.ref as any)((latest: ResolvedValues) => {
+        lead.mount((latest: ResolvedValues) => {
             latestLeadValues = latest
         })
-        ;(follow.ref as any)(
-            (latest: ResolvedValues) => (latestFollowValues = latest)
-        )
+        follow.mount((latest: ResolvedValues) => (latestFollowValues = latest))
 
         crossfader.setOptions({ lead, follow, crossfadeOpacity: true })
         lead.setCrossfader(crossfader)
@@ -229,7 +230,7 @@ describe("crossfader", () => {
 
         const leadValues = { opacity: 0.4 }
         const lead = mockVisualElement({
-            initialVisualState: leadValues,
+            visualState: makeVisualState(leadValues),
             props: {
                 initial: leadValues,
             },
@@ -239,7 +240,7 @@ describe("crossfader", () => {
             opacity: 1,
         }
         const follow = mockVisualElement({
-            initialVisualState: followValues,
+            visualState: makeVisualState(followValues),
             props: {
                 initial: followValues,
             },
@@ -248,12 +249,10 @@ describe("crossfader", () => {
         let latestLeadValues: ResolvedValues = {}
         let latestFollowValues: ResolvedValues = {}
 
-        ;(lead.ref as any)((latest: ResolvedValues) => {
+        lead.mount((latest: ResolvedValues) => {
             latestLeadValues = latest
         })
-        ;(follow.ref as any)(
-            (latest: ResolvedValues) => (latestFollowValues = latest)
-        )
+        follow.mount((latest: ResolvedValues) => (latestFollowValues = latest))
 
         crossfader.setOptions({
             lead,
@@ -288,7 +287,7 @@ describe("crossfader", () => {
             opacity: 1,
         }
         const lead = mockVisualElement({
-            initialVisualState: leadValues,
+            visualState: makeVisualState(leadValues),
             props: {
                 initial: leadValues,
             },
@@ -296,7 +295,7 @@ describe("crossfader", () => {
 
         let latestLeadValues: ResolvedValues = {}
 
-        ;(lead.ref as any)((latest: ResolvedValues) => {
+        lead.mount((latest: ResolvedValues) => {
             latestLeadValues = latest
         })
 

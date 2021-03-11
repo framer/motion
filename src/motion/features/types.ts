@@ -1,6 +1,7 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { ResolvedValues, VisualElement } from "../../render/types"
+import { VisualState } from "../utils/use-visual-state"
+import { VisualElement } from "../../render/types"
 
 /**
  * @public
@@ -20,9 +21,9 @@ export interface MotionFeature {
     ) => React.ComponentType<FeatureProps> | undefined
 }
 
-export type RenderComponent = (
+export type RenderComponent<Instance, RenderState> = (
     props: MotionProps,
-    visualState: ResolvedValues,
-    isStatic: boolean,
-    visualElement?: VisualElement
+    ref: React.Ref<Instance>,
+    visualState: VisualState<Instance, RenderState>,
+    isStatic: boolean
 ) => any

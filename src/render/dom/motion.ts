@@ -1,7 +1,5 @@
-import { createDomVisualElement } from "./create-dom-visual-element"
-import { createUseRender } from "./use-render"
 import { DOMMotionComponents } from "./types"
-import { MotionComponentConfig, createMotionComponent } from "../../motion"
+import { createMotionComponent } from "../../motion"
 import { Drag } from "../../motion/features/drag"
 import { Gestures } from "../../motion/features/gestures"
 import { Exit } from "../../motion/features/exit"
@@ -9,7 +7,7 @@ import { Animation } from "../../motion/features/animation"
 import { AnimateLayout } from "../../motion/features/layout/Animate"
 import { MeasureLayout } from "../../motion/features/layout/Measure"
 import { createMotionProxy } from "./motion-proxy"
-import { scrapeMotionValuesFromProps as scrapeHTMLMotionValues } from "../html/utils/scrape-motion-values"
+import { createDomMotionConfig } from "./utils/create-config"
 
 const allMotionFeatures = [
     MeasureLayout,
@@ -46,11 +44,7 @@ export const motion = /*@__PURE__*/ createMotionProxy(allMotionFeatures)
 export function createDomMotionComponent<T extends keyof DOMMotionComponents>(
     key: T
 ) {
-    const config: MotionComponentConfig<HTMLElement | SVGElement> = {
-        createVisualElement: createDomVisualElement(key),
-        useRender: createUseRender(key, false),
-        defaultFeatures: allMotionFeatures,
-        scrapeMotionValuesFromProps: scrapeHTMLMotionValues,
-    }
-    return createMotionComponent(config) as DOMMotionComponents[T]
+    return createMotionComponent(
+        createDomMotionConfig(allMotionFeatures, key, false) as any
+    ) as DOMMotionComponents[T]
 }

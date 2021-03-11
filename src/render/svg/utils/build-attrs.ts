@@ -45,12 +45,15 @@ export function buildSVGAttrs(
      * and copy it into style.
      */
     if (attrs.transform) {
-        style.transform = attrs.transform
+        if (dimensions) style.transform = attrs.transform
         delete attrs.transform
     }
 
     // Parse transformOrigin
-    if (originX !== undefined || originY !== undefined || style.transform) {
+    if (
+        dimensions &&
+        (originX !== undefined || originY !== undefined || style.transform)
+    ) {
         style.transformOrigin = calcSVGTransformOrigin(
             dimensions,
             originX !== undefined ? originX : 0.5,

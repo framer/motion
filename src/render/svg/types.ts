@@ -8,7 +8,7 @@ export interface SVGRenderState extends HTMLRenderState {
     /**
      * Measured dimensions of the SVG element to be used to calculate a transform-origin.
      */
-    dimensions: SVGDimensions
+    dimensions?: SVGDimensions
 
     /**
      * A mutable record of attributes we want to apply directly to the rendered Element

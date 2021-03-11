@@ -1,8 +1,7 @@
 import { createHtmlRenderState } from "../../html/utils/create-render-state"
-import { zeroDimensions } from "./zero-dimensions"
+import { SVGRenderState } from "../types"
 
-export const createSvgRenderState = () => ({
+export const createSvgRenderState = (): SVGRenderState => ({
     ...createHtmlRenderState(),
     attrs: {},
-    dimensions: zeroDimensions,
 })

@@ -1,4 +1,3 @@
-import { Ref } from "react"
 import { startAnimation } from "../animation/utils/transitions"
 import {
     Presence,
@@ -6,6 +5,7 @@ import {
 } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionProps } from "../motion/types"
+import { VisualState } from "../motion/utils/use-visual-state"
 import { TargetAndTransition, Transition, Variant } from "../types"
 import { AxisBox2D, Point2D } from "../types/geometry"
 import { MotionValue } from "../value"
@@ -18,7 +18,7 @@ export interface MotionPoint {
     y: MotionValue<number>
 }
 
-export interface VisualElement<Instance = any, MutableState = any>
+export interface VisualElement<Instance = any, RenderState = any>
     extends LifecycleManager {
     treeType: string
     depth: number
@@ -29,11 +29,12 @@ export interface VisualElement<Instance = any, MutableState = any>
     projection: TargetProjection
     variantChildren?: Set<VisualElement>
     isMounted(): boolean
+    mount(instance: Instance): void
+    unmount(): void
     isStatic?: boolean
     getInstance(): Instance | null
     path: VisualElement[]
     addChild(child: VisualElement): () => void
-    ref: Ref<Instance | null>
     sortNodePosition(element: VisualElement): number
 
     addVariantChild(child: VisualElement): undefined | (() => void)
@@ -86,7 +87,7 @@ export interface VisualElement<Instance = any, MutableState = any>
               whileTap?: string | string[]
           }
 
-    build(): MutableState
+    build(): RenderState
     syncRender(): void
 
     /**
@@ -127,21 +128,15 @@ export interface VisualElement<Instance = any, MutableState = any>
     animationState?: AnimationState
 }
 
-export interface VisualElementConfig<Instance, MutableState, Options> {
+export interface VisualElementConfig<Instance, RenderState, Options> {
     treeType?: string
-    createRenderState(): MutableState
-    onMount?: (
-        element: VisualElement<Instance>,
-        instance: Instance,
-        mutableState: MutableState
-    ) => void
     getBaseTarget?(
         props: MotionProps,
         key: string
     ): string | number | undefined | MotionValue
     build(
         visualElement: VisualElement<Instance>,
-        renderState: MutableState,
+        renderState: RenderState,
         latestValues: ResolvedValues,
         projection: TargetProjection,
         layoutState: LayoutState,
@@ -166,9 +161,9 @@ export interface VisualElementConfig<Instance, MutableState, Options> {
         instance: Instance,
         props: MotionProps
     ): void
-    restoreTransform(instance: Instance, mutableState: MutableState): void
-    render(instance: Instance, mutableState: MutableState): void
-    removeValueFromMutableState(key: string, mutableState: MutableState): void
+    restoreTransform(instance: Instance, renderState: RenderState): void
+    render(instance: Instance, renderState: RenderState): void
+    removeValueFromRenderState(key: string, renderState: RenderState): void
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
 }
 
@@ -176,9 +171,10 @@ export type ScrapeMotionValuesFromProps = (
     props: MotionProps
 ) => { [key: string]: MotionValue | string | number }
 
-export type VisualElementOptions<Instance> = {
-    ref?: Ref<Instance>
-    initialVisualState: ResolvedValues
+export type UseRenderState<RenderState = any> = () => RenderState
+
+export type VisualElementOptions<Instance, RenderState = any> = {
+    visualState: VisualState<Instance, RenderState>
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
     snapshot?: ResolvedValues
@@ -187,14 +183,10 @@ export type VisualElementOptions<Instance> = {
     blockInitialAnimation?: boolean
 }
 
-export type ExtendVisualElement<
-    Extended extends VisualElement,
-    Element = any
-> = (element: VisualElement<Element>) => Extended
-
-export type CreateVisualElement<E> = (
-    options: VisualElementOptions<E>
-) => VisualElement<E>
+export type CreateVisualElement<Instance> = (
+    isStatic: boolean,
+    options: VisualElementOptions<Instance>
+) => VisualElement<Instance>
 
 /**
  * A generic set of string/number values

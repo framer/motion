@@ -1,23 +1,21 @@
 import * as React from "react"
-import { forwardRef, Ref, useContext } from "react"
+import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
 import { RenderComponent, MotionFeature } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { MotionConfigContext } from "./context/MotionConfigContext"
 import { MotionContext, useCreateMotionContext } from "./context/MotionContext"
-import {
-    CreateVisualElement,
-    ScrapeMotionValuesFromProps,
-} from "../render/types"
+import { CreateVisualElement } from "../render/types"
 import { useVisualElement } from "./utils/use-visual-element"
-import { useCreateVisualState } from "./utils/use-create-visual-state"
+import { UseVisualState } from "./utils/use-visual-state"
+import { useMotionRef } from "./utils/use-motion-ref"
 export { MotionProps }
 
-export interface MotionComponentConfig<E> {
+export interface MotionComponentConfig<Instance, RenderState> {
     defaultFeatures: MotionFeature[]
-    createVisualElement: CreateVisualElement<E>
-    useRender: RenderComponent
-    scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
+    createVisualElement: CreateVisualElement<Instance>
+    useRender: RenderComponent<Instance, RenderState>
+    useVisualState: UseVisualState<Instance, RenderState>
 }
 
 /**
@@ -31,13 +29,16 @@ export interface MotionComponentConfig<E> {
  *
  * @internal
  */
-export function createMotionComponent<P extends {}, E>({
+export function createMotionComponent<Props extends {}, Instance, RenderState>({
     defaultFeatures,
     createVisualElement,
     useRender,
-    scrapeMotionValuesFromProps,
-}: MotionComponentConfig<E>) {
-    function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
+    useVisualState,
+}: MotionComponentConfig<Instance, RenderState>) {
+    function MotionComponent(
+        props: Props & MotionProps,
+        externalRef?: React.Ref<Instance>
+    ) {
         /**
          * If we're rendering in a static environment, we only visually update the component
          * as a result of a React-rerender rather than interactions or animations. This
@@ -57,11 +58,7 @@ export function createMotionComponent<P extends {}, E>({
         /**
          *
          */
-        const visualState = useCreateVisualState(
-            props,
-            isStatic,
-            scrapeMotionValuesFromProps
-        )
+        const visualState = useVisualState(props, isStatic)
 
         if (!isStatic && typeof window !== "undefined") {
             /**
@@ -71,10 +68,10 @@ export function createMotionComponent<P extends {}, E>({
              * for more performant animations and interactions
              */
             context.visualElement = useVisualElement(
+                isStatic,
                 visualState,
                 createVisualElement,
-                props,
-                externalRef
+                props
             )
 
             /**
@@ -100,9 +97,13 @@ export function createMotionComponent<P extends {}, E>({
                 <MotionContext.Provider value={context}>
                     {useRender(
                         props,
+                        useMotionRef(
+                            visualState,
+                            context.visualElement,
+                            externalRef
+                        ),
                         visualState,
-                        isStatic,
-                        context.visualElement
+                        isStatic
                     )}
                 </MotionContext.Provider>
                 {features}

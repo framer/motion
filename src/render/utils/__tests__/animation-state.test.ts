@@ -5,19 +5,18 @@ import { AnimationType } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../setters"
 import { visualElement } from "../../"
 import { MotionProps } from "../../../motion"
-import { makeCreateVisualState } from "../../../motion/utils/use-create-visual-state"
+import { createHtmlRenderState } from "../../html/utils/create-render-state"
 
 const stateVisualElement = visualElement<
     ResolvedValues,
     {},
     { initialState: ResolvedValues }
 >({
-    createRenderState: () => ({}),
     build() {},
     measureViewportBox: axisBox,
     resetTransform() {},
     restoreTransform() {},
-    removeValueFromMutableState() {},
+    removeValueFromRenderState() {},
     render() {},
     scrapeMotionValuesFromProps() {
         return {}
@@ -42,12 +41,10 @@ function createTest(
         {
             props,
             parent,
-            initialVisualState: makeCreateVisualState(
-                props,
-                {},
-                null,
-                () => ({})
-            )(),
+            visualState: {
+                latestValues: {},
+                renderState: createHtmlRenderState(),
+            },
         },
         {
             initialState: {},

@@ -5,11 +5,20 @@ import { htmlConfig } from "../html/visual-element"
 import { DOMVisualElementOptions } from "../dom/types"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { camelToDash } from "../dom/utils/camel-to-dash"
-import { createSvgRenderState } from "./utils/create-render-state"
 import { camelCaseAttributes } from "./utils/camel-case-attrs"
 import { isTransformProp } from "../html/utils/transform"
 import { getDefaultValueType } from "../dom/utils/value-types"
-import { zeroDimensions } from "./utils/zero-dimensions"
+
+export function renderSVG(element: SVGElement, renderState: SVGRenderState) {
+    htmlConfig.render(element as any, renderState)
+
+    for (const key in renderState.attrs) {
+        element.setAttribute(
+            !camelCaseAttributes.has(key) ? camelToDash(key) : key,
+            renderState.attrs[key] as string
+        )
+    }
+}
 
 export const svgVisualElement = visualElement<
     SVGElement,
@@ -17,28 +26,6 @@ export const svgVisualElement = visualElement<
     DOMVisualElementOptions
 >({
     ...(htmlConfig as any),
-    createRenderState: createSvgRenderState,
-    onMount(element, instance, mutableState) {
-        try {
-            mutableState.dimensions =
-                typeof (instance as SVGGraphicsElement).getBBox === "function"
-                    ? (instance as SVGGraphicsElement).getBBox()
-                    : (instance.getBoundingClientRect() as DOMRect)
-        } catch (e) {
-            // Most likely trying to measure an unrendered element under Firefox
-            mutableState.dimensions = zeroDimensions
-        }
-
-        if (isPath(instance)) {
-            mutableState.totalPathLength = instance.getTotalLength()
-        }
-
-        /**
-         * Ensure we render the element as soon as possible to reflect the measured dimensions.
-         * Preferably this would happen synchronously but we put it in rAF to prevent layout thrashing.
-         */
-        element.scheduleRender()
-    },
 
     getBaseTarget(props, key) {
         return props[key]
@@ -73,20 +60,5 @@ export const svgVisualElement = visualElement<
         )
     },
 
-    render(element, mutableState) {
-        htmlConfig.render(element as any, mutableState)
-
-        for (const key in mutableState.attrs) {
-            element.setAttribute(
-                !camelCaseAttributes.has(key) ? camelToDash(key) : key,
-                mutableState.attrs[key] as string
-            )
-        }
-    },
+    render: renderSVG,
 })
-
-function isPath(
-    element: SVGElement | SVGPathElement
-): element is SVGPathElement {
-    return element.tagName === "path"
-}
