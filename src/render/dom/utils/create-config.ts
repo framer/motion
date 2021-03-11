@@ -4,8 +4,8 @@ import { MotionComponentConfig } from "../../../motion"
 import { createUseRender } from "../use-render"
 import { HTMLRenderState } from "../../html/types"
 import { SVGRenderState } from "../../svg/types"
-import { svgMotionConfig } from "../../svg/create-visual-element"
-import { htmlMotionConfig } from "../../html/create-visual-element"
+import { svgMotionConfig } from "../../svg/config-motion"
+import { htmlMotionConfig } from "../../html/config-motion"
 
 export function createDomMotionConfig<Props>(
     defaultFeatures: MotionFeature[],
