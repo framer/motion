@@ -109,6 +109,7 @@ export function createAnimationState(
     ) {
         const props = visualElement.getProps()
         const context = visualElement.getVariantContext(true) || {}
+        console.log("prop", props.animate, context)
 
         /**
          * A list of animations that we'll build into as we iterate through the animation
@@ -181,7 +182,7 @@ export function createAnimationState(
              * be any key that has been animated or otherwise handled by active, higher-priortiy types.
              */
             typeState.protectedKeys = { ...encounteredKeys }
-
+            console.log("trying to animate", type, prop)
             // Check if we can skip analysing this prop early
             if (
                 // If it isn't active and hasn't *just* been set as inactive
@@ -194,7 +195,7 @@ export function createAnimationState(
             ) {
                 continue
             }
-
+            if (AnimationType.Animate) console.log(prop)
             /**
              * As we go look through the values defined on this type, if we detect
              * a changed value or a value that was removed in a higher priority, we set
@@ -210,12 +211,16 @@ export function createAnimationState(
                 // If we removed a higher-priority variant (i is in reverse order)
                 (i > removedVariantIndex && propIsVariant)
 
+            if (AnimationType.Animate)
+                console.log("shouldAnimateType:", shouldAnimateType)
             /**
              * As animations can be set as variant lists, variants or target objects, we
              * coerce everything to an array if it isn't one already
              */
             const definitionList = Array.isArray(prop) ? prop : [prop]
 
+            if (AnimationType.Animate)
+                console.log("definitionList", definitionList)
             /**
              * Build an object of all the resolved values. We'll use this in the subsequent
              * animateChanges calls to determine whether a value has changed.
@@ -339,11 +344,12 @@ export function createAnimationState(
             const fallbackAnimation = {}
             removedKeys.forEach((key) => {
                 const fallbackTarget = visualElement.getBaseTarget(key)
+                console.log(key, fallbackTarget)
                 if (fallbackTarget !== undefined) {
                     fallbackAnimation[key] = fallbackTarget
                 }
             })
-
+            console.log("fallback animation", fallbackAnimation)
             animations.push({ animation: fallbackAnimation })
         }
 
