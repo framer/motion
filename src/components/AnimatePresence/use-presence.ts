@@ -1,5 +1,8 @@
 import { useContext, useEffect } from "react"
-import { PresenceContext, PresenceContextProps } from "./PresenceContext"
+import {
+    PresenceContext,
+    PresenceContextProps,
+} from "../../context/PresenceContext"
 import { useConstant } from "../../utils/use-constant"
 
 export type SafeToRemove = () => void

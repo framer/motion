@@ -4,7 +4,7 @@ import {
     SharedLayoutContext,
     FramerTreeLayoutContext,
     isSharedLayout,
-} from "../../../components/AnimateSharedLayout/SharedLayoutContext"
+} from "../../../context/SharedLayoutContext"
 import { useIsomorphicLayoutEffect } from "../../../utils/use-isomorphic-effect"
 
 export function useSnapshotOnUnmount(visualElement: VisualElement) {

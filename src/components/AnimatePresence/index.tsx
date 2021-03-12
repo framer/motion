@@ -14,7 +14,7 @@ import { PresenceChild } from "./PresenceChild"
 import {
     SharedLayoutContext,
     isSharedLayout,
-} from "../AnimateSharedLayout/SharedLayoutContext"
+} from "../../context/SharedLayoutContext"
 
 type ComponentKey = string | number
 

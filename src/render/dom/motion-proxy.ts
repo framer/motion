@@ -1,13 +1,10 @@
 import { warning } from "hey-listen"
-import {
-    createMotionComponent,
-    MotionComponentConfig,
-    MotionProps,
-} from "../../motion"
+import { createMotionComponent, MotionProps } from "../../motion"
 import { MotionFeature } from "../../motion/features/types"
-import { createDomVisualElement } from "./create-dom-visual-element"
-import { MotionComponents } from "./types"
-import { createUseRender } from "./use-render"
+import { DOMMotionComponents } from "./types"
+import { createDomMotionConfig } from "./utils/create-config"
+import { HTMLRenderState } from "../html/types"
+import { SVGRenderState } from "../svg/types"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -45,20 +42,18 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
     }
 
     type Motion = typeof custom &
-        MotionComponents &
+        DOMMotionComponents &
         DeprecatedCustomMotionComponent
 
     function custom<Props>(
         Component: string | React.ComponentType<Props>,
         { forwardMotionProps = false }: DomMotionComponentConfig = {}
     ): CustomDomComponent<Props> {
-        const config: MotionComponentConfig<HTMLElement | SVGElement> = {
-            defaultFeatures,
-            createVisualElement: createDomVisualElement(Component),
-            useRender: createUseRender(Component, forwardMotionProps),
-        }
-
-        return createMotionComponent<Props, HTMLElement | SVGElement>(config)
+        return createMotionComponent<
+            Props,
+            HTMLElement | SVGElement,
+            HTMLRenderState | SVGRenderState
+        >(createDomMotionConfig(defaultFeatures, Component, forwardMotionProps))
     }
 
     function deprecatedCustom<Props>(

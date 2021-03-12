@@ -1,8 +1,8 @@
 import * as React from "react"
 import { createContext, useContext, useMemo } from "react"
-import { MotionFeature } from "../features/types"
-import { TransformPoint2D } from "../../types/geometry"
-import { Transition } from "../../types"
+import { MotionFeature } from "../motion/features/types"
+import { Transition } from "../types"
+import { TransformPoint2D } from "../types/geometry"
 
 /**
  * @public

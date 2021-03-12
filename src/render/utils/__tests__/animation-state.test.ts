@@ -5,18 +5,18 @@ import { AnimationType } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../setters"
 import { visualElement } from "../../"
 import { MotionProps } from "../../../motion"
+import { createHtmlRenderState } from "../../html/utils/create-render-state"
 
 const stateVisualElement = visualElement<
     ResolvedValues,
     {},
     { initialState: ResolvedValues }
 >({
-    createRenderState: () => ({}),
     build() {},
     measureViewportBox: axisBox,
     resetTransform() {},
     restoreTransform() {},
-    removeValueFromMutableState() {},
+    removeValueFromRenderState() {},
     render() {},
     scrapeMotionValuesFromProps() {
         return {}
@@ -38,7 +38,14 @@ function createTest(
     parent: VisualElement<any> | undefined = undefined
 ): { element: VisualElement; state: any } {
     const element = stateVisualElement(
-        { props, parent },
+        {
+            props,
+            parent,
+            visualState: {
+                latestValues: {},
+                renderState: createHtmlRenderState(),
+            },
+        },
         {
             initialState: {},
         }

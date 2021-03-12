@@ -3,7 +3,7 @@ import { makeRenderlessComponent } from "../utils/make-renderless-component"
 import { FeatureProps, MotionFeature } from "./types"
 import { checkShouldInheritVariant } from "../utils/should-inherit-variant"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
-import { PresenceContext } from "../../components/AnimatePresence/PresenceContext"
+import { PresenceContext } from "../../context/PresenceContext"
 import { AnimationType } from "../../render/utils/types"
 
 /**

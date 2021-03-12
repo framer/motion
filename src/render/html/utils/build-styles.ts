@@ -1,23 +1,27 @@
 import { MotionProps } from "../../../motion"
+import { HTMLRenderState } from "../types"
 import { ResolvedValues } from "../../types"
 import { LayoutState, TargetProjection } from "../../utils/state"
-import { valueScaleCorrection } from "../projection/scale-correction"
-import { DOMVisualElementOptions, HTMLMutableState } from "../types"
+import { valueScaleCorrection } from "../../dom/projection/scale-correction"
+import { DOMVisualElementOptions } from "../../dom/types"
 import {
     buildLayoutProjectionTransform,
     buildLayoutProjectionTransformOrigin,
     buildTransform,
     buildTransformOrigin,
 } from "./build-transform"
-import { isCSSVariable } from "./is-css-variable"
+import { isCSSVariable } from "../../dom/utils/is-css-variable"
 import { isTransformOriginProp, isTransformProp } from "./transform"
-import { getDefaultValueType, getValueAsType } from "./value-types"
+import {
+    getDefaultValueType,
+    getValueAsType,
+} from "../../dom/utils/value-types"
 
 export function buildHTMLStyles(
-    state: HTMLMutableState,
+    state: HTMLRenderState,
     latestValues: ResolvedValues,
-    projection: TargetProjection,
-    layoutState: LayoutState,
+    projection: TargetProjection | undefined,
+    layoutState: LayoutState | undefined,
     options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
@@ -77,7 +81,12 @@ export function buildHTMLStyles(
              * If layout projection is on, and we need to perform scale correction for this
              * value type, perform it.
              */
-            if (layoutState.isHydrated && valueScaleCorrection[key]) {
+            if (
+                layoutState &&
+                projection &&
+                layoutState.isHydrated &&
+                valueScaleCorrection[key]
+            ) {
                 const correctedValue = valueScaleCorrection[key].process(
                     value,
                     layoutState,
@@ -103,7 +112,12 @@ export function buildHTMLStyles(
         }
     }
 
-    if (projection.isEnabled && layoutState.isHydrated) {
+    if (
+        layoutState &&
+        projection &&
+        projection.isEnabled &&
+        layoutState.isHydrated
+    ) {
         style.transform = buildLayoutProjectionTransform(
             layoutState.deltaFinal,
             layoutState.treeScale,

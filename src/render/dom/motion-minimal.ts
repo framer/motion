@@ -4,4 +4,4 @@ import { createMotionProxy } from "./motion-proxy"
 /**
  * @public
  */
-export const m = /*@__PURE__*/ createMotionProxy([MeasureLayout])
+export const m = createMotionProxy([MeasureLayout])

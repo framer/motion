@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.10.3] 2021-03-10
+
+### Fixed
+
+-   Reduced memory consumption in static mode by not loading `VisualElement`.
+
 ## [3.10.2] 2021-03-09
 
 ### Fixed

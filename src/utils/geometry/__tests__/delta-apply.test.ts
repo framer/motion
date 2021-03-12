@@ -1,4 +1,5 @@
-import { htmlVisualElement } from "../../../render/dom/html-visual-element"
+import { createHtmlRenderState } from "../../../render/html/utils/create-render-state"
+import { htmlVisualElement } from "../../../render/html/visual-element"
 import {
     resetAxis,
     resetBox,
@@ -200,7 +201,16 @@ describe("applyTreeDeltas", () => {
             y: { translate: -100, scale: 0.5, origin: 0.5, originPoint: 350 },
         }
 
-        const element = htmlVisualElement({ props: {} }, {})
+        const element = htmlVisualElement(
+            {
+                props: {},
+                visualState: {
+                    latestValues: {},
+                    renderState: createHtmlRenderState(),
+                },
+            },
+            {}
+        )
         element.getLayoutState().delta = delta
 
         const treeScale = { x: 1, y: 1 }

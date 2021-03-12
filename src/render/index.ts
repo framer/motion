@@ -10,10 +10,9 @@ import {
     removeBoxTransforms,
 } from "../utils/geometry/delta-apply"
 import { updateBoxDelta } from "../utils/geometry/delta-calc"
-import { isRefObject } from "../utils/is-ref-object"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
-import { buildLayoutProjectionTransform } from "./dom/utils/build-transform"
+import { buildLayoutProjectionTransform } from "./html/utils/build-transform"
 import {
     VisualElement,
     VisualElementConfig,
@@ -24,39 +23,34 @@ import { variantPriorityOrder } from "./utils/animation-state"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
-import {
-    createLayoutState,
-    createProjectionState,
-    createVisualState,
-} from "./utils/state"
+import { createLayoutState, createProjectionState } from "./utils/state"
 import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
-    createRenderState,
     build,
     getBaseTarget,
     makeTargetAnimatable,
     measureViewportBox,
-    onMount,
     render: renderInstance,
     readValueFromInstance,
     resetTransform,
     restoreTransform,
-    removeValueFromMutableState,
+    removeValueFromRenderState,
     sortNodePosition,
     scrapeMotionValuesFromProps,
 }: VisualElementConfig<Instance, MutableState, Options>) => (
     {
         parent,
-        ref: externalRef,
         props,
-        isStatic,
         presenceId,
         blockInitialAnimation,
+        visualState,
     }: VisualElementOptions<Instance>,
     options: Options = {} as Options
 ) => {
+    const { latestValues, renderState } = visualState
+
     /**
      * The instance of the render-specific node that will be hydrated by the
      * exposed React ref. So for example, this visual element can host a
@@ -83,11 +77,6 @@ export const visualElement = <Instance, MutableState, Options>({
     const projection = createProjectionState()
 
     /**
-     * The latest resolved motion values.
-     */
-    let latestValues = createVisualState(props, parent, blockInitialAnimation)
-
-    /**
      * This is a reference to the visual state of the "lead" visual element.
      * Usually, this will be this visual element. But if it shares a layoutId
      * with other visual elements, only one of them will be designated lead by
@@ -106,12 +95,6 @@ export const visualElement = <Instance, MutableState, Options>({
      * projection calculations needed to project into the same viewport box.
      */
     const layoutState = createLayoutState()
-
-    /**
-     * Each visual element creates a pool of renderer-specific mutable state
-     * which allows renderer-specific calculations to occur while reducing GC.
-     */
-    let renderState = createRenderState()
 
     /**
      *
@@ -168,35 +151,6 @@ export const visualElement = <Instance, MutableState, Options>({
      */
     let removeFromMotionTree: undefined | (() => void)
     let removeFromVariantTree: undefined | (() => void)
-
-    /**
-     *
-     */
-    function mount() {
-        element.pointTo(element)
-        removeFromMotionTree = parent?.addChild(element)
-
-        if (isVariantNode && parent && !isControllingVariants) {
-            removeFromVariantTree = parent?.addVariantChild(element)
-        }
-
-        onMount?.(element, instance, renderState)
-    }
-
-    /**
-     *
-     */
-    function unmount() {
-        cancelSync.update(update)
-        cancelSync.render(render)
-        cancelSync.preRender(element.updateLayoutProjection)
-        valueSubscriptions.forEach((remove) => remove())
-        element.stopLayoutAnimation()
-        removeFromMotionTree?.()
-        removeFromVariantTree?.()
-        unsubscribeFromLeadVisualElement?.()
-        lifecycles.clearAllListeners()
-    }
 
     /**
      *
@@ -400,13 +354,6 @@ export const visualElement = <Instance, MutableState, Options>({
         blockInitialAnimation,
 
         /**
-         * If a visual element is static, it's essentially in "pure" mode with
-         * no additional functionality like animations or gestures loaded in.
-         * This can be considered Framer canvas mode.
-         */
-        isStatic,
-
-        /**
          * A boolean that can be used to determine whether to respect hover events.
          * For layout measurements we often have to reposition the instance by
          * removing its transform. This can trigger hover events, which is
@@ -420,6 +367,31 @@ export const visualElement = <Instance, MutableState, Options>({
          * own animations on mount.
          */
         isMounted: () => Boolean(instance),
+
+        mount(newInstance: Instance) {
+            instance = element.current = newInstance
+            element.pointTo(element)
+            removeFromMotionTree = parent?.addChild(element)
+
+            if (isVariantNode && parent && !isControllingVariants) {
+                removeFromVariantTree = parent?.addVariantChild(element)
+            }
+        },
+
+        /**
+         *
+         */
+        unmount() {
+            cancelSync.update(update)
+            cancelSync.render(render)
+            cancelSync.preRender(element.updateLayoutProjection)
+            valueSubscriptions.forEach((remove) => remove())
+            element.stopLayoutAnimation()
+            removeFromMotionTree?.()
+            removeFromVariantTree?.()
+            unsubscribeFromLeadVisualElement?.()
+            lifecycles.clearAllListeners()
+        },
 
         /**
          * Add a child visual element to our set of children.
@@ -491,22 +463,6 @@ export const visualElement = <Instance, MutableState, Options>({
         getLatestValues: () => latestValues,
 
         /**
-         * Replaces the current mutable states with fresh ones. This is used
-         * in static mode where rather than creating a new visual element every
-         * render we can just make fresh state.
-         */
-        clearState(newProps) {
-            values.clear()
-            props = newProps
-            leadLatestValues = latestValues = createVisualState(
-                props,
-                parent,
-                blockInitialAnimation
-            )
-            renderState = createRenderState()
-        },
-
-        /**
          * Set the visiblity of the visual element. If it's changed, schedule
          * a render to reflect these changes.
          */
@@ -567,7 +523,7 @@ export const visualElement = <Instance, MutableState, Options>({
             valueSubscriptions.get(key)?.()
             valueSubscriptions.delete(key)
             delete latestValues[key]
-            removeValueFromMutableState(key, renderState)
+            removeValueFromRenderState(key, renderState)
         },
 
         /**
@@ -627,22 +583,6 @@ export const visualElement = <Instance, MutableState, Options>({
         // Lifecyles ========================
 
         ...lifecycles,
-
-        /**
-         * A ref function to be provided to the mounting React component.
-         * This is used to hydrated the instance and run mount/unmount lifecycles.
-         */
-        ref(mountingElement: any) {
-            instance = element.current = mountingElement
-            mountingElement ? mount() : unmount()
-
-            if (!externalRef) return
-            if (typeof externalRef === "function") {
-                externalRef(mountingElement)
-            } else if (isRefObject(externalRef)) {
-                ;(externalRef as any).current = mountingElement
-            }
-        },
 
         /**
          * Build the renderer state based on the latest visual state.

@@ -6,26 +6,26 @@ import { visualElement } from "../render"
 import { ResolvedValues } from "../render/types"
 import { axisBox } from "../utils/geometry"
 import { animateVisualElement } from "../render/utils/animation"
+import { makeUseVisualState } from "../motion/utils/use-visual-state"
 
 interface AnimatedStateOptions {
     initialState: ResolvedValues
 }
+
+const createObject = () => ({})
 
 const stateVisualElement = visualElement<
     ResolvedValues,
     {},
     AnimatedStateOptions
 >({
-    createRenderState: () => ({}),
     build() {},
     measureViewportBox: axisBox,
     resetTransform() {},
     restoreTransform() {},
-    removeValueFromMutableState() {},
+    removeValueFromRenderState() {},
     render() {},
-    scrapeMotionValuesFromProps() {
-        return {}
-    },
+    scrapeMotionValuesFromProps: createObject,
 
     readValueFromInstance(_state, key, options) {
         return options.initialState[key] || 0
@@ -38,6 +38,11 @@ const stateVisualElement = visualElement<
     },
 })
 
+const useVisualState = makeUseVisualState({
+    scrapeMotionValuesFromProps: createObject,
+    createRenderState: createObject,
+})
+
 /**
  * This is not an officially supported API and may be removed
  * on any version.
@@ -45,13 +50,16 @@ const stateVisualElement = visualElement<
  */
 export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)
+
+    const visualState = useVisualState({}, false)
+
     const element = useConstant(() =>
-        stateVisualElement({ props: {} }, { initialState })
+        stateVisualElement({ props: {}, visualState }, { initialState })
     )
 
     useEffect(() => {
-        ;(element.ref as any)({})
-        return () => (element.ref as any)(null)
+        element.mount({})
+        return element.unmount()
     }, [])
 
     useEffect(() => {

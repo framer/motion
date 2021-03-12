@@ -1,16 +1,17 @@
-import { SVGMutableState, DOMVisualElementOptions } from "../types"
-import { buildHTMLStyles } from "./build-html-styles"
+import { DOMVisualElementOptions } from "../../dom/types"
+import { buildHTMLStyles } from "../../html/utils/build-styles"
 import { ResolvedValues } from "../../types"
-import { calcSVGTransformOrigin } from "./svg-transform-origin"
-import { buildSVGPath } from "./svg-path"
+import { calcSVGTransformOrigin } from "./transform-origin"
+import { buildSVGPath } from "./path"
 import { MotionProps } from "../../../motion/types"
 import { LayoutState, TargetProjection } from "../../utils/state"
+import { SVGRenderState } from "../types"
 
 /**
  * Build SVG visual attrbutes, like cx and style.transform
  */
 export function buildSVGAttrs(
-    state: SVGMutableState,
+    state: SVGRenderState,
     {
         attrX,
         attrY,
@@ -22,8 +23,8 @@ export function buildSVGAttrs(
         // This is object creation, which we try to avoid per-frame.
         ...latest
     }: ResolvedValues,
-    projection: TargetProjection,
-    layoutState: LayoutState,
+    projection: TargetProjection | undefined,
+    layoutState: LayoutState | undefined,
     options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
@@ -44,12 +45,15 @@ export function buildSVGAttrs(
      * and copy it into style.
      */
     if (attrs.transform) {
-        style.transform = attrs.transform
+        if (dimensions) style.transform = attrs.transform
         delete attrs.transform
     }
 
     // Parse transformOrigin
-    if (originX !== undefined || originY !== undefined || style.transform) {
+    if (
+        dimensions &&
+        (originX !== undefined || originY !== undefined || style.transform)
+    ) {
         style.transformOrigin = calcSVGTransformOrigin(
             dimensions,
             originX !== undefined ? originX : 0.5,

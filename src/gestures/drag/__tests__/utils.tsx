@@ -1,6 +1,6 @@
 import * as React from "react"
 import sync from "framesync"
-import { MotionConfig } from "../../../motion/context/MotionConfigContext"
+import { MotionConfig } from "../../../context/MotionConfigContext"
 import { act } from "react-dom/test-utils"
 import { fireEvent } from "@testing-library/dom"
 
@@ -15,7 +15,7 @@ const pos: Point = {
 }
 
 export const frame = {
-    postRender: () => new Promise(resolve => sync.postRender(resolve)),
+    postRender: () => new Promise((resolve) => sync.postRender(resolve)),
 }
 
 type Deferred<T> = {
@@ -25,7 +25,7 @@ type Deferred<T> = {
 
 export function deferred<T>(): Deferred<T> {
     const def = {} as Deferred<T>
-    def.promise = new Promise(resolve => {
+    def.promise = new Promise((resolve) => {
         def.resolve = resolve as any
     })
     return def
@@ -57,7 +57,7 @@ export const drag = (element: any, triggerElement?: any) => {
 }
 
 export const sleep = (ms: number) =>
-    new Promise(resolve => setTimeout(resolve, ms))
+    new Promise((resolve) => setTimeout(resolve, ms))
 
 export const MockDrag = ({ children }: { children: React.ReactNode }) => (
     <MotionConfig transformPagePoint={() => pos}>{children}</MotionConfig>

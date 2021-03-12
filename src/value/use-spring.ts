@@ -4,7 +4,7 @@ import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"
 import { useMotionValue } from "./use-motion-value"
 import { useOnChange } from "./use-on-change"
-import { MotionConfigContext } from "../motion/context/MotionConfigContext"
+import { MotionConfigContext } from "../context/MotionConfigContext"
 
 /**
  * Creates a `MotionValue` that, when `set`, will use a spring animation to animate to its new state.

@@ -2,12 +2,14 @@ import { MotionProps } from "../../types"
 import { FeatureProps, MotionFeature } from "../types"
 import React, { useContext } from "react"
 import {
-    SyncLayoutBatcher,
-    SharedLayoutSyncMethods,
     isSharedLayout,
     SharedLayoutContext,
     FramerTreeLayoutContext,
-} from "../../../components/AnimateSharedLayout/SharedLayoutContext"
+} from "../../../context/SharedLayoutContext"
+import {
+    SharedLayoutSyncMethods,
+    SyncLayoutBatcher,
+} from "../../../components/AnimateSharedLayout/types"
 
 interface SyncProps extends FeatureProps {
     syncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher

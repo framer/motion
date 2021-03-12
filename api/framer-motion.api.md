@@ -15,7 +15,6 @@ import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
 import * as React from 'react';
 import { ReactHTML } from 'react';
-import { Ref } from 'react';
 import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { SpringOptions } from 'popmotion';
@@ -53,8 +52,10 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, 
     componentDidMount(): void;
     // (undocumented)
     componentDidUpdate(): void;
+    // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
-    static contextType: React.Context<VisualElement<any, any> | undefined>;
+    static contextType: React.Context<MotionContextProps>;
     // (undocumented)
     render(): JSX.Element;
     // (undocumented)
@@ -183,16 +184,16 @@ export function createBatcher(): SyncLayoutBatcher;
 // @public (undocumented)
 export function createCrossfader(): Crossfader;
 
-// Warning: (ae-forgotten-export) The symbol "MotionComponents" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "DOMMotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function createDomMotionComponent<T extends keyof MotionComponents>(key: T): MotionComponents[T];
+export function createDomMotionComponent<T extends keyof DOMMotionComponents>(key: T): DOMMotionComponents[T];
 
 // Warning: (ae-forgotten-export) The symbol "MotionComponentConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function createMotionComponent<P extends {}, E>({ defaultFeatures, createVisualElement, useRender, }: MotionComponentConfig<E>): React.ForwardRefExoticComponent<React.PropsWithoutRef<P & MotionProps> & React.RefAttributes<E>>;
+export function createMotionComponent<Props extends {}, Instance, RenderState>({ defaultFeatures, createVisualElement, useRender, useVisualState, }: MotionComponentConfig<Instance, RenderState>): React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<Instance>>;
 
 // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "CustomDomComponent" should be prefixed with an underscore because the declaration is marked as @internal
@@ -370,12 +371,12 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents & {
     custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
 };
 
 // @public
-export const motion: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("./types").HTMLMotionComponents & import("./types").SVGMotionComponents & {
+export const motion: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents & {
     custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
 };
 
@@ -834,7 +835,7 @@ export enum VisibilityAction {
 // Warning: (ae-forgotten-export) The symbol "LifecycleManager" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export interface VisualElement<Instance = any, MutableState = any> extends LifecycleManager {
+export interface VisualElement<Instance = any, RenderState = any> extends LifecycleManager {
     // (undocumented)
     addChild(child: VisualElement): () => void;
     // (undocumented)
@@ -852,9 +853,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     blockInitialAnimation?: boolean;
     // (undocumented)
-    build(): MutableState;
-    // (undocumented)
-    clearState(props: MotionProps): void;
+    build(): RenderState;
     // (undocumented)
     current: Instance | null;
     // (undocumented)
@@ -928,6 +927,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     measureViewportBox(withTransform?: boolean): AxisBox2D;
     // (undocumented)
+    mount(instance: Instance): void;
+    // (undocumented)
     notifyLayoutReady(config?: SharedLayoutAnimationConfig): void;
     // (undocumented)
     path: VisualElement[];
@@ -951,8 +952,6 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     readValue(key: string): string | number | undefined | null;
     // (undocumented)
     rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void;
-    // (undocumented)
-    ref: Ref<Instance | null>;
     // (undocumented)
     removeValue(key: string): void;
     // (undocumented)
@@ -990,6 +989,8 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
     // (undocumented)
     unlockProjectionTarget(): void;
     // (undocumented)
+    unmount(): void;
+    // (undocumented)
     updateLayoutMeasurement(): void;
     // (undocumented)
     updateLayoutProjection(): void;
@@ -1003,7 +1004,7 @@ export interface VisualElement<Instance = any, MutableState = any> extends Lifec
 // Warning: (ae-forgotten-export) The symbol "VisualElementOptions" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export const visualElement: <Instance, MutableState, Options>({ treeType, createRenderState, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, onMount, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromMutableState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, ref: externalRef, props, isStatic, presenceId, blockInitialAnimation, }: VisualElementOptions<Instance>, options?: Options) => VisualElement<Instance, any>;
+export const visualElement: <Instance, MutableState, Options>({ treeType, build, getBaseTarget, makeTargetAnimatable, measureViewportBox, render: renderInstance, readValueFromInstance, resetTransform, restoreTransform, removeValueFromRenderState, sortNodePosition, scrapeMotionValuesFromProps, }: VisualElementConfig<Instance, MutableState, Options>) => ({ parent, props, presenceId, blockInitialAnimation, visualState, }: VisualElementOptions<Instance, any>, options?: Options) => VisualElement<Instance, any>;
 
 // @public
 export interface VisualElementLifecycles {

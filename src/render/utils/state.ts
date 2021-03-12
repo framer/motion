@@ -1,11 +1,5 @@
-import { isAnimationControls } from "../../animation/animation-controls"
-import { MotionProps } from "../../motion"
-import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
 import { AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { axisBox, delta } from "../../utils/geometry"
-import { isMotionValue } from "../../value/utils/is-motion-value"
-import { ResolvedValues, VisualElement } from "../types"
-import { checkIfControllingVariants, resolveVariantFromProps } from "./variants"
 
 /**
  * Represents the size and position we want to project a given visual
@@ -42,63 +36,6 @@ export const createProjectionState = () => ({
     target: axisBox(),
     targetFinal: axisBox(),
 })
-
-export function createVisualState(
-    props: MotionProps,
-    parent?: VisualElement,
-    blockInitialAnimation?: boolean
-) {
-    const { style } = props
-    const values: ResolvedValues = {}
-
-    for (const key in style) {
-        if (isMotionValue(style[key])) {
-            values[key] = style[key].get()
-        } else if (isForcedMotionValue(key, props)) {
-            values[key] = style[key]
-        }
-    }
-
-    let { initial, animate } = props
-    const isControllingVariants = checkIfControllingVariants(props)
-    const isVariantNode = isControllingVariants || props.variants
-
-    if (
-        parent &&
-        isVariantNode &&
-        !isControllingVariants &&
-        props.inherit !== false
-    ) {
-        const context = parent.getVariantContext()
-
-        if (context) {
-            initial ??= context.initial
-            animate ??= context.animate
-        }
-    }
-
-    const initialToSet =
-        blockInitialAnimation || initial === false ? animate : initial
-
-    if (
-        initialToSet &&
-        typeof initialToSet !== "boolean" &&
-        !isAnimationControls(initialToSet)
-    ) {
-        const list = Array.isArray(initialToSet) ? initialToSet : [initialToSet]
-        list.forEach((definition) => {
-            const resolved = resolveVariantFromProps(props, definition)
-            if (!resolved) return
-
-            const { transitionEnd, transition, ...target } = resolved
-
-            for (const key in target) values[key] = target[key]
-            for (const key in transitionEnd) values[key] = transitionEnd[key]
-        })
-    }
-
-    return values
-}
 
 /**
  * Data about the element's current layout. Contains the latest measurements

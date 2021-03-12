@@ -80,19 +80,15 @@ export { VisualElement } from "./render/types"
 export {
     MotionConfig,
     MotionConfigContext,
-} from "./motion/context/MotionConfigContext"
-export { PresenceContext } from "./components/AnimatePresence/PresenceContext"
-export { LayoutGroupContext } from "./components/AnimateSharedLayout/LayoutGroupContext"
+} from "./context/MotionConfigContext"
+export { PresenceContext } from "./context/PresenceContext"
+export { LayoutGroupContext } from "./context/LayoutGroupContext"
 
 /**
  * Types
  */
-export {
-    HTMLMotionProps,
-    SVGMotionProps,
-    SVGAttributesAsMotionValues,
-    ForwardRefComponent,
-} from "./render/dom/types"
+export { HTMLMotionProps, ForwardRefComponent } from "./render/html/types"
+export { SVGMotionProps, SVGAttributesAsMotionValues } from "./render/svg/types"
 export {
     AnimationOptions,
     AnimationPlaybackControls,
@@ -145,14 +141,14 @@ export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
 export {
     SharedLayoutAnimationConfig,
     VisibilityAction,
+    SharedLayoutSyncMethods,
+    SyncLayoutLifecycles,
 } from "./components/AnimateSharedLayout/types"
 export {
-    SharedLayoutSyncMethods,
     SharedLayoutContext,
     FramerTreeLayoutContext,
-    SyncLayoutLifecycles,
-    createBatcher,
-} from "./components/AnimateSharedLayout/SharedLayoutContext"
+} from "./context/SharedLayoutContext"
+export { createBatcher } from "./components/AnimateSharedLayout/utils/batcher"
 export * from "./types/geometry"
 
 /**
