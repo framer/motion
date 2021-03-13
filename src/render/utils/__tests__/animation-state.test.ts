@@ -581,7 +581,7 @@ test("Removing values, inherited variant changed from starting at undefined", ()
     parent.animationState!.animateChanges()
 
     expect(parentAnimate).toBeCalledWith(["a"])
-    expect(childAnimate).not.toBeCalled()
+    expect(childAnimate).toBeCalledWith(["a"])
     expect(childState.getState()[AnimationType.Animate].protectedKeys).toEqual(
         {}
     )
@@ -606,7 +606,7 @@ test("Removing values, inherited variant changed from starting at undefined", ()
     child.animationState!.animateChanges()
     parent.animationState!.animateChanges()
     expect(parentAnimate).toBeCalledWith(["b"])
-    expect(childAnimate).not.toBeCalled()
+    expect(childAnimate).toBeCalledWith(["b"])
     expect(childState.getState()[AnimationType.Animate].protectedKeys).toEqual(
         {}
     )
