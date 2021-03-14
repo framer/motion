@@ -10,7 +10,7 @@ import { VisualState } from "./use-visual-state"
  */
 export function useMotionRef<Instance, RenderState>(
     visualState: VisualState<Instance, RenderState>,
-    visualElement?: VisualElement<Instance>,
+    visualElement?: VisualElement<Instance> | null,
     externalRef?: React.Ref<Instance>
 ): React.Ref<Instance> {
     return useCallback((instance: Instance) => {

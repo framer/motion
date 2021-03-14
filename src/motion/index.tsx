@@ -14,7 +14,7 @@ export { MotionProps }
 
 export interface MotionComponentConfig<Instance, RenderState> {
     defaultFeatures: MotionFeature[]
-    createVisualElement: CreateVisualElement<Instance>
+    createVisualElement?: CreateVisualElement<Instance>
     useRender: RenderComponent<Instance, RenderState>
     useVisualState: UseVisualState<Instance, RenderState>
 }
@@ -69,10 +69,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * for more performant animations and interactions
              */
             context.visualElement = useVisualElement(
-                isStatic,
                 visualState,
-                createVisualElement,
-                props
+                props,
+                createVisualElement
             )
 
             /**
@@ -84,8 +83,8 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              */
             features = useFeatures(
                 defaultFeatures,
-                context.visualElement,
-                props
+                props,
+                context.visualElement
             )
         }
 

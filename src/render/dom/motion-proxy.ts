@@ -5,6 +5,7 @@ import { DOMMotionComponents } from "./types"
 import { createDomMotionConfig } from "./utils/create-config"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
+import { CreateVisualElement } from "../types"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -36,7 +37,10 @@ export interface DomMotionComponentConfig {
  *
  * @public
  */
-export function createMotionProxy(defaultFeatures: MotionFeature[]) {
+export function createMotionProxy(
+    defaultFeatures: MotionFeature[],
+    createVisualElement?: CreateVisualElement<any>
+) {
     type DeprecatedCustomMotionComponent = {
         custom: typeof custom
     }
@@ -53,7 +57,14 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
             Props,
             HTMLElement | SVGElement,
             HTMLRenderState | SVGRenderState
-        >(createDomMotionConfig(defaultFeatures, Component, forwardMotionProps))
+        >(
+            createDomMotionConfig(
+                defaultFeatures,
+                Component,
+                forwardMotionProps,
+                createVisualElement
+            )
+        )
     }
 
     function deprecatedCustom<Props>(

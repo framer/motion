@@ -184,7 +184,6 @@ export type VisualElementOptions<Instance, RenderState = any> = {
 }
 
 export type CreateVisualElement<Instance> = (
-    isStatic: boolean,
     options: VisualElementOptions<Instance>
 ) => VisualElement<Instance>
 

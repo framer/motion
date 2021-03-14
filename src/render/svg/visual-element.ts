@@ -8,17 +8,7 @@ import { camelToDash } from "../dom/utils/camel-to-dash"
 import { camelCaseAttributes } from "./utils/camel-case-attrs"
 import { isTransformProp } from "../html/utils/transform"
 import { getDefaultValueType } from "../dom/utils/value-types"
-
-export function renderSVG(element: SVGElement, renderState: SVGRenderState) {
-    htmlConfig.render(element as any, renderState)
-
-    for (const key in renderState.attrs) {
-        element.setAttribute(
-            !camelCaseAttributes.has(key) ? camelToDash(key) : key,
-            renderState.attrs[key] as string
-        )
-    }
-}
+import { renderSVG } from "./utils/render"
 
 export const svgVisualElement = visualElement<
     SVGElement,

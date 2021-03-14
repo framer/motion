@@ -399,6 +399,10 @@ export interface MotionConfigContext {
     // @internal (undocumented)
     transformPagePoint: TransformPoint2D;
     transition?: Transition;
+    // Warning: (ae-forgotten-export) The symbol "CreateVisualElement" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    visualElement?: CreateVisualElement<any>;
 }
 
 // @public (undocumented)
