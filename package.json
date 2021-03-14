@@ -4,6 +4,7 @@
     "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.js",
+    "exports": "./dist/es/index.js",
     "types": "types/index.d.ts",
     "author": "Framer",
     "license": "MIT",
