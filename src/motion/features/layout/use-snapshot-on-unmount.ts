@@ -7,12 +7,14 @@ import {
 } from "../../../context/SharedLayoutContext"
 import { useIsomorphicLayoutEffect } from "../../../utils/use-isomorphic-effect"
 
-export function useSnapshotOnUnmount(visualElement: VisualElement) {
+export function useSnapshotOnUnmount(visualElement?: VisualElement) {
     const syncLayout = useContext(SharedLayoutContext)
     const framerSyncLayout = useContext(FramerTreeLayoutContext)
 
     useIsomorphicLayoutEffect(
         () => () => {
+            if (!visualElement) return
+
             if (isSharedLayout(syncLayout)) {
                 syncLayout.remove(visualElement as any)
             }
@@ -21,6 +23,6 @@ export function useSnapshotOnUnmount(visualElement: VisualElement) {
                 framerSyncLayout.remove(visualElement as any)
             }
         },
-        []
+        [visualElement]
     )
 }

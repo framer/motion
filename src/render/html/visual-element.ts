@@ -10,6 +10,7 @@ import { parseDomVariant } from "../dom/utils/parse-dom-variant"
 import { isTransformProp } from "./utils/transform"
 import { getDefaultValueType } from "../dom/utils/value-types"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
+import { renderHTML } from "./utils/render"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -154,16 +155,7 @@ export const htmlConfig: VisualElementConfig<
         )
     },
 
-    render(element, { style, vars }) {
-        // Directly assign style into the Element's style prop. In tests Object.assign is the
-        // fastest way to assign styles.
-        Object.assign(element.style, style)
-
-        // Loop over any CSS variables and assign those.
-        for (const key in vars) {
-            element.style.setProperty(key, vars[key] as string)
-        }
-    },
+    render: renderHTML,
 }
 
 export const htmlVisualElement = visualElement(htmlConfig)

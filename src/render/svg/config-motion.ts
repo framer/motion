@@ -1,6 +1,6 @@
 import { MotionComponentConfig } from "../../motion"
 import { SVGRenderState } from "./types"
-import { renderSVG, svgVisualElement } from "./visual-element"
+import { renderSVG } from "./utils/render"
 import { scrapeMotionValuesFromProps as scrapeSVGProps } from "./utils/scrape-motion-values"
 import { makeUseVisualState } from "../../motion/utils/use-visual-state"
 import { createSvgRenderState } from "./utils/create-render-state"
@@ -10,8 +10,8 @@ export const svgMotionConfig: Partial<MotionComponentConfig<
     SVGElement,
     SVGRenderState
 >> = {
-    createVisualElement: (_, options) =>
-        svgVisualElement(options, { enableHardwareAcceleration: false }),
+    // createVisualElement: (options) =>
+    //     svgVisualElement(options, { enableHardwareAcceleration: true }),
     useVisualState: makeUseVisualState({
         scrapeMotionValuesFromProps: scrapeSVGProps,
         createRenderState: createSvgRenderState,
@@ -45,6 +45,7 @@ export const svgMotionConfig: Partial<MotionComponentConfig<
                 props.transformTemplate
             )
 
+            // TODO: Replace with direct assignment
             renderSVG(instance, renderState)
         },
     }),

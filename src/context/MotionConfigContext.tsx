@@ -1,6 +1,7 @@
 import * as React from "react"
 import { createContext, useContext, useMemo } from "react"
 import { MotionFeature } from "../motion/features/types"
+import { CreateVisualElement } from "../render/types"
 import { Transition } from "../types"
 import { TransformPoint2D } from "../types/geometry"
 
@@ -34,6 +35,11 @@ export interface MotionConfigContext {
      * @public
      */
     transition?: Transition
+
+    /**
+     * @public
+     */
+    visualElement?: CreateVisualElement<any>
 }
 
 export interface MotionConfigProps extends Partial<MotionConfigContext> {

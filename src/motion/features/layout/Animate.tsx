@@ -12,6 +12,8 @@ import {
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
 import { axisBox } from "../../../utils/geometry"
+import { addScaleCorrection } from "../../../render/dom/projection/scale-correction"
+import { defaultScaleCorrectors } from "../../../render/dom/projection/default-scale-correctors"
 
 interface AxisLocks {
     x?: () => void
@@ -61,6 +63,8 @@ class Animate extends React.Component<AnimateProps> {
         visualElement.enableLayoutProjection()
         this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
         visualElement.layoutSafeToRemove = () => this.safeToRemove()
+
+        addScaleCorrection(defaultScaleCorrectors)
     }
 
     componentWillUnmount() {

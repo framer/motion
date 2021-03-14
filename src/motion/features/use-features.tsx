@@ -11,9 +11,11 @@ import { MotionFeature } from "./types"
  */
 export function useFeatures(
     defaultFeatures: MotionFeature[],
-    visualElement: VisualElement,
-    props: MotionProps
+    props: MotionProps,
+    visualElement?: VisualElement
 ): null | JSX.Element[] {
+    if (!visualElement) return null
+
     const plugins = useContext(MotionConfigContext)
 
     const allFeatures = [...defaultFeatures, ...plugins.features]
