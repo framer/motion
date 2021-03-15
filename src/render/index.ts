@@ -290,10 +290,7 @@ export const visualElement = <Instance, MutableState, Options>({
      * Determine what role this visual element should take in the variant tree.
      */
     const isControllingVariants = checkIfControllingVariants(props)
-    const definesInitialVariant = isVariantLabel(props.initial)
-    const isVariantNode = Boolean(
-        definesInitialVariant || isControllingVariants || props.variants
-    )
+    const isVariantNode = Boolean(isControllingVariants || props.variants)
 
     const element: VisualElement<Instance> = {
         treeType,
