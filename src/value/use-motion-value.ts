@@ -1,4 +1,6 @@
+import { useContext, useEffect, useState } from "react"
 import { motionValue, MotionValue } from "."
+import { MotionConfigContext } from "../context/MotionConfigContext"
 import { useConstant } from "../utils/use-constant"
 
 /**
@@ -31,5 +33,18 @@ import { useConstant } from "../utils/use-constant"
  * @public
  */
 export function useMotionValue<T>(initial: T): MotionValue<T> {
-    return useConstant(() => motionValue(initial))
+    const value = useConstant(() => motionValue(initial))
+
+    /**
+     * If this motion value is being used in static mode, like on
+     * the Framer canvas, force components to rerender when the motion
+     * value is updated.
+     */
+    const { isStatic } = useContext(MotionConfigContext)
+    if (isStatic) {
+        const [, setLatest] = useState(initial)
+        useEffect(() => value.onChange(setLatest), [])
+    }
+
+    return value
 }
