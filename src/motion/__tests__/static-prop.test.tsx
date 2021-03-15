@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../.."
+import { motion, useMotionValue } from "../.."
 import * as React from "react"
 import { motionValue } from "../../value"
 import { MotionConfig } from "../../context/MotionConfigContext"
@@ -197,5 +197,29 @@ describe("isStatic prop", () => {
         rerender(<Test />)
 
         expect(getByTestId("child")).toBeTruthy()
+    })
+
+    test("it reflects changes in attached motion values", async () => {
+        function Component() {
+            const x = useMotionValue(10)
+
+            React.useEffect(() => x.set(20), [x])
+
+            return <motion.div data-testid="child" style={{ x }} />
+        }
+        const { getByTestId } = render(
+            <MotionConfig isStatic>
+                <Component />
+            </MotionConfig>
+        )
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                expect(getByTestId("child") as Element).toHaveStyle(
+                    "transform: translateX(20px)"
+                )
+                resolve(undefined)
+            }, 40)
+        })
     })
 })
