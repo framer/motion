@@ -1,6 +1,5 @@
 import * as React from "react"
-import { MotionProps } from "../../types"
-import { FeatureProps, MotionFeature } from "../types"
+import { FeatureProps } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
@@ -255,7 +254,7 @@ class Animate extends React.Component<AnimateProps> {
     }
 }
 
-function AnimateLayoutContextProvider(props: FeatureProps) {
+export function AnimateLayoutContextProvider(props: FeatureProps) {
     const [, safeToRemove] = usePresence()
     return <Animate {...props} safeToRemove={safeToRemove} />
 }
@@ -280,14 +279,4 @@ function axisIsEqual(a: Axis, b: Axis) {
 const defaultTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
-}
-
-/**
- * @public
- */
-export const AnimateLayout: MotionFeature = {
-    key: "animate-layout",
-    shouldRender: (props: MotionProps) =>
-        !!props.layout || props.layoutId !== undefined,
-    getComponent: () => AnimateLayoutContextProvider,
 }

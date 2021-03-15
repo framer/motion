@@ -1,22 +1,13 @@
-import { MotionProps } from "../types"
-import { useGestures } from "../../gestures"
-import { gestureProps } from "../../gestures/types"
-import { FeatureProps, MotionFeature } from "./types"
+import { useFocusGesture } from "../../gestures/use-focus-gesture"
+import { useHoverGesture } from "../../gestures/use-hover-gesture"
+import { usePanGesture } from "../../gestures/use-pan-gesture"
+import { useTapGesture } from "../../gestures/use-tap-gesture"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
+import { FeatureBundle } from "./types"
 
-const GestureComponent = makeRenderlessComponent(
-    ({ visualElement, ...props }: FeatureProps) => {
-        useGestures(props, visualElement)
-    }
-)
-
-/**
- * @public
- */
-export const Gestures: MotionFeature = {
-    key: "gestures",
-    shouldRender: (props: MotionProps) => {
-        return gestureProps.some((key) => props.hasOwnProperty(key))
-    },
-    getComponent: () => GestureComponent,
+export const gestures: FeatureBundle = {
+    tap: makeRenderlessComponent(useTapGesture),
+    focus: makeRenderlessComponent(useFocusGesture),
+    hover: makeRenderlessComponent(useHoverGesture),
+    pan: makeRenderlessComponent(usePanGesture),
 }

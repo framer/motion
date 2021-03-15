@@ -1,11 +1,13 @@
 import { warning } from "hey-listen"
-import { createMotionComponent, MotionProps } from "../../motion"
-import { MotionFeature } from "../../motion/features/types"
+import {
+    createMotionComponent,
+    MotionComponentConfig,
+    MotionProps,
+} from "../../motion"
 import { DOMMotionComponents } from "./types"
-import { createDomMotionConfig } from "./utils/create-config"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
-import { CreateVisualElement } from "../types"
+import React from "react"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -19,9 +21,14 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
         React.RefAttributes<SVGElement | HTMLElement>
 >
 
-export interface DomMotionComponentConfig {
+export interface CustomMotionComponentConfig {
     forwardMotionProps?: boolean
 }
+
+export type CreateConfig = <Instance, RenderState, Props>(
+    Component: string | React.ComponentType<Props>,
+    config: CustomMotionComponentConfig
+) => MotionComponentConfig<Instance, RenderState>
 
 /**
  * Convert any React component into a `motion` component. The provided component
@@ -37,10 +44,7 @@ export interface DomMotionComponentConfig {
  *
  * @public
  */
-export function createMotionProxy(
-    defaultFeatures: MotionFeature[],
-    createVisualElement?: CreateVisualElement<any>
-) {
+export function createMotionProxy(createConfig: CreateConfig) {
     type DeprecatedCustomMotionComponent = {
         custom: typeof custom
     }
@@ -51,20 +55,13 @@ export function createMotionProxy(
 
     function custom<Props>(
         Component: string | React.ComponentType<Props>,
-        { forwardMotionProps = false }: DomMotionComponentConfig = {}
+        customMotionComponentConfig: CustomMotionComponentConfig = {}
     ): CustomDomComponent<Props> {
         return createMotionComponent<
             Props,
             HTMLElement | SVGElement,
             HTMLRenderState | SVGRenderState
-        >(
-            createDomMotionConfig(
-                defaultFeatures,
-                Component,
-                forwardMotionProps,
-                createVisualElement
-            )
-        )
+        >(createConfig(Component, customMotionComponentConfig))
     }
 
     function deprecatedCustom<Props>(

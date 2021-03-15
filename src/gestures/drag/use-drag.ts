@@ -1,17 +1,16 @@
 import { useEffect, useContext } from "react"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
-import { DraggableProps } from "./types"
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"
-import { VisualElement } from "../../render/types"
+import { FeatureProps } from "../../motion/features/types"
 
 /**
  * A hook that allows an element to be dragged.
  *
  * @internal
  */
-export function useDrag(props: DraggableProps, visualElement: VisualElement) {
-    const { dragControls: groupDragControls } = props
+export function useDrag(props: FeatureProps) {
+    const { dragControls: groupDragControls, visualElement } = props
     const { transformPagePoint } = useContext(MotionConfigContext)
 
     const dragControls = useConstant(() => {

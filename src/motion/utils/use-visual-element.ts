@@ -1,4 +1,10 @@
-import { MutableRefObject, useContext, useEffect, useRef } from "react"
+import {
+    ComponentType,
+    MutableRefObject,
+    useContext,
+    useEffect,
+    useRef,
+} from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
@@ -20,6 +26,7 @@ function useLayoutId({ layoutId }: MotionProps) {
 export function useVisualElement<Instance, RenderState>(
     visualState: VisualState<Instance, RenderState>,
     props: MotionProps,
+    Component: string | ComponentType,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
     const config = useContext(MotionConfigContext)
@@ -36,7 +43,7 @@ export function useVisualElement<Instance, RenderState>(
     }
 
     if (!visualElementRef.current && createVisualElement) {
-        visualElementRef.current = createVisualElement({
+        visualElementRef.current = createVisualElement(Component, {
             visualState,
             parent,
             props: { ...props, layoutId },

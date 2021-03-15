@@ -1,4 +1,3 @@
-import { gestureProps } from "../../gestures/types"
 import { MotionProps } from "../types"
 
 /**
@@ -45,7 +44,18 @@ const validMotionProps = new Set<keyof MotionProps>([
     "dragPropagation",
     "dragTransition",
     "whileDrag",
-    ...gestureProps,
+    "onPan",
+    "onPanStart",
+    "onPanEnd",
+    "onPanSessionStart",
+    "onTap",
+    "onTapStart",
+    "onTapCancel",
+    "onHoverStart",
+    "onHoverEnd",
+    "whileFocus",
+    "whileTap",
+    "whileHover",
 ])
 
 /**

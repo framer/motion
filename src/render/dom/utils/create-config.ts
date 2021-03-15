@@ -1,4 +1,4 @@
-import { MotionFeature } from "../../../motion/features/types"
+import { FeatureBundle } from "../../../motion/features/types"
 import { isSVGComponent } from "./is-svg-component"
 import { MotionComponentConfig } from "../../../motion"
 import { createUseRender } from "../use-render"
@@ -7,11 +7,12 @@ import { SVGRenderState } from "../../svg/types"
 import { svgMotionConfig } from "../../svg/config-motion"
 import { htmlMotionConfig } from "../../html/config-motion"
 import { CreateVisualElement } from "../../types"
+import { CustomMotionComponentConfig } from "../motion-proxy"
 
 export function createDomMotionConfig<Props>(
-    defaultFeatures: MotionFeature[],
     Component: string | React.ComponentType<Props>,
-    forwardMotionProps: boolean,
+    { forwardMotionProps = false }: CustomMotionComponentConfig,
+    preloadedFeatures?: FeatureBundle,
     createVisualElement?: CreateVisualElement<any>
 ) {
     const baseConfig = isSVGComponent(Component)
@@ -20,7 +21,7 @@ export function createDomMotionConfig<Props>(
 
     return {
         ...baseConfig,
-        defaultFeatures,
+        preloadedFeatures,
         useRender: createUseRender(Component, forwardMotionProps),
         createVisualElement,
     } as

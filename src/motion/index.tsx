@@ -1,7 +1,7 @@
 import * as React from "react"
 import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
-import { RenderComponent, MotionFeature } from "./features/types"
+import { RenderComponent, FeatureBundle } from "./features/types"
 import { useFeatures } from "./features/use-features"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { MotionContext } from "../context/MotionContext"
@@ -13,7 +13,7 @@ import { useCreateMotionContext } from "../context/MotionContext/create"
 export { MotionProps }
 
 export interface MotionComponentConfig<Instance, RenderState> {
-    defaultFeatures: MotionFeature[]
+    preloadedFeatures?: FeatureBundle
     createVisualElement?: CreateVisualElement<Instance>
     useRender: RenderComponent<Instance, RenderState>
     useVisualState: UseVisualState<Instance, RenderState>
@@ -31,11 +31,14 @@ export interface MotionComponentConfig<Instance, RenderState> {
  * @internal
  */
 export function createMotionComponent<Props extends {}, Instance, RenderState>({
-    defaultFeatures,
+    preloadedFeatures,
     createVisualElement,
     useRender,
     useVisualState,
 }: MotionComponentConfig<Instance, RenderState>) {
+    if (preloadedFeatures) {
+    }
+
     function MotionComponent(
         props: Props & MotionProps,
         externalRef?: React.Ref<Instance>
@@ -81,11 +84,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * TODO: The intention is to move these away from a React-centric to a
              * VisualElement-centric lifecycle scheme.
              */
-            features = useFeatures(
-                defaultFeatures,
-                props,
-                context.visualElement
-            )
+            features = useFeatures(props, context.visualElement)
         }
 
         /**
