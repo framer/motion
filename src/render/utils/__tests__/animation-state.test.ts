@@ -140,7 +140,8 @@ describe("Animation state - Initiating props", () => {
         const { element: parent } = createTest({
             animate: "test",
         })
-        const { state } = createTest({}, parent)
+        const { element: child, state } = createTest({}, parent)
+        child.manuallyAnimateOnMount = false
 
         const animate = mockAnimate(state)
         state.setProps({
@@ -545,9 +546,8 @@ describe("Animation state - Setting props", () => {
     })
 
     test("Removing values, inherited variant changed from starting at undefined", () => {
-        console.log("++++ Test 3 ++++")
         const { element: parent, state: parentState } = createTest({
-            animate: "",
+            animate: undefined,
         })
         const { element: child, state: childState } = createTest({}, parent)
         child.manuallyAnimateOnMount = false

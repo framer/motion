@@ -641,8 +641,8 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         getVariantContext(startAtParent = false) {
             if (startAtParent) return parent?.getVariantContext()
-            // TODO Make this dynamic to fix
-            if (!isControllingVariants) {
+
+            if (!checkIfControllingVariants(props)) {
                 const context = parent?.getVariantContext() || {}
                 if (props.initial !== undefined) {
                     context.initial = props.initial as any
