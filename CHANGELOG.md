@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.10.4] 2021-03-15
+
+### Fixed
+
+-   `useMotionValue` now forces re-render on the Framer canvas.
+
 ## [3.10.3] 2021-03-10
 
 ### Fixed
