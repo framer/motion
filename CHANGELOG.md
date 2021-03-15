@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [3.10.4] 2021-03-15
 
+### Added
+
+-   `exports` field to `package.json`.
+
 ### Fixed
 
 -   `useMotionValue` now forces re-render on the Framer canvas.
