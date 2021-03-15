@@ -9,11 +9,10 @@ export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 /**
  * Features
  */
-export { Animation as AnimationFeature } from "./motion/features/animation"
-export { Drag as DragFeature } from "./motion/features/drag"
-export { Exit as ExitFeature } from "./motion/features/exit"
-export { Gestures as GesturesFeature } from "./motion/features/gestures"
-export { AnimateLayout as AnimateLayoutFeature } from "./motion/features/layout/Animate"
+export { animations } from "./motion/features/animations"
+export { gestures } from "./motion/features/gestures"
+export { drag } from "./motion/features/drag"
+export { layoutAnimations } from "./motion/features/layout"
 
 /**
  * Motion values

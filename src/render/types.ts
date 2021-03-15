@@ -1,3 +1,4 @@
+import { ComponentType } from "react"
 import { startAnimation } from "../animation/utils/transitions"
 import {
     Presence,
@@ -184,6 +185,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
 }
 
 export type CreateVisualElement<Instance> = (
+    Component: string | ComponentType,
     options: VisualElementOptions<Instance>
 ) => VisualElement<Instance>
 

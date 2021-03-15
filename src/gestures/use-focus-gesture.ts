@@ -1,24 +1,6 @@
-import { TargetAndTransition } from "../types"
 import { AnimationType } from "../render/utils/types"
-import { MotionProps, VariantLabels } from "../motion/types"
 import { useDomEvent } from "../events/use-dom-event"
-import { VisualElement } from "../render/types"
-
-/**
- * @public
- */
-export interface FocusHandlers {
-    /**
-     * Properties or variant label to animate to while the focus gesture is recognised.
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.input whileFocus={{ scale: 1.2 }} />
-     * ```
-     */
-    whileFocus?: VariantLabels | TargetAndTransition
-}
+import { FeatureProps } from "../motion/features/types"
 
 /**
  *
@@ -26,10 +8,7 @@ export interface FocusHandlers {
  * @param ref
  * @internal
  */
-export function useFocusGesture(
-    { whileFocus }: MotionProps,
-    visualElement: VisualElement
-) {
+export function useFocusGesture({ whileFocus, visualElement }: FeatureProps) {
     const onFocus = () => {
         visualElement.animationState?.setActive(AnimationType.Focus, true)
     }

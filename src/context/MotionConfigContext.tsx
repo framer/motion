@@ -39,7 +39,7 @@ export interface MotionConfigContext {
     /**
      * @public
      */
-    visualElement?: CreateVisualElement<any>
+    renderer?: CreateVisualElement<any>
 }
 
 export interface MotionConfigProps extends Partial<MotionConfigContext> {
@@ -83,16 +83,16 @@ export function MotionConfig({
     transition,
     ...props
 }: MotionConfigProps) {
-    const pluginContext = useContext(MotionConfigContext)
+    const configContext = useContext(MotionConfigContext)
     const loadedFeatures = [
-        ...new Set([...pluginContext.features, ...features]),
+        ...new Set([...configContext.features, ...features]),
     ]
 
     // We do want to rerender children when the number of loaded features changes
     const value = useMemo(
         () => ({
             features: loadedFeatures,
-            transition: transition || pluginContext.transition,
+            transition: transition || configContext.transition,
         }),
         [loadedFeatures.length, transition]
     ) as MotionConfigContext

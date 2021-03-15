@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0] Unreleased
+
+### Added
+
+-   Added the `renderer` prop to `MotionConfig`, allowing live functionality to be lazy-loaded, reducing the size of the `m` component to `7.2kb`.
+-   `exports` field to `package.json`.
+
 ## [3.10.6] 2021-03-18
 
 ### Fixed
