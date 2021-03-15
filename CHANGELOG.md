@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [3.10.5] 2021-03-15
+
+### Fixed
+
+-   Added specific `default` and `require` fields to the `exports` field for CJS compatibility.
+
 ## [3.10.4] 2021-03-15
 
 ### Added
