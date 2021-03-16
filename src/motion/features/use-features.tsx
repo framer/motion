@@ -16,7 +16,6 @@ export function useFeatures(
     visualElement?: VisualElement
 ): null | JSX.Element[] {
     const features: JSX.Element[] = []
-    // const config = useContext(MotionConfigContext)
 
     if (!visualElement) return null
 
