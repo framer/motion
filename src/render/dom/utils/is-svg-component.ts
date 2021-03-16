@@ -26,4 +26,6 @@ export function isSVGComponent(Component: string | ComponentType) {
     ) {
         return true
     }
+
+    return false
 }

@@ -4,6 +4,16 @@ import { DOMVisualElementOptions } from "../../../dom/types"
 import { BoxDelta, Point2D, AxisBox2D } from "../../../../types/geometry"
 import { ResolvedValues } from "../../../types"
 import { TransformOrigin } from "../../types"
+import { addScaleCorrection } from "../../../dom/projection/scale-correction"
+import { defaultScaleCorrectors } from "../../../dom/projection/default-scale-correctors"
+import {
+    buildLayoutProjectionTransform,
+    buildLayoutProjectionTransformOrigin,
+    BuildProjectionTransform,
+    BuildProjectionTransformOrigin,
+} from "../build-projection-transform"
+
+addScaleCorrection(defaultScaleCorrectors)
 
 describe("buildHTMLStyles", () => {
     test("Builds basic styles", () => {
@@ -135,17 +145,22 @@ describe("buildHTMLStyles", () => {
             y: { translate: 2, scale: 2, origin: 0.2, originPoint: 0 },
         }
 
-        build(latest, {
-            style,
-            isLayoutProjectionEnabled: true,
-            treeScale: { x: 1, y: 1 },
-            delta,
-            deltaFinal: delta,
-            targetBox: {
-                x: { min: 0, max: 100 },
-                y: { min: 0, max: 100 },
+        build(
+            latest,
+            {
+                style,
+                isLayoutProjectionEnabled: true,
+                treeScale: { x: 1, y: 1 },
+                delta,
+                deltaFinal: delta,
+                targetBox: {
+                    x: { min: 0, max: 100 },
+                    y: { min: 0, max: 100 },
+                },
             },
-        })
+            buildLayoutProjectionTransform,
+            buildLayoutProjectionTransformOrigin
+        )
 
         expect(style).toEqual({
             transform: "translate3d(1px, 2px, 0) scale(0.5, 2)",
@@ -165,17 +180,22 @@ describe("buildHTMLStyles", () => {
             y: { translate: 2, scale: 2, origin: 0.2, originPoint: 0 },
         }
 
-        build(latest, {
-            style,
-            isLayoutProjectionEnabled: true,
-            treeScale: { x: 1, y: 1 },
-            delta,
-            deltaFinal: delta,
-            targetBox: {
-                x: { min: 0, max: 100 },
-                y: { min: 0, max: 100 },
+        build(
+            latest,
+            {
+                style,
+                isLayoutProjectionEnabled: true,
+                treeScale: { x: 1, y: 1 },
+                delta,
+                deltaFinal: delta,
+                targetBox: {
+                    x: { min: 0, max: 100 },
+                    y: { min: 0, max: 100 },
+                },
             },
-        })
+            buildLayoutProjectionTransform,
+            buildLayoutProjectionTransformOrigin
+        )
 
         expect(style).toEqual({
             transform: "translate3d(1px, 2px, 0) rotate(90deg) scale(0.5, 2)",
@@ -198,17 +218,22 @@ describe("buildHTMLStyles", () => {
             y: { translate: 2, scale: 2, origin: 0.2, originPoint: 0 },
         }
 
-        build(latest, {
-            style,
-            isLayoutProjectionEnabled: true,
-            treeScale: { x: 0.5, y: 2 },
-            delta,
-            deltaFinal: delta,
-            targetBox: {
-                x: { min: 0, max: 10 },
-                y: { min: 0, max: 20 },
+        build(
+            latest,
+            {
+                style,
+                isLayoutProjectionEnabled: true,
+                treeScale: { x: 0.5, y: 2 },
+                delta,
+                deltaFinal: delta,
+                targetBox: {
+                    x: { min: 0, max: 10 },
+                    y: { min: 0, max: 20 },
+                },
             },
-        })
+            buildLayoutProjectionTransform,
+            buildLayoutProjectionTransformOrigin
+        )
 
         expect(style).toEqual({
             transform: "translate3d(2px, 1px, 0) scale(0.5, 2)",
@@ -253,7 +278,9 @@ function build(
         deltaFinal,
         treeScale,
         targetBox,
-    }: Partial<BuildProps> = {}
+    }: Partial<BuildProps> = {},
+    buildProjectionTransform?: BuildProjectionTransform,
+    buildProjectionTransformOrigin?: BuildProjectionTransformOrigin
 ) {
     buildHTMLStyles(
         {
@@ -277,6 +304,8 @@ function build(
             isHydrated: true,
         } as any,
         config,
-        config.transformTemplate
+        config.transformTemplate,
+        buildProjectionTransform,
+        buildProjectionTransformOrigin
     )
 }

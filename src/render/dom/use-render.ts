@@ -1,4 +1,3 @@
-import * as React from "react"
 import { createElement } from "react"
 import { useHTMLProps } from "../html/use-props"
 import { filterProps } from "./utils/filter-props"
@@ -8,17 +7,15 @@ import { RenderComponent } from "../../motion/features/types"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
 
-export function createUseRender<Props>(
-    Component: string | React.ComponentType<Props>,
-    forwardMotionProps = false
-) {
+export function createUseRender(forwardMotionProps = false) {
     const useRender: RenderComponent<
         HTMLElement | SVGElement,
         HTMLRenderState | SVGRenderState
-    > = (props, ref, { latestValues }, isStatic) => {
+    > = (Component, props, ref, { latestValues }, isStatic) => {
         const useVisualProps = isSVGComponent(Component)
             ? useSVGProps
             : useHTMLProps
+
         const visualProps = useVisualProps(props, latestValues, isStatic)
         const filteredProps = filterProps(
             props,

@@ -9,12 +9,10 @@ import {
     vh,
     complex,
 } from "style-value-types"
-import {
-    auto,
-    findDimensionValueType,
-    findValueType,
-    getValueAsType,
-} from "../value-types"
+import { auto } from "../type-auto"
+import { findDimensionValueType } from "../dimensions"
+import { findValueType } from "../find"
+import { getValueAsType } from "../get-as-type"
 
 describe("auto ValueType", () => {
     it("Correctly tests for auto", () => {

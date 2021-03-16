@@ -75,9 +75,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * for more performant animations and interactions
              */
             context.visualElement = useVisualElement(
+                Component,
                 visualState,
                 props,
-                Component,
                 createVisualElement
             )
 
@@ -99,6 +99,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             <>
                 <MotionContext.Provider value={context}>
                     {useRender(
+                        Component,
                         props,
                         useMotionRef(
                             visualState,

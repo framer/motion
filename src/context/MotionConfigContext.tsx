@@ -111,9 +111,9 @@ export function MotionConfig({
      */
     const context = useMemo(
         () => ({
-            isStatic,
             ...config,
             features: allDefinedFeatures,
+            isStatic,
         }),
         [numLoadedFeatures, config.renderer, config.transition]
     )

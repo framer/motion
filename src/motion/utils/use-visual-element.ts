@@ -19,9 +19,9 @@ function useLayoutId({ layoutId }: MotionProps) {
 }
 
 export function useVisualElement<Instance, RenderState>(
+    Component: string | React.ComponentType,
     visualState: VisualState<Instance, RenderState>,
     props: MotionProps,
-    Component: string | React.ComponentType,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
     const config = useContext(MotionConfigContext)

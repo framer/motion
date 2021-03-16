@@ -3,7 +3,7 @@ import {
     pixelsToPercent,
     correctBoxShadow,
     correctBorderRadius,
-} from "../scale-correction"
+} from "../default-scale-correctors"
 
 describe("pixelsToPercent", () => {
     test("Correctly converts pixels to percent", () => {

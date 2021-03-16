@@ -23,8 +23,9 @@ export function createDomMotionConfig<Props>(
     return {
         ...baseConfig,
         preloadedFeatures,
-        useRender: createUseRender(Component, forwardMotionProps),
+        useRender: createUseRender(forwardMotionProps),
         createVisualElement,
+        Component,
     } as
         | MotionComponentConfig<SVGElement, SVGRenderState>
         | MotionComponentConfig<HTMLElement, HTMLRenderState>
