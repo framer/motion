@@ -1,3 +1,4 @@
+import * as React from "react"
 import { VisualElement } from "../../render/types"
 import { Transition } from "../../types"
 import { AxisBox2D } from "../../types/geometry"
