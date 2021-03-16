@@ -134,11 +134,11 @@
             "maxSize": "30 kB"
         },
         {
-            "path": "./dist/minimal-component.js",
+            "path": "./dist/size-rollup-m.js",
             "maxSize": "5.5 kB"
         },
         {
-            "path": "./dist/m-component-size-test.js",
+            "path": "./dist/size-webpack-m.js",
             "maxSize": "5.5 kB"
         }
     ]

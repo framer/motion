@@ -633,10 +633,8 @@ export const SharedLayoutContext: import("react").Context<SyncLayoutBatcher | Sh
 
 // @public (undocumented)
 export interface SharedLayoutProps {
-    // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
-    children: React_2.ReactNode;
+    children: React.ReactNode;
     type?: "switch" | "crossfade";
 }
 

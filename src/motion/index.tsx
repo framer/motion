@@ -88,7 +88,11 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * TODO: The intention is to move these away from a React-centric to a
              * VisualElement-centric lifecycle scheme.
              */
-            features = useFeatures(props, context.visualElement)
+            features = useFeatures(
+                props,
+                context.visualElement,
+                preloadedFeatures
+            )
         }
 
         /**

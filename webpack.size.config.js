@@ -11,18 +11,26 @@ const tsLoader = {
 
 module.exports = {
     mode: "production",
-    entry: path.join(__dirname, "./src/render/dom/motion-minimal.ts"),
+    entry: {
+        "size-webpack-m": path.join(
+            __dirname,
+            "./src/render/dom/motion-minimal.ts"
+        ),
+    },
     output: {
         path: path.join(__dirname, "dist"),
-        filename: "m-component-size-test.js",
+        filename: "[name].js",
     },
     devtool: false,
     optimization: {
         usedExports: true,
-        minimize: true,
+        minimize: false,
         minimizer: [
             new TerserPlugin({
-                terserOptions: { output: { comments: false } },
+                terserOptions: {
+                    extractComments: false,
+                    output: { comments: false },
+                },
             }),
         ],
     },

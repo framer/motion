@@ -72,10 +72,11 @@ const es = Object.assign({}, config, {
     external,
 })
 
-const m = Object.assign({}, umdProd, {
-    input: "lib/render/dom/motion-minimal.js",
-    output: Object.assign({}, umd.output, {
-        file: `dist/minimal-component.js`,
+const m = Object.assign({}, es, {
+    input: "lib/render/dom/size-rollup-m.js",
+    output: Object.assign({}, es.output, {
+        dir: `dist/m`,
+        preserveModules: false,
     }),
 })
 
