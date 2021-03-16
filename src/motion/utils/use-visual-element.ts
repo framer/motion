@@ -78,7 +78,7 @@ export function useVisualElement<Instance, RenderState>(
         visualElement.animationState?.animateChanges()
     })
 
-    useUnmountEffect(() => visualElement?.notifyUnmount())
+    useIsomorphicLayoutEffect(() => () => visualElement?.notifyUnmount(), [])
 
     return visualElement
 }
