@@ -10,8 +10,6 @@ export const svgMotionConfig: Partial<MotionComponentConfig<
     SVGElement,
     SVGRenderState
 >> = {
-    // createVisualElement: (options) =>
-    //     svgVisualElement(options, { enableHardwareAcceleration: true }),
     useVisualState: makeUseVisualState({
         scrapeMotionValuesFromProps: scrapeSVGProps,
         createRenderState: createSvgRenderState,

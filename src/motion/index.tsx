@@ -10,6 +10,8 @@ import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
 import { useCreateMotionContext } from "../context/MotionContext/create"
+import { loadFeatures } from "./features/definitions"
+import { isBrowser } from "../utils/is-browser"
 export { MotionProps }
 
 export interface MotionComponentConfig<Instance, RenderState> {
@@ -17,6 +19,7 @@ export interface MotionComponentConfig<Instance, RenderState> {
     createVisualElement?: CreateVisualElement<Instance>
     useRender: RenderComponent<Instance, RenderState>
     useVisualState: UseVisualState<Instance, RenderState>
+    Component: string | React.ComponentType
 }
 
 /**
@@ -35,9 +38,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
     createVisualElement,
     useRender,
     useVisualState,
+    Component,
 }: MotionComponentConfig<Instance, RenderState>) {
-    if (preloadedFeatures) {
-    }
+    preloadedFeatures && loadFeatures(preloadedFeatures)
 
     function MotionComponent(
         props: Props & MotionProps,
@@ -64,7 +67,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          */
         const visualState = useVisualState(props, isStatic)
 
-        if (!isStatic && typeof window !== "undefined") {
+        if (!isStatic && isBrowser) {
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
              * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
@@ -74,6 +77,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             context.visualElement = useVisualElement(
                 visualState,
                 props,
+                Component,
                 createVisualElement
             )
 

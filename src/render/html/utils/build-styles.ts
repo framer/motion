@@ -4,18 +4,15 @@ import { ResolvedValues } from "../../types"
 import { LayoutState, TargetProjection } from "../../utils/state"
 import { valueScaleCorrection } from "../../dom/projection/scale-correction"
 import { DOMVisualElementOptions } from "../../dom/types"
-import {
-    buildLayoutProjectionTransform,
-    buildLayoutProjectionTransformOrigin,
-    buildTransform,
-    buildTransformOrigin,
-} from "./build-transform"
+import { buildTransform, buildTransformOrigin } from "./build-transform"
 import { isCSSVariable } from "../../dom/utils/is-css-variable"
 import { isTransformOriginProp, isTransformProp } from "./transform"
+import { getValueAsType } from "../../dom/value-types/get-as-type"
+import { numberValueTypes } from "../../dom/value-types/number"
 import {
-    getDefaultValueType,
-    getValueAsType,
-} from "../../dom/utils/value-types"
+    BuildProjectionTransform,
+    BuildProjectionTransformOrigin,
+} from "./build-projection-transform"
 
 export function buildHTMLStyles(
     state: HTMLRenderState,
@@ -23,7 +20,9 @@ export function buildHTMLStyles(
     projection: TargetProjection | undefined,
     layoutState: LayoutState | undefined,
     options: DOMVisualElementOptions,
-    transformTemplate?: MotionProps["transformTemplate"]
+    transformTemplate?: MotionProps["transformTemplate"],
+    buildProjectionTransform?: BuildProjectionTransform,
+    buildProjectionTransformOrigin?: BuildProjectionTransformOrigin
 ) {
     const { style, vars, transform, transformKeys, transformOrigin } = state
 
@@ -57,7 +56,7 @@ export function buildHTMLStyles(
         }
 
         // Convert the value to its default value type, ie 0 -> "0px"
-        const valueType = getDefaultValueType(key)
+        const valueType = numberValueTypes[key]
         const valueAsType = getValueAsType(value, valueType)
 
         if (isTransformProp(key)) {
@@ -115,22 +114,18 @@ export function buildHTMLStyles(
     if (
         layoutState &&
         projection &&
-        projection.isEnabled &&
-        layoutState.isHydrated
+        buildProjectionTransform &&
+        buildProjectionTransformOrigin
     ) {
-        style.transform = buildLayoutProjectionTransform(
+        style.transform = buildProjectionTransform(
             layoutState.deltaFinal,
             layoutState.treeScale,
             hasTransform ? transform : undefined
         )
-
         if (transformTemplate) {
             style.transform = transformTemplate(transform, style.transform)
         }
-
-        style.transformOrigin = buildLayoutProjectionTransformOrigin(
-            layoutState
-        )
+        style.transformOrigin = buildProjectionTransformOrigin(layoutState)
     } else {
         if (hasTransform) {
             style.transform = buildTransform(

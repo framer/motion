@@ -1,4 +1,4 @@
-import { warning } from "hey-listen"
+import * as React from "react"
 import {
     createMotionComponent,
     MotionComponentConfig,
@@ -7,7 +7,6 @@ import {
 import { DOMMotionComponents } from "./types"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
-import React from "react"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -45,14 +44,6 @@ export type CreateConfig = <Instance, RenderState, Props>(
  * @public
  */
 export function createMotionProxy(createConfig: CreateConfig) {
-    type DeprecatedCustomMotionComponent = {
-        custom: typeof custom
-    }
-
-    type Motion = typeof custom &
-        DOMMotionComponents &
-        DeprecatedCustomMotionComponent
-
     function custom<Props>(
         Component: string | React.ComponentType<Props>,
         customMotionComponentConfig: CustomMotionComponentConfig = {}
@@ -62,13 +53,6 @@ export function createMotionProxy(createConfig: CreateConfig) {
             HTMLElement | SVGElement,
             HTMLRenderState | SVGRenderState
         >(createConfig(Component, customMotionComponentConfig))
-    }
-
-    function deprecatedCustom<Props>(
-        Component: string | React.ComponentType<Props>
-    ) {
-        warning(false, "motion.custom() is deprecated. Use motion() instead.")
-        return custom(Component, { forwardMotionProps: true })
     }
 
     /**
@@ -85,11 +69,6 @@ export function createMotionProxy(createConfig: CreateConfig) {
          */
         get: (_target, key: string) => {
             /**
-             * Can be removed in 4.0
-             */
-            if (key === "custom") return deprecatedCustom
-
-            /**
              * If this element doesn't exist in the component cache, create it and cache.
              */
             if (!componentCache.has(key)) {
@@ -98,5 +77,5 @@ export function createMotionProxy(createConfig: CreateConfig) {
 
             return componentCache.get(key)!
         },
-    }) as Motion
+    }) as typeof custom & DOMMotionComponents
 }

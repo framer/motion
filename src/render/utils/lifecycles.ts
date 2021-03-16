@@ -16,6 +16,7 @@ const names = [
     "LayoutAnimationComplete",
     "AnimationStart",
     "SetAxisTarget",
+    "Unmount",
 ]
 
 export type LayoutMeasureListener = (
@@ -148,6 +149,11 @@ export interface VisualElementLifecycles {
      * @internal
      */
     onLayoutAnimationComplete?(): void
+
+    /**
+     * @internal
+     */
+    onUnmount?(): void
 }
 
 export interface LifecycleManager {
@@ -173,6 +179,8 @@ export interface LifecycleManager {
     notifySetAxisTarget: SetAxisTargetListener
     onRender: (callback: RenderListener) => () => void
     notifyRender: RenderListener
+    onUnmount: (callback: () => void) => () => void
+    notifyUnmount: () => void
     clearAllListeners: () => void
     updatePropListeners: (props: MotionProps) => void
 }

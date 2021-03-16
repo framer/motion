@@ -5,8 +5,8 @@ import { invariant } from "hey-listen"
 import { MotionValue } from "../../../value"
 import { transformProps } from "../../html/utils/transform"
 import { AxisBox2D } from "../../../types/geometry"
-import { findDimensionValueType } from "./value-types"
 import { VisualElement } from "../../types"
+import { findDimensionValueType } from "../value-types/dimensions"
 
 const positionalKeys = new Set([
     "width",

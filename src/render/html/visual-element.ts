@@ -8,9 +8,13 @@ import { buildHTMLStyles } from "./utils/build-styles"
 import { isCSSVariable } from "../dom/utils/is-css-variable"
 import { parseDomVariant } from "../dom/utils/parse-dom-variant"
 import { isTransformProp } from "./utils/transform"
-import { getDefaultValueType } from "../dom/utils/value-types"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { renderHTML } from "./utils/render"
+import { getDefaultValueType } from "../dom/value-types/defaults"
+import {
+    buildLayoutProjectionTransform,
+    buildLayoutProjectionTransformOrigin,
+} from "./utils/build-projection-transform"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -145,13 +149,19 @@ export const htmlConfig: VisualElementConfig<
                 : "hidden"
         }
 
+        const isProjectionTranform =
+            projection.isEnabled && layoutState.isHydrated
         buildHTMLStyles(
             renderState,
             latestValues,
             projection,
             layoutState,
             options,
-            props.transformTemplate
+            props.transformTemplate,
+            isProjectionTranform ? buildLayoutProjectionTransform : undefined,
+            isProjectionTranform
+                ? buildLayoutProjectionTransformOrigin
+                : undefined
         )
     },
 

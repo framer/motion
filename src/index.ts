@@ -13,6 +13,7 @@ export { animations } from "./motion/features/animations"
 export { gestures } from "./motion/features/gestures"
 export { drag } from "./motion/features/drag"
 export { layoutAnimations } from "./motion/features/layout"
+export { createDomVisualElement as dom } from "./render/dom/create-visual-element"
 
 /**
  * Motion values
@@ -48,12 +49,8 @@ export {
     PanHandlers,
     FocusHandlers,
     TapInfo,
-    PanInfo,
-    GestureHandlers,
-    useTapGesture,
-    usePanGesture,
-    useGestures,
-} from "./gestures"
+} from "./gestures/types"
+export { PanInfo } from "./gestures/PanSession"
 export { useCycle } from "./utils/use-cycle"
 export { transform } from "./utils/transform"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
@@ -128,7 +125,7 @@ export {
 } from "./types"
 export { EventInfo } from "./events/types"
 export { VisualElementLifecycles } from "./render/utils/lifecycles"
-export { MotionFeature, FeatureProps } from "./motion/features/types"
+export * from "./motion/features/types"
 export {
     DraggableProps,
     DragHandlers,

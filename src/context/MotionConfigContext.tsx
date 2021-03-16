@@ -1,9 +1,10 @@
 import * as React from "react"
 import { createContext, useContext, useMemo } from "react"
-import { MotionFeature } from "../motion/features/types"
+import { FeatureBundle } from "../motion/features/types"
 import { CreateVisualElement } from "../render/types"
 import { Transition } from "../types"
 import { TransformPoint2D } from "../types/geometry"
+import { useConstant } from "../utils/use-constant"
 
 /**
  * @public
@@ -19,7 +20,7 @@ export interface MotionConfigContext {
      *
      * @public
      */
-    features: MotionFeature[]
+    features?: FeatureBundle
 
     /**
      * Determines whether this is a static context ie the Framer canvas. If so,
@@ -51,7 +52,6 @@ export interface MotionConfigProps extends Partial<MotionConfigContext> {
  */
 export const MotionConfigContext = createContext<MotionConfigContext>({
     transformPagePoint: (p) => p,
-    features: [],
     isStatic: false,
 })
 
@@ -79,32 +79,51 @@ export const MotionConfigContext = createContext<MotionConfigContext>({
  */
 export function MotionConfig({
     children,
-    features = [],
-    transition,
-    ...props
+    isStatic,
+    ...config
 }: MotionConfigProps) {
-    const configContext = useContext(MotionConfigContext)
-    const loadedFeatures = [
-        ...new Set([...configContext.features, ...features]),
-    ]
+    const parentConfig = useContext(MotionConfigContext)
 
-    // We do want to rerender children when the number of loaded features changes
-    const value = useMemo(
+    /**
+     * Don't allow isStatic to change between renders as it affects how many hooks
+     * motion components fire.
+     */
+    isStatic = useConstant(() => isStatic)
+
+    /**
+     * Inherit and overwrite any parent MotionConfigs
+     */
+    config = { ...parentConfig, ...config }
+
+    const allDefinedFeatures = {
+        ...parentConfig.features,
+        ...config.features,
+    }
+    const loadedFeatures = Object.keys(allDefinedFeatures).filter(
+        (name) => allDefinedFeatures[name] !== null
+    )
+    const numLoadedFeatures = loadedFeatures.length
+
+    /**
+     * Creating a new config context object will re-render every `motion` component
+     * every render. So we only create a new one when we *want* to rerender these
+     * components, for instance when a new feature has loaded, or the renderer has loaded.
+     */
+    const context = useMemo(
         () => ({
-            features: loadedFeatures,
-            transition: transition || configContext.transition,
+            isStatic,
+            ...config,
+            features: allDefinedFeatures,
         }),
-        [loadedFeatures.length, transition]
-    ) as MotionConfigContext
+        [numLoadedFeatures, config.renderer, config.transition]
+    )
 
     // Mutative to prevent triggering rerenders in all listening
     // components every time this component renders
-    for (const key in props) {
-        value[key] = props[key]
-    }
+    context.transformPagePoint = config.transformPagePoint
 
     return (
-        <MotionConfigContext.Provider value={value}>
+        <MotionConfigContext.Provider value={context as MotionConfigContext}>
             {children}
         </MotionConfigContext.Provider>
     )

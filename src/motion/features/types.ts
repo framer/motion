@@ -19,6 +19,7 @@ export type FeatureNames = {
     hover: true
     pan: true
     layoutAnimation: true
+    measureLayout: true
 }
 
 export type FeatureComponent = React.ComponentType<FeatureProps>
