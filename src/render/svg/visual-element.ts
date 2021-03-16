@@ -40,13 +40,19 @@ export const svgVisualElement = visualElement<
         options,
         props
     ) {
+        const isProjectionTranform =
+            projection.isEnabled && layoutState.isHydrated
         buildSVGAttrs(
             renderState,
             latestValues,
             projection,
             layoutState,
             options,
-            props.transformTemplate
+            props.transformTemplate,
+            isProjectionTranform ? buildLayoutProjectionTransform : undefined,
+            isProjectionTranform
+                ? buildLayoutProjectionTransformOrigin
+                : undefined
         )
     },
 
