@@ -33,7 +33,7 @@ export function useVisualElement<Instance, RenderState>(
         VisualElement | undefined
     > = useRef(undefined)
 
-    if (createVisualElement === null) {
+    if (!createVisualElement) {
         createVisualElement = config.renderer
     }
 

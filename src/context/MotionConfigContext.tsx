@@ -1,5 +1,6 @@
 import * as React from "react"
 import { createContext, useContext, useMemo } from "react"
+import { loadFeatures } from "../motion/features/definitions"
 import { FeatureBundle } from "../motion/features/types"
 import { CreateVisualElement } from "../render/types"
 import { Transition } from "../types"
@@ -109,14 +110,16 @@ export function MotionConfig({
      * every render. So we only create a new one when we *want* to rerender these
      * components, for instance when a new feature has loaded, or the renderer has loaded.
      */
-    const context = useMemo(
-        () => ({
+    const context = useMemo(() => {
+        // TODO We probably don't need to pass this through context
+        config.features && loadFeatures(config.features)
+
+        return {
             ...config,
             features: allDefinedFeatures,
             isStatic,
-        }),
-        [numLoadedFeatures, config.renderer, config.transition]
-    )
+        }
+    }, [numLoadedFeatures, config.renderer, config.transition])
 
     // Mutative to prevent triggering rerenders in all listening
     // components every time this component renders
