@@ -1,4 +1,4 @@
-import { AnimationControls } from "../../animation/animation-controls"
+import { AnimationControls } from "../../animation/types"
 import { MotionProps } from "../../motion/types"
 import { TargetAndTransition, TargetResolver } from "../../types"
 import { ResolvedValues, VisualElement } from "../types"

@@ -1,4 +1,4 @@
-import { isAnimationControls } from "../../animation/animation-controls"
+import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import { isKeyframesTarget } from "../../animation/utils/is-keyframes-target"
 import { VariantLabels } from "../../motion/types"
 import { TargetAndTransition } from "../../types"

@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react"
-import { isAnimationControls } from "../../animation/animation-controls"
+import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../context/PresenceContext"
 import { createAnimationState } from "../../render/utils/animation-state"
