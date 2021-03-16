@@ -328,7 +328,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * any children that are also part of the tree. This is essentially
          * a shadow tree to simplify logic around how to stagger over children.
          */
-        variantChildren: undefined,
+        variantChildren: isVariantNode ? new Set() : undefined,
 
         /**
          * Whether this instance is visible. This can be changed imperatively
@@ -373,6 +373,10 @@ export const visualElement = <Instance, MutableState, Options>({
             instance = element.current = newInstance
             element.pointTo(element)
             removeFromMotionTree = parent?.addChild(element)
+
+            if (isVariantNode && parent && !isControllingVariants) {
+                removeFromVariantTree = parent?.addVariantChild(element)
+            }
         },
 
         /**
