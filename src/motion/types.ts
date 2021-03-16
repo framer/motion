@@ -1,6 +1,6 @@
 import { CSSProperties } from "react"
 import { MotionValue } from "../value"
-import { AnimationControls } from "../animation/animation-controls"
+import { AnimationControls } from "../animation/types"
 import {
     Variants,
     Target,

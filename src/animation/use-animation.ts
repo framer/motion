@@ -1,4 +1,5 @@
-import { AnimationControls, animationControls } from "./animation-controls"
+import { animationControls } from "./animation-controls"
+import { AnimationControls } from "./types"
 import { useEffect } from "react"
 import { useConstant } from "../utils/use-constant"
 

@@ -35,6 +35,7 @@
         "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
+        "test-size": "webpack --config webpack.size.config.js && bundlesize",
         "prettier": "prettier ./src/* --write",
         "build": "tsc -p . && rollup -c && make api",
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
@@ -92,6 +93,7 @@
         "rollup-plugin-visualizer": "^2.4.3",
         "start-server-and-test": "^1.9.1",
         "styled-components": "^4.1.1",
+        "terser-webpack-plugin": "4.2.3",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
         "typescript": "^4.0.2",
@@ -134,6 +136,10 @@
         },
         {
             "path": "./dist/minimal-component.js",
+            "maxSize": "5.5 kB"
+        },
+        {
+            "path": "./dist/m-component-size-test.js",
             "maxSize": "5.5 kB"
         }
     ]

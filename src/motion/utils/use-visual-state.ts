@@ -1,5 +1,5 @@
 import { useContext } from "react"
-import { isAnimationControls } from "../../animation/animation-controls"
+import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import {
     PresenceContext,
     PresenceContextProps,
