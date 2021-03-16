@@ -66,25 +66,4 @@ describe("motion()", () => {
         expect(animate).toEqual({ x: 100 })
         expect(foo).toBe(true)
     })
-
-    test("forwards MotionProps if deprecated motion.custom used", () => {
-        let animate: any
-        let foo: boolean = false
-        const BaseComponent = React.forwardRef(
-            (props: Props & MotionProps, ref: RefObject<HTMLDivElement>) => {
-                animate = props.animate
-                foo = props.foo
-                return <div ref={ref} />
-            }
-        )
-
-        const MotionComponent = motion.custom<Props>(BaseComponent)
-
-        const Component = () => <MotionComponent foo animate={{ x: 100 }} />
-
-        render(<Component />)
-
-        expect(animate).toEqual({ x: 100 })
-        expect(foo).toBe(true)
-    })
 })

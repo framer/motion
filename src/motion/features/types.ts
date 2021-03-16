@@ -43,6 +43,7 @@ export type FeatureDefinitions = {
 }
 
 export type RenderComponent<Instance, RenderState> = (
+    Component: string | React.ComponentType,
     props: MotionProps,
     ref: React.Ref<Instance>,
     visualState: VisualState<Instance, RenderState>,

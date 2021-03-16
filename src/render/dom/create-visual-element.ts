@@ -9,7 +9,8 @@ export const createDomVisualElement: CreateVisualElement<
 > = (
     Component: string | ComponentType,
     options: VisualElementOptions<HTMLElement | SVGElement>
-) =>
-    isSVGComponent(Component)
-        ? svgVisualElement(options)
-        : htmlVisualElement(options)
+) => {
+    return isSVGComponent(Component)
+        ? svgVisualElement(options, { enableHardwareAcceleration: false })
+        : htmlVisualElement(options, { enableHardwareAcceleration: true })
+}
