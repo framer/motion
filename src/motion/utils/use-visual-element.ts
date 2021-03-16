@@ -9,7 +9,6 @@ import { CreateVisualElement, VisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualState } from "./use-visual-state"
-import { useUnmountEffect } from "../../utils/use-unmount-effect"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
