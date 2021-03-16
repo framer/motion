@@ -9,6 +9,10 @@ import { camelCaseAttributes } from "./utils/camel-case-attrs"
 import { isTransformProp } from "../html/utils/transform"
 import { renderSVG } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
+import {
+    buildLayoutProjectionTransform,
+    buildLayoutProjectionTransformOrigin,
+} from "../html/utils/build-projection-transform"
 
 export const svgVisualElement = visualElement<
     SVGElement,
