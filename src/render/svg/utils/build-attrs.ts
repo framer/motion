@@ -6,6 +6,10 @@ import { buildSVGPath } from "./path"
 import { MotionProps } from "../../../motion/types"
 import { LayoutState, TargetProjection } from "../../utils/state"
 import { SVGRenderState } from "../types"
+import {
+    BuildProjectionTransform,
+    BuildProjectionTransformOrigin,
+} from "../../html/utils/build-projection-transform"
 
 /**
  * Build SVG visual attrbutes, like cx and style.transform
@@ -26,7 +30,9 @@ export function buildSVGAttrs(
     projection: TargetProjection | undefined,
     layoutState: LayoutState | undefined,
     options: DOMVisualElementOptions,
-    transformTemplate?: MotionProps["transformTemplate"]
+    transformTemplate?: MotionProps["transformTemplate"],
+    buildProjectionTransform?: BuildProjectionTransform,
+    buildProjectionTransformOrigin?: BuildProjectionTransformOrigin
 ) {
     buildHTMLStyles(
         state,
@@ -34,7 +40,9 @@ export function buildSVGAttrs(
         projection,
         layoutState,
         options,
-        transformTemplate
+        transformTemplate,
+        buildProjectionTransform,
+        buildProjectionTransformOrigin
     )
 
     state.attrs = state.style
