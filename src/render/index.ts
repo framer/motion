@@ -24,7 +24,11 @@ import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
 import { createLayoutState, createProjectionState } from "./utils/state"
-import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
+import {
+    checkIfControllingVariants,
+    checkIfVariantNode,
+    isVariantLabel,
+} from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -290,7 +294,7 @@ export const visualElement = <Instance, MutableState, Options>({
      * Determine what role this visual element should take in the variant tree.
      */
     const isControllingVariants = checkIfControllingVariants(props)
-    const isVariantNode = Boolean(isControllingVariants || props.variants)
+    const isVariantNode = checkIfVariantNode(props)
 
     const element: VisualElement<Instance> = {
         treeType,
@@ -324,7 +328,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * any children that are also part of the tree. This is essentially
          * a shadow tree to simplify logic around how to stagger over children.
          */
-        variantChildren: isVariantNode ? new Set() : undefined,
+        variantChildren: undefined,
 
         /**
          * Whether this instance is visible. This can be changed imperatively
@@ -369,10 +373,6 @@ export const visualElement = <Instance, MutableState, Options>({
             instance = element.current = newInstance
             element.pointTo(element)
             removeFromMotionTree = parent?.addChild(element)
-
-            if (isVariantNode && parent && !isControllingVariants) {
-                removeFromVariantTree = parent?.addVariantChild(element)
-            }
         },
 
         /**
@@ -639,7 +639,7 @@ export const visualElement = <Instance, MutableState, Options>({
         getVariantContext(startAtParent = false) {
             if (startAtParent) return parent?.getVariantContext()
 
-            if (!checkIfControllingVariants(props)) {
+            if (!isControllingVariants) {
                 const context = parent?.getVariantContext() || {}
                 if (props.initial !== undefined) {
                     context.initial = props.initial as any

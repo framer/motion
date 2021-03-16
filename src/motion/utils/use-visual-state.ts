@@ -7,6 +7,7 @@ import {
 import { ResolvedValues, ScrapeMotionValuesFromProps } from "../../render/types"
 import {
     checkIfControllingVariants,
+    checkIfVariantNode,
     resolveVariantFromProps,
 } from "../../render/utils/variants"
 import { useConstant } from "../../utils/use-constant"
@@ -92,7 +93,7 @@ function makeLatestValues(
 
     let { initial, animate } = props
     const isControllingVariants = checkIfControllingVariants(props)
-    const isVariantNode = isControllingVariants || props.variants
+    const isVariantNode = checkIfVariantNode(props)
 
     if (
         context &&
