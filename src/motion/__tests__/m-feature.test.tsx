@@ -1,11 +1,11 @@
 import { render } from "../../../jest.setup"
-import { m, AnimationFeature, MotionConfig } from "../../"
+import { m, animations, dom, MotionConfig } from "../../"
 import * as React from "react"
 import { motionValue } from "../../value"
 
 describe("Dynamic feature loading", () => {
     test("Doesn't animate to set prop without loaded features", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const Component = () => (
@@ -26,11 +26,11 @@ describe("Dynamic feature loading", () => {
     })
 
     test("Does animate to set prop without loaded features", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const Component = () => (
-                <MotionConfig features={[AnimationFeature]}>
+                <MotionConfig renderer={dom} features={animations}>
                     <m.div
                         animate={{ x: 20 }}
                         transition={{ duration: 0.01 }}
@@ -47,12 +47,12 @@ describe("Dynamic feature loading", () => {
     })
 
     test("Does support duplicate features in nested contexts", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
             const Component = () => (
-                <MotionConfig features={[AnimationFeature]}>
-                    <MotionConfig features={[AnimationFeature]}>
+                <MotionConfig renderer={dom} features={animations}>
+                    <MotionConfig renderer={dom} features={animations}>
                         <m.div
                             animate={{ x: 20 }}
                             transition={{ duration: 0.01 }}
