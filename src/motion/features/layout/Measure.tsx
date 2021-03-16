@@ -1,4 +1,3 @@
-import { MotionProps } from "../../types"
 import { FeatureProps } from "../types"
 import React, { useContext } from "react"
 import {
@@ -28,6 +27,16 @@ class Measure extends React.Component<SyncProps> {
         isSharedLayout(syncLayout) && syncLayout.register(visualElement)
         isSharedLayout(framerSyncLayout) &&
             framerSyncLayout.register(visualElement)
+
+        visualElement.onUnmount(() => {
+            if (isSharedLayout(syncLayout)) {
+                syncLayout.remove(visualElement as any)
+            }
+
+            if (isSharedLayout(framerSyncLayout)) {
+                framerSyncLayout.remove(visualElement as any)
+            }
+        })
     }
 
     /**

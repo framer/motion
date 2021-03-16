@@ -7,8 +7,8 @@ import { buildSVGAttrs } from "./utils/build-attrs"
 import { camelToDash } from "../dom/utils/camel-to-dash"
 import { camelCaseAttributes } from "./utils/camel-case-attrs"
 import { isTransformProp } from "../html/utils/transform"
-import { getDefaultValueType } from "../dom/utils/value-types"
 import { renderSVG } from "./utils/render"
+import { getDefaultValueType } from "../dom/value-types/defaults"
 
 export const svgVisualElement = visualElement<
     SVGElement,

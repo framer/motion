@@ -1,3 +1,4 @@
+import * as React from "react"
 import { FeatureBundle } from "../../../motion/features/types"
 import { isSVGComponent } from "./is-svg-component"
 import { MotionComponentConfig } from "../../../motion"

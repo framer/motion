@@ -8,8 +8,6 @@ export const htmlMotionConfig: Partial<MotionComponentConfig<
     HTMLElement,
     HTMLRenderState
 >> = {
-    // createVisualElement: (options) =>
-    //     htmlVisualElement(options, { enableHardwareAcceleration: true }),
     useVisualState: makeUseVisualState({
         scrapeMotionValuesFromProps: scrapeHTMLProps,
         createRenderState: createHtmlRenderState,

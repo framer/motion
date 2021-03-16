@@ -1,48 +1,38 @@
-import { FeatureDefinitions } from "./types"
+import { MotionProps } from "../types"
+import { FeatureBundle, FeatureDefinitions } from "./types"
+
+const createDefinition = (propNames: string[]) => ({
+    isEnabled: (props: MotionProps) => propNames.some((name) => !!props[name]),
+})
 
 export const featureDefinitions: FeatureDefinitions = {
-    animation: {
-        isEnabled: ({
-            animate,
-            whileHover,
-            whileFocus,
-            whileTap,
-            whileDrag,
-            exit,
-            variants,
-        }) =>
-            Boolean(
-                animate ||
-                    variants ||
-                    exit ||
-                    whileHover ||
-                    whileTap ||
-                    whileDrag ||
-                    whileFocus
-            ),
-    },
-    exit: {
-        isEnabled: ({ exit }) => !!exit,
-    },
-    drag: {
-        isEnabled: ({ drag, dragControls }) => !!drag || !!dragControls,
-    },
-    focus: {
-        isEnabled: ({ whileFocus }) => !!whileFocus,
-    },
-    hover: {
-        isEnabled: ({ whileHover, onHoverStart, onHoverEnd }) =>
-            !!whileHover || !!onHoverStart || !!onHoverEnd,
-    },
-    tap: {
-        isEnabled: ({ whileTap, onTap, onTapStart, onTapEnd }) =>
-            !!whileTap || !!onTap || !!onTapStart || !!onTapEnd,
-    },
-    pan: {
-        isEnabled: ({ onPan, onPanStart, onPanSessionStart, onPanEnd }) =>
-            !!onPan || !!onPanStart || !!onPanSessionStart || !!onPanEnd,
-    },
-    layoutAnimation: {
-        isEnabled: ({ layout, layoutId }) => !!layout || layoutId !== undefined,
-    },
+    measureLayout: createDefinition(["layout", "layoutId", "drag"]),
+    animation: createDefinition([
+        "animate",
+        "exit",
+        "variants",
+        "whileHover",
+        "whileTap",
+        "whileFocus",
+        "whileDrag",
+    ]),
+    exit: createDefinition(["exit"]),
+    drag: createDefinition(["drag", "dragControls"]),
+    focus: createDefinition(["whileFocus"]),
+    hover: createDefinition(["whileHover", "onHoverStart", "onHoverEnd"]),
+    tap: createDefinition(["whileTap", "onTap", "onTapStart", "onTapCancel"]),
+    pan: createDefinition([
+        "onPan",
+        "onPanStart",
+        "onPanSessionStart",
+        "onPanEnd",
+    ]),
+    layoutAnimation: createDefinition(["layout", "layoutId"]),
+}
+
+export function loadFeatures(features: FeatureBundle) {
+    for (const key in features) {
+        const Component = features[key]
+        if (Component !== null) featureDefinitions[key].Component = Component
+    }
 }

@@ -1,20 +1,15 @@
-import {
-    ComponentType,
-    MutableRefObject,
-    useContext,
-    useEffect,
-    useRef,
-} from "react"
+import * as React from "react"
+import { MutableRefObject, useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../context/MotionContext"
-import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { CreateVisualElement, VisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualState } from "./use-visual-state"
+import { useUnmountEffect } from "../../utils/use-unmount-effect"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
@@ -26,7 +21,7 @@ function useLayoutId({ layoutId }: MotionProps) {
 export function useVisualElement<Instance, RenderState>(
     visualState: VisualState<Instance, RenderState>,
     props: MotionProps,
-    Component: string | ComponentType,
+    Component: string | React.ComponentType,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
     const config = useContext(MotionConfigContext)
@@ -39,7 +34,7 @@ export function useVisualElement<Instance, RenderState>(
     > = useRef(undefined)
 
     if (createVisualElement === null) {
-        createVisualElement = config.visualElement
+        createVisualElement = config.renderer
     }
 
     if (!visualElementRef.current && createVisualElement) {
@@ -83,12 +78,7 @@ export function useVisualElement<Instance, RenderState>(
         visualElement.animationState?.animateChanges()
     })
 
-    /**
-     * If this component is a child of AnimateSharedLayout, we need to snapshot the component
-     * before it's unmounted. This lives here rather than in features/layout/Measure because
-     * as a child component its unmount effect runs after this component has been unmounted.
-     */
-    useSnapshotOnUnmount(visualElement)
+    useUnmountEffect(() => visualElement?.notifyUnmount())
 
     return visualElement
 }

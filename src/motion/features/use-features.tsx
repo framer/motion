@@ -1,6 +1,4 @@
 import * as React from "react"
-import { useContext } from "react"
-import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from ".."
 import { FeatureDefinition } from "./types"
@@ -18,7 +16,7 @@ export function useFeatures(
     visualElement?: VisualElement
 ): null | JSX.Element[] {
     const features: JSX.Element[] = []
-    const config = useContext(MotionConfigContext)
+    // const config = useContext(MotionConfigContext)
 
     if (!visualElement) return null
 

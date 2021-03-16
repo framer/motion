@@ -10,7 +10,7 @@ import { MotionValue } from "../../value"
 import { isAnimatable } from "./is-animatable"
 import { getDefaultTransition } from "./default-transitions"
 import { warning } from "hey-listen"
-import { getAnimatableNone } from "../../render/dom/utils/value-types"
+import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 
 type StopAnimation = { stop: () => void }
 
