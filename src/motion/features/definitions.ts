@@ -1,5 +1,5 @@
 import { MotionProps } from "../types"
-import { FeatureBundle, FeatureDefinitions } from "./types"
+import { FeatureDefinitions, Features } from "./types"
 
 const createDefinition = (propNames: string[]) => ({
     isEnabled: (props: MotionProps) => propNames.some((name) => !!props[name]),
@@ -30,7 +30,7 @@ export const featureDefinitions: FeatureDefinitions = {
     layoutAnimation: createDefinition(["layout", "layoutId"]),
 }
 
-export function loadFeatures(features: FeatureBundle) {
+export function loadFeatures(features: Partial<Features>) {
     for (const key in features) {
         const Component = features[key]
         if (Component !== null) featureDefinitions[key].Component = Component

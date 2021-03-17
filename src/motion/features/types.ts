@@ -1,7 +1,7 @@
 import * as React from "react"
 import { MotionProps } from "../types"
 import { VisualState } from "../utils/use-visual-state"
-import { VisualElement } from "../../render/types"
+import { CreateVisualElement, VisualElement } from "../../render/types"
 
 /**
  * @public
@@ -32,8 +32,20 @@ export interface FeatureDefinition {
     Component?: FeatureComponent
 }
 
-export interface FeatureBundle {
-    [key: string]: FeatureComponent
+export interface FeatureComponents {
+    animation?: FeatureComponent
+    exit?: FeatureComponent
+    drag?: FeatureComponent
+    tap?: FeatureComponent
+    focus?: FeatureComponent
+    hover?: FeatureComponent
+    pan?: FeatureComponent
+    layoutAnimation?: FeatureComponent
+    measureLayout?: FeatureComponent
+}
+
+export interface FeatureBundle extends FeatureComponents {
+    renderer: CreateVisualElement<any>
 }
 
 export type LazyFeatureBundle = () => Promise<FeatureBundle>
