@@ -441,10 +441,19 @@ export interface LayoutProps {
 // @public (undocumented)
 export type LazyFeatureBundle = () => Promise<FeatureBundle>;
 
-// Warning: (ae-forgotten-export) The symbol "LazyProps" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export function LazyMotion({ children, features, strict }: LazyProps): JSX.Element;
+
+// @public (undocumented)
+export interface LazyProps {
+    // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    children?: React_2.ReactNode;
+    // Warning: (ae-forgotten-export) The symbol "LazyFeatureBundle" needs to be exported by the entry point index.d.ts
+    features: FeatureBundle | LazyFeatureBundle_2;
+    strict?: boolean;
+}
 
 // @public (undocumented)
 export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
@@ -458,8 +467,6 @@ export interface MotionAdvancedProps {
     inherit?: boolean;
 }
 
-// Warning: (ae-forgotten-export) The symbol "MotionConfigProps" needs to be exported by the entry point index.d.ts
-// 
 // @public
 export function MotionConfig({ children, ...config }: MotionConfigProps): JSX.Element;
 
@@ -474,6 +481,12 @@ export interface MotionConfigContext {
 
 // @public (undocumented)
 export const MotionConfigContext: import("react").Context<MotionConfigContext>;
+
+// @public (undocumented)
+export interface MotionConfigProps extends Partial<MotionConfigContext> {
+    // (undocumented)
+    children?: React.ReactNode;
+}
 
 // @public
 export interface MotionProps extends AnimationProps, VisualElementLifecycles, PanHandlers, TapHandlers, HoverHandlers, FocusHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
