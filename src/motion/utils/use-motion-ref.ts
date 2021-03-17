@@ -13,19 +13,24 @@ export function useMotionRef<Instance, RenderState>(
     visualElement?: VisualElement<Instance> | null,
     externalRef?: React.Ref<Instance>
 ): React.Ref<Instance> {
-    return useCallback((instance: Instance) => {
-        instance && visualState.mount?.(instance)
+    return useCallback(
+        (instance: Instance) => {
+            instance && visualState.mount?.(instance)
 
-        if (visualElement) {
-            instance ? visualElement.mount(instance) : visualElement.unmount()
-        }
-
-        if (externalRef) {
-            if (typeof externalRef === "function") {
-                externalRef(instance)
-            } else if (isRefObject(externalRef)) {
-                ;(externalRef as any).current = instance
+            if (visualElement) {
+                instance
+                    ? visualElement.mount(instance)
+                    : visualElement.unmount()
             }
-        }
-    }, [])
+
+            if (externalRef) {
+                if (typeof externalRef === "function") {
+                    externalRef(instance)
+                } else if (isRefObject(externalRef)) {
+                    ;(externalRef as any).current = instance
+                }
+            }
+        },
+        [visualElement]
+    )
 }

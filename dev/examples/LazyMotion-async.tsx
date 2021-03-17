@@ -1,5 +1,5 @@
 import * as React from "react"
-import { m, MotionConfig } from "@framer"
+import { m, LazyMotion, domAnimation } from "@framer"
 import { useEffect, useState } from "react"
 
 /**
@@ -31,15 +31,19 @@ const Component = React.memo(() => {
 })
 
 export const App = () => {
-    const [loadedFeatures, setFeatures] = useState([])
-
-    useEffect(() => {
-        import("./inc/dynamic-features").then(res => setFeatures(res.default))
-    }, [])
-
     return (
-        <MotionConfig features={loadedFeatures}>
+        <LazyMotion
+            features={() => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        import("./inc/dynamic-features").then((res) =>
+                            resolve(res.default)
+                        )
+                    }, 2000)
+                })
+            }}
+        >
             <Component />
-        </MotionConfig>
+        </LazyMotion>
     )
 }

@@ -5,9 +5,9 @@ import { PresenceContext } from "../../context/PresenceContext"
 import { createAnimationState } from "../../render/utils/animation-state"
 import { AnimationType } from "../../render/utils/types"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
-import { FeatureBundle, FeatureProps } from "./types"
+import { FeatureComponents, FeatureProps } from "./types"
 
-export const animations: FeatureBundle = {
+export const animations: FeatureComponents = {
     animation: makeRenderlessComponent(
         ({ visualElement, animate }: FeatureProps) => {
             /**

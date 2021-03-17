@@ -204,11 +204,29 @@ export interface CustomValueType {
 
 // @public (undocumented)
 export const domAnimation: {
+    animation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    exit?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    drag?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    tap?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    focus?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    hover?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    pan?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    layoutAnimation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    measureLayout?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
     renderer: import("../types").CreateVisualElement<SVGElement | HTMLElement>;
 };
 
 // @public (undocumented)
 export const domMax: {
+    animation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    exit?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    drag?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    tap?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    focus?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    hover?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    pan?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    layoutAnimation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
+    measureLayout?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
     renderer: import("../types").CreateVisualElement<SVGElement | HTMLElement>;
 };
 
@@ -264,13 +282,37 @@ export interface EventInfo {
 }
 
 // @public (undocumented)
-export interface FeatureBundle {
+export interface FeatureBundle extends FeatureComponents {
+    // Warning: (ae-forgotten-export) The symbol "CreateVisualElement" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
-    [key: string]: FeatureComponent;
+    renderer: CreateVisualElement<any>;
 }
 
 // @public (undocumented)
 export type FeatureComponent = React.ComponentType<FeatureProps>;
+
+// @public (undocumented)
+export interface FeatureComponents {
+    // (undocumented)
+    animation?: FeatureComponent;
+    // (undocumented)
+    drag?: FeatureComponent;
+    // (undocumented)
+    exit?: FeatureComponent;
+    // (undocumented)
+    focus?: FeatureComponent;
+    // (undocumented)
+    hover?: FeatureComponent;
+    // (undocumented)
+    layoutAnimation?: FeatureComponent;
+    // (undocumented)
+    measureLayout?: FeatureComponent;
+    // (undocumented)
+    pan?: FeatureComponent;
+    // (undocumented)
+    tap?: FeatureComponent;
+}
 
 // @public (undocumented)
 export interface FeatureDefinition {
@@ -399,6 +441,11 @@ export interface LayoutProps {
 // @public (undocumented)
 export type LazyFeatureBundle = () => Promise<FeatureBundle>;
 
+// Warning: (ae-forgotten-export) The symbol "LazyProps" needs to be exported by the entry point index.d.ts
+// 
+// @public
+export function LazyMotion({ children, features, strict }: LazyProps): JSX.Element;
+
 // @public (undocumented)
 export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
 
@@ -414,24 +461,19 @@ export interface MotionAdvancedProps {
 // Warning: (ae-forgotten-export) The symbol "MotionConfigProps" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function MotionConfig({ children, isStatic, ...config }: MotionConfigProps): JSX.Element;
+export function MotionConfig({ children, ...config }: MotionConfigProps): JSX.Element;
 
 // @public (undocumented)
 export interface MotionConfigContext {
-    features?: FeatureBundle;
     // @internal
     isStatic: boolean;
-    // Warning: (ae-forgotten-export) The symbol "CreateVisualElement" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    renderer?: CreateVisualElement<any>;
     // @internal (undocumented)
     transformPagePoint: TransformPoint2D;
     transition?: Transition;
 }
 
 // @public (undocumented)
-export const MotionConfigContext: React.Context<MotionConfigContext>;
+export const MotionConfigContext: import("react").Context<MotionConfigContext>;
 
 // @public
 export interface MotionProps extends AnimationProps, VisualElementLifecycles, PanHandlers, TapHandlers, HoverHandlers, FocusHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {

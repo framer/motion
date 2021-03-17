@@ -1,5 +1,5 @@
 import * as React from "react"
-import { FeatureBundle } from "../../../motion/features/types"
+import { FeatureComponents } from "../../../motion/features/types"
 import { isSVGComponent } from "./is-svg-component"
 import { MotionComponentConfig } from "../../../motion"
 import { createUseRender } from "../use-render"
@@ -13,7 +13,7 @@ import { CustomMotionComponentConfig } from "../motion-proxy"
 export function createDomMotionConfig<Props>(
     Component: string | React.ComponentType<Props>,
     { forwardMotionProps = false }: CustomMotionComponentConfig,
-    preloadedFeatures?: FeatureBundle,
+    preloadedFeatures?: FeatureComponents,
     createVisualElement?: CreateVisualElement<any>
 ) {
     const baseConfig = isSVGComponent(Component)

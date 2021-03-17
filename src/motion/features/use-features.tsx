@@ -30,7 +30,7 @@ export function useFeatures(
     if (
         process.env.NODE_ENV !== "production" &&
         preloadedFeatures &&
-        lazyContext
+        lazyContext.strict
     ) {
         invariant(
             false,
