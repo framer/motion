@@ -1,12 +1,9 @@
 import * as React from "react"
-import {
-    createMotionComponent,
-    MotionComponentConfig,
-    MotionProps,
-} from "../../motion"
 import { DOMMotionComponents } from "./types"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
+import { MotionProps } from "../../motion/types"
+import { createMotionComponent, MotionComponentConfig } from "../../motion"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws

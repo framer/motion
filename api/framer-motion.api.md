@@ -106,9 +106,6 @@ export interface AnimationProps {
     variants?: Variants;
 }
 
-// @public (undocumented)
-export const animations: FeatureBundle;
-
 // @public
 export interface Axis {
     // (undocumented)
@@ -205,13 +202,15 @@ export interface CustomValueType {
     toValue: () => number | string;
 }
 
-// Warning: (ae-forgotten-export) The symbol "CreateVisualElement" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
-export const dom: CreateVisualElement<HTMLElement | SVGElement>;
+export const domAnimation: {
+    renderer: import("../types").CreateVisualElement<SVGElement | HTMLElement>;
+};
 
 // @public (undocumented)
-export const drag: FeatureBundle;
+export const domMax: {
+    renderer: import("../types").CreateVisualElement<SVGElement | HTMLElement>;
+};
 
 // @public
 export class DragControls {
@@ -319,9 +318,6 @@ export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRe
 export const FramerTreeLayoutContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
 
 // @public (undocumented)
-export const gestures: FeatureBundle;
-
-// @public (undocumented)
 export interface HoverHandlers {
     onHoverEnd?(event: MouseEvent, info: EventInfo): void;
     onHoverStart?(event: MouseEvent, info: EventInfo): void;
@@ -388,9 +384,6 @@ export interface Keyframes {
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
-// @public (undocumented)
-export const layoutAnimations: FeatureBundle;
-
 // Warning: (ae-internal-missing-underscore) The name "LayoutGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
@@ -428,6 +421,8 @@ export interface MotionConfigContext {
     features?: FeatureBundle;
     // @internal
     isStatic: boolean;
+    // Warning: (ae-forgotten-export) The symbol "CreateVisualElement" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
     renderer?: CreateVisualElement<any>;
     // @internal (undocumented)

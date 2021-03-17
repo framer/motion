@@ -9,11 +9,8 @@ export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 /**
  * Features
  */
-export { animations } from "./motion/features/animations"
-export { gestures } from "./motion/features/gestures"
-export { drag } from "./motion/features/drag"
-export { layoutAnimations } from "./motion/features/layout"
-export { createDomVisualElement as dom } from "./render/dom/create-visual-element"
+export { domAnimation } from "./render/dom/features-animation"
+export { domMax } from "./render/dom/features-max"
 
 /**
  * Motion values

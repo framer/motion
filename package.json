@@ -135,7 +135,15 @@
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "5.5 kB"
+            "maxSize": "5 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-animation.js",
+            "maxSize": "13 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-max.js",
+            "maxSize": "18 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",

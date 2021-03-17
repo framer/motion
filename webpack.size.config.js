@@ -24,7 +24,7 @@ module.exports = {
     devtool: false,
     optimization: {
         usedExports: true,
-        minimize: false,
+        minimize: true,
         minimizer: [
             new TerserPlugin({
                 terserOptions: {

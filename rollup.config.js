@@ -73,11 +73,33 @@ const es = Object.assign({}, config, {
 })
 
 const m = Object.assign({}, es, {
-    input: "lib/render/dom/size-rollup-m.js",
+    input: "lib/render/dom/motion-minimal.js",
     output: Object.assign({}, es.output, {
-        dir: `dist/m`,
+        file: `dist/size-rollup-m.js`,
         preserveModules: false,
+        dir: undefined,
     }),
+    plugins: [resolve(), terser({ output: { comments: false } })],
 })
 
-export default [umd, umdProd, cjs, es, m]
+const domAnimation = Object.assign({}, es, {
+    input: "lib/render/dom/features-animation.js",
+    output: Object.assign({}, es.output, {
+        file: `dist/size-rollup-dom-animation.js`,
+        preserveModules: false,
+        dir: undefined,
+    }),
+    plugins: [resolve(), terser({ output: { comments: false } })],
+})
+
+const domMax = Object.assign({}, es, {
+    input: "lib/render/dom/features-max.js",
+    output: Object.assign({}, es.output, {
+        file: `dist/size-rollup-dom-max.js`,
+        preserveModules: false,
+        dir: undefined,
+    }),
+    plugins: [resolve(), terser({ output: { comments: false } })],
+})
+
+export default [umd, umdProd, cjs, es, m, domAnimation, domMax]
