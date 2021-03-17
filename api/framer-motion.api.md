@@ -800,7 +800,7 @@ export function useTransform<I, O>(input: MotionValue<I>, transformer: SingleTra
 // Warning: (ae-forgotten-export) The symbol "MultiTransformer" needs to be exported by the entry point index.d.ts
 // 
 // @public
-export function useTransform<I, O>(input: MotionValue<string | number>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
+export function useTransform<I, O>(input: MotionValue<string>[] | MotionValue<number>[] | MotionValue<string | number>[], transformer: MultiTransformer<I, O>): MotionValue<O>;
 
 // @public
 export function useVelocity(value: MotionValue<number>): MotionValue<number>;
