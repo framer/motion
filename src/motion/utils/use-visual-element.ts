@@ -9,6 +9,7 @@ import { CreateVisualElement, VisualElement } from "../../render/types"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualState } from "./use-visual-state"
+import { LazyContext } from "../../context/LazyContext"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
@@ -24,6 +25,7 @@ export function useVisualElement<Instance, RenderState>(
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
     const config = useContext(MotionConfigContext)
+    const lazyRenderer = useContext(LazyContext)
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
@@ -32,9 +34,10 @@ export function useVisualElement<Instance, RenderState>(
         VisualElement | undefined
     > = useRef(undefined)
 
-    if (!createVisualElement) {
-        createVisualElement = config.renderer
-    }
+    /**
+     * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
+     */
+    if (!createVisualElement) createVisualElement = lazyRenderer
 
     if (!visualElementRef.current && createVisualElement) {
         visualElementRef.current = createVisualElement(Component, {
