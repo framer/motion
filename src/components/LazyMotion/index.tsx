@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { LazyContext } from "../../context/LazyContext"
 import { loadFeatures } from "../../motion/features/definitions"
 import { FeatureBundle, LazyFeatureBundle } from "../../motion/features/types"
@@ -41,13 +41,10 @@ import { LazyProps } from "./types"
  *
  * @public
  */
-export function LazyMotion({ children, features }: LazyProps) {
-    const [loadedRenderer, setRenderer] = useState<
-        CreateVisualElement<any> | undefined
-    >(
-        !isLazyBundle(features)
-            ? (features.renderer as CreateVisualElement<any>)
-            : undefined
+export function LazyMotion({ children, features, strict = false }: LazyProps) {
+    const [, setIsLoaded] = useState(!isLazyBundle(features))
+    const loadedRenderer = useRef<undefined | CreateVisualElement<any>>(
+        undefined
     )
 
     /**
@@ -55,6 +52,7 @@ export function LazyMotion({ children, features }: LazyProps) {
      */
     if (!isLazyBundle(features)) {
         const { renderer, ...loadedFeatures } = features
+        loadedRenderer.current = renderer
         loadFeatures(loadedFeatures)
     }
 
@@ -62,18 +60,23 @@ export function LazyMotion({ children, features }: LazyProps) {
         if (isLazyBundle(features)) {
             features().then(({ renderer, ...loadedFeatures }) => {
                 loadFeatures(loadedFeatures)
-                setRenderer(renderer)
+                loadedRenderer.current = renderer
+                setIsLoaded(true)
             })
         }
     }, [])
 
     return (
-        <LazyContext.Provider value={loadedRenderer}>
+        <LazyContext.Provider
+            value={{ renderer: loadedRenderer.current, strict }}
+        >
             {children}
         </LazyContext.Provider>
     )
 }
 
-function isLazyBundle(features: FeatureBundle): features is LazyFeatureBundle {
-    return typeof features === "function" || features === null
+function isLazyBundle(
+    features: FeatureBundle | LazyFeatureBundle
+): features is LazyFeatureBundle {
+    return typeof features === "function"
 }

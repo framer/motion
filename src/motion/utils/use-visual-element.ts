@@ -25,7 +25,7 @@ export function useVisualElement<Instance, RenderState>(
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
     const config = useContext(MotionConfigContext)
-    const lazyRenderer = useContext(LazyContext)
+    const lazyContext = useContext(LazyContext)
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
@@ -37,7 +37,7 @@ export function useVisualElement<Instance, RenderState>(
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
      */
-    if (!createVisualElement) createVisualElement = lazyRenderer
+    if (!createVisualElement) createVisualElement = lazyContext.renderer
 
     if (!visualElementRef.current && createVisualElement) {
         visualElementRef.current = createVisualElement(Component, {

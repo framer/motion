@@ -8,4 +8,5 @@ export type LazyFeatureBundle = () => Promise<FeatureBundle>
 export interface LazyProps {
     children?: React.ReactNode
     features: FeatureBundle | LazyFeatureBundle
+    strict?: boolean
 }

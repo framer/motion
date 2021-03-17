@@ -5,6 +5,8 @@ export { motion, createDomMotionComponent } from "./render/dom/motion"
 export { m } from "./render/dom/motion-minimal"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
+export { MotionConfig } from "./components/MotionConfig"
+export { LazyMotion } from "./components/LazyMotion"
 
 /**
  * Features
@@ -68,10 +70,7 @@ export { VisualElement } from "./render/types"
 /**
  * Contexts
  */
-export {
-    MotionConfig,
-    MotionConfigContext,
-} from "./context/MotionConfigContext"
+export { MotionConfigContext } from "./context/MotionConfigContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
 

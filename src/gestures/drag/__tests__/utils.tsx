@@ -1,6 +1,6 @@
 import * as React from "react"
 import sync from "framesync"
-import { MotionConfig } from "../../../context/MotionConfigContext"
+import { MotionConfig } from "../../../components/MotionConfig"
 import { act } from "react-dom/test-utils"
 import { fireEvent } from "@testing-library/dom"
 
