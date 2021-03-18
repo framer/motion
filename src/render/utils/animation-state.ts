@@ -358,6 +358,7 @@ export function createAnimationState(
         }
 
         isInitialRender = false
+
         return shouldAnimate ? animate(animations) : Promise.resolve()
     }
 

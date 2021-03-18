@@ -24,7 +24,11 @@ import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
 import { createLayoutState, createProjectionState } from "./utils/state"
-import { checkIfControllingVariants, isVariantLabel } from "./utils/variants"
+import {
+    checkIfControllingVariants,
+    checkIfVariantNode,
+    isVariantLabel,
+} from "./utils/variants"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -290,10 +294,7 @@ export const visualElement = <Instance, MutableState, Options>({
      * Determine what role this visual element should take in the variant tree.
      */
     const isControllingVariants = checkIfControllingVariants(props)
-    const definesInitialVariant = isVariantLabel(props.initial)
-    const isVariantNode = Boolean(
-        definesInitialVariant || isControllingVariants || props.variants
-    )
+    const isVariantNode = checkIfVariantNode(props)
 
     const element: VisualElement<Instance> = {
         treeType,

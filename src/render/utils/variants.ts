@@ -107,3 +107,7 @@ export function checkIfControllingVariants(props: MotionProps) {
         isVariantLabel(props.exit)
     )
 }
+
+export function checkIfVariantNode(props: MotionProps) {
+    return Boolean(checkIfControllingVariants(props) || props.variants)
+}

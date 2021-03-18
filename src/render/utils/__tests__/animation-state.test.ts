@@ -22,6 +22,10 @@ const stateVisualElement = visualElement<
         return {}
     },
 
+    getBaseTarget(props, key) {
+        return props.style?.[key]
+    },
+
     readValueFromInstance(_state, key, options) {
         return options.initialState[key] || 0
     },
@@ -52,13 +56,22 @@ function createTest(
     )
     element.animationState = createAnimationState(element)
 
+    element.mount({})
+
     return {
         element: element,
         state: {
             ...element.animationState,
-            setProps(newProps: any, options: any, type: any): any {
+            setProps(
+                newProps: any,
+                options: any,
+                type: any,
+                animateChanges = true
+            ): any {
                 element.setProps(newProps)
-                return element.animationState?.animateChanges(options, type)
+                return animateChanges === true
+                    ? element.animationState?.animateChanges(options, type)
+                    : undefined
             },
         },
     }
@@ -127,7 +140,8 @@ describe("Animation state - Initiating props", () => {
         const { element: parent } = createTest({
             animate: "test",
         })
-        const { state } = createTest({}, parent)
+        const { element: child, state } = createTest({}, parent)
+        child.manuallyAnimateOnMount = false
 
         const animate = mockAnimate(state)
         state.setProps({
@@ -476,10 +490,7 @@ describe("Animation state - Setting props", () => {
         )
     })
 
-    /**
-     * TODO: Un-skip these and validate before merge
-     */
-    test.skip("Removing values, variant changed", () => {
+    test("Removing values, variant changed", () => {
         const { state } = createTest()
 
         state.setProps({
@@ -507,7 +518,7 @@ describe("Animation state - Setting props", () => {
         )
     })
 
-    test.skip("Removing values, inherited variant changed", () => {
+    test("Removing values, inherited variant changed", () => {
         const { element: parent } = createTest({ animate: "a" })
         const { state } = createTest({}, parent)
 
@@ -532,6 +543,101 @@ describe("Animation state - Setting props", () => {
         expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
             {}
         )
+    })
+
+    test("Removing values, inherited variant changed from starting at empty variant", () => {
+        const { element: parent, state: parentState } = createTest({
+            animate: "",
+        })
+        const { element: child, state: childState } = createTest({}, parent)
+        child.manuallyAnimateOnMount = false
+        childState.setProps(
+            {
+                style: { opacity: 0 },
+                variants: {
+                    a: { opacity: 0.1 },
+                    b: { opacity: 0.9 },
+                },
+            },
+            undefined,
+            undefined,
+            false
+        )
+
+        let parentAnimate = mockAnimate(parentState)
+        let childAnimate = mockAnimate(childState)
+
+        childState.setProps(
+            {
+                style: { opacity: 0 },
+                variants: {
+                    a: { opacity: 0.1 },
+                    b: { opacity: 0.9 },
+                },
+            },
+            undefined,
+            undefined,
+            false
+        )
+        parentState.setProps({ animate: "a" }, undefined, undefined, false)
+        child.animationState!.animateChanges()
+        parent.animationState!.animateChanges()
+
+        expect(parentAnimate).toBeCalledWith(["a"])
+        expect(childAnimate).not.toBeCalled()
+        expect(
+            childState.getState()[AnimationType.Animate].protectedKeys
+        ).toEqual({})
+
+        parentAnimate = mockAnimate(parentState)
+        childAnimate = mockAnimate(childState)
+
+        childState.setProps(
+            {
+                style: { opacity: 0 },
+                variants: {
+                    a: { opacity: 0.1 },
+                    b: { opacity: 0.9 },
+                },
+            },
+            undefined,
+            undefined,
+            false
+        )
+        parentState.setProps({ animate: "b" }, undefined, undefined, false)
+
+        child.animationState!.animateChanges()
+        parent.animationState!.animateChanges()
+        expect(parentAnimate).toBeCalledWith(["b"])
+        expect(childAnimate).not.toBeCalled()
+        expect(
+            childState.getState()[AnimationType.Animate].protectedKeys
+        ).toEqual({})
+
+        parentAnimate = mockAnimate(parentState)
+        childAnimate = mockAnimate(childState)
+
+        childState.setProps(
+            {
+                style: { opacity: 0 },
+                variants: {
+                    a: { opacity: 0.1 },
+                    b: { opacity: 0.9 },
+                },
+            },
+            undefined,
+            undefined,
+            false
+        )
+        parentState.setProps({ animate: "" }, undefined, undefined, false)
+
+        child.animationState!.animateChanges()
+        parent.animationState!.animateChanges()
+        expect(parentAnimate).toBeCalledWith([""])
+        expect(childAnimate).toBeCalledWith([{ opacity: 0 }])
+        expect(
+            childState.getState()[AnimationType.Animate].protectedKeys
+        ).toEqual({})
     })
 })
 
