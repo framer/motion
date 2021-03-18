@@ -34,12 +34,13 @@ export const App = () => {
     return (
         <LazyMotion
             features={() => {
-                return new Promise((resolve) => {
+                return new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        import("./inc/dynamic-features").then((res) =>
+                        import("./inc/dynamic-features").then((res) => {
+                            reject()
                             resolve(res.default)
-                        )
-                    }, 2000)
+                        })
+                    }, 5000)
                 })
             }}
         >
