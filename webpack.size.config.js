@@ -16,6 +16,14 @@ module.exports = {
             __dirname,
             "./src/render/dom/motion-minimal.ts"
         ),
+        "size-webpack-dom-animation": path.join(
+            __dirname,
+            "./src/render/dom/features-animation.ts"
+        ),
+        "size-webpack-dom-max": path.join(
+            __dirname,
+            "./src/render/dom/features-max.ts"
+        ),
     },
     output: {
         path: path.join(__dirname, "dist"),
