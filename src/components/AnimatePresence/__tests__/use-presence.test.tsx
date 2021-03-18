@@ -9,7 +9,7 @@ type CB = () => void
 
 describe("usePresence", () => {
     test("Can defer unmounting", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise<void>((resolve) => {
             let remove: CB
 
             const Child = () => {
@@ -42,7 +42,7 @@ describe("usePresence", () => {
     })
 
     test("Multiple children can exit", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise<void>((resolve) => {
             let removeA: CB
             let removeB: CB
 
@@ -97,7 +97,7 @@ describe("usePresence", () => {
     })
 
     test("Multiple children can exit over multiple rerenders", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise<void>((resolve) => {
             let removeA: CB
             let removeB: CB
 

@@ -49,10 +49,10 @@ export function animationControls(): AnimationControls {
 
                 return Promise.all(animations)
             } else {
-                return new Promise((resolve) => {
+                return new Promise<void>((resolve) => {
                     pendingAnimations.push({
                         animation: [definition, transitionOverride],
-                        resolve: () => resolve(undefined),
+                        resolve,
                     })
                 })
             }

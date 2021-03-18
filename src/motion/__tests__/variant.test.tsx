@@ -603,7 +603,7 @@ describe("animate prop as variant", () => {
     test("onUpdate doesnt fire if no values have changed", async () => {
         const onUpdate = jest.fn()
 
-        await new Promise((resolve) => {
+        await new Promise<void>((resolve) => {
             const x = motionValue(0)
             const Component = ({ xTarget = 0 }) => (
                 <motion.div

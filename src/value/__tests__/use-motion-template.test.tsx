@@ -37,7 +37,7 @@ describe("useMotionTemplate", () => {
         const { container } = render(<Component />)
         const { firstChild } = container
 
-        return new Promise(resolve => {
+        return new Promise<void>((resolve) => {
             setTimeout(() => {
                 expect(firstChild).toHaveStyle(
                     `transform: translateX(10px) translateY(2px)`

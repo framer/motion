@@ -10,6 +10,7 @@ import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from 'popmotion';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { Interaction } from 'scheduler/tracing';
 import { PlaybackControls } from 'popmotion';
 import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
@@ -203,32 +204,10 @@ export interface CustomValueType {
 }
 
 // @public (undocumented)
-export const domAnimation: {
-    animation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    exit?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    drag?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    tap?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    focus?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    hover?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    pan?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    layoutAnimation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    measureLayout?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    renderer: import("../types").CreateVisualElement<SVGElement | HTMLElement>;
-};
+export const domAnimation: FeatureBundle;
 
 // @public (undocumented)
-export const domMax: {
-    animation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    exit?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    drag?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    tap?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    focus?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    hover?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    pan?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    layoutAnimation?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    measureLayout?: import("react").ComponentClass<import("../..").FeatureProps, any> | import("react").FunctionComponent<import("../..").FeatureProps> | undefined;
-    renderer: import("../types").CreateVisualElement<SVGElement | HTMLElement>;
-};
+export const domMax: FeatureBundle;
 
 // @public
 export class DragControls {
@@ -456,10 +435,10 @@ export interface LazyProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
+export const m: (<Props>(Component: string | import("react").ComponentType<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
 
 // @public
-export const motion: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
+export const motion: (<Props>(Component: string | import("react").ComponentType<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
 
 // @public (undocumented)
 export interface MotionAdvancedProps {
