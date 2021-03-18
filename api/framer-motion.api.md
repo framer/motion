@@ -818,8 +818,9 @@ export function useCycle<T>(...items: T[]): CycleState<T>;
 export function useDeprecatedAnimatedState(initialState: any): any[];
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "useDeprecatedInvertedScale" should be prefixed with an underscore because the declaration is marked as @internal
 // 
-// @public @deprecated
+// @internal @deprecated
 export function useDeprecatedInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
 // @public
