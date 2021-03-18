@@ -1,19 +1,29 @@
+import * as React from "react"
 import { VisualElement } from "../../render/types"
 import { Transition } from "../../types"
 import { AxisBox2D } from "../../types/geometry"
 import { MotionValue } from "../../value"
 
+/**
+ * @public
+ */
 export enum Presence {
     Entering,
     Present,
     Exiting,
 }
 
+/**
+ * @public
+ */
 export enum VisibilityAction {
     Hide,
     Show,
 }
 
+/**
+ * @public
+ */
 export interface SharedLayoutProps {
     /**
      * @public
@@ -48,6 +58,8 @@ export interface SharedLayoutAnimationConfig {
 /**
  * Handlers for batching sync layout lifecycles. We batches these processes to cut
  * down on layout thrashing
+ *
+ * @public
  */
 export interface SyncLayoutLifecycles {
     measureLayout: (child: VisualElement) => void
@@ -57,6 +69,8 @@ export interface SyncLayoutLifecycles {
 
 /**
  * The exposed API for children to add themselves to the batcher and to flush it.
+ *
+ * @public
  */
 export interface SyncLayoutBatcher {
     add: (child: VisualElement) => void

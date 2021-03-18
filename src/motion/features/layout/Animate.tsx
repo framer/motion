@@ -1,6 +1,5 @@
 import * as React from "react"
-import { MotionProps } from "../../types"
-import { FeatureProps, MotionFeature } from "../types"
+import { FeatureProps } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
@@ -12,6 +11,8 @@ import {
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
 import { axisBox } from "../../../utils/geometry"
+import { addScaleCorrection } from "../../../render/dom/projection/scale-correction"
+import { defaultScaleCorrectors } from "../../../render/dom/projection/default-scale-correctors"
 
 interface AxisLocks {
     x?: () => void
@@ -61,6 +62,8 @@ class Animate extends React.Component<AnimateProps> {
         visualElement.enableLayoutProjection()
         this.unsubLayoutReady = visualElement.onLayoutUpdate(this.animate)
         visualElement.layoutSafeToRemove = () => this.safeToRemove()
+
+        addScaleCorrection(defaultScaleCorrectors)
     }
 
     componentWillUnmount() {
@@ -251,7 +254,7 @@ class Animate extends React.Component<AnimateProps> {
     }
 }
 
-function AnimateLayoutContextProvider(props: FeatureProps) {
+export function AnimateLayoutContextProvider(props: FeatureProps) {
     const [, safeToRemove] = usePresence()
     return <Animate {...props} safeToRemove={safeToRemove} />
 }
@@ -276,14 +279,4 @@ function axisIsEqual(a: Axis, b: Axis) {
 const defaultTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
-}
-
-/**
- * @public
- */
-export const AnimateLayout: MotionFeature = {
-    key: "animate-layout",
-    shouldRender: (props: MotionProps) =>
-        !!props.layout || props.layoutId !== undefined,
-    getComponent: () => AnimateLayoutContextProvider,
 }

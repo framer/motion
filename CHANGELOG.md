@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.0] Unreleased
+
+### Added
+
+-   Added the new `LazyMotion` component to defer the loading of animations and gestures.
+
+### Removed
+
+-   The deprecated `motion.custom()`. Use `motion()` instead.
+
 ## [3.10.6] 2021-03-18
 
 ### Fixed

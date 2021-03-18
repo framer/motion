@@ -1,74 +1,9 @@
-import { TargetAndTransition } from "../types"
 import { isMouseEvent } from "./utils/event-type"
 import { EventInfo } from "../events/types"
 import { AnimationType } from "../render/utils/types"
-import { VariantLabels } from "../motion/types"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { VisualElement } from "../render/types"
-
-/**
- * @public
- */
-export interface HoverHandlers {
-    /**
-     * Properties or variant label to animate to while the hover gesture is recognised.
-     *
-     * @library
-     *
-     * ```jsx
-     * <Frame whileHover={{ scale: 1.2 }} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.div whileHover={{ scale: 1.2 }} />
-     * ```
-     */
-    whileHover?: VariantLabels | TargetAndTransition
-
-    /**
-     * Callback function that fires when pointer starts hovering over the component.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onHoverStart(event) {
-     *   console.log("Hover starts")
-     * }
-     *
-     * <Frame onHoverStart={onHoverStart} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.div onHoverStart={() => console.log('Hover starts')} />
-     * ```
-     */
-    onHoverStart?(event: MouseEvent, info: EventInfo): void
-
-    /**
-     * Callback function that fires when pointer stops hovering over the component.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onHoverEnd(event) {
-     *   console.log("Hover ends")
-     * }
-     *
-     * <Frame onHoverEnd={onHoverEnd} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.div onHoverEnd={() => console.log("Hover ends")} />
-     * ```
-     */
-    onHoverEnd?(event: MouseEvent, info: EventInfo): void
-}
+import { FeatureProps } from "../motion/features/types"
 
 function createHoverEvent(
     visualElement: VisualElement,
@@ -82,10 +17,12 @@ function createHoverEvent(
     }
 }
 
-export function useHoverGesture(
-    { onHoverStart, onHoverEnd, whileHover }: HoverHandlers,
-    visualElement: VisualElement
-) {
+export function useHoverGesture({
+    onHoverStart,
+    onHoverEnd,
+    whileHover,
+    visualElement,
+}: FeatureProps) {
     usePointerEvent(
         visualElement,
         "pointerenter",

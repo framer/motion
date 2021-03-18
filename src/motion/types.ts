@@ -1,6 +1,6 @@
 import { CSSProperties } from "react"
 import { MotionValue } from "../value"
-import { AnimationControls } from "../animation/animation-controls"
+import { AnimationControls } from "../animation/types"
 import {
     Variants,
     Target,
@@ -9,11 +9,16 @@ import {
     Omit,
     MakeCustomValueType,
 } from "../types"
-import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
 import { ResolvedValues } from "../render/types"
 import { VisualElementLifecycles } from "../render/utils/lifecycles"
+import {
+    PanHandlers,
+    TapHandlers,
+    HoverHandlers,
+    FocusHandlers,
+} from "../gestures/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -340,7 +345,10 @@ export interface MotionAdvancedProps {
 export interface MotionProps
     extends AnimationProps,
         VisualElementLifecycles,
-        GestureHandlers,
+        PanHandlers,
+        TapHandlers,
+        HoverHandlers,
+        FocusHandlers,
         DraggableProps,
         LayoutProps,
         MotionAdvancedProps {

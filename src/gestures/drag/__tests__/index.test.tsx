@@ -300,7 +300,7 @@ describe("dragging", () => {
         await pointer.to(50, 50)
         pointer.end()
 
-        const checkPointer = new Promise((resolve) => {
+        const checkPointer = new Promise<void>((resolve) => {
             setTimeout(() => {
                 expect(dragX.get()).toBeGreaterThan(50)
                 expect(x.get()).toBe(0)

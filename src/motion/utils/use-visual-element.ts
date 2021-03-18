@@ -1,15 +1,15 @@
-import { useContext, useEffect } from "react"
+import * as React from "react"
+import { MutableRefObject, useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { MotionProps } from "../../motion"
 import { useVisualElementContext } from "../../context/MotionContext"
-import { useSnapshotOnUnmount } from "../../motion/features/layout/use-snapshot-on-unmount"
 import { CreateVisualElement, VisualElement } from "../../render/types"
-import { useConstant } from "../../utils/use-constant"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualState } from "./use-visual-state"
+import { LazyContext } from "../../context/LazyContext"
 
 function useLayoutId({ layoutId }: MotionProps) {
     const layoutGroupId = useContext(LayoutGroupContext)
@@ -19,27 +19,41 @@ function useLayoutId({ layoutId }: MotionProps) {
 }
 
 export function useVisualElement<Instance, RenderState>(
-    isStatic: boolean,
+    Component: string | React.ComponentType,
     visualState: VisualState<Instance, RenderState>,
-    createVisualElement: CreateVisualElement<Instance>,
-    props: MotionProps
-): VisualElement<Instance> {
+    props: MotionProps,
+    createVisualElement?: CreateVisualElement<Instance>
+): VisualElement<Instance> | undefined {
     const config = useContext(MotionConfigContext)
+    const lazyContext = useContext(LazyContext)
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const layoutId = useLayoutId(props)
 
-    const visualElement = useConstant(() =>
-        createVisualElement(isStatic, {
+    const visualElementRef: MutableRefObject<
+        VisualElement | undefined
+    > = useRef(undefined)
+
+    /**
+     * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
+     */
+    if (!createVisualElement) createVisualElement = lazyContext.renderer
+
+    if (!visualElementRef.current && createVisualElement) {
+        visualElementRef.current = createVisualElement(Component, {
             visualState,
             parent,
             props: { ...props, layoutId },
             presenceId: presenceContext?.id,
             blockInitialAnimation: presenceContext?.initial === false,
         })
-    )
+    }
+
+    const visualElement = visualElementRef.current
 
     useIsomorphicLayoutEffect(() => {
+        if (!visualElement) return
+
         visualElement.setProps({
             ...config,
             ...props,
@@ -57,6 +71,8 @@ export function useVisualElement<Instance, RenderState>(
     })
 
     useEffect(() => {
+        if (!visualElement) return
+
         /**
          * In a future refactor we can replace the features-as-components and
          * have this loop through them all firing "effect" listeners
@@ -64,12 +80,7 @@ export function useVisualElement<Instance, RenderState>(
         visualElement.animationState?.animateChanges()
     })
 
-    /**
-     * If this component is a child of AnimateSharedLayout, we need to snapshot the component
-     * before it's unmounted. This lives here rather than in features/layout/Measure because
-     * as a child component its unmount effect runs after this component has been unmounted.
-     */
-    useSnapshotOnUnmount(visualElement)
+    useIsomorphicLayoutEffect(() => () => visualElement?.notifyUnmount(), [])
 
     return visualElement
 }

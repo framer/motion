@@ -1,5 +1,4 @@
-import { MotionProps } from "../../types"
-import { FeatureProps, MotionFeature } from "../types"
+import { FeatureProps } from "../types"
 import React, { useContext } from "react"
 import {
     isSharedLayout,
@@ -28,6 +27,16 @@ class Measure extends React.Component<SyncProps> {
         isSharedLayout(syncLayout) && syncLayout.register(visualElement)
         isSharedLayout(framerSyncLayout) &&
             framerSyncLayout.register(visualElement)
+
+        visualElement.onUnmount(() => {
+            if (isSharedLayout(syncLayout)) {
+                syncLayout.remove(visualElement as any)
+            }
+
+            if (isSharedLayout(framerSyncLayout)) {
+                framerSyncLayout.remove(visualElement as any)
+            }
+        })
     }
 
     /**
@@ -66,7 +75,7 @@ class Measure extends React.Component<SyncProps> {
     }
 }
 
-function MeasureContextProvider(props: FeatureProps) {
+export function MeasureContextProvider(props: FeatureProps) {
     const syncLayout = useContext(SharedLayoutContext)
     const framerSyncLayout = useContext(FramerTreeLayoutContext)
     return (
@@ -76,11 +85,4 @@ function MeasureContextProvider(props: FeatureProps) {
             framerSyncLayout={framerSyncLayout}
         />
     )
-}
-
-export const MeasureLayout: MotionFeature = {
-    key: "measure-layout",
-    shouldRender: (props: MotionProps) =>
-        !!props.drag || !!props.layout || props.layoutId !== undefined,
-    getComponent: () => MeasureContextProvider,
 }

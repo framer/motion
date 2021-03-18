@@ -1,39 +1,62 @@
 import * as React from "react"
-import { useContext } from "react"
-import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from ".."
-import { MotionFeature } from "./types"
+import { FeatureBundle, FeatureDefinition } from "./types"
+import { featureDefinitions } from "./definitions"
+import { invariant } from "hey-listen"
+import { useContext } from "react"
+import { LazyContext } from "../../context/LazyContext"
+
+const featureNames = Object.keys(featureDefinitions)
+const numFeatures = featureNames.length
 
 /**
  * Load features via renderless components based on the provided MotionProps.
- * TODO: Look into porting this to a component-less appraoch.
  */
 export function useFeatures(
-    defaultFeatures: MotionFeature[],
-    visualElement: VisualElement,
-    props: MotionProps
+    props: MotionProps,
+    visualElement?: VisualElement,
+    preloadedFeatures?: FeatureBundle
 ): null | JSX.Element[] {
-    const plugins = useContext(MotionConfigContext)
-
-    const allFeatures = [...defaultFeatures, ...plugins.features]
-    const numFeatures = allFeatures.length
     const features: JSX.Element[] = []
+    const lazyContext = useContext(LazyContext)
 
-    // Decide which features we should render and add them to the returned array
+    if (!visualElement) return null
+
+    /**
+     * If we're in development mode, check to make sure we're not rendering a motion component
+     * as a child of LazyMotion, as this will break the file-size benefits of using it.
+     */
+    if (
+        process.env.NODE_ENV !== "production" &&
+        preloadedFeatures &&
+        lazyContext.strict
+    ) {
+        invariant(
+            false,
+            "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
+        )
+    }
+
     for (let i = 0; i < numFeatures; i++) {
-        const { shouldRender, key, getComponent } = allFeatures[i]
+        const name = featureNames[i]
+        const { isEnabled, Component } = featureDefinitions[
+            name
+        ] as FeatureDefinition
 
-        if (shouldRender(props)) {
-            const Component = getComponent(props)
-            Component &&
-                features.push(
-                    <Component
-                        key={key}
-                        {...props}
-                        visualElement={visualElement as any}
-                    />
-                )
+        /**
+         * It might be possible in the future to use this moment to
+         * dynamically request functionality. In initial tests this
+         * was producing a lot of duplication amongst bundles.
+         */
+        if (isEnabled(props) && Component) {
+            features.push(
+                <Component
+                    key={name}
+                    {...props}
+                    visualElement={visualElement}
+                />
+            )
         }
     }
 

@@ -10,6 +10,7 @@ import { DetailedHTMLFactory } from 'react';
 import { Easing as Easing_2 } from 'popmotion';
 import { ForwardRefExoticComponent } from 'react';
 import { HTMLAttributes } from 'react';
+import { Interaction } from 'scheduler/tracing';
 import { PlaybackControls } from 'popmotion';
 import { PropsWithoutRef } from 'react';
 import * as PropTypes from 'prop-types';
@@ -28,9 +29,6 @@ export function addScaleCorrection(correctors: ScaleCorrectionDefinitionMap): vo
 
 // @public
 export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions<V>): AnimationPlaybackControls;
-
-// @public (undocumented)
-export const AnimateLayoutFeature: MotionFeature;
 
 // @public
 export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps>;
@@ -86,9 +84,6 @@ export interface AnimationControls {
 
 // @public (undocumented)
 export function animationControls(): AnimationControls;
-
-// @public (undocumented)
-export const AnimationFeature: MotionFeature;
 
 // Warning: (ae-forgotten-export) The symbol "AnimationPlaybackLifecycles" needs to be exported by the entry point index.d.ts
 // 
@@ -193,13 +188,12 @@ export function createDomMotionComponent<T extends keyof DOMMotionComponents>(ke
 // Warning: (ae-internal-missing-underscore) The name "createMotionComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export function createMotionComponent<Props extends {}, Instance, RenderState>({ defaultFeatures, createVisualElement, useRender, useVisualState, }: MotionComponentConfig<Instance, RenderState>): React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<Instance>>;
+export function createMotionComponent<Props extends {}, Instance, RenderState>({ preloadedFeatures, createVisualElement, useRender, useVisualState, Component, }: MotionComponentConfig<Instance, RenderState>): React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<Instance>>;
 
-// Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "CustomDomComponent" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal
-export type CustomDomComponent<Props> = React_2.ForwardRefExoticComponent<React_2.PropsWithoutRef<Props & MotionProps> & React_2.RefAttributes<SVGElement | HTMLElement>>;
+export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<React.PropsWithoutRef<Props & MotionProps> & React.RefAttributes<SVGElement | HTMLElement>>;
 
 // @public (undocumented)
 export interface CustomValueType {
@@ -208,6 +202,12 @@ export interface CustomValueType {
     // (undocumented)
     toValue: () => number | string;
 }
+
+// @public (undocumented)
+export const domAnimation: FeatureBundle;
+
+// @public (undocumented)
+export const domMax: FeatureBundle;
 
 // @public
 export class DragControls {
@@ -223,9 +223,6 @@ export class DragControls {
 
 // @public (undocumented)
 export type DragElastic = boolean | number | Partial<BoundingBox2D>;
-
-// @public (undocumented)
-export const DragFeature: MotionFeature;
 
 // @public (undocumented)
 export interface DraggableProps extends DragHandlers {
@@ -264,7 +261,63 @@ export interface EventInfo {
 }
 
 // @public (undocumented)
-export const ExitFeature: MotionFeature;
+export interface FeatureBundle extends FeatureComponents {
+    // Warning: (ae-forgotten-export) The symbol "CreateVisualElement" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    renderer: CreateVisualElement<any>;
+}
+
+// @public (undocumented)
+export type FeatureComponent = React.ComponentType<FeatureProps>;
+
+// @public (undocumented)
+export interface FeatureComponents {
+    // (undocumented)
+    animation?: FeatureComponent;
+    // (undocumented)
+    drag?: FeatureComponent;
+    // (undocumented)
+    exit?: FeatureComponent;
+    // (undocumented)
+    focus?: FeatureComponent;
+    // (undocumented)
+    hover?: FeatureComponent;
+    // (undocumented)
+    layoutAnimation?: FeatureComponent;
+    // (undocumented)
+    measureLayout?: FeatureComponent;
+    // (undocumented)
+    pan?: FeatureComponent;
+    // (undocumented)
+    tap?: FeatureComponent;
+}
+
+// @public (undocumented)
+export interface FeatureDefinition {
+    // (undocumented)
+    Component?: FeatureComponent;
+    // (undocumented)
+    isEnabled: (props: MotionProps) => boolean;
+}
+
+// @public (undocumented)
+export type FeatureDefinitions = {
+    [K in keyof FeatureNames]: FeatureDefinition;
+};
+
+// @public (undocumented)
+export type FeatureNames = {
+    animation: true;
+    exit: true;
+    drag: true;
+    tap: true;
+    focus: true;
+    hover: true;
+    pan: true;
+    layoutAnimation: true;
+    measureLayout: true;
+};
 
 // @public (undocumented)
 export interface FeatureProps extends MotionProps {
@@ -284,12 +337,6 @@ export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRe
 // 
 // @internal (undocumented)
 export const FramerTreeLayoutContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
-
-// @public (undocumented)
-export type GestureHandlers = PanHandlers & TapHandlers & HoverHandlers & FocusHandlers;
-
-// @public (undocumented)
-export const GesturesFeature: MotionFeature;
 
 // @public (undocumented)
 export interface HoverHandlers {
@@ -371,14 +418,27 @@ export interface LayoutProps {
 }
 
 // @public (undocumented)
-export const m: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents & {
-    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
-};
+export type LazyFeatureBundle = () => Promise<FeatureBundle>;
 
 // @public
-export const motion: (<Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents & {
-    custom: <Props>(Component: string | import("react").ComponentClass<Props, any> | import("react").FunctionComponent<Props>, { forwardMotionProps }?: import("./motion-proxy").DomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>;
-};
+export function LazyMotion({ children, features, strict }: LazyProps): JSX.Element;
+
+// @public (undocumented)
+export interface LazyProps {
+    // Warning: (ae-forgotten-export) The symbol "React" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    children?: React_2.ReactNode;
+    // Warning: (ae-forgotten-export) The symbol "LazyFeatureBundle" needs to be exported by the entry point index.d.ts
+    features: FeatureBundle | LazyFeatureBundle_2;
+    strict?: boolean;
+}
+
+// @public (undocumented)
+export const m: (<Props>(Component: string | import("react").ComponentType<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
+
+// @public
+export const motion: (<Props>(Component: string | import("react").ComponentType<Props>, customMotionComponentConfig?: import("./motion-proxy").CustomMotionComponentConfig) => import("./motion-proxy").CustomDomComponent<Props>) & import("../html/types").HTMLMotionComponents & import("../svg/types").SVGMotionComponents;
 
 // @public (undocumented)
 export interface MotionAdvancedProps {
@@ -386,14 +446,11 @@ export interface MotionAdvancedProps {
     inherit?: boolean;
 }
 
-// Warning: (ae-forgotten-export) The symbol "MotionConfigProps" needs to be exported by the entry point index.d.ts
-// 
 // @public
-export function MotionConfig({ children, features, transition, ...props }: MotionConfigProps): JSX.Element;
+export function MotionConfig({ children, ...config }: MotionConfigProps): JSX.Element;
 
 // @public (undocumented)
 export interface MotionConfigContext {
-    features: MotionFeature[];
     // @internal
     isStatic: boolean;
     // @internal (undocumented)
@@ -402,20 +459,16 @@ export interface MotionConfigContext {
 }
 
 // @public (undocumented)
-export const MotionConfigContext: React.Context<MotionConfigContext>;
+export const MotionConfigContext: import("react").Context<MotionConfigContext>;
 
 // @public (undocumented)
-export interface MotionFeature {
+export interface MotionConfigProps extends Partial<MotionConfigContext> {
     // (undocumented)
-    getComponent: (props: MotionProps) => React.ComponentType<FeatureProps> | undefined;
-    // (undocumented)
-    key: string;
-    // (undocumented)
-    shouldRender: (props: MotionProps) => boolean;
+    children?: React.ReactNode;
 }
 
 // @public
-export interface MotionProps extends AnimationProps, VisualElementLifecycles, GestureHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
+export interface MotionProps extends AnimationProps, VisualElementLifecycles, PanHandlers, TapHandlers, HoverHandlers, FocusHandlers, DraggableProps, LayoutProps, MotionAdvancedProps {
     initial?: boolean | Target | VariantLabels;
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
@@ -545,6 +598,11 @@ export interface RelayoutInfo {
     };
 }
 
+// Warning: (ae-forgotten-export) The symbol "VisualState" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
+
 // @public (undocumented)
 export interface Repeat {
     repeat?: number;
@@ -605,7 +663,7 @@ export const SharedLayoutContext: import("react").Context<SyncLayoutBatcher | Sh
 // @public (undocumented)
 export interface SharedLayoutProps {
     // (undocumented)
-    children: React_2.ReactNode;
+    children: React.ReactNode;
     type?: "switch" | "crossfade";
 }
 
@@ -739,8 +797,9 @@ export function useCycle<T>(...items: T[]): CycleState<T>;
 export function useDeprecatedAnimatedState(initialState: any): any[];
 
 // Warning: (ae-forgotten-export) The symbol "ScaleMotionValues" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "useDeprecatedInvertedScale" should be prefixed with an underscore because the declaration is marked as @internal
 // 
-// @public @deprecated
+// @internal @deprecated
 export function useDeprecatedInvertedScale(scale?: Partial<ScaleMotionValues>): ScaleMotionValues;
 
 // @public
@@ -753,9 +812,6 @@ export function useDragControls(): DragControls;
 export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValues;
 
 // @public
-export function useGestures<GestureHandlers>(props: GestureHandlers, visualElement: VisualElement): void;
-
-// @public
 export function useIsPresent(): boolean;
 
 // @public
@@ -763,11 +819,6 @@ export function useMotionTemplate(fragments: TemplateStringsArray, ...values: Mo
 
 // @public
 export function useMotionValue<T>(initial: T): MotionValue<T>;
-
-// Warning: (ae-internal-missing-underscore) The name "usePanGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function usePanGesture({ onPan, onPanStart, onPanEnd, onPanSessionStart }: PanHandlers, ref: RefObject<Element> | VisualElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "AlwaysPresent" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "Present" needs to be exported by the entry point index.d.ts
@@ -781,11 +832,6 @@ export function useReducedMotion(): boolean | null;
 
 // @public
 export function useSpring(source: MotionValue | number, config?: SpringOptions): MotionValue<any>;
-
-// Warning: (ae-internal-missing-underscore) The name "useTapGesture" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export function useTapGesture({ onTap, onTapStart, onTapCancel, whileTap }: TapHandlers, visualElement: VisualElement): void;
 
 // Warning: (ae-forgotten-export) The symbol "InputRange" needs to be exported by the entry point index.d.ts
 // 
@@ -1016,6 +1062,8 @@ export interface VisualElementLifecycles {
     onLayoutAnimationComplete?(): void;
     // (undocumented)
     onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void;
+    // @internal (undocumented)
+    onUnmount?(): void;
     onUpdate?(latest: ResolvedValues): void;
     onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void;
 }

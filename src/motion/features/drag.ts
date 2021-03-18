@@ -1,19 +1,9 @@
-import { MotionProps } from "../types"
 import { useDrag } from "../../gestures/drag/use-drag"
+import { usePanGesture } from "../../gestures/use-pan-gesture"
 import { makeRenderlessComponent } from "../utils/make-renderless-component"
-import { FeatureProps, MotionFeature } from "./types"
+import { FeatureComponents } from "./types"
 
-const Component = makeRenderlessComponent(
-    ({ visualElement, ...props }: FeatureProps) => {
-        return useDrag(props, visualElement)
-    }
-)
-
-/**
- * @public
- */
-export const Drag: MotionFeature = {
-    key: "drag",
-    shouldRender: (props: MotionProps) => !!props.drag || !!props.dragControls,
-    getComponent: () => Component,
+export const drag: FeatureComponents = {
+    pan: makeRenderlessComponent(usePanGesture),
+    drag: makeRenderlessComponent(useDrag),
 }

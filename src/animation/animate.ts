@@ -3,10 +3,16 @@ import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { startAnimation } from "./utils/transitions"
 
+/**
+ * @public
+ */
 export interface AnimationPlaybackControls {
     stop: () => void
 }
 
+/**
+ * @public
+ */
 export interface AnimationPlaybackLifecycles<V> {
     onUpdate?: (latest: V) => void
     onPlay?: () => void
@@ -15,6 +21,9 @@ export interface AnimationPlaybackLifecycles<V> {
     onStop?: () => void
 }
 
+/**
+ * @public
+ */
 export type AnimationOptions<V> = (Tween | Spring) &
     AnimationPlaybackLifecycles<V> & {
         delay?: number

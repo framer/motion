@@ -357,7 +357,7 @@ export class MotionValue<V = any> {
     start(animation: StartAnimation) {
         this.stop()
 
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.hasAnimated = true
             this.stopAnimation = animation(resolve)
         }).then(() => this.clearAnimation())

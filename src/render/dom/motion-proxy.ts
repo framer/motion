@@ -1,10 +1,9 @@
-import { warning } from "hey-listen"
-import { createMotionComponent, MotionProps } from "../../motion"
-import { MotionFeature } from "../../motion/features/types"
+import * as React from "react"
 import { DOMMotionComponents } from "./types"
-import { createDomMotionConfig } from "./utils/create-config"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
+import { MotionProps } from "../../motion/types"
+import { createMotionComponent, MotionComponentConfig } from "../../motion"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -18,9 +17,14 @@ export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
         React.RefAttributes<SVGElement | HTMLElement>
 >
 
-export interface DomMotionComponentConfig {
+export interface CustomMotionComponentConfig {
     forwardMotionProps?: boolean
 }
+
+export type CreateConfig = <Instance, RenderState, Props>(
+    Component: string | React.ComponentType<Props>,
+    config: CustomMotionComponentConfig
+) => MotionComponentConfig<Instance, RenderState>
 
 /**
  * Convert any React component into a `motion` component. The provided component
@@ -36,31 +40,16 @@ export interface DomMotionComponentConfig {
  *
  * @public
  */
-export function createMotionProxy(defaultFeatures: MotionFeature[]) {
-    type DeprecatedCustomMotionComponent = {
-        custom: typeof custom
-    }
-
-    type Motion = typeof custom &
-        DOMMotionComponents &
-        DeprecatedCustomMotionComponent
-
+export function createMotionProxy(createConfig: CreateConfig) {
     function custom<Props>(
         Component: string | React.ComponentType<Props>,
-        { forwardMotionProps = false }: DomMotionComponentConfig = {}
+        customMotionComponentConfig: CustomMotionComponentConfig = {}
     ): CustomDomComponent<Props> {
         return createMotionComponent<
             Props,
             HTMLElement | SVGElement,
             HTMLRenderState | SVGRenderState
-        >(createDomMotionConfig(defaultFeatures, Component, forwardMotionProps))
-    }
-
-    function deprecatedCustom<Props>(
-        Component: string | React.ComponentType<Props>
-    ) {
-        warning(false, "motion.custom() is deprecated. Use motion() instead.")
-        return custom(Component, { forwardMotionProps: true })
+        >(createConfig(Component, customMotionComponentConfig))
     }
 
     /**
@@ -77,11 +66,6 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
          */
         get: (_target, key: string) => {
             /**
-             * Can be removed in 4.0
-             */
-            if (key === "custom") return deprecatedCustom
-
-            /**
              * If this element doesn't exist in the component cache, create it and cache.
              */
             if (!componentCache.has(key)) {
@@ -90,5 +74,5 @@ export function createMotionProxy(defaultFeatures: MotionFeature[]) {
 
             return componentCache.get(key)!
         },
-    }) as Motion
+    }) as typeof custom & DOMMotionComponents
 }

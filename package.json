@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "3.10.6",
+    "version": "4.0.0-rc.2",
     "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.js",
@@ -40,7 +40,7 @@
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
         "prepublishOnly": "yarn test && yarn build",
         "postpublish": "git push --tags",
-        "measure": "bundlesize",
+        "measure": "webpack --config webpack.size.config.js && bundlesize",
         "deduplicate": "yarn-deduplicate yarn.lock",
         "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
     },
@@ -92,9 +92,10 @@
         "rollup-plugin-visualizer": "^2.4.3",
         "start-server-and-test": "^1.9.1",
         "styled-components": "^4.1.1",
+        "terser-webpack-plugin": "4.2.3",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
-        "typescript": "^4.0.2",
+        "typescript": "^4.2.3",
         "uglifyjs-webpack-plugin": "^2.2.0",
         "webpack": "^4.25.1",
         "webpack-cli": "^3.1.2",
@@ -106,7 +107,7 @@
         "hey-listen": "^1.0.8",
         "popmotion": "9.3.1",
         "style-value-types": "4.1.1",
-        "tslib": "^1.10.0"
+        "tslib": "^2.1.0"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
@@ -133,8 +134,28 @@
             "maxSize": "30 kB"
         },
         {
-            "path": "./dist/minimal-component.js",
+            "path": "./dist/size-rollup-m.js",
+            "maxSize": "5 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-animation.js",
             "maxSize": "14 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-max.js",
+            "maxSize": "18 kB"
+        },
+        {
+            "path": "./dist/size-webpack-m.js",
+            "maxSize": "7 kB"
+        },
+        {
+            "path": "./dist/size-webpack-dom-animation.js",
+            "maxSize": "21 kB"
+        },
+        {
+            "path": "./dist/size-webpack-dom-max.js",
+            "maxSize": "26 kB"
         }
     ]
 }

@@ -360,7 +360,7 @@ describe("animate prop as object", () => {
         const x = motionValue(0)
         const y = motionValue(0)
         const z = motionValue(0)
-        const promise = new Promise((resolve) => {
+        const promise = new Promise<void>((resolve) => {
             const Component = () => (
                 <motion.div
                     initial={false}
