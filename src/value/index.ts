@@ -359,7 +359,7 @@ export class MotionValue<V = any> {
 
         return new Promise((resolve) => {
             this.hasAnimated = true
-            this.stopAnimation = animation(resolve)
+            this.stopAnimation = animation(() => resolve(undefined))
         }).then(() => this.clearAnimation())
     }
 

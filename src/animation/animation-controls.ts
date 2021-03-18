@@ -52,7 +52,7 @@ export function animationControls(): AnimationControls {
                 return new Promise((resolve) => {
                     pendingAnimations.push({
                         animation: [definition, transitionOverride],
-                        resolve,
+                        resolve: () => resolve(undefined),
                     })
                 })
             }
