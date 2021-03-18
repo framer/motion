@@ -545,9 +545,9 @@ describe("Animation state - Setting props", () => {
         )
     })
 
-    test("Removing values, inherited variant changed from starting at undefined", () => {
+    test("Removing values, inherited variant changed from starting at empty variant", () => {
         const { element: parent, state: parentState } = createTest({
-            animate: undefined,
+            animate: "",
         })
         const { element: child, state: childState } = createTest({}, parent)
         child.manuallyAnimateOnMount = false
@@ -629,16 +629,11 @@ describe("Animation state - Setting props", () => {
             undefined,
             false
         )
-        parentState.setProps(
-            { animate: undefined },
-            undefined,
-            undefined,
-            false
-        )
+        parentState.setProps({ animate: "" }, undefined, undefined, false)
 
         child.animationState!.animateChanges()
         parent.animationState!.animateChanges()
-        expect(parentAnimate).not.toBeCalled()
+        expect(parentAnimate).toBeCalledWith([""])
         expect(childAnimate).toBeCalledWith([{ opacity: 0 }])
         expect(
             childState.getState()[AnimationType.Animate].protectedKeys
