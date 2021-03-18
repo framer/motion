@@ -1,17 +1,26 @@
 import { TargetAndTransition, TargetResolver, Transition } from "../types"
 import { VisualElement } from "../render/types"
 
+/**
+ * @public
+ */
 export type ControlsAnimationDefinition =
     | string
     | string[]
     | TargetAndTransition
     | TargetResolver
 
+/**
+ * @public
+ */
 export type PendingAnimations = {
     animation: [ControlsAnimationDefinition, Transition | undefined]
     resolve: () => void
 }
 
+/**
+ * @public
+ */
 export interface AnimationControls {
     /**
      * Subscribes a component's animation controls to this.

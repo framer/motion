@@ -39,6 +39,9 @@ export type ResolvedValueTarget = ResolvedSingleTarget | ResolvedKeyframesTarget
  */
 export type ValueTarget = SingleTarget | KeyframesTarget
 
+/**
+ * @public
+ */
 export type Props = { [key: string]: any }
 
 /**
@@ -1577,6 +1580,9 @@ export interface None {
     velocity?: number
 }
 
+/**
+ * @public
+ */
 export type PopmotionTransitionProps =
     | Tween
     | Spring
@@ -1584,6 +1590,9 @@ export type PopmotionTransitionProps =
     | Inertia
     | Just
 
+/**
+ * @public
+ */
 export type PermissiveTransitionDefinition = {
     [key: string]: any
 }
@@ -1625,14 +1634,26 @@ type TargetProperties = CSSPropertiesWithoutTransitionOrSingleTransforms &
     CustomStyles &
     SVGPathProperties
 
+/**
+ * @public
+ */
 export type MakeCustomValueType<T> = { [K in keyof T]: T[K] | CustomValueType }
 
+/**
+ * @public
+ */
 export type Target = MakeCustomValueType<TargetProperties>
 
+/**
+ * @public
+ */
 export type MakeKeyframes<T> = {
     [K in keyof T]: T[K] | T[K][] | [null, ...T[K][]]
 }
 
+/**
+ * @public
+ */
 export type TargetWithKeyframes = MakeKeyframes<Target>
 
 /**

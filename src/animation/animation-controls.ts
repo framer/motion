@@ -4,6 +4,9 @@ import { animateVisualElement, stopAnimation } from "../render/utils/animation"
 import { setValues } from "../render/utils/setters"
 import { AnimationControls, PendingAnimations } from "./types"
 
+/**
+ * @public
+ */
 export function animationControls(): AnimationControls {
     /**
      * Track whether the host component has mounted.
