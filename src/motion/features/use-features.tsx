@@ -44,19 +44,19 @@ export function useFeatures(
             name
         ] as FeatureDefinition
 
-        if (isEnabled(props)) {
-            if (Component) {
-                features.push(
-                    <Component
-                        key={name}
-                        {...props}
-                        visualElement={visualElement}
-                    />
-                )
-            } else {
-                // TODO: Lazy load
-                // TODO: Warn if no lazy load definition or null found
-            }
+        /**
+         * It might be possible in the future to use this moment to
+         * dynamically request functionality. In initial tests this
+         * was producing a lot of duplication amongst bundles.
+         */
+        if (isEnabled(props) && Component) {
+            features.push(
+                <Component
+                    key={name}
+                    {...props}
+                    visualElement={visualElement}
+                />
+            )
         }
     }
 
