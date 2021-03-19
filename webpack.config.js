@@ -2,6 +2,7 @@ const path = require("path")
 const execSync = require("child_process").execSync
 const webpack = require("webpack")
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin")
+const ProgressBarPlugin = require("progress-bar-webpack-plugin")
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
 const convertPathsToAliases = require("convert-tsconfig-paths-to-webpack-aliases")
     .default

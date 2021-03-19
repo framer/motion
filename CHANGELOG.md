@@ -2,13 +2,19 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.0.2] 2021-03-19
+
+### Upgraded
+
+-   Upgraded `popmotion`, `framesync`, `style-value-types` and `tslib` to `latest`.
+
 ## [4.0.1] 2021-03-23
 
 ### Fixed
 
 -   Adding `package.json` to `exports` so it can be imported by Node.
 
-## [4.0.0] 2021-03-19
+## [4.0.0] 2021-03-18
 
 ### Added
 
