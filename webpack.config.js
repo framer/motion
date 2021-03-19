@@ -1,7 +1,7 @@
 const path = require("path")
 const execSync = require("child_process").execSync
 const webpack = require("webpack")
-const TerserPlugin = require("terser-webpack-plugin")
+const UglifyJSPlugin = require("uglifyjs-webpack-plugin")
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
 const convertPathsToAliases = require("convert-tsconfig-paths-to-webpack-aliases")
     .default
@@ -78,8 +78,35 @@ if (!isProduction) {
 if (isProduction) {
     config.devtool = "source-map"
     config.optimization = {
-        minimize: true,
-        minimizer: [new TerserPlugin()],
+        minimizer: [
+            new UglifyJSPlugin({
+                parallel: true,
+                sourceMap: true,
+                uglifyOptions: {
+                    ecma: 6,
+                    mangle: {
+                        safari10: true,
+                        keep_classnames: true,
+                    },
+                    compress: {
+                        warnings: false,
+                        conditionals: true,
+                        unused: true,
+                        comparisons: true,
+                        dead_code: true,
+                        evaluate: true,
+                        if_return: true,
+                        join_vars: true,
+                        keep_classnames: true,
+                    },
+                    output: {
+                        safari10: true,
+                        beautify: false,
+                        comments: false,
+                    },
+                },
+            }),
+        ],
     }
 }
 

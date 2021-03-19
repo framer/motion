@@ -13,7 +13,7 @@ export const App = () => {
     React.useEffect(() => {
         setCount(count + 1)
     }, [])
-
+    console.log(parentLayout, childLayout)
     return (
         <motion.div
             id="parent"

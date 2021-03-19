@@ -85,13 +85,11 @@
         "lint-staged": "^8.0.4",
         "lodash": "^4.17.13",
         "prettier": "^2.1.0",
-        "progress-bar-webpack-plugin": "^1.11.0",
         "react": "^17.0.0-rc.0",
         "react-dev-utils": "^11.0.4",
         "react-dom": "^17.0.0-rc.0",
         "rollup": "^2.10.5",
         "rollup-plugin-terser": "^5.3.0",
-        "rollup-plugin-visualizer": "^2.4.3",
         "start-server-and-test": "^1.9.1",
         "styled-components": "^4.1.1",
         "terser-webpack-plugin": "4.2.3",
@@ -101,8 +99,7 @@
         "uglifyjs-webpack-plugin": "^2.2.0",
         "webpack": "^4.25.1",
         "webpack-cli": "^3.1.2",
-        "webpack-dev-server": "^3.7.2",
-        "yarn-deduplicate": "^1.1.1"
+        "webpack-dev-server": "^3.7.2"
     },
     "dependencies": {
         "framesync": "5.2.0",
