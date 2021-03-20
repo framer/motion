@@ -25,7 +25,7 @@
 
 <br>
 
-Motion is an open source, production-ready library that's designed for all creative developers.
+Framer Motion is an open source, production-ready library that's designed for all creative developers.
 
 It looks like this:
 
