@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [4.0.2] 2021-03-19
 
+### Fixed
+
+-   Various layout animation bugfixes.
+
 ### Upgraded
 
 -   Upgraded `popmotion`, `framesync`, `style-value-types` and `tslib` to `latest`.

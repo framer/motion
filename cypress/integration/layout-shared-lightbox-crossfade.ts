@@ -45,7 +45,7 @@ function runScript(args: string) {
             expect(window.getComputedStyle($box).opacity).to.equal("0")
             expectBbox($box, {
                 top: 130,
-                left: 800,
+                left: 200,
                 width: 600,
                 height: 400,
             })
@@ -69,7 +69,7 @@ function runScript(args: string) {
             expect(window.getComputedStyle($box).opacity).to.equal("1")
             expectBbox($box, {
                 top: 130,
-                left: 800,
+                left: 200,
                 width: 600,
                 height: 400,
             })
@@ -86,11 +86,12 @@ function runScript(args: string) {
             })
         })
         // Close lightbox
+        .get("#overlay")
         .trigger("click")
         .wait(50)
         .get("#item-parent")
         .should(([$box]: any) => {
-            expect(window.getComputedStyle($box).borderRadius).to.equal("0")
+            expect(window.getComputedStyle($box).borderRadius).to.equal("0%")
             expect(window.getComputedStyle($box).opacity).to.equal("1")
             expectBbox($box, {
                 top: 40,

@@ -27,6 +27,7 @@ function Gallery({ items, setIndex }) {
                         style={child}
                         id={i === 0 ? `item-child` : undefined}
                         layoutId={`child-${color}`}
+                        transition={transition}
                     />
                 </motion.li>
             ))}
@@ -48,7 +49,7 @@ function SingleImage({ color, setIndex }) {
             />
             <div style={singleImageContainer}>
                 <motion.div
-                    id="color"
+                    id="parent"
                     layoutId={color}
                     style={{
                         ...singleImage,
@@ -166,5 +167,4 @@ const child = {
     borderRadius: 25,
     backgroundColor: "white",
     opacity: 0.5,
-    //opacity: 0.5,
 }
