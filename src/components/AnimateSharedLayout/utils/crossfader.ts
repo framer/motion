@@ -156,12 +156,9 @@ export function createCrossfader(): Crossfader {
     }
 
     return {
-        isActive: () => {
-            return (
-                leadState &&
-                (isActive || getFrameData().timestamp === finalCrossfadeFrame)
-            )
-        },
+        isActive: () =>
+            leadState &&
+            (isActive || getFrameData().timestamp === finalCrossfadeFrame),
         fromLead(transition) {
             return startCrossfadeAnimation(0, transition)
         },

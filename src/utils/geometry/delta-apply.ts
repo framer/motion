@@ -227,10 +227,8 @@ export function applyTreeDeltas(
     // Reset the treeScale
     treeScale.x = treeScale.y = 1
 
-    let visualElement: VisualElement
     for (let i = 0; i < treeLength; i++) {
-        visualElement = treePath[i]
-        const { delta } = visualElement.getLayoutState()
+        const { delta } = treePath[i].getLayoutState()
 
         // Incoporate each ancestor's scale into a culmulative treeScale for this component
         treeScale.x *= delta.x.scale
@@ -238,9 +236,5 @@ export function applyTreeDeltas(
 
         // Apply each ancestor's calculated delta into this component's recorded layout box
         applyBoxDelta(box, delta)
-
-        if (visualElement.getProps().drag) {
-            applyBoxTransforms(box, box, visualElement.getLatestValues())
-        }
     }
 }
