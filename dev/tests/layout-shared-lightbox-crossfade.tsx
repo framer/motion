@@ -9,6 +9,7 @@ import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
 
 const params = new URLSearchParams(window.location.search)
 const instant = params.get("instant") || false
+const type = params.get("type") || "crossfade"
 const transition = instant ? { type: false } : { duration: 0.01 }
 
 function Gallery({ items, setIndex }) {
@@ -86,7 +87,7 @@ export function Component() {
 
 export function App() {
     return (
-        <AnimateSharedLayout type="crossfade">
+        <AnimateSharedLayout type={type}>
             <Component />
         </AnimateSharedLayout>
     )
