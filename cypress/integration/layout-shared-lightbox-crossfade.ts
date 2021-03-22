@@ -120,3 +120,12 @@ describe("AnimateSharedLayout lightbox example, crossfade", () => {
         runScript("")
     })
 })
+
+// describe("AnimateSharedLayout lightbox example, switch", () => {
+//   it("Correctly animates between items and lightbox with instant transition", () => {
+//       runScript("&instant=true")
+//   })
+//   it("Correctly animates between items and lightbox with very fast transition", () => {
+//       runScript("")
+//   })
+// })
