@@ -69,7 +69,6 @@ export function createCrossfader(): Crossfader {
         let hasUpdated = false
 
         const onUpdate = () => {
-            console.log("crossfade update", lead?.current.id, progress.get())
             hasUpdated = true
             lead && lead.scheduleRender()
             follow && follow.scheduleRender()
