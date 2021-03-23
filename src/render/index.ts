@@ -24,6 +24,7 @@ import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
 import { createLayoutState, createProjectionState } from "./utils/state"
+import { LayoutTree } from "./utils/tree"
 import {
     checkIfControllingVariants,
     checkIfVariantNode,
@@ -62,12 +63,6 @@ export const visualElement = <Instance, MutableState, Options>({
      * in VisualElementConfig allow us to interface with this instance.
      */
     let instance: Instance
-
-    /**
-     * A set of all children of this visual element. We use this to traverse
-     * the tree when updating layout projections.
-     */
-    const children = new Set<VisualElement>()
 
     /**
      * Manages the subscriptions for a visual element's lifecycle, for instance
@@ -153,7 +148,6 @@ export const visualElement = <Instance, MutableState, Options>({
      * On mount, this will be hydrated with a callback to disconnect
      * this visual element from its parent on unmount.
      */
-    let removeFromMotionTree: undefined | (() => void)
     let removeFromVariantTree: undefined | (() => void)
 
     /**
@@ -317,6 +311,8 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         path: parent ? [...parent.path, parent] : [],
 
+        layoutTree: parent ? parent.layoutTree : new LayoutTree(),
+
         /**
          *
          */
@@ -373,7 +369,6 @@ export const visualElement = <Instance, MutableState, Options>({
         mount(newInstance: Instance) {
             instance = element.current = newInstance
             element.pointTo(element)
-            removeFromMotionTree = parent?.addChild(element)
 
             if (isVariantNode && parent && !isControllingVariants) {
                 removeFromVariantTree = parent?.addVariantChild(element)
@@ -389,18 +384,10 @@ export const visualElement = <Instance, MutableState, Options>({
             cancelSync.preRender(element.updateLayoutProjection)
             valueSubscriptions.forEach((remove) => remove())
             element.stopLayoutAnimation()
-            removeFromMotionTree?.()
+            element.layoutTree.remove(element)
             removeFromVariantTree?.()
             unsubscribeFromLeadVisualElement?.()
             lifecycles.clearAllListeners()
-        },
-
-        /**
-         * Add a child visual element to our set of children.
-         */
-        addChild(child) {
-            children.add(child)
-            return () => children.delete(child)
         },
 
         /**
@@ -439,7 +426,12 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         scheduleUpdateLayoutProjection: parent
             ? parent.scheduleUpdateLayoutProjection
-            : () => sync.preRender(element.updateLayoutProjection, false, true),
+            : () =>
+                  sync.preRender(
+                      element.updateTreeLayoutProjection,
+                      false,
+                      true
+                  ),
 
         /**
          * Expose the latest layoutId prop.
@@ -673,6 +665,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         enableLayoutProjection() {
             projection.isEnabled = true
+            element.layoutTree.add(element)
         },
 
         /**
@@ -847,8 +840,11 @@ export const visualElement = <Instance, MutableState, Options>({
         },
 
         updateLayoutProjection() {
-            isProjecting() && updateLayoutProjection()
-            children.forEach(fireUpdateLayoutProjection)
+            updateLayoutProjection()
+        },
+
+        updateTreeLayoutProjection() {
+            element.layoutTree.forEach(fireUpdateLayoutProjection)
         },
 
         /**

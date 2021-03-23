@@ -883,8 +883,6 @@ export enum VisibilityAction {
 // @public (undocumented)
 export interface VisualElement<Instance = any, RenderState = any> extends LifecycleManager {
     // (undocumented)
-    addChild(child: VisualElement): () => void;
-    // (undocumented)
     addValue(key: string, value: MotionValue<any>): void;
     // (undocumented)
     addVariantChild(child: VisualElement): undefined | (() => void);
@@ -935,9 +933,9 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -964,6 +962,10 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     isVisible?: boolean;
     // (undocumented)
     layoutSafeToRemove?: () => void;
+    // Warning: (ae-forgotten-export) The symbol "LayoutTree" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    layoutTree: LayoutTree;
     // (undocumented)
     lockProjectionTarget(): void;
     // (undocumented)
@@ -1040,6 +1042,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     updateLayoutMeasurement(): void;
     // (undocumented)
     updateLayoutProjection(): void;
+    // (undocumented)
+    updateTreeLayoutProjection(): void;
     // (undocumented)
     variantChildren?: Set<VisualElement>;
     // (undocumented)
