@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.0.0] Unreleased
+## [4.0.1] 2021-03-22
+
+### Fixed
+
+-   Adding `package.json` to `exports` so it can be imported by Next.js.
+
+## [4.0.0] 2021-03-19
 
 ### Added
 
