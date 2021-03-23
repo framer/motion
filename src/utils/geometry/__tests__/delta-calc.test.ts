@@ -1,4 +1,10 @@
-import { isNear, calcOrigin, updateAxisDelta } from "../delta-calc"
+import { createProjectionState } from "../../../render/utils/state"
+import {
+    isNear,
+    calcOrigin,
+    updateAxisDelta,
+    calcRelativeBox,
+} from "../delta-calc"
 
 describe("isNear", () => {
     test("Correctly indicate when the provided value is within maxDistance of the provided target", () => {
@@ -54,6 +60,30 @@ describe("updateAxisDelta", () => {
             originPoint: 200,
             scale: 2,
             translate: 300,
+        })
+    })
+})
+
+describe("calcRelativeBox", () => {
+    test("Correctly calculates a target relative to its parent", () => {
+        const parent = createProjectionState()
+        const child = createProjectionState()
+
+        parent.target = {
+            x: { min: 100, max: 200 },
+            y: { min: 300, max: 500 },
+        }
+
+        child.relativeTarget = {
+            x: { min: 10, max: 50 },
+            y: { min: 10, max: 50 },
+        }
+
+        calcRelativeBox(child, parent)
+
+        expect(child.target).toEqual({
+            x: { min: 110, max: 150 },
+            y: { min: 310, max: 350 },
         })
     })
 })

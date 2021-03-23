@@ -9,7 +9,7 @@ import {
     applyBoxTransforms,
     removeBoxTransforms,
 } from "../utils/geometry/delta-apply"
-import { updateBoxDelta } from "../utils/geometry/delta-calc"
+import { calcRelativeBox, updateBoxDelta } from "../utils/geometry/delta-calc"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import { buildLayoutProjectionTransform } from "./html/utils/build-projection-transform"
@@ -244,6 +244,10 @@ export const visualElement = <Instance, MutableState, Options>({
             element.scheduleRender()
         }
         layoutState.deltaTransform = deltaTransform
+    }
+
+    function updateTreeLayoutProjection() {
+        element.layoutTree.forEach(fireUpdateLayoutProjection)
     }
 
     /**
@@ -842,7 +846,14 @@ export const visualElement = <Instance, MutableState, Options>({
         updateLayoutProjection,
 
         updateTreeLayoutProjection() {
-            element.layoutTree.forEach(fireUpdateLayoutProjection)
+            element.layoutTree.forEach(fireResolveRelativeTargetBox)
+            sync.preRender(updateTreeLayoutProjection, false, true)
+        },
+
+        resolveRelativeTargetBox() {
+            if (projection.relativeTarget) {
+                calcRelativeBox(projection, parentProjection)
+            }
         },
 
         /**
@@ -874,6 +885,10 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     return element
+}
+
+function fireResolveRelativeTargetBox(child: VisualElement) {
+    child.resolveRelativeTargetBox()
 }
 
 function fireUpdateLayoutProjection(child: VisualElement) {

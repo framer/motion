@@ -19,6 +19,13 @@ export interface TargetProjection {
     isTargetLocked: boolean
 
     /**
+     * The parent-relative box we want to derive the viewport box from, if defined.
+     * This is currently all relative to the top/left of the parent box,
+     * but could be expanded in the future.
+     */
+    relativeTarget?: AxisBox2D
+
+    /**
      * The viewport-relative box we want to project the element into.
      */
     target: AxisBox2D
@@ -30,7 +37,7 @@ export interface TargetProjection {
     targetFinal: AxisBox2D
 }
 
-export const createProjectionState = () => ({
+export const createProjectionState = (): TargetProjection => ({
     isEnabled: false,
     isTargetLocked: false,
     target: axisBox(),
