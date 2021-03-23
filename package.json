@@ -64,6 +64,7 @@
         "@types/styled-components": "^4.1.0",
         "@typescript-eslint/eslint-plugin": "^1.5.0",
         "@typescript-eslint/parser": "^1.5.0",
+        "ansi-regex": "^5.0.0",
         "array-move": "^2.1.0",
         "bundlesize": "^0.18.0",
         "cache-loader": "^1.2.5",
