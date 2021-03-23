@@ -5,7 +5,9 @@
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.js",
     "exports": {
-        "package.json": "./package.json",
+        "./package.json": "./package.json",
+        "./useAnimatedState": "./dist/es/animation/use-animated-state.js",
+        "./useInvertedScale": "./dist/es/value/use-inverted-scale.js",
         "require": "./dist/framer-motion.cjs.js",
         "import": "./dist/es/index.js",
         "default": "./dist/es/index.js"

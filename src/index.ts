@@ -142,9 +142,3 @@ export { createBatcher } from "./components/AnimateSharedLayout/utils/batcher"
 export * from "./types/geometry"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
-
-/**
- * Deprecated
- */
-export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/use-animated-state"
-export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
