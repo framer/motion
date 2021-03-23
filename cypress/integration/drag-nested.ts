@@ -89,4 +89,5 @@ describe.skip("Nested drag", () => {
         testNestedDrag("parentLayout=true&childLayout=true"))
     it("Parent: layout", () => testNestedDrag("parentLayout=true"))
     it("Child: layout", () => testNestedDrag("childLayout=true"))
+    it("Neither", () => testNestedDrag(""))
 })

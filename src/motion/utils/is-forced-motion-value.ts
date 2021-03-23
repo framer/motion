@@ -12,6 +12,7 @@ export function isForcedMotionValue(
     return (
         isTransformProp(key) ||
         isTransformOriginProp(key) ||
-        ((layout || layoutId !== undefined) && !!valueScaleCorrection[key])
+        ((layout || layoutId !== undefined) &&
+            (!!valueScaleCorrection[key] || key === "opacity"))
     )
 }

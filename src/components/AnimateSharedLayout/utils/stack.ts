@@ -101,8 +101,9 @@ export function layoutStack(): LayoutStack {
             })
 
             if (
-                prevState.lead !== state.lead ||
-                prevState.leadIsExiting !== state.leadIsExiting
+                state.follow &&
+                (prevState.lead !== state.lead ||
+                    prevState.leadIsExiting !== state.leadIsExiting)
             ) {
                 needsCrossfadeAnimation = true
             }

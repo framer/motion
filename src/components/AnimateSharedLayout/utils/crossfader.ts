@@ -1,4 +1,4 @@
-import { getFrameData } from "framesync"
+import sync, { getFrameData } from "framesync"
 import {
     circOut,
     linear,
@@ -66,20 +66,40 @@ export function createCrossfader(): Crossfader {
         const { lead, follow } = options
         isActive = true
         finalCrossfadeFrame = null
+        let hasUpdated = false
+
+        const onUpdate = () => {
+            hasUpdated = true
+            lead && lead.scheduleRender()
+            follow && follow.scheduleRender()
+        }
+
+        const onComplete = () => {
+            isActive = false
+
+            /**
+             * If the crossfade animation is no longer active, flag a frame
+             * that we're still allowed to crossfade
+             */
+            finalCrossfadeFrame = getFrameData().timestamp
+        }
+
         return animate(progress, target, {
             ...transition,
-            onUpdate: () => {
-                lead && lead.scheduleRender()
-                follow && follow.scheduleRender()
-            },
+            onUpdate,
             onComplete: () => {
-                isActive = false
+                if (!hasUpdated) {
+                    progress.set(1)
+                    /**
+                     * If we never ran an update, for instance if this was an instant transition, fire a
+                     * simulated final frame to ensure the crossfade gets applied correctly.
+                     */
+                    sync.read(onComplete)
+                } else {
+                    onComplete()
+                }
 
-                /**
-                 * If the crossfade animation is no longer active, flag a frame
-                 * that we're still allowed to crossfade
-                 */
-                finalCrossfadeFrame = getFrameData().timestamp
+                onUpdate()
             },
         } as any)
     }
@@ -114,6 +134,7 @@ export function createCrossfader(): Crossfader {
          */
         const leadTargetOpacity = (latestLeadValues.opacity as number) ?? 1
         const followTargetOpacity = (latestFollowValues?.opacity as number) ?? 1
+
         if (options.crossfadeOpacity && follow) {
             leadState.opacity = mix(0, leadTargetOpacity, easeCrossfadeIn(p))
             followState.opacity = options.preserveFollowOpacity
