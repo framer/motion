@@ -839,9 +839,7 @@ export const visualElement = <Instance, MutableState, Options>({
             isEnabled && restoreTransform(instance, renderState)
         },
 
-        updateLayoutProjection() {
-            updateLayoutProjection()
-        },
+        updateLayoutProjection,
 
         updateTreeLayoutProjection() {
             element.layoutTree.forEach(fireUpdateLayoutProjection)
