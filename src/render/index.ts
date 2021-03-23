@@ -24,7 +24,7 @@ import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
 import { createLayoutState, createProjectionState } from "./utils/state"
-import { LayoutTree } from "./utils/tree"
+import { FlatTree } from "./utils/flat-tree"
 import {
     checkIfControllingVariants,
     checkIfVariantNode,
@@ -311,7 +311,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         path: parent ? [...parent.path, parent] : [],
 
-        layoutTree: parent ? parent.layoutTree : new LayoutTree(),
+        layoutTree: parent ? parent.layoutTree : new FlatTree(),
 
         /**
          *

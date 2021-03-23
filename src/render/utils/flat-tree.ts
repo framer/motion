@@ -1,24 +1,27 @@
 import { addUniqueItem, removeItem } from "../../utils/array"
-import { VisualElement } from "../types"
 import { sortByDepth } from "./sort-by-depth"
 
-export class LayoutTree {
-    children: VisualElement[] = []
+export interface DepthChild {
+    depth: number
+}
+
+export class FlatTree {
+    children: DepthChild[] = []
     numChildren = 0
 
     private isDirty: boolean = false
 
-    add(child: VisualElement) {
+    add(child: DepthChild) {
         addUniqueItem(this.children, child)
         this.isDirty = true
     }
 
-    remove(child: VisualElement) {
+    remove(child: DepthChild) {
         removeItem(this.children, child)
         this.isDirty = true
     }
 
-    forEach(callback: (child: VisualElement) => void) {
+    forEach(callback: (child: DepthChild) => void) {
         this.isDirty && this.order()
         for (let i = 0; i < this.numChildren; i++) {
             callback(this.children[i])

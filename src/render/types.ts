@@ -13,7 +13,7 @@ import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
 import { LayoutState, TargetProjection } from "./utils/state"
-import { LayoutTree } from "./utils/tree"
+import { FlatTree } from "./utils/flat-tree"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -25,7 +25,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     treeType: string
     depth: number
     current: Instance | null
-    layoutTree: LayoutTree
+    layoutTree: FlatTree
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
     presenceId: number | undefined

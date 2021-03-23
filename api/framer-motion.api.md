@@ -962,10 +962,10 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     isVisible?: boolean;
     // (undocumented)
     layoutSafeToRemove?: () => void;
-    // Warning: (ae-forgotten-export) The symbol "LayoutTree" needs to be exported by the entry point index.d.ts
+    // Warning: (ae-forgotten-export) The symbol "FlatTree" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
-    layoutTree: LayoutTree;
+    layoutTree: FlatTree;
     // (undocumented)
     lockProjectionTarget(): void;
     // (undocumented)
