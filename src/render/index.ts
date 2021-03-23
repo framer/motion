@@ -872,23 +872,9 @@ export const visualElement = <Instance, MutableState, Options>({
         resolveRelativeTargetBox() {
             if (!projection.relativeTarget) return
 
-            if (parentProjection === undefined) {
-                let foundParentProjection: TargetProjection | false = false
-
-                // Search backwards through tree
-                for (let i = element.path.length; i >= 0; i--) {
-                    const elementProjection = element.path[i].projection
-                    if (elementProjection.isEnabled) {
-                        foundParentProjection = elementProjection
-                    }
-                }
-
-                parentProjection = foundParentProjection
-            }
-
-            if (parentProjection) {
-                calcRelativeBox(projection, parentProjection)
-            } else {
+            const relativeParent = element.getProjectionParent()
+            if (relativeParent) {
+                calcRelativeBox(projection, relativeParent.projection)
             }
         },
 
