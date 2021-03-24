@@ -326,6 +326,18 @@ export interface FeatureProps extends MotionProps {
 }
 
 // @public (undocumented)
+export class FlatTree {
+    // Warning: (ae-forgotten-export) The symbol "WithDepth" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    add(child: WithDepth): void;
+    // (undocumented)
+    forEach(callback: (child: WithDepth) => void): void;
+    // (undocumented)
+    remove(child: WithDepth): void;
+}
+
+// @public (undocumented)
 export interface FocusHandlers {
     whileFocus?: VariantLabels | TargetAndTransition;
 }
@@ -962,8 +974,6 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     isVisible?: boolean;
     // (undocumented)
     layoutSafeToRemove?: () => void;
-    // Warning: (ae-forgotten-export) The symbol "FlatTree" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     layoutTree: FlatTree;
     // (undocumented)

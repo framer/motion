@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Replaced layout animation tree traversal with flat array traversal of _just_ projecting elements.
+-   Replaced layout animation tree traversal with flat array traversal of **just** projecting elements.
 
 ## [4.0.2] 2021-03-19
 
