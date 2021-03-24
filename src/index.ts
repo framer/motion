@@ -142,6 +142,7 @@ export { createBatcher } from "./components/AnimateSharedLayout/utils/batcher"
 export * from "./types/geometry"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
+export { FlatTree } from "./render/utils/flat-tree"
 
 /**
  * Deprecated
