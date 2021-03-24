@@ -669,6 +669,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         enableLayoutProjection() {
             projection.isEnabled = true
+            console.log("enabling", instance)
             element.layoutTree.add(element)
         },
 
@@ -852,7 +853,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
         resolveRelativeTargetBox() {
             if (projection.relativeTarget) {
-                calcRelativeBox(projection, parentProjection)
+                // calcRelativeBox(projection, parentProjection)
             }
         },
 
