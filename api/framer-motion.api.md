@@ -943,11 +943,11 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string, defaultValue: string | number): MotionValue;
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
+    getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -1014,6 +1014,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     removeValue(key: string): void;
     // (undocumented)
     resetTransform(): void;
+    // (undocumented)
+    resolveRelativeTargetBox(): void;
     // (undocumented)
     scheduleRender(): void;
     // (undocumented)
