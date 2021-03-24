@@ -681,7 +681,6 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         enableLayoutProjection() {
             projection.isEnabled = true
-            console.log("enabling", instance)
             element.layoutTree.add(element)
         },
 
