@@ -7,7 +7,10 @@ describe("FlatTree", () => {
 
         tree.add({ depth: 1 })
         tree.add({ depth: 0 })
-        expect((tree as any).children).toBe([{ depth: 1 }, { depth: 0 }])
+        expect((tree as any).children).toStrictEqual([
+            { depth: 1 },
+            { depth: 0 },
+        ])
 
         const received: WithDepth[] = []
         tree.forEach((child) => received.push(child))
