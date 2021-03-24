@@ -1,5 +1,5 @@
 import { VisualElement } from "../../../render/types"
-import { sortByDepth } from "../../../render/utils/sort-by-depth"
+import { compareByDepth } from "../../../render/utils/compare-by-depth"
 import { Presence, SyncLayoutBatcher, SyncLayoutLifecycles } from "../types"
 
 /**
@@ -19,7 +19,7 @@ export function createBatcher(): SyncLayoutBatcher {
     return {
         add: (child) => queue.add(child),
         flush: ({ measureLayout, layoutReady, parent } = defaultHandler) => {
-            const order = Array.from(queue).sort(sortByDepth)
+            const order = Array.from(queue).sort(compareByDepth)
 
             const resetAndMeasure = () => {
                 /**
