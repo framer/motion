@@ -1,3 +1,4 @@
+import { WithDepth } from "../compare-by-depth"
 import { FlatTree } from "../flat-tree"
 
 describe("FlatTree", () => {
@@ -7,7 +8,7 @@ describe("FlatTree", () => {
         tree.add({ depth: 0 })
         expect((tree as any).children).toBe([{ depth: 1 }, { depth: 0 }])
 
-        const received = []
+        const received: WithDepth[] = []
         tree.forEach((child) => received.push(child))
         expect(received).toBe([{ depth: 0 }, { depth: 1 }])
         expect((tree as any).children).toBe([{ depth: 0 }, { depth: 1 }])
