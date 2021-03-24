@@ -23,7 +23,11 @@ import { variantPriorityOrder } from "./utils/animation-state"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
-import { createLayoutState, createProjectionState } from "./utils/state"
+import {
+    createLayoutState,
+    createProjectionState,
+    TargetProjection,
+} from "./utils/state"
 import { FlatTree } from "./utils/flat-tree"
 import {
     checkIfControllingVariants,
@@ -74,6 +78,14 @@ export const visualElement = <Instance, MutableState, Options>({
      *
      */
     const projection = createProjectionState()
+
+    /**
+     * A reference to the nearest parent projection target. This is either
+     * undefined if we haven't looked for the nearest projecting parent,
+     * false if there is no parent performing layout projection, or a reference
+     * to the parents prohection.
+     */
+    let parentProjection: undefined | false | TargetProjection
 
     /**
      * This is a reference to the visual state of the "lead" visual element.
@@ -669,7 +681,6 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         enableLayoutProjection() {
             projection.isEnabled = true
-            console.log("enabling", instance)
             element.layoutTree.add(element)
         },
 
@@ -848,12 +859,36 @@ export const visualElement = <Instance, MutableState, Options>({
 
         updateTreeLayoutProjection() {
             element.layoutTree.forEach(fireResolveRelativeTargetBox)
+
+            /**
+             * Schedule the projection updates at the end of the current preRender
+             * step. This will ensure that all layout trees will first resolve
+             * relative projection boxes into viewport boxes, and *then*
+             * update projections.
+             */
             sync.preRender(updateTreeLayoutProjection, false, true)
         },
 
         resolveRelativeTargetBox() {
-            if (projection.relativeTarget) {
-                // calcRelativeBox(projection, parentProjection)
+            if (!projection.relativeTarget) return
+
+            if (parentProjection === undefined) {
+                let foundParentProjection: TargetProjection | false = false
+
+                // Search backwards through tree
+                for (let i = element.path.length; i >= 0; i--) {
+                    const elementProjection = element.path[i].projection
+                    if (elementProjection.isEnabled) {
+                        foundParentProjection = elementProjection
+                    }
+                }
+
+                parentProjection = foundParentProjection
+            }
+
+            if (parentProjection) {
+                calcRelativeBox(projection, parentProjection)
+            } else {
             }
         },
 
