@@ -309,8 +309,6 @@ describe("crossfader", () => {
         })
         lead.setCrossfader(crossfader)
 
-        console.log("crossfading from snapshot to lead")
-
         crossfader.toLead({
             duration: 1000,
             ease: () => 0.25,
