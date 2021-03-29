@@ -106,7 +106,9 @@ export interface VisualElement<Instance = any, RenderState = any>
     measureViewportBox(withTransform?: boolean): AxisBox2D
     updateLayoutMeasurement(): void
     getLayoutState: () => LayoutState
+    getProjectionParent: () => VisualElement | false
     getProjectionAnimationProgress(): MotionPoint
+    setRelativeProjectionTarget(axis: "x" | "y", min: number, max: number): void
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void
     startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>
     stopLayoutAnimation(): void

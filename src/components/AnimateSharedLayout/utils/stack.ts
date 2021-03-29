@@ -121,9 +121,17 @@ export function layoutStack(): LayoutStack {
                 }
 
                 const config: SharedLayoutAnimationConfig = {}
+                const prevParent = state.follow?.getProjectionParent()
                 if (child.presence === Presence.Entering) {
+                    if (prevParent) {
+                        config.prevParentViewportBox =
+                            prevParent.prevViewportBox
+                    }
                     config.originBox = getFollowViewportBox()
                 } else if (child.presence === Presence.Exiting) {
+                    if (prevParent) {
+                        config.prevParentLayout = prevParent.getLayoutState().layout
+                    }
                     config.targetBox = getFollowLayout()
                 }
 
