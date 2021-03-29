@@ -656,9 +656,15 @@ export interface SharedLayoutAnimationConfig {
     // (undocumented)
     crossfadeOpacity?: MotionValue<number>;
     // (undocumented)
+    isRelative?: boolean;
+    // (undocumented)
     onComplete?: () => void;
     // (undocumented)
     originBox?: AxisBox2D;
+    // (undocumented)
+    prevParentLayout?: AxisBox2D;
+    // (undocumented)
+    prevParentViewportBox?: AxisBox2D;
     // (undocumented)
     shouldStackAnimate?: boolean;
     // (undocumented)
@@ -939,15 +945,17 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getProjectionAnimationProgress(): MotionPoint;
     // (undocumented)
+    getProjectionParent: () => VisualElement | false;
+    // (undocumented)
     getProps(): MotionProps;
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
+    getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
-    getValue(key: string, defaultValue: string | number): MotionValue;
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -1028,6 +1036,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)
     setProps(props: MotionProps): void;
+    // (undocumented)
+    setRelativeProjectionTarget(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)
     setStaticValue(key: string, value: number | string): void;
     // (undocumented)

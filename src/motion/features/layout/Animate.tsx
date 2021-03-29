@@ -3,7 +3,7 @@ import { FeatureProps } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
-import { tweenAxis } from "./utils"
+import { calcRelativeOffset, tweenAxis } from "./utils"
 import {
     SharedLayoutAnimationConfig,
     VisibilityAction,
@@ -109,6 +109,23 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
+        let isRelative = false
+        const projectionParent = visualElement.getProjectionParent()
+
+        if (projectionParent) {
+            const prevViewportBox =
+                config.prevParentViewportBox || projectionParent.prevViewportBox
+            const parentLayout =
+                config.prevParentLayout ||
+                projectionParent.getLayoutState().layout
+
+            if (prevViewportBox) {
+                isRelative = true
+                origin = calcRelativeOffset(prevViewportBox, origin)
+                target = calcRelativeOffset(parentLayout, target)
+            }
+        }
+
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis((axis) => {
@@ -130,20 +147,24 @@ class Animate extends React.Component<AnimateProps> {
             } else if (boxHasMoved) {
                 // If the box has moved, animate between it's current visual state and its
                 // final state
-                return this.animateAxis(
-                    axis,
-                    target[axis],
-                    origin[axis],
-                    config
-                )
+                return this.animateAxis(axis, target[axis], origin[axis], {
+                    ...config,
+                    isRelative,
+                })
             } else {
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
-                return visualElement.setProjectionTargetAxis(
-                    axis,
-                    target[axis].min,
-                    target[axis].max
-                )
+                return isRelative
+                    ? visualElement.setRelativeProjectionTarget(
+                          axis,
+                          target[axis].min,
+                          target[axis].max
+                      )
+                    : visualElement.setProjectionTargetAxis(
+                          axis,
+                          target[axis].min,
+                          target[axis].max
+                      )
             }
         })
 
@@ -171,7 +192,7 @@ class Animate extends React.Component<AnimateProps> {
         axis: "x" | "y",
         target: Axis,
         origin: Axis,
-        { transition }: SharedLayoutAnimationConfig = {}
+        { transition, isRelative }: SharedLayoutAnimationConfig = {}
     ) {
         /**
          * If we're not animating to a new target, don't run this animation
@@ -210,11 +231,18 @@ class Animate extends React.Component<AnimateProps> {
 
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
-            visualElement.setProjectionTargetAxis(
-                axis,
-                frameTarget.min,
-                frameTarget.max
-            )
+
+            isRelative
+                ? visualElement.setRelativeProjectionTarget(
+                      axis,
+                      frameTarget.min,
+                      frameTarget.max
+                  )
+                : visualElement.setProjectionTargetAxis(
+                      axis,
+                      frameTarget.min,
+                      frameTarget.max
+                  )
         }
 
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.

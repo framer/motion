@@ -4,7 +4,7 @@ import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionStyle } from "../motion/types"
 import { eachAxis } from "../utils/each-axis"
-import { copyAxisBox } from "../utils/geometry"
+import { axisBox, copyAxisBox } from "../utils/geometry"
 import {
     applyBoxTransforms,
     removeBoxTransforms,
@@ -23,11 +23,7 @@ import { variantPriorityOrder } from "./utils/animation-state"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import { updateLayoutDeltas } from "./utils/projection"
-import {
-    createLayoutState,
-    createProjectionState,
-    TargetProjection,
-} from "./utils/state"
+import { createLayoutState, createProjectionState } from "./utils/state"
 import { FlatTree } from "./utils/flat-tree"
 import {
     checkIfControllingVariants,
@@ -80,12 +76,12 @@ export const visualElement = <Instance, MutableState, Options>({
     const projection = createProjectionState()
 
     /**
-     * A reference to the nearest parent projection target. This is either
+     * A reference to the nearest projecting parent. This is either
      * undefined if we haven't looked for the nearest projecting parent,
      * false if there is no parent performing layout projection, or a reference
-     * to the parents prohection.
+     * to the projecting parent.
      */
-    let parentProjection: undefined | false | TargetProjection
+    let projectionParent: undefined | false | VisualElement
 
     /**
      * This is a reference to the visual state of the "lead" visual element.
@@ -700,7 +696,6 @@ export const visualElement = <Instance, MutableState, Options>({
          * Record the viewport box as it was before an expected mutation/re-render
          */
         snapshotViewportBox() {
-            // TODO: Store this snapshot in LayoutState
             element.prevViewportBox = element.measureViewportBox(false)
 
             /**
@@ -802,6 +797,22 @@ export const visualElement = <Instance, MutableState, Options>({
             lifecycles.notifySetAxisTarget()
         },
 
+        // TODO Remove duplication ^ V
+        setRelativeProjectionTarget(axis, min, max) {
+            if (!projection.relativeTarget) {
+                projection.relativeTarget = axisBox()
+            }
+
+            const target = projection.relativeTarget[axis]
+            target.min = min
+            target.max = max
+
+            // Flag that we want to fire the onViewportBoxUpdate event handler
+            hasViewportBoxUpdated = true
+
+            lifecycles.notifySetAxisTarget()
+        },
+
         /**
          * Rebase the projection target on top of the provided viewport box
          * or the measured layout. This ensures that non-animating elements
@@ -869,10 +880,29 @@ export const visualElement = <Instance, MutableState, Options>({
             sync.preRender(updateTreeLayoutProjection, false, true)
         },
 
+        getProjectionParent() {
+            if (projectionParent === undefined) {
+                let foundParent: VisualElement | false = false
+
+                // Search backwards through the tree path
+                for (let i = element.path.length - 1; i >= 0; i--) {
+                    const ancestor = element.path[i]
+                    if (ancestor.projection.isEnabled) {
+                        foundParent = ancestor
+                    }
+                }
+
+                projectionParent = foundParent
+            }
+
+            return projectionParent
+        },
+
         resolveRelativeTargetBox() {
             if (!projection.relativeTarget) return
 
             const relativeParent = element.getProjectionParent()
+
             if (relativeParent) {
                 calcRelativeBox(projection, relativeParent.projection)
             }

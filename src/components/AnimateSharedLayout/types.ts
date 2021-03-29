@@ -53,6 +53,9 @@ export interface SharedLayoutAnimationConfig {
     crossfadeOpacity?: MotionValue<number>
     shouldStackAnimate?: boolean
     onComplete?: () => void
+    isRelative?: boolean
+    prevParentViewportBox?: AxisBox2D
+    prevParentLayout?: AxisBox2D
 }
 
 /**

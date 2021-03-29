@@ -34,7 +34,7 @@
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/layout-relative-delay.ts\"'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/layout-shared-lightbox-crossfade-repeated.ts\"'",
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
@@ -44,7 +44,7 @@
         "postpublish": "git push --tags",
         "measure": "webpack --config webpack.size.config.js && bundlesize",
         "deduplicate": "yarn-deduplicate yarn.lock",
-        "start-dev-server": "webpack serve --config dev/webpack/config.js"
+        "start-dev-server": "webpack serve --config dev/webpack/config.js --hot"
     },
     "peerDependencies": {
         "react": ">=16.8 || ^17.0.0",
@@ -53,6 +53,7 @@
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
         "@microsoft/api-extractor": "7.3.4",
+        "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
         "@testing-library/dom": "^6.10.1",
@@ -89,6 +90,7 @@
         "react": "^17.0.0-rc.0",
         "react-dev-utils": "^11.0.4",
         "react-dom": "^17.0.0-rc.0",
+        "react-refresh": "^0.9.0",
         "rollup": "^2.10.5",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",
@@ -96,6 +98,7 @@
         "styled-components": "^4.1.1",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
+        "type-fest": "^1.0.1",
         "typescript": "^4.2.3",
         "webpack": "^5.27.2",
         "webpack-cli": "^4.5.0",
