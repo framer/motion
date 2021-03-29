@@ -293,7 +293,7 @@ describe("AnimateSharedLayout: A -> B crossfade transition", () => {
             /**
              * Test that onLayoutAnimationComplete fires
              */
-            .wait(200)
+            .wait(220)
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 0, 255)")
             })
