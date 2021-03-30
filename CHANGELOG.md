@@ -7,12 +7,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Relative layout animations
--   Orchestrate crossfade transition by specififying `transition.crossfade`. FIXME NEEDS TEST
+-   Adding `transition.crossfade` and `transition.layout` for crossfade and layout-specific transitions.
 
 ### Fixed
 
--   FIXME NEEDS TEST type=switch no longer crossfading opacity
--   FIXME NEEDS TEST open/close crossfade test multiple times - make sure crossfade animation plays
+-   Various layout projection improvements.
 
 ## [4.0.3] 2021-03-24
 
