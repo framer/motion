@@ -53,6 +53,9 @@ function SingleImage({ color, index, setIndex }) {
 
 export function Component() {
     const [index, setIndex] = useState<false | number>(false)
+
+    console.log(index)
+
     return (
         <>
             <Gallery items={colors} setIndex={setIndex} />
