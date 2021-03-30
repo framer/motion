@@ -1,4 +1,4 @@
-import { getFrameData, flushSync } from "framesync"
+import { flushSync } from "framesync"
 import { VisualElement } from "../../../render/types"
 import { compareByDepth } from "../../../render/utils/compare-by-depth"
 import { Presence, SyncLayoutBatcher, SyncLayoutLifecycles } from "../types"
@@ -53,6 +53,12 @@ export function createBatcher(): SyncLayoutBatcher {
                 if (child.isPresent) child.presence = Presence.Present
             })
 
+            /**
+             * Starting these animations will have queued jobs on the frame loop. In some situations,
+             * like when removing an element, these will be processed too late after the DOM is manipulated,
+             * leaving a flash of incorrectly-projected content. By manually flushing these jobs
+             * we ensure there's no flash.
+             */
             flushSync.preRender()
             flushSync.render()
 
