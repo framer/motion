@@ -662,11 +662,7 @@ export interface SharedLayoutAnimationConfig {
     // (undocumented)
     originBox?: AxisBox2D;
     // (undocumented)
-    prevParentLayout?: AxisBox2D;
-    // (undocumented)
-    prevParentLayoutId?: string;
-    // (undocumented)
-    prevParentViewportBox?: AxisBox2D;
+    prevParent?: VisualElement;
     // (undocumented)
     shouldStackAnimate?: boolean;
     // (undocumented)
