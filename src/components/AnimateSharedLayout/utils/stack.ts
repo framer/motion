@@ -101,7 +101,7 @@ export function layoutStack(): LayoutStack {
             })
 
             if (
-                state.follow &&
+                state.lead !== prevState.follow &&
                 (prevState.lead !== state.lead ||
                     prevState.leadIsExiting !== state.leadIsExiting)
             ) {
@@ -138,6 +138,7 @@ export function layoutStack(): LayoutStack {
                 if (needsCrossfadeAnimation) {
                     needsCrossfadeAnimation = false
                     const transition = child.getDefaultTransition()
+
                     child.presence === Presence.Entering
                         ? crossfader.toLead(transition)
                         : crossfader.fromLead(transition)

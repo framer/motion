@@ -172,6 +172,7 @@ export function createCrossfader(): Crossfader {
         },
         toLead(transition) {
             let initialProgress = 0
+
             if (!options.prevValues && !options.follow) {
                 initialProgress = 1
             } else if (
