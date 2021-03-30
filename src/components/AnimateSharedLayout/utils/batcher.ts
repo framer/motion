@@ -1,3 +1,4 @@
+import { getFrameData, flushSync } from "framesync"
 import { VisualElement } from "../../../render/types"
 import { compareByDepth } from "../../../render/utils/compare-by-depth"
 import { Presence, SyncLayoutBatcher, SyncLayoutLifecycles } from "../types"
@@ -51,6 +52,9 @@ export function createBatcher(): SyncLayoutBatcher {
             order.forEach((child) => {
                 if (child.isPresent) child.presence = Presence.Present
             })
+
+            flushSync.preRender()
+            flushSync.render()
 
             queue.clear()
         },
