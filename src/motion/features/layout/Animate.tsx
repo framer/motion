@@ -248,9 +248,6 @@ class Animate extends React.Component<AnimateProps> {
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
 
-        // Ensure that the layout delta is updated for this frame.
-        visualElement.updateLayoutProjection()
-
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
 

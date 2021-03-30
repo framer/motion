@@ -887,8 +887,10 @@ export const visualElement = <Instance, MutableState, Options>({
                 // Search backwards through the tree path
                 for (let i = element.path.length - 1; i >= 0; i--) {
                     const ancestor = element.path[i]
+
                     if (ancestor.projection.isEnabled) {
                         foundParent = ancestor
+                        break
                     }
                 }
 
