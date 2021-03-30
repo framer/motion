@@ -819,6 +819,7 @@ export const visualElement = <Instance, MutableState, Options>({
             const { x, y } = element.getProjectionAnimationProgress()
 
             const shouldRebase =
+                !projection.relativeTarget &&
                 !projection.isTargetLocked &&
                 !x.isAnimating() &&
                 !y.isAnimating()
