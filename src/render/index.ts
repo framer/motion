@@ -30,6 +30,7 @@ import {
     checkIfVariantNode,
     isVariantLabel,
 } from "./utils/variants"
+import { Axis } from "../types/geometry"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -786,24 +787,19 @@ export const visualElement = <Instance, MutableState, Options>({
          * Update the projection of a single axis. Schedule an update to
          * the tree layout projection.
          */
-        setProjectionTargetAxis(axis, min, max) {
-            const target = projection.target[axis]
-            target.min = min
-            target.max = max
+        setProjectionTargetAxis(axis, min, max, isRelative = false) {
+            let target: Axis
 
-            // Flag that we want to fire the onViewportBoxUpdate event handler
-            hasViewportBoxUpdated = true
-
-            lifecycles.notifySetAxisTarget()
-        },
-
-        // TODO Remove duplication ^ V
-        setRelativeProjectionTarget(axis, min, max) {
-            if (!projection.relativeTarget) {
-                projection.relativeTarget = axisBox()
+            if (isRelative) {
+                if (!projection.relativeTarget) {
+                    projection.relativeTarget = axisBox()
+                }
+                target = projection.relativeTarget[axis]
+            } else {
+                projection.relativeTarget = undefined
+                target = projection.target[axis]
             }
 
-            const target = projection.relativeTarget[axis]
             target.min = min
             target.max = max
 

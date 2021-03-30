@@ -94,7 +94,7 @@ export function createCrossfader(): Crossfader {
             onUpdate,
             onComplete: () => {
                 if (!hasUpdated) {
-                    progress.set(1)
+                    progress.set(target)
                     /**
                      * If we never ran an update, for instance if this was an instant transition, fire a
                      * simulated final frame to ensure the crossfade gets applied correctly.
@@ -142,6 +142,10 @@ export function createCrossfader(): Crossfader {
 
         if (options.crossfadeOpacity && follow) {
             leadState.opacity = mix(
+                /**
+                 * If the follow child has been completely hidden we animate
+                 * this opacity from its previous opacity, but otherwise from completely transparent.
+                 */
                 follow.isVisible !== false ? 0 : followTargetOpacity,
                 leadTargetOpacity,
                 easeCrossfadeIn(p)
@@ -174,11 +178,17 @@ export function createCrossfader(): Crossfader {
             let initialProgress = 0
 
             if (!options.prevValues && !options.follow) {
+                /**
+                 * If we're not coming from anywhere, start at the end of the animation.
+                 */
                 initialProgress = 1
             } else if (
                 prevOptions.lead === options.follow &&
                 prevOptions.follow === options.lead
             ) {
+                /**
+                 * If we're swapping follow/lead we can reverse the progress
+                 */
                 initialProgress = 1 - progress.get()
             }
 

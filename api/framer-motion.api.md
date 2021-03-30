@@ -664,6 +664,8 @@ export interface SharedLayoutAnimationConfig {
     // (undocumented)
     prevParentLayout?: AxisBox2D;
     // (undocumented)
+    prevParentLayoutId?: string;
+    // (undocumented)
     prevParentViewportBox?: AxisBox2D;
     // (undocumented)
     shouldStackAnimate?: boolean;
@@ -953,9 +955,9 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
-    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -1033,11 +1035,9 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     setCrossfader(crossfader: Crossfader): void;
     // (undocumented)
-    setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void;
+    setProjectionTargetAxis(axis: "x" | "y", min: number, max: number, isRelative?: boolean): void;
     // (undocumented)
     setProps(props: MotionProps): void;
-    // (undocumented)
-    setRelativeProjectionTarget(axis: "x" | "y", min: number, max: number): void;
     // (undocumented)
     setStaticValue(key: string, value: number | string): void;
     // (undocumented)

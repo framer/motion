@@ -122,11 +122,19 @@ export function layoutStack(): LayoutStack {
 
                 const config: SharedLayoutAnimationConfig = {}
                 const prevParent = state.follow?.getProjectionParent()
+                if (prevParent) {
+                    /**
+                     * We'll use this to determine if the layoutId has been reparented.
+                     */
+                    config.prevParentLayoutId = prevParent.getLayoutId()
+                }
+
                 if (child.presence === Presence.Entering) {
                     if (prevParent) {
                         config.prevParentViewportBox =
                             prevParent.prevViewportBox
                     }
+
                     config.originBox = getFollowViewportBox()
                 } else if (child.presence === Presence.Exiting) {
                     if (prevParent) {

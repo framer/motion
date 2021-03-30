@@ -54,8 +54,9 @@ export interface SharedLayoutAnimationConfig {
     shouldStackAnimate?: boolean
     onComplete?: () => void
     isRelative?: boolean
-    prevParentViewportBox?: AxisBox2D
     prevParentLayout?: AxisBox2D
+    prevParentLayoutId?: string
+    prevParentViewportBox?: AxisBox2D
 }
 
 /**

@@ -109,6 +109,11 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
+        /**
+         * If this element has a projecting parent, there's an opportunity to animate
+         * it relatively to that parent rather than relatively to the viewport. This
+         * allows us to add orchestrated animations.
+         */
         let isRelative = false
         const projectionParent = visualElement.getProjectionParent()
 
@@ -154,17 +159,12 @@ class Animate extends React.Component<AnimateProps> {
             } else {
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
-                return isRelative
-                    ? visualElement.setRelativeProjectionTarget(
-                          axis,
-                          target[axis].min,
-                          target[axis].max
-                      )
-                    : visualElement.setProjectionTargetAxis(
-                          axis,
-                          target[axis].min,
-                          target[axis].max
-                      )
+                return visualElement.setProjectionTargetAxis(
+                    axis,
+                    target[axis].min,
+                    target[axis].max,
+                    isRelative
+                )
             }
         })
 
@@ -232,17 +232,12 @@ class Animate extends React.Component<AnimateProps> {
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
 
-            isRelative
-                ? visualElement.setRelativeProjectionTarget(
-                      axis,
-                      frameTarget.min,
-                      frameTarget.max
-                  )
-                : visualElement.setProjectionTargetAxis(
-                      axis,
-                      frameTarget.min,
-                      frameTarget.max
-                  )
+            visualElement.setProjectionTargetAxis(
+                axis,
+                frameTarget.min,
+                frameTarget.max,
+                isRelative
+            )
         }
 
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.

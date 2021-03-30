@@ -108,8 +108,12 @@ export interface VisualElement<Instance = any, RenderState = any>
     getLayoutState: () => LayoutState
     getProjectionParent: () => VisualElement | false
     getProjectionAnimationProgress(): MotionPoint
-    setRelativeProjectionTarget(axis: "x" | "y", min: number, max: number): void
-    setProjectionTargetAxis(axis: "x" | "y", min: number, max: number): void
+    setProjectionTargetAxis(
+        axis: "x" | "y",
+        min: number,
+        max: number,
+        isRelative?: boolean
+    ): void
     startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>
     stopLayoutAnimation(): void
     snapshotViewportBox(): void
