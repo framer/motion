@@ -124,22 +124,14 @@ export function layoutStack(): LayoutStack {
                 const prevParent = state.follow?.getProjectionParent()
                 if (prevParent) {
                     /**
-                     * We'll use this to determine if the layoutId has been reparented.
+                     * We'll use this to determine if the element or its layoutId has been reparented.
                      */
-                    config.prevParentLayoutId = prevParent.getLayoutId()
+                    config.prevParent = prevParent
                 }
 
                 if (child.presence === Presence.Entering) {
-                    if (prevParent) {
-                        config.prevParentViewportBox =
-                            prevParent.prevViewportBox
-                    }
-
                     config.originBox = getFollowViewportBox()
                 } else if (child.presence === Presence.Exiting) {
-                    if (prevParent) {
-                        config.prevParentLayout = prevParent.getLayoutState().layout
-                    }
                     config.targetBox = getFollowLayout()
                 }
 

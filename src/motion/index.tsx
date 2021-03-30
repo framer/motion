@@ -12,7 +12,6 @@ import { useMotionRef } from "./utils/use-motion-ref"
 import { useCreateMotionContext } from "../context/MotionContext/create"
 import { loadFeatures } from "./features/definitions"
 import { isBrowser } from "../utils/is-browser"
-export { MotionProps }
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
