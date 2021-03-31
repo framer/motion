@@ -18,6 +18,7 @@ const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
         <motion.ul
             layout
             style={styles.list}
+            drag
             transition={{ type: "spring", stiffness: 200, damping: 20 }}
         >
             <AnimatePresence>
@@ -31,8 +32,7 @@ const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
                         transition={{
                             default: {
                                 type: "spring",
-                                stiffness: 200,
-                                damping: 20,
+                                duration: 5,
                             },
                             crossfade: {
                                 duration: 0.4,
