@@ -113,6 +113,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     snapshotViewportBox(): void
     updateLayoutProjection(): void
     updateTreeLayoutProjection(): void
+    resolveRelativeTargetBox(): void
     makeTargetAnimatable(
         target: TargetAndTransition,
         isLive?: boolean

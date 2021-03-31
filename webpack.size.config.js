@@ -36,7 +36,6 @@ module.exports = {
         minimizer: [
             new TerserPlugin({
                 terserOptions: {
-                    extractComments: false,
                     output: { comments: false },
                 },
             }),

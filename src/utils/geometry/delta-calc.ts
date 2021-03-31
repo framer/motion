@@ -1,6 +1,7 @@
 import { Axis, AxisDelta, BoxDelta, AxisBox2D } from "../../types/geometry"
 import { mix, distance, progress, clamp } from "popmotion"
 import { ResolvedValues } from "../../render/types"
+import { TargetProjection } from "../../render/utils/state"
 
 const clampProgress = (v: number) => clamp(0, 1, v)
 
@@ -78,4 +79,25 @@ export function updateBoxDelta(
  */
 function defaultOrigin(origin: number | string | null) {
     return typeof origin === "number" ? origin : 0.5
+}
+
+export function calcRelativeAxis(target: Axis, relative: Axis, parent: Axis) {
+    target.min = parent.min + relative.min
+    target.max = target.min + calcLength(relative)
+}
+
+export function calcRelativeBox(
+    projection: TargetProjection,
+    parentProjection: TargetProjection
+) {
+    calcRelativeAxis(
+        projection.target.x,
+        projection.relativeTarget!.x,
+        parentProjection.target.x
+    )
+    calcRelativeAxis(
+        projection.target.y,
+        projection.relativeTarget!.y,
+        parentProjection.target.y
+    )
 }

@@ -44,7 +44,7 @@
         "postpublish": "git push --tags",
         "measure": "webpack --config webpack.size.config.js && bundlesize",
         "deduplicate": "yarn-deduplicate yarn.lock",
-        "start-dev-server": "webpack-dev-server --config=dev/webpack/config.js"
+        "start-dev-server": "webpack serve --config dev/webpack/config.js"
     },
     "peerDependencies": {
         "react": ">=16.8 || ^17.0.0",
@@ -65,7 +65,6 @@
         "@types/styled-components": "^4.1.0",
         "@typescript-eslint/eslint-plugin": "^1.5.0",
         "@typescript-eslint/parser": "^1.5.0",
-        "ansi-regex": "^5.0.0",
         "array-move": "^2.1.0",
         "bundlesize": "^0.18.0",
         "cache-loader": "^1.2.5",
@@ -77,7 +76,7 @@
         "eslint-plugin-import": "^2.16.0",
         "eslint-plugin-react": "^7.12.4",
         "eslint-plugin-react-hooks": "^1.6.0",
-        "fork-ts-checker-webpack-plugin": "^0.4.15",
+        "fork-ts-checker-webpack-plugin": "^6.2.0",
         "husky": "1.1.4",
         "jest": "^24.8.0",
         "jest-dom": "^3.5.0",
@@ -85,8 +84,8 @@
         "jest-watch-typeahead": "^0.4.2",
         "lint-staged": "^8.0.4",
         "lodash": "^4.17.13",
+        "path-browserify": "^1.0.1",
         "prettier": "^2.1.0",
-        "progress-bar-webpack-plugin": "^1.11.0",
         "react": "^17.0.0-rc.0",
         "react-dev-utils": "^11.0.4",
         "react-dom": "^17.0.0-rc.0",
@@ -98,10 +97,9 @@
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
         "typescript": "^4.2.3",
-        "uglifyjs-webpack-plugin": "^2.2.0",
-        "webpack": "^4.25.1",
-        "webpack-cli": "^3.1.2",
-        "webpack-dev-server": "^3.7.2",
+        "webpack": "^5.27.2",
+        "webpack-cli": "^4.5.0",
+        "webpack-dev-server": "^3.11.2",
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
@@ -157,7 +155,7 @@
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "26 kB"
+            "maxSize": "26.5 kB"
         }
     ]
 }
