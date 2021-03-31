@@ -3,7 +3,7 @@ import { FeatureProps } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
 import { eachAxis } from "../../../utils/each-axis"
 import { startAnimation } from "../../../animation/utils/transitions"
-import { calcRelativeOffset, tweenAxis } from "./utils"
+import { calcRelativeOffset, checkIfParentHasChanged, tweenAxis } from "./utils"
 import {
     SharedLayoutAnimationConfig,
     VisibilityAction,
@@ -119,21 +119,18 @@ class Animate extends React.Component<AnimateProps> {
         const projectionParent = visualElement.getProjectionParent()
 
         if (projectionParent) {
-            let hasReparented = false
             let prevParentViewportBox = projectionParent.prevViewportBox
             let parentLayout = projectionParent.getLayoutState().layout
 
             if (prevParent) {
-                if (
-                    projectionParent !== prevParent ||
-                    projectionParent.getLayoutId() !== prevParent.getLayoutId()
-                ) {
-                    hasReparented = true
-                }
                 if (targetBox) {
                     parentLayout = prevParent.getLayoutState().layout
                 }
-                if (originBox && !hasReparented) {
+                if (
+                    originBox &&
+                    !checkIfParentHasChanged(prevParent, projectionParent) &&
+                    prevParent.prevViewportBox
+                ) {
                     prevParentViewportBox = prevParent.prevViewportBox
                 }
             }
@@ -143,27 +140,6 @@ class Animate extends React.Component<AnimateProps> {
                 origin = calcRelativeOffset(prevParentViewportBox, origin)
                 target = calcRelativeOffset(parentLayout, target)
             }
-
-            // const parentLayoutId = projectionParent.getLayoutId()
-            // const hasReparented =
-            //     config.prevParentLayoutId !== parentLayoutId ||
-            //     (parentLayoutId === undefined &&
-            //         config.prevParent &&
-            //         config.prevParent !== projectionParent)
-
-            // const prevParentViewportBox = hasReparented
-            //     ? projectionParent.prevViewportBox
-            //     : config.prevParentViewportBox ||
-            //       projectionParent.prevViewportBox
-            // const parentLayout =
-            //     config.prevParentLayout ||
-            //     projectionParent.getLayoutState().layout
-
-            // if (prevParentViewportBox) {
-            //     isRelative = true
-            //     origin = calcRelativeOffset(prevParentViewportBox, origin)
-            //     target = calcRelativeOffset(parentLayout, target)
-            // }
         }
 
         const boxHasMoved = hasMoved(origin, target)

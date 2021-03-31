@@ -29,9 +29,9 @@ import { getBoundingBox } from "../../render/dom/projection/measure"
 import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
-import { MotionProps } from "../../motion"
 import { AnimationType } from "../../render/utils/types"
 import { VisualElement } from "../../render/types"
+import { MotionProps } from "../../motion/types"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
