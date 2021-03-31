@@ -269,7 +269,9 @@ class Animate extends React.Component<AnimateProps> {
         this.currentAnimationTarget[axis] = target
 
         const layoutTransition =
-            transition || this.props.transition || defaultTransition
+            transition ||
+            visualElement.getDefaultTransition() ||
+            defaultLayoutTransition
 
         // Start the animation on this axis
         const animation = startAnimation(
@@ -313,7 +315,7 @@ function axisIsEqual(a: Axis, b: Axis) {
     return a.min === b.min && a.max === b.max
 }
 
-const defaultTransition = {
+const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
 }
