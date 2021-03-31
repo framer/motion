@@ -101,7 +101,9 @@ export function layoutStack(): LayoutStack {
             })
 
             if (
-                state.follow &&
+                // Don't crossfade if we've just animated back from lead and switched the
+                // old follow to the new lead.
+                state.lead !== prevState.follow &&
                 (prevState.lead !== state.lead ||
                     prevState.leadIsExiting !== state.leadIsExiting)
             ) {
@@ -121,6 +123,14 @@ export function layoutStack(): LayoutStack {
                 }
 
                 const config: SharedLayoutAnimationConfig = {}
+                const prevParent = state.follow?.getProjectionParent()
+                if (prevParent) {
+                    /**
+                     * We'll use this to determine if the element or its layoutId has been reparented.
+                     */
+                    config.prevParent = prevParent
+                }
+
                 if (child.presence === Presence.Entering) {
                     config.originBox = getFollowViewportBox()
                 } else if (child.presence === Presence.Exiting) {
@@ -130,6 +140,7 @@ export function layoutStack(): LayoutStack {
                 if (needsCrossfadeAnimation) {
                     needsCrossfadeAnimation = false
                     const transition = child.getDefaultTransition()
+
                     child.presence === Presence.Entering
                         ? crossfader.toLead(transition)
                         : crossfader.fromLead(transition)

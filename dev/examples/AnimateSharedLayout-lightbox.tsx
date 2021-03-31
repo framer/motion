@@ -1,13 +1,29 @@
 import * as React from "react"
 import { CSSProperties, useState } from "react"
-import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
+import {
+    motion,
+    AnimateSharedLayout,
+    AnimatePresence,
+    useIsPresent,
+    Transition,
+} from "@framer"
 
 /**
  * This demonstrates children with layoutId animating
  * back to their origin components
  */
 
-const transition = { type: "spring", stiffness: 500, damping: 30 }
+const params = new URLSearchParams(window.location.search)
+const instant = params.get("instant") || false
+const partialEase = params.get("partial-ease") || false
+const type = params.get("type") || "switch"
+let transition: Transition = instant ? { type: false } : { duration: 3 }
+if (partialEase) {
+    transition = {
+        duration: 0.15,
+        ease: () => 0.1,
+    }
+}
 
 function Gallery({ items, setIndex }) {
     return (
@@ -16,86 +32,111 @@ function Gallery({ items, setIndex }) {
                 <motion.li
                     key={color}
                     onClick={() => setIndex(i)}
-                    initial={{ borderRadius: 10 }}
-                    style={{ ...item, backgroundColor: color }}
+                    style={{ ...item, backgroundColor: color, borderRadius: 0 }}
                     layoutId={color}
-                    id={i === 0 && "list-red"}
+                    transition={transition}
+                    id={i === 0 ? `item-parent` : undefined}
                 >
-                    <motion.div style={child} layoutId={`child-${color}`} />
+                    <motion.div
+                        style={child}
+                        id={i === 0 ? `item-child` : undefined}
+                        layoutId={`child-${color}`}
+                        transition={transition}
+                    />
                 </motion.li>
             ))}
         </ul>
     )
 }
 
-function SingleImage({ color, index, setIndex }) {
+function SingleImage({ color, setIndex }) {
+    const isPresent = useIsPresent()
+
     return (
-        <div style={singleImageContainer}>
-            <div onClick={() => setIndex(index - 1)} style={prev} />
+        <>
             <motion.div
-                id="color"
-                layoutId={color}
-                initial={{ borderRadius: 20 }}
-                style={{ ...singleImage, backgroundColor: color }}
-                transition={{ duration: 2 }}
-            >
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                style={{
+                    ...overlay,
+                    pointerEvents: isPresent ? "auto" : "none",
+                }}
+                id="overlay"
+                transition={transition}
+                onClick={() => setIndex(false)}
+            />
+            <div style={singleImageContainer}>
                 <motion.div
-                    style={child}
-                    id="child"
-                    layoutId={`child-${color}`}
-                    transition={{ duration: 2 }}
-                />
-            </motion.div>
-            <div onClick={() => setIndex(index + 1)} style={next} />
-        </div>
+                    id="parent"
+                    layoutId={color}
+                    style={{
+                        ...singleImage,
+                        backgroundColor: "#fff",
+                        borderRadius: 50,
+                    }}
+                    transition={transition}
+                >
+                    <motion.div
+                        style={{ ...child, backgroundColor: "black" }}
+                        id="child"
+                        layoutId={`child-${color}`}
+                        transition={transition}
+                    />
+                </motion.div>
+            </div>
+        </>
     )
 }
 
 export function Component() {
     const [index, setIndex] = useState<false | number>(false)
+
+    if (partialEase) {
+        if (index === 0) {
+            transition.ease = () => 0.1
+        } else {
+            transition.ease = (t: number) => (t === 1 ? 1 : 0.9)
+        }
+    }
+
     return (
-        <>
+        <div style={background}>
             <Gallery items={colors} setIndex={setIndex} />
             <AnimatePresence>
                 {index !== false && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        style={overlay}
-                        id="overlay"
-                        key="overlay"
-                        onClick={() => setIndex(false)}
-                    />
+                    <SingleImage color={colors[index]} setIndex={setIndex} />
                 )}
             </AnimatePresence>
-            <AnimatePresence>
-                {index !== false && (
-                    <SingleImage
-                        index={index}
-                        key={colors[index]}
-                        color={colors[index]}
-                        setIndex={setIndex}
-                    />
-                )}
-            </AnimatePresence>
-        </>
+        </div>
     )
 }
 
 export function App() {
     return (
-        <AnimateSharedLayout>
+        <AnimateSharedLayout type={type}>
             <Component />
         </AnimateSharedLayout>
     )
 }
 
-const numColors = 3 //4 * 4
+const numColors = 3 // 4 * 4
 const makeColor = (hue) => `hsl(${hue}, 100%, 50%)`
 const colors = Array.from(Array(numColors)).map((_, i) =>
     makeColor(Math.round((360 / numColors) * i))
 )
+
+const background = {
+    position: "fixed",
+    top: "0",
+    left: "0",
+    bottom: "0",
+    right: "0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    background: "#ccc",
+}
 
 const container = {
     backgroundColor: "#eeeeee",
@@ -123,7 +164,7 @@ const item = {
 
 const overlay = {
     background: "rgba(0,0,0,0.6)",
-    position: "absolute",
+    position: "fixed",
     top: "0",
     left: "0",
     bottom: "0",
@@ -154,17 +195,4 @@ const child = {
     borderRadius: 25,
     backgroundColor: "white",
     opacity: 0.5,
-}
-
-const next = {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    background: "rgba(255,255,255,0.5)",
-    margin: 10,
-    pointerEvents: "auto",
-}
-
-const prev = {
-    ...next,
 }

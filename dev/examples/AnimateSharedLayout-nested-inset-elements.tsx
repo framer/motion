@@ -15,7 +15,7 @@ export const App = () => {
                 height: 500,
             }}
         >
-            <AnimateSharedLayout type="crossfade" _supportRotate>
+            <AnimateSharedLayout type="crossfade">
                 <AnimatePresence>
                     <motion.div
                         key={isOn ? "a" : "b"}
@@ -36,6 +36,9 @@ export const App = () => {
                             style={{
                                 ...container,
                                 background: isOn ? "#f00" : "#0f0",
+                                width: 100,
+                                height: 100,
+                                borderRadius: "50%",
                             }}
                             transition={{ duration: 2 }}
                         >
@@ -44,6 +47,9 @@ export const App = () => {
                                 style={{
                                     ...container,
                                     background: isOn ? "#0f0" : "#f00",
+                                    width: 80,
+                                    height: 80,
+                                    borderRadius: "50%",
                                 }}
                                 transition={{ duration: 2 }}
                             />

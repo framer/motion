@@ -2,6 +2,17 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.0] Unreleased
+
+### Added
+
+-   Relative layout animations
+-   Adding `transition.crossfade` and `transition.layout` for crossfade and layout-specific transitions.
+
+### Fixed
+
+-   Various layout projection improvements.
+
 ## [4.0.3] 2021-03-24
 
 ### Fixed

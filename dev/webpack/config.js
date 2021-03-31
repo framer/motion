@@ -4,6 +4,8 @@ const convertPathsToAliases = require("convert-tsconfig-paths-to-webpack-aliases
     .default
 const chalk = require("chalk")
 const tsconfig = require("../../tsconfig.json")
+const webpack = require("webpack")
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
 
 const tsLoader = {
     loader: "ts-loader",
@@ -35,9 +37,20 @@ module.exports = {
     module: {
         rules: [
             {
-                test: /\.ts(x?)$/,
+                test: /\.[jt]sx?$/,
                 exclude: [/__tests__/, /node_modules/],
-                use: ["cache-loader", tsLoader],
+                use: [
+                    "cache-loader",
+                    {
+                        loader: require.resolve("babel-loader"),
+                        options: {
+                            plugins: [
+                                require.resolve("react-refresh/babel"),
+                            ].filter(Boolean),
+                        },
+                    },
+                    tsLoader,
+                ],
             },
         ],
     },
@@ -70,5 +83,9 @@ module.exports = {
         stats: "errors-only",
         port: DEV_SERVER_PORT,
     },
-    plugins: [new ForkTsCheckerWebpackPlugin()],
+    plugins: [
+        new ReactRefreshWebpackPlugin(),
+        new ForkTsCheckerWebpackPlugin(),
+        new webpack.HotModuleReplacementPlugin(),
+    ],
 }

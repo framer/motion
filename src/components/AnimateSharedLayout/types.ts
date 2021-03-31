@@ -53,6 +53,8 @@ export interface SharedLayoutAnimationConfig {
     crossfadeOpacity?: MotionValue<number>
     shouldStackAnimate?: boolean
     onComplete?: () => void
+    isRelative?: boolean
+    prevParent?: VisualElement
 }
 
 /**

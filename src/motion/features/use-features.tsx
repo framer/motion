@@ -1,6 +1,6 @@
 import * as React from "react"
 import { VisualElement } from "../../render/types"
-import { MotionProps } from ".."
+import { MotionProps } from "../types"
 import { FeatureBundle, FeatureDefinition } from "./types"
 import { featureDefinitions } from "./definitions"
 import { invariant } from "hey-listen"

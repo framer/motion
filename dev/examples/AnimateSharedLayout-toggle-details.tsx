@@ -27,12 +27,10 @@ const List = styled(motion.div)`
     flex-direction: column;
     background: white;
     padding: 20px;
-    border-radius: 25px;
 `
 
 const Container = styled(motion.div)`
     background-color: rgba(214, 214, 214, 0.5);
-    border-radius: 10px;
     padding: 20px;
     margin-bottom: 20px;
     overflow: hidden;
@@ -57,7 +55,8 @@ function Item({ onClick, i }: ItemProps) {
             layout
             onClick={() => setIsOpen(!isOpen)}
             isOpen={isOpen}
-            id="container"
+            id={`container-${i}`}
+            style={{ borderRadius: 10 }}
         >
             <Image id={`image-${i}`} layout />
             <AnimatePresence initial={false}>
@@ -80,7 +79,12 @@ function Item({ onClick, i }: ItemProps) {
 
 const Component = () => {
     return (
-        <List initial={{ borderRadius: 25 }} layout>
+        <List
+            initial={{ borderRadius: 25 }}
+            layout
+            style={{ borderRadius: 25 }}
+            id="container"
+        >
             {items.map((id) => (
                 <Item key={id} i={id} />
             ))}

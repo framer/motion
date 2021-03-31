@@ -1,6 +1,12 @@
 import * as React from "react"
 import { CSSProperties, useState } from "react"
-import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
+import {
+    motion,
+    AnimateSharedLayout,
+    AnimatePresence,
+    useIsPresent,
+    Transition,
+} from "@framer"
 
 /**
  * This demonstrates children with layoutId animating
@@ -9,8 +15,15 @@ import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
 
 const params = new URLSearchParams(window.location.search)
 const instant = params.get("instant") || false
+const partialEase = params.get("partial-ease") || false
 const type = params.get("type") || "crossfade"
-const transition = instant ? { type: false } : { duration: 0.01 }
+let transition: Transition = instant ? { type: false } : { duration: 0.01 }
+if (partialEase) {
+    transition = {
+        duration: 0.15,
+        ease: () => 0.1,
+    }
+}
 
 function Gallery({ items, setIndex }) {
     return (
@@ -37,13 +50,18 @@ function Gallery({ items, setIndex }) {
 }
 
 function SingleImage({ color, setIndex }) {
+    const isPresent = useIsPresent()
+
     return (
         <>
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                style={overlay}
+                style={{
+                    ...overlay,
+                    pointerEvents: isPresent ? "auto" : "none",
+                }}
                 id="overlay"
                 transition={transition}
                 onClick={() => setIndex(false)}
@@ -73,6 +91,15 @@ function SingleImage({ color, setIndex }) {
 
 export function Component() {
     const [index, setIndex] = useState<false | number>(false)
+
+    if (partialEase) {
+        if (index === 0) {
+            transition.ease = () => 0.1
+        } else {
+            transition.ease = (t: number) => (t === 1 ? 1 : 0.9)
+        }
+    }
+
     return (
         <div style={background}>
             <Gallery items={colors} setIndex={setIndex} />

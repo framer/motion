@@ -2,8 +2,11 @@ import * as React from "react"
 import { FeatureProps } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
 import { eachAxis } from "../../../utils/each-axis"
-import { startAnimation } from "../../../animation/utils/transitions"
-import { tweenAxis } from "./utils"
+import {
+    getValueTransition,
+    startAnimation,
+} from "../../../animation/utils/transitions"
+import { calcRelativeOffset, checkIfParentHasChanged, tweenAxis } from "./utils"
 import {
     SharedLayoutAnimationConfig,
     VisibilityAction,
@@ -80,6 +83,7 @@ class Animate extends React.Component<AnimateProps> {
             visibilityAction,
             shouldStackAnimate,
             onComplete,
+            prevParent,
             ...config
         }: SharedLayoutAnimationConfig = {}
     ) => {
@@ -109,6 +113,52 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
+        /**
+         * If this element has a projecting parent, there's an opportunity to animate
+         * it relatively to that parent rather than relatively to the viewport. This
+         * allows us to add orchestrated animations.
+         */
+        let isRelative = false
+        const projectionParent = visualElement.getProjectionParent()
+
+        if (projectionParent) {
+            let prevParentViewportBox = projectionParent.prevViewportBox
+            let parentLayout = projectionParent.getLayoutState().layout
+
+            /**
+             * If we're being provided a previous parent VisualElement by AnimateSharedLayout
+             */
+            if (prevParent) {
+                /**
+                 * If we've been provided an explicit target box it means we're animating back
+                 * to this previous parent. So we can make a relative box by comparing to the previous
+                 * parent's layout
+                 */
+                if (targetBox) {
+                    parentLayout = prevParent.getLayoutState().layout
+                }
+
+                /**
+                 * Likewise if we've been provided an explicit origin box it means we're
+                 * animating out from a different element. So we should figure out where that was
+                 * on screen relative to the new parent element.
+                 */
+                if (
+                    originBox &&
+                    !checkIfParentHasChanged(prevParent, projectionParent) &&
+                    prevParent.prevViewportBox
+                ) {
+                    prevParentViewportBox = prevParent.prevViewportBox
+                }
+            }
+
+            if (prevParentViewportBox) {
+                isRelative = true
+                origin = calcRelativeOffset(prevParentViewportBox, origin)
+                target = calcRelativeOffset(parentLayout, target)
+            }
+        }
+
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis((axis) => {
@@ -130,19 +180,18 @@ class Animate extends React.Component<AnimateProps> {
             } else if (boxHasMoved) {
                 // If the box has moved, animate between it's current visual state and its
                 // final state
-                return this.animateAxis(
-                    axis,
-                    target[axis],
-                    origin[axis],
-                    config
-                )
+                return this.animateAxis(axis, target[axis], origin[axis], {
+                    ...config,
+                    isRelative,
+                })
             } else {
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
                 return visualElement.setProjectionTargetAxis(
                     axis,
                     target[axis].min,
-                    target[axis].max
+                    target[axis].max,
+                    isRelative
                 )
             }
         })
@@ -171,7 +220,7 @@ class Animate extends React.Component<AnimateProps> {
         axis: "x" | "y",
         target: Axis,
         origin: Axis,
-        { transition }: SharedLayoutAnimationConfig = {}
+        { transition, isRelative }: SharedLayoutAnimationConfig = {}
     ) {
         /**
          * If we're not animating to a new target, don't run this animation
@@ -210,18 +259,17 @@ class Animate extends React.Component<AnimateProps> {
 
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
+
             visualElement.setProjectionTargetAxis(
                 axis,
                 frameTarget.min,
-                frameTarget.max
+                frameTarget.max,
+                isRelative
             )
         }
 
         // Synchronously run a frame to ensure there's no flash of the uncorrected bounding box.
         frame()
-
-        // Ensure that the layout delta is updated for this frame.
-        visualElement.updateLayoutProjection()
 
         // Create a function to stop animation on this specific axis
         const unsubscribeProgress = layoutProgress.onChange(frame)
@@ -234,12 +282,17 @@ class Animate extends React.Component<AnimateProps> {
 
         this.currentAnimationTarget[axis] = target
 
+        const layoutTransition =
+            transition ||
+            visualElement.getDefaultTransition() ||
+            defaultLayoutTransition
+
         // Start the animation on this axis
         const animation = startAnimation(
             axis === "x" ? "layoutX" : "layoutY",
             layoutProgress,
             progressTarget,
-            transition || this.props.transition || defaultTransition
+            layoutTransition && getValueTransition(layoutTransition, "layout")
         ).then(this.stopAxisAnimation[axis])
 
         return animation
@@ -276,7 +329,7 @@ function axisIsEqual(a: Axis, b: Axis) {
     return a.min === b.min && a.max === b.max
 }
 
-const defaultTransition = {
+const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
 }

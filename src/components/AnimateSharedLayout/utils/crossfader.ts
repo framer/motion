@@ -8,6 +8,7 @@ import {
     progress as calcProgress,
 } from "popmotion"
 import { animate } from "../../../animation/animate"
+import { getValueTransition } from "../../../animation/utils/transitions"
 import { ResolvedValues, VisualElement } from "../../../render/types"
 import { EasingFunction, Transition } from "../../../types"
 import { motionValue } from "../../../value"
@@ -43,6 +44,8 @@ export function createCrossfader(): Crossfader {
         crossfadeOpacity: false,
         preserveFollowOpacity: false,
     }
+
+    let prevOptions = { ...options }
 
     let leadState: ResolvedValues = {}
     let followState: ResolvedValues = {}
@@ -84,12 +87,14 @@ export function createCrossfader(): Crossfader {
             finalCrossfadeFrame = getFrameData().timestamp
         }
 
+        transition = transition && getValueTransition(transition, "crossfade")
+
         return animate(progress, target, {
             ...transition,
             onUpdate,
             onComplete: () => {
                 if (!hasUpdated) {
-                    progress.set(1)
+                    progress.set(target)
                     /**
                      * If we never ran an update, for instance if this was an instant transition, fire a
                      * simulated final frame to ensure the crossfade gets applied correctly.
@@ -136,7 +141,15 @@ export function createCrossfader(): Crossfader {
         const followTargetOpacity = (latestFollowValues?.opacity as number) ?? 1
 
         if (options.crossfadeOpacity && follow) {
-            leadState.opacity = mix(0, leadTargetOpacity, easeCrossfadeIn(p))
+            leadState.opacity = mix(
+                /**
+                 * If the follow child has been completely hidden we animate
+                 * this opacity from its previous opacity, but otherwise from completely transparent.
+                 */
+                follow.isVisible !== false ? 0 : followTargetOpacity,
+                leadTargetOpacity,
+                easeCrossfadeIn(p)
+            )
             followState.opacity = options.preserveFollowOpacity
                 ? followTargetOpacity
                 : mix(followTargetOpacity, 0, easeCrossfadeOut(p))
@@ -162,7 +175,24 @@ export function createCrossfader(): Crossfader {
             return startCrossfadeAnimation(0, transition)
         },
         toLead(transition) {
-            progress.set(options.follow ? 1 - progress.get() : 0)
+            let initialProgress = 0
+
+            if (!options.prevValues && !options.follow) {
+                /**
+                 * If we're not coming from anywhere, start at the end of the animation.
+                 */
+                initialProgress = 1
+            } else if (
+                prevOptions.lead === options.follow &&
+                prevOptions.follow === options.lead
+            ) {
+                /**
+                 * If we're swapping follow/lead we can reverse the progress
+                 */
+                initialProgress = 1 - progress.get()
+            }
+
+            progress.set(initialProgress)
             return startCrossfadeAnimation(1, transition)
         },
         reset: () => progress.set(1),
@@ -176,6 +206,7 @@ export function createCrossfader(): Crossfader {
             }
         },
         setOptions(newOptions) {
+            prevOptions = options
             options = newOptions
             leadState = {}
             followState = {}

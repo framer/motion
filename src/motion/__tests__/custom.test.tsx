@@ -2,7 +2,7 @@ import { render } from "../../../jest.setup"
 import { motion } from "../.."
 import * as React from "react"
 import { RefObject } from "react"
-import { MotionProps } from ".."
+import { MotionProps } from "../types"
 
 interface Props {
     foo: boolean

@@ -1,4 +1,4 @@
-import { MotionProps } from "../../../motion"
+import { MotionProps } from "../../../motion/types"
 import { HTMLRenderState } from "../types"
 import { ResolvedValues } from "../../types"
 import { LayoutState, TargetProjection } from "../../utils/state"

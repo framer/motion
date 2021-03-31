@@ -15,7 +15,12 @@ interface ListProps {
 
 const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul layout style={styles.list} transition={{ duration: 3 }}>
+        <motion.ul
+            layout
+            style={styles.list}
+            drag
+            transition={{ type: "spring", stiffness: 200, damping: 20 }}
+        >
             <AnimatePresence>
                 {list.map((id) => (
                     <motion.li
@@ -24,7 +29,15 @@ const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
                         layoutId={id}
                         id={"list-" + id}
                         onClick={() => onItemClick(id)}
-                        transition={{ duration: 3 }}
+                        transition={{
+                            default: {
+                                type: "spring",
+                                duration: 5,
+                            },
+                            crossfade: {
+                                duration: 0.4,
+                            },
+                        }}
                         //  drag
                     />
                 ))}
@@ -39,25 +52,36 @@ export const App = () => {
 
     //const [lists, setLists] = useState([[0], [1]])
     const [lists, setLists] = useState([
-        [0, 1, 2],
+        [3, 1, 2],
         [7, 8, 9],
     ])
 
     return (
-        <AnimateSharedLayout type="crossfade" transition={{ duration: 2 }}>
-            <div style={styles.container}>
-                <List
-                    list={lists[0]}
-                    onItemClick={(id) => moveItem(id, 1, lists, setLists)}
-                    backgroundColor="red"
-                />
-                <List
-                    list={lists[1]}
-                    onItemClick={(id) => moveItem(id, 0, lists, setLists)}
-                    backgroundColor="blue"
-                />
-            </div>
-        </AnimateSharedLayout>
+        <div
+            style={{
+                position: "fixed",
+                inset: 0,
+                backgroundColor: "#222222",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <AnimateSharedLayout type="crossfade" transition={{ duration: 2 }}>
+                <div style={styles.container}>
+                    <List
+                        list={lists[0]}
+                        onItemClick={(id) => moveItem(id, 1, lists, setLists)}
+                        backgroundColor="#ff3366"
+                    />
+                    <List
+                        list={lists[1]}
+                        onItemClick={(id) => moveItem(id, 0, lists, setLists)}
+                        backgroundColor="#0099ff"
+                    />
+                </div>
+            </AnimateSharedLayout>
+        </div>
     )
 }
 
@@ -72,7 +96,7 @@ const styles = {
         width: 350,
         borderRadius: 10,
         padding: 10,
-        backgroundColor: "white",
+        backgroundColor: "#444444",
         display: "flex",
         listStyle: "none",
         flexDirection: "column",
