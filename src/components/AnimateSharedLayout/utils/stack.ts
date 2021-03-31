@@ -101,6 +101,8 @@ export function layoutStack(): LayoutStack {
             })
 
             if (
+                // Don't crossfade if we've just animated back from lead and switched the
+                // old follow to the new lead.
                 state.lead !== prevState.follow &&
                 (prevState.lead !== state.lead ||
                     prevState.leadIsExiting !== state.leadIsExiting)
