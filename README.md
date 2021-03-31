@@ -69,14 +69,14 @@ Check out [our documentation](https://framer.com/api/motion) for guides and a fu
 
 Or checkout [our examples](https://framer.com/motion) for inspiration.
 
-## Contribute
+### Contribute
 
 Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
-## License
+### License
 
 Framer Motion is MIT licensed.
 
-### Framer
+## Framer
 
 Get on the same page as your designers before production. Get started with [design and prototyping in Framer](https://www.framer.com/).
