@@ -4,7 +4,7 @@ import { AnimationState, createAnimationState } from "../animation-state"
 import { AnimationType } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../setters"
 import { visualElement } from "../../"
-import { MotionProps } from "../../../motion"
+import { MotionProps } from "../../../motion/types"
 import { createHtmlRenderState } from "../../html/utils/create-render-state"
 
 const stateVisualElement = visualElement<
