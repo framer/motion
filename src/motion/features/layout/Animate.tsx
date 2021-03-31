@@ -2,7 +2,10 @@ import * as React from "react"
 import { FeatureProps } from "../types"
 import { Axis, AxisBox2D } from "../../../types/geometry"
 import { eachAxis } from "../../../utils/each-axis"
-import { startAnimation } from "../../../animation/utils/transitions"
+import {
+    getValueTransition,
+    startAnimation,
+} from "../../../animation/utils/transitions"
 import { calcRelativeOffset, checkIfParentHasChanged, tweenAxis } from "./utils"
 import {
     SharedLayoutAnimationConfig,
@@ -265,12 +268,15 @@ class Animate extends React.Component<AnimateProps> {
 
         this.currentAnimationTarget[axis] = target
 
+        const layoutTransition =
+            transition || this.props.transition || defaultTransition
+
         // Start the animation on this axis
         const animation = startAnimation(
             axis === "x" ? "layoutX" : "layoutY",
             layoutProgress,
             progressTarget,
-            transition || this.props.transition || defaultTransition
+            layoutTransition && getValueTransition(layoutTransition, "layout")
         ).then(this.stopAxisAnimation[axis])
 
         return animation
