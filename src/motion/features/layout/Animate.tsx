@@ -125,10 +125,24 @@ class Animate extends React.Component<AnimateProps> {
             let prevParentViewportBox = projectionParent.prevViewportBox
             let parentLayout = projectionParent.getLayoutState().layout
 
+            /**
+             * If we're being provided a previous parent VisualElement by AnimateSharedLayout
+             */
             if (prevParent) {
+                /**
+                 * If we've been provided an explicit target box it means we're animating back
+                 * to this previous parent. So we can make a relative box by comparing to the previous
+                 * parent's layout
+                 */
                 if (targetBox) {
                     parentLayout = prevParent.getLayoutState().layout
                 }
+
+                /**
+                 * Likewise if we've been provided an explicit origin box it means we're
+                 * animating out from a different element. So we should figure out where that was
+                 * on screen relative to the new parent element.
+                 */
                 if (
                     originBox &&
                     !checkIfParentHasChanged(prevParent, projectionParent) &&
