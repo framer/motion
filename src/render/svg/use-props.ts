@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import { MotionProps } from "../../motion"
+import { MotionProps } from "../../motion/types"
 import { copyRawValuesOnly } from "../html/use-props"
 import { ResolvedValues } from "../types"
 import { buildSVGAttrs } from "./utils/build-attrs"

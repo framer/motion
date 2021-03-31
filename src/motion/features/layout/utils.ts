@@ -19,3 +19,17 @@ export function calcRelativeOffset(parent: AxisBox2D, child: AxisBox2D) {
         y: calcRelativeOffsetAxis(parent.y, child.y),
     }
 }
+
+interface WithLayoutId {
+    getLayoutId: () => undefined | string
+}
+
+export function checkIfParentHasChanged(
+    prev: WithLayoutId,
+    next: WithLayoutId
+): boolean {
+    const prevId = prev.getLayoutId()
+    const nextId = next.getLayoutId()
+
+    return prevId !== nextId || (nextId === undefined && prev !== next)
+}
