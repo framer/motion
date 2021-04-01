@@ -266,7 +266,7 @@ function mixValues(
             typeof followRadius === "number" &&
             typeof leadRadius === "number"
         ) {
-            const radius = mix(followRadius, leadRadius, p)
+            const radius = Math.max(mix(followRadius, leadRadius, p), 0)
             leadState[borderLabel] = followState[borderLabel] = radius
         }
     }
