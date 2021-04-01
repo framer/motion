@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.1.0] Unreleased
+## [4.1.1] 2021-04-01
+
+### Fixed
+
+-   Animating from `undefined` to number (including units) now animates from `0`.
+
+## [4.1.0] 2021-03-31
 
 ### Added
 

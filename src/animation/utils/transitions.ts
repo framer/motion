@@ -11,6 +11,8 @@ import { isAnimatable } from "./is-animatable"
 import { getDefaultTransition } from "./default-transitions"
 import { warning } from "hey-listen"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
+import { findDimensionValueType } from "../../render/dom/value-types/dimensions"
+import { getValueAsType } from "../../render/dom/value-types/get-as-type"
 
 type StopAnimation = { stop: () => void }
 
@@ -160,12 +162,20 @@ function getAnimation(
 
     const isTargetAnimatable = isAnimatable(key, target)
 
-    /**
-     * If we're trying to animate from "none", try and get an animatable version
-     * of the target. This could be improved to work both ways.
-     */
     if (origin === "none" && isTargetAnimatable && typeof target === "string") {
+        /**
+         * If we're trying to animate from "none", try and get an animatable version
+         * of the target. This could be improved to work both ways.
+         */
         origin = getAnimatableNone(key, target)
+    } else if (isZero(origin) && typeof target === "string") {
+        origin = getZeroUnit(target)
+    } else if (
+        !Array.isArray(target) &&
+        isZero(target) &&
+        typeof origin === "string"
+    ) {
+        target = getZeroUnit(origin)
     }
 
     const isOriginAnimatable = isAnimatable(key, origin)
@@ -216,6 +226,21 @@ function getAnimation(
         valueTransition.type === false
         ? set
         : start
+}
+
+export function isZero(value: string | number) {
+    return (
+        value === 0 ||
+        (typeof value === "string" &&
+            parseFloat(value) === 0 &&
+            value.indexOf(" ") === -1)
+    )
+}
+
+export function getZeroUnit(
+    potentialUnitType: string | number
+): string | number {
+    return getValueAsType(0, findDimensionValueType(potentialUnitType))
 }
 
 export function getValueTransition(transition: Transition, key: string) {
