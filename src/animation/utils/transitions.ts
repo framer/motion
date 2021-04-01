@@ -175,7 +175,6 @@ function getAnimation(
         isZero(target) &&
         typeof origin === "string"
     ) {
-        console.log("b")
         target = getZeroUnit(origin)
     }
 
