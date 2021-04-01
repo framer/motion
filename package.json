@@ -146,7 +146,7 @@
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "18.6 kB"
+            "maxSize": "18.7 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
@@ -158,7 +158,7 @@
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "26.5 kB"
+            "maxSize": "26.6 kB"
         }
     ]
 }
