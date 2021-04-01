@@ -168,13 +168,14 @@ function getAnimation(
          * of the target. This could be improved to work both ways.
          */
         origin = getAnimatableNone(key, target)
-    } else if (!Array.isArray(target) && typeof origin !== typeof target) {
-        /**
-         * If there's a type mismatch between origin and target, coerce any 0 values into
-         * the string value type
-         */
-        origin = convertZeroToUnit(origin, target)
-        target = convertZeroToUnit(target, origin)
+    } else if (isZero(origin) && typeof target === "string") {
+        origin = getZeroUnit(target)
+    } else if (
+        !Array.isArray(target) &&
+        isZero(target) &&
+        typeof origin === "string"
+    ) {
+        target = getZeroUnit(origin)
     }
 
     const isOriginAnimatable = isAnimatable(key, origin)
@@ -227,19 +228,14 @@ function getAnimation(
         : start
 }
 
-export function convertZeroToUnit(
-    source: string | number,
+export function isZero(value: string | number) {
+    return value === 0 || (typeof value === "string" && parseFloat(value) === 0)
+}
+
+export function getZeroUnit(
     potentialUnitType: string | number
 ): string | number {
-    const sourceAsNumber =
-        typeof source === "number" ? source : parseFloat(source)
-
-    if (sourceAsNumber !== 0) return source
-
-    return getValueAsType(
-        sourceAsNumber,
-        findDimensionValueType(potentialUnitType)
-    )
+    return getValueAsType(0, findDimensionValueType(potentialUnitType))
 }
 
 export function getValueTransition(transition: Transition, key: string) {
