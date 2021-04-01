@@ -270,6 +270,7 @@ function mixValues(
             typeof leadRadius === "number"
         ) {
             const radius = mix(followRadius, leadRadius, p)
+            console.log(followRadius, leadRadius, p, radius)
             leadState[borderLabel] = followState[borderLabel] = radius
         }
     }
