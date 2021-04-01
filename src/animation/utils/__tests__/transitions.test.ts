@@ -232,6 +232,7 @@ describe("isZero", () => {
         expect(isZero(5)).toBe(false)
         expect(isZero("#000")).toBe(false)
         expect(isZero("5%")).toBe(false)
+        expect(isZero("0px 0px")).toBe(false)
     })
 })
 

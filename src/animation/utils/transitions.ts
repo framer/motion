@@ -175,6 +175,7 @@ function getAnimation(
         isZero(target) &&
         typeof origin === "string"
     ) {
+        console.log("b")
         target = getZeroUnit(origin)
     }
 
@@ -229,7 +230,12 @@ function getAnimation(
 }
 
 export function isZero(value: string | number) {
-    return value === 0 || (typeof value === "string" && parseFloat(value) === 0)
+    return (
+        value === 0 ||
+        (typeof value === "string" &&
+            parseFloat(value) === 0 &&
+            value.indexOf(" ") === -1)
+    )
 }
 
 export function getZeroUnit(
