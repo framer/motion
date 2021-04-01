@@ -1,6 +1,5 @@
 import sync, { getFrameData } from "framesync"
 import {
-    clamp,
     circOut,
     linear,
     mix,
@@ -32,8 +31,6 @@ export interface CrossfadeAnimationOptions {
     crossfadeOpacity?: boolean
     preserveFollowOpacity?: boolean
 }
-
-const clampProgress = (p: number) => clamp(0, 1, p)
 
 export function createCrossfader(): Crossfader {
     /**
@@ -134,7 +131,7 @@ export function createCrossfader(): Crossfader {
             : options.prevValues
         Object.assign(followState, latestFollowValues)
 
-        const p = clampProgress(progress.get())
+        const p = progress.get()
 
         /**
          * Crossfade the opacity between the two components. This will result
@@ -269,8 +266,7 @@ function mixValues(
             typeof followRadius === "number" &&
             typeof leadRadius === "number"
         ) {
-            const radius = mix(followRadius, leadRadius, p)
-            console.log(followRadius, leadRadius, p, radius)
+            const radius = Math.max(mix(followRadius, leadRadius, p), 0)
             leadState[borderLabel] = followState[borderLabel] = radius
         }
     }
