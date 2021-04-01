@@ -4,6 +4,7 @@ import {
     getDelayFromTransition,
     hydrateKeyframes,
     getPopmotionAnimationOptions,
+    convertZeroToUnit,
 } from "../transitions"
 import {
     underDampedSpring,
@@ -220,5 +221,17 @@ describe("getPopmotionAnimationOptions", () => {
             from: 50,
             to: [50, 100],
         })
+    })
+})
+
+describe("convertZeroToUnit", () => {
+    test("correctly converts zeroes to the other unit type", () => {
+        expect(convertZeroToUnit(0, "5px")).toBe("0px")
+        expect(convertZeroToUnit(0, "5%")).toBe("0%")
+        expect(convertZeroToUnit(20, "5px")).toBe(20)
+        expect(convertZeroToUnit("20px", 0)).toBe("20px")
+        expect(convertZeroToUnit("20px", 0)).toBe("20px")
+        expect(convertZeroToUnit("0%", "100px")).toBe("0px")
+        expect(convertZeroToUnit("0%", 100)).toBe(0)
     })
 })

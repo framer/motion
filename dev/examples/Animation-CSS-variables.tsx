@@ -10,6 +10,7 @@ const style = {
     width: 100,
     height: 100,
     background: "var(--from)",
+    x: "var(--x)",
 }
 
 export const App = () => {
@@ -36,8 +37,10 @@ export const App = () => {
                 }}
                 animate={{
                     background: `var(--token-666a5765-0e05-4d0e-b396-a6c555d9cdb3, hsl(125, 74%, 43%)) /* {"name":"Goblin Green"} */`,
+                    "--x": "100px",
                 }}
                 transition={transition}
+                onUpdate={(v) => console.log(v)}
                 style={style}
             />
         </div>
