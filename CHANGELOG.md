@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.2] 2021-04-01
+
+### Fixed
+
+-   Clamping `borderRadius` to `0` and above during crossfade.
+
 ## [4.1.1] 2021-04-01
 
 ### Fixed
