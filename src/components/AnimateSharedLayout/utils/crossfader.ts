@@ -1,5 +1,6 @@
 import sync, { getFrameData } from "framesync"
 import {
+    clamp,
     circOut,
     linear,
     mix,
@@ -31,6 +32,8 @@ export interface CrossfadeAnimationOptions {
     crossfadeOpacity?: boolean
     preserveFollowOpacity?: boolean
 }
+
+const clampProgress = (p: number) => clamp(0, 1, p)
 
 export function createCrossfader(): Crossfader {
     /**
@@ -131,7 +134,7 @@ export function createCrossfader(): Crossfader {
             : options.prevValues
         Object.assign(followState, latestFollowValues)
 
-        const p = progress.get()
+        const p = clampProgress(progress.get())
 
         /**
          * Crossfade the opacity between the two components. This will result
