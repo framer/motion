@@ -11,8 +11,8 @@ import { isAnimatable } from "./is-animatable"
 import { getDefaultTransition } from "./default-transitions"
 import { warning } from "hey-listen"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
-import { findDimensionValueType } from "../../render/dom/value-types/dimensions"
-import { getValueAsType } from "../../render/dom/value-types/get-as-type"
+
+const floatRegex = /(-)?([\d]*\.?[\d])+/g
 
 type StopAnimation = { stop: () => void }
 
@@ -240,7 +240,9 @@ export function isZero(value: string | number) {
 export function getZeroUnit(
     potentialUnitType: string | number
 ): string | number {
-    return getValueAsType(0, findDimensionValueType(potentialUnitType))
+    return typeof potentialUnitType === "number"
+        ? 0
+        : 0 + potentialUnitType.replace(floatRegex, "")
 }
 
 export function getValueTransition(transition: Transition, key: string) {
