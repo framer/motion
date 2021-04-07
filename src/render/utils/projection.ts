@@ -5,7 +5,7 @@ import { LayoutState, TargetProjection } from "./state"
 
 export function updateLayoutDeltas(
     { delta, layout, layoutCorrected, treeScale }: LayoutState,
-    { target }: TargetProjection,
+    { target, relativeTarget }: TargetProjection,
     treePath: VisualElement[],
     transformOrigin: ResolvedValues
 ) {
@@ -19,7 +19,12 @@ export function updateLayoutDeltas(
      * Apply all the parent deltas to this box to produce the corrected box. This
      * is the layout box, as it will appear on screen as a result of the transforms of its parents.
      */
-    applyTreeDeltas(layoutCorrected, treeScale, treePath)
+    applyTreeDeltas(
+        layoutCorrected,
+        treeScale,
+        treePath,
+        Boolean(relativeTarget)
+    )
 
     /**
      * Update the delta between the corrected box and the target box before user-set transforms were applied.

@@ -1,7 +1,6 @@
 import { Axis, AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { mix } from "popmotion"
 import { ResolvedValues, VisualElement } from "../../render/types"
-import { copyAxisBox } from "."
 
 /**
  * Reset an axis to the provided origin box.
@@ -220,7 +219,8 @@ export function removeBoxTransforms(
 export function applyTreeDeltas(
     box: AxisBox2D,
     treeScale: Point2D,
-    treePath: VisualElement[]
+    treePath: VisualElement[],
+    isRelative: boolean
 ) {
     const treeLength = treePath.length
     if (!treeLength) return
@@ -239,7 +239,7 @@ export function applyTreeDeltas(
         applyBoxDelta(box, delta)
 
         // TODO This can be cleaned
-        if (treePath[i].getProps().drag) {
+        if (treePath[i].getProps().drag && !isRelative) {
             applyBoxTransforms(box, box, treePath[i].getLatestValues())
         }
     }

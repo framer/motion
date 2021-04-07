@@ -13,7 +13,10 @@ export function calcRelativeOffsetAxis(parent: Axis, child: Axis) {
     }
 }
 
-export function calcRelativeOffset(parent: AxisBox2D, child: AxisBox2D) {
+export function calcRelativeOffset(
+    parent: AxisBox2D,
+    child: AxisBox2D
+): AxisBox2D {
     return {
         x: calcRelativeOffsetAxis(parent.x, child.x),
         y: calcRelativeOffsetAxis(parent.y, child.y),

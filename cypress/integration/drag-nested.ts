@@ -84,7 +84,7 @@ function testNestedDrag(query: string) {
         })
 }
 
-describe.skip("Nested drag", () => {
+describe("Nested drag", () => {
     it("Parent: layout, Child: layout", () =>
         testNestedDrag("parentLayout=true&childLayout=true"))
     it("Parent: layout", () => testNestedDrag("parentLayout=true"))

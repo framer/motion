@@ -114,7 +114,11 @@ export interface VisualElement<Instance = any, RenderState = any>
         max: number,
         isRelative?: boolean
     ): void
-    startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>
+    startLayoutAnimation(
+        axis: "x" | "y",
+        transition: Transition,
+        isRelative: boolean
+    ): Promise<any>
     stopLayoutAnimation(): void
     snapshotViewportBox(): void
     updateLayoutProjection(): void

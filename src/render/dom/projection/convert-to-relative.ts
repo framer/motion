@@ -1,5 +1,6 @@
 import { calcRelativeOffset } from "../../../motion/features/layout/utils"
 import { eachAxis } from "../../../utils/each-axis"
+import { removeBoxTransforms } from "../../../utils/geometry/delta-apply"
 import { VisualElement } from "../../types"
 
 export function convertToRelativeProjection(visualElement: VisualElement) {
@@ -11,6 +12,8 @@ export function convertToRelativeProjection(visualElement: VisualElement) {
         projectionParent.projection.target,
         visualElement.projection.target
     )
+
+    removeBoxTransforms(offset, projectionParent.getLatestValues())
 
     eachAxis((axis) =>
         visualElement.setProjectionTargetAxis(

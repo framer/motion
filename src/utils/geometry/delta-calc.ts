@@ -96,12 +96,6 @@ export function calcRelativeBox(
         parentProjection.target.x
     )
 
-    console.log(
-        parentProjection.target.x,
-        projection.relativeTarget!.x,
-        projection.target.x
-    )
-
     calcRelativeAxis(
         projection.target.y,
         projection.relativeTarget!.y,
