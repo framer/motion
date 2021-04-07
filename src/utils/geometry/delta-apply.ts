@@ -1,6 +1,7 @@
 import { Axis, AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { mix } from "popmotion"
 import { ResolvedValues, VisualElement } from "../../render/types"
+import { copyAxisBox } from "."
 
 /**
  * Reset an axis to the provided origin box.
@@ -236,5 +237,10 @@ export function applyTreeDeltas(
 
         // Apply each ancestor's calculated delta into this component's recorded layout box
         applyBoxDelta(box, delta)
+
+        // TODO This can be cleaned
+        if (treePath[i].getProps().drag) {
+            applyBoxTransforms(box, box, treePath[i].getLatestValues())
+        }
     }
 }

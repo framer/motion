@@ -15,21 +15,25 @@ export const App = () => {
     }, [])
 
     return (
-        <motion.div
-            id="parent"
-            drag={parentDrag}
-            dragMomentum={false}
-            layout={parentLayout}
-            style={b}
-        >
+        <div style={{ height: 3000 }}>
             <motion.div
-                id="child"
-                drag={childDrag}
+                id="parent"
+                drag={parentDrag}
                 dragMomentum={false}
-                layout={childLayout}
-                style={a}
-            />
-        </motion.div>
+                layout={parentLayout}
+                style={b}
+            >
+                <motion.div
+                    id="child"
+                    drag={childDrag}
+                    dragMomentum={false}
+                    dragElastic={false}
+                    dragConstraints={{ left: 0, right: 500 }}
+                    layout={childLayout}
+                    style={a}
+                />
+            </motion.div>
+        </div>
     )
 }
 

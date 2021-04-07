@@ -32,6 +32,7 @@ import { Transition } from "../../types"
 import { AnimationType } from "../../render/utils/types"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../../motion/types"
+import { convertToRelativeProjection } from "../../render/dom/projection/convert-to-relative"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -289,6 +290,7 @@ export class VisualElementDragControls {
         visualElement.withoutTransform(() => {
             visualElement.updateLayoutMeasurement()
         })
+
         visualElement.rebaseProjectionTarget(
             true,
             visualElement.measureViewportBox(false)
@@ -396,7 +398,6 @@ export class VisualElementDragControls {
         if (!isDragging) return
 
         const { dragMomentum, onDragEnd } = this.props
-
         if (dragMomentum || this.elastic) {
             const { velocity } = info
             this.animateDragEnd(velocity)
@@ -529,12 +530,27 @@ export class VisualElementDragControls {
     private animateDragEnd(velocity: Point2D) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
+        const isRelative = convertToRelativeProjection(this.visualElement)
+
+        const constraints = this.constraints || {}
+        if (isRelative && this.constraints) {
+            const { target, relativeTarget } = this.visualElement.projection
+
+            eachAxis((axis) => {
+                const offset = target[axis].min - relativeTarget![axis].min
+                constraints[axis] = {
+                    min: constraints[axis].min - offset,
+                    max: constraints[axis].max - offset,
+                }
+            })
+        }
+
         const momentumAnimations = eachAxis((axis) => {
             if (!shouldDrag(axis, drag, this.currentDirection)) {
                 return
             }
 
-            const transition = this.constraints ? this.constraints[axis] : {}
+            const transition = constraints?.[axis] ?? {}
 
             /**
              * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
@@ -562,7 +578,11 @@ export class VisualElementDragControls {
             // otherwise we just have to animate the `MotionValue` itself.
             return this.getAxisMotionValue(axis)
                 ? this.startAxisValueAnimation(axis, inertia)
-                : this.visualElement.startLayoutAnimation(axis, inertia)
+                : this.visualElement.startLayoutAnimation(
+                      axis,
+                      inertia,
+                      isRelative
+                  )
         })
 
         // Run all animations and then resolve the new drag constraints.

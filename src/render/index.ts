@@ -714,19 +714,20 @@ export const visualElement = <Instance, MutableState, Options>({
 
         /**
          * Start a layout animation on a given axis.
-         * TODO: This could be better.
          */
-        startLayoutAnimation(axis, transition) {
+        startLayoutAnimation(axis, transition, isRelative = false) {
             const progress = element.getProjectionAnimationProgress()[axis]
-            const { min, max } = projection.target[axis]
+            const { min, max } = isRelative
+                ? projection.relativeTarget![axis]
+                : projection.target[axis]
             const length = max - min
 
             progress.clearListeners()
             progress.set(min)
             progress.set(min) // Set twice to hard-reset velocity
-            progress.onChange((v) =>
-                element.setProjectionTargetAxis(axis, v, v + length)
-            )
+            progress.onChange((v) => {
+                element.setProjectionTargetAxis(axis, v, v + length, isRelative)
+            })
 
             return element.animateMotionValue!(axis, progress, 0, transition)
         },
@@ -799,7 +800,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 projection.relativeTarget = undefined
                 target = projection.target[axis]
             }
-
+            // console.log(min, max, isRelative)
             target.min = min
             target.max = max
 
