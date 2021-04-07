@@ -244,5 +244,7 @@ describe("getZeroUnit", () => {
         expect(getZeroUnit("5rem")).toBe("0rem")
         expect(getZeroUnit("5%")).toBe("0%")
         expect(getZeroUnit(5)).toBe(0)
+        expect(getZeroUnit("solid")).toBe("solid")
+        expect(getZeroUnit("#fff")).toBe("rgba(255, 255, 255, 1)")
     })
 })

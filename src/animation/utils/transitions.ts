@@ -12,8 +12,6 @@ import { getDefaultTransition } from "./default-transitions"
 import { warning } from "hey-listen"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 
-const floatRegex = /(-)?([\d]*\.?[\d])+/g
-
 type StopAnimation = { stop: () => void }
 
 /**
@@ -242,7 +240,7 @@ export function getZeroUnit(
 ): string | number {
     return typeof potentialUnitType === "number"
         ? 0
-        : 0 + potentialUnitType.replace(floatRegex, "")
+        : getAnimatableNone("", potentialUnitType)
 }
 
 export function getValueTransition(transition: Transition, key: string) {
