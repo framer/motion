@@ -11,6 +11,7 @@ import { MotionContext, MotionContextProps } from "../../context/MotionContext"
 import { resetRotate } from "./utils/rotate"
 import { VisualElement } from "../../render/types"
 import { createBatcher } from "./utils/batcher"
+import { snapshotViewportBox } from "../../render/dom/projection/utils"
 
 /**
  * @public
@@ -109,7 +110,6 @@ export class AnimateSharedLayout extends React.Component<
          * Create a handler which we can use to flush the children animations
          */
         const handler: SyncLayoutLifecycles = {
-            measureLayout: (child) => child.updateLayoutMeasurement(),
             layoutReady: (child) => {
                 if (child.getLayoutId() !== undefined) {
                     const stack = this.getStack(child)!
@@ -157,7 +157,7 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Read: Snapshot children
          */
-        this.children.forEach((child) => child.snapshotViewportBox())
+        this.children.forEach(snapshotViewportBox)
 
         /**
          * Every child keeps a local snapshot, but we also want to record

@@ -15,7 +15,7 @@ export const App = () => {
     }, [])
 
     return (
-        <div style={{ height: 3000 }}>
+        <div>
             <motion.div
                 id="parent"
                 drag={parentDrag}
@@ -41,15 +41,16 @@ const box = {
     position: "absolute",
     top: 0,
     left: 0,
-    background: "red",
+    background: "#ff0055",
 }
 
 const b = {
     ...box,
     top: 100,
-    left: 200,
+    left: 100,
     width: 300,
     height: 300,
+    borderRadius: 10,
 }
 
 const a = {
@@ -58,5 +59,6 @@ const a = {
     left: 50,
     width: 600,
     height: 200,
-    background: "blue",
+    background: "#ffcc00",
+    borderRadius: 10,
 }

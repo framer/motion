@@ -91,9 +91,9 @@ export class DragControls {
     }
 
     updateConstraints() {
-        this.componentControls.forEach((controls) => {
-            controls.prepareBoundingBox()
-            controls.resolveDragConstraints()
+        this.componentControls.forEach((_controls) => {
+            // controls.prepareBoundingBox()
+            // controls.resolveDragConstraints()
         })
     }
 }
