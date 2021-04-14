@@ -8,6 +8,7 @@ export const App = () => {
     const childDrag = params.get("childDrag") || true
     const parentLayout = params.get("parentLayout") ? true : undefined
     const childLayout = params.get("childLayout") ? true : undefined
+    const constraints = Boolean(params.get("constraints"))
 
     // Trigger layout projection in the child
     React.useEffect(() => {
@@ -20,6 +21,8 @@ export const App = () => {
                 id="parent"
                 drag={parentDrag}
                 dragMomentum={false}
+                dragElastic={false}
+                dragConstraints={constraints && { top: -10, right: 100 }}
                 layout={parentLayout}
                 style={b}
             >
@@ -28,7 +31,9 @@ export const App = () => {
                     drag={childDrag}
                     dragMomentum={false}
                     dragElastic={false}
-                    dragConstraints={{ left: 0, right: 500 }}
+                    dragConstraints={
+                        constraints && { top: 0, left: -100, right: 100 }
+                    }
                     layout={childLayout}
                     style={a}
                 />

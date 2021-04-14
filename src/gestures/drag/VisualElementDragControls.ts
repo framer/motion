@@ -220,14 +220,12 @@ export class VisualElementDragControls {
                 if (!this.openGlobalLock) return
             }
 
-            // ===========
-
             /**
              * Resolve the drag constraints. These are either set as top/right/bottom/left constraints
              * relative to the element's layout, or a ref to another element. Both need converting to
              * viewport coordinates.
              */
-            // this.resolveDragConstraints()
+            this.resolveDragConstraints()
 
             // // Set current drag status
             this.isDragging = true
@@ -286,35 +284,15 @@ export class VisualElementDragControls {
         )
     }
 
-    /**
-     * Ensure the component's layout and target bounding boxes are up-to-date.
-     */
-    // prepareBoundingBox() {
-    //     const { visualElement } = this
-
-    //     visualElement.withoutTransform(() => {
-    //         visualElement.updateLayoutMeasurement()
-    //     })
-
-    //     visualElement.rebaseProjectionTarget(
-    //         true,
-    //         visualElement.measureViewportBox(false)
-    //     )
-    // }
-
     resolveDragConstraints() {
         const { dragConstraints, dragElastic } = this.props
-
+        this.visualElement.updateLayoutProjection()
+        const { layoutCorrected: layout } = this.visualElement.getLayoutState()
+        console.log(layout.x)
         if (dragConstraints) {
             this.constraints = isRefObject(dragConstraints)
-                ? this.resolveRefConstraints(
-                      this.visualElement.getLayoutState().layout,
-                      dragConstraints
-                  )
-                : calcRelativeConstraints(
-                      this.visualElement.getLayoutState().layout,
-                      dragConstraints
-                  )
+                ? this.resolveRefConstraints(layout, dragConstraints)
+                : calcRelativeConstraints(layout, dragConstraints)
         } else {
             this.constraints = false
         }
@@ -329,7 +307,7 @@ export class VisualElementDragControls {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        this.visualElement.getLayoutState().layout[axis],
+                        layout[axis],
                         this.constraints[axis]
                     )
                 }
