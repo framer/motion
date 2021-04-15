@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.4] 2021-04-15
+
+### Fixed
+
+-   Disabling hover events when a drag is active.
+
 ## [4.1.3] 2021-04-07
 
 ### Fixed
