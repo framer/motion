@@ -288,7 +288,7 @@ export class VisualElementDragControls {
         const { dragConstraints, dragElastic } = this.props
         this.visualElement.updateLayoutProjection()
         const { layoutCorrected: layout } = this.visualElement.getLayoutState()
-        console.log(layout.x)
+
         if (dragConstraints) {
             this.constraints = isRefObject(dragConstraints)
                 ? this.resolveRefConstraints(layout, dragConstraints)

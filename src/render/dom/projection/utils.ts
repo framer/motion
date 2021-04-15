@@ -61,7 +61,7 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
     layoutState.isHydrated = true
     layoutState.layout = visualElement.measureViewportBox()
     layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
-    console.log("updating layout measurement")
+
     visualElement.notifyLayoutMeasure(
         layoutState.layout,
         visualElement.prevViewportBox || layoutState.layout
