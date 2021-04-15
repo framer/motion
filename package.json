@@ -150,7 +150,7 @@
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "7 kB"
+            "maxSize": "5.3 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
