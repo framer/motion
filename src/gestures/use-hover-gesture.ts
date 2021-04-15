@@ -4,6 +4,7 @@ import { AnimationType } from "../render/utils/types"
 import { usePointerEvent } from "../events/use-pointer-event"
 import { VisualElement } from "../render/types"
 import { FeatureProps } from "../motion/features/types"
+import { isDragActive } from "./drag/utils/lock"
 
 function createHoverEvent(
     visualElement: VisualElement,
@@ -11,7 +12,14 @@ function createHoverEvent(
     callback?: (event: MouseEvent, info: EventInfo) => void
 ) {
     return (event: MouseEvent, info: EventInfo) => {
-        if (!isMouseEvent(event) || !visualElement.isHoverEventsEnabled) return
+        if (
+            !isMouseEvent(event) ||
+            !visualElement.isHoverEventsEnabled ||
+            isDragActive()
+        ) {
+            return
+        }
+
         callback?.(event, info)
         visualElement.animationState?.setActive(AnimationType.Hover, isActive)
     }
