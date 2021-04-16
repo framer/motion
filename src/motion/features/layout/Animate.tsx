@@ -153,9 +153,11 @@ class Animate extends React.Component<AnimateProps> {
             }
 
             if (prevParentViewportBox) {
-                isRelative = true
-                origin = calcRelativeOffset(prevParentViewportBox, origin)
-                target = calcRelativeOffset(parentLayout, target)
+                if (prevParent || (!prevParent && !(originBox || targetBox))) {
+                    isRelative = true
+                    origin = calcRelativeOffset(prevParentViewportBox, origin)
+                    target = calcRelativeOffset(parentLayout, target)
+                }
             }
         }
 

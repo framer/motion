@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.5] 2021-04-15
+
+### Fixed
+
+-   Being more conservative with when we perform relative projection.
+
 ## [4.1.4] 2021-04-15
 
 ### Fixed
