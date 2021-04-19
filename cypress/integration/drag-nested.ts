@@ -182,7 +182,7 @@ function testNestedDragConstraints(
         .trigger("pointerdown", 5, 5, { force: true })
         .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
         .wait(50)
-        .trigger("pointermove", 200, 100, { force: true })
+        .trigger("pointermove", 300, 100, { force: true })
         .wait(50)
         .trigger("pointerup")
         .get("#parent")
@@ -203,32 +203,31 @@ function testNestedDragConstraints(
                 height: 200,
             })
         })
-        .wait(20)
-        .get("#parent")
-        .trigger("pointerdown", { clientX: 210, clientY: 200, force: true })
-        .trigger("pointermove", { clientX: 205, clientY: 195, force: true }) // Gesture will start from first move past threshold
-        .wait(50)
-        .trigger("pointermove", { clientX: 110, clientY: 100, force: true })
-        .wait(50)
-        .trigger("pointerup")
-        .should(([$parent]: any) => {
-            // Should have only moved 10 px to the top
-            expectBbox($parent, {
-                top: 90,
-                left: 100,
-                width: 300,
-                height: 300,
-            })
-        })
-        .get("#child")
-        .should(([$child]: any) => {
-            expectBbox($child, {
-                top: 240,
-                left: 250,
-                width: 600,
-                height: 200,
-            })
-        })
+    // .wait(20)
+    // .get("#parent")
+    // .trigger("pointerdown", { clientX: 210, clientY: 200, force: true })
+    // .trigger("pointermove", { clientX: 205, clientY: 195, force: true }) // Gesture will start from first move past threshold
+    // .wait(50)
+    // .trigger("pointermove", { clientX: 110, clientY: 100, force: true })
+    // .wait(50)
+    // .trigger("pointerup")
+    // .should(([$parent]: any) => {
+    //     expectBbox($parent, {
+    //         top: 90,
+    //         left: 100,
+    //         width: 300,
+    //         height: 300,
+    //     })
+    // })
+    // .get("#child")
+    // .should(([$child]: any) => {
+    //     expectBbox($child, {
+    //         top: 240,
+    //         left: 250,
+    //         width: 600,
+    //         height: 200,
+    //     })
+    // })
 }
 
 describe("Nested drag with constraints", () => {
@@ -239,16 +238,91 @@ describe("Nested drag with constraints", () => {
     it("Neither", () => testNestedDragConstraints(false, false))
 })
 
-// function testNestedDragConstraints(parentLayout: boolean, childLayout: boolean) {
-//     let url = `?test=drag-layout-nested&constraints=true`
-//     if (parentLayout) url += `&parentLayout=true`
-//     if (childLayout) url += `&childLayout=true`
-//     cy.visit(url)
-// }
+function testNestedDragConstraintsAndAnimation(
+    parentLayout: boolean,
+    childLayout: boolean
+) {
+    let url = `?test=drag-layout-nested&constraints=true&animation=true`
+    if (parentLayout) url += `&parentLayout=true`
+    if (childLayout) url += `&childLayout=true`
+    cy.visit(url)
+        .get("#parent")
+        .trigger("pointerdown", 5, 10)
+        .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
+        .wait(50)
+        .trigger("pointermove", 200, 10, { force: true })
+        .wait(50)
+        .should(([$parent]: any) => {
+            // Should have only moved 10 px to the top
+            expectBbox($parent, {
+                top: 100,
+                left: 250,
+                width: 300,
+                height: 300,
+            })
+        })
+        .get("#child")
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 150,
+                left: 300,
+                width: 600,
+                height: 200,
+            })
+        })
+        .get("#parent")
+        .trigger("pointerup")
+        .wait(2000)
+        .should(([$parent]: any) => {
+            // Should have only moved 10 px to the top
+            expectBbox($parent, {
+                top: 100,
+                left: 200,
+                width: 300,
+                height: 300,
+            })
+        })
+        .get("#child")
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 150,
+                left: 250,
+                width: 600,
+                height: 200,
+            })
+        })
+        .get("#child")
+        .trigger("pointerdown", 5, 10)
+        .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
+        .wait(50)
+        .trigger("pointermove", 200, 10, { force: true })
+        .wait(50)
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 150,
+                left: 400,
+                width: 600,
+                height: 200,
+            })
+        })
+        .trigger("pointerup")
+        .wait(2000)
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 150,
+                left: 350,
+                width: 600,
+                height: 200,
+            })
+        })
+}
 
-// describe("Nested drag with constraints", () => {
-//     it("Parent: layout, Child: layout", () => testNestedDragConstraints(true, true))
-//     it("Parent: layout", () => testNestedDragConstraints(true, false))
-//     it("Child: layout", () => testNestedDragConstraints(false, true))
-//     it("Neither", () => testNestedDragConstraints(false, false))
-// })
+describe("Nested drag with constraints and animation", () => {
+    it("Parent: layout, Child: layout", () =>
+        testNestedDragConstraintsAndAnimation(true, true))
+    it("Parent: layout", () =>
+        testNestedDragConstraintsAndAnimation(true, false))
+    it("Child: layout", () =>
+        testNestedDragConstraintsAndAnimation(false, true))
+    it("Neither", () => testNestedDragConstraintsAndAnimation(false, false))
+})

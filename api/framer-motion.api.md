@@ -951,9 +951,9 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
-    // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -1038,6 +1038,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     setStaticValue(key: string, value: number | string): void;
     // (undocumented)
     setVisibility(visibility: boolean): void;
+    // (undocumented)
+    snapshotTimestamp?: number;
     // (undocumented)
     snapshotViewportBox(): void;
     // (undocumented)
