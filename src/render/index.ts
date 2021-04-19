@@ -834,8 +834,6 @@ export const visualElement = <Instance, MutableState, Options>({
              * update projections.
              */
             sync.preRender(updateTreeLayoutProjection, false, true)
-
-            // sync.postRender(() => element.scheduleUpdateLayoutProjection())
         },
 
         getProjectionParent() {

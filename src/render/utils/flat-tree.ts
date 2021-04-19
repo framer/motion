@@ -18,10 +18,7 @@ export class FlatTree {
 
     forEach(callback: (child: WithDepth) => void) {
         this.isDirty && this.children.sort(compareByDepth)
-
-        const numChildren = this.children.length
-        for (let i = 0; i < numChildren; i++) {
-            callback(this.children[i])
-        }
+        this.isDirty = false
+        this.children.forEach(callback)
     }
 }
