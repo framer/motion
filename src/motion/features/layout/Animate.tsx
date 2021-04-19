@@ -193,6 +193,8 @@ class Animate extends React.Component<AnimateProps> {
                     isRelative,
                 })
             } else {
+                this.stopAxisAnimation[axis]?.()
+
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
                 return visualElement.setProjectionTargetAxis(

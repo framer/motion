@@ -769,7 +769,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 projection.relativeTarget = undefined
                 target = projection.target[axis]
             }
-            // console.log(min, max, isRelative)
+
             target.min = min
             target.max = max
 
