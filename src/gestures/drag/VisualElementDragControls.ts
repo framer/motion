@@ -156,13 +156,6 @@ export class VisualElementDragControls {
         originEvent: AnyPointerEvent,
         { snapToCursor = false, cursorProgress }: DragControlOptions = {}
     ) {
-        /**
-         * If this drag session has been manually triggered by the user, it might be from an event
-         * outside the draggable element. If snapToCursor is set to true, we need to measure the position
-         * of the element and snap it to the cursor.
-         */
-        snapToCursor && this.snapToCursor(originEvent)
-
         const onSessionStart = (event: AnyPointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
@@ -173,6 +166,13 @@ export class VisualElementDragControls {
              * We'll need these to accurately project the element and figure out its constraints.
              */
             updateTreeLayoutMeasurements(this.visualElement)
+
+            /**
+             * If this drag session has been manually triggered by the user, it might be from an event
+             * outside the draggable element. If snapToCursor is set to true, we need to measure the position
+             * of the element and snap it to the cursor.
+             */
+            snapToCursor && this.snapToCursor(originEvent)
 
             /**
              * Apply a simple lock to the projection target. This ensures no animations
@@ -228,7 +228,7 @@ export class VisualElementDragControls {
              */
             this.resolveDragConstraints()
 
-            // // Set current drag status
+            // Set current drag status
             this.isDragging = true
             this.currentDirection = null
 
@@ -387,26 +387,26 @@ export class VisualElementDragControls {
         this.props.onDragEnd?.(event, info)
     }
 
-    snapToCursor(_event: AnyPointerEvent) {
-        // this.prepareBoundingBox()
-        // eachAxis((axis) => {
-        //     const { drag } = this.props
-        //     // If we're not dragging this axis, do an early return.
-        //     if (!shouldDrag(axis, drag, this.currentDirection)) return
-        //     const axisValue = this.getAxisMotionValue(axis)
-        //     if (axisValue) {
-        //         const { point } = getViewportPointFromEvent(event)
-        //         const box = this.visualElement.getLayoutState().layout
-        //         const length = box[axis].max - box[axis].min
-        //         const center = box[axis].min + length / 2
-        //         const offset = point[axis] - center
-        //         this.originPoint[axis] = point[axis]
-        //         axisValue.set(offset)
-        //     } else {
-        //         this.cursorProgress[axis] = 0.5
-        //         this.updateVisualElementAxis(axis, event)
-        //     }
-        // })
+    snapToCursor(event: AnyPointerEvent) {
+        eachAxis((axis) => {
+            const { drag } = this.props
+            // If we're not dragging this axis, do an early return.
+            if (!shouldDrag(axis, drag, this.currentDirection)) return
+
+            const axisValue = this.getAxisMotionValue(axis)
+            if (axisValue) {
+                const { point } = getViewportPointFromEvent(event)
+                const box = this.visualElement.getLayoutState().layout
+                const length = box[axis].max - box[axis].min
+                const center = box[axis].min + length / 2
+                const offset = point[axis] - center
+                this.originPoint[axis] = point[axis]
+                axisValue.set(offset)
+            } else {
+                this.cursorProgress[axis] = 0.5
+                this.updateVisualElementAxis(axis, event)
+            }
+        })
     }
 
     /**
@@ -621,8 +621,8 @@ export class VisualElementDragControls {
          * Then, using the latest layout and constraints measurements, reposition the new layout axis
          * proportionally within the constraints.
          */
-        // this.prepareBoundingBox()
-        // this.resolveDragConstraints()
+        updateTreeLayoutMeasurements(this.visualElement)
+        this.resolveDragConstraints()
 
         eachAxis((axis) => {
             if (!shouldDrag(axis, drag, null)) return
