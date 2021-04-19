@@ -16,6 +16,7 @@ import { LayoutProps } from "./types"
 import { axisBox } from "../../../utils/geometry"
 import { addScaleCorrection } from "../../../render/dom/projection/scale-correction"
 import { defaultScaleCorrectors } from "../../../render/dom/projection/default-scale-correctors"
+import { VisualElement } from "../../../render/types"
 
 interface AxisLocks {
     x?: () => void
@@ -152,7 +153,14 @@ class Animate extends React.Component<AnimateProps> {
                 }
             }
 
-            if (prevParentViewportBox) {
+            if (
+                prevParentViewportBox &&
+                isProvidedCorrectDataForRelativeSharedLayout(
+                    prevParent,
+                    originBox,
+                    targetBox
+                )
+            ) {
                 isRelative = true
                 origin = calcRelativeOffset(prevParentViewportBox, origin)
                 target = calcRelativeOffset(parentLayout, target)
@@ -332,4 +340,12 @@ function axisIsEqual(a: Axis, b: Axis) {
 const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
+}
+
+function isProvidedCorrectDataForRelativeSharedLayout(
+    prevParent?: VisualElement,
+    originBox?: AxisBox2D,
+    targetBox?: AxisBox2D
+) {
+    return prevParent || (!prevParent && !(originBox || targetBox))
 }
