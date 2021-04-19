@@ -124,6 +124,7 @@ class Animate extends React.Component<AnimateProps> {
 
         if (projectionParent) {
             let prevParentViewportBox = projectionParent.prevViewportBox
+            let parentSnapshotTimestamp = projectionParent.snapshotTimestamp
             let parentLayout = projectionParent.getLayoutState().layout
 
             /**
@@ -150,11 +151,13 @@ class Animate extends React.Component<AnimateProps> {
                     prevParent.prevViewportBox
                 ) {
                     prevParentViewportBox = prevParent.prevViewportBox
+                    parentSnapshotTimestamp = prevParent.snapshotTimestamp
                 }
             }
 
             if (
                 prevParentViewportBox &&
+                parentSnapshotTimestamp === visualElement.snapshotTimestamp &&
                 isProvidedCorrectDataForRelativeSharedLayout(
                     prevParent,
                     originBox,

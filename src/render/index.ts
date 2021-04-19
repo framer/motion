@@ -1,4 +1,4 @@
-import sync, { cancelSync } from "framesync"
+import sync, { cancelSync, getFrameData } from "framesync"
 import { pipe } from "popmotion"
 import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
@@ -698,6 +698,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         snapshotViewportBox() {
             element.prevViewportBox = element.measureViewportBox(false)
+            element.snapshotTimestamp = getFrameData().timestamp
 
             /**
              * Update targetBox to match the prevViewportBox. This is just to ensure

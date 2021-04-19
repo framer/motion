@@ -134,6 +134,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     isPresenceRoot?: boolean
     prevDragCursor?: Point2D
     prevViewportBox?: AxisBox2D
+    snapshotTimestamp?: number
     getLayoutId(): string | undefined
     animationState?: AnimationState
 }
