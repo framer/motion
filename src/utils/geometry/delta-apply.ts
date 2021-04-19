@@ -220,7 +220,7 @@ export function applyTreeDeltas(
     box: AxisBox2D,
     treeScale: Point2D,
     treePath: VisualElement[],
-    isRelative: boolean
+    isRelative: boolean = false
 ) {
     const treeLength = treePath.length
     if (!treeLength) return
