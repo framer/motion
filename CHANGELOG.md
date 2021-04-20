@@ -2,13 +2,19 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.1.5] 2021-04-15
+## [4.1.6] 2021-04-20
+
+### Fixed
+
+-   Nested drag improvements.
+
+## [4.1.5] 2021-04-19
 
 ### Fixed
 
 -   Layout projection improvements.
 
-## [4.1.4] 2021-04-15
+## [4.1.4] 2021-04-19
 
 ### Fixed
 
