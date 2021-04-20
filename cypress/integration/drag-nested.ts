@@ -326,3 +326,42 @@ describe("Nested drag with constraints and animation", () => {
         testNestedDragConstraintsAndAnimation(false, true))
     it("Neither", () => testNestedDragConstraintsAndAnimation(false, false))
 })
+
+function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
+    let url = `?test=drag-layout-nested&bothAxes=true`
+    if (parentLayout) url += `&parentLayout=true`
+    if (childLayout) url += `&childLayout=true`
+    cy.visit(url)
+        .wait(50)
+        .get("#child")
+        .trigger("pointerdown", 5, 5, { force: true })
+        .trigger("pointermove", 10, 10, { force: true })
+        .wait(50)
+        .trigger("pointermove", 100, 100, { force: true })
+        .wait(50)
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 250,
+                left: 250,
+                width: 600,
+                height: 200,
+            })
+        })
+        .get("#parent")
+        .should(([$parent]: any) => {
+            expectBbox($parent, {
+                top: 200,
+                left: 100,
+                width: 300,
+                height: 300,
+            })
+        })
+        .wait(30)
+}
+
+describe("Nested drag with alternate draggable axes", () => {
+    it("Parent: layout, Child: layout", () => testAlternateAxes(true, true))
+    it("Parent: layout", () => testAlternateAxes(true, false))
+    it("Child: layout", () => testAlternateAxes(false, true))
+    it("Neither", () => testAlternateAxes(false, false))
+})
