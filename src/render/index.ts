@@ -1,4 +1,4 @@
-import sync, { cancelSync } from "framesync"
+import sync, { cancelSync, getFrameData } from "framesync"
 import { pipe } from "popmotion"
 import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
@@ -236,6 +236,16 @@ export const visualElement = <Instance, MutableState, Options>({
         hasViewportBoxUpdated = false
 
         const deltaTransform = buildLayoutProjectionTransform(delta, treeScale)
+
+        if (instance.id === "item-child") {
+            console.log(
+                layoutState.layout.x,
+                leadProjection.target.x,
+                leadProjection.isEnabled,
+                deltaTransform,
+                getFrameData().timestamp
+            )
+        }
 
         if (
             deltaTransform !== prevDeltaTransform ||
