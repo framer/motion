@@ -337,7 +337,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .trigger("pointerdown", 5, 5, { force: true })
         .trigger("pointermove", 10, 10, { force: true })
         .wait(50)
-        .trigger("pointermove", 100, 100, { force: true })
+        .trigger("pointermove", 110, 110, { force: true })
         .wait(50)
         .should(([$child]: any) => {
             expectBbox($child, {
@@ -359,7 +359,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(30)
 }
 
-describe("Nested drag with alternate draggable axes", () => {
+describe.skip("Nested drag with alternate draggable axes", () => {
     it("Parent: layout, Child: layout", () => testAlternateAxes(true, true))
     it("Parent: layout", () => testAlternateAxes(true, false))
     it("Child: layout", () => testAlternateAxes(false, true))
