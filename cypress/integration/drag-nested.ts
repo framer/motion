@@ -357,11 +357,36 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
             })
         })
         .wait(30)
+        .get("#child")
+        .trigger("pointerup", { force: true })
+        .wait(50)
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 250,
+                left: 250,
+                width: 600,
+                height: 200,
+            })
+        })
+        .get("#parent")
+        .should(([$parent]: any) => {
+            expectBbox($parent, {
+                top: 200,
+                left: 100,
+                width: 300,
+                height: 300,
+            })
+        })
 }
 
-describe.skip("Nested drag with alternate draggable axes", () => {
-    it("Parent: layout, Child: layout", () => testAlternateAxes(true, true))
-    it("Parent: layout", () => testAlternateAxes(true, false))
-    it("Child: layout", () => testAlternateAxes(false, true))
+describe("Nested drag with alternate draggable axes", () => {
+    /**
+     * Skipping for now as there are still issues when either draggable
+     * component is also involved in layout animation
+     */
+    it.skip("Parent: layout, Child: layout", () =>
+        testAlternateAxes(true, true))
+    it.skip("Parent: layout", () => testAlternateAxes(true, false))
+    it.skip("Child: layout", () => testAlternateAxes(false, true))
     it("Neither", () => testAlternateAxes(false, false))
 })
