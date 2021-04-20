@@ -504,16 +504,23 @@ export class VisualElementDragControls {
         }
     }
 
+    private isLayoutDrag() {
+        return !this.getAxisMotionValue("x")
+    }
+
     private animateDragEnd(velocity: Point2D) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
-        const isRelative = convertToRelativeProjection(this.visualElement)
+        const isRelative = convertToRelativeProjection(
+            this.visualElement,
+            this.isLayoutDrag()
+        )
 
         const constraints = this.constraints || {}
         if (
             isRelative &&
             Object.keys(constraints).length &&
-            !this.getAxisMotionValue("x")
+            this.isLayoutDrag()
         ) {
             const projectionParent = this.visualElement.getProjectionParent()
 
