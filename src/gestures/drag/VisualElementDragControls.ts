@@ -165,7 +165,7 @@ export class VisualElementDragControls {
              * Ensure that this element's layout measurements are updated.
              * We'll need these to accurately project the element and figure out its constraints.
              */
-            updateTreeLayoutMeasurements(this.visualElement)
+            this.updateLayoutMeasurements()
 
             /**
              * If this drag session has been manually triggered by the user, it might be from an event
@@ -283,6 +283,10 @@ export class VisualElementDragControls {
             },
             { transformPagePoint }
         )
+    }
+
+    updateLayoutMeasurements() {
+        updateTreeLayoutMeasurements(this.visualElement)
     }
 
     resolveDragConstraints() {
@@ -511,11 +515,19 @@ export class VisualElementDragControls {
     private animateDragEnd(velocity: Point2D) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
+        /**
+         * Everything beyond the drag gesture should be performed with
+         * relative projection so children stay in sync with their parent element.
+         */
         const isRelative = convertToRelativeProjection(
             this.visualElement,
             this.isLayoutDrag()
         )
 
+        /**
+         * If we had previously resolved constraints relative to the viewport,
+         * we need to also convert those to a relative coordinate space for the animation
+         */
         const constraints = this.constraints || {}
         if (
             isRelative &&
@@ -628,7 +640,7 @@ export class VisualElementDragControls {
          * Then, using the latest layout and constraints measurements, reposition the new layout axis
          * proportionally within the constraints.
          */
-        updateTreeLayoutMeasurements(this.visualElement)
+        this.updateLayoutMeasurements()
         this.resolveDragConstraints()
 
         eachAxis((axis) => {

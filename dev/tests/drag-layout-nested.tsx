@@ -4,10 +4,8 @@ import * as React from "react"
 export const App = () => {
     const [count, setCount] = React.useState(0)
     const params = new URLSearchParams(window.location.search)
-    let parentDrag: boolean | string | undefined =
-        params.get("parentDrag") || true
-    let childDrag: boolean | string | undefined =
-        params.get("childDrag") || true
+    let parentDrag: boolean | string = params.get("parentDrag") || true
+    let childDrag: boolean | string = params.get("childDrag") || true
     const parentLayout = params.get("parentLayout") ? true : undefined
     const childLayout = params.get("childLayout") ? true : undefined
     const constraints = Boolean(params.get("constraints"))
