@@ -7,18 +7,19 @@ export function setCurrentViewportBox(visualElement: VisualElement) {
 
     if (!projectionParent) {
         visualElement.rebaseProjectionTarget()
-    } else {
-        const relativeOffset = calcRelativeOffset(
-            projectionParent.getLayoutState().layout,
-            visualElement.getLayoutState().layout
-        )
-        eachAxis((axis) => {
-            visualElement.setProjectionTargetAxis(
-                axis,
-                relativeOffset[axis].min,
-                relativeOffset[axis].max,
-                true
-            )
-        })
+        return
     }
+
+    const relativeOffset = calcRelativeOffset(
+        projectionParent.getLayoutState().layout,
+        visualElement.getLayoutState().layout
+    )
+    eachAxis((axis) => {
+        visualElement.setProjectionTargetAxis(
+            axis,
+            relativeOffset[axis].min,
+            relativeOffset[axis].max,
+            true
+        )
+    })
 }

@@ -4,6 +4,10 @@ import { eachAxis } from "../../../utils/each-axis"
 import { removeBoxTransforms } from "../../../utils/geometry/delta-apply"
 import { VisualElement } from "../../types"
 
+/**
+ * Returns a boolean stating whether or not we converted the projection
+ * to relative projection.
+ */
 export function convertToRelativeProjection(
     visualElement: VisualElement,
     isLayoutDrag: boolean = true

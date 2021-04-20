@@ -25,11 +25,13 @@ export function createBatcher(): SyncLayoutBatcher {
         flush: ({ layoutReady, parent } = defaultHandler) => {
             const order = Array.from(queue).sort(compareByDepth)
 
-            parent
-                ? withoutTreeTransform(parent, () => {
-                      batchResetAndMeasure(order)
-                  })
-                : batchResetAndMeasure(order)
+            if (parent) {
+                withoutTreeTransform(parent, () => {
+                    batchResetAndMeasure(order)
+                })
+            } else {
+                batchResetAndMeasure(order)
+            }
 
             /**
              * Write: Notify the VisualElements they're ready for further write operations.
