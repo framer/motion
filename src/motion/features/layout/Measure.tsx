@@ -9,6 +9,8 @@ import {
     SharedLayoutSyncMethods,
     SyncLayoutBatcher,
 } from "../../../components/AnimateSharedLayout/types"
+import { setCurrentViewportBox } from "../../../render/dom/projection/relative-set"
+import { snapshotViewportBox } from "../../../render/dom/projection/utils"
 
 interface SyncProps extends FeatureProps {
     syncLayout: SharedLayoutSyncMethods | SyncLayoutBatcher
@@ -51,7 +53,7 @@ class Measure extends React.Component<SyncProps> {
         if (isSharedLayout(syncLayout)) {
             syncLayout.syncUpdate()
         } else {
-            visualElement.snapshotViewportBox()
+            snapshotViewportBox(visualElement)
             syncLayout.add(visualElement)
         }
 
@@ -63,11 +65,7 @@ class Measure extends React.Component<SyncProps> {
 
         if (!isSharedLayout(syncLayout)) syncLayout.flush()
 
-        /**
-         * If this axis isn't animating as a result of this render we want to reset the targetBox
-         * to the measured box
-         */
-        visualElement.rebaseProjectionTarget()
+        setCurrentViewportBox(visualElement)
     }
 
     render() {

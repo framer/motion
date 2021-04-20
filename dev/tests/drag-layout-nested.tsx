@@ -4,10 +4,18 @@ import * as React from "react"
 export const App = () => {
     const [count, setCount] = React.useState(0)
     const params = new URLSearchParams(window.location.search)
-    const parentDrag = params.get("parentDrag") || true
-    const childDrag = params.get("childDrag") || true
+    let parentDrag: boolean | string = params.get("parentDrag") || true
+    let childDrag: boolean | string = params.get("childDrag") || true
     const parentLayout = params.get("parentLayout") ? true : undefined
     const childLayout = params.get("childLayout") ? true : undefined
+    const constraints = Boolean(params.get("constraints"))
+    const animation = Boolean(params.get("animation"))
+    const bothAxes = Boolean(params.get("bothAxes"))
+
+    if (bothAxes) {
+        parentDrag = "y"
+        childDrag = "x"
+    }
 
     // Trigger layout projection in the child
     React.useEffect(() => {
@@ -15,21 +23,29 @@ export const App = () => {
     }, [])
 
     return (
-        <motion.div
-            id="parent"
-            drag={parentDrag}
-            dragMomentum={false}
-            layout={parentLayout}
-            style={b}
-        >
+        <div>
             <motion.div
-                id="child"
-                drag={childDrag}
-                dragMomentum={false}
-                layout={childLayout}
-                style={a}
-            />
-        </motion.div>
+                id="parent"
+                drag={parentDrag}
+                dragMomentum={animation}
+                dragElastic={constraints && animation ? 0.5 : false}
+                dragConstraints={constraints && { top: -10, right: 100 }}
+                layout={parentLayout}
+                style={b}
+            >
+                <motion.div
+                    id="child"
+                    drag={childDrag}
+                    dragMomentum={animation}
+                    dragElastic={constraints && animation ? 0.5 : false}
+                    dragConstraints={
+                        constraints && { top: 0, left: -100, right: 100 }
+                    }
+                    layout={childLayout}
+                    style={a}
+                />
+            </motion.div>
+        </div>
     )
 }
 
@@ -37,15 +53,16 @@ const box = {
     position: "absolute",
     top: 0,
     left: 0,
-    background: "red",
+    background: "#ff0055",
 }
 
 const b = {
     ...box,
     top: 100,
-    left: 200,
+    left: 100,
     width: 300,
     height: 300,
+    borderRadius: 10,
 }
 
 const a = {
@@ -54,5 +71,6 @@ const a = {
     left: 50,
     width: 600,
     height: 200,
-    background: "blue",
+    background: "#ffcc00",
+    borderRadius: 10,
 }

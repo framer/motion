@@ -24,13 +24,16 @@ export interface VisualElement<Instance = any, RenderState = any>
     extends LifecycleManager {
     treeType: string
     depth: number
+    parent?: VisualElement
+    children: Set<VisualElement>
+    variantChildren?: Set<VisualElement>
     current: Instance | null
     layoutTree: FlatTree
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
     presenceId: number | undefined
     projection: TargetProjection
-    variantChildren?: Set<VisualElement>
+    isProjecting: () => boolean
     isMounted(): boolean
     mount(instance: Instance): void
     unmount(): void
@@ -98,13 +101,11 @@ export interface VisualElement<Instance = any, RenderState = any>
      */
     isHoverEventsEnabled: boolean
     suspendHoverEvents(): void
-    withoutTransform(callback: () => void): void
     enableLayoutProjection(): void
     lockProjectionTarget(): void
     unlockProjectionTarget(): void
     rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void
     measureViewportBox(withTransform?: boolean): AxisBox2D
-    updateLayoutMeasurement(): void
     getLayoutState: () => LayoutState
     getProjectionParent: () => VisualElement | false
     getProjectionAnimationProgress(): MotionPoint
@@ -114,9 +115,12 @@ export interface VisualElement<Instance = any, RenderState = any>
         max: number,
         isRelative?: boolean
     ): void
-    startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>
+    startLayoutAnimation(
+        axis: "x" | "y",
+        transition: Transition,
+        isRelative: boolean
+    ): Promise<any>
     stopLayoutAnimation(): void
-    snapshotViewportBox(): void
     updateLayoutProjection(): void
     updateTreeLayoutProjection(): void
     resolveRelativeTargetBox(): void
@@ -128,6 +132,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     notifyLayoutReady(config?: SharedLayoutAnimationConfig): void
     pointTo(element: VisualElement): void
     resetTransform(): void
+    restoreTransform(): void
 
     isPresent: boolean
     presence: Presence

@@ -95,6 +95,7 @@ export function calcRelativeBox(
         projection.relativeTarget!.x,
         parentProjection.target.x
     )
+
     calcRelativeAxis(
         projection.target.y,
         projection.relativeTarget!.y,

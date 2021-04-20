@@ -1,4 +1,8 @@
 import sync, { flushSync } from "framesync"
+import {
+    batchResetAndMeasure,
+    withoutTreeTransform,
+} from "../../../render/dom/projection/utils"
 import { VisualElement } from "../../../render/types"
 import { compareByDepth } from "../../../render/utils/compare-by-depth"
 import { Presence, SyncLayoutBatcher, SyncLayoutLifecycles } from "../types"
@@ -7,7 +11,6 @@ import { Presence, SyncLayoutBatcher, SyncLayoutLifecycles } from "../types"
  * Default handlers for batching VisualElements
  */
 const defaultHandler: SyncLayoutLifecycles = {
-    measureLayout: (child) => child.updateLayoutMeasurement(),
     layoutReady: (child) => child.notifyLayoutReady(),
 }
 
@@ -19,24 +22,16 @@ export function createBatcher(): SyncLayoutBatcher {
 
     return {
         add: (child) => queue.add(child),
-        flush: ({ measureLayout, layoutReady, parent } = defaultHandler) => {
+        flush: ({ layoutReady, parent } = defaultHandler) => {
             const order = Array.from(queue).sort(compareByDepth)
 
-            const resetAndMeasure = () => {
-                /**
-                 * Write: Reset any transforms on children elements so we can read their actual layout
-                 */
-                order.forEach((child) => child.resetTransform())
-
-                /**
-                 * Read: Measure the actual layout
-                 */
-                order.forEach(measureLayout)
+            if (parent) {
+                withoutTreeTransform(parent, () => {
+                    batchResetAndMeasure(order)
+                })
+            } else {
+                batchResetAndMeasure(order)
             }
-
-            parent
-                ? parent.withoutTransform(resetAndMeasure)
-                : resetAndMeasure()
 
             /**
              * Write: Notify the VisualElements they're ready for further write operations.

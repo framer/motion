@@ -20,4 +20,18 @@ describe("FlatTree", () => {
             { depth: 1 },
         ])
     })
+
+    test("Doesn't crash when removing child mid-loop", () => {
+        const tree = new FlatTree()
+        const toRemove = { depth: 1 }
+        tree.add({ depth: 0 })
+        tree.add(toRemove)
+
+        const received: WithDepth[] = []
+        tree.forEach((child) => {
+            received.push(child)
+            tree.remove(toRemove)
+        })
+        expect(received).toStrictEqual([{ depth: 0 }])
+    })
 })

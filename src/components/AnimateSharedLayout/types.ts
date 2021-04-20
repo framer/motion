@@ -64,7 +64,6 @@ export interface SharedLayoutAnimationConfig {
  * @public
  */
 export interface SyncLayoutLifecycles {
-    measureLayout: (child: VisualElement) => void
     layoutReady: (child: VisualElement) => void
     parent?: VisualElement
 }

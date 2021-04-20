@@ -733,8 +733,6 @@ export interface SyncLayoutLifecycles {
     // (undocumented)
     layoutReady: (child: VisualElement) => void;
     // (undocumented)
-    measureLayout: (child: VisualElement) => void;
-    // (undocumented)
     parent?: VisualElement;
 }
 
@@ -915,6 +913,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     build(): RenderState;
     // (undocumented)
+    children: Set<VisualElement>;
+    // (undocumented)
     current: Instance | null;
     // (undocumented)
     depth: number;
@@ -949,11 +949,11 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
+    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
+    // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getValue(key: string): undefined | MotionValue;
-    // (undocumented)
-    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -976,6 +976,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     isPresent: boolean;
     // (undocumented)
+    isProjecting: () => boolean;
+    // (undocumented)
     isStatic?: boolean;
     isVisible?: boolean;
     // (undocumented)
@@ -994,6 +996,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     mount(instance: Instance): void;
     // (undocumented)
     notifyLayoutReady(config?: SharedLayoutAnimationConfig): void;
+    // (undocumented)
+    parent?: VisualElement;
     // (undocumented)
     path: VisualElement[];
     // (undocumented)
@@ -1023,6 +1027,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     resolveRelativeTargetBox(): void;
     // (undocumented)
+    restoreTransform(): void;
+    // (undocumented)
     scheduleRender(): void;
     // (undocumented)
     scheduleUpdateLayoutProjection(): void;
@@ -1039,11 +1045,9 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     setVisibility(visibility: boolean): void;
     // (undocumented)
-    snapshotViewportBox(): void;
-    // (undocumented)
     sortNodePosition(element: VisualElement): number;
     // (undocumented)
-    startLayoutAnimation(axis: "x" | "y", transition: Transition): Promise<any>;
+    startLayoutAnimation(axis: "x" | "y", transition: Transition, isRelative: boolean): Promise<any>;
     // (undocumented)
     stopLayoutAnimation(): void;
     // (undocumented)
@@ -1057,15 +1061,11 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     unmount(): void;
     // (undocumented)
-    updateLayoutMeasurement(): void;
-    // (undocumented)
     updateLayoutProjection(): void;
     // (undocumented)
     updateTreeLayoutProjection(): void;
     // (undocumented)
     variantChildren?: Set<VisualElement>;
-    // (undocumented)
-    withoutTransform(callback: () => void): void;
 }
 
 // Warning: (ae-forgotten-export) The symbol "VisualElementConfig" needs to be exported by the entry point index.d.ts

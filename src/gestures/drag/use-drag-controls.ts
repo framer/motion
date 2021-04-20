@@ -92,7 +92,7 @@ export class DragControls {
 
     updateConstraints() {
         this.componentControls.forEach((controls) => {
-            controls.prepareBoundingBox()
+            controls.updateLayoutMeasurements()
             controls.resolveDragConstraints()
         })
     }

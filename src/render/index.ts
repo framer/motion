@@ -4,7 +4,7 @@ import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionStyle } from "../motion/types"
 import { eachAxis } from "../utils/each-axis"
-import { axisBox, copyAxisBox } from "../utils/geometry"
+import { axisBox } from "../utils/geometry"
 import {
     applyBoxTransforms,
     removeBoxTransforms,
@@ -162,17 +162,10 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      *
      */
-    function isProjecting() {
-        return projection.isEnabled && layoutState.isHydrated
-    }
-
-    /**
-     *
-     */
     function render() {
         if (!instance) return
 
-        if (isProjecting()) {
+        if (element.isProjecting()) {
             /**
              * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
              * This is the final box that we will then project into by calculating a transform delta and
@@ -318,6 +311,10 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         depth: parent ? parent.depth + 1 : 0,
 
+        parent,
+
+        children: new Set(),
+
         /**
          * An ancestor path back to the root visual element. This is used
          * by layout projection to quickly recurse back up the tree.
@@ -386,6 +383,7 @@ export const visualElement = <Instance, MutableState, Options>({
             if (isVariantNode && parent && !isControllingVariants) {
                 removeFromVariantTree = parent?.addVariantChild(element)
             }
+            parent?.children.add(element)
         },
 
         /**
@@ -399,6 +397,7 @@ export const visualElement = <Instance, MutableState, Options>({
             element.stopLayoutAnimation()
             element.layoutTree.remove(element)
             removeFromVariantTree?.()
+            parent?.children.delete(element)
             unsubscribeFromLeadVisualElement?.()
             lifecycles.clearAllListeners()
         },
@@ -693,40 +692,30 @@ export const visualElement = <Instance, MutableState, Options>({
             projection.isTargetLocked = false
         },
 
-        /**
-         * Record the viewport box as it was before an expected mutation/re-render
-         */
-        snapshotViewportBox() {
-            element.prevViewportBox = element.measureViewportBox(false)
-
-            /**
-             * Update targetBox to match the prevViewportBox. This is just to ensure
-             * that targetBox is affected by scroll in the same way as the measured box
-             */
-            element.rebaseProjectionTarget(false, element.prevViewportBox)
-        },
-
         getLayoutState: () => layoutState,
 
         setCrossfader(newCrossfader) {
             crossfader = newCrossfader
         },
 
+        isProjecting: () => projection.isEnabled && layoutState.isHydrated,
+
         /**
          * Start a layout animation on a given axis.
-         * TODO: This could be better.
          */
-        startLayoutAnimation(axis, transition) {
+        startLayoutAnimation(axis, transition, isRelative = false) {
             const progress = element.getProjectionAnimationProgress()[axis]
-            const { min, max } = projection.target[axis]
+            const { min, max } = isRelative
+                ? projection.relativeTarget![axis]
+                : projection.target[axis]
             const length = max - min
 
             progress.clearListeners()
             progress.set(min)
             progress.set(min) // Set twice to hard-reset velocity
-            progress.onChange((v) =>
-                element.setProjectionTargetAxis(axis, v, v + length)
-            )
+            progress.onChange((v) => {
+                element.setProjectionTargetAxis(axis, v, v + length, isRelative)
+            })
 
             return element.animateMotionValue!(axis, progress, 0, transition)
         },
@@ -749,25 +738,6 @@ export const visualElement = <Instance, MutableState, Options>({
             const viewportBox = measureViewportBox(instance, options)
             if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
             return viewportBox
-        },
-
-        /**
-         * Update the layoutState by measuring the DOM layout. This
-         * should be called after resetting any layout-affecting transforms.
-         */
-        updateLayoutMeasurement() {
-            element.notifyBeforeLayoutMeasure(layoutState.layout)
-
-            layoutState.isHydrated = true
-            layoutState.layout = element.measureViewportBox()
-            layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
-
-            element.notifyLayoutMeasure(
-                layoutState.layout,
-                element.prevViewportBox || layoutState.layout
-            )
-
-            sync.update(() => element.rebaseProjectionTarget())
         },
 
         /**
@@ -850,18 +820,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         resetTransform: () => resetTransform(element, instance, props),
 
-        /**
-         * Perform the callback after temporarily unapplying the transform
-         * upwards through the tree.
-         */
-        withoutTransform(callback) {
-            const { isEnabled } = projection
-            isEnabled && element.resetTransform()
-
-            parent ? parent.withoutTransform(callback) : callback()
-
-            isEnabled && restoreTransform(instance, renderState)
-        },
+        restoreTransform: () => restoreTransform(instance, renderState),
 
         updateLayoutProjection,
 
