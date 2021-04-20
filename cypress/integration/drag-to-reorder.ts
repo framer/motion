@@ -58,21 +58,5 @@ describe("Drag to reorder", () => {
                     height: 60,
                 })
             })
-
-        // .get("#parent")
-        // .trigger("pointerdown", 5, 5)
-        // .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
-        // .wait(50)
-        // .trigger("pointermove", 50, 50)
-        // .wait(50)
-        // .trigger("pointerup")
-        // .should(([$parent]: any) => {
-        //     expectBbox($parent, {
-        //         top: 150,
-        //         left: 150,
-        //         width: 300,
-        //         height: 300,
-        //     })
-        // })
     })
 })
