@@ -14,6 +14,7 @@ export function setCurrentViewportBox(visualElement: VisualElement) {
         projectionParent.getLayoutState().layout,
         visualElement.getLayoutState().layout
     )
+
     eachAxis((axis) => {
         visualElement.setProjectionTargetAxis(
             axis,

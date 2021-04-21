@@ -189,8 +189,8 @@ describe("Drag & Layout", () => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
 
-                expect(left).to.equal(190)
-                expect(top).to.equal(290)
+                expect(left).to.equal(200)
+                expect(top).to.equal(300)
             })
     })
 
@@ -208,7 +208,7 @@ describe("Drag & Layout", () => {
                 const draggable = $draggable[0] as HTMLDivElement
                 const { left, top } = draggable.getBoundingClientRect()
 
-                expect(left).to.equal(190)
+                expect(left).to.equal(200)
                 expect(top).to.equal(0)
             })
     })
@@ -228,7 +228,7 @@ describe("Drag & Layout", () => {
                 const { left, top } = draggable.getBoundingClientRect()
 
                 expect(left).to.equal(0)
-                expect(top).to.equal(290)
+                expect(top).to.equal(300)
             })
     })
 
@@ -275,7 +275,7 @@ describe("Drag & Layout", () => {
                 const { left, top } = draggable.getBoundingClientRect()
 
                 expect(left).to.equal(0)
-                expect(top).to.equal(190)
+                expect(top).to.equal(200)
             })
     })
 

@@ -9,7 +9,6 @@ import {
     SharedLayoutSyncMethods,
     SyncLayoutBatcher,
 } from "../../../components/AnimateSharedLayout/types"
-import { setCurrentViewportBox } from "../../../render/dom/projection/relative-set"
 import { snapshotViewportBox } from "../../../render/dom/projection/utils"
 
 interface SyncProps extends FeatureProps {
@@ -61,11 +60,9 @@ class Measure extends React.Component<SyncProps> {
     }
 
     componentDidUpdate() {
-        const { syncLayout, visualElement } = this.props
+        const { syncLayout } = this.props
 
         if (!isSharedLayout(syncLayout)) syncLayout.flush()
-
-        setCurrentViewportBox(visualElement)
     }
 
     render() {

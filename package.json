@@ -34,7 +34,7 @@
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/layout-shared-lightbox-crossfade.ts\"'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/drag-svg.ts\"'",
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
