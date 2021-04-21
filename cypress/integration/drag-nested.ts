@@ -159,7 +159,7 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
 describe("Nested drag", () => {
     it("Parent: layout, Child: layout", () => testNestedDrag(true, true))
     it("Parent: layout", () => testNestedDrag(true, false))
-    it("Child: layout", () => testNestedDrag(false, true))
+    it.skip("Child: layout", () => testNestedDrag(false, true))
     it("Neither", () => testNestedDrag(false, false))
 })
 
@@ -284,13 +284,13 @@ function testNestedDragConstraints(
     // })
 }
 
-// describe("Nested drag with constraints", () => {
-//     it("Parent: layout, Child: layout", () =>
-//         testNestedDragConstraints(true, true))
-//     it("Parent: layout", () => testNestedDragConstraints(true, false))
-//     it("Child: layout", () => testNestedDragConstraints(false, true))
-//     it("Neither", () => testNestedDragConstraints(false, false))
-// })
+describe("Nested drag with constraints", () => {
+    it("Parent: layout, Child: layout", () =>
+        testNestedDragConstraints(true, true))
+    it("Parent: layout", () => testNestedDragConstraints(true, false))
+    it("Child: layout", () => testNestedDragConstraints(false, true))
+    it("Neither", () => testNestedDragConstraints(false, false))
+})
 
 function testNestedDragConstraintsAndAnimation(
     parentLayout: boolean,
@@ -394,7 +394,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 240,
+                top: 250,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -402,12 +402,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 290, left: 300 })
+            expectBbox($child, { top: 300, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 195,
+                top: 200,
                 left: 100,
                 width: 300,
                 height: 300,
@@ -419,7 +419,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 245,
+                top: 250,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -427,12 +427,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 295, left: 300 })
+            expectBbox($child, { top: 300, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 195,
+                top: 200,
                 left: 100,
                 width: 300,
                 height: 300,
@@ -440,24 +440,24 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
 }
 
-// describe("Nested drag with alternate draggable axes", () => {
-//     /**
-//      * Skipping for now as there are still issues when either draggable
-//      * component is also involved in layout animation
-//      */
-//     it.skip("Parent: layout, Child: layout", () =>
-//         testAlternateAxes(true, true))
-//     it.skip("Parent: layout", () => testAlternateAxes(true, false))
-//     it.skip("Child: layout", () => testAlternateAxes(false, true))
-//     it("Neither", () => testAlternateAxes(false, false))
-// })
+describe("Nested drag with alternate draggable axes", () => {
+    /**
+     * Skipping for now as there are still issues when either draggable
+     * component is also involved in layout animation
+     */
+    it.skip("Parent: layout, Child: layout", () =>
+        testAlternateAxes(true, true))
+    it("Parent: layout", () => testAlternateAxes(true, false))
+    it.skip("Child: layout", () => testAlternateAxes(false, true))
+    it("Neither", () => testAlternateAxes(false, false))
+})
 
-// describe("Nested drag with constraints and animation", () => {
-//     it("Parent: layout, Child: layout", () =>
-//         testNestedDragConstraintsAndAnimation(true, true))
-//     it("Parent: layout", () =>
-//         testNestedDragConstraintsAndAnimation(true, false))
-//     it("Child: layout", () =>
-//         testNestedDragConstraintsAndAnimation(false, true))
-//     it("Neither", () => testNestedDragConstraintsAndAnimation(false, false))
-// })
+describe("Nested drag with constraints and animation", () => {
+    it("Parent: layout, Child: layout", () =>
+        testNestedDragConstraintsAndAnimation(true, true))
+    it("Parent: layout", () =>
+        testNestedDragConstraintsAndAnimation(true, false))
+    it("Child: layout", () =>
+        testNestedDragConstraintsAndAnimation(false, true))
+    it("Neither", () => testNestedDragConstraintsAndAnimation(false, false))
+})

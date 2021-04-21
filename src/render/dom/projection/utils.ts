@@ -19,6 +19,12 @@ export function updateTreeLayoutMeasurements(
             true,
             visualElement.measureViewportBox(false)
         )
+
+    // console.log(
+    //     "updating tree measurements",
+    //     visualElement.getInstance().id,
+    //     visualElement.projection.target.y.min
+    // )
 }
 
 export function collectProjectingChildren(

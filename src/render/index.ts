@@ -797,7 +797,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 !x.isAnimating() &&
                 !y.isAnimating()
 
-            console.log("rebasing", shouldRebase, instance.id, box.y.min)
+            // console.log("rebasing", shouldRebase, instance.id, box.y.min)
             if (force || shouldRebase) {
                 eachAxis((axis) => {
                     const { min, max } = box[axis]
@@ -870,22 +870,22 @@ export const visualElement = <Instance, MutableState, Options>({
                 calcRelativeBox(projection, relativeParent.projection)
             }
 
-            if (instance.id === "child") {
-                console.log(
-                    "child target calculated as",
-                    projection.target.y.min
-                )
-            }
-            if (instance.id === "control") {
-                console.log(
-                    "relative: ",
-                    projection.relativeTarget.y.min,
-                    "calculated target: ",
-                    projection.target.y.min,
-                    "parent target: ",
-                    relativeParent.projection.target.y
-                )
-            }
+            // if (instance.id === "child") {
+            //     console.log(
+            //         "child target calculated as",
+            //         projection.target.y.min
+            //     )
+            // }
+            // if (instance.id === "control") {
+            //     console.log(
+            //         "relative: ",
+            //         projection.relativeTarget.y.min,
+            //         "calculated target: ",
+            //         projection.target.y.min,
+            //         "parent target: ",
+            //         relativeParent.projection.target.y
+            //     )
+            // }
         },
 
         /**
