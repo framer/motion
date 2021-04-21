@@ -699,6 +699,9 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
+export function snapshotViewportBox(visualElement: VisualElement): void;
+
+// @public
 export interface Spring extends Repeat {
     bounce?: number;
     damping?: number;
