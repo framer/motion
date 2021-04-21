@@ -29,7 +29,7 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "rm -rf types && yarn test-client && yarn test-server && yarn test-e2e && yarn build && yarn measure",
+        "test": "rm -rf types && yarn test-e2e && yarn test-client && yarn test-server && yarn build && yarn measure",
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
@@ -134,7 +134,7 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "31 kB"
+            "maxSize": "31.5 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -146,7 +146,7 @@
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "18.7 kB"
+            "maxSize": "19.1 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
@@ -158,7 +158,7 @@
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "26.6 kB"
+            "maxSize": "27 kB"
         }
     ]
 }
