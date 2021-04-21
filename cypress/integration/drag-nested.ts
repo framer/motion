@@ -296,7 +296,7 @@ function testNestedDragConstraintsAndAnimation(
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 200, 10, { force: true })
-        .wait(50)
+        .wait(70)
         .should(([$child]: any) => {
             expectBbox($child, {
                 top: 150,
@@ -329,7 +329,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .trigger("pointermove", 10, 10, { force: true })
         .wait(50)
         .trigger("pointermove", 100, 100, { force: true })
-        .wait(50)
+        .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
                 top: 240,
@@ -350,7 +350,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(30)
         .get("#child")
         .trigger("pointerup", { force: true })
-        .wait(50)
+        .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
                 top: 245,

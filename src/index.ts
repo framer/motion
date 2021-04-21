@@ -62,6 +62,7 @@ export {
 export { useDomEvent } from "./events/use-dom-event"
 export { createMotionComponent } from "./motion"
 export { addScaleCorrection } from "./render/dom/projection/scale-correction"
+export { snapshotViewportBox } from "./render/dom/projection/utils"
 export { createCrossfader } from "./components/AnimateSharedLayout/utils/crossfader"
 
 export { visualElement } from "./render"
