@@ -178,7 +178,7 @@ export class VisualElementDragControls {
              * Apply a simple lock to the projection target. This ensures no animations
              * can run on the projection box while this lock is active.
              */
-            this.visualElement.lockProjectionTarget()
+            this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
 
             /**
              * When dragging starts, we want to find where the cursor is relative to the bounding box
@@ -286,7 +286,10 @@ export class VisualElementDragControls {
     }
 
     updateLayoutMeasurements() {
-        updateTreeLayoutMeasurements(this.visualElement)
+        updateTreeLayoutMeasurements(
+            this.visualElement,
+            Boolean(this.getAxisMotionValue("x"))
+        )
     }
 
     resolveDragConstraints() {

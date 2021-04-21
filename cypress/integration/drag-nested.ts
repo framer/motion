@@ -5,12 +5,12 @@ interface BoundingBox {
     height: number
 }
 
-function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
+function expectBbox(element: HTMLElement, expectedBbox: Partial<BoundingBox>) {
     const bbox = element.getBoundingClientRect()
     expect(bbox.left).to.equal(expectedBbox.left)
     expect(bbox.top).to.equal(expectedBbox.top)
-    expect(bbox.width).to.equal(expectedBbox.width)
-    expect(bbox.height).to.equal(expectedBbox.height)
+    expectedBbox.width && expect(bbox.width).to.equal(expectedBbox.width)
+    expectedBbox.height && expect(bbox.height).to.equal(expectedBbox.height)
 }
 
 function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
@@ -38,6 +38,13 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
                 height: 200,
             })
         })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 200,
+                left: 200,
+            })
+        })
         .get("#parent")
         .trigger("pointerdown", 5, 5)
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
@@ -53,6 +60,10 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
                 height: 300,
             })
         })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 250, left: 250 })
+        })
         .get("#child")
         .should(([$child]: any) => {
             expectBbox($child, {
@@ -67,7 +78,6 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
         .wait(50)
         .trigger("pointermove", 50, 50)
         .wait(50)
-        .trigger("pointerup")
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
@@ -85,6 +95,34 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
                 width: 600,
                 height: 200,
             })
+        })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 300, left: 300 })
+        })
+        .trigger("pointerup")
+        .wait(50)
+        .get("#parent")
+        .should(([$parent]: any) => {
+            expectBbox($parent, {
+                top: 150,
+                left: 150,
+                width: 300,
+                height: 300,
+            })
+        })
+        .get("#child")
+        .should(([$child]: any) => {
+            expectBbox($child, {
+                top: 250,
+                left: 250,
+                width: 600,
+                height: 200,
+            })
+        })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 300, left: 300 })
         })
         .get("#parent")
         .trigger("pointerdown", 5, 5)
@@ -111,6 +149,10 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
                 width: 600,
                 height: 200,
             })
+        })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 350, left: 350 })
         })
 }
 
@@ -155,6 +197,10 @@ function testNestedDragConstraints(
                 height: 200,
             })
         })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 190, left: 175 })
+        })
         .get("#parent")
         .trigger("pointerdown", 5, 5)
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
@@ -169,6 +215,10 @@ function testNestedDragConstraints(
                 width: 300,
                 height: 300,
             })
+        })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 290, left: 300 })
         })
         .get("#child")
         .should(([$child]: any) => {
@@ -203,6 +253,10 @@ function testNestedDragConstraints(
                 height: 200,
             })
         })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 390, left: 400 })
+        })
     // .wait(20)
     // .get("#parent")
     // .trigger("pointerdown", { clientX: 210, clientY: 200, force: true })
@@ -230,13 +284,13 @@ function testNestedDragConstraints(
     // })
 }
 
-describe("Nested drag with constraints", () => {
-    it("Parent: layout, Child: layout", () =>
-        testNestedDragConstraints(true, true))
-    it("Parent: layout", () => testNestedDragConstraints(true, false))
-    it("Child: layout", () => testNestedDragConstraints(false, true))
-    it("Neither", () => testNestedDragConstraints(false, false))
-})
+// describe("Nested drag with constraints", () => {
+//     it("Parent: layout, Child: layout", () =>
+//         testNestedDragConstraints(true, true))
+//     it("Parent: layout", () => testNestedDragConstraints(true, false))
+//     it("Child: layout", () => testNestedDragConstraints(false, true))
+//     it("Neither", () => testNestedDragConstraints(false, false))
+// })
 
 function testNestedDragConstraintsAndAnimation(
     parentLayout: boolean,
@@ -270,6 +324,10 @@ function testNestedDragConstraintsAndAnimation(
                 height: 200,
             })
         })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 200, left: 350 })
+        })
         .get("#parent")
         .trigger("pointerup")
         .wait(2000)
@@ -290,6 +348,10 @@ function testNestedDragConstraintsAndAnimation(
                 width: 600,
                 height: 200,
             })
+        })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 200, left: 300 })
         })
         .get("#child")
         .trigger("pointerdown", 5, 10)
@@ -338,6 +400,10 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
                 height: 200,
             })
         })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 290, left: 300 })
+        })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
@@ -359,6 +425,10 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
                 height: 200,
             })
         })
+        .get("#control")
+        .should(([$child]: any) => {
+            expectBbox($child, { top: 295, left: 300 })
+        })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
@@ -370,24 +440,24 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
 }
 
-describe("Nested drag with alternate draggable axes", () => {
-    /**
-     * Skipping for now as there are still issues when either draggable
-     * component is also involved in layout animation
-     */
-    it.skip("Parent: layout, Child: layout", () =>
-        testAlternateAxes(true, true))
-    it.skip("Parent: layout", () => testAlternateAxes(true, false))
-    it.skip("Child: layout", () => testAlternateAxes(false, true))
-    it("Neither", () => testAlternateAxes(false, false))
-})
+// describe("Nested drag with alternate draggable axes", () => {
+//     /**
+//      * Skipping for now as there are still issues when either draggable
+//      * component is also involved in layout animation
+//      */
+//     it.skip("Parent: layout, Child: layout", () =>
+//         testAlternateAxes(true, true))
+//     it.skip("Parent: layout", () => testAlternateAxes(true, false))
+//     it.skip("Child: layout", () => testAlternateAxes(false, true))
+//     it("Neither", () => testAlternateAxes(false, false))
+// })
 
-describe("Nested drag with constraints and animation", () => {
-    it("Parent: layout, Child: layout", () =>
-        testNestedDragConstraintsAndAnimation(true, true))
-    it("Parent: layout", () =>
-        testNestedDragConstraintsAndAnimation(true, false))
-    it("Child: layout", () =>
-        testNestedDragConstraintsAndAnimation(false, true))
-    it("Neither", () => testNestedDragConstraintsAndAnimation(false, false))
-})
+// describe("Nested drag with constraints and animation", () => {
+//     it("Parent: layout, Child: layout", () =>
+//         testNestedDragConstraintsAndAnimation(true, true))
+//     it("Parent: layout", () =>
+//         testNestedDragConstraintsAndAnimation(true, false))
+//     it("Child: layout", () =>
+//         testNestedDragConstraintsAndAnimation(false, true))
+//     it("Neither", () => testNestedDragConstraintsAndAnimation(false, false))
+// })
