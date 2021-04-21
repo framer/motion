@@ -31,6 +31,7 @@ import {
     isVariantLabel,
 } from "./utils/variants"
 import { Axis } from "../types/geometry"
+import { setCurrentViewportBox } from "./dom/projection/relative-set"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -808,6 +809,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * needs to be performed.
          */
         notifyLayoutReady(config) {
+            setCurrentViewportBox(element)
             element.notifyLayoutUpdate(
                 layoutState.layout,
                 element.prevViewportBox || layoutState.layout,

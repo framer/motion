@@ -114,8 +114,8 @@ describe("Relative projection targets: Drag", () => {
             .get("#parent")
             .should(([$parent]: any) => {
                 expectBbox($parent, {
-                    top: 100,
-                    left: 100,
+                    top: 110,
+                    left: 110,
                     width: 200,
                     height: 200,
                 })
@@ -123,8 +123,8 @@ describe("Relative projection targets: Drag", () => {
             .get("#child")
             .should(([$child]: any) => {
                 expectBbox($child, {
-                    top: 100,
-                    left: 100,
+                    top: 110,
+                    left: 110,
                     width: 100,
                     height: 100,
                 })
