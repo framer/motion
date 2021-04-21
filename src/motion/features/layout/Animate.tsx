@@ -89,7 +89,6 @@ class Animate extends React.Component<AnimateProps> {
         }: SharedLayoutAnimationConfig = {}
     ) => {
         const { visualElement, layout } = this.props
-        console.log(visualElement.getInstance().id)
 
         /**
          * Early return if we've been instructed not to animate this render.
@@ -195,7 +194,7 @@ class Animate extends React.Component<AnimateProps> {
                 })
             } else {
                 this.stopAxisAnimation[axis]?.()
-                console.log(visualElement.getInstance().id)
+
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
                 return visualElement.setProjectionTargetAxis(
