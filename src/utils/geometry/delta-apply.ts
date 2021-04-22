@@ -219,8 +219,7 @@ export function removeBoxTransforms(
 export function applyTreeDeltas(
     box: AxisBox2D,
     treeScale: Point2D,
-    treePath: VisualElement[],
-    isRelative: boolean = false
+    treePath: VisualElement[]
 ) {
     const treeLength = treePath.length
     if (!treeLength) return
