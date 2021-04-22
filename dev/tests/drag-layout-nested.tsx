@@ -43,7 +43,9 @@ export const App = () => {
                     }
                     layout={childLayout}
                     style={a}
-                />
+                >
+                    <motion.div id="control" layoutId="test" style={c} />
+                </motion.div>
             </motion.div>
         </div>
     )
@@ -72,5 +74,15 @@ const a = {
     width: 600,
     height: 200,
     background: "#ffcc00",
+    borderRadius: 10,
+}
+
+const c = {
+    position: "relative",
+    top: 50,
+    left: 50,
+    width: 100,
+    height: 100,
+    background: "#ffaa00",
     borderRadius: 10,
 }

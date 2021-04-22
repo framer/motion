@@ -859,12 +859,18 @@ export const visualElement = <Instance, MutableState, Options>({
         },
 
         resolveRelativeTargetBox() {
-            if (!projection.relativeTarget) return
-
             const relativeParent = element.getProjectionParent()
+            if (!projection.relativeTarget || !relativeParent) return
 
-            if (relativeParent) {
-                calcRelativeBox(projection, relativeParent.projection)
+            calcRelativeBox(projection, relativeParent.projection)
+
+            if (relativeParent.getProps().drag) {
+                const { target } = projection
+                applyBoxTransforms(
+                    target,
+                    target,
+                    relativeParent.getLatestValues()
+                )
             }
         },
 

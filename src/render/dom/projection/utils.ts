@@ -3,7 +3,10 @@ import { copyAxisBox } from "../../../utils/geometry"
 import { VisualElement } from "../../types"
 import { compareByDepth } from "../../utils/compare-by-depth"
 
-export function updateTreeLayoutMeasurements(visualElement: VisualElement) {
+export function updateTreeLayoutMeasurements(
+    visualElement: VisualElement,
+    isRelativeDrag: boolean
+) {
     withoutTreeTransform(visualElement, () => {
         const allChildren = collectProjectingChildren(visualElement)
         batchResetAndMeasure(allChildren)
@@ -11,10 +14,11 @@ export function updateTreeLayoutMeasurements(visualElement: VisualElement) {
         updateLayoutMeasurement(visualElement)
     })
 
-    visualElement.rebaseProjectionTarget(
-        true,
-        visualElement.measureViewportBox(false)
-    )
+    !isRelativeDrag &&
+        visualElement.rebaseProjectionTarget(
+            true,
+            visualElement.measureViewportBox(false)
+        )
 }
 
 export function collectProjectingChildren(
