@@ -515,6 +515,11 @@ export class VisualElementDragControls {
         return !this.getAxisMotionValue("x")
     }
 
+    private isExternalDrag() {
+        const { _dragX, _dragY } = this.props
+        return _dragX || _dragY
+    }
+
     private animateDragEnd(velocity: Point2D) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
@@ -524,7 +529,7 @@ export class VisualElementDragControls {
          */
         const isRelative = convertToRelativeProjection(
             this.visualElement,
-            this.isLayoutDrag()
+            this.isLayoutDrag() && !this.isExternalDrag()
         )
 
         /**
