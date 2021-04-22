@@ -862,28 +862,17 @@ export const visualElement = <Instance, MutableState, Options>({
         },
 
         resolveRelativeTargetBox() {
-            if (!projection.relativeTarget) return
-
             const relativeParent = element.getProjectionParent()
+            if (!projection.relativeTarget || !relativeParent) return
 
-            if (relativeParent) {
-                calcRelativeBox(projection, relativeParent.projection)
-            }
+            calcRelativeBox(projection, relativeParent.projection)
 
-            if (instance.id === "child") {
-                console.log(
-                    "child target calculated as",
-                    projection.target.y.min
-                )
-            }
-            if (instance.id === "control") {
-                console.log(
-                    "relative: ",
-                    projection.relativeTarget.y.min,
-                    "calculated target: ",
-                    projection.target.y.min,
-                    "parent target: ",
-                    relativeParent.projection.target.y
+            if (relativeParent.getProps().drag) {
+                const { target } = projection
+                applyBoxTransforms(
+                    target,
+                    target,
+                    relativeParent.getLatestValues()
                 )
             }
         },

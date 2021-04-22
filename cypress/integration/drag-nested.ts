@@ -159,7 +159,7 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
 describe("Nested drag", () => {
     it("Parent: layout, Child: layout", () => testNestedDrag(true, true))
     it("Parent: layout", () => testNestedDrag(true, false))
-    it.skip("Child: layout", () => testNestedDrag(false, true))
+    it("Child: layout", () => testNestedDrag(false, true))
     it("Neither", () => testNestedDrag(false, false))
 })
 

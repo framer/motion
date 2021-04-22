@@ -242,7 +242,7 @@ export function applyTreeDeltas(
         applyBoxDelta(box, delta)
 
         // If this is a draggable ancestor, also incorporate the node's transform to the layout box
-        if (!isRelative && node.getProps().drag) {
+        if (node.getProps().drag) {
             applyBoxTransforms(box, box, node.getLatestValues())
         }
     }
