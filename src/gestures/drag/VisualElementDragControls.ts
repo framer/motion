@@ -288,7 +288,7 @@ export class VisualElementDragControls {
     updateLayoutMeasurements() {
         updateTreeLayoutMeasurements(
             this.visualElement,
-            Boolean(this.getAxisMotionValue("x"))
+            Boolean(this.getAxisMotionValue("x") && !this.isExternalDrag())
         )
     }
 
