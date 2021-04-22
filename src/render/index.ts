@@ -870,22 +870,22 @@ export const visualElement = <Instance, MutableState, Options>({
                 calcRelativeBox(projection, relativeParent.projection)
             }
 
-            // if (instance.id === "child") {
-            //     console.log(
-            //         "child target calculated as",
-            //         projection.target.y.min
-            //     )
-            // }
-            // if (instance.id === "control") {
-            //     console.log(
-            //         "relative: ",
-            //         projection.relativeTarget.y.min,
-            //         "calculated target: ",
-            //         projection.target.y.min,
-            //         "parent target: ",
-            //         relativeParent.projection.target.y
-            //     )
-            // }
+            if (instance.id === "child") {
+                console.log(
+                    "child target calculated as",
+                    projection.target.y.min
+                )
+            }
+            if (instance.id === "control") {
+                console.log(
+                    "relative: ",
+                    projection.relativeTarget.y.min,
+                    "calculated target: ",
+                    projection.target.y.min,
+                    "parent target: ",
+                    relativeParent.projection.target.y
+                )
+            }
         },
 
         /**
