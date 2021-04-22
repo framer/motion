@@ -5,7 +5,7 @@ import { LayoutState, TargetProjection } from "./state"
 
 export function updateLayoutDeltas(
     { delta, layout, layoutCorrected, treeScale }: LayoutState,
-    { target, relativeTarget }: TargetProjection,
+    { target }: TargetProjection,
     treePath: VisualElement[],
     transformOrigin: ResolvedValues
 ) {
