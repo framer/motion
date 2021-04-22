@@ -5,7 +5,7 @@ import { compareByDepth } from "../../utils/compare-by-depth"
 
 export function updateTreeLayoutMeasurements(
     visualElement: VisualElement,
-    isRelative: boolean
+    isRelativeDrag: boolean
 ) {
     withoutTreeTransform(visualElement, () => {
         const allChildren = collectProjectingChildren(visualElement)
@@ -14,17 +14,11 @@ export function updateTreeLayoutMeasurements(
         updateLayoutMeasurement(visualElement)
     })
 
-    !isRelative &&
+    !isRelativeDrag &&
         visualElement.rebaseProjectionTarget(
             true,
             visualElement.measureViewportBox(false)
         )
-
-    // console.log(
-    //     "updating tree measurements",
-    //     visualElement.getInstance().id,
-    //     visualElement.projection.target.y.min
-    // )
 }
 
 export function collectProjectingChildren(

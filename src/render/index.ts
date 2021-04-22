@@ -789,15 +789,12 @@ export const visualElement = <Instance, MutableState, Options>({
         rebaseProjectionTarget(force, box = layoutState.layout) {
             const { x, y } = element.getProjectionAnimationProgress()
 
-            // console.trace()
-
             const shouldRebase =
                 !projection.relativeTarget &&
                 !projection.isTargetLocked &&
                 !x.isAnimating() &&
                 !y.isAnimating()
 
-            // console.log("rebasing", shouldRebase, instance.id, box.y.min)
             if (force || shouldRebase) {
                 eachAxis((axis) => {
                     const { min, max } = box[axis]
