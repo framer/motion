@@ -30,7 +30,7 @@ describe("Nested Scroll/Page", () => {
             .trigger("pointermove", 10, 10, { force: true })
             .wait(100)
             .trigger("pointerup")
-            .wait(50)
+            .wait(70)
             .should(([$a]: any) => {
                 expectBbox($a, {
                     top: 400,
