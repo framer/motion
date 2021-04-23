@@ -979,7 +979,7 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     isPresent: boolean;
     // (undocumented)
-    isProjecting: () => boolean;
+    isProjectionReady: () => boolean;
     // (undocumented)
     isStatic?: boolean;
     isVisible?: boolean;

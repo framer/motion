@@ -33,7 +33,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     blockInitialAnimation?: boolean
     presenceId: number | undefined
     projection: TargetProjection
-    isProjecting: () => boolean
+    isProjectionReady: () => boolean
     isMounted(): boolean
     mount(instance: Instance): void
     unmount(): void

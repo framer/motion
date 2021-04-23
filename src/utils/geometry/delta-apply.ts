@@ -1,6 +1,7 @@
 import { Axis, AxisBox2D, BoxDelta, Point2D } from "../../types/geometry"
 import { mix } from "popmotion"
 import { ResolvedValues, VisualElement } from "../../render/types"
+import { isDraggable } from "../../render/utils/is-draggable"
 
 /**
  * Reset an axis to the provided origin box.
@@ -241,7 +242,7 @@ export function applyTreeDeltas(
         applyBoxDelta(box, delta)
 
         // If this is a draggable ancestor, also incorporate the node's transform to the layout box
-        if (node.getProps().drag) {
+        if (isDraggable(node)) {
             applyBoxTransforms(box, box, node.getLatestValues())
         }
     }
