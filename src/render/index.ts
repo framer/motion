@@ -167,7 +167,7 @@ export const visualElement = <Instance, MutableState, Options>({
     function render() {
         if (!instance) return
 
-        if (element.isProjecting()) {
+        if (element.isProjectionReady()) {
             /**
              * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
              * This is the final box that we will then project into by calculating a transform delta and
@@ -700,7 +700,7 @@ export const visualElement = <Instance, MutableState, Options>({
             crossfader = newCrossfader
         },
 
-        isProjecting: () => projection.isEnabled && layoutState.isHydrated,
+        isProjectionReady: () => projection.isEnabled && layoutState.isHydrated,
 
         /**
          * Start a layout animation on a given axis.

@@ -27,7 +27,7 @@ export function collectProjectingChildren(
     const children: VisualElement[] = []
 
     const addChild = (child: VisualElement) => {
-        child.isProjecting() && children.push(child)
+        child.projection.isEnabled && children.push(child)
         child.children.forEach(addChild)
     }
 
