@@ -46,6 +46,7 @@ export function withoutTreeTransform(
 ) {
     const { parent } = visualElement
     const { isEnabled } = visualElement.projection
+
     isEnabled && visualElement.resetTransform()
 
     parent ? withoutTreeTransform(parent, callback) : callback()
@@ -65,6 +66,15 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
     layoutState.isHydrated = true
     layoutState.layout = visualElement.measureViewportBox()
     layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
+
+    if (visualElement.getInstance().id === "a") {
+        console.log(
+            "transform of page is ",
+            document.querySelector("#Page")?.style.transform
+        )
+        // console.trace()
+        console.log("measured as", layoutState.layout.x.min)
+    }
 
     visualElement.notifyLayoutMeasure(
         layoutState.layout,

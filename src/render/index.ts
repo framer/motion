@@ -32,6 +32,7 @@ import {
 } from "./utils/variants"
 import { Axis } from "../types/geometry"
 import { setCurrentViewportBox } from "./dom/projection/relative-set"
+import { isDraggable } from "./utils/is-draggable"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -247,6 +248,19 @@ export const visualElement = <Instance, MutableState, Options>({
             element.scheduleRender()
         }
         layoutState.deltaTransform = deltaTransform
+
+        if (instance.id === "a") {
+            console.log(
+                "l",
+                layoutState.layout.x.min,
+                "r",
+                projection.relativeTarget?.x.min,
+                "t",
+                projection.target.x.min,
+                "p",
+                deltaTransform
+            )
+        }
     }
 
     function updateTreeLayoutProjection() {
@@ -864,7 +878,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
             calcRelativeBox(projection, relativeParent.projection)
 
-            if (relativeParent.getProps().drag) {
+            if (isDraggable(relativeParent)) {
                 const { target } = projection
                 applyBoxTransforms(
                     target,
