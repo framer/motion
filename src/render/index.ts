@@ -248,19 +248,6 @@ export const visualElement = <Instance, MutableState, Options>({
             element.scheduleRender()
         }
         layoutState.deltaTransform = deltaTransform
-
-        if (instance.id === "a") {
-            console.log(
-                "l",
-                layoutState.layout.x.min,
-                "r",
-                projection.relativeTarget?.x.min,
-                "t",
-                projection.target.x.min,
-                "p",
-                deltaTransform
-            )
-        }
     }
 
     function updateTreeLayoutProjection() {

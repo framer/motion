@@ -67,15 +67,6 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
     layoutState.layout = visualElement.measureViewportBox()
     layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
 
-    if (visualElement.getInstance().id === "a") {
-        console.log(
-            "transform of page is ",
-            document.querySelector("#Page")?.style.transform
-        )
-        // console.trace()
-        console.log("measured as", layoutState.layout.x.min)
-    }
-
     visualElement.notifyLayoutMeasure(
         layoutState.layout,
         visualElement.prevViewportBox || layoutState.layout
