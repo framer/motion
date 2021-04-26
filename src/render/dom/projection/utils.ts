@@ -29,9 +29,10 @@ export function collectProjectingChildren(
     const addChild = (child: VisualElement) => {
         if (
             child.projection.isEnabled ||
-            child.getProps()._layoutResetTransform
-        )
+            visualElement.shouldResetTransform()
+        ) {
             children.push(child)
+        }
         child.children.forEach(addChild)
     }
 
@@ -50,8 +51,7 @@ export function withoutTreeTransform(
 ) {
     const { parent } = visualElement
     const { isEnabled } = visualElement.projection
-    const shouldReset =
-        isEnabled || visualElement.getProps()._layoutResetTransform
+    const shouldReset = isEnabled || visualElement.shouldResetTransform()
 
     shouldReset && visualElement.resetTransform()
 
@@ -65,7 +65,7 @@ export function withoutTreeTransform(
  * should be called after resetting any layout-affecting transforms.
  */
 export function updateLayoutMeasurement(visualElement: VisualElement) {
-    if (!visualElement.shouldSnapshot()) return
+    if (visualElement.shouldResetTransform()) return
 
     const layoutState = visualElement.getLayoutState()
 
@@ -87,7 +87,7 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
  * Record the viewport box as it was before an expected mutation/re-render
  */
 export function snapshotViewportBox(visualElement: VisualElement) {
-    if (!visualElement.shouldSnapshot()) return
+    if (visualElement.shouldResetTransform()) return
     visualElement.prevViewportBox = visualElement.measureViewportBox(false)
 
     /**

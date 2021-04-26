@@ -133,7 +133,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     pointTo(element: VisualElement): void
     resetTransform(): void
     restoreTransform(): void
-    shouldSnapshot(): boolean
+    shouldResetTransform(): boolean
 
     isPresent: boolean
     presence: Presence

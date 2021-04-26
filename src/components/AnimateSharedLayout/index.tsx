@@ -154,7 +154,7 @@ export class AnimateSharedLayout extends React.Component<
          */
         this.children.forEach((child) => {
             resetRotate(child)
-            if (!child.shouldSnapshot()) child.resetTransform()
+            if (child.shouldResetTransform()) child.resetTransform()
         })
 
         /**
