@@ -1050,7 +1050,7 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     setVisibility(visibility: boolean): void;
     // (undocumented)
-    shouldSnapshot(): boolean;
+    shouldResetTransform(): boolean;
     // (undocumented)
     sortNodePosition(element: VisualElement): number;
     // (undocumented)
