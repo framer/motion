@@ -875,6 +875,10 @@ export const visualElement = <Instance, MutableState, Options>({
             }
         },
 
+        shouldSnapshot() {
+            return !props._layoutResetTransform
+        },
+
         /**
          *
          */

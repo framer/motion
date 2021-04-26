@@ -426,6 +426,8 @@ export const LayoutGroupContext: import("react").Context<string | null>;
 export interface LayoutProps {
     layout?: boolean | "position";
     layoutId?: string;
+    // @internal
+    _layoutResetTransform?: boolean;
     onLayoutAnimationComplete?(): void;
 }
 
@@ -1047,6 +1049,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     setStaticValue(key: string, value: number | string): void;
     // (undocumented)
     setVisibility(visibility: boolean): void;
+    // (undocumented)
+    shouldSnapshot(): boolean;
     // (undocumented)
     sortNodePosition(element: VisualElement): number;
     // (undocumented)

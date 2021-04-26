@@ -6,7 +6,12 @@ const createDefinition = (propNames: string[]) => ({
 })
 
 export const featureDefinitions: FeatureDefinitions = {
-    measureLayout: createDefinition(["layout", "layoutId", "drag"]),
+    measureLayout: createDefinition([
+        "layout",
+        "layoutId",
+        "drag",
+        "_layoutResetTransform",
+    ]),
     animation: createDefinition([
         "animate",
         "exit",

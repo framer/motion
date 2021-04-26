@@ -152,7 +152,10 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Write: Reset rotation transforms so bounding boxes can be accurately measured.
          */
-        this.children.forEach((child) => resetRotate(child))
+        this.children.forEach((child) => {
+            resetRotate(child)
+            if (!child.shouldSnapshot()) child.resetTransform()
+        })
 
         /**
          * Read: Snapshot children
