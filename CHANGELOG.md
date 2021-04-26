@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.1.8] 2021-04-23
+## [4.1.10] 2021-04-26
+
+### Fixed
+
+-   Allow a component to have `transform` reset before measuring child layout.
+
+## [4.1.9] 2021-04-23
 
 ### Fixed
 
