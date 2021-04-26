@@ -52,6 +52,16 @@ export interface LayoutProps {
     layoutId?: string
 
     /**
+     * This enables a component's transform to be reset during layout
+     * measurements. This is intended to be used independently of the
+     * layout prop, for instance if a parent component's transform is
+     * interfering with the measurement of a child.
+     *
+     * @internal
+     */
+    _layoutResetTransform?: boolean
+
+    /**
      * A callback that will fire when a layout animation on this component completes.
      *
      * @public
