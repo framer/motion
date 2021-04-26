@@ -150,7 +150,7 @@ export class AnimateSharedLayout extends React.Component<
         this.updateScheduled = true
 
         /**
-         * Write: Reset rotation transforms so bounding boxes can be accurately measured.
+         * Write: Reset transforms so bounding boxes can be accurately measured.
          */
         this.children.forEach((child) => {
             resetRotate(child)
