@@ -234,6 +234,14 @@ export const visualElement = <Instance, MutableState, Options>({
             latestValues
         )
 
+        if (instance.id === "child") {
+            console.log(
+                "projecting from",
+                layoutState.layout.x.min,
+                layoutState.layout.x.max
+            )
+        }
+
         hasViewportBoxUpdated &&
             element.notifyViewportBoxUpdate(leadProjection.target, delta)
         hasViewportBoxUpdated = false
@@ -892,7 +900,9 @@ export const visualElement = <Instance, MutableState, Options>({
                 console.log(
                     "target after",
                     projection.target.x.min,
-                    projection.target.x.max
+                    projection.target.x.max,
+                    "from",
+                    relativeParent.getLatestValues().x
                 )
             }
         },
