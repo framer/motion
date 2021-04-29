@@ -12,6 +12,11 @@ export interface TargetProjection {
     isEnabled: boolean
 
     /**
+     * Whether we should attempt to project into this target box.
+     */
+    isHydrated: boolean
+
+    /**
      * Whether this target box is locked. We might want to lock the box, for
      * instance if the user is dragging or animating it. Otherwise
      * we want to rebase the target box ontop of the measured layout.
@@ -39,6 +44,7 @@ export interface TargetProjection {
 
 export const createProjectionState = (): TargetProjection => ({
     isEnabled: false,
+    isHydrated: false,
     isTargetLocked: false,
     target: axisBox(),
     targetFinal: axisBox(),

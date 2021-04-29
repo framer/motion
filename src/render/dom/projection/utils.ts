@@ -10,7 +10,6 @@ export function updateTreeLayoutMeasurements(
     withoutTreeTransform(visualElement, () => {
         const allChildren = collectProjectingChildren(visualElement)
         batchResetAndMeasure(allChildren)
-
         updateLayoutMeasurement(visualElement)
     })
 

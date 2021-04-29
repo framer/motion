@@ -302,7 +302,6 @@ export class VisualElementDragControls {
 
     resolveDragConstraints() {
         const { dragConstraints, dragElastic } = this.props
-        this.visualElement.updateLayoutProjection()
         const { layoutCorrected: layout } = this.visualElement.getLayoutState()
 
         if (dragConstraints) {
@@ -702,7 +701,9 @@ export class VisualElementDragControls {
          * whenever its layout changes.
          */
         const stopLayoutUpdateListener = visualElement.onLayoutUpdate(() => {
-            if (this.isDragging) this.resolveDragConstraints()
+            if (this.isDragging) {
+                this.resolveDragConstraints()
+            }
         })
 
         /**

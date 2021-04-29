@@ -194,6 +194,7 @@ export const visualElement = <Instance, MutableState, Options>({
         }
 
         triggerBuild()
+
         renderInstance(instance, renderState)
     }
 
@@ -700,7 +701,10 @@ export const visualElement = <Instance, MutableState, Options>({
             crossfader = newCrossfader
         },
 
-        isProjectionReady: () => projection.isEnabled && layoutState.isHydrated,
+        isProjectionReady: () =>
+            projection.isEnabled &&
+            projection.isHydrated &&
+            layoutState.isHydrated,
 
         /**
          * Start a layout animation on a given axis.
@@ -771,6 +775,8 @@ export const visualElement = <Instance, MutableState, Options>({
                 projection.relativeTarget = undefined
                 target = projection.target[axis]
             }
+
+            projection.isHydrated = true
 
             target.min = min
             target.max = max
@@ -865,12 +871,28 @@ export const visualElement = <Instance, MutableState, Options>({
 
             calcRelativeBox(projection, relativeParent.projection)
 
+            if (instance.id === "child") {
+                console.log(
+                    "target before",
+                    projection.target.x.min,
+                    projection.target.x.max
+                )
+            }
+
             if (isDraggable(relativeParent)) {
                 const { target } = projection
                 applyBoxTransforms(
                     target,
                     target,
                     relativeParent.getLatestValues()
+                )
+            }
+
+            if (instance.id === "child") {
+                console.log(
+                    "target after",
+                    projection.target.x.min,
+                    projection.target.x.max
                 )
             }
         },
