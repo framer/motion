@@ -156,10 +156,31 @@ export class VisualElementDragControls {
         originEvent: AnyPointerEvent,
         { snapToCursor = false, cursorProgress }: DragControlOptions = {}
     ) {
+        let initialPoint: Point2D
+
         const onSessionStart = (event: AnyPointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
             this.stopMotion()
+
+            /**
+             * Save the initial point. We'll use this to calculate the pointer's position rather
+             * than the one we receive when the gesture actually starts. By then, the pointer will
+             * have already moved, and the perception will be of the pointer "slipping" across the element
+             */
+            initialPoint = getViewportPointFromEvent(event).point
+        }
+
+        const onStart = (event: AnyPointerEvent, info: PanInfo) => {
+            // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
+            const { drag, dragPropagation } = this.props
+            if (drag && !dragPropagation) {
+                if (this.openGlobalLock) this.openGlobalLock()
+                this.openGlobalLock = getGlobalLock(drag)
+
+                // If we don 't have the lock, don't start dragging
+                if (!this.openGlobalLock) return
+            }
 
             /**
              * Ensure that this element's layout measurements are updated.
@@ -191,13 +212,12 @@ export class VisualElementDragControls {
              * if the DOM element itself changes layout as a result of React updates the user might
              * make based on the drag position.
              */
-            const { point } = getViewportPointFromEvent(event)
             eachAxis((axis) => {
                 const { min, max } = this.visualElement.projection.target[axis]
 
                 this.cursorProgress[axis] = cursorProgress
                     ? cursorProgress[axis]
-                    : progress(min, max, point[axis])
+                    : progress(min, max, initialPoint[axis])
 
                 /**
                  * If we have external drag MotionValues, record their origin point. On pointermove
@@ -208,18 +228,6 @@ export class VisualElementDragControls {
                     this.originPoint[axis] = axisValue.get()
                 }
             })
-        }
-
-        const onStart = (event: AnyPointerEvent, info: PanInfo) => {
-            // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
-            const { drag, dragPropagation } = this.props
-            if (drag && !dragPropagation) {
-                if (this.openGlobalLock) this.openGlobalLock()
-                this.openGlobalLock = getGlobalLock(drag)
-
-                // If we don 't have the lock, don't start dragging
-                if (!this.openGlobalLock) return
-            }
 
             /**
              * Resolve the drag constraints. These are either set as top/right/bottom/left constraints
