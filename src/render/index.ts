@@ -238,7 +238,10 @@ export const visualElement = <Instance, MutableState, Options>({
             console.log(
                 "projecting from",
                 layoutState.layout.x.min,
-                layoutState.layout.x.max
+                layoutState.layout.x.max,
+                "into",
+                leadProjection.targetFinal.x.min,
+                leadProjection.targetFinal.x.max
             )
         }
 

@@ -108,6 +108,11 @@ export class VisualElementDragControls {
     private hasMutatedConstraints: boolean = false
 
     /**
+     * @internal
+     */
+    private cancelLayout?: () => void
+
+    /**
      * Track the initial position of the cursor relative to the dragging element
      * when dragging starts as a value of 0-1 on each axis. We then use this to calculate
      * an ideal bounding box for the VisualElement renderer to project into every frame.
@@ -156,8 +161,6 @@ export class VisualElementDragControls {
         originEvent: AnyPointerEvent,
         { snapToCursor = false, cursorProgress }: DragControlOptions = {}
     ) {
-        let initialPoint: Point2D
-
         const onSessionStart = (event: AnyPointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
@@ -168,7 +171,81 @@ export class VisualElementDragControls {
              * than the one we receive when the gesture actually starts. By then, the pointer will
              * have already moved, and the perception will be of the pointer "slipping" across the element
              */
-            initialPoint = getViewportPointFromEvent(event).point
+            const initialPoint = getViewportPointFromEvent(event).point
+
+            this.cancelLayout?.()
+            this.cancelLayout = batchLayout((read, write) => {
+                write(() => {
+                    // Unset tree transforms
+                    // Unset children transforms
+                })
+
+                read(() => {
+                    // Measure children
+                    // Measure this element
+                    // Measure ref constraints
+                })
+
+                write(() => {
+                    // Rebase projection target
+                    // Snap to cursor
+                    // Calc ref constraints
+                })
+            })
+
+            // /**
+            //  * Ensure that this element's layout measurements are updated.
+            //  * We'll need these to accurately project the element and figure out its constraints.
+            //  */
+            //  this.updateLayoutMeasurements()
+
+            //  /**
+            //   * If this drag session has been manually triggered by the user, it might be from an event
+            //   * outside the draggable element. If snapToCursor is set to true, we need to measure the position
+            //   * of the element and snap it to the cursor.
+            //   */
+            //  snapToCursor && this.snapToCursor(originEvent)
+
+            //  /**
+            //   * Apply a simple lock to the projection target. This ensures no animations
+            //   * can run on the projection box while this lock is active.
+            //   */
+            //  this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
+
+            //  /**
+            //   * When dragging starts, we want to find where the cursor is relative to the bounding box
+            //   * of the element. Every frame, we calculate a new bounding box using this relative position
+            //   * and let the visualElement renderer figure out how to reproject the element into this bounding
+            //   * box.
+            //   *
+            //   * By doing it this way, rather than applying an x/y transform directly to the element,
+            //   * we can ensure the component always visually sticks to the cursor as we'd expect, even
+            //   * if the DOM element itself changes layout as a result of React updates the user might
+            //   * make based on the drag position.
+            //   */
+            //  eachAxis((axis) => {
+            //      const { min, max } = this.visualElement.projection.target[axis]
+
+            //      this.cursorProgress[axis] = cursorProgress
+            //          ? cursorProgress[axis]
+            //          : progress(min, max, initialPoint[axis])
+
+            //      /**
+            //       * If we have external drag MotionValues, record their origin point. On pointermove
+            //       * we'll apply the pan gesture offset directly to this value.
+            //       */
+            //      const axisValue = this.getAxisMotionValue(axis)
+            //      if (axisValue) {
+            //          this.originPoint[axis] = axisValue.get()
+            //      }
+            //  })
+
+            //  /**
+            //   * Resolve the drag constraints. These are either set as top/right/bottom/left constraints
+            //   * relative to the element's layout, or a ref to another element. Both need converting to
+            //   * viewport coordinates.
+            //   */
+            //  this.resolveDragConstraints()
         }
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
@@ -182,59 +259,7 @@ export class VisualElementDragControls {
                 if (!this.openGlobalLock) return
             }
 
-            /**
-             * Ensure that this element's layout measurements are updated.
-             * We'll need these to accurately project the element and figure out its constraints.
-             */
-            this.updateLayoutMeasurements()
-
-            /**
-             * If this drag session has been manually triggered by the user, it might be from an event
-             * outside the draggable element. If snapToCursor is set to true, we need to measure the position
-             * of the element and snap it to the cursor.
-             */
-            snapToCursor && this.snapToCursor(originEvent)
-
-            /**
-             * Apply a simple lock to the projection target. This ensures no animations
-             * can run on the projection box while this lock is active.
-             */
-            this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
-
-            /**
-             * When dragging starts, we want to find where the cursor is relative to the bounding box
-             * of the element. Every frame, we calculate a new bounding box using this relative position
-             * and let the visualElement renderer figure out how to reproject the element into this bounding
-             * box.
-             *
-             * By doing it this way, rather than applying an x/y transform directly to the element,
-             * we can ensure the component always visually sticks to the cursor as we'd expect, even
-             * if the DOM element itself changes layout as a result of React updates the user might
-             * make based on the drag position.
-             */
-            eachAxis((axis) => {
-                const { min, max } = this.visualElement.projection.target[axis]
-
-                this.cursorProgress[axis] = cursorProgress
-                    ? cursorProgress[axis]
-                    : progress(min, max, initialPoint[axis])
-
-                /**
-                 * If we have external drag MotionValues, record their origin point. On pointermove
-                 * we'll apply the pan gesture offset directly to this value.
-                 */
-                const axisValue = this.getAxisMotionValue(axis)
-                if (axisValue) {
-                    this.originPoint[axis] = axisValue.get()
-                }
-            })
-
-            /**
-             * Resolve the drag constraints. These are either set as top/right/bottom/left constraints
-             * relative to the element's layout, or a ref to another element. Both need converting to
-             * viewport coordinates.
-             */
-            this.resolveDragConstraints()
+            flushLayout()
 
             // Set current drag status
             this.isDragging = true
@@ -374,6 +399,7 @@ export class VisualElementDragControls {
     }
 
     cancelDrag() {
+        this.cancelLayout?.()
         this.isDragging = false
         this.panSession && this.panSession.end()
         this.panSession = null
