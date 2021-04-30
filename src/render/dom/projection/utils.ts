@@ -3,21 +3,22 @@ import { copyAxisBox } from "../../../utils/geometry"
 import { VisualElement } from "../../types"
 import { compareByDepth } from "../../utils/compare-by-depth"
 
-export function updateTreeLayoutMeasurements(
-    visualElement: VisualElement,
-    isRelativeDrag: boolean
-) {
-    withoutTreeTransform(visualElement, () => {
-        const allChildren = collectProjectingChildren(visualElement)
-        batchResetAndMeasure(allChildren)
-        updateLayoutMeasurement(visualElement)
-    })
+function isProjecting(visualElement: VisualElement) {
+    const { isEnabled } = visualElement.projection
+    return isEnabled || visualElement.shouldResetTransform()
+}
 
-    !isRelativeDrag &&
-        visualElement.rebaseProjectionTarget(
-            true,
-            visualElement.measureViewportBox(false)
-        )
+export function collectProjectingAncestors(
+    visualElement: VisualElement,
+    ancestors: VisualElement[] = []
+) {
+    const { parent } = visualElement
+
+    if (parent) collectProjectingAncestors(parent, ancestors)
+
+    if (isProjecting(visualElement)) ancestors.push(visualElement)
+
+    return ancestors
 }
 
 export function collectProjectingChildren(
@@ -26,9 +27,7 @@ export function collectProjectingChildren(
     const children: VisualElement[] = []
 
     const addChild = (child: VisualElement) => {
-        if (child.projection.isEnabled || child.shouldResetTransform()) {
-            children.push(child)
-        }
+        if (isProjecting(child)) children.push(child)
         child.children.forEach(addChild)
     }
 

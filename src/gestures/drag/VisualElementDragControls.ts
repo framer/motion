@@ -31,10 +31,16 @@ import { Transition } from "../../types"
 import { AnimationType } from "../../render/utils/types"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../../motion/types"
-import { updateTreeLayoutMeasurements } from "../../render/dom/projection/utils"
+import {
+    collectProjectingAncestors,
+    collectProjectingChildren,
+    updateLayoutMeasurement,
+    updateTreeLayoutMeasurements,
+} from "../../render/dom/projection/utils"
 import { progress } from "popmotion"
 import { convertToRelativeProjection } from "../../render/dom/projection/convert-to-relative"
 import { calcRelativeOffset } from "../../motion/features/layout/utils"
+import { batchLayout, flushLayout } from "../../render/dom/utils/batch-layout"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -175,21 +181,73 @@ export class VisualElementDragControls {
 
             this.cancelLayout?.()
             this.cancelLayout = batchLayout((read, write) => {
+                const ancestors = collectProjectingAncestors(this.visualElement)
+                const children = collectProjectingChildren(this.visualElement)
+                const tree = [...ancestors, ...children]
+
+                /**
+                 * Apply a simple lock to the projection target. This ensures no animations
+                 * can run on the projection box while this lock is active.
+                 */
+                this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
+
                 write(() => {
-                    // Unset tree transforms
-                    // Unset children transforms
+                    tree.forEach((element) => element.resetTransform())
                 })
 
                 read(() => {
-                    // Measure children
-                    // Measure this element
-                    // Measure ref constraints
+                    this.isLayoutDrag() &&
+                        updateLayoutMeasurement(this.visualElement)
+                    children.forEach(updateLayoutMeasurement)
                 })
 
                 write(() => {
-                    // Rebase projection target
+                    tree.forEach((element) => element.restoreTransform())
                     // Snap to cursor
-                    // Calc ref constraints
+                })
+
+                read(() => {
+                    /**
+                     * When dragging starts, we want to find where the cursor is relative to the bounding box
+                     * of the element. Every frame, we calculate a new bounding box using this relative position
+                     * and let the visualElement renderer figure out how to reproject the element into this bounding
+                     * box.
+                     *
+                     * By doing it this way, rather than applying an x/y transform directly to the element,
+                     * we can ensure the component always visually sticks to the cursor as we'd expect, even
+                     * if the DOM element itself changes layout as a result of React updates the user might
+                     * make based on the drag position.
+                     */
+                    const { projection } = this.visualElement
+
+                    eachAxis((axis) => {
+                        const { min, max } = projection.target[axis]
+
+                        this.cursorProgress[axis] = cursorProgress
+                            ? cursorProgress[axis]
+                            : progress(min, max, initialPoint[axis])
+
+                        /**
+                         * If we have external drag MotionValues, record their origin point. On pointermove
+                         * we'll apply the pan gesture offset directly to this value.
+                         */
+                        const axisValue = this.getAxisMotionValue(axis)
+                        if (axisValue) {
+                            this.originPoint[axis] = axisValue.get()
+                        }
+                    })
+
+                    this.resolveDragConstraints()
+
+                    const isRelativeDrag = Boolean(
+                        this.getAxisMotionValue("x") && !this.isExternalDrag()
+                    )
+                    if (!isRelativeDrag) {
+                        this.visualElement.rebaseProjectionTarget(
+                            true,
+                            this.visualElement.measureViewportBox(false)
+                        )
+                    }
                 })
             })
 
