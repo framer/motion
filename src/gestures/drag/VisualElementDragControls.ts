@@ -693,6 +693,30 @@ export class VisualElementDragControls {
          * Then, using the latest layout and constraints measurements, reposition the new layout axis
          * proportionally within the constraints.
          */
+        this.updateConstraints(() => {
+            eachAxis((axis) => {
+                if (!shouldDrag(axis, drag, null)) return
+
+                // Calculate the position of the targetBox relative to the constraintsBox using the
+                // previously calculated progress
+                const { min, max } = calcPositionFromProgress(
+                    this.visualElement.projection.target[axis],
+                    this.constraintsBox![axis],
+                    boxProgress[axis]
+                )
+
+                this.visualElement.setProjectionTargetAxis(axis, min, max)
+            })
+        })
+
+        /**
+         * If any other draggable components are queuing the same tasks synchronously
+         * this will wait until they've all been scheduled before flushing.
+         */
+        setTimeout(flushLayout, 1)
+    }
+
+    updateConstraints(onReady?: () => void) {
         this.cancelLayout = batchLayout((read, write) => {
             const ancestors = collectProjectingAncestors(this.visualElement)
 
@@ -710,28 +734,8 @@ export class VisualElementDragControls {
                 this.resolveDragConstraints()
             })
 
-            write(() => {
-                eachAxis((axis) => {
-                    if (!shouldDrag(axis, drag, null)) return
-
-                    // Calculate the position of the targetBox relative to the constraintsBox using the
-                    // previously calculated progress
-                    const { min, max } = calcPositionFromProgress(
-                        this.visualElement.projection.target[axis],
-                        this.constraintsBox![axis],
-                        boxProgress[axis]
-                    )
-
-                    this.visualElement.setProjectionTargetAxis(axis, min, max)
-                })
-            })
+            if (onReady) write(onReady)
         })
-
-        /**
-         * If any other draggable components are queuing the same tasks synchronously
-         * this will wait until they've all been scheduled before flushing.
-         */
-        setTimeout(flushLayout, 1)
     }
 
     mount(visualElement: VisualElement) {
