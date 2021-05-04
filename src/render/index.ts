@@ -1,4 +1,4 @@
-import sync, { cancelSync } from "framesync"
+import sync, { cancelSync, getFrameData } from "framesync"
 import { pipe } from "popmotion"
 import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
@@ -222,6 +222,8 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     function updateLayoutProjection() {
+        if (!element.isProjectionReady()) return
+
         const { delta, treeScale } = layoutState
         const prevTreeScaleX = treeScale.x
         const prevTreeScaleY = treeScale.x
@@ -233,17 +235,6 @@ export const visualElement = <Instance, MutableState, Options>({
             element.path,
             latestValues
         )
-
-        if (instance.id === "child") {
-            console.log(
-                "projecting from",
-                layoutState.layout.x.min,
-                layoutState.layout.x.max,
-                "into",
-                leadProjection.targetFinal.x.min,
-                leadProjection.targetFinal.x.max
-            )
-        }
 
         hasViewportBoxUpdated &&
             element.notifyViewportBoxUpdate(leadProjection.target, delta)
@@ -854,6 +845,7 @@ export const visualElement = <Instance, MutableState, Options>({
              * update projections.
              */
             sync.preRender(updateTreeLayoutProjection, false, true)
+            // sync.postRender(() => element.scheduleUpdateLayoutProjection())
         },
 
         getProjectionParent() {
@@ -882,30 +874,12 @@ export const visualElement = <Instance, MutableState, Options>({
 
             calcRelativeBox(projection, relativeParent.projection)
 
-            if (instance.id === "child") {
-                console.log(
-                    "target before",
-                    projection.target.x.min,
-                    projection.target.x.max
-                )
-            }
-
             if (isDraggable(relativeParent)) {
                 const { target } = projection
                 applyBoxTransforms(
                     target,
                     target,
                     relativeParent.getLatestValues()
-                )
-            }
-
-            if (instance.id === "child") {
-                console.log(
-                    "target after",
-                    projection.target.x.min,
-                    projection.target.x.max,
-                    "from",
-                    relativeParent.getLatestValues().x
                 )
             }
         },

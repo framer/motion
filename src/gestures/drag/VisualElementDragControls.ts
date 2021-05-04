@@ -41,6 +41,7 @@ import { progress } from "popmotion"
 import { convertToRelativeProjection } from "../../render/dom/projection/convert-to-relative"
 import { calcRelativeOffset } from "../../motion/features/layout/utils"
 import { batchLayout, flushLayout } from "../../render/dom/utils/batch-layout"
+import { flushSync } from "framesync"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -203,10 +204,24 @@ export class VisualElementDragControls {
 
                 write(() => {
                     tree.forEach((element) => element.restoreTransform())
-                    // Snap to cursor
+                    // TODOL Snap to cursor
                 })
 
                 read(() => {
+                    this.resolveDragConstraints()
+
+                    const isRelativeDrag = Boolean(
+                        this.getAxisMotionValue("x") && !this.isExternalDrag()
+                    )
+                    if (!isRelativeDrag) {
+                        this.visualElement.rebaseProjectionTarget(
+                            true,
+                            this.visualElement.measureViewportBox(false)
+                        )
+                    }
+
+                    this.visualElement.scheduleUpdateLayoutProjection()
+
                     /**
                      * When dragging starts, we want to find where the cursor is relative to the bounding box
                      * of the element. Every frame, we calculate a new bounding box using this relative position
@@ -236,18 +251,13 @@ export class VisualElementDragControls {
                             this.originPoint[axis] = axisValue.get()
                         }
                     })
+                })
 
-                    this.resolveDragConstraints()
-
-                    const isRelativeDrag = Boolean(
-                        this.getAxisMotionValue("x") && !this.isExternalDrag()
-                    )
-                    if (!isRelativeDrag) {
-                        this.visualElement.rebaseProjectionTarget(
-                            true,
-                            this.visualElement.measureViewportBox(false)
-                        )
-                    }
+                write(() => {
+                    flushSync.update()
+                    flushSync.preRender()
+                    flushSync.render()
+                    flushSync.postRender()
                 })
             })
 
@@ -410,6 +420,10 @@ export class VisualElementDragControls {
                     )
                 }
             })
+        }
+
+        if (this.visualElement.getInstance().id === "child") {
+            console.log(this.constraints.x)
         }
     }
 
