@@ -1,4 +1,4 @@
-import sync, { cancelSync, getFrameData } from "framesync"
+import sync, { cancelSync } from "framesync"
 import { pipe } from "popmotion"
 import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"

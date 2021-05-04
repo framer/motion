@@ -377,7 +377,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 250,
+                top: 245,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -385,12 +385,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 300, left: 300 })
+            expectBbox($child, { top: 295, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 200,
+                top: 195,
                 left: 100,
                 width: 300,
                 height: 300,
@@ -402,7 +402,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 250,
+                top: 245,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -410,12 +410,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 300, left: 300 })
+            expectBbox($child, { top: 295, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 200,
+                top: 195,
                 left: 100,
                 width: 300,
                 height: 300,
