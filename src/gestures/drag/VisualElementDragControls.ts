@@ -197,10 +197,7 @@ export class VisualElementDragControls {
                 })
 
                 read(() => {
-                    if (this.isLayoutDrag() || snapToCursor) {
-                        updateLayoutMeasurement(this.visualElement)
-                    }
-
+                    updateLayoutMeasurement(this.visualElement)
                     children.forEach(updateLayoutMeasurement)
                 })
 
