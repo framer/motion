@@ -75,27 +75,3 @@ export function flushLayout() {
 }
 
 const executeJob = (job: Job) => job()
-
-/**
- * updateConstraints
- *  - write: prepareDom (resetTransforms)
- *  - read: measure
- *  - write: restoreDom (restoreTransforms)
- *  - read: resolveConstraints
- *
- * startDrag
- *  - write: prepareDom (resetTransforms)
- *  - read: measure
- *  - write: restoreDom & snapToCursor
- *  - read: rebase projection target & init cursor info
- *  - write: sync flush frame jobs
- *  - read: resolveConstraints
- *
- * AnimateSharedLayout
- *  - write: prepareDom (reset)
- *  - read: measure
- *  - write: notify layout ready (start animations)
- *  - batched: set presence info
- *  - write: flush render
- *  - batch: assign projection
- */
