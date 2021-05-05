@@ -117,7 +117,7 @@ export interface PanInfo {
      */
     offset: Point2D
     /**
-     * Contains `x` and `y` values for the current velocity of the pointer.
+     * Contains `x` and `y` values for the current velocity of the pointer, in px/ms.
      *
      * @library
      *
