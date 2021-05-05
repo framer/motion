@@ -1,3 +1,5 @@
+import sync from "framesync"
+
 type Job = () => void
 
 type JobSetter = (job: Job) => void
@@ -14,6 +16,10 @@ function pushJob(stack: Job[][], job: Job, pointer: number) {
 export function batchLayout(callback: ReadWrites) {
     unresolvedJobs.add(callback)
     return () => unresolvedJobs.delete(callback)
+}
+
+export const layoutState = {
+    isMeasuringLayout: false,
 }
 
 export function flushLayout() {
@@ -40,6 +46,25 @@ export function flushLayout() {
     unresolvedJobs.clear()
 
     /**
+     * Mark that we're currently measuring layouts. This allows us to, for instance, ignore
+     * hover events that might be triggered as a result of resetting transforms.
+     *
+     * The postRender/setTimeout combo seems like an odd bit of scheduling but what it's saying
+     * is *after* the next render, wait 10ms before re-enabling hover events. Waiting until the
+     * next frame completely will result in missed, valid hover events. But events seem to
+     * be fired async from their actual action, so setting this to false too soon can still
+     * trigger events from layout measurements.
+     *
+     * Note: If we figure out a way of measuring layout while transforms remain applied, this can be removed.
+     * I have attempted unregistering event listeners and setting CSS to pointer-events: none
+     * but neither seem to work as expected.
+     */
+    layoutState.isMeasuringLayout = true
+    sync.postRender(() => {
+        setTimeout(() => (layoutState.isMeasuringLayout = false), 10)
+    })
+
+    /**
      * Execute jobs
      */
     const numStacks = writes.length
@@ -50,3 +75,27 @@ export function flushLayout() {
 }
 
 const executeJob = (job: Job) => job()
+
+/**
+ * updateConstraints
+ *  - write: prepareDom (resetTransforms)
+ *  - read: measure
+ *  - write: restoreDom (restoreTransforms)
+ *  - read: resolveConstraints
+ *
+ * startDrag
+ *  - write: prepareDom (resetTransforms)
+ *  - read: measure
+ *  - write: restoreDom & snapToCursor
+ *  - read: rebase projection target & init cursor info
+ *  - write: sync flush frame jobs
+ *  - read: resolveConstraints
+ *
+ * AnimateSharedLayout
+ *  - write: prepareDom (reset)
+ *  - read: measure
+ *  - write: notify layout ready (start animations)
+ *  - batched: set presence info
+ *  - write: flush render
+ *  - batch: assign projection
+ */

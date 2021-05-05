@@ -99,8 +99,6 @@ export interface VisualElement<Instance = any, RenderState = any>
      * Layout projection - perhaps a candidate for lazy-loading
      * or an external interface. Move into Projection?
      */
-    isHoverEventsEnabled: boolean
-    suspendHoverEvents(): void
     enableLayoutProjection(): void
     lockProjectionTarget(): void
     unlockProjectionTarget(): void
