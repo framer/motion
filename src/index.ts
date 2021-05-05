@@ -64,9 +64,9 @@ export { createMotionComponent } from "./motion"
 export { addScaleCorrection } from "./render/dom/projection/scale-correction"
 export { snapshotViewportBox } from "./render/dom/projection/utils"
 export { createCrossfader } from "./components/AnimateSharedLayout/utils/crossfader"
-
 export { visualElement } from "./render"
 export { VisualElement } from "./render/types"
+export { batchLayout, flushLayout } from "./render/dom/utils/batch-layout"
 
 /**
  * Contexts

@@ -91,12 +91,12 @@ export class DragControls {
         })
     }
 
-    updateConstraints() {
+    updateConstraints(flush = true) {
         this.componentControls.forEach((controls) => {
             controls.updateConstraints()
         })
 
-        flushLayout()
+        flush && flushLayout()
     }
 }
 
