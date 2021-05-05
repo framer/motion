@@ -91,15 +91,3 @@ export function snapshotViewportBox(visualElement: VisualElement) {
      */
     visualElement.rebaseProjectionTarget(false, visualElement.prevViewportBox)
 }
-
-export function batchResetAndMeasure(order: VisualElement[]) {
-    /**
-     * Write: Reset any transforms on children elements so we can read their actual layout
-     */
-    order.forEach((child) => child.resetTransform())
-
-    /**
-     * Read: Measure the actual layout
-     */
-    order.forEach(updateLayoutMeasurement)
-}

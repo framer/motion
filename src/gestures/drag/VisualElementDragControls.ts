@@ -726,9 +726,9 @@ export class VisualElementDragControls {
 
             read(() => updateLayoutMeasurement(this.visualElement))
 
-            write(() =>
+            write(() => {
                 ancestors.forEach((element) => element.restoreTransform())
-            )
+            })
 
             read(() => {
                 this.resolveDragConstraints()
