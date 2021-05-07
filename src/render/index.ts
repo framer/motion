@@ -367,14 +367,6 @@ export const visualElement = <Instance, MutableState, Options>({
         blockInitialAnimation,
 
         /**
-         * A boolean that can be used to determine whether to respect hover events.
-         * For layout measurements we often have to reposition the instance by
-         * removing its transform. This can trigger hover events, which is
-         * undesired.
-         */
-        isHoverEventsEnabled: true,
-
-        /**
          * Determine whether this component has mounted yet. This is mostly used
          * by variant children to determine whether they need to trigger their
          * own animations on mount.
@@ -493,23 +485,6 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         makeTargetAnimatable(target, canMutate = true) {
             return makeTargetAnimatable(element, target, props, canMutate)
-        },
-
-        /**
-         * Temporarily suspend hover events while we remove transforms in order to measure the layout.
-         *
-         * This seems like an odd bit of scheduling but what we're doing is saying after
-         * the next render, wait 10 milliseconds before reenabling hover events. Waiting until
-         * the next frame results in missed, valid hover events. But triggering on the postRender
-         * frame is too soon to avoid triggering events with layout measurements.
-         *
-         * Note: If we figure out a way of measuring layout while transforms remain applied, this can be removed.
-         */
-        suspendHoverEvents() {
-            element.isHoverEventsEnabled = false
-            sync.postRender(() =>
-                setTimeout(() => (element.isHoverEventsEnabled = true), 10)
-            )
         },
 
         // Motion values ========================
