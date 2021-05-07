@@ -66,13 +66,6 @@ export const htmlConfig: VisualElementConfig<
      * works
      */
     resetTransform(element, domElement, props) {
-        /**
-         * When we reset the transform of an element, there's a fair possibility that
-         * the element will visually move from underneath the pointer, triggering attached
-         * pointerenter/leave events. We temporarily suspend these while measurement takes place.
-         */
-        element.suspendHoverEvents()
-
         const { transformTemplate } = props
         domElement.style.transform = transformTemplate
             ? transformTemplate({}, "")

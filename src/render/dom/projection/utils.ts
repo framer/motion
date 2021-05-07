@@ -37,25 +37,6 @@ export function collectProjectingChildren(
 }
 
 /**
- * Perform the callback after temporarily unapplying the transform
- * upwards through the tree.
- */
-export function withoutTreeTransform(
-    visualElement: VisualElement,
-    callback: () => void
-) {
-    const { parent } = visualElement
-    const { isEnabled } = visualElement.projection
-    const shouldReset = isEnabled || visualElement.shouldResetTransform()
-
-    shouldReset && visualElement.resetTransform()
-
-    parent ? withoutTreeTransform(parent, callback) : callback()
-
-    shouldReset && visualElement.restoreTransform()
-}
-
-/**
  * Update the layoutState by measuring the DOM layout. This
  * should be called after resetting any layout-affecting transforms.
  */
@@ -90,16 +71,4 @@ export function snapshotViewportBox(visualElement: VisualElement) {
      * that targetBox is affected by scroll in the same way as the measured box
      */
     visualElement.rebaseProjectionTarget(false, visualElement.prevViewportBox)
-}
-
-export function batchResetAndMeasure(order: VisualElement[]) {
-    /**
-     * Write: Reset any transforms on children elements so we can read their actual layout
-     */
-    order.forEach((child) => child.resetTransform())
-
-    /**
-     * Read: Measure the actual layout
-     */
-    order.forEach(updateLayoutMeasurement)
 }
