@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.12] 2021-05-07
+
+### Fixed
+
+-   Layout measurements for drag gesture don't happen until the gesture is confirmed to start.
+-   Prevent occasional flash when projection hasn't yet been hydrated.
+-   Unifying layout batcher between drag and layout animations.
+-   Suspending hover events globally during layout measurements.
+-   Call function ref if it changes between renders.
+
 ## [4.1.11] 2021-04-28
 
 ### Fixed

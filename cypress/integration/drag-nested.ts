@@ -47,6 +47,7 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#parent")
         .trigger("pointerdown", 5, 5)
+        .wait(50)
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 50, 50)
@@ -74,6 +75,7 @@ function testNestedDrag(parentLayout: boolean, childLayout: boolean) {
             })
         })
         .trigger("pointerdown", 5, 5)
+        .wait(50)
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 50, 50)
@@ -174,6 +176,7 @@ function testNestedDragConstraints(
     cy.visit(url)
         .get("#parent")
         .trigger("pointerdown", 40, 40)
+        .wait(50)
         .trigger("pointermove", 35, 35) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 20, 20)
@@ -203,6 +206,7 @@ function testNestedDragConstraints(
         })
         .get("#parent")
         .trigger("pointerdown", 5, 5)
+        .wait(50)
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 200, 100)
@@ -230,6 +234,7 @@ function testNestedDragConstraints(
             })
         })
         .trigger("pointerdown", 5, 5, { force: true })
+        .wait(50)
         .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 300, 100, { force: true })
@@ -257,31 +262,6 @@ function testNestedDragConstraints(
         .should(([$child]: any) => {
             expectBbox($child, { top: 390, left: 400 })
         })
-    // .wait(20)
-    // .get("#parent")
-    // .trigger("pointerdown", { clientX: 210, clientY: 200, force: true })
-    // .trigger("pointermove", { clientX: 205, clientY: 195, force: true }) // Gesture will start from first move past threshold
-    // .wait(50)
-    // .trigger("pointermove", { clientX: 110, clientY: 100, force: true })
-    // .wait(50)
-    // .trigger("pointerup")
-    // .should(([$parent]: any) => {
-    //     expectBbox($parent, {
-    //         top: 90,
-    //         left: 100,
-    //         width: 300,
-    //         height: 300,
-    //     })
-    // })
-    // .get("#child")
-    // .should(([$child]: any) => {
-    //     expectBbox($child, {
-    //         top: 240,
-    //         left: 250,
-    //         width: 600,
-    //         height: 200,
-    //     })
-    // })
 }
 
 describe("Nested drag with constraints", () => {
@@ -302,6 +282,7 @@ function testNestedDragConstraintsAndAnimation(
     cy.visit(url)
         .get("#parent")
         .trigger("pointerdown", 5, 10)
+        .wait(50)
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 200, 10, { force: true })
@@ -355,6 +336,7 @@ function testNestedDragConstraintsAndAnimation(
         })
         .get("#child")
         .trigger("pointerdown", 5, 10)
+        .wait(50)
         .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
         .wait(50)
         .trigger("pointermove", 200, 10, { force: true })
@@ -388,13 +370,14 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(50)
         .get("#child")
         .trigger("pointerdown", 5, 5, { force: true })
+        .wait(50)
         .trigger("pointermove", 10, 10, { force: true })
         .wait(50)
         .trigger("pointermove", 100, 100, { force: true })
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 250,
+                top: 245,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -402,12 +385,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 300, left: 300 })
+            expectBbox($child, { top: 295, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 200,
+                top: 195,
                 left: 100,
                 width: 300,
                 height: 300,
@@ -419,7 +402,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 250,
+                top: 245,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -427,12 +410,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 300, left: 300 })
+            expectBbox($child, { top: 295, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 200,
+                top: 195,
                 left: 100,
                 width: 300,
                 height: 300,

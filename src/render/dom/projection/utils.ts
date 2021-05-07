@@ -3,22 +3,22 @@ import { copyAxisBox } from "../../../utils/geometry"
 import { VisualElement } from "../../types"
 import { compareByDepth } from "../../utils/compare-by-depth"
 
-export function updateTreeLayoutMeasurements(
+function isProjecting(visualElement: VisualElement) {
+    const { isEnabled } = visualElement.projection
+    return isEnabled || visualElement.shouldResetTransform()
+}
+
+export function collectProjectingAncestors(
     visualElement: VisualElement,
-    isRelativeDrag: boolean
+    ancestors: VisualElement[] = []
 ) {
-    withoutTreeTransform(visualElement, () => {
-        const allChildren = collectProjectingChildren(visualElement)
-        batchResetAndMeasure(allChildren)
+    const { parent } = visualElement
 
-        updateLayoutMeasurement(visualElement)
-    })
+    if (parent) collectProjectingAncestors(parent, ancestors)
 
-    !isRelativeDrag &&
-        visualElement.rebaseProjectionTarget(
-            true,
-            visualElement.measureViewportBox(false)
-        )
+    if (isProjecting(visualElement)) ancestors.push(visualElement)
+
+    return ancestors
 }
 
 export function collectProjectingChildren(
@@ -27,34 +27,13 @@ export function collectProjectingChildren(
     const children: VisualElement[] = []
 
     const addChild = (child: VisualElement) => {
-        if (child.projection.isEnabled || child.shouldResetTransform()) {
-            children.push(child)
-        }
+        if (isProjecting(child)) children.push(child)
         child.children.forEach(addChild)
     }
 
     visualElement.children.forEach(addChild)
 
     return children.sort(compareByDepth)
-}
-
-/**
- * Perform the callback after temporarily unapplying the transform
- * upwards through the tree.
- */
-export function withoutTreeTransform(
-    visualElement: VisualElement,
-    callback: () => void
-) {
-    const { parent } = visualElement
-    const { isEnabled } = visualElement.projection
-    const shouldReset = isEnabled || visualElement.shouldResetTransform()
-
-    shouldReset && visualElement.resetTransform()
-
-    parent ? withoutTreeTransform(parent, callback) : callback()
-
-    shouldReset && visualElement.restoreTransform()
 }
 
 /**
@@ -92,16 +71,4 @@ export function snapshotViewportBox(visualElement: VisualElement) {
      * that targetBox is affected by scroll in the same way as the measured box
      */
     visualElement.rebaseProjectionTarget(false, visualElement.prevViewportBox)
-}
-
-export function batchResetAndMeasure(order: VisualElement[]) {
-    /**
-     * Write: Reset any transforms on children elements so we can read their actual layout
-     */
-    order.forEach((child) => child.resetTransform())
-
-    /**
-     * Read: Measure the actual layout
-     */
-    order.forEach(updateLayoutMeasurement)
 }
