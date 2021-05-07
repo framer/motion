@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.12] 2021-04-29
+
+### Fixed
+
+-   Layout measurements for drag gesture don't happen until the gesture is confirmed to start.
+-   Prevent occasional flash when projection hasn't yet been hydrated.
+
 ## [4.1.11] 2021-04-28
 
 ### Fixed

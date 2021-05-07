@@ -141,6 +141,11 @@ export interface AxisDelta {
     translate: number;
 }
 
+// Warning: (ae-forgotten-export) The symbol "ReadWrites" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export function batchLayout(callback: ReadWrites): () => boolean;
+
 // @public
 export interface BoundingBox2D {
     // (undocumented)
@@ -218,7 +223,7 @@ export class DragControls {
     // @internal
     subscribe(controls: VisualElementDragControls): () => void;
     // (undocumented)
-    updateConstraints(): void;
+    updateConstraints(flush?: boolean): void;
 }
 
 // @public (undocumented)
@@ -336,6 +341,9 @@ export class FlatTree {
     // (undocumented)
     remove(child: WithDepth): void;
 }
+
+// @public (undocumented)
+export function flushLayout(): void;
 
 // @public (undocumented)
 export interface FocusHandlers {

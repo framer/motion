@@ -194,6 +194,7 @@ export const visualElement = <Instance, MutableState, Options>({
         }
 
         triggerBuild()
+
         renderInstance(instance, renderState)
     }
 
@@ -221,6 +222,8 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     function updateLayoutProjection() {
+        if (!element.isProjectionReady()) return
+
         const { delta, treeScale } = layoutState
         const prevTreeScaleX = treeScale.x
         const prevTreeScaleY = treeScale.x
@@ -700,7 +703,10 @@ export const visualElement = <Instance, MutableState, Options>({
             crossfader = newCrossfader
         },
 
-        isProjectionReady: () => projection.isEnabled && layoutState.isHydrated,
+        isProjectionReady: () =>
+            projection.isEnabled &&
+            projection.isHydrated &&
+            layoutState.isHydrated,
 
         /**
          * Start a layout animation on a given axis.
@@ -772,6 +778,8 @@ export const visualElement = <Instance, MutableState, Options>({
                 target = projection.target[axis]
             }
 
+            projection.isHydrated = true
+
             target.min = min
             target.max = max
 
@@ -837,6 +845,7 @@ export const visualElement = <Instance, MutableState, Options>({
              * update projections.
              */
             sync.preRender(updateTreeLayoutProjection, false, true)
+            // sync.postRender(() => element.scheduleUpdateLayoutProjection())
         },
 
         getProjectionParent() {

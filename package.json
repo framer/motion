@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "4.1.11",
+    "version": "4.1.12-rc.0",
     "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.js",
@@ -34,7 +34,7 @@
         "test-client": "jest --coverage --config jest.config.json --maxWorkers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/drag-framer-page.ts\"'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/drag-nested.ts\"'",
         "test-e2e-ci": "start-server-and-test start-dev-server http://localhost:9990 'cypress run'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
@@ -134,7 +134,7 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "31.5 kB"
+            "maxSize": "31.7 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -146,7 +146,7 @@
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "19.2 kB"
+            "maxSize": "19.5 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
@@ -158,7 +158,7 @@
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "27.1 kB"
+            "maxSize": "27.5 kB"
         }
     ]
 }
