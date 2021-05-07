@@ -31,6 +31,6 @@ export function useMotionRef<Instance, RenderState>(
                 }
             }
         },
-        [visualElement]
+        [visualElement, externalRef]
     )
 }
