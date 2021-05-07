@@ -440,7 +440,7 @@ export interface Repeat {
      *
      * "reverse": Alternates between forward and backwards playback
      *
-     * "mirror": Switchs `from` and `to` alternately
+     * "mirror": Switches `from` and `to` alternately
      *
      * @library
      *
