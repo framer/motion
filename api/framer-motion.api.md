@@ -141,6 +141,11 @@ export interface AxisDelta {
     translate: number;
 }
 
+// Warning: (ae-forgotten-export) The symbol "ReadWrites" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export function batchLayout(callback: ReadWrites): () => boolean;
+
 // @public
 export interface BoundingBox2D {
     // (undocumented)
@@ -218,7 +223,7 @@ export class DragControls {
     // @internal
     subscribe(controls: VisualElementDragControls): () => void;
     // (undocumented)
-    updateConstraints(): void;
+    updateConstraints(flush?: boolean): void;
 }
 
 // @public (undocumented)
@@ -338,6 +343,9 @@ export class FlatTree {
 }
 
 // @public (undocumented)
+export function flushLayout(): void;
+
+// @public (undocumented)
 export interface FocusHandlers {
     whileFocus?: VariantLabels | TargetAndTransition;
 }
@@ -426,6 +434,8 @@ export const LayoutGroupContext: import("react").Context<string | null>;
 export interface LayoutProps {
     layout?: boolean | "position";
     layoutId?: string;
+    // @internal
+    _layoutResetTransform?: boolean;
     onLayoutAnimationComplete?(): void;
 }
 
@@ -921,7 +931,6 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     current: Instance | null;
     // (undocumented)
     depth: number;
-    // (undocumented)
     enableLayoutProjection(): void;
     // (undocumented)
     forEachValue(callback: (value: MotionValue, key: string) => void): void;
@@ -971,7 +980,6 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     };
     // (undocumented)
     hasValue(key: string): boolean;
-    isHoverEventsEnabled: boolean;
     // (undocumented)
     isMounted(): boolean;
     // (undocumented)
@@ -1048,13 +1056,13 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     setVisibility(visibility: boolean): void;
     // (undocumented)
+    shouldResetTransform(): boolean;
+    // (undocumented)
     sortNodePosition(element: VisualElement): number;
     // (undocumented)
     startLayoutAnimation(axis: "x" | "y", transition: Transition, isRelative: boolean): Promise<any>;
     // (undocumented)
     stopLayoutAnimation(): void;
-    // (undocumented)
-    suspendHoverEvents(): void;
     // (undocumented)
     syncRender(): void;
     // (undocumented)

@@ -73,6 +73,7 @@ class Measure extends React.Component<SyncProps> {
 export function MeasureContextProvider(props: FeatureProps) {
     const syncLayout = useContext(SharedLayoutContext)
     const framerSyncLayout = useContext(FramerTreeLayoutContext)
+
     return (
         <Measure
             {...props}
