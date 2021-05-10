@@ -323,7 +323,8 @@ export class VisualElementDragControls {
             lastPointerEvent = event
         }
 
-        const onEnd: DragHandler = (event, info) => this.stop(event, info)
+        const onSessionEnd: DragHandler = (event, info) =>
+            this.stop(event, info)
 
         const { transformPagePoint } = this.props
         this.panSession = new PanSession(
@@ -332,7 +333,7 @@ export class VisualElementDragControls {
                 onSessionStart,
                 onStart,
                 onMove,
-                onEnd,
+                onSessionEnd,
             },
             { transformPagePoint }
         )
@@ -412,6 +413,7 @@ export class VisualElementDragControls {
     }
 
     cancelDrag() {
+        this.visualElement.unlockProjectionTarget()
         this.cancelLayout?.()
         this.isDragging = false
         this.panSession && this.panSession.end()
@@ -426,7 +428,6 @@ export class VisualElementDragControls {
     }
 
     stop(event: AnyPointerEvent, info: PanInfo) {
-        this.visualElement.unlockProjectionTarget()
         this.panSession?.end()
         this.panSession = null
         const isDragging = this.isDragging
