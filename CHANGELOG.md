@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.14] 2021-05-10
+
+### Fixed
+
+-   Narrowing the edge cases within which drag could lock the projection viewport box.
+
 ## [4.1.13] 2021-05-07
 
 ### Fixed
