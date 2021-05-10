@@ -226,7 +226,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
         const { delta, treeScale } = layoutState
         const prevTreeScaleX = treeScale.x
-        const prevTreeScaleY = treeScale.x
+        const prevTreeScaleY = treeScale.y
         const prevDeltaTransform = layoutState.deltaTransform
 
         updateLayoutDeltas(
