@@ -80,6 +80,7 @@ const m = Object.assign({}, es, {
         dir: undefined,
     }),
     plugins: [resolve(), terser({ output: { comments: false } })],
+    external: ["react", "react-dom"],
 })
 
 const domAnimation = Object.assign({}, es, {
@@ -90,6 +91,7 @@ const domAnimation = Object.assign({}, es, {
         dir: undefined,
     }),
     plugins: [resolve(), terser({ output: { comments: false } })],
+    external: ["react", "react-dom"],
 })
 
 const domMax = Object.assign({}, es, {
@@ -100,6 +102,7 @@ const domMax = Object.assign({}, es, {
         dir: undefined,
     }),
     plugins: [resolve(), terser({ output: { comments: false } })],
+    external: ["react", "react-dom"],
 })
 
 export default [umd, umdProd, cjs, es, m, domAnimation, domMax]
