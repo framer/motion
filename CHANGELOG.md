@@ -2,7 +2,19 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.1.14] 2021-05-10
+## [4.1.16] 2021-05-12
+
+### Fixed
+
+-   Use with changing external refs.
+
+## [4.1.15] 2021-05-11
+
+### Fixed
+
+-   Correctly firing `onAnimationComplete` when a spring animation defined by `bounce` and no `duration` is completed.
+
+## [4.1.14] 2021-05-11
 
 ### Fixed
 
