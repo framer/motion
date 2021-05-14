@@ -230,6 +230,7 @@ export function applyTreeDeltas(
 
     let node: VisualElement
     let delta: BoxDelta
+
     for (let i = 0; i < treeLength; i++) {
         node = treePath[i]
         delta = node.getLayoutState().delta

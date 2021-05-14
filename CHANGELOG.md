@@ -2,7 +2,53 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [4.1.8] 2021-04-23
+## [4.1.16] 2021-05-12
+
+### Fixed
+
+-   Use with changing external refs.
+
+## [4.1.15] 2021-05-11
+
+### Fixed
+
+-   Correctly firing `onAnimationComplete` when a spring animation defined by `bounce` and no `duration` is completed.
+
+## [4.1.14] 2021-05-11
+
+### Fixed
+
+-   Narrowing the edge cases within which drag could lock the projection viewport box.
+-   Comparing prev scale to correct axis.
+
+## [4.1.13] 2021-05-07
+
+### Fixed
+
+-   Call function ref if it changes between renders.
+
+## [4.1.12] 2021-05-07
+
+### Fixed
+
+-   Layout measurements for drag gesture don't happen until the gesture is confirmed to start.
+-   Prevent occasional flash when projection hasn't yet been hydrated.
+-   Unifying layout batcher between drag and layout animations.
+-   Suspending hover events globally during layout measurements.
+
+## [4.1.11] 2021-04-28
+
+### Fixed
+
+-   Layout projection fix.
+
+## [4.1.10] 2021-04-26
+
+### Fixed
+
+-   Allow a component to have `transform` reset before measuring child layout.
+
+## [4.1.9] 2021-04-23
 
 ### Fixed
 
