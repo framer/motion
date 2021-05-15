@@ -150,6 +150,7 @@ interface PanSessionHandlers {
     onStart: PanHandler
     onMove: PanHandler
     onEnd: PanHandler
+    onSessionEnd: PanHandler
 }
 
 interface PanSessionOptions {
@@ -274,14 +275,18 @@ export class PanSession {
     private handlePointerUp = (event: AnyPointerEvent, info: EventInfo) => {
         this.end()
 
-        const { onEnd } = this.handlers
-        if (!onEnd || !this.startEvent) return
+        const { onEnd, onSessionEnd } = this.handlers
 
         const panInfo = getPanInfo(
             transformPoint(info, this.transformPagePoint),
             this.history
         )
-        onEnd && onEnd(event, panInfo)
+
+        if (this.startEvent && onEnd) {
+            onEnd(event, panInfo)
+        }
+
+        onSessionEnd && onSessionEnd(event, panInfo)
     }
 
     updateHandlers(handlers: Partial<PanSessionHandlers>) {

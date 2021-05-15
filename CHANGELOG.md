@@ -2,6 +2,25 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.16] 2021-05-12
+
+### Fixed
+
+-   Use with changing external refs.
+
+## [4.1.15] 2021-05-11
+
+### Fixed
+
+-   Correctly firing `onAnimationComplete` when a spring animation defined by `bounce` and no `duration` is completed.
+
+## [4.1.14] 2021-05-11
+
+### Fixed
+
+-   Narrowing the edge cases within which drag could lock the projection viewport box.
+-   Comparing prev scale to correct axis.
+
 ## [4.1.13] 2021-05-07
 
 ### Fixed
