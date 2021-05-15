@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.17] 2021-05-17
+
+### Fixed
+
+-   Fixing SVG gradientTransform
+
 ## [4.1.16] 2021-05-12
 
 ### Fixed
