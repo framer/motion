@@ -47,5 +47,17 @@ describe("Nested Scroll/Page", () => {
                     left: 50,
                 })
             })
+            .get("#b")
+            .trigger("pointerup", { force: true })
+            .wait(30)
+            .get("#a")
+            .trigger("pointerenter", { force: true })
+            .wait(60)
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 400,
+                    left: 50,
+                })
+            })
     })
 })

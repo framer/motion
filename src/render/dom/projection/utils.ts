@@ -65,6 +65,7 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
 export function snapshotViewportBox(visualElement: VisualElement) {
     if (visualElement.shouldResetTransform()) return
     visualElement.prevViewportBox = visualElement.measureViewportBox(false)
+    visualElement.prevTransform = { ...visualElement.getLatestValues() }
 
     /**
      * Update targetBox to match the prevViewportBox. This is just to ensure

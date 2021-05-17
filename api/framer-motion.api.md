@@ -1022,6 +1022,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     prevDragCursor?: Point2D;
     // (undocumented)
+    prevTransform?: ResolvedValues;
+    // (undocumented)
     prevViewportBox?: AxisBox2D;
     // Warning: (ae-forgotten-export) The symbol "TargetProjection" needs to be exported by the entry point index.d.ts
     // 
