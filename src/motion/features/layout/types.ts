@@ -20,11 +20,12 @@ export interface LayoutProps {
      * animated on this component. Otherwise, set them directly via the `initial` prop.
      *
      * If `layout` is set to `"position"`, the size of the component will change instantly and
-     * only its position will animate.
+     * only its position will animate. If `layout` is set to `"size"`, the position of the
+     * component will change instantly but its size will animate.
      *
      * @public
      */
-    layout?: boolean | "position"
+    layout?: boolean | "position" | "size"
 
     /**
      * Enable shared layout transitions between components for children of `AnimateSharedLayout`.

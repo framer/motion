@@ -95,6 +95,42 @@ describe("AnimateSharedLayout: A -> B transition", () => {
                 })
             })
     })
+
+    it(`It correctly fires layout="size" animations`, () => {
+        cy.visit("?test=layout-shared-switch-a-b&type=size")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 50,
+                    left: 100,
+                    width: 300,
+                    height: 300,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 25,
+                    left: 50,
+                    width: 100,
+                    height: 200,
+                })
+            })
+    })
 })
 
 describe("AnimateSharedLayout: A -> AB -> A switch transition", () => {
@@ -312,6 +348,42 @@ describe("AnimateSharedLayout: A -> B crossfade transition", () => {
 
     it(`It correctly fires layout="position" animations`, () => {
         cy.visit("?test=layout-shared-switch-a-b&type=position")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 50,
+                    left: 100,
+                    width: 300,
+                    height: 300,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 25,
+                    left: 50,
+                    width: 100,
+                    height: 200,
+                })
+            })
+    })
+
+    it(`It correctly fires layout="size" animations`, () => {
+        cy.visit("?test=layout-shared-switch-a-b&type=size")
             .wait(50)
             .get("#a")
             .should(([$box]: any) => {

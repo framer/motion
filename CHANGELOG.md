@@ -2,6 +2,10 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+### Added
+
+-   `layout="size"` for size-only layout animations.
+
 ## [4.1.17] 2021-05-17
 
 ### Fixed

@@ -170,13 +170,21 @@ class Animate extends React.Component<AnimateProps> {
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis((axis) => {
-            /**
-             * If layout is set to "position", we can resize the origin box based on the target
-             * box and only animate its position.
-             */
             if (layout === "position") {
+                /**
+                 * If layout is set to "position", we can resize the origin box based on the target
+                 * box and only animate its position.
+                 */
                 const targetLength = target[axis].max - target[axis].min
                 origin[axis].max = origin[axis].min + targetLength
+            } else if (layout === "size") {
+                /**
+                 * If layout is set to "size", we move the origin to the target box and only animate
+                 * its length.
+                 */
+                const originLength = origin[axis].max - origin[axis].min
+                origin[axis].min = target[axis].min
+                origin[axis].max = origin[axis].min + originLength
             }
 
             if (visualElement.projection.isTargetLocked) {
