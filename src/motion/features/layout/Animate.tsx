@@ -167,6 +167,15 @@ class Animate extends React.Component<AnimateProps> {
             }
         }
 
+        visualElement.getInstance().id === "Page" &&
+            console.log(
+                isRelative,
+                "origin",
+                origin.x.min,
+                "target",
+                target.x.min
+            )
+
         const boxHasMoved = hasMoved(origin, target)
 
         const animations = eachAxis((axis) => {

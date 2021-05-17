@@ -31,13 +31,15 @@ export function layoutStack(): LayoutStack {
     let prevState: StackState = { ...state }
 
     let prevValues: ResolvedValues | undefined
-    let prevViewportBox: AxisBox2D | undefined
+    let prevViewportBoxWithoutTransform: AxisBox2D | undefined
     let prevDragCursor: Point2D | undefined
     const crossfader = createCrossfader()
     let needsCrossfadeAnimation = false
 
     function getFollowViewportBox() {
-        return state.follow ? state.follow.prevViewportBox : prevViewportBox
+        return state.follow
+            ? state.follow.prevViewportBoxWithoutTransform
+            : prevViewportBoxWithoutTransform
     }
 
     function getFollowLayout() {
@@ -66,7 +68,8 @@ export function layoutStack(): LayoutStack {
             prevValues = crossfader.isActive()
                 ? crossfader.getLatestValues()
                 : state.lead.getLatestValues()
-            prevViewportBox = state.lead.prevViewportBox
+            prevViewportBoxWithoutTransform =
+                state.lead.prevViewportBoxWithoutTransform
 
             const dragControls = elementDragControls.get(state.lead)
             if (dragControls && dragControls.isDragging) {
@@ -74,7 +77,7 @@ export function layoutStack(): LayoutStack {
             }
         },
         clearSnapshot() {
-            prevDragCursor = prevViewportBox = undefined
+            prevDragCursor = prevViewportBoxWithoutTransform = undefined
         },
         updateLeadAndFollow() {
             prevState = { ...state }

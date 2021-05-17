@@ -53,7 +53,7 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
 
     visualElement.notifyLayoutMeasure(
         layoutState.layout,
-        visualElement.prevViewportBox || layoutState.layout
+        visualElement.prevViewportBoxWithoutTransform || layoutState.layout
     )
 
     sync.update(() => visualElement.rebaseProjectionTarget())
@@ -64,11 +64,18 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
  */
 export function snapshotViewportBox(visualElement: VisualElement) {
     if (visualElement.shouldResetTransform()) return
-    visualElement.prevViewportBox = visualElement.measureViewportBox(false)
+
+    visualElement.prevViewportBox = visualElement.measureViewportBox()
+    visualElement.prevViewportBoxWithoutTransform = visualElement.measureViewportBox(
+        false
+    )
 
     /**
-     * Update targetBox to match the prevViewportBox. This is just to ensure
+     * Update targetBox to match the prevViewportBoxWithoutTransform. This is just to ensure
      * that targetBox is affected by scroll in the same way as the measured box
      */
-    visualElement.rebaseProjectionTarget(false, visualElement.prevViewportBox)
+    visualElement.rebaseProjectionTarget(
+        false,
+        visualElement.prevViewportBoxWithoutTransform
+    )
 }

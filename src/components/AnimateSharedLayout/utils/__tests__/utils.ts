@@ -5,7 +5,7 @@ import { htmlVisualElement } from "../../../../render/dom/html-visual-element"
 
 export function makeChild(
     presence = Presence.Present,
-    prevViewportBox?: any,
+    prevViewportBoxWithoutTransform?: any,
     box?: any,
     isPresenceRoot = true,
     opacity: MotionValue<number> = motionValue(0)
@@ -14,7 +14,7 @@ export function makeChild(
     element.isPresent = presence !== Presence.Exiting
     element.isPresenceRoot = isPresenceRoot
     element.presence = presence
-    element.prevViewportBox = prevViewportBox
+    element.prevViewportBoxWithoutTransform = prevViewportBoxWithoutTransform
     element.projection.layout = box
     element.addValue("opacity", opacity)
 

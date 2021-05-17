@@ -73,9 +73,9 @@ export function createBatcher(): SyncLayoutBatcher {
                 read(() => {
                     /**
                      * Schedule a callback at the end of the following frame to assign the latest projection
-                     * box to the prevViewportBox snapshot. Once global batching is in place this could be run
+                     * box to the prevViewportBoxWithoutTransform snapshot. Once global batching is in place this could be run
                      * synchronously. But for now it ensures that if any nested `AnimateSharedLayout` top-level
-                     * child attempts to calculate its previous relative position against a prevViewportBox
+                     * child attempts to calculate its previous relative position against a prevViewportBoxWithoutTransform
                      * it will be against its latest projection box instead, as the snapshot is useless beyond this
                      * render.
                      */
@@ -94,5 +94,6 @@ export function createBatcher(): SyncLayoutBatcher {
 }
 
 function assignProjectionToSnapshot(child: VisualElement) {
-    child.prevViewportBox = child.projection.target
+    child.prevViewportBox = child.projection.targetFinal
+    child.prevViewportBoxWithoutTransform = child.projection.target
 }

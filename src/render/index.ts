@@ -796,7 +796,7 @@ export const visualElement = <Instance, MutableState, Options>({
             setCurrentViewportBox(element)
             element.notifyLayoutUpdate(
                 layoutState.layout,
-                element.prevViewportBox || layoutState.layout,
+                element.prevViewportBoxWithoutTransform || layoutState.layout,
                 config
             )
         },
