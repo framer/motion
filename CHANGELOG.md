@@ -6,7 +6,8 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Fixing SVG gradientTransform
+-   Fixing SVG `gradientTransform`.
+-   Removing hover event suspension during layout measurements.
 
 ## [4.1.16] 2021-05-12
 
