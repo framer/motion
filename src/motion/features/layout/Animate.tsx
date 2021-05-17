@@ -13,10 +13,11 @@ import {
 } from "../../../components/AnimateSharedLayout/types"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
-import { axisBox } from "../../../utils/geometry"
+import { axisBox, copyAxisBox } from "../../../utils/geometry"
 import { addScaleCorrection } from "../../../render/dom/projection/scale-correction"
 import { defaultScaleCorrectors } from "../../../render/dom/projection/default-scale-correctors"
 import { VisualElement } from "../../../render/types"
+import { applyBoxTransforms } from "../../../utils/geometry/delta-apply"
 
 interface AxisLocks {
     x?: () => void
@@ -124,6 +125,7 @@ class Animate extends React.Component<AnimateProps> {
 
         if (projectionParent) {
             let prevParentViewportBox = projectionParent.prevViewportBox
+            let prevTransform = projectionParent.prevTransform
             let parentLayout = projectionParent.getLayoutState().layout
 
             /**
@@ -150,11 +152,13 @@ class Animate extends React.Component<AnimateProps> {
                     prevParent.prevViewportBox
                 ) {
                     prevParentViewportBox = prevParent.prevViewportBox
+                    prevTransform = prevParent.prevTransform
                 }
             }
 
             if (
                 prevParentViewportBox &&
+                prevTransform &&
                 isProvidedCorrectDataForRelativeSharedLayout(
                     prevParent,
                     originBox,
@@ -162,7 +166,13 @@ class Animate extends React.Component<AnimateProps> {
                 )
             ) {
                 isRelative = true
-                origin = calcRelativeOffset(prevParentViewportBox, origin)
+                const snapshot = copyAxisBox(prevParentViewportBox)
+                applyBoxTransforms(
+                    snapshot,
+                    prevParentViewportBox,
+                    prevTransform
+                )
+                origin = calcRelativeOffset(snapshot, origin)
                 target = calcRelativeOffset(parentLayout, target)
             }
         }

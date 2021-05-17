@@ -95,4 +95,5 @@ export function createBatcher(): SyncLayoutBatcher {
 
 function assignProjectionToSnapshot(child: VisualElement) {
     child.prevViewportBox = child.projection.target
+    child.prevTransform = child.getLatestValues()
 }
