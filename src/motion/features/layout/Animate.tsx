@@ -172,7 +172,7 @@ class Animate extends React.Component<AnimateProps> {
                     prevParentViewportBox,
                     prevTransform
                 )
-                origin = calcRelativeOffset(prevParentViewportBox, origin)
+                origin = calcRelativeOffset(snapshot, origin)
                 target = calcRelativeOffset(parentLayout, target)
             }
         }

@@ -12,6 +12,8 @@ export const App = () => {
     const dummyX = useMotionValue(0)
     const dummyY = useMotionValue(0)
 
+    const [count, setCount] = React.useState(0)
+
     return (
         <motion.div style={scrollContainer} layout>
             <motion.div
@@ -21,7 +23,12 @@ export const App = () => {
                 _dragX={dummyX}
                 _dragY={dummyY}
             >
-                <motion.div style={{ ...pageContainer, x, y }} layout id="Page">
+                <motion.div
+                    style={{ ...pageContainer, x, y }}
+                    layout
+                    id="Page"
+                    onHoverStart={() => setCount(count + 1)}
+                >
                     <Page x={x} y={y} id="a" />
                     <Page x={x} y={y} id="b" />
                     <Page x={x} y={y} />
