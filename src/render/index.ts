@@ -796,7 +796,9 @@ export const visualElement = <Instance, MutableState, Options>({
             setCurrentViewportBox(element)
             element.notifyLayoutUpdate(
                 layoutState.layout,
-                element.prevViewportBox || layoutState.layout,
+                element.snapshot
+                    ? element.snapshot.viewportBox
+                    : layoutState.layout,
                 config
             )
         },
@@ -804,7 +806,8 @@ export const visualElement = <Instance, MutableState, Options>({
         /**
          * Temporarily reset the transform of the instance.
          */
-        resetTransform: () => resetTransform(element, instance, props),
+        resetTransform: () =>
+            resetTransform(element, instance, props, renderState, options),
 
         restoreTransform: () => restoreTransform(instance, renderState),
 

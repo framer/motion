@@ -137,10 +137,15 @@ export interface VisualElement<Instance = any, RenderState = any>
     presence: Presence
     isPresenceRoot?: boolean
     prevDragCursor?: Point2D
-    prevViewportBox?: AxisBox2D
-    prevTransform?: ResolvedValues
+    snapshot?: Snapshot
     getLayoutId(): string | undefined
     animationState?: AnimationState
+}
+
+export interface Snapshot {
+    taken: number
+    viewportBox: AxisBox2D
+    transform: ResolvedValues
 }
 
 export interface VisualElementConfig<Instance, RenderState, Options> {
@@ -174,7 +179,9 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
     resetTransform(
         element: VisualElement<Instance>,
         instance: Instance,
-        props: MotionProps
+        props: MotionProps,
+        renderState: RenderState,
+        options: Options
     ): void
     restoreTransform(instance: Instance, renderState: RenderState): void
     render(instance: Instance, renderState: RenderState): void

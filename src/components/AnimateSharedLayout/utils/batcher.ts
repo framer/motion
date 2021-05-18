@@ -1,4 +1,4 @@
-import sync, { flushSync } from "framesync"
+import { flushSync } from "framesync"
 import {
     collectProjectingAncestors,
     updateLayoutMeasurement,
@@ -29,6 +29,7 @@ export function createBatcher(): SyncLayoutBatcher {
         flush: ({ layoutReady, parent } = defaultHandler) => {
             batchLayout((read, write) => {
                 const order = Array.from(queue).sort(compareByDepth)
+
                 const ancestors = parent
                     ? collectProjectingAncestors(parent)
                     : []
@@ -68,21 +69,6 @@ export function createBatcher(): SyncLayoutBatcher {
                      */
                     flushSync.preRender()
                     flushSync.render()
-                })
-
-                read(() => {
-                    /**
-                     * Schedule a callback at the end of the following frame to assign the latest projection
-                     * box to the prevViewportBox snapshot. Once global batching is in place this could be run
-                     * synchronously. But for now it ensures that if any nested `AnimateSharedLayout` top-level
-                     * child attempts to calculate its previous relative position against a prevViewportBox
-                     * it will be against its latest projection box instead, as the snapshot is useless beyond this
-                     * render.
-                     */
-                    sync.postRender(() =>
-                        order.forEach(assignProjectionToSnapshot)
-                    )
-
                     queue.clear()
                 })
             })
@@ -91,9 +77,4 @@ export function createBatcher(): SyncLayoutBatcher {
             flushLayout()
         },
     }
-}
-
-function assignProjectionToSnapshot(child: VisualElement) {
-    child.prevViewportBox = child.projection.target
-    child.prevTransform = child.getLatestValues()
 }

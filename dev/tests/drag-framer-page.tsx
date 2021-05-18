@@ -1,4 +1,4 @@
-import { motion, useMotionValue } from "@framer"
+import { motion, useMotionValue, AnimateSharedLayout } from "@framer"
 import * as React from "react"
 
 /**
@@ -15,7 +15,7 @@ export const App = () => {
     const [count, setCount] = React.useState(0)
 
     return (
-        <motion.div style={scrollContainer} layout>
+        <motion.div style={scrollContainer} layout id="root">
             <motion.div
                 id="parent"
                 style={b}
@@ -25,14 +25,14 @@ export const App = () => {
             >
                 <motion.div
                     style={{ ...pageContainer, x, y }}
-                    layout
                     id="Page"
-                    onHoverStart={() => setCount(count + 1)}
+                    onClick={() => setCount(count + 1)}
+                    onPointerEnter={() => setCount(count + 1)}
                 >
                     <Page x={x} y={y} id="a" />
                     <Page x={x} y={y} id="b" />
-                    <Page x={x} y={y} />
-                    <Page x={x} y={y} />
+                    <Page x={x} y={y} id="c" />
+                    <Page x={x} y={y} id="d" />
                 </motion.div>
             </motion.div>
         </motion.div>
@@ -55,8 +55,35 @@ function Page({ x, y, id }: any) {
                 flex: "0 0 180px",
             }}
         >
-            <motion.div layout style={c} />
+            <motion.div layout style={c} id={`inner-square-${id}`}>
+                <Square id={id} />
+            </motion.div>
         </motion.div>
+    )
+}
+
+function Square({ id }) {
+    const [count, setCount] = React.useState(0)
+    return (
+        <AnimateSharedLayout>
+            <motion.div
+                id={id + "Square"}
+                layout
+                style={{
+                    width: 50,
+                    height: 50,
+                    background: "#09f",
+                    borderRadius: 10,
+                }}
+                transition={{ duration: 2 }}
+                drag
+                onClick={(e) => {
+                    // e.stopPropagation()
+                    setCount(count + 1)
+                }}
+                onHoverStart={() => setCount(count + 1)}
+            />
+        </AnimateSharedLayout>
     )
 }
 

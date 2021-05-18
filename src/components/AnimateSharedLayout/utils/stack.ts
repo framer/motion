@@ -1,6 +1,6 @@
 import { Presence, SharedLayoutAnimationConfig } from "../types"
-import { AxisBox2D, Point2D } from "../../../types/geometry"
-import { ResolvedValues, VisualElement } from "../../../render/types"
+import { Point2D } from "../../../types/geometry"
+import { ResolvedValues, Snapshot, VisualElement } from "../../../render/types"
 import { elementDragControls } from "../../../gestures/drag/VisualElementDragControls"
 import { createCrossfader } from "./crossfader"
 
@@ -31,13 +31,15 @@ export function layoutStack(): LayoutStack {
     let prevState: StackState = { ...state }
 
     let prevValues: ResolvedValues | undefined
-    let prevViewportBox: AxisBox2D | undefined
+    let snapshot: Snapshot | undefined
     let prevDragCursor: Point2D | undefined
     const crossfader = createCrossfader()
     let needsCrossfadeAnimation = false
 
     function getFollowViewportBox() {
-        return state.follow ? state.follow.prevViewportBox : prevViewportBox
+        return state.follow
+            ? state.follow.snapshot?.viewportBox
+            : snapshot?.viewportBox
     }
 
     function getFollowLayout() {
@@ -66,7 +68,7 @@ export function layoutStack(): LayoutStack {
             prevValues = crossfader.isActive()
                 ? crossfader.getLatestValues()
                 : state.lead.getLatestValues()
-            prevViewportBox = state.lead.prevViewportBox
+            snapshot = state.lead.snapshot
 
             const dragControls = elementDragControls.get(state.lead)
             if (dragControls && dragControls.isDragging) {
@@ -74,7 +76,7 @@ export function layoutStack(): LayoutStack {
             }
         },
         clearSnapshot() {
-            prevDragCursor = prevViewportBox = undefined
+            prevDragCursor = snapshot = undefined
         },
         updateLeadAndFollow() {
             prevState = { ...state }

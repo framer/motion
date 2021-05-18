@@ -24,6 +24,24 @@ describe("Nested Scroll/Page", () => {
                     left: 110,
                 })
             })
+            .get("#aSquare")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 450,
+                    left: 160,
+                })
+            })
+            .get("#a")
+            .trigger("click")
+            .wait(100)
+            .get("#aSquare")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 450,
+                    left: 160,
+                })
+            })
+            .get("#a")
             .trigger("pointerdown", 60, 60, { force: true })
             .trigger("pointermove", 50, 50, { force: true }) // Gesture will start from first move past threshold
             .wait(50)
@@ -57,6 +75,21 @@ describe("Nested Scroll/Page", () => {
                 expectBbox($a, {
                     top: 400,
                     left: 50,
+                })
+            })
+            .get("#aSquare")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 450,
+                    left: 100,
+                })
+            })
+            .trigger("click", { force: true })
+            .wait(60)
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 450,
+                    left: 100,
                 })
             })
     })

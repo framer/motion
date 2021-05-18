@@ -963,9 +963,9 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
-    getValue(key: string, defaultValue: string | number): MotionValue;
-    // (undocumented)
     getValue(key: string): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -1021,10 +1021,6 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     presenceId: number | undefined;
     // (undocumented)
     prevDragCursor?: Point2D;
-    // (undocumented)
-    prevTransform?: ResolvedValues;
-    // (undocumented)
-    prevViewportBox?: AxisBox2D;
     // Warning: (ae-forgotten-export) The symbol "TargetProjection" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -1059,6 +1055,10 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     setVisibility(visibility: boolean): void;
     // (undocumented)
     shouldResetTransform(): boolean;
+    // Warning: (ae-forgotten-export) The symbol "Snapshot" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    snapshot?: Snapshot;
     // (undocumented)
     sortNodePosition(element: VisualElement): number;
     // (undocumented)

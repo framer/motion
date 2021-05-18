@@ -1,4 +1,4 @@
-import sync from "framesync"
+import sync, { getFrameData } from "framesync"
 import { copyAxisBox } from "../../../utils/geometry"
 import { VisualElement } from "../../types"
 import { compareByDepth } from "../../utils/compare-by-depth"
@@ -51,9 +51,10 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
     layoutState.layout = visualElement.measureViewportBox()
     layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
 
+    const { snapshot } = visualElement
     visualElement.notifyLayoutMeasure(
         layoutState.layout,
-        visualElement.prevViewportBox || layoutState.layout
+        snapshot ? snapshot.viewportBox : layoutState.layout
     )
 
     sync.update(() => visualElement.rebaseProjectionTarget())
@@ -64,12 +65,19 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
  */
 export function snapshotViewportBox(visualElement: VisualElement) {
     if (visualElement.shouldResetTransform()) return
-    visualElement.prevViewportBox = visualElement.measureViewportBox(false)
-    visualElement.prevTransform = { ...visualElement.getLatestValues() }
+
+    visualElement.snapshot = {
+        taken: getFrameData().timestamp,
+        transform: { ...visualElement.getLatestValues() },
+        viewportBox: visualElement.measureViewportBox(false),
+    }
 
     /**
-     * Update targetBox to match the prevViewportBox. This is just to ensure
+     * Update targetBox to match the snapshot. This is just to ensure
      * that targetBox is affected by scroll in the same way as the measured box
      */
-    visualElement.rebaseProjectionTarget(false, visualElement.prevViewportBox)
+    visualElement.rebaseProjectionTarget(
+        false,
+        visualElement.snapshot.viewportBox
+    )
 }
