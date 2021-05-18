@@ -15,7 +15,6 @@ import {
     buildLayoutProjectionTransform,
     buildLayoutProjectionTransformOrigin,
 } from "./utils/build-projection-transform"
-import { buildTransform } from "./utils/build-transform"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -66,11 +65,9 @@ export const htmlConfig: VisualElementConfig<
      * layout transforms up the tree in the same way this.getBoundingBoxWithoutTransforms
      * works
      */
-    resetTransform(element, domElement, props, renderState, options) {
-        const { transformTemplate, _resetTransform } = props
-        domElement.style.transform = _resetTransform
-            ? buildTransform(renderState, options, false, transformTemplate)
-            : transformTemplate
+    resetTransform(element, domElement, props) {
+        const { transformTemplate } = props
+        domElement.style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
 

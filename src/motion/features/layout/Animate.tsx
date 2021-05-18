@@ -122,7 +122,7 @@ class Animate extends React.Component<AnimateProps> {
          * allows us to add orchestrated animations.
          */
         let isRelative = false
-        const projectionParent = visualElement.getProjectionParent()
+        let projectionParent = visualElement.getProjectionParent()
 
         if (visualElement.getInstance().id === "a") {
             console.log(
@@ -152,6 +152,7 @@ class Animate extends React.Component<AnimateProps> {
                  * parent's layout
                  */
                 if (targetBox) {
+                    projectionParent = prevParent
                     parentLayout = prevParent.getLayoutState()
                 }
 
@@ -164,6 +165,7 @@ class Animate extends React.Component<AnimateProps> {
                     originBox &&
                     !checkIfParentHasChanged(prevParent, projectionParent)
                 ) {
+                    projectionParent = prevParent
                     parentSnapshot = prevParent.snapshot
                 }
             }
@@ -178,25 +180,37 @@ class Animate extends React.Component<AnimateProps> {
                 )
             }
 
-            if (
-                parentSnapshot &&
-                parentSnapshot.taken === getFrameData().timestamp &&
-                parentLayout.isHydrated &&
-                isProvidedCorrectDataForRelativeSharedLayout(
-                    prevParent,
-                    originBox,
-                    targetBox
-                )
-            ) {
-                isRelative = true
-                const prevViewportBox = copyAxisBox(parentSnapshot.viewportBox)
-                applyBoxTransforms(
-                    prevViewportBox,
-                    parentSnapshot.viewportBox,
-                    parentSnapshot.transform
-                )
-                origin = calcRelativeOffset(prevViewportBox, origin)
-                target = calcRelativeOffset(parentLayout.layout, target)
+            if (parentLayout.isHydrated && parentSnapshot) {
+                /**
+                 * If the snapshot is out
+                 */
+                if (parentSnapshot.taken !== getFrameData().timestamp) {
+                    parentSnapshot = {
+                        taken: 0,
+                        viewportBox: projectionParent.getLayoutState().layout,
+                        transform: projectionParent.getLatestValues(),
+                    }
+                }
+
+                if (
+                    isProvidedCorrectDataForRelativeSharedLayout(
+                        prevParent,
+                        originBox,
+                        targetBox
+                    )
+                ) {
+                    isRelative = true
+                    const prevViewportBox = copyAxisBox(
+                        parentSnapshot.viewportBox
+                    )
+                    applyBoxTransforms(
+                        prevViewportBox,
+                        parentSnapshot.viewportBox,
+                        parentSnapshot.transform
+                    )
+                    origin = calcRelativeOffset(prevViewportBox, origin)
+                    target = calcRelativeOffset(parentLayout.layout, target)
+                }
             }
         }
 
