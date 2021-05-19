@@ -5,7 +5,7 @@ import { LayoutState, TargetProjection } from "./state"
 
 export function updateLayoutDeltas(
     { delta, layout, layoutCorrected, treeScale }: LayoutState,
-    { target }: TargetProjection,
+    { target, isHydrated }: TargetProjection,
     treePath: VisualElement[],
     transformOrigin: ResolvedValues
 ) {
@@ -31,4 +31,15 @@ export function updateLayoutDeltas(
      * layout reprojection or the final bounding box.
      */
     updateBoxDelta(delta, layoutCorrected, target, transformOrigin)
+
+    if (delta.y.translate < 0) {
+        console.log(
+            delta.y.translate,
+            delta.y.scale,
+            target.y,
+            layoutCorrected.y,
+            isHydrated.x,
+            isHydrated.y
+        )
+    }
 }

@@ -251,6 +251,7 @@ export const visualElement = <Instance, MutableState, Options>({
             element.scheduleRender()
         }
         layoutState.deltaTransform = deltaTransform
+        // if (instance.id === "inner-square-a") console.log(deltaTransform)
     }
 
     function updateTreeLayoutProjection() {
@@ -680,7 +681,8 @@ export const visualElement = <Instance, MutableState, Options>({
 
         isProjectionReady: () =>
             projection.isEnabled &&
-            projection.isHydrated &&
+            projection.isHydrated.x &&
+            projection.isHydrated.y &&
             layoutState.isHydrated,
 
         /**
@@ -719,7 +721,15 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         measureViewportBox(withTransform = true) {
             const viewportBox = measureViewportBox(instance, options)
+
+            if (viewportBox.y.max - viewportBox.y.min === 1) {
+                console.log("before", viewportBox.y)
+            }
+
             if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
+            if (viewportBox.y.max - viewportBox.y.min === 1) {
+                console.log("after", viewportBox.y)
+            }
             return viewportBox
         },
 
@@ -746,6 +756,7 @@ export const visualElement = <Instance, MutableState, Options>({
             if (isRelative) {
                 if (!projection.relativeTarget) {
                     projection.relativeTarget = axisBox()
+                    projection.isHydrated.x = projection.isHydrated.y = false
                 }
                 target = projection.relativeTarget[axis]
             } else {
@@ -753,7 +764,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 target = projection.target[axis]
             }
 
-            projection.isHydrated = true
+            projection.isHydrated[axis] = true
 
             target.min = min
             target.max = max
@@ -823,7 +834,6 @@ export const visualElement = <Instance, MutableState, Options>({
              * update projections.
              */
             sync.preRender(updateTreeLayoutProjection, false, true)
-            // sync.postRender(() => element.scheduleUpdateLayoutProjection())
         },
 
         getProjectionParent() {
@@ -848,9 +858,18 @@ export const visualElement = <Instance, MutableState, Options>({
 
         resolveRelativeTargetBox() {
             const relativeParent = element.getProjectionParent()
+
             if (!projection.relativeTarget || !relativeParent) return
 
             calcRelativeBox(projection, relativeParent.projection)
+
+            // if (instance.id === "a") {
+            //     console.log(
+            //         projection.relativeTarget.x.min,
+            //         relativeParent.projection.target.x.min,
+            //         projection.target.x.min
+            //     )
+            // }
 
             if (isDraggable(relativeParent)) {
                 const { target } = projection

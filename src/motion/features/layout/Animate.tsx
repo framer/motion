@@ -124,15 +124,23 @@ class Animate extends React.Component<AnimateProps> {
         let isRelative = false
         let projectionParent = visualElement.getProjectionParent()
 
-        if (visualElement.getInstance().id === "a") {
-            console.log(
-                "Viewport-relative:",
-                origin.x.min,
-                target.x.min,
-                "Layout:",
-                visualElement.getLayoutState().layout.x.min
-            )
-        }
+        /**
+         * TODO
+         */
+        // visualElement.path.forEach((node) => {
+        //     if (
+        //         node.getProps()._accountForTransform &&
+        //         visualElement.getInstance().id === "dSquare"
+        //     ) {
+        //         console.log(origin.x.min, node.getLatestValues().x)
+        //     }
+        //     if (isDraggable(node) || node.getProps()._accountForTransform) {
+        //         removeBoxTransforms(origin, node.getLatestValues())
+        //     }
+        // })
+        // if (visualElement.getInstance().id === "dSquare") {
+        //     console.log(origin.x.min)
+        // }
 
         if (projectionParent) {
             let parentSnapshot = projectionParent.snapshot
@@ -169,16 +177,6 @@ class Animate extends React.Component<AnimateProps> {
                     parentSnapshot = prevParent.snapshot
                 }
             }
-            if (visualElement.getInstance().id === "a") {
-                console.log(
-                    "prev projection x: ",
-                    parentSnapshot!.viewportBox?.x.min,
-                    "taken at",
-                    parentSnapshot!.taken,
-                    "now:",
-                    getFrameData().timestamp
-                )
-            }
 
             if (parentLayout.isHydrated && parentSnapshot) {
                 /**
@@ -187,7 +185,9 @@ class Animate extends React.Component<AnimateProps> {
                 if (parentSnapshot.taken !== getFrameData().timestamp) {
                     parentSnapshot = {
                         taken: 0,
-                        viewportBox: projectionParent.getLayoutState().layout,
+                        viewportBox: copyAxisBox(
+                            projectionParent.projection.target
+                        ),
                         transform: projectionParent.getLatestValues(),
                     }
                 }
@@ -200,24 +200,45 @@ class Animate extends React.Component<AnimateProps> {
                     )
                 ) {
                     isRelative = true
-                    const prevViewportBox = copyAxisBox(
+                    const prevParentViewportBox = copyAxisBox(
                         parentSnapshot.viewportBox
                     )
                     applyBoxTransforms(
-                        prevViewportBox,
+                        prevParentViewportBox,
                         parentSnapshot.viewportBox,
                         parentSnapshot.transform
                     )
-                    origin = calcRelativeOffset(prevViewportBox, origin)
+
+                    origin = calcRelativeOffset(prevParentViewportBox, origin)
                     target = calcRelativeOffset(parentLayout.layout, target)
+
+                    if (visualElement.getInstance().id === "dSquare") {
+                        console.log(
+                            "Relative:",
+                            origin.x.min,
+                            target.x.min,
+                            prevParentViewportBox.x.min
+                        )
+                        console.log("----------")
+                    }
                 }
             }
         }
 
-        if (visualElement.getInstance().id === "a" && isRelative) {
-            console.log("Relative:", origin.x.min, target.x.min)
-            console.log("----------")
-        }
+        // if (parentSnapshot.taken !== getFrameData().timestamp) {
+        //     parentSnapshot = {
+        //         taken: 0,
+        //         viewportBox: copyAxisBox(
+        //             projectionParent.projection.target
+        //         ),
+        //         transform: projectionParent.getLatestValues(),
+        //     }
+        // }
+
+        // if (visualElement.getInstance().id === "dSquare") {
+        //     console.log("FInal:", origin.x.min, target.x.min)
+        //     console.log("----------")
+        // }
 
         const boxHasMoved = hasMoved(origin, target)
 

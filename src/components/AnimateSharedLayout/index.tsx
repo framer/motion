@@ -160,7 +160,9 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Read: Snapshot children
          */
-        this.children.forEach(snapshotViewportBox)
+        this.children.forEach((child) => snapshotViewportBox(child))
+        const parent = (this.context as MotionContextProps).visualElement
+        parent && snapshotViewportBox(parent, false)
 
         /**
          * Every child keeps a local snapshot, but we also want to record

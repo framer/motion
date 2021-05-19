@@ -81,7 +81,8 @@ export function buildHTMLStyles(
              * value type, perform it.
              */
             if (
-                projection?.isHydrated &&
+                projection?.isHydrated.x &&
+                projection?.isHydrated.y &&
                 layoutState?.isHydrated &&
                 valueScaleCorrection[key]
             ) {

@@ -142,8 +142,8 @@ export const htmlConfig: VisualElementConfig<
                 : "hidden"
         }
 
-        const isProjectionTranform =
-            projection.isEnabled && layoutState.isHydrated
+        const isProjectionTranform = element.isProjectionReady()
+
         buildHTMLStyles(
             renderState,
             latestValues,

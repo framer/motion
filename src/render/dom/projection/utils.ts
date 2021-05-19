@@ -45,6 +45,10 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
 
     const layoutState = visualElement.getLayoutState()
 
+    if (visualElement.getInstance().id === "a") {
+        console.log("before measure", layoutState.layout.x.min)
+    }
+
     visualElement.notifyBeforeLayoutMeasure(layoutState.layout)
 
     layoutState.isHydrated = true
@@ -56,6 +60,14 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
         layoutState.layout,
         snapshot ? snapshot.viewportBox : layoutState.layout
     )
+    if (visualElement.getInstance().id === "a") {
+        console.log(
+            "after measure",
+            layoutState.layout.x.min,
+            "Page offset",
+            document.getElementById("Page")?.style.transform
+        )
+    }
 
     sync.update(() => visualElement.rebaseProjectionTarget())
 }
@@ -63,7 +75,10 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
 /**
  * Record the viewport box as it was before an expected mutation/re-render
  */
-export function snapshotViewportBox(visualElement: VisualElement) {
+export function snapshotViewportBox(
+    visualElement: VisualElement,
+    rebase = true
+) {
     if (visualElement.shouldResetTransform()) return
 
     visualElement.snapshot = {
@@ -76,8 +91,9 @@ export function snapshotViewportBox(visualElement: VisualElement) {
      * Update targetBox to match the snapshot. This is just to ensure
      * that targetBox is affected by scroll in the same way as the measured box
      */
-    visualElement.rebaseProjectionTarget(
-        false,
-        visualElement.snapshot.viewportBox
-    )
+    rebase &&
+        visualElement.rebaseProjectionTarget(
+            false,
+            visualElement.snapshot.viewportBox
+        )
 }
