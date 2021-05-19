@@ -40,7 +40,7 @@ export function createBatcher(): SyncLayoutBatcher {
                 })
 
                 read(() => {
-                    order.forEach(updateLayoutMeasurement)
+                    order.forEach((node) => updateLayoutMeasurement(node))
                     parent && updateLayoutMeasurement(parent, false)
                 })
 

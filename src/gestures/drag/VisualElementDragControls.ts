@@ -198,7 +198,7 @@ export class VisualElementDragControls {
 
                 read(() => {
                     updateLayoutMeasurement(this.visualElement)
-                    children.forEach(updateLayoutMeasurement)
+                    children.forEach((node) => updateLayoutMeasurement(node))
                 })
 
                 write(() => {
