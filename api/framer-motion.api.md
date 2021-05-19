@@ -709,7 +709,7 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
-export function snapshotViewportBox(visualElement: VisualElement): void;
+export function snapshotViewportBox(visualElement: VisualElement, rebase?: boolean): void;
 
 // @public
 export interface Spring extends Repeat {

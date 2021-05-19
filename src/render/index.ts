@@ -228,13 +228,20 @@ export const visualElement = <Instance, MutableState, Options>({
         const prevTreeScaleX = treeScale.x
         const prevTreeScaleY = treeScale.y
         const prevDeltaTransform = layoutState.deltaTransform
-
         updateLayoutDeltas(
             layoutState,
             leadProjection,
             element.path,
             latestValues
         )
+        // if (instance.id === "dSquare") {
+        //     console.log(
+        //         "projection",
+        //         leadProjection.target.x.min,
+        //         "layout",
+        //         layoutState.layout.x.min
+        //     )
+        // }
 
         hasViewportBoxUpdated &&
             element.notifyViewportBoxUpdate(leadProjection.target, delta)
@@ -251,7 +258,6 @@ export const visualElement = <Instance, MutableState, Options>({
             element.scheduleRender()
         }
         layoutState.deltaTransform = deltaTransform
-        // if (instance.id === "inner-square-a") console.log(deltaTransform)
     }
 
     function updateTreeLayoutProjection() {
