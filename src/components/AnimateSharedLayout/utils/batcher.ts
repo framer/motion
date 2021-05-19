@@ -41,10 +41,12 @@ export function createBatcher(): SyncLayoutBatcher {
 
                 read(() => {
                     order.forEach(updateLayoutMeasurement)
+                    parent && updateLayoutMeasurement(parent, false)
                 })
 
                 write(() => {
                     ancestors.forEach((element) => element.restoreTransform())
+                    parent && parent.notifyLayoutReady()
                     order.forEach(layoutReady)
                 })
 

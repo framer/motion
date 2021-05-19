@@ -40,7 +40,10 @@ export function collectProjectingChildren(
  * Update the layoutState by measuring the DOM layout. This
  * should be called after resetting any layout-affecting transforms.
  */
-export function updateLayoutMeasurement(visualElement: VisualElement) {
+export function updateLayoutMeasurement(
+    visualElement: VisualElement,
+    rebase = true
+) {
     if (visualElement.shouldResetTransform()) return
 
     const layoutState = visualElement.getLayoutState()
@@ -57,7 +60,7 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
         snapshot ? snapshot.viewportBox : layoutState.layout
     )
 
-    sync.update(() => visualElement.rebaseProjectionTarget())
+    rebase && sync.update(() => visualElement.rebaseProjectionTarget())
 }
 
 /**
