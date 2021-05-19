@@ -294,7 +294,7 @@ function build(
         {
             target: targetBox,
             isEnabled: isLayoutProjectionEnabled,
-            isHydrated: true,
+            isHydrated: { x: true, y: true },
             isTargetLocked: false,
             targetFinal: targetBox,
         } as any,
