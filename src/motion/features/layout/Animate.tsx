@@ -124,24 +124,6 @@ class Animate extends React.Component<AnimateProps> {
         let isRelative = false
         let projectionParent = visualElement.getProjectionParent()
 
-        /**
-         * TODO
-         */
-        // visualElement.path.forEach((node) => {
-        //     if (
-        //         node.getProps()._accountForTransform &&
-        //         visualElement.getInstance().id === "dSquare"
-        //     ) {
-        //         console.log(origin.x.min, node.getLatestValues().x)
-        //     }
-        //     if (isDraggable(node) || node.getProps()._accountForTransform) {
-        //         removeBoxTransforms(origin, node.getLatestValues())
-        //     }
-        // })
-        // if (visualElement.getInstance().id === "dSquare") {
-        //     console.log(origin.x.min)
-        // }
-
         if (projectionParent) {
             let parentSnapshot = projectionParent.snapshot
             let parentLayout = projectionParent.getLayoutState()
@@ -211,34 +193,9 @@ class Animate extends React.Component<AnimateProps> {
 
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
                     target = calcRelativeOffset(parentLayout.layout, target)
-
-                    if (visualElement.getInstance().id === "dSquare") {
-                        console.log(
-                            "Relative:",
-                            origin.x.min,
-                            target.x.min,
-                            prevParentViewportBox.x.min
-                        )
-                        console.log("----------")
-                    }
                 }
             }
         }
-
-        // if (parentSnapshot.taken !== getFrameData().timestamp) {
-        //     parentSnapshot = {
-        //         taken: 0,
-        //         viewportBox: copyAxisBox(
-        //             projectionParent.projection.target
-        //         ),
-        //         transform: projectionParent.getLatestValues(),
-        //     }
-        // }
-
-        // if (visualElement.getInstance().id === "dSquare") {
-        //     console.log("FInal:", origin.x.min, target.x.min)
-        //     console.log("----------")
-        // }
 
         const boxHasMoved = hasMoved(origin, target)
 

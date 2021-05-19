@@ -45,10 +45,6 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
 
     const layoutState = visualElement.getLayoutState()
 
-    if (visualElement.getInstance().id === "a") {
-        console.log("before measure", layoutState.layout.x.min)
-    }
-
     visualElement.notifyBeforeLayoutMeasure(layoutState.layout)
 
     layoutState.isHydrated = true
@@ -60,14 +56,6 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
         layoutState.layout,
         snapshot ? snapshot.viewportBox : layoutState.layout
     )
-    if (visualElement.getInstance().id === "a") {
-        console.log(
-            "after measure",
-            layoutState.layout.x.min,
-            "Page offset",
-            document.getElementById("Page")?.style.transform
-        )
-    }
 
     sync.update(() => visualElement.rebaseProjectionTarget())
 }

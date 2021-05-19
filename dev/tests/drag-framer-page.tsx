@@ -25,9 +25,11 @@ export const App = () => {
             >
                 <motion.div
                     style={{ ...pageContainer, x, y }}
+                    layout
                     id="Page"
                     onClick={() => setCount(count + 1)}
                     onPointerEnter={() => setCount(count + 1)}
+                    _accountForTransform
                 >
                     <Page x={x} y={y} id="a" />
                     <Page x={x} y={y} id="b" />
@@ -91,7 +93,7 @@ const scrollContainer: React.CSSProperties = {
     position: "absolute",
     top: 100,
     left: 100,
-    width: 200,
+    width: 600,
     height: 500,
     overflow: "hidden",
 }
