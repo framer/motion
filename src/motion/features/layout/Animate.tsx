@@ -182,6 +182,7 @@ class Animate extends React.Component<AnimateProps> {
                     )
                 ) {
                     isRelative = true
+
                     const prevParentViewportBox = copyAxisBox(
                         parentSnapshot.viewportBox
                     )

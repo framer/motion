@@ -234,14 +234,6 @@ export const visualElement = <Instance, MutableState, Options>({
             element.path,
             latestValues
         )
-        // if (instance.id === "dSquare") {
-        //     console.log(
-        //         "projection",
-        //         leadProjection.target.x.min,
-        //         "layout",
-        //         layoutState.layout.x.min
-        //     )
-        // }
 
         hasViewportBoxUpdated &&
             element.notifyViewportBoxUpdate(leadProjection.target, delta)
@@ -868,14 +860,6 @@ export const visualElement = <Instance, MutableState, Options>({
             if (!projection.relativeTarget || !relativeParent) return
 
             calcRelativeBox(projection, relativeParent.projection)
-
-            // if (instance.id === "a") {
-            //     console.log(
-            //         projection.relativeTarget.x.min,
-            //         relativeParent.projection.target.x.min,
-            //         projection.target.x.min
-            //     )
-            // }
 
             if (isDraggable(relativeParent)) {
                 const { target } = projection
