@@ -92,16 +92,16 @@ describe("Nested Scroll/Page", () => {
                     left: 100,
                 })
             })
-            .trigger("pointerdown", 5, 5, { force: true })
-            .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
-            .wait(50)
-            .trigger("pointermove", 20, 20, { force: true })
-            .wait(50)
-            .should(([$a]: any) => {
-                expectBbox($a, {
-                    top: 470,
-                    left: 120,
-                })
-            })
+        // .trigger("pointerdown", 5, 5, { force: true })
+        // .trigger("pointermove", 10, 10, { force: true }) // Gesture will start from first move past threshold
+        // .wait(50)
+        // .trigger("pointermove", 20, 20, { force: true })
+        // .wait(50)
+        // .should(([$a]: any) => {
+        //     expectBbox($a, {
+        //         top: 470,
+        //         left: 120,
+        //     })
+        // })
     })
 })
