@@ -118,7 +118,7 @@ export class AnimateSharedLayout extends React.Component<
                     child.notifyLayoutReady()
                 }
             },
-            parent: (this.context as MotionContextProps).visualElement,
+            parent: getNearestProjectionParent(this.context) as any,
         }
 
         /**
@@ -161,8 +161,8 @@ export class AnimateSharedLayout extends React.Component<
          * Read: Snapshot children
          */
         this.children.forEach((child) => snapshotViewportBox(child))
-        const parent = (this.context as MotionContextProps).visualElement
-        parent && snapshotViewportBox(parent, false)
+        // const layoutParent = getNearestProjectionParent(this.context)
+        // layoutParent && snapshotViewportBox(layoutParent, false)
 
         /**
          * Every child keeps a local snapshot, but we also want to record
@@ -227,4 +227,13 @@ export class AnimateSharedLayout extends React.Component<
             </SharedLayoutContext.Provider>
         )
     }
+}
+
+function getNearestProjectionParent({ visualElement }: MotionContextProps) {
+    if (visualElement) {
+        return visualElement.projection.isEnabled
+            ? visualElement
+            : visualElement.getProjectionParent() || false
+    }
+    return false
 }

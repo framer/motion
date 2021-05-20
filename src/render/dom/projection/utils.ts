@@ -60,6 +60,10 @@ export function updateLayoutMeasurement(
         snapshot ? snapshot.viewportBox : layoutState.layout
     )
 
+    if (visualElement.getInstance().id === "child") {
+        console.log("update layout measurement")
+    }
+
     rebase && sync.update(() => visualElement.rebaseProjectionTarget())
 }
 
@@ -75,7 +79,9 @@ export function snapshotViewportBox(
     visualElement.snapshot = {
         taken: getFrameData().timestamp,
         transform: { ...visualElement.getLatestValues() },
-        viewportBox: visualElement.measureViewportBox(false),
+        viewportBox: visualElement.measureViewportBox(
+            visualElement.getProps()._applyTransforms ? true : false
+        ),
     }
 
     /**

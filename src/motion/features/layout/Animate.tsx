@@ -116,6 +116,17 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
+        target = copyAxisBox(target)
+        Array.from([...visualElement.path, visualElement]).forEach((node) => {
+            if (node.getProps()._applyTransforms) {
+                applyBoxTransforms(target, target, node.getLatestValues())
+            }
+        })
+
+        if (visualElement.getInstance().id === "a") {
+            console.log("viewport relative", origin.x.min, target.x.min)
+        }
+
         /**
          * If this element has a projecting parent, there's an opportunity to animate
          * it relatively to that parent rather than relatively to the viewport. This
@@ -186,6 +197,7 @@ class Animate extends React.Component<AnimateProps> {
                     const prevParentViewportBox = copyAxisBox(
                         parentSnapshot.viewportBox
                     )
+
                     applyBoxTransforms(
                         prevParentViewportBox,
                         parentSnapshot.viewportBox,
@@ -194,11 +206,43 @@ class Animate extends React.Component<AnimateProps> {
 
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
                     target = calcRelativeOffset(parentLayout.layout, target)
+
+                    if (visualElement.getInstance().id === "a") {
+                        console.log(
+                            isRelative,
+                            "parent origin",
+                            prevParentViewportBox.x.min,
+                            "relative offset origin",
+                            origin.x.min,
+                            "parent layout",
+                            parentLayout.layout.x.min,
+                            "relative target",
+                            target.x.min
+                        )
+                    }
                 }
             }
         }
 
         const boxHasMoved = hasMoved(origin, target)
+
+        if (visualElement.getInstance().id === "a") {
+            console.log("a has moved", boxHasMoved)
+        }
+
+        if (visualElement.getInstance().id === "Page") {
+            console.log("Page has moved", boxHasMoved)
+        }
+
+        if (visualElement.getInstance().id === "dSquare") {
+            console.log(
+                visualElement.getInstance().id,
+                origin.x.min,
+                target.x.min,
+                isRelative,
+                boxHasMoved
+            )
+        }
 
         const animations = eachAxis((axis) => {
             /**

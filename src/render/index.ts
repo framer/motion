@@ -4,7 +4,7 @@ import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionStyle } from "../motion/types"
 import { eachAxis } from "../utils/each-axis"
-import { axisBox } from "../utils/geometry"
+import { axisBox, copyAxisBox } from "../utils/geometry"
 import {
     applyBoxTransforms,
     removeBoxTransforms,
@@ -30,9 +30,10 @@ import {
     checkIfVariantNode,
     isVariantLabel,
 } from "./utils/variants"
-import { Axis } from "../types/geometry"
+import { Axis, AxisBox2D } from "../types/geometry"
 import { setCurrentViewportBox } from "./dom/projection/relative-set"
 import { isDraggable } from "./utils/is-draggable"
+import { isTransformProp } from "./html/utils/transform"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -228,6 +229,7 @@ export const visualElement = <Instance, MutableState, Options>({
         const prevTreeScaleX = treeScale.x
         const prevTreeScaleY = treeScale.y
         const prevDeltaTransform = layoutState.deltaTransform
+
         updateLayoutDeltas(
             layoutState,
             leadProjection,
@@ -264,6 +266,10 @@ export const visualElement = <Instance, MutableState, Options>({
             (latestValue: string | number) => {
                 latestValues[key] = latestValue
                 props.onUpdate && sync.update(update, false, true)
+
+                if (isTransformProp(key) && props._applyTransforms) {
+                    element.scheduleUpdateLayoutProjection()
+                }
             }
         )
 
@@ -720,14 +726,8 @@ export const visualElement = <Instance, MutableState, Options>({
         measureViewportBox(withTransform = true) {
             const viewportBox = measureViewportBox(instance, options)
 
-            if (viewportBox.y.max - viewportBox.y.min === 1) {
-                console.log("before", viewportBox.y)
-            }
-
             if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
-            if (viewportBox.y.max - viewportBox.y.min === 1) {
-                console.log("after", viewportBox.y)
-            }
+
             return viewportBox
         },
 
@@ -779,8 +779,22 @@ export const visualElement = <Instance, MutableState, Options>({
          * don't fall out of sync differences in measurements vs projections
          * after a page scroll or other relayout.
          */
-        rebaseProjectionTarget(force, box = layoutState.layout) {
+        rebaseProjectionTarget(force, box) {
             const { x, y } = element.getProjectionAnimationProgress()
+
+            if (!box) {
+                box = copyAxisBox(layoutState.layout) as AxisBox2D
+
+                element.path.forEach((node) => {
+                    if (node.getProps()._applyTransforms) {
+                        applyBoxTransforms(
+                            box as AxisBox2D,
+                            box as AxisBox2D,
+                            node.getLatestValues()
+                        )
+                    }
+                })
+            }
 
             const shouldRebase =
                 !projection.relativeTarget &&
@@ -788,9 +802,13 @@ export const visualElement = <Instance, MutableState, Options>({
                 !x.isAnimating() &&
                 !y.isAnimating()
 
+            /**
+             * TODO Rebase layout on transformed parent
+             */
+
             if (force || shouldRebase) {
                 eachAxis((axis) => {
-                    const { min, max } = box[axis]
+                    const { min, max } = box![axis]
                     element.setProjectionTargetAxis(axis, min, max)
                 })
             }
@@ -803,6 +821,7 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         notifyLayoutReady(config) {
             setCurrentViewportBox(element)
+
             element.notifyLayoutUpdate(
                 layoutState.layout,
                 element.snapshot
@@ -861,7 +880,10 @@ export const visualElement = <Instance, MutableState, Options>({
 
             calcRelativeBox(projection, relativeParent.projection)
 
-            if (isDraggable(relativeParent)) {
+            if (
+                isDraggable(relativeParent) ||
+                relativeParent.getProps()._applyTransforms
+            ) {
                 const { target } = projection
                 applyBoxTransforms(
                     target,

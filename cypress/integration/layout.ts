@@ -107,3 +107,29 @@ describe("Layout animation", () => {
             })
     })
 })
+
+describe("Localised AnimateSharedLayout updates", () => {
+    it("Correctly *doesn't* perform an unnecessary animation within transformed layers", () => {
+        cy.visit("?test=layout-nested-transform")
+            .get("#child")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 70,
+                    left: 470,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 70,
+                    left: 470,
+                    width: 100,
+                    height: 200,
+                })
+            })
+    })
+})

@@ -2,6 +2,7 @@
  * @public
  */
 export interface LayoutProps {
+    _applyTransforms?: boolean
     /**
      * If `true`, this component will automatically animate to its new position when
      * its layout changes.

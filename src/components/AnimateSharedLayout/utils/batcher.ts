@@ -28,6 +28,7 @@ export function createBatcher(): SyncLayoutBatcher {
         add: (child) => queue.add(child),
         flush: ({ layoutReady, parent } = defaultHandler) => {
             batchLayout((read, write) => {
+                if (!queue.size) return
                 const order = Array.from(queue).sort(compareByDepth)
 
                 const ancestors = parent
@@ -41,12 +42,10 @@ export function createBatcher(): SyncLayoutBatcher {
 
                 read(() => {
                     order.forEach((node) => updateLayoutMeasurement(node))
-                    parent && updateLayoutMeasurement(parent, false)
                 })
 
                 write(() => {
                     ancestors.forEach((element) => element.restoreTransform())
-                    parent && parent.notifyLayoutReady()
                     order.forEach(layoutReady)
                 })
 

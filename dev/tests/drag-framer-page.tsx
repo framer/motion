@@ -29,7 +29,7 @@ export const App = () => {
                     id="Page"
                     onClick={() => setCount(count + 1)}
                     onPointerEnter={() => setCount(count + 1)}
-                    _accountForTransform
+                    _applyTransforms
                 >
                     <Page x={x} y={y} id="a" />
                     <Page x={x} y={y} id="b" />
@@ -57,9 +57,9 @@ function Page({ x, y, id }: any) {
                 flex: "0 0 180px",
             }}
         >
-            <motion.div layout style={c} id={`inner-square-${id}`}>
+            {/* <motion.div layout style={c} id={`inner-square-${id}`}>
                 <Square id={id} />
-            </motion.div>
+            </motion.div> */}
         </motion.div>
     )
 }

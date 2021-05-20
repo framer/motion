@@ -216,7 +216,7 @@ export class VisualElementDragControls {
                         this.getAxisMotionValue("x") && !this.isExternalDrag()
                     )
 
-                    if (!isRelativeDrag) {
+                    if (!isRelativeDrag && !this.isExternalDrag()) {
                         this.visualElement.rebaseProjectionTarget(
                             true,
                             this.visualElement.measureViewportBox(false)
@@ -667,10 +667,11 @@ export class VisualElementDragControls {
 
         const currentValue = axisValue.get()
 
+        console.log("animate drag end", axis)
         axisValue.set(currentValue)
         axisValue.set(currentValue) // Set twice to hard-reset velocity
 
-        return startAnimation(axis, axisValue, 0, transition)
+        // return startAnimation(axis, axisValue, 0, transition)
     }
 
     scalePoint() {

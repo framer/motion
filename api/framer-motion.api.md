@@ -432,6 +432,8 @@ export const LayoutGroupContext: import("react").Context<string | null>;
 
 // @public (undocumented)
 export interface LayoutProps {
+    // (undocumented)
+    _applyTransforms?: boolean;
     layout?: boolean | "position";
     layoutId?: string;
     // @internal
