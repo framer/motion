@@ -20,4 +20,5 @@ export const camelCaseAttributes = new Set([
     "stdDeviation",
     "tableValues",
     "viewBox",
+    "gradientTransform",
 ])

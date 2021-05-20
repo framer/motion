@@ -5,7 +5,6 @@ import { usePointerEvent } from "../events/use-pointer-event"
 import { VisualElement } from "../render/types"
 import { FeatureProps } from "../motion/features/types"
 import { isDragActive } from "./drag/utils/lock"
-import { layoutState } from "../render/dom/utils/batch-layout"
 
 function createHoverEvent(
     visualElement: VisualElement,
@@ -13,13 +12,7 @@ function createHoverEvent(
     callback?: (event: MouseEvent, info: EventInfo) => void
 ) {
     return (event: MouseEvent, info: EventInfo) => {
-        if (
-            !isMouseEvent(event) ||
-            layoutState.isMeasuringLayout ||
-            isDragActive()
-        ) {
-            return
-        }
+        if (!isMouseEvent(event) || isDragActive()) return
 
         callback?.(event, info)
         visualElement.animationState?.setActive(AnimationType.Hover, isActive)
