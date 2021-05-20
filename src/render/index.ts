@@ -699,6 +699,10 @@ export const visualElement = <Instance, MutableState, Options>({
                 : projection.target[axis]
             const length = max - min
 
+            if (axis === "x") {
+                console.log("aninate to", min)
+            }
+
             progress.clearListeners()
             progress.set(min)
             progress.set(min) // Set twice to hard-reset velocity

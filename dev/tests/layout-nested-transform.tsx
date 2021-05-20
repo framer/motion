@@ -32,7 +32,10 @@ function Box() {
                 id="child"
                 layout
                 style={a}
-                onClick={() => setCount(count + 1)}
+                onClick={() => {
+                    console.log("on click")
+                    setCount(count + 1)
+                }}
             />
         </AnimateSharedLayout>
     )

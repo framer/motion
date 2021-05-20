@@ -667,11 +667,10 @@ export class VisualElementDragControls {
 
         const currentValue = axisValue.get()
 
-        console.log("animate drag end", axis)
         axisValue.set(currentValue)
         axisValue.set(currentValue) // Set twice to hard-reset velocity
 
-        // return startAnimation(axis, axisValue, 0, transition)
+        return startAnimation(axis, axisValue, 0, transition)
     }
 
     scalePoint() {

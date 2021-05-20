@@ -27,7 +27,10 @@ export const App = () => {
                     style={{ ...pageContainer, x, y }}
                     layout
                     id="Page"
-                    onClick={() => setCount(count + 1)}
+                    onClick={() => {
+                        console.log("click")
+                        // setCount(count + 1)
+                    }}
                     onPointerEnter={() => setCount(count + 1)}
                     _applyTransforms
                 >
