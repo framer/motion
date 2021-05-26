@@ -786,19 +786,17 @@ export const visualElement = <Instance, MutableState, Options>({
         rebaseProjectionTarget(force, box) {
             const { x, y } = element.getProjectionAnimationProgress()
 
-            if (!box) {
-                box = copyAxisBox(layoutState.layout) as AxisBox2D
+            box = box ?? (copyAxisBox(layoutState.layout) as AxisBox2D)
 
-                element.path.forEach((node) => {
-                    if (node.getProps()._applyTransforms) {
-                        applyBoxTransforms(
-                            box as AxisBox2D,
-                            box as AxisBox2D,
-                            node.getLatestValues()
-                        )
-                    }
-                })
-            }
+            element.path.forEach((node) => {
+                if (node.getProps()._applyTransforms) {
+                    applyBoxTransforms(
+                        box as AxisBox2D,
+                        box as AxisBox2D,
+                        node.getLatestValues()
+                    )
+                }
+            })
 
             const shouldRebase =
                 !projection.relativeTarget &&

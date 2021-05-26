@@ -17,7 +17,10 @@ import { axisBox, copyAxisBox } from "../../../utils/geometry"
 import { addScaleCorrection } from "../../../render/dom/projection/scale-correction"
 import { defaultScaleCorrectors } from "../../../render/dom/projection/default-scale-correctors"
 import { VisualElement } from "../../../render/types"
-import { applyBoxTransforms } from "../../../utils/geometry/delta-apply"
+import {
+    applyBoxTransforms,
+    removeBoxTransforms,
+} from "../../../utils/geometry/delta-apply"
 import { getFrameData } from "framesync"
 
 interface AxisLocks {
@@ -116,14 +119,23 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
+        origin = copyAxisBox(origin)
         target = copyAxisBox(target)
-        Array.from([...visualElement.path, visualElement]).forEach((node) => {
+
+        if (
+            visualElement.getProps()._applyTransforms &&
+            visualElement.snapshot?.transform
+        ) {
+            removeBoxTransforms(origin, visualElement.snapshot?.transform)
+        }
+
+        visualElement.path.forEach((node) => {
             if (node.getProps()._applyTransforms) {
                 applyBoxTransforms(target, target, node.getLatestValues())
             }
         })
 
-        if (visualElement.getInstance().id === "a") {
+        if (visualElement.getInstance().id === "Page") {
             console.log("viewport relative", origin.x.min, target.x.min)
         }
 
@@ -142,7 +154,7 @@ class Animate extends React.Component<AnimateProps> {
             /**
              * If we're being provided a previous parent VisualElement by AnimateSharedLayout
              *
-             * TODO: I suspect if we have a target or origin and there's no corressponding layout
+             * TODO: I suspect if we have a target or origin and there's no corresponding layout
              * or snapshot we want to disable relative animation, but that is for a subsequent pass
              * once a bug is isolated.
              */
@@ -203,11 +215,35 @@ class Animate extends React.Component<AnimateProps> {
                         parentSnapshot.viewportBox,
                         parentSnapshot.transform
                     )
+                    const nextParentLayout = copyAxisBox(parentLayout.layout)
 
+                    if (projectionParent.getProps()._applyTransforms) {
+                        applyBoxTransforms(
+                            nextParentLayout,
+                            parentLayout.layout,
+                            parentSnapshot.transform
+                        )
+                    }
+
+                    if (visualElement.getInstance().id === "Page") {
+                        console.log("BEFORE RELATIVE", {
+                            origin: copyAxisBox(origin),
+                            target: copyAxisBox(target),
+                            prevParentBox: copyAxisBox(prevParentViewportBox),
+                            parentLayout: copyAxisBox(nextParentLayout),
+                            parentSnapshot: parentSnapshot,
+                        })
+                    }
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
-                    target = calcRelativeOffset(parentLayout.layout, target)
+                    target = calcRelativeOffset(nextParentLayout, target)
 
-                    if (visualElement.getInstance().id === "a") {
+                    if (visualElement.getInstance().id === "Page") {
+                        console.log("AFTER RELATIVE", {
+                            origin: copyAxisBox(origin),
+                            target: copyAxisBox(target),
+                        })
+                    }
+                    if (visualElement.getInstance().id === "Page") {
                         console.log(
                             isRelative,
                             "parent origin",
@@ -215,7 +251,7 @@ class Animate extends React.Component<AnimateProps> {
                             "relative offset origin",
                             origin.x.min,
                             "parent layout",
-                            parentLayout.layout.x.min,
+                            nextParentLayout.x.min,
                             "relative target",
                             target.x.min
                         )
@@ -226,22 +262,8 @@ class Animate extends React.Component<AnimateProps> {
 
         const boxHasMoved = hasMoved(origin, target)
 
-        if (visualElement.getInstance().id === "a") {
-            console.log("a has moved", boxHasMoved)
-        }
-
         if (visualElement.getInstance().id === "Page") {
-            console.log("Page has moved", boxHasMoved)
-        }
-
-        if (visualElement.getInstance().id === "dSquare") {
-            console.log(
-                visualElement.getInstance().id,
-                origin.x.min,
-                target.x.min,
-                isRelative,
-                boxHasMoved
-            )
+            console.log("a has moved", boxHasMoved)
         }
 
         const animations = eachAxis((axis) => {
