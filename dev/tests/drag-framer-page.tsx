@@ -60,9 +60,9 @@ function Page({ x, y, id }: any) {
                 flex: "0 0 180px",
             }}
         >
-            {/* <motion.div layout style={c} id={`inner-square-${id}`}>
+            <motion.div layout style={c} id={`inner-square-${id}`}>
                 <Square id={id} />
-            </motion.div> */}
+            </motion.div>
         </motion.div>
     )
 }
@@ -72,7 +72,7 @@ function Square({ id }) {
     return (
         <AnimateSharedLayout>
             <motion.div
-                id={id + "Square"}
+                id={id + "-square"}
                 layout
                 style={{
                     width: 50,
