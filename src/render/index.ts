@@ -783,20 +783,26 @@ export const visualElement = <Instance, MutableState, Options>({
          * don't fall out of sync differences in measurements vs projections
          * after a page scroll or other relayout.
          */
-        rebaseProjectionTarget(force, box) {
+        rebaseProjectionTarget(
+            force,
+            box,
+            withApplyTransforms: boolean = true
+        ) {
             const { x, y } = element.getProjectionAnimationProgress()
 
-            box = box ?? (copyAxisBox(layoutState.layout) as AxisBox2D)
+            if (withApplyTransforms) {
+                box = box ?? (copyAxisBox(layoutState.layout) as AxisBox2D)
 
-            element.path.forEach((node) => {
-                if (node.getProps()._applyTransforms) {
-                    applyBoxTransforms(
-                        box as AxisBox2D,
-                        box as AxisBox2D,
-                        node.getLatestValues()
-                    )
-                }
-            })
+                element.path.forEach((node) => {
+                    if (node.getProps()._applyTransforms) {
+                        applyBoxTransforms(
+                            box as AxisBox2D,
+                            box as AxisBox2D,
+                            node.getLatestValues()
+                        )
+                    }
+                })
+            }
 
             const shouldRebase =
                 !projection.relativeTarget &&

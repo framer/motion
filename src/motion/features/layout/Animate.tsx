@@ -135,7 +135,7 @@ class Animate extends React.Component<AnimateProps> {
             }
         })
 
-        if (visualElement.getInstance().id === "inner-square-a") {
+        if (visualElement.getInstance().id === "a-square") {
             console.log("viewport relative", origin.x.min, target.x.min)
         }
 
@@ -227,7 +227,7 @@ class Animate extends React.Component<AnimateProps> {
                         }
                     })
 
-                    if (visualElement.getInstance().id === "inner-square-a") {
+                    if (visualElement.getInstance().id === "a-square") {
                         console.log("BEFORE RELATIVE", {
                             origin: copyAxisBox(origin),
                             target: copyAxisBox(target),
@@ -239,13 +239,13 @@ class Animate extends React.Component<AnimateProps> {
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
                     target = calcRelativeOffset(nextParentLayout, target)
 
-                    if (visualElement.getInstance().id === "inner-square-a") {
+                    if (visualElement.getInstance().id === "a-square") {
                         console.log("AFTER RELATIVE", {
                             origin: copyAxisBox(origin),
                             target: copyAxisBox(target),
                         })
                     }
-                    if (visualElement.getInstance().id === "inner-square-a") {
+                    if (visualElement.getInstance().id === "a-square") {
                         console.log(
                             isRelative,
                             "parent origin",
@@ -264,8 +264,8 @@ class Animate extends React.Component<AnimateProps> {
 
         const boxHasMoved = hasMoved(origin, target)
 
-        if (visualElement.getInstance().id === "inner-square-a") {
-            console.log("inner-square-a has moved", boxHasMoved)
+        if (visualElement.getInstance().id === "a-square") {
+            console.log("a-square has moved", boxHasMoved)
         }
 
         const animations = eachAxis((axis) => {
