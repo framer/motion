@@ -1030,7 +1030,7 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     readValue(key: string): string | number | undefined | null;
     // (undocumented)
-    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void;
+    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D, withTransforms?: boolean): void;
     // (undocumented)
     removeValue(key: string): void;
     // (undocumented)
