@@ -24,7 +24,7 @@ describe("Nested Scroll/Page", () => {
                     left: 110,
                 })
             })
-            .get("#aSquare")
+            .get("#a-square")
             .should(([$a]: any) => {
                 expectBbox($a, {
                     top: 450,
@@ -34,7 +34,7 @@ describe("Nested Scroll/Page", () => {
             .get("#a")
             .trigger("click")
             .wait(100)
-            .get("#aSquare")
+            .get("#a-square")
             .should(([$a]: any) => {
                 expectBbox($a, {
                     top: 450,
@@ -77,7 +77,7 @@ describe("Nested Scroll/Page", () => {
                     left: 50,
                 })
             })
-            .get("#aSquare")
+            .get("#a-square")
             .should(([$a]: any) => {
                 expectBbox($a, {
                     top: 450,
