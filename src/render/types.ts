@@ -102,7 +102,11 @@ export interface VisualElement<Instance = any, RenderState = any>
     enableLayoutProjection(): void
     lockProjectionTarget(): void
     unlockProjectionTarget(): void
-    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void
+    rebaseProjectionTarget(
+        force?: boolean,
+        sourceBox?: AxisBox2D,
+        withTransforms?: boolean
+    ): void
     measureViewportBox(withTransform?: boolean): AxisBox2D
     getLayoutState: () => LayoutState
     getProjectionParent: () => VisualElement | false
