@@ -27,10 +27,10 @@ export const App = () => {
                     style={{ ...pageContainer, x, y }}
                     layout
                     id="Page"
-                    onClick={() => {
-                        console.log("click")
-                        // setCount(count + 1)
-                    }}
+                    // onClick={() => {
+                    //     console.log("click")
+                    //     // setCount(count + 1)
+                    // }}
                     onPointerEnter={() => setCount(count + 1)}
                     _applyTransforms
                 >
@@ -82,11 +82,28 @@ function Square({ id }) {
                 }}
                 transition={{ duration: 2 }}
                 drag
-                onClick={(e) => {
-                    // e.stopPropagation()
-                    setCount(count + 1)
+                // onClick={(e) => {
+                //     // e.stopPropagation()
+                //     setCount(count + 1)
+                // }}
+                // onHoverStart={() => setCount(count + 1)}
+            />
+            <motion.div
+                id={id + "-square"}
+                layout
+                style={{
+                    width: 50,
+                    height: 50,
+                    background: "green",
+                    borderRadius: 10,
                 }}
-                onHoverStart={() => setCount(count + 1)}
+                transition={{ duration: 2 }}
+                // drag
+                // onClick={(e) => {
+                //     // e.stopPropagation()
+                //     setCount(count + 1)
+                // }}
+                // onHoverStart={() => setCount(count + 1)}
             />
         </AnimateSharedLayout>
     )
