@@ -14,6 +14,10 @@ export const App = () => {
 
     const [count, setCount] = React.useState(0)
 
+    React.useEffect(() => {
+        setCount(count + 1)
+    }, [])
+
     return (
         <motion.div style={scrollContainer} layout id="root">
             <motion.div
@@ -31,7 +35,7 @@ export const App = () => {
                     //     console.log("click")
                     //     // setCount(count + 1)
                     // }}
-                    onPointerEnter={() => setCount(count + 1)}
+                    // onPointerEnter={() => setCount(count + 1)}
                     _applyTransforms
                 >
                     <Page x={x} y={y} id="a" />
@@ -82,14 +86,14 @@ function Square({ id }) {
                 }}
                 transition={{ duration: 2 }}
                 drag
-                // onClick={(e) => {
-                //     // e.stopPropagation()
-                //     setCount(count + 1)
-                // }}
-                // onHoverStart={() => setCount(count + 1)}
+                onClick={(e) => {
+                    // e.stopPropagation()
+                    setCount(count + 1)
+                }}
+                onHoverStart={() => setCount(count + 1)}
             />
             <motion.div
-                id={id + "-square"}
+                id={id + "-square-green"}
                 layout
                 style={{
                     width: 50,
@@ -98,12 +102,12 @@ function Square({ id }) {
                     borderRadius: 10,
                 }}
                 transition={{ duration: 2 }}
-                // drag
-                // onClick={(e) => {
-                //     // e.stopPropagation()
-                //     setCount(count + 1)
-                // }}
-                // onHoverStart={() => setCount(count + 1)}
+                drag
+                onClick={(e) => {
+                    // e.stopPropagation()
+                    setCount(count + 1)
+                }}
+                onHoverStart={() => setCount(count + 1)}
             />
         </AnimateSharedLayout>
     )

@@ -31,6 +31,7 @@ export function createBatcher(): SyncLayoutBatcher {
                 if (!queue.size) return
                 const order = Array.from(queue).sort(compareByDepth)
 
+                console.log("flush batch layout", order)
                 const ancestors = parent
                     ? collectProjectingAncestors(parent)
                     : []

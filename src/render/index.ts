@@ -755,6 +755,16 @@ export const visualElement = <Instance, MutableState, Options>({
         setProjectionTargetAxis(axis, min, max, isRelative = false) {
             let target: Axis
 
+            if (instance.id === "a" && axis === "x") {
+                console.log(layoutState.isHydrated)
+                console.log("setting projecting a", isRelative)
+                // console.trace()
+            }
+            if (instance.id === "b-square") {
+                console.log("b", isRelative)
+                // console.trace()
+            }
+
             if (isRelative) {
                 if (!projection.relativeTarget) {
                     projection.relativeTarget = axisBox()
@@ -791,17 +801,19 @@ export const visualElement = <Instance, MutableState, Options>({
             const { x, y } = element.getProjectionAnimationProgress()
 
             if (withApplyTransforms) {
-                box = box ?? (copyAxisBox(layoutState.layout) as AxisBox2D)
+                box = box
+                    ? copyAxisBox(box)
+                    : (copyAxisBox(layoutState.layout) as AxisBox2D)
 
-                element.path.forEach((node) => {
-                    if (node.getProps()._applyTransforms) {
-                        applyBoxTransforms(
-                            box as AxisBox2D,
-                            box as AxisBox2D,
-                            node.getLatestValues()
-                        )
-                    }
-                })
+                // element.path.forEach((node) => {
+                //     if (node.getProps()._applyTransforms) {
+                //         applyBoxTransforms(
+                //             box as AxisBox2D,
+                //             box as AxisBox2D,
+                //             node.getLatestValues()
+                //         )
+                //     }
+                // })
             }
 
             const shouldRebase =
@@ -828,6 +840,8 @@ export const visualElement = <Instance, MutableState, Options>({
          * needs to be performed.
          */
         notifyLayoutReady(config) {
+            if (instance.id === "a-square") console.log("a notify ready")
+            if (instance.id === "b-square") console.log("b notify ready")
             setCurrentViewportBox(element)
 
             element.notifyLayoutUpdate(

@@ -50,6 +50,13 @@ export function updateLayoutMeasurement(
 
     visualElement.notifyBeforeLayoutMeasure(layoutState.layout)
 
+    if (visualElement.getInstance().id === "inner-square-a") {
+        console.log("measuring a")
+    }
+    if (visualElement.getInstance().id === "inner-square-b") {
+        console.log("measuring b")
+    }
+
     layoutState.isHydrated = true
     layoutState.layout = visualElement.measureViewportBox()
     layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
@@ -61,7 +68,7 @@ export function updateLayoutMeasurement(
     )
 
     if (visualElement.getInstance().id === "child") {
-        console.log("update layout measurement")
+        console.log("update layout measurement", snapshot?.viewportBox.x.min)
     }
 
     rebase && sync.update(() => visualElement.rebaseProjectionTarget())

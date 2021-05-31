@@ -95,6 +95,13 @@ class Animate extends React.Component<AnimateProps> {
     ) => {
         const { visualElement, layout } = this.props
 
+        if (visualElement.getInstance().id === "child") {
+            console.log(origin.x.min)
+        }
+        if (visualElement.getInstance().id === "b-square") {
+            console.log("animating b")
+        }
+
         /**
          * Early return if we've been instructed not to animate this render.
          */
@@ -134,10 +141,6 @@ class Animate extends React.Component<AnimateProps> {
                 applyBoxTransforms(target, target, node.getLatestValues())
             }
         })
-
-        if (visualElement.getInstance().id === "a-square") {
-            console.log("viewport relative", origin.x.min, target.x.min)
-        }
 
         /**
          * If this element has a projecting parent, there's an opportunity to animate
@@ -209,7 +212,6 @@ class Animate extends React.Component<AnimateProps> {
                     const prevParentViewportBox = copyAxisBox(
                         parentSnapshot.viewportBox
                     )
-
                     applyBoxTransforms(
                         prevParentViewportBox,
                         parentSnapshot.viewportBox,
@@ -227,37 +229,38 @@ class Animate extends React.Component<AnimateProps> {
                         }
                     })
 
-                    if (visualElement.getInstance().id === "a-square") {
-                        console.log("BEFORE RELATIVE", {
-                            origin: copyAxisBox(origin),
-                            target: copyAxisBox(target),
-                            prevParentBox: copyAxisBox(prevParentViewportBox),
-                            parentLayout: copyAxisBox(nextParentLayout),
-                            parentSnapshot: parentSnapshot,
-                        })
-                    }
+                    // if (visualElement.getInstance().id === "a-square") {
+                    //     console.log("BEFORE RELATIVE", {
+                    //         origin: copyAxisBox(origin),
+                    //         target: copyAxisBox(target),
+                    //         prevParentBox: copyAxisBox(prevParentViewportBox),
+                    //         parentLayout: copyAxisBox(nextParentLayout),
+                    //         parentSnapshot: parentSnapshot,
+                    //     })
+                    // }
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
                     target = calcRelativeOffset(nextParentLayout, target)
 
-                    if (visualElement.getInstance().id === "a-square") {
-                        console.log("AFTER RELATIVE", {
-                            origin: copyAxisBox(origin),
-                            target: copyAxisBox(target),
-                        })
-                    }
-                    if (visualElement.getInstance().id === "a-square") {
-                        console.log(
-                            isRelative,
-                            "parent origin",
-                            prevParentViewportBox.x.min,
-                            "relative offset origin",
-                            origin.x.min,
-                            "parent layout",
-                            nextParentLayout.x.min,
-                            "relative target",
-                            target.x.min
-                        )
-                    }
+                    // if (visualElement.getInstance().id === "a-square") {
+                    //     console.log(
+                    //         isRelative,
+                    //         "parent origin",
+                    //         prevParentViewportBox.x.min,
+                    //         "relative offset origin",
+                    //         origin.x.min,
+                    //         "parent layout",
+                    //         nextParentLayout.x.min,
+                    //         "relative target",
+                    //         target.x.min
+                    //     )
+                    // }
+
+                    // if (visualElement.getInstance().id === "a-square") {
+                    //     console.log("AFTER RELATIVE", {
+                    //         origin: copyAxisBox(origin),
+                    //         target: copyAxisBox(target),
+                    //     })
+                    // }
                 }
             }
         }
@@ -265,7 +268,10 @@ class Animate extends React.Component<AnimateProps> {
         const boxHasMoved = hasMoved(origin, target)
 
         if (visualElement.getInstance().id === "a-square") {
-            console.log("a-square has moved", boxHasMoved)
+            console.log("a has moved:", boxHasMoved)
+        }
+        if (visualElement.getInstance().id === "b-square") {
+            console.log("b has moved: ", boxHasMoved)
         }
 
         const animations = eachAxis((axis) => {
