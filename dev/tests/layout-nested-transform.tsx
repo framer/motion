@@ -5,8 +5,6 @@ export const App = () => {
     /**
      * TODO Needs batching
      */
-    const [count, setCount] = React.useState(0)
-    React.useEffect(() => setCount(21), [])
     return (
         <motion.div
             id="parent"
@@ -37,7 +35,6 @@ function Box() {
             layout
             style={a}
             onClick={() => {
-                console.log("on click")
                 setCount(count + 1)
             }}
         />

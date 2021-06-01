@@ -5,7 +5,12 @@ import { compareByDepth } from "../../utils/compare-by-depth"
 
 function isProjecting(visualElement: VisualElement) {
     const { isEnabled } = visualElement.projection
-    return isEnabled || visualElement.shouldResetTransform()
+
+    return (
+        isEnabled ||
+        visualElement.shouldResetTransform() ||
+        visualElement.getProps()._applyTransforms
+    )
 }
 
 export function collectProjectingAncestors(
@@ -71,7 +76,8 @@ export function updateLayoutMeasurement(
         console.log("update layout measurement", snapshot?.viewportBox.x.min)
     }
 
-    rebase && sync.update(() => visualElement.rebaseProjectionTarget())
+    // TODO: Rebase to layout as transformed by parent
+    // rebase && sync.update(() => visualElement.rebaseProjectionTarget())
 }
 
 /**

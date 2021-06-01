@@ -31,14 +31,23 @@ export function createBatcher(): SyncLayoutBatcher {
                 if (!queue.size) return
                 const order = Array.from(queue).sort(compareByDepth)
 
-                console.log("flush batch layout", order)
-                const ancestors = parent
-                    ? collectProjectingAncestors(parent)
-                    : []
+                let ancestors: VisualElement[] = []
+                if (parent) {
+                    ancestors = collectProjectingAncestors(parent)
+                } else {
+                    // Find the ancestors for each top-level element in the queue
+                    order.forEach((element) => ancestors.push(...element.path))
+                    ancestors = Array.from(new Set(ancestors)).filter(
+                        (element) => !queue.has(element)
+                    )
+                }
 
                 write(() => {
                     const allElements = [...ancestors, ...order]
-                    allElements.forEach((element) => element.resetTransform())
+                    allElements.forEach((element) => {
+                        console.log(order)
+                        element.resetTransform()
+                    })
                 })
 
                 read(() => {

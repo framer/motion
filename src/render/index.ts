@@ -755,14 +755,6 @@ export const visualElement = <Instance, MutableState, Options>({
         setProjectionTargetAxis(axis, min, max, isRelative = false) {
             let target: Axis
 
-            // if (instance.id === "child") {
-            //     console.log(axis, min, max, isRelative)
-
-            //     if (!isRelative) {
-            //         console.trace()
-            //     }
-            // }
-
             if (isRelative) {
                 if (!projection.relativeTarget) {
                     projection.relativeTarget = axisBox()
@@ -793,26 +785,26 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         rebaseProjectionTarget(
             force,
-            box,
+            box = layoutState.layout,
             withApplyTransforms: boolean = true
         ) {
             const { x, y } = element.getProjectionAnimationProgress()
 
-            if (withApplyTransforms) {
-                box = box
-                    ? copyAxisBox(box)
-                    : (copyAxisBox(layoutState.layout) as AxisBox2D)
+            // if (withApplyTransforms) {
+            //     box = box
+            //         ? copyAxisBox(box)
+            //         : (copyAxisBox(layoutState.layout) as AxisBox2D)
 
-                // element.path.forEach((node) => {
-                //     if (node.getProps()._applyTransforms) {
-                //         applyBoxTransforms(
-                //             box as AxisBox2D,
-                //             box as AxisBox2D,
-                //             node.getLatestValues()
-                //         )
-                //     }
-                // })
-            }
+            //     // element.path.forEach((node) => {
+            //     //     if (node.getProps()._applyTransforms) {
+            //     //         applyBoxTransforms(
+            //     //             box as AxisBox2D,
+            //     //             box as AxisBox2D,
+            //     //             node.getLatestValues()
+            //     //         )
+            //     //     }
+            //     // })
+            // }
 
             const shouldRebase =
                 !projection.relativeTarget &&

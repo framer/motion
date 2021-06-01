@@ -311,6 +311,8 @@ class Animate extends React.Component<AnimateProps> {
                 }
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
+                if (axis === "x" && target[axis].min === 70)
+                    console.log("stop animation")
                 return visualElement.setProjectionTargetAxis(
                     axis,
                     target[axis].min,
@@ -383,7 +385,7 @@ class Animate extends React.Component<AnimateProps> {
 
             // Tween the axis and update the visualElement with the latest values
             tweenAxis(frameTarget, origin, target, p)
-
+            if (axis === "x" && frameTarget.min === 70) console.log("Frame")
             visualElement.setProjectionTargetAxis(
                 axis,
                 frameTarget.min,
