@@ -95,9 +95,6 @@ class Animate extends React.Component<AnimateProps> {
     ) => {
         const { visualElement, layout } = this.props
 
-        if (visualElement.getInstance().id === "child") {
-            console.log(origin.x.min)
-        }
         if (visualElement.getInstance().id === "b-square") {
             console.log("animating b")
         }
@@ -141,7 +138,6 @@ class Animate extends React.Component<AnimateProps> {
                 applyBoxTransforms(target, target, node.getLatestValues())
             }
         })
-
         /**
          * If this element has a projecting parent, there's an opportunity to animate
          * it relatively to that parent rather than relatively to the viewport. This
@@ -149,6 +145,9 @@ class Animate extends React.Component<AnimateProps> {
          */
         let isRelative = false
         let projectionParent = visualElement.getProjectionParent()
+        if (visualElement.getInstance().id === "child") {
+            console.log("animating ", origin.x.min, target.x.min)
+        }
 
         if (projectionParent) {
             let parentSnapshot = projectionParent.snapshot
@@ -184,6 +183,10 @@ class Animate extends React.Component<AnimateProps> {
                     projectionParent = prevParent
                     parentSnapshot = prevParent.snapshot
                 }
+            }
+
+            if (visualElement.getInstance().id === "child") {
+                console.log(parentLayout.isHydrated, parentSnapshot)
             }
 
             if (parentLayout.isHydrated && parentSnapshot) {
@@ -267,6 +270,10 @@ class Animate extends React.Component<AnimateProps> {
 
         const boxHasMoved = hasMoved(origin, target)
 
+        if (visualElement.getInstance().id === "child") {
+            console.log(origin.x.min, target.x.min)
+        }
+
         if (visualElement.getInstance().id === "a-square") {
             console.log("a has moved:", boxHasMoved)
         }
@@ -299,7 +306,9 @@ class Animate extends React.Component<AnimateProps> {
                 })
             } else {
                 this.stopAxisAnimation[axis]?.()
-
+                if (visualElement.getInstance().id === "child") {
+                    console.log(target.x.min)
+                }
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
                 return visualElement.setProjectionTargetAxis(

@@ -2,6 +2,11 @@ import { motion, AnimateSharedLayout } from "@framer"
 import * as React from "react"
 
 export const App = () => {
+    /**
+     * TODO Needs batching
+     */
+    const [count, setCount] = React.useState(0)
+    React.useEffect(() => setCount(21), [])
     return (
         <motion.div
             id="parent"
@@ -27,17 +32,15 @@ function Box() {
     const [count, setCount] = React.useState(0)
 
     return (
-        <AnimateSharedLayout>
-            <motion.div
-                id="child"
-                layout
-                style={a}
-                onClick={() => {
-                    console.log("on click")
-                    setCount(count + 1)
-                }}
-            />
-        </AnimateSharedLayout>
+        <motion.div
+            id="child"
+            layout
+            style={a}
+            onClick={() => {
+                console.log("on click")
+                setCount(count + 1)
+            }}
+        />
     )
 }
 

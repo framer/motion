@@ -755,15 +755,13 @@ export const visualElement = <Instance, MutableState, Options>({
         setProjectionTargetAxis(axis, min, max, isRelative = false) {
             let target: Axis
 
-            if (instance.id === "a" && axis === "x") {
-                console.log(layoutState.isHydrated)
-                console.log("setting projecting a", isRelative)
-                // console.trace()
-            }
-            if (instance.id === "b-square") {
-                console.log("b", isRelative)
-                // console.trace()
-            }
+            // if (instance.id === "child") {
+            //     console.log(axis, min, max, isRelative)
+
+            //     if (!isRelative) {
+            //         console.trace()
+            //     }
+            // }
 
             if (isRelative) {
                 if (!projection.relativeTarget) {
@@ -840,8 +838,6 @@ export const visualElement = <Instance, MutableState, Options>({
          * needs to be performed.
          */
         notifyLayoutReady(config) {
-            if (instance.id === "a-square") console.log("a notify ready")
-            if (instance.id === "b-square") console.log("b notify ready")
             setCurrentViewportBox(element)
 
             element.notifyLayoutUpdate(
