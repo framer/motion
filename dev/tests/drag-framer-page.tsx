@@ -31,11 +31,7 @@ export const App = () => {
                     style={{ ...pageContainer, x, y }}
                     layout
                     id="Page"
-                    // onClick={() => {
-                    //     console.log("click")
-                    //     // setCount(count + 1)
-                    // }}
-                    // onPointerEnter={() => setCount(count + 1)}
+                    onPointerEnter={() => setCount(count + 1)}
                     _applyTransforms
                 >
                     <Page x={x} y={y} id="a" />
@@ -73,6 +69,7 @@ function Page({ x, y, id }: any) {
 
 function Square({ id }) {
     const [count, setCount] = React.useState(0)
+
     return (
         <AnimateSharedLayout>
             <motion.div

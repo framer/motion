@@ -22,6 +22,7 @@ import {
     removeBoxTransforms,
 } from "../../../utils/geometry/delta-apply"
 import { getFrameData } from "framesync"
+import { LayoutState } from "../../../render/utils/state"
 
 interface AxisLocks {
     x?: () => void
@@ -95,9 +96,9 @@ class Animate extends React.Component<AnimateProps> {
     ) => {
         const { visualElement, layout } = this.props
 
-        if (visualElement.getInstance().id === "b-square") {
-            console.log("animating b")
-        }
+        // if (visualElement.getInstance().id === "b-square") {
+        //     console.log("animating b")
+        // }
 
         /**
          * Early return if we've been instructed not to animate this render.
@@ -125,6 +126,9 @@ class Animate extends React.Component<AnimateProps> {
 
         origin = copyAxisBox(origin)
         target = copyAxisBox(target)
+        if (visualElement.getInstance().id === "a") {
+            console.log("attempting to animate a ", origin.x.min, target.x.min)
+        }
 
         if (
             visualElement.getProps()._applyTransforms &&
@@ -138,6 +142,7 @@ class Animate extends React.Component<AnimateProps> {
                 applyBoxTransforms(target, target, node.getLatestValues())
             }
         })
+
         /**
          * If this element has a projecting parent, there's an opportunity to animate
          * it relatively to that parent rather than relatively to the viewport. This
@@ -145,13 +150,42 @@ class Animate extends React.Component<AnimateProps> {
          */
         let isRelative = false
         let projectionParent = visualElement.getProjectionParent()
-        if (visualElement.getInstance().id === "child") {
+        if (visualElement.getInstance().id === "id_tEc8CJBhG") {
             console.log("animating ", origin.x.min, target.x.min)
+        }
+
+        let parentLayout: LayoutState
+
+        const convertTargetToRelative = () => {
+            if (
+                !parentLayout ||
+                !parentLayout.isHydrated ||
+                !projectionParent ||
+                !projectionParent.isProjectionReady()
+            )
+                return false
+            const nextParentLayout = copyAxisBox(parentLayout.layout)
+            visualElement.path.forEach((node) => {
+                if (node.getProps()._applyTransforms) {
+                    applyBoxTransforms(
+                        nextParentLayout,
+                        parentLayout.layout,
+                        node.getLatestValues()
+                    )
+                }
+            })
+            target = calcRelativeOffset(nextParentLayout, target)
+            console.log(
+                parentLayout.layout.x.min,
+                parentLayout.layout.x.max,
+                target.x.min
+            )
+            return true
         }
 
         if (projectionParent) {
             let parentSnapshot = projectionParent.snapshot
-            let parentLayout = projectionParent.getLayoutState()
+            parentLayout = projectionParent.getLayoutState()
 
             /**
              * If we're being provided a previous parent VisualElement by AnimateSharedLayout
@@ -185,7 +219,7 @@ class Animate extends React.Component<AnimateProps> {
                 }
             }
 
-            if (visualElement.getInstance().id === "child") {
+            if (visualElement.getInstance().id === "id_tEc8CJBhG") {
                 console.log(parentLayout.isHydrated, parentSnapshot)
             }
 
@@ -215,22 +249,11 @@ class Animate extends React.Component<AnimateProps> {
                     const prevParentViewportBox = copyAxisBox(
                         parentSnapshot.viewportBox
                     )
-                    applyBoxTransforms(
-                        prevParentViewportBox,
-                        parentSnapshot.viewportBox,
-                        parentSnapshot.transform
-                    )
-                    const nextParentLayout = copyAxisBox(parentLayout.layout)
-
-                    visualElement.path.forEach((node) => {
-                        if (node.getProps()._applyTransforms) {
-                            applyBoxTransforms(
-                                nextParentLayout,
-                                parentLayout.layout,
-                                node.getLatestValues()
-                            )
-                        }
-                    })
+                    // applyBoxTransforms(
+                    //     prevParentViewportBox,
+                    //     parentSnapshot.viewportBox,
+                    //     parentSnapshot.transform
+                    // )
 
                     // if (visualElement.getInstance().id === "a-square") {
                     //     console.log("BEFORE RELATIVE", {
@@ -242,21 +265,7 @@ class Animate extends React.Component<AnimateProps> {
                     //     })
                     // }
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
-                    target = calcRelativeOffset(nextParentLayout, target)
-
-                    // if (visualElement.getInstance().id === "a-square") {
-                    //     console.log(
-                    //         isRelative,
-                    //         "parent origin",
-                    //         prevParentViewportBox.x.min,
-                    //         "relative offset origin",
-                    //         origin.x.min,
-                    //         "parent layout",
-                    //         nextParentLayout.x.min,
-                    //         "relative target",
-                    //         target.x.min
-                    //     )
-                    // }
+                    convertTargetToRelative()
 
                     // if (visualElement.getInstance().id === "a-square") {
                     //     console.log("AFTER RELATIVE", {
@@ -269,17 +278,6 @@ class Animate extends React.Component<AnimateProps> {
         }
 
         const boxHasMoved = hasMoved(origin, target)
-
-        if (visualElement.getInstance().id === "child") {
-            console.log(origin.x.min, target.x.min)
-        }
-
-        if (visualElement.getInstance().id === "a-square") {
-            console.log("a has moved:", boxHasMoved)
-        }
-        if (visualElement.getInstance().id === "b-square") {
-            console.log("b has moved: ", boxHasMoved)
-        }
 
         const animations = eachAxis((axis) => {
             /**
@@ -306,13 +304,22 @@ class Animate extends React.Component<AnimateProps> {
                 })
             } else {
                 this.stopAxisAnimation[axis]?.()
-                if (visualElement.getInstance().id === "child") {
-                    console.log(target.x.min)
+
+                if (!isRelative) {
+                    isRelative = convertTargetToRelative()
                 }
+
+                if (visualElement.getInstance().id === "child") {
+                    console.log(
+                        isRelative,
+                        boxHasMoved,
+                        origin.x.min,
+                        target.x.min
+                    )
+                }
+
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
-                if (axis === "x" && target[axis].min === 70)
-                    console.log("stop animation")
                 return visualElement.setProjectionTargetAxis(
                     axis,
                     target[axis].min,

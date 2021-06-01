@@ -4,7 +4,7 @@ import { Presence } from "../components/AnimateSharedLayout/types"
 import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionStyle } from "../motion/types"
 import { eachAxis } from "../utils/each-axis"
-import { axisBox, copyAxisBox } from "../utils/geometry"
+import { axisBox } from "../utils/geometry"
 import {
     applyBoxTransforms,
     removeBoxTransforms,
@@ -30,7 +30,7 @@ import {
     checkIfVariantNode,
     isVariantLabel,
 } from "./utils/variants"
-import { Axis, AxisBox2D } from "../types/geometry"
+import { Axis } from "../types/geometry"
 import { setCurrentViewportBox } from "./dom/projection/relative-set"
 import { isDraggable } from "./utils/is-draggable"
 import { isTransformProp } from "./html/utils/transform"
@@ -699,10 +699,6 @@ export const visualElement = <Instance, MutableState, Options>({
                 : projection.target[axis]
             const length = max - min
 
-            if (axis === "x") {
-                console.log("aninate to", min)
-            }
-
             progress.clearListeners()
             progress.set(min)
             progress.set(min) // Set twice to hard-reset velocity
@@ -783,11 +779,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * don't fall out of sync differences in measurements vs projections
          * after a page scroll or other relayout.
          */
-        rebaseProjectionTarget(
-            force,
-            box = layoutState.layout,
-            withApplyTransforms: boolean = true
-        ) {
+        rebaseProjectionTarget(force, box = layoutState.layout) {
             const { x, y } = element.getProjectionAnimationProgress()
 
             // if (withApplyTransforms) {

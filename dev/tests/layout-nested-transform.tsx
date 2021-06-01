@@ -5,6 +5,8 @@ export const App = () => {
     /**
      * TODO Needs batching
      */
+    const [count, setCount] = React.useState(0)
+    React.useEffect(() => setCount(1), [])
     return (
         <motion.div
             id="parent"
@@ -30,14 +32,16 @@ function Box() {
     const [count, setCount] = React.useState(0)
 
     return (
-        <motion.div
-            id="child"
-            layout
-            style={a}
-            onClick={() => {
-                setCount(count + 1)
-            }}
-        />
+        <AnimateSharedLayout>
+            <motion.div
+                id="child"
+                layout
+                style={a}
+                onClick={() => {
+                    setCount(count + 1)
+                }}
+            />
+        </AnimateSharedLayout>
     )
 }
 

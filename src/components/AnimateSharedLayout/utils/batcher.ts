@@ -42,16 +42,22 @@ export function createBatcher(): SyncLayoutBatcher {
                     )
                 }
 
+                const allElements = [...ancestors, ...order]
                 write(() => {
-                    const allElements = [...ancestors, ...order]
                     allElements.forEach((element) => {
-                        console.log(order)
                         element.resetTransform()
                     })
                 })
 
                 read(() => {
-                    order.forEach((node) => updateLayoutMeasurement(node))
+                    ancestors.forEach(
+                        (element) =>
+                            !element.getLayoutState().isHydrated &&
+                            updateLayoutMeasurement(element)
+                    )
+                    order.forEach((element) => {
+                        updateLayoutMeasurement(element)
+                    })
                 })
 
                 write(() => {

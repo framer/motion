@@ -55,7 +55,6 @@ class Measure extends React.Component<SyncProps> {
             snapshotViewportBox(visualElement)
             syncLayout.add(visualElement)
         }
-
         return null
     }
 

@@ -68,6 +68,10 @@ export class AnimateSharedLayout extends React.Component<
         remove: (child) => this.removeChild(child),
     }
 
+    getSnapshotBeforeUpdate() {
+        return null
+    }
+
     componentDidMount() {
         this.hasMounted = true
     }

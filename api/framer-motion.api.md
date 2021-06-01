@@ -55,6 +55,8 @@ export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, 
     // (undocumented)
     static contextType: React.Context<MotionContextProps>;
     // (undocumented)
+    getSnapshotBeforeUpdate(): null;
+    // (undocumented)
     render(): JSX.Element;
     // (undocumented)
     shouldComponentUpdate(): boolean;

@@ -1,4 +1,4 @@
-import sync, { getFrameData } from "framesync"
+import { getFrameData } from "framesync"
 import { copyAxisBox } from "../../../utils/geometry"
 import { VisualElement } from "../../types"
 import { compareByDepth } from "../../utils/compare-by-depth"
@@ -46,21 +46,14 @@ export function collectProjectingChildren(
  * should be called after resetting any layout-affecting transforms.
  */
 export function updateLayoutMeasurement(
-    visualElement: VisualElement,
-    rebase = true
+    visualElement: VisualElement
+    // rebase = true
 ) {
     if (visualElement.shouldResetTransform()) return
 
     const layoutState = visualElement.getLayoutState()
 
     visualElement.notifyBeforeLayoutMeasure(layoutState.layout)
-
-    if (visualElement.getInstance().id === "inner-square-a") {
-        console.log("measuring a")
-    }
-    if (visualElement.getInstance().id === "inner-square-b") {
-        console.log("measuring b")
-    }
 
     layoutState.isHydrated = true
     layoutState.layout = visualElement.measureViewportBox()
@@ -71,10 +64,6 @@ export function updateLayoutMeasurement(
         layoutState.layout,
         snapshot ? snapshot.viewportBox : layoutState.layout
     )
-
-    if (visualElement.getInstance().id === "child") {
-        console.log("update layout measurement", snapshot?.viewportBox.x.min)
-    }
 
     // TODO: Rebase to layout as transformed by parent
     // rebase && sync.update(() => visualElement.rebaseProjectionTarget())
