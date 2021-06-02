@@ -235,7 +235,12 @@ export const visualElement = <Instance, MutableState, Options>({
             leadProjection,
             element.path,
             latestValues
+            // instance.id === "Page"
         )
+
+        // if (instance.id === "Page") {
+        //     console.log(layoutState.delta.x.translate)
+        // }
 
         hasViewportBoxUpdated &&
             element.notifyViewportBoxUpdate(leadProjection.target, delta)
@@ -758,6 +763,9 @@ export const visualElement = <Instance, MutableState, Options>({
                 }
                 target = projection.relativeTarget[axis]
             } else {
+                // if (instance.id === "parent") {
+                //     console.log(axis, min, max)
+                // }
                 projection.relativeTarget = undefined
                 target = projection.target[axis]
             }

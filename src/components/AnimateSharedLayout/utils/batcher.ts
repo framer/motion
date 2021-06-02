@@ -50,10 +50,9 @@ export function createBatcher(): SyncLayoutBatcher {
                 })
 
                 read(() => {
-                    ancestors.forEach(
-                        (element) =>
-                            !element.getLayoutState().isHydrated &&
-                            updateLayoutMeasurement(element)
+                    ancestors.forEach((element) =>
+                        // !element.getLayoutState().isHydrated &&
+                        updateLayoutMeasurement(element)
                     )
                     order.forEach((element) => {
                         updateLayoutMeasurement(element)

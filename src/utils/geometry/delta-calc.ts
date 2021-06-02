@@ -50,11 +50,11 @@ export function updateAxisDelta(
     delta.originPoint = mix(source.min, source.max, delta.origin)
 
     delta.scale = calcLength(target) / calcLength(source)
-    if (isNear(delta.scale, 1, 0.0001)) delta.scale = 1
+    if (isNear(delta.scale, 1, 0.0001) || isNaN(delta.scale)) delta.scale = 1
 
     delta.translate =
         mix(target.min, target.max, delta.origin) - delta.originPoint
-    if (isNear(delta.translate)) delta.translate = 0
+    if (isNear(delta.translate) || isNaN(delta.translate)) delta.translate = 0
 }
 
 /**

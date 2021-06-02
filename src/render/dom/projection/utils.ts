@@ -1,5 +1,8 @@
 import { getFrameData } from "framesync"
+import { calcRelativeOffset } from "../../../motion/features/layout/utils"
+import { eachAxis } from "../../../utils/each-axis"
 import { copyAxisBox } from "../../../utils/geometry"
+import { applyBoxTransforms } from "../../../utils/geometry/delta-apply"
 import { VisualElement } from "../../types"
 import { compareByDepth } from "../../utils/compare-by-depth"
 
@@ -49,6 +52,9 @@ export function updateLayoutMeasurement(
     visualElement: VisualElement
     // rebase = true
 ) {
+    if (visualElement.getInstance().id === "root") {
+        console.log("updateing root layout measurement")
+    }
     if (visualElement.shouldResetTransform()) return
 
     const layoutState = visualElement.getLayoutState()
@@ -65,6 +71,44 @@ export function updateLayoutMeasurement(
         snapshot ? snapshot.viewportBox : layoutState.layout
     )
 
+    if (!visualElement.isProjectionReady()) {
+        visualElement.rebaseProjectionTarget()
+        // let isRelative = false
+        const projectionParent = visualElement.getProjectionParent()
+
+        if (projectionParent) {
+            const parentLayout = projectionParent.getLayoutState()
+
+            if (parentLayout && parentLayout.isHydrated) {
+                const nextParentLayout = copyAxisBox(parentLayout.layout)
+                visualElement.path.forEach((node) => {
+                    if (node.getProps()._applyTransforms) {
+                        applyBoxTransforms(
+                            nextParentLayout,
+                            nextParentLayout,
+                            node.getLatestValues()
+                        )
+                    }
+                    const target = calcRelativeOffset(
+                        nextParentLayout,
+                        layoutState.layout
+                    )
+
+                    eachAxis((axis) =>
+                        visualElement.setProjectionTargetAxis(
+                            axis,
+                            target[axis].min,
+                            target[axis].max,
+                            true
+                        )
+                    )
+                    // isRelative = true
+                })
+            }
+        }
+    }
+
+    // console.log("measuring layout", visualElement.getInstance().id)
     // TODO: Rebase to layout as transformed by parent
     // rebase && sync.update(() => visualElement.rebaseProjectionTarget())
 }

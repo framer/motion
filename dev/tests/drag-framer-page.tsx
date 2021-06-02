@@ -14,18 +14,20 @@ export const App = () => {
 
     const [count, setCount] = React.useState(0)
 
-    React.useEffect(() => {
-        setCount(count + 1)
-    }, [])
+    // React.useEffect(() => {
+    //     setCount(count + 1)
+    // }, [])
 
     return (
         <motion.div style={scrollContainer} layout id="root">
             <motion.div
                 id="parent"
-                style={b}
+                style={{ ...b, y: dummyY }}
                 drag="y"
+                layout
                 _dragX={dummyX}
                 _dragY={dummyY}
+                _applyTransforms
             >
                 <motion.div
                     style={{ ...pageContainer, x, y }}
@@ -116,7 +118,6 @@ const scrollContainer: React.CSSProperties = {
     left: 100,
     width: 600,
     height: 500,
-    overflow: "hidden",
 }
 
 const pageContainer: React.CSSProperties = {
