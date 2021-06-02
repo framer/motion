@@ -11,38 +11,57 @@ export const App = () => {
     const y = useMotionValue(0)
     const dummyX = useMotionValue(0)
     const dummyY = useMotionValue(0)
+    const containerRef = React.useRef<HTMLDivElement>(null)
 
     const [count, setCount] = React.useState(0)
 
-    // React.useEffect(() => {
-    //     setCount(count + 1)
-    // }, [])
+    React.useLayoutEffect(() => {
+        const setScrollY = (yValue: number) => {
+            const element = containerRef.current
+            if (!(element instanceof HTMLDivElement)) return
+
+            element.scrollTop = -yValue
+        }
+
+        const currentY = y.get()
+        if (currentY !== 0) setScrollY(currentY)
+
+        return dummyY.onChange(setScrollY)
+    }, [dummyY])
 
     return (
-        <motion.div style={scrollContainer} layout id="root">
+        <AnimateSharedLayout>
             <motion.div
-                id="parent"
-                style={{ ...b, y: dummyY }}
-                drag="y"
+                style={scrollContainer}
                 layout
-                _dragX={dummyX}
-                _dragY={dummyY}
-                _applyTransforms
+                id="root"
+                ref={containerRef}
             >
                 <motion.div
-                    style={{ ...pageContainer, x, y }}
+                    id="parent"
+                    style={{ ...b }}
+                    drag="y"
                     layout
-                    id="Page"
-                    onPointerEnter={() => setCount(count + 1)}
+                    dragConstraints={containerRef}
+                    _dragX={dummyX}
+                    _dragY={dummyY}
                     _applyTransforms
                 >
-                    <Page x={x} y={y} id="a" />
-                    <Page x={x} y={y} id="b" />
-                    <Page x={x} y={y} id="c" />
-                    <Page x={x} y={y} id="d" />
+                    <motion.div
+                        style={{ ...pageContainer, x, y }}
+                        layout
+                        id="Page"
+                        onPointerEnter={() => setCount(count + 1)}
+                        _applyTransforms
+                    >
+                        <Page x={x} y={y} id="a" />
+                        <Page x={x} y={y} id="b" />
+                        <Page x={x} y={y} id="c" />
+                        <Page x={x} y={y} id="d" />
+                    </motion.div>
                 </motion.div>
             </motion.div>
-        </motion.div>
+        </AnimateSharedLayout>
     )
 }
 
@@ -73,7 +92,7 @@ function Square({ id }) {
     const [count, setCount] = React.useState(0)
 
     return (
-        <AnimateSharedLayout>
+        <>
             <motion.div
                 id={id + "-square"}
                 layout
@@ -108,7 +127,7 @@ function Square({ id }) {
                 }}
                 onHoverStart={() => setCount(count + 1)}
             />
-        </AnimateSharedLayout>
+        </>
     )
 }
 
@@ -118,6 +137,7 @@ const scrollContainer: React.CSSProperties = {
     left: 100,
     width: 600,
     height: 500,
+    overflow: "hidden",
 }
 
 const pageContainer: React.CSSProperties = {
@@ -139,7 +159,7 @@ const b = {
     top: 100,
     left: 100,
     width: "100%",
-    height: 500,
+    height: 1000,
     borderRadius: 10,
 }
 

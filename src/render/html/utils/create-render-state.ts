@@ -4,4 +4,5 @@ export const createHtmlRenderState = () => ({
     transformKeys: [],
     transformOrigin: {},
     vars: {},
+    scrollTop: 0,
 })

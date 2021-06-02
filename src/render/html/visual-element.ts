@@ -65,7 +65,7 @@ export const htmlConfig: VisualElementConfig<
      * layout transforms up the tree in the same way this.getBoundingBoxWithoutTransforms
      * works
      */
-    resetTransform(element, domElement, props) {
+    resetTransform(element, domElement, props, renderState) {
         const { transformTemplate } = props
         domElement.style.transform = transformTemplate
             ? transformTemplate({}, "")
@@ -73,10 +73,15 @@ export const htmlConfig: VisualElementConfig<
 
         // Ensure that whatever happens next, we restore our transform on the next frame
         element.scheduleRender()
+
+        renderState.scrollTop = domElement.scrollTop
+        domElement.scrollTop = 0
     },
 
-    restoreTransform(instance, mutableState) {
-        instance.style.transform = mutableState.style.transform as string
+    restoreTransform(domElement, renderState) {
+        domElement.style.transform = renderState.style.transform as string
+
+        domElement.scrollTop = renderState.scrollTop
     },
 
     removeValueFromRenderState(key, { vars, style }) {
