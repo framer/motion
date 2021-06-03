@@ -156,6 +156,7 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Write: Reset transforms so bounding boxes can be accurately measured.
          */
+        // TODO Go up through tree and reset the rotation of everything upwards here
         this.children.forEach((child) => {
             resetRotate(child)
             if (child.shouldResetTransform()) child.resetTransform()
@@ -165,8 +166,6 @@ export class AnimateSharedLayout extends React.Component<
          * Read: Snapshot children
          */
         this.children.forEach((child) => snapshotViewportBox(child))
-        // const layoutParent = getNearestProjectionParent(this.context)
-        // layoutParent && snapshotViewportBox(layoutParent, false)
 
         /**
          * Every child keeps a local snapshot, but we also want to record

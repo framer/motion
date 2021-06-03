@@ -29,7 +29,7 @@ export function resetRotate(child: VisualElement) {
 
     // Force a render of this element to apply the transform with all rotations
     // set to 0.
-    child.syncRender()
+    child.syncRender(false)
 
     // Put back all the values we reset
     for (const key in resetValues) {

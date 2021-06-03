@@ -93,7 +93,7 @@ export interface VisualElement<Instance = any, RenderState = any>
           }
 
     build(): RenderState
-    syncRender(): void
+    syncRender(crossfade: boolean): void
 
     /**
      * Layout projection - perhaps a candidate for lazy-loading

@@ -165,7 +165,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      *
      */
-    function render() {
+    function render(crossfade: boolean = true) {
         if (!instance) return
 
         if (element.isProjectionReady()) {
@@ -194,15 +194,15 @@ export const visualElement = <Instance, MutableState, Options>({
             )
         }
 
-        triggerBuild()
+        triggerBuild(crossfade)
 
         renderInstance(instance, renderState)
     }
 
-    function triggerBuild() {
+    function triggerBuild(crossfade = true) {
         let valuesToRender = latestValues
 
-        if (crossfader && crossfader.isActive()) {
+        if (crossfade !== false && crossfader && crossfader.isActive()) {
             const crossfadedValues = crossfader.getCrossfadeState(element)
             if (crossfadedValues) valuesToRender = crossfadedValues
         }
