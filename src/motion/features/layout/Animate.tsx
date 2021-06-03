@@ -298,7 +298,7 @@ class Animate extends React.Component<AnimateProps> {
                     isRelative,
                 })
             } else {
-                this.stopAxisAnimation[axis]?.()
+                // this.stopAxisAnimation[axis]?.()
 
                 if (!isRelative) {
                     isRelative = convertTargetToRelative()

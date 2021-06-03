@@ -110,7 +110,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      *
      */
-    let crossfader: Crossfader
+    let crossfader: Crossfader | undefined
 
     /**
      * Keep track of whether the viewport box has been updated since the
@@ -165,7 +165,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      *
      */
-    function render(crossfade: boolean = true) {
+    function render() {
         if (!instance) return
 
         if (element.isProjectionReady()) {
@@ -194,15 +194,15 @@ export const visualElement = <Instance, MutableState, Options>({
             )
         }
 
-        triggerBuild(crossfade)
+        triggerBuild()
 
         renderInstance(instance, renderState)
     }
 
-    function triggerBuild(crossfade = true) {
+    function triggerBuild() {
         let valuesToRender = latestValues
 
-        if (crossfade !== false && crossfader && crossfader.isActive()) {
+        if (crossfader && crossfader.isActive()) {
             const crossfadedValues = crossfader.getCrossfadeState(element)
             if (crossfadedValues) valuesToRender = crossfadedValues
         }
@@ -601,7 +601,12 @@ export const visualElement = <Instance, MutableState, Options>({
          * synchronously. However in those instances other measures should be taken
          * to batch reads/writes.
          */
-        syncRender: render,
+        syncRender: (suspendCrossfade) => {
+            const prevCrossfader = crossfader
+            if (suspendCrossfade) crossfader = undefined
+            render()
+            if (suspendCrossfade) crossfader = prevCrossfader
+        },
 
         /**
          * Update the provided props. Ensure any newly-added motion values are
@@ -763,9 +768,6 @@ export const visualElement = <Instance, MutableState, Options>({
                 }
                 target = projection.relativeTarget[axis]
             } else {
-                // if (instance.id === "parent") {
-                //     console.log(axis, min, max)
-                // }
                 projection.relativeTarget = undefined
                 target = projection.target[axis]
             }
