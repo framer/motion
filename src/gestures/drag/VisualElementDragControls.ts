@@ -192,20 +192,37 @@ export class VisualElementDragControls {
                  */
                 this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
 
+                read(() => {
+                    tree.forEach((element) => {
+                        if (element.getProps()._resetScroll) {
+                            saveScrollPosition(element)
+                        }
+                    })
+                })
+
                 write(() => {
-                    tree.forEach((element) => element.resetTransform())
+                    tree.forEach((element) => {
+                        element.resetTransform()
+
+                        if (element.getProps()._resetScroll) {
+                            resetScrollPosition(element)
+                        }
+                    })
                 })
 
                 read(() => {
                     tree.forEach((node) => {
-                        if (this.visualElement.getProps()._suppressProjection)
-                            return
                         updateLayoutMeasurement(node)
                     })
                 })
 
                 write(() => {
-                    tree.forEach((element) => element.restoreTransform())
+                    tree.forEach((element) => {
+                        element.restoreTransform()
+                        if (element.getProps()._resetScroll) {
+                            restoreScrollPosition(element)
+                        }
+                    })
 
                     if (snapToCursor) {
                         hasManuallySetCursorOrigin = this.snapToCursor(
@@ -725,17 +742,36 @@ export class VisualElementDragControls {
         this.cancelLayout = batchLayout((read, write) => {
             const ancestors = collectProjectingAncestors(this.visualElement)
 
+            read(() => {
+                ancestors.forEach((element) => {
+                    if (element.getProps()._resetScroll) {
+                        saveScrollPosition(element)
+                    }
+                })
+            })
+
             write(() =>
-                ancestors.forEach((element) => element.resetTransform())
+                ancestors.forEach((element) => {
+                    element.resetTransform()
+
+                    if (element.getProps()._resetScroll) {
+                        resetScrollPosition(element)
+                    }
+                })
             )
 
             read(() => {
-                if (this.visualElement.getProps()._suppressProjection) return
                 updateLayoutMeasurement(this.visualElement)
             })
 
             write(() =>
-                ancestors.forEach((element) => element.restoreTransform())
+                ancestors.forEach((element) => {
+                    element.restoreTransform()
+
+                    if (element.getProps()._resetScroll) {
+                        restoreScrollPosition(element)
+                    }
+                })
             )
 
             read(() => {
@@ -838,4 +874,21 @@ export function expectsResolvedDragConstraints({
     onMeasureDragConstraints,
 }: MotionProps) {
     return isRefObject(dragConstraints) && !!onMeasureDragConstraints
+}
+
+function saveScrollPosition(element: VisualElement) {
+    const instance = element.getInstance()
+    ;(element as any).scrollPosition = {
+        x: instance.scrollLeft,
+        y: instance.scrollTop,
+    }
+}
+
+function restoreScrollPosition(element: VisualElement) {
+    element.getInstance().scroll(0, 0)
+}
+
+function resetScrollPosition(element: VisualElement) {
+    const pos = (element as any).scrollPosition
+    element.getInstance().scroll(pos.x, pos.y)
 }
