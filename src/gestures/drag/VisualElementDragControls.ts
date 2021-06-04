@@ -183,7 +183,9 @@ export class VisualElementDragControls {
             this.cancelLayout = batchLayout((read, write) => {
                 const ancestors = collectProjectingAncestors(this.visualElement)
                 const children = collectProjectingChildren(this.visualElement)
-                const tree = [...ancestors, ...children]
+                const tree = this.isExternalDrag()
+                    ? ancestors
+                    : [...ancestors, ...children]
                 let hasManuallySetCursorOrigin: boolean = false
 
                 /**
