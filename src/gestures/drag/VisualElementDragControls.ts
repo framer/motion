@@ -844,20 +844,3 @@ export function expectsResolvedDragConstraints({
 }: MotionProps) {
     return isRefObject(dragConstraints) && !!onMeasureDragConstraints
 }
-
-function saveScrollPosition(element: VisualElement) {
-    const instance = element.getInstance()
-    ;(element as any).scrollPosition = {
-        x: instance.scrollLeft,
-        y: instance.scrollTop,
-    }
-}
-
-function resetScrollPosition(element: VisualElement) {
-    element.getInstance().scroll(0, 0)
-}
-
-function restoreScrollPosition(element: VisualElement) {
-    const pos = (element as any).scrollPosition
-    element.getInstance().scroll(pos.x, pos.y)
-}
