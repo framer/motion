@@ -441,6 +441,8 @@ export interface LayoutProps {
     // @internal
     _layoutResetTransform?: boolean;
     onLayoutAnimationComplete?(): void;
+    // (undocumented)
+    _suppressProjection?: boolean;
 }
 
 // @public (undocumented)

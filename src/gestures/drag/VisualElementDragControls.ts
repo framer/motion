@@ -197,7 +197,11 @@ export class VisualElementDragControls {
                 })
 
                 read(() => {
-                    tree.forEach((node) => updateLayoutMeasurement(node))
+                    tree.forEach((node) => {
+                        if (this.visualElement.getProps()._suppressProjection)
+                            return
+                        updateLayoutMeasurement(node)
+                    })
                 })
 
                 write(() => {
@@ -725,7 +729,10 @@ export class VisualElementDragControls {
                 ancestors.forEach((element) => element.resetTransform())
             )
 
-            read(() => updateLayoutMeasurement(this.visualElement))
+            read(() => {
+                if (this.visualElement.getProps()._suppressProjection) return
+                updateLayoutMeasurement(this.visualElement)
+            })
 
             write(() =>
                 ancestors.forEach((element) => element.restoreTransform())
