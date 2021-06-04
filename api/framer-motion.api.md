@@ -442,6 +442,8 @@ export interface LayoutProps {
     _layoutResetTransform?: boolean;
     onLayoutAnimationComplete?(): void;
     // (undocumented)
+    _resetScroll?: boolean;
+    // (undocumented)
     _suppressProjection?: boolean;
 }
 
