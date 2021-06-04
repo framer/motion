@@ -30,38 +30,31 @@ export const App = () => {
     }, [dummyY])
 
     return (
-        <AnimateSharedLayout>
+        <motion.div style={scrollContainer} layout id="root" ref={containerRef}>
             <motion.div
-                style={scrollContainer}
+                id="parent"
+                style={{ ...b }}
+                drag="y"
                 layout
-                id="root"
-                ref={containerRef}
+                dragConstraints={containerRef}
+                _dragX={dummyX}
+                _dragY={dummyY}
+                _applyTransforms
             >
                 <motion.div
-                    id="parent"
-                    style={{ ...b }}
-                    drag="y"
+                    style={{ ...pageContainer, x, y }}
                     layout
-                    dragConstraints={containerRef}
-                    _dragX={dummyX}
-                    _dragY={dummyY}
+                    id="Page"
+                    onPointerEnter={() => setCount(count + 1)}
                     _applyTransforms
                 >
-                    <motion.div
-                        style={{ ...pageContainer, x, y }}
-                        layout
-                        id="Page"
-                        onPointerEnter={() => setCount(count + 1)}
-                        _applyTransforms
-                    >
-                        <Page x={x} y={y} id="a" />
-                        <Page x={x} y={y} id="b" />
-                        <Page x={x} y={y} id="c" />
-                        <Page x={x} y={y} id="d" />
-                    </motion.div>
+                    <Page x={x} y={y} id="a" />
+                    <Page x={x} y={y} id="b" />
+                    <Page x={x} y={y} id="c" />
+                    <Page x={x} y={y} id="d" />
                 </motion.div>
             </motion.div>
-        </AnimateSharedLayout>
+        </motion.div>
     )
 }
 
@@ -81,9 +74,11 @@ function Page({ x, y, id }: any) {
                 flex: "0 0 180px",
             }}
         >
-            <motion.div layout style={c} id={`inner-square-${id}`}>
-                <Square id={id} />
-            </motion.div>
+            <AnimateSharedLayout>
+                <motion.div layout style={c} id={`inner-square-${id}`}>
+                    <Square id={id} />
+                </motion.div>
+            </AnimateSharedLayout>
         </motion.div>
     )
 }

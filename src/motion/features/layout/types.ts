@@ -62,6 +62,8 @@ export interface LayoutProps {
      */
     _layoutResetTransform?: boolean
 
+    _suppressProjection?: boolean
+
     /**
      * A callback that will fire when a layout animation on this component completes.
      *

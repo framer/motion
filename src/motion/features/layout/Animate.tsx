@@ -135,9 +135,6 @@ class Animate extends React.Component<AnimateProps> {
                 applyBoxTransforms(target, target, node.getLatestValues())
             }
         })
-        if (visualElement.getInstance().id === "b-square") {
-            console.log("attempting to animate a ", origin.x.min, target.x.min)
-        }
 
         /**
          * If this element has a projecting parent, there's an opportunity to animate
@@ -146,9 +143,6 @@ class Animate extends React.Component<AnimateProps> {
          */
         let isRelative = false
         let projectionParent = visualElement.getProjectionParent()
-        if (visualElement.getInstance().id === "b-square") {
-            console.log("animating ", origin.y.min, target.y.min)
-        }
 
         let parentLayout: LayoutState
 
@@ -226,10 +220,6 @@ class Animate extends React.Component<AnimateProps> {
                         ),
                         transform: projectionParent.getLatestValues(),
                     }
-                }
-
-                if (visualElement.getInstance().id === "b-square") {
-                    console.log(parentSnapshot)
                 }
 
                 if (

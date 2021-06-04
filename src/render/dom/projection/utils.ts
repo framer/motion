@@ -52,9 +52,6 @@ export function updateLayoutMeasurement(
     visualElement: VisualElement
     // rebase = true
 ) {
-    if (visualElement.getInstance().id === "root") {
-        console.log("updateing root layout measurement")
-    }
     if (visualElement.shouldResetTransform()) return
 
     const layoutState = visualElement.getLayoutState()

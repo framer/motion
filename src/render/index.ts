@@ -223,7 +223,7 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     function updateLayoutProjection() {
-        if (!element.isProjectionReady()) return
+        if (!element.isProjectionReady() || props._suppressProjection) return
 
         const { delta, treeScale } = layoutState
         const prevTreeScaleX = treeScale.x

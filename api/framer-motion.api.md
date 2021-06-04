@@ -1070,7 +1070,7 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     stopLayoutAnimation(): void;
     // (undocumented)
-    syncRender(): void;
+    syncRender(crossfade?: boolean): void;
     // (undocumented)
     treeType: string;
     // (undocumented)
