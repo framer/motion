@@ -46,8 +46,6 @@ export interface HTMLRenderState {
      * every frame. We use a mutable data structure to reduce GC during animations.
      */
     vars: ResolvedValues
-
-    scrollTop: number
 }
 
 /**
