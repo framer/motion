@@ -192,21 +192,9 @@ export class VisualElementDragControls {
                  */
                 this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
 
-                read(() => {
-                    tree.forEach((element) => {
-                        if (element.getProps()._resetScroll) {
-                            saveScrollPosition(element)
-                        }
-                    })
-                })
-
                 write(() => {
                     tree.forEach((element) => {
                         element.resetTransform()
-
-                        if (element.getProps()._resetScroll) {
-                            resetScrollPosition(element)
-                        }
                     })
                 })
 
@@ -219,9 +207,6 @@ export class VisualElementDragControls {
                 write(() => {
                     tree.forEach((element) => {
                         element.restoreTransform()
-                        if (element.getProps()._resetScroll) {
-                            restoreScrollPosition(element)
-                        }
                     })
 
                     if (snapToCursor) {
@@ -742,21 +727,9 @@ export class VisualElementDragControls {
         this.cancelLayout = batchLayout((read, write) => {
             const ancestors = collectProjectingAncestors(this.visualElement)
 
-            read(() => {
-                ancestors.forEach((element) => {
-                    if (element.getProps()._resetScroll) {
-                        saveScrollPosition(element)
-                    }
-                })
-            })
-
             write(() =>
                 ancestors.forEach((element) => {
                     element.resetTransform()
-
-                    if (element.getProps()._resetScroll) {
-                        resetScrollPosition(element)
-                    }
                 })
             )
 
@@ -767,10 +740,6 @@ export class VisualElementDragControls {
             write(() =>
                 ancestors.forEach((element) => {
                     element.restoreTransform()
-
-                    if (element.getProps()._resetScroll) {
-                        restoreScrollPosition(element)
-                    }
                 })
             )
 

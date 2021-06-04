@@ -44,19 +44,8 @@ export function createBatcher(): SyncLayoutBatcher {
 
                 const allElements = [...ancestors, ...order]
 
-                read(() => {
-                    allElements.forEach((element) => {
-                        if (element.getProps()._resetScroll) {
-                            saveScrollPosition(element)
-                        }
-                    })
-                })
-
                 write(() => {
                     allElements.forEach((element) => {
-                        if (element.getProps()._resetScroll) {
-                            resetScrollPosition(element)
-                        }
                         element.resetTransform()
                     })
                 })
@@ -74,9 +63,6 @@ export function createBatcher(): SyncLayoutBatcher {
                 write(() => {
                     ancestors.forEach((element) => {
                         element.restoreTransform()
-                        if (element.getProps()._resetScroll) {
-                            restoreScrollPosition(element)
-                        }
                     })
                     order.forEach(layoutReady)
                 })
@@ -111,28 +97,4 @@ export function createBatcher(): SyncLayoutBatcher {
             flushLayout()
         },
     }
-}
-// function assignProjectionToSnapshot(child: VisualElement) {
-//     child.snapshot = {
-//         taken: 0,
-//         viewportBox: child.projection.target,
-//         transform: child.getLatestValues(),
-//     }
-// }
-
-function saveScrollPosition(element: VisualElement) {
-    const instance = element.getInstance()
-    ;(element as any).scrollPosition = {
-        x: instance.scrollLeft,
-        y: instance.scrollTop,
-    }
-}
-
-function resetScrollPosition(element: VisualElement) {
-    element.getInstance().scroll(0, 0)
-}
-
-function restoreScrollPosition(element: VisualElement) {
-    const pos = (element as any).scrollPosition
-    element.getInstance().scroll(pos.x, pos.y)
 }
