@@ -884,11 +884,11 @@ function saveScrollPosition(element: VisualElement) {
     }
 }
 
-function restoreScrollPosition(element: VisualElement) {
+function resetScrollPosition(element: VisualElement) {
     element.getInstance().scroll(0, 0)
 }
 
-function resetScrollPosition(element: VisualElement) {
+function restoreScrollPosition(element: VisualElement) {
     const pos = (element as any).scrollPosition
     element.getInstance().scroll(pos.x, pos.y)
 }
