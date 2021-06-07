@@ -162,7 +162,7 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         visualElement: VisualElement<Instance>,
         renderState: RenderState,
         latestValues: ResolvedValues,
-        projection: TargetProjection,
+        projection: TargetProjection | undefined,
         layoutState: LayoutState,
         options: Options,
         props: MotionProps

@@ -1,4 +1,4 @@
-import { getFrameData } from "framesync"
+import sync, { getFrameData } from "framesync"
 import { calcRelativeOffset } from "../../../motion/features/layout/utils"
 import { eachAxis } from "../../../utils/each-axis"
 import { copyAxisBox } from "../../../utils/geometry"
@@ -69,7 +69,6 @@ export function updateLayoutMeasurement(
     )
 
     if (!visualElement.isProjectionReady()) {
-        visualElement.rebaseProjectionTarget()
         // let isRelative = false
         const projectionParent = visualElement.getProjectionParent()
 
@@ -105,9 +104,7 @@ export function updateLayoutMeasurement(
         }
     }
 
-    // console.log("measuring layout", visualElement.getInstance().id)
-    // TODO: Rebase to layout as transformed by parent
-    // rebase && sync.update(() => visualElement.rebaseProjectionTarget())
+    sync.update(() => visualElement.rebaseProjectionTarget())
 }
 
 /**

@@ -35,8 +35,6 @@ import { setCurrentViewportBox } from "./dom/projection/relative-set"
 import { isDraggable } from "./utils/is-draggable"
 import { isTransformProp } from "./html/utils/transform"
 
-const zeroProjection = createProjectionState()
-
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
     build,
@@ -213,7 +211,7 @@ export const visualElement = <Instance, MutableState, Options>({
             element,
             renderState,
             valuesToRender,
-            props._suppressProjection ? zeroProjection : leadProjection,
+            props._suppressProjection ? undefined : leadProjection,
             layoutState,
             options,
             props
@@ -225,7 +223,7 @@ export const visualElement = <Instance, MutableState, Options>({
     }
 
     function updateLayoutProjection() {
-        if (!element.isProjectionReady() || props._suppressProjection) return
+        if (!element.isProjectionReady()) return
 
         const { delta, treeScale } = layoutState
         const prevTreeScaleX = treeScale.x
