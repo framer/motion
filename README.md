@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://static.framer.com/motion/motion-readme-4.gif" width="400" height="250" alt="Framer Motion" />
+  <img src="https://misc.framerstatic.com/motion/motion-readme-4.gif" width="400" height="250" alt="Framer Motion" />
 </p>
 
 <h3 align="center">
