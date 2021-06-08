@@ -15,7 +15,11 @@ export interface LayoutStack {
     getLead(): VisualElement | undefined
     updateSnapshot(): void
     clearSnapshot(): void
-    animate(element: VisualElement, crossfade: boolean): void
+    animate(
+        element: VisualElement,
+        crossfade: boolean,
+        isControlled?: boolean
+    ): void
     updateLeadAndFollow(): void
 }
 

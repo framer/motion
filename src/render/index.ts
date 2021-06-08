@@ -787,22 +787,6 @@ export const visualElement = <Instance, MutableState, Options>({
         rebaseProjectionTarget(force, box = layoutState.layout) {
             const { x, y } = element.getProjectionAnimationProgress()
 
-            // if (withApplyTransforms) {
-            //     box = box
-            //         ? copyAxisBox(box)
-            //         : (copyAxisBox(layoutState.layout) as AxisBox2D)
-
-            //     // element.path.forEach((node) => {
-            //     //     if (node.getProps()._applyTransforms) {
-            //     //         applyBoxTransforms(
-            //     //             box as AxisBox2D,
-            //     //             box as AxisBox2D,
-            //     //             node.getLatestValues()
-            //     //         )
-            //     //     }
-            //     // })
-            // }
-
             const shouldRebase =
                 !projection.relativeTarget &&
                 !projection.isTargetLocked &&
@@ -916,7 +900,9 @@ export const visualElement = <Instance, MutableState, Options>({
              */
             unsubscribeFromLeadVisualElement?.()
             unsubscribeFromLeadVisualElement = pipe(
-                newLead.onSetAxisTarget(element.scheduleUpdateLayoutProjection),
+                newLead.onSetAxisTarget(() =>
+                    element.scheduleUpdateLayoutProjection()
+                ),
                 newLead.onLayoutAnimationComplete(() => {
                     if (element.isPresent) {
                         element.presence = Presence.Present

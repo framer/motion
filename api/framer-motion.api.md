@@ -45,25 +45,7 @@ export interface AnimatePresenceProps {
 }
 
 // @public (undocumented)
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, VisualElement> {
-    // (undocumented)
-    componentDidMount(): void;
-    // (undocumented)
-    componentDidUpdate(): void;
-    // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    static contextType: React.Context<MotionContextProps>;
-    // (undocumented)
-    getSnapshotBeforeUpdate(): null;
-    // (undocumented)
-    render(): JSX.Element;
-    // (undocumented)
-    shouldComponentUpdate(): boolean;
-    syncContext: SharedLayoutSyncMethods;
-    // (undocumented)
-    updateStacks(): void;
-}
+export function AnimateSharedLayout(props: SharedLayoutProps): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
@@ -355,10 +337,11 @@ export interface FocusHandlers {
 // @public (undocumented)
 export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
 
+// Warning: (ae-forgotten-export) The symbol "FramerTreeContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "FramerTreeLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const FramerTreeLayoutContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
+export const FramerTreeLayoutContext: import("react").Context<FramerTreeContextProps>;
 
 // @public (undocumented)
 export interface HoverHandlers {

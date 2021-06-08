@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useContext } from "react"
 import {
     Presence,
     SharedLayoutProps,
@@ -13,16 +14,17 @@ import { VisualElement } from "../../render/types"
 import { createBatcher } from "./utils/batcher"
 import { snapshotViewportBox } from "../../render/dom/projection/utils"
 
+interface SharedLayoutPropsWithContext extends SharedLayoutProps {
+    motionContext: MotionContextProps
+}
+
 /**
  * @public
  */
-export class AnimateSharedLayout extends React.Component<
-    SharedLayoutProps,
-    {},
-    VisualElement
+class AnimateSharedLayoutWithContext extends React.Component<
+    SharedLayoutPropsWithContext,
+    {}
 > {
-    static contextType = MotionContext
-
     /**
      * A list of all the children in the shared layout
      */
@@ -113,16 +115,18 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Create a handler which we can use to flush the children animations
          */
+
         const handler: SyncLayoutLifecycles = {
             layoutReady: (child) => {
-                if (child.getLayoutId() !== undefined) {
+                const id = child.getLayoutId()
+                if (id !== undefined) {
                     const stack = this.getStack(child)!
                     stack.animate(child, type === "crossfade")
                 } else {
                     child.notifyLayoutReady()
                 }
             },
-            parent: getNearestProjectionParent(this.context) as any,
+            parent: getNearestProjectionParent(this.props.motionContext) as any,
         }
 
         /**
@@ -230,6 +234,15 @@ export class AnimateSharedLayout extends React.Component<
             </SharedLayoutContext.Provider>
         )
     }
+}
+
+export function AnimateSharedLayout(props: SharedLayoutProps) {
+    return (
+        <AnimateSharedLayoutWithContext
+            {...props}
+            motionContext={useContext(MotionContext)}
+        />
+    )
 }
 
 function getNearestProjectionParent({ visualElement }: MotionContextProps) {
