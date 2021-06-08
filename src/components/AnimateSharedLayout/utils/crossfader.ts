@@ -4,7 +4,6 @@ import {
     linear,
     mix,
     mixColor,
-    PlaybackControls,
     progress as calcProgress,
 } from "popmotion"
 import { animate } from "../../../animation/animate"
@@ -16,8 +15,8 @@ import { motionValue } from "../../../value"
 export interface Crossfader {
     isActive(): boolean
     getCrossfadeState(element: VisualElement): ResolvedValues | undefined
-    toLead(transition?: Transition): PlaybackControls
-    fromLead(transition?: Transition): PlaybackControls
+    toLead(transition?: Transition): Promise<void>
+    fromLead(transition?: Transition): Promise<void>
     setOptions(options: CrossfadeAnimationOptions): void
     reset(): void
     stop(): void
@@ -71,42 +70,47 @@ export function createCrossfader(): Crossfader {
         finalCrossfadeFrame = null
         let hasUpdated = false
 
-        const onUpdate = () => {
-            hasUpdated = true
-            lead && lead.scheduleRender()
-            follow && follow.scheduleRender()
-        }
+        return new Promise<void>((resolve) => {
+            const onUpdate = () => {
+                hasUpdated = true
+                lead && lead.scheduleRender()
+                follow && follow.scheduleRender()
+            }
 
-        const onComplete = () => {
-            isActive = false
+            const onComplete = () => {
+                isActive = false
 
-            /**
-             * If the crossfade animation is no longer active, flag a frame
-             * that we're still allowed to crossfade
-             */
-            finalCrossfadeFrame = getFrameData().timestamp
-        }
+                /**
+                 * If the crossfade animation is no longer active, flag a frame
+                 * that we're still allowed to crossfade
+                 */
+                finalCrossfadeFrame = getFrameData().timestamp
 
-        transition = transition && getValueTransition(transition, "crossfade")
+                resolve()
+            }
 
-        return animate(progress, target, {
-            ...transition,
-            onUpdate,
-            onComplete: () => {
-                if (!hasUpdated) {
-                    progress.set(target)
-                    /**
-                     * If we never ran an update, for instance if this was an instant transition, fire a
-                     * simulated final frame to ensure the crossfade gets applied correctly.
-                     */
-                    sync.read(onComplete)
-                } else {
-                    onComplete()
-                }
+            transition =
+                transition && getValueTransition(transition, "crossfade")
 
-                onUpdate()
-            },
-        } as any)
+            animate(progress, target, {
+                ...transition,
+                onUpdate,
+                onComplete: () => {
+                    if (!hasUpdated) {
+                        progress.set(target)
+                        /**
+                         * If we never ran an update, for instance if this was an instant transition, fire a
+                         * simulated final frame to ensure the crossfade gets applied correctly.
+                         */
+                        sync.read(onComplete)
+                    } else {
+                        onComplete()
+                    }
+
+                    onUpdate()
+                },
+            } as any)
+        })
     }
 
     function updateCrossfade() {

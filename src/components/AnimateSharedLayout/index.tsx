@@ -121,7 +121,9 @@ class AnimateSharedLayoutWithContext extends React.Component<
                 const id = child.getLayoutId()
                 if (id !== undefined) {
                     const stack = this.getStack(child)!
-                    stack.animate(child, type === "crossfade")
+                    stack
+                        .animate(child, type === "crossfade")
+                        ?.then(child.notifyLayoutAnimationComplete)
                 } else {
                     child.notifyLayoutReady()
                 }

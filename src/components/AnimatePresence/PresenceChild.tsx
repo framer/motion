@@ -39,11 +39,8 @@ export const PresenceChild = ({
             custom,
             onExitComplete: (childId: number) => {
                 presenceChildren.set(childId, true)
-                let allComplete = true
-                presenceChildren.forEach((isComplete) => {
-                    if (!isComplete) allComplete = false
-                })
-
+                const completed = [...presenceChildren.values()]
+                const allComplete = completed.every(Boolean)
                 allComplete && onExitComplete?.()
             },
             register: (childId: number) => {

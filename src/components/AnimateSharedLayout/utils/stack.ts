@@ -19,7 +19,7 @@ export interface LayoutStack {
         element: VisualElement,
         crossfade: boolean,
         isControlled?: boolean
-    ): void
+    ): Promise<void> | undefined
     updateLeadAndFollow(): void
 }
 
@@ -117,6 +117,7 @@ export function layoutStack(): LayoutStack {
             }
         },
         animate(child, shouldCrossfade = false) {
+            let promise
             if (child === state.lead) {
                 if (shouldCrossfade) {
                     /**
@@ -150,7 +151,7 @@ export function layoutStack(): LayoutStack {
                     if (child.presence === Presence.Entering) {
                         crossfader.toLead(transition)
                     } else if (child.presence === Presence.Exiting) {
-                        crossfader.fromLead(transition)
+                        promise = crossfader.fromLead(transition)
                     }
                 }
 
@@ -162,6 +163,8 @@ export function layoutStack(): LayoutStack {
                     child.setVisibility(false)
                 }
             }
+
+            return promise
         },
     }
 }

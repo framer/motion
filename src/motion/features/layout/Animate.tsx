@@ -8,6 +8,7 @@ import {
 } from "../../../animation/utils/transitions"
 import { calcRelativeOffset, checkIfParentHasChanged, tweenAxis } from "./utils"
 import {
+    Presence,
     SharedLayoutAnimationConfig,
     VisibilityAction,
 } from "../../../components/AnimateSharedLayout/types"
@@ -281,7 +282,7 @@ class Animate extends React.Component<AnimateProps> {
                     visibilityAction === VisibilityAction.Show
                 )
             } else if (boxHasMoved) {
-                // If the box has moved, animate between it's current visual state and its
+                // If the box has moved, animate between its current visual state and its
                 // final state
                 return this.animateAxis(axis, target[axis], origin[axis], {
                     ...config,
@@ -317,15 +318,18 @@ class Animate extends React.Component<AnimateProps> {
         // Force a render to ensure there's no flash of uncorrected bounding box.
         visualElement.syncRender()
 
-        /**
-         * If this visualElement isn't present (ie it's been removed from the tree by the user but
-         * kept in by the tree by AnimatePresence) then call safeToRemove when all axis animations
-         * have successfully finished.
-         */
         return Promise.all(animations).then(() => {
             this.isAnimatingTree = false
             onComplete && onComplete()
-            visualElement.notifyLayoutAnimationComplete()
+
+            // When the element is crossfading due to a AnimateSharedLayout +
+            // AnimatePresence tree, we let the stack handle the
+            // notifyLayoutAnimationComplete() call when the crossfade is done
+            const isCrossfadingOut =
+                visualElement.getLayoutId() !== undefined &&
+                visualElement.presence === Presence.Exiting
+
+            !isCrossfadingOut && visualElement.notifyLayoutAnimationComplete()
         })
     }
 
