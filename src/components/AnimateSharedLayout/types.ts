@@ -43,10 +43,6 @@ export interface SharedLayoutProps {
      * @public
      */
     type?: "switch" | "crossfade"
-
-    /**
-     * @internal
-     */
 }
 
 export interface SharedLayoutAnimationConfig {

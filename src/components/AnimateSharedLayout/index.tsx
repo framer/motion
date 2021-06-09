@@ -70,10 +70,6 @@ class AnimateSharedLayoutWithContext extends React.Component<
         remove: (child) => this.removeChild(child),
     }
 
-    getSnapshotBeforeUpdate() {
-        return null
-    }
-
     componentDidMount() {
         this.hasMounted = true
     }
@@ -118,8 +114,7 @@ class AnimateSharedLayoutWithContext extends React.Component<
 
         const handler: SyncLayoutLifecycles = {
             layoutReady: (child) => {
-                const id = child.getLayoutId()
-                if (id !== undefined) {
+                if (child.getLayoutId() !== undefined) {
                     const stack = this.getStack(child)!
                     stack.animate(child, type === "crossfade")
                 } else {
