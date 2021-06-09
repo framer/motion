@@ -224,8 +224,7 @@ export class VisualElementDragControls {
                     if (!isRelativeDrag && !this.isExternalDrag()) {
                         this.visualElement.rebaseProjectionTarget(
                             true,
-                            this.visualElement.measureViewportBox(false),
-                            false
+                            this.visualElement.measureViewportBox(false)
                         )
                     }
 
