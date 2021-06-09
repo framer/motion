@@ -727,9 +727,7 @@ export class VisualElementDragControls {
             const ancestors = collectProjectingAncestors(this.visualElement)
 
             write(() =>
-                ancestors.forEach((element) => {
-                    element.resetTransform()
-                })
+                ancestors.forEach((element) => element.resetTransform())
             )
 
             read(() => {
@@ -739,9 +737,7 @@ export class VisualElementDragControls {
             })
 
             write(() =>
-                ancestors.forEach((element) => {
-                    element.restoreTransform()
-                })
+                ancestors.forEach((element) => element.restoreTransform())
             )
 
             write(() => {

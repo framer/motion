@@ -50,7 +50,6 @@ export function collectProjectingChildren(
  */
 export function updateLayoutMeasurement(
     visualElement: VisualElement
-    // rebase = true
 ) {
     if (visualElement.shouldResetTransform()) return
 
@@ -69,7 +68,6 @@ export function updateLayoutMeasurement(
     )
 
     if (!visualElement.isProjectionReady()) {
-        // let isRelative = false
         const projectionParent = visualElement.getProjectionParent()
 
         if (projectionParent) {

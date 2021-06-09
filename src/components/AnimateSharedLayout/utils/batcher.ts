@@ -45,14 +45,11 @@ export function createBatcher(): SyncLayoutBatcher {
                 const allElements = [...ancestors, ...order]
 
                 write(() => {
-                    allElements.forEach((element) => {
-                        element.resetTransform()
-                    })
+                    allElements.forEach((element) => element.resetTransform())
                 })
 
                 read(() => {
                     ancestors.forEach((element) =>
-                        // !element.getLayoutState().isHydrated &&
                         updateLayoutMeasurement(element)
                     )
                     order.forEach((element) => {
@@ -61,9 +58,7 @@ export function createBatcher(): SyncLayoutBatcher {
                 })
 
                 write(() => {
-                    ancestors.forEach((element) => {
-                        element.restoreTransform()
-                    })
+                    ancestors.forEach((element) =>  element.restoreTransform())
                     order.forEach(layoutReady)
                 })
 

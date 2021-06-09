@@ -8,6 +8,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Various layout animation fixes.
 -   Explicit handling of NaN values in layout projection.
+-   Fixed an issue where MotionConfig would not update when the provided transition was updated.
 
 ## [4.1.17] 2021-05-17
 
