@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [4.1.18] Unreleased
+
+### Fixed
+
+-   Various layout animation fixes.
+-   Explicit handling of NaN values in layout projection.
+
 ## [4.1.17] 2021-05-17
 
 ### Fixed
