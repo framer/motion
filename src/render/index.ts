@@ -596,11 +596,11 @@ export const visualElement = <Instance, MutableState, Options>({
          * synchronously. However in those instances other measures should be taken
          * to batch reads/writes.
          */
-        syncRender: (suspendCrossfade) => {
+        syncRender: (applyCrossfade = true) => {
             const prevCrossfader = crossfader
-            if (suspendCrossfade) crossfader = undefined
+            if (!applyCrossfade) crossfader = undefined
             render()
-            if (suspendCrossfade) crossfader = prevCrossfader
+            if (!applyCrossfade) crossfader = prevCrossfader
         },
 
         /**
