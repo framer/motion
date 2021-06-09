@@ -234,30 +234,8 @@ class Animate extends React.Component<AnimateProps> {
                     const prevParentViewportBox = copyAxisBox(
                         parentSnapshot.viewportBox
                     )
-                    // applyBoxTransforms(
-                    //     prevParentViewportBox,
-                    //     parentSnapshot.viewportBox,
-                    //     parentSnapshot.transform
-                    // )
-
-                    // if (visualElement.getInstance().id === "a-square") {
-                    //     console.log("BEFORE RELATIVE", {
-                    //         origin: copyAxisBox(origin),
-                    //         target: copyAxisBox(target),
-                    //         prevParentBox: copyAxisBox(prevParentViewportBox),
-                    //         parentLayout: copyAxisBox(nextParentLayout),
-                    //         parentSnapshot: parentSnapshot,
-                    //     })
-                    // }
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
                     convertTargetToRelative()
-
-                    // if (visualElement.getInstance().id === "a-square") {
-                    //     console.log("AFTER RELATIVE", {
-                    //         origin: copyAxisBox(origin),
-                    //         target: copyAxisBox(target),
-                    //     })
-                    // }
                 }
             }
         }
@@ -288,20 +266,9 @@ class Animate extends React.Component<AnimateProps> {
                     isRelative,
                 })
             } else {
-                // this.stopAxisAnimation[axis]?.()
-
                 if (!isRelative) {
                     isRelative = convertTargetToRelative()
                 }
-
-                // if (visualElement.getInstance().id === "child") {
-                //     console.log(
-                //         isRelative,
-                //         boxHasMoved,
-                //         origin.x.min,
-                //         target.x.min
-                //     )
-                // }
 
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state
