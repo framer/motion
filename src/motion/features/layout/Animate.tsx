@@ -220,6 +220,14 @@ class Animate extends React.Component<AnimateProps> {
                         ),
                         transform: projectionParent.getLatestValues(),
                     }
+
+                    if (projectionParent.getProps()._applyTransforms) {
+                        applyBoxTransforms(
+                            parentSnapshot.viewportBox,
+                            parentSnapshot.viewportBox,
+                            projectionParent.getLatestValues()
+                        )
+                    }
                 }
 
                 if (

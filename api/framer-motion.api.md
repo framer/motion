@@ -1017,7 +1017,7 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     readValue(key: string): string | number | undefined | null;
     // (undocumented)
-    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D, withTransforms?: boolean): void;
+    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void;
     // (undocumented)
     removeValue(key: string): void;
     // (undocumented)
@@ -1055,7 +1055,7 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     stopLayoutAnimation(): void;
     // (undocumented)
-    syncRender(crossfade?: boolean): void;
+    syncRender(applyCrossfade?: boolean): void;
     // (undocumented)
     treeType: string;
     // (undocumented)
