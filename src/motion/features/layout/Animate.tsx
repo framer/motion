@@ -289,11 +289,13 @@ class Animate extends React.Component<AnimateProps> {
          * kept in by the tree by AnimatePresence) then call safeToRemove when all axis animations
          * have successfully finished.
          */
-        return Promise.all(animations).then(() => {
-            this.isAnimatingTree = false
-            onComplete && onComplete()
-            visualElement.notifyLayoutAnimationComplete()
-        })
+        if (animations.filter(Boolean).length) {
+            return Promise.all(animations).then(() => {
+                this.isAnimatingTree = false
+                onComplete && onComplete()
+                visualElement.notifyLayoutAnimationComplete()
+            })
+        }
     }
 
     /**
