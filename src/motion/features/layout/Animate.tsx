@@ -281,15 +281,15 @@ class Animate extends React.Component<AnimateProps> {
             }
         })
 
-        // Force a render to ensure there's no flash of uncorrected bounding box.
-        visualElement.syncRender()
-
         /**
          * If this visualElement isn't present (ie it's been removed from the tree by the user but
          * kept in by the tree by AnimatePresence) then call safeToRemove when all axis animations
          * have successfully finished.
          */
         if (animations.filter(Boolean).length) {
+            // Force a render to ensure there's no flash of uncorrected bounding box.
+            visualElement.syncRender()
+
             return Promise.all(animations).then(() => {
                 this.isAnimatingTree = false
                 onComplete && onComplete()
