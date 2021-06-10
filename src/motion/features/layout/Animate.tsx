@@ -236,12 +236,11 @@ class Animate extends React.Component<AnimateProps> {
                     )
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
 
-                    if (projectionParent.getProps()._applyTransforms) {
-                        applyBoxTransforms(
-                            parentSnapshot.viewportBox,
-                            parentSnapshot.viewportBox,
-                            projectionParent.getLatestValues()
-                        )
+                    if (projectionParent.getProps()._suppressProjection) {
+                        origin = {
+                            x: { min: 0, max: target.x.max - target.x.min },
+                            y: { min: 0, max: target.y.max - target.y.min },
+                        }
                     }
 
                     convertTargetToRelative()
