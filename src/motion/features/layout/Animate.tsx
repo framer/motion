@@ -220,14 +220,6 @@ class Animate extends React.Component<AnimateProps> {
                         ),
                         transform: projectionParent.getLatestValues(),
                     }
-
-                    if (projectionParent.getProps()._applyTransforms) {
-                        applyBoxTransforms(
-                            parentSnapshot.viewportBox,
-                            parentSnapshot.viewportBox,
-                            projectionParent.getLatestValues()
-                        )
-                    }
                 }
 
                 if (
@@ -243,6 +235,15 @@ class Animate extends React.Component<AnimateProps> {
                         parentSnapshot.viewportBox
                     )
                     origin = calcRelativeOffset(prevParentViewportBox, origin)
+
+                    if (projectionParent.getProps()._applyTransforms) {
+                        applyBoxTransforms(
+                            parentSnapshot.viewportBox,
+                            parentSnapshot.viewportBox,
+                            projectionParent.getLatestValues()
+                        )
+                    }
+
                     convertTargetToRelative()
                 }
             }
