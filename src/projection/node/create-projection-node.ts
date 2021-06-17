@@ -1,4 +1,4 @@
-import sync, { cancelSync } from "framesync"
+import sync, { cancelSync, flushSync } from "framesync"
 import {
     applyBoxDelta,
     applyTreeDeltas,
@@ -141,6 +141,11 @@ export function createProjectionNode<I>({
              */
             // Notify listeners that the layout is updated
             notifyLayoutUpdate(this)
+
+            // Flush any scheduled updates
+            flushSync.update()
+            flushSync.preRender()
+            flushSync.render()
         }
 
         scheduleUpdateProjection() {
