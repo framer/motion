@@ -56,6 +56,9 @@
             const child = document.getElementById("child")
             const childProjection = createNode(child, boxProjection)
 
+            const boxOrigin = box.getBoundingClientRect()
+            const childOrigin = child.getBoundingClientRect()
+
             boxProjection.willUpdate()
             childProjection.willUpdate()
 
@@ -63,19 +66,8 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, {
-                top: 0,
-                left: 0,
-                right: 100,
-                bottom: 100,
-            })
-
-            matchViewportBox(child, {
-                top: 0,
-                left: 0,
-                right: 50,
-                bottom: 50,
-            })
+            matchViewportBox(box, boxOrigin)
+            matchViewportBox(child, childOrigin)
         </script>
     </body>
 </html>
