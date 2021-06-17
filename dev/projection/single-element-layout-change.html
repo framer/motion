@@ -44,6 +44,7 @@
             const { matchViewportBox } = window.Assert
             const box = document.getElementById("box")
             const boxProjection = createNode(box)
+            const boxOrigin = box.getBoundingClientRect()
 
             boxProjection.willUpdate()
 
@@ -51,12 +52,7 @@
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, {
-                top: 0,
-                left: 0,
-                right: 100,
-                bottom: 100,
-            })
+            matchViewportBox(box, boxOrigin)
         </script>
     </body>
 </html>
