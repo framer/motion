@@ -40,7 +40,7 @@ export interface ProjectionNodeConfig<I> {
 }
 
 export interface ProjectionNodeOptions {
-    applyScroll?: boolean
+    shouldMeasureScroll?: boolean
     onLayoutUpdate?: ({
         layout,
         snapshot,
@@ -121,6 +121,12 @@ export function createProjectionNode<I>({
          * Lifecycles
          */
         willUpdate() {
+            /**
+             * TODO: Check we haven't updated the scroll
+             * since the last didUpdate
+             */
+            this.path.forEach((node) => node.updateScroll())
+
             // Maybe will need to read the scroll position of window
             this.updateSnapshot()
             this.isLayoutDirty = true
@@ -131,10 +137,6 @@ export function createProjectionNode<I>({
             /**
              * Read ==================
              */
-            // Update window scroll position. Perhaps we make this as part
-            // of updateLayoutTree
-            this.updateScroll()
-
             // Update layout measurements of updated children
             updateTreeLayout(this)
 
@@ -163,12 +165,18 @@ export function createProjectionNode<I>({
          */
         updateSnapshot() {
             if (!measureViewportBox) return
-            // TODO: Only do once per update batch or if scroll is dirty (preferable)
-            this.root.updateScroll()
+
             this.snapshot = this.measure()
         }
 
         updateLayout() {
+            // TODO: Incorporate into a forwarded
+            // scroll offset
+            if (this.options.shouldMeasureScroll) {
+                this.updateScroll()
+            }
+
+            if (!this.isLayoutDirty) return
             this.layout = this.measure()
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
@@ -184,11 +192,14 @@ export function createProjectionNode<I>({
             if (!measureViewportBox) return
             const box = measureViewportBox(this.instance)
 
-            // Offset by the page scroll
-            const pageScroll = this.root.scroll
-            if (pageScroll) {
-                eachAxis((axis) => translateAxis(box[axis], pageScroll[axis]))
-            }
+            // TODO: Keep a culmulative scroll offset rather
+            // than loop through
+            this.path.forEach((node) => {
+                if (node.scroll && node.options.shouldMeasureScroll) {
+                    const { scroll } = node
+                    eachAxis((axis) => translateAxis(box[axis], scroll[axis]))
+                }
+            })
 
             return box
         }
@@ -269,7 +280,7 @@ export function createProjectionNode<I>({
 }
 
 function updateTreeLayout(node: IProjectionNode) {
-    node.isLayoutDirty && node.updateLayout()
+    node.updateLayout()
     node.children.forEach(updateTreeLayout)
 }
 
@@ -277,10 +288,10 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     const { onLayoutUpdate } = node.options
     if (onLayoutUpdate) {
         const { layout, snapshot } = node
+
         if (layout && snapshot) {
             const delta = createDelta()
             calcBoxDelta(delta, layout, snapshot)
-
             onLayoutUpdate({ layout, snapshot, delta })
         }
     }
@@ -301,12 +312,4 @@ function resolveTreeTargetDeltas(node: IProjectionNode) {
 function calcTreeProjection(node: IProjectionNode) {
     node.calcProjection()
     node.children.forEach(calcTreeProjection)
-}
-
-function calcLength(axis: Axis) {
-    return axis.max - axis.min
-}
-export function calcRelativeAxis(target: Axis, relative: Axis, parent: Axis) {
-    target.min = parent.min + relative.min
-    target.max = target.min + calcLength(relative)
 }

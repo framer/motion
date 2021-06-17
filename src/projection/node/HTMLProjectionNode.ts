@@ -14,7 +14,7 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
     defaultParent: () => {
         if (!documentNode) {
             documentNode = new DocumentProjectionNode(window, {
-                applyScroll: true,
+                shouldMeasureScroll: true,
             })
         }
         return documentNode
