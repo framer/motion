@@ -2,7 +2,7 @@ Undo = {}
 
 const { HTMLProjectionNode, sync } = Projection
 
-Undo.createNode = (element, parent) => {
+Undo.createNode = (element, parent, options = {}) => {
     const node = new HTMLProjectionNode(
         element,
         {
@@ -14,6 +14,7 @@ Undo.createNode = (element, parent) => {
                     Object.assign(element.style, node.getProjectionStyles())
                 })
             },
+            ...options,
         },
         parent
     )
