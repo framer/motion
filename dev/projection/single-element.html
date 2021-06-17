@@ -49,7 +49,8 @@
             const boxProjection = createNode(box)
 
             boxProjection.willUpdate()
-            boxProjection.didUpdate()
+
+            boxProjection.root.didUpdate()
 
             matchViewportBox(box, {
                 top: 0,
