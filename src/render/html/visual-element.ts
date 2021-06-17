@@ -28,15 +28,16 @@ export const htmlConfig: VisualElementConfig<
     treeType: "dom",
 
     readValueFromInstance(domElement, key) {
+        const defaultType = getDefaultValueType(key)
+        const fallback = defaultType?.default ?? 0
         if (isTransformProp(key)) {
-            const defaultType = getDefaultValueType(key)
-            return defaultType ? defaultType.default || 0 : 0
+            return fallback
         } else {
             const computedStyle = getComputedStyle(domElement)
             return (
                 (isCSSVariable(key)
                     ? computedStyle.getPropertyValue(key)
-                    : computedStyle[key]) || 0
+                    : computedStyle[key]) || fallback
             )
         }
     },
@@ -51,7 +52,9 @@ export const htmlConfig: VisualElementConfig<
     },
 
     getBaseTarget(props, key) {
-        return props.style?.[key]
+        const defaultType = getDefaultValueType(key)
+        const fallback = defaultType?.default ?? 0
+        return props.style?.[key] ?? fallback
     },
 
     measureViewportBox(element, { transformPagePoint }) {

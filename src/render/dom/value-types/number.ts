@@ -66,7 +66,7 @@ export const numberValueTypes: ValueTypeMap = {
     z: px,
     perspective: px,
     transformPerspective: px,
-    opacity: alpha,
+    opacity: { ...alpha, default: 1 },
     originX: progressPercentage,
     originY: progressPercentage,
     originZ: px,
