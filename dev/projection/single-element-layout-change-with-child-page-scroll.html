@@ -43,7 +43,6 @@
             }
         </style>
     </head>
-
     <body>
         <div id="box" data-layout-correct="true">
             <div id="child" data-layout-correct="true"></div>
@@ -57,7 +56,7 @@
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const { matchViewportBox } = window.Assert
+            const { matchViewportBox, addPageScroll } = window.Assert
             const box = document.getElementById("box")
             const boxProjection = createNode(box)
 
@@ -71,12 +70,14 @@
             childProjection.willUpdate()
 
             box.classList.add("b")
-            child.classList.add("b")
+
+            const scrollOffset = [50, 100]
+            window.scrollTo(...scrollOffset)
 
             boxProjection.root.didUpdate()
 
-            matchViewportBox(box, boxOrigin)
-            matchViewportBox(child, childOrigin)
+            matchViewportBox(box, addPageScroll(boxOrigin, ...scrollOffset))
+            matchViewportBox(child, addPageScroll(childOrigin, ...scrollOffset))
         </script>
     </body>
 </html>
