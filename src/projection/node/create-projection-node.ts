@@ -7,7 +7,7 @@ import {
 import { calcBoxDelta } from "../geometry/delta-calc"
 import { createBox, createDelta } from "../geometry/models"
 import { translateAxis } from "../geometry/operations"
-import { Axis, Box, Delta, Point } from "../geometry/types"
+import { Box, Delta, Point } from "../geometry/types"
 import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
 
