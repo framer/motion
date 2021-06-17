@@ -37,6 +37,22 @@ const umd = Object.assign({}, config, {
     ],
 })
 
+const projection = Object.assign({}, config, {
+    input: "lib/projection/index.js",
+    output: {
+        file: `dist/projection.dev.js`,
+        format: "umd",
+        name: "Projection",
+        exports: "named",
+    },
+    plugins: [
+        resolve(),
+        replace({
+            "process.env.NODE_ENV": JSON.stringify("development"),
+        }),
+    ],
+})
+
 const umdProd = Object.assign({}, umd, {
     output: Object.assign({}, umd.output, {
         file: `dist/${pkg.name}.js`,
@@ -113,4 +129,4 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
-export default [umd, umdProd, cjs, es, m, domAnimation, domMax]
+export default [projection, umd, umdProd, cjs, es, m, domAnimation, domMax]

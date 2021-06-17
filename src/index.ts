@@ -150,3 +150,10 @@ export { FlatTree } from "./render/utils/flat-tree"
  */
 export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
+
+/**
+ * Projection
+ */
+export function helloWorld() {
+    console.log("Yo!")
+}
