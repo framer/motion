@@ -10,4 +10,12 @@ window.Assert = {
             element.dataset.layoutCorrect = "false"
         }
     },
+    addPageScroll({ top, right, bottom, left }, x, y) {
+        return {
+            top: top - y,
+            right: right - x,
+            bottom: bottom - y,
+            left: left - x,
+        }
+    },
 }
