@@ -11,10 +11,7 @@ Undo.createNode = (element, parent) => {
             },
             onProjectionUpdate: () => {
                 sync.render(() => {
-                    Object.assign(
-                        element.style,
-                        boxProjection.getProjectionStyles()
-                    )
+                    Object.assign(element.style, node.getProjectionStyles())
                 })
             },
         },
