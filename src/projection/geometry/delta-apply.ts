@@ -100,7 +100,7 @@ export function applyTreeDeltas(
     treeScale.x = treeScale.y = 1
 
     let node: IProjectionNode
-    let delta: Delta
+    let delta: Delta | undefined
 
     for (let i = 0; i < treeLength; i++) {
         node = treePath[i]
