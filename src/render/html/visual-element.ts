@@ -28,16 +28,15 @@ export const htmlConfig: VisualElementConfig<
     treeType: "dom",
 
     readValueFromInstance(domElement, key) {
-        const defaultType = getDefaultValueType(key)
-        const fallback = defaultType?.default ?? 0
         if (isTransformProp(key)) {
-            return fallback
+            const defaultType = getDefaultValueType(key)
+            return defaultType?.default ?? 0
         } else {
             const computedStyle = getComputedStyle(domElement)
             return (
                 (isCSSVariable(key)
                     ? computedStyle.getPropertyValue(key)
-                    : computedStyle[key]) || fallback
+                    : computedStyle[key]) || 0
             )
         }
     },
