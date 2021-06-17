@@ -42,7 +42,7 @@
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
         "prepublishOnly": "yarn test && yarn build",
         "postpublish": "git push --tags",
-        "measure": "webpack --config webpack.size.config.js && bundlesize",
+        "measure": "webpack --config webpack.size.config.js",
         "deduplicate": "yarn-deduplicate yarn.lock",
         "start-dev-server": "webpack serve --config dev/webpack/config.js --hot"
     },
