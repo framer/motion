@@ -59,7 +59,7 @@
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const { matchViewportBox } = window.Assert
+            const { matchViewportBox, addPageScroll } = window.Assert
 
             const container = document.getElementById("container")
             const a = document.getElementById("a")
@@ -78,8 +78,8 @@
 
             aProjection.root.didUpdate()
 
-            matchViewportBox(a, aOrigin)
-            matchViewportBox(b, bOrigin)
+            matchViewportBox(a, addPageScroll(aOrigin, 50, 100))
+            matchViewportBox(b, addPageScroll(bOrigin, 50, 100))
         </script>
     </body>
 </html>
