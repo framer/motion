@@ -1,11 +1,11 @@
 window.Assert = {
-    matchViewportBox: (element, expected) => {
+    matchViewportBox: (element, expected, threshold = 0.01) => {
         const bbox = element.getBoundingClientRect()
         if (
-            expected.top !== bbox.top ||
-            expected.right !== bbox.right ||
-            expected.bottom !== bbox.bottom ||
-            expected.left !== bbox.left
+            Math.abs(expected.top - bbox.top) > threshold ||
+            Math.abs(expected.right - bbox.right) > threshold ||
+            Math.abs(expected.bottom - bbox.bottom) > threshold ||
+            Math.abs(expected.left - bbox.left) > threshold
         ) {
             element.dataset.layoutCorrect = "false"
         }
