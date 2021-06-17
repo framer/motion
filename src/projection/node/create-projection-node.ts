@@ -111,7 +111,9 @@ export function createProjectionNode<I>({
         }
 
         destructor() {
-            this.parent.children.delete(this)
+            if (this.parent) {
+                this.parent.children.delete(this)
+            }
             cancelSync.preRender(this.updateProjection)
         }
 
