@@ -1,5 +1,4 @@
 import sync, { cancelSync } from "framesync"
-import { calcRelativeBox } from "../../utils/geometry/delta-calc"
 import {
     applyBoxDelta,
     applyTreeDeltas,
@@ -21,10 +20,13 @@ export interface IProjectionNode {
     layout?: Box
     snapshot?: Box
     scroll?: Point
+    projectionDelta?: Delta
     isLayoutDirty: boolean
     updateLayout(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
+    resolveTargetDelta(): void
+    calcProjection(): void
 }
 
 export interface ProjectionNodeConfig<I> {
@@ -39,7 +41,15 @@ export interface ProjectionNodeConfig<I> {
 
 export interface ProjectionNodeOptions {
     applyScroll?: boolean
-    onLayoutUpdate?: () => void
+    onLayoutUpdate?: ({
+        layout,
+        snapshot,
+        delta,
+    }: {
+        layout: Box
+        snapshot: Box
+        delta: Delta
+    }) => void
     onProjectionUpdate?: () => void
 }
 
@@ -64,9 +74,9 @@ export function createProjectionNode<I>({
 
         options: ProjectionNodeOptions
 
-        snapshot: Box
+        snapshot: Box | undefined
 
-        layout: Box
+        layout: Box | undefined
 
         layoutCorrected: Box
 
@@ -74,7 +84,7 @@ export function createProjectionNode<I>({
 
         isLayoutDirty: boolean
 
-        treeScale?: Point = { x: 1, y: 1 } // TODO Lazy-initialise
+        treeScale: Point = { x: 1, y: 1 } // TODO Lazy-initialise
 
         targetDelta?: Delta
 
@@ -102,7 +112,7 @@ export function createProjectionNode<I>({
 
         destructor() {
             this.parent.children.delete(this)
-            cancelSync.preRender(this.updateProjectionTree)
+            cancelSync.preRender(this.updateProjection)
         }
 
         /**
@@ -164,11 +174,14 @@ export function createProjectionNode<I>({
 
         measure() {
             if (!measureScroll) return
+            if (!measureViewportBox) return
             const box = measureViewportBox(this.instance)
 
             // Offset by the page scroll
             const pageScroll = this.root.scroll
-            eachAxis((axis) => translateAxis(box[axis], pageScroll[axis]))
+            if (pageScroll) {
+                eachAxis((axis) => translateAxis(box[axis], pageScroll[axis]))
+            }
 
             return box
         }
@@ -188,6 +201,7 @@ export function createProjectionNode<I>({
          */
         resolveTargetDelta() {
             if (!this.targetDelta) return
+            if (!this.layout) return
             if (!this.target) this.target = createBox()
 
             resetBox(this.target, this.layout)
@@ -196,7 +210,8 @@ export function createProjectionNode<I>({
 
         calcProjection() {
             if (!this.layout) return
-
+            if (!this.target) return
+            if (!this.projectionDelta) return
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -230,6 +245,7 @@ export function createProjectionNode<I>({
         }
 
         getProjectionStyles() {
+            if (!this.projectionDelta) return {}
             // Resolve crossfading props and viewport boxes
             // TODO: Only return if projecting
             // TODO: Apply user-set transforms to targetBox
@@ -254,10 +270,12 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     const { onLayoutUpdate } = node.options
     if (onLayoutUpdate) {
         const { layout, snapshot } = node
-        const delta = createDelta()
-        calcBoxDelta(delta, layout, snapshot)
+        if (layout && snapshot) {
+            const delta = createDelta()
+            calcBoxDelta(delta, layout, snapshot)
 
-        onLayoutUpdate({ layout, snapshot, delta })
+            onLayoutUpdate({ layout, snapshot, delta })
+        }
     }
 
     node.children.forEach(notifyLayoutUpdate)
