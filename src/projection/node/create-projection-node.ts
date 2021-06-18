@@ -1,9 +1,6 @@
 import sync, { cancelSync, flushSync } from "framesync"
-import {
-    applyBoxDelta,
-    applyTreeDeltas,
-    resetBox,
-} from "../geometry/delta-apply"
+import { copyBoxInto } from "../geometry/copy"
+import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import { calcBoxDelta } from "../geometry/delta-calc"
 import { createBox, createDelta } from "../geometry/models"
 import { translateAxis } from "../geometry/operations"
@@ -222,7 +219,7 @@ export function createProjectionNode<I>({
             if (!this.layout) return
             if (!this.target) this.target = createBox()
 
-            resetBox(this.target, this.layout)
+            copyBoxInto(this.target, this.layout)
             applyBoxDelta(this.target, this.targetDelta)
         }
 
@@ -234,7 +231,7 @@ export function createProjectionNode<I>({
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
              */
-            resetBox(this.layoutCorrected, this.layout)
+            copyBoxInto(this.layoutCorrected, this.layout)
 
             /**
              * Apply all the parent deltas to this box to produce the corrected box. This

@@ -2,26 +2,6 @@ import { IProjectionNode } from "../node/create-projection-node"
 import { Axis, Box, Delta, Point } from "./types"
 
 /**
- * Reset an axis to the provided origin box.
- *
- * This is a mutative operation.
- */
-export function resetAxis(axis: Axis, originAxis: Axis) {
-    axis.min = originAxis.min
-    axis.max = originAxis.max
-}
-
-/**
- * Reset a box to the provided origin box.
- *
- * This is a mutative operation.
- */
-export function resetBox(box: Box, originBox: Box) {
-    resetAxis(box.x, originBox.x)
-    resetAxis(box.y, originBox.y)
-}
-
-/**
  * Scales a point based on a factor and an originPoint
  */
 export function scalePoint(point: number, scale: number, originPoint: number) {
