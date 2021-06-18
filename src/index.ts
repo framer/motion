@@ -4,7 +4,6 @@
 export { motion, createDomMotionComponent } from "./render/dom/motion"
 export { m } from "./render/dom/motion-minimal"
 export { AnimatePresence } from "./components/AnimatePresence"
-export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
 
@@ -61,12 +60,8 @@ export {
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
 export { createMotionComponent } from "./motion"
-export { addScaleCorrection } from "./render/dom/projection/scale-correction"
-export { snapshotViewportBox } from "./render/dom/projection/utils"
-export { createCrossfader } from "./components/AnimateSharedLayout/utils/crossfader"
 export { visualElement } from "./render"
 export { VisualElement } from "./render/types"
-export { batchLayout, flushLayout } from "./render/dom/utils/batch-layout"
 
 /**
  * Contexts
@@ -128,18 +123,6 @@ export {
 } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
-export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
-export {
-    SharedLayoutAnimationConfig,
-    VisibilityAction,
-    SharedLayoutSyncMethods,
-    SyncLayoutLifecycles,
-} from "./components/AnimateSharedLayout/types"
-export {
-    SharedLayoutContext,
-    FramerTreeLayoutContext,
-} from "./context/SharedLayoutContext"
-export { createBatcher } from "./components/AnimateSharedLayout/utils/batcher"
 export * from "./types/geometry"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
@@ -150,10 +133,3 @@ export { FlatTree } from "./render/utils/flat-tree"
  */
 export { useAnimatedState as useDeprecatedAnimatedState } from "./animation/use-animated-state"
 export { useInvertedScale as useDeprecatedInvertedScale } from "./value/use-inverted-scale"
-
-/**
- * Projection
- */
-export function helloWorld() {
-    console.log("Yo!")
-}

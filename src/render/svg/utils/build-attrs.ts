@@ -27,8 +27,6 @@ export function buildSVGAttrs(
         // This is object creation, which we try to avoid per-frame.
         ...latest
     }: ResolvedValues,
-    projection: TargetProjection | undefined,
-    layoutState: LayoutState | undefined,
     options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"],
     buildProjectionTransform?: BuildProjectionTransform,
@@ -37,8 +35,6 @@ export function buildSVGAttrs(
     buildHTMLStyles(
         state,
         latest,
-        projection,
-        layoutState,
         options,
         transformTemplate,
         buildProjectionTransform,

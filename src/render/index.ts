@@ -1,38 +1,20 @@
 import sync, { cancelSync } from "framesync"
-import { pipe } from "popmotion"
-import { Presence } from "../components/AnimateSharedLayout/types"
-import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionStyle } from "../motion/types"
-import { eachAxis } from "../utils/each-axis"
-import { axisBox } from "../utils/geometry"
-import {
-    applyBoxTransforms,
-    removeBoxTransforms,
-} from "../utils/geometry/delta-apply"
-import { calcRelativeBox, updateBoxDelta } from "../utils/geometry/delta-calc"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
-import { buildLayoutProjectionTransform } from "./html/utils/build-projection-transform"
 import {
     VisualElement,
     VisualElementConfig,
-    MotionPoint,
     VisualElementOptions,
 } from "./types"
 import { variantPriorityOrder } from "./utils/animation-state"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
-import { updateLayoutDeltas } from "./utils/projection"
-import { createLayoutState, createProjectionState } from "./utils/state"
-import { FlatTree } from "./utils/flat-tree"
 import {
     checkIfControllingVariants,
     checkIfVariantNode,
     isVariantLabel,
 } from "./utils/variants"
-import { Axis } from "../types/geometry"
-import { setCurrentViewportBox } from "./dom/projection/relative-set"
-import { isDraggable } from "./utils/is-draggable"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -74,50 +56,6 @@ export const visualElement = <Instance, MutableState, Options>({
     const lifecycles = createLifecycles()
 
     /**
-     *
-     */
-    const projection = createProjectionState()
-
-    /**
-     * A reference to the nearest projecting parent. This is either
-     * undefined if we haven't looked for the nearest projecting parent,
-     * false if there is no parent performing layout projection, or a reference
-     * to the projecting parent.
-     */
-    let projectionParent: undefined | false | VisualElement
-
-    /**
-     * This is a reference to the visual state of the "lead" visual element.
-     * Usually, this will be this visual element. But if it shares a layoutId
-     * with other visual elements, only one of them will be designated lead by
-     * AnimateSharedLayout. All the other visual elements will take on the visual
-     * appearance of the lead while they crossfade to it.
-     */
-    let leadProjection = projection
-    let leadLatestValues = latestValues
-    let unsubscribeFromLeadVisualElement: Function
-
-    /**
-     * The latest layout measurements and calculated projections. This
-     * is seperate from the target projection data in visualState as
-     * many visual elements might point to the same piece of visualState as
-     * a target, whereas they might each have different layouts and thus
-     * projection calculations needed to project into the same viewport box.
-     */
-    const layoutState = createLayoutState()
-
-    /**
-     *
-     */
-    let crossfader: Crossfader
-
-    /**
-     * Keep track of whether the viewport box has been updated since the
-     * last time the layout projection was re-calculated.
-     */
-    let hasViewportBoxUpdated = false
-
-    /**
      * A map of all motion values attached to this visual element. Motion
      * values are source of truth for any given animated value. A motion
      * value might be provided externally by the component via props.
@@ -138,14 +76,6 @@ export const visualElement = <Instance, MutableState, Options>({
     let prevMotionValues: MotionStyle = {}
 
     /**
-     * x/y motion values that track the progress of initiated layout
-     * animations.
-     *
-     * TODO: Target for removal
-     */
-    let projectionTargetProgress: MotionPoint
-
-    /**
      * When values are removed from all animation props we need to search
      * for a fallback value to animate to. These values are tracked in baseTarget.
      */
@@ -162,99 +92,25 @@ export const visualElement = <Instance, MutableState, Options>({
     let removeFromVariantTree: undefined | (() => void)
 
     /**
-     *
+     * Render the element with the latest styles outside of the React
+     * render lifecycle
      */
     function render() {
         if (!instance) return
 
-        if (element.isProjectionReady()) {
-            /**
-             * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
-             * This is the final box that we will then project into by calculating a transform delta and
-             * applying it to the corrected box.
-             */
-            applyBoxTransforms(
-                leadProjection.targetFinal,
-                leadProjection.target,
-                leadLatestValues
-            )
-
-            /**
-             * Update the delta between the corrected box and the final target box, after
-             * user-set transforms are applied to it. This will be used by the renderer to
-             * create a transform style that will reproject the element from its actual layout
-             * into the desired bounding box.
-             */
-            updateBoxDelta(
-                layoutState.deltaFinal,
-                layoutState.layoutCorrected,
-                leadProjection.targetFinal,
-                latestValues
-            )
-        }
-
         triggerBuild()
+
+        // TODO Update final projection here
 
         renderInstance(instance, renderState)
     }
 
     function triggerBuild() {
-        let valuesToRender = latestValues
-
-        if (crossfader && crossfader.isActive()) {
-            const crossfadedValues = crossfader.getCrossfadeState(element)
-            if (crossfadedValues) valuesToRender = crossfadedValues
-        }
-
-        build(
-            element,
-            renderState,
-            valuesToRender,
-            leadProjection,
-            layoutState,
-            options,
-            props
-        )
+        build(element, renderState, latestValues, options, props)
     }
 
     function update() {
         lifecycles.notifyUpdate(latestValues)
-    }
-
-    function updateLayoutProjection() {
-        if (!element.isProjectionReady()) return
-
-        const { delta, treeScale } = layoutState
-        const prevTreeScaleX = treeScale.x
-        const prevTreeScaleY = treeScale.y
-        const prevDeltaTransform = layoutState.deltaTransform
-
-        updateLayoutDeltas(
-            layoutState,
-            leadProjection,
-            element.path,
-            latestValues
-        )
-
-        hasViewportBoxUpdated &&
-            element.notifyViewportBoxUpdate(leadProjection.target, delta)
-        hasViewportBoxUpdated = false
-
-        const deltaTransform = buildLayoutProjectionTransform(delta, treeScale)
-
-        if (
-            deltaTransform !== prevDeltaTransform ||
-            // Also compare calculated treeScale, for values that rely on this only for scale correction
-            prevTreeScaleX !== treeScale.x ||
-            prevTreeScaleY !== treeScale.y
-        ) {
-            element.scheduleRender()
-        }
-        layoutState.deltaTransform = deltaTransform
-    }
-
-    function updateTreeLayoutProjection() {
-        element.layoutTree.forEach(fireUpdateLayoutProjection)
     }
 
     /**
@@ -321,19 +177,9 @@ export const visualElement = <Instance, MutableState, Options>({
         children: new Set(),
 
         /**
-         * An ancestor path back to the root visual element. This is used
-         * by layout projection to quickly recurse back up the tree.
-         */
-        path: parent ? [...parent.path, parent] : [],
-
-        layoutTree: parent ? parent.layoutTree : new FlatTree(),
-
-        /**
          *
          */
         presenceId,
-
-        projection,
 
         /**
          * If this component is part of the variant tree, it should track
@@ -375,7 +221,6 @@ export const visualElement = <Instance, MutableState, Options>({
 
         mount(newInstance: Instance) {
             instance = element.current = newInstance
-            element.pointTo(element)
 
             if (isVariantNode && parent && !isControllingVariants) {
                 removeFromVariantTree = parent?.addVariantChild(element)
@@ -389,13 +234,10 @@ export const visualElement = <Instance, MutableState, Options>({
         unmount() {
             cancelSync.update(update)
             cancelSync.render(render)
-            cancelSync.preRender(element.updateLayoutProjection)
             valueSubscriptions.forEach((remove) => remove())
-            element.stopLayoutAnimation()
             element.layoutTree.remove(element)
             removeFromVariantTree?.()
             parent?.children.delete(element)
-            unsubscribeFromLeadVisualElement?.()
             lifecycles.clearAllListeners()
         },
 
@@ -427,20 +269,6 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         getClosestVariantNode: () =>
             isVariantNode ? element : parent?.getClosestVariantNode(),
-
-        /**
-         * A method that schedules an update to layout projections throughout
-         * the tree. We inherit from the parent so there's only ever one
-         * job scheduled on the next frame - that of the root visual element.
-         */
-        scheduleUpdateLayoutProjection: parent
-            ? parent.scheduleUpdateLayoutProjection
-            : () =>
-                  sync.preRender(
-                      element.updateTreeLayoutProjection,
-                      false,
-                      true
-                  ),
 
         /**
          * Expose the latest layoutId prop.
@@ -649,257 +477,12 @@ export const visualElement = <Instance, MutableState, Options>({
             return context
         },
 
-        // Layout projection ==============================
-
-        /**
-         * Enable layout projection for this visual element. Won't actually
-         * occur until we also have hydrated layout measurements.
-         */
-        enableLayoutProjection() {
-            projection.isEnabled = true
-            element.layoutTree.add(element)
-        },
-
-        /**
-         * Lock the projection target, for instance when dragging, so
-         * nothing else can try and animate it.
-         */
-        lockProjectionTarget() {
-            projection.isTargetLocked = true
-        },
-        unlockProjectionTarget() {
-            element.stopLayoutAnimation()
-            projection.isTargetLocked = false
-        },
-
-        getLayoutState: () => layoutState,
-
-        setCrossfader(newCrossfader) {
-            crossfader = newCrossfader
-        },
-
-        isProjectionReady: () =>
-            projection.isEnabled &&
-            projection.isHydrated &&
-            layoutState.isHydrated,
-
-        /**
-         * Start a layout animation on a given axis.
-         */
-        startLayoutAnimation(axis, transition, isRelative = false) {
-            const progress = element.getProjectionAnimationProgress()[axis]
-            const { min, max } = isRelative
-                ? projection.relativeTarget![axis]
-                : projection.target[axis]
-            const length = max - min
-
-            progress.clearListeners()
-            progress.set(min)
-            progress.set(min) // Set twice to hard-reset velocity
-            progress.onChange((v) => {
-                element.setProjectionTargetAxis(axis, v, v + length, isRelative)
-            })
-
-            return element.animateMotionValue!(axis, progress, 0, transition)
-        },
-
-        /**
-         * Stop layout animations.
-         */
-        stopLayoutAnimation() {
-            eachAxis((axis) =>
-                element.getProjectionAnimationProgress()[axis].stop()
-            )
-        },
-
-        /**
-         * Measure the current viewport box with or without transforms.
-         * Only measures axis-aligned boxes, rotate and skew must be manually
-         * removed with a re-render to work.
-         */
-        measureViewportBox(withTransform = true) {
-            const viewportBox = measureViewportBox(instance, options)
-            if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
-            return viewportBox
-        },
-
-        /**
-         * Get the motion values tracking the layout animations on each
-         * axis. Lazy init if not already created.
-         */
-        getProjectionAnimationProgress() {
-            projectionTargetProgress ||= {
-                x: motionValue(0),
-                y: motionValue(0),
-            }
-
-            return projectionTargetProgress
-        },
-
-        /**
-         * Update the projection of a single axis. Schedule an update to
-         * the tree layout projection.
-         */
-        setProjectionTargetAxis(axis, min, max, isRelative = false) {
-            let target: Axis
-
-            if (isRelative) {
-                if (!projection.relativeTarget) {
-                    projection.relativeTarget = axisBox()
-                }
-                target = projection.relativeTarget[axis]
-            } else {
-                projection.relativeTarget = undefined
-                target = projection.target[axis]
-            }
-
-            projection.isHydrated = true
-
-            target.min = min
-            target.max = max
-
-            // Flag that we want to fire the onViewportBoxUpdate event handler
-            hasViewportBoxUpdated = true
-
-            lifecycles.notifySetAxisTarget()
-        },
-
-        /**
-         * Rebase the projection target on top of the provided viewport box
-         * or the measured layout. This ensures that non-animating elements
-         * don't fall out of sync differences in measurements vs projections
-         * after a page scroll or other relayout.
-         */
-        rebaseProjectionTarget(force, box = layoutState.layout) {
-            const { x, y } = element.getProjectionAnimationProgress()
-
-            const shouldRebase =
-                !projection.relativeTarget &&
-                !projection.isTargetLocked &&
-                !x.isAnimating() &&
-                !y.isAnimating()
-
-            if (force || shouldRebase) {
-                eachAxis((axis) => {
-                    const { min, max } = box[axis]
-                    element.setProjectionTargetAxis(axis, min, max)
-                })
-            }
-        },
-
-        /**
-         * Notify the visual element that its layout is up-to-date.
-         * Currently Animate.tsx uses this to check whether a layout animation
-         * needs to be performed.
-         */
-        notifyLayoutReady(config) {
-            setCurrentViewportBox(element)
-            element.notifyLayoutUpdate(
-                layoutState.layout,
-                element.prevViewportBox || layoutState.layout,
-                config
-            )
-        },
-
-        /**
-         * Temporarily reset the transform of the instance.
-         */
-        resetTransform: () => resetTransform(element, instance, props),
-
-        restoreTransform: () => restoreTransform(instance, renderState),
-
-        updateLayoutProjection,
-
-        updateTreeLayoutProjection() {
-            element.layoutTree.forEach(fireResolveRelativeTargetBox)
-
-            /**
-             * Schedule the projection updates at the end of the current preRender
-             * step. This will ensure that all layout trees will first resolve
-             * relative projection boxes into viewport boxes, and *then*
-             * update projections.
-             */
-            sync.preRender(updateTreeLayoutProjection, false, true)
-            // sync.postRender(() => element.scheduleUpdateLayoutProjection())
-        },
-
-        getProjectionParent() {
-            if (projectionParent === undefined) {
-                let foundParent: VisualElement | false = false
-
-                // Search backwards through the tree path
-                for (let i = element.path.length - 1; i >= 0; i--) {
-                    const ancestor = element.path[i]
-
-                    if (ancestor.projection.isEnabled) {
-                        foundParent = ancestor
-                        break
-                    }
-                }
-
-                projectionParent = foundParent
-            }
-
-            return projectionParent
-        },
-
-        resolveRelativeTargetBox() {
-            const relativeParent = element.getProjectionParent()
-            if (!projection.relativeTarget || !relativeParent) return
-
-            calcRelativeBox(projection, relativeParent.projection)
-
-            if (isDraggable(relativeParent)) {
-                const { target } = projection
-                applyBoxTransforms(
-                    target,
-                    target,
-                    relativeParent.getLatestValues()
-                )
-            }
-        },
-
-        shouldResetTransform() {
-            return Boolean(props._layoutResetTransform)
-        },
-
-        /**
-         *
-         */
-        pointTo(newLead) {
-            leadProjection = newLead.projection
-            leadLatestValues = newLead.getLatestValues()
-
-            /**
-             * Subscribe to lead component's layout animations
-             */
-            unsubscribeFromLeadVisualElement?.()
-            unsubscribeFromLeadVisualElement = pipe(
-                newLead.onSetAxisTarget(element.scheduleUpdateLayoutProjection),
-                newLead.onLayoutAnimationComplete(() => {
-                    if (element.isPresent) {
-                        element.presence = Presence.Present
-                    } else {
-                        element.layoutSafeToRemove?.()
-                    }
-                })
-            )
-        },
-
         // TODO: Clean this up
-        isPresent: true,
-        presence: Presence.Entering,
+        // isPresent: true,
+        // presence: Presence.Entering,
     }
 
     return element
-}
-
-function fireResolveRelativeTargetBox(child: VisualElement) {
-    child.resolveRelativeTargetBox()
-}
-
-function fireUpdateLayoutProjection(child: VisualElement) {
-    child.updateLayoutProjection()
 }
 
 const variantProps = ["initial", ...variantPriorityOrder]
