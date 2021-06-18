@@ -19,7 +19,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "inherit",
     "layout",
     "layoutId",
-    "_layoutResetTransform",
     "onLayoutAnimationComplete",
     "onViewportBoxUpdate",
     "onLayoutMeasure",

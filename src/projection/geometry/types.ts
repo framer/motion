@@ -31,3 +31,5 @@ export interface Delta {
     x: AxisDelta
     y: AxisDelta
 }
+
+export type TransformPoint = (point: Point) => Point

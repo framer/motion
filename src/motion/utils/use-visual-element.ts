@@ -1,7 +1,7 @@
 import * as React from "react"
 import { MutableRefObject, useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
-import { isPresent } from "../../components/AnimatePresence/use-presence"
+// import { isPresent } from "../../components/AnimatePresence/use-presence"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -60,7 +60,7 @@ export function useVisualElement<Instance, RenderState>(
             layoutId,
         })
 
-        visualElement.isPresent = isPresent(presenceContext)
+        // visualElement.isPresent = isPresent(presenceContext)
         visualElement.isPresenceRoot =
             !parent || parent.presenceId !== presenceContext?.id
 

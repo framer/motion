@@ -1,4 +1,4 @@
-import { TransformPoint2D } from "../../types/geometry"
+import { TransformPoint } from "../../projection/geometry/types"
 import { HTMLMotionComponents } from "../html/types"
 import { SVGMotionComponents } from "../svg/types"
 
@@ -9,7 +9,7 @@ export interface DOMVisualElementOptions {
      *
      * @public
      */
-    transformPagePoint?: TransformPoint2D
+    transformPagePoint?: TransformPoint
 
     /**
      * Allow `transform` to be set as `"none"` if all transforms are their default

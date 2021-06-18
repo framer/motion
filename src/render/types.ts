@@ -3,12 +3,10 @@ import { startAnimation } from "../animation/utils/transitions"
 import { MotionProps } from "../motion/types"
 import { VisualState } from "../motion/utils/use-visual-state"
 import { TargetAndTransition, Transition, Variant } from "../types"
-import { AxisBox2D, Point2D } from "../types/geometry"
 import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
-import { LayoutState, TargetProjection } from "./utils/state"
-import { FlatTree } from "./utils/flat-tree"
+import { Box, Point } from "../projection/geometry/types"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -23,7 +21,6 @@ export interface VisualElement<Instance = any, RenderState = any>
     children: Set<VisualElement>
     variantChildren?: Set<VisualElement>
     current: Instance | null
-    layoutTree: FlatTree
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
     presenceId: number | undefined
@@ -33,7 +30,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     isStatic?: boolean
     getInstance(): Instance | null
     sortNodePosition(element: VisualElement): number
-
+    measureViewportBox(withTransform?: boolean): Box
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
 
@@ -92,7 +89,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     // isPresent: boolean
     // presence: Presence
     isPresenceRoot?: boolean
-    prevDragCursor?: Point2D
+    prevDragCursor?: Point
     getLayoutId(): string | undefined
     animationState?: AnimationState
 }
@@ -118,7 +115,7 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         isLive: boolean
     ): TargetAndTransition
     // TODO Review which of these we still need
-    measureViewportBox(instance: Instance, options: Options): AxisBox2D
+    measureViewportBox(instance: Instance, options: Options): Box
     readValueFromInstance(
         instance: Instance,
         key: string,

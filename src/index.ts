@@ -123,7 +123,6 @@ export {
 } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
-export * from "./types/geometry"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"

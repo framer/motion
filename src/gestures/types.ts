@@ -1,7 +1,7 @@
 import { EventInfo } from "../events/types"
 import { VariantLabels } from "../motion/types"
+import { Point } from "../projection/geometry/types"
 import { TargetAndTransition } from "../types"
-import { Point2D } from "../types/geometry"
 import { PanInfo } from "./PanSession"
 
 export type RemoveEvent = () => void
@@ -75,7 +75,7 @@ export interface TapInfo {
      *
      * @public
      */
-    point: Point2D
+    point: Point
 }
 
 /**

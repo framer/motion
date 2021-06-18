@@ -4,9 +4,9 @@ import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { MotionValue } from "../../../value"
 import { transformProps } from "../../html/utils/transform"
-import { AxisBox2D } from "../../../types/geometry"
 import { VisualElement } from "../../types"
 import { findDimensionValueType } from "../value-types/dimensions"
+import { Box } from "../../../projection/geometry/types"
 
 const positionalKeys = new Set([
     "width",
@@ -43,7 +43,7 @@ export enum BoundingBoxDimension {
 }
 
 type GetActualMeasurementInPixels = (
-    bbox: AxisBox2D,
+    bbox: Box,
     computedStyle: Partial<CSSStyleDeclaration>
 ) => number
 

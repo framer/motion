@@ -4,12 +4,7 @@ import { ResolvedValues } from "../../types"
 import { calcSVGTransformOrigin } from "./transform-origin"
 import { buildSVGPath } from "./path"
 import { MotionProps } from "../../../motion/types"
-import { LayoutState, TargetProjection } from "../../utils/state"
 import { SVGRenderState } from "../types"
-import {
-    BuildProjectionTransform,
-    BuildProjectionTransformOrigin,
-} from "../../html/utils/build-projection-transform"
 
 /**
  * Build SVG visual attrbutes, like cx and style.transform
@@ -28,18 +23,9 @@ export function buildSVGAttrs(
         ...latest
     }: ResolvedValues,
     options: DOMVisualElementOptions,
-    transformTemplate?: MotionProps["transformTemplate"],
-    buildProjectionTransform?: BuildProjectionTransform,
-    buildProjectionTransformOrigin?: BuildProjectionTransformOrigin
+    transformTemplate?: MotionProps["transformTemplate"]
 ) {
-    buildHTMLStyles(
-        state,
-        latest,
-        options,
-        transformTemplate,
-        buildProjectionTransform,
-        buildProjectionTransformOrigin
-    )
+    buildHTMLStyles(state, latest, options, transformTemplate)
 
     state.attrs = state.style
     state.style = {}

@@ -1,6 +1,5 @@
-import { SharedLayoutAnimationConfig } from "../../components/AnimateSharedLayout/types"
 import { MotionProps } from "../../motion/types"
-import { AxisBox2D, BoxDelta } from "../../types/geometry"
+import { Axis, Delta } from "../../projection/geometry/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { ResolvedValues } from "../types"
 import { AnimationDefinition } from "./animation"
@@ -19,15 +18,12 @@ const names = [
     "Unmount",
 ]
 
-export type LayoutMeasureListener = (
-    layout: AxisBox2D,
-    prevLayout: AxisBox2D
-) => void
-export type BeforeLayoutMeasureListener = (layout: AxisBox2D) => void
+export type LayoutMeasureListener = (layout: Axis, prevLayout: Axis) => void
+export type BeforeLayoutMeasureListener = (layout: Axis) => void
 export type LayoutUpdateListener = (
-    layout: AxisBox2D,
-    prevLayout: AxisBox2D,
-    config?: SharedLayoutAnimationConfig
+    layout: Axis,
+    prevLayout: Axis
+    // config?: SharedLayoutAnimationConfig
 ) => void
 export type UpdateListener = (latest: ResolvedValues) => void
 export type AnimationStartListener = () => void
@@ -37,7 +33,7 @@ export type AnimationCompleteListener = (
 export type LayoutAnimationCompleteListener = () => void
 export type SetAxisTargetListener = () => void
 export type RenderListener = () => void
-export type OnViewportBoxUpdate = (box: AxisBox2D, delta: BoxDelta) => void
+export type OnViewportBoxUpdate = (box: Axis, delta: Delta) => void
 
 /**
  * TODO: Make more of these lifecycle events available as props
@@ -48,11 +44,11 @@ export interface VisualElementLifecycles {
      *
      * @public
      */
-    onViewportBoxUpdate?(box: AxisBox2D, delta: BoxDelta): void
+    onViewportBoxUpdate?(box: Axis, delta: Delta): void
 
-    onBeforeLayoutMeasure?(box: AxisBox2D): void
+    onBeforeLayoutMeasure?(box: Axis): void
 
-    onLayoutMeasure?(box: AxisBox2D, prevBox: AxisBox2D): void
+    onLayoutMeasure?(box: Axis, prevBox: Axis): void
 
     /**
      * Callback with latest motion values, fired max once per frame.
