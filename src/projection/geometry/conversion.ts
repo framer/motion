@@ -17,6 +17,10 @@ export function convertBoundingBoxToBox({
     }
 }
 
+export function convertBoxToBoundingBox({ x, y }: Box): BoundingBox {
+    return { top: y.min, right: x.max, bottom: y.max, left: x.min }
+}
+
 /**
  * Applies a TransformPoint function to a bounding box. TransformPoint is usually a function
  * provided by Framer to allow measured points to be corrected for device scaling. This is used

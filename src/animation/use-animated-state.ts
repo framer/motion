@@ -4,9 +4,9 @@ import { checkTargetForNewValues, getOrigin } from "../render/utils/setters"
 import { TargetAndTransition } from "../types"
 import { visualElement } from "../render"
 import { ResolvedValues } from "../render/types"
-import { axisBox } from "../utils/geometry"
 import { animateVisualElement } from "../render/utils/animation"
 import { makeUseVisualState } from "../motion/utils/use-visual-state"
+import { createBox } from "../projection/geometry/models"
 
 interface AnimatedStateOptions {
     initialState: ResolvedValues
@@ -20,7 +20,7 @@ const stateVisualElement = visualElement<
     AnimatedStateOptions
 >({
     build() {},
-    measureViewportBox: axisBox,
+    measureViewportBox: createBox,
     resetTransform() {},
     restoreTransform() {},
     removeValueFromRenderState() {},
