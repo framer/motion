@@ -7,13 +7,6 @@ import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
 import { addDomEvent } from "../../events/use-dom-event"
 import { getViewportPointFromEvent } from "../../events/event-info"
-import { TransformPoint, AxisBox2D, Point2D } from "../../types/geometry"
-import {
-    convertBoundingBoxToAxisBox,
-    convertAxisBoxToBoundingBox,
-    axisBox,
-} from "../../utils/geometry"
-import { eachAxis } from "../../utils/each-axis"
 import {
     calcRelativeConstraints,
     calcConstrainedMinPoint,
@@ -24,23 +17,21 @@ import {
     resolveDragElastic,
     defaultElastic,
 } from "./utils/constraints"
-import { getBoundingBox } from "../../render/dom/projection/measure"
-import { calcOrigin } from "../../utils/geometry/delta-calc"
 import { startAnimation } from "../../animation/utils/transitions"
 import { Transition } from "../../types"
 import { AnimationType } from "../../render/utils/types"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../../motion/types"
-import {
-    collectProjectingAncestors,
-    collectProjectingChildren,
-    updateLayoutMeasurement,
-} from "../../render/dom/projection/utils"
 import { progress } from "popmotion"
-import { convertToRelativeProjection } from "../../render/dom/projection/convert-to-relative"
-import { calcRelativeOffset } from "../../motion/features/layout/utils"
-import { batchLayout, flushLayout } from "../../render/dom/utils/batch-layout"
 import { flushSync } from "framesync"
+import { Box, Point, TransformPoint } from "../../projection/geometry/types"
+import { createBox } from "../../projection/geometry/models"
+import { eachAxis } from "../../projection/utils/each-axis"
+import { measureViewportBox } from "../../projection/node/HTMLProjectionNode"
+import {
+    convertBoundingBoxToBox,
+    convertBoxToBoundingBox,
+} from "../../projection/geometry/conversion"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -53,7 +44,7 @@ interface DragControlConfig {
 
 export interface DragControlOptions {
     snapToCursor?: boolean
-    cursorProgress?: Point2D
+    cursorProgress?: Point
 }
 
 interface DragControlsProps extends DraggableProps {
@@ -94,7 +85,7 @@ export class VisualElementDragControls {
      *
      * @internal
      */
-    private elastic: AxisBox2D = axisBox()
+    private elastic: Box = createBox()
 
     /**
      * A reference to the host component's latest props.
@@ -125,7 +116,7 @@ export class VisualElementDragControls {
      *
      * @internal
      */
-    cursorProgress: Point2D = {
+    cursorProgress: Point = {
         x: 0.5,
         y: 0.5,
     }
@@ -150,11 +141,11 @@ export class VisualElementDragControls {
     /**
      * A reference to the measured constraints bounding box
      */
-    private constraintsBox?: AxisBox2D
+    private constraintsBox?: Box
 
     constructor({ visualElement }: DragControlConfig) {
         this.visualElement = visualElement
-        this.visualElement.enableLayoutProjection()
+        // this.visualElement.enableLayoutProjection()
         elementDragControls.set(visualElement, this)
     }
 
@@ -179,93 +170,93 @@ export class VisualElementDragControls {
              */
             const initialPoint = getViewportPointFromEvent(event).point
 
-            this.cancelLayout?.()
-            this.cancelLayout = batchLayout((read, write) => {
-                const ancestors = collectProjectingAncestors(this.visualElement)
-                const children = collectProjectingChildren(this.visualElement)
-                const tree = [...ancestors, ...children]
-                let hasManuallySetCursorOrigin: boolean = false
+            // this.cancelLayout?.()
+            // this.cancelLayout = batchLayout((read, write) => {
+            //     const ancestors = collectProjectingAncestors(this.visualElement)
+            //     const children = collectProjectingChildren(this.visualElement)
+            //     const tree = [...ancestors, ...children]
+            //     let hasManuallySetCursorOrigin: boolean = false
 
-                /**
-                 * Apply a simple lock to the projection target. This ensures no animations
-                 * can run on the projection box while this lock is active.
-                 */
-                this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
+            //     /**
+            //      * Apply a simple lock to the projection target. This ensures no animations
+            //      * can run on the projection box while this lock is active.
+            //      */
+            //     this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
 
-                write(() => {
-                    tree.forEach((element) => element.resetTransform())
-                })
+            //     write(() => {
+            //         tree.forEach((element) => element.resetTransform())
+            //     })
 
-                read(() => {
-                    updateLayoutMeasurement(this.visualElement)
-                    children.forEach(updateLayoutMeasurement)
-                })
+            //     read(() => {
+            //         updateLayoutMeasurement(this.visualElement)
+            //         children.forEach(updateLayoutMeasurement)
+            //     })
 
-                write(() => {
-                    tree.forEach((element) => element.restoreTransform())
+            //     write(() => {
+            //         tree.forEach((element) => element.restoreTransform())
 
-                    if (snapToCursor) {
-                        hasManuallySetCursorOrigin = this.snapToCursor(
-                            initialPoint
-                        )
-                    }
-                })
+            //         if (snapToCursor) {
+            //             hasManuallySetCursorOrigin = this.snapToCursor(
+            //                 initialPoint
+            //             )
+            //         }
+            //     })
 
-                read(() => {
-                    const isRelativeDrag = Boolean(
-                        this.getAxisMotionValue("x") && !this.isExternalDrag()
-                    )
+            //     read(() => {
+            //         const isRelativeDrag = Boolean(
+            //             this.getAxisMotionValue("x") && !this.isExternalDrag()
+            //         )
 
-                    if (!isRelativeDrag) {
-                        this.visualElement.rebaseProjectionTarget(
-                            true,
-                            this.visualElement.measureViewportBox(false)
-                        )
-                    }
+            //         if (!isRelativeDrag) {
+            //             this.visualElement.rebaseProjectionTarget(
+            //                 true,
+            //                 this.visualElement.measureViewportBox(false)
+            //             )
+            //         }
 
-                    this.visualElement.scheduleUpdateLayoutProjection()
+            //         this.visualElement.scheduleUpdateLayoutProjection()
 
-                    /**
-                     * When dragging starts, we want to find where the cursor is relative to the bounding box
-                     * of the element. Every frame, we calculate a new bounding box using this relative position
-                     * and let the visualElement renderer figure out how to reproject the element into this bounding
-                     * box.
-                     *
-                     * By doing it this way, rather than applying an x/y transform directly to the element,
-                     * we can ensure the component always visually sticks to the cursor as we'd expect, even
-                     * if the DOM element itself changes layout as a result of React updates the user might
-                     * make based on the drag position.
-                     */
-                    const { projection } = this.visualElement
+            //         /**
+            //          * When dragging starts, we want to find where the cursor is relative to the bounding box
+            //          * of the element. Every frame, we calculate a new bounding box using this relative position
+            //          * and let the visualElement renderer figure out how to reproject the element into this bounding
+            //          * box.
+            //          *
+            //          * By doing it this way, rather than applying an x/y transform directly to the element,
+            //          * we can ensure the component always visually sticks to the cursor as we'd expect, even
+            //          * if the DOM element itself changes layout as a result of React updates the user might
+            //          * make based on the drag position.
+            //          */
+            //         const { projection } = this.visualElement
 
-                    eachAxis((axis) => {
-                        if (!hasManuallySetCursorOrigin) {
-                            const { min, max } = projection.target[axis]
-                            this.cursorProgress[axis] = cursorProgress
-                                ? cursorProgress[axis]
-                                : progress(min, max, initialPoint[axis])
-                        }
+            //         eachAxis((axis) => {
+            //             if (!hasManuallySetCursorOrigin) {
+            //                 const { min, max } = projection.target[axis]
+            //                 this.cursorProgress[axis] = cursorProgress
+            //                     ? cursorProgress[axis]
+            //                     : progress(min, max, initialPoint[axis])
+            //             }
 
-                        /**
-                         * If we have external drag MotionValues, record their origin point. On pointermove
-                         * we'll apply the pan gesture offset directly to this value.
-                         */
-                        const axisValue = this.getAxisMotionValue(axis)
-                        if (axisValue) {
-                            this.originPoint[axis] = axisValue.get()
-                        }
-                    })
-                })
+            //             /**
+            //              * If we have external drag MotionValues, record their origin point. On pointermove
+            //              * we'll apply the pan gesture offset directly to this value.
+            //              */
+            //             const axisValue = this.getAxisMotionValue(axis)
+            //             if (axisValue) {
+            //                 this.originPoint[axis] = axisValue.get()
+            //             }
+            //         })
+            //     })
 
-                write(() => {
-                    flushSync.update()
-                    flushSync.preRender()
-                    flushSync.render()
-                    flushSync.postRender()
-                })
+            //     write(() => {
+            //         flushSync.update()
+            //         flushSync.preRender()
+            //         flushSync.render()
+            //         flushSync.postRender()
+            //     })
 
-                read(() => this.resolveDragConstraints())
-            })
+            //     read(() => this.resolveDragConstraints())
+            // })
         }
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
@@ -279,7 +270,7 @@ export class VisualElementDragControls {
                 if (!this.openGlobalLock) return
             }
 
-            flushLayout()
+            // flushLayout()
 
             // Set current drag status
             this.isDragging = true
@@ -341,8 +332,8 @@ export class VisualElementDragControls {
 
     resolveDragConstraints() {
         const { dragConstraints, dragElastic } = this.props
-        const { layoutCorrected: layout } = this.visualElement.getLayoutState()
-
+        // const { layoutCorrected: layout } = this.visualElement.getLayoutState()
+        const layout = createBox()
         if (dragConstraints) {
             this.constraints = isRefObject(dragConstraints)
                 ? this.resolveRefConstraints(layout, dragConstraints)
@@ -369,19 +360,16 @@ export class VisualElementDragControls {
         }
     }
 
-    resolveRefConstraints(
-        layoutBox: AxisBox2D,
-        constraints: RefObject<Element>
-    ) {
+    resolveRefConstraints(layoutBox: Box, constraints: RefObject<Element>) {
         const { onMeasureDragConstraints, transformPagePoint } = this.props
-        const constraintsElement = constraints.current as Element
+        const constraintsElement = constraints.current as HTMLElement
 
         invariant(
             constraintsElement !== null,
             "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
         )
 
-        this.constraintsBox = getBoundingBox(
+        this.constraintsBox = measureViewportBox(
             constraintsElement,
             transformPagePoint
         )
@@ -397,15 +385,13 @@ export class VisualElementDragControls {
          */
         if (onMeasureDragConstraints) {
             const userConstraints = onMeasureDragConstraints(
-                convertAxisBoxToBoundingBox(measuredConstraints)
+                convertBoxToBoundingBox(measuredConstraints)
             )
 
             this.hasMutatedConstraints = !!userConstraints
 
             if (userConstraints) {
-                measuredConstraints = convertBoundingBoxToAxisBox(
-                    userConstraints
-                )
+                measuredConstraints = convertBoundingBoxToBox(userConstraints)
             }
         }
 
@@ -413,7 +399,7 @@ export class VisualElementDragControls {
     }
 
     cancelDrag() {
-        this.visualElement.unlockProjectionTarget()
+        // this.visualElement.unlockProjectionTarget()
         this.cancelLayout?.()
         this.isDragging = false
         this.panSession && this.panSession.end()
@@ -441,7 +427,7 @@ export class VisualElementDragControls {
         this.props.onDragEnd?.(event, info)
     }
 
-    snapToCursor(point: Point2D) {
+    snapToCursor(point: Point) {
         return eachAxis((axis) => {
             const { drag } = this.props
             // If we're not dragging this axis, do an early return.
@@ -449,8 +435,8 @@ export class VisualElementDragControls {
 
             const axisValue = this.getAxisMotionValue(axis)
             if (axisValue) {
-                const box = this.visualElement.getLayoutState().layout
-
+                // const box = this.visualElement.getLayoutState().layout
+                const box = createBox()
                 const length = box[axis].max - box[axis].min
                 const center = box[axis].min + length / 2
                 const offset = point[axis] - center
@@ -460,13 +446,13 @@ export class VisualElementDragControls {
                 this.cursorProgress[axis] = 0.5
                 return true
             }
-        }).includes(true)
+        }) //.includes(true)
     }
 
     /**
      * Update the specified axis with the latest pointer information.
      */
-    updateAxis(axis: DragDirection, point: Point2D, offset?: Point2D) {
+    updateAxis(axis: DragDirection, point: Point, offset?: Point) {
         const { drag } = this.props
 
         // If we're not dragging this axis, do an early return.
@@ -477,7 +463,7 @@ export class VisualElementDragControls {
             : this.updateVisualElementAxis(axis, point)
     }
 
-    updateAxisMotionValue(axis: DragDirection, offset?: Point2D) {
+    updateAxisMotionValue(axis: DragDirection, offset?: Point) {
         const axisValue = this.getAxisMotionValue(axis)
 
         if (!offset || !axisValue) return
@@ -494,9 +480,10 @@ export class VisualElementDragControls {
         axisValue.set(update)
     }
 
-    updateVisualElementAxis(axis: DragDirection, point: Point2D) {
+    updateVisualElementAxis(axis: DragDirection, point: Point) {
         // Get the actual layout bounding box of the element
-        const axisLayout = this.visualElement.getLayoutState().layout[axis]
+        const axisLayout = createBox().x
+        // const axisLayout = this.visualElement.getLayoutState().layout[axis]
 
         // Calculate its current length. In the future we might want to lerp this to animate
         // between lengths if the layout changes as we change the DOM
@@ -515,7 +502,7 @@ export class VisualElementDragControls {
         )
 
         // Update the axis viewport target with this new min and the length
-        this.visualElement.setProjectionTargetAxis(axis, min, min + axisLength)
+        // this.visualElement.setProjectionTargetAxis(axis, min, min + axisLength)
     }
 
     setProps({
@@ -566,45 +553,45 @@ export class VisualElementDragControls {
         return _dragX || _dragY
     }
 
-    private animateDragEnd(velocity: Point2D) {
+    private animateDragEnd(velocity: Point) {
         const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
         /**
          * Everything beyond the drag gesture should be performed with
          * relative projection so children stay in sync with their parent element.
          */
-        const isRelative = convertToRelativeProjection(
-            this.visualElement,
-            this.isLayoutDrag() && !this.isExternalDrag()
-        )
+        // const isRelative = convertToRelativeProjection(
+        //     this.visualElement,
+        //     this.isLayoutDrag() && !this.isExternalDrag()
+        // )
 
-        /**
-         * If we had previously resolved constraints relative to the viewport,
-         * we need to also convert those to a relative coordinate space for the animation
-         */
-        const constraints = this.constraints || {}
-        if (
-            isRelative &&
-            Object.keys(constraints).length &&
-            this.isLayoutDrag()
-        ) {
-            const projectionParent = this.visualElement.getProjectionParent()
+        // /**
+        //  * If we had previously resolved constraints relative to the viewport,
+        //  * we need to also convert those to a relative coordinate space for the animation
+        //  */
+        // const constraints = this.constraints || {}
+        // if (
+        //     isRelative &&
+        //     Object.keys(constraints).length &&
+        //     this.isLayoutDrag()
+        // ) {
+        //     const projectionParent = this.visualElement.getProjectionParent()
 
-            if (projectionParent) {
-                const relativeConstraints = calcRelativeOffset(
-                    projectionParent.projection.targetFinal,
-                    constraints as AxisBox2D
-                )
+        //     if (projectionParent) {
+        //         const relativeConstraints = calcRelativeOffset(
+        //             projectionParent.projection.targetFinal,
+        //             constraints as Box
+        //         )
 
-                eachAxis((axis) => {
-                    const { min, max } = relativeConstraints[axis]
-                    constraints[axis] = {
-                        min: isNaN(min) ? undefined : min,
-                        max: isNaN(max) ? undefined : max,
-                    }
-                })
-            }
-        }
+        //         eachAxis((axis) => {
+        //             const { min, max } = relativeConstraints[axis]
+        //             constraints[axis] = {
+        //                 min: isNaN(min) ? undefined : min,
+        //                 max: isNaN(max) ? undefined : max,
+        //             }
+        //         })
+        //     }
+        // }
 
         const momentumAnimations = eachAxis((axis) => {
             if (!shouldDrag(axis, drag, this.currentDirection)) {
@@ -637,27 +624,28 @@ export class VisualElementDragControls {
             // If we're not animating on an externally-provided `MotionValue` we can use the
             // component's animation controls which will handle interactions with whileHover (etc),
             // otherwise we just have to animate the `MotionValue` itself.
-            return this.getAxisMotionValue(axis)
-                ? this.startAxisValueAnimation(axis, inertia)
-                : this.visualElement.startLayoutAnimation(
-                      axis,
-                      inertia,
-                      isRelative
-                  )
+            // return this.getAxisMotionValue(axis)
+            //     ? this.startAxisValueAnimation(axis, inertia)
+            //     : this.visualElement.startLayoutAnimation(
+            //           axis,
+            //           inertia,
+            //           isRelative
+            //       )
+            return true
         })
-
+        return Promise.resolve()
         // Run all animations and then resolve the new drag constraints.
-        return Promise.all(momentumAnimations).then(() => {
-            this.props.onDragTransitionEnd?.()
-        })
+        // return Promise.all(momentumAnimations).then(() => {
+        //     this.props.onDragTransitionEnd?.()
+        // })
     }
 
     stopMotion() {
         eachAxis((axis) => {
-            const axisValue = this.getAxisMotionValue(axis)
-            axisValue
-                ? axisValue.stop()
-                : this.visualElement.stopLayoutAnimation()
+            // const axisValue = this.getAxisMotionValue(axis)
+            // axisValue
+            //     ? axisValue.stop()
+            //     : this.visualElement.stopLayoutAnimation()
         })
     }
 
@@ -674,69 +662,58 @@ export class VisualElementDragControls {
     }
 
     scalePoint() {
-        const { drag, dragConstraints } = this.props
-        if (!isRefObject(dragConstraints) || !this.constraintsBox) return
-
-        // Stop any current animations as there can be some visual glitching if we resize mid animation
-        this.stopMotion()
-
-        // Record the relative progress of the targetBox relative to the constraintsBox
-        const boxProgress = { x: 0, y: 0 }
-        eachAxis((axis) => {
-            boxProgress[axis] = calcOrigin(
-                this.visualElement.projection.target[axis],
-                this.constraintsBox![axis]
-            )
-        })
-
+        // const { drag, dragConstraints } = this.props
+        // if (!isRefObject(dragConstraints) || !this.constraintsBox) return
+        // // Stop any current animations as there can be some visual glitching if we resize mid animation
+        // this.stopMotion()
+        // // Record the relative progress of the targetBox relative to the constraintsBox
+        // const boxProgress = { x: 0, y: 0 }
+        // eachAxis((axis) => {
+        //     boxProgress[axis] = calcOrigin(
+        //         this.visualElement.projection.target[axis],
+        //         this.constraintsBox![axis]
+        //     )
+        // })
         /**
          * For each axis, calculate the current progress of the layout axis within the constraints.
          * Then, using the latest layout and constraints measurements, reposition the new layout axis
          * proportionally within the constraints.
          */
-        this.updateConstraints(() => {
-            eachAxis((axis) => {
-                if (!shouldDrag(axis, drag, null)) return
-
-                // Calculate the position of the targetBox relative to the constraintsBox using the
-                // previously calculated progress
-                const { min, max } = calcPositionFromProgress(
-                    this.visualElement.projection.target[axis],
-                    this.constraintsBox![axis],
-                    boxProgress[axis]
-                )
-
-                this.visualElement.setProjectionTargetAxis(axis, min, max)
-            })
-        })
-
+        // this.updateConstraints(() => {
+        //     eachAxis((axis) => {
+        //         if (!shouldDrag(axis, drag, null)) return
+        //         // Calculate the position of the targetBox relative to the constraintsBox using the
+        //         // previously calculated progress
+        //         const { min, max } = calcPositionFromProgress(
+        //             this.visualElement.projection.target[axis],
+        //             this.constraintsBox![axis],
+        //             boxProgress[axis]
+        //         )
+        //         this.visualElement.setProjectionTargetAxis(axis, min, max)
+        //     })
+        // })
         /**
          * If any other draggable components are queuing the same tasks synchronously
          * this will wait until they've all been scheduled before flushing.
          */
-        setTimeout(flushLayout, 1)
+        // setTimeout(flushLayout, 1)
     }
 
     updateConstraints(onReady?: () => void) {
-        this.cancelLayout = batchLayout((read, write) => {
-            const ancestors = collectProjectingAncestors(this.visualElement)
-
-            write(() =>
-                ancestors.forEach((element) => element.resetTransform())
-            )
-
-            read(() => updateLayoutMeasurement(this.visualElement))
-
-            write(() =>
-                ancestors.forEach((element) => element.restoreTransform())
-            )
-
-            read(() => {
-                this.resolveDragConstraints()
-            })
-
-            if (onReady) write(onReady)
-        })
+        // this.cancelLayout = batchLayout((read, write) => {
+        //     const ancestors = collectProjectingAncestors(this.visualElement)
+        //     write(() =>
+        //         ancestors.forEach((element) => element.resetTransform())
+        //     )
+        //     read(() => updateLayoutMeasurement(this.visualElement))
+        //     write(() =>
+        //         ancestors.forEach((element) => element.restoreTransform())
+        //     )
+        //     read(() => {
+        //         this.resolveDragConstraints()
+        //     })
+        //     if (onReady) write(onReady)
+        // })
     }
 
     mount(visualElement: VisualElement) {
@@ -812,7 +789,7 @@ function shouldDrag(
  * @param lockThreshold - (Optional) - the minimum absolute offset before we can determine a drag direction.
  */
 function getCurrentDirection(
-    offset: Point2D,
+    offset: Point,
     lockThreshold = 10
 ): DragDirection | null {
     let direction: DragDirection | null = null

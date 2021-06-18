@@ -1,17 +1,17 @@
 import { RefObject } from "react"
 import { PanInfo } from "../PanSession"
 import { Inertia, TargetAndTransition } from "../../types"
-import { Axis, BoundingBox2D } from "../../types/geometry"
 import { DragControls } from "./use-drag-controls"
 import { MotionValue } from "../../value"
 import { VariantLabels } from "../../motion/types"
+import { Axis, BoundingBox } from "../../projection/geometry/types"
 
 export type DragHandler = (
     event: MouseEvent | TouchEvent | PointerEvent,
     info: PanInfo
 ) => void
 
-export type DragElastic = boolean | number | Partial<BoundingBox2D>
+export type DragElastic = boolean | number | Partial<BoundingBox>
 
 export interface ResolvedConstraints {
     x: Partial<Axis>
@@ -302,7 +302,7 @@ export interface DraggableProps extends DragHandlers {
      * }
      * ```
      */
-    dragConstraints?: false | Partial<BoundingBox2D> | RefObject<Element>
+    dragConstraints?: false | Partial<BoundingBox> | RefObject<Element>
 
     /**
      * The degree of movement allowed outside constraints. 0 = no movement, 1 =
@@ -486,9 +486,7 @@ export interface DraggableProps extends DragHandlers {
      *
      * @public
      */
-    onMeasureDragConstraints?: (
-        constraints: BoundingBox2D
-    ) => BoundingBox2D | void
+    onMeasureDragConstraints?: (constraints: BoundingBox) => BoundingBox | void
 
     /**
      * Usually, dragging uses the layout project engine, and applies transforms to the underlying VisualElement.

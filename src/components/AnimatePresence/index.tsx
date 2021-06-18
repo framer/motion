@@ -11,10 +11,6 @@ import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
-import {
-    SharedLayoutContext,
-    isSharedLayout,
-} from "../../context/SharedLayoutContext"
 
 type ComponentKey = string | number
 
@@ -129,12 +125,12 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
-    let forceRender = useForceUpdate()
-    const layoutContext = useContext(SharedLayoutContext)
+    const forceRender = useForceUpdate()
+    // const layoutContext = useContext(SharedLayoutContext)
 
-    if (isSharedLayout(layoutContext)) {
-        forceRender = layoutContext.forceUpdate
-    }
+    // if (isSharedLayout(layoutContext)) {
+    //     forceRender = layoutContext.forceUpdate
+    // }
 
     const isInitialRender = useRef(true)
 
