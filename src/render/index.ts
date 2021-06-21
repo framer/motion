@@ -1,5 +1,6 @@
 import sync, { cancelSync } from "framesync"
 import { MotionStyle } from "../motion/types"
+import { HTMLProjectionNode } from "../projection"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
@@ -220,9 +221,14 @@ export const visualElement = <Instance, MutableState, Options>({
         mount(newInstance: Instance) {
             instance = element.current = newInstance
 
+            if (element.projection) {
+                element.projection.mount(newInstance)
+            }
+
             if (isVariantNode && parent && !isControllingVariants) {
                 removeFromVariantTree = parent?.addVariantChild(element)
             }
+
             parent?.children.add(element)
         },
 

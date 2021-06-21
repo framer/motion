@@ -8,17 +8,26 @@ import { Box, Delta, Point } from "../geometry/types"
 import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
 
-export interface IProjectionNode {
+export interface Snapshot {
+    layout: Box
+    visible: Box
+}
+
+export interface IProjectionNode<I = unknown> {
     parent?: IProjectionNode
     root?: IProjectionNode
     children: Set<IProjectionNode>
     path: IProjectionNode[]
+    mount: (node: I) => void
     options: ProjectionNodeOptions
+    setOptions(options: ProjectionNodeOptions): void
     layout?: Box
-    snapshot?: Box
+    snapshot?: Snapshot
     scroll?: Point
     projectionDelta?: Delta
     isLayoutDirty: boolean
+    willUpdate(): void
+    didUpdate(): void
     updateLayout(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
@@ -44,7 +53,7 @@ export interface ProjectionNodeOptions {
         delta,
     }: {
         layout: Box
-        snapshot: Box
+        snapshot: Snapshot
         delta: Delta
     }) => void
     onProjectionUpdate?: () => void
@@ -58,7 +67,7 @@ export function createProjectionNode<I>({
     measureScroll,
     measureViewportBox,
 }: ProjectionNodeConfig<I>) {
-    return class ProjectionNode implements IProjectionNode {
+    return class ProjectionNode implements IProjectionNode<I> {
         instance: I
 
         root: IProjectionNode
@@ -71,7 +80,7 @@ export function createProjectionNode<I>({
 
         options: ProjectionNodeOptions
 
-        snapshot: Box | undefined
+        snapshot: Snapshot | undefined
 
         layout: Box | undefined
 
@@ -89,19 +98,14 @@ export function createProjectionNode<I>({
 
         target?: Box
 
-        constructor(
-            instance: I,
-            options: ProjectionNodeOptions = {},
-            parent?: IProjectionNode
-        ) {
-            this.instance = instance
+        constructor(parent?: IProjectionNode) {
             this.parent = parent
                 ? parent
                 : (defaultParent?.() as IProjectionNode)
+
             if (this.parent) this.parent.children.add(this)
             this.root = this.parent ? this.parent.root || this.parent : this
             this.path = this.parent ? [...this.parent.path, this.parent] : []
-            this.options = options
 
             if (attachResizeListener) {
             }
@@ -117,6 +121,10 @@ export function createProjectionNode<I>({
         /**
          * Lifecycles
          */
+        mount(instance: I) {
+            this.instance = instance
+        }
+
         willUpdate() {
             /**
              * TODO: Check we haven't updated the scroll
@@ -163,7 +171,11 @@ export function createProjectionNode<I>({
         updateSnapshot() {
             if (!measureViewportBox) return
 
-            this.snapshot = this.measure()
+            const visible = this.measure()!
+            this.snapshot = {
+                visible,
+                layout: this.removeElementScroll(visible!),
+            }
         }
 
         updateLayout() {
@@ -174,7 +186,8 @@ export function createProjectionNode<I>({
             }
 
             if (!this.isLayoutDirty) return
-            this.layout = this.measure()
+
+            this.layout = this.removeElementScroll(this.measure()!)
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
         }
@@ -189,16 +202,32 @@ export function createProjectionNode<I>({
             if (!measureViewportBox) return
             const box = measureViewportBox(this.instance)
 
+            // Remove window scroll to give page-relative coordinates
+            const { scroll } = this.root
+            scroll && eachAxis((axis) => translateAxis(box[axis], scroll[axis]))
+
+            return box
+        }
+
+        removeElementScroll(box: Box) {
+            const boxWithoutScroll = createBox()
+            copyBoxInto(boxWithoutScroll, box)
             // TODO: Keep a culmulative scroll offset rather
             // than loop through
             this.path.forEach((node) => {
-                if (node.scroll && node.options.shouldMeasureScroll) {
+                if (
+                    node !== this.root &&
+                    node.scroll &&
+                    node.options.shouldMeasureScroll
+                ) {
                     const { scroll } = node
-                    eachAxis((axis) => translateAxis(box[axis], scroll[axis]))
+                    eachAxis((axis) =>
+                        translateAxis(boxWithoutScroll[axis], scroll[axis])
+                    )
                 }
             })
 
-            return box
+            return boxWithoutScroll
         }
 
         /**
@@ -209,6 +238,10 @@ export function createProjectionNode<I>({
 
             if (!this.projectionDelta) this.projectionDelta = createDelta()
             this.root.scheduleUpdateProjection()
+        }
+
+        setOptions(options: ProjectionNodeOptions) {
+            this.options = options
         }
 
         /**
@@ -285,10 +318,15 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     const { onLayoutUpdate } = node.options
     if (onLayoutUpdate) {
         const { layout, snapshot } = node
-
         if (layout && snapshot) {
             const delta = createDelta()
-            calcBoxDelta(delta, layout, snapshot)
+
+            /**
+             * TODO: Create delta to see if layout has
+             * changed and pass that data through
+             */
+            console.log(snapshot.layout.x.min, layout.x.min)
+            calcBoxDelta(delta, layout, snapshot.layout)
             onLayoutUpdate({ layout, snapshot, delta })
         }
     }

@@ -7,6 +7,7 @@ import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
 import { Box, Point } from "../projection/geometry/types"
+import { IProjectionNode } from "../projection/node/create-projection-node"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -35,6 +36,8 @@ export interface VisualElement<Instance = any, RenderState = any>
     getClosestVariantNode(): VisualElement | undefined
 
     animateMotionValue?: typeof startAnimation
+
+    projection?: IProjectionNode
 
     /**
      * Visibility
