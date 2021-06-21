@@ -1,5 +1,4 @@
 import * as React from "react"
-import { flushLayout } from "../../render/dom/utils/batch-layout"
 import { useConstant } from "../../utils/use-constant"
 import {
     VisualElementDragControls,
@@ -91,12 +90,12 @@ export class DragControls {
         })
     }
 
-    updateConstraints(flush = true) {
+    updateConstraints(_flush = true) {
         this.componentControls.forEach((controls) => {
             controls.updateConstraints()
         })
 
-        flush && flushLayout()
+        // flush && flushLayout()
     }
 }
 
