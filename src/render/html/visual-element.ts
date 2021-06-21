@@ -52,8 +52,7 @@ export const htmlConfig: VisualElementConfig<
 
     getBaseTarget(props, key) {
         const defaultType = getDefaultValueType(key)
-        const fallback = defaultType?.default ?? 0
-        return props.style?.[key] ?? fallback
+        return props.style?.[key] ?? defaultType?.default
     },
 
     measureViewportBox(element, { transformPagePoint }) {
