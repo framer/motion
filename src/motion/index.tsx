@@ -100,6 +100,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          */
         return (
             <>
+                {features}
                 <MotionContext.Provider value={context}>
                     {useRender(
                         Component,
@@ -113,7 +114,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                         isStatic
                     )}
                 </MotionContext.Provider>
-                {features}
             </>
         )
     }

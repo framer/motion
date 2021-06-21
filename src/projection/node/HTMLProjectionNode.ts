@@ -25,7 +25,9 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
     measureViewportBox,
     defaultParent: () => {
         if (!documentNode) {
-            documentNode = new DocumentProjectionNode(window, {
+            documentNode = new DocumentProjectionNode()
+            documentNode.mount(window)
+            documentNode.setOptions({
                 shouldMeasureScroll: true,
             })
         }

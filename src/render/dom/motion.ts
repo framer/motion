@@ -7,12 +7,13 @@ import { animations } from "../../motion/features/animations"
 import { drag } from "../../motion/features/drag"
 import { FeatureComponents } from "../../motion/features/types"
 import { createDomVisualElement } from "./create-visual-element"
+import { layoutFeatures } from "../../motion/features/layout"
 
 const featureBundle: FeatureComponents = {
     ...animations,
     ...gestureAnimations,
     ...drag,
-    // ...layoutAnimations,
+    ...layoutFeatures,
 }
 
 /**
