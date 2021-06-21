@@ -47,14 +47,11 @@ export interface ProjectionNodeConfig<I> {
 
 export interface ProjectionNodeOptions {
     shouldMeasureScroll?: boolean
-    onLayoutUpdate?: ({
-        layout,
-        snapshot,
-        delta,
-    }: {
+    onLayoutUpdate?: (data: {
         layout: Box
         snapshot: Snapshot
         delta: Delta
+        hasLayoutChanged: boolean
     }) => void
     onProjectionUpdate?: () => void
 }
@@ -319,15 +316,22 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     if (onLayoutUpdate) {
         const { layout, snapshot } = node
         if (layout && snapshot) {
-            const delta = createDelta()
+            const layoutDelta = createDelta()
+            calcBoxDelta(layoutDelta, layout, snapshot.layout)
 
-            /**
-             * TODO: Create delta to see if layout has
-             * changed and pass that data through
-             */
-            console.log(snapshot.layout.x.min, layout.x.min)
-            calcBoxDelta(delta, layout, snapshot.layout)
-            onLayoutUpdate({ layout, snapshot, delta })
+            const visualDelta = createDelta()
+            calcBoxDelta(visualDelta, layout, snapshot.visible)
+
+            onLayoutUpdate({
+                layout,
+                snapshot,
+                delta: visualDelta,
+                hasLayoutChanged:
+                    layoutDelta.x.translate !== 0 ||
+                    layoutDelta.x.scale !== 1 ||
+                    layoutDelta.y.translate !== 0 ||
+                    layoutDelta.y.scale !== 1,
+            })
         }
     }
 
