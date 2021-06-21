@@ -6,24 +6,17 @@ import { Lock, getGlobalLock } from "./utils/lock"
 import { isRefObject } from "../../utils/is-ref-object"
 import { addPointerEvent } from "../../events/use-pointer-event"
 import { addDomEvent } from "../../events/use-dom-event"
-import { getViewportPointFromEvent } from "../../events/event-info"
 import {
     calcRelativeConstraints,
-    calcConstrainedMinPoint,
     calcViewportConstraints,
-    calcPositionFromProgress,
     applyConstraints,
     rebaseAxisConstraints,
     resolveDragElastic,
     defaultElastic,
 } from "./utils/constraints"
-import { startAnimation } from "../../animation/utils/transitions"
-import { Transition } from "../../types"
 import { AnimationType } from "../../render/utils/types"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../../motion/types"
-import { progress } from "popmotion"
-import { flushSync } from "framesync"
 import { Box, Point, TransformPoint } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { eachAxis } from "../../projection/utils/each-axis"
@@ -154,11 +147,8 @@ export class VisualElementDragControls {
      *
      * @public
      */
-    start(
-        originEvent: AnyPointerEvent,
-        { snapToCursor = false, cursorProgress }: DragControlOptions = {}
-    ) {
-        const onSessionStart = (event: AnyPointerEvent) => {
+    start(originEvent: AnyPointerEvent, _options: DragControlOptions = {}) {
+        const onSessionStart = (_event: AnyPointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
             this.stopMotion()
@@ -168,7 +158,7 @@ export class VisualElementDragControls {
              * than the one we receive when the gesture actually starts. By then, the pointer will
              * have already moved, and the perception will be of the pointer "slipping" across the element
              */
-            const initialPoint = getViewportPointFromEvent(event).point
+            // const initialPoint = getViewportPointFromEvent(event).point
 
             // this.cancelLayout?.()
             // this.cancelLayout = batchLayout((read, write) => {
@@ -480,27 +470,23 @@ export class VisualElementDragControls {
         axisValue.set(update)
     }
 
-    updateVisualElementAxis(axis: DragDirection, point: Point) {
+    updateVisualElementAxis(_axis: DragDirection, _point: Point) {
         // Get the actual layout bounding box of the element
-        const axisLayout = createBox().x
+        // const axisLayout = createBox().x
         // const axisLayout = this.visualElement.getLayoutState().layout[axis]
-
-        // Calculate its current length. In the future we might want to lerp this to animate
-        // between lengths if the layout changes as we change the DOM
-        const axisLength = axisLayout.max - axisLayout.min
-
-        // Get the initial progress that the pointer sat on this axis on gesture start.
-        const axisProgress = this.cursorProgress[axis]
-
-        // Calculate a new min point based on the latest pointer position, constraints and elastic
-        const min = calcConstrainedMinPoint(
-            point[axis],
-            axisLength,
-            axisProgress,
-            this.constraints?.[axis],
-            this.elastic[axis]
-        )
-
+        // // Calculate its current length. In the future we might want to lerp this to animate
+        // // between lengths if the layout changes as we change the DOM
+        // const axisLength = axisLayout.max - axisLayout.min
+        // // Get the initial progress that the pointer sat on this axis on gesture start.
+        // const axisProgress = this.cursorProgress[axis]
+        // // Calculate a new min point based on the latest pointer position, constraints and elastic
+        // const min = calcConstrainedMinPoint(
+        //     point[axis],
+        //     axisLength,
+        //     axisProgress,
+        //     this.constraints?.[axis],
+        //     this.elastic[axis]
+        // )
         // Update the axis viewport target with this new min and the length
         // this.visualElement.setProjectionTargetAxis(axis, min, min + axisLength)
     }
@@ -544,17 +530,17 @@ export class VisualElementDragControls {
         }
     }
 
-    private isLayoutDrag() {
-        return !this.getAxisMotionValue("x")
-    }
+    // private isLayoutDrag() {
+    //     return !this.getAxisMotionValue("x")
+    // }
 
-    private isExternalDrag() {
-        const { _dragX, _dragY } = this.props
-        return _dragX || _dragY
-    }
+    // private isExternalDrag() {
+    //     const { _dragX, _dragY } = this.props
+    //     return _dragX || _dragY
+    // }
 
-    private animateDragEnd(velocity: Point) {
-        const { drag, dragMomentum, dragElastic, dragTransition } = this.props
+    private animateDragEnd(_velocity: Point) {
+        // const { drag, dragMomentum, dragElastic, dragTransition } = this.props
 
         /**
          * Everything beyond the drag gesture should be performed with
@@ -593,46 +579,46 @@ export class VisualElementDragControls {
         //     }
         // }
 
-        const momentumAnimations = eachAxis((axis) => {
-            if (!shouldDrag(axis, drag, this.currentDirection)) {
-                return
-            }
+        // const momentumAnimations = eachAxis((axis) => {
+        //     if (!shouldDrag(axis, drag, this.currentDirection)) {
+        //         return
+        //     }
 
-            const transition = constraints?.[axis] ?? {}
+        //     const transition = constraints?.[axis] ?? {}
 
-            /**
-             * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
-             * of spring animations so we should look into adding a disable spring option to `inertia`.
-             * We could do something here where we affect the `bounceStiffness` and `bounceDamping`
-             * using the value of `dragElastic`.
-             */
-            const bounceStiffness = dragElastic ? 200 : 1000000
-            const bounceDamping = dragElastic ? 40 : 10000000
+        //     /**
+        //      * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
+        //      * of spring animations so we should look into adding a disable spring option to `inertia`.
+        //      * We could do something here where we affect the `bounceStiffness` and `bounceDamping`
+        //      * using the value of `dragElastic`.
+        //      */
+        //     const bounceStiffness = dragElastic ? 200 : 1000000
+        //     const bounceDamping = dragElastic ? 40 : 10000000
 
-            const inertia = {
-                type: "inertia",
-                velocity: dragMomentum ? velocity[axis] : 0,
-                bounceStiffness,
-                bounceDamping,
-                timeConstant: 750,
-                restDelta: 1,
-                restSpeed: 10,
-                ...dragTransition,
-                ...transition,
-            }
+        //     const inertia = {
+        //         type: "inertia",
+        //         velocity: dragMomentum ? velocity[axis] : 0,
+        //         bounceStiffness,
+        //         bounceDamping,
+        //         timeConstant: 750,
+        //         restDelta: 1,
+        //         restSpeed: 10,
+        //         ...dragTransition,
+        //         ...transition,
+        //     }
 
-            // If we're not animating on an externally-provided `MotionValue` we can use the
-            // component's animation controls which will handle interactions with whileHover (etc),
-            // otherwise we just have to animate the `MotionValue` itself.
-            // return this.getAxisMotionValue(axis)
-            //     ? this.startAxisValueAnimation(axis, inertia)
-            //     : this.visualElement.startLayoutAnimation(
-            //           axis,
-            //           inertia,
-            //           isRelative
-            //       )
-            return true
-        })
+        //     // If we're not animating on an externally-provided `MotionValue` we can use the
+        //     // component's animation controls which will handle interactions with whileHover (etc),
+        //     // otherwise we just have to animate the `MotionValue` itself.
+        //     return this.getAxisMotionValue(axis)
+        //         ? this.startAxisValueAnimation(axis, inertia)
+        //         : this.visualElement.startLayoutAnimation(
+        //               axis,
+        //               inertia,
+        //               isRelative
+        //           )
+        //     return true
+        // })
         return Promise.resolve()
         // Run all animations and then resolve the new drag constraints.
         // return Promise.all(momentumAnimations).then(() => {
@@ -641,25 +627,25 @@ export class VisualElementDragControls {
     }
 
     stopMotion() {
-        eachAxis((axis) => {
-            // const axisValue = this.getAxisMotionValue(axis)
-            // axisValue
-            //     ? axisValue.stop()
-            //     : this.visualElement.stopLayoutAnimation()
-        })
+        // eachAxis((axis) => {
+        // const axisValue = this.getAxisMotionValue(axis)
+        // axisValue
+        //     ? axisValue.stop()
+        //     : this.visualElement.stopLayoutAnimation()
+        // })
     }
 
-    private startAxisValueAnimation(axis: "x" | "y", transition: Transition) {
-        const axisValue = this.getAxisMotionValue(axis)
-        if (!axisValue) return
+    // private startAxisValueAnimation(axis: "x" | "y", transition: Transition) {
+    //     const axisValue = this.getAxisMotionValue(axis)
+    //     if (!axisValue) return
 
-        const currentValue = axisValue.get()
+    //     const currentValue = axisValue.get()
 
-        axisValue.set(currentValue)
-        axisValue.set(currentValue) // Set twice to hard-reset velocity
+    //     axisValue.set(currentValue)
+    //     axisValue.set(currentValue) // Set twice to hard-reset velocity
 
-        return startAnimation(axis, axisValue, 0, transition)
-    }
+    //     return startAnimation(axis, axisValue, 0, transition)
+    // }
 
     scalePoint() {
         // const { drag, dragConstraints } = this.props
@@ -699,7 +685,7 @@ export class VisualElementDragControls {
         // setTimeout(flushLayout, 1)
     }
 
-    updateConstraints(onReady?: () => void) {
+    updateConstraints(_onReady?: () => void) {
         // this.cancelLayout = batchLayout((read, write) => {
         //     const ancestors = collectProjectingAncestors(this.visualElement)
         //     write(() =>

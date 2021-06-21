@@ -1,7 +1,7 @@
 import { distance, mix } from "popmotion"
 import { Axis, AxisDelta, Box, Delta } from "./types"
 
-function calcLength(axis: Axis) {
+export function calcLength(axis: Axis) {
     return axis.max - axis.min
 }
 
