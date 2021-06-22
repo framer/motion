@@ -12,7 +12,7 @@ import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 
 function useLayoutId({ layoutId }: MotionProps) {
-    const layoutGroupId = useContext(LayoutGroupContext)
+    const layoutGroupId = useContext(LayoutGroupContext).prefix
     return layoutGroupId && layoutId !== undefined
         ? layoutGroupId + "-" + layoutId
         : layoutId
