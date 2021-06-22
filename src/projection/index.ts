@@ -1,5 +1,6 @@
 export { HTMLProjectionNode } from "./node/HTMLProjectionNode"
 export { nodeGroup } from "./node/group"
+export { animateDelta } from "./animation"
 export { calcBoxDelta } from "./geometry/delta-calc"
 
 /**
