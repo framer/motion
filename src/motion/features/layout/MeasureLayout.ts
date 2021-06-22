@@ -2,6 +2,7 @@ import React from "react"
 import { LayoutGroupContext } from "../../../context/LayoutGroupContext"
 import { HTMLProjectionNode } from "../../../projection"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
+import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
 import { FeatureProps } from "../types"
 
@@ -71,7 +72,5 @@ const defaultScaleCorrectors = {
     borderTopRightRadius: correctBorderRadius,
     borderBottomLeftRadius: correctBorderRadius,
     borderBottomRightRadius: correctBorderRadius,
-    // boxShadow: {
-    //     process: correctBoxShadow,
-    // },
+    boxShadow: correctBoxShadow,
 }

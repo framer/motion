@@ -19,6 +19,7 @@ export interface IProjectionNode<I = unknown> {
     snapshot?: Snapshot
     target?: Box
     scroll?: Point
+    treeScale?: Point
     projectionDelta?: Delta
     isLayoutDirty: boolean
     willUpdate(notifyListeners?: boolean): void
