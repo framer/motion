@@ -1,4 +1,5 @@
 import sync, { cancelSync, flushSync } from "framesync"
+import { SubscriptionManager } from "../../utils/subscription-manager"
 import { copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import { calcBoxDelta } from "../geometry/delta-calc"
@@ -26,13 +27,18 @@ export interface IProjectionNode<I = unknown> {
     scroll?: Point
     projectionDelta?: Delta
     isLayoutDirty: boolean
-    willUpdate(): void
+    willUpdate(notifyListeners?: boolean): void
     didUpdate(): void
     updateLayout(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
     resolveTargetDelta(): void
     calcProjection(): void
+
+    /**
+     * Events
+     */
+    onLayoutWillUpdate: (callback: VoidFunction) => VoidFunction
 }
 
 export interface ProjectionNodeConfig<I> {
@@ -75,7 +81,7 @@ export function createProjectionNode<I>({
 
         children = new Set<IProjectionNode>()
 
-        options: ProjectionNodeOptions
+        options: ProjectionNodeOptions = {}
 
         snapshot: Snapshot | undefined
 
@@ -94,6 +100,8 @@ export function createProjectionNode<I>({
         projectionDelta?: Delta
 
         target?: Box
+
+        layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
 
         constructor(parent?: IProjectionNode) {
             this.parent = parent
@@ -122,16 +130,19 @@ export function createProjectionNode<I>({
             this.instance = instance
         }
 
-        willUpdate() {
+        willUpdate(shouldNotifyListeners = true) {
+            if (this.isLayoutDirty) return
+
+            this.isLayoutDirty = true
+
             /**
              * TODO: Check we haven't updated the scroll
              * since the last didUpdate
              */
             this.path.forEach((node) => node.updateScroll())
 
-            // Maybe will need to read the scroll position of window
             this.updateSnapshot()
-            this.isLayoutDirty = true
+            shouldNotifyListeners && this.layoutWillUpdateListeners?.notify()
         }
 
         // Note: Currently only running on root node
@@ -166,9 +177,7 @@ export function createProjectionNode<I>({
          * Update measurements
          */
         updateSnapshot() {
-            if (!measureViewportBox) return
-
-            const visible = this.measure()!
+            const visible = this.measure()
             this.snapshot = {
                 visible,
                 layout: this.removeElementScroll(visible!),
@@ -184,7 +193,7 @@ export function createProjectionNode<I>({
 
             if (!this.isLayoutDirty) return
 
-            this.layout = this.removeElementScroll(this.measure()!)
+            this.layout = this.removeElementScroll(this.measure())
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
         }
@@ -195,8 +204,8 @@ export function createProjectionNode<I>({
         }
 
         measure() {
-            if (!measureScroll) return
-            if (!measureViewportBox) return
+            if (!measureViewportBox) return createBox()
+
             const box = measureViewportBox(this.instance)
 
             // Remove window scroll to give page-relative coordinates
@@ -209,6 +218,7 @@ export function createProjectionNode<I>({
         removeElementScroll(box: Box) {
             const boxWithoutScroll = createBox()
             copyBoxInto(boxWithoutScroll, box)
+
             // TODO: Keep a culmulative scroll offset rather
             // than loop through
             this.path.forEach((node) => {
@@ -303,6 +313,16 @@ export function createProjectionNode<I>({
                 ),
             }
         }
+
+        /**
+         * Events
+         */
+        onLayoutWillUpdate(handler: VoidFunction) {
+            if (!this.layoutWillUpdateListeners) {
+                this.layoutWillUpdateListeners = new SubscriptionManager()
+            }
+            return this.layoutWillUpdateListeners!.add(handler)
+        }
     }
 }
 
@@ -313,8 +333,10 @@ function updateTreeLayout(node: IProjectionNode) {
 
 function notifyLayoutUpdate(node: IProjectionNode) {
     const { onLayoutUpdate } = node.options
+
     if (onLayoutUpdate) {
         const { layout, snapshot } = node
+
         if (layout && snapshot) {
             const layoutDelta = createDelta()
             calcBoxDelta(layoutDelta, layout, snapshot.layout)
