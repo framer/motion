@@ -1,8 +1,11 @@
 import React, { useEffect } from "react"
+import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { HTMLProjectionNode, sync } from "../../projection"
 import { FeatureComponents, FeatureProps } from "./types"
 
 class MeasureLayout extends React.Component<FeatureProps> {
+    static contextType = LayoutGroupContext
+
     /**
      * This only mounts projection nodes for components that
      * need measuring, we might want to do it for all components
@@ -26,6 +29,8 @@ class MeasureLayout extends React.Component<FeatureProps> {
                 })
             },
         })
+        const { group } = this.context
+        if (group) group.add(projection)
     }
 
     getSnapshotBeforeUpdate() {
@@ -35,6 +40,11 @@ class MeasureLayout extends React.Component<FeatureProps> {
 
     componentDidUpdate() {
         this.props.visualElement.projection?.root!.didUpdate()
+    }
+
+    componentWillUnmount() {
+        const { group } = this.context
+        if (group) group.remove(this.props.visualElement.projection)
     }
 
     render() {
