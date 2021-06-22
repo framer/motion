@@ -6,15 +6,16 @@ Undo.createNode = (element, parent, options = {}) => {
     const node = new HTMLProjectionNode(parent)
     node.mount(element)
     node.setOptions({
-        onLayoutUpdate: ({ delta, hasLayoutChanged }) => {
-            hasLayoutChanged && node.setTargetDelta(delta)
-        },
         onProjectionUpdate: () => {
             sync.render(() => {
                 Object.assign(element.style, node.getProjectionStyles())
             })
         },
         ...options,
+    })
+
+    node.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
+        hasLayoutChanged && node.setTargetDelta(delta)
     })
 
     return node

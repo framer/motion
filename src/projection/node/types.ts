@@ -1,3 +1,5 @@
+import { ResolvedValues } from "../../render/types"
+import { SubscriptionManager } from "../../utils/subscription-manager"
 import { Box, Delta, Point } from "../geometry/types"
 
 export interface Snapshot {
@@ -15,6 +17,7 @@ export interface IProjectionNode<I = unknown> {
     setOptions(options: ProjectionNodeOptions): void
     layout?: Box
     snapshot?: Snapshot
+    target?: Box
     scroll?: Point
     projectionDelta?: Delta
     isLayoutDirty: boolean
@@ -26,12 +29,26 @@ export interface IProjectionNode<I = unknown> {
     setTargetDelta(delta: Delta): void
     resolveTargetDelta(): void
     calcProjection(): void
+    getProjectionStyles(latest: ResolvedValues): ResolvedValues
 
     /**
      * Events
      */
     onLayoutWillUpdate: (callback: VoidFunction) => VoidFunction
+    onLayoutDidUpdate: (
+        callback: (data: LayoutUpdateData) => void
+    ) => VoidFunction
+    layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
 }
+
+export interface LayoutUpdateData {
+    layout: Box
+    snapshot: Snapshot
+    delta: Delta
+    hasLayoutChanged: boolean
+}
+
+export type LayoutUpdateHandler = (data: LayoutUpdateData) => void
 
 export interface ProjectionNodeConfig<I> {
     defaultParent?: () => IProjectionNode
@@ -45,12 +62,6 @@ export interface ProjectionNodeConfig<I> {
 
 export interface ProjectionNodeOptions {
     shouldMeasureScroll?: boolean
-    onLayoutUpdate?: (data: {
-        layout: Box
-        snapshot: Snapshot
-        delta: Delta
-        hasLayoutChanged: boolean
-    }) => void
     onProjectionUpdate?: () => void
 }
 

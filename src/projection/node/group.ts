@@ -1,4 +1,4 @@
-import { IProjectionNode } from "./create-projection-node"
+import { IProjectionNode } from "./types"
 
 const notify = (node: IProjectionNode) =>
     !node.isLayoutDirty && node.willUpdate(false)

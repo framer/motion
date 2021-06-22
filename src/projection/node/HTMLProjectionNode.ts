@@ -3,8 +3,9 @@ import {
     transformBoxPoints,
 } from "../geometry/conversion"
 import { TransformPoint } from "../geometry/types"
-import { createProjectionNode, IProjectionNode } from "./create-projection-node"
+import { createProjectionNode } from "./create-projection-node"
 import { DocumentProjectionNode } from "./DocumentProjectionNode"
+import { IProjectionNode } from "./types"
 
 let documentNode: IProjectionNode
 
