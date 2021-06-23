@@ -1,4 +1,3 @@
-import { axisBox } from "../../../utils/geometry"
 import { ResolvedValues, VisualElement } from "../../types"
 import { AnimationState, createAnimationState } from "../animation-state"
 import { AnimationType } from "../types"
@@ -6,6 +5,7 @@ import { checkTargetForNewValues, getOrigin } from "../setters"
 import { visualElement } from "../../"
 import { MotionProps } from "../../../motion/types"
 import { createHtmlRenderState } from "../../html/utils/create-render-state"
+import { createBox } from "../../../projection/geometry/models"
 
 const stateVisualElement = visualElement<
     ResolvedValues,
@@ -13,7 +13,7 @@ const stateVisualElement = visualElement<
     { initialState: ResolvedValues }
 >({
     build() {},
-    measureViewportBox: axisBox,
+    measureViewportBox: createBox,
     resetTransform() {},
     restoreTransform() {},
     removeValueFromRenderState() {},
