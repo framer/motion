@@ -1,7 +1,5 @@
-import {
-    createProjectionNode,
-    IProjectionNode,
-} from "../create-projection-node"
+import { createProjectionNode } from "../create-projection-node"
+import { IProjectionNode } from "../types"
 
 let rootNode: IProjectionNode
 

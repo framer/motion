@@ -277,7 +277,10 @@ export function createProjectionNode<I>({
              * Apply scale correction
              */
             for (const key in scaleCorrectors) {
-                if (latest[key] === undefined) continue
+                if (latest[key] === undefined) {
+                    delete styles[key]
+                    continue
+                }
 
                 const { correct, applyTo } = scaleCorrectors[key]
                 const corrected = correct(latest[key], this)
