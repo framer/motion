@@ -22,12 +22,14 @@ export interface IProjectionNode<I = unknown> {
     treeScale?: Point
     projectionDelta?: Delta
     isLayoutDirty: boolean
+    shouldResetTransform: boolean
     willUpdate(notifyListeners?: boolean): void
     didUpdate(): void
     updateLayout(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
     setTargetDelta(delta: Delta): void
+    resetTransform(): void
     resolveTargetDelta(): void
     calcProjection(): void
     getProjectionStyles(latest: ResolvedValues): ResolvedValues
@@ -59,6 +61,7 @@ export interface ProjectionNodeConfig<I> {
     ) => VoidFunction
     measureScroll: (instance: I) => Point
     measureViewportBox?: (instance: I) => Box
+    resetTransform?: (instance: I) => void
 }
 
 export interface ProjectionNodeOptions {

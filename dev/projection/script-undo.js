@@ -15,7 +15,9 @@ Undo.createNode = (element, parent, options = {}) => {
     })
 
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
-        hasLayoutChanged && node.setTargetDelta(delta)
+        // console.log(hasLayoutChanged)
+        // hasLayoutChanged && // or existing delta is not nothing
+        node.setTargetDelta(delta)
     })
 
     return node
