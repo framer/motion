@@ -7,6 +7,7 @@ import { calcBoxDelta } from "../geometry/delta-calc"
 import { createBox, createDelta } from "../geometry/models"
 import { translateAxis } from "../geometry/operations"
 import { Box, Delta, Point } from "../geometry/types"
+import { isDeltaZero } from "../geometry/utils"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
@@ -24,6 +25,7 @@ export function createProjectionNode<I>({
     defaultParent,
     measureScroll,
     measureViewportBox,
+    resetTransform,
 }: ProjectionNodeConfig<I>) {
     return class ProjectionNode implements IProjectionNode<I> {
         instance: I
@@ -47,6 +49,8 @@ export function createProjectionNode<I>({
         scroll?: Point
 
         isLayoutDirty: boolean
+
+        shouldResetTransform: boolean
 
         treeScale: Point = { x: 1, y: 1 } // TODO Lazy-initialise
 
@@ -73,9 +77,7 @@ export function createProjectionNode<I>({
         }
 
         destructor() {
-            if (this.parent) {
-                this.parent.children.delete(this)
-            }
+            this.parent?.children.delete(this)
             cancelSync.preRender(this.updateProjection)
         }
 
@@ -91,11 +93,15 @@ export function createProjectionNode<I>({
 
             this.isLayoutDirty = true
 
-            /**
-             * TODO: Check we haven't updated the scroll
-             * since the last didUpdate
-             */
-            this.path.forEach((node) => node.updateScroll())
+            this.path.forEach((node) => {
+                node.shouldResetTransform = true
+
+                /**
+                 * TODO: Check we haven't updated the scroll
+                 * since the last didUpdate
+                 */
+                node.updateScroll()
+            })
 
             this.updateSnapshot()
             shouldNotifyListeners && this.layoutWillUpdateListeners?.notify()
@@ -103,6 +109,11 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
+            /**
+             * Write
+             */
+            resetTreeTransform(this)
+
             /**
              * Read ==================
              */
@@ -150,6 +161,7 @@ export function createProjectionNode<I>({
             if (!this.isLayoutDirty) return
 
             this.layout = this.removeElementScroll(this.measure())
+
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
         }
@@ -157,6 +169,19 @@ export function createProjectionNode<I>({
         updateScroll() {
             if (!measureScroll) return
             this.scroll = measureScroll(this.instance)
+        }
+
+        resetTransform() {
+            if (
+                resetTransform &&
+                this.projectionDelta &&
+                (this.isLayoutDirty || this.shouldResetTransform) &&
+                !isDeltaZero(this.projectionDelta)
+            ) {
+                resetTransform(this.instance)
+                this.shouldResetTransform = false
+                // TODO: Trigger render to restore transform
+            }
         }
 
         measure() {
@@ -184,9 +209,9 @@ export function createProjectionNode<I>({
                     node.options.shouldMeasureScroll
                 ) {
                     const { scroll } = node
-                    eachAxis((axis) =>
+                    eachAxis((axis) => {
                         translateAxis(boxWithoutScroll[axis], scroll[axis])
-                    )
+                    })
                 }
             })
 
@@ -338,15 +363,16 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             layout,
             snapshot,
             delta: visualDelta,
-            hasLayoutChanged:
-                layoutDelta.x.translate !== 0 ||
-                layoutDelta.x.scale !== 1 ||
-                layoutDelta.y.translate !== 0 ||
-                layoutDelta.y.scale !== 1,
+            hasLayoutChanged: !isDeltaZero(layoutDelta),
         })
     }
 
     node.children.forEach(notifyLayoutUpdate)
+}
+
+function resetTreeTransform(node: IProjectionNode) {
+    node.resetTransform()
+    node.children.forEach(resetTreeTransform)
 }
 
 function updateProjectionTree(node: IProjectionNode) {

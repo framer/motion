@@ -1,3 +1,5 @@
+import { createBox } from "../../geometry/models"
+import { Box } from "../../geometry/types"
 import { createProjectionNode } from "../create-projection-node"
 import { IProjectionNode } from "../types"
 
@@ -7,7 +9,12 @@ export const TestRootNode = createProjectionNode<{}>({
     measureScroll: (_instance) => ({ x: 0, y: 0 }),
 })
 
-export const TestProjectionNode = createProjectionNode<{}>({
+interface TestInstance {
+    resetTransform?: () => void
+    box?: Box
+}
+
+export const TestProjectionNode = createProjectionNode<TestInstance>({
     measureScroll: (_instance) => ({ x: 0, y: 0 }),
     defaultParent: () => {
         if (!rootNode) {
@@ -16,4 +23,6 @@ export const TestProjectionNode = createProjectionNode<{}>({
 
         return rootNode
     },
+    measureViewportBox: (instance) => instance.box || createBox(),
+    resetTransform: (instance) => instance.resetTransform?.(),
 })
