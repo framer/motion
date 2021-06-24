@@ -4,6 +4,7 @@ import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"
 import { MotionProps } from "../../motion/types"
 import { createMotionComponent, MotionComponentConfig } from "../../motion"
+import { motionTags } from "./motion-tags"
 
 /**
  * I'd rather the return type of `custom` to be implicit but this throws
@@ -50,6 +51,13 @@ export function createMotionProxy(createConfig: CreateConfig) {
             HTMLElement | SVGElement,
             HTMLRenderState | SVGRenderState
         >(createConfig(Component, customMotionComponentConfig))
+    }
+
+    if (typeof Proxy === "undefined") {
+        return motionTags.reduce(
+            (acc, tag) => Object.assign(acc, { [tag]: custom(tag) }),
+            custom
+        ) as typeof custom & DOMMotionComponents
     }
 
     /**
