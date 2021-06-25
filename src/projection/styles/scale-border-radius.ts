@@ -3,6 +3,7 @@ import { Axis } from "../geometry/types"
 import { ScaleCorrectorDefinition } from "./types"
 
 export function pixelsToPercent(pixels: number, axis: Axis): number {
+    if (axis.max === axis.min) return 0
     return (pixels / (axis.max - axis.min)) * 100
 }
 
