@@ -106,4 +106,42 @@ describe("Layout animation", () => {
                 })
             })
     })
+
+    it("Doesn't initiate a new animation if layoutDependency hasn't changed", () => {
+        cy.visit("?test=layout-dependency")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    height: 300,
+                    left: 200,
+                    top: 100,
+                    width: 300,
+                })
+            })
+            /**
+             * The easing curve is set to always return t=0.5, so if this box moves it means
+             * a new animation has started
+             */
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+    })
 })
