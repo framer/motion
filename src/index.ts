@@ -62,6 +62,7 @@ export { useDomEvent } from "./events/use-dom-event"
 export { createMotionComponent } from "./motion"
 export { visualElement } from "./render"
 export { VisualElement } from "./render/types"
+export { addScaleCorrector } from "./projection/styles/scale-correction"
 
 /**
  * Contexts

@@ -8,4 +8,5 @@ export { calcBoxDelta } from "./geometry/delta-calc"
  */
 import sync from "framesync"
 import { animate, mix } from "popmotion"
-export { sync, animate, mix }
+import { buildTransform } from "../render/html/utils/build-transform"
+export { sync, animate, mix, buildTransform }
