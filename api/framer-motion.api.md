@@ -20,6 +20,11 @@ import { RefObject } from 'react';
 import { SpringOptions } from 'popmotion';
 import { SVGAttributes } from 'react';
 
+// Warning: (ae-forgotten-export) The symbol "ScaleCorrectorMap" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export function addScaleCorrector(correctors: ScaleCorrectorMap): void;
+
 // @public
 export function animate<V>(from: MotionValue<V> | V, to: V | V[], transition?: AnimationOptions<V>): AnimationPlaybackControls;
 

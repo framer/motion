@@ -127,6 +127,7 @@ export { AnimatePresenceProps } from "./components/AnimatePresence/types"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"
+export * from "./projection/geometry/types"
 
 /**
  * Deprecated

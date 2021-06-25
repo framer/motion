@@ -104,6 +104,9 @@ export function createProjectionNode<I>({
             })
 
             this.updateSnapshot()
+
+            console.log(this.snapshot)
+
             shouldNotifyListeners && this.layoutWillUpdateListeners?.notify()
         }
 
@@ -236,8 +239,7 @@ export function createProjectionNode<I>({
          * Frame calculations
          */
         resolveTargetDelta() {
-            if (!this.targetDelta) return
-            if (!this.layout) return
+            if (!this.targetDelta || !this.layout) return
             if (!this.target) this.target = createBox()
 
             copyBoxInto(this.target, this.layout)
