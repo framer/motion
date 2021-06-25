@@ -42,7 +42,7 @@
         "prettier": "prettier ./src/* --write",
         "build": "tsc -p . && rollup -c && make api",
         "watch": "concurrently \"tsc --watch -p .\" \"rollup -c -w\"",
-        "prepublishOnly": "yarn test && yarn build",
+        "prepublishOnly": "yarn build",
         "postpublish": "git push --tags",
         "measure": "webpack --config webpack.size.config.js && bundlesize",
         "deduplicate": "yarn-deduplicate yarn.lock",
