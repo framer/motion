@@ -31,9 +31,10 @@ export function removeAxisDelta(
     translate: number = 0,
     scale: number = 1,
     origin: number = 0.5,
-    boxScale?: number
+    boxScale?: number,
+    originAxis: Axis = axis
 ): void {
-    const originPoint = mix(axis.min, axis.max, origin) - translate
+    const originPoint = mix(originAxis.min, originAxis.max, origin) - translate
 
     axis.min = removePointDelta(
         axis.min,
@@ -59,14 +60,16 @@ export function removeAxisDelta(
 export function removeAxisTransforms(
     axis: Axis,
     transforms: ResolvedValues,
-    [key, scaleKey, originKey]: string[]
+    [key, scaleKey, originKey]: string[],
+    origin?: Axis
 ) {
     removeAxisDelta(
         axis,
         transforms[key] as number,
         transforms[scaleKey] as number,
         transforms[originKey] as number,
-        transforms.scale as number
+        transforms.scale as number,
+        origin
     )
 }
 
@@ -82,8 +85,9 @@ const yKeys = ["y", "scaleY", "originY"]
  */
 export function removeBoxTransforms(
     box: Box,
-    transforms: ResolvedValues
+    transforms: ResolvedValues,
+    originBox?: Box
 ): void {
-    removeAxisTransforms(box.x, transforms, xKeys)
-    removeAxisTransforms(box.y, transforms, yKeys)
+    removeAxisTransforms(box.x, transforms, xKeys, originBox?.x)
+    removeAxisTransforms(box.y, transforms, yKeys, originBox?.y)
 }

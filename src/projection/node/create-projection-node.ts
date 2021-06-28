@@ -153,13 +153,10 @@ export function createProjectionNode<I>({
          * Update measurements
          */
         updateSnapshot() {
-            const visible = this.measure()
+            const visible = this.removeTransform(this.measure()!)
             this.snapshot = {
                 visible,
-                // TODO: Does removeTransform need to recursively remove all transforms
-                layout: this.removeTransform(
-                    this.removeElementScroll(visible!)
-                ),
+                layout: this.removeElementScroll(visible!),
             }
         }
 
@@ -186,9 +183,10 @@ export function createProjectionNode<I>({
         resetTransform() {
             if (
                 resetTransform &&
-                this.projectionDelta &&
-                (this.isLayoutDirty || this.shouldResetTransform) &&
-                !isDeltaZero(this.projectionDelta)
+                (this.isLayoutDirty || this.shouldResetTransform)
+                // this.projectionDelta &&
+                // !isDeltaZero(this.projectionDelta)
+                // TODO: Do we have a transform in latestValues
             ) {
                 resetTransform(this.instance)
                 this.shouldResetTransform = false
@@ -233,6 +231,16 @@ export function createProjectionNode<I>({
         removeTransform(box: Box) {
             const boxWithoutTransform = createBox()
             copyBoxInto(boxWithoutTransform, box)
+
+            this.path.forEach((node) => {
+                if (node === this.root) return
+                removeBoxTransforms(
+                    boxWithoutTransform,
+                    node.latestValues!,
+                    // TODO: Figure out which is newest
+                    node.layout || node.snapshot.layout
+                )
+            })
 
             removeBoxTransforms(boxWithoutTransform, this.latestValues)
 
@@ -321,6 +329,13 @@ export function createProjectionNode<I>({
                 this.treeScale,
                 this.latestValues
             )
+            if (this.instance.id === "parent") {
+                console.log(
+                    this.projectionDelta.x,
+                    styles.transform,
+                    this.treeScale.x
+                )
+            }
 
             // TODO Move into stand-alone, testable function
             const { x, y } = this.projectionDelta

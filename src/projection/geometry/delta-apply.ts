@@ -89,6 +89,7 @@ export function applyTreeDeltas(
         if (!delta) continue
 
         // Incoporate each ancestor's scale into a culmulative treeScale for this component
+        console.log("tree scale", treeScale.x, delta.x.scale)
         treeScale.x *= delta.x.scale
         treeScale.y *= delta.y.scale
 
