@@ -1,4 +1,5 @@
 import { distance, mix } from "popmotion"
+import { ResolvedValues } from "../../render/types"
 import { Axis, AxisDelta, Box, Delta } from "./types"
 
 export function calcLength(axis: Axis) {
@@ -29,9 +30,9 @@ export function calcAxisDelta(
 export function calcBoxDelta(
     delta: Delta,
     source: Box,
-    target: Box
-    // origin: ResolvedValues
+    target: Box,
+    origin?: ResolvedValues
 ): void {
-    calcAxisDelta(delta.x, source.x, target.x)
-    calcAxisDelta(delta.y, source.y, target.y)
+    calcAxisDelta(delta.x, source.x, target.x, origin?.originX as number)
+    calcAxisDelta(delta.y, source.y, target.y, origin?.originY as number)
 }

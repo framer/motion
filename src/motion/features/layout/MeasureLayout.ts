@@ -51,7 +51,10 @@ export class MeasureLayout extends React.Component<FeatureProps> {
         const { visualElement } = this.props
         if (!visualElement.projection) {
             const parent = visualElement.parent?.projection
-            visualElement.projection = new HTMLProjectionNode(parent)
+            visualElement.projection = new HTMLProjectionNode(
+                visualElement.getLatestValues(),
+                parent
+            )
         }
 
         return null

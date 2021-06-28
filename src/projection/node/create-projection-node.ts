@@ -4,8 +4,9 @@ import { SubscriptionManager } from "../../utils/subscription-manager"
 import { copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import { calcBoxDelta } from "../geometry/delta-calc"
+import { removeBoxTransforms } from "../geometry/delta-remove"
 import { createBox, createDelta } from "../geometry/models"
-import { translateAxis } from "../geometry/operations"
+import { transformBox, translateAxis } from "../geometry/operations"
 import { Box, Delta, Point } from "../geometry/types"
 import { isDeltaZero } from "../geometry/utils"
 import { scaleCorrectors } from "../styles/scale-correction"
@@ -57,13 +58,18 @@ export function createProjectionNode<I>({
         targetDelta?: Delta
 
         projectionDelta?: Delta
+        projectionDeltaWithTransform?: Delta
 
         target?: Box
+        targetWithTransforms?: Box
+
+        latestValues: ResolvedValues
 
         layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
         layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
 
-        constructor(parent?: IProjectionNode) {
+        constructor(latestValues: ResolvedValues, parent?: IProjectionNode) {
+            this.latestValues = latestValues
             this.parent = parent
                 ? parent
                 : (defaultParent?.() as IProjectionNode)
@@ -150,7 +156,10 @@ export function createProjectionNode<I>({
             const visible = this.measure()
             this.snapshot = {
                 visible,
-                layout: this.removeElementScroll(visible!),
+                // TODO: Does removeTransform need to recursively remove all transforms
+                layout: this.removeTransform(
+                    this.removeElementScroll(visible!)
+                ),
             }
         }
 
@@ -221,13 +230,25 @@ export function createProjectionNode<I>({
             return boxWithoutScroll
         }
 
+        removeTransform(box: Box) {
+            const boxWithoutTransform = createBox()
+            copyBoxInto(boxWithoutTransform, box)
+
+            removeBoxTransforms(boxWithoutTransform, this.latestValues)
+
+            return boxWithoutTransform
+        }
+
         /**
          *
          */
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
 
-            if (!this.projectionDelta) this.projectionDelta = createDelta()
+            if (!this.projectionDelta) {
+                this.projectionDelta = createDelta()
+                this.projectionDeltaWithTransform = createDelta()
+            }
             this.root.scheduleUpdateProjection()
         }
 
@@ -240,7 +261,10 @@ export function createProjectionNode<I>({
          */
         resolveTargetDelta() {
             if (!this.targetDelta || !this.layout) return
-            if (!this.target) this.target = createBox()
+            if (!this.target) {
+                this.target = createBox()
+                this.targetWithTransforms = createBox()
+            }
 
             copyBoxInto(this.target, this.layout)
             applyBoxDelta(this.target, this.targetDelta)
@@ -273,27 +297,29 @@ export function createProjectionNode<I>({
             calcBoxDelta(
                 this.projectionDelta,
                 this.layoutCorrected,
-                this.target
-            ) // origin)
+                this.target,
+                this.latestValues
+            )
 
             // TODO Make this event listener
             const { onProjectionUpdate } = this.options
             onProjectionUpdate && onProjectionUpdate()
         }
 
-        getProjectionStyles(latest: ResolvedValues) {
+        getProjectionStyles() {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
 
             if (!this.projectionDelta) return styles
 
             // Resolve crossfading props and viewport boxes
-            // TODO: Apply user-set transforms to targetBox
             // TODO: Return persistent mutable object
 
+            this.applyTransformsToTarget()
             styles.transform = buildProjectionTransform(
-                this.projectionDelta,
-                this.treeScale
+                this.projectionDeltaWithTransform!,
+                this.treeScale,
+                this.latestValues
             )
 
             // TODO Move into stand-alone, testable function
@@ -304,13 +330,13 @@ export function createProjectionNode<I>({
              * Apply scale correction
              */
             for (const key in scaleCorrectors) {
-                if (latest[key] === undefined) {
+                if (this.latestValues[key] === undefined) {
                     delete styles[key]
                     continue
                 }
 
                 const { correct, applyTo } = scaleCorrectors[key]
-                const corrected = correct(latest[key], this)
+                const corrected = correct(this.latestValues[key], this)
 
                 if (applyTo) {
                     const num = applyTo.length
@@ -323,6 +349,30 @@ export function createProjectionNode<I>({
             }
 
             return styles
+        }
+
+        applyTransformsToTarget() {
+            copyBoxInto(this.targetWithTransforms!, this.target!)
+
+            /**
+             * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
+             * This is the final box that we will then project into by calculating a transform delta and
+             * applying it to the corrected box.
+             */
+            transformBox(this.targetWithTransforms!, this.latestValues)
+
+            /**
+             * Update the delta between the corrected box and the final target box, after
+             * user-set transforms are applied to it. This will be used by the renderer to
+             * create a transform style that will reproject the element from its actual layout
+             * into the desired bounding box.
+             */
+            calcBoxDelta(
+                this.projectionDeltaWithTransform!,
+                this.layoutCorrected,
+                this.targetWithTransforms!,
+                this.latestValues
+            )
         }
 
         /**

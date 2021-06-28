@@ -133,7 +133,6 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
     render(
         instance: Instance,
         renderState: RenderState,
-        latest: ResolvedValues,
         projection?: IProjectionNode
     ): void
     removeValueFromRenderState(key: string, renderState: RenderState): void

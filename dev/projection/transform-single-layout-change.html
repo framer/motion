@@ -51,24 +51,25 @@
             const boxProjection = createNode(box)
             const boxOrigin = box.getBoundingClientRect()
 
-            boxProjection.setTransform("x", "100px")
+            boxProjection.setTransform("x", 100)
 
             sync.postRender(() => {
-                matchViewportBox(box, {
+                const transformedBox = {
                     top: 0,
                     left: 100,
                     right: 200,
                     bottom: 100,
-                })
+                }
+                matchViewportBox(box, transformedBox)
 
                 boxProjection.willUpdate()
+
+                box.classList.add("b")
+
+                boxProjection.root.didUpdate()
+
+                matchViewportBox(box, transformedBox)
             })
-
-            // box.classList.add("b")
-
-            // boxProjection.root.didUpdate()
-
-            // matchViewportBox(box, boxOrigin)
         </script>
     </body>
 </html>

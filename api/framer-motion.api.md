@@ -86,6 +86,46 @@ export interface AnimationProps {
     variants?: Variants;
 }
 
+// @public (undocumented)
+export interface Axis {
+    // (undocumented)
+    max: number;
+    // (undocumented)
+    min: number;
+}
+
+// @public (undocumented)
+export interface AxisDelta {
+    // (undocumented)
+    origin: number;
+    // (undocumented)
+    originPoint: number;
+    // (undocumented)
+    scale: number;
+    // (undocumented)
+    translate: number;
+}
+
+// @public (undocumented)
+export interface BoundingBox {
+    // (undocumented)
+    bottom: number;
+    // (undocumented)
+    left: number;
+    // (undocumented)
+    right: number;
+    // (undocumented)
+    top: number;
+}
+
+// @public (undocumented)
+export interface Box {
+    // (undocumented)
+    x: Axis;
+    // (undocumented)
+    y: Axis;
+}
+
 // Warning: (ae-forgotten-export) The symbol "DOMMotionComponents" needs to be exported by the entry point index.d.ts
 // 
 // @public
@@ -111,6 +151,14 @@ export interface CustomValueType {
 }
 
 // @public (undocumented)
+export interface Delta {
+    // (undocumented)
+    x: AxisDelta;
+    // (undocumented)
+    y: AxisDelta;
+}
+
+// @public (undocumented)
 export const domAnimation: FeatureBundle;
 
 // @public (undocumented)
@@ -128,8 +176,6 @@ export class DragControls {
     updateConstraints(_flush?: boolean): void;
 }
 
-// Warning: (ae-forgotten-export) The symbol "BoundingBox" needs to be exported by the entry point index.d.ts
-// 
 // @public (undocumented)
 export type DragElastic = boolean | number | Partial<BoundingBox>;
 
@@ -165,8 +211,6 @@ export type EasingFunction = (v: number) => number;
 
 // @public (undocumented)
 export interface EventInfo {
-    // Warning: (ae-forgotten-export) The symbol "Point" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     point: Point;
 }
@@ -374,8 +418,6 @@ export function MotionConfig({ children, ...config }: MotionConfigProps): JSX.El
 export interface MotionConfigContext {
     // @internal
     isStatic: boolean;
-    // Warning: (ae-forgotten-export) The symbol "TransformPoint" needs to be exported by the entry point index.d.ts
-    // 
     // @internal (undocumented)
     transformPagePoint: TransformPoint;
     transition?: Transition;
@@ -490,6 +532,14 @@ export interface PanInfo {
 
 // @public (undocumented)
 export type PassiveEffect<T> = (v: T, safeSetter: (v: T) => void) => void;
+
+// @public (undocumented)
+export interface Point {
+    // (undocumented)
+    x: number;
+    // (undocumented)
+    y: number;
+}
 
 // Warning: (ae-forgotten-export) The symbol "PresenceContextProps" needs to be exported by the entry point index.d.ts
 // 
@@ -614,6 +664,9 @@ export function transform<T>(inputValue: number, inputRange: number[], outputRan
 
 // @public
 export function transform<T>(inputRange: number[], outputRange: T[], options?: TransformOptions<T>): (inputValue: number) => T;
+
+// @public (undocumented)
+export type TransformPoint = (point: Point) => Point;
 
 // Warning: (ae-forgotten-export) The symbol "TransitionDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "TransitionMap" needs to be exported by the entry point index.d.ts
@@ -801,8 +854,6 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     makeTargetAnimatable(target: TargetAndTransition, isLive?: boolean): TargetAndTransition;
     // (undocumented)
     manuallyAnimateOnMount: boolean;
-    // Warning: (ae-forgotten-export) The symbol "Box" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     measureViewportBox(withTransform?: boolean): Box;
     // (undocumented)
@@ -862,8 +913,6 @@ export interface VisualElementLifecycles {
     // @internal (undocumented)
     onUnmount?(): void;
     onUpdate?(latest: ResolvedValues): void;
-    // Warning: (ae-forgotten-export) The symbol "Axis" needs to be exported by the entry point index.d.ts
-    // Warning: (ae-forgotten-export) The symbol "Delta" needs to be exported by the entry point index.d.ts
     onViewportBoxUpdate?(box: Axis, delta: Delta): void;
 }
 
