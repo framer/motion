@@ -1,7 +1,6 @@
 window.Assert = {
     matchViewportBox: (element, expected, threshold = 0.01) => {
         const bbox = element.getBoundingClientRect()
-        console.log(bbox)
         if (
             Math.abs(expected.top - bbox.top) > threshold ||
             Math.abs(expected.right - bbox.right) > threshold ||
