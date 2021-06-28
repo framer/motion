@@ -3,7 +3,7 @@ Animate = {}
 const { HTMLProjectionNode, sync, animateDelta } = Projection
 
 Animate.createNode = (element, parent, options = {}) => {
-    const node = new HTMLProjectionNode(parent)
+    const node = new HTMLProjectionNode({}, parent)
     node.mount(element)
     node.setOptions({
         onProjectionUpdate: () => {

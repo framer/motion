@@ -97,7 +97,7 @@ export const visualElement = <Instance, MutableState, Options>({
         if (!instance) return
 
         triggerBuild()
-        renderInstance(instance, renderState, latestValues, element.projection)
+        renderInstance(instance, renderState, element.projection)
     }
 
     function triggerBuild() {

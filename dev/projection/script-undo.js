@@ -11,7 +11,7 @@ Undo.createNode = (element, parent, options = {}) => {
             {
                 transform: buildTransform(
                     {
-                        transform: latestTransform,
+                        transform: defaultValueType(latestTransform),
                         transformKeys: Object.keys(latestTransform),
                     },
                     {}
@@ -25,7 +25,7 @@ Undo.createNode = (element, parent, options = {}) => {
         sync.render(render)
     }
 
-    const node = new HTMLProjectionNode(parent)
+    const node = new HTMLProjectionNode(latestTransform, parent)
     node.mount(element)
     node.setOptions({
         onProjectionUpdate: scheduleRender,
@@ -44,6 +44,20 @@ Undo.createNode = (element, parent, options = {}) => {
     }
 
     return node
+}
+
+function defaultValueType(transform) {
+    const withValueType = {}
+
+    for (const key in transform) {
+        if (key === "x" || key === "y") {
+            withValueType[key] = transform[key] + "px"
+        } else {
+            withValueType[key] = transform[key]
+        }
+    }
+
+    return withValueType
 }
 
 window.Undo = Undo
