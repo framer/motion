@@ -72,14 +72,17 @@ export function createProjectionNode<I>({
         layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
 
         constructor(
+            id: string,
             latestValues: ResolvedValues,
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
+            this.id = id
             this.latestValues = latestValues
-            parent?.children.add(this)
             this.root = parent ? parent.root || parent : this
             this.path = parent ? [...parent.path, parent] : []
             this.parent = parent
+
+            this.root.registerPotentialNode(id, this)
         }
 
         destructor() {
@@ -87,11 +90,25 @@ export function createProjectionNode<I>({
             cancelSync.preRender(this.updateProjection)
         }
 
+        // Note: Currently only running on root node
+        potentialNodes = new Map<string, IProjectionNode>()
+        registerPotentialNode(id: string, node: IProjectionNode) {
+            this.potentialNodes.set(id, node)
+        }
+
         /**
          * Lifecycles
          */
-        mount(instance: I) {
+        mount(instance: I, isLayoutDirty = false) {
+            if (this.instance) return
             this.instance = instance
+            this.parent?.children.add(this)
+            // TODO this.root.potentialNodes.delete(this.id)
+
+            if (isLayoutDirty) {
+                this.isLayoutDirty = true
+                this.setTargetDelta(createDelta())
+            }
 
             attachResizeListener?.(instance, () => {
                 // TODO: Complete all active animations/delete all projections
@@ -129,7 +146,14 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
-            //    const newNodes = findMountedNodes(renderedHashes)
+            this.potentialNodes.forEach((node, id) => {
+                const element = document.querySelector(
+                    `[data-projection-id="${id}"]`
+                )
+                if (element) node.mount(element, true)
+                console.log(!!element, id)
+            })
+            this.potentialNodes.clear()
 
             /**
              * Write
@@ -253,7 +277,7 @@ export function createProjectionNode<I>({
 
             // TODO Convert to for loop
             this.path.forEach((node) => {
-                if (!node.latestValues || !hasTransform(node.latestValues)) {
+                if (!hasTransform(node.latestValues)) {
                     return
                 }
 
@@ -304,7 +328,7 @@ export function createProjectionNode<I>({
 
         calcProjection() {
             if (!this.layout || !this.target || !this.projectionDelta) return
-
+            console.log("calc projection", this.id)
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -346,7 +370,7 @@ export function createProjectionNode<I>({
 
             // Resolve crossfading props and viewport boxes
             // TODO: Return persistent mutable object
-            console.log("target delta", this.targetDelta)
+
             this.applyTransformsToTarget()
             styles.transform = buildProjectionTransform(
                 this.projectionDeltaWithTransform!,
