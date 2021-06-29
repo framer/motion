@@ -17,7 +17,7 @@ Undo.createNode = (element, parent, options = {}) => {
                     {}
                 ),
             },
-            node.getProjectionStyles(latestTransform)
+            node.getProjectionStyles()
         )
     }
 

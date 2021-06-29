@@ -8,7 +8,7 @@ describe("Project the element to its original box", () => {
     tests.forEach((test) => {
         it(test, () => {
             cy.visit(test)
-            cy.get('[data-layout-correct="false"]').should("not.exist")
+            cy.wait(50).get('[data-layout-correct="false"]').should("not.exist")
         })
     })
 })
