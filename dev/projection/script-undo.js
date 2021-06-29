@@ -2,7 +2,7 @@ Undo = {}
 
 const { HTMLProjectionNode, sync, buildTransform } = Projection
 
-Undo.createNode = (element, parent, options = {}) => {
+Undo.createNode = (element, parent, options = {}, mount = true) => {
     const latestTransform = {}
 
     function render() {
@@ -26,7 +26,11 @@ Undo.createNode = (element, parent, options = {}) => {
     }
 
     const node = new HTMLProjectionNode(latestTransform, parent)
-    node.mount(element)
+
+    if (mount) {
+        node.mount(element)
+    }
+
     node.setOptions({
         onProjectionUpdate: scheduleRender,
         ...options,
