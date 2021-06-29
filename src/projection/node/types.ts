@@ -24,9 +24,12 @@ export interface IProjectionNode<I = unknown> {
     latestValues?: ResolvedValues
     isLayoutDirty: boolean
     shouldResetTransform: boolean
+    isUpdating: boolean
+    startUpdate(): void
     willUpdate(notifyListeners?: boolean): void
     didUpdate(): void
     updateLayout(): void
+    updateSnapshot(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
     setTargetDelta(delta: Delta): void

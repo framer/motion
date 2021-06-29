@@ -12,6 +12,7 @@ import { isDeltaZero } from "../geometry/utils"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
+import { hasScale, hasTransform } from "../utils/has-transform"
 import {
     IProjectionNode,
     LayoutUpdateData,
@@ -33,7 +34,7 @@ export function createProjectionNode<I>({
 
         root: IProjectionNode
 
-        parent: IProjectionNode
+        parent?: IProjectionNode
 
         path: IProjectionNode[]
 
@@ -49,9 +50,11 @@ export function createProjectionNode<I>({
 
         scroll?: Point
 
-        isLayoutDirty: boolean
+        isLayoutDirty = false
 
-        shouldResetTransform: boolean
+        isUpdating = false
+
+        shouldResetTransform = false
 
         treeScale: Point = { x: 1, y: 1 } // TODO Lazy-initialise
 
@@ -68,18 +71,15 @@ export function createProjectionNode<I>({
         layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
         layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
 
-        constructor(latestValues: ResolvedValues, parent?: IProjectionNode) {
+        constructor(
+            latestValues: ResolvedValues,
+            parent: IProjectionNode | undefined = defaultParent?.()
+        ) {
             this.latestValues = latestValues
+            parent?.children.add(this)
+            this.root = parent ? parent.root || parent : this
+            this.path = parent ? [...parent.path, parent] : []
             this.parent = parent
-                ? parent
-                : (defaultParent?.() as IProjectionNode)
-
-            if (this.parent) this.parent.children.add(this)
-            this.root = this.parent ? this.parent.root || this.parent : this
-            this.path = this.parent ? [...this.parent.path, this.parent] : []
-
-            if (attachResizeListener) {
-            }
         }
 
         destructor() {
@@ -92,12 +92,25 @@ export function createProjectionNode<I>({
          */
         mount(instance: I) {
             this.instance = instance
+
+            attachResizeListener?.(instance, () => {
+                // TODO: Complete all active animations/delete all projections
+            })
+        }
+
+        // Note: currently only running on root node
+        startUpdate() {
+            this.isUpdating = true
+
+            // TODO: Traverse the tree, reset rotations
         }
 
         willUpdate(shouldNotifyListeners = true) {
             if (this.isLayoutDirty) return
 
             this.isLayoutDirty = true
+
+            !this.root.isUpdating && this.root.startUpdate()
 
             this.path.forEach((node) => {
                 node.shouldResetTransform = true
@@ -111,13 +124,13 @@ export function createProjectionNode<I>({
 
             this.updateSnapshot()
 
-            console.log(this.snapshot)
-
             shouldNotifyListeners && this.layoutWillUpdateListeners?.notify()
         }
 
         // Note: Currently only running on root node
         didUpdate() {
+            //    const newNodes = findMountedNodes(renderedHashes)
+
             /**
              * Write
              */
@@ -139,6 +152,8 @@ export function createProjectionNode<I>({
             flushSync.update()
             flushSync.preRender()
             flushSync.render()
+
+            this.isUpdating = false
         }
 
         scheduleUpdateProjection() {
@@ -153,6 +168,8 @@ export function createProjectionNode<I>({
          * Update measurements
          */
         updateSnapshot() {
+            if (this.snapshot) return
+
             const visible = this.removeTransform(this.measure()!)
             this.snapshot = {
                 visible,
@@ -190,7 +207,7 @@ export function createProjectionNode<I>({
             ) {
                 resetTransform(this.instance)
                 this.shouldResetTransform = false
-                // TODO: Trigger render to restore transform
+                this.options.onProjectionUpdate?.()
             }
         }
 
@@ -201,6 +218,7 @@ export function createProjectionNode<I>({
 
             // Remove window scroll to give page-relative coordinates
             const { scroll } = this.root
+            // TODO Make loop
             scroll && eachAxis((axis) => translateAxis(box[axis], scroll[axis]))
 
             return box
@@ -212,6 +230,7 @@ export function createProjectionNode<I>({
 
             // TODO: Keep a culmulative scroll offset rather
             // than loop through
+            // TODO Make loop
             this.path.forEach((node) => {
                 if (
                     node !== this.root &&
@@ -219,6 +238,7 @@ export function createProjectionNode<I>({
                     node.options.shouldMeasureScroll
                 ) {
                     const { scroll } = node
+                    // TODO Make loop
                     eachAxis((axis) => {
                         translateAxis(boxWithoutScroll[axis], scroll[axis])
                     })
@@ -232,13 +252,18 @@ export function createProjectionNode<I>({
             const boxWithoutTransform = createBox()
             copyBoxInto(boxWithoutTransform, box)
 
+            // TODO Convert to for loop
             this.path.forEach((node) => {
-                if (node === this.root) return
+                if (!node.latestValues || !hasTransform(node.latestValues)) {
+                    return
+                }
+
+                hasScale(node.latestValues) && node.updateSnapshot()
+
                 removeBoxTransforms(
                     boxWithoutTransform,
                     node.latestValues!,
-                    // TODO: Figure out which is newest
-                    node.layout || node.snapshot.layout
+                    node.snapshot!.layout
                 )
             })
 
@@ -329,18 +354,16 @@ export function createProjectionNode<I>({
                 this.treeScale,
                 this.latestValues
             )
-            if (this.instance.id === "parent") {
-                console.log(
-                    this.projectionDelta.x,
-                    styles.transform,
-                    this.treeScale.x
-                )
-            }
 
             // TODO Move into stand-alone, testable function
             const { x, y } = this.projectionDelta
             styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
-
+            if (this.instance.id === "parent") {
+                console.log(
+                    this.projectionDelta,
+                    this.projectionDeltaWithTransform
+                )
+            }
             /**
              * Apply scale correction
              */
@@ -435,6 +458,8 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     }
 
     node.children.forEach(notifyLayoutUpdate)
+
+    node.snapshot = undefined
 }
 
 function resetTreeTransform(node: IProjectionNode) {
