@@ -2,7 +2,8 @@ Undo = {}
 
 const { HTMLProjectionNode, sync, buildTransform } = Projection
 
-Undo.createNode = (element, parent, options = {}, mount = true) => {
+let id = 1
+Undo.createNode = (element, parent, options = {}, overrideId) => {
     const latestTransform = {}
 
     function render() {
@@ -25,9 +26,14 @@ Undo.createNode = (element, parent, options = {}, mount = true) => {
         sync.render(render)
     }
 
-    const node = new HTMLProjectionNode(latestTransform, parent)
+    id++
+    const node = new HTMLProjectionNode(
+        overrideId || id,
+        latestTransform,
+        parent
+    )
 
-    if (mount) {
+    if (!overrideId) {
         node.mount(element)
     }
 

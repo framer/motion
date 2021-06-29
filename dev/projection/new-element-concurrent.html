@@ -54,22 +54,27 @@
             const boxProjection = createNode(box)
 
             const boxOrigin = box.getBoundingClientRect()
-
-            boxProjection.willUpdate()
-
             const a = document.createElement("div")
             a.id = "child"
             a.setAttribute("data-projection-id", "a")
 
-            const aProjection = new HTMLProjectionNode({}, boxProjection)
-            const bProjection = new HTMLProjectionNode({}, boxProjection)
+            // Render phase
+            const aProjection = createNode(a, boxProjection, {}, "a")
+            const bProjection = new HTMLProjectionNode("b", {}, boxProjection)
 
+            // Snapshot
+            boxProjection.willUpdate()
+
+            // Commit
             box.appendChild(a)
-
             box.classList.add("b")
             const aOrigin = a.getBoundingClientRect()
 
+            // First layout effect
             boxProjection.root.didUpdate()
+
+            // A/B mounts
+            aProjection.mount(a)
 
             matchViewportBox(box, boxOrigin)
             matchViewportBox(a, aOrigin)

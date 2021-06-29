@@ -21,7 +21,7 @@ export interface IProjectionNode<I = unknown> {
     scroll?: Point
     treeScale?: Point
     projectionDelta?: Delta
-    latestValues?: ResolvedValues
+    latestValues: ResolvedValues
     isLayoutDirty: boolean
     shouldResetTransform: boolean
     isUpdating: boolean
@@ -32,6 +32,7 @@ export interface IProjectionNode<I = unknown> {
     updateSnapshot(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
+    registerPotentialNode(id: string, node: IProjectionNode): void
     setTargetDelta(delta: Delta): void
     resetTransform(): void
     resolveTargetDelta(): void
