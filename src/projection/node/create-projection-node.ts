@@ -201,8 +201,7 @@ export function createProjectionNode<I>({
             if (
                 resetTransform &&
                 (this.isLayoutDirty || this.shouldResetTransform) &&
-                this.projectionDelta &&
-                (!isDeltaZero(this.projectionDelta) ||
+                ((this.projectionDelta && !isDeltaZero(this.projectionDelta)) ||
                     hasTransform(this.latestValues))
             ) {
                 resetTransform(this.instance)
@@ -262,7 +261,7 @@ export function createProjectionNode<I>({
 
                 removeBoxTransforms(
                     boxWithoutTransform,
-                    node.latestValues!,
+                    node.latestValues,
                     node.snapshot!.layout
                 )
             })
@@ -347,7 +346,7 @@ export function createProjectionNode<I>({
 
             // Resolve crossfading props and viewport boxes
             // TODO: Return persistent mutable object
-
+            console.log("target delta", this.targetDelta)
             this.applyTransformsToTarget()
             styles.transform = buildProjectionTransform(
                 this.projectionDeltaWithTransform!,
