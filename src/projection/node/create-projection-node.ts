@@ -200,10 +200,10 @@ export function createProjectionNode<I>({
         resetTransform() {
             if (
                 resetTransform &&
-                (this.isLayoutDirty || this.shouldResetTransform)
-                // this.projectionDelta &&
-                // !isDeltaZero(this.projectionDelta)
-                // TODO: Do we have a transform in latestValues
+                (this.isLayoutDirty || this.shouldResetTransform) &&
+                this.projectionDelta &&
+                (!isDeltaZero(this.projectionDelta) ||
+                    hasTransform(this.latestValues))
             ) {
                 resetTransform(this.instance)
                 this.shouldResetTransform = false
@@ -358,12 +358,7 @@ export function createProjectionNode<I>({
             // TODO Move into stand-alone, testable function
             const { x, y } = this.projectionDelta
             styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
-            if (this.instance.id === "parent") {
-                console.log(
-                    this.projectionDelta,
-                    this.projectionDeltaWithTransform
-                )
-            }
+
             /**
              * Apply scale correction
              */
