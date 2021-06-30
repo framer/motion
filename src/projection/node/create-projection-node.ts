@@ -72,7 +72,7 @@ export function createProjectionNode<I>({
         layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
 
         constructor(
-            id: string,
+            id: number,
             latestValues: ResolvedValues,
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
@@ -90,8 +90,8 @@ export function createProjectionNode<I>({
         }
 
         // Note: Currently only running on root node
-        potentialNodes = new Map<string, IProjectionNode>()
-        registerPotentialNode(id: string, node: IProjectionNode) {
+        potentialNodes = new Map<number, IProjectionNode>()
+        registerPotentialNode(id: number, node: IProjectionNode) {
             this.potentialNodes.set(id, node)
         }
 

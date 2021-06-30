@@ -32,7 +32,7 @@ export interface IProjectionNode<I = unknown> {
     updateSnapshot(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
-    registerPotentialNode(id: string, node: IProjectionNode): void
+    registerPotentialNode(id: number, node: IProjectionNode): void
     setTargetDelta(delta: Delta): void
     resetTransform(): void
     resolveTargetDelta(): void

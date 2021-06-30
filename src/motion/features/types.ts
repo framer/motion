@@ -7,6 +7,7 @@ import { CreateVisualElement, VisualElement } from "../../render/types"
  * @public
  */
 export interface FeatureProps extends MotionProps {
+    projectionId: number
     visualElement: VisualElement
 }
 
@@ -57,6 +58,7 @@ export type FeatureDefinitions = {
 export type RenderComponent<Instance, RenderState> = (
     Component: string | React.ComponentType,
     props: MotionProps,
+    projectionId: number,
     ref: React.Ref<Instance>,
     visualState: VisualState<Instance, RenderState>,
     isStatic: boolean
