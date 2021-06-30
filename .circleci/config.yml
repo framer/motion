@@ -10,7 +10,7 @@ jobs:
             # Specify service dependencies here if necessary
             # CircleCI maintains a library of pre-built images
             # documented at https://circleci.com/docs/2.0/circleci-images/
-            # - image: circleci/mongo:3.4.4
+            - image: circleci/python:3.6
         environment:
             CC_TEST_REPORTER_ID: 9919eb70aea3b16ee55969b91e1c19c455289b6c9d72ac85037c2e1b26dfd307
 
