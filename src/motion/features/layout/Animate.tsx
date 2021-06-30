@@ -295,6 +295,8 @@ class Animate extends React.Component<AnimateProps> {
                 onComplete && onComplete()
                 visualElement.notifyLayoutAnimationComplete()
             })
+        } else if (shouldStackAnimate) {
+            this.isAnimatingTree = false
         }
     }
 
