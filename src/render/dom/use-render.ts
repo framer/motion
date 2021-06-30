@@ -25,8 +25,12 @@ export function createUseRender(forwardMotionProps = false) {
         const elementProps = {
             ...filteredProps,
             ...visualProps,
-            "data-projection-id": projectionId,
             ref,
+        }
+
+        // TODO: This is actually going to break SSR, so maybe after initial render?
+        if (props.layout || props.layoutId || props.drag) {
+            elementProps["data-projection-id"] = projectionId
         }
 
         return createElement<any>(Component, elementProps)

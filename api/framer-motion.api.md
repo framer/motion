@@ -277,6 +277,8 @@ export type FeatureNames = {
 // @public (undocumented)
 export interface FeatureProps extends MotionProps {
     // (undocumented)
+    projectionId: number;
+    // (undocumented)
     visualElement: VisualElement;
 }
 
@@ -560,7 +562,7 @@ export interface RelayoutInfo {
 // Warning: (ae-forgotten-export) The symbol "VisualState" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
+export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, projectionId: number, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
 
 // @public (undocumented)
 export interface Repeat {

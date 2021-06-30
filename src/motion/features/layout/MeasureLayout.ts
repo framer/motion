@@ -15,14 +15,16 @@ export class MeasureLayout extends React.Component<FeatureProps> {
      * in order to incorporate transforms
      */
     componentDidMount() {
-        const { visualElement } = this.props
+        const { visualElement, layout } = this.props
         const { projection } = visualElement
 
         addScaleCorrector(defaultScaleCorrectors)
 
         projection!.setOptions({
             onProjectionUpdate: () => visualElement.scheduleRender(),
+            animationType: typeof layout === "string" ? layout : "both",
         })
+
         const { group } = this.context
         if (group) group.add(projection)
     }

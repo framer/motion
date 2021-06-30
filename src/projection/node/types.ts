@@ -72,6 +72,7 @@ export interface ProjectionNodeConfig<I> {
 export interface ProjectionNodeOptions {
     shouldMeasureScroll?: boolean
     onProjectionUpdate?: () => void
+    animationType?: "size" | "position" | "both"
 }
 
 export type ProjectionEventName = "layoutUpdate" | "projectionUpdate"
