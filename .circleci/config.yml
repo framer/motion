@@ -4,13 +4,16 @@ version: 2.1
 jobs:
     build:
         docker:
-            # specify the version you desire here
-            - image: circleci/node:14.17
+            # This python image includes node 14.17.1 according to
+            # https://circleci.com/developer/images/image/cimg/python#image-tags
+            # It's a bit weird to use a python image when we care about node
+            # first, but it's needed to get node-gyp to work to build iltorb
+            - image: cimg/python:3.9.6-node
 
             # Specify service dependencies here if necessary
             # CircleCI maintains a library of pre-built images
             # documented at https://circleci.com/docs/2.0/circleci-images/
-            - image: circleci/python:3.6
+            # - image: circleci/mongo:3.4.4
         environment:
             CC_TEST_REPORTER_ID: 9919eb70aea3b16ee55969b91e1c19c455289b6c9d72ac85037c2e1b26dfd307
 
