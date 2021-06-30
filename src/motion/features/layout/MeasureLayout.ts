@@ -50,6 +50,7 @@ export class MeasureLayout extends React.Component<FeatureProps> {
     render() {
         const { visualElement } = this.props
         if (!visualElement.projection) {
+            // TODO do this on construction
             const parent = visualElement.parent?.projection
 
             // TODO Create a new id
