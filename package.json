@@ -39,7 +39,7 @@
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
         "build": "tsc -p . && rollup -c && make api",
-        "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p .\" \"rollup -c -w\"",
+        "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepublishOnly": "yarn test && yarn build",
         "postpublish": "git push --tags",
         "measure": "webpack --config webpack.size.config.js && bundlesize",
