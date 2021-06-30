@@ -33,6 +33,7 @@ export function AnimateLayout({
                      */
                     !boxEquals(layoutTarget.current, newLayout)
                 ) {
+                    // TODO: On final frame, delete delta
                     animateDelta(projection, delta, {
                         ...getValueTransition(layoutTransition, "layout"),
                         onComplete: onLayoutAnimationComplete,

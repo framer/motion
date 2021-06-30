@@ -16,7 +16,8 @@ Animate.createNode = (element, parent, options = {}) => {
     })
 
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
-        hasLayoutChanged && animateDelta(node, delta, { duration: 2 })
+        hasLayoutChanged &&
+            animateDelta(node, delta, { duration: 2, ease: () => 0.5 })
     })
 
     return node
