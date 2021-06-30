@@ -39,6 +39,9 @@ export interface IProjectionNode<I = unknown> {
     calcProjection(): void
     getProjectionStyles(): ResolvedValues
 
+    // Shared element
+    isLead(node: IProjectionNode, layoutId: string): boolean
+
     /**
      * Events
      */

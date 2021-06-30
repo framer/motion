@@ -6,24 +6,19 @@
                 margin: 0;
             }
 
-            #box {
+            #box-a {
                 width: 100px;
                 height: 100px;
                 background-color: #00cc88;
             }
 
-            #child {
-                width: 50px;
-                height: 50px;
-                background-color: #0077ff;
-            }
-
-            #box.b {
-                width: 200px;
+            #box-b {
                 position: absolute;
                 top: 100px;
-                left: 200px;
-                padding: 20px;
+                left: 100px;
+                width: 200px;
+                height: 300px;
+                background-color: #09f;
             }
 
             #trigger-overflow {
@@ -41,7 +36,7 @@
         </style>
     </head>
     <body>
-        <div id="box" data-layout-correct="true"></div>
+        <div id="box-a"></div>
         <div id="trigger-overflow"></div>
 
         <script src="../../dist/projection.dev.js"></script>
@@ -49,17 +44,26 @@
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const { matchViewportBox } = window.Assert
-            const box = document.getElementById("box")
-            const boxProjection = createNode(box)
+            const { matchViewportBox, matchVisibility } = window.Assert
 
+            const box = document.getElementById("box-a")
+            const boxProjection = createNode(box, undefined, { layoutId: "a" })
             const boxOrigin = box.getBoundingClientRect()
 
             boxProjection.willUpdate()
 
-            boxProjection.root.didUpdate()
+            const newBox = document.createElement("div")
+            newBox.id = "box-b"
+            document.body.appendChild(newBox)
+            const newBoxProjection = createNode(newBox, undefined, {
+                layoutId: "a",
+            })
+
+            newBoxProjection.root.didUpdate()
 
             matchViewportBox(box, boxOrigin)
+            matchVisibility(box, "visible")
+            matchVisibility(newBox, "hidden")
         </script>
     </body>
 </html>

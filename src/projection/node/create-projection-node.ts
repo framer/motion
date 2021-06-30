@@ -362,8 +362,17 @@ export function createProjectionNode<I>({
         getProjectionStyles() {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
+            console.log(layoutId, this.root.isLead(this, layoutId))
+            const { layoutId } = this.options
+            if (layoutId) {
+                if (!this.root.isLead(this, layoutId)) {
+                    return { visibility: "hidden" }
+                }
+            }
 
-            if (!this.projectionDelta) return styles
+            if (!this.projectionDelta) {
+                return styles
+            }
 
             // Resolve crossfading props and viewport boxes
             // TODO: Return persistent mutable object
@@ -445,6 +454,13 @@ export function createProjectionNode<I>({
                 this.layoutDidUpdateListeners = new SubscriptionManager()
             }
             return this.layoutDidUpdateListeners!.add(handler)
+        }
+
+        /**
+         * Shared layout
+         */
+        isLead(node: IProjectionNode, layoutId: string) {
+            return false
         }
     }
 }

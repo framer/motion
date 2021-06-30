@@ -10,6 +10,17 @@ window.Assert = {
             element.dataset.layoutCorrect = "false"
         }
     },
+    matchVisibility: (element, expected) => {
+        if (expected === "hidden") {
+            if (element.style.visibility !== expected) {
+                element.dataset.layoutCorrect = "false"
+            }
+        } else {
+            if (element.style.visibility === "hidden") {
+                element.dataset.layoutCorrect = "false"
+            }
+        }
+    },
     addPageScroll({ top, right, bottom, left }, x, y) {
         return {
             top: top - y,
