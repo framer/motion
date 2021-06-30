@@ -114,8 +114,12 @@ export function checkTargetForNewValues(
          */
         if (value === undefined || value === null) continue
 
-        if (typeof value === "string" && isNumericalString(value)) {
-            // If this is a number read as a string, ie "0" or "200", convert it to a number
+        if (
+            typeof value === "string" &&
+            (isNumericalString(value) || value.startsWith("0"))
+        ) {
+            // If this is a number read as a string, ie "0", "200",
+            // or a zero number like "0px", convert it to a number type
             value = parseFloat(value)
         } else if (!findValueType(value) && complex.test(targetValue)) {
             value = getAnimatableNone(key, targetValue)
