@@ -12,7 +12,7 @@ export interface IProjectionNode<I = unknown> {
     root?: IProjectionNode
     children: Set<IProjectionNode>
     path: IProjectionNode[]
-    mount: (node: I) => void
+    mount: (node: I, isLayoutDirty?: boolean) => void
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
     layout?: Box

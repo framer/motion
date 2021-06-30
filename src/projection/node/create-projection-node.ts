@@ -76,7 +76,6 @@ export function createProjectionNode<I>({
             latestValues: ResolvedValues,
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
-            this.id = id
             this.latestValues = latestValues
             this.root = parent ? parent.root || parent : this
             this.path = parent ? [...parent.path, parent] : []
@@ -247,39 +246,37 @@ export function createProjectionNode<I>({
             return box
         }
 
-        removeElementScroll(box: Box) {
+        removeElementScroll(box: Box): Box {
             const boxWithoutScroll = createBox()
             copyBoxInto(boxWithoutScroll, box)
 
-            // TODO: Keep a culmulative scroll offset rather
-            // than loop through
-            // TODO Make loop
-            this.path.forEach((node) => {
+            /**
+             * Performance TODO: Keep a cumulative scroll offset down the tree
+             * rather than loop back up the path.
+             */
+            for (let i = 0; i < this.path.length; i++) {
+                const node = this.path[i]
+                const { scroll, options } = node
                 if (
                     node !== this.root &&
-                    node.scroll &&
-                    node.options.shouldMeasureScroll
+                    scroll &&
+                    options.shouldMeasureScroll
                 ) {
-                    const { scroll } = node
-                    // TODO Make loop
-                    eachAxis((axis) => {
-                        translateAxis(boxWithoutScroll[axis], scroll[axis])
-                    })
+                    translateAxis(boxWithoutScroll.x, scroll.x)
+                    translateAxis(boxWithoutScroll.y, scroll.y)
                 }
-            })
+            }
 
             return boxWithoutScroll
         }
 
-        removeTransform(box: Box) {
+        removeTransform(box: Box): Box {
             const boxWithoutTransform = createBox()
             copyBoxInto(boxWithoutTransform, box)
 
-            // TODO Convert to for loop
-            this.path.forEach((node) => {
-                if (!hasTransform(node.latestValues)) {
-                    return
-                }
+            for (let i = 0; i < this.path.length; i++) {
+                const node = this.path[i]
+                if (!hasTransform(node.latestValues)) continue
 
                 hasScale(node.latestValues) && node.updateSnapshot()
 
@@ -288,7 +285,7 @@ export function createProjectionNode<I>({
                     node.latestValues,
                     node.snapshot!.layout
                 )
-            })
+            }
 
             removeBoxTransforms(boxWithoutTransform, this.latestValues)
 
@@ -328,7 +325,7 @@ export function createProjectionNode<I>({
 
         calcProjection() {
             if (!this.layout || !this.target || !this.projectionDelta) return
-            console.log("calc projection", this.id)
+
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -466,7 +463,6 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 
         const visualDelta = createDelta()
         calcBoxDelta(visualDelta, layout, snapshot.visible)
-
         node.layoutDidUpdateListeners.notify({
             layout,
             snapshot,

@@ -34,7 +34,8 @@ export function removeAxisDelta(
     boxScale?: number,
     originAxis: Axis = axis
 ): void {
-    const originPoint = mix(originAxis.min, originAxis.max, origin) - translate
+    let originPoint = mix(originAxis.min, originAxis.max, origin)
+    if (axis === originAxis) originPoint -= translate
 
     axis.min = removePointDelta(
         axis.min,
