@@ -45,7 +45,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
         // console.log(hasLayoutChanged)
         // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
-        node.setTargetDelta(delta)
+        hasLayoutChanged && node.setTargetDelta(delta)
     })
 
     node.setTransform = (key, value) => {
