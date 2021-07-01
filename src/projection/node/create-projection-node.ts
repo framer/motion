@@ -31,6 +31,8 @@ export function createProjectionNode<I>({
     resetTransform,
 }: ProjectionNodeConfig<I>) {
     return class ProjectionNode implements IProjectionNode<I> {
+        id: number
+
         instance: I
 
         root: IProjectionNode
@@ -478,9 +480,19 @@ export function createProjectionNode<I>({
         }
 
         // TODO Only running on root node
-        isLead(node: IProjectionNode, layoutId: string) {
-            const stack = this.sharedNodes.get(layoutId)
+        isLead(node: IProjectionNode) {
+            const stack = node.getStack()
             return stack ? stack.lead === node : false
+        }
+
+        getStack() {
+            const { layoutId } = this.options
+            if (layoutId) return this.root.sharedNodes.get(layoutId)
+        }
+
+        promote() {
+            const stack = this.getStack()
+            if (stack) stack.promote(this)
         }
     }
 }
