@@ -51,6 +51,7 @@ const projection = Object.assign({}, config, {
             "process.env.NODE_ENV": JSON.stringify("development"),
         }),
     ],
+    external: ["react", "react-dom"],
 })
 
 const umdProd = Object.assign({}, umd, {
@@ -129,4 +130,4 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
-export default [projection, umd, umdProd, cjs, es, m, domAnimation, domMax]
+export default [projection] //, umd, umdProd, cjs, es, m, domAnimation, domMax]

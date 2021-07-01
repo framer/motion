@@ -33,6 +33,8 @@ export interface IProjectionNode<I = unknown> {
     updateScroll(): void
     scheduleUpdateProjection(): void
     registerPotentialNode(id: number, node: IProjectionNode): void
+    registerSharedNode(id: string, node: IProjectionNode): void
+
     setTargetDelta(delta: Delta): void
     resetTransform(): void
     resolveTargetDelta(): void
@@ -76,6 +78,7 @@ export interface ProjectionNodeOptions {
     shouldMeasureScroll?: boolean
     onProjectionUpdate?: () => void
     animationType?: "size" | "position" | "both"
+    layoutId?: string
 }
 
 export type ProjectionEventName = "layoutUpdate" | "projectionUpdate"

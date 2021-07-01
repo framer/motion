@@ -9,6 +9,7 @@ import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/operations"
 import { Box, Delta, Point } from "../geometry/types"
 import { isDeltaZero } from "../geometry/utils"
+import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
@@ -76,6 +77,7 @@ export function createProjectionNode<I>({
             latestValues: ResolvedValues,
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
+            this.id = id
             this.latestValues = latestValues
             this.root = parent ? parent.root || parent : this
             this.path = parent ? [...parent.path, parent] : []
@@ -102,7 +104,7 @@ export function createProjectionNode<I>({
             if (this.instance) return
             this.instance = instance
             this.parent?.children.add(this)
-            // TODO this.root.potentialNodes.delete(this.id)
+            this.root.potentialNodes.delete(this.id)
 
             if (isLayoutDirty) {
                 this.isLayoutDirty = true
@@ -307,6 +309,11 @@ export function createProjectionNode<I>({
 
         setOptions(options: ProjectionNodeOptions) {
             this.options = options
+
+            const { layoutId } = this.options
+            if (layoutId) {
+                this.root.registerSharedNode(layoutId, this)
+            }
         }
 
         /**
@@ -362,8 +369,8 @@ export function createProjectionNode<I>({
         getProjectionStyles() {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
-            console.log(layoutId, this.root.isLead(this, layoutId))
             const { layoutId } = this.options
+
             if (layoutId) {
                 if (!this.root.isLead(this, layoutId)) {
                     return { visibility: "hidden" }
@@ -459,8 +466,21 @@ export function createProjectionNode<I>({
         /**
          * Shared layout
          */
+        // TODO Only running on root node
+        sharedNodes: Map<string, NodeStack> = new Map()
+        registerSharedNode(layoutId: string, node: IProjectionNode) {
+            if (!this.sharedNodes.has(layoutId)) {
+                this.sharedNodes.set(layoutId, new NodeStack())
+            }
+
+            const stack = this.sharedNodes.get(layoutId)!
+            stack.add(node)
+        }
+
+        // TODO Only running on root node
         isLead(node: IProjectionNode, layoutId: string) {
-            return false
+            const stack = this.sharedNodes.get(layoutId)
+            return stack ? stack.lead === node : false
         }
     }
 }
