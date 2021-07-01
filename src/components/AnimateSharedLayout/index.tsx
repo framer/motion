@@ -1,4 +1,5 @@
 import * as React from "react"
+import { useContext } from "react"
 import {
     Presence,
     SharedLayoutProps,
@@ -13,16 +14,17 @@ import { VisualElement } from "../../render/types"
 import { createBatcher } from "./utils/batcher"
 import { snapshotViewportBox } from "../../render/dom/projection/utils"
 
+interface SharedLayoutPropsWithContext extends SharedLayoutProps {
+    motionContext: MotionContextProps
+}
+
 /**
  * @public
  */
-export class AnimateSharedLayout extends React.Component<
-    SharedLayoutProps,
-    {},
-    VisualElement
+class AnimateSharedLayoutWithContext extends React.Component<
+    SharedLayoutPropsWithContext,
+    {}
 > {
-    static contextType = MotionContext
-
     /**
      * A list of all the children in the shared layout
      */
@@ -109,6 +111,7 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Create a handler which we can use to flush the children animations
          */
+
         const handler: SyncLayoutLifecycles = {
             layoutReady: (child) => {
                 if (child.getLayoutId() !== undefined) {
@@ -118,7 +121,7 @@ export class AnimateSharedLayout extends React.Component<
                     child.notifyLayoutReady()
                 }
             },
-            parent: (this.context as MotionContextProps).visualElement,
+            parent: getNearestProjectionParent(this.props.motionContext) as any,
         }
 
         /**
@@ -152,6 +155,7 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Write: Reset transforms so bounding boxes can be accurately measured.
          */
+        // TODO Go up through tree and reset the rotation of everything upwards here
         this.children.forEach((child) => {
             resetRotate(child)
             if (child.shouldResetTransform()) child.resetTransform()
@@ -160,7 +164,7 @@ export class AnimateSharedLayout extends React.Component<
         /**
          * Read: Snapshot children
          */
-        this.children.forEach(snapshotViewportBox)
+        this.children.forEach((child) => snapshotViewportBox(child))
 
         /**
          * Every child keeps a local snapshot, but we also want to record
@@ -225,4 +229,22 @@ export class AnimateSharedLayout extends React.Component<
             </SharedLayoutContext.Provider>
         )
     }
+}
+
+export function AnimateSharedLayout(props: SharedLayoutProps) {
+    return (
+        <AnimateSharedLayoutWithContext
+            {...props}
+            motionContext={useContext(MotionContext)}
+        />
+    )
+}
+
+function getNearestProjectionParent({ visualElement }: MotionContextProps) {
+    if (visualElement) {
+        return visualElement.projection.isEnabled
+            ? visualElement
+            : visualElement.getProjectionParent() || false
+    }
+    return false
 }

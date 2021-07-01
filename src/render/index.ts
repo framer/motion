@@ -33,6 +33,7 @@ import {
 import { Axis } from "../types/geometry"
 import { setCurrentViewportBox } from "./dom/projection/relative-set"
 import { isDraggable } from "./utils/is-draggable"
+import { isTransformProp } from "./html/utils/transform"
 
 export const visualElement = <Instance, MutableState, Options>({
     treeType = "",
@@ -109,7 +110,7 @@ export const visualElement = <Instance, MutableState, Options>({
     /**
      *
      */
-    let crossfader: Crossfader
+    let crossfader: Crossfader | undefined
 
     /**
      * Keep track of whether the viewport box has been updated since the
@@ -210,7 +211,7 @@ export const visualElement = <Instance, MutableState, Options>({
             element,
             renderState,
             valuesToRender,
-            leadProjection,
+            props._suppressProjection ? undefined : leadProjection,
             layoutState,
             options,
             props
@@ -265,6 +266,10 @@ export const visualElement = <Instance, MutableState, Options>({
             (latestValue: string | number) => {
                 latestValues[key] = latestValue
                 props.onUpdate && sync.update(update, false, true)
+
+                if (isTransformProp(key) && props._applyTransforms) {
+                    element.scheduleUpdateLayoutProjection()
+                }
             }
         )
 
@@ -591,7 +596,12 @@ export const visualElement = <Instance, MutableState, Options>({
          * synchronously. However in those instances other measures should be taken
          * to batch reads/writes.
          */
-        syncRender: render,
+        syncRender: (applyCrossfade = true) => {
+            const prevCrossfader = crossfader
+            if (!applyCrossfade) crossfader = undefined
+            render()
+            if (!applyCrossfade) crossfader = prevCrossfader
+        },
 
         /**
          * Update the provided props. Ensure any newly-added motion values are
@@ -680,7 +690,8 @@ export const visualElement = <Instance, MutableState, Options>({
 
         isProjectionReady: () =>
             projection.isEnabled &&
-            projection.isHydrated &&
+            projection.isHydrated.x &&
+            projection.isHydrated.y &&
             layoutState.isHydrated,
 
         /**
@@ -719,7 +730,9 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         measureViewportBox(withTransform = true) {
             const viewportBox = measureViewportBox(instance, options)
+
             if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
+
             return viewportBox
         },
 
@@ -746,6 +759,7 @@ export const visualElement = <Instance, MutableState, Options>({
             if (isRelative) {
                 if (!projection.relativeTarget) {
                     projection.relativeTarget = axisBox()
+                    projection.isHydrated.x = projection.isHydrated.y = false
                 }
                 target = projection.relativeTarget[axis]
             } else {
@@ -753,7 +767,7 @@ export const visualElement = <Instance, MutableState, Options>({
                 target = projection.target[axis]
             }
 
-            projection.isHydrated = true
+            projection.isHydrated[axis] = true
 
             target.min = min
             target.max = max
@@ -779,9 +793,13 @@ export const visualElement = <Instance, MutableState, Options>({
                 !x.isAnimating() &&
                 !y.isAnimating()
 
+            /**
+             * TODO Rebase layout on transformed parent
+             */
+
             if (force || shouldRebase) {
                 eachAxis((axis) => {
-                    const { min, max } = box[axis]
+                    const { min, max } = box![axis]
                     element.setProjectionTargetAxis(axis, min, max)
                 })
             }
@@ -794,9 +812,12 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         notifyLayoutReady(config) {
             setCurrentViewportBox(element)
+
             element.notifyLayoutUpdate(
                 layoutState.layout,
-                element.prevViewportBox || layoutState.layout,
+                element.snapshot
+                    ? element.snapshot.viewportBox
+                    : layoutState.layout,
                 config
             )
         },
@@ -804,7 +825,8 @@ export const visualElement = <Instance, MutableState, Options>({
         /**
          * Temporarily reset the transform of the instance.
          */
-        resetTransform: () => resetTransform(element, instance, props),
+        resetTransform: () =>
+            resetTransform(element, instance, props, renderState, options),
 
         restoreTransform: () => restoreTransform(instance, renderState),
 
@@ -820,7 +842,6 @@ export const visualElement = <Instance, MutableState, Options>({
              * update projections.
              */
             sync.preRender(updateTreeLayoutProjection, false, true)
-            // sync.postRender(() => element.scheduleUpdateLayoutProjection())
         },
 
         getProjectionParent() {
@@ -845,11 +866,15 @@ export const visualElement = <Instance, MutableState, Options>({
 
         resolveRelativeTargetBox() {
             const relativeParent = element.getProjectionParent()
+
             if (!projection.relativeTarget || !relativeParent) return
 
             calcRelativeBox(projection, relativeParent.projection)
 
-            if (isDraggable(relativeParent)) {
+            if (
+                isDraggable(relativeParent) ||
+                relativeParent.getProps()._applyTransforms
+            ) {
                 const { target } = projection
                 applyBoxTransforms(
                     target,
@@ -875,7 +900,9 @@ export const visualElement = <Instance, MutableState, Options>({
              */
             unsubscribeFromLeadVisualElement?.()
             unsubscribeFromLeadVisualElement = pipe(
-                newLead.onSetAxisTarget(element.scheduleUpdateLayoutProjection),
+                newLead.onSetAxisTarget(() =>
+                    element.scheduleUpdateLayoutProjection()
+                ),
                 newLead.onLayoutAnimationComplete(() => {
                     if (element.isPresent) {
                         element.presence = Presence.Present

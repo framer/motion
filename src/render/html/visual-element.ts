@@ -75,8 +75,8 @@ export const htmlConfig: VisualElementConfig<
         element.scheduleRender()
     },
 
-    restoreTransform(instance, mutableState) {
-        instance.style.transform = mutableState.style.transform as string
+    restoreTransform(domElement, renderState) {
+        domElement.style.transform = renderState.style.transform as string
     },
 
     removeValueFromRenderState(key, { vars, style }) {
@@ -142,8 +142,8 @@ export const htmlConfig: VisualElementConfig<
                 : "hidden"
         }
 
-        const isProjectionTranform =
-            projection.isEnabled && layoutState.isHydrated
+        const isProjectionTranform = element.isProjectionReady()
+
         buildHTMLStyles(
             renderState,
             latestValues,

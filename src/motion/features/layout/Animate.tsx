@@ -13,10 +13,16 @@ import {
 } from "../../../components/AnimateSharedLayout/types"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import { LayoutProps } from "./types"
-import { axisBox } from "../../../utils/geometry"
+import { axisBox, copyAxisBox } from "../../../utils/geometry"
 import { addScaleCorrection } from "../../../render/dom/projection/scale-correction"
 import { defaultScaleCorrectors } from "../../../render/dom/projection/default-scale-correctors"
 import { VisualElement } from "../../../render/types"
+import {
+    applyBoxTransforms,
+    removeBoxTransforms,
+} from "../../../utils/geometry/delta-apply"
+import { getFrameData } from "framesync"
+import { LayoutState } from "../../../render/utils/state"
 
 interface AxisLocks {
     x?: () => void
@@ -114,20 +120,65 @@ class Animate extends React.Component<AnimateProps> {
         origin = originBox || origin
         target = targetBox || target
 
+        origin = copyAxisBox(origin)
+        target = copyAxisBox(target)
+
+        if (
+            visualElement.getProps()._applyTransforms &&
+            visualElement.snapshot?.transform
+        ) {
+            removeBoxTransforms(origin, visualElement.snapshot?.transform)
+        }
+
+        visualElement.path.forEach((node) => {
+            if (node.getProps()._applyTransforms) {
+                applyBoxTransforms(target, target, node.getLatestValues())
+            }
+        })
+
         /**
          * If this element has a projecting parent, there's an opportunity to animate
          * it relatively to that parent rather than relatively to the viewport. This
          * allows us to add orchestrated animations.
          */
         let isRelative = false
-        const projectionParent = visualElement.getProjectionParent()
+        let projectionParent = visualElement.getProjectionParent()
+
+        let parentLayout: LayoutState
+
+        const convertTargetToRelative = () => {
+            if (
+                !parentLayout ||
+                !parentLayout.isHydrated ||
+                !projectionParent ||
+                !projectionParent.isProjectionReady()
+            )
+                return false
+            const nextParentLayout = copyAxisBox(parentLayout.layout)
+            visualElement.path.forEach((node) => {
+                if (node.getProps()._applyTransforms) {
+                    applyBoxTransforms(
+                        nextParentLayout,
+                        nextParentLayout,
+                        node.getLatestValues()
+                    )
+                }
+            })
+            target = calcRelativeOffset(nextParentLayout, target)
+
+            return true
+        }
 
         if (projectionParent) {
-            let prevParentViewportBox = projectionParent.prevViewportBox
-            let parentLayout = projectionParent.getLayoutState().layout
+            let parentSnapshot = projectionParent.snapshot
+            parentLayout = projectionParent.getLayoutState()
 
             /**
              * If we're being provided a previous parent VisualElement by AnimateSharedLayout
+             *
+             * TODO: I suspect if we have a target or origin and there's no corresponding layout
+             * or snapshot we want to disable relative animation, but that is for a subsequent pass
+             * once a bug is isolated.
              */
             if (prevParent) {
                 /**
@@ -136,7 +187,8 @@ class Animate extends React.Component<AnimateProps> {
                  * parent's layout
                  */
                 if (targetBox) {
-                    parentLayout = prevParent.getLayoutState().layout
+                    projectionParent = prevParent
+                    parentLayout = prevParent.getLayoutState()
                 }
 
                 /**
@@ -146,24 +198,53 @@ class Animate extends React.Component<AnimateProps> {
                  */
                 if (
                     originBox &&
-                    !checkIfParentHasChanged(prevParent, projectionParent) &&
-                    prevParent.prevViewportBox
+                    !checkIfParentHasChanged(prevParent, projectionParent)
                 ) {
-                    prevParentViewportBox = prevParent.prevViewportBox
+                    projectionParent = prevParent
+                    parentSnapshot = prevParent.snapshot
                 }
             }
 
-            if (
-                prevParentViewportBox &&
-                isProvidedCorrectDataForRelativeSharedLayout(
-                    prevParent,
-                    originBox,
-                    targetBox
-                )
-            ) {
-                isRelative = true
-                origin = calcRelativeOffset(prevParentViewportBox, origin)
-                target = calcRelativeOffset(parentLayout, target)
+            if (projectionParent.isProjectionReady()) {
+                /**
+                 * If the snapshot is out
+                 */
+                if (
+                    !parentSnapshot ||
+                    parentSnapshot.taken !== getFrameData().timestamp
+                ) {
+                    parentSnapshot = {
+                        taken: 0,
+                        viewportBox: copyAxisBox(
+                            projectionParent.projection.target
+                        ),
+                        transform: projectionParent.getLatestValues(),
+                    }
+                }
+
+                if (
+                    isProvidedCorrectDataForRelativeSharedLayout(
+                        prevParent,
+                        originBox,
+                        targetBox
+                    )
+                ) {
+                    isRelative = true
+
+                    const prevParentViewportBox = copyAxisBox(
+                        parentSnapshot.viewportBox
+                    )
+                    origin = calcRelativeOffset(prevParentViewportBox, origin)
+
+                    if (projectionParent.getProps()._suppressProjection) {
+                        origin = {
+                            x: { min: 0, max: target.x.max - target.x.min },
+                            y: { min: 0, max: target.y.max - target.y.min },
+                        }
+                    }
+
+                    convertTargetToRelative()
+                }
             }
         }
 
@@ -193,7 +274,9 @@ class Animate extends React.Component<AnimateProps> {
                     isRelative,
                 })
             } else {
-                this.stopAxisAnimation[axis]?.()
+                if (!isRelative) {
+                    isRelative = convertTargetToRelative()
+                }
 
                 // If the box has remained in the same place, immediately set the axis target
                 // to the final desired state

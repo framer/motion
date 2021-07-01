@@ -45,23 +45,7 @@ export interface AnimatePresenceProps {
 }
 
 // @public (undocumented)
-export class AnimateSharedLayout extends React.Component<SharedLayoutProps, {}, VisualElement> {
-    // (undocumented)
-    componentDidMount(): void;
-    // (undocumented)
-    componentDidUpdate(): void;
-    // Warning: (ae-forgotten-export) The symbol "MotionContextProps" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    static contextType: React.Context<MotionContextProps>;
-    // (undocumented)
-    render(): JSX.Element;
-    // (undocumented)
-    shouldComponentUpdate(): boolean;
-    syncContext: SharedLayoutSyncMethods;
-    // (undocumented)
-    updateStacks(): void;
-}
+export function AnimateSharedLayout(props: SharedLayoutProps): JSX.Element;
 
 // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
@@ -353,10 +337,11 @@ export interface FocusHandlers {
 // @public (undocumented)
 export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<PropsWithoutRef<P> & RefAttributes<T>>;
 
+// Warning: (ae-forgotten-export) The symbol "FramerTreeContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "FramerTreeLayoutContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const FramerTreeLayoutContext: import("react").Context<SyncLayoutBatcher | SharedLayoutSyncMethods>;
+export const FramerTreeLayoutContext: import("react").Context<FramerTreeContextProps>;
 
 // @public (undocumented)
 export interface HoverHandlers {
@@ -432,11 +417,15 @@ export const LayoutGroupContext: import("react").Context<string | null>;
 
 // @public (undocumented)
 export interface LayoutProps {
+    // (undocumented)
+    _applyTransforms?: boolean;
     layout?: boolean | "position";
     layoutId?: string;
     // @internal
     _layoutResetTransform?: boolean;
     onLayoutAnimationComplete?(): void;
+    // (undocumented)
+    _suppressProjection?: boolean;
 }
 
 // @public (undocumented)
@@ -709,7 +698,7 @@ export interface SharedLayoutSyncMethods extends SyncLayoutBatcher {
 export type SingleTarget = ResolvedSingleTarget | CustomValueType;
 
 // @public
-export function snapshotViewportBox(visualElement: VisualElement): void;
+export function snapshotViewportBox(visualElement: VisualElement, rebase?: boolean): void;
 
 // @public
 export interface Spring extends Repeat {
@@ -963,9 +952,9 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
-    getValue(key: string, defaultValue: string | number): MotionValue;
-    // (undocumented)
     getValue(key: string): undefined | MotionValue;
+    // (undocumented)
+    getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)
@@ -1021,8 +1010,6 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     presenceId: number | undefined;
     // (undocumented)
     prevDragCursor?: Point2D;
-    // (undocumented)
-    prevViewportBox?: AxisBox2D;
     // Warning: (ae-forgotten-export) The symbol "TargetProjection" needs to be exported by the entry point index.d.ts
     // 
     // (undocumented)
@@ -1057,6 +1044,10 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     setVisibility(visibility: boolean): void;
     // (undocumented)
     shouldResetTransform(): boolean;
+    // Warning: (ae-forgotten-export) The symbol "Snapshot" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    snapshot?: Snapshot;
     // (undocumented)
     sortNodePosition(element: VisualElement): number;
     // (undocumented)
@@ -1064,7 +1055,7 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     stopLayoutAnimation(): void;
     // (undocumented)
-    syncRender(): void;
+    syncRender(applyCrossfade?: boolean): void;
     // (undocumented)
     treeType: string;
     // (undocumented)

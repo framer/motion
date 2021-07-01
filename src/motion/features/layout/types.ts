@@ -2,6 +2,7 @@
  * @public
  */
 export interface LayoutProps {
+    _applyTransforms?: boolean
     /**
      * If `true`, this component will automatically animate to its new position when
      * its layout changes.
@@ -60,6 +61,8 @@ export interface LayoutProps {
      * @internal
      */
     _layoutResetTransform?: boolean
+
+    _suppressProjection?: boolean
 
     /**
      * A callback that will fire when a layout animation on this component completes.

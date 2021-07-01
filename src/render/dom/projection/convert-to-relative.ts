@@ -17,7 +17,6 @@ export function convertToRelativeProjection(
     if (!projectionParent) return false
 
     let offset: AxisBox2D
-
     if (isLayoutDrag) {
         offset = calcRelativeOffset(
             projectionParent.projection.target,

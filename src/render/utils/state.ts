@@ -14,7 +14,10 @@ export interface TargetProjection {
     /**
      * Whether we should attempt to project into this target box.
      */
-    isHydrated: boolean
+    isHydrated: {
+        x: boolean
+        y: boolean
+    }
 
     /**
      * Whether this target box is locked. We might want to lock the box, for
@@ -44,7 +47,7 @@ export interface TargetProjection {
 
 export const createProjectionState = (): TargetProjection => ({
     isEnabled: false,
-    isHydrated: false,
+    isHydrated: { x: false, y: false },
     isTargetLocked: false,
     target: axisBox(),
     targetFinal: axisBox(),

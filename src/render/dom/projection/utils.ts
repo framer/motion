@@ -1,11 +1,19 @@
-import sync from "framesync"
+import sync, { getFrameData } from "framesync"
+import { calcRelativeOffset } from "../../../motion/features/layout/utils"
+import { eachAxis } from "../../../utils/each-axis"
 import { copyAxisBox } from "../../../utils/geometry"
+import { applyBoxTransforms } from "../../../utils/geometry/delta-apply"
 import { VisualElement } from "../../types"
 import { compareByDepth } from "../../utils/compare-by-depth"
 
 function isProjecting(visualElement: VisualElement) {
     const { isEnabled } = visualElement.projection
-    return isEnabled || visualElement.shouldResetTransform()
+
+    return (
+        isEnabled ||
+        visualElement.shouldResetTransform() ||
+        visualElement.getProps()._applyTransforms
+    )
 }
 
 export function collectProjectingAncestors(
@@ -51,10 +59,48 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
     layoutState.layout = visualElement.measureViewportBox()
     layoutState.layoutCorrected = copyAxisBox(layoutState.layout)
 
+    const { snapshot } = visualElement
     visualElement.notifyLayoutMeasure(
         layoutState.layout,
-        visualElement.prevViewportBox || layoutState.layout
+        snapshot ? snapshot.viewportBox : layoutState.layout
     )
+
+    if (!visualElement.isProjectionReady()) {
+        // Hydrate target box immediately so children can correctly resolve relatively
+        visualElement.rebaseProjectionTarget()
+
+        const projectionParent = visualElement.getProjectionParent()
+
+        if (projectionParent) {
+            const parentLayout = projectionParent.getLayoutState()
+
+            if (parentLayout && parentLayout.isHydrated) {
+                const nextParentLayout = copyAxisBox(parentLayout.layout)
+                visualElement.path.forEach((node) => {
+                    if (node.getProps()._applyTransforms) {
+                        applyBoxTransforms(
+                            nextParentLayout,
+                            nextParentLayout,
+                            node.getLatestValues()
+                        )
+                    }
+                    const target = calcRelativeOffset(
+                        nextParentLayout,
+                        layoutState.layout
+                    )
+
+                    eachAxis((axis) =>
+                        visualElement.setProjectionTargetAxis(
+                            axis,
+                            target[axis].min,
+                            target[axis].max,
+                            true
+                        )
+                    )
+                })
+            }
+        }
+    }
 
     sync.update(() => visualElement.rebaseProjectionTarget())
 }
@@ -62,13 +108,27 @@ export function updateLayoutMeasurement(visualElement: VisualElement) {
 /**
  * Record the viewport box as it was before an expected mutation/re-render
  */
-export function snapshotViewportBox(visualElement: VisualElement) {
+export function snapshotViewportBox(
+    visualElement: VisualElement,
+    rebase = true
+) {
     if (visualElement.shouldResetTransform()) return
-    visualElement.prevViewportBox = visualElement.measureViewportBox(false)
+
+    visualElement.snapshot = {
+        taken: getFrameData().timestamp,
+        transform: { ...visualElement.getLatestValues() },
+        viewportBox: visualElement.measureViewportBox(
+            visualElement.getProps()._applyTransforms ? true : false
+        ),
+    }
 
     /**
-     * Update targetBox to match the prevViewportBox. This is just to ensure
+     * Update targetBox to match the snapshot. This is just to ensure
      * that targetBox is affected by scroll in the same way as the measured box
      */
-    visualElement.rebaseProjectionTarget(false, visualElement.prevViewportBox)
+    rebase &&
+        visualElement.rebaseProjectionTarget(
+            false,
+            visualElement.snapshot.viewportBox
+        )
 }

@@ -193,16 +193,21 @@ export class VisualElementDragControls {
                 this.isLayoutDrag() && this.visualElement.lockProjectionTarget()
 
                 write(() => {
-                    tree.forEach((element) => element.resetTransform())
+                    tree.forEach((element) => {
+                        element.resetTransform()
+                    })
                 })
 
                 read(() => {
-                    updateLayoutMeasurement(this.visualElement)
-                    children.forEach(updateLayoutMeasurement)
+                    tree.forEach((node) => {
+                        updateLayoutMeasurement(node)
+                    })
                 })
 
                 write(() => {
-                    tree.forEach((element) => element.restoreTransform())
+                    tree.forEach((element) => {
+                        element.restoreTransform()
+                    })
 
                     if (snapToCursor) {
                         hasManuallySetCursorOrigin = this.snapToCursor(
@@ -216,7 +221,7 @@ export class VisualElementDragControls {
                         this.getAxisMotionValue("x") && !this.isExternalDrag()
                     )
 
-                    if (!isRelativeDrag) {
+                    if (!isRelativeDrag && !this.isExternalDrag()) {
                         this.visualElement.rebaseProjectionTarget(
                             true,
                             this.visualElement.measureViewportBox(false)
@@ -725,11 +730,22 @@ export class VisualElementDragControls {
                 ancestors.forEach((element) => element.resetTransform())
             )
 
-            read(() => updateLayoutMeasurement(this.visualElement))
+            read(() => {
+                ancestors.forEach((element) => {
+                    updateLayoutMeasurement(element)
+                })
+            })
 
             write(() =>
                 ancestors.forEach((element) => element.restoreTransform())
             )
+
+            write(() => {
+                flushSync.update()
+                flushSync.preRender()
+                flushSync.render()
+                flushSync.postRender()
+            })
 
             read(() => {
                 this.resolveDragConstraints()

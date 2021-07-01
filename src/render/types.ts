@@ -93,7 +93,7 @@ export interface VisualElement<Instance = any, RenderState = any>
           }
 
     build(): RenderState
-    syncRender(): void
+    syncRender(applyCrossfade?: boolean): void
 
     /**
      * Layout projection - perhaps a candidate for lazy-loading
@@ -137,9 +137,15 @@ export interface VisualElement<Instance = any, RenderState = any>
     presence: Presence
     isPresenceRoot?: boolean
     prevDragCursor?: Point2D
-    prevViewportBox?: AxisBox2D
+    snapshot?: Snapshot
     getLayoutId(): string | undefined
     animationState?: AnimationState
+}
+
+export interface Snapshot {
+    taken: number
+    viewportBox: AxisBox2D
+    transform: ResolvedValues
 }
 
 export interface VisualElementConfig<Instance, RenderState, Options> {
@@ -152,7 +158,7 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         visualElement: VisualElement<Instance>,
         renderState: RenderState,
         latestValues: ResolvedValues,
-        projection: TargetProjection,
+        projection: TargetProjection | undefined,
         layoutState: LayoutState,
         options: Options,
         props: MotionProps
@@ -173,7 +179,9 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
     resetTransform(
         element: VisualElement<Instance>,
         instance: Instance,
-        props: MotionProps
+        props: MotionProps,
+        renderState: RenderState,
+        options: Options
     ): void
     restoreTransform(instance: Instance, renderState: RenderState): void
     render(instance: Instance, renderState: RenderState): void
