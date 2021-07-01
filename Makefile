@@ -1,6 +1,12 @@
-SHELL := /bin/bash
+###### This is coming from our common.mk in the FramerStudio repo
+# Path of this file, includes trailing slash
+# NOTE: Should not be used in files that import this one, use BASE_DIR instead.
+__DIR__ := $(dir $(lastword $(MAKEFILE_LIST)))
 
-###### This is coming from our shared.mk in the FramerStudio repo
+
+# Root path of the repository, absolute (no slash suffix)
+BASE_DIR := $(abspath $(__DIR__))
+
 
 # Include node modules in the path
 PATH := $(CURDIR)/node_modules/.bin:$(PATH)
@@ -17,13 +23,21 @@ clean::
 	rm -rf node_modules
 	git clean -fdX .
 
-# Update node modules if package.json is newer than node_modules or yarn lockfile
 # Use a mutex file so multiple Source dirs can be built in parallel.
-node_modules/.yarn-integrity: yarn.lock package.json
-	yarn install --mutex network
+WORKTREE_NODE_MODULES := $(BASE_DIR)/node_modules/.yarn-state.yml
+WORKSPACE_NODE_MODULES := node_modules
+
+# Update node modules if package.json is newer than node_modules or yarn lockfile
+$(WORKTREE_NODE_MODULES) $(WORKSPACE_NODE_MODULES): $(BASE_DIR)/yarn.lock package.json
+	yarn install
 	touch $@
 
-bootstrap:: node_modules/.yarn-integrity
+# Install requirements, this should usually be the first dependency of build.
+# Only install the worktree (root) node_modules by default. If a package has it‘s own
+# node_modules, include a rule that says `bootstrap:: $(WORKSPACE_NODE_MODULES)` in the
+# Makefile
+bootstrap:: $(WORKTREE_NODE_MODULES)
+
 SOURCE_FILES := $(shell find ./src -type f)
 
 ######
