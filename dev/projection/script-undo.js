@@ -1,6 +1,6 @@
 Undo = {}
 
-const { HTMLProjectionNode, sync, buildTransform } = Projection
+const { HTMLProjectionNode, sync, buildTransform, animateDelta } = Projection
 
 let id = 1
 Undo.createNode = (element, parent, options = {}, overrideId) => {
