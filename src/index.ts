@@ -12,6 +12,7 @@ export { LazyMotion } from "./components/LazyMotion"
  * Features
  */
 export { domAnimation } from "./render/dom/features-animation"
+export { layoutAnimations } from "./motion/features/layout"
 export { domMax } from "./render/dom/features-max"
 
 /**
