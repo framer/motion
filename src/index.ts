@@ -1,4 +1,9 @@
 /**
+ * Proxy patch for `motion` and `m`
+ */
+export { patchMotionTags } from "./render/dom/patch-motion-tags"
+
+/**
  * Components
  */
 export { motion, createDomMotionComponent } from "./render/dom/motion"
