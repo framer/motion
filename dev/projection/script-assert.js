@@ -21,6 +21,14 @@ window.Assert = {
             }
         }
     },
+    matchOpacity: (element, expected) => {
+        const elementOpacity =
+            element.style.opacity === "" ? 1 : element.style.opacity
+
+        if (elementOpacity !== expected) {
+            element.dataset.layoutCorrect = "false"
+        }
+    },
     addPageScroll({ top, right, bottom, left }, x, y) {
         return {
             top: top - y,
