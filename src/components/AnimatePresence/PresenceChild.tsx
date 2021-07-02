@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useMemo } from "react"
+import { useMemo, useEffect } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
@@ -59,16 +59,18 @@ export const PresenceChild = ({
         presenceAffectsLayout ? undefined : [isPresent]
     )
 
-    useMemo(() => {
-        presenceChildren.forEach((_, key) => presenceChildren.set(key, false))
-    }, [isPresent])
-
-    /**
-     * If there's no `motion` components to fire exit animations, we want to remove this
-     * component immediately.
-     */
-    React.useEffect(() => {
-        !isPresent && !presenceChildren.size && onExitComplete?.()
+    useEffect(() => {
+        if (presenceChildren.size) {
+            presenceChildren.forEach((_, key) =>
+                presenceChildren.set(key, false)
+            )
+        } else if (!isPresent && onExitComplete) {
+            /**
+             * If there's no `motion` components to fire exit animations, we want to remove this
+             * component immediately.
+             */
+            onExitComplete()
+        }
     }, [isPresent])
 
     return (
