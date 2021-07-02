@@ -27,6 +27,9 @@ export class NodeStack {
         if (prevLead) {
             prevLead.scheduleRender()
             node.snapshot = prevLead.snapshot
+            node.snapshot.latestValues =
+                prevLead.animationValues || prevLead.latestValues
+            console.log(node.snapshot.latestValues)
             node.isLayoutDirty = true
 
             if (transfer === "immediate") {

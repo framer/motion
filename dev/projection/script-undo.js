@@ -1,6 +1,31 @@
 Undo = {}
 
-const { HTMLProjectionNode, sync, buildTransform, animateDelta } = Projection
+const {
+    HTMLProjectionNode,
+    sync,
+    buildTransform,
+    animateDelta,
+    addScaleCorrector,
+    correctBoxShadow,
+    correctBorderRadius,
+} = Projection
+
+addScaleCorrector({
+    borderRadius: {
+        ...correctBorderRadius,
+        applyTo: [
+            "borderTopLeftRadius",
+            "borderTopRightRadius",
+            "borderBottomLeftRadius",
+            "borderBottomRightRadius",
+        ],
+    },
+    borderTopLeftRadius: correctBorderRadius,
+    borderTopRightRadius: correctBorderRadius,
+    borderBottomLeftRadius: correctBorderRadius,
+    borderBottomRightRadius: correctBorderRadius,
+    boxShadow: correctBoxShadow,
+})
 
 let id = 1
 Undo.createNode = (element, parent, options = {}, overrideId) => {
@@ -42,10 +67,12 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         ...options,
     })
 
-    node.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
+    node.onLayoutDidUpdate(({ delta, hasLayoutChanged, snapshot }) => {
+        console.log(snapshot.latestValues)
         // console.log(hasLayoutChanged)
         // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
-        hasLayoutChanged && node.setTargetDelta(delta)
+        hasLayoutChanged &&
+            node.setAnimationOrigin(delta, snapshot.latestValues)
     })
 
     node.setTransform = (key, value) => {

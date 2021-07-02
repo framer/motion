@@ -1,13 +1,17 @@
 import sync, { cancelSync, flushSync } from "framesync"
+import { mix } from "popmotion"
+import { animate, AnimationPlaybackControls } from "../../animation/animate"
 import { ResolvedValues } from "../../render/types"
+import { Transition } from "../../types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
+import { mixValues } from "../animation/mix-values"
 import { copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import { calcBoxDelta, calcLength } from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
 import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/operations"
-import { Box, Delta, Point } from "../geometry/types"
+import { AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { isDeltaZero } from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
@@ -386,57 +390,47 @@ export function createProjectionNode<I>({
             // TODO Rename this option
             this.options.onProjectionUpdate?.()
         }
-        getProjectionStyles() {
-            // TODO: Return lifecycle-persistent object
-            const styles: ResolvedValues = {}
 
-            if (!this.isVisible) {
-                return { visibility: "hidden" }
-            }
+        /**
+         * Animation
+         */
+        animationProgress = 0
+        animationValues?: ResolvedValues
+        currentAnimation: AnimationPlaybackControls
+        mixTargetDelta: (progress: number) => void
 
-            if (!this.projectionDelta) {
-                return styles
-            }
-
-            // Resolve crossfading props and viewport boxes
-            // TODO: Return persistent mutable object
-
-            this.applyTransformsToTarget()
-            styles.transform = buildProjectionTransform(
-                this.projectionDeltaWithTransform!,
-                this.treeScale,
-                this.latestValues
-            )
-            if (this.instance.id === "box-a")
-                console.log("rendering", styles.transform)
-
-            // TODO Move into stand-alone, testable function
-            const { x, y } = this.projectionDelta
-            styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
-
-            /**
-             * Apply scale correction
-             */
-            for (const key in scaleCorrectors) {
-                if (this.latestValues[key] === undefined) {
-                    delete styles[key]
-                    continue
+        setAnimationOrigin(delta: Delta, latestValues: ResolvedValues) {
+            console.log(delta, latestValues)
+            this.animationValues = {}
+            const targetDelta = createDelta()
+            this.mixTargetDelta = (latest: number) => {
+                const progress = latest / 1000
+                mixAxisDelta(targetDelta.x, delta.x, progress)
+                mixAxisDelta(targetDelta.y, delta.y, progress)
+                if (latestValues !== this.latestValues) {
+                    mixValues(
+                        this.animationValues,
+                        latestValues,
+                        this.latestValues,
+                        progress
+                    )
                 }
 
-                const { correct, applyTo } = scaleCorrectors[key]
-                const corrected = correct(this.latestValues[key], this)
-
-                if (applyTo) {
-                    const num = applyTo.length
-                    for (let i = 0; i < num; i++) {
-                        styles[applyTo[i]] = corrected
-                    }
-                } else {
-                    styles[key] = corrected
-                }
+                this.setTargetDelta(targetDelta)
+                this.root.scheduleUpdateProjection()
             }
+            this.mixTargetDelta(0)
+        }
 
-            return styles
+        startAnimation(transition: Transition) {
+            this.currentAnimation?.stop()
+            this.currentAnimation = animate(0, 1000, {
+                ...(transition as any),
+                onUpdate: this.mixTargetDelta,
+                onComplete: () => {
+                    this.animationValues = undefined
+                },
+            })
         }
 
         applyTransformsToTarget() {
@@ -521,8 +515,62 @@ export function createProjectionNode<I>({
             const stack = this.getStack()
             if (stack) stack.promote(this, options)
         }
+
+        getProjectionStyles() {
+            // TODO: Return lifecycle-persistent object
+            const styles: ResolvedValues = {}
+
+            if (!this.isVisible) {
+                return { visibility: "hidden" }
+            }
+
+            if (!this.projectionDelta) {
+                return emptyStyles
+            }
+
+            // TODO: Return persistent mutable object
+
+            this.applyTransformsToTarget()
+            styles.transform = buildProjectionTransform(
+                this.projectionDeltaWithTransform!,
+                this.treeScale,
+                this.latestValues
+            )
+
+            const lead = this.getLead()
+            const valuesToRender = lead.animationValues || lead.latestValues
+
+            // TODO Move into stand-alone, testable function
+            const { x, y } = this.projectionDelta
+            styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
+
+            /**
+             * Apply scale correction
+             */
+            for (const key in scaleCorrectors) {
+                if (valuesToRender[key] === undefined) {
+                    continue
+                }
+
+                const { correct, applyTo } = scaleCorrectors[key]
+                const corrected = correct(valuesToRender[key], lead)
+
+                if (applyTo) {
+                    const num = applyTo.length
+                    for (let i = 0; i < num; i++) {
+                        styles[applyTo[i]] = corrected
+                    }
+                } else {
+                    styles[key] = corrected
+                }
+            }
+
+            return styles
+        }
     }
 }
+
+const emptyStyles = {}
 
 function updateTreeLayout(node: IProjectionNode) {
     node.updateLayout()
@@ -586,4 +634,11 @@ function resolveTreeTargetDeltas(node: IProjectionNode) {
 function calcTreeProjection(node: IProjectionNode) {
     node.calcProjection()
     node.children.forEach(calcTreeProjection)
+}
+
+export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {
+    output.translate = mix(delta.translate, 0, p)
+    output.scale = mix(delta.scale, 1, p)
+    output.origin = delta.origin
+    output.originPoint = delta.originPoint
 }

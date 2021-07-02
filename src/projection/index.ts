@@ -8,5 +8,8 @@ export { calcBoxDelta } from "./geometry/delta-calc"
  */
 import sync from "framesync"
 import { animate, mix } from "popmotion"
-import { buildTransform } from "../render/html/utils/build-transform"
-export { sync, animate, mix, buildTransform }
+export { sync, animate, mix }
+export { buildTransform } from "../render/html/utils/build-transform"
+export { addScaleCorrector } from "./styles/scale-correction"
+export { correctBorderRadius } from "./styles/scale-border-radius"
+export { correctBoxShadow } from "./styles/scale-box-shadow"

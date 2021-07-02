@@ -20,6 +20,7 @@ export interface IProjectionNode<I = unknown> {
     layout?: Box
     snapshot?: Snapshot
     target?: Box
+    targetWithTransforms?: Box
     scroll?: Point
     treeScale?: Point
     projectionDelta?: Delta

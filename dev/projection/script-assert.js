@@ -29,6 +29,11 @@ window.Assert = {
             element.dataset.layoutCorrect = "false"
         }
     },
+    matchBorderRadius: (element, expected) => {
+        if (element.style.borderRadius !== expected) {
+            element.dataset.layoutCorrect = "false"
+        }
+    },
     addPageScroll({ top, right, bottom, left }, x, y) {
         return {
             top: top - y,
