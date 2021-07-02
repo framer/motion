@@ -69,6 +69,30 @@ describe("Layout animation", () => {
             })
     })
 
+    it(`It correctly fires layout="size" animations`, () => {
+        cy.visit("?test=layout&type=size")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 50,
+                    left: 100,
+                    width: 300,
+                    height: 300,
+                })
+            })
+    })
+
     it("Doesn't initiate a new animation if the viewport box hasn't updated between renders", () => {
         cy.visit("?test=layout-interrupt")
             .wait(50)
