@@ -41,9 +41,9 @@
 
         <script src="../../dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
-        <script src="./script-undo.js"></script>
+        <script src="./script-animate.js"></script>
         <script>
-            const { createNode } = window.Undo
+            const { createNode } = window.Animate
             const {
                 matchViewportBox,
                 matchVisibility,
@@ -52,7 +52,6 @@
 
             const box = document.getElementById("box-a")
             const boxProjection = createNode(box, undefined, { layoutId: "a" })
-            const boxOrigin = box.getBoundingClientRect()
 
             boxProjection.willUpdate()
 
@@ -63,14 +62,16 @@
                 layoutId: "a",
             })
 
-            newBoxProjection.promote()
+            newBoxProjection.promote({ transfer: "crossfade" })
 
             newBoxProjection.root.didUpdate()
 
-            matchViewportBox(box, boxOrigin)
-            matchViewportBox(newBox, boxOrigin)
-            matchVisibility(box, "hidden")
+            const midBox = { bottom: 250, left: 50, right: 200, top: 50 }
+            matchViewportBox(box, midBox)
+            matchViewportBox(newBox, midBox)
+            matchVisibility(box, "visible")
             matchVisibility(newBox, "visible")
+            matchOpacity(box, 1)
             matchOpacity(newBox, 1)
         </script>
     </body>

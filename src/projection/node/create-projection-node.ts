@@ -66,6 +66,7 @@ export function createProjectionNode<I>({
         projectionDelta?: Delta
         projectionDeltaWithTransform?: Delta
 
+        lead?: IProjectionNode
         target?: Box
         targetWithTransforms?: Box
 
@@ -126,7 +127,7 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
-            if (this.isLayoutDirty) return
+            if (!this.isLead() || this.isLayoutDirty) return
 
             this.isLayoutDirty = true
 
@@ -301,11 +302,6 @@ export function createProjectionNode<I>({
          */
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
-
-            if (!this.projectionDelta) {
-                this.projectionDelta = createDelta()
-                this.projectionDeltaWithTransform = createDelta()
-            }
             this.root.scheduleUpdateProjection()
         }
 
@@ -323,6 +319,7 @@ export function createProjectionNode<I>({
          */
         resolveTargetDelta() {
             if (!this.targetDelta || !this.layout) return
+
             if (!this.target) {
                 this.target = createBox()
                 this.targetWithTransforms = createBox()
@@ -333,7 +330,14 @@ export function createProjectionNode<I>({
         }
 
         calcProjection() {
-            if (!this.layout || !this.target || !this.projectionDelta) return
+            const { target } = this.getLead()
+
+            if (!this.layout || !target) return
+
+            if (!this.projectionDelta) {
+                this.projectionDelta = createDelta()
+                this.projectionDeltaWithTransform = createDelta()
+            }
 
             /**
              * Reset the corrected box with the latest values from box, as we're then going
@@ -359,7 +363,7 @@ export function createProjectionNode<I>({
             calcBoxDelta(
                 this.projectionDelta,
                 this.layoutCorrected,
-                this.target,
+                target,
                 this.latestValues
             )
 
@@ -368,15 +372,26 @@ export function createProjectionNode<I>({
             onProjectionUpdate && onProjectionUpdate()
         }
 
+        isVisible = true
+        hide() {
+            this.isVisible = false
+            // TODO: Schedule render
+        }
+        show() {
+            this.isVisible = true
+            // TODO: Schedule render
+        }
+
+        scheduleRender() {
+            // TODO Rename this option
+            this.options.onProjectionUpdate?.()
+        }
         getProjectionStyles() {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
-            const { layoutId } = this.options
 
-            if (layoutId) {
-                if (!this.root.isLead(this, layoutId)) {
-                    return { visibility: "hidden" }
-                }
+            if (!this.isVisible) {
+                return { visibility: "hidden" }
             }
 
             if (!this.projectionDelta) {
@@ -392,6 +407,8 @@ export function createProjectionNode<I>({
                 this.treeScale,
                 this.latestValues
             )
+            if (this.instance.id === "box-a")
+                console.log("rendering", styles.transform)
 
             // TODO Move into stand-alone, testable function
             const { x, y } = this.projectionDelta
@@ -423,14 +440,20 @@ export function createProjectionNode<I>({
         }
 
         applyTransformsToTarget() {
-            copyBoxInto(this.targetWithTransforms!, this.target!)
+            const {
+                targetWithTransforms,
+                target,
+                latestValues,
+            } = this.getLead()
+
+            copyBoxInto(targetWithTransforms!, target!)
 
             /**
              * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
              * This is the final box that we will then project into by calculating a transform delta and
              * applying it to the corrected box.
              */
-            transformBox(this.targetWithTransforms!, this.latestValues)
+            transformBox(targetWithTransforms!, latestValues)
 
             /**
              * Update the delta between the corrected box and the final target box, after
@@ -441,8 +464,8 @@ export function createProjectionNode<I>({
             calcBoxDelta(
                 this.projectionDeltaWithTransform!,
                 this.layoutCorrected,
-                this.targetWithTransforms!,
-                this.latestValues
+                targetWithTransforms!,
+                latestValues
             )
         }
 
@@ -479,10 +502,14 @@ export function createProjectionNode<I>({
             stack.add(node)
         }
 
-        // TODO Only running on root node
-        isLead(node: IProjectionNode) {
-            const stack = node.getStack()
-            return stack ? stack.lead === node : false
+        isLead() {
+            const stack = this.getStack()
+            return stack ? stack.lead === this : true
+        }
+
+        getLead() {
+            const { layoutId } = this.options
+            return layoutId ? this.getStack()?.lead || this : this
         }
 
         getStack() {
@@ -490,9 +517,9 @@ export function createProjectionNode<I>({
             if (layoutId) return this.root.sharedNodes.get(layoutId)
         }
 
-        promote() {
+        promote(options) {
             const stack = this.getStack()
-            if (stack) stack.promote(this)
+            if (stack) stack.promote(this, options)
         }
     }
 }
