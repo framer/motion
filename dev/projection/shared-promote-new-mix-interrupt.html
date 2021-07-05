@@ -52,7 +52,10 @@
             } = window.Assert
 
             const box = document.getElementById("box-a")
-            const boxProjection = createNode(box, undefined, { layoutId: "a" })
+            const boxProjection = createNode(box, undefined, {
+                layoutId: "a",
+                crossfade: true,
+            })
 
             boxProjection.willUpdate()
 
@@ -61,11 +64,12 @@
             document.body.appendChild(newBox)
             const newBoxProjection = createNode(newBox, undefined, {
                 layoutId: "a",
+                crossfade: true,
             })
 
             newBoxProjection.setValue("borderRadius", 20)
 
-            newBoxProjection.promote({ transfer: "crossfade" })
+            newBoxProjection.promote()
 
             newBoxProjection.root.didUpdate()
 
@@ -74,14 +78,14 @@
             matchViewportBox(newBox, midBox)
             matchVisibility(box, "visible")
             matchVisibility(newBox, "visible")
-            matchOpacity(box, 1)
-            matchOpacity(newBox, 1)
+            matchOpacity(box, 0.5)
+            matchOpacity(newBox, 0.5)
             matchBorderRadius(box, "6.66667% / 5%")
             matchBorderRadius(newBox, "6.66667% / 5%")
 
             newBoxProjection.willUpdate()
 
-            boxProjection.promote({ transfer: "crossfade" })
+            boxProjection.promote()
 
             newBoxProjection.root.didUpdate()
 
@@ -95,8 +99,8 @@
             matchViewportBox(newBox, midBox)
             matchVisibility(box, "visible")
             matchVisibility(newBox, "visible")
-            matchOpacity(box, 1)
-            matchOpacity(newBox, 1)
+            matchOpacity(box, 0.75)
+            matchOpacity(newBox, 0.25)
             matchBorderRadius(box, "4% / 3.33333%")
             matchBorderRadius(newBox, "4% / 3.33333%")
         </script>

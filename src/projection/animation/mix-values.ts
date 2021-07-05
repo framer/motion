@@ -6,17 +6,23 @@ const numBorders = borders.length
 
 export function mixValues(
     target: ResolvedValues,
-    from: ResolvedValues,
-    to: ResolvedValues,
-    progress: number
+    follow: ResolvedValues,
+    lead: ResolvedValues,
+    progress: number,
+    shouldCrossfadeOpacity: boolean
 ) {
+    if (shouldCrossfadeOpacity) {
+        target.opacity = mix(0, (lead.opacity as number) ?? 1, progress)
+        target.opacityExit = mix((follow.opacity as number) ?? 1, 0, progress)
+    }
+
     /**
      * Mix border radius
      */
     for (let i = 0; i < numBorders; i++) {
         const borderLabel = `border${borders[i]}Radius`
-        let followRadius = getRadius(from, borderLabel)
-        let leadRadius = getRadius(to, borderLabel)
+        let followRadius = getRadius(follow, borderLabel)
+        let leadRadius = getRadius(lead, borderLabel)
 
         if (followRadius === undefined && leadRadius === undefined) continue
 
