@@ -59,7 +59,6 @@ Animate.createNode = (element, parent, options = {}) => {
             },
             node.getProjectionStyles()
         )
-        console.log(node.instance.id, node.getProjectionStyles().opacity)
     }
 
     function scheduleRender() {
