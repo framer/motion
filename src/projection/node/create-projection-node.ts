@@ -400,19 +400,23 @@ export function createProjectionNode<I>({
         mixTargetDelta: (progress: number) => void
 
         setAnimationOrigin(delta: Delta, latestValues: ResolvedValues) {
-            console.log(delta, latestValues)
             this.animationValues = {}
             const targetDelta = createDelta()
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
+
                 if (latestValues !== this.latestValues) {
+                    const shouldCrossfadeOpacity =
+                        this.options.crossfade === true
+
                     mixValues(
                         this.animationValues,
                         latestValues,
                         this.latestValues,
-                        progress
+                        progress,
+                        shouldCrossfadeOpacity
                     )
                 }
 
@@ -511,9 +515,9 @@ export function createProjectionNode<I>({
             if (layoutId) return this.root.sharedNodes.get(layoutId)
         }
 
-        promote(options) {
+        promote() {
             const stack = this.getStack()
-            if (stack) stack.promote(this, options)
+            if (stack) stack.promote(this)
         }
 
         getProjectionStyles() {
@@ -543,6 +547,11 @@ export function createProjectionNode<I>({
             // TODO Move into stand-alone, testable function
             const { x, y } = this.projectionDelta
             styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
+
+            styles.opacity =
+                lead === this
+                    ? valuesToRender.opacity
+                    : valuesToRender.opacityExit
 
             /**
              * Apply scale correction

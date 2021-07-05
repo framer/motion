@@ -85,6 +85,7 @@ export interface ProjectionNodeOptions {
     onProjectionUpdate?: () => void
     animationType?: "size" | "position" | "both"
     layoutId?: string
+    crossfade?: boolean
 }
 
 export type ProjectionEventName = "layoutUpdate" | "projectionUpdate"

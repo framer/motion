@@ -65,7 +65,7 @@
 
             newBoxProjection.setValue("borderRadius", 20)
 
-            newBoxProjection.promote({ transfer: "crossfade" })
+            newBoxProjection.promote()
 
             newBoxProjection.root.didUpdate()
 
@@ -74,8 +74,8 @@
             matchViewportBox(newBox, midBox)
             matchVisibility(box, "visible")
             matchVisibility(newBox, "visible")
-            matchOpacity(box, 1)
-            matchOpacity(newBox, 1)
+            matchOpacity(box, 0.5)
+            matchOpacity(newBox, 0.5)
 
             // TODO: This should actually not be a corrected 20 but 10 - 0.5 through the crossfade
             matchBorderRadius(box, "6.66667% / 5%")

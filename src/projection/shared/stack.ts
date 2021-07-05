@@ -15,10 +15,7 @@ export class NodeStack {
         node.scheduleRender()
     }
 
-    promote(
-        node: IProjectionNode,
-        { transfer = "immediate" }: PromoteOptions = {}
-    ) {
+    promote(node: IProjectionNode) {
         const prevLead = this.lead
         this.lead = node
 
@@ -29,14 +26,27 @@ export class NodeStack {
             node.snapshot = prevLead.snapshot
             node.snapshot.latestValues =
                 prevLead.animationValues || prevLead.latestValues
-            console.log(node.snapshot.latestValues)
+
             node.isLayoutDirty = true
 
+            const { transfer } = node.options
             if (transfer === "immediate") {
                 prevLead.hide()
             } else if (transfer === "crossfade") {
-                // prevLead.followTargetBox(node)
             }
+
+            /**
+             * TODO:
+             *   - Test border radius when previous node was deleted
+             *   - boxShadow mixing
+             *   - Shared between element A in scrolled container and element B (scroll stays the same or changes)
+             *   - Shared between element A in transformed container and element B (transform stays the same or changes)
+             *   - Shared between element A in scrolled page and element B (scroll stays the same or changes)
+             * ---
+             *   - Crossfade opacity of root nodes
+             *   - layoutId changes after animation
+             *   - layoutId changes mid animation
+             */
         }
     }
 }
