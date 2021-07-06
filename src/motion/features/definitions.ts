@@ -32,7 +32,6 @@ export const featureDefinitions: FeatureDefinitions = {
         "onPanSessionStart",
         "onPanEnd",
     ]),
-    layoutAnimation: createDefinition(["layout", "layoutId"]),
 }
 
 export function loadFeatures(features: FeatureComponents) {
