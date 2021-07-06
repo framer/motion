@@ -1,3 +1,4 @@
+import { Transition } from "types"
 import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { Box, Delta, Point } from "../geometry/types"
@@ -6,6 +7,7 @@ import { NodeStack } from "../shared/stack"
 export interface Snapshot {
     layout: Box
     visible: Box
+    latestValues: ResolvedValues
 }
 
 export interface IProjectionNode<I = unknown> {
@@ -47,6 +49,8 @@ export interface IProjectionNode<I = unknown> {
     calcProjection(): void
     getProjectionStyles(): ResolvedValues
 
+    setAnimationOrigin(delta: Delta, latestValues: ResolvedValues): void
+    startAnimation(transition: Transition): void
     // Shared element
     isLead(node: IProjectionNode, layoutId: string): boolean
 

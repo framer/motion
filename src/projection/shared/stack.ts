@@ -15,6 +15,10 @@ export class NodeStack {
         node.scheduleRender()
     }
 
+    remove(node: IProjectionNode) {
+        this.members.delete(node)
+    }
+
     promote(node: IProjectionNode) {
         const prevLead = this.lead
         this.lead = node
@@ -24,8 +28,11 @@ export class NodeStack {
         if (prevLead) {
             prevLead.scheduleRender()
             node.snapshot = prevLead.snapshot
-            node.snapshot.latestValues =
-                prevLead.animationValues || prevLead.latestValues
+
+            if (node.snapshot) {
+                node.snapshot.latestValues =
+                    prevLead.animationValues || prevLead.latestValues
+            }
 
             node.isLayoutDirty = true
 

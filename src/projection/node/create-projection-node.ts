@@ -93,11 +93,6 @@ export function createProjectionNode<I>({
             this.root.registerPotentialNode(id, this)
         }
 
-        destructor() {
-            this.parent?.children.delete(this)
-            cancelSync.preRender(this.updateProjection)
-        }
-
         // Note: Currently only running on root node
         potentialNodes = new Map<number, IProjectionNode>()
         registerPotentialNode(id: number, node: IProjectionNode) {
@@ -123,6 +118,16 @@ export function createProjectionNode<I>({
             })
         }
 
+        unmount() {
+            // @TODO: only snapshot if there's a pending lead sharing the same layout id
+            if (this.options.layoutId) {
+                this.willUpdate()
+            }
+            this.getStack()?.remove(this)
+            this.parent?.children.delete(this)
+            cancelSync.preRender(this.updateProjection)
+        }
+
         // Note: currently only running on root node
         startUpdate() {
             this.isUpdating = true
@@ -131,11 +136,10 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
+            !this.root.isUpdating && this.root.startUpdate()
             if (!this.isLead() || this.isLayoutDirty) return
 
             this.isLayoutDirty = true
-
-            !this.root.isUpdating && this.root.startUpdate()
 
             this.path.forEach((node) => {
                 node.shouldResetTransform = true
@@ -154,6 +158,8 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
+            if (!this.isUpdating) return
+
             this.potentialNodes.forEach((node, id) => {
                 const element = document.querySelector(
                     `[data-projection-id="${id}"]`
@@ -444,7 +450,6 @@ export function createProjectionNode<I>({
                 target,
                 latestValues,
             } = this.getLead()
-
             copyBoxInto(targetWithTransforms!, target!)
 
             /**
