@@ -402,15 +402,16 @@ export function createProjectionNode<I>({
         setAnimationOrigin(delta: Delta, latestValues: ResolvedValues) {
             this.animationValues = {}
             const targetDelta = createDelta()
+            let shouldCrossfadeOpacity =
+                this.options.crossfade === true &&
+                !this.path.some(hasOpacityCrossfade)
+
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
 
                 if (latestValues !== this.latestValues) {
-                    const shouldCrossfadeOpacity =
-                        this.options.crossfade === true
-
                     mixValues(
                         this.animationValues,
                         latestValues,
@@ -650,4 +651,10 @@ export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {
     output.scale = mix(delta.scale, 1, p)
     output.origin = delta.origin
     output.originPoint = delta.originPoint
+}
+
+function hasOpacityCrossfade(node: IProjectionNode) {
+    return (
+        node.animationValues && node.animationValues.opacityExit !== undefined
+    )
 }
