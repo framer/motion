@@ -1,3 +1,4 @@
+import { addUniqueItem, removeItem } from "../../utils/array"
 import { IProjectionNode } from "../node/types"
 
 export interface PromoteOptions {
@@ -6,17 +7,24 @@ export interface PromoteOptions {
 
 export class NodeStack {
     lead?: IProjectionNode
-    members = new Set<IProjectionNode>()
+    members: IProjectionNode[] = []
 
     add(node: IProjectionNode) {
-        !this.members.size && this.promote(node)
+        // !this.members.size &&
+        this.promote(node)
 
-        this.members.add(node)
+        addUniqueItem(this.members, node)
         node.scheduleRender()
     }
 
     remove(node: IProjectionNode) {
-        this.members.delete(node)
+        removeItem(this.members, node)
+        if (node === this.lead) {
+            const prevLead = this.members[this.members.length - 1]
+            if (prevLead) {
+                this.promote(prevLead)
+            }
+        }
     }
 
     promote(node: IProjectionNode) {

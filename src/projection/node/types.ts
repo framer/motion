@@ -1,5 +1,5 @@
 import { Transition } from "types"
-import { ResolvedValues } from "../../render/types"
+import { ResolvedValues, VisualElement } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { Box, Delta, Point } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
@@ -89,6 +89,8 @@ export interface ProjectionNodeOptions {
     onProjectionUpdate?: () => void
     animationType?: "size" | "position" | "both"
     layoutId?: string
+    layout?: boolean | string
+    visualElement?: VisualElement
     crossfade?: boolean
 }
 
