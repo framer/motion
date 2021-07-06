@@ -20,12 +20,6 @@ export class MeasureLayout extends React.Component<FeatureProps> {
 
         addScaleCorrector(defaultScaleCorrectors)
 
-        projection!.setOptions({
-            layoutId,
-            onProjectionUpdate: () => visualElement.scheduleRender(),
-            animationType: typeof layout === "string" ? layout : "both",
-        })
-
         const { group } = this.context
         if (group) group.add(projection)
 
@@ -53,7 +47,7 @@ export class MeasureLayout extends React.Component<FeatureProps> {
     }
 
     render() {
-        const { visualElement } = this.props
+        const { visualElement, layoutId, layout } = this.props
         if (!visualElement.projection) {
             // TODO do this on construction
             const parent = visualElement.parent?.projection
@@ -63,6 +57,14 @@ export class MeasureLayout extends React.Component<FeatureProps> {
                 visualElement.getLatestValues(),
                 parent
             )
+
+            visualElement.projection.setOptions({
+                layoutId,
+                layout,
+                visualElement,
+                onProjectionUpdate: () => visualElement.scheduleRender(),
+                animationType: typeof layout === "string" ? layout : "both",
+            })
         }
 
         return null

@@ -12,6 +12,7 @@ import { removeBoxTransforms } from "../geometry/delta-remove"
 import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/operations"
 import { AxisDelta, Box, Delta, Point } from "../geometry/types"
+import { getValueTransition } from "../../animation/utils/transitions"
 import { isDeltaZero } from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
@@ -116,6 +117,49 @@ export function createProjectionNode<I>({
             attachResizeListener?.(instance, () => {
                 // TODO: Complete all active animations/delete all projections
             })
+
+            const { layoutId, layout, visualElement } = this.options
+            if (layoutId) {
+                this.root.registerSharedNode(layoutId, this)
+            }
+
+            // Only register the handler if it requires layout animation
+            if (visualElement && (layoutId || layout)) {
+                this.onLayoutDidUpdate(
+                    ({ delta, hasLayoutChanged, snapshot }) => {
+                        // TODO: Check here if an animation exists
+                        const layoutTransition =
+                            visualElement.getDefaultTransition() ||
+                            defaultLayoutTransition
+
+                        const {
+                            onLayoutAnimationComplete,
+                        } = visualElement.getProps()
+
+                        if (
+                            hasLayoutChanged
+                            /**
+                             * Don't create a new animation if the target box
+                             * hasn't changed TODO: And we're already animating
+                             */
+                            // !boxEquals(layoutTarget.current, newLayout)
+                        ) {
+                            // TODO: On final frame, delete delta
+                            this.setAnimationOrigin(
+                                delta,
+                                snapshot.latestValues
+                            )
+                            this.startAnimation({
+                                ...getValueTransition(
+                                    layoutTransition,
+                                    "layout"
+                                ),
+                                onComplete: onLayoutAnimationComplete,
+                            })
+                        }
+                    }
+                )
+            }
         }
 
         unmount() {
@@ -152,7 +196,6 @@ export function createProjectionNode<I>({
             })
 
             this.updateSnapshot()
-
             shouldNotifyListeners && this.layoutWillUpdateListeners?.notify()
         }
 
@@ -317,11 +360,6 @@ export function createProjectionNode<I>({
 
         setOptions(options: ProjectionNodeOptions) {
             this.options = options
-
-            const { layoutId } = this.options
-            if (layoutId) {
-                this.root.registerSharedNode(layoutId, this)
-            }
         }
 
         /**
@@ -450,6 +488,7 @@ export function createProjectionNode<I>({
                 target,
                 latestValues,
             } = this.getLead()
+            console.log("apply", targetWithTransforms, target, latestValues)
             copyBoxInto(targetWithTransforms!, target!)
 
             /**
@@ -579,7 +618,7 @@ export function createProjectionNode<I>({
                     styles[key] = corrected
                 }
             }
-
+            console.log({ styles })
             return styles
         }
     }
@@ -595,7 +634,7 @@ function updateTreeLayout(node: IProjectionNode) {
 function notifyLayoutUpdate(node: IProjectionNode) {
     const { layout, snapshot } = node
 
-    if (layout && snapshot && node.layoutDidUpdateListeners) {
+    if (node.isLead() && layout && snapshot && node.layoutDidUpdateListeners) {
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position
         if (node.options.animationType === "size") {
@@ -627,8 +666,10 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     }
 
     node.children.forEach(notifyLayoutUpdate)
+    console.log("node.children", node.children.size)
 
     node.snapshot = undefined
+    console.log("snapshot deleted", node.instance.id)
 }
 
 function resetTreeTransform(node: IProjectionNode) {
@@ -662,4 +703,9 @@ function hasOpacityCrossfade(node: IProjectionNode) {
     return (
         node.animationValues && node.animationValues.opacityExit !== undefined
     )
+}
+
+const defaultLayoutTransition = {
+    duration: 0.45,
+    ease: [0.4, 0, 0.1, 1],
 }
