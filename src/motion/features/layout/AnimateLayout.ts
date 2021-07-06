@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react"
 import { getValueTransition } from "../../../animation/utils/transitions"
-import { animateDelta } from "../../../projection"
 import { createBox } from "../../../projection/geometry/models"
 import { boxEquals } from "../../../projection/geometry/utils"
 import { FeatureProps } from "../types"
@@ -13,11 +12,11 @@ export function AnimateLayout({
     const { projection } = visualElement
     const layoutTarget = useRef(createBox())
 
-    useEffect(() => {
-        if (!(layout || layoutId) || !projection) return
+    const layoutDidUpdate = useRef<VoidFunction | null>(null)
 
-        return projection.onLayoutDidUpdate(
-            ({ layout: newLayout, delta, hasLayoutChanged }) => {
+    if (layoutDidUpdate.current === null && projection) {
+        layoutDidUpdate.current = projection.onLayoutDidUpdate(
+            ({ layout: newLayout, delta, hasLayoutChanged, snapshot }) => {
                 // TODO: Check here if an animation exists
                 const layoutTransition =
                     visualElement.getDefaultTransition() ||
@@ -34,7 +33,8 @@ export function AnimateLayout({
                     !boxEquals(layoutTarget.current, newLayout)
                 ) {
                     // TODO: On final frame, delete delta
-                    animateDelta(projection, delta, {
+                    projection.setAnimationOrigin(delta, snapshot.latestValues)
+                    projection.startAnimation({
                         ...getValueTransition(layoutTransition, "layout"),
                         onComplete: onLayoutAnimationComplete,
                     })
@@ -43,7 +43,10 @@ export function AnimateLayout({
                 layoutTarget.current = newLayout
             }
         )
-    }, [layout, layoutId])
+    }
+    useEffect(() => {
+        return layoutDidUpdate.current?.()
+    }, [])
 
     return null
 }

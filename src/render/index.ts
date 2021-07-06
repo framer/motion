@@ -232,6 +232,9 @@ export const visualElement = <Instance, MutableState, Options>({
          *
          */
         unmount() {
+            if (element.projection) {
+                element.projection.unmount()
+            }
             cancelSync.update(update)
             cancelSync.render(render)
             valueSubscriptions.forEach((remove) => remove())
