@@ -255,6 +255,7 @@ export function createProjectionNode<I>({
             this.snapshot = {
                 visible,
                 layout: this.removeElementScroll(visible!),
+                latestValues: {},
             }
         }
 
@@ -445,8 +446,9 @@ export function createProjectionNode<I>({
 
         setAnimationOrigin(delta: Delta, latestValues: ResolvedValues) {
             this.animationValues = {}
+
             const targetDelta = createDelta()
-            let shouldCrossfadeOpacity =
+            const shouldCrossfadeOpacity =
                 this.options.crossfade === true &&
                 !this.path.some(hasOpacityCrossfade)
 
@@ -455,7 +457,10 @@ export function createProjectionNode<I>({
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
 
-                if (latestValues !== this.latestValues) {
+                if (
+                    latestValues !== this.latestValues &&
+                    this.animationValues
+                ) {
                     mixValues(
                         this.animationValues,
                         latestValues,
@@ -488,7 +493,7 @@ export function createProjectionNode<I>({
                 target,
                 latestValues,
             } = this.getLead()
-            console.log("apply", targetWithTransforms, target, latestValues)
+
             copyBoxInto(targetWithTransforms!, target!)
 
             /**
@@ -545,7 +550,7 @@ export function createProjectionNode<I>({
             stack.add(node)
         }
 
-        isLead() {
+        isLead(): boolean {
             const stack = this.getStack()
             return stack ? stack.lead === this : true
         }
@@ -618,7 +623,6 @@ export function createProjectionNode<I>({
                     styles[key] = corrected
                 }
             }
-            console.log({ styles })
             return styles
         }
     }
@@ -666,10 +670,8 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     }
 
     node.children.forEach(notifyLayoutUpdate)
-    console.log("node.children", node.children.size)
 
     node.snapshot = undefined
-    console.log("snapshot deleted", node.instance.id)
 }
 
 function resetTreeTransform(node: IProjectionNode) {
