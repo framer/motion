@@ -1,10 +1,6 @@
 import { addUniqueItem, removeItem } from "../../utils/array"
 import { IProjectionNode } from "../node/types"
 
-export interface PromoteOptions {
-    transfer?: "immediate" | "crossfade"
-}
-
 export class NodeStack {
     lead?: IProjectionNode
     members: IProjectionNode[] = []
@@ -44,12 +40,11 @@ export class NodeStack {
 
             node.isLayoutDirty = true
 
-            const { transfer } = node.options
-            if (transfer === "immediate") {
+            const { crossfade } = node.options
+            if (crossfade === false) {
                 prevLead.hide()
-            } else if (transfer === "crossfade") {
+            } else {
             }
-
             /**
              * TODO:
              *   - Test border radius when previous node was deleted

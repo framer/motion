@@ -17,6 +17,7 @@ export interface IProjectionNode<I = unknown> {
     children: Set<IProjectionNode>
     path: IProjectionNode[]
     mount: (node: I, isLayoutDirty?: boolean) => void
+    unmount: () => void
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
     layout?: Box
@@ -42,6 +43,10 @@ export interface IProjectionNode<I = unknown> {
     registerPotentialNode(id: number, node: IProjectionNode): void
     registerSharedNode(id: string, node: IProjectionNode): void
     getStack(): NodeStack | undefined
+    isVisible: boolean
+    hide(): void
+    show(): void
+    scheduleRender(): void
 
     setTargetDelta(delta: Delta): void
     resetTransform(): void
@@ -49,10 +54,12 @@ export interface IProjectionNode<I = unknown> {
     calcProjection(): void
     getProjectionStyles(): ResolvedValues
 
+    animationValues?: ResolvedValues
     setAnimationOrigin(delta: Delta, latestValues: ResolvedValues): void
     startAnimation(transition: Transition): void
+
     // Shared element
-    isLead(node: IProjectionNode, layoutId: string): boolean
+    isLead(): boolean
 
     /**
      * Events

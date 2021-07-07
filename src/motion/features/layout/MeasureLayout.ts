@@ -15,7 +15,7 @@ export class MeasureLayout extends React.Component<FeatureProps> {
      * in order to incorporate transforms
      */
     componentDidMount() {
-        const { visualElement, layout, layoutId } = this.props
+        const { visualElement } = this.props
         const { projection } = visualElement
 
         addScaleCorrector(defaultScaleCorrectors)
