@@ -576,6 +576,8 @@ export function createProjectionNode<I>({
 
             if (!this.isVisible) {
                 return { visibility: "hidden" }
+            } else {
+                styles.visibility = ""
             }
 
             if (!this.projectionDelta) {
