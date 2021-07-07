@@ -1,4 +1,4 @@
-import { motion, AnimateSharedLayout } from "@framer"
+import { motion } from "@framer"
 import * as React from "react"
 
 const transition = {
@@ -16,25 +16,23 @@ export const App = () => {
             style={overlay as any}
             onClick={() => setCount(count + 1)}
         >
-            <AnimateSharedLayout>
-                {(count === 1 || count === 3) && (
-                    <motion.div
-                        id="a"
-                        layoutId="box"
-                        layout={type}
-                        style={a}
-                        transition={transition}
-                    />
-                )}
-                {count === 2 && (
-                    <motion.div
-                        id="b"
-                        layoutId="box"
-                        style={b}
-                        transition={transition}
-                    />
-                )}
-            </AnimateSharedLayout>
+            {(count === 1 || count === 3) && (
+                <motion.div
+                    id="a"
+                    layoutId="box"
+                    layout={type}
+                    style={a}
+                    transition={transition}
+                />
+            )}
+            {count === 2 && (
+                <motion.div
+                    id="b"
+                    layoutId="box"
+                    style={b}
+                    transition={transition}
+                />
+            )}
         </div>
     )
 }

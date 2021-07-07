@@ -1,8 +1,11 @@
 import sync, { cancelSync, flushSync } from "framesync"
 import { mix } from "popmotion"
-import { animate, AnimationPlaybackControls } from "../../animation/animate"
+import {
+    animate,
+    AnimationOptions,
+    AnimationPlaybackControls,
+} from "../../animation/animate"
 import { ResolvedValues } from "../../render/types"
-import { Transition } from "../../types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
 import { copyBoxInto } from "../geometry/copy"
@@ -476,13 +479,17 @@ export function createProjectionNode<I>({
             this.mixTargetDelta(0)
         }
 
-        startAnimation(transition: Transition) {
+        startAnimation(options: AnimationOptions<number>) {
             this.currentAnimation?.stop()
             this.currentAnimation = animate(0, 1000, {
-                ...(transition as any),
-                onUpdate: this.mixTargetDelta,
+                ...(options as any),
+                onUpdate: (latest: number) => {
+                    this.mixTargetDelta(latest)
+                    options.onUpdate?.(latest)
+                },
                 onComplete: () => {
                     this.animationValues = undefined
+                    options.onComplete?.()
                 },
             })
         }

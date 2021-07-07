@@ -1,4 +1,4 @@
-import { motion, AnimateSharedLayout } from "@framer"
+import { motion } from "@framer"
 import * as React from "react"
 
 const transition = {
@@ -12,7 +12,7 @@ export const App = () => {
     const [state, setState] = React.useState(false)
 
     return (
-        <AnimateSharedLayout>
+        <>
             <motion.div
                 id="a"
                 layoutId="box"
@@ -30,7 +30,7 @@ export const App = () => {
                     onClick={() => setState(!state)}
                 />
             )}
-        </AnimateSharedLayout>
+        </>
     )
 }
 
