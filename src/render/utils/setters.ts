@@ -7,6 +7,7 @@ import {
     Transition,
 } from "../../types"
 import { isNumericalString } from "../../utils/is-numerical-string"
+import { isZeroValueString } from "../../utils/is-zero-value-string"
 import { resolveFinalValueInKeyframes } from "../../utils/resolve-value"
 import { motionValue } from "../../value"
 import { getAnimatableNone } from "../dom/value-types/animatable-none"
@@ -116,7 +117,7 @@ export function checkTargetForNewValues(
 
         if (
             typeof value === "string" &&
-            (isNumericalString(value) || value.startsWith("0"))
+            (isNumericalString(value) || isZeroValueString(value))
         ) {
             // If this is a number read as a string, ie "0", "200",
             // or a zero number like "0px", convert it to a number type
