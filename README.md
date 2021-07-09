@@ -1,8 +1,8 @@
-<p align=“center”>
-  <img src=“https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png” width=“108” height=“108" alt=“Framer Motion” />
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png" width="108" height="108" alt="Framer Motion" />
 </p>
-<h1 align=“center”>Framer Motion</h1>
-<h3 align=“center”>
+<h1 align="center">Framer Motion</h1>
+<h3 align="center">
   An open source and production-ready motion<br>library for React on the web.
 </h3>
 
