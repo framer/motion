@@ -364,10 +364,7 @@ describe("AnimateSharedLayout: A -> AB -> A crossfade transition", () => {
             .wait(50)
             .get("#a")
             .should(([$box]: any) => {
-                expect(
-                    $box.style.opacity === "" ||
-                        parseFloat($box.style.opacity) === 1
-                ).to.be.true
+                expect(parseFloat($box.style.opacity)).to.equal(0.5)
                 expectBbox($box, {
                     top: 50,
                     left: 100,
@@ -377,10 +374,7 @@ describe("AnimateSharedLayout: A -> AB -> A crossfade transition", () => {
             })
             .get("#b")
             .should(([$box]: any) => {
-                expect(
-                    $box.style.opacity === "" ||
-                        parseFloat($box.style.opacity) === 1
-                ).to.be.true
+                expect(parseFloat($box.style.opacity)).to.equal(0.5)
                 expectBbox($box, {
                     top: 50,
                     left: 100,
