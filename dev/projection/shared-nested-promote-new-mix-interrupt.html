@@ -95,9 +95,6 @@
 
             newBoxProjection.setValue("borderRadius", 20)
 
-            newBoxProjection.promote()
-            newChildProjection.promote()
-
             newBoxProjection.root.didUpdate()
 
             let midBox = { bottom: 100, left: 50, right: 125, top: 50 }
@@ -105,6 +102,8 @@
             matchViewportBox(newChild, midBox)
             matchVisibility(child, "visible")
             matchVisibility(newChild, "visible")
+            matchOpacity(box, 0.5)
+            matchOpacity(newBox, 0.5)
             matchOpacity(child, 1)
             matchOpacity(newChild, 1)
 
@@ -118,13 +117,15 @@
 
             newBoxProjection.root.didUpdate()
 
-            midBox = { bottom: 175, left: 25, right: 150, top: 25 }
+            midBox = { bottom: 75, left: 25, right: 87.5, top: 25 }
             matchViewportBox(child, midBox)
             matchViewportBox(newChild, midBox)
             matchVisibility(child, "visible")
             matchVisibility(newChild, "visible")
+            matchOpacity(box, 0.75)
+            matchOpacity(newBox, 0.25)
             matchOpacity(child, 1)
-            matchOpacity(newChild, 0.25)
+            matchOpacity(newChild, 1)
         </script>
     </body>
 </html>
