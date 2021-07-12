@@ -42,7 +42,7 @@ addScaleCorrector({
 })
 
 let id = 1
-Animate.createNode = (element, parent, options = {}) => {
+Animate.createNode = (element, parent, options = {}, transition = { duration: 2, ease: () => 0.5 }) => {
     const latestValues = {}
 
     function render() {
@@ -78,7 +78,7 @@ Animate.createNode = (element, parent, options = {}) => {
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged, snapshot }) => {
         if (hasLayoutChanged) {
             node.setAnimationOrigin(delta, snapshot.latestValues)
-            node.startAnimation({ duration: 2, ease: () => 0.5 })
+            node.startAnimation(transition)
         }
     })
 

@@ -609,10 +609,18 @@ export function createProjectionNode<I>({
             const { x, y } = this.projectionDelta
             styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
 
-            styles.opacity =
-                lead === this
-                    ? valuesToRender.opacity
-                    : valuesToRender.opacityExit
+            if (!lead.animationValues) {
+                // snap opacity to full 0/1 when the animation is finished
+                styles.opacity =
+                    lead === this
+                        ? valuesToRender.opacity ?? ""
+                        : valuesToRender.opacityExit ?? 0
+            } else {
+                styles.opacity =
+                    lead === this
+                        ? valuesToRender.opacity
+                        : valuesToRender.opacityExit
+            }
 
             /**
              * Apply scale correction
