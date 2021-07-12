@@ -66,11 +66,14 @@ Animate.createNode = (element, parent, options = {}) => {
     }
 
     const node = new HTMLProjectionNode(id, latestValues, parent)
-    node.mount(element)
+
     node.setOptions({
         onProjectionUpdate: scheduleRender,
         ...options,
     })
+
+
+    node.mount(element)
 
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged, snapshot }) => {
         if (hasLayoutChanged) {

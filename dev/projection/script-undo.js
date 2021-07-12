@@ -58,14 +58,15 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         parent
     )
 
-    if (!overrideId) {
-        node.mount(element)
-    }
-
     node.setOptions({
         onProjectionUpdate: scheduleRender,
         ...options,
     })
+
+    if (!overrideId) {
+        node.mount(element)
+    }
+
 
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged, snapshot }) => {
         console.log(snapshot.latestValues)

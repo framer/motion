@@ -363,7 +363,7 @@ export function createProjectionNode<I>({
         }
 
         setOptions(options: ProjectionNodeOptions) {
-            this.options = options
+            this.options = { ...options, crossfade: options.crossfade ?? true }
         }
 
         /**
@@ -454,6 +454,7 @@ export function createProjectionNode<I>({
             const shouldCrossfadeOpacity =
                 this.options.crossfade === true &&
                 !this.path.some(hasOpacityCrossfade)
+            const start = this.snapshot?.latestValues
 
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
@@ -469,7 +470,8 @@ export function createProjectionNode<I>({
                         latestValues,
                         this.latestValues,
                         progress,
-                        shouldCrossfadeOpacity
+                        shouldCrossfadeOpacity,
+                        start
                     )
                 }
 

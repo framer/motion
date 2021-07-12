@@ -61,9 +61,8 @@
             document.body.appendChild(newBox)
             const newBoxProjection = createNode(newBox, undefined, {
                 layoutId: "a",
+                crossfade: false,
             })
-
-            newBoxProjection.promote()
 
             newBoxProjection.root.didUpdate()
 
