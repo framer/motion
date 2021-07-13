@@ -7,7 +7,7 @@ import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
 import { Box, Point } from "../projection/geometry/types"
-import { IProjectionNode } from "../projection/node/create-projection-node"
+import { IProjectionNode } from "../projection/node/types"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -130,7 +130,12 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         props: MotionProps
     ): void
     restoreTransform(instance: Instance, renderState: RenderState): void
-    render(instance: Instance, renderState: RenderState): void
+    render(
+        instance: Instance,
+        renderState: RenderState,
+        latest: ResolvedValues,
+        projection?: IProjectionNode
+    ): void
     removeValueFromRenderState(key: string, renderState: RenderState): void
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
 }

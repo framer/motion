@@ -2,7 +2,10 @@ import { Delta, Point } from "../geometry/types"
 
 export const identityProjection = "translate3d(0px, 0px, 0) scale(1, 1)"
 
-export function buildProjectionTransform(delta: Delta, treeScale: Point) {
+export function buildProjectionTransform(
+    delta: Delta,
+    treeScale: Point
+): string {
     /**
      * The translations we use to calculate are always relative to the viewport coordinate space.
      * But when we apply scales, we also scale the coordinate space of an element and its children.

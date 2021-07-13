@@ -58,4 +58,9 @@ export interface LayoutProps {
      * @public
      */
     onLayoutAnimationComplete?(): void
+
+    /**
+     * @public
+     */
+    layoutDependency?: any
 }

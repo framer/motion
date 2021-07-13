@@ -2,9 +2,22 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.0.0] Unreleased
+
 ### Added
 
+-   `LayoutGroup` (TBD, maybe reuse `AnimateSharedLayout`)
+-   `layoutDependency` prop to optionally trigger layout animations.
+-   Layout animations are auto-completed when the viewport resizes.
 -   `layout="size"` for size-only layout animations.
+
+### Fixed
+
+-   Various layout projection improvements.
+
+### Removed
+
+-   `AnimateSharedLayout`
 
 ## [4.1.17] 2021-05-17
 

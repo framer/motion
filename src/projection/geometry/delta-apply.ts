@@ -1,4 +1,4 @@
-import { IProjectionNode } from "../node/create-projection-node"
+import { IProjectionNode } from "../node/types"
 import { Axis, Box, Delta, Point } from "./types"
 
 /**

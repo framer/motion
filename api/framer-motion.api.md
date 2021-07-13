@@ -318,14 +318,17 @@ export interface Keyframes {
 // @public (undocumented)
 export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueType[]] | CustomValueType[];
 
+// Warning: (ae-forgotten-export) The symbol "LayoutGroupContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "LayoutGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const LayoutGroupContext: import("react").Context<string | null>;
+export const LayoutGroupContext: import("react").Context<LayoutGroupContextProps>;
 
 // @public (undocumented)
 export interface LayoutProps {
     layout?: boolean | "position";
+    // (undocumented)
+    layoutDependency?: any;
     layoutId?: string;
     onLayoutAnimationComplete?(): void;
 }
@@ -805,6 +808,10 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     presenceId: number | undefined;
     // (undocumented)
     prevDragCursor?: Point;
+    // Warning: (ae-forgotten-export) The symbol "IProjectionNode" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    projection?: IProjectionNode;
     // (undocumented)
     readValue(key: string): string | number | undefined | null;
     // (undocumented)

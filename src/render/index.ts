@@ -1,6 +1,5 @@
 import sync, { cancelSync } from "framesync"
 import { MotionStyle } from "../motion/types"
-import { HTMLProjectionNode } from "../projection"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
@@ -98,10 +97,7 @@ export const visualElement = <Instance, MutableState, Options>({
         if (!instance) return
 
         triggerBuild()
-
-        // TODO Update final projection here
-
-        renderInstance(instance, renderState)
+        renderInstance(instance, renderState, latestValues, element.projection)
     }
 
     function triggerBuild() {

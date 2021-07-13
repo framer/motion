@@ -5,16 +5,9 @@ import { createDelta } from "../geometry/models"
 import { AxisDelta, Delta } from "../geometry/types"
 import { IProjectionNode } from "../node/types"
 
-export type AnimationDeltaType = "position" | "size" | true
-
-export function mixAxisDelta(
-    output: AxisDelta,
-    delta: AxisDelta,
-    p: number,
-    type: AnimationDeltaType = true
-) {
-    output.translate = mix(delta.translate, 0, type !== "size" ? p : 1)
-    output.scale = mix(delta.scale, 1, type !== "position" ? p : 1)
+export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {
+    output.translate = mix(delta.translate, 0, p)
+    output.scale = mix(delta.scale, 1, p)
     output.origin = delta.origin
     output.originPoint = delta.originPoint
 }
@@ -25,16 +18,15 @@ export function mixAxisDelta(
 export function animateDelta(
     node: IProjectionNode,
     delta: Delta,
-    transition: Transition,
-    type: AnimationDeltaType = true
+    transition: Transition
 ) {
     const targetDelta = createDelta()
 
     const onUpdate = (progress: number) => {
         const p = progress / 1000
 
-        mixAxisDelta(targetDelta.x, delta.x, p, type)
-        mixAxisDelta(targetDelta.y, delta.y, p, type)
+        mixAxisDelta(targetDelta.x, delta.x, p)
+        mixAxisDelta(targetDelta.y, delta.y, p)
 
         node.setTargetDelta(targetDelta)
     }

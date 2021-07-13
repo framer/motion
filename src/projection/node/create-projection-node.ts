@@ -1,4 +1,5 @@
 import sync, { cancelSync, flushSync } from "framesync"
+import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
@@ -6,10 +7,13 @@ import { calcBoxDelta } from "../geometry/delta-calc"
 import { createBox, createDelta } from "../geometry/models"
 import { translateAxis } from "../geometry/operations"
 import { Box, Delta, Point } from "../geometry/types"
+import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
 import {
     IProjectionNode,
+    LayoutUpdateData,
+    LayoutUpdateHandler,
     ProjectionNodeConfig,
     ProjectionNodeOptions,
     Snapshot,
@@ -53,6 +57,7 @@ export function createProjectionNode<I>({
         target?: Box
 
         layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
+        layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
 
         constructor(parent?: IProjectionNode) {
             this.parent = parent
@@ -215,9 +220,8 @@ export function createProjectionNode<I>({
         }
 
         calcProjection() {
-            if (!this.layout) return
-            if (!this.target) return
-            if (!this.projectionDelta) return
+            if (!this.layout || !this.target || !this.projectionDelta) return
+
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -250,29 +254,64 @@ export function createProjectionNode<I>({
             onProjectionUpdate && onProjectionUpdate()
         }
 
-        getProjectionStyles() {
-            if (!this.projectionDelta) return {}
+        getProjectionStyles(latest: ResolvedValues) {
+            // TODO: Return lifecycle-persistent object
+            const styles: ResolvedValues = {}
+
+            if (!this.projectionDelta) return styles
+
             // Resolve crossfading props and viewport boxes
-            // TODO: Only return if projecting
             // TODO: Apply user-set transforms to targetBox
-            // TODO: calcBoxDelta to final box
-            // TODO: Return mutable object
-            return {
-                transform: buildProjectionTransform(
-                    this.projectionDelta,
-                    this.treeScale
-                ),
+            // TODO: Return persistent mutable object
+
+            styles.transform = buildProjectionTransform(
+                this.projectionDelta,
+                this.treeScale
+            )
+
+            // TODO Move into stand-alone, testable function
+            const { x, y } = this.projectionDelta
+            styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
+
+            /**
+             * Apply scale correction
+             */
+            for (const key in scaleCorrectors) {
+                if (latest[key] === undefined) continue
+
+                const { correct, applyTo } = scaleCorrectors[key]
+                const corrected = correct(latest[key], this)
+
+                if (applyTo) {
+                    const num = applyTo.length
+                    for (let i = 0; i < num; i++) {
+                        styles[applyTo[i]] = corrected
+                    }
+                } else {
+                    styles[key] = corrected
+                }
             }
+
+            return styles
         }
 
         /**
          * Events
+         *
+         * TODO Replace this with a key-based lookup
          */
         onLayoutWillUpdate(handler: VoidFunction) {
             if (!this.layoutWillUpdateListeners) {
                 this.layoutWillUpdateListeners = new SubscriptionManager()
             }
             return this.layoutWillUpdateListeners!.add(handler)
+        }
+
+        onLayoutDidUpdate(handler: (data: LayoutUpdateData) => void) {
+            if (!this.layoutDidUpdateListeners) {
+                this.layoutDidUpdateListeners = new SubscriptionManager()
+            }
+            return this.layoutDidUpdateListeners!.add(handler)
         }
     }
 }
@@ -283,29 +322,25 @@ function updateTreeLayout(node: IProjectionNode) {
 }
 
 function notifyLayoutUpdate(node: IProjectionNode) {
-    const { onLayoutUpdate } = node.options
+    const { layout, snapshot } = node
 
-    if (onLayoutUpdate) {
-        const { layout, snapshot } = node
+    if (layout && snapshot && node.layoutDidUpdateListeners) {
+        const layoutDelta = createDelta()
+        calcBoxDelta(layoutDelta, layout, snapshot.layout)
 
-        if (layout && snapshot) {
-            const layoutDelta = createDelta()
-            calcBoxDelta(layoutDelta, layout, snapshot.layout)
+        const visualDelta = createDelta()
+        calcBoxDelta(visualDelta, layout, snapshot.visible)
 
-            const visualDelta = createDelta()
-            calcBoxDelta(visualDelta, layout, snapshot.visible)
-
-            onLayoutUpdate({
-                layout,
-                snapshot,
-                delta: visualDelta,
-                hasLayoutChanged:
-                    layoutDelta.x.translate !== 0 ||
-                    layoutDelta.x.scale !== 1 ||
-                    layoutDelta.y.translate !== 0 ||
-                    layoutDelta.y.scale !== 1,
-            })
-        }
+        node.layoutDidUpdateListeners.notify({
+            layout,
+            snapshot,
+            delta: visualDelta,
+            hasLayoutChanged:
+                layoutDelta.x.translate !== 0 ||
+                layoutDelta.x.scale !== 1 ||
+                layoutDelta.y.translate !== 0 ||
+                layoutDelta.y.scale !== 1,
+        })
     }
 
     node.children.forEach(notifyLayoutUpdate)
