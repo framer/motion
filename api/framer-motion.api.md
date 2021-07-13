@@ -277,6 +277,8 @@ export type FeatureNames = {
 // @public (undocumented)
 export interface FeatureProps extends MotionProps {
     // (undocumented)
+    projectionId: number;
+    // (undocumented)
     visualElement: VisualElement;
 }
 
@@ -375,7 +377,7 @@ export const LayoutGroupContext: import("react").Context<LayoutGroupContextProps
 
 // @public (undocumented)
 export interface LayoutProps {
-    layout?: boolean | "position";
+    layout?: boolean | "position" | "size";
     // (undocumented)
     layoutDependency?: any;
     layoutId?: string;
@@ -560,7 +562,7 @@ export interface RelayoutInfo {
 // Warning: (ae-forgotten-export) The symbol "VisualState" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
+export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, projectionId: number, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
 
 // @public (undocumented)
 export interface Repeat {
@@ -824,11 +826,11 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
+    getValue(key: string): undefined | MotionValue;
+    // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
-    // (undocumented)
-    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)

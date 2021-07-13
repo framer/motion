@@ -85,10 +85,10 @@ describe("Layout animation", () => {
             .wait(50)
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    top: 50,
-                    left: 100,
-                    width: 300,
-                    height: 300,
+                    top: 100,
+                    left: 200,
+                    width: 200,
+                    height: 250,
                 })
             })
     })

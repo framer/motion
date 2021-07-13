@@ -3,7 +3,7 @@ import { ResolvedValues } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
-import { calcBoxDelta } from "../geometry/delta-calc"
+import { calcBoxDelta, calcLength } from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
 import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/operations"
@@ -458,11 +458,28 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     const { layout, snapshot } = node
 
     if (layout && snapshot && node.layoutDidUpdateListeners) {
+        // TODO Maybe we want to also resize the layout snapshot so we don't trigger
+        // animations for instance if layout="size" and an element has only changed position
+        if (node.options.animationType === "size") {
+            eachAxis((axis) => {
+                const axisSnapshot = snapshot.visible[axis]
+                const length = calcLength(axisSnapshot)
+                axisSnapshot.min = layout[axis].min
+                axisSnapshot.max = axisSnapshot.min + length
+            })
+        } else if (node.options.animationType === "position") {
+            eachAxis((axis) => {
+                const axisSnapshot = snapshot.visible[axis]
+                const length = calcLength(layout[axis])
+                axisSnapshot.max = axisSnapshot.min + length
+            })
+        }
+
         const layoutDelta = createDelta()
         calcBoxDelta(layoutDelta, layout, snapshot.layout)
-
         const visualDelta = createDelta()
         calcBoxDelta(visualDelta, layout, snapshot.visible)
+
         node.layoutDidUpdateListeners.notify({
             layout,
             snapshot,

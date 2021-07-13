@@ -23,6 +23,9 @@ export interface LayoutProps {
      * only its position will animate. If `layout` is set to `"size"`, the position of the
      * component will change instantly but its size will animate.
      *
+     * If `layout` is set to `"size"`, the position of the component will change instantly and
+     * only its size will animate.
+     *
      * @public
      */
     layout?: boolean | "position" | "size"
