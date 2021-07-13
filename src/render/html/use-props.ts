@@ -30,8 +30,6 @@ function useInitialMotionValues(
         buildHTMLStyles(
             state,
             visualState,
-            undefined,
-            undefined,
             { enableHardwareAcceleration: !isStatic },
             transformTemplate
         )

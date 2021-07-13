@@ -1,6 +1,6 @@
 import { createContext } from "react"
+import { TransformPoint } from "../projection/geometry/types"
 import { Transition } from "../types"
-import { TransformPoint2D } from "../types/geometry"
 
 /**
  * @public
@@ -9,7 +9,7 @@ export interface MotionConfigContext {
     /**
      * @internal
      */
-    transformPagePoint: TransformPoint2D
+    transformPagePoint: TransformPoint
 
     /**
      * Determines whether this is a static context ie the Framer canvas. If so,

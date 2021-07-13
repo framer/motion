@@ -6,10 +6,9 @@ import { makeUseVisualState } from "../../motion/utils/use-visual-state"
 import { createSvgRenderState } from "./utils/create-render-state"
 import { buildSVGAttrs } from "./utils/build-attrs"
 
-export const svgMotionConfig: Partial<MotionComponentConfig<
-    SVGElement,
-    SVGRenderState
->> = {
+export const svgMotionConfig: Partial<
+    MotionComponentConfig<SVGElement, SVGRenderState>
+> = {
     useVisualState: makeUseVisualState({
         scrapeMotionValuesFromProps: scrapeSVGProps,
         createRenderState: createSvgRenderState,
@@ -37,8 +36,6 @@ export const svgMotionConfig: Partial<MotionComponentConfig<
             buildSVGAttrs(
                 renderState,
                 latestValues,
-                undefined,
-                undefined,
                 { enableHardwareAcceleration: false },
                 props.transformTemplate
             )

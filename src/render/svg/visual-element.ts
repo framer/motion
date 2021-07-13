@@ -9,10 +9,6 @@ import { camelCaseAttributes } from "./utils/camel-case-attrs"
 import { isTransformProp } from "../html/utils/transform"
 import { renderSVG } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
-import {
-    buildLayoutProjectionTransform,
-    buildLayoutProjectionTransformOrigin,
-} from "../html/utils/build-projection-transform"
 
 export const svgVisualElement = visualElement<
     SVGElement,
@@ -35,28 +31,12 @@ export const svgVisualElement = visualElement<
 
     scrapeMotionValuesFromProps,
 
-    build(
-        _element,
-        renderState,
-        latestValues,
-        projection,
-        layoutState,
-        options,
-        props
-    ) {
-        const isProjectionTranform =
-            projection.isEnabled && layoutState.isHydrated
+    build(_element, renderState, latestValues, options, props) {
         buildSVGAttrs(
             renderState,
             latestValues,
-            projection,
-            layoutState,
             options,
-            props.transformTemplate,
-            isProjectionTranform ? buildLayoutProjectionTransform : undefined,
-            isProjectionTranform
-                ? buildLayoutProjectionTransformOrigin
-                : undefined
+            props.transformTemplate
         )
     },
 

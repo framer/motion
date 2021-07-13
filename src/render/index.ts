@@ -24,8 +24,6 @@ export const visualElement = <Instance, MutableState, Options>({
     measureViewportBox,
     render: renderInstance,
     readValueFromInstance,
-    resetTransform,
-    restoreTransform,
     removeValueFromRenderState,
     sortNodePosition,
     scrapeMotionValuesFromProps,
@@ -235,7 +233,6 @@ export const visualElement = <Instance, MutableState, Options>({
             cancelSync.update(update)
             cancelSync.render(render)
             valueSubscriptions.forEach((remove) => remove())
-            element.layoutTree.remove(element)
             removeFromVariantTree?.()
             parent?.children.delete(element)
             lifecycles.clearAllListeners()
@@ -313,6 +310,18 @@ export const visualElement = <Instance, MutableState, Options>({
          */
         makeTargetAnimatable(target, canMutate = true) {
             return makeTargetAnimatable(element, target, props, canMutate)
+        },
+
+        /**
+         * Measure the current viewport box with or without transforms.
+         * Only measures axis-aligned boxes, rotate and skew must be manually
+         * removed with a re-render to work.
+         */
+        measureViewportBox() {
+            //withTransform = true) {
+            const viewportBox = measureViewportBox(instance, options)
+            // if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
+            return viewportBox
         },
 
         // Motion values ========================
