@@ -2,7 +2,6 @@ import * as React from "react"
 import { MutableRefObject, useContext, useEffect, useRef } from "react"
 import { PresenceContext } from "../../context/PresenceContext"
 // import { isPresent } from "../../components/AnimatePresence/use-presence"
-import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { MotionProps } from "../../motion/types"
 import { useVisualElementContext } from "../../context/MotionContext"
 import { CreateVisualElement, VisualElement } from "../../render/types"
@@ -10,13 +9,6 @@ import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
-
-function useLayoutId({ layoutId }: MotionProps) {
-    const layoutGroupId = useContext(LayoutGroupContext).prefix
-    return layoutGroupId && layoutId !== undefined
-        ? layoutGroupId + "-" + layoutId
-        : layoutId
-}
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType,
@@ -28,7 +20,6 @@ export function useVisualElement<Instance, RenderState>(
     const lazyContext = useContext(LazyContext)
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
-    const layoutId = useLayoutId(props)
 
     const visualElementRef: MutableRefObject<
         VisualElement | undefined
@@ -43,7 +34,7 @@ export function useVisualElement<Instance, RenderState>(
         visualElementRef.current = createVisualElement(Component, {
             visualState,
             parent,
-            props: { ...props, layoutId },
+            props,
             presenceId: presenceContext?.id,
             blockInitialAnimation: presenceContext?.initial === false,
         })
@@ -57,7 +48,6 @@ export function useVisualElement<Instance, RenderState>(
         visualElement.setProps({
             ...config,
             ...props,
-            layoutId,
         })
 
         // visualElement.isPresent = isPresent(presenceContext)

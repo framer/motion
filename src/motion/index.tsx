@@ -13,6 +13,7 @@ import { useCreateMotionContext } from "../context/MotionContext/create"
 import { loadFeatures } from "./features/definitions"
 import { isBrowser } from "../utils/is-browser"
 import { useProjectionId } from "../projection/node/id"
+import { LayoutGroupContext } from "../context/LayoutGroupContext"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -46,6 +47,8 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         props: Props & MotionProps,
         externalRef?: React.Ref<Instance>
     ) {
+        const layoutId = useLayoutId(props)
+        props = { ...props, layoutId }
         /**
          * If we're rendering in a static environment, we only visually update the component
          * as a result of a React-rerender rather than interactions or animations. This
@@ -135,4 +138,11 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
     }
 
     return forwardRef(MotionComponent)
+}
+
+function useLayoutId({ layoutId }: MotionProps) {
+    const layoutGroupId = useContext(LayoutGroupContext).prefix
+    return layoutGroupId && layoutId !== undefined
+        ? layoutGroupId + "-" + layoutId
+        : layoutId
 }

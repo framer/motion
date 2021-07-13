@@ -35,7 +35,6 @@ export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
     measureScroll,
-    measureViewportBox,
     resetTransform,
 }: ProjectionNodeConfig<I>) {
     return class ProjectionNode implements IProjectionNode<I> {
@@ -109,6 +108,12 @@ export function createProjectionNode<I>({
         mount(instance: I, isLayoutDirty = false) {
             if (this.instance) return
             this.instance = instance
+
+            const { layoutId, layout, visualElement } = this.options
+            if (visualElement && !visualElement.getInstance()) {
+                visualElement.mount(instance)
+            }
+
             this.parent?.children.add(this)
             this.root.potentialNodes.delete(this.id)
 
@@ -121,7 +126,6 @@ export function createProjectionNode<I>({
                 // TODO: Complete all active animations/delete all projections
             })
 
-            const { layoutId, layout, visualElement } = this.options
             if (layoutId) {
                 this.root.registerSharedNode(layoutId, this)
             }
@@ -275,6 +279,7 @@ export function createProjectionNode<I>({
 
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
+            this.projectionDelta = undefined
         }
 
         updateScroll() {
@@ -296,10 +301,10 @@ export function createProjectionNode<I>({
         }
 
         measure() {
-            if (!measureViewportBox) return createBox()
+            const { visualElement } = this.options
+            if (!visualElement) return createBox()
 
-            const box = measureViewportBox(this.instance)
-
+            const box = visualElement.measureViewportBox()
             // Remove window scroll to give page-relative coordinates
             const { scroll } = this.root
             // TODO Make loop
@@ -601,6 +606,15 @@ export function createProjectionNode<I>({
                 this.treeScale,
                 this.latestValues
             )
+
+            const transformTemplate = this.options.visualElement?.getProps()
+                .transformTemplate
+            if (transformTemplate) {
+                styles.transform = transformTemplate(
+                    this.latestValues,
+                    styles.transform
+                )
+            }
 
             const lead = this.getLead()
             const valuesToRender = lead.animationValues || lead.latestValues
