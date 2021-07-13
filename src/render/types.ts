@@ -1,10 +1,5 @@
 import * as React from "react"
 import { startAnimation } from "../animation/utils/transitions"
-import {
-    Presence,
-    SharedLayoutAnimationConfig,
-} from "../components/AnimateSharedLayout/types"
-import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
 import { MotionProps } from "../motion/types"
 import { VisualState } from "../motion/utils/use-visual-state"
 import { TargetAndTransition, Transition, Variant } from "../types"
@@ -32,21 +27,15 @@ export interface VisualElement<Instance = any, RenderState = any>
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
     presenceId: number | undefined
-    projection: TargetProjection
-    isProjectionReady: () => boolean
     isMounted(): boolean
     mount(instance: Instance): void
     unmount(): void
     isStatic?: boolean
     getInstance(): Instance | null
-    path: VisualElement[]
     sortNodePosition(element: VisualElement): number
 
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
-
-    setCrossfader(crossfader: Crossfader): void
-    layoutSafeToRemove?: () => void
 
     animateMotionValue?: typeof startAnimation
 
@@ -74,6 +63,11 @@ export interface VisualElement<Instance = any, RenderState = any>
     getLatestValues(): ResolvedValues
     scheduleRender(): void
 
+    makeTargetAnimatable(
+        target: TargetAndTransition,
+        isLive?: boolean
+    ): TargetAndTransition
+
     setProps(props: MotionProps): void
     getProps(): MotionProps
     getVariant(name: string): Variant | undefined
@@ -95,49 +89,10 @@ export interface VisualElement<Instance = any, RenderState = any>
     build(): RenderState
     syncRender(): void
 
-    /**
-     * Layout projection - perhaps a candidate for lazy-loading
-     * or an external interface. Move into Projection?
-     */
-    enableLayoutProjection(): void
-    lockProjectionTarget(): void
-    unlockProjectionTarget(): void
-    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void
-    measureViewportBox(withTransform?: boolean): AxisBox2D
-    getLayoutState: () => LayoutState
-    getProjectionParent: () => VisualElement | false
-    getProjectionAnimationProgress(): MotionPoint
-    setProjectionTargetAxis(
-        axis: "x" | "y",
-        min: number,
-        max: number,
-        isRelative?: boolean
-    ): void
-    startLayoutAnimation(
-        axis: "x" | "y",
-        transition: Transition,
-        isRelative: boolean
-    ): Promise<any>
-    stopLayoutAnimation(): void
-    updateLayoutProjection(): void
-    updateTreeLayoutProjection(): void
-    resolveRelativeTargetBox(): void
-    makeTargetAnimatable(
-        target: TargetAndTransition,
-        isLive?: boolean
-    ): TargetAndTransition
-    scheduleUpdateLayoutProjection(): void
-    notifyLayoutReady(config?: SharedLayoutAnimationConfig): void
-    pointTo(element: VisualElement): void
-    resetTransform(): void
-    restoreTransform(): void
-    shouldResetTransform(): boolean
-
-    isPresent: boolean
-    presence: Presence
+    // isPresent: boolean
+    // presence: Presence
     isPresenceRoot?: boolean
     prevDragCursor?: Point2D
-    prevViewportBox?: AxisBox2D
     getLayoutId(): string | undefined
     animationState?: AnimationState
 }
@@ -152,8 +107,6 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         visualElement: VisualElement<Instance>,
         renderState: RenderState,
         latestValues: ResolvedValues,
-        projection: TargetProjection,
-        layoutState: LayoutState,
         options: Options,
         props: MotionProps
     ): void
@@ -164,6 +117,7 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         props: MotionProps,
         isLive: boolean
     ): TargetAndTransition
+    // TODO Review which of these we still need
     measureViewportBox(instance: Instance, options: Options): AxisBox2D
     readValueFromInstance(
         instance: Instance,
@@ -191,7 +145,6 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     visualState: VisualState<Instance, RenderState>
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
-    snapshot?: ResolvedValues
     presenceId?: number | undefined
     props: MotionProps
     blockInitialAnimation?: boolean

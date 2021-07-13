@@ -1,19 +1,8 @@
 import "../../../../../jest.setup"
 import { buildHTMLStyles } from "../build-styles"
 import { DOMVisualElementOptions } from "../../../dom/types"
-import { BoxDelta, Point2D, AxisBox2D } from "../../../../types/geometry"
 import { ResolvedValues } from "../../../types"
 import { TransformOrigin } from "../../types"
-import { addScaleCorrection } from "../../../dom/projection/scale-correction"
-import { defaultScaleCorrectors } from "../../../dom/projection/default-scale-correctors"
-import {
-    buildLayoutProjectionTransform,
-    buildLayoutProjectionTransformOrigin,
-    BuildProjectionTransform,
-    BuildProjectionTransformOrigin,
-} from "../build-projection-transform"
-
-addScaleCorrection(defaultScaleCorrectors)
 
 describe("buildHTMLStyles", () => {
     test("Builds basic styles", () => {
@@ -136,115 +125,6 @@ describe("buildHTMLStyles", () => {
             transform: "translateY(2) translateX(1px) translateZ(0)",
         })
     })
-
-    test("Uses layout projection transform if enabled", () => {
-        const latest = {}
-        const style = {}
-        const delta = {
-            x: { translate: 1, scale: 0.5, origin: 0.8, originPoint: 0 },
-            y: { translate: 2, scale: 2, origin: 0.2, originPoint: 0 },
-        }
-
-        build(
-            latest,
-            {
-                style,
-                isLayoutProjectionEnabled: true,
-                treeScale: { x: 1, y: 1 },
-                delta,
-                deltaFinal: delta,
-                targetBox: {
-                    x: { min: 0, max: 100 },
-                    y: { min: 0, max: 100 },
-                },
-            },
-            buildLayoutProjectionTransform,
-            buildLayoutProjectionTransformOrigin
-        )
-
-        expect(style).toEqual({
-            transform: "translate3d(1px, 2px, 0) scale(0.5, 2)",
-            transformOrigin: "80% 20% 0",
-        })
-    })
-
-    test("Adds rotate transforms if present, but not translation, scale and skew", () => {
-        /**
-         * Translation and rotate are already baked into deltaFinal
-         */
-
-        const latest = { x: 100, rotate: 90, skew: 3 }
-        const style = {}
-        const delta = {
-            x: { translate: 1, scale: 0.5, origin: 0.8, originPoint: 0 },
-            y: { translate: 2, scale: 2, origin: 0.2, originPoint: 0 },
-        }
-
-        build(
-            latest,
-            {
-                style,
-                isLayoutProjectionEnabled: true,
-                treeScale: { x: 1, y: 1 },
-                delta,
-                deltaFinal: delta,
-                targetBox: {
-                    x: { min: 0, max: 100 },
-                    y: { min: 0, max: 100 },
-                },
-            },
-            buildLayoutProjectionTransform,
-            buildLayoutProjectionTransformOrigin
-        )
-
-        expect(style).toEqual({
-            transform: "translate3d(1px, 2px, 0) rotate(90deg) scale(0.5, 2)",
-            transformOrigin: "80% 20% 0",
-        })
-    })
-
-    test("Applies scale correction to borderRadius and boxShadow", () => {
-        /**
-         * Translation and rotate are already baked into deltaFinal
-         */
-
-        const latest = {
-            borderRadius: 1,
-            boxShadow: "10px 20px 30px rgba(0, 0, 0, 0.5)",
-        }
-        const style = {}
-        const delta = {
-            x: { translate: 1, scale: 0.5, origin: 0.8, originPoint: 0 },
-            y: { translate: 2, scale: 2, origin: 0.2, originPoint: 0 },
-        }
-
-        build(
-            latest,
-            {
-                style,
-                isLayoutProjectionEnabled: true,
-                treeScale: { x: 0.5, y: 2 },
-                delta,
-                deltaFinal: delta,
-                targetBox: {
-                    x: { min: 0, max: 10 },
-                    y: { min: 0, max: 20 },
-                },
-            },
-            buildLayoutProjectionTransform,
-            buildLayoutProjectionTransformOrigin
-        )
-
-        expect(style).toEqual({
-            transform: "translate3d(2px, 1px, 0) scale(0.5, 2)",
-            transformOrigin: "80% 20% 0",
-            borderBottomLeftRadius: "10% 5%",
-            borderBottomRightRadius: "10% 5%",
-            borderTopLeftRadius: "10% 5%",
-            borderTopRightRadius: "10% 5%",
-            boxShadow: "40px 5px 14.11765px rgba(0, 0, 0, 0.5)",
-        })
-    })
 })
 
 interface BuildProps {
@@ -254,11 +134,6 @@ interface BuildProps {
     transformOrigin: TransformOrigin
     transformKeys: string[]
     config: DOMVisualElementOptions & { transformTemplate?: any }
-    isLayoutProjectionEnabled: boolean
-    delta?: BoxDelta
-    deltaFinal?: BoxDelta
-    treeScale?: Point2D
-    targetBox?: AxisBox2D
 }
 
 function build(
@@ -273,14 +148,7 @@ function build(
             enableHardwareAcceleration: true,
             allowTransformNone: true,
         },
-        isLayoutProjectionEnabled,
-        delta,
-        deltaFinal,
-        treeScale,
-        targetBox,
-    }: Partial<BuildProps> = {},
-    buildProjectionTransform?: BuildProjectionTransform,
-    buildProjectionTransformOrigin?: BuildProjectionTransformOrigin
+    }: Partial<BuildProps> = {}
 ) {
     buildHTMLStyles(
         {
@@ -291,22 +159,7 @@ function build(
             transformKeys,
         },
         latest,
-        {
-            target: targetBox,
-            isEnabled: isLayoutProjectionEnabled,
-            isHydrated: true,
-            isTargetLocked: false,
-            targetFinal: targetBox,
-        } as any,
-        {
-            delta,
-            deltaFinal,
-            treeScale,
-            isHydrated: true,
-        } as any,
         config,
-        config.transformTemplate,
-        buildProjectionTransform,
-        buildProjectionTransformOrigin
+        config.transformTemplate
     )
 }
