@@ -87,7 +87,6 @@ export interface ProjectionNodeConfig<I> {
         notifyResize: VoidFunction
     ) => VoidFunction
     measureScroll: (instance: I) => Point
-    measureViewportBox?: (instance: I) => Box
     resetTransform?: (instance: I) => void
 }
 

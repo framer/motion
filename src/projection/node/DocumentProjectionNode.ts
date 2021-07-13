@@ -1,4 +1,3 @@
-import { createBox } from "../geometry/models"
 import { createProjectionNode } from "./create-projection-node"
 
 export const DocumentProjectionNode = createProjectionNode<Window>({
@@ -13,5 +12,4 @@ export const DocumentProjectionNode = createProjectionNode<Window>({
         x: document.documentElement.scrollLeft || document.body.scrollLeft,
         y: document.documentElement.scrollTop || document.body.scrollTop,
     }),
-    measureViewportBox: () => createBox(),
 })
