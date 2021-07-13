@@ -6,11 +6,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   `layout="size"` for size-only animations.
 -   `LayoutGroup`, to group elements that may affect each-other's layout if any one of them re-renders.
 -   `layoutDependency` prop to optionally trigger layout animations.
 -   Layout animations are auto-completed when the viewport resizes.
--   `layout="size"` for size-only layout animations.
+-   `layout="size"` for size-only animations [Credit to the original PR by @bhollis](https://github.com/framer/motion/pull/1154).
 
 ### Fixed
 
