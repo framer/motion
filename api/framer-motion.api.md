@@ -19,6 +19,7 @@ import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { SpringOptions } from 'popmotion';
 import { SVGAttributes } from 'react';
+import { Transition as Transition_2 } from 'types';
 
 // Warning: (ae-forgotten-export) The symbol "ScaleCorrectorMap" needs to be exported by the entry point index.d.ts
 // 
@@ -74,6 +75,8 @@ export type AnimationOptions<V> = (Tween | Spring) & AnimationPlaybackLifecycles
 
 // @public (undocumented)
 export interface AnimationPlaybackControls {
+    // (undocumented)
+    isAnimating: () => boolean;
     // (undocumented)
     stop: () => void;
 }
@@ -239,8 +242,6 @@ export interface FeatureComponents {
     // (undocumented)
     hover?: FeatureComponent;
     // (undocumented)
-    layoutAnimation?: FeatureComponent;
-    // (undocumented)
     measureLayout?: FeatureComponent;
     // (undocumented)
     pan?: FeatureComponent;
@@ -270,7 +271,6 @@ export type FeatureNames = {
     focus: true;
     hover: true;
     pan: true;
-    layoutAnimation: true;
     measureLayout: true;
 };
 
