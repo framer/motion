@@ -130,4 +130,4 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
-export default [projection] //, umd, umdProd, cjs, es, m, domAnimation, domMax]
+export default [projection, umd, umdProd, cjs, es, m, domAnimation, domMax]
