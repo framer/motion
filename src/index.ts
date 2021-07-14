@@ -6,6 +6,7 @@ export { m } from "./render/dom/motion-minimal"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
+export { LayoutGroup } from "./components/LayoutGroup"
 
 /**
  * Features
