@@ -4,6 +4,7 @@ import { NodeGroup } from "../projection/node/group"
 export interface LayoutGroupContextProps {
     prefix?: string
     group?: NodeGroup
+    forceRender?: VoidFunction
 }
 
 /**

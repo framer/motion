@@ -6,6 +6,7 @@ const notify = (node: IProjectionNode) =>
 export interface NodeGroup {
     add: (node: IProjectionNode) => void
     remove: (node: IProjectionNode) => void
+    dirty: VoidFunction
 }
 
 export function nodeGroup(): NodeGroup {
@@ -23,6 +24,8 @@ export function nodeGroup(): NodeGroup {
             nodes.delete(node)
             subscriptions.get(node)?.()
             subscriptions.delete(node)
+            dirtyAll()
         },
+        dirty: dirtyAll,
     }
 }

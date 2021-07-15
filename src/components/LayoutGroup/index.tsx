@@ -1,10 +1,11 @@
 import * as React from "react"
-import { MutableRefObject, useRef } from "react"
+import { MutableRefObject, useMemo, useRef } from "react"
 import {
     LayoutGroupContext,
     LayoutGroupContextProps,
 } from "../../context/LayoutGroupContext"
 import { nodeGroup } from "../../projection"
+import { useForceUpdate } from "../../utils/use-force-update"
 
 export interface Props {
     prefix?: string
@@ -12,6 +13,7 @@ export interface Props {
 }
 
 export function LayoutGroup({ children, prefix }: Props) {
+    const [forceRender, key] = useForceUpdate()
     const context = useRef(
         null
     ) as MutableRefObject<LayoutGroupContextProps | null>
@@ -22,9 +24,12 @@ export function LayoutGroup({ children, prefix }: Props) {
             group: nodeGroup(),
         }
     }
+
     // TODO If parent id, incorporate
     return (
-        <LayoutGroupContext.Provider value={context.current}>
+        <LayoutGroupContext.Provider
+            value={useMemo(() => ({ ...context.current, forceRender }), [key])}
+        >
             {children}
         </LayoutGroupContext.Provider>
     )

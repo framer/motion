@@ -133,36 +133,31 @@ export function createProjectionNode<I>({
 
             // Only register the handler if it requires layout animation
             if (visualElement && (layoutId || layout)) {
-                this.onLayoutDidUpdate(
-                    ({ delta, hasLayoutChanged, snapshot }) => {
-                        // TODO: Check here if an animation exists
-                        const layoutTransition =
-                            visualElement.getDefaultTransition() ||
-                            defaultLayoutTransition
+                this.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
+                    // TODO: Check here if an animation exists
+                    const layoutTransition =
+                        visualElement.getDefaultTransition() ||
+                        defaultLayoutTransition
 
-                        const {
-                            onLayoutAnimationComplete,
-                        } = visualElement.getProps()
+                    const {
+                        onLayoutAnimationComplete,
+                    } = visualElement.getProps()
 
-                        if (
-                            hasLayoutChanged
-                            /**
-                             * Don't create a new animation if the target box
-                             * hasn't changed TODO: And we're already animating
-                             */
-                            // !boxEquals(layoutTarget.current, newLayout)
-                        ) {
-                            this.setAnimationOrigin(delta)
-                            this.startAnimation({
-                                ...getValueTransition(
-                                    layoutTransition,
-                                    "layout"
-                                ),
-                                onComplete: onLayoutAnimationComplete,
-                            })
-                        }
+                    if (
+                        hasLayoutChanged
+                        /**
+                         * Don't create a new animation if the target box
+                         * hasn't changed TODO: And we're already animating
+                         */
+                        // !boxEquals(layoutTarget.current, newLayout)
+                    ) {
+                        this.setAnimationOrigin(delta)
+                        this.startAnimation({
+                            ...getValueTransition(layoutTransition, "layout"),
+                            onComplete: onLayoutAnimationComplete,
+                        })
                     }
-                )
+                })
             }
         }
 
@@ -215,10 +210,10 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
-            if (this.updateBlocked) {
-                this.unblockUpdate()
-            }
+            if (this.updateBlocked) this.unblockUpdate()
             if (!this.isUpdating) return
+
+            this.isUpdating = false
 
             this.potentialNodes.forEach((node, id) => {
                 const element = document.querySelector(
@@ -249,8 +244,6 @@ export function createProjectionNode<I>({
             flushSync.update()
             flushSync.preRender()
             flushSync.render()
-
-            this.isUpdating = false
         }
 
         scheduleUpdateProjection() {
