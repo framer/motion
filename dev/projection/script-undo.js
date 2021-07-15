@@ -61,7 +61,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
 
     if (!overrideId) {
         node.mount(element)
-        visualElement.mount(element)
+        visualElement.projection = node
     }
 
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged, snapshot }) => {
