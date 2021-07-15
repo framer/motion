@@ -1,4 +1,4 @@
-import { Transition } from "types"
+import { Transition } from "../../types"
 import { ResolvedValues, VisualElement } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { Box, Delta, Point } from "../geometry/types"
@@ -30,6 +30,9 @@ export interface IProjectionNode<I = unknown> {
     latestValues: ResolvedValues
     isLayoutDirty: boolean
     shouldResetTransform: boolean
+    updateBlocked: boolean
+    blockUpdate(): void
+    unblockUpdate(): void
     isUpdating: boolean
     startUpdate(): void
     willUpdate(notifyListeners?: boolean): void

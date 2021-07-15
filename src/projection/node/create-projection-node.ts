@@ -62,6 +62,7 @@ export function createProjectionNode<I>({
 
         isLayoutDirty = false
 
+        updateBlocked = false
         isUpdating = false
 
         shouldResetTransform = false
@@ -179,8 +180,18 @@ export function createProjectionNode<I>({
             cancelSync.preRender(this.updateProjection)
         }
 
+        // only on the root
+        blockUpdate() {
+            this.updateBlocked = true
+        }
+
+        unblockUpdate() {
+            this.updateBlocked = false
+        }
+
         // Note: currently only running on root node
         startUpdate() {
+            if (this.updateBlocked) return
             this.isUpdating = true
 
             // TODO: Traverse the tree, reset rotations
@@ -208,6 +219,9 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
+            if (this.updateBlocked) {
+                this.unblockUpdate()
+            }
             if (!this.isUpdating) return
 
             this.potentialNodes.forEach((node, id) => {
