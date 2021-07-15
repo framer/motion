@@ -36,6 +36,7 @@ export class NodeStack {
             if (node.snapshot) {
                 node.snapshot.latestValues =
                     prevLead.animationValues || prevLead.latestValues
+                node.snapshot.isShared = true
             }
 
             node.isLayoutDirty = true

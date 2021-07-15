@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, AnimateSharedLayout, useCycle } from "@framer"
+import { motion, useCycle } from "@framer"
 
 /**
  * An example of a component resuming animation and layout state using AnimateSharedLayout and layoutId
@@ -39,9 +39,7 @@ export const App = () => {
                 alignItems: "center",
             }}
         >
-            <AnimateSharedLayout>
-                <Component />
-            </AnimateSharedLayout>
+            <Component />
         </div>
     )
 }

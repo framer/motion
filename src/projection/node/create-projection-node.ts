@@ -458,14 +458,16 @@ export function createProjectionNode<I>({
         mixTargetDelta: (progress: number) => void
 
         setAnimationOrigin(delta: Delta) {
+            const snapshot = this.snapshot
+            const snapshotLatestValues = snapshot?.latestValues || {}
             this.animationValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
 
-            // TODO We need to detect this to fix opacity crossfade
-            const isSharedLayoutAnimation = false
+            const isSharedLayoutAnimation = snapshot?.isShared
             const shouldCrossfadeOpacity = Boolean(
                 isSharedLayoutAnimation &&
+                    (this.getStack()?.members.length || 0) > 1 &&
                     this.options.crossfade === true &&
                     !this.path.some(hasOpacityCrossfade)
             )
@@ -478,7 +480,7 @@ export function createProjectionNode<I>({
                 if (isSharedLayoutAnimation && this.animationValues) {
                     mixValues(
                         this.animationValues,
-                        this.snapshot?.latestValues || {},
+                        snapshotLatestValues,
                         this.latestValues,
                         progress,
                         shouldCrossfadeOpacity

@@ -8,6 +8,7 @@ export interface Snapshot {
     layout: Box
     visible: Box
     latestValues: ResolvedValues
+    isShared?: boolean
 }
 
 export interface IProjectionNode<I = unknown> {
