@@ -64,6 +64,7 @@ export { createMotionComponent } from "./motion"
 export { visualElement } from "./render"
 export { VisualElement } from "./render/types"
 export { addScaleCorrector } from "./projection/styles/scale-correction"
+export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 
 /**
  * Contexts

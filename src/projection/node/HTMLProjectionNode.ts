@@ -8,7 +8,9 @@ import { DocumentProjectionNode } from "./DocumentProjectionNode"
 import { createProjectionId } from "./id"
 import { IProjectionNode } from "./types"
 
-let documentNode: IProjectionNode
+export const rootProjectionNode: { current: IProjectionNode | undefined } = {
+    current: undefined,
+}
 
 export function measureViewportBox(
     instance: HTMLElement,
@@ -25,14 +27,18 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
         y: instance.scrollTop,
     }),
     defaultParent: () => {
-        if (!documentNode) {
-            documentNode = new DocumentProjectionNode(createProjectionId(), {})
+        if (!rootProjectionNode.current) {
+            const documentNode = new DocumentProjectionNode(
+                createProjectionId(),
+                {}
+            )
             documentNode.mount(window)
             documentNode.setOptions({
                 shouldMeasureScroll: true,
             })
+            rootProjectionNode.current = documentNode
         }
-        return documentNode
+        return rootProjectionNode.current
     },
     resetTransform: (instance) => (instance.style.transform = "none"),
 })

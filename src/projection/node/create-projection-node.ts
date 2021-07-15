@@ -161,9 +161,19 @@ export function createProjectionNode<I>({
             }
         }
 
+        hasPendingLead(layoutId: string) {
+            if (!this.potentialNodes.size) return false
+            for (const potentialNode of this.potentialNodes.values()) {
+                if (potentialNode.options.layoutId === layoutId) return true
+            }
+            return false
+        }
+
         unmount() {
-            // @TODO: only snapshot if there's a pending lead sharing the same layout id
-            if (this.options.layoutId) {
+            if (
+                this.options.layoutId &&
+                this.hasPendingLead(this.options.layoutId)
+            ) {
                 this.willUpdate()
             }
             this.getStack()?.remove(this)
