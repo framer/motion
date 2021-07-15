@@ -64,7 +64,12 @@
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const { matchViewportBox, addPageScroll } = window.Assert
+            const {
+                matchOpacity,
+                matchBorderRadius,
+                matchViewportBox,
+                addPageScroll,
+            } = window.Assert
 
             const container = document.getElementById("container")
             const a = document.getElementById("a")
@@ -74,6 +79,7 @@
 
             const aProjection = createNode(a)
             const bProjection = createNode(b)
+            aProjection.setValue("borderRadius", 20)
 
             aProjection.willUpdate()
             bProjection.willUpdate()
@@ -95,6 +101,10 @@
 
             matchViewportBox(a, aOrigin)
             matchViewportBox(b, bOrigin)
+            matchOpacity(a, 1)
+            matchOpacity(b, 1)
+            matchBorderRadius(a, "20px")
+            matchBorderRadius(b, "")
         </script>
     </body>
 </html>

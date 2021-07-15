@@ -54,7 +54,11 @@
         <script src="./script-animate.js"></script>
         <script>
             const { createNode } = window.Animate
-            const { matchViewportBox } = window.Assert
+            const {
+                matchViewportBox,
+                matchOpacity,
+                matchBorderRadius,
+            } = window.Assert
             const box = document.getElementById("box")
             const boxProjection = createNode(box)
 
@@ -63,6 +67,8 @@
 
             const boxOrigin = box.getBoundingClientRect()
             const childOrigin = child.getBoundingClientRect()
+
+            childProjection.setValue("borderRadius", 20)
 
             boxProjection.willUpdate()
             childProjection.willUpdate()
@@ -83,6 +89,10 @@
                 bottom: 110,
                 left: 110,
             })
+            matchOpacity(box, 1)
+            matchOpacity(child, 1)
+            matchBorderRadius(box, 0)
+            matchBorderRadius(box, "40%")
         </script>
     </body>
 </html>

@@ -658,7 +658,7 @@ export function createProjectionNode<I>({
                     styles[key] = corrected
                 }
             }
-            console.log(styles)
+
             return styles
         }
     }

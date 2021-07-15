@@ -58,6 +58,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         visualElement,
         ...options,
     })
+    visualElement.projection = node
 
     if (!overrideId) {
         node.mount(element)
@@ -76,20 +77,6 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     }
 
     return node
-}
-
-function defaultValueType(transform) {
-    const withValueType = {}
-
-    for (const key in transform) {
-        if (key === "x" || key === "y") {
-            withValueType[key] = transform[key] + "px"
-        } else {
-            withValueType[key] = transform[key]
-        }
-    }
-
-    return withValueType
 }
 
 window.Undo = Undo

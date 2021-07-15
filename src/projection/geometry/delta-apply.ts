@@ -89,16 +89,10 @@ export function applyTreeDeltas(
         if (!delta) continue
 
         // Incoporate each ancestor's scale into a culmulative treeScale for this component
-        console.log("tree scale", treeScale.x, delta.x.scale)
         treeScale.x *= delta.x.scale
         treeScale.y *= delta.y.scale
 
         // Apply each ancestor's calculated delta into this component's recorded layout box
         applyBoxDelta(box, delta)
-
-        // // If this is a draggable ancestor, also incorporate the node's transform to the layout box
-        // if (isDraggable(node) || node.getProps()._applyTransforms) {
-        //     applyBoxTransforms(box, box, node.getLatestValues())
-        // }
     }
 }

@@ -36,10 +36,10 @@
                 left: 2000px;
             }
 
-[data-layout-correct="false"] {
-    background: #dd1144 !important;
-    opacity: 0.5;
-}
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
         </style>
     </head>
     <body>
@@ -54,7 +54,11 @@
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const { matchViewportBox } = window.Assert
+            const {
+                matchOpacity,
+                matchBorderRadius,
+                matchViewportBox,
+            } = window.Assert
 
             const container = document.getElementById("container")
             const a = document.getElementById("a")
@@ -64,6 +68,7 @@
 
             const aProjection = createNode(a)
             const bProjection = createNode(b)
+            aProjection.setValue("borderRadius", 20)
 
             aProjection.willUpdate()
             bProjection.willUpdate()
@@ -74,6 +79,10 @@
 
             matchViewportBox(a, aOrigin)
             matchViewportBox(b, bOrigin)
+            matchOpacity(a, 1)
+            matchOpacity(b, 1)
+            matchBorderRadius(a, "20px")
+            matchBorderRadius(b, "")
         </script>
     </body>
 </html>

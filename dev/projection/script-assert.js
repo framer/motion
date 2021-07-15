@@ -8,16 +8,19 @@ window.Assert = {
             Math.abs(expected.left - bbox.left) > threshold
         ) {
             element.dataset.layoutCorrect = "false"
+            console.error("Viewport box doesn't match")
         }
     },
     matchVisibility: (element, expected) => {
         if (expected === "hidden") {
             if (element.style.visibility !== expected) {
                 element.dataset.layoutCorrect = "false"
+                console.error("visibility doesn't match 'hidden'")
             }
         } else {
             if (element.style.visibility === "hidden") {
                 element.dataset.layoutCorrect = "false"
+                console.error("visibility is unexpectedly 'hidden'")
             }
         }
     },
@@ -27,11 +30,17 @@ window.Assert = {
 
         if (elementOpacity !== expected) {
             element.dataset.layoutCorrect = "false"
+            console.error(
+                `opacity ${elementOpacity} doesn't match expected ${expected}`
+            )
         }
     },
     matchBorderRadius: (element, expected) => {
         if (element.style.borderRadius !== expected) {
             element.dataset.layoutCorrect = "false"
+            console.error(
+                `border-radius ${element.style.borderRadius} doesn't match expected ${expected}`
+            )
         }
     },
     addPageScroll({ top, right, bottom, left }, x, y) {

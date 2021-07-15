@@ -30,10 +30,10 @@
                 left: 2000px;
             }
 
-[data-layout-correct="false"] {
-    background: #dd1144 !important;
-    opacity: 0.5;
-}
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
         </style>
     </head>
     <body>
@@ -48,7 +48,12 @@
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const { matchViewportBox, addPageScroll } = window.Assert
+            const {
+                matchViewportBox,
+                addPageScroll,
+                matchOpacity,
+                matchBorderRadius,
+            } = window.Assert
 
             const scroll = document.getElementById("scroll")
             const box = document.getElementById("box")
@@ -61,6 +66,7 @@
             })
 
             const boxProjection = createNode(box, scrollProjection)
+            boxProjection.setValue("borderRadius", 20)
 
             boxProjection.willUpdate()
 
@@ -69,6 +75,8 @@
             boxProjection.root.didUpdate()
 
             matchViewportBox(box, addPageScroll(boxOrigin, -50, 0))
+            matchOpacity(box, 1)
+            matchBorderRadius(box, "20px")
         </script>
     </body>
 </html>
