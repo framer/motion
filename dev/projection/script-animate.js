@@ -8,6 +8,7 @@ const {
     addScaleCorrector,
     correctBoxShadow,
     correctBorderRadius,
+    htmlVisualElement,
 } = Projection
 
 function defaultValueType(transform) {
@@ -44,36 +45,36 @@ addScaleCorrector({
 let id = 1
 Animate.createNode = (element, parent, options = {}, transition = { duration: 2, ease: () => 0.5 }) => {
     const latestValues = {}
-
-    function render() {
-        Object.assign(
-            element.style,
-            {
-                transform: buildTransform(
-                    {
-                        transform: defaultValueType(latestValues),
-                        transformKeys: Object.keys(latestValues),
-                    },
-                    {}
-                ),
+    const visualElement = htmlVisualElement({
+        visualState: {
+            latestValues,
+            renderState: {
+                transformOrigin: {},
+                transformKeys: [],
+                transform: {},
+                style: {},
+                vars: {},
             },
-            node.getProjectionStyles()
-        )
-    }
+        },
+        props: {},
+    })
 
     function scheduleRender() {
-        sync.render(render)
+        visualElement.scheduleRender()
     }
 
+    id++
     const node = new HTMLProjectionNode(id, latestValues, parent)
 
     node.setOptions({
         onProjectionUpdate: scheduleRender,
+        visualElement,
         ...options,
     })
 
 
     node.mount(element)
+    visualElement.projection = node
 
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged, snapshot }) => {
         if (hasLayoutChanged) {
