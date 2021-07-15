@@ -73,7 +73,6 @@ Animate.createNode = (
             node.startAnimation(transition)
         }
     })
-    visualElement.projection = node
 
     node.setValue = (key, value) => {
         latestValues[key] = value
