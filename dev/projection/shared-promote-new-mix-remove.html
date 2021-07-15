@@ -63,17 +63,19 @@
                 layoutId: "a",
             })
 
-            boxProjection.setValue("opacity", 0.8)
+            boxProjection.setValue("opacity", 0)
             newBoxProjection.setValue("borderRadius", 20)
+
+            boxProjection.unmount()
+            document.body.removeChild(box)
 
             newBoxProjection.root.didUpdate()
 
             const midBox = { bottom: 250, left: 50, right: 200, top: 50 }
-            matchViewportBox(box, midBox)
             matchViewportBox(newBox, midBox)
-            matchVisibility(box, "visible")
             matchVisibility(newBox, "visible")
-            matchOpacity(box, 0.4)
+
+            // Should animate from old opacity to new opacity
             matchOpacity(newBox, 0.5)
 
             matchBorderRadius(box, "6.66667% / 5%")

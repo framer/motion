@@ -1,4 +1,4 @@
-import { motion, AnimateSharedLayout } from "@framer"
+import { motion } from "@framer"
 import * as React from "react"
 
 const transition = {

@@ -41,18 +41,18 @@
 
         <script src="../../dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
-        <script src="./script-animate.js"></script>
+        <script src="./script-undo.js"></script>
         <script>
-            const { createNode } = window.Animate
+            const { createNode } = window.Undo
             const {
                 matchViewportBox,
                 matchVisibility,
                 matchOpacity,
-                matchBorderRadius,
             } = window.Assert
 
             const box = document.getElementById("box-a")
             const boxProjection = createNode(box, undefined, { layoutId: "a" })
+            const boxOrigin = box.getBoundingClientRect()
 
             boxProjection.willUpdate()
 
@@ -61,23 +61,19 @@
             document.body.appendChild(newBox)
             const newBoxProjection = createNode(newBox, undefined, {
                 layoutId: "a",
+                crossfade: false,
             })
-
-            boxProjection.setValue("opacity", 0.8)
-            newBoxProjection.setValue("borderRadius", 20)
+            newBoxProjection.setValue("rotate", 45)
 
             newBoxProjection.root.didUpdate()
 
-            const midBox = { bottom: 250, left: 50, right: 200, top: 50 }
-            matchViewportBox(box, midBox)
-            matchViewportBox(newBox, midBox)
-            matchVisibility(box, "visible")
-            matchVisibility(newBox, "visible")
-            matchOpacity(box, 0.4)
-            matchOpacity(newBox, 0.5)
-
-            matchBorderRadius(box, "6.66667% / 5%")
-            matchBorderRadius(newBox, "6.66667% / 5%")
+            setTimeout(() => {
+                matchViewportBox(box, boxOrigin)
+                matchViewportBox(newBox, boxOrigin)
+                matchVisibility(box, "hidden")
+                matchVisibility(newBox, "visible")
+                matchOpacity(newBox, 1)
+            }, 50)
         </script>
     </body>
 </html>

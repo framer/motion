@@ -132,7 +132,11 @@ export function createProjectionNode<I>({
             }
 
             // Only register the handler if it requires layout animation
-            if (visualElement && (layoutId || layout)) {
+            if (
+                this.options.animate !== false &&
+                visualElement &&
+                (layoutId || layout)
+            ) {
                 this.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
                     // TODO: Check here if an animation exists
                     const layoutTransition =

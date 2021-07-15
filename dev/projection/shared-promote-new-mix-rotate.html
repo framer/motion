@@ -65,6 +65,7 @@
 
             boxProjection.setValue("opacity", 0.8)
             newBoxProjection.setValue("borderRadius", 20)
+            newBoxProjection.setValue("rotate", 40)
 
             newBoxProjection.root.didUpdate()
 
@@ -75,6 +76,8 @@
             matchVisibility(newBox, "visible")
             matchOpacity(box, 0.4)
             matchOpacity(newBox, 0.5)
+            matchRotate(box, 20)
+            matchRotate(newBox, 20)
 
             matchBorderRadius(box, "6.66667% / 5%")
             matchBorderRadius(newBox, "6.66667% / 5%")

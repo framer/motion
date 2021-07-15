@@ -54,6 +54,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     const node = new HTMLProjectionNode(overrideId || id, latestValues, parent)
 
     node.setOptions({
+        animate: false,
         onProjectionUpdate: scheduleRender,
         visualElement,
         ...options,

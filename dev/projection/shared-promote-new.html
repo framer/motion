@@ -66,11 +66,13 @@
 
             newBoxProjection.root.didUpdate()
 
-            matchViewportBox(box, boxOrigin)
-            matchViewportBox(newBox, boxOrigin)
-            matchVisibility(box, "hidden")
-            matchVisibility(newBox, "visible")
-            matchOpacity(newBox, 1)
+            setTimeout(() => {
+                matchViewportBox(box, boxOrigin)
+                matchViewportBox(newBox, boxOrigin)
+                matchVisibility(box, "hidden")
+                matchVisibility(newBox, "visible")
+                matchOpacity(newBox, 1)
+            }, 50)
         </script>
     </body>
 </html>
