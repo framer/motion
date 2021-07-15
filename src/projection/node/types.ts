@@ -58,7 +58,7 @@ export interface IProjectionNode<I = unknown> {
     getProjectionStyles(): ResolvedValues
 
     animationValues?: ResolvedValues
-    setAnimationOrigin(delta: Delta, latestValues: ResolvedValues): void
+    setAnimationOrigin(delta: Delta): void
     startAnimation(transition: Transition): void
 
     // Shared element

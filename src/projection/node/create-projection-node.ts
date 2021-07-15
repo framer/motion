@@ -152,11 +152,7 @@ export function createProjectionNode<I>({
                              */
                             // !boxEquals(layoutTarget.current, newLayout)
                         ) {
-                            // TODO: On final frame, delete delta
-                            this.setAnimationOrigin(
-                                delta,
-                                snapshot.latestValues
-                            )
+                            this.setAnimationOrigin(delta)
                             this.startAnimation({
                                 ...getValueTransition(
                                     layoutTransition,
@@ -229,7 +225,6 @@ export function createProjectionNode<I>({
                     `[data-projection-id="${id}"]`
                 )
                 if (element) node.mount(element, true)
-                console.log(!!element, id)
             })
             this.potentialNodes.clear()
 
@@ -469,31 +464,31 @@ export function createProjectionNode<I>({
         currentAnimation: AnimationPlaybackControls
         mixTargetDelta: (progress: number) => void
 
-        setAnimationOrigin(delta: Delta, latestValues: ResolvedValues) {
-            this.animationValues = {}
+        setAnimationOrigin(delta: Delta) {
+            this.animationValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
-            const shouldCrossfadeOpacity =
-                this.options.crossfade === true &&
-                !this.path.some(hasOpacityCrossfade)
-            const start = this.snapshot?.latestValues
+
+            // TODO We need to detect this to fix opacity crossfade
+            const isSharedLayoutAnimation = false
+            const shouldCrossfadeOpacity = Boolean(
+                isSharedLayoutAnimation &&
+                    this.options.crossfade === true &&
+                    !this.path.some(hasOpacityCrossfade)
+            )
 
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
 
-                if (
-                    latestValues !== this.latestValues &&
-                    this.animationValues
-                ) {
+                if (isSharedLayoutAnimation && this.animationValues) {
                     mixValues(
                         this.animationValues,
-                        latestValues,
+                        this.snapshot?.latestValues || {},
                         this.latestValues,
                         progress,
-                        shouldCrossfadeOpacity,
-                        start
+                        shouldCrossfadeOpacity
                     )
                 }
 
