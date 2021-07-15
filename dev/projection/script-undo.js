@@ -8,6 +8,7 @@ const {
     addScaleCorrector,
     correctBoxShadow,
     correctBorderRadius,
+    htmlVisualElement,
 } = Projection
 
 addScaleCorrector({
@@ -29,55 +30,48 @@ addScaleCorrector({
 
 let id = 1
 Undo.createNode = (element, parent, options = {}, overrideId) => {
-    const latestTransform = {}
-
-    function render() {
-        Object.assign(
-            element.style,
-            {
-                transform: buildTransform(
-                    {
-                        transform: defaultValueType(latestTransform),
-                        transformKeys: Object.keys(latestTransform),
-                    },
-                    {}
-                ),
+    const latestValues = {}
+    const visualElement = htmlVisualElement({
+        visualState: {
+            latestValues,
+            renderState: {
+                transformOrigin: {},
+                transformKeys: [],
+                transform: {},
+                style: {},
+                vars: {},
             },
-            node.getProjectionStyles()
-        )
-    }
+        },
+        // parent,
+        props: {},
+    })
 
     function scheduleRender() {
-        sync.render(render)
+        visualElement.scheduleRender()
     }
 
     id++
-    const node = new HTMLProjectionNode(
-        overrideId || id,
-        latestTransform,
-        parent
-    )
+    const node = new HTMLProjectionNode(overrideId || id, latestValues, parent)
 
     node.setOptions({
         onProjectionUpdate: scheduleRender,
+        visualElement,
         ...options,
     })
 
     if (!overrideId) {
         node.mount(element)
+        visualElement.mount(element)
     }
 
-
     node.onLayoutDidUpdate(({ delta, hasLayoutChanged, snapshot }) => {
-        console.log(snapshot.latestValues)
-        // console.log(hasLayoutChanged)
         // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
         hasLayoutChanged &&
             node.setAnimationOrigin(delta, snapshot.latestValues)
     })
 
-    node.setTransform = (key, value) => {
-        latestTransform[key] = value
+    node.setValue = (key, value) => {
+        latestValues[key] = value
         scheduleRender()
     }
 

@@ -305,10 +305,13 @@ export function createProjectionNode<I>({
             if (!visualElement) return createBox()
 
             const box = visualElement.measureViewportBox()
-            // Remove window scroll to give page-relative coordinates
+
+            // Remove viewport scroll to give page-relative coordinates
             const { scroll } = this.root
-            // TODO Make loop
-            scroll && eachAxis((axis) => translateAxis(box[axis], scroll[axis]))
+            if (scroll) {
+                translateAxis(box.x, scroll.x)
+                translateAxis(box.y, scroll.y)
+            }
 
             return box
         }
@@ -483,6 +486,7 @@ export function createProjectionNode<I>({
                 this.setTargetDelta(targetDelta)
                 this.root.scheduleUpdateProjection()
             }
+
             this.mixTargetDelta(0)
         }
 
@@ -640,9 +644,7 @@ export function createProjectionNode<I>({
              * Apply scale correction
              */
             for (const key in scaleCorrectors) {
-                if (valuesToRender[key] === undefined) {
-                    continue
-                }
+                if (valuesToRender[key] === undefined) continue
 
                 const { correct, applyTo } = scaleCorrectors[key]
                 const corrected = correct(valuesToRender[key], lead)
@@ -656,6 +658,7 @@ export function createProjectionNode<I>({
                     styles[key] = corrected
                 }
             }
+            console.log(styles)
             return styles
         }
     }

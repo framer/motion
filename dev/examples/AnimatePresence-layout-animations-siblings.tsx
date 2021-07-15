@@ -1,4 +1,4 @@
-import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
+import { motion, AnimatePresence, LayoutGroup } from "@framer"
 import * as React from "react"
 import { useState } from "react"
 
@@ -30,29 +30,21 @@ function ExitComponent() {
     )
 }
 
-export const Component = () => {
+export const App = () => {
     const [isVisible, setVisible] = useState(true)
 
     React.useEffect(() => {
         setTimeout(() => {
             setVisible(!isVisible)
-        }, 1500)
+        }, 3000)
     })
 
     return (
-        <>
+        <LayoutGroup>
             <AnimatePresence initial={false} onRest={() => console.log("rest")}>
                 {isVisible && <ExitComponent />}
             </AnimatePresence>
-            <motion.div layout style={style} />
-        </>
-    )
-}
-
-export const App = () => {
-    return (
-        <AnimateSharedLayout>
-            <Component />
-        </AnimateSharedLayout>
+            <motion.div layout style={style} id="a" />
+        </LayoutGroup>
     )
 }

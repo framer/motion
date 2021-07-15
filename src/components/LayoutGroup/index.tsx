@@ -8,7 +8,7 @@ import { nodeGroup } from "../../projection"
 
 export interface Props {
     prefix?: string
-    children?: React.ReactChild
+    children?: React.ReactChild // TODO Fix children type here to accept multiple children
 }
 
 export function LayoutGroup({ children, prefix }: Props) {
