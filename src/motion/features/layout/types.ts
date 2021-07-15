@@ -31,25 +31,22 @@ export interface LayoutProps {
     layout?: boolean | "position" | "size"
 
     /**
-     * Enable shared layout transitions between components for children of `AnimateSharedLayout`.
+     * Enable shared layout transitions between different components with the same `layoutId`.
      *
      * When a component with a layoutId is removed from the React tree, and then
      * added elsewhere, it will visually animate from the previous component's bounding box
      * and its latest animated values.
      *
      * ```jsx
-     * <AnimateSharedLayout>
      *   {items.map(item => (
      *      <motion.li layout>
      *         {item.name}
      *         {item.isSelected && <motion.div layoutId="underline" />}
      *      </motion.li>
      *   ))}
-     * </AnimateSharedLayout>
      * ```
      *
-     * If the previous component remains in the tree it will either get hidden immediately or,
-     * if `type="crossfade"` is set on `AnimateSharedLayout`, it will crossfade to the new component.
+     * If the previous component remains in the tree it will crossfade with the new component.
      *
      * @public
      */

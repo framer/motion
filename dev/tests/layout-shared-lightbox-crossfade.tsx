@@ -1,12 +1,6 @@
 import * as React from "react"
 import { CSSProperties, useState } from "react"
-import {
-    motion,
-    AnimateSharedLayout,
-    AnimatePresence,
-    useIsPresent,
-    Transition,
-} from "@framer"
+import { motion, AnimatePresence, useIsPresent, Transition } from "@framer"
 
 /**
  * This demonstrates children with layoutId animating
@@ -89,7 +83,7 @@ function SingleImage({ color, setIndex }) {
     )
 }
 
-export function Component() {
+export function App() {
     const [index, setIndex] = useState<false | number>(false)
 
     if (partialEase) {
@@ -109,14 +103,6 @@ export function Component() {
                 )}
             </AnimatePresence>
         </div>
-    )
-}
-
-export function App() {
-    return (
-        <AnimateSharedLayout type={type}>
-            <Component />
-        </AnimateSharedLayout>
     )
 }
 

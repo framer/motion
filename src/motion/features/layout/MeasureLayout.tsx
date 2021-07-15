@@ -1,14 +1,24 @@
-import React from "react"
-import { LayoutGroupContext } from "../../../context/LayoutGroupContext"
+import React, { useContext } from "react"
+import { usePresence } from "../../../components/AnimatePresence/use-presence"
+import {
+    LayoutGroupContext,
+    LayoutGroupContextProps,
+} from "../../../context/LayoutGroupContext"
 import { HTMLProjectionNode } from "../../../projection"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
 import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
 import { FeatureProps } from "../types"
 
-export class MeasureLayout extends React.Component<FeatureProps> {
-    static contextType = LayoutGroupContext
+interface MeasureContextProps {
+    layoutGroup: LayoutGroupContextProps
+    isPresent: boolean
+    safeToRemove?: VoidFunction | null
+}
 
+class MeasureLayoutWithContext extends React.Component<
+    FeatureProps & MeasureContextProps
+> {
     /**
      * This only mounts projection nodes for components that
      * need measuring, we might want to do it for all components
@@ -46,6 +56,10 @@ export class MeasureLayout extends React.Component<FeatureProps> {
         if (group) group.remove(this.props.visualElement.projection)
     }
 
+    safeToRemove() {
+        this.props.safeToRemove?.()
+    }
+
     render() {
         const { visualElement, layoutId, layout } = this.props
         if (!visualElement.projection) {
@@ -63,12 +77,25 @@ export class MeasureLayout extends React.Component<FeatureProps> {
                 layout,
                 visualElement,
                 onProjectionUpdate: () => visualElement.scheduleRender(),
+                onExitComplete: () => this.safeToRemove(),
                 animationType: typeof layout === "string" ? layout : "both",
             })
         }
 
         return null
     }
+}
+
+export function MeasureLayout(props: FeatureProps) {
+    const [isPresent, safeToRemove] = usePresence()
+    return (
+        <MeasureLayoutWithContext
+            {...props}
+            layoutGroup={useContext(LayoutGroupContext)}
+            isPresent={isPresent}
+            safeToRemove={safeToRemove}
+        />
+    )
 }
 
 const defaultScaleCorrectors = {

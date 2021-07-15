@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimateSharedLayout } from "@framer"
+import { motion } from "@framer"
 import styled from "styled-components"
 
 class Underline extends React.Component {
@@ -57,23 +57,21 @@ const Component = () => {
 
 export const App = () => {
     return (
-        <AnimateSharedLayout>
-            <div
-                style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    background: "white",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <Component />
-            </div>
-        </AnimateSharedLayout>
+        <div
+            style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                right: 0,
+                bottom: 0,
+                background: "white",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}
+        >
+            <Component />
+        </div>
     )
 }
 

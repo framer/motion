@@ -2,7 +2,7 @@ import * as React from "react"
 import { motion, useCycle } from "@framer"
 
 /**
- * An example of a component resuming animation and layout state using AnimateSharedLayout and layoutId
+ * An example of a component resuming animation and layout state using shared layout and layoutId
  */
 function Component() {
     const [count, cycleCount] = useCycle(0, 1, 2, 3)

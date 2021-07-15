@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimateSharedLayout } from "@framer"
+import { motion } from "@framer"
 
 /**
  * This demonstrates the rotation support used by Framer
@@ -10,30 +10,28 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <AnimateSharedLayout>
+        <motion.div
+            layout
+            initial={false}
+            transition={{ duration: 1 }}
+            style={isOn ? bigParent : smallParent}
+            animate={{
+                rotate: isOn ? 45 : 10,
+                borderRadius: isOn ? 0 : 50,
+            }}
+            onClick={() => setIsOn(!isOn)}
+        >
             <motion.div
                 layout
                 initial={false}
                 transition={{ duration: 1 }}
-                style={isOn ? bigParent : smallParent}
+                style={isOn ? bigChild : smallChild}
                 animate={{
-                    rotate: isOn ? 45 : 10,
-                    borderRadius: isOn ? 0 : 50,
+                    rotate: isOn ? 0 : 45,
+                    borderRadius: isOn ? 20 : 0,
                 }}
-                onClick={() => setIsOn(!isOn)}
-            >
-                <motion.div
-                    layout
-                    initial={false}
-                    transition={{ duration: 1 }}
-                    style={isOn ? bigChild : smallChild}
-                    animate={{
-                        rotate: isOn ? 0 : 45,
-                        borderRadius: isOn ? 20 : 0,
-                    }}
-                />
-            </motion.div>
-        </AnimateSharedLayout>
+            />
+        </motion.div>
     )
 }
 

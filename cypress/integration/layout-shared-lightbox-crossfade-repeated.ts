@@ -15,7 +15,7 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     expect(bbox.height).to.equal(expectedBbox.height)
 }
 
-describe("AnimateSharedLayout lightbox example, toggle back and forth", () => {
+describe("Shared layout lightbox example, toggle back and forth", () => {
     it("Correctly animates back and forth with crossfade", () => {
         function open(session: Cypress.cy) {
             return session

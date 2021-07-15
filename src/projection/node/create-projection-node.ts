@@ -505,6 +505,7 @@ export function createProjectionNode<I>({
                 onComplete: () => {
                     this.animationValues = undefined
                     options.onComplete?.()
+                    this.getStack()?.exitAnimationComplete()
                 },
             })
         }

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, AnimateSharedLayout } from "@framer"
+import { motion, useCycle } from "@framer"
 import styled from "styled-components"
 
 const Container = styled.div`
@@ -77,9 +77,7 @@ export const App = () => {
 
     return (
         <Container onClick={() => toggleOn()}>
-            <AnimateSharedLayout type="crossfade">
-                {isOn ? <Child /> : <Sibling />}
-            </AnimateSharedLayout>
+            {isOn ? <Child /> : <Sibling />}
         </Container>
     )
 }

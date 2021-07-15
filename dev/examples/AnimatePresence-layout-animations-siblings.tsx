@@ -3,7 +3,7 @@ import * as React from "react"
 import { useState } from "react"
 
 /**
- * An example of an AnimatePresence child animating in and out, and AnimateSharedLayout
+ * An example of an AnimatePresence child animating in and out with shared layout
  * ensuring that layout update is shared with the sibling `motion.div layout`
  */
 

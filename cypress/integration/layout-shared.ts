@@ -13,7 +13,7 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     expect(bbox.height).to.equal(expectedBbox.height)
 }
 
-describe("AnimateSharedLayout: A -> B transition", () => {
+describe("Shared layout: A -> B transition", () => {
     it("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
         cy.visit("?test=layout-shared-switch-a-b")
             .wait(50)
@@ -133,7 +133,7 @@ describe("AnimateSharedLayout: A -> B transition", () => {
     })
 })
 
-describe("AnimateSharedLayout: A -> AB -> A switch transition", () => {
+describe("Shared layout: A -> AB -> A switch transition", () => {
     it.skip("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
         cy.visit("?test=layout-shared-switch-a-ab")
             .wait(50)
@@ -213,7 +213,7 @@ describe("AnimateSharedLayout: A -> AB -> A switch transition", () => {
     })
 })
 
-describe("AnimateSharedLayout: 0 -> A -> B -> 0 transition", () => {
+describe("Shared layout: 0 -> A -> B -> 0 transition", () => {
     it("Correctly fires layout={true} animations", () => {
         cy.visit("?test=layout-shared-switch-0-a-b-0")
             .wait(50)
@@ -256,7 +256,7 @@ describe("AnimateSharedLayout: 0 -> A -> B -> 0 transition", () => {
     })
 })
 
-describe("AnimateSharedLayout: 0 -> A -> AB -> A -> 0 transition", () => {
+describe("Shared layout: 0 -> A -> AB -> A -> 0 transition", () => {
     it("Correctly fires layout={true} animations", () => {
         cy.visit("?test=layout-shared-switch-0-a-b-0")
             .wait(50)
@@ -299,7 +299,7 @@ describe("AnimateSharedLayout: 0 -> A -> AB -> A -> 0 transition", () => {
     })
 })
 
-describe("AnimateSharedLayout: A -> B crossfade transition", () => {
+describe("Shared layout: A -> B crossfade transition", () => {
     it("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
         cy.visit("?test=layout-shared-switch-a-b")
             .wait(50)
@@ -419,7 +419,7 @@ describe("AnimateSharedLayout: A -> B crossfade transition", () => {
     })
 })
 
-describe("AnimateSharedLayout: A -> AB -> A crossfade transition", () => {
+describe("Shared layout: A -> AB -> A crossfade transition", () => {
     it("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
         cy.visit("?test=layout-shared-crossfade-a-ab")
             .wait(50)
@@ -533,7 +533,7 @@ describe("AnimateSharedLayout: A -> AB -> A crossfade transition", () => {
     })
 })
 
-describe("AnimateSharedLayout: 0 -> A -> B -> 0 crossfade transition", () => {
+describe("Shared layout: 0 -> A -> B -> 0 crossfade transition", () => {
     it("Correctly fires layout={true} animations", () => {
         cy.visit("?test=layout-shared-switch-0-a-b-0")
             .wait(50)
@@ -576,7 +576,7 @@ describe("AnimateSharedLayout: 0 -> A -> B -> 0 crossfade transition", () => {
     })
 })
 
-describe("AnimateSharedLayout:  0 -> A -> AB -> A -> 0 crossfade transition", () => {
+describe("Shared layout:  0 -> A -> AB -> A -> 0 crossfade transition", () => {
     it("Correctly fires layout={true} animations", () => {
         cy.visit("?test=layout-shared-switch-0-a-b-0")
             .wait(50)

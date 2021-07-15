@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, AnimateSharedLayout } from "@framer"
+import { motion, AnimatePresence } from "@framer"
 
 /**
  * This demonstrates the rotation support as setup by Framer's Navigation component
@@ -10,40 +10,38 @@ export const App = () => {
     const [isOn, setIsOn] = useState(false)
 
     return (
-        <AnimateSharedLayout type="crossfade">
-            <AnimatePresence>
+        <AnimatePresence>
+            <motion.div
+                id="parent"
+                layoutId="parent"
+                transition={{ duration: 1 }}
+                style={smallParent}
+                onClick={() => setIsOn(!isOn)}
+                key="a"
+            >
                 <motion.div
-                    id="parent"
+                    layoutId="child"
+                    transition={{ duration: 1 }}
+                    style={smallChild}
+                />
+            </motion.div>
+            {isOn && (
+                <motion.div
+                    id="parent-2"
                     layoutId="parent"
                     transition={{ duration: 1 }}
-                    style={smallParent}
+                    style={bigParent}
                     onClick={() => setIsOn(!isOn)}
-                    key="a"
+                    key="b"
                 >
                     <motion.div
                         layoutId="child"
                         transition={{ duration: 1 }}
-                        style={smallChild}
+                        style={bigChild}
                     />
                 </motion.div>
-                {isOn && (
-                    <motion.div
-                        id="parent-2"
-                        layoutId="parent"
-                        transition={{ duration: 1 }}
-                        style={bigParent}
-                        onClick={() => setIsOn(!isOn)}
-                        key="b"
-                    >
-                        <motion.div
-                            layoutId="child"
-                            transition={{ duration: 1 }}
-                            style={bigChild}
-                        />
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </AnimateSharedLayout>
+            )}
+        </AnimatePresence>
     )
 }
 

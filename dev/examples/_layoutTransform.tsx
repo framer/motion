@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimateSharedLayout } from "@framer"
+import { motion } from "@framer"
 import styled from "styled-components"
 
 const transition = { default: { duration: 5 }, scale: { duration: 0.2 } }
@@ -8,24 +8,22 @@ const transition = { default: { duration: 5 }, scale: { duration: 0.2 } }
 export const App = () => {
     const [isOpen, setIsOpen] = useState(false)
     return (
-        <AnimateSharedLayout>
-            <Container
+        <Container
+            layout
+            transition={transition}
+            initial={{ borderRadius: 10 }}
+            isOpen={isOpen}
+        >
+            <Child
                 layout
                 transition={transition}
-                initial={{ borderRadius: 10 }}
                 isOpen={isOpen}
-            >
-                <Child
-                    layout
-                    transition={transition}
-                    isOpen={isOpen}
-                    onClick={() => setIsOpen(!isOpen)}
-                    initial={{ borderRadius: 20 }}
-                    //whileHover={{ scale: 1.13 }}
-                    id="child"
-                />
-            </Container>
-        </AnimateSharedLayout>
+                onClick={() => setIsOpen(!isOpen)}
+                initial={{ borderRadius: 20 }}
+                //whileHover={{ scale: 1.13 }}
+                id="child"
+            />
+        </Container>
     )
 }
 

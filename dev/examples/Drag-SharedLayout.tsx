@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useRef } from "react"
-import { motion, AnimateSharedLayout } from "../../src"
+import { motion } from "../../src"
 import styled from "styled-components"
 
 /**
@@ -103,9 +103,7 @@ function DragDrop() {
 export const App = () => {
     return (
         <Container>
-            <AnimateSharedLayout>
-                <DragDrop />
-            </AnimateSharedLayout>
+            <DragDrop />
         </Container>
     )
 }

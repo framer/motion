@@ -185,7 +185,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
         /**
          * Whether this instance is visible. This can be changed imperatively
-         * by AnimateSharedLayout, is analogous to CSS's visibility in that
+         * by the projection tree, is analogous to CSS's visibility in that
          * hidden elements should take up layout, and needs enacting by the configured
          * render function.
          */

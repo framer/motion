@@ -113,7 +113,7 @@ function runScriptCrossfade(args: string) {
         })
 }
 
-describe("AnimateSharedLayout lightbox example, crossfade", () => {
+describe("Shared layout lightbox example, crossfade", () => {
     it("Correctly animates between items and lightbox with instant transition", () => {
         runScriptCrossfade("&instant=true")
     })
@@ -224,7 +224,7 @@ function runScriptSwitch(args: string) {
         })
 }
 
-describe("AnimateSharedLayout lightbox example, switch", () => {
+describe("Shared layout lightbox example, switch", () => {
     it("Correctly animates between items and lightbox with instant transition", () => {
         runScriptSwitch(`&instant=true&type=switch`)
     })

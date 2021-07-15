@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence, AnimateSharedLayout } from "@framer"
+import { motion, AnimatePresence, LayoutGroup } from "@framer"
 import styled from "styled-components"
 
 /**
@@ -77,26 +77,21 @@ function Item({ onClick, i }: ItemProps) {
     )
 }
 
-const Component = () => {
+export const App = () => {
     return (
-        <List
-            initial={{ borderRadius: 25 }}
-            layout
-            style={{ borderRadius: 25 }}
-            id="container"
-        >
-            {items.map((id) => (
-                <Item key={id} i={id} />
-            ))}
-        </List>
+        <LayoutGroup>
+            <List
+                initial={{ borderRadius: 25 }}
+                layout
+                style={{ borderRadius: 25 }}
+                id="container"
+            >
+                {items.map((id) => (
+                    <Item key={id} i={id} />
+                ))}
+            </List>
+        </LayoutGroup>
     )
 }
 
 const items = [0, 1, 2]
-export const App = () => {
-    return (
-        <AnimateSharedLayout>
-            <Component />
-        </AnimateSharedLayout>
-    )
-}

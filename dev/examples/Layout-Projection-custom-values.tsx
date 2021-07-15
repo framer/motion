@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimateSharedLayout, addScaleCorrection } from "@framer"
+import { motion, addScaleCorrection } from "@framer"
 import { mix } from "popmotion"
 import styled from "styled-components"
 
@@ -51,36 +51,34 @@ export const App = () => {
     }, [])
 
     return (
-        <AnimateSharedLayout>
-            <Container
+        <Container
+            layout
+            transition={{ duration: 3, ease: "circIn" }}
+            onClick={() => setOn(!isOn)}
+            isOn={isOn}
+        >
+            <motion.div
                 layout
+                initial={false}
+                animate={
+                    isOn
+                        ? {
+                              borderColor: "#000",
+                              borderTopWidth: 5,
+                              borderRightWidth: 5,
+                              borderLeftWidth: 5,
+                              borderBottomWidth: 30,
+                          }
+                        : {
+                              borderColor: "#90f",
+                              borderTopWidth: 50,
+                              borderRightWidth: 50,
+                              borderLeftWidth: 50,
+                              borderBottomWidth: 50,
+                          }
+                }
                 transition={{ duration: 3, ease: "circIn" }}
-                onClick={() => setOn(!isOn)}
-                isOn={isOn}
-            >
-                <motion.div
-                    layout
-                    initial={false}
-                    animate={
-                        isOn
-                            ? {
-                                  borderColor: "#000",
-                                  borderTopWidth: 5,
-                                  borderRightWidth: 5,
-                                  borderLeftWidth: 5,
-                                  borderBottomWidth: 30,
-                              }
-                            : {
-                                  borderColor: "#90f",
-                                  borderTopWidth: 50,
-                                  borderRightWidth: 50,
-                                  borderLeftWidth: 50,
-                                  borderBottomWidth: 50,
-                              }
-                    }
-                    transition={{ duration: 3, ease: "circIn" }}
-                />
-            </Container>
-        </AnimateSharedLayout>
+            />
+        </Container>
     )
 }

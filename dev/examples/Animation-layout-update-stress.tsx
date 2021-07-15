@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, AnimateSharedLayout } from "@framer"
+import { motion, useCycle } from "@framer"
 import styled from "styled-components"
 
 /**
@@ -27,11 +27,9 @@ export const App = () => {
     const [isOpen, toggleIsOpen] = useCycle(true, false)
 
     return (
-        <AnimateSharedLayout>
-            <Container layout data-isOpen={isOpen} onClick={toggleIsOpen}>
-                {layoutChildren(0)}
-            </Container>
-        </AnimateSharedLayout>
+        <Container layout data-isOpen={isOpen} onClick={toggleIsOpen}>
+            {layoutChildren(0)}
+        </Container>
     )
 }
 

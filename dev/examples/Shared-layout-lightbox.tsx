@@ -1,13 +1,23 @@
 import * as React from "react"
 import { CSSProperties, useState } from "react"
-import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
+import { motion, AnimatePresence, useIsPresent, Transition } from "@framer"
 
 /**
  * This demonstrates children with layoutId animating
  * back to their origin components
  */
 
-const transition = { type: "spring", stiffness: 500, damping: 30 }
+const params = new URLSearchParams(window.location.search)
+const instant = params.get("instant") || false
+const partialEase = params.get("partial-ease") || false
+const type = params.get("type") || "switch"
+let transition: Transition = instant ? { type: false } : { duration: 3 }
+if (partialEase) {
+    transition = {
+        duration: 0.15,
+        ease: () => 0.1,
+    }
+}
 
 function Gallery({ items, setIndex }) {
     return (
@@ -18,10 +28,15 @@ function Gallery({ items, setIndex }) {
                     onClick={() => setIndex(i)}
                     style={{ ...item, backgroundColor: color, borderRadius: 0 }}
                     layoutId={color}
-                    //transition={{ duration: 5 }}
-                    id={i === 0 && "list-red"}
+                    transition={transition}
+                    id={i === 0 ? `item-parent` : undefined}
                 >
-                    <motion.div style={child} layoutId={`child-${color}`} />
+                    <motion.div
+                        style={child}
+                        id={i === 0 ? `item-child` : undefined}
+                        layoutId={`child-${color}`}
+                        transition={transition}
+                    />
                 </motion.li>
             ))}
         </ul>
@@ -29,33 +44,38 @@ function Gallery({ items, setIndex }) {
 }
 
 function SingleImage({ color, setIndex }) {
+    const isPresent = useIsPresent()
+
     return (
         <>
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                style={overlay}
+                style={{
+                    ...overlay,
+                    pointerEvents: isPresent ? "auto" : "none",
+                }}
                 id="overlay"
-                transition={{ duration: 2 }}
+                transition={transition}
                 onClick={() => setIndex(false)}
             />
             <div style={singleImageContainer}>
                 <motion.div
-                    id="color"
+                    id="parent"
                     layoutId={color}
                     style={{
                         ...singleImage,
                         backgroundColor: "#fff",
                         borderRadius: 50,
                     }}
-                    transition={{ duration: 2 }}
+                    transition={transition}
                 >
                     <motion.div
                         style={{ ...child, backgroundColor: "black" }}
                         id="child"
                         layoutId={`child-${color}`}
-                        transition={{ duration: 2 }}
+                        transition={transition}
                     />
                 </motion.div>
             </div>
@@ -63,8 +83,17 @@ function SingleImage({ color, setIndex }) {
     )
 }
 
-export function Component() {
+export function App() {
     const [index, setIndex] = useState<false | number>(false)
+
+    if (partialEase) {
+        if (index === 0) {
+            transition.ease = () => 0.1
+        } else {
+            transition.ease = (t: number) => (t === 1 ? 1 : 0.9)
+        }
+    }
+
     return (
         <div style={background}>
             <Gallery items={colors} setIndex={setIndex} />
@@ -74,14 +103,6 @@ export function Component() {
                 )}
             </AnimatePresence>
         </div>
-    )
-}
-
-export function App() {
-    return (
-        <AnimateSharedLayout type="crossfade">
-            <Component />
-        </AnimateSharedLayout>
     )
 }
 
@@ -160,5 +181,4 @@ const child = {
     borderRadius: 25,
     backgroundColor: "white",
     opacity: 0.5,
-    //opacity: 0.5,
 }

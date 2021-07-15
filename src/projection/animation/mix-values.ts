@@ -13,7 +13,9 @@ export function mixValues(
 ) {
     if (shouldCrossfadeOpacity) {
         target.opacity = mix(
-            (follow?.opacity as number) ?? 0,
+            0,
+            // (follow?.opacity as number) ?? 0,
+            // TODO Reinstate this if only child
             (lead.opacity as number) ?? 1,
             progress
         )
