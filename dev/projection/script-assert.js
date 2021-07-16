@@ -36,7 +36,12 @@ window.Assert = {
         }
     },
     matchBorderRadius: (element, expected) => {
-        if (element.style.borderRadius !== expected) {
+        const radius = element.style.borderRadius
+
+        if (
+            (expected !== 0 && radius !== expected) ||
+            (expected === 0 && radius !== "")
+        ) {
             element.dataset.layoutCorrect = "false"
             console.error(
                 `border-radius ${element.style.borderRadius} doesn't match expected ${expected}`
