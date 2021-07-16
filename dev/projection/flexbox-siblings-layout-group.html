@@ -4,6 +4,7 @@
             body {
                 padding: 0;
                 margin: 0;
+                overflow: hidden;
             }
 
             #container {
@@ -28,14 +29,6 @@
                 flex: 1;
             }
 
-            #trigger-overflow {
-                width: 1px;
-                height: 1px;
-                position: absolute;
-                top: 2000px;
-                left: 2000px;
-            }
-
             [data-layout-correct="false"] {
                 background: #dd1144 !important;
                 opacity: 0.5;
@@ -47,7 +40,6 @@
             <div id="a" data-layout-correct="true"></div>
             <div id="b" data-layout-correct="true"></div>
         </div>
-        <div id="trigger-overflow"></div>
 
         <script src="../../dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
@@ -80,6 +72,8 @@
             container.style.flexDirection = "column-reverse"
 
             aProjection.root.didUpdate()
+
+            window.scrollTo(0, 0)
 
             matchViewportBox(a, aOrigin)
             matchViewportBox(b, bOrigin)

@@ -42,10 +42,10 @@
                 left: 2000px;
             }
 
-[data-layout-correct="false"] {
-    background: #dd1144 !important;
-    opacity: 0.5;
-}
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
         </style>
     </head>
 
@@ -54,9 +54,7 @@
             <div id="child" data-layout-correct="true"></div>
         </div>
         <div id="trigger-overflow"></div>
-        <script>
-            history.scrollRestoration = "manual"
-        </script>
+
         <script src="../../dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
         <script src="./script-undo.js"></script>

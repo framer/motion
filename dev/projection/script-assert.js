@@ -1,3 +1,11 @@
+history.scrollRestoration = "manual"
+
+function showError(element, msg) {
+    element.dataset.layoutCorrect = "false"
+    console.error(msg)
+    document.body.innerHTML += `<p style="color: red">${msg}</p>`
+}
+
 window.Assert = {
     matchViewportBox: (element, expected, threshold = 0.01) => {
         const bbox = element.getBoundingClientRect()
@@ -7,20 +15,17 @@ window.Assert = {
             Math.abs(expected.bottom - bbox.bottom) > threshold ||
             Math.abs(expected.left - bbox.left) > threshold
         ) {
-            element.dataset.layoutCorrect = "false"
-            console.error("Viewport box doesn't match")
+            showError(element, "Viewport box doesn't match")
         }
     },
     matchVisibility: (element, expected) => {
         if (expected === "hidden") {
             if (element.style.visibility !== expected) {
-                element.dataset.layoutCorrect = "false"
-                console.error("visibility doesn't match 'hidden'")
+                showError(element, "visibility doesn't match 'hidden'")
             }
         } else {
             if (element.style.visibility === "hidden") {
-                element.dataset.layoutCorrect = "false"
-                console.error("visibility is unexpectedly 'hidden'")
+                showError(element, "visibility is unexpectedly 'hidden'")
             }
         }
     },
@@ -29,29 +34,35 @@ window.Assert = {
             element.style.opacity === "" ? 1 : parseFloat(element.style.opacity)
 
         if (elementOpacity !== expected) {
-            element.dataset.layoutCorrect = "false"
-            console.error(
+            showError(
+                element,
                 `opacity ${elementOpacity} doesn't match expected ${expected}`
             )
         }
     },
     matchBorderRadius: (element, expected) => {
-        const radius = element.style.borderRadius
+        let radius = element.style.borderRadius
+
+        // Different browsers might return borders to a different accuracy
+        if (typeof expected === "string") {
+            expected = roundBorder(expected)
+            radius = roundBorder(radius)
+        }
 
         if (
             (expected !== 0 && radius !== expected) ||
             (expected === 0 && radius !== "")
         ) {
-            element.dataset.layoutCorrect = "false"
-            console.error(
+            showError(
+                element,
                 `border-radius ${element.style.borderRadius} doesn't match expected ${expected}`
             )
         }
     },
     matchRotate: (element, expected) => {
         if (!element.style.transform.includes(`${expected}deg`)) {
-            element.dataset.layoutCorrect = "false"
-            console.error(
+            showError(
+                element,
                 `rotate in ${element.style.transform} doesn't match expected ${expected}deg`
             )
         }
@@ -64,4 +75,8 @@ window.Assert = {
             left: left - x,
         }
     },
+}
+
+function roundBorder(border) {
+    return border.split("/").map(parseInt).join(" / ")
 }

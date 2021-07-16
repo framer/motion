@@ -1,8 +1,5 @@
 <html>
     <head>
-        <script>
-            history.scrollRestoration = "manual"
-        </script>
         <style>
             body {
                 padding: 0;
@@ -85,14 +82,9 @@
 
             boxProjection.root.didUpdate()
 
-            /**
-             * TODO: This should currently be failing to highlight
-             * a shortcoming between animating to/from scrolled
-             * spaces.
-             */
             matchViewportBox(box, boxOrigin)
             matchOpacity(box, 1)
-            matchBorderRadius(box, "20px")
+            matchBorderRadius(box, "20%")
         </script>
     </body>
 </html>
