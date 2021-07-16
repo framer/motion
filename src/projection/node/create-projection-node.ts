@@ -182,6 +182,8 @@ export function createProjectionNode<I>({
             }
             this.getStack()?.remove(this)
             this.parent?.children.delete(this)
+            this.projectionDelta = undefined
+            this.target = undefined
             cancelSync.preRender(this.updateProjection)
         }
 
