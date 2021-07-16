@@ -49,6 +49,7 @@
                 matchVisibility,
                 matchOpacity,
                 matchBorderRadius,
+                matchRotate,
             } = window.Assert
 
             const box = document.getElementById("box-a")
@@ -69,9 +70,8 @@
 
             newBoxProjection.root.didUpdate()
 
-            const midBox = { bottom: 250, left: 50, right: 200, top: 50 }
-            matchViewportBox(box, midBox)
-            matchViewportBox(newBox, midBox)
+            const bbox = newBox.getBoundingClientRect()
+            matchViewportBox(box, bbox)
             matchVisibility(box, "visible")
             matchVisibility(newBox, "visible")
             matchOpacity(box, 0.4)

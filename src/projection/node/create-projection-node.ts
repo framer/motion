@@ -30,6 +30,7 @@ import {
     ProjectionNodeOptions,
     Snapshot,
 } from "./types"
+import { transformAxes } from "../../render/html/utils/transform"
 
 export function createProjectionNode<I>({
     attachResizeListener,
@@ -201,7 +202,7 @@ export function createProjectionNode<I>({
             if (this.updateBlocked) return
             this.isUpdating = true
 
-            // TODO: Traverse the tree, reset rotations
+            resetTreeRotations(this)
         }
 
         willUpdate(shouldNotifyListeners = true) {
@@ -294,7 +295,6 @@ export function createProjectionNode<I>({
             if (!this.isLayoutDirty) return
 
             this.layout = this.removeElementScroll(this.measure())
-
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
@@ -609,6 +609,52 @@ export function createProjectionNode<I>({
             if (stack) stack.promote(this)
         }
 
+        resetRotation() {
+            const { visualElement } = this.options
+
+            if (!visualElement) return
+
+            // If there's no detected rotation values, we can early return without a forced render.
+            let hasRotate = false
+
+            // Keep a record of all the values we've reset
+            const resetValues = {}
+
+            // Check the rotate value of all axes and reset to 0
+            for (let i = 0; i < transformAxes.length; i++) {
+                const axis = transformAxes[i]
+                const key = "rotate" + axis
+
+                // If this rotation doesn't exist as a motion value, then we don't
+                // need to reset it
+                if (!visualElement.getStaticValue(key)) {
+                    continue
+                }
+
+                hasRotate = true
+
+                // Record the rotation and then temporarily set it to 0
+                resetValues[key] = visualElement.getStaticValue(key)
+                visualElement.setStaticValue(key, 0)
+            }
+
+            // If there's no rotation values, we don't need to do any more.
+            if (!hasRotate) return
+
+            // Force a render of this element to apply the transform with all rotations
+            // set to 0.
+            visualElement?.syncRender()
+
+            // Put back all the values we reset
+            for (const key in resetValues) {
+                visualElement.setStaticValue(key, resetValues[key])
+            }
+
+            // Schedule a render for the next frame. This ensures we won't visually
+            // see the element with the reset rotate value applied.
+            visualElement.scheduleRender()
+        }
+
         getProjectionStyles() {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
@@ -623,13 +669,14 @@ export function createProjectionNode<I>({
                 return emptyStyles
             }
 
-            // TODO: Return persistent mutable object
+            const lead = this.getLead()
+            const valuesToRender = lead.animationValues || lead.latestValues
 
             this.applyTransformsToTarget()
             styles.transform = buildProjectionTransform(
                 this.projectionDeltaWithTransform!,
                 this.treeScale,
-                this.latestValues
+                valuesToRender
             )
 
             const transformTemplate = this.options.visualElement?.getProps()
@@ -640,9 +687,6 @@ export function createProjectionNode<I>({
                     styles.transform
                 )
             }
-
-            const lead = this.getLead()
-            const valuesToRender = lead.animationValues || lead.latestValues
 
             // TODO Move into stand-alone, testable function
             const { x, y } = this.projectionDelta
@@ -749,6 +793,11 @@ function resolveTreeTargetDeltas(node: IProjectionNode) {
 function calcTreeProjection(node: IProjectionNode) {
     node.calcProjection()
     node.children.forEach(calcTreeProjection)
+}
+
+function resetTreeRotations(node: IProjectionNode) {
+    node.resetRotation()
+    node.children.forEach(resetTreeRotations)
 }
 
 export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {

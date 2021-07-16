@@ -54,6 +54,7 @@ export interface IProjectionNode<I = unknown> {
 
     setTargetDelta(delta: Delta): void
     resetTransform(): void
+    resetRotation(): void
     resolveTargetDelta(): void
     calcProjection(): void
     getProjectionStyles(): ResolvedValues

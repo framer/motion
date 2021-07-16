@@ -43,6 +43,14 @@ window.Assert = {
             )
         }
     },
+    matchRotate: (element, expected) => {
+        if (!element.style.transform.includes(`${expected}deg`)) {
+            element.dataset.layoutCorrect = "false"
+            console.error(
+                `rotate in ${element.style.transform} doesn't match expected ${expected}deg`
+            )
+        }
+    },
     addPageScroll({ top, right, bottom, left }, x, y) {
         return {
             top: top - y,

@@ -49,19 +49,20 @@
             const { matchViewportBox } = window.Assert
             const box = document.getElementById("box")
             const boxProjection = createNode(box)
-            const boxOrigin = box.getBoundingClientRect()
-
-            boxProjection.setValue("rotate", 45)
-
-            boxProjection.willUpdate()
-
-            box.classList.add("b")
 
             boxProjection.setValue("rotate", 75)
+            requestAnimationFrame(() => {
+                const boxOrigin = box.getBoundingClientRect()
+                boxProjection.setValue("rotate", 45)
+                requestAnimationFrame(() => {
+                    boxProjection.willUpdate()
+                    box.classList.add("b")
+                    boxProjection.setValue("rotate", 75)
+                    boxProjection.root.didUpdate()
 
-            boxProjection.root.didUpdate()
-
-            matchViewportBox(box, boxOrigin)
+                    matchViewportBox(box, boxOrigin)
+                })
+            })
         </script>
     </body>
 </html>

@@ -21,9 +21,9 @@ export function buildProjectionTransform(
 
     if (latestTransform) {
         const { rotate, rotateX, rotateY } = latestTransform
-        if (rotate) transform += `rotate(${rotate}) `
-        if (rotateX) transform += `rotateX(${rotateX}) `
-        if (rotateY) transform += `rotateY(${rotateY}) `
+        if (rotate) transform += `rotate(${rotate}deg) `
+        if (rotateX) transform += `rotateX(${rotateX}deg) `
+        if (rotateY) transform += `rotateY(${rotateY}deg) `
     }
 
     transform += `scale(${delta.x.scale}, ${delta.y.scale})`

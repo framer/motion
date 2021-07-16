@@ -48,23 +48,22 @@ export function mixValues(
             target[borderLabel] = radius
         }
     }
+
+    /**
+     * Mix rotation
+     */
+    if (follow.rotate || lead.rotate) {
+        target.rotate = mix(
+            (follow.rotate as number) || 0,
+            (lead.rotate as number) || 0,
+            progress
+        )
+    }
 }
 
 function getRadius(values: ResolvedValues, radiusName: string) {
     return values[radiusName] ?? values.borderRadius
 }
-
-// /**
-//  * Mix rotation
-//  */
-// if (latestFollowValues.rotate || latestLeadValues.rotate) {
-//     const rotate = mix(
-//         (latestFollowValues.rotate as number) || 0,
-//         (latestLeadValues.rotate as number) || 0,
-//         p
-//     )
-//     leadState.rotate = followState.rotate = rotate
-// }
 
 // /**
 //  * We only want to mix the background color if there's a follow element
