@@ -476,7 +476,7 @@ export function createProjectionNode<I>({
         setAnimationOrigin(delta: Delta) {
             const snapshot = this.snapshot
             const snapshotLatestValues = snapshot?.latestValues || {}
-            this.animationValues = { ...this.latestValues }
+            const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
 
@@ -493,9 +493,10 @@ export function createProjectionNode<I>({
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
 
-                if (isSharedLayoutAnimation && this.animationValues) {
+                if (isSharedLayoutAnimation) {
+                    this.animationValues = mixedValues
                     mixValues(
-                        this.animationValues,
+                        mixedValues,
                         snapshotLatestValues,
                         this.latestValues,
                         progress,
@@ -683,7 +684,7 @@ export function createProjectionNode<I>({
                 .transformTemplate
             if (transformTemplate) {
                 styles.transform = transformTemplate(
-                    this.latestValues,
+                    valuesToRender,
                     styles.transform
                 )
             }

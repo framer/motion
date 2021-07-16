@@ -13,5 +13,13 @@ export function hasScale({ scale, scaleX, scaleY }: ResolvedValues) {
 }
 
 export function hasTransform(values: ResolvedValues) {
-    return hasScale(values) || values.x || values.y || values.z
+    return (
+        hasScale(values) ||
+        values.x ||
+        values.y ||
+        values.z ||
+        values.rotate ||
+        values.rotateX ||
+        values.rotateY
+    )
 }

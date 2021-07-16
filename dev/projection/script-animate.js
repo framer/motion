@@ -33,7 +33,7 @@ Animate.createNode = (
     element,
     parent,
     options = {},
-    transition = { duration: 2, ease: () => 0.5 }
+    transition = { duration: 200, ease: () => 0.5 }
 ) => {
     const latestValues = {}
     const visualElement = htmlVisualElement({
@@ -78,6 +78,8 @@ Animate.createNode = (
         latestValues[key] = value
         scheduleRender()
     }
+
+    node.render = () => visualElement.syncRender()
 
     return node
 }

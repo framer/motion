@@ -12,6 +12,7 @@ export const App = () => {
     return (
         <motion.div
             layout
+            id="parent"
             initial={false}
             transition={{ duration: 1 }}
             style={isOn ? bigParent : smallParent}
@@ -23,6 +24,7 @@ export const App = () => {
         >
             <motion.div
                 layout
+                id="child"
                 initial={false}
                 transition={{ duration: 1 }}
                 style={isOn ? bigChild : smallChild}
