@@ -28,5 +28,7 @@ export function buildProjectionTransform(
 
     transform += `scale(${delta.x.scale}, ${delta.y.scale})`
 
-    return !latestTransform && transform === identityProjection ? "" : transform
+    return !latestTransform && transform === identityProjection
+        ? "none"
+        : transform
 }
