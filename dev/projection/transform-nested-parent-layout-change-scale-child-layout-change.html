@@ -63,8 +63,8 @@
             const parentProjection = createNode(parent)
             const childProjection = createNode(child, parentProjection)
 
-            parentProjection.setTransform("scale", 2)
-            parentProjection.setTransform("x", 400)
+            parentProjection.setValue("scale", 2)
+            parentProjection.setValue("x", 400)
 
             sync.postRender(() => {
                 const parentOrigin = parent.getBoundingClientRect()

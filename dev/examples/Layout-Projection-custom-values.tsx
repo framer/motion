@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, addScaleCorrection } from "@framer"
+import { motion, addScaleCorrector } from "@framer"
 import { mix } from "popmotion"
 import styled from "styled-components"
 
@@ -28,8 +28,8 @@ const Container = styled(motion.div)<{ isOn: boolean }>`
 `
 
 const borderWidth = (axis: "x" | "y") => ({
-    process: (latest: any, { delta, treeScale }: any) => {
-        return latest / delta[axis].scale / treeScale[axis] + "px"
+    correct: (latest: any, { targetDelta, treeScale }: any) => {
+        return latest / targetDelta[axis].scale / treeScale[axis] + "px"
     },
 })
 
@@ -47,7 +47,7 @@ export const App = () => {
     const [isOn, setOn] = useState(false)
 
     React.useEffect(() => {
-        addScaleCorrection(border)
+        addScaleCorrector(border)
     }, [])
 
     return (
