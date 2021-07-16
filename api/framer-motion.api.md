@@ -19,7 +19,6 @@ import { RefAttributes } from 'react';
 import { RefObject } from 'react';
 import { SpringOptions } from 'popmotion';
 import { SVGAttributes } from 'react';
-import { Transition as Transition_2 } from 'types';
 
 // Warning: (ae-forgotten-export) The symbol "ScaleCorrectorMap" needs to be exported by the entry point index.d.ts
 // 
@@ -726,6 +725,9 @@ export function useDragControls(): DragControls;
 
 // @public
 export function useElementScroll(ref: RefObject<HTMLElement>): ScrollMotionValues;
+
+// @public (undocumented)
+export function useInstantLayoutTransition(): (cb?: (() => void) | undefined) => void;
 
 // @public
 export function useIsPresent(): boolean;
