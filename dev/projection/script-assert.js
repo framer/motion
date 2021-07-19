@@ -3,7 +3,7 @@ history.scrollRestoration = "manual"
 function showError(element, msg) {
     element.dataset.layoutCorrect = "false"
     console.error(msg)
-    document.body.innerHTML += `<p style="color: red">${msg}</p>`
+    document.body.innerHTML += `<p style="color: black;z-index: 1000;position: absolute;">${msg}</p>`
 }
 
 window.Assert = {
@@ -55,7 +55,7 @@ window.Assert = {
         ) {
             showError(
                 element,
-                `border-radius ${element.style.borderRadius} doesn't match expected ${expected}`
+                `border-radius ${radius} doesn't match expected ${expected}`
             )
         }
     },
@@ -78,5 +78,9 @@ window.Assert = {
 }
 
 function roundBorder(border) {
-    return border.split("/").map(parseInt).join(" / ")
+    return border
+        .replace(" / ", " ")
+        .split(" ")
+        .map((num) => parseInt(num.trim()))
+        .join(" / ")
 }
