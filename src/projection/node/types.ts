@@ -98,6 +98,7 @@ export interface ProjectionNodeConfig<I> {
 export interface ProjectionNodeOptions {
     animate?: boolean
     shouldMeasureScroll?: boolean
+    alwaysMeasureLayout?: boolean
     onProjectionUpdate?: VoidFunction
     onExitComplete?: VoidFunction
     animationType?: "size" | "position" | "both"

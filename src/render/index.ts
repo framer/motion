@@ -1,5 +1,6 @@
 import sync, { cancelSync } from "framesync"
 import { MotionStyle } from "../motion/types"
+import { TransformPoint } from "../projection/geometry/types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
@@ -463,6 +464,10 @@ export const visualElement = <Instance, MutableState, Options>({
          * Returns the defined default transition on this component.
          */
         getDefaultTransition: () => props.transition,
+
+        getTransformPagePoint: () => {
+            return (options as any).transformPagePoint
+        },
 
         /**
          * Used by child variant nodes to get the closest ancestor variant props.

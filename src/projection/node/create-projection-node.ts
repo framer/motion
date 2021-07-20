@@ -64,7 +64,7 @@ export function createProjectionNode<I>({
         isLayoutDirty = false
 
         updateBlocked = false
-        isUpdating = false
+        isUpdating = true
 
         shouldResetTransform = false
 
@@ -292,12 +292,14 @@ export function createProjectionNode<I>({
                 this.updateScroll()
             }
 
-            if (!this.isLayoutDirty) return
+            if (!this.options.alwaysMeasureLayout && !this.isLayoutDirty) return
 
             this.layout = this.removeElementScroll(this.measure())
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
+
+            // TODO Trigger onLayoutMeasure callback
         }
 
         updateScroll() {

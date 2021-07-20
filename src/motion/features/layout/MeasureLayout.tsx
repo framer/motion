@@ -37,8 +37,9 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps) {
-        const { layoutDependency, visualElement } = this.props
+        const { layoutDependency, visualElement, drag } = this.props
         if (
+            drag ||
             prevProps.layoutDependency !== layoutDependency ||
             layoutDependency === undefined
         ) {
@@ -61,7 +62,7 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     render() {
-        const { visualElement, layoutId, layout } = this.props
+        const { visualElement, layoutId, layout, drag } = this.props
         if (!visualElement.projection) {
             // TODO do this on construction
             const parent = visualElement.parent?.projection
@@ -75,6 +76,7 @@ class MeasureLayoutWithContext extends React.Component<
             visualElement.projection.setOptions({
                 layoutId,
                 layout,
+                alwaysMeasureLayout: !!drag,
                 visualElement,
                 onProjectionUpdate: () => visualElement.scheduleRender(),
                 onExitComplete: () => this.safeToRemove(),

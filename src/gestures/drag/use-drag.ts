@@ -11,15 +11,8 @@ import { FeatureProps } from "../../motion/features/types"
  */
 export function useDrag(props: FeatureProps) {
     const { dragControls: groupDragControls, visualElement } = props
-    const { transformPagePoint } = useContext(MotionConfigContext)
 
-    const dragControls = useConstant(() => {
-        return new VisualElementDragControls({
-            visualElement,
-        })
-    })
-
-    dragControls.setProps({ ...props, transformPagePoint })
+    const dragControls = useConstant(() => new VisualElementDragControls())
 
     // If we've been provided a DragControls for manual control over the drag gesture,
     // subscribe this component to it on mount.

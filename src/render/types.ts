@@ -6,7 +6,7 @@ import { TargetAndTransition, Transition, Variant } from "../types"
 import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
-import { Box, Point } from "../projection/geometry/types"
+import { Box, Point, TransformPoint } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 
 export interface MotionPoint {
@@ -85,7 +85,7 @@ export interface VisualElement<Instance = any, RenderState = any>
               whileFocus?: string | string[]
               whileTap?: string | string[]
           }
-
+    getTransformPagePoint: () => TransformPoint | undefined
     build(): RenderState
     syncRender(): void
 
