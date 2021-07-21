@@ -377,7 +377,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 245,
+                top: 250,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -385,12 +385,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 295, left: 300 })
+            expectBbox($child, { top: 300, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 195,
+                top: 200,
                 left: 100,
                 width: 300,
                 height: 300,
@@ -402,7 +402,7 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         .wait(80)
         .should(([$child]: any) => {
             expectBbox($child, {
-                top: 245,
+                top: 250,
                 left: 250,
                 width: 600,
                 height: 200,
@@ -410,12 +410,12 @@ function testAlternateAxes(parentLayout: boolean, childLayout: boolean) {
         })
         .get("#control")
         .should(([$child]: any) => {
-            expectBbox($child, { top: 295, left: 300 })
+            expectBbox($child, { top: 300, left: 300 })
         })
         .get("#parent")
         .should(([$parent]: any) => {
             expectBbox($parent, {
-                top: 195,
+                top: 200,
                 left: 100,
                 width: 300,
                 height: 300,
@@ -428,10 +428,9 @@ describe("Nested drag with alternate draggable axes", () => {
      * Skipping for now as there are still issues when either draggable
      * component is also involved in layout animation
      */
-    it.skip("Parent: layout, Child: layout", () =>
-        testAlternateAxes(true, true))
+    it("Parent: layout, Child: layout", () => testAlternateAxes(true, true))
     it("Parent: layout", () => testAlternateAxes(true, false))
-    it.skip("Child: layout", () => testAlternateAxes(false, true))
+    it("Child: layout", () => testAlternateAxes(false, true))
     it("Neither", () => testAlternateAxes(false, false))
 })
 
