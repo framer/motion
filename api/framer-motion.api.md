@@ -174,8 +174,6 @@ export class DragControls {
     // 
     // @internal
     subscribe(controls: VisualElementDragControls): () => void;
-    // (undocumented)
-    updateConstraints(_flush?: boolean): void;
 }
 
 // @public (undocumented)
@@ -832,6 +830,8 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     getProps(): MotionProps;
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
+    // (undocumented)
+    getTransformPagePoint: () => TransformPoint | undefined;
     // (undocumented)
     getValue(key: string): undefined | MotionValue;
     // (undocumented)

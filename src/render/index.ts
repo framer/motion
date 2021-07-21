@@ -1,6 +1,5 @@
 import sync, { cancelSync } from "framesync"
 import { MotionStyle } from "../motion/types"
-import { TransformPoint } from "../projection/geometry/types"
 import { motionValue, MotionValue } from "../value"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
@@ -324,10 +323,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * removed with a re-render to work.
          */
         measureViewportBox() {
-            //withTransform = true) {
-            const viewportBox = measureViewportBox(instance, options)
-            // if (!withTransform) removeBoxTransforms(viewportBox, latestValues)
-            return viewportBox
+            return measureViewportBox(instance, options)
         },
 
         // Motion values ========================
@@ -466,7 +462,7 @@ export const visualElement = <Instance, MutableState, Options>({
         getDefaultTransition: () => props.transition,
 
         getTransformPagePoint: () => {
-            return (options as any).transformPagePoint
+            return (props as any).transformPagePoint
         },
 
         /**

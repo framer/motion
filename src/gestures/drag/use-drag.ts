@@ -1,5 +1,4 @@
-import { useEffect, useContext } from "react"
-import { MotionConfigContext } from "../../context/MotionConfigContext"
+import { useEffect } from "react"
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"
 import { FeatureProps } from "../../motion/features/types"
@@ -12,7 +11,9 @@ import { FeatureProps } from "../../motion/features/types"
 export function useDrag(props: FeatureProps) {
     const { dragControls: groupDragControls, visualElement } = props
 
-    const dragControls = useConstant(() => new VisualElementDragControls())
+    const dragControls = useConstant(
+        () => new VisualElementDragControls(visualElement)
+    )
 
     // If we've been provided a DragControls for manual control over the drag gesture,
     // subscribe this component to it on mount.
@@ -21,6 +22,6 @@ export function useDrag(props: FeatureProps) {
         [dragControls]
     )
 
-    // Mount the drag controls with the visualElement
-    useEffect(() => dragControls.mount(visualElement), [])
+    // Apply the event listeners to the element
+    useEffect(() => dragControls.addListeners(), [])
 }

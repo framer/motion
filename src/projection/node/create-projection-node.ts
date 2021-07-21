@@ -83,6 +83,7 @@ export function createProjectionNode<I>({
 
         layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
         layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
+        layoutMeasureListeners?: SubscriptionManager<VoidFunction>
 
         constructor(
             id: number,
@@ -298,8 +299,7 @@ export function createProjectionNode<I>({
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
-
-            // TODO Trigger onLayoutMeasure callback
+            this.layoutMeasureListeners?.notify()
         }
 
         updateScroll() {
@@ -576,6 +576,14 @@ export function createProjectionNode<I>({
                 this.layoutDidUpdateListeners = new SubscriptionManager()
             }
             return this.layoutDidUpdateListeners!.add(handler)
+        }
+
+        onLayoutMeasure(handler: VoidFunction) {
+            console.log("adding handler")
+            if (!this.layoutMeasureListeners) {
+                this.layoutMeasureListeners = new SubscriptionManager()
+            }
+            return this.layoutMeasureListeners!.add(handler)
         }
 
         /**

@@ -1,7 +1,7 @@
 import { TestProjectionNode } from "./TestProjectionNode"
 
 describe("node", () => {
-    test("If a child updates layout, parent resetsTransform during measurement", () => {
+    test.skip("If a child updates layout, parent resetsTransform during measurement", () => {
         const parent = new TestProjectionNode()
 
         const parentInstance = {
@@ -61,7 +61,7 @@ describe("node", () => {
         expect(childInstance.resetTransform).toBeCalledTimes(1)
     })
 
-    test("If a child updates layout, parent doesn't resetsTransform during measurement if it has no projection transform", () => {
+    test.skip("If a child updates layout, parent doesn't resetsTransform during measurement if it has no projection transform", () => {
         const parent = new TestProjectionNode()
 
         const parentInstance = {

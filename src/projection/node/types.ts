@@ -73,6 +73,8 @@ export interface IProjectionNode<I = unknown> {
     onLayoutDidUpdate: (
         callback: (data: LayoutUpdateData) => void
     ) => VoidFunction
+
+    onLayoutMeasure: (callback: VoidFunction) => VoidFunction
     layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
 }
 

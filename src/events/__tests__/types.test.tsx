@@ -1,5 +1,5 @@
 import "../../../jest.setup"
-import { Point2D } from "../../types/geometry"
+import { Point } from "../../projection/geometry/types"
 
 const relativeTo = (idOrElem: string | HTMLElement) => {
     let elem: HTMLElement | null
@@ -15,7 +15,7 @@ const relativeTo = (idOrElem: string | HTMLElement) => {
         return elem
     }
 
-    return ({ x, y }: Point2D): Point2D | undefined => {
+    return ({ x, y }: Point): Point | undefined => {
         const localElem = getElem()
 
         if (!localElem) return undefined

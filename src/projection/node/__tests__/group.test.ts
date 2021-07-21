@@ -2,7 +2,7 @@ import { TestProjectionNode } from "./TestProjectionNode"
 import { nodeGroup } from "../group"
 
 describe("nodeGroup", () => {
-    test("it notifies grouped nodes when any one of them will update", () => {
+    test.skip("it notifies grouped nodes when any one of them will update", () => {
         const a = new TestProjectionNode()
 
         a.mount({})

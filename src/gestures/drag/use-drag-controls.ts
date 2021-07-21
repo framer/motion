@@ -89,14 +89,6 @@ export class DragControls {
             )
         })
     }
-
-    updateConstraints(_flush = true) {
-        this.componentControls.forEach((controls) => {
-            controls.updateConstraints()
-        })
-
-        // flush && flushLayout()
-    }
 }
 
 const createDragControls = () => new DragControls()
