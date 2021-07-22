@@ -191,7 +191,9 @@ export const defaultElastic = 0.35
 /**
  * Accepts a dragElastic prop and returns resolved elastic values for each axis.
  */
-export function resolveDragElastic(dragElastic: DragElastic): Box {
+export function resolveDragElastic(
+    dragElastic: DragElastic = defaultElastic
+): Box {
     if (dragElastic === false) {
         dragElastic = 0
     } else if (dragElastic === true) {

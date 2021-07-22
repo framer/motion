@@ -250,7 +250,7 @@ export class VisualElementDragControls {
             }
         }
 
-        this.elastic = resolveDragElastic(dragElastic!)
+        this.elastic = resolveDragElastic(dragElastic)
 
         /**
          * If we're outputting to external MotionValues, we want to rebase the measured constraints
@@ -287,7 +287,6 @@ export class VisualElementDragControls {
             "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
         )
 
-        const { layout } = this.visualElement.projection!
         const constraintsBox = measurePageBox(
             constraintsElement,
             this.visualElement.projection!.root!,
@@ -295,7 +294,7 @@ export class VisualElementDragControls {
         )
 
         let measuredConstraints = calcViewportConstraints(
-            layout!,
+            this.visualElement.projection?.layout!,
             constraintsBox
         )
 
@@ -429,14 +428,23 @@ export class VisualElementDragControls {
     }
 
     getProps(): MotionProps {
+        const props = this.visualElement.getProps()
+        const {
+            drag = false,
+            dragDirectionLock = false,
+            dragPropagation = false,
+            dragConstraints = false,
+            dragElastic = defaultElastic,
+            dragMomentum = true,
+        } = props
         return {
-            drag: false,
-            dragDirectionLock: false,
-            dragPropagation: false,
-            dragConstraints: false,
-            dragElastic: defaultElastic,
-            dragMomentum: true,
-            ...this.visualElement.getProps(),
+            ...props,
+            drag,
+            dragDirectionLock,
+            dragPropagation,
+            dragConstraints,
+            dragElastic,
+            dragMomentum,
         }
     }
 

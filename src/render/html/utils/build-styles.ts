@@ -77,6 +77,8 @@ export function buildHTMLStyles(
             transformIsNone,
             transformTemplate
         )
+    } else if (transformTemplate) {
+        style.transform = transformTemplate({}, "")
     }
 
     if (hasTransformOrigin) {

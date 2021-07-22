@@ -45,10 +45,7 @@ export function useVisualElement<Instance, RenderState>(
     useIsomorphicLayoutEffect(() => {
         if (!visualElement) return
 
-        visualElement.setProps({
-            ...config,
-            ...props,
-        })
+        visualElement.setProps({ ...config, ...props })
 
         // visualElement.isPresent = isPresent(presenceContext)
         visualElement.isPresenceRoot =
