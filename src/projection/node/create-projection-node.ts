@@ -373,7 +373,7 @@ export function createProjectionNode<I>({
                 removeBoxTransforms(
                     boxWithoutTransform,
                     node.latestValues,
-                    node.snapshot!.layout
+                    node.snapshot?.layout
                 )
             }
 
