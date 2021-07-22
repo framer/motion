@@ -8,6 +8,7 @@ import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
 import { Box, Point, TransformPoint } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
+import { MotionConfigProps } from "../components/MotionConfig"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -118,7 +119,10 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         isLive: boolean
     ): TargetAndTransition
     // TODO Review which of these we still need
-    measureViewportBox(instance: Instance, options: Options): Box
+    measureViewportBox(
+        instance: Instance,
+        props: MotionProps & MotionConfigProps
+    ): Box
     readValueFromInstance(
         instance: Instance,
         key: string,

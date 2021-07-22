@@ -323,7 +323,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * removed with a re-render to work.
          */
         measureViewportBox() {
-            return measureViewportBox(instance, options)
+            return measureViewportBox(instance, props)
         },
 
         // Motion values ========================

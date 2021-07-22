@@ -4,7 +4,6 @@ import {
     LayoutGroupContext,
     LayoutGroupContextProps,
 } from "../../../context/LayoutGroupContext"
-import { HTMLProjectionNode } from "../../../projection"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
 import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
@@ -62,28 +61,6 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     render() {
-        const { visualElement, layoutId, layout, drag } = this.props
-        if (!visualElement.projection) {
-            // TODO do this on construction
-            const parent = visualElement.parent?.projection
-
-            visualElement.projection = new HTMLProjectionNode(
-                this.props.projectionId,
-                visualElement.getLatestValues(),
-                parent
-            )
-
-            visualElement.projection.setOptions({
-                layoutId,
-                layout,
-                alwaysMeasureLayout: !!drag,
-                visualElement,
-                onProjectionUpdate: () => visualElement.scheduleRender(),
-                onExitComplete: () => this.safeToRemove(),
-                animationType: typeof layout === "string" ? layout : "both",
-            })
-        }
-
         return null
     }
 }

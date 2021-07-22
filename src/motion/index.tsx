@@ -14,6 +14,7 @@ import { loadFeatures } from "./features/definitions"
 import { isBrowser } from "../utils/is-browser"
 import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
+import { useProjection } from "./features/use-projection"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -106,10 +107,13 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              */
             features = useFeatures(
                 props,
-                projectionId,
+                projectionId, // TODO Probably not needed here
                 context.visualElement,
                 preloadedFeatures
             )
+
+            // TODO Allow lazy load of projection node
+            useProjection(projectionId, props, context.visualElement)
         }
 
         /**

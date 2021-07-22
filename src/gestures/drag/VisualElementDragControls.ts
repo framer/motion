@@ -94,14 +94,12 @@ export class VisualElementDragControls {
              * have already moved, and the perception will be of the pointer "slipping" across the element
              */
             initialPoint = getViewportPointFromEvent(event).point
-
-            console.log("session start")
         }
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
             // Attempt to grab the global drag gesture lock - maybe make this part of PanSession
             const { drag, dragPropagation, onDragStart } = this.getProps()
-            console.log("drag start", drag)
+
             if (drag && !dragPropagation) {
                 if (this.openGlobalLock) this.openGlobalLock()
                 this.openGlobalLock = getGlobalLock(drag)
