@@ -40,6 +40,7 @@ export interface IProjectionNode<I = unknown> {
     didUpdate(): void
     updateLayout(): void
     updateSnapshot(): void
+    clearSnapshot(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
     potentialNodes: Map<number, IProjectionNode>

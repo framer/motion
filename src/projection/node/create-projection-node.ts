@@ -258,6 +258,8 @@ export function createProjectionNode<I>({
             // Notify listeners that the layout is updated
             notifyLayoutUpdate(this)
 
+            clearSnapshots(this)
+
             // Flush any scheduled updates
             flushSync.update()
             flushSync.preRender()
@@ -737,6 +739,10 @@ export function createProjectionNode<I>({
 
             return styles
         }
+
+        clearSnapshot() {
+            this.snapshot = undefined
+        }
     }
 }
 
@@ -782,8 +788,11 @@ function notifyLayoutUpdate(node: IProjectionNode) {
     }
 
     node.children.forEach(notifyLayoutUpdate)
+}
 
-    node.snapshot = undefined
+function clearSnapshots(node: IProjectionNode) {
+    node.clearSnapshot()
+    node.children.forEach(clearSnapshots)
 }
 
 function resetTreeTransform(node: IProjectionNode) {
