@@ -31,9 +31,10 @@ export class NodeStack {
 
         if (prevLead) {
             prevLead.scheduleRender()
-            node.snapshot = prevLead.snapshot
+            node.resumeFrom = prevLead
 
-            if (node.snapshot) {
+            if (prevLead.snapshot) {
+                node.snapshot = prevLead.snapshot
                 node.snapshot.latestValues =
                     prevLead.animationValues || prevLead.latestValues
                 node.snapshot.isShared = true

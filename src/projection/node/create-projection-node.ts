@@ -75,7 +75,8 @@ export function createProjectionNode<I>({
         projectionDelta?: Delta
         projectionDeltaWithTransform?: Delta
 
-        lead?: IProjectionNode
+        resumeFrom?: IProjectionNode
+
         target?: Box
         targetWithTransforms?: Box
 
@@ -742,6 +743,7 @@ export function createProjectionNode<I>({
 
         clearSnapshot() {
             this.snapshot = undefined
+            this.resumeFrom = undefined
         }
     }
 }
@@ -754,8 +756,8 @@ function updateTreeLayout(node: IProjectionNode) {
 }
 
 function notifyLayoutUpdate(node: IProjectionNode) {
-    const { layout, snapshot } = node
-
+    const { layout } = node
+    const snapshot = node.resumeFrom?.snapshot ?? node.snapshot
     if (node.isLead() && layout && snapshot && node.layoutDidUpdateListeners) {
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position
