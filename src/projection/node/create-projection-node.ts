@@ -209,7 +209,7 @@ export function createProjectionNode<I>({
 
         willUpdate(shouldNotifyListeners = true) {
             !this.root.isUpdating && this.root.startUpdate()
-            if (!this.isLead() || this.isLayoutDirty) return
+            if (this.isLayoutDirty) return
 
             this.isLayoutDirty = true
 

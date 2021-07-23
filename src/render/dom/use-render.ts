@@ -29,9 +29,7 @@ export function createUseRender(forwardMotionProps = false) {
         }
 
         // TODO: This is actually going to break SSR, so maybe after initial render?
-        if (props.layout || props.layoutId || props.drag) {
-            elementProps["data-projection-id"] = projectionId
-        }
+        elementProps["data-projection-id"] = projectionId
 
         return createElement<any>(Component, elementProps)
     }

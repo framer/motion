@@ -66,6 +66,7 @@ export interface IProjectionNode<I = unknown> {
 
     // Shared element
     isLead(): boolean
+    promote(): void
     resumeFrom?: IProjectionNode
 
     /**

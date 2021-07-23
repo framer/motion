@@ -72,6 +72,7 @@ export { useInstantLayoutTransition } from "./projection/use-instant-layout-tran
 export { MotionConfigContext } from "./context/MotionConfigContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
+export { PromoteGroupContext } from "./context/PromoteContext"
 
 /**
  * Types

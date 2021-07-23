@@ -4,6 +4,10 @@ import {
     LayoutGroupContext,
     LayoutGroupContextProps,
 } from "../../../context/LayoutGroupContext"
+import {
+    PromoteGroupContext,
+    PromoteGroupContextProps,
+} from "../../../context/PromoteContext"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
 import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
@@ -11,6 +15,7 @@ import { FeatureProps } from "../types"
 
 interface MeasureContextProps {
     layoutGroup: LayoutGroupContextProps
+    promoteGroup: PromoteGroupContextProps
     isPresent: boolean
     safeToRemove?: VoidFunction | null
 }
@@ -24,19 +29,25 @@ class MeasureLayoutWithContext extends React.Component<
      * in order to incorporate transforms
      */
     componentDidMount() {
-        const { visualElement } = this.props
+        const { visualElement, layoutGroup } = this.props
         const { projection } = visualElement
 
         addScaleCorrector(defaultScaleCorrectors)
 
-        const { group } = this.context
-        if (group) group.add(projection)
+        const { group } = layoutGroup
+        if (group && projection) group.add(projection)
 
         this.props.visualElement.projection?.root!.didUpdate()
     }
 
-    getSnapshotBeforeUpdate(prevProps: FeatureProps) {
-        const { layoutDependency, visualElement, drag } = this.props
+    getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {
+        const {
+            layoutDependency,
+            visualElement,
+            drag,
+            promoteGroup,
+        } = this.props
+
         if (
             drag ||
             prevProps.layoutDependency !== layoutDependency ||
@@ -44,6 +55,11 @@ class MeasureLayoutWithContext extends React.Component<
         ) {
             visualElement.projection?.willUpdate()
         }
+
+        if (!prevProps.promoteGroup?.isPromoted && promoteGroup.isPromoted) {
+            visualElement.projection?.promote()
+        }
+
         return null
     }
 
@@ -52,8 +68,10 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     componentWillUnmount() {
-        const { group } = this.context
-        if (group) group.remove(this.props.visualElement.projection)
+        const { visualElement, layoutGroup } = this.props
+        const { group } = layoutGroup
+        if (group && visualElement.projection)
+            group.remove(visualElement.projection)
     }
 
     safeToRemove() {
@@ -71,6 +89,7 @@ export function MeasureLayout(props: FeatureProps) {
         <MeasureLayoutWithContext
             {...props}
             layoutGroup={useContext(LayoutGroupContext)}
+            promoteGroup={useContext(PromoteGroupContext)}
             isPresent={isPresent}
             safeToRemove={safeToRemove}
         />

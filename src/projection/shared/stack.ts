@@ -25,6 +25,8 @@ export class NodeStack {
 
     promote(node: IProjectionNode) {
         const prevLead = this.lead
+        if (node === prevLead) return
+
         this.lead = node
 
         node.show()
