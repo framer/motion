@@ -623,6 +623,11 @@ export function createProjectionNode<I>({
             if (stack) stack.promote(this)
         }
 
+        relegate() {
+            const stack = this.getStack()
+            if (stack) stack.relegate(this)
+        }
+
         resetRotation() {
             const { visualElement } = this.options
 

@@ -46,18 +46,24 @@ class MeasureLayoutWithContext extends React.Component<
             visualElement,
             drag,
             promoteGroup,
+            isPresent,
         } = this.props
+        const projection = visualElement.projection!
 
         if (
             drag ||
             prevProps.layoutDependency !== layoutDependency ||
             layoutDependency === undefined
         ) {
-            visualElement.projection?.willUpdate()
+            projection.willUpdate()
         }
 
-        if (!prevProps.promoteGroup?.isPromoted && promoteGroup.isPromoted) {
-            visualElement.projection?.promote()
+        if (promoteGroup.isPromoted !== undefined) {
+            if (promoteGroup.isPromoted && !prevProps.promoteGroup.isPromoted) {
+                projection.promote()
+            }
+        } else if (prevProps.isPresent !== isPresent) {
+            isPresent ? projection.promote() : projection.relegate()
         }
 
         return null
@@ -75,6 +81,7 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     safeToRemove() {
+        console.log("safe to remove")
         this.props.safeToRemove?.()
     }
 

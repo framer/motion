@@ -35,51 +35,51 @@ describe("Shared layout lightbox example, toggle back and forth", () => {
                         height: 562,
                     })
                 })
-            // .get("#item-child")
-            // .should(([$box]: any) => {
-            //     expect(window.getComputedStyle($box).borderRadius).to.equal(
-            //         "50%"
-            //     )
-            //     expect(window.getComputedStyle($box).opacity).to.equal(
-            //         "0.5"
-            //     )
-            //     expectBbox($box, {
-            //         top: 292.5,
-            //         left: 272.5,
-            //         width: 50,
-            //         height: 50,
-            //     })
-            // })
-            // .get("#parent")
-            // .should(([$box]: any) => {
-            //     expect(window.getComputedStyle($box).borderRadius).to.equal(
-            //         "2.25225% / 0.88968%"
-            //     )
-            //     expect(window.getComputedStyle($box).opacity).to.equal(
-            //         "0.6"
-            //     )
-            //     expectBbox($box, {
-            //         top: 49,
-            //         left: 209,
-            //         width: 222,
-            //         height: 562,
-            //     })
-            // })
-            // .get("#child")
-            // .should(([$box]: any) => {
-            //     expect(window.getComputedStyle($box).borderRadius).to.equal(
-            //         "50%"
-            //     )
-            //     expect(window.getComputedStyle($box).opacity).to.equal(
-            //         "0.5"
-            //     )
-            //     expectBbox($box, {
-            //         top: 292.5,
-            //         left: 272.5,
-            //         width: 50,
-            //         height: 50,
-            //     })
-            // })
+                .get("#item-child")
+                .should(([$box]: any) => {
+                    expect(window.getComputedStyle($box).borderRadius).to.equal(
+                        "50%"
+                    )
+                    expect(window.getComputedStyle($box).opacity).to.equal(
+                        "0.5"
+                    )
+                    expectBbox($box, {
+                        top: 292.5,
+                        left: 272.5,
+                        width: 50,
+                        height: 50,
+                    })
+                })
+                .get("#parent")
+                .should(([$box]: any) => {
+                    expect(window.getComputedStyle($box).borderRadius).to.equal(
+                        "2.25225% / 0.88968%"
+                    )
+                    expect(window.getComputedStyle($box).opacity).to.equal(
+                        "0.6"
+                    )
+                    expectBbox($box, {
+                        top: 49,
+                        left: 209,
+                        width: 222,
+                        height: 562,
+                    })
+                })
+                .get("#child")
+                .should(([$box]: any) => {
+                    expect(window.getComputedStyle($box).borderRadius).to.equal(
+                        "50%"
+                    )
+                    expect(window.getComputedStyle($box).opacity).to.equal(
+                        "0.5"
+                    )
+                    expectBbox($box, {
+                        top: 292.5,
+                        left: 272.5,
+                        width: 50,
+                        height: 50,
+                    })
+                })
         }
 
         function close(session: Cypress.cy) {

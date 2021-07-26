@@ -23,6 +23,12 @@ export class NodeStack {
         }
     }
 
+    relegate(_node: IProjectionNode) {
+        // if (this.lead === node) {
+        //     this.promote(this.follow)
+        // }
+    }
+
     promote(node: IProjectionNode) {
         const prevLead = this.lead
         if (node === prevLead) return

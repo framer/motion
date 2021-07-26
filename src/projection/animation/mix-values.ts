@@ -1,5 +1,6 @@
-import { mix } from "popmotion"
+import { circOut, linear, mix, progress as calcProgress } from "popmotion"
 import { ResolvedValues } from "../../render/types"
+import { EasingFunction } from "../../types"
 
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
 const numBorders = borders.length
@@ -17,9 +18,13 @@ export function mixValues(
             // (follow?.opacity as number) ?? 0,
             // TODO Reinstate this if only child
             (lead.opacity as number) ?? 1,
-            progress
+            easeCrossfadeIn(progress)
         )
-        target.opacityExit = mix((follow.opacity as number) ?? 1, 0, progress)
+        target.opacityExit = mix(
+            (follow.opacity as number) ?? 1,
+            0,
+            easeCrossfadeOut(progress)
+        )
     }
 
     /**
@@ -88,3 +93,19 @@ function getRadius(values: ResolvedValues, radiusName: string) {
 //         latestLeadValues.backgroundColor as string
 //     )(p)
 // }
+
+const easeCrossfadeIn = compress(0, 0.5, circOut)
+const easeCrossfadeOut = compress(0.5, 0.95, linear)
+
+function compress(
+    min: number,
+    max: number,
+    easing: EasingFunction
+): EasingFunction {
+    return (p: number) => {
+        // Could replace ifs with clamp
+        if (p < min) return 0
+        if (p > max) return 1
+        return easing(calcProgress(min, max, p))
+    }
+}
