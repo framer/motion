@@ -292,7 +292,12 @@ export class VisualElementDragControls {
         )
 
         let measuredConstraints = calcViewportConstraints(
-            this.visualElement.projection?.layout!,
+            this.visualElement.projection?.layout ||
+                measurePageBox(
+                    this.visualElement.getInstance(),
+                    this.visualElement.projection!.root!,
+                    this.visualElement.getTransformPagePoint()
+                ),
             constraintsBox
         )
 
