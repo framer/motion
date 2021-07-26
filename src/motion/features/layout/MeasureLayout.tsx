@@ -29,25 +29,22 @@ class MeasureLayoutWithContext extends React.Component<
      * in order to incorporate transforms
      */
     componentDidMount() {
-        const { visualElement, layoutGroup } = this.props
+        const { visualElement, layoutGroup, promoteGroup } = this.props
         const { projection } = visualElement
 
         addScaleCorrector(defaultScaleCorrectors)
 
-        const { group } = layoutGroup
-        if (group && projection) group.add(projection)
+        if (projection) {
+            if (layoutGroup.group) layoutGroup.group.add(projection)
+            if (promoteGroup.group && projection.options.layoutId)
+                promoteGroup.group.add(projection)
+        }
 
-        this.props.visualElement.projection?.root!.didUpdate()
+        projection?.root!.didUpdate()
     }
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {
-        const {
-            layoutDependency,
-            visualElement,
-            drag,
-            promoteGroup,
-            isPresent,
-        } = this.props
+        const { layoutDependency, visualElement, drag, isPresent } = this.props
         const projection = visualElement.projection!
 
         if (
@@ -58,11 +55,7 @@ class MeasureLayoutWithContext extends React.Component<
             projection.willUpdate()
         }
 
-        if (promoteGroup.isPromoted !== undefined) {
-            if (promoteGroup.isPromoted && !prevProps.promoteGroup.isPromoted) {
-                projection.promote()
-            }
-        } else if (prevProps.isPresent !== isPresent) {
+        if (prevProps.isPresent !== isPresent) {
             isPresent ? projection.promote() : projection.relegate()
         }
 
@@ -74,10 +67,13 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     componentWillUnmount() {
-        const { visualElement, layoutGroup } = this.props
-        const { group } = layoutGroup
-        if (group && visualElement.projection)
-            group.remove(visualElement.projection)
+        const { visualElement, layoutGroup, promoteGroup } = this.props
+        const { projection } = visualElement
+
+        if (projection) {
+            if (layoutGroup.group) layoutGroup.group.remove(projection)
+            if (promoteGroup.group) promoteGroup.group.delete(projection)
+        }
     }
 
     safeToRemove() {

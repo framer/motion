@@ -1,7 +1,8 @@
+import type { IProjectionNode } from "../projection/node/types"
 import { createContext } from "react"
 
 export interface PromoteGroupContextProps {
-    isPromoted?: boolean
+    group?: Set<IProjectionNode>
 }
 
 /**
