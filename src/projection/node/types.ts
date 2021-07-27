@@ -59,6 +59,7 @@ export interface IProjectionNode<I = unknown> {
     resolveTargetDelta(): void
     calcProjection(): void
     getProjectionStyles(): ResolvedValues
+    clearMeasurements(): void
 
     animationValues?: ResolvedValues
     setAnimationOrigin(delta: Delta): void

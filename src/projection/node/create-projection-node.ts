@@ -183,10 +183,10 @@ export function createProjectionNode<I>({
             ) {
                 this.willUpdate()
             }
+
             this.getStack()?.remove(this)
             this.parent?.children.delete(this)
-            this.projectionDelta = undefined
-            this.target = undefined
+
             cancelSync.preRender(this.updateProjection)
         }
 
@@ -397,6 +397,12 @@ export function createProjectionNode<I>({
             this.options = { ...options, crossfade: options.crossfade ?? true }
         }
 
+        clearMeasurements() {
+            this.scroll = undefined
+            this.layout = undefined
+            this.snapshot = undefined
+            this.children.forEach((child) => child.clearMeasurements())
+        }
         /**
          * Frame calculations
          */
