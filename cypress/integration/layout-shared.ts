@@ -436,7 +436,7 @@ describe("Shared layout: A -> AB -> A crossfade transition", () => {
             .wait(50)
             .get("#a")
             .should(([$box]: any) => {
-                expect(parseFloat($box.style.opacity)).to.equal(0)
+                expect(parseFloat($box.style.opacity) || 1).to.equal(1)
                 expectBbox($box, {
                     top: 50,
                     left: 100,
@@ -446,7 +446,7 @@ describe("Shared layout: A -> AB -> A crossfade transition", () => {
             })
             .get("#b")
             .should(([$box]: any) => {
-                expect(parseFloat($box.style.opacity)).to.equal(0)
+                expect(parseFloat($box.style.opacity) || 1).to.equal(1)
                 expectBbox($box, {
                     top: 50,
                     left: 100,

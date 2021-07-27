@@ -145,8 +145,6 @@ export function createProjectionNode<I>({
             ) {
                 this.onLayoutDidUpdate(
                     ({ delta, hasLayoutChanged, layout: newLayout }) => {
-                        console.log("layout did update!")
-
                         // TODO: Check here if an animation exists
                         const layoutTransition =
                             visualElement.getDefaultTransition() ||
@@ -165,11 +163,6 @@ export function createProjectionNode<I>({
                             // If there's a current animation and the target hasn't changed, ignore
                             (targetChanged || !this.currentAnimation)
                         ) {
-                            console.log(
-                                "starting layout animation",
-                                delta,
-                                hasLayoutChanged
-                            )
                             this.setAnimationOrigin(delta)
                             this.startAnimation({
                                 ...getValueTransition(
@@ -216,7 +209,6 @@ export function createProjectionNode<I>({
         startUpdate() {
             if (this.updateBlocked) return
             this.isUpdating = true
-            console.log("starting layout animation update")
             resetTreeRotations(this)
         }
 
@@ -244,7 +236,6 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (this.updateBlocked) this.unblockUpdate()
             if (!this.isUpdating) return
-            console.log("did update")
             this.isUpdating = false
 
             this.potentialNodes.forEach((node, id) => {
@@ -758,7 +749,9 @@ export function createProjectionNode<I>({
             } else {
                 styles.opacity =
                     lead === this
-                        ? valuesToRender.opacity
+                        ? valuesToRender.opacity ??
+                          this.latestValues.opacity ??
+                          1
                         : valuesToRender.opacityExit
             }
 
@@ -846,7 +839,6 @@ function resetTreeTransform(node: IProjectionNode) {
 }
 
 function updateProjectionTree(node: IProjectionNode) {
-    console.log("updating projection tree")
     resolveTreeTargetDeltas(node)
     calcTreeProjection(node)
 }
