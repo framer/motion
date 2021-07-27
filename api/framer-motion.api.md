@@ -550,6 +550,12 @@ export interface Point {
 // @public (undocumented)
 export const PresenceContext: import("react").Context<PresenceContextProps | null>;
 
+// Warning: (ae-forgotten-export) The symbol "PromoteGroupContextProps" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "PromoteGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export const PromoteGroupContext: import("react").Context<PromoteGroupContextProps>;
+
 // @public (undocumented)
 export interface RelayoutInfo {
     // (undocumented)
@@ -745,6 +751,9 @@ export function usePresence(): AlwaysPresent | Present | NotPresent;
 
 // @public
 export function useReducedMotion(): boolean | null;
+
+// @public (undocumented)
+export function useResetProjection(): () => void;
 
 // @public
 export function useSpring(source: MotionValue | number, config?: SpringOptions): MotionValue<any>;
