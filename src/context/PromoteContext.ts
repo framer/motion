@@ -1,4 +1,4 @@
-import type { IProjectionNode } from "../projection/node/types"
+import { IProjectionNode } from "../projection/node/types"
 import { createContext } from "react"
 
 export interface PromoteGroupContextProps {
