@@ -68,7 +68,7 @@ export interface IProjectionNode<I = unknown> {
     // Shared element
     isLead(): boolean
     promote(): void
-    relegate(): void
+    relegate(): boolean
     resumeFrom?: IProjectionNode
 
     /**
@@ -78,6 +78,7 @@ export interface IProjectionNode<I = unknown> {
     onLayoutDidUpdate: (
         callback: (data: LayoutUpdateData) => void
     ) => VoidFunction
+    onAnimationComplete: (callback: VoidFunction) => VoidFunction
 
     onLayoutMeasure: (callback: VoidFunction) => VoidFunction
     layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>

@@ -6,10 +6,8 @@ export class NodeStack {
     members: IProjectionNode[] = []
 
     add(node: IProjectionNode) {
-        // !this.members.size &&
-        this.promote(node)
-
         addUniqueItem(this.members, node)
+        this.promote(node)
         node.scheduleRender()
     }
 
@@ -23,10 +21,14 @@ export class NodeStack {
         }
     }
 
-    relegate(_node: IProjectionNode) {
-        // if (this.lead === node) {
-        //     this.promote(this.follow)
-        // }
+    relegate(node: IProjectionNode): boolean {
+        const indexOfNode = this.members.findIndex((member) => node === member)
+        if (indexOfNode === 0) return false
+
+        const prevLead = this.members[indexOfNode - 1]
+        if (!prevLead) return false
+        this.promote(prevLead)
+        return true
     }
 
     promote(node: IProjectionNode) {

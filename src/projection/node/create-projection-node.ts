@@ -85,6 +85,7 @@ export function createProjectionNode<I>({
         layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
         layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
         layoutMeasureListeners?: SubscriptionManager<VoidFunction>
+        animationCompleteListeners?: SubscriptionManager<VoidFunction>
 
         constructor(
             id: number,
@@ -571,13 +572,20 @@ export function createProjectionNode<I>({
         /**
          * Events
          *
-         * TODO Replace this with a key-based lookup
+         * TODO Replace this with a key-based lookup addEventListener
          */
         onLayoutWillUpdate(handler: VoidFunction) {
             if (!this.layoutWillUpdateListeners) {
                 this.layoutWillUpdateListeners = new SubscriptionManager()
             }
             return this.layoutWillUpdateListeners!.add(handler)
+        }
+
+        onAnimationComplete(handler: VoidFunction) {
+            if (!this.animationCompleteListeners) {
+                this.animationCompleteListeners = new SubscriptionManager()
+            }
+            return this.animationCompleteListeners!.add(handler)
         }
 
         onLayoutDidUpdate(handler: (data: LayoutUpdateData) => void) {
@@ -588,7 +596,6 @@ export function createProjectionNode<I>({
         }
 
         onLayoutMeasure(handler: VoidFunction) {
-            console.log("adding handler")
             if (!this.layoutMeasureListeners) {
                 this.layoutMeasureListeners = new SubscriptionManager()
             }
@@ -629,9 +636,13 @@ export function createProjectionNode<I>({
             if (stack) stack.promote(this)
         }
 
-        relegate() {
+        relegate(): boolean {
             const stack = this.getStack()
-            if (stack) stack.relegate(this)
+            if (stack) {
+                return stack.relegate(this)
+            } else {
+                return false
+            }
         }
 
         resetRotation() {

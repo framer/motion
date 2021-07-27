@@ -14,18 +14,18 @@ const type = params.get("type") || "crossfade"
 let transition: Transition = instant ? { type: false } : { duration: 0.01 }
 if (partialEase) {
     transition = {
-        duration: 0.15,
+        duration: 0.5,
         ease: () => 0.1,
     }
 }
 
-function Gallery({ items, setIndex }) {
+function Gallery({ items, setOpen }) {
     return (
         <ul style={container}>
             {items.map((color, i) => (
                 <motion.li
                     key={color}
-                    onClick={() => setIndex(i)}
+                    onClick={() => setOpen(color)}
                     style={{ ...item, backgroundColor: color, borderRadius: 0 }}
                     layoutId={color}
                     transition={transition}
@@ -43,7 +43,7 @@ function Gallery({ items, setIndex }) {
     )
 }
 
-function SingleImage({ color, setIndex }) {
+function SingleImage({ color, setOpen }) {
     const isPresent = useIsPresent()
 
     return (
@@ -58,7 +58,7 @@ function SingleImage({ color, setIndex }) {
                 }}
                 id="overlay"
                 transition={transition}
-                onClick={() => setIndex(false)}
+                onClick={() => setOpen(false)}
             />
             <div style={singleImageContainer}>
                 <motion.div
@@ -84,10 +84,10 @@ function SingleImage({ color, setIndex }) {
 }
 
 export function App() {
-    const [index, setIndex] = useState<false | number>(false)
+    const [openColor, setOpen] = useState<false | string>(false)
 
     if (partialEase) {
-        if (index === 0) {
+        if (`hsl(0, 100%, 50%)` === openColor) {
             transition.ease = () => 0.1
         } else {
             transition.ease = (t: number) => (t === 1 ? 1 : 0.9)
@@ -96,10 +96,14 @@ export function App() {
 
     return (
         <div style={background}>
-            <Gallery items={colors} setIndex={setIndex} />
+            <Gallery items={colors} setOpen={setOpen} />
             <AnimatePresence>
-                {index !== false && (
-                    <SingleImage color={colors[index]} setIndex={setIndex} />
+                {openColor !== false && (
+                    <SingleImage
+                        color={openColor}
+                        setOpen={setOpen}
+                        key={openColor}
+                    />
                 )}
             </AnimatePresence>
         </div>

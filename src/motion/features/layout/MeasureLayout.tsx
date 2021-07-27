@@ -41,6 +41,7 @@ class MeasureLayoutWithContext extends React.Component<
         }
 
         projection?.root!.didUpdate()
+        projection?.onAnimationComplete(() => this.safeToRemove())
     }
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {
@@ -56,7 +57,12 @@ class MeasureLayoutWithContext extends React.Component<
         }
 
         if (prevProps.isPresent !== isPresent) {
-            isPresent ? projection.promote() : projection.relegate()
+            if (isPresent) {
+                projection.promote()
+            } else {
+                const foundPrevNode = projection.relegate()
+                if (!foundPrevNode) this.safeToRemove()
+            }
         }
 
         return null
