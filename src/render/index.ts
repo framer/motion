@@ -37,6 +37,7 @@ export const visualElement = <Instance, MutableState, Options>({
     }: VisualElementOptions<Instance>,
     options: Options = {} as Options
 ) => {
+    let isMounted = false
     const { latestValues, renderState } = visualState
 
     /**
@@ -45,7 +46,7 @@ export const visualElement = <Instance, MutableState, Options>({
      * HTMLElement, plain object, or Three.js object. The functions provided
      * in VisualElementConfig allow us to interface with this instance.
      */
-    let instance: Instance
+    let instance: Instance | undefined
 
     /**
      * Manages the subscriptions for a visual element's lifecycle, for instance
@@ -94,7 +95,7 @@ export const visualElement = <Instance, MutableState, Options>({
      * render lifecycle
      */
     function render() {
-        if (!instance) return
+        if (!instance || !isMounted) return
 
         triggerBuild()
         renderInstance(instance, renderState, element.projection)
@@ -215,6 +216,7 @@ export const visualElement = <Instance, MutableState, Options>({
         isMounted: () => Boolean(instance),
 
         mount(newInstance: Instance) {
+            isMounted = true
             instance = element.current = newInstance
 
             if (element.projection) {
@@ -241,6 +243,7 @@ export const visualElement = <Instance, MutableState, Options>({
             removeFromVariantTree?.()
             parent?.children.delete(element)
             lifecycles.clearAllListeners()
+            isMounted = false
         },
 
         /**
@@ -280,7 +283,7 @@ export const visualElement = <Instance, MutableState, Options>({
         /**
          * Returns the current instance.
          */
-        getInstance: () => instance,
+        getInstance: () => instance!,
 
         /**
          * Get/set the latest static values.
@@ -323,7 +326,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * removed with a re-render to work.
          */
         measureViewportBox() {
-            return measureViewportBox(instance, props)
+            return measureViewportBox(instance!, props)
         },
 
         // Motion values ========================
@@ -382,7 +385,7 @@ export const visualElement = <Instance, MutableState, Options>({
          * directly from the instance (which might have performance implications).
          */
         readValue: (key: string) =>
-            latestValues[key] ?? readValueFromInstance(instance, key, options),
+            latestValues[key] ?? readValueFromInstance(instance!, key, options),
 
         /**
          * Set the base target to later animate back to. This is currently

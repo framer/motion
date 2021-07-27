@@ -16,7 +16,7 @@ import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/operations"
 import { AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
-import { isDeltaZero } from "../geometry/utils"
+import { boxEquals, isDeltaZero } from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
@@ -80,6 +80,8 @@ export function createProjectionNode<I>({
         target?: Box
         targetWithTransforms?: Box
 
+        targetLayout?: Box
+
         latestValues: ResolvedValues
 
         layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
@@ -141,31 +143,46 @@ export function createProjectionNode<I>({
                 visualElement &&
                 (layoutId || layout)
             ) {
-                this.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
-                    // TODO: Check here if an animation exists
-                    const layoutTransition =
-                        visualElement.getDefaultTransition() ||
-                        defaultLayoutTransition
+                this.onLayoutDidUpdate(
+                    ({ delta, hasLayoutChanged, layout: newLayout }) => {
+                        console.log("layout did update!")
 
-                    const {
-                        onLayoutAnimationComplete,
-                    } = visualElement.getProps()
+                        // TODO: Check here if an animation exists
+                        const layoutTransition =
+                            visualElement.getDefaultTransition() ||
+                            defaultLayoutTransition
 
-                    if (
-                        hasLayoutChanged
-                        /**
-                         * Don't create a new animation if the target box
-                         * hasn't changed TODO: And we're already animating
-                         */
-                        // !boxEquals(layoutTarget.current, newLayout)
-                    ) {
-                        this.setAnimationOrigin(delta)
-                        this.startAnimation({
-                            ...getValueTransition(layoutTransition, "layout"),
-                            onComplete: onLayoutAnimationComplete,
-                        })
+                        const {
+                            onLayoutAnimationComplete,
+                        } = visualElement.getProps()
+
+                        const targetChanged =
+                            !this.targetLayout ||
+                            !boxEquals(this.targetLayout, newLayout)
+
+                        if (
+                            hasLayoutChanged &&
+                            // If there's a current animation and the target hasn't changed, ignore
+                            (targetChanged || !this.currentAnimation)
+                        ) {
+                            console.log(
+                                "starting layout animation",
+                                delta,
+                                hasLayoutChanged
+                            )
+                            this.setAnimationOrigin(delta)
+                            this.startAnimation({
+                                ...getValueTransition(
+                                    layoutTransition,
+                                    "layout"
+                                ),
+                                onComplete: onLayoutAnimationComplete,
+                            })
+                        }
+
+                        this.targetLayout = newLayout
                     }
-                })
+                )
             }
         }
 
@@ -178,12 +195,7 @@ export function createProjectionNode<I>({
         }
 
         unmount() {
-            if (
-                this.options.layoutId &&
-                this.hasPendingLead(this.options.layoutId)
-            ) {
-                this.willUpdate()
-            }
+            this.options.layoutId && this.willUpdate()
 
             this.getStack()?.remove(this)
             this.parent?.children.delete(this)
@@ -204,7 +216,7 @@ export function createProjectionNode<I>({
         startUpdate() {
             if (this.updateBlocked) return
             this.isUpdating = true
-
+            console.log("starting layout animation update")
             resetTreeRotations(this)
         }
 
@@ -232,7 +244,7 @@ export function createProjectionNode<I>({
         didUpdate() {
             if (this.updateBlocked) this.unblockUpdate()
             if (!this.isUpdating) return
-
+            console.log("did update")
             this.isUpdating = false
 
             this.potentialNodes.forEach((node, id) => {
@@ -381,7 +393,9 @@ export function createProjectionNode<I>({
                 )
             }
 
-            removeBoxTransforms(boxWithoutTransform, this.latestValues)
+            if (hasTransform(this.latestValues)) {
+                removeBoxTransforms(boxWithoutTransform, this.latestValues)
+            }
 
             return boxWithoutTransform
         }
@@ -482,7 +496,7 @@ export function createProjectionNode<I>({
          */
         animationProgress = 0
         animationValues?: ResolvedValues
-        currentAnimation: AnimationPlaybackControls
+        currentAnimation?: AnimationPlaybackControls
         mixTargetDelta: (progress: number) => void
 
         setAnimationOrigin(delta: Delta) {
@@ -532,7 +546,7 @@ export function createProjectionNode<I>({
                     options.onUpdate?.(latest)
                 },
                 onComplete: () => {
-                    this.animationValues = undefined
+                    this.currentAnimation = this.animationValues = undefined
                     options.onComplete?.()
                     this.getStack()?.exitAnimationComplete()
                 },
@@ -545,15 +559,16 @@ export function createProjectionNode<I>({
                 target,
                 latestValues,
             } = this.getLead()
+            if (!targetWithTransforms || !target) return
 
-            copyBoxInto(targetWithTransforms!, target!)
+            copyBoxInto(targetWithTransforms, target)
 
             /**
              * Apply the latest user-set transforms to the targetBox to produce the targetBoxFinal.
              * This is the final box that we will then project into by calculating a transform delta and
              * applying it to the corrected box.
              */
-            transformBox(targetWithTransforms!, latestValues)
+            transformBox(targetWithTransforms, latestValues)
 
             /**
              * Update the delta between the corrected box and the final target box, after
@@ -701,11 +716,17 @@ export function createProjectionNode<I>({
                 styles.visibility = ""
             }
 
-            if (!this.projectionDelta) {
+            const lead = this.getLead()
+
+            if (
+                !this.projectionDelta ||
+                !this.target ||
+                !this.layout ||
+                (lead && !lead.target)
+            ) {
                 return emptyStyles
             }
 
-            const lead = this.getLead()
             const valuesToRender = lead.animationValues || lead.latestValues
 
             this.applyTransformsToTarget()
@@ -825,6 +846,7 @@ function resetTreeTransform(node: IProjectionNode) {
 }
 
 function updateProjectionTree(node: IProjectionNode) {
+    console.log("updating projection tree")
     resolveTreeTargetDeltas(node)
     calcTreeProjection(node)
 }

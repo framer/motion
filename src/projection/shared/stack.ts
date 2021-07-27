@@ -34,13 +34,13 @@ export class NodeStack {
     promote(node: IProjectionNode) {
         const prevLead = this.lead
         if (node === prevLead) return
-
         this.lead = node
 
         node.show()
 
         if (prevLead) {
             prevLead.scheduleRender()
+            node.root?.startUpdate()
             node.resumeFrom = prevLead
 
             if (prevLead.snapshot) {
