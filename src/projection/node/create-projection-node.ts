@@ -213,6 +213,7 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
+            if (this.root.updateBlocked) return
             !this.root.isUpdating && this.root.startUpdate()
             if (this.isLayoutDirty) return
 
