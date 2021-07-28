@@ -61,7 +61,7 @@
 
             box.classList.add("b")
 
-            // // should unblock update
+            // should unblock update
             boxProjection.root.didUpdate()
 
             const boxNewLayout = {
@@ -77,7 +77,7 @@
             box.classList.remove("b")
 
             boxProjection.root.didUpdate()
-            matchViewportBox(box, boxOrigin)
+            matchViewportBox(box, boxNewLayout)
         </script>
     </body>
 </html>

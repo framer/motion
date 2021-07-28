@@ -64,7 +64,7 @@ export function createProjectionNode<I>({
         isLayoutDirty = false
 
         updateBlocked = false
-        isUpdating = true
+        isUpdating = false
 
         shouldResetTransform = false
 
@@ -721,7 +721,6 @@ export function createProjectionNode<I>({
                 (this === lead && !this.target) ||
                 (this !== lead && !lead.target)
             ) {
-                console.log("returning ")
                 return emptyStyles
             }
 
