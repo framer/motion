@@ -43,7 +43,7 @@ export function animateVisualElement(
     definition: AnimationDefinition,
     options: AnimationOptions = {}
 ) {
-    visualElement.notifyAnimationStart()
+    visualElement.notifyAnimationStart(definition)
     let animation: Promise<any>
 
     if (Array.isArray(definition)) {
