@@ -54,6 +54,8 @@
             const box = document.getElementById("box-a")
             const boxProjection = createNode(box, undefined, { layoutId: "a" })
 
+            boxProjection.setValue("opacity", 0)
+
             boxProjection.willUpdate()
 
             const newBox = document.createElement("div")
@@ -62,8 +64,6 @@
             const newBoxProjection = createNode(newBox, undefined, {
                 layoutId: "a",
             })
-
-            boxProjection.setValue("opacity", 0)
             newBoxProjection.setValue("borderRadius", 20)
 
             boxProjection.unmount()
@@ -77,8 +77,6 @@
 
             // Should animate from old opacity to new opacity
             matchOpacity(newBox, 0.5)
-
-            matchBorderRadius(box, "6.66667% / 5%")
             matchBorderRadius(newBox, "6.66667% / 5%")
         </script>
     </body>

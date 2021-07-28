@@ -10,7 +10,8 @@ export function mixValues(
     follow: ResolvedValues,
     lead: ResolvedValues,
     progress: number,
-    shouldCrossfadeOpacity: boolean
+    shouldCrossfadeOpacity: boolean,
+    isOnlyMember: boolean
 ) {
     if (shouldCrossfadeOpacity) {
         target.opacity = mix(
@@ -24,6 +25,12 @@ export function mixValues(
             (follow.opacity as number) ?? 1,
             0,
             easeCrossfadeOut(progress)
+        )
+    } else if (isOnlyMember) {
+        target.opacity = mix(
+            (follow.opacity as number) ?? 1,
+            (lead.opacity as number) ?? 1,
+            progress
         )
     }
 

@@ -218,6 +218,7 @@ export function createProjectionNode<I>({
 
             this.isLayoutDirty = true
 
+            // TODO: Replace with path loop
             this.path.forEach((node) => {
                 node.shouldResetTransform = true
 
@@ -238,6 +239,7 @@ export function createProjectionNode<I>({
             if (!this.isUpdating) return
             this.isUpdating = false
 
+            // TODO: Replace with loop
             this.potentialNodes.forEach((node, id) => {
                 const element = document.querySelector(
                     `[data-projection-id="${id}"]`
@@ -498,9 +500,10 @@ export function createProjectionNode<I>({
             const targetDelta = createDelta()
 
             const isSharedLayoutAnimation = snapshot?.isShared
+            const isOnlyMember = (this.getStack()?.members.length || 0) <= 1
             const shouldCrossfadeOpacity = Boolean(
                 isSharedLayoutAnimation &&
-                    (this.getStack()?.members.length || 0) > 1 &&
+                    !isOnlyMember &&
                     this.options.crossfade === true &&
                     !this.path.some(hasOpacityCrossfade)
             )
@@ -512,12 +515,14 @@ export function createProjectionNode<I>({
 
                 if (isSharedLayoutAnimation) {
                     this.animationValues = mixedValues
+
                     mixValues(
                         mixedValues,
                         snapshotLatestValues,
                         this.latestValues,
                         progress,
-                        shouldCrossfadeOpacity
+                        shouldCrossfadeOpacity,
+                        isOnlyMember
                     )
                 }
 
@@ -711,10 +716,11 @@ export function createProjectionNode<I>({
 
             if (
                 !this.projectionDelta ||
-                !this.target ||
                 !this.layout ||
-                (lead && !lead.target)
+                (this === lead && !this.target) ||
+                (this !== lead && !lead.target)
             ) {
+                console.log("returning ")
                 return emptyStyles
             }
 
