@@ -550,11 +550,18 @@ export interface Point {
 // @public (undocumented)
 export const PresenceContext: import("react").Context<PresenceContextProps | null>;
 
-// Warning: (ae-forgotten-export) The symbol "PromoteGroupContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "PromoteGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export const PromoteGroupContext: import("react").Context<PromoteGroupContextProps>;
+export interface PromoteGroupContext {
+    // Warning: (ae-forgotten-export) The symbol "IProjectionNode" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    group?: Set<IProjectionNode>;
+}
+
+// @internal (undocumented)
+export const PromoteGroupContext: import("react").Context<PromoteGroupContext>;
 
 // @public (undocumented)
 export interface RelayoutInfo {
@@ -882,8 +889,6 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     presenceId: number | undefined;
     // (undocumented)
     prevDragCursor?: Point;
-    // Warning: (ae-forgotten-export) The symbol "IProjectionNode" needs to be exported by the entry point index.d.ts
-    // 
     // (undocumented)
     projection?: IProjectionNode;
     // (undocumented)
