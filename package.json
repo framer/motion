@@ -10,7 +10,7 @@
             "import": "./dist/es/index.js",
             "default": "./dist/es/index.js"
         },
-        "package.json": "./package.json",
+        "package.json": "./package.json"
     },
     "types": "types/index.d.ts",
     "author": "Framer",
