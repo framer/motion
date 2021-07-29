@@ -67,7 +67,11 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     componentDidUpdate() {
-        this.props.visualElement.projection?.root!.didUpdate()
+        const { projection } = this.props.visualElement
+        if (projection) {
+            projection.root!.didUpdate()
+            if (!projection.currentAnimation) this.safeToRemove()
+        }
     }
 
     componentWillUnmount() {

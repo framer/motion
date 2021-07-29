@@ -3,6 +3,7 @@ import { ResolvedValues, VisualElement } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { Box, Delta, Point } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
+import { AnimationPlaybackControls } from "../../animation/animate"
 
 export interface Snapshot {
     layout: Box
@@ -62,6 +63,7 @@ export interface IProjectionNode<I = unknown> {
     clearMeasurements(): void
 
     animationValues?: ResolvedValues
+    currentAnimation?: AnimationPlaybackControls
     setAnimationOrigin(delta: Delta): void
     startAnimation(transition: Transition): void
 

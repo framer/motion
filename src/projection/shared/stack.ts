@@ -40,6 +40,7 @@ export class NodeStack {
 
         if (prevLead) {
             prevLead.scheduleRender()
+            node.scheduleRender()
             node.root?.startUpdate()
             node.resumeFrom = prevLead
 
