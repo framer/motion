@@ -159,7 +159,10 @@ export function createProjectionNode<I>({
                             !boxEquals(this.targetLayout, newLayout)
 
                         if (
-                            hasLayoutChanged &&
+                            // If the element is animating from another element,
+                            // we should force the animation even if they have
+                            // the same layout
+                            (hasLayoutChanged || this.resumeFrom) &&
                             // If there's a current animation and the target hasn't changed, ignore
                             (targetChanged || !this.currentAnimation)
                         ) {
