@@ -7,8 +7,6 @@ export function useResetProjection() {
         if (!root) return
         root.clearMeasurements()
         root.sharedNodes.clear()
-
-        root.isUpdating = true
     }, [])
 
     return reset
