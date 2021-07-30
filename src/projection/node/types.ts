@@ -18,7 +18,7 @@ export type LayoutEvents =
     | "animationComplete"
 
 export interface IProjectionNode<I = unknown> {
-    id: number
+    id: number | undefined
     parent?: IProjectionNode
     root?: IProjectionNode
     children: Set<IProjectionNode>
@@ -38,6 +38,7 @@ export interface IProjectionNode<I = unknown> {
     isLayoutDirty: boolean
     shouldResetTransform: boolean
     updateBlocked: boolean
+    hasEverUpdated: boolean
     blockUpdate(): void
     unblockUpdate(): void
     isUpdating: boolean

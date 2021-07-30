@@ -28,8 +28,9 @@ export function createUseRender(forwardMotionProps = false) {
             ref,
         }
 
-        // TODO: This is actually going to break SSR, so maybe after initial render?
-        elementProps["data-projection-id"] = projectionId
+        if (projectionId) {
+            elementProps["data-projection-id"] = projectionId
+        }
 
         return createElement<any>(Component, elementProps)
     }

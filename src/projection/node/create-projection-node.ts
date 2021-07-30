@@ -49,7 +49,7 @@ export function createProjectionNode<I>({
          * rendered components will be committed by React). In `didUpdate`, we search the DOM for
          * these potential nodes with this id and hydrate the projetion node of the ones that were commited.
          */
-        id: number
+        id: number | undefined
 
         /**
          * A reference to the platform-native node (currently this will be a HTMLElement).
@@ -208,7 +208,7 @@ export function createProjectionNode<I>({
         eventHandlers = new Map<LayoutEvents, SubscriptionManager<any>>()
 
         constructor(
-            id: number,
+            id: number | undefined,
             latestValues: ResolvedValues,
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
@@ -218,7 +218,7 @@ export function createProjectionNode<I>({
             this.path = parent ? [...parent.path, parent] : []
             this.parent = parent
 
-            this.root.registerPotentialNode(id, this)
+            id && this.root.registerPotentialNode(id, this)
         }
 
         addEventListener(name: LayoutEvents, handler: any) {
@@ -257,7 +257,7 @@ export function createProjectionNode<I>({
             }
 
             this.parent?.children.add(this)
-            this.root.potentialNodes.delete(this.id)
+            this.id && this.root.potentialNodes.delete(this.id)
 
             if (isLayoutDirty) {
                 this.isLayoutDirty = true

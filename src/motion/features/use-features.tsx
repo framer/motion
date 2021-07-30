@@ -15,7 +15,7 @@ const numFeatures = featureNames.length
  */
 export function useFeatures(
     props: MotionProps,
-    projectionId: number,
+    projectionId: number | undefined,
     visualElement?: VisualElement,
     preloadedFeatures?: FeatureBundle
 ): null | JSX.Element[] {

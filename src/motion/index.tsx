@@ -67,19 +67,6 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         const context = useCreateMotionContext(props, isStatic)
 
         /**
-         * Create a unique projection ID for this component. If a new component is added
-         * during a layout animation we'll use this to query the DOM and hydrate its ref early, allowing
-         * us to measure it as soon as any layout effect flushes pending layout animations.
-         *
-         * Performance note: It'd be better not to have to search the DOM for these elements.
-         * For newly-entering components it could be enough to only correct treeScale, in which
-         * case we could mount in a scale-correction mode. This wouldn't be enough for
-         * shared element transitions however. Perhaps for those we could revert to a root node
-         * that gets forceRendered and layout animations are triggered on its layout effect.
-         */
-        const projectionId = useProjectionId()
-
-        /**
          *
          */
         const visualState = useVisualState(props, isStatic)
@@ -97,7 +84,22 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                 props,
                 createVisualElement
             )
+        }
 
+        /**
+         * Create a unique projection ID for this component. If a new component is added
+         * during a layout animation we'll use this to query the DOM and hydrate its ref early, allowing
+         * us to measure it as soon as any layout effect flushes pending layout animations.
+         *
+         * Performance note: It'd be better not to have to search the DOM for these elements.
+         * For newly-entering components it could be enough to only correct treeScale, in which
+         * case we could mount in a scale-correction mode. This wouldn't be enough for
+         * shared element transitions however. Perhaps for those we could revert to a root node
+         * that gets forceRendered and layout animations are triggered on its layout effect.
+         */
+        const projectionId = useProjectionId(context.visualElement)
+
+        if (!isStatic && isBrowser) {
             /**
              * Load Motion gesture and animation features. These are rendered as renderless
              * components so each feature can optionally make use of React lifecycle methods.

@@ -3,7 +3,7 @@ import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
 
 export function useProjection(
-    projectionId: number,
+    projectionId: number | undefined,
     { layoutId, layout, drag }: MotionProps,
     visualElement?: VisualElement
 ) {
