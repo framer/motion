@@ -1,6 +1,5 @@
 import { Transition } from "../../types"
 import { ResolvedValues, VisualElement } from "../../render/types"
-import { SubscriptionManager } from "../../utils/subscription-manager"
 import { Box, Delta, Point } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/animate"
@@ -11,6 +10,12 @@ export interface Snapshot {
     latestValues: ResolvedValues
     isShared?: boolean
 }
+
+export type LayoutEvents =
+    | "willUpdate"
+    | "didUpdate"
+    | "measure"
+    | "animationComplete"
 
 export interface IProjectionNode<I = unknown> {
     id: number
@@ -73,17 +78,9 @@ export interface IProjectionNode<I = unknown> {
     relegate(): boolean
     resumeFrom?: IProjectionNode
 
-    /**
-     * Events
-     */
-    onLayoutWillUpdate: (callback: VoidFunction) => VoidFunction
-    onLayoutDidUpdate: (
-        callback: (data: LayoutUpdateData) => void
-    ) => VoidFunction
-    onAnimationComplete: (callback: VoidFunction) => VoidFunction
-
-    onLayoutMeasure: (callback: VoidFunction) => VoidFunction
-    layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
+    addEventListener(name: LayoutEvents, handler: VoidFunction): VoidFunction
+    notifyListeners(name: LayoutEvents, ...args: any): void
+    hasListeners(name: LayoutEvents): boolean
 }
 
 export interface LayoutUpdateData {

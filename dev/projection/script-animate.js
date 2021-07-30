@@ -67,7 +67,7 @@ Animate.createNode = (
     node.mount(element)
     visualElement.projection = node
 
-    node.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
+    node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
         if (hasLayoutChanged) {
             node.setAnimationOrigin(delta)
             node.startAnimation(transition)

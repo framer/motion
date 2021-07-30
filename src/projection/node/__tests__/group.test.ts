@@ -10,7 +10,7 @@ describe("nodeGroup", () => {
         b.mount({})
 
         const bLayoutUpdate = jest.fn()
-        b.onLayoutDidUpdate(bLayoutUpdate)
+        b.addEventListener("didUpdate", bLayoutUpdate)
 
         const group = nodeGroup()
         group.add(a)

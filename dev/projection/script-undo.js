@@ -66,7 +66,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         visualElement.projection = node
     }
 
-    node.onLayoutDidUpdate(({ delta, hasLayoutChanged }) => {
+    node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
         // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
         hasLayoutChanged && node.setAnimationOrigin(delta)
     })

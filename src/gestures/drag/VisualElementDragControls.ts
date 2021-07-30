@@ -449,7 +449,8 @@ export class VisualElementDragControls {
     effect() {
         const constraints = this.getProps().dragConstraints
         if (isRefObject(constraints)) {
-            this.removeMeasureLayoutListener = this.visualElement.projection?.onLayoutMeasure(
+            this.removeMeasureLayoutListener = this.visualElement.projection?.addEventListener(
+                "measure",
                 () => (this.constraints = this.resolveRefConstraints())
             )
         }

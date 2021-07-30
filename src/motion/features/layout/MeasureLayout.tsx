@@ -39,7 +39,9 @@ class MeasureLayoutWithContext extends React.Component<
         }
 
         projection?.root!.didUpdate()
-        projection?.onAnimationComplete(() => this.safeToRemove())
+        projection?.addEventListener("animationComplete", () =>
+            this.safeToRemove()
+        )
     }
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {

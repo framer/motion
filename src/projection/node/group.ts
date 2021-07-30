@@ -18,7 +18,10 @@ export function nodeGroup(): NodeGroup {
     return {
         add: (node) => {
             nodes.add(node)
-            subscriptions.set(node, node.onLayoutWillUpdate(dirtyAll))
+            subscriptions.set(
+                node,
+                node.addEventListener("willUpdate", dirtyAll)
+            )
         },
         remove: (node) => {
             nodes.delete(node)

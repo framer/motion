@@ -24,8 +24,8 @@ import { eachAxis } from "../utils/each-axis"
 import { hasScale, hasTransform } from "../utils/has-transform"
 import {
     IProjectionNode,
+    LayoutEvents,
     LayoutUpdateData,
-    LayoutUpdateHandler,
     ProjectionNodeConfig,
     ProjectionNodeOptions,
     Snapshot,
@@ -39,55 +39,173 @@ export function createProjectionNode<I>({
     resetTransform,
 }: ProjectionNodeConfig<I>) {
     return class ProjectionNode implements IProjectionNode<I> {
+        /**
+         * A unique ID generated for every projection node.
+         *
+         * The projection tree's `didUpdate` function will be triggered by the first element
+         * in the tree to run its layout effects. However, if there are elements entering the tree
+         * these might not be mounted yet. When React renders a `motion` component we
+         * give it a unique selector and register it as a potential projection node (not all
+         * rendered components will be committed by React). In `didUpdate`, we search the DOM for
+         * these potential nodes with this id and hydrate the projetion node of the ones that were commited.
+         */
         id: number
 
+        /**
+         * A reference to the platform-native node (currently this will be a HTMLElement).
+         */
         instance: I
 
+        /**
+         * A reference to the root projection node. There'll only ever be one tree and one root.
+         */
         root: IProjectionNode
 
+        /**
+         * A reference to this node's parent.
+         */
         parent?: IProjectionNode
 
+        /**
+         * A path from this node to the root node. This provides a fast way to iterate
+         * back up the tree.
+         */
         path: IProjectionNode[]
 
+        /**
+         * A Set containing all this component's children. This is used to iterate
+         * through the children.
+         *
+         * TODO: This could be faster to iterate as a flat array stored on the root node.
+         */
         children = new Set<IProjectionNode>()
 
+        /**
+         * Options for the node. We use this to configure what kind of layout animations
+         * we should perform (if any).
+         */
         options: ProjectionNodeOptions = {}
 
+        /**
+         * A snapshot of the element's state just before the current update. This is
+         * hydrated when this node's `willUpdate` method is called and scrubbed at the
+         * end of the tree's `didUpdate` method.
+         */
         snapshot: Snapshot | undefined
 
+        /**
+         * A box defining the element's layout relative to the page. This will have been
+         * captured with all parent scrolls and projection transforms unset.
+         */
         layout: Box | undefined
 
-        layoutCorrected: Box
-
-        scroll?: Point
-
-        isLayoutDirty = false
-
-        updateBlocked = false
-        isUpdating = false
-
-        shouldResetTransform = false
-
-        treeScale: Point = { x: 1, y: 1 } // TODO Lazy-initialise
-
-        targetDelta?: Delta
-
-        projectionDelta?: Delta
-        projectionDeltaWithTransform?: Delta
-
-        resumeFrom?: IProjectionNode
-
-        target?: Box
-        targetWithTransforms?: Box
-
+        /**
+         * The layout used to calculate the previous layout animation. We use this to compare
+         * layouts between renders and decide whether we need to trigger a new layout animation
+         * or just let the current one play out.
+         */
         targetLayout?: Box
 
+        /**
+         * A mutable data structure we use to apply all parent transforms currently
+         * acting on the element's layout. It's from here we can calculate the projectionDelta
+         * required to get the element from its layout into its calculated target box.
+         */
+        layoutCorrected: Box
+
+        /**
+         * An ideal projection transform we want to apply to the element. This is calculated,
+         * usually when an element's layout has changed, and we want the element to look as though
+         * its in its previous layout on the next frame. From there, we animated it down to 0
+         * to animate the element to its new layout.
+         */
+        targetDelta?: Delta
+
+        /**
+         * A mutable structure representing the visual bounding box on the page where we want
+         * and element to appear. This can be set directly but is currently derived once a frame
+         * from apply targetDelta to layout.
+         */
+        target?: Box
+
+        /**
+         * A mutable structure that represents the target as transformed by the element's
+         * latest user-set transforms (ie scale, x)
+         */
+        targetWithTransforms?: Box
+
+        /**
+         * A calculated transform that will project an element from its layoutCorrected
+         * into the target. This will be used by children to calculate their own layoutCorrect boxes.
+         */
+        projectionDelta?: Delta
+
+        /**
+         * A calculated transform that will project an element from its layoutCorrected
+         * into the targetWithTransforms.
+         */
+        projectionDeltaWithTransform?: Delta
+
+        /**
+         * If we're tracking the scroll of this element, we store it here.
+         */
+        scroll?: Point
+
+        /**
+         * Flag to true if we think this layout has been changed. We can't always know this,
+         * currently we set it to true every time a component renders, or if it has a layoutDependency
+         * if that has changed between renders. Additionally, components can be grouped by LayoutGroup
+         * and if one node is dirtied, they all are.
+         */
+        isLayoutDirty = false
+
+        /**
+         * Block layout updates for instant layout transitions throughout the tree.
+         */
+        updateBlocked = false
+
+        /**
+         * We set this to true once, on the first update. Any nodes added to the tree beyond that
+         * update will be given a `data-projection-id` attribute.
+         */
+        hasEverUpdated = false
+
+        /**
+         * Set to true between the start of the first `willUpdate` call and the end of the `didUpdate`
+         * call.
+         */
+        isUpdating = false
+
+        /**
+         * Flags whether this node should have its transform reset prior to measuring.
+         */
+        shouldResetTransform = false
+
+        /**
+         * An object representing the calculated contextual/accumulated/tree scale.
+         * This will be used to scale calculcated projection transforms, as these are
+         * calculated in screen-space but need to be scaled for elements to actually
+         * make it to their calculated destinations.
+         *
+         * TODO: Lazy-init
+         */
+        treeScale: Point = { x: 1, y: 1 }
+
+        /**
+         * Is hydrated with a projection node if an element is animating from another.
+         */
+        resumeFrom?: IProjectionNode
+
+        /**
+         * A reference to the element's latest animated values. This is a reference shared
+         * between the element's VisualElement and the ProjectionNode.
+         */
         latestValues: ResolvedValues
 
-        layoutWillUpdateListeners?: SubscriptionManager<VoidFunction>
-        layoutDidUpdateListeners?: SubscriptionManager<LayoutUpdateHandler>
-        layoutMeasureListeners?: SubscriptionManager<VoidFunction>
-        animationCompleteListeners?: SubscriptionManager<VoidFunction>
+        /**
+         *
+         */
+        eventHandlers = new Map<LayoutEvents, SubscriptionManager<any>>()
 
         constructor(
             id: number,
@@ -101,6 +219,23 @@ export function createProjectionNode<I>({
             this.parent = parent
 
             this.root.registerPotentialNode(id, this)
+        }
+
+        addEventListener(name: LayoutEvents, handler: any) {
+            if (!this.eventHandlers.has(name)) {
+                this.eventHandlers.set(name, new SubscriptionManager())
+            }
+
+            return this.eventHandlers.get(name)!.add(handler)
+        }
+
+        notifyListeners(name: LayoutEvents, ...args: any) {
+            const subscriptionManager = this.eventHandlers.get(name)
+            subscriptionManager?.notify(...args)
+        }
+
+        hasListeners(name: LayoutEvents) {
+            return this.eventHandlers.has(name)
         }
 
         // Note: Currently only running on root node
@@ -143,8 +278,13 @@ export function createProjectionNode<I>({
                 visualElement &&
                 (layoutId || layout)
             ) {
-                this.onLayoutDidUpdate(
-                    ({ delta, hasLayoutChanged, layout: newLayout }) => {
+                this.addEventListener(
+                    "didUpdate",
+                    ({
+                        delta,
+                        hasLayoutChanged,
+                        layout: newLayout,
+                    }: LayoutUpdateData) => {
                         // TODO: Check here if an animation exists
                         const layoutTransition =
                             visualElement.getDefaultTransition() ||
@@ -211,7 +351,7 @@ export function createProjectionNode<I>({
         // Note: currently only running on root node
         startUpdate() {
             if (this.updateBlocked) return
-            this.isUpdating = true
+            this.hasEverUpdated = this.isUpdating = true
             resetTreeRotations(this)
         }
 
@@ -234,7 +374,7 @@ export function createProjectionNode<I>({
             })
 
             this.updateSnapshot()
-            shouldNotifyListeners && this.layoutWillUpdateListeners?.notify()
+            shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
 
         // Note: Currently only running on root node
@@ -243,32 +383,38 @@ export function createProjectionNode<I>({
             if (!this.isUpdating) return
             this.isUpdating = false
 
-            // TODO: Replace with loop
-            this.potentialNodes.forEach((node, id) => {
-                const element = document.querySelector(
-                    `[data-projection-id="${id}"]`
-                )
-                if (element) node.mount(element, true)
-            })
-            this.potentialNodes.clear()
+            /**
+             * Search for and mount newly-added projection elements.
+             *
+             * TODO: Every time a new component is rendered we could search up the tree for
+             * the closest mounted node and query from there rather than document.
+             */
+            if (this.potentialNodes.size) {
+                this.potentialNodes.forEach(mountNodeEarly)
+                this.potentialNodes.clear()
+            }
 
             /**
              * Write
+             * TODO: Move from tree to flat array traversal
              */
             resetTreeTransform(this)
 
             /**
              * Read ==================
+             * TODO: Move from tree to flat array traversal
              */
             // Update layout measurements of updated children
             updateTreeLayout(this)
 
             /**
              * Write
+             * TODO: Move from tree to flat array traversal
              */
             // Notify listeners that the layout is updated
             notifyLayoutUpdate(this)
 
+            // TODO Move from tree to flat array traversal
             clearSnapshots(this)
 
             // Flush any scheduled updates
@@ -281,9 +427,8 @@ export function createProjectionNode<I>({
             sync.preRender(this.updateProjection, false, true)
         }
 
-        updateProjection = () => {
-            updateProjectionTree(this)
-        }
+        // TODO Move from tree to flat array traversal
+        updateProjection = () => updateProjectionTree(this)
 
         /**
          * Update measurements
@@ -312,7 +457,7 @@ export function createProjectionNode<I>({
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
-            this.layoutMeasureListeners?.notify()
+            this.notifyListeners("measure")
         }
 
         updateScroll() {
@@ -585,39 +730,6 @@ export function createProjectionNode<I>({
         }
 
         /**
-         * Events
-         *
-         * TODO Replace this with a key-based lookup addEventListener
-         */
-        onLayoutWillUpdate(handler: VoidFunction) {
-            if (!this.layoutWillUpdateListeners) {
-                this.layoutWillUpdateListeners = new SubscriptionManager()
-            }
-            return this.layoutWillUpdateListeners!.add(handler)
-        }
-
-        onAnimationComplete(handler: VoidFunction) {
-            if (!this.animationCompleteListeners) {
-                this.animationCompleteListeners = new SubscriptionManager()
-            }
-            return this.animationCompleteListeners!.add(handler)
-        }
-
-        onLayoutDidUpdate(handler: (data: LayoutUpdateData) => void) {
-            if (!this.layoutDidUpdateListeners) {
-                this.layoutDidUpdateListeners = new SubscriptionManager()
-            }
-            return this.layoutDidUpdateListeners!.add(handler)
-        }
-
-        onLayoutMeasure(handler: VoidFunction) {
-            if (!this.layoutMeasureListeners) {
-                this.layoutMeasureListeners = new SubscriptionManager()
-            }
-            return this.layoutMeasureListeners!.add(handler)
-        }
-
-        /**
          * Shared layout
          */
         // TODO Only running on root node
@@ -803,7 +915,7 @@ function updateTreeLayout(node: IProjectionNode) {
 function notifyLayoutUpdate(node: IProjectionNode) {
     const { layout } = node
     const snapshot = node.resumeFrom?.snapshot ?? node.snapshot
-    if (node.isLead() && layout && snapshot && node.layoutDidUpdateListeners) {
+    if (node.isLead() && layout && snapshot && node.hasListeners("didUpdate")) {
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position
         if (node.options.animationType === "size") {
@@ -826,7 +938,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const visualDelta = createDelta()
         calcBoxDelta(visualDelta, layout, snapshot.visible)
 
-        node.layoutDidUpdateListeners.notify({
+        node.notifyListeners("didUpdate", {
             layout,
             snapshot,
             delta: visualDelta,
@@ -883,4 +995,9 @@ function hasOpacityCrossfade(node: IProjectionNode) {
 const defaultLayoutTransition = {
     duration: 0.45,
     ease: [0.4, 0, 0.1, 1],
+}
+
+function mountNodeEarly(node: IProjectionNode, id: number) {
+    const element = document.querySelector(`[data-projection-id="${id}"]`)
+    if (element) node.mount(element, true)
 }

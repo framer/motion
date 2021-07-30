@@ -13,7 +13,9 @@ describe("node", () => {
             },
         }
         parent.mount(parentInstance)
-        parent.onLayoutDidUpdate(({ delta }) => parent.setTargetDelta(delta))
+        parent.addEventListener("didUpdate", ({ delta }) =>
+            parent.setTargetDelta(delta)
+        )
 
         const child = new TestProjectionNode(parent)
         const childInstance = {
@@ -25,7 +27,7 @@ describe("node", () => {
             },
         }
         child.mount(childInstance)
-        child.onLayoutDidUpdate(({ delta }) => {
+        child.addEventListener("didUpdate", ({ delta }) => {
             child.setTargetDelta(delta)
         })
 
@@ -73,7 +75,9 @@ describe("node", () => {
             },
         }
         parent.mount(parentInstance)
-        parent.onLayoutDidUpdate(({ delta }) => parent.setTargetDelta(delta))
+        parent.addEventListener("didUpdate", ({ delta }) =>
+            parent.setTargetDelta(delta)
+        )
 
         const child = new TestProjectionNode(parent)
         const childInstance = {
@@ -85,7 +89,7 @@ describe("node", () => {
             },
         }
         child.mount(childInstance)
-        child.onLayoutDidUpdate(({ delta }) => {
+        child.addEventListener("didUpdate", ({ delta }) => {
             child.setTargetDelta(delta)
         })
 
