@@ -31,6 +31,13 @@ import {
     Snapshot,
 } from "./types"
 import { transformAxes } from "../../render/html/utils/transform"
+import { FlatTree } from "../../render/utils/flat-tree"
+
+/**
+ * Global flag as to whether the tree has animated since the last time
+ * we reszied the window
+ */
+let hasAnimated = true
 
 export function createProjectionNode<I>({
     attachResizeListener,
@@ -207,6 +214,8 @@ export function createProjectionNode<I>({
          */
         eventHandlers = new Map<LayoutEvents, SubscriptionManager<any>>()
 
+        nodes?: FlatTree
+
         constructor(
             id: number | undefined,
             latestValues: ResolvedValues,
@@ -219,6 +228,10 @@ export function createProjectionNode<I>({
             this.parent = parent
 
             id && this.root.registerPotentialNode(id, this)
+
+            if (this.root === this) {
+                this.nodes = new FlatTree()
+            }
         }
 
         addEventListener(name: LayoutEvents, handler: any) {
@@ -265,7 +278,10 @@ export function createProjectionNode<I>({
             }
 
             attachResizeListener?.(instance, () => {
-                // TODO: Complete all active animations/delete all projections
+                if (hasAnimated) {
+                    hasAnimated = false
+                    finishAnimation(this)
+                }
             })
 
             if (layoutId) {
@@ -683,6 +699,7 @@ export function createProjectionNode<I>({
         }
 
         startAnimation(options: AnimationOptions<number>) {
+            hasAnimated = true
             this.currentAnimation?.stop()
             this.currentAnimation = animate(0, 1000, {
                 ...(options as any),
@@ -696,6 +713,13 @@ export function createProjectionNode<I>({
                     this.getStack()?.exitAnimationComplete()
                 },
             })
+        }
+
+        finishAnimation() {
+            if (!this.currentAnimation) return
+
+            this.currentAnimation.stop()
+            this.mixTargetDelta(1)
         }
 
         applyTransformsToTarget() {
@@ -957,6 +981,11 @@ function clearSnapshots(node: IProjectionNode) {
 function resetTreeTransform(node: IProjectionNode) {
     node.resetTransform()
     node.children.forEach(resetTreeTransform)
+}
+
+function finishAnimation(node: IProjectionNode) {
+    node.finishAnimation()
+    node.children.forEach(finishAnimation)
 }
 
 function updateProjectionTree(node: IProjectionNode) {
