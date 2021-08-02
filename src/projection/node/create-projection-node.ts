@@ -34,10 +34,23 @@ import { transformAxes } from "../../render/html/utils/transform"
 import { FlatTree } from "../../render/utils/flat-tree"
 
 /**
- * Global flag as to whether the tree has animated since the last time
- * we reszied the window
+ * This should only ever be modified on the client otherwise it'll
+ * persist through server requests. If we need instanced states we
+ * could lazy-init via root.
  */
-let hasAnimated = true
+export const globalProjectionState = {
+    /**
+     * Global flag as to whether the tree has animated since the last time
+     * we resized the window
+     */
+    hasAnimatedSinceResize: true,
+
+    /**
+     * We set this to true once, on the first update. Any nodes added to the tree beyond that
+     * update will be given a `data-projection-id` attribute.
+     */
+    hasEverUpdated: false,
+}
 
 export function createProjectionNode<I>({
     attachResizeListener,
@@ -172,12 +185,6 @@ export function createProjectionNode<I>({
         updateBlocked = false
 
         /**
-         * We set this to true once, on the first update. Any nodes added to the tree beyond that
-         * update will be given a `data-projection-id` attribute.
-         */
-        hasEverUpdated = false
-
-        /**
          * Set to true between the start of the first `willUpdate` call and the end of the `didUpdate`
          * call.
          */
@@ -239,9 +246,7 @@ export function createProjectionNode<I>({
 
             id && this.root.registerPotentialNode(id, this)
 
-            if (this.root === this) {
-                this.nodes = new FlatTree()
-            }
+            if (this.root === this) this.nodes = new FlatTree()
         }
 
         addEventListener(name: LayoutEvents, handler: any) {
@@ -274,13 +279,12 @@ export function createProjectionNode<I>({
             if (this.instance) return
             this.instance = instance
 
-            this.root.nodes!.add(this)
-
             const { layoutId, layout, visualElement } = this.options
             if (visualElement && !visualElement.getInstance()) {
                 visualElement.mount(instance)
             }
 
+            this.root.nodes!.add(this)
             this.parent?.children.add(this)
             this.id && this.root.potentialNodes.delete(this.id)
 
@@ -290,8 +294,8 @@ export function createProjectionNode<I>({
             }
 
             attachResizeListener?.(instance, () => {
-                if (hasAnimated) {
-                    hasAnimated = false
+                if (globalProjectionState.hasAnimatedSinceResize) {
+                    globalProjectionState.hasAnimatedSinceResize = false
                     this.nodes!.forEach(finishAnimation)
                 }
             })
@@ -380,7 +384,7 @@ export function createProjectionNode<I>({
         // Note: currently only running on root node
         startUpdate() {
             if (this.updateBlocked) return
-            this.hasEverUpdated = this.isUpdating = true
+            this.isUpdating = true
             this.nodes?.forEach(resetRotation)
         }
 
@@ -724,7 +728,7 @@ export function createProjectionNode<I>({
         }
 
         startAnimation(options: AnimationOptions<number>) {
-            hasAnimated = true
+            globalProjectionState.hasAnimatedSinceResize = true
             this.currentAnimation?.stop()
             this.currentAnimation = animate(0, 1000, {
                 ...(options as any),
@@ -963,6 +967,7 @@ function updateLayout(node: IProjectionNode) {
 function notifyLayoutUpdate(node: IProjectionNode) {
     const { layout } = node
     const snapshot = node.resumeFrom?.snapshot ?? node.snapshot
+
     if (node.isLead() && layout && snapshot && node.hasListeners("didUpdate")) {
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position

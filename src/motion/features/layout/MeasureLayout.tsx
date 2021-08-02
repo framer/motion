@@ -5,6 +5,7 @@ import {
     LayoutGroupContextProps,
 } from "../../../context/LayoutGroupContext"
 import { PromoteGroupContext } from "../../../context/PromoteContext"
+import { globalProjectionState } from "../../../projection/node/create-projection-node"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
 import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
@@ -42,6 +43,8 @@ class MeasureLayoutWithContext extends React.Component<
         projection?.addEventListener("animationComplete", () =>
             this.safeToRemove()
         )
+
+        globalProjectionState.hasEverUpdated = true
     }
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {

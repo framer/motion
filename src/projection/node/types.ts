@@ -41,7 +41,6 @@ export interface IProjectionNode<I = unknown> {
     isLayoutDirty: boolean
     shouldResetTransform: boolean
     updateBlocked: boolean
-    hasEverUpdated: boolean
     blockUpdate(): void
     unblockUpdate(): void
     isUpdating: boolean

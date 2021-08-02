@@ -1,12 +1,10 @@
-import { VisualElement } from "../../render/types"
 import { useConstant } from "../../utils/use-constant"
+import { globalProjectionState } from "./create-projection-node"
 
 let id = 1
-export function useProjectionId(
-    visualElement?: VisualElement
-): number | undefined {
+export function useProjectionId(): number | undefined {
     return useConstant(() => {
-        if (visualElement?.projection?.root?.hasEverUpdated) {
+        if (globalProjectionState.hasEverUpdated) {
             return id++
         }
     })
