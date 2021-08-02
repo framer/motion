@@ -1043,7 +1043,13 @@ const defaultLayoutTransition = {
 }
 
 function mountNodeEarly(node: IProjectionNode, id: number) {
-    const searchNode = node.path.find(nodeHasInstance)
+    let searchNode = node.root
+    for (let i = node.path.length - 1; i >= 0; i--) {
+        if (Boolean(node.path[i].instance)) {
+            searchNode = node.path[i]
+            break
+        }
+    }
     const searchElement =
         searchNode && searchNode !== node.root ? searchNode.instance : document
 
@@ -1051,8 +1057,4 @@ function mountNodeEarly(node: IProjectionNode, id: number) {
         `[data-projection-id="${id}"]`
     )
     if (element) node.mount(element, true)
-}
-
-function nodeHasInstance(node: IProjectionNode) {
-    return Boolean(node.instance)
 }
