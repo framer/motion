@@ -45,6 +45,7 @@ export interface IProjectionNode<I = unknown> {
     blockUpdate(): void
     unblockUpdate(): void
     isUpdating: boolean
+    needsReset: boolean
     startUpdate(): void
     willUpdate(notifyListeners?: boolean): void
     didUpdate(): void
@@ -79,7 +80,7 @@ export interface IProjectionNode<I = unknown> {
 
     // Shared element
     isLead(): boolean
-    promote(): void
+    promote(needsReset?: boolean): void
     relegate(): boolean
     resumeFrom?: IProjectionNode
 

@@ -191,6 +191,12 @@ export function createProjectionNode<I>({
         isUpdating = false
 
         /**
+         * Flag to true (during promotion) if a node doing an instant layout transition needs to reset
+         * its projection styles.
+         */
+        needsReset = false
+
+        /**
          * Flags whether this node should have its transform reset prior to measuring.
          */
         shouldResetTransform = false
@@ -409,8 +415,19 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
+            const updateWasBlocked = this.updateBlocked
             if (this.updateBlocked) this.unblockUpdate()
-            if (!this.isUpdating) return
+
+            if (!this.isUpdating) {
+                // When doing an instant transition, we skip the layout update,
+                // but should still clean up the measurements so that the next
+                // snapshot could be taken correctly.
+                if (updateWasBlocked) {
+                    this.nodes!.forEach(clearSnapshot)
+                    this.nodes!.forEach(clearMeasurements)
+                }
+                return
+            }
             this.isUpdating = false
 
             /**
@@ -462,11 +479,13 @@ export function createProjectionNode<I>({
          */
         updateSnapshot() {
             if (this.snapshot) return
+            const measured = this.measure()
+            const visible = this.removeTransform(measured)
+            const layout = this.removeElementScroll(visible!)
 
-            const visible = this.removeTransform(this.measure()!)
             this.snapshot = {
                 visible,
-                layout: this.removeElementScroll(visible!),
+                layout,
                 latestValues: {},
             }
         }
@@ -585,7 +604,8 @@ export function createProjectionNode<I>({
             this.scroll = undefined
             this.layout = undefined
             this.snapshot = undefined
-            this.children.forEach((child) => child.clearMeasurements())
+
+            this.isLayoutDirty = false
         }
         /**
          * Frame calculations
@@ -803,14 +823,21 @@ export function createProjectionNode<I>({
             return layoutId ? this.getStack()?.lead || this : this
         }
 
+        getPrevLead() {
+            const { layoutId } = this.options
+            return layoutId ? this.getStack()?.prevLead : undefined
+        }
+
         getStack() {
             const { layoutId } = this.options
             if (layoutId) return this.root.sharedNodes.get(layoutId)
         }
 
-        promote() {
+        promote(needsReset?: boolean) {
             const stack = this.getStack()
             if (stack) stack.promote(this)
+
+            if (needsReset) this.needsReset = true
         }
 
         relegate(): boolean {
@@ -878,11 +905,28 @@ export function createProjectionNode<I>({
                 styles.visibility = ""
             }
 
-            const lead = this.getLead()
+            const needsReset = this.needsReset
 
+            if (needsReset) {
+                this.needsReset = false
+
+                styles.opacity = ""
+                styles.transform = "none"
+                return styles
+            }
+
+            const lead = this.getLead()
+            const prevLead = this.getPrevLead()
+            const transform = this.instance?.style?.transform
+            const transformed = transform && transform !== "none"
             if (
                 !this.projectionDelta ||
                 !this.layout ||
+                // If the node does not participate in the current transition,
+                // and don't have a projection transform to overwrite, don't
+                // calculate the projection styles, otherwise its snapshot would
+                // be incorrect when it's promoted in the future.
+                (!(this === lead || this === prevLead) && !transformed) ||
                 (this === lead && !this.target) ||
                 (this !== lead && !lead.target)
             ) {
@@ -999,6 +1043,10 @@ function notifyLayoutUpdate(node: IProjectionNode) {
 
 function clearSnapshot(node: IProjectionNode) {
     node.clearSnapshot()
+}
+
+function clearMeasurements(node: IProjectionNode) {
+    node.clearMeasurements()
 }
 
 function resetTransformStyle(node: IProjectionNode) {

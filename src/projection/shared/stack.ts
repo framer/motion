@@ -3,6 +3,7 @@ import { IProjectionNode } from "../node/types"
 
 export class NodeStack {
     lead?: IProjectionNode
+    prevLead?: IProjectionNode
     members: IProjectionNode[] = []
 
     add(node: IProjectionNode) {
@@ -35,6 +36,7 @@ export class NodeStack {
         const prevLead = this.lead
 
         if (node === prevLead) return
+        this.prevLead = prevLead
         this.lead = node
 
         node.show()
