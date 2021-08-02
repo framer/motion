@@ -1,4 +1,5 @@
 import { mix } from "popmotion"
+import { percent } from "style-value-types"
 import { ResolvedValues } from "../../render/types"
 import { scalePoint } from "./delta-apply"
 import { Axis, Box } from "./types"
@@ -28,12 +29,20 @@ export function removePointDelta(
  */
 export function removeAxisDelta(
     axis: Axis,
-    translate: number = 0,
+    translate: number | string = 0,
     scale: number = 1,
     origin: number = 0.5,
     boxScale?: number,
     originAxis: Axis = axis
 ): void {
+    if (percent.test(translate)) {
+        translate = parseFloat(translate as string)
+        const relativeProgress = mix(axis.min, axis.min, translate / 100)
+        translate = relativeProgress - axis.min
+    }
+
+    if (typeof translate !== "number") return
+
     let originPoint = mix(originAxis.min, originAxis.max, origin)
     if (axis === originAxis) originPoint -= translate
 

@@ -15,11 +15,15 @@ export function hasScale({ scale, scaleX, scaleY }: ResolvedValues) {
 export function hasTransform(values: ResolvedValues) {
     return (
         hasScale(values) ||
-        values.x ||
-        values.y ||
+        hasTranslate(values.x) ||
+        hasTranslate(values.y) ||
         values.z ||
         values.rotate ||
         values.rotateX ||
         values.rotateY
     )
+}
+
+function hasTranslate(value: string | number | undefined) {
+    return value && value !== "0%"
 }
