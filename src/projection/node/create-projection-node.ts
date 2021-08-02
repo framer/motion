@@ -216,6 +216,8 @@ export function createProjectionNode<I>({
 
         nodes?: FlatTree
 
+        depth: number
+
         constructor(
             id: number | undefined,
             latestValues: ResolvedValues,
@@ -226,6 +228,8 @@ export function createProjectionNode<I>({
             this.root = parent ? parent.root || parent : this
             this.path = parent ? [...parent.path, parent] : []
             this.parent = parent
+
+            this.depth = parent ? parent.depth + 1 : 0
 
             id && this.root.registerPotentialNode(id, this)
 
@@ -280,7 +284,7 @@ export function createProjectionNode<I>({
             attachResizeListener?.(instance, () => {
                 if (hasAnimated) {
                     hasAnimated = false
-                    finishAnimation(this)
+                    this.nodes!.forEach(finishAnimation)
                 }
             })
 
@@ -368,7 +372,7 @@ export function createProjectionNode<I>({
         startUpdate() {
             if (this.updateBlocked) return
             this.hasEverUpdated = this.isUpdating = true
-            resetTreeRotations(this)
+            this.nodes?.forEach(resetRotation)
         }
 
         willUpdate(shouldNotifyListeners = true) {
@@ -412,26 +416,21 @@ export function createProjectionNode<I>({
 
             /**
              * Write
-             * TODO: Move from tree to flat array traversal
              */
-            resetTreeTransform(this)
+            this.nodes!.forEach(resetTransform)
 
             /**
              * Read ==================
-             * TODO: Move from tree to flat array traversal
              */
             // Update layout measurements of updated children
-            updateTreeLayout(this)
+            this.nodes!.forEach(updateLayout)
 
             /**
              * Write
-             * TODO: Move from tree to flat array traversal
              */
             // Notify listeners that the layout is updated
-            notifyLayoutUpdate(this)
-
-            // TODO Move from tree to flat array traversal
-            clearSnapshots(this)
+            this.nodes!.forEach(notifyLayoutUpdate)
+            this.nodes!.forEach(clearSnapshot)
 
             // Flush any scheduled updates
             flushSync.update()
@@ -443,8 +442,10 @@ export function createProjectionNode<I>({
             sync.preRender(this.updateProjection, false, true)
         }
 
-        // TODO Move from tree to flat array traversal
-        updateProjection = () => updateProjectionTree(this)
+        updateProjection = () => {
+            this.nodes!.forEach(resolveTargetDelta)
+            this.nodes!.forEach(calcProjection)
+        }
 
         /**
          * Update measurements
@@ -931,9 +932,8 @@ export function createProjectionNode<I>({
 
 const emptyStyles = {}
 
-function updateTreeLayout(node: IProjectionNode) {
+function updateLayout(node: IProjectionNode) {
     node.updateLayout()
-    node.children.forEach(updateTreeLayout)
 }
 
 function notifyLayoutUpdate(node: IProjectionNode) {
@@ -969,43 +969,30 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             hasLayoutChanged: !isDeltaZero(layoutDelta),
         })
     }
-
-    node.children.forEach(notifyLayoutUpdate)
 }
 
-function clearSnapshots(node: IProjectionNode) {
+function clearSnapshot(node: IProjectionNode) {
     node.clearSnapshot()
-    node.children.forEach(clearSnapshots)
 }
 
-function resetTreeTransform(node: IProjectionNode) {
+function resetTransform(node: IProjectionNode) {
     node.resetTransform()
-    node.children.forEach(resetTreeTransform)
 }
 
 function finishAnimation(node: IProjectionNode) {
     node.finishAnimation()
-    node.children.forEach(finishAnimation)
 }
 
-function updateProjectionTree(node: IProjectionNode) {
-    resolveTreeTargetDeltas(node)
-    calcTreeProjection(node)
-}
-
-function resolveTreeTargetDeltas(node: IProjectionNode) {
+function resolveTargetDelta(node: IProjectionNode) {
     node.resolveTargetDelta()
-    node.children.forEach(resolveTreeTargetDeltas)
 }
 
-function calcTreeProjection(node: IProjectionNode) {
+function calcProjection(node: IProjectionNode) {
     node.calcProjection()
-    node.children.forEach(calcTreeProjection)
 }
 
-function resetTreeRotations(node: IProjectionNode) {
+function resetRotation(node: IProjectionNode) {
     node.resetRotation()
-    node.children.forEach(resetTreeRotations)
 }
 
 export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {

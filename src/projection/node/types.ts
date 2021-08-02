@@ -23,6 +23,7 @@ export interface IProjectionNode<I = unknown> {
     root?: IProjectionNode
     children: Set<IProjectionNode>
     path: IProjectionNode[]
+    depth: number
     mount: (node: I, isLayoutDirty?: boolean) => void
     unmount: () => void
     options: ProjectionNodeOptions
