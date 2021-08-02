@@ -6,7 +6,7 @@ export const identityProjection = "translate3d(0px, 0px, 0) scale(1, 1)"
 export function buildProjectionTransform(
     delta: Delta,
     treeScale: Point,
-    latestTransform: ResolvedValues
+    latestTransform?: ResolvedValues
 ): string {
     /**
      * The translations we use to calculate are always relative to the viewport coordinate space.

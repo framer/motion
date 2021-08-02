@@ -218,6 +218,12 @@ export function createProjectionNode<I>({
 
         depth: number
 
+        /**
+         * When we update the projection transform, we also build it into a string.
+         * If the string changes between frames, we trigger a render.
+         */
+        projectionTransform: string
+
         constructor(
             id: number | undefined,
             latestValues: ResolvedValues,
@@ -605,6 +611,10 @@ export function createProjectionNode<I>({
                 this.projectionDeltaWithTransform = createDelta()
             }
 
+            const prevTreeScaleX = this.treeScale.x
+            const prevTreeScaleY = this.treeScale.y
+            const prevProjectionTransform = this.projectionTransform
+
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -633,9 +643,19 @@ export function createProjectionNode<I>({
                 this.latestValues
             )
 
-            // TODO Make this event listener
-            const { onProjectionUpdate } = this.options
-            onProjectionUpdate && onProjectionUpdate()
+            this.projectionTransform = buildProjectionTransform(
+                this.projectionDeltaWithTransform!,
+                this.treeScale
+            )
+
+            if (
+                this.projectionTransform !== prevProjectionTransform ||
+                this.treeScale.x !== prevTreeScaleX ||
+                this.treeScale.y !== prevTreeScaleY
+            ) {
+                const { onProjectionUpdate } = this.options
+                onProjectionUpdate && onProjectionUpdate()
+            }
         }
 
         isVisible = true
