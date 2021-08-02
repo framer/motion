@@ -5,7 +5,6 @@ import {
 import { TransformPoint } from "../geometry/types"
 import { createProjectionNode } from "./create-projection-node"
 import { DocumentProjectionNode } from "./DocumentProjectionNode"
-import { createProjectionId } from "./id"
 import { IProjectionNode } from "./types"
 
 export const rootProjectionNode: { current: IProjectionNode | undefined } = {
@@ -28,10 +27,7 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
     }),
     defaultParent: () => {
         if (!rootProjectionNode.current) {
-            const documentNode = new DocumentProjectionNode(
-                createProjectionId(),
-                {}
-            )
+            const documentNode = new DocumentProjectionNode(0, {})
             documentNode.mount(window)
             documentNode.setOptions({
                 shouldMeasureScroll: true,

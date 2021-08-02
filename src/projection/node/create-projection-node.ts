@@ -417,7 +417,7 @@ export function createProjectionNode<I>({
             /**
              * Write
              */
-            this.nodes!.forEach(resetTransform)
+            this.nodes!.forEach(resetTransformStyle)
 
             /**
              * Read ==================
@@ -975,7 +975,7 @@ function clearSnapshot(node: IProjectionNode) {
     node.clearSnapshot()
 }
 
-function resetTransform(node: IProjectionNode) {
+function resetTransformStyle(node: IProjectionNode) {
     node.resetTransform()
 }
 
