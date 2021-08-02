@@ -717,6 +717,7 @@ export function createProjectionNode<I>({
 
                 this.setTargetDelta(targetDelta)
                 this.root.scheduleUpdateProjection()
+                this.options.onProjectionUpdate?.()
             }
 
             this.mixTargetDelta(0)
