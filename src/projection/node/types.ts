@@ -72,6 +72,7 @@ export interface IProjectionNode<I = unknown> {
     currentAnimation?: AnimationPlaybackControls
     setAnimationOrigin(delta: Delta): void
     startAnimation(transition: Transition): void
+    finishAnimation(): void
 
     // Shared element
     isLead(): boolean
