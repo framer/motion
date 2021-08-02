@@ -90,7 +90,6 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     safeToRemove() {
-        console.log("safe to remove")
         this.props.safeToRemove?.()
     }
 

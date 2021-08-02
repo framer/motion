@@ -27,7 +27,6 @@ export function useProjection(
          * ensuring it gets called if there's no potential layout animations.
          *
          */
-        // onExitComplete: () => this.safeToRemove(),
         animationType: typeof layout === "string" ? layout : "both",
     })
 }

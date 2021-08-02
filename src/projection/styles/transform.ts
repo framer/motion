@@ -16,7 +16,6 @@ export function buildProjectionTransform(
      */
     const xTranslate = delta.x.translate / treeScale.x
     const yTranslate = delta.y.translate / treeScale.y
-
     let transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `
 
     if (latestTransform) {
@@ -28,7 +27,5 @@ export function buildProjectionTransform(
 
     transform += `scale(${delta.x.scale}, ${delta.y.scale})`
 
-    return !latestTransform || transform === identityProjection
-        ? "none"
-        : transform
+    return transform === identityProjection ? "none" : transform
 }

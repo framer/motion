@@ -648,7 +648,7 @@ export function createProjectionNode<I>({
             )
 
             this.projectionTransform = buildProjectionTransform(
-                this.projectionDeltaWithTransform!,
+                this.projectionDelta!,
                 this.treeScale
             )
 

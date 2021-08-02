@@ -11,7 +11,7 @@ const params = new URLSearchParams(window.location.search)
 const instant = params.get("instant") || false
 const partialEase = params.get("partial-ease") || false
 const type = params.get("type") || "crossfade"
-let transition: Transition = instant ? { type: false } : { duration: 0.01 }
+let transition: Transition = instant ? { type: false } : { duration: 2 }
 if (partialEase) {
     transition = {
         duration: 0.5,
