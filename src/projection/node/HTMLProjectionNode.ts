@@ -29,9 +29,7 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
         if (!rootProjectionNode.current) {
             const documentNode = new DocumentProjectionNode(0, {})
             documentNode.mount(window)
-            documentNode.setOptions({
-                shouldMeasureScroll: true,
-            })
+            documentNode.setOptions({ shouldMeasureScroll: true })
             rootProjectionNode.current = documentNode
         }
         return rootProjectionNode.current

@@ -268,6 +268,8 @@ export function createProjectionNode<I>({
             if (this.instance) return
             this.instance = instance
 
+            this.root.nodes!.add(this)
+
             const { layoutId, layout, visualElement } = this.options
             if (visualElement && !visualElement.getInstance()) {
                 visualElement.mount(instance)
@@ -352,6 +354,7 @@ export function createProjectionNode<I>({
 
         unmount() {
             this.options.layoutId && this.willUpdate()
+            this.root.nodes!.remove(this)
 
             this.getStack()?.remove(this)
             this.parent?.children.delete(this)

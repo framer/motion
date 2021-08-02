@@ -3,6 +3,7 @@ import { ResolvedValues, VisualElement } from "../../render/types"
 import { Box, Delta, Point } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/animate"
+import { FlatTree } from "../../render/utils/flat-tree"
 
 export interface Snapshot {
     layout: Box
@@ -23,6 +24,7 @@ export interface IProjectionNode<I = unknown> {
     root?: IProjectionNode
     children: Set<IProjectionNode>
     path: IProjectionNode[]
+    nodes?: FlatTree
     depth: number
     mount: (node: I, isLayoutDirty?: boolean) => void
     unmount: () => void
