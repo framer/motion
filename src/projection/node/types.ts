@@ -26,6 +26,7 @@ export interface IProjectionNode<I = unknown> {
     path: IProjectionNode[]
     nodes?: FlatTree
     depth: number
+    instance: I
     mount: (node: I, isLayoutDirty?: boolean) => void
     unmount: () => void
     options: ProjectionNodeOptions

@@ -1043,6 +1043,16 @@ const defaultLayoutTransition = {
 }
 
 function mountNodeEarly(node: IProjectionNode, id: number) {
-    const element = document.querySelector(`[data-projection-id="${id}"]`)
+    const searchNode = node.path.find(nodeHasInstance)
+    const searchElement =
+        searchNode && searchNode !== node.root ? searchNode.instance : document
+
+    const element = (searchElement as Element).querySelector(
+        `[data-projection-id="${id}"]`
+    )
     if (element) node.mount(element, true)
+}
+
+function nodeHasInstance(node: IProjectionNode) {
+    return Boolean(node.instance)
 }
