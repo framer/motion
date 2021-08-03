@@ -217,6 +217,11 @@ export function createProjectionNode<I>({
         resumeFrom?: IProjectionNode
 
         /**
+         * Is hydrated with a projection node if an element is animating from another.
+         */
+        resumingFrom?: IProjectionNode
+
+        /**
          * A reference to the element's latest animated values. This is a reference shared
          * between the element's VisualElement and the ProjectionNode.
          */
@@ -341,6 +346,11 @@ export function createProjectionNode<I>({
                             (hasLayoutChanged &&
                                 (targetChanged || !this.currentAnimation))
                         ) {
+                            if (this.resumeFrom) {
+                                this.resumingFrom = this.resumeFrom
+                                this.resumingFrom.resumingFrom = undefined
+                            }
+
                             this.setAnimationOrigin(delta)
                             this.startAnimation({
                                 ...getValueTransition(
@@ -357,15 +367,8 @@ export function createProjectionNode<I>({
             }
         }
 
-        hasPendingLead(layoutId: string) {
-            if (!this.potentialNodes.size) return false
-            for (const potentialNode of this.potentialNodes.values()) {
-                if (potentialNode.options.layoutId === layoutId) return true
-            }
-            return false
-        }
-
         unmount() {
+            ;(this.instance as any) = undefined
             this.options.layoutId && this.willUpdate()
             this.root.nodes!.remove(this)
 
@@ -398,16 +401,15 @@ export function createProjectionNode<I>({
 
             this.isLayoutDirty = true
 
-            // TODO: Replace with path loop
-            this.path.forEach((node) => {
+            for (let i = 0; i < this.path.length; i++) {
+                const node = this.path[i]
                 node.shouldResetTransform = true
-
                 /**
                  * TODO: Check we haven't updated the scroll
                  * since the last didUpdate
                  */
                 node.updateScroll()
-            })
+            }
 
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
@@ -491,11 +493,8 @@ export function createProjectionNode<I>({
         }
 
         updateLayout() {
-            // TODO: Incorporate into a forwarded
-            // scroll offset
-            if (this.options.shouldMeasureScroll) {
-                this.updateScroll()
-            }
+            // TODO: Incorporate into a forwarded scroll offset
+            this.updateScroll()
 
             if (!this.options.alwaysMeasureLayout && !this.isLayoutDirty) return
 
@@ -507,8 +506,9 @@ export function createProjectionNode<I>({
         }
 
         updateScroll() {
-            if (!measureScroll) return
-            this.scroll = measureScroll(this.instance)
+            if (this.options.shouldMeasureScroll && this.instance) {
+                this.scroll = measureScroll(this.instance)
+            }
         }
 
         resetTransform() {
@@ -520,7 +520,7 @@ export function createProjectionNode<I>({
             ) {
                 resetTransform(this.instance)
                 this.shouldResetTransform = false
-                this.options.onProjectionUpdate?.()
+                this.scheduleRender()
             }
         }
 
@@ -674,8 +674,7 @@ export function createProjectionNode<I>({
                 this.treeScale.x !== prevTreeScaleX ||
                 this.treeScale.y !== prevTreeScaleY
             ) {
-                const { onProjectionUpdate } = this.options
-                onProjectionUpdate && onProjectionUpdate()
+                this.scheduleRender()
             }
         }
 
@@ -690,8 +689,14 @@ export function createProjectionNode<I>({
         }
 
         scheduleRender() {
-            // TODO Rename this option
             this.options.onProjectionUpdate?.()
+            if (this.resumingFrom) {
+                if (!this.resumingFrom.instance) {
+                    this.resumingFrom = undefined
+                } else {
+                    this.resumingFrom.scheduleRender()
+                }
+            }
         }
 
         /**
@@ -738,7 +743,7 @@ export function createProjectionNode<I>({
 
                 this.setTargetDelta(targetDelta)
                 this.root.scheduleUpdateProjection()
-                this.options.onProjectionUpdate?.()
+                this.scheduleRender()
             }
 
             this.mixTargetDelta(0)
@@ -754,7 +759,7 @@ export function createProjectionNode<I>({
                     options.onUpdate?.(latest)
                 },
                 onComplete: () => {
-                    this.currentAnimation = this.animationValues = undefined
+                    this.resumingFrom = this.currentAnimation = this.animationValues = undefined
                     options.onComplete?.()
                     this.getStack()?.exitAnimationComplete()
                 },
@@ -993,8 +998,7 @@ export function createProjectionNode<I>({
         }
 
         clearSnapshot() {
-            this.snapshot = undefined
-            this.resumeFrom = undefined
+            this.resumeFrom = this.snapshot = undefined
         }
     }
 }
