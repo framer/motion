@@ -44,7 +44,6 @@ export class NodeStack {
         if (prevLead) {
             prevLead.scheduleRender()
             node.scheduleRender()
-            node.root?.startUpdate()
             node.resumeFrom = prevLead
 
             if (prevLead.snapshot) {
@@ -54,7 +53,9 @@ export class NodeStack {
                 node.snapshot.isShared = true
             }
 
-            node.isLayoutDirty = true
+            if (node.root?.isUpdating) {
+                node.isLayoutDirty = true
+            }
 
             const { crossfade } = node.options
             if (crossfade === false) {

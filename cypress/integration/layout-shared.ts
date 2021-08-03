@@ -531,6 +531,57 @@ describe("Shared layout: A -> AB -> A crossfade transition", () => {
                 })
             })
     })
+
+    it("Correctly fires layout={true} animations after an instant transition", () => {
+        cy.visit("?test=layout-shared-instant-transition-a-ab-a")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .get("#a")
+            // a shouldn't change since the update is blocked
+            .should(([$box]: any) => {
+                expect(parseFloat($box.style.opacity) || 1).to.equal(1)
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .get("#b")
+            // b should have its identical layout
+            .should(([$box]: any) => {
+                expect(parseFloat($box.style.opacity) || 1).to.equal(1)
+                expectBbox($box, {
+                    top: 100,
+                    left: 200,
+                    width: 300,
+                    height: 300,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            // half way back to a
+            .get("#a")
+            .should(([$box]: any) => {
+                expect(parseFloat($box.style.opacity) || 1).to.equal(1)
+                expectBbox($box, {
+                    top: 50,
+                    left: 100,
+                    width: 200,
+                    height: 250,
+                })
+            })
+    })
 })
 
 describe("Shared layout: 0 -> A -> B -> 0 crossfade transition", () => {
