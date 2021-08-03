@@ -244,7 +244,7 @@ export function createProjectionNode<I>({
 
         constructor(
             id: number | undefined,
-            latestValues: ResolvedValues,
+            latestValues: ResolvedValues = {},
             parent: IProjectionNode | undefined = defaultParent?.()
         ) {
             this.id = id
@@ -512,11 +512,15 @@ export function createProjectionNode<I>({
         }
 
         resetTransform() {
+            if (!resetTransform) return
+            const isResetRequested =
+                this.isLayoutDirty || this.shouldResetTransform
+            const hasProjection =
+                this.projectionDelta && !isDeltaZero(this.projectionDelta)
+
             if (
-                resetTransform &&
-                (this.isLayoutDirty || this.shouldResetTransform) &&
-                ((this.projectionDelta && !isDeltaZero(this.projectionDelta)) ||
-                    hasTransform(this.latestValues))
+                isResetRequested &&
+                (hasProjection || hasTransform(this.latestValues))
             ) {
                 resetTransform(this.instance)
                 this.shouldResetTransform = false
@@ -901,10 +905,9 @@ export function createProjectionNode<I>({
         }
 
         getProjectionStyles() {
-            if (!this.instance) return {}
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
-
+            if (!this.instance) return styles
             if (!this.isVisible) {
                 return { visibility: "hidden" }
             } else {

@@ -1,4 +1,4 @@
-import { TestProjectionNode } from "../../node/__tests__/TestProjectionNode"
+import { createTestNode } from "../../node/__tests__/TestProjectionNode"
 import { IProjectionNode } from "../../node/types"
 import { correctBorderRadius, pixelsToPercent } from "../scale-border-radius"
 import { correctBoxShadow } from "../scale-box-shadow"
@@ -16,7 +16,7 @@ describe("pixelsToPercent", () => {
 describe("correctBorderRadius", () => {
     let node: IProjectionNode
     beforeEach(() => {
-        node = new TestProjectionNode()
+        node = createTestNode()
     })
 
     test("Leave non-pixel values alone", () => {
@@ -47,7 +47,7 @@ describe("correctBorderRadius", () => {
 describe("correctBoxShadow", () => {
     let node: IProjectionNode
     beforeEach(() => {
-        node = new TestProjectionNode()
+        node = createTestNode()
         node.projectionDelta = {
             x: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },
             y: { scale: 0.5, translate: 0, origin: 0, originPoint: 0 },

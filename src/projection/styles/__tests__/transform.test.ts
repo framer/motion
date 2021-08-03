@@ -4,7 +4,7 @@ import { createDelta } from "../../geometry/models"
 describe("buildProjectionTransform", () => {
     it("Creates the expected transform for the provided arguments", () => {
         expect(buildProjectionTransform(createDelta(), { x: 1, y: 1 })).toEqual(
-            ""
+            "none"
         )
 
         const delta = {

@@ -1,8 +1,8 @@
-import { TestProjectionNode } from "./TestProjectionNode"
+import { createTestNode } from "./TestProjectionNode"
 
 describe("node", () => {
-    test.skip("If a child updates layout, parent resetsTransform during measurement", () => {
-        const parent = new TestProjectionNode()
+    test("If a child updates layout, and parent has scale, parent resetsTransform during measurement", () => {
+        const parent = createTestNode(undefined, {}, { scale: 2 })
 
         const parentInstance = {
             id: "parent",
@@ -13,11 +13,11 @@ describe("node", () => {
             },
         }
         parent.mount(parentInstance)
-        parent.addEventListener("didUpdate", ({ delta }) =>
+        parent.addEventListener("didUpdate", ({ delta }: any) =>
             parent.setTargetDelta(delta)
         )
 
-        const child = new TestProjectionNode(parent)
+        const child = createTestNode(parent)
         const childInstance = {
             id: "child",
             resetTransform: jest.fn(),
@@ -27,7 +27,7 @@ describe("node", () => {
             },
         }
         child.mount(childInstance)
-        child.addEventListener("didUpdate", ({ delta }) => {
+        child.addEventListener("didUpdate", ({ delta }: any) => {
             child.setTargetDelta(delta)
         })
 
@@ -46,8 +46,7 @@ describe("node", () => {
 
         child.root.didUpdate()
 
-        // Shouldn't call on initial render as calculated deltas are zero
-        expect(parentInstance.resetTransform).toBeCalledTimes(0)
+        expect(parentInstance.resetTransform).toBeCalledTimes(1)
         expect(childInstance.resetTransform).toBeCalledTimes(0)
 
         child.willUpdate()
@@ -59,12 +58,12 @@ describe("node", () => {
 
         child.root.didUpdate()
 
-        expect(parentInstance.resetTransform).toBeCalledTimes(1)
-        expect(childInstance.resetTransform).toBeCalledTimes(1)
+        expect(parentInstance.resetTransform).toBeCalledTimes(2)
+        expect(childInstance.resetTransform).toBeCalledTimes(0)
     })
 
-    test.skip("If a child updates layout, parent doesn't resetsTransform during measurement if it has no projection transform", () => {
-        const parent = new TestProjectionNode()
+    test("If a child updates layout, parent doesn't resetsTransform during measurement if it has no projection transform", () => {
+        const parent = createTestNode()
 
         const parentInstance = {
             id: "parent",
@@ -75,11 +74,11 @@ describe("node", () => {
             },
         }
         parent.mount(parentInstance)
-        parent.addEventListener("didUpdate", ({ delta }) =>
+        parent.addEventListener("didUpdate", ({ delta }: any) =>
             parent.setTargetDelta(delta)
         )
 
-        const child = new TestProjectionNode(parent)
+        const child = createTestNode(parent)
         const childInstance = {
             id: "child",
             resetTransform: jest.fn(),
@@ -89,7 +88,7 @@ describe("node", () => {
             },
         }
         child.mount(childInstance)
-        child.addEventListener("didUpdate", ({ delta }) => {
+        child.addEventListener("didUpdate", ({ delta }: any) => {
             child.setTargetDelta(delta)
         })
 
@@ -108,6 +107,11 @@ describe("node", () => {
         expect(childInstance.resetTransform).toBeCalledTimes(0)
 
         child.willUpdate()
+
+        child.projectionDelta = {
+            x: { translate: 100, scale: 1, originPoint: 60, origin: 0.4 },
+            y: { translate: 0, scale: 1, originPoint: 60, origin: 0.4 },
+        }
 
         childInstance.box = {
             x: { min: 0, max: 150 },

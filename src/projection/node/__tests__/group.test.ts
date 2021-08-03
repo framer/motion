@@ -1,12 +1,12 @@
-import { TestProjectionNode } from "./TestProjectionNode"
+import { createTestNode } from "./TestProjectionNode"
 import { nodeGroup } from "../group"
 
 describe("nodeGroup", () => {
     test.skip("it notifies grouped nodes when any one of them will update", () => {
-        const a = new TestProjectionNode()
+        const a = createTestNode()
 
         a.mount({})
-        const b = new TestProjectionNode()
+        const b = createTestNode()
         b.mount({})
 
         const bLayoutUpdate = jest.fn()
