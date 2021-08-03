@@ -42,7 +42,7 @@ type DragDirection = "x" | "y"
 /**
  *
  */
-let latestPointerEvent: AnyPointerEvent
+// let latestPointerEvent: AnyPointerEvent
 
 export class VisualElementDragControls {
     private visualElement: VisualElement
@@ -70,8 +70,6 @@ export class VisualElementDragControls {
      * The per-axis resolved elastic values.
      */
     private elastic = createBox()
-
-    private removeMeasureLayoutListener?: VoidFunction
 
     constructor(visualElement: VisualElement) {
         this.visualElement = visualElement
@@ -133,7 +131,7 @@ export class VisualElementDragControls {
         }
 
         const onMove = (event: AnyPointerEvent, info: PanInfo) => {
-            latestPointerEvent = event
+            // latestPointerEvent = event
 
             const {
                 dragPropagation,
@@ -408,20 +406,30 @@ export class VisualElementDragControls {
             }
         )
 
-        if (latestPointerEvent) {
-            console.log("yooo")
+        const measureDragConstraints = () => {
+            const { dragConstraints } = this.getProps()
+            if (isRefObject(dragConstraints)) {
+                this.constraints = this.resolveRefConstraints()
+            }
         }
 
-        // TODO: Scale point on resize
+        const { projection } = this.visualElement
 
-        // TODO: When we measure the layout of this element, measure the layout of drag constraints
+        const stopMeasureLayoutListener = projection!.addEventListener(
+            "measure",
+            measureDragConstraints
+        )
+
+        if (!projection!.layout) projection!.updateLayout()
+        measureDragConstraints()
+
+        // TODO: Scale point on resize
 
         // TODO: If we're resuming from a previous drag gesture, project into the previous box
 
         return () => {
             stopPointerListener()
-
-            this.removeMeasureLayoutListener?.()
+            stopMeasureLayoutListener()
         }
     }
 
@@ -443,16 +451,6 @@ export class VisualElementDragControls {
             dragConstraints,
             dragElastic,
             dragMomentum,
-        }
-    }
-
-    effect() {
-        const constraints = this.getProps().dragConstraints
-        if (isRefObject(constraints)) {
-            this.removeMeasureLayoutListener = this.visualElement.projection?.addEventListener(
-                "measure",
-                () => (this.constraints = this.resolveRefConstraints())
-            )
         }
     }
 }

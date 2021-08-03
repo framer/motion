@@ -922,7 +922,7 @@ export function createProjectionNode<I>({
 
             const lead = this.getLead()
             const prevLead = this.getPrevLead()
-            const transform = this.instance?.style?.transform
+            const transform = (this.instance as any).style?.transform
             const transformed = transform && transform !== "none"
             if (
                 !this.projectionDelta ||
