@@ -234,15 +234,14 @@ export const visualElement = <Instance, MutableState, Options>({
          *
          */
         unmount() {
-            if (element.projection) {
-                element.projection.unmount()
-            }
+            element.projection?.unmount()
             cancelSync.update(update)
             cancelSync.render(render)
             valueSubscriptions.forEach((remove) => remove())
             removeFromVariantTree?.()
             parent?.children.delete(element)
             lifecycles.clearAllListeners()
+            instance = undefined
             isMounted = false
         },
 

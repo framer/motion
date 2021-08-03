@@ -368,12 +368,12 @@ export function createProjectionNode<I>({
         }
 
         unmount() {
-            ;(this.instance as any) = undefined
             this.options.layoutId && this.willUpdate()
             this.root.nodes!.remove(this)
 
             this.getStack()?.remove(this)
             this.parent?.children.delete(this)
+            ;(this.instance as any) = undefined
 
             cancelSync.preRender(this.updateProjection)
         }
@@ -901,6 +901,7 @@ export function createProjectionNode<I>({
         }
 
         getProjectionStyles() {
+            if (!this.instance) return {}
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
 
