@@ -40,8 +40,10 @@ class MeasureLayoutWithContext extends React.Component<
         }
 
         projection?.root!.didUpdate()
-        projection?.addEventListener("animationComplete", () =>
-            this.safeToRemove()
+        projection?.addEventListener(
+            "animationComplete",
+            () => this.safeToRemove(),
+            { passive: true }
         )
 
         globalProjectionState.hasEverUpdated = true

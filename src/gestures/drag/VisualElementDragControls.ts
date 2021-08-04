@@ -417,7 +417,8 @@ export class VisualElementDragControls {
 
         const stopMeasureLayoutListener = projection!.addEventListener(
             "measure",
-            measureDragConstraints
+            measureDragConstraints,
+            { passive: true }
         )
 
         if (!projection!.layout) projection!.updateLayout()

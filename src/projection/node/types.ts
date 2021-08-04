@@ -85,7 +85,7 @@ export interface IProjectionNode<I = unknown> {
     resumeFrom?: IProjectionNode
     resumingFrom?: IProjectionNode
 
-    addEventListener(name: LayoutEvents, handler: VoidFunction): VoidFunction
+    addEventListener(name: LayoutEvents, handler: VoidFunction, options?: boolean | AddEventListenerOptions | undefined): VoidFunction
     notifyListeners(name: LayoutEvents, ...args: any): void
     hasListeners(name: LayoutEvents): boolean
 }

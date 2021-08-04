@@ -6,8 +6,11 @@ export function addDomEvent(
     handler: EventListener,
     options?: AddEventListenerOptions
 ) {
-    target.addEventListener(eventName, handler, options)
+    target.addEventListener(eventName, handler, options || { passive: true })
 
+    /**
+     * no need to care for overrides as only "capture" could be passed @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/removeEventListener#parameters
+     */
     return () => target.removeEventListener(eventName, handler, options)
 }
 

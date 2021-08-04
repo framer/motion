@@ -90,7 +90,6 @@ export function useElementScroll(
             element,
             "scroll",
             updateScrollValues,
-            { passive: true }
         )
 
         const resizeListener = addDomEvent(

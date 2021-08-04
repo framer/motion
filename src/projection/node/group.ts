@@ -20,7 +20,7 @@ export function nodeGroup(): NodeGroup {
             nodes.add(node)
             subscriptions.set(
                 node,
-                node.addEventListener("willUpdate", dirtyAll)
+                node.addEventListener("willUpdate", dirtyAll, { passive: true })
             )
         },
         remove: (node) => {
