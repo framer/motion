@@ -54,7 +54,7 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 drag="y"
                 onDragStart={() => setDragging(true)}
                 onDragEnd={() => setDragging(false)}
-                onViewportBoxUpdate={(_viewportBox, delta) => {
+                onProjectionUpdate={(_viewportBox, delta) => {
                     // color === "#FF008C" && console.log(_viewportBox.y.min)
                     isDragging && moveItem(i, delta.y.translate)
                 }}

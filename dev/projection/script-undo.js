@@ -55,7 +55,7 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
 
     node.setOptions({
         animate: false,
-        onProjectionUpdate: scheduleRender,
+        scheduleRender: scheduleRender,
         visualElement,
         ...options,
     })

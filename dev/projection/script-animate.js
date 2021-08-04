@@ -59,7 +59,7 @@ Animate.createNode = (
     const node = new HTMLProjectionNode(id, latestValues, parent)
 
     node.setOptions({
-        onProjectionUpdate: scheduleRender,
+        scheduleRender: scheduleRender,
         visualElement,
         ...options,
     })

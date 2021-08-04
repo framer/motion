@@ -1,5 +1,5 @@
 import { MotionProps } from "../../motion/types"
-import { Axis, Delta } from "../../projection/geometry/types"
+import { Axis, Box, Delta } from "../../projection/geometry/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { ResolvedValues } from "../types"
 import { AnimationDefinition } from "./animation"
@@ -44,11 +44,11 @@ export interface VisualElementLifecycles {
      *
      * @public
      */
-    onViewportBoxUpdate?(box: Axis, delta: Delta): void
+    onProjectionUpdate?(box: Box, delta: Delta): void
 
-    onBeforeLayoutMeasure?(box: Axis): void
+    onBeforeLayoutMeasure?(box: Box): void
 
-    onLayoutMeasure?(box: Axis, prevBox: Axis): void
+    onLayoutMeasure?(box: Box, prevBox: Box): void
 
     /**
      * Callback with latest motion values, fired max once per frame.
@@ -159,7 +159,7 @@ export interface LifecycleManager {
     notifyBeforeLayoutMeasure: BeforeLayoutMeasureListener
     onLayoutUpdate: (callback: LayoutUpdateListener) => () => void
     notifyLayoutUpdate: LayoutUpdateListener
-    onViewportBoxUpdate: (callback: OnViewportBoxUpdate) => () => void
+    onProjectionUpdate: (callback: OnViewportBoxUpdate) => () => void
     notifyViewportBoxUpdate: OnViewportBoxUpdate
     onUpdate: (callback: UpdateListener) => () => void
     notifyUpdate: UpdateListener

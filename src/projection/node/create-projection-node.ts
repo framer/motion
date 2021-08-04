@@ -228,6 +228,8 @@ export function createProjectionNode<I>({
          */
         latestValues: ResolvedValues
 
+        hasTargetBoxUpdated = false
+
         /**
          *
          */
@@ -600,6 +602,7 @@ export function createProjectionNode<I>({
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
             this.root.scheduleUpdateProjection()
+            this.hasTargetBoxUpdated = true
         }
 
         setOptions(options: ProjectionNodeOptions) {
@@ -686,6 +689,14 @@ export function createProjectionNode<I>({
             ) {
                 this.scheduleRender()
             }
+
+            if (this.hasTargetBoxUpdated) {
+                this.options.onProjectionUpdate?.(
+                    this.target!,
+                    this.targetDelta!
+                )
+            }
+            this.hasTargetBoxUpdated = false
         }
 
         isVisible = true
@@ -699,7 +710,7 @@ export function createProjectionNode<I>({
         }
 
         scheduleRender() {
-            this.options.onProjectionUpdate?.()
+            this.options.scheduleRender?.()
             if (this.resumingFrom) {
                 if (!this.resumingFrom.instance) {
                     this.resumingFrom = undefined
