@@ -1,11 +1,13 @@
 import { HTMLProjectionNode } from "../../projection/node/HTMLProjectionNode"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
+import { Transition } from "../../types"
 
 export function useProjection(
     projectionId: number | undefined,
     { layoutId, layout, drag }: MotionProps,
-    visualElement?: VisualElement
+    visualElement?: VisualElement,
+    initialTransition?: Transition
 ) {
     if (!visualElement || visualElement.projection) return
 
@@ -28,5 +30,6 @@ export function useProjection(
          *
          */
         animationType: typeof layout === "string" ? layout : "both",
+        transition: initialTransition,
     })
 }

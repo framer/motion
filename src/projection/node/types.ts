@@ -80,7 +80,7 @@ export interface IProjectionNode<I = unknown> {
 
     // Shared element
     isLead(): boolean
-    promote(needsReset?: boolean): void
+    promote(options?: { needsReset?: boolean; transition?: Transition }): void
     relegate(): boolean
     resumeFrom?: IProjectionNode
     resumingFrom?: IProjectionNode
@@ -120,6 +120,7 @@ export interface ProjectionNodeOptions {
     layout?: boolean | string
     visualElement?: VisualElement
     crossfade?: boolean
+    transition?: Transition
 }
 
 export type ProjectionEventName = "layoutUpdate" | "projectionUpdate"

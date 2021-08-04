@@ -32,6 +32,7 @@ import {
 } from "./types"
 import { transformAxes } from "../../render/html/utils/transform"
 import { FlatTree } from "../../render/utils/flat-tree"
+import { Transition } from "../../types"
 
 /**
  * This should only ever be modified on the client otherwise it'll
@@ -330,7 +331,8 @@ export function createProjectionNode<I>({
                     }: LayoutUpdateData) => {
                         // TODO: Check here if an animation exists
                         const layoutTransition =
-                            visualElement.getDefaultTransition() ||
+                            visualElement.getDefaultTransition() ??
+                            this.options.transition ??
                             defaultLayoutTransition
 
                         const {
@@ -601,7 +603,11 @@ export function createProjectionNode<I>({
         }
 
         setOptions(options: ProjectionNodeOptions) {
-            this.options = { ...options, crossfade: options.crossfade ?? true }
+            this.options = {
+                ...this.options,
+                ...options,
+                crossfade: options.crossfade ?? true,
+            }
         }
 
         clearMeasurements() {
@@ -842,11 +848,18 @@ export function createProjectionNode<I>({
             if (layoutId) return this.root.sharedNodes.get(layoutId)
         }
 
-        promote(needsReset?: boolean) {
+        promote({
+            needsReset,
+            transition,
+        }: {
+            needsReset?: boolean
+            transition?: Transition
+        } = {}) {
             const stack = this.getStack()
             if (stack) stack.promote(this)
 
             if (needsReset) this.needsReset = true
+            if (transition) this.setOptions({ transition })
         }
 
         relegate(): boolean {

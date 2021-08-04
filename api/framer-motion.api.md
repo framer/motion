@@ -558,6 +558,7 @@ export interface PromoteGroupContext {
     // 
     // (undocumented)
     group?: Set<IProjectionNode>;
+    initialTransition?: Transition;
 }
 
 // @internal (undocumented)
