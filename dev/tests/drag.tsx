@@ -11,6 +11,8 @@ export const App = () => {
     const left = parseFloat(params.get("left")) || undefined
     const right = parseFloat(params.get("right")) || undefined
     const bottom = parseFloat(params.get("bottom")) || undefined
+    const x = parseFloat(params.get("x")) || 0
+    const y = parseFloat(params.get("y")) || 0
     const layout = params.get("layout") || undefined
 
     return (
@@ -27,6 +29,8 @@ export const App = () => {
                 width: 50,
                 height: 50,
                 background: "red",
+                x,
+                y,
             }}
         />
     )
