@@ -283,14 +283,18 @@ export class VisualElementDragControls {
             "If `dragConstraints` is set as a React ref, that ref must be passed to another component's `ref` prop."
         )
 
+        const { projection } = this.visualElement
+
+        if (!projection || !projection.layout) return false
+
         const constraintsBox = measurePageBox(
             constraintsElement,
-            this.visualElement.projection!.root!,
+            projection.root!,
             this.visualElement.getTransformPagePoint()
         )
 
         let measuredConstraints = calcViewportConstraints(
-            this.visualElement.projection?.layout!,
+            projection.layout,
             constraintsBox
         )
 

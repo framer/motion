@@ -12,6 +12,28 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     expect(bbox.width).to.equal(expectedBbox.width)
     expect(bbox.height).to.equal(expectedBbox.height)
 }
+describe("Shared layout: A -> B transition", () => {
+    it("When performing crossfade animation, removed element isn't removed until animation is complete", () => {
+        cy.visit("?test=layout-shared-animate-presence")
+            .wait(50)
+            .get("#shape-0")
+            .should(([$box]: any) => {
+                expect($box.style.opacity).to.equal("1")
+            })
+            .trigger("click")
+            .wait(50)
+            // Lose reference to orignal element
+            .get("#shape-1")
+            .get("#shape-0")
+            .should(([$box]: any) => {
+                expect($box.style.opacity).to.equal("0.5")
+            })
+            .get("#shape-1")
+            .should(([$box]: any) => {
+                expect($box.style.opacity).to.equal("1")
+            })
+    })
+})
 
 describe("Shared layout: A -> B transition", () => {
     it("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
@@ -25,6 +47,7 @@ describe("Shared layout: A -> B transition", () => {
                     width: 100,
                     height: 200,
                 })
+                expect(getComputedStyle($box).opacity).to.equal("0.4")
             })
             .trigger("click")
             .wait(50)
@@ -33,6 +56,7 @@ describe("Shared layout: A -> B transition", () => {
                 expect(window.getComputedStyle($box).borderRadius).to.equal(
                     "5% / 4%"
                 )
+                expect(getComputedStyle($box).opacity).to.equal("0.7")
                 expectBbox($box, {
                     top: 50,
                     left: 100,

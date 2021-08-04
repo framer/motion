@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence } from "@framer"
+import { motion, AnimatePresence, LayoutGroup } from "@framer"
 
 /**
  * This is a stress test of snapshotting ability as components
@@ -57,29 +57,31 @@ export const App = () => {
     ])
 
     return (
-        <div
-            style={{
-                position: "fixed",
-                inset: 0,
-                backgroundColor: "#222222",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-            }}
-        >
-            <div style={styles.container}>
-                <List
-                    list={lists[0]}
-                    onItemClick={(id) => moveItem(id, 1, lists, setLists)}
-                    backgroundColor="#ff3366"
-                />
-                <List
-                    list={lists[1]}
-                    onItemClick={(id) => moveItem(id, 0, lists, setLists)}
-                    backgroundColor="#0099ff"
-                />
+        <LayoutGroup>
+            <div
+                style={{
+                    position: "fixed",
+                    inset: 0,
+                    backgroundColor: "#222222",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <div style={styles.container}>
+                    <List
+                        list={lists[0]}
+                        onItemClick={(id) => moveItem(id, 1, lists, setLists)}
+                        backgroundColor="#ff3366"
+                    />
+                    <List
+                        list={lists[1]}
+                        onItemClick={(id) => moveItem(id, 0, lists, setLists)}
+                        backgroundColor="#0099ff"
+                    />
+                </div>
             </div>
-        </div>
+        </LayoutGroup>
     )
 }
 

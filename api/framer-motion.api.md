@@ -929,15 +929,15 @@ export interface VisualElementLifecycles {
     onAnimationComplete?(definition: AnimationDefinition): void;
     onAnimationStart?(): void;
     // (undocumented)
-    onBeforeLayoutMeasure?(box: Axis): void;
+    onBeforeLayoutMeasure?(box: Box): void;
     // @internal (undocumented)
     onLayoutAnimationComplete?(): void;
     // (undocumented)
-    onLayoutMeasure?(box: Axis, prevBox: Axis): void;
+    onLayoutMeasure?(box: Box, prevBox: Box): void;
+    onProjectionUpdate?(box: Box, delta: Delta): void;
     // @internal (undocumented)
     onUnmount?(): void;
     onUpdate?(latest: ResolvedValues): void;
-    onViewportBoxUpdate?(box: Axis, delta: Delta): void;
 }
 
 

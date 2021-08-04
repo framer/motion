@@ -780,11 +780,16 @@ export function createProjectionNode<I>({
                     options.onUpdate?.(latest)
                 },
                 onComplete: () => {
+                    if (this.resumingFrom)
+                        this.resumingFrom.currentAnimation = undefined
                     this.resumingFrom = this.currentAnimation = this.animationValues = undefined
                     options.onComplete?.()
                     this.getStack()?.exitAnimationComplete()
                 },
             })
+            if (this.resumingFrom) {
+                this.resumingFrom.currentAnimation = this.currentAnimation
+            }
         }
 
         finishAnimation() {

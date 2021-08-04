@@ -18,6 +18,7 @@ export const App = () => {
                 ...(state ? a : b),
                 backgroundColor,
                 borderRadius: state ? 0 : 20,
+                opacity: state ? 0.4 : 1,
             }}
             onClick={() => setState(!state)}
             transition={{ duration: 0.2, ease: () => 0.5 }}

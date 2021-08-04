@@ -40,9 +40,9 @@ class MeasureLayoutWithContext extends React.Component<
         }
 
         projection?.root!.didUpdate()
-        projection?.addEventListener("animationComplete", () =>
+        projection?.addEventListener("animationComplete", () => {
             this.safeToRemove()
-        )
+        })
 
         globalProjectionState.hasEverUpdated = true
     }
@@ -63,8 +63,7 @@ class MeasureLayoutWithContext extends React.Component<
             if (isPresent) {
                 projection.promote()
             } else {
-                const foundPrevNode = projection.relegate()
-                if (!foundPrevNode) this.safeToRemove()
+                projection.relegate()
             }
         }
 
@@ -75,7 +74,9 @@ class MeasureLayoutWithContext extends React.Component<
         const { projection } = this.props.visualElement
         if (projection) {
             projection.root!.didUpdate()
-            if (!projection.currentAnimation) this.safeToRemove()
+            if (!projection.currentAnimation && projection.isLead()) {
+                this.safeToRemove()
+            }
         }
     }
 
