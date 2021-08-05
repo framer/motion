@@ -33,11 +33,18 @@ export const App = () => {
                     onClick={() => setState(!state)}
                 >
                     <motion.div
-                        id="child"
-                        layoutId="child"
+                        id="mid"
+                        layoutId="mid"
+                        style={{ display: "contents" }}
                         transition={transition}
-                        style={state ? childA : childB}
-                    />
+                    >
+                        <motion.div
+                            id="child"
+                            layoutId="child"
+                            style={state ? childA : childB}
+                            transition={transition}
+                        />
+                    </motion.div>
                 </motion.div>
             </motion.div>
         </AnimatePresence>

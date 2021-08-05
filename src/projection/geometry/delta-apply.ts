@@ -85,7 +85,7 @@ export function applyTreeDeltas(
     for (let i = 0; i < treeLength; i++) {
         node = treePath[i]
         delta = node.projectionDelta
-
+        if ((node.instance as any)?.style?.display === "contents") continue
         if (!delta) continue
 
         // Incoporate each ancestor's scale into a culmulative treeScale for this component

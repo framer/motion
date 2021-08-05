@@ -692,3 +692,99 @@ describe("Shared layout:  0 -> A -> AB -> A -> 0 crossfade transition", () => {
             })
     })
 })
+
+describe("Shared layout: nested crossfade transition", () => {
+    it("Correctly fires layout={true} animations", () => {
+        cy.visit("?test=layout-shared-crossfade-nested")
+            .wait(50)
+            .get("#a")
+            .trigger("click")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 200,
+                    left: 200,
+                    width: 200,
+                    height: 250,
+                })
+            })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 200,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#b")
+            .trigger("click")
+            .wait(50)
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 150,
+                    left: 200,
+                    width: 150,
+                    height: 225,
+                })
+            })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 150,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
+
+    it("Correctly fires layout={true} animations when there are divs with `display: contents` in the path", () => {
+        cy.visit("?test=layout-shared-crossfade-nested-display-contents")
+            .wait(50)
+            .get("#a")
+            .trigger("click")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 200,
+                    left: 200,
+                    width: 200,
+                    height: 250,
+                })
+            })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 200,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#b")
+            .trigger("click")
+            .wait(50)
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 150,
+                    left: 200,
+                    width: 150,
+                    height: 225,
+                })
+            })
+            .get("#child")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 150,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
+})
