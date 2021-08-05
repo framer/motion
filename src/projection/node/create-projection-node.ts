@@ -960,6 +960,7 @@ export function createProjectionNode<I>({
             const prevLead = this.getPrevLead()
             const transform = (this.instance as any).style?.transform
             const transformed = transform && transform !== "none"
+
             if (
                 !this.projectionDelta ||
                 !this.layout ||
@@ -971,7 +972,13 @@ export function createProjectionNode<I>({
                 (this === lead && !this.target) ||
                 (this !== lead && !lead.target)
             ) {
-                return emptyStyles
+                /**
+                 * TODO This needs an explicit test. If the element has had its opacity changed
+                 * in the past but we dont have an explicit opacity in latestValues we need to set one.
+                 */
+                return {
+                    opacity: this.latestValues.opacity ?? 1,
+                }
             }
 
             const valuesToRender = lead.animationValues || lead.latestValues
@@ -1036,8 +1043,6 @@ export function createProjectionNode<I>({
         }
     }
 }
-
-const emptyStyles = {}
 
 function updateLayout(node: IProjectionNode) {
     node.updateLayout()
