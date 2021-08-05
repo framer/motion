@@ -188,7 +188,6 @@ export function createLifecycles() {
         clearAllListeners: () => managers.forEach((manager) => manager.clear()),
         updatePropListeners: (props) =>
             names.forEach((name) => {
-                propSubscriptions[name]?.()
                 const on = "on" + name
                 const propListener = props[on]
                 if (propListener) {

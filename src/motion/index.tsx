@@ -16,6 +16,7 @@ import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { useProjection } from "./features/use-projection"
 import { PromoteGroupContext } from "../context/PromoteContext"
+import { VisualElementHandler } from "./utils/VisualElementHandler"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -57,7 +58,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * means we don't need to load additional memory structures like VisualElement,
          * or any gesture/animation features.
          */
-        const { isStatic } = useContext(MotionConfigContext)
+        const config = useContext(MotionConfigContext)
 
         let features: JSX.Element[] | null = null
 
@@ -65,7 +66,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * Create the tree context. This is memoized and will only trigger renders
          * when the current tree variant changes in static mode.
          */
-        const context = useCreateMotionContext(props, isStatic)
+        const context = useCreateMotionContext(props, config.isStatic)
 
         /**
          * Create a unique projection ID for this component. If a new component is added
@@ -83,9 +84,9 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         /**
          *
          */
-        const visualState = useVisualState(props, isStatic)
+        const visualState = useVisualState(props, config.isStatic)
 
-        if (!isStatic && isBrowser) {
+        if (!config.isStatic && isBrowser) {
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
              * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
@@ -95,12 +96,12 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             context.visualElement = useVisualElement(
                 Component,
                 visualState,
-                props,
+                { ...config, ...props },
                 createVisualElement
             )
         }
 
-        if (!isStatic && isBrowser) {
+        if (!config.isStatic && isBrowser) {
             /**
              * Load Motion gesture and animation features. These are rendered as renderless
              * components so each feature can optionally make use of React lifecycle methods.
@@ -130,7 +131,10 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * is hydrated by the time features fire their effects.
          */
         return (
-            <>
+            <VisualElementHandler
+                visualElement={context.visualElement}
+                props={{ ...config, ...props }}
+            >
                 {features}
                 <MotionContext.Provider value={context}>
                     {useRender(
@@ -143,10 +147,10 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                             externalRef
                         ),
                         visualState,
-                        isStatic
+                        config.isStatic
                     )}
                 </MotionContext.Provider>
-            </>
+            </VisualElementHandler>
         )
     }
 

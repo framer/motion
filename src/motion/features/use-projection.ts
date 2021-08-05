@@ -10,14 +10,13 @@ export function useProjection(
     visualElement?: VisualElement,
     initialTransition?: Transition
 ) {
-    if (!visualElement) return
-
     /**
      * Update latest options
      * TODO: Currently only updating onProjectionUpdate but this will be where
      * to add support for changing layoutId etc
      */
     useEffect(() => {
+        if (!visualElement) return
         const { projection } = visualElement
         if (!projection) return
 
@@ -25,9 +24,9 @@ export function useProjection(
             ...projection.options,
             onProjectionUpdate,
         })
-    }, [onProjectionUpdate])
+    }, [visualElement, onProjectionUpdate])
 
-    if (visualElement.projection) return
+    if (!visualElement || visualElement?.projection) return
 
     visualElement.projection = new HTMLProjectionNode(
         projectionId,

@@ -285,6 +285,7 @@ export class VisualElementDragControls {
 
         const { projection } = this.visualElement
 
+        // TODO
         if (!projection || !projection.layout) return false
 
         const constraintsBox = measurePageBox(
