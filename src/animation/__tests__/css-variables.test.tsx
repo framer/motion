@@ -50,18 +50,16 @@ describe("css variables", () => {
 
     test("should animate css color variables", async () => {
         const promise = new Promise((resolve) => {
-            let isFirstFrame = true
+            let frameCount = 0
             const Component = () => (
                 <motion.div
                     style={style}
                     initial={{ background: fromVariable }}
                     animate={{ background: toVariable }}
                     onUpdate={({ background }) => {
-                        if (isFirstFrame) {
-                            isFirstFrame = false
-                        } else {
-                            resolve(background)
-                        }
+                        frameCount += 1
+
+                        if (frameCount > 2) resolve(background)
                     }}
                 />
             )
@@ -96,7 +94,7 @@ describe("css variables", () => {
         })
 
         const results = await promise
-        expect(results).toEqual(["20px"])
+        expect(results).toEqual(["20px", "20px"])
     })
 
     // Skipping because this test always succeeds, no matter what style values you check for ¯\\_(ツ)_/¯
