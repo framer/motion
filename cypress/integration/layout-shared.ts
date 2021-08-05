@@ -26,11 +26,11 @@ describe("Shared layout: A -> B transition", () => {
             .get("#shape-1")
             .get("#shape-0")
             .should(([$box]: any) => {
-                expect($box.style.opacity).to.equal("0.5")
+                expect($box.style.opacity).to.equal("1")
             })
             .get("#shape-1")
             .should(([$box]: any) => {
-                expect($box.style.opacity).to.equal("1")
+                expect($box.style.opacity).to.equal("0.433013")
             })
     })
 })
@@ -67,7 +67,7 @@ describe("Shared layout: A -> B transition", () => {
             /**
              * Test that onLayoutAnimationComplete fires
              */
-            .wait(200)
+            .wait(300)
             .should(([$box]: any) => {
                 expect($box.style.backgroundColor).to.equal("rgb(0, 0, 255)")
             })

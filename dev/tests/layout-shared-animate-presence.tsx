@@ -15,7 +15,7 @@ function Component() {
                     position: "absolute",
                     ...styles[count],
                 }}
-                transition={{ duration: 1, ease: () => 0.25 }}
+                transition={{ duration: 10, ease: () => 0.25 }}
                 animate={animate[count]}
                 layoutId="box"
                 id={`shape-${count}`}
