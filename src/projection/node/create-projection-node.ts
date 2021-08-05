@@ -943,17 +943,20 @@ export function createProjectionNode<I>({
                 styles.visibility = ""
             }
 
-            const needsReset = this.needsReset
+            const lead = this.getLead()
+            const transformTemplate = this.options.visualElement?.getProps()
+                .transformTemplate
 
-            if (needsReset) {
+            if (this.needsReset) {
                 this.needsReset = false
 
                 styles.opacity = ""
-                styles.transform = "none"
+                styles.transform = transformTemplate
+                    ? transformTemplate(this.latestValues, "none")
+                    : "none"
                 return styles
             }
 
-            const lead = this.getLead()
             const prevLead = this.getPrevLead()
             const transform = (this.instance as any).style?.transform
             const transformed = transform && transform !== "none"
@@ -980,8 +983,6 @@ export function createProjectionNode<I>({
                 valuesToRender
             )
 
-            const transformTemplate = this.options.visualElement?.getProps()
-                .transformTemplate
             if (transformTemplate) {
                 styles.transform = transformTemplate(
                     valuesToRender,
