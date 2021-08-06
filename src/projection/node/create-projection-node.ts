@@ -774,6 +774,7 @@ export function createProjectionNode<I>({
 
         startAnimation(options: AnimationOptions<number>) {
             globalProjectionState.hasAnimatedSinceResize = true
+
             this.currentAnimation?.stop()
             this.currentAnimation = animate(0, 1000, {
                 ...(options as any),
@@ -789,7 +790,9 @@ export function createProjectionNode<I>({
                     this.getStack()?.exitAnimationComplete()
                 },
             })
+
             if (this.resumingFrom) {
+                this.resumingFrom.currentAnimation?.stop()
                 this.resumingFrom.currentAnimation = this.currentAnimation
             }
         }

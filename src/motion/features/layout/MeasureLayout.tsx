@@ -37,12 +37,16 @@ class MeasureLayoutWithContext extends React.Component<
             if (promoteContext.group && projection.options.layoutId) {
                 promoteContext.group.add(projection)
             }
-        }
 
-        projection?.root!.didUpdate()
-        projection?.addEventListener("animationComplete", () => {
-            this.safeToRemove()
-        })
+            projection.root!.didUpdate()
+            projection.addEventListener("animationComplete", () => {
+                this.safeToRemove()
+            })
+            projection.setOptions({
+                ...projection.options,
+                onExitComplete: () => this.safeToRemove(),
+            })
+        }
 
         globalProjectionState.hasEverUpdated = true
     }

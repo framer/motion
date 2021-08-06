@@ -13,14 +13,16 @@ interface ListProps {
     backgroundColor: string
 }
 
+const transition = {
+    type: "spring",
+    duration: 5,
+    //     stiffness: 200,
+    //     damping: 20,
+}
+
 const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
     return (
-        <motion.ul
-            layout
-            style={styles.list}
-            drag
-            transition={{ type: "spring", stiffness: 200, damping: 20 }}
-        >
+        <motion.ul layout style={styles.list} drag transition={transition}>
             <AnimatePresence>
                 {list.map((id) => (
                     <motion.li
@@ -29,15 +31,7 @@ const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
                         layoutId={id}
                         id={"list-" + id}
                         onClick={() => onItemClick(id)}
-                        transition={{
-                            default: {
-                                type: "spring",
-                                duration: 5,
-                            },
-                            crossfade: {
-                                duration: 0.4,
-                            },
-                        }}
+                        transition={transition}
                         //  drag
                     />
                 ))}
