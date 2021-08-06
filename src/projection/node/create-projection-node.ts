@@ -333,9 +333,11 @@ export function createProjectionNode<I>({
                     }: LayoutUpdateData) => {
                         // TODO: Check here if an animation exists
                         const layoutTransition =
-                            visualElement.getDefaultTransition() ??
                             this.options.transition ??
+                            visualElement.getDefaultTransition() ??
                             defaultLayoutTransition
+
+                        this.setOptions({ transition: undefined })
 
                         const {
                             onLayoutAnimationComplete,
