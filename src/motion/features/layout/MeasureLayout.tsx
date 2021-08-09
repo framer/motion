@@ -4,7 +4,7 @@ import {
     LayoutGroupContext,
     LayoutGroupContextProps,
 } from "../../../context/LayoutGroupContext"
-import { PromoteGroupContext } from "../../../context/PromoteContext"
+import { SwitchLayoutGroupContext } from "../../../context/SwitchLayoutGroupContext"
 import { globalProjectionState } from "../../../projection/node/create-projection-node"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
 import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
@@ -13,7 +13,7 @@ import { FeatureProps } from "../types"
 
 interface MeasureContextProps {
     layoutGroup: LayoutGroupContextProps
-    promoteContext: PromoteGroupContext
+    switchLayoutGroup: SwitchLayoutGroupContext
     isPresent: boolean
     safeToRemove?: VoidFunction | null
 }
@@ -27,15 +27,15 @@ class MeasureLayoutWithContext extends React.Component<
      * in order to incorporate transforms
      */
     componentDidMount() {
-        const { visualElement, layoutGroup, promoteContext } = this.props
+        const { visualElement, layoutGroup, switchLayoutGroup } = this.props
         const { projection } = visualElement
 
         addScaleCorrector(defaultScaleCorrectors)
 
         if (projection) {
             if (layoutGroup.group) layoutGroup.group.add(projection)
-            if (promoteContext.group && projection.options.layoutId) {
-                promoteContext.group.add(projection)
+            if (switchLayoutGroup.register && projection.options.layoutId) {
+                switchLayoutGroup.register(projection)
             }
 
             projection.root!.didUpdate()
@@ -85,12 +85,16 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     componentWillUnmount() {
-        const { visualElement, layoutGroup, promoteContext } = this.props
+        const {
+            visualElement,
+            layoutGroup,
+            switchLayoutGroup: promoteContext,
+        } = this.props
         const { projection } = visualElement
 
         if (projection) {
             if (layoutGroup.group) layoutGroup.group.remove(projection)
-            if (promoteContext.group) promoteContext.group.delete(projection)
+            if (promoteContext.deregister) promoteContext.deregister(projection)
         }
     }
 
@@ -109,7 +113,7 @@ export function MeasureLayout(props: FeatureProps) {
         <MeasureLayoutWithContext
             {...props}
             layoutGroup={useContext(LayoutGroupContext)}
-            promoteContext={useContext(PromoteGroupContext)}
+            switchLayoutGroup={useContext(SwitchLayoutGroupContext)}
             isPresent={isPresent}
             safeToRemove={safeToRemove}
         />

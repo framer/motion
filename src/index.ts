@@ -73,7 +73,7 @@ export { useResetProjection } from "./projection/use-reset-projection"
 export { MotionConfigContext } from "./context/MotionConfigContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
-export { PromoteGroupContext } from "./context/PromoteContext"
+export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 
 /**
  * Types
@@ -132,7 +132,7 @@ export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"
 export * from "./projection/geometry/types"
-
+export { IProjectionNode } from "./projection/node/types"
 /**
  * Deprecated
  */

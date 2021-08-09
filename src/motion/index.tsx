@@ -15,7 +15,7 @@ import { isBrowser } from "../utils/is-browser"
 import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { useProjection } from "./features/use-projection"
-import { PromoteGroupContext } from "../context/PromoteContext"
+import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { VisualElementHandler } from "./utils/VisualElementHandler"
 
 export interface MotionComponentConfig<Instance, RenderState> {
@@ -117,7 +117,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             )
 
             // TODO Allow lazy load of projection node
-            const { initialTransition } = useContext(PromoteGroupContext)
+            const { initialTransition } = useContext(SwitchLayoutGroupContext)
             useProjection(
                 projectionId,
                 props,
