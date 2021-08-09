@@ -330,6 +330,151 @@ export interface Inertia {
     velocity?: number;
 }
 
+// @public (undocumented)
+export interface IProjectionNode<I = unknown> {
+    // Warning: (ae-forgotten-export) The symbol "LayoutEvents" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    addEventListener(name: LayoutEvents, handler: VoidFunction): VoidFunction;
+    // (undocumented)
+    animationValues?: ResolvedValues;
+    // (undocumented)
+    blockUpdate(): void;
+    // (undocumented)
+    calcProjection(): void;
+    // (undocumented)
+    children: Set<IProjectionNode>;
+    // (undocumented)
+    clearMeasurements(): void;
+    // (undocumented)
+    clearSnapshot(): void;
+    // (undocumented)
+    currentAnimation?: AnimationPlaybackControls;
+    // (undocumented)
+    depth: number;
+    // (undocumented)
+    didUpdate(): void;
+    // (undocumented)
+    finishAnimation(): void;
+    // (undocumented)
+    getProjectionStyles(): ResolvedValues;
+    // (undocumented)
+    getStack(): NodeStack | undefined;
+    // (undocumented)
+    hasListeners(name: LayoutEvents): boolean;
+    // (undocumented)
+    hide(): void;
+    // (undocumented)
+    id: number | undefined;
+    // (undocumented)
+    instance: I;
+    // (undocumented)
+    isLayoutDirty: boolean;
+    // (undocumented)
+    isLead(): boolean;
+    // (undocumented)
+    isUpdating: boolean;
+    // (undocumented)
+    isVisible: boolean;
+    // Warning: (ae-forgotten-export) The symbol "ResolvedValues" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    latestValues: ResolvedValues;
+    // (undocumented)
+    layout?: Box;
+    // (undocumented)
+    mount: (node: I, isLayoutDirty?: boolean) => void;
+    // (undocumented)
+    needsReset: boolean;
+    // (undocumented)
+    nodes?: FlatTree;
+    // (undocumented)
+    notifyListeners(name: LayoutEvents, ...args: any): void;
+    // Warning: (ae-forgotten-export) The symbol "ProjectionNodeOptions" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    options: ProjectionNodeOptions;
+    // (undocumented)
+    parent?: IProjectionNode;
+    // (undocumented)
+    path: IProjectionNode[];
+    // (undocumented)
+    potentialNodes: Map<number, IProjectionNode>;
+    // (undocumented)
+    projectionDelta?: Delta;
+    // (undocumented)
+    promote(options?: {
+        needsReset?: boolean;
+        transition?: Transition;
+    }): void;
+    // (undocumented)
+    registerPotentialNode(id: number, node: IProjectionNode): void;
+    // (undocumented)
+    registerSharedNode(id: string, node: IProjectionNode): void;
+    // (undocumented)
+    relegate(): boolean;
+    // (undocumented)
+    resetRotation(): void;
+    // (undocumented)
+    resetTransform(): void;
+    // (undocumented)
+    resolveTargetDelta(): void;
+    // (undocumented)
+    resumeFrom?: IProjectionNode;
+    // (undocumented)
+    resumingFrom?: IProjectionNode;
+    // (undocumented)
+    root?: IProjectionNode;
+    // (undocumented)
+    scheduleRender(): void;
+    // (undocumented)
+    scheduleUpdateProjection(): void;
+    // (undocumented)
+    scroll?: Point;
+    // (undocumented)
+    setAnimationOrigin(delta: Delta): void;
+    // (undocumented)
+    setOptions(options: ProjectionNodeOptions): void;
+    // (undocumented)
+    setTargetDelta(delta: Delta): void;
+    // Warning: (ae-forgotten-export) The symbol "NodeStack" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    sharedNodes: Map<string, NodeStack>;
+    // (undocumented)
+    shouldResetTransform: boolean;
+    // (undocumented)
+    show(): void;
+    // Warning: (ae-forgotten-export) The symbol "Snapshot" needs to be exported by the entry point index.d.ts
+    // 
+    // (undocumented)
+    snapshot?: Snapshot;
+    // (undocumented)
+    startAnimation(transition: Transition): void;
+    // (undocumented)
+    startUpdate(): void;
+    // (undocumented)
+    target?: Box;
+    // (undocumented)
+    targetWithTransforms?: Box;
+    // (undocumented)
+    treeScale?: Point;
+    // (undocumented)
+    unblockUpdate(): void;
+    // (undocumented)
+    unmount: () => void;
+    // (undocumented)
+    updateBlocked: boolean;
+    // (undocumented)
+    updateLayout(): void;
+    // (undocumented)
+    updateScroll(): void;
+    // (undocumented)
+    updateSnapshot(): void;
+    // (undocumented)
+    willUpdate(notifyListeners?: boolean): void;
+}
+
 // @public
 export function isValidMotionProp(key: string): boolean;
 
@@ -442,8 +587,6 @@ export interface MotionProps extends AnimationProps, VisualElementLifecycles, Pa
     style?: MotionStyle;
     // Warning: (ae-forgotten-export) The symbol "TransformProperties" needs to be exported by the entry point index.d.ts
     transformTemplate?(transform: TransformProperties, generatedTransform: string): string;
-    // Warning: (ae-forgotten-export) The symbol "ResolvedValues" needs to be exported by the entry point index.d.ts
-    // 
     // @internal
     transformValues?<V extends ResolvedValues>(values: V): V;
 }
@@ -550,20 +693,6 @@ export interface Point {
 // @public (undocumented)
 export const PresenceContext: import("react").Context<PresenceContextProps | null>;
 
-// Warning: (ae-internal-missing-underscore) The name "PromoteGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
-// 
-// @internal (undocumented)
-export interface PromoteGroupContext {
-    // Warning: (ae-forgotten-export) The symbol "IProjectionNode" needs to be exported by the entry point index.d.ts
-    // 
-    // (undocumented)
-    group?: Set<IProjectionNode>;
-    initialTransition?: Transition;
-}
-
-// @internal (undocumented)
-export const PromoteGroupContext: import("react").Context<PromoteGroupContext>;
-
 // @public (undocumented)
 export interface RelayoutInfo {
     // (undocumented)
@@ -648,6 +777,17 @@ export type SVGAttributesAsMotionValues<T> = MakeMotion<SVGAttributesWithoutMoti
 // @public (undocumented)
 export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, MotionProps {
 }
+
+// Warning: (ae-forgotten-export) The symbol "SwitchLayoutGroup" needs to be exported by the entry point index.d.ts
+// Warning: (ae-internal-missing-underscore) The name "SwitchLayoutGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal (undocumented)
+export type SwitchLayoutGroupContext = SwitchLayoutGroup & {
+    initialTransition?: Transition;
+};
+
+// @internal (undocumented)
+export const SwitchLayoutGroupContext: import("react").Context<SwitchLayoutGroupContext>;
 
 // @public (undocumented)
 export interface TapHandlers {
