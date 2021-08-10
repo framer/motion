@@ -1095,14 +1095,18 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         // animations for instance if layout="size" and an element has only changed position
         if (node.options.animationType === "size") {
             eachAxis((axis) => {
-                const axisSnapshot = snapshot.visible[axis]
+                const axisSnapshot = snapshot.isShared
+                    ? snapshot.measured[axis]
+                    : snapshot.visible[axis]
                 const length = calcLength(axisSnapshot)
                 axisSnapshot.min = layout[axis].min
                 axisSnapshot.max = axisSnapshot.min + length
             })
         } else if (node.options.animationType === "position") {
             eachAxis((axis) => {
-                const axisSnapshot = snapshot.visible[axis]
+                const axisSnapshot = snapshot.isShared
+                    ? snapshot.measured[axis]
+                    : snapshot.visible[axis]
                 const length = calcLength(layout[axis])
                 axisSnapshot.max = axisSnapshot.min + length
             })
