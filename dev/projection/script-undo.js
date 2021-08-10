@@ -67,6 +67,10 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
     }
 
     node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
+        if (node.resumeFrom) {
+            node.resumingFrom = node.resumeFrom
+            node.resumingFrom.resumingFrom = undefined
+        }
         // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
         hasLayoutChanged && node.setAnimationOrigin(delta)
     })

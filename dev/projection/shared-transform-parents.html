@@ -82,7 +82,6 @@
                 childProjection.willUpdate()
 
                 const childOrigin = child.getBoundingClientRect()
-                console.log(childOrigin.top, childOrigin.left)
 
                 const newChild = document.createElement("div")
                 newChild.classList.add("child")
@@ -94,12 +93,11 @@
                 newChildProjection.root.didUpdate()
 
                 const newChildOrigin = newChild.getBoundingClientRect()
-                console.log(newChildOrigin.top, newChildOrigin.left)
 
-                // matchViewportBox(child, childOrigin)
-                // matchViewportBox(newChild, childOrigin)
-                // matchOpacity(child, 1)
-                // matchOpacity(newChild, 0)
+                matchViewportBox(child, childOrigin)
+                matchViewportBox(newChild, childOrigin)
+                matchOpacity(child, 1)
+                matchOpacity(newChild, 0)
             })
         </script>
     </body>

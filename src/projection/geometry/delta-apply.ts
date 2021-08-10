@@ -1,4 +1,6 @@
 import { IProjectionNode } from "../node/types"
+import { hasTransform } from "../utils/has-transform"
+import { transformBox } from "./operations"
 import { Axis, Box, Delta, Point } from "./types"
 
 /**
@@ -71,7 +73,8 @@ export function applyBoxDelta(box: Box, { x, y }: Delta): void {
 export function applyTreeDeltas(
     box: Box,
     treeScale: Point,
-    treePath: IProjectionNode[]
+    treePath: IProjectionNode[],
+    isSharedTransition: boolean = false
 ) {
     const treeLength = treePath.length
     if (!treeLength) return
@@ -86,13 +89,19 @@ export function applyTreeDeltas(
         node = treePath[i]
         delta = node.projectionDelta
         if ((node.instance as any)?.style?.display === "contents") continue
-        if (!delta) continue
 
-        // Incoporate each ancestor's scale into a culmulative treeScale for this component
-        treeScale.x *= delta.x.scale
-        treeScale.y *= delta.y.scale
+        if (delta) {
+            // Incoporate each ancestor's scale into a culmulative treeScale for this component
+            treeScale.x *= delta.x.scale
+            treeScale.y *= delta.y.scale
 
-        // Apply each ancestor's calculated delta into this component's recorded layout box
-        applyBoxDelta(box, delta)
+            // Apply each ancestor's calculated delta into this component's recorded layout box
+            applyBoxDelta(box, delta)
+        }
+        console.log(isSharedTransition, hasTransform(node.latestValues))
+        if (isSharedTransition && hasTransform(node.latestValues)) {
+            console.log("shared")
+            transformBox(box, node.latestValues)
+        }
     }
 }

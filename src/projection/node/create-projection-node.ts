@@ -487,11 +487,12 @@ export function createProjectionNode<I>({
          */
         updateSnapshot() {
             if (this.snapshot) return
-            const measured = this.measure()
-            const visible = this.removeTransform(measured)
-            const layout = this.removeElementScroll(visible!)
+            const measured = this.measure()!
+            const visible = this.removeTransform(measured)!
+            const layout = this.removeElementScroll(visible)
 
             this.snapshot = {
+                measured,
                 visible,
                 layout,
                 latestValues: {},
@@ -504,7 +505,8 @@ export function createProjectionNode<I>({
 
             if (!this.options.alwaysMeasureLayout && !this.isLayoutDirty) return
 
-            this.layout = this.removeElementScroll(this.measure())
+            const measured = this.measure()
+            this.layout = this.removeElementScroll(measured)
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
@@ -574,6 +576,25 @@ export function createProjectionNode<I>({
             return boxWithoutScroll
         }
 
+        applyTransform(box: Box): Box {
+            const withTransforms = createBox()
+            copyBoxInto(withTransforms, box)
+            for (let i = 0; i < this.path.length; i++) {
+                const node = this.path[i]
+                if (!hasTransform(node.latestValues)) continue
+
+                // TODO: Potential performace no no
+                hasScale(node.latestValues) && node.updateLayout()
+                transformBox(withTransforms, node.latestValues)
+            }
+
+            if (hasTransform(this.latestValues)) {
+                transformBox(withTransforms, this.latestValues)
+            }
+
+            return withTransforms
+        }
+
         removeTransform(box: Box): Box {
             const boxWithoutTransform = createBox()
             copyBoxInto(boxWithoutTransform, box)
@@ -635,10 +656,12 @@ export function createProjectionNode<I>({
 
             copyBoxInto(this.target, this.layout)
             applyBoxDelta(this.target, this.targetDelta)
+            console.log("target:", this.target, this.targetDelta)
         }
 
         calcProjection() {
-            const { target } = this.getLead()
+            const lead = this.getLead()
+            const { target } = lead
 
             if (!this.layout || !target) return
 
@@ -661,7 +684,12 @@ export function createProjectionNode<I>({
              * Apply all the parent deltas to this box to produce the corrected box. This
              * is the layout box, as it will appear on screen as a result of the transforms of its parents.
              */
-            applyTreeDeltas(this.layoutCorrected, this.treeScale, this.path)
+            applyTreeDeltas(
+                this.layoutCorrected,
+                this.treeScale,
+                this.path,
+                Boolean(this.resumingFrom) || this !== lead
+            )
 
             /**
              * Update the delta between the corrected box and the target box before user-set transforms were applied.
@@ -783,8 +811,9 @@ export function createProjectionNode<I>({
                     options.onUpdate?.(latest)
                 },
                 onComplete: () => {
-                    if (this.resumingFrom)
+                    if (this.resumingFrom) {
                         this.resumingFrom.currentAnimation = undefined
+                    }
                     this.resumingFrom = this.currentAnimation = this.animationValues = undefined
                     options.onComplete?.()
                     this.getStack()?.exitAnimationComplete()
@@ -1076,7 +1105,12 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const layoutDelta = createDelta()
         calcBoxDelta(layoutDelta, layout, snapshot.layout)
         const visualDelta = createDelta()
-        calcBoxDelta(visualDelta, layout, snapshot.visible)
+
+        if (snapshot.isShared) {
+            calcBoxDelta(visualDelta, node.layout!, snapshot.measured)
+        } else {
+            calcBoxDelta(visualDelta, layout, snapshot.visible)
+        }
 
         node.notifyListeners("didUpdate", {
             layout,

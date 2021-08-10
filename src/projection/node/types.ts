@@ -5,7 +5,9 @@ import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/animate"
 import { FlatTree } from "../../render/utils/flat-tree"
 
+// TODO: Find more appropriate names for each snapshot
 export interface Snapshot {
+    measured: Box
     layout: Box
     visible: Box
     latestValues: ResolvedValues
