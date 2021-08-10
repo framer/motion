@@ -306,7 +306,7 @@ export function createProjectionNode<I>({
             this.parent?.children.add(this)
             this.id && this.root.potentialNodes.delete(this.id)
 
-            if (isLayoutDirty) {
+            if (isLayoutDirty && (layout || layoutId)) {
                 this.isLayoutDirty = true
                 this.setTargetDelta(createDelta())
             }

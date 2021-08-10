@@ -59,7 +59,12 @@
             a.setAttribute("data-projection-id", "a")
 
             // Render phase
-            const aProjection = createNode(a, boxProjection, {}, "a")
+            const aProjection = createNode(
+                a,
+                boxProjection,
+                { layout: true },
+                "a"
+            )
             const bProjection = new HTMLProjectionNode("b", {}, boxProjection)
 
             // Snapshot
