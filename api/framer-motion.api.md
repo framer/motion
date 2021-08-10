@@ -339,6 +339,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     animationValues?: ResolvedValues;
     // (undocumented)
+    applyTransform(box: Box): Box;
+    // (undocumented)
     blockUpdate(): void;
     // (undocumented)
     calcProjection(): void;

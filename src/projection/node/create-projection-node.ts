@@ -13,7 +13,7 @@ import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
 import { calcBoxDelta, calcLength } from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
 import { createBox, createDelta } from "../geometry/models"
-import { transformBox, translateAxis } from "../geometry/operations"
+import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
 import { boxEquals, isDeltaZero } from "../geometry/utils"
@@ -259,6 +259,10 @@ export function createProjectionNode<I>({
             this.depth = parent ? parent.depth + 1 : 0
 
             id && this.root.registerPotentialNode(id, this)
+
+            for (let i = 0; i < this.path.length; i++) {
+                this.path[i].shouldResetTransform = true
+            }
 
             if (this.root === this) this.nodes = new FlatTree()
         }
@@ -523,6 +527,7 @@ export function createProjectionNode<I>({
             if (!resetTransform) return
             const isResetRequested =
                 this.isLayoutDirty || this.shouldResetTransform
+
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
 
@@ -582,9 +587,6 @@ export function createProjectionNode<I>({
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 if (!hasTransform(node.latestValues)) continue
-
-                // TODO: Potential performace no no
-                hasScale(node.latestValues) && node.updateLayout()
                 transformBox(withTransforms, node.latestValues)
             }
 
@@ -654,9 +656,13 @@ export function createProjectionNode<I>({
                 this.targetWithTransforms = createBox()
             }
 
-            copyBoxInto(this.target, this.layout)
+            if (Boolean(this.resumingFrom)) {
+                // TODO: This is creating a new object every frame
+                this.target = this.applyTransform(this.layout)
+            } else {
+                copyBoxInto(this.target, this.layout)
+            }
             applyBoxDelta(this.target, this.targetDelta)
-            console.log("target:", this.target, this.targetDelta)
         }
 
         calcProjection() {
@@ -1107,11 +1113,14 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const visualDelta = createDelta()
 
         if (snapshot.isShared) {
-            calcBoxDelta(visualDelta, node.layout!, snapshot.measured)
+            calcBoxDelta(
+                visualDelta,
+                node.applyTransform(layout),
+                snapshot.measured
+            )
         } else {
             calcBoxDelta(visualDelta, layout, snapshot.visible)
         }
-
         node.notifyListeners("didUpdate", {
             layout,
             snapshot,
@@ -1168,6 +1177,10 @@ const defaultLayoutTransition = {
 }
 
 function mountNodeEarly(node: IProjectionNode, id: number) {
+    /**
+     * Rather than searching the DOM from document we can search the
+     * path for the deepest mounted ancestor and search from there
+     */
     let searchNode = node.root
     for (let i = node.path.length - 1; i >= 0; i--) {
         if (Boolean(node.path[i].instance)) {

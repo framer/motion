@@ -1,4 +1,4 @@
-import { translateAxis } from "../geometry/operations"
+import { translateAxis } from "../geometry/delta-apply"
 import { TransformPoint } from "../geometry/types"
 import { measureViewportBox } from "../node/HTMLProjectionNode"
 import { IProjectionNode } from "../node/types"

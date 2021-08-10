@@ -68,6 +68,10 @@ Animate.createNode = (
     visualElement.projection = node
 
     node.addEventListener("didUpdate", ({ delta, hasLayoutChanged }) => {
+        if (node.resumeFrom) {
+            node.resumingFrom = node.resumeFrom
+            node.resumingFrom.resumingFrom = undefined
+        }
         if (hasLayoutChanged) {
             node.setAnimationOrigin(delta)
             node.startAnimation(transition)
