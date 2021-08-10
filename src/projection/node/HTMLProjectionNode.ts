@@ -34,5 +34,7 @@ export const HTMLProjectionNode = createProjectionNode<HTMLElement>({
         }
         return rootProjectionNode.current
     },
-    resetTransform: (instance) => (instance.style.transform = "none"),
+    resetTransform: (instance, value) => {
+        instance.style.transform = value ?? "none"
+    },
 })

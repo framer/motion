@@ -535,7 +535,12 @@ export function createProjectionNode<I>({
                 isResetRequested &&
                 (hasProjection || hasTransform(this.latestValues))
             ) {
-                resetTransform(this.instance)
+                const transformTemplate = this.options.visualElement?.getProps()
+                    .transformTemplate
+                const value = transformTemplate
+                    ? transformTemplate(this.latestValues, "")
+                    : undefined
+                resetTransform(this.instance, value)
                 this.shouldResetTransform = false
                 this.scheduleRender()
             }
