@@ -441,6 +441,43 @@ describe("Shared layout: A -> B crossfade transition", () => {
                 })
             })
     })
+
+    it("It correctly fires layout={true} animations when the component has a transformTemplate", () => {
+        cy.visit("?test=layout-shared-crossfade-a-b-transform-template")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 150,
+                    left: 200,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(10)
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 125,
+                    left: 150,
+                    width: 200,
+                    height: 250,
+                })
+            })
+            // interrupt the animation
+            .trigger("click")
+            .wait(10)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 137.5,
+                    left: 175,
+                    width: 150,
+                    height: 225,
+                })
+            })
+    })
 })
 
 describe("Shared layout: A -> AB -> A crossfade transition", () => {
