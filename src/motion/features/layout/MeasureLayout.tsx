@@ -67,7 +67,8 @@ class MeasureLayoutWithContext extends React.Component<
          * TODO: We use this data in relegate to determine whether to
          * promote a previous element. There's no guarantee its presence data
          * will have updated by this point - if a bug like this arises it will
-         * have to be that we markForRelegation and then find a new lead some other way
+         * have to be that we markForRelegation and then find a new lead some other way,
+         * perhaps in didUpdate
          */
         projection.isPresent = isPresent
 

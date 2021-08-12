@@ -2,7 +2,7 @@ import { createContext } from "react"
 import { NodeGroup } from "../projection/node/group"
 
 export interface LayoutGroupContextProps {
-    prefix?: string
+    id?: string
     group?: NodeGroup
     forceRender?: VoidFunction
 }

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { MutableRefObject, useMemo, useRef } from "react"
+import { MutableRefObject, useContext, useMemo, useRef } from "react"
 import {
     LayoutGroupContext,
     LayoutGroupContextProps,
@@ -8,28 +8,39 @@ import { nodeGroup } from "../../projection"
 import { useForceUpdate } from "../../utils/use-force-update"
 
 export interface Props {
-    prefix?: string
-    children?: React.ReactChild // TODO Fix children type here to accept multiple children
+    id?: string
+    inheritId?: boolean
 }
 
-export function LayoutGroup({ children, prefix }: Props) {
+export const LayoutGroup: React.FunctionComponent<Props> = ({
+    children,
+    id,
+    inheritId = true,
+}) => {
+    const layoutGroupContext = useContext(LayoutGroupContext)
     const [forceRender, key] = useForceUpdate()
     const context = useRef(
         null
     ) as MutableRefObject<LayoutGroupContextProps | null>
 
     if (context.current === null) {
+        if (inheritId && layoutGroupContext.id) {
+            id = layoutGroupContext.id + "-" + id
+        }
+
         context.current = {
-            prefix,
+            id,
             group: nodeGroup(),
         }
     }
 
-    // TODO If parent id, incorporate
+    const memoizedContext = useMemo(
+        () => ({ ...context.current, forceRender }),
+        [key]
+    )
+
     return (
-        <LayoutGroupContext.Provider
-            value={useMemo(() => ({ ...context.current, forceRender }), [key])}
-        >
+        <LayoutGroupContext.Provider value={memoizedContext}>
             {children}
         </LayoutGroupContext.Provider>
     )
