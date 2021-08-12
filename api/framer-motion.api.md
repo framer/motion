@@ -518,7 +518,7 @@ export type KeyframesTarget = ResolvedKeyframesTarget | [null, ...CustomValueTyp
 // Warning: (ae-forgotten-export) The symbol "Props" needs to be exported by the entry point index.d.ts
 // 
 // @public (undocumented)
-export function LayoutGroup({ children, prefix }: Props): JSX.Element;
+export const LayoutGroup: React.FunctionComponent<Props>;
 
 // Warning: (ae-forgotten-export) The symbol "LayoutGroupContextProps" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "LayoutGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
