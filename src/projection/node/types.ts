@@ -87,6 +87,7 @@ export interface IProjectionNode<I = unknown> {
     relegate(): boolean
     resumeFrom?: IProjectionNode
     resumingFrom?: IProjectionNode
+    isPresent?: boolean
 
     addEventListener(name: LayoutEvents, handler: VoidFunction): VoidFunction
     notifyListeners(name: LayoutEvents, ...args: any): void

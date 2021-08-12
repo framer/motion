@@ -14,6 +14,9 @@ export class NodeStack {
 
     remove(node: IProjectionNode) {
         removeItem(this.members, node)
+        if (node === this.prevLead) {
+            this.prevLead = undefined
+        }
         if (node === this.lead) {
             const prevLead = this.members[this.members.length - 1]
             if (prevLead) {
@@ -26,10 +29,24 @@ export class NodeStack {
         const indexOfNode = this.members.findIndex((member) => node === member)
         if (indexOfNode === 0) return false
 
-        const prevLead = this.members[indexOfNode - 1]
-        if (!prevLead) return false
-        this.promote(prevLead)
-        return true
+        /**
+         * Find the next projection node that is present
+         */
+        let prevLead: IProjectionNode | undefined
+        for (let i = indexOfNode; i >= 0; i--) {
+            const member = this.members[i]
+            if (member.isPresent !== false) {
+                prevLead = member
+                break
+            }
+        }
+
+        if (prevLead) {
+            this.promote(prevLead)
+            return true
+        } else {
+            return false
+        }
     }
 
     promote(node: IProjectionNode) {
@@ -41,7 +58,7 @@ export class NodeStack {
 
         node.show()
 
-        if (prevLead) {
+        if (prevLead && prevLead.instance) {
             prevLead.scheduleRender()
             node.scheduleRender()
             node.resumeFrom = prevLead

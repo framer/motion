@@ -982,13 +982,22 @@ export function createProjectionNode<I>({
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
             if (!this.instance) return styles
+
+            const lead = this.getLead()
+            if (
+                this.options.layoutId &&
+                lead !== this &&
+                lead.resumingFrom !== this
+            ) {
+                return { visibility: "hidden" }
+            }
+
             if (!this.isVisible) {
                 return { visibility: "hidden" }
             } else {
                 styles.visibility = ""
             }
 
-            const lead = this.getLead()
             const transformTemplate = this.options.visualElement?.getProps()
                 .transformTemplate
 
@@ -1044,19 +1053,26 @@ export function createProjectionNode<I>({
             const { x, y } = this.projectionDelta
             styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
 
-            if (!lead.animationValues) {
-                // snap opacity to full 0/1 when the animation is finished
-                styles.opacity =
-                    lead === this
-                        ? valuesToRender.opacity ?? ""
-                        : valuesToRender.opacityExit ?? 0
-            } else {
+            if (lead.animationValues) {
+                /**
+                 * If the lead component is animating, assign this either the entering/leaving
+                 * opacity
+                 */
                 styles.opacity =
                     lead === this
                         ? valuesToRender.opacity ??
                           this.latestValues.opacity ??
                           1
                         : valuesToRender.opacityExit
+            } else {
+                /**
+                 * Or we're not animating at all, set the lead component to its actual
+                 * opacity and other components to hidden.
+                 */
+                styles.opacity =
+                    lead === this
+                        ? valuesToRender.opacity ?? ""
+                        : valuesToRender.opacityExit ?? 0
             }
 
             /**

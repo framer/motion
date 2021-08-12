@@ -90,8 +90,6 @@ export interface VisualElement<Instance = any, RenderState = any>
     build(): RenderState
     syncRender(): void
 
-    // isPresent: boolean
-    // presence: Presence
     isPresenceRoot?: boolean
     prevDragCursor?: Point
     getLayoutId(): string | undefined

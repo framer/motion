@@ -27,14 +27,20 @@ class MeasureLayoutWithContext extends React.Component<
      * in order to incorporate transforms
      */
     componentDidMount() {
-        const { visualElement, layoutGroup, switchLayoutGroup } = this.props
+        const {
+            visualElement,
+            layoutGroup,
+            switchLayoutGroup,
+            layoutId,
+        } = this.props
         const { projection } = visualElement
 
         addScaleCorrector(defaultScaleCorrectors)
 
         if (projection) {
             if (layoutGroup.group) layoutGroup.group.add(projection)
-            if (switchLayoutGroup.register && projection.options.layoutId) {
+
+            if (switchLayoutGroup.register && layoutId) {
                 switchLayoutGroup.register(projection)
             }
 
@@ -53,7 +59,17 @@ class MeasureLayoutWithContext extends React.Component<
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {
         const { layoutDependency, visualElement, drag, isPresent } = this.props
-        const projection = visualElement.projection!
+        const projection = visualElement.projection
+
+        if (!projection) return null
+
+        /**
+         * TODO: We use this data in relegate to determine whether to
+         * promote a previous element. There's no guarantee its presence data
+         * will have updated by this point - if a bug like this arises it will
+         * have to be that we markForRelegation and then find a new lead some other way
+         */
+        projection.isPresent = isPresent
 
         if (
             drag ||
