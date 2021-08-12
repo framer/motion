@@ -375,6 +375,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     isLead(): boolean;
     // (undocumented)
+    isPresent?: boolean;
+    // (undocumented)
     isUpdating: boolean;
     // (undocumented)
     isVisible: boolean;
