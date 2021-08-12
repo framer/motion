@@ -671,20 +671,9 @@ export function createProjectionNode<I>({
         }
 
         calcProjection() {
+            if (!this.layout) return
+
             const lead = this.getLead()
-            const { target } = lead
-
-            if (!this.layout || !target) return
-
-            if (!this.projectionDelta) {
-                this.projectionDelta = createDelta()
-                this.projectionDeltaWithTransform = createDelta()
-            }
-
-            const prevTreeScaleX = this.treeScale.x
-            const prevTreeScaleY = this.treeScale.y
-            const prevProjectionTransform = this.projectionTransform
-
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -701,6 +690,33 @@ export function createProjectionNode<I>({
                 this.path,
                 Boolean(this.resumingFrom) || this !== lead
             )
+
+            // If the child's layout hasn't changed but the parent has changed,
+            // we should calculate a scale to keep the child at the same size.
+            if (!lead.target) {
+                const isScaleOnly = !boxEquals(
+                    this.layoutCorrected,
+                    this.layout
+                )
+                if (isScaleOnly) {
+                    lead.target = createBox()
+                    lead.targetWithTransforms = createBox()
+
+                    copyBoxInto(lead.target, this.layout)
+                }
+            }
+
+            const { target } = lead
+            if (!target) return
+
+            if (!this.projectionDelta) {
+                this.projectionDelta = createDelta()
+                this.projectionDeltaWithTransform = createDelta()
+            }
+
+            const prevTreeScaleX = this.treeScale.x
+            const prevTreeScaleY = this.treeScale.y
+            const prevProjectionTransform = this.projectionTransform
 
             /**
              * Update the delta between the corrected box and the target box before user-set transforms were applied.
@@ -1093,7 +1109,6 @@ export function createProjectionNode<I>({
                     styles[key] = corrected
                 }
             }
-
             return styles
         }
 
