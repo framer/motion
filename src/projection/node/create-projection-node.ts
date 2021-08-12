@@ -1000,13 +1000,6 @@ export function createProjectionNode<I>({
             if (!this.instance) return styles
 
             const lead = this.getLead()
-            if (
-                this.options.layoutId &&
-                lead !== this &&
-                lead.resumingFrom !== this
-            ) {
-                return { visibility: "hidden" }
-            }
 
             if (!this.isVisible) {
                 return { visibility: "hidden" }

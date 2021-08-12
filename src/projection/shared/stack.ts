@@ -10,6 +10,8 @@ export class NodeStack {
         addUniqueItem(this.members, node)
         this.promote(node)
         node.scheduleRender()
+
+        console.log("adding node")
     }
 
     remove(node: IProjectionNode) {
@@ -58,7 +60,7 @@ export class NodeStack {
 
         node.show()
 
-        if (prevLead && prevLead.instance) {
+        if (prevLead) {
             prevLead.scheduleRender()
             node.scheduleRender()
             node.resumeFrom = prevLead
