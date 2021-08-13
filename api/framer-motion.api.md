@@ -430,7 +430,7 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     root?: IProjectionNode;
     // (undocumented)
-    scheduleRender(): void;
+    scheduleRender(notifyAll?: boolean): void;
     // (undocumented)
     scheduleUpdateProjection(): void;
     // (undocumented)
