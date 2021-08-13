@@ -766,14 +766,11 @@ export function createProjectionNode<I>({
             // TODO: Schedule render
         }
 
-        scheduleRender() {
+        scheduleRender(notifyAll = true) {
             this.options.scheduleRender?.()
-            if (this.resumingFrom) {
-                if (!this.resumingFrom.instance) {
-                    this.resumingFrom = undefined
-                } else {
-                    this.resumingFrom.scheduleRender()
-                }
+            notifyAll && this.getStack()?.scheduleRender()
+            if (this.resumingFrom && !this.resumingFrom.instance) {
+                this.resumingFrom = undefined
             }
         }
 
@@ -1020,21 +1017,7 @@ export function createProjectionNode<I>({
                 return styles
             }
 
-            const prevLead = this.getPrevLead()
-            const transform = (this.instance as any).style?.transform
-            const transformed = transform && transform !== "none"
-
-            if (
-                !this.projectionDelta ||
-                !this.layout ||
-                // If the node does not participate in the current transition,
-                // and don't have a projection transform to overwrite, don't
-                // calculate the projection styles, otherwise its snapshot would
-                // be incorrect when it's promoted in the future.
-                (!(this === lead || this === prevLead) && !transformed) ||
-                (this === lead && !this.target) ||
-                (this !== lead && !lead.target)
-            ) {
+            if (!this.projectionDelta || !this.layout) {
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
                     emptyStyles.opacity = this.latestValues.opacity ?? 1

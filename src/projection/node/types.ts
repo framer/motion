@@ -64,7 +64,7 @@ export interface IProjectionNode<I = unknown> {
     isVisible: boolean
     hide(): void
     show(): void
-    scheduleRender(): void
+    scheduleRender(notifyAll?: boolean): void
 
     setTargetDelta(delta: Delta): void
     resetTransform(): void
