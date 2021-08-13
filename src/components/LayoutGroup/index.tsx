@@ -24,13 +24,17 @@ export const LayoutGroup: React.FunctionComponent<Props> = ({
     ) as MutableRefObject<LayoutGroupContextProps | null>
 
     if (context.current === null) {
-        if (inheritId && layoutGroupContext.id) {
+        if (
+            inheritId &&
+            layoutGroupContext.id &&
+            layoutGroupContext.id !== id
+        ) {
             id = layoutGroupContext.id + "-" + id
         }
 
         context.current = {
             id,
-            group: nodeGroup(),
+            group: inheritId ? layoutGroupContext.group : nodeGroup(),
         }
     }
 
