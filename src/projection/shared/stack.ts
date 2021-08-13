@@ -10,8 +10,6 @@ export class NodeStack {
         addUniqueItem(this.members, node)
         this.promote(node)
         node.scheduleRender()
-
-        console.log("adding node")
     }
 
     remove(node: IProjectionNode) {
