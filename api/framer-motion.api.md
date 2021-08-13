@@ -387,6 +387,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     layout?: Box;
     // (undocumented)
+    measure(): Box;
+    // (undocumented)
     mount: (node: I, isLayoutDirty?: boolean) => void;
     // (undocumented)
     needsReset: boolean;

@@ -33,12 +33,17 @@ export function removeAxisDelta(
     scale: number = 1,
     origin: number = 0.5,
     boxScale?: number,
-    originAxis: Axis = axis
+    originAxis: Axis = axis,
+    sourceAxis: Axis = axis
 ): void {
     if (percent.test(translate)) {
         translate = parseFloat(translate as string)
-        const relativeProgress = mix(axis.min, axis.min, translate / 100)
-        translate = relativeProgress - axis.min
+        const relativeProgress = mix(
+            sourceAxis.min,
+            sourceAxis.max,
+            translate / 100
+        )
+        translate = relativeProgress - sourceAxis.min
     }
 
     if (typeof translate !== "number") return
@@ -71,7 +76,8 @@ export function removeAxisTransforms(
     axis: Axis,
     transforms: ResolvedValues,
     [key, scaleKey, originKey]: string[],
-    origin?: Axis
+    origin?: Axis,
+    sourceAxis?: Axis
 ) {
     removeAxisDelta(
         axis,
@@ -79,7 +85,8 @@ export function removeAxisTransforms(
         transforms[scaleKey] as number,
         transforms[originKey] as number,
         transforms.scale as number,
-        origin
+        origin,
+        sourceAxis
     )
 }
 
@@ -96,8 +103,9 @@ const yKeys = ["y", "scaleY", "originY"]
 export function removeBoxTransforms(
     box: Box,
     transforms: ResolvedValues,
-    originBox?: Box
+    originBox?: Box,
+    sourceBox?: Box
 ): void {
-    removeAxisTransforms(box.x, transforms, xKeys, originBox?.x)
-    removeAxisTransforms(box.y, transforms, yKeys, originBox?.y)
+    removeAxisTransforms(box.x, transforms, xKeys, originBox?.x, sourceBox?.x)
+    removeAxisTransforms(box.y, transforms, yKeys, originBox?.y, sourceBox?.y)
 }

@@ -608,14 +608,19 @@ export function createProjectionNode<I>({
 
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
+                if (!node.instance) continue
                 if (!hasTransform(node.latestValues)) continue
-
                 hasScale(node.latestValues) && node.updateSnapshot()
+
+                const sourceBox = createBox()
+                const nodeBox = node.measure()
+                copyBoxInto(sourceBox, nodeBox)
 
                 removeBoxTransforms(
                     boxWithoutTransform,
                     node.latestValues,
-                    node.snapshot?.layout
+                    node.snapshot?.layout,
+                    sourceBox
                 )
             }
 
