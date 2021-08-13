@@ -61,7 +61,7 @@ export class NodeStack {
         node.show()
 
         if (prevLead) {
-            prevLead.scheduleRender()
+            prevLead.instance && prevLead.scheduleRender()
             node.scheduleRender()
             node.resumeFrom = prevLead
 
