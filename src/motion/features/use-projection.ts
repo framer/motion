@@ -3,10 +3,17 @@ import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
 import { Transition } from "../../types"
 import { useEffect } from "react"
+import { isRefObject } from "../../utils/is-ref-object"
 
 export function useProjection(
     projectionId: number | undefined,
-    { layoutId, layout, drag, onProjectionUpdate }: MotionProps,
+    {
+        layoutId,
+        layout,
+        drag,
+        dragConstraints,
+        onProjectionUpdate,
+    }: MotionProps,
     visualElement?: VisualElement,
     initialTransition?: Transition
 ) {
@@ -37,7 +44,8 @@ export function useProjection(
     visualElement.projection.setOptions({
         layoutId,
         layout,
-        alwaysMeasureLayout: !!drag,
+        alwaysMeasureLayout:
+            !!drag || (dragConstraints && isRefObject(dragConstraints)),
         visualElement,
         scheduleRender: () => visualElement.scheduleRender(),
         /**
