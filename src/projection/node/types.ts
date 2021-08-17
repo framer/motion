@@ -43,6 +43,7 @@ export interface IProjectionNode<I = unknown> {
     latestValues: ResolvedValues
     isLayoutDirty: boolean
     shouldResetTransform: boolean
+    prevTransformTemplateValue: string | undefined
     updateBlocked: boolean
     blockUpdate(): void
     unblockUpdate(): void

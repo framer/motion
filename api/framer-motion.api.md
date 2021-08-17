@@ -407,6 +407,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     potentialNodes: Map<number, IProjectionNode>;
     // (undocumented)
+    prevTransformTemplateValue: string | undefined;
+    // (undocumented)
     projectionDelta?: Delta;
     // (undocumented)
     promote(options?: {

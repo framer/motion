@@ -245,6 +245,12 @@ export function createProjectionNode<I>({
          */
         projectionTransform: string
 
+        /**
+         * If transformTemplate generates a different value before/after the
+         * update, we need to reset the transform.
+         */
+        prevTransformTemplateValue: string | undefined
+
         constructor(
             id: number | undefined,
             latestValues: ResolvedValues = {},
@@ -421,6 +427,13 @@ export function createProjectionNode<I>({
                 node.updateScroll()
             }
 
+            const transformTemplate = this.options.visualElement?.getProps()
+                .transformTemplate
+            this.prevTransformTemplateValue = transformTemplate?.(
+                this.latestValues,
+                ""
+            )
+
             this.updateSnapshot()
             shouldNotifyListeners && this.notifyListeners("willUpdate")
         }
@@ -531,16 +544,21 @@ export function createProjectionNode<I>({
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
 
+            const transformTemplate = this.options.visualElement?.getProps()
+                .transformTemplate
+            const transformTemplateValue = transformTemplate?.(
+                this.latestValues,
+                ""
+            )
+            const transformTemplateHasChanged =
+                transformTemplateValue !== this.prevTransformTemplateValue
             if (
                 isResetRequested &&
-                (hasProjection || hasTransform(this.latestValues))
+                (hasProjection ||
+                    hasTransform(this.latestValues) ||
+                    transformTemplateHasChanged)
             ) {
-                const transformTemplate = this.options.visualElement?.getProps()
-                    .transformTemplate
-                const value = transformTemplate
-                    ? transformTemplate(this.latestValues, "")
-                    : undefined
-                resetTransform(this.instance, value)
+                resetTransform(this.instance, transformTemplateValue)
                 this.shouldResetTransform = false
                 this.scheduleRender()
             }
@@ -652,6 +670,7 @@ export function createProjectionNode<I>({
             this.scroll = undefined
             this.layout = undefined
             this.snapshot = undefined
+            this.prevTransformTemplateValue = undefined
 
             this.isLayoutDirty = false
         }
@@ -1017,7 +1036,7 @@ export function createProjectionNode<I>({
 
                 styles.opacity = ""
                 styles.transform = transformTemplate
-                    ? transformTemplate(this.latestValues, "none")
+                    ? transformTemplate(this.latestValues, "")
                     : "none"
                 return styles
             }
