@@ -4,6 +4,7 @@ import { Box, Delta, Point } from "../geometry/types"
 import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/animate"
 import { FlatTree } from "../../render/utils/flat-tree"
+import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 
 // TODO: Find more appropriate names for each snapshot
 export interface Snapshot {
@@ -85,7 +86,11 @@ export interface IProjectionNode<I = unknown> {
 
     // Shared element
     isLead(): boolean
-    promote(options?: { needsReset?: boolean; transition?: Transition }): void
+    promote(options?: {
+        needsReset?: boolean
+        transition?: Transition
+        preserveFollowOpacity?: boolean
+    }): void
     relegate(): boolean
     resumeFrom?: IProjectionNode
     resumingFrom?: IProjectionNode
@@ -94,6 +99,8 @@ export interface IProjectionNode<I = unknown> {
     addEventListener(name: LayoutEvents, handler: VoidFunction): VoidFunction
     notifyListeners(name: LayoutEvents, ...args: any): void
     hasListeners(name: LayoutEvents): boolean
+
+    preserveOpacity?: boolean
 }
 
 export interface LayoutUpdateData {
@@ -128,6 +135,7 @@ export interface ProjectionNodeOptions {
     visualElement?: VisualElement
     crossfade?: boolean
     transition?: Transition
+    initialPromotionConfig?: InitialPromotionConfig
 }
 
 export type ProjectionEventName = "layoutUpdate" | "projectionUpdate"

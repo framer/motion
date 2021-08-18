@@ -1,9 +1,9 @@
 import { HTMLProjectionNode } from "../../projection/node/HTMLProjectionNode"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
-import { Transition } from "../../types"
 import { useEffect } from "react"
 import { isRefObject } from "../../utils/is-ref-object"
+import { InitialPromotionConfig } from "context/SwitchLayoutGroupContext"
 
 export function useProjection(
     projectionId: number | undefined,
@@ -15,7 +15,7 @@ export function useProjection(
         onProjectionUpdate,
     }: MotionProps,
     visualElement?: VisualElement,
-    initialTransition?: Transition
+    initialPromotionConfig?: InitialPromotionConfig
 ) {
     /**
      * Update latest options
@@ -56,6 +56,6 @@ export function useProjection(
          *
          */
         animationType: typeof layout === "string" ? layout : "both",
-        transition: initialTransition,
+        initialPromotionConfig,
     })
 }

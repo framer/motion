@@ -117,13 +117,13 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             )
 
             // TODO Allow lazy load of projection node
-            const { initialTransition } = useContext(SwitchLayoutGroupContext)
-            useProjection(
-                projectionId,
-                props,
-                context.visualElement,
-                initialTransition
+            const { transition, shouldPreserveFollowOpacity } = useContext(
+                SwitchLayoutGroupContext
             )
+            useProjection(projectionId, props, context.visualElement, {
+                transition,
+                shouldPreserveFollowOpacity,
+            })
         }
 
         /**

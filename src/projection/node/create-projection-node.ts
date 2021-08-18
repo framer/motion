@@ -251,6 +251,7 @@ export function createProjectionNode<I>({
          */
         prevTransformTemplateValue: string | undefined
 
+        preserveOpacity?: boolean
         constructor(
             id: number | undefined,
             latestValues: ResolvedValues = {},
@@ -861,6 +862,7 @@ export function createProjectionNode<I>({
                 onComplete: () => {
                     if (this.resumingFrom) {
                         this.resumingFrom.currentAnimation = undefined
+                        this.resumingFrom.preserveOpacity = undefined
                     }
                     this.resumingFrom = this.currentAnimation = this.animationValues = undefined
                     options.onComplete?.()
@@ -924,6 +926,13 @@ export function createProjectionNode<I>({
 
             const stack = this.sharedNodes.get(layoutId)!
             stack.add(node)
+
+            node.promote({
+                transition: node.options.initialPromotionConfig?.transition,
+                preserveFollowOpacity: node.options.initialPromotionConfig?.shouldPreserveFollowOpacity?.(
+                    node
+                ),
+            })
         }
 
         isLead(): boolean {
@@ -949,12 +958,15 @@ export function createProjectionNode<I>({
         promote({
             needsReset,
             transition,
+            preserveFollowOpacity,
         }: {
             needsReset?: boolean
             transition?: Transition
+            preserveFollowOpacity?: boolean
         } = {}) {
             const stack = this.getStack()
-            if (stack) stack.promote(this)
+
+            if (stack) stack.promote(this, preserveFollowOpacity)
 
             if (needsReset) this.needsReset = true
             if (transition) this.setOptions({ transition })
@@ -1079,6 +1091,8 @@ export function createProjectionNode<I>({
                         ? valuesToRender.opacity ??
                           this.latestValues.opacity ??
                           1
+                        : this.preserveOpacity
+                        ? this.latestValues.opacity
                         : valuesToRender.opacityExit
             } else {
                 /**

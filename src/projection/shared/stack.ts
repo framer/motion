@@ -8,7 +8,6 @@ export class NodeStack {
 
     add(node: IProjectionNode) {
         addUniqueItem(this.members, node)
-        this.promote(node)
         node.scheduleRender()
     }
 
@@ -49,7 +48,7 @@ export class NodeStack {
         }
     }
 
-    promote(node: IProjectionNode) {
+    promote(node: IProjectionNode, preserveFollowOpacity?: boolean) {
         const prevLead = this.lead
 
         if (node === prevLead) return
@@ -62,6 +61,10 @@ export class NodeStack {
             prevLead.instance && prevLead.scheduleRender()
             node.scheduleRender()
             node.resumeFrom = prevLead
+
+            if (preserveFollowOpacity) {
+                node.resumeFrom.preserveOpacity = true
+            }
 
             if (prevLead.snapshot) {
                 node.snapshot = prevLead.snapshot

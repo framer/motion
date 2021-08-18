@@ -407,6 +407,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     potentialNodes: Map<number, IProjectionNode>;
     // (undocumented)
+    preserveOpacity?: boolean;
+    // (undocumented)
     prevTransformTemplateValue: string | undefined;
     // (undocumented)
     projectionDelta?: Delta;
@@ -414,6 +416,7 @@ export interface IProjectionNode<I = unknown> {
     promote(options?: {
         needsReset?: boolean;
         transition?: Transition;
+        preserveFollowOpacity?: boolean;
     }): void;
     // (undocumented)
     registerPotentialNode(id: number, node: IProjectionNode): void;
@@ -787,12 +790,11 @@ export interface SVGMotionProps<T> extends SVGAttributesAsMotionValues<T>, Motio
 }
 
 // Warning: (ae-forgotten-export) The symbol "SwitchLayoutGroup" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "InitialPromotionConfig" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "SwitchLayoutGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
 // 
 // @internal (undocumented)
-export type SwitchLayoutGroupContext = SwitchLayoutGroup & {
-    initialTransition?: Transition;
-};
+export type SwitchLayoutGroupContext = SwitchLayoutGroup & InitialPromotionConfig;
 
 // @internal (undocumented)
 export const SwitchLayoutGroupContext: import("react").Context<SwitchLayoutGroupContext>;
