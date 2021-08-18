@@ -29,7 +29,7 @@ export const LayoutGroup: React.FunctionComponent<Props> = ({
             layoutGroupContext.id &&
             layoutGroupContext.id !== id
         ) {
-            id = layoutGroupContext.id + "-" + id
+            id = id ? layoutGroupContext.id + "-" + id : layoutGroupContext.id
         }
 
         context.current = {
