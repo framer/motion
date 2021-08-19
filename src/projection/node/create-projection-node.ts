@@ -1129,6 +1129,12 @@ export function createProjectionNode<I>({
         clearSnapshot() {
             this.resumeFrom = this.snapshot = undefined
         }
+
+        // Only run on root
+        resetTree() {
+            this.root.nodes!.forEach(clearMeasurements)
+            this.root.sharedNodes.clear()
+        }
     }
 }
 

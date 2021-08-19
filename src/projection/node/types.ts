@@ -77,6 +77,7 @@ export interface IProjectionNode<I = unknown> {
     calcProjection(): void
     getProjectionStyles(): ResolvedValues
     clearMeasurements(): void
+    resetTree(): void
 
     animationValues?: ResolvedValues
     currentAnimation?: AnimationPlaybackControls

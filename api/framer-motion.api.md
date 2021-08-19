@@ -429,6 +429,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     resetTransform(): void;
     // (undocumented)
+    resetTree(): void;
+    // (undocumented)
     resolveTargetDelta(): void;
     // (undocumented)
     resumeFrom?: IProjectionNode;

@@ -5,8 +5,7 @@ export function useResetProjection() {
     const reset = React.useCallback(() => {
         const root = rootProjectionNode.current
         if (!root) return
-        root.clearMeasurements()
-        root.sharedNodes.clear()
+        root.resetTree()
     }, [])
 
     return reset
