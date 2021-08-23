@@ -61,6 +61,7 @@ Animate.createNode = (
     node.setOptions({
         scheduleRender: scheduleRender,
         visualElement,
+        layout: true,
         ...options,
     })
 

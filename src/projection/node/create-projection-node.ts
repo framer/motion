@@ -418,6 +418,9 @@ export function createProjectionNode<I>({
 
             this.isLayoutDirty = true
 
+            const { layoutId, layout } = this.options
+            if (!layoutId && !layout) return
+
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 node.shouldResetTransform = true
@@ -696,7 +699,8 @@ export function createProjectionNode<I>({
         }
 
         calcProjection() {
-            if (!this.layout) return
+            const { layout, layoutId } = this.options
+            if (!this.layout || !(layout || layoutId)) return
 
             const lead = this.getLead()
             /**
@@ -965,7 +969,6 @@ export function createProjectionNode<I>({
             preserveFollowOpacity?: boolean
         } = {}) {
             const stack = this.getStack()
-
             if (stack) stack.promote(this, preserveFollowOpacity)
 
             if (needsReset) this.needsReset = true

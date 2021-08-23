@@ -45,7 +45,7 @@ export function useProjection(
         layoutId,
         layout,
         alwaysMeasureLayout:
-            !!drag || (dragConstraints && isRefObject(dragConstraints)),
+            Boolean(drag) || (dragConstraints && isRefObject(dragConstraints)),
         visualElement,
         scheduleRender: () => visualElement.scheduleRender(),
         /**
