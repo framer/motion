@@ -675,6 +675,8 @@ export function createProjectionNode<I>({
             this.layout = undefined
             this.snapshot = undefined
             this.prevTransformTemplateValue = undefined
+            this.targetDelta = undefined
+            this.target = undefined
 
             this.isLayoutDirty = false
         }
@@ -1135,6 +1137,9 @@ export function createProjectionNode<I>({
 
         // Only run on root
         resetTree() {
+            this.root.nodes!.forEach((node: IProjectionNode) =>
+                node.currentAnimation?.stop()
+            )
             this.root.nodes!.forEach(clearMeasurements)
             this.root.sharedNodes.clear()
         }
