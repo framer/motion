@@ -10,11 +10,16 @@ import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
 import { copyBoxInto } from "../geometry/copy"
 import { applyBoxDelta, applyTreeDeltas } from "../geometry/delta-apply"
-import { calcBoxDelta, calcLength } from "../geometry/delta-calc"
+import {
+    calcBoxDelta,
+    calcLength,
+    calcRelativeBox,
+    calcRelativePosition,
+} from "../geometry/delta-calc"
 import { removeBoxTransforms } from "../geometry/delta-remove"
 import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
-import { AxisDelta, Box, Delta, Point } from "../geometry/types"
+import { Axis, AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
 import { boxEquals, isDeltaZero } from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
@@ -148,6 +153,22 @@ export function createProjectionNode<I>({
          * from apply targetDelta to layout.
          */
         target?: Box
+
+        /**
+         * A mutable structure describing a visual bounding box relative to the element's
+         * projected parent. If defined, target will be derived from this rather than targetDelta.
+         * If not defined, we'll attempt to calculate on the first layout animation frame
+         * based on the targets calculated from targetDelta. This will transfer a layout animation
+         * from viewport-relative to parent-relative.
+         */
+        relativeTarget?: Box
+
+        relativeTargetOrigin?: Box
+
+        /**
+         * If true, attempt to resolve relativeTarget.
+         */
+        attemptToResolveRelativeTarget?: boolean
 
         /**
          * A mutable structure that represents the target as transformed by the element's
@@ -418,9 +439,6 @@ export function createProjectionNode<I>({
 
             this.isLayoutDirty = true
 
-            const { layoutId, layout } = this.options
-            if (!layoutId && !layout) return
-
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 node.shouldResetTransform = true
@@ -430,6 +448,9 @@ export function createProjectionNode<I>({
                  */
                 node.updateScroll()
             }
+
+            const { layoutId, layout } = this.options
+            if (!layoutId && !layout) return
 
             const transformTemplate = this.options.visualElement?.getProps()
                 .transformTemplate
@@ -691,13 +712,41 @@ export function createProjectionNode<I>({
                 this.targetWithTransforms = createBox()
             }
 
-            if (Boolean(this.resumingFrom)) {
-                // TODO: This is creating a new object every frame
-                this.target = this.applyTransform(this.layout)
+            if (
+                this.relativeTarget &&
+                this.relativeTargetOrigin &&
+                this.parent?.target
+            ) {
+                calcRelativeBox(
+                    this.target,
+                    this.relativeTarget,
+                    this.parent.target
+                )
             } else {
-                copyBoxInto(this.target, this.layout)
+                if (Boolean(this.resumingFrom)) {
+                    // TODO: This is creating a new object every frame
+                    this.target = this.applyTransform(this.layout)
+                } else {
+                    copyBoxInto(this.target, this.layout)
+                }
+                applyBoxDelta(this.target, this.targetDelta)
             }
-            applyBoxDelta(this.target, this.targetDelta)
+
+            if (this.attemptToResolveRelativeTarget) {
+                this.attemptToResolveRelativeTarget = false
+
+                // TODO: Find closest projection target rather than immediate parent
+                if (this.parent?.target) {
+                    this.relativeTarget = createBox()
+                    this.relativeTargetOrigin = createBox()
+                    calcRelativePosition(
+                        this.relativeTargetOrigin,
+                        this.target,
+                        this.parent.target
+                    )
+                    copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
+                }
+            }
         }
 
         calcProjection() {
@@ -819,6 +868,9 @@ export function createProjectionNode<I>({
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
+            this.relativeTarget = this.relativeTargetOrigin = undefined
+            this.attemptToResolveRelativeTarget = true
+            const relativeLayout = createBox()
 
             const isSharedLayoutAnimation = snapshot?.isShared
             const isOnlyMember = (this.getStack()?.members.length || 0) <= 1
@@ -831,8 +883,29 @@ export function createProjectionNode<I>({
 
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
+
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
+                this.setTargetDelta(targetDelta)
+
+                if (
+                    this.relativeTarget &&
+                    this.relativeTargetOrigin &&
+                    this.layout &&
+                    this.parent?.layout
+                ) {
+                    calcRelativePosition(
+                        relativeLayout,
+                        this.layout,
+                        this.parent.layout
+                    )
+                    mixBox(
+                        this.relativeTarget,
+                        this.relativeTargetOrigin,
+                        relativeLayout,
+                        progress
+                    )
+                }
 
                 if (isSharedLayoutAnimation) {
                     this.animationValues = mixedValues
@@ -847,7 +920,6 @@ export function createProjectionNode<I>({
                     )
                 }
 
-                this.setTargetDelta(targetDelta)
                 this.root.scheduleUpdateProjection()
                 this.scheduleRender()
             }
@@ -866,13 +938,8 @@ export function createProjectionNode<I>({
                     options.onUpdate?.(latest)
                 },
                 onComplete: () => {
-                    if (this.resumingFrom) {
-                        this.resumingFrom.currentAnimation = undefined
-                        this.resumingFrom.preserveOpacity = undefined
-                    }
-                    this.resumingFrom = this.currentAnimation = this.animationValues = undefined
                     options.onComplete?.()
-                    this.getStack()?.exitAnimationComplete()
+                    this.completeAnimation()
                 },
             })
 
@@ -882,11 +949,22 @@ export function createProjectionNode<I>({
             }
         }
 
+        completeAnimation() {
+            if (this.resumingFrom) {
+                this.resumingFrom.currentAnimation = undefined
+                this.resumingFrom.preserveOpacity = undefined
+            }
+            // this.relativeTargetOrigin = this.relativeTarget =
+            this.resumingFrom = this.currentAnimation = this.animationValues = undefined
+            this.getStack()?.exitAnimationComplete()
+        }
+
         finishAnimation() {
             if (!this.currentAnimation) return
 
-            this.currentAnimation.stop()
             this.mixTargetDelta(1)
+            this.currentAnimation.stop()
+            this.completeAnimation()
         }
 
         applyTransformsToTarget() {
@@ -1189,6 +1267,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         } else {
             calcBoxDelta(visualDelta, layout, snapshot.visible)
         }
+
         node.notifyListeners("didUpdate", {
             layout,
             snapshot,
@@ -1231,6 +1310,16 @@ export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {
     output.scale = mix(delta.scale, 1, p)
     output.origin = delta.origin
     output.originPoint = delta.originPoint
+}
+
+export function mixAxis(output: Axis, from: Axis, to: Axis, p: number) {
+    output.min = mix(from.min, to.min, p)
+    output.max = mix(from.max, to.max, p)
+}
+
+export function mixBox(output: Box, from: Box, to: Box, p: number) {
+    mixAxis(output.x, from.x, to.x, p)
+    mixAxis(output.y, from.y, to.y, p)
 }
 
 function hasOpacityCrossfade(node: IProjectionNode) {

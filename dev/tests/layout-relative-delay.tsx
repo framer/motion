@@ -3,7 +3,7 @@ import * as React from "react"
 
 export const App = () => {
     const [state, setState] = React.useState(true)
-
+    let frameCount = 0
     return (
         <motion.div
             id="parent"
@@ -17,7 +17,14 @@ export const App = () => {
                 height: 200,
                 background: "red",
             }}
-            transition={{ ease: () => 0.5 }}
+            transition={{
+                ease: (t: number) => {
+                    frameCount++
+                    // This is a bit funny but boxes are resolved relatively after
+                    // the first frame
+                    return frameCount > 1 ? 0.5 : t
+                },
+            }}
         >
             <motion.div
                 id="child"

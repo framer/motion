@@ -13,7 +13,7 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     expect(Math.round(bbox.height)).to.equal(expectedBbox.height)
 }
 
-describe.skip("Relative projection targets: Delay", () => {
+describe("Relative projection targets: Delay", () => {
     it("Child correctly follows parent", () => {
         cy.visit(`?test=layout-relative-delay`)
             .wait(50)

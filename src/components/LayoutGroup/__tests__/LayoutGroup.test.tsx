@@ -13,7 +13,6 @@ it("if it's the first LayoutGroup it sets the group id", () => {
             <Consumer />
         </LayoutGroup>
     )
-    console.log(LayoutGroup, Consumer)
 
     const { getByTestId } = render(tree)
 

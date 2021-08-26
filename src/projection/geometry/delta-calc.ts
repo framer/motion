@@ -36,3 +36,27 @@ export function calcBoxDelta(
     calcAxisDelta(delta.x, source.x, target.x, origin?.originX as number)
     calcAxisDelta(delta.y, source.y, target.y, origin?.originY as number)
 }
+
+export function calcRelativeAxis(target: Axis, relative: Axis, parent: Axis) {
+    target.min = parent.min + relative.min
+    target.max = target.min + calcLength(relative)
+}
+
+export function calcRelativeBox(target: Box, relative: Box, parent: Box) {
+    calcRelativeAxis(target.x, relative.x, parent.x)
+    calcRelativeAxis(target.y, relative.y, parent.y)
+}
+
+export function calcRelativeAxisPosition(
+    target: Axis,
+    layout: Axis,
+    parent: Axis
+) {
+    target.min = layout.min - parent.min
+    target.max = target.min + calcLength(layout)
+}
+
+export function calcRelativePosition(target: Box, layout: Box, parent: Box) {
+    calcRelativeAxisPosition(target.x, layout.x, parent.x)
+    calcRelativeAxisPosition(target.y, layout.y, parent.y)
+}

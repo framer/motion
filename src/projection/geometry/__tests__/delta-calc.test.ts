@@ -1,6 +1,11 @@
-import { isNear, calcAxisDelta } from "../delta-calc"
+import {
+    isNear,
+    calcAxisDelta,
+    calcRelativeBox,
+    calcRelativePosition,
+} from "../delta-calc"
 import { applyAxisDelta } from "../delta-apply"
-import { createDelta } from "../models"
+import { createBox, createDelta } from "../models"
 
 describe("isNear", () => {
     test("Correctly indicate when the provided value is within maxDistance of the provided target", () => {
@@ -54,5 +59,46 @@ describe("calcAxisDelta", () => {
             delta.x.originPoint
         )
         expect(source).toEqual(target)
+    })
+})
+
+describe("calcRelativeBox", () => {
+    const target = createBox()
+
+    calcRelativeBox(
+        target,
+        { x: { min: 100, max: 150 }, y: { min: -100, max: 0 } },
+        { x: { min: 500, max: 800 }, y: { min: 100, max: 200 } }
+    )
+
+    expect(target).toEqual({
+        x: { min: 600, max: 650 },
+        y: { min: 0, max: 100 },
+    })
+})
+
+describe("calcRelativePosition", () => {
+    const target = createBox()
+
+    calcRelativePosition(
+        target,
+        { x: { min: 600, max: 650 }, y: { min: 200, max: 300 } },
+        { x: { min: 500, max: 800 }, y: { min: 100, max: 200 } }
+    )
+
+    expect(target).toEqual({
+        x: { min: 100, max: 150 },
+        y: { min: 100, max: 200 },
+    })
+
+    calcRelativePosition(
+        target,
+        { x: { min: 600, max: 650 }, y: { min: 200, max: 300 } },
+        { x: { min: 600, max: 650 }, y: { min: 200, max: 300 } }
+    )
+
+    expect(target).toEqual({
+        x: { min: 0, max: 50 },
+        y: { min: 0, max: 100 },
     })
 })
