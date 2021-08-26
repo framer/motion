@@ -68,6 +68,7 @@ export interface IProjectionNode<I = unknown> {
     hide(): void
     show(): void
     scheduleRender(notifyAll?: boolean): void
+    getClosestProjectingParent(): IProjectionNode | undefined
 
     setTargetDelta(delta: Delta): void
     resetTransform(): void

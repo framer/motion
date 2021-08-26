@@ -164,6 +164,7 @@ export function createProjectionNode<I>({
         relativeTarget?: Box
 
         relativeTargetOrigin?: Box
+        relativeParent?: IProjectionNode
 
         /**
          * If true, attempt to resolve relativeTarget.
@@ -715,12 +716,12 @@ export function createProjectionNode<I>({
             if (
                 this.relativeTarget &&
                 this.relativeTargetOrigin &&
-                this.parent?.target
+                this.relativeParent?.target
             ) {
                 calcRelativeBox(
                     this.target,
                     this.relativeTarget,
-                    this.parent.target
+                    this.relativeParent.target
                 )
             } else {
                 if (Boolean(this.resumingFrom)) {
@@ -735,17 +736,28 @@ export function createProjectionNode<I>({
             if (this.attemptToResolveRelativeTarget) {
                 this.attemptToResolveRelativeTarget = false
 
+                this.relativeParent = this.getClosestProjectingParent()
+
                 // TODO: Find closest projection target rather than immediate parent
-                if (this.parent?.target) {
+                if (this.relativeParent && this.relativeParent.target) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.target,
-                        this.parent.target
+                        this.relativeParent.target
                     )
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
                 }
+            }
+        }
+
+        getClosestProjectingParent() {
+            if (!this.parent) return undefined
+            if (this.parent.target && this.parent.layout) {
+                return this.parent
+            } else {
+                return this.parent.getClosestProjectingParent()
             }
         }
 
@@ -892,12 +904,12 @@ export function createProjectionNode<I>({
                     this.relativeTarget &&
                     this.relativeTargetOrigin &&
                     this.layout &&
-                    this.parent?.layout
+                    this.relativeParent?.layout
                 ) {
                     calcRelativePosition(
                         relativeLayout,
                         this.layout,
-                        this.parent.layout
+                        this.relativeParent.layout
                     )
                     mixBox(
                         this.relativeTarget,
