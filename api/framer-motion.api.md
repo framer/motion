@@ -359,6 +359,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     finishAnimation(): void;
     // (undocumented)
+    getClosestProjectingParent(): IProjectionNode | undefined;
+    // (undocumented)
     getProjectionStyles(): ResolvedValues;
     // (undocumented)
     getStack(): NodeStack | undefined;
