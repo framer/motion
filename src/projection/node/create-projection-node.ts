@@ -962,7 +962,7 @@ export function createProjectionNode<I>({
         finishAnimation() {
             if (!this.currentAnimation) return
 
-            this.mixTargetDelta(1)
+            this.mixTargetDelta?.(1)
             this.currentAnimation.stop()
             this.completeAnimation()
         }

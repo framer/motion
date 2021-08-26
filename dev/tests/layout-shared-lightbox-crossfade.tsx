@@ -14,7 +14,7 @@ const type = params.get("type") || "crossfade"
 let transition: Transition = instant ? { type: false } : { duration: 0.01 }
 if (partialEase) {
     transition = {
-        duration: 0.5,
+        duration: 0.6,
         ease: () => 0.1,
     }
 }
