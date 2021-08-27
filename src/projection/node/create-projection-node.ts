@@ -757,7 +757,9 @@ export function createProjectionNode<I>({
         }
 
         getClosestProjectingParent() {
-            if (!this.parent) return undefined
+            if (!this.parent || hasTransform(this.parent.latestValues))
+                return undefined
+
             if (this.parent.target && this.parent.layout) {
                 return this.parent
             } else {
