@@ -160,6 +160,11 @@ export interface Delta {
     y: AxisDelta;
 }
 
+// Warning: (ae-internal-missing-underscore) The name "DeprecatedLayoutGroupContext" should be prefixed with an underscore because the declaration is marked as @internal
+// 
+// @internal @deprecated (undocumented)
+export const DeprecatedLayoutGroupContext: import("react").Context<string | null>;
+
 // @public (undocumented)
 export const domAnimation: FeatureBundle;
 

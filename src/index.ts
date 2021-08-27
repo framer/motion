@@ -73,6 +73,7 @@ export { useResetProjection } from "./projection/use-reset-projection"
 export { MotionConfigContext } from "./context/MotionConfigContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
+export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupContext"
 export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 
 /**

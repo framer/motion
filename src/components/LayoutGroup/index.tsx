@@ -4,6 +4,7 @@ import {
     LayoutGroupContext,
     LayoutGroupContextProps,
 } from "../../context/LayoutGroupContext"
+import { DeprecatedLayoutGroupContext } from "../../context/DeprecatedLayoutGroupContext"
 import { nodeGroup } from "../../projection"
 import { useForceUpdate } from "../../utils/use-force-update"
 
@@ -18,23 +19,25 @@ export const LayoutGroup: React.FunctionComponent<Props> = ({
     inheritId = true,
 }) => {
     const layoutGroupContext = useContext(LayoutGroupContext)
+    const deprecatedLayoutGroupContext = useContext(
+        DeprecatedLayoutGroupContext
+    )
     const [forceRender, key] = useForceUpdate()
     const context = useRef(
         null
     ) as MutableRefObject<LayoutGroupContextProps | null>
 
+    const upstreamId = layoutGroupContext.id ?? deprecatedLayoutGroupContext
     if (context.current === null) {
-        if (
-            inheritId &&
-            layoutGroupContext.id &&
-            layoutGroupContext.id !== id
-        ) {
-            id = id ? layoutGroupContext.id + "-" + id : layoutGroupContext.id
+        if (inheritId && upstreamId) {
+            id = id ? upstreamId + "-" + id : upstreamId
         }
 
         context.current = {
             id,
-            group: inheritId ? layoutGroupContext.group : nodeGroup(),
+            group: inheritId
+                ? layoutGroupContext?.group ?? nodeGroup()
+                : nodeGroup(),
         }
     }
 
