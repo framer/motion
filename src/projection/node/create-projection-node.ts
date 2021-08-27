@@ -546,7 +546,11 @@ export function createProjectionNode<I>({
             // TODO: Incorporate into a forwarded scroll offset
             this.updateScroll()
 
-            if (!this.options.alwaysMeasureLayout && !this.isLayoutDirty) return
+            if (
+                !(this.options.alwaysMeasureLayout && this.isLead()) &&
+                !this.isLayoutDirty
+            )
+                return
 
             const measured = this.measure()
             this.layout = this.removeElementScroll(measured)
