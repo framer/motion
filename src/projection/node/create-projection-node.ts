@@ -1069,7 +1069,10 @@ export function createProjectionNode<I>({
             const stack = this.getStack()
             if (stack) stack.promote(this, preserveFollowOpacity)
 
-            if (needsReset) this.needsReset = true
+            if (needsReset) {
+                this.projectionDelta = undefined
+                this.needsReset = true
+            }
             if (transition) this.setOptions({ transition })
         }
 
