@@ -60,16 +60,13 @@
 
             const parent = document.getElementById("parent")
             const child = document.getElementById("child")
+            const parentOrigin = parent.getBoundingClientRect()
 
             const parentProjection = createNode(
                 parent,
                 undefined,
                 {},
-                {
-                    duration: 1,
-                    delay: 2,
-                    // ease: () => 0.5,
-                }
+                { delay: 1000 }
             )
             const childProjection = createNode(child, parentProjection)
 
@@ -80,7 +77,18 @@
 
             parentProjection.root.didUpdate()
 
-            // matchViewportBox(parent, parentOrigin)
+            requestAnimationFrame(() => {
+                matchViewportBox(parent, parentOrigin)
+                matchViewportBox(child, {
+                    bottom: 127.50002670288086,
+                    height: 87.50003051757812,
+                    left: 140.0000762939453,
+                    right: 227.50013732910156,
+                    top: 39.999996185302734,
+                    width: 87.50006103515625,
+                    x: 140.0000762939453,
+                })
+            })
         </script>
     </body>
 </html>

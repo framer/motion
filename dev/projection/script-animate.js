@@ -89,4 +89,12 @@ Animate.createNode = (
     return node
 }
 
+Animate.relativeEase = () => {
+    let frame = 0
+    return () => {
+        frame++
+        return frame >= 2 ? 0.5 : 0
+    }
+}
+
 window.Animate = Animate

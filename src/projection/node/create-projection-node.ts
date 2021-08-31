@@ -706,17 +706,56 @@ export function createProjectionNode<I>({
 
             this.isLayoutDirty = false
         }
+
         /**
          * Frame calculations
          */
         resolveTargetDelta() {
-            if (!this.targetDelta || !this.layout) return
+            const { layout, layoutId } = this.options
 
+            /**
+             * If we have no layout, we can't perform projection, so early return
+             */
+            if (!this.layout || !(layout || layoutId)) return
+
+            /**
+             * If we don't have a targetDelta but do have a layout, we can attempt to resolve
+             * a relativeParent. This will allow a component to perform scale correction
+             * even if no animation has started.
+             */
+            if (!this.targetDelta) {
+                // TODO: This is a semi-repetition of further down this function, make DRY
+                this.relativeParent = this.getClosestProjectingParent()
+
+                if (this.relativeParent && this.relativeParent.layout) {
+                    this.relativeTarget = createBox()
+                    this.relativeTargetOrigin = createBox()
+                    calcRelativePosition(
+                        this.relativeTargetOrigin,
+                        this.layout,
+                        this.relativeParent.layout
+                    )
+                    copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
+                }
+            }
+
+            /**
+             * If we have no relative target or no target delta we can't perform projection
+             * so early return.
+             */
+            if (!this.relativeTarget && !this.targetDelta) return
+
+            /**
+             * Lazy-init target data structure
+             */
             if (!this.target) {
                 this.target = createBox()
                 this.targetWithTransforms = createBox()
             }
 
+            /**
+             * If we've got a relative box for this component, resolve it into a target relative to the parent.
+             */
             if (
                 this.relativeTarget &&
                 this.relativeTargetOrigin &&
@@ -727,7 +766,10 @@ export function createProjectionNode<I>({
                     this.relativeTarget,
                     this.relativeParent.target
                 )
-            } else {
+                /**
+                 * If we've only got a targetDelta, resolve it into a target
+                 */
+            } else if (this.targetDelta) {
                 if (Boolean(this.resumingFrom)) {
                     // TODO: This is creating a new object every frame
                     this.target = this.applyTransform(this.layout)
@@ -737,12 +779,14 @@ export function createProjectionNode<I>({
                 applyBoxDelta(this.target, this.targetDelta)
             }
 
+            /**
+             * If we've been told to attempt to resolve a relative target, do so.
+             */
             if (this.attemptToResolveRelativeTarget) {
                 this.attemptToResolveRelativeTarget = false
 
                 this.relativeParent = this.getClosestProjectingParent()
 
-                // TODO: Find closest projection target rather than immediate parent
                 if (this.relativeParent && this.relativeParent.target) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
@@ -901,7 +945,6 @@ export function createProjectionNode<I>({
 
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
-
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
                 this.setTargetDelta(targetDelta)
@@ -972,7 +1015,7 @@ export function createProjectionNode<I>({
                 this.resumingFrom.currentAnimation = undefined
                 this.resumingFrom.preserveOpacity = undefined
             }
-            // this.relativeTargetOrigin = this.relativeTarget =
+
             this.resumingFrom = this.currentAnimation = this.animationValues = undefined
             this.getStack()?.exitAnimationComplete()
         }

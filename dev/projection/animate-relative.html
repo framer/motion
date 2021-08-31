@@ -55,22 +55,23 @@
         <script src="./script-assert.js"></script>
         <script src="./script-animate.js"></script>
         <script>
-            const { createNode } = window.Animate
+            const { createNode, relativeEase } = window.Animate
             const { matchViewportBox } = window.Assert
 
             const parent = document.getElementById("parent")
             const child = document.getElementById("child")
 
-            const parentProjection = createNode(parent)
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { ease: relativeEase() }
+            )
             const childProjection = createNode(
                 child,
                 parentProjection,
                 {},
-                {
-                    duration: 1,
-                    delay: 2,
-                    // ease: () => 0.5,
-                }
+                { delay: 1000, ease: relativeEase() }
             )
 
             parentProjection.willUpdate()
@@ -80,7 +81,20 @@
 
             parentProjection.root.didUpdate()
 
-            // matchViewportBox(parent, parentOrigin)
+            requestAnimationFrame(() => {
+                matchViewportBox(parent, {
+                    bottom: 170,
+                    left: 100,
+                    right: 270,
+                    top: 50,
+                })
+                matchViewportBox(child, {
+                    bottom: 100,
+                    left: 100,
+                    right: 150,
+                    top: 50,
+                })
+            })
         </script>
     </body>
 </html>

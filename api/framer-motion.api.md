@@ -42,6 +42,9 @@ export interface AnimatePresenceProps {
     presenceAffectsLayout?: boolean;
 }
 
+// @public (undocumented)
+export const AnimateSharedLayout: React.FunctionComponent;
+
 // Warning: (ae-forgotten-export) The symbol "AnimationDefinition" needs to be exported by the entry point index.d.ts
 // Warning: (ae-forgotten-export) The symbol "AnimationOptions" needs to be exported by the entry point index.d.ts
 // Warning: (ae-internal-missing-underscore) The name "animateVisualElement" should be prefixed with an underscore because the declaration is marked as @internal
