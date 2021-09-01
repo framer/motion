@@ -343,7 +343,6 @@ export function createProjectionNode<I>({
 
             if (isLayoutDirty && (layout || layoutId)) {
                 this.isLayoutDirty = true
-                this.setTargetDelta(createDelta())
             }
 
             attachResizeListener?.(instance, () => {
@@ -732,7 +731,6 @@ export function createProjectionNode<I>({
             if (!this.targetDelta) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 this.relativeParent = this.getClosestProjectingParent()
-
                 if (this.relativeParent && this.relativeParent.layout) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()

@@ -73,7 +73,6 @@
             // Commit
             box.appendChild(a)
             box.classList.add("b")
-            const aOrigin = a.getBoundingClientRect()
 
             // First layout effect
             boxProjection.root.didUpdate()
@@ -82,7 +81,12 @@
             aProjection.mount(a)
 
             matchViewportBox(box, boxOrigin)
-            matchViewportBox(a, aOrigin)
+            matchViewportBox(a, {
+                bottom: 70,
+                left: 20,
+                right: 70,
+                top: 20,
+            })
         </script>
     </body>
 </html>
