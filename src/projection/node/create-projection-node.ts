@@ -40,6 +40,12 @@ import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
 
 /**
+ * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
+ * which has a noticeable difference in spring animations
+ */
+const animationTarget = 1000
+
+/**
  * This should only ever be modified on the client otherwise it'll
  * persist through server requests. If we need instanced states we
  * could lazy-init via root.
@@ -992,7 +998,7 @@ export function createProjectionNode<I>({
             globalProjectionState.hasAnimatedSinceResize = true
 
             this.currentAnimation?.stop()
-            this.currentAnimation = animate(0, 1000, {
+            this.currentAnimation = animate(0, animationTarget, {
                 ...(options as any),
                 onUpdate: (latest: number) => {
                     this.mixTargetDelta(latest)
@@ -1023,7 +1029,7 @@ export function createProjectionNode<I>({
         finishAnimation() {
             if (!this.currentAnimation) return
 
-            this.mixTargetDelta?.(1)
+            this.mixTargetDelta?.(animationTarget)
             this.currentAnimation.stop()
             this.completeAnimation()
         }
