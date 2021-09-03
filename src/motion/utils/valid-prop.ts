@@ -20,7 +20,6 @@ const validMotionProps = new Set<keyof MotionProps>([
     "layout",
     "layoutId",
     "onLayoutAnimationComplete",
-    "onProjectionUpdate",
     "onLayoutMeasure",
     "onBeforeLayoutMeasure",
     "onAnimationStart",

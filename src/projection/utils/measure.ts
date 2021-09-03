@@ -1,7 +1,19 @@
+import {
+    convertBoundingBoxToBox,
+    transformBoxPoints,
+} from "../geometry/conversion"
 import { translateAxis } from "../geometry/delta-apply"
 import { TransformPoint } from "../geometry/types"
-import { measureViewportBox } from "../node/HTMLProjectionNode"
 import { IProjectionNode } from "../node/types"
+
+export function measureViewportBox(
+    instance: HTMLElement,
+    transformPoint?: TransformPoint
+) {
+    return convertBoundingBoxToBox(
+        transformBoxPoints(instance.getBoundingClientRect(), transformPoint)
+    )
+}
 
 export function measurePageBox(
     element: HTMLElement,

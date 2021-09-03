@@ -369,7 +369,7 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     getClosestProjectingParent(): IProjectionNode | undefined;
     // (undocumented)
-    getProjectionStyles(): ResolvedValues;
+    getProjectionStyles(): ResolvedValues | undefined;
     // (undocumented)
     getStack(): NodeStack | undefined;
     // (undocumented)
@@ -735,6 +735,11 @@ export interface RelayoutInfo {
 // @public (undocumented)
 export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, projectionId: number | undefined, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
 
+// Warning: (ae-forgotten-export) The symbol "ReorderComponents" needs to be exported by the entry point index.d.ts
+// 
+// @public (undocumented)
+export const Reorder: ReorderComponents;
+
 // @public (undocumented)
 export interface Repeat {
     repeat?: number;
@@ -1099,7 +1104,6 @@ export interface VisualElementLifecycles {
     onLayoutAnimationComplete?(): void;
     // (undocumented)
     onLayoutMeasure?(box: Box, prevBox: Box): void;
-    onProjectionUpdate?(box: Box, delta: Delta): void;
     // @internal (undocumented)
     onUnmount?(): void;
     onUpdate?(latest: ResolvedValues): void;

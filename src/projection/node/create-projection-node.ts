@@ -38,6 +38,7 @@ import {
 import { transformAxes } from "../../render/html/utils/transform"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
+import { elementDragControls } from "../../gestures/drag/VisualElementDragControls"
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
@@ -263,8 +264,6 @@ export function createProjectionNode<I>({
          */
         latestValues: ResolvedValues
 
-        hasTargetBoxUpdated = false
-
         /**
          *
          */
@@ -376,6 +375,11 @@ export function createProjectionNode<I>({
                         hasLayoutChanged,
                         layout: newLayout,
                     }: LayoutUpdateData) => {
+                        const dragControls = elementDragControls.get(
+                            visualElement
+                        )
+                        if (dragControls?.isDragging) return
+
                         // TODO: Check here if an animation exists
                         const layoutTransition =
                             this.options.transition ??
@@ -580,12 +584,16 @@ export function createProjectionNode<I>({
             }
 
             const measured = this.measure()
-
+            const prevLayout = this.layout
             this.layout = this.removeElementScroll(measured)
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
             this.notifyListeners("measure")
+            this.options.visualElement?.notifyLayoutMeasure(
+                this.layout,
+                prevLayout
+            )
         }
 
         updateScroll() {
@@ -714,7 +722,6 @@ export function createProjectionNode<I>({
         setTargetDelta(delta: Delta) {
             this.targetDelta = delta
             this.root.scheduleUpdateProjection()
-            this.hasTargetBoxUpdated = true
         }
 
         setOptions(options: ProjectionNodeOptions) {
@@ -938,14 +945,6 @@ export function createProjectionNode<I>({
             ) {
                 this.scheduleRender()
             }
-
-            if (this.hasTargetBoxUpdated) {
-                this.options.onProjectionUpdate?.(
-                    this.target!,
-                    this.targetDelta!
-                )
-            }
-            this.hasTargetBoxUpdated = false
         }
 
         isVisible = true
@@ -1402,6 +1401,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             layout,
             snapshot,
             delta: visualDelta,
+            layoutDelta,
             hasLayoutChanged: !isDeltaZero(layoutDelta),
         })
     }

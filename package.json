@@ -37,7 +37,7 @@
         "test-server": "jest --config jest.config.ssr.json",
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://localhost:8000 'yarn run cypress run -s cypress/integration/projection.ts --config baseUrl=http://0.0.0.0:8000/'",
         "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --config ignoreTestFiles=projection.ts'",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/layout-resize.ts\"'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/drag-to-reorder.ts\"'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "projection-dev": "python -m SimpleHTTPServer",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
@@ -68,7 +68,6 @@
         "@types/styled-components": "^4.1.0",
         "@typescript-eslint/eslint-plugin": "^1.5.0",
         "@typescript-eslint/parser": "^1.5.0",
-        "array-move": "^2.1.0",
         "bundlesize": "^0.18.0",
         "cache-loader": "^1.2.5",
         "concurrently": "^5.2.0",
@@ -119,7 +118,7 @@
     },
     "husky": {
         "hooks": {
-            "pre-commit": "lint-staged && yarn build && yarn test-projection"
+            "pre-commit": "lint-staged"
         }
     },
     "lint-staged": {

@@ -2,7 +2,6 @@ import * as React from "react"
 import { useState, useRef, useEffect } from "react"
 import { motion } from "@framer"
 import { clamp, distance } from "popmotion"
-import move from "array-move"
 
 /**
  * This demonstrates drag working with automatic animations.
@@ -56,11 +55,6 @@ const Item = ({ color, setPosition, moveItem, i }) => {
                 drag="y"
                 onDragStart={() => setDragging(true)}
                 onDragEnd={() => setDragging(false)}
-                onProjectionUpdate={(_viewportBox, delta) => {
-                    console.log("hello")
-                    color === "#FF008C" && console.log(_viewportBox.y.min)
-                    isDragging && moveItem(i, delta.y.translate)
-                }}
             />
         </li>
     )
@@ -80,7 +74,7 @@ export const App = () => {
     // sibling.
     const moveItem = (i: number, dragOffset: number) => {
         const targetIndex = findIndex(i, dragOffset, positions)
-        if (targetIndex !== i) setColors(move(colors, i, targetIndex))
+        // if (targetIndex !== i) setColors(move(colors, i, targetIndex))
     }
 
     return (

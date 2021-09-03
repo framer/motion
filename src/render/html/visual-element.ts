@@ -10,7 +10,7 @@ import { isTransformProp } from "./utils/transform"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { renderHTML } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
-import { measureViewportBox } from "../../projection/node/HTMLProjectionNode"
+import { measureViewportBox } from "../../projection/utils/measure"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)

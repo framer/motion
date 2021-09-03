@@ -1,8 +1,8 @@
 import * as React from "react"
 import { useState, useRef, useEffect } from "react"
-import { motion } from "@framer"
+import { motion, useMotionValue, Reorder } from "@framer"
 import { clamp, distance } from "popmotion"
-import move from "array-move"
+// import move from "array-move"
 
 /**
  * This demonstrates drag working with automatic animations.
@@ -10,88 +10,124 @@ import move from "array-move"
  * stays stuck to the user's pointer.
  */
 
-const Item = ({ color, setPosition, moveItem, i }) => {
-    const [isDragging, setDragging] = useState(false)
-
-    // We'll use a `ref` to access the DOM element that the `motion.li` produces.
-    // This will allow us to measure its height and position, which will be useful to
-    // decide when a dragging element should switch places with its siblings.
-    const ref = useRef(null)
-
-    // Update the measured position of the item so we can calculate when we should rearrange.
-    useEffect(() => {
-        setPosition(i, {
-            height: ref.current.offsetHeight,
-            top: ref.current.offsetTop,
-        })
-    })
-
+const Item = ({ color }) => {
     return (
         <li
             style={{
                 padding: 0,
                 height: heights[color],
-                zIndex: isDragging ? 3 : 1,
+                // zIndex: isDragging ? 3 : 1,
             }}
         >
-            <motion.div
-                ref={ref}
-                initial={false}
-                id={`h${heights[color]}`}
-                layout
-                // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
+            <Reorder.Item
+                id={color}
                 style={{
                     background: color,
                     height: heights[color],
                     borderRadius: 5,
                 }}
-                whileHover={{
-                    boxShadow: "0px 3px 3px rgba(0,0,0,0.15)",
-                }}
-                whileTap={{
-                    boxShadow: "0px 5px 5px rgba(0,0,0,0.1)",
-                }}
-                drag="y"
-                onDragStart={() => setDragging(true)}
-                onDragEnd={() => setDragging(false)}
-                onProjectionUpdate={(_viewportBox, delta) => {
-                    // color === "#FF008C" && console.log(_viewportBox.y.min)
-                    isDragging && moveItem(i, delta.y.translate)
-                }}
             />
         </li>
     )
+
+    // const [isDragging, setDragging] = useState(false)
+    // const y = useMotionValue(0)
+
+    // // We'll use a `ref` to access the DOM element that the `motion.li` produces.
+    // // This will allow us to measure its height and position, which will be useful to
+    // // decide when a dragging element should switch places with its siblings.
+    // const ref = useRef(null)
+
+    // const isReordering = useRef(false)
+
+    // // Update the measured position of the item so we can calculate when we should rearrange.
+    // useEffect(() => {
+    //     setPosition(i, {
+    //         height: ref.current.offsetHeight,
+    //         top: ref.current.offsetTop,
+    //     })
+    //     isReordering.current = false
+    //     return y.onChange((latest) => {
+    //         if (isDragging && !isReordering.current) {
+    //             isReordering.current = moveItem(i, latest)
+    //         }
+    //     })
+    // })
+
+    // return (
+    //     <li
+    //         style={{
+    //             padding: 0,
+    //             height: heights[color],
+    //             zIndex: isDragging ? 3 : 1,
+    //         }}
+    //     >
+    //         <motion.div
+    //             ref={ref}
+    //             initial={false}
+    //             id={`h${heights[color]}`}
+    //             layout
+    //             // If we're dragging, we want to set the zIndex of that item to be on top of the other items.
+    //             style={{
+    //                 background: color,
+    //                 height: heights[color],
+    //                 borderRadius: 5,
+    //                 y,
+    //             }}
+    //             whileHover={{
+    //                 boxShadow: "0px 3px 3px rgba(0,0,0,0.15)",
+    //             }}
+    //             whileTap={{
+    //                 boxShadow: "0px 5px 5px rgba(0,0,0,0.1)",
+    //             }}
+    //             drag="y"
+    //             dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
+    //             dragElastic={1}
+    //             onDragStart={() => setDragging(true)}
+    //             onDragEnd={() => setDragging(false)}
+    //             onLayoutMeasure={(layout) => console.log(layout)}
+    //         />
+    //     </li>
+    // )
 }
 
 export const App = () => {
     const [colors, setColors] = useState(initialColors)
 
-    // We need to collect an array of height and position data for all of this component's
-    // `Item` children, so we can later us that in calculations to decide when a dragging
-    // `Item` should swap places with its siblings.
-    const positions = useRef<Position[]>([]).current
-    const setPosition = (i: number, offset: Position) => (positions[i] = offset)
+    // // We need to collect an array of height and position data for all of this component's
+    // // `Item` children, so we can later us that in calculations to decide when a dragging
+    // // `Item` should swap places with its siblings.
+    // const positions = useRef<Position[]>([]).current
+    // const setPosition = (i: number, offset: Position) => (positions[i] = offset)
 
-    // Find the ideal index for a dragging item based on its position in the array, and its
-    // current drag offset. If it's different to its current index, we swap this item with that
-    // sibling.
-    const moveItem = (i: number, dragOffset: number) => {
-        const targetIndex = findIndex(i, dragOffset, positions)
-        if (targetIndex !== i) setColors(move(colors, i, targetIndex))
-    }
-
+    // // Find the ideal index for a dragging item based on its position in the array, and its
+    // // current drag offset. If it's different to its current index, we swap this item with that
+    // // sibling.
+    // const moveItem = (i: number, dragOffset: number) => {
+    //     const targetIndex = findIndex(i, dragOffset, positions)
+    //     if (targetIndex !== i) {
+    //         console.log("target index changed")
+    //         setColors(move(colors, i, targetIndex))
+    //         return true
+    //     } else {
+    //         return false
+    //     }
+    // }
+    console.log("colors", colors)
     return (
-        <ul>
-            {colors.map((color, i) => (
-                <Item
-                    key={color}
-                    i={i}
-                    color={color}
-                    setPosition={setPosition}
-                    moveItem={moveItem}
-                />
-            ))}
-            <style>{styles}</style>
+        <ul style={{ padding: 100 }}>
+            <Reorder.Group
+                axis="y"
+                onReorder={(order) => {
+                    console.log("new order", order)
+                    setColors(order)
+                }}
+            >
+                {colors.map((color) => (
+                    <Item key={color} color={color} />
+                ))}
+                <style>{styles}</style>
+            </Reorder.Group>
         </ul>
     )
 }

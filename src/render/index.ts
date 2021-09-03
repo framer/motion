@@ -50,7 +50,7 @@ export const visualElement = <Instance, MutableState, Options>({
 
     /**
      * Manages the subscriptions for a visual element's lifecycle, for instance
-     * onRender and onProjectionUpdate.
+     * onRender
      */
     const lifecycles = createLifecycles()
 

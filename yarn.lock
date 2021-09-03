@@ -2801,13 +2801,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"array-move@npm:^2.1.0":
-  version: 2.2.2
-  resolution: "array-move@npm:2.2.2"
-  checksum: b809a07bfbe2dedc54d409ac964de6ff6c3da4635359238f9bf9cc28b4042479fd34e2ad66ac9472a2691def666e52cd3bfdf8307de770a1cbd1c7b3ff4d076d
-  languageName: node
-  linkType: hard
-
 "array-union@npm:^1.0.1":
   version: 1.0.2
   resolution: "array-union@npm:1.0.2"
@@ -5816,7 +5809,6 @@ __metadata:
     "@types/styled-components": ^4.1.0
     "@typescript-eslint/eslint-plugin": ^1.5.0
     "@typescript-eslint/parser": ^1.5.0
-    array-move: ^2.1.0
     bundlesize: ^0.18.0
     cache-loader: ^1.2.5
     concurrently: ^5.2.0
