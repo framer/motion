@@ -444,7 +444,6 @@ export function createProjectionNode<I>({
             if (this.isLayoutDirty) return
 
             this.isLayoutDirty = true
-
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 node.shouldResetTransform = true
@@ -536,6 +535,7 @@ export function createProjectionNode<I>({
         updateSnapshot() {
             if (this.snapshot) return
             const measured = this.measure()!
+
             const visible = this.removeTransform(measured)!
             const layout = this.removeElementScroll(visible)
 
@@ -554,10 +554,12 @@ export function createProjectionNode<I>({
             if (
                 !(this.options.alwaysMeasureLayout && this.isLead()) &&
                 !this.isLayoutDirty
-            )
+            ) {
                 return
+            }
 
             const measured = this.measure()
+
             this.layout = this.removeElementScroll(measured)
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
@@ -663,6 +665,7 @@ export function createProjectionNode<I>({
                 const node = this.path[i]
                 if (!node.instance) continue
                 if (!hasTransform(node.latestValues)) continue
+
                 hasScale(node.latestValues) && node.updateSnapshot()
 
                 const sourceBox = createBox()
@@ -731,6 +734,7 @@ export function createProjectionNode<I>({
             if (!this.targetDelta) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 this.relativeParent = this.getClosestProjectingParent()
+
                 if (this.relativeParent && this.relativeParent.layout) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
@@ -770,6 +774,7 @@ export function createProjectionNode<I>({
                     this.relativeTarget,
                     this.relativeParent.target
                 )
+
                 /**
                  * If we've only got a targetDelta, resolve it into a target
                  */
@@ -781,6 +786,11 @@ export function createProjectionNode<I>({
                     copyBoxInto(this.target, this.layout)
                 }
                 applyBoxDelta(this.target, this.targetDelta)
+            } else {
+                /**
+                 * If no target, use own layout as target
+                 */
+                copyBoxInto(this.target, this.layout)
             }
 
             /**
@@ -844,6 +854,7 @@ export function createProjectionNode<I>({
                     this.layoutCorrected,
                     this.layout
                 )
+
                 if (isScaleOnly) {
                     lead.target = createBox()
                     lead.targetWithTransforms = createBox()
