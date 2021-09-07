@@ -1,13 +1,4 @@
-import * as React from "react"
-import { MotionStyle } from "../../motion/types"
 import { Axis, Box } from "../../projection/geometry/types"
-import { MotionValue } from "../../value"
-
-export interface ReorderComponents<T> {
-    Group: React.FunctionComponent<RenderGroupProps<T>>
-    Item: React.FunctionComponent<RenderItemProps<T>>
-    Trigger: React.FunctionComponent<RenderTriggerProps>
-}
 
 export interface ReorderContextProps<T> {
     axis: "x" | "y"

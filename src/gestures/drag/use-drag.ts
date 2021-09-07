@@ -19,9 +19,9 @@ export function useDrag(props: FeatureProps) {
     // subscribe this component to it on mount.
     useEffect(
         () => groupDragControls && groupDragControls.subscribe(dragControls),
-        [dragControls]
+        [dragControls, groupDragControls]
     )
 
     // Apply the event listeners to the element
-    useEffect(() => dragControls.addListeners(), [])
+    useEffect(() => dragControls.addListeners(), [dragControls])
 }

@@ -7,6 +7,7 @@ const inactiveShadow = "0px 0px 0px rgba(0,0,0,0.8)"
 const Item = ({ item }) => {
     const y = useMotionValue(0)
     const boxShadow = useMotionValue(inactiveShadow)
+    // const dragControls = useDragControls()
 
     useEffect(() => {
         let isActive = false
@@ -25,13 +26,21 @@ const Item = ({ item }) => {
             }
         })
     }, [y, boxShadow])
-    // box shadow
-    // automatic zindex
 
     return (
-        <Reorder.Item as="li" y={y} id={item} style={{ boxShadow }}>
+        <Reorder.Item
+            value={item}
+            id={item}
+            drag
+            // dragListener={false}
+            // dragControls={dragControls}
+            style={{ boxShadow, y }}
+            transition={{ duration: 0.1 }}
+        >
             <span>{item}</span>
-            <ReorderIcon />
+            <ReorderIcon
+            // dragControls={dragControls}
+            />
         </Reorder.Item>
     )
 }
@@ -40,7 +49,7 @@ export const App = () => {
     const [items, setItems] = useState(initialItems)
 
     return (
-        <Reorder.Group as="ul" axis="y" onReorder={setItems}>
+        <Reorder.Group onReorder={setItems}>
             {items.map((item) => (
                 <Item key={item} item={item} />
             ))}
@@ -55,13 +64,16 @@ export interface Position {
     height: number
 }
 
-function ReorderIcon() {
+function ReorderIcon({ dragControls }) {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 39 39"
             width="39"
             height="39"
+            // onPointerDown={(e) => {
+            //     dragControls.start(e)
+            // }}
         >
             <path
                 d="M 5 0 C 7.761 0 10 2.239 10 5 C 10 7.761 7.761 10 5 10 C 2.239 10 0 7.761 0 5 C 0 2.239 2.239 0 5 0 Z"
@@ -141,7 +153,6 @@ ul {
 li {
   border-radius: 10px;
   margin-bottom: 10px;
-  cursor: pointer;
   width: 100%;
   padding: 20px;
   position: relative;
@@ -155,6 +166,7 @@ li {
 li svg {
     width: 18px;
     height: 18px;
+    cursor: grab;
 }
 
 .background {

@@ -1,9 +1,10 @@
 import { Group } from "./Group"
 import { Item } from "./Item"
-import { Trigger } from "./Trigger"
 
-export const Render = {
+/**
+ * TODO: Tests
+ */
+export const Reorder = {
     Group,
     Item,
-    Trigger,
 }

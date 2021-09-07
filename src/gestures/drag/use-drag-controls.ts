@@ -54,6 +54,7 @@ export class DragControls {
      */
     subscribe(controls: VisualElementDragControls): () => void {
         this.componentControls.add(controls)
+
         return () => this.componentControls.delete(controls)
     }
 
