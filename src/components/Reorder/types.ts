@@ -1,29 +1,31 @@
 import * as React from "react"
 import { MotionStyle } from "../../motion/types"
 import { Axis, Box } from "../../projection/geometry/types"
+import { MotionValue } from "../../value"
 
-export interface ReorderComponents {
-    Group: React.FunctionComponent<RenderGroupProps>
-    Item: React.FunctionComponent<RenderItemProps>
+export interface ReorderComponents<T> {
+    Group: React.FunctionComponent<RenderGroupProps<T>>
+    Item: React.FunctionComponent<RenderItemProps<T>>
+    Trigger: React.FunctionComponent<RenderTriggerProps>
 }
 
-export interface ReorderContextProps {
+export interface ReorderContextProps<T> {
     axis: "x" | "y"
-    registerItem: (id: string, layout: Box) => void
-    updateOrder: (id: string, offset: number, velocity: number) => void
+    registerItem: (id: T, layout: Box) => void
+    updateOrder: (id: T, offset: number, velocity: number) => void
 }
 
-export interface RenderGroupProps {
+export interface RenderGroupProps<T> {
+    as?: string
     axis: "x" | "y"
-    onReorder: (order: string[]) => void
+    onReorder: (order: T[]) => void
 }
 
-export interface RenderItemProps {
-    id: string
-    style?: MotionStyle
+export interface RenderTriggerProps {
+    as?: string
 }
 
-export interface ItemData {
-    id: string
+export interface ItemData<T> {
+    value: T
     layout: Axis
 }

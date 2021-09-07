@@ -11,6 +11,8 @@ function runTests(render: (components: any) => string) {
                 initial={{ x: 100 }}
                 whileTap={{ opacity: 0 }}
                 drag
+                layout
+                layoutId="a"
                 style={{ opacity: 1 }}
             />
         )

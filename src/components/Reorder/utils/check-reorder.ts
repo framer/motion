@@ -2,15 +2,15 @@ import { mix } from "popmotion"
 import { moveItem } from "../../utils/array"
 import { ItemData } from "./types"
 
-export function checkReorder(
-    order: ItemData[],
-    id: string,
+export function checkReorder<T>(
+    order: ItemData<T>[],
+    value: T,
     offset: number,
     velocity: number
-): ItemData[] {
+): ItemData<T>[] {
     if (!velocity) return order
 
-    const index = order.findIndex((item) => item.id === id)
+    const index = order.findIndex((item) => item.value === value)
 
     if (index === -1) return order
 
@@ -27,7 +27,6 @@ export function checkReorder(
         (nextOffset === 1 && item.layout.max + offset > nextItemCenter) ||
         (nextOffset === -1 && item.layout.min + offset < nextItemCenter)
     ) {
-        console.log(order, id, offset, velocity, nextOffset)
         return moveItem(order, index, index + nextOffset)
     }
 
