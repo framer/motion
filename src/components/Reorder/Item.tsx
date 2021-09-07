@@ -1,7 +1,6 @@
 import { invariant } from "hey-listen"
 import * as React from "react"
 import {
-    PropsWithChildren,
     ReactHTML,
     FunctionComponent,
     useContext,
@@ -32,7 +31,7 @@ export function Item<V>({
     value,
     as = "li",
     ...props
-}: Props<V> & HTMLMotionProps<any> & PropsWithChildren<{}>) {
+}: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         HTMLMotionProps<any>
     >

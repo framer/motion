@@ -735,10 +735,11 @@ export interface RelayoutInfo {
 // @public (undocumented)
 export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, projectionId: number | undefined, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
 
-// Warning: (ae-forgotten-export) The symbol "ReorderComponents" needs to be exported by the entry point index.d.ts
-// 
-// @public (undocumented)
-export const Reorder: ReorderComponents;
+// @public
+export const Reorder: {
+    Group: typeof Group;
+    Item: typeof Item;
+};
 
 // @public (undocumented)
 export interface Repeat {
@@ -1109,6 +1110,11 @@ export interface VisualElementLifecycles {
     onUpdate?(latest: ResolvedValues): void;
 }
 
+
+// Warnings were encountered during analysis:
+// 
+// types/components/Reorder/index.d.ts:7:5 - (ae-forgotten-export) The symbol "Group" needs to be exported by the entry point index.d.ts
+// types/components/Reorder/index.d.ts:8:5 - (ae-forgotten-export) The symbol "Item" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

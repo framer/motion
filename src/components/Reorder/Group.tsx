@@ -1,11 +1,5 @@
 import * as React from "react"
-import {
-    FunctionComponent,
-    PropsWithChildren,
-    ReactHTML,
-    useEffect,
-    useRef,
-} from "react"
+import { FunctionComponent, ReactHTML, useEffect, useRef } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"
@@ -25,7 +19,7 @@ export function Group<V>({
     axis = "y",
     onReorder,
     ...props
-}: Props<V> & HTMLMotionProps<any> & PropsWithChildren<{}>) {
+}: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         HTMLMotionProps<any>
     >
