@@ -363,20 +363,6 @@ export function createProjectionNode<I>({
                 this.root.registerSharedNode(layoutId, this)
             }
 
-            if (
-                this !== this.root &&
-                this.options.shouldMeasureScroll === undefined &&
-                this.instance instanceof Element
-            ) {
-                const computedStyle = getComputedStyle(this.instance)
-                if (
-                    computedStyle.overflowX === "scroll" ||
-                    computedStyle.overflowY === "scroll"
-                ) {
-                    this.setOptions({ shouldMeasureScroll: true })
-                }
-            }
-
             // Only register the handler if it requires layout animation
             if (
                 this.options.animate !== false &&

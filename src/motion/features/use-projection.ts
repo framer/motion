@@ -13,6 +13,7 @@ export function useProjection(
         drag,
         dragConstraints,
         onProjectionUpdate,
+        shouldMeasureScroll,
     }: MotionProps,
     visualElement?: VisualElement,
     initialPromotionConfig?: InitialPromotionConfig
@@ -57,5 +58,6 @@ export function useProjection(
          */
         animationType: typeof layout === "string" ? layout : "both",
         initialPromotionConfig,
+        shouldMeasureScroll,
     })
 }
