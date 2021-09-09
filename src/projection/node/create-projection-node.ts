@@ -173,6 +173,13 @@ export function createProjectionNode<I>({
         relativeParent?: IProjectionNode
 
         /**
+         * We use this to detect when its safe to shut down part of a projection tree.
+         * We have to keep projecting children for scale correction and relative projection
+         * until all their parents stop performing layout animations.
+         */
+        isTreeAnimating = false
+
+        /**
          * If true, attempt to resolve relativeTarget.
          */
         attemptToResolveRelativeTarget?: boolean
@@ -827,6 +834,18 @@ export function createProjectionNode<I>({
 
         calcProjection() {
             const { layout, layoutId } = this.options
+
+            /**
+             * If this section of the tree isn't animating we can
+             * delete our target sources for the following frame.
+             */
+            this.isTreeAnimating = Boolean(
+                this.parent?.isTreeAnimating || this.currentAnimation
+            )
+            if (!this.isTreeAnimating) {
+                this.targetDelta = this.relativeTarget = undefined
+            }
+
             if (!this.layout || !(layout || layoutId)) return
 
             const lead = this.getLead()

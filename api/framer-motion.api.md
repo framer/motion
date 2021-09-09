@@ -387,6 +387,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     isPresent?: boolean;
     // (undocumented)
+    isTreeAnimating?: boolean;
+    // (undocumented)
     isUpdating: boolean;
     // (undocumented)
     isVisible: boolean;

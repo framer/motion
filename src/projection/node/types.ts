@@ -82,6 +82,7 @@ export interface IProjectionNode<I = unknown> {
 
     animationValues?: ResolvedValues
     currentAnimation?: AnimationPlaybackControls
+    isTreeAnimating?: boolean
     setAnimationOrigin(delta: Delta): void
     startAnimation(transition: Transition): void
     finishAnimation(): void
