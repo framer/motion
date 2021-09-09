@@ -7,10 +7,13 @@ import {
     useEffect,
     useRef,
 } from "react"
-import { Box, motion, useMotionValue, useTransform } from "../.."
 import { ReorderContext } from "../../context/ReorderContext"
+import { Box } from "../../projection/geometry/types"
+import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
+import { useMotionValue } from "../../value/use-motion-value"
+import { useTransform } from "../../value/use-transform"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
 interface Props<V> {
