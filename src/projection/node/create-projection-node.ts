@@ -363,6 +363,20 @@ export function createProjectionNode<I>({
                 this.root.registerSharedNode(layoutId, this)
             }
 
+            if (
+                this !== this.root &&
+                this.options.shouldMeasureScroll === undefined &&
+                this.instance instanceof Element
+            ) {
+                const computedStyle = getComputedStyle(this.instance)
+                if (
+                    computedStyle.overflowX === "scroll" ||
+                    computedStyle.overflowY === "scroll"
+                ) {
+                    this.setOptions({ shouldMeasureScroll: true })
+                }
+            }
+
             // Only register the handler if it requires layout animation
             if (
                 this.options.animate !== false &&
@@ -393,7 +407,7 @@ export function createProjectionNode<I>({
                             !boxEquals(this.targetLayout, newLayout)
 
                         if (
-                            this.resumeFrom ||
+                            this.resumeFrom?.instance ||
                             (hasLayoutChanged &&
                                 (targetChanged || !this.currentAnimation))
                         ) {
@@ -563,6 +577,20 @@ export function createProjectionNode<I>({
                 !this.isLayoutDirty
             ) {
                 return
+            }
+
+            /**
+             * When a node is mounted, it simply resumes from the prevLead's
+             * snapshot instead of taking a new one, but the ancestors scroll
+             * might have updated while the prevLead is unmounted. We need to
+             * update the scroll again to make sure the layout we measure is
+             * up to date.
+             */
+            if (this.resumeFrom && !this.resumeFrom.instance) {
+                for (let i = 0; i < this.path.length; i++) {
+                    const node = this.path[i]
+                    node.updateScroll()
+                }
             }
 
             const measured = this.measure()
