@@ -554,6 +554,7 @@ export interface LayoutProps {
     layoutDependency?: any;
     layoutId?: string;
     onLayoutAnimationComplete?(): void;
+    shouldMeasureScroll?: boolean;
 }
 
 // @public (undocumented)
