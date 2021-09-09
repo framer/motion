@@ -114,7 +114,9 @@ function runTests(render: (components: any) => string) {
             </Reorder.Group>
         )
 
-        expect(div).toBe(`<ul><li></li></ul>`)
+        expect(div).toBe(
+            `<ul><li style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+        )
     })
 
     test("Reorder: Renders provided element", () => {
@@ -124,7 +126,9 @@ function runTests(render: (components: any) => string) {
             </Reorder.Group>
         )
 
-        expect(div).toBe(`<div><div></div></div>`)
+        expect(div).toBe(
+            `<div><div style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
+        )
     })
 }
 
