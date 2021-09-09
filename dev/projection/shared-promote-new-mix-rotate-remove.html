@@ -72,10 +72,12 @@
 
             newBoxProjection.root.didUpdate()
 
-            matchVisibility(newBox, "visible")
-            matchOpacity(newBox, 1)
-            matchRotate(newBox, 20)
-            matchBorderRadius(newBox, "6.66667% / 5%")
+            sync.postRender(() => {
+                matchVisibility(newBox, "visible")
+                matchOpacity(newBox, 1)
+                matchRotate(newBox, 20)
+                matchBorderRadius(newBox, "6.66667% / 5%")
+            })
         </script>
     </body>
 </html>

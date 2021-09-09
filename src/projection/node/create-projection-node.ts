@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync } from "framesync"
+import sync, { cancelSync, flushSync, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -393,7 +393,7 @@ export function createProjectionNode<I>({
                             !boxEquals(this.targetLayout, newLayout)
 
                         if (
-                            this.resumeFrom ||
+                            this.resumeFrom?.instance ||
                             (hasLayoutChanged &&
                                 (targetChanged || !this.currentAnimation))
                         ) {
@@ -563,6 +563,20 @@ export function createProjectionNode<I>({
                 !this.isLayoutDirty
             ) {
                 return
+            }
+
+            /**
+             * When a node is mounted, it simply resumes from the prevLead's
+             * snapshot instead of taking a new one, but the ancestors scroll
+             * might have updated while the prevLead is unmounted. We need to
+             * update the scroll again to make sure the layout we measure is
+             * up to date.
+             */
+            if (this.resumeFrom && !this.resumeFrom.instance) {
+                for (let i = 0; i < this.path.length; i++) {
+                    const node = this.path[i]
+                    node.updateScroll()
+                }
             }
 
             const measured = this.measure()
@@ -840,7 +854,9 @@ export function createProjectionNode<I>({
              * delete our target sources for the following frame.
              */
             this.isTreeAnimating = Boolean(
-                this.parent?.isTreeAnimating || this.currentAnimation
+                this.parent?.isTreeAnimating ||
+                    this.currentAnimation ||
+                    this.pendingAnimation
             )
             if (!this.isTreeAnimating) {
                 this.targetDelta = this.relativeTarget = undefined
@@ -955,6 +971,7 @@ export function createProjectionNode<I>({
          */
         animationProgress = 0
         animationValues?: ResolvedValues
+        pendingAnimation?: Process
         currentAnimation?: AnimationPlaybackControls
         mixTargetDelta: (progress: number) => void
 
@@ -1023,25 +1040,40 @@ export function createProjectionNode<I>({
         }
 
         startAnimation(options: AnimationOptions<number>) {
-            globalProjectionState.hasAnimatedSinceResize = true
-
             this.currentAnimation?.stop()
-            this.currentAnimation = animate(0, animationTarget, {
-                ...(options as any),
-                onUpdate: (latest: number) => {
-                    this.mixTargetDelta(latest)
-                    options.onUpdate?.(latest)
-                },
-                onComplete: () => {
-                    options.onComplete?.()
-                    this.completeAnimation()
-                },
-            })
-
             if (this.resumingFrom) {
                 this.resumingFrom.currentAnimation?.stop()
-                this.resumingFrom.currentAnimation = this.currentAnimation
             }
+            if (this.pendingAnimation) {
+                cancelSync.update(this.pendingAnimation)
+                this.pendingAnimation = undefined
+            }
+            /**
+             * Start the animation in the next frame to have a frame with progress 0,
+             * where the target is the same as when the animation started, so we can
+             * calculate the relative positions correctly for instant transitions.
+             */
+            this.pendingAnimation = sync.update(() => {
+                globalProjectionState.hasAnimatedSinceResize = true
+
+                this.currentAnimation = animate(0, animationTarget, {
+                    ...(options as any),
+                    onUpdate: (latest: number) => {
+                        this.mixTargetDelta(latest)
+                        options.onUpdate?.(latest)
+                    },
+                    onComplete: () => {
+                        options.onComplete?.()
+                        this.completeAnimation()
+                    },
+                })
+
+                if (this.resumingFrom) {
+                    this.resumingFrom.currentAnimation = this.currentAnimation
+                }
+
+                this.pendingAnimation = undefined
+            })
         }
 
         completeAnimation() {

@@ -150,23 +150,25 @@
 
             childProjection.root.didUpdate()
 
-            // only update child layout
-            childProjection.willUpdate()
+            sync.postRender(() => {
+                // only update child layout
+                childProjection.willUpdate()
 
-            child.classList.add("moved")
+                child.classList.add("moved")
 
-            childProjection.root.didUpdate()
+                childProjection.root.didUpdate()
 
-            const midChildBox = {
-                left: 0,
-                right: 50,
-                top: 75,
-                bottom: 125,
-            }
+                sync.postRender(() => {
+                    const midChildBox = {
+                        left: 0,
+                        right: 50,
+                        top: 75,
+                        bottom: 125,
+                    }
 
-            setTimeout(() => {
-                matchViewportBox(child, midChildBox)
-            }, 50)
+                    matchViewportBox(child, midChildBox)
+                })
+            })
         </script>
     </body>
 </html>

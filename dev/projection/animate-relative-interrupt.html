@@ -60,18 +60,20 @@
 
             const parent = document.getElementById("parent")
             const child = document.getElementById("child")
+            const parentOrigin = parent.getBoundingClientRect()
+            const childOrigin = child.getBoundingClientRect()
 
             const parentProjection = createNode(
                 parent,
                 undefined,
                 {},
-                { ease: relativeEase() }
+                { duration: 1000, ease: relativeEase() }
             )
             const childProjection = createNode(
                 child,
                 parentProjection,
                 {},
-                { delay: 1000, ease: relativeEase() }
+                { duration: 200, ease: relativeEase() }
             )
 
             parentProjection.willUpdate()
@@ -81,19 +83,48 @@
 
             parentProjection.root.didUpdate()
 
+            matchViewportBox(parent, parentOrigin)
+            matchViewportBox(child, childOrigin)
+
             sync.postRender(() => {
                 sync.postRender(() => {
                     matchViewportBox(parent, {
+                        top: 50,
                         bottom: 170,
                         left: 100,
                         right: 270,
-                        top: 50,
                     })
                     matchViewportBox(child, {
-                        bottom: 100,
-                        left: 100,
-                        right: 150,
-                        top: 50,
+                        top: 60,
+                        bottom: 135,
+                        left: 160,
+                        right: 235,
+                    })
+
+                    parentProjection.willUpdate()
+                    childProjection.willUpdate()
+
+                    parent.classList.remove("b")
+
+                    parentProjection.root.didUpdate()
+
+                    sync.postRender(() => {
+                        sync.postRender(() => {
+                            matchViewportBox(parent, {
+                                top: 25,
+                                bottom: 135,
+                                height: 110,
+                                left: 50,
+                                right: 185,
+                            })
+                            matchViewportBox(child, {
+                                top: 30,
+                                bottom: 92.5,
+                                height: 62.5,
+                                left: 80,
+                                right: 142.5,
+                            })
+                        })
                     })
                 })
             })

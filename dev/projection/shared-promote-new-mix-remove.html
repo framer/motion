@@ -71,16 +71,18 @@
 
             newBoxProjection.root.didUpdate()
 
-            const midBox = { bottom: 250, left: 50, right: 200, top: 50 }
-            matchViewportBox(newBox, midBox)
-            matchVisibility(newBox, "visible")
+            sync.postRender(() => {
+                const midBox = { bottom: 250, left: 50, right: 200, top: 50 }
+                matchViewportBox(newBox, midBox)
+                matchVisibility(newBox, "visible")
 
-            /**
-             * Should animate from the old opacity to the new one
-             * IMPORTANT: Don't make the previous opacity something non-default
-             */
-            matchOpacity(newBox, 0.9)
-            matchBorderRadius(newBox, "6.66667% / 5%")
+                /**
+                 * Should animate from the old opacity to the new one
+                 * IMPORTANT: Don't make the previous opacity something non-default
+                 */
+                matchOpacity(newBox, 0.9)
+                matchBorderRadius(newBox, "6.66667% / 5%")
+            })
         </script>
     </body>
 </html>

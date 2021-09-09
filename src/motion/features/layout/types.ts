@@ -63,4 +63,11 @@ export interface LayoutProps {
      * @public
      */
     layoutDependency?: any
+
+    /**
+     * Wether a projection node should measure its scroll when it or its descendants update their layout.
+     *
+     * @public
+     */
+    shouldMeasureScroll?: boolean
 }

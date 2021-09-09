@@ -85,23 +85,25 @@
 
             boxProjection.root.didUpdate()
 
-            requestAnimationFrame(() => {
-                matchViewportBox(box, {
-                    top: 50,
-                    right: 270,
-                    bottom: 170,
-                    left: 100,
+            sync.postRender(() => {
+                sync.postRender(() => {
+                    matchViewportBox(box, {
+                        top: 50,
+                        right: 270,
+                        bottom: 170,
+                        left: 100,
+                    })
+                    matchViewportBox(child, {
+                        top: 60,
+                        right: 160,
+                        bottom: 110,
+                        left: 110,
+                    })
+                    matchOpacity(box, 1)
+                    matchOpacity(child, 1)
+                    matchBorderRadius(box, 0)
+                    matchBorderRadius(child, "40%")
                 })
-                matchViewportBox(child, {
-                    top: 60,
-                    right: 160,
-                    bottom: 110,
-                    left: 110,
-                })
-                matchOpacity(box, 1)
-                matchOpacity(child, 1)
-                matchBorderRadius(box, 0)
-                matchBorderRadius(child, "40%")
             })
         </script>
     </body>
