@@ -369,7 +369,7 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     getClosestProjectingParent(): IProjectionNode | undefined;
     // (undocumented)
-    getProjectionStyles(): ResolvedValues;
+    getProjectionStyles(): ResolvedValues | undefined;
     // (undocumented)
     getStack(): NodeStack | undefined;
     // (undocumented)
@@ -736,6 +736,12 @@ export interface RelayoutInfo {
 export type RenderComponent<Instance, RenderState> = (Component: string | React.ComponentType, props: MotionProps, projectionId: number | undefined, ref: React.Ref<Instance>, visualState: VisualState<Instance, RenderState>, isStatic: boolean) => any;
 
 // @public (undocumented)
+export const Reorder: {
+    Group: typeof Group;
+    Item: typeof Item;
+};
+
+// @public (undocumented)
 export interface Repeat {
     repeat?: number;
     repeatDelay?: number;
@@ -1099,12 +1105,16 @@ export interface VisualElementLifecycles {
     onLayoutAnimationComplete?(): void;
     // (undocumented)
     onLayoutMeasure?(box: Box, prevBox: Box): void;
-    onProjectionUpdate?(box: Box, delta: Delta): void;
     // @internal (undocumented)
     onUnmount?(): void;
     onUpdate?(latest: ResolvedValues): void;
 }
 
+
+// Warnings were encountered during analysis:
+// 
+// types/components/Reorder/index.d.ts:4:5 - (ae-forgotten-export) The symbol "Group" needs to be exported by the entry point index.d.ts
+// types/components/Reorder/index.d.ts:5:5 - (ae-forgotten-export) The symbol "Item" needs to be exported by the entry point index.d.ts
 
 // (No @packageDocumentation comment for this package)
 

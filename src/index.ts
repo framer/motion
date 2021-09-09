@@ -8,6 +8,7 @@ export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
 export { LayoutGroup } from "./components/LayoutGroup"
+export { Reorder } from "./components/Reorder"
 
 /**
  * Features

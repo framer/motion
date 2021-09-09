@@ -18,7 +18,7 @@ import { MotionProps } from "../../motion/types"
 import { Point } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { eachAxis } from "../../projection/utils/each-axis"
-import { measurePageBox } from "../../projection/utils/measure-page-box"
+import { measurePageBox } from "../../projection/utils/measure"
 import { getViewportPointFromEvent } from "../../events/event-info"
 import { Transition } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
@@ -26,6 +26,7 @@ import {
     convertBoundingBoxToBox,
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
+import { LayoutUpdateData } from "../../projection/node/types"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -54,7 +55,7 @@ export class VisualElementDragControls {
     // TODO: Look into moving this into pansession?
     private openGlobalLock: Lock | null = null
 
-    private isDragging = false
+    isDragging = false
     private currentDirection: DragDirection | null = null
 
     private originPoint: Point = { x: 0, y: 0 }
@@ -431,6 +432,25 @@ export class VisualElementDragControls {
         // TODO: Scale point on resize
 
         // TODO: If we're resuming from a previous drag gesture, project into the previous box
+
+        projection!.addEventListener("didUpdate", (({
+            layoutDelta,
+            hasLayoutChanged,
+        }: LayoutUpdateData) => {
+            if (this.isDragging && hasLayoutChanged) {
+                eachAxis((axis) => {
+                    const motionValue = this.getAxisMotionValue(axis)
+                    if (!motionValue) return
+
+                    this.originPoint[axis] += layoutDelta[axis].translate
+                    motionValue.set(
+                        motionValue.get() + layoutDelta[axis].translate
+                    )
+                })
+
+                this.visualElement.syncRender()
+            }
+        }) as any)
 
         return () => {
             stopPointerListener()

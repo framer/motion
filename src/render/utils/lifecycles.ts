@@ -18,7 +18,7 @@ const names = [
     "Unmount",
 ]
 
-export type LayoutMeasureListener = (layout: Axis, prevLayout: Axis) => void
+export type LayoutMeasureListener = (layout: Box, prevLayout?: Box) => void
 export type BeforeLayoutMeasureListener = (layout: Axis) => void
 export type LayoutUpdateListener = (
     layout: Axis,
@@ -39,13 +39,6 @@ export type OnViewportBoxUpdate = (box: Axis, delta: Delta) => void
  * TODO: Make more of these lifecycle events available as props
  */
 export interface VisualElementLifecycles {
-    /**
-     * A callback that fires whenever the viewport-relative bounding box updates.
-     *
-     * @public
-     */
-    onProjectionUpdate?(box: Box, delta: Delta): void
-
     onBeforeLayoutMeasure?(box: Box): void
 
     onLayoutMeasure?(box: Box, prevBox: Box): void
@@ -159,8 +152,6 @@ export interface LifecycleManager {
     notifyBeforeLayoutMeasure: BeforeLayoutMeasureListener
     onLayoutUpdate: (callback: LayoutUpdateListener) => () => void
     notifyLayoutUpdate: LayoutUpdateListener
-    onProjectionUpdate: (callback: OnViewportBoxUpdate) => () => void
-    notifyViewportBoxUpdate: OnViewportBoxUpdate
     onUpdate: (callback: UpdateListener) => () => void
     notifyUpdate: UpdateListener
     onAnimationStart: (callback: AnimationStartListener) => () => void

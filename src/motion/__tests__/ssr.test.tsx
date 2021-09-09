@@ -3,6 +3,7 @@ import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
+import { Reorder } from "../../components/Reorder"
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
@@ -11,6 +12,8 @@ function runTests(render: (components: any) => string) {
                 initial={{ x: 100 }}
                 whileTap={{ opacity: 0 }}
                 drag
+                layout
+                layoutId="a"
                 style={{ opacity: 1 }}
             />
         )
@@ -101,6 +104,30 @@ function runTests(render: (components: any) => string) {
 
         expect(div).toBe(
             `<div style="transform:translateX(100px) translateZ(0)"></div>`
+        )
+    })
+
+    test("Reorder: Renders correct element", () => {
+        const div = render(
+            <Reorder.Group onReorder={() => {}}>
+                <Reorder.Item value="a" />
+            </Reorder.Group>
+        )
+
+        expect(div).toBe(
+            `<ul><li style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+        )
+    })
+
+    test("Reorder: Renders provided element", () => {
+        const div = render(
+            <Reorder.Group as="div" onReorder={() => {}}>
+                <Reorder.Item as="div" value="a" />
+            </Reorder.Group>
+        )
+
+        expect(div).toBe(
+            `<div><div style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
         )
     })
 }
