@@ -854,7 +854,9 @@ export function createProjectionNode<I>({
              * delete our target sources for the following frame.
              */
             this.isTreeAnimating = Boolean(
-                this.parent?.isTreeAnimating || this.currentAnimation
+                this.parent?.isTreeAnimating ||
+                    this.currentAnimation ||
+                    this.pendingAnimation
             )
             if (!this.isTreeAnimating) {
                 this.targetDelta = this.relativeTarget = undefined
@@ -1044,6 +1046,7 @@ export function createProjectionNode<I>({
             }
             if (this.pendingAnimation) {
                 cancelSync.update(this.pendingAnimation)
+                this.pendingAnimation = undefined
             }
             /**
              * Start the animation in the next frame to have a frame with progress 0,
@@ -1068,6 +1071,8 @@ export function createProjectionNode<I>({
                 if (this.resumingFrom) {
                     this.resumingFrom.currentAnimation = this.currentAnimation
                 }
+
+                this.pendingAnimation = undefined
             })
         }
 
