@@ -70,17 +70,19 @@
 
             newBoxProjection.root.didUpdate()
 
-            const bbox = newBox.getBoundingClientRect()
-            matchViewportBox(box, bbox)
-            matchVisibility(box, "visible")
-            matchVisibility(newBox, "visible")
-            matchOpacity(box, 0.8)
-            matchOpacity(newBox, 1)
-            matchRotate(box, 20)
-            matchRotate(newBox, 20)
+            sync.postRender(() => {
+                const bbox = newBox.getBoundingClientRect()
+                matchViewportBox(box, bbox)
+                matchVisibility(box, "visible")
+                matchVisibility(newBox, "visible")
+                matchOpacity(box, 0.8)
+                matchOpacity(newBox, 1)
+                matchRotate(box, 20)
+                matchRotate(newBox, 20)
 
-            matchBorderRadius(box, "6.66667% / 5%")
-            matchBorderRadius(newBox, "6.66667% / 5%")
+                matchBorderRadius(box, "6.66667% / 5%")
+                matchBorderRadius(newBox, "6.66667% / 5%")
+            })
         </script>
     </body>
 </html>

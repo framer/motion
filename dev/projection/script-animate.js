@@ -93,6 +93,10 @@ Animate.relativeEase = () => {
     let frame = 0
     return () => {
         frame++
+        // one frame for the first synchronous call of mixTargetDelta at the very start,
+        // don't lock it to 0.5 otherwise the relative boxes can't be measure correctly.
+        // Then the first animation frame when we resolve relative delta,
+        // and then finally the first relative frame.
         return frame >= 2 ? 0.5 : 0
     }
 }

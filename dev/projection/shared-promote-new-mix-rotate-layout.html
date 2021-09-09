@@ -112,17 +112,19 @@
             })
             childAProjection.root.didUpdate()
 
-            const parentBbox = parentB.getBoundingClientRect()
-            matchViewportBox(parentA, parentBbox)
+            sync.postRender(() => {
+                const parentBbox = parentB.getBoundingClientRect()
+                matchViewportBox(parentA, parentBbox)
 
-            const childBbox = childB.getBoundingClientRect()
-            // TODO: Nested transforms not expected to match currently
-            // matchViewportBox(childA, childBbox)
+                const childBbox = childB.getBoundingClientRect()
+                // TODO: Nested transforms not expected to match currently
+                // matchViewportBox(childA, childBbox)
 
-            matchRotate(parentA, 22.5)
-            matchRotate(childA, 22.5)
-            matchRotate(parentB, 22.5)
-            matchRotate(childB, 22.5)
+                matchRotate(parentA, 22.5)
+                matchRotate(childA, 22.5)
+                matchRotate(parentB, 22.5)
+                matchRotate(childB, 22.5)
+            })
         </script>
     </body>
 </html>

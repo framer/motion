@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync } from "framesync"
+import sync, { cancelSync, flushSync, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -955,6 +955,7 @@ export function createProjectionNode<I>({
          */
         animationProgress = 0
         animationValues?: ResolvedValues
+        pendingAnimation?: Process
         currentAnimation?: AnimationPlaybackControls
         mixTargetDelta: (progress: number) => void
 
@@ -1023,25 +1024,37 @@ export function createProjectionNode<I>({
         }
 
         startAnimation(options: AnimationOptions<number>) {
-            globalProjectionState.hasAnimatedSinceResize = true
-
             this.currentAnimation?.stop()
-            this.currentAnimation = animate(0, animationTarget, {
-                ...(options as any),
-                onUpdate: (latest: number) => {
-                    this.mixTargetDelta(latest)
-                    options.onUpdate?.(latest)
-                },
-                onComplete: () => {
-                    options.onComplete?.()
-                    this.completeAnimation()
-                },
-            })
-
             if (this.resumingFrom) {
                 this.resumingFrom.currentAnimation?.stop()
-                this.resumingFrom.currentAnimation = this.currentAnimation
             }
+            if (this.pendingAnimation) {
+                cancelSync.update(this.pendingAnimation)
+            }
+            /**
+             * Start the animation in the next frame to have a frame with progress 0,
+             * where the target is the same as when the animation started, so we can
+             * calculate the relative positions correctly for instant transitions.
+             */
+            this.pendingAnimation = sync.update(() => {
+                globalProjectionState.hasAnimatedSinceResize = true
+
+                this.currentAnimation = animate(0, animationTarget, {
+                    ...(options as any),
+                    onUpdate: (latest: number) => {
+                        this.mixTargetDelta(latest)
+                        options.onUpdate?.(latest)
+                    },
+                    onComplete: () => {
+                        options.onComplete?.()
+                        this.completeAnimation()
+                    },
+                })
+
+                if (this.resumingFrom) {
+                    this.resumingFrom.currentAnimation = this.currentAnimation
+                }
+            })
         }
 
         completeAnimation() {

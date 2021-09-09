@@ -77,16 +77,18 @@
 
             parentProjection.root.didUpdate()
 
-            requestAnimationFrame(() => {
-                matchViewportBox(parent, parentOrigin)
-                matchViewportBox(child, {
-                    bottom: 127.50002670288086,
-                    height: 87.50003051757812,
-                    left: 140.0000762939453,
-                    right: 227.50013732910156,
-                    top: 39.999996185302734,
-                    width: 87.50006103515625,
-                    x: 140.0000762939453,
+            sync.postRender(() => {
+                sync.postRender(() => {
+                    matchViewportBox(parent, parentOrigin)
+                    matchViewportBox(child, {
+                        bottom: 85,
+                        height: 75,
+                        left: 60,
+                        right: 135,
+                        top: 10,
+                        width: 75,
+                        x: 60,
+                    })
                 })
             })
         </script>

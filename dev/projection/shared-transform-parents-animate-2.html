@@ -84,12 +84,18 @@
 
                 aProjection.root.didUpdate()
 
-                matchViewportBox(a, b.getBoundingClientRect())
-                matchViewportBox(a, {
-                    bottom: 349.9999313354492,
-                    left: 55.00004959106445,
-                    right: 304.999942779541,
-                    top: 100.00005340576172,
+                sync.postRender(() => {
+                    matchViewportBox(a, b.getBoundingClientRect())
+                    matchViewportBox(a, {
+                        bottom: 350,
+                        height: 250,
+                        left: 55,
+                        right: 305,
+                        top: 100,
+                        width: 250,
+                        x: 55,
+                        y: 100,
+                    })
                 })
             })
         </script>

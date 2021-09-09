@@ -98,34 +98,38 @@
             newBoxProjection.root.didUpdate()
 
             let midBox = { bottom: 100, left: 50, right: 125, top: 50 }
-            matchViewportBox(child, midBox)
-            matchViewportBox(newChild, midBox)
-            matchVisibility(child, "visible")
-            matchVisibility(newChild, "visible")
-            matchOpacity(box, 1)
-            matchOpacity(newBox, 1)
-            matchOpacity(child, 1)
-            matchOpacity(newChild, 1)
+            sync.postRender(() => {
+                matchViewportBox(child, midBox)
+                matchViewportBox(newChild, midBox)
+                matchVisibility(child, "visible")
+                matchVisibility(newChild, "visible")
+                matchOpacity(box, 1)
+                matchOpacity(newBox, 1)
+                matchOpacity(child, 1)
+                matchOpacity(newChild, 1)
 
-            boxProjection.willUpdate()
-            childProjection.willUpdate()
-            newBoxProjection.willUpdate()
-            newChildProjection.willUpdate()
+                boxProjection.willUpdate()
+                childProjection.willUpdate()
+                newBoxProjection.willUpdate()
+                newChildProjection.willUpdate()
 
-            boxProjection.promote()
-            childProjection.promote()
+                boxProjection.promote()
+                childProjection.promote()
 
-            newBoxProjection.root.didUpdate()
+                newBoxProjection.root.didUpdate()
 
-            midBox = { bottom: 75, left: 25, right: 87.5, top: 25 }
-            matchViewportBox(child, midBox)
-            matchViewportBox(newChild, midBox)
-            matchVisibility(child, "visible")
-            matchVisibility(newChild, "visible")
-            matchOpacity(box, 1)
-            matchOpacity(newBox, 1)
-            matchOpacity(child, 1)
-            matchOpacity(newChild, 1)
+                midBox = { bottom: 75, left: 25, right: 87.5, top: 25 }
+                sync.postRender(() => {
+                    matchViewportBox(child, midBox)
+                    matchViewportBox(newChild, midBox)
+                    matchVisibility(child, "visible")
+                    matchVisibility(newChild, "visible")
+                    matchOpacity(box, 1)
+                    matchOpacity(newBox, 1)
+                    matchOpacity(child, 1)
+                    matchOpacity(newChild, 1)
+                })
+            })
         </script>
     </body>
 </html>

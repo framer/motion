@@ -90,9 +90,11 @@
 
                 newChildProjection.root.didUpdate()
 
-                matchViewportBox(child, newChild.getBoundingClientRect())
-                matchOpacity(child, 1)
-                matchOpacity(newChild, 1)
+                sync.postRender(() => {
+                    matchViewportBox(child, newChild.getBoundingClientRect())
+                    matchOpacity(child, 1)
+                    matchOpacity(newChild, 1)
+                })
             })
         </script>
     </body>
