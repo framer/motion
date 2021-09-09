@@ -14,7 +14,7 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
 }
 
 describe("Drag to reorder", () => {
-    it("Works correctly with other layout animations", () => {
+    it("Y axis", () => {
         cy.visit("?test=drag-to-reorder")
             .wait(50)
             .get("#Tomato")
@@ -58,6 +58,55 @@ describe("Drag to reorder", () => {
                     height: 68,
                     left: 350,
                     top: 174,
+                    width: 340,
+                })
+            })
+    })
+
+    it("X axis", () => {
+        cy.visit("?test=drag-to-reorder&axis=x")
+            .wait(50)
+            .get("#Tomato")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 291,
+                    width: 340,
+                })
+            })
+            .get("#Cucumber")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 690,
+                    top: 291,
+                    width: 340,
+                })
+            })
+            .get("#Tomato")
+            .trigger("pointerdown", 360, 175, { force: true })
+            .wait(50)
+            .trigger("pointermove", 365, 175, { force: true })
+            .wait(20)
+            .trigger("pointermove", 425, 175, { force: true })
+            .wait(20)
+            .trigger("pointermove", 475, 175, { force: true })
+            .wait(50)
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 420,
+                    top: 291,
+                    width: 340,
+                })
+            })
+            .get("#Cucumber")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 291,
                     width: 340,
                 })
             })

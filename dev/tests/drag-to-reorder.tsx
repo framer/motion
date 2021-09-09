@@ -4,14 +4,16 @@ import { Reorder, useMotionValue, animate } from "@framer"
 
 const inactiveShadow = "0px 0px 0px rgba(0,0,0,0.8)"
 
-const Item = ({ item }) => {
+const Item = ({ item, axis }) => {
+    const x = useMotionValue(0)
     const y = useMotionValue(0)
+    const axisValue = axis === "y" ? y : x
     const boxShadow = useMotionValue(inactiveShadow)
     // const dragControls = useDragControls()
 
     useEffect(() => {
         let isActive = false
-        y.onChange((latestY) => {
+        axisValue.onChange((latestY) => {
             const wasActive = isActive
             if (latestY !== 0) {
                 isActive = true
@@ -47,11 +49,17 @@ const Item = ({ item }) => {
 
 export const App = () => {
     const [items, setItems] = useState(initialItems)
+    const params = new URLSearchParams(window.location.search)
+    const axis = params.get("axis") || "y"
 
     return (
-        <Reorder.Group onReorder={setItems}>
+        <Reorder.Group
+            axis={axis}
+            onReorder={setItems}
+            style={axis === "y" ? verticalList : horizontalList}
+        >
             {items.map((item) => (
-                <Item key={item} item={item} />
+                <Item axis={axis} key={item} item={item} />
             ))}
             <style>{styles}</style>
         </Reorder.Group>
@@ -64,7 +72,7 @@ export interface Position {
     height: number
 }
 
-function ReorderIcon({ dragControls }) {
+function ReorderIcon() {
     return (
         <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -115,6 +123,12 @@ function ReorderIcon({ dragControls }) {
     )
 }
 
+const verticalList = {}
+
+const horizontalList = {
+    display: "flex",
+}
+
 const styles = `body {
   width: 100vw;
   height: 100vh;
@@ -161,6 +175,7 @@ li {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-shrink: 0;
 }
 
 li svg {
