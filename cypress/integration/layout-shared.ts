@@ -825,3 +825,22 @@ describe("Shared layout: nested crossfade transition", () => {
             })
     })
 })
+
+describe("Shared layout: component unmounts in a LayoutGroup", () => {
+    it("Should trigger sibling animation when unmount", () => {
+        cy.visit("?test=layout-group-unmount")
+            .wait(50)
+            .get("#a")
+            .trigger("click")
+            .wait(50)
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 90,
+                    left: 20,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
+})
