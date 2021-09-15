@@ -39,11 +39,11 @@ describe("Drag to reorder", () => {
             .trigger("pointerdown", 360, 175, { force: true })
             .wait(50)
             .trigger("pointermove", 360, 180, { force: true })
-            .wait(20)
-            .trigger("pointermove", 360, 200, { force: true })
-            .wait(20)
-            .trigger("pointermove", 360, 220, { force: true })
             .wait(50)
+            .trigger("pointermove", 360, 200, { force: true })
+            .wait(50)
+            .trigger("pointermove", 360, 220, { force: true })
+            .wait(100)
             .should(([$item]: any) => {
                 expectBbox($item, {
                     height: 68,
@@ -88,11 +88,11 @@ describe("Drag to reorder", () => {
             .trigger("pointerdown", 360, 175, { force: true })
             .wait(50)
             .trigger("pointermove", 365, 175, { force: true })
-            .wait(20)
-            .trigger("pointermove", 425, 175, { force: true })
-            .wait(20)
-            .trigger("pointermove", 475, 175, { force: true })
             .wait(50)
+            .trigger("pointermove", 425, 175, { force: true })
+            .wait(50)
+            .trigger("pointermove", 475, 175, { force: true })
+            .wait(100)
             .should(([$item]: any) => {
                 expectBbox($item, {
                     height: 68,
