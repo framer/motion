@@ -127,10 +127,21 @@ class MeasureLayoutWithContext extends React.Component<
 
 export function MeasureLayout(props: FeatureProps) {
     const [isPresent, safeToRemove] = usePresence()
+    const layoutGroup = useContext(LayoutGroupContext)
+    // Trigger a didUpdate onUnmount for siblings in the same layout group
+    React.useEffect(() => {
+        return () => {
+            const { visualElement } = props
+            const { projection } = visualElement
+            if (layoutGroup.group && projection?.isLayoutDirty) {
+                projection.root?.didUpdate()
+            }
+        }
+    }, [])
     return (
         <MeasureLayoutWithContext
             {...props}
-            layoutGroup={useContext(LayoutGroupContext)}
+            layoutGroup={layoutGroup}
             switchLayoutGroup={useContext(SwitchLayoutGroupContext)}
             isPresent={isPresent}
             safeToRemove={safeToRemove}
