@@ -453,6 +453,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     scheduleRender(notifyAll?: boolean): void;
     // (undocumented)
+    scheduleUpdateFailedCheck(): void;
+    // (undocumented)
     scheduleUpdateProjection(): void;
     // (undocumented)
     scroll?: Point;

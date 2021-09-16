@@ -425,7 +425,6 @@ export function createProjectionNode<I>({
         unmount() {
             this.options.layoutId && this.willUpdate()
             this.root.nodes!.remove(this)
-
             this.getStack()?.remove(this)
             this.parent?.children.delete(this)
             ;(this.instance as any) = undefined
@@ -489,7 +488,7 @@ export function createProjectionNode<I>({
                 // but should still clean up the measurements so that the next
                 // snapshot could be taken correctly.
                 if (updateWasBlocked) {
-                    this.nodes!.forEach(clearSnapshot)
+                    this.clearAllSnapshots()
                     this.nodes!.forEach(clearMeasurements)
                 }
                 return
@@ -523,7 +522,7 @@ export function createProjectionNode<I>({
              */
             // Notify listeners that the layout is updated
             this.nodes!.forEach(notifyLayoutUpdate)
-            this.nodes!.forEach(clearSnapshot)
+            this.clearAllSnapshots()
 
             // Flush any scheduled updates
             flushSync.update()
@@ -531,8 +530,24 @@ export function createProjectionNode<I>({
             flushSync.render()
         }
 
+        clearAllSnapshots() {
+            this.nodes!.forEach(clearSnapshot)
+            this.sharedNodes.forEach(removeLeadSnapshots)
+        }
+
         scheduleUpdateProjection() {
             sync.preRender(this.updateProjection, false, true)
+        }
+
+        scheduleUpdateFailedCheck() {
+            sync.postRender(this.checkUpdateFailed)
+        }
+
+        checkUpdateFailed = () => {
+            if (this.isUpdating) {
+                this.isUpdating = false
+                this.clearAllSnapshots()
+            }
         }
 
         updateProjection = () => {
@@ -739,7 +754,6 @@ export function createProjectionNode<I>({
             this.prevTransformTemplateValue = undefined
             this.targetDelta = undefined
             this.target = undefined
-
             this.isLayoutDirty = false
         }
 
@@ -1433,6 +1447,10 @@ function calcProjection(node: IProjectionNode) {
 
 function resetRotation(node: IProjectionNode) {
     node.resetRotation()
+}
+
+function removeLeadSnapshots(stack: NodeStack) {
+    stack.removeLeadSnapshot()
 }
 
 export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {

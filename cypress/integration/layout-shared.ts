@@ -844,3 +844,61 @@ describe("Shared layout: component unmounts in a LayoutGroup", () => {
             })
     })
 })
+
+describe("Shared layout: A -> undefined -> B transition", () => {
+    it("After removing an element with a layoutId, the next element with that ID should not animate from the last element", () => {
+        cy.visit("?test=layout-shared-clear-snapshots")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 0,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("button")
+            .click()
+            .wait(50)
+            .click()
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
+
+    it("As previous, but with rendering layout projecting sibling that is not removed", () => {
+        cy.visit("?test=layout-shared-clear-snapshots&sibling=true")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 0,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("button")
+            .click()
+            .wait(50)
+            .click()
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
+})
