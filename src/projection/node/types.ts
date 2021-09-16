@@ -59,6 +59,7 @@ export interface IProjectionNode<I = unknown> {
     clearSnapshot(): void
     updateScroll(): void
     scheduleUpdateProjection(): void
+    scheduleCheckUpdateFailed(): void
     potentialNodes: Map<number, IProjectionNode>
     sharedNodes: Map<string, NodeStack>
     registerPotentialNode(id: number, node: IProjectionNode): void
