@@ -2,6 +2,8 @@ import { motion, useCycle } from "@framer"
 import * as React from "react"
 
 export const App = () => {
+    const params = new URLSearchParams(window.location.search)
+    const sibling = params.get("sibling") || false
     const [state, cycle] = useCycle(0, 1, 2)
 
     return (
@@ -19,6 +21,12 @@ export const App = () => {
                         duration: 0.15,
                         // ease: state === 2 ? () => 0.5 : undefined,
                     }}
+                />
+            ) : null}
+            {sibling ? (
+                <motion.div
+                    layout
+                    style={{ ...box, backgroundColor: "blue", top: 200 }}
                 />
             ) : null}
         </>

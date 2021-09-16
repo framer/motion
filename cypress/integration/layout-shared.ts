@@ -873,4 +873,32 @@ describe("Shared layout: A -> undefined -> B transition", () => {
                 })
             })
     })
+
+    it("As previous, but with rendering layout projecting sibling that is not removed", () => {
+        cy.visit("?test=layout-shared-clear-snapshots&sibling=true")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 0,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("button")
+            .click()
+            .wait(50)
+            .click()
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 100,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
 })
