@@ -110,7 +110,7 @@ class MeasureLayoutWithContext extends React.Component<
         const { projection } = visualElement
 
         if (projection) {
-            projection.root!.scheduleCheckUpdateFailed()
+            projection.root!.scheduleUpdateFailedCheck()
             if (layoutGroup?.group) layoutGroup.group.remove(projection)
             if (promoteContext?.deregister)
                 promoteContext.deregister(projection)

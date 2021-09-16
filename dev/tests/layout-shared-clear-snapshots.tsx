@@ -30,7 +30,7 @@ export const App = () => {
              * methods can fire it) so the checkUpdateFailed will flag on the next frame
              * and cancel the update
              */}
-            {sibling ? (
+            {sibling && state !== 2 ? (
                 <motion.div
                     layout
                     style={{ ...box, backgroundColor: "blue", top: 200 }}

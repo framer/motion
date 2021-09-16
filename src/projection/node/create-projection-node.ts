@@ -532,14 +532,14 @@ export function createProjectionNode<I>({
 
         clearAllSnapshots() {
             this.nodes!.forEach(clearSnapshot)
-            this.sharedNodes.forEach(clearLeadSnapshots)
+            this.sharedNodes.forEach(removeLeadSnapshots)
         }
 
         scheduleUpdateProjection() {
             sync.preRender(this.updateProjection, false, true)
         }
 
-        scheduleCheckUpdateFailed() {
+        scheduleUpdateFailedCheck() {
             sync.postRender(this.checkUpdateFailed)
         }
 
@@ -1449,8 +1449,8 @@ function resetRotation(node: IProjectionNode) {
     node.resetRotation()
 }
 
-function clearLeadSnapshots(stack: NodeStack) {
-    stack.clearLeadSnapshot()
+function removeLeadSnapshots(stack: NodeStack) {
+    stack.removeLeadSnapshot()
 }
 
 export function mixAxisDelta(output: AxisDelta, delta: AxisDelta, p: number) {

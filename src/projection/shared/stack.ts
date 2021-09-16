@@ -112,7 +112,7 @@ export class NodeStack {
      * Clear any leads that have been removed this render to prevent them from being
      * used in future animations and to prevent memory leaks
      */
-    clearLeadSnapshot() {
+    removeLeadSnapshot() {
         if (this.lead && this.lead.snapshot) {
             this.lead.snapshot = undefined
         }
