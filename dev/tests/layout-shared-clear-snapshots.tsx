@@ -23,6 +23,13 @@ export const App = () => {
                     }}
                 />
             ) : null}
+            {/**
+             * Test this twice, once with a sibling and once without. With a sibling,
+             * didUpdate should fire as normal. Without a sibling, didUpdate won't fire as
+             * the removed element is the only projecting element in the tree (so no lifecycle
+             * methods can fire it) so the checkUpdateFailed will flag on the next frame
+             * and cancel the update
+             */}
             {sibling ? (
                 <motion.div
                     layout
