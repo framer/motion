@@ -386,8 +386,6 @@ export function createProjectionNode<I>({
                             visualElement.getDefaultTransition() ??
                             defaultLayoutTransition
 
-                        this.setOptions({ transition: undefined })
-
                         const {
                             onLayoutAnimationComplete,
                         } = visualElement.getProps()
@@ -1419,6 +1417,13 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             hasLayoutChanged: !isDeltaZero(layoutDelta),
         })
     }
+
+    /**
+     * Clearing transition
+     * TODO: Investigate why this transition is being passed in as {type: false } from Framer
+     * and why we need it at all
+     */
+    node.options.transition = undefined
 }
 
 function clearSnapshot(node: IProjectionNode) {
