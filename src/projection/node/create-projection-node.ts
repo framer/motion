@@ -219,7 +219,9 @@ export function createProjectionNode<I>({
         /**
          * Block layout updates for instant layout transitions throughout the tree.
          */
-        updateBlocked = false
+        updateManuallyBlocked = false
+
+        updateBlockedByResize = false
 
         /**
          * Set to true between the start of the first `willUpdate` call and the end of the `didUpdate`
@@ -351,12 +353,24 @@ export function createProjectionNode<I>({
                 this.isLayoutDirty = true
             }
 
-            attachResizeListener?.(instance, () => {
-                if (globalProjectionState.hasAnimatedSinceResize) {
-                    globalProjectionState.hasAnimatedSinceResize = false
-                    this.nodes!.forEach(finishAnimation)
-                }
-            })
+            if (attachResizeListener) {
+                let unblockTimeout: number
+
+                const unblockUpdate = () =>
+                    (this.root.updateBlockedByResize = false)
+
+                attachResizeListener(instance, () => {
+                    this.root.updateBlockedByResize = true
+
+                    clearTimeout(unblockTimeout)
+                    unblockTimeout = setTimeout(unblockUpdate, 250)
+
+                    if (globalProjectionState.hasAnimatedSinceResize) {
+                        globalProjectionState.hasAnimatedSinceResize = false
+                        this.nodes!.forEach(finishAnimation)
+                    }
+                })
+            }
 
             if (layoutId) {
                 this.root.registerSharedNode(layoutId, this)
@@ -432,22 +446,26 @@ export function createProjectionNode<I>({
 
         // only on the root
         blockUpdate() {
-            this.updateBlocked = true
+            this.updateManuallyBlocked = true
         }
 
         unblockUpdate() {
-            this.updateBlocked = false
+            this.updateManuallyBlocked = false
+        }
+
+        isUpdateBlocked() {
+            return this.updateManuallyBlocked || this.updateBlockedByResize
         }
 
         // Note: currently only running on root node
         startUpdate() {
-            if (this.updateBlocked) return
+            if (this.updateManuallyBlocked) return
             this.isUpdating = true
             this.nodes?.forEach(resetRotation)
         }
 
         willUpdate(shouldNotifyListeners = true) {
-            if (this.root.updateBlocked) return
+            if (this.root.isUpdateBlocked()) return
             !this.root.isUpdating && this.root.startUpdate()
             if (this.isLayoutDirty) return
 
@@ -478,19 +496,20 @@ export function createProjectionNode<I>({
 
         // Note: Currently only running on root node
         didUpdate() {
-            const updateWasBlocked = this.updateBlocked
-            if (this.updateBlocked) this.unblockUpdate()
+            const updateWasBlocked = this.isUpdateBlocked()
 
-            if (!this.isUpdating) {
-                // When doing an instant transition, we skip the layout update,
-                // but should still clean up the measurements so that the next
-                // snapshot could be taken correctly.
-                if (updateWasBlocked) {
-                    this.clearAllSnapshots()
-                    this.nodes!.forEach(clearMeasurements)
-                }
+            // When doing an instant transition, we skip the layout update,
+            // but should still clean up the measurements so that the next
+            // snapshot could be taken correctly.
+            if (updateWasBlocked) {
+                this.unblockUpdate()
+                this.clearAllSnapshots()
+                this.nodes!.forEach(clearMeasurements)
                 return
             }
+
+            if (!this.isUpdating) return
+
             this.isUpdating = false
 
             /**
