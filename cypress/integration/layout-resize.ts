@@ -51,7 +51,7 @@ describe("Resize window", () => {
             })
             .wait(200)
             .trigger("click", { force: true })
-            .wait(100)
+            .wait(300)
             .should(([$box]: any) => {
                 const bbox = $box.getBoundingClientRect()
                 expect(Math.round(bbox.top)).not.to.equal(0)
