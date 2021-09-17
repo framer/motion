@@ -14,7 +14,7 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
 }
 
 describe("Resize window", () => {
-    it("Finishes the animation", () => {
+    it("Finishes the animation and blocks animation on immediate layout animations until 250ms", () => {
         cy.visit("?test=layout-resize")
             .wait(50)
             .get("#box")
@@ -38,6 +38,24 @@ describe("Resize window", () => {
                     width: 200,
                     height: 200,
                 })
+            })
+            .trigger("click", { force: true })
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .wait(200)
+            .trigger("click", { force: true })
+            .wait(100)
+            .should(([$box]: any) => {
+                const bbox = $box.getBoundingClientRect()
+                expect(Math.round(bbox.top)).not.to.equal(0)
+                expect(Math.round(bbox.top)).not.to.equal(100)
             })
     })
 })

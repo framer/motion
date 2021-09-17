@@ -389,6 +389,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     isTreeAnimating?: boolean;
     // (undocumented)
+    isUpdateBlocked(): boolean;
+    // (undocumented)
     isUpdating: boolean;
     // (undocumented)
     isVisible: boolean;
@@ -491,9 +493,11 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     unmount: () => void;
     // (undocumented)
-    updateBlocked: boolean;
+    updateBlockedByResize: boolean;
     // (undocumented)
     updateLayout(): void;
+    // (undocumented)
+    updateManuallyBlocked: boolean;
     // (undocumented)
     updateScroll(): void;
     // (undocumented)
