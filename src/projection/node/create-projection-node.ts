@@ -356,14 +356,14 @@ export function createProjectionNode<I>({
             if (attachResizeListener) {
                 let unblockTimeout: number
 
-                const unblockUpdate = () =>
+                const resizeUnblockUpdate = () =>
                     (this.root.updateBlockedByResize = false)
 
                 attachResizeListener(instance, () => {
                     this.root.updateBlockedByResize = true
 
                     clearTimeout(unblockTimeout)
-                    unblockTimeout = setTimeout(unblockUpdate, 250)
+                    unblockTimeout = setTimeout(resizeUnblockUpdate, 250)
 
                     if (globalProjectionState.hasAnimatedSinceResize) {
                         globalProjectionState.hasAnimatedSinceResize = false
@@ -459,7 +459,7 @@ export function createProjectionNode<I>({
 
         // Note: currently only running on root node
         startUpdate() {
-            if (this.updateManuallyBlocked) return
+            if (this.isUpdateBlocked()) return
             this.isUpdating = true
             this.nodes?.forEach(resetRotation)
         }
