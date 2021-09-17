@@ -13,7 +13,7 @@ export const App = () => {
             layout={type}
             style={{ ...(state ? a : b) }}
             onClick={() => setState(!state)}
-            transition={{ duration: 10 }}
+            transition={{ duration: 3 }}
         />
     )
 }
