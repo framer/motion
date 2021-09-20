@@ -398,8 +398,10 @@ export interface IProjectionNode<I = unknown> {
     // 
     // (undocumented)
     latestValues: ResolvedValues;
+    // Warning: (ae-forgotten-export) The symbol "Layout" needs to be exported by the entry point index.d.ts
+    // 
     // (undocumented)
-    layout?: Box;
+    layout?: Layout;
     // (undocumented)
     measure(): Box;
     // (undocumented)

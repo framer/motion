@@ -239,7 +239,7 @@ export class VisualElementDragControls {
         } else {
             if (dragConstraints && layout) {
                 this.constraints = calcRelativeConstraints(
-                    layout,
+                    layout.actual,
                     dragConstraints
                 )
             } else {
@@ -262,7 +262,7 @@ export class VisualElementDragControls {
             eachAxis((axis) => {
                 if (this.getAxisMotionValue(axis)) {
                     this.constraints[axis] = rebaseAxisConstraints(
-                        layout[axis],
+                        layout.actual[axis],
                         this.constraints[axis]
                     )
                 }
@@ -296,7 +296,7 @@ export class VisualElementDragControls {
         )
 
         let measuredConstraints = calcViewportConstraints(
-            projection.layout,
+            projection.layout.actual,
             constraintsBox
         )
 
