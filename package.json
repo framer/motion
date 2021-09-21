@@ -1,165 +1,165 @@
 {
-  "name": "framer-motion",
-  "version": "5.0.0-beta.34",
-  "description": "A simple and powerful React animation library",
-  "main": "dist/framer-motion.cjs.js",
-  "module": "dist/es/index.js",
-  "exports": {
-    "package.json": "./package.json",
-    "require": "./dist/framer-motion.cjs.js",
-    "import": "./dist/es/index.js",
-    "default": "./dist/es/index.js"
-  },
-  "types": "types/index.d.ts",
-  "author": "Framer",
-  "license": "MIT",
-  "repository": "https://github.com/framer/motion/",
-  "sideEffects": false,
-  "keywords": [
-    "react animation",
-    "react",
-    "pose",
-    "react pose",
-    "animation",
-    "gestures",
-    "drag",
-    "spring",
-    "popmotion",
-    "framer"
-  ],
-  "scripts": {
-    "lint": "yarn eslint src/**/*.ts",
-    "test": "yarn build && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e",
-    "build": "yarn clean && tsc -p . && rollup -c && make api",
-    "clean": "rm -rf types dist lib",
-    "test-ci": "yarn test-client && yarn test-server",
-    "test-client": "jest --coverage --config jest.config.json",
-    "test-server": "jest --config jest.config.ssr.json",
-    "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://localhost:8000 'yarn run cypress run -s cypress/integration/projection.ts --config baseUrl=http://0.0.0.0:8000/'",
-    "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --config ignoreTestFiles=projection.ts'",
-    "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/layout-viewport-jump.ts\"'",
-    "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
-    "projection-dev": "python -m SimpleHTTPServer",
-    "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
-    "prettier": "prettier ./src/* --write",
-    "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
-    "prepublishOnly": "yarn test",
-    "postpublish": "git push --tags",
-    "measure": "webpack --config webpack.size.config.js && bundlesize",
-    "start-dev-server": "webpack serve --config dev/webpack/config.js --hot"
-  },
-  "peerDependencies": {
-    "react": ">=16.8 || ^17.0.0",
-    "react-dom": ">=16.8 || ^17.0.0"
-  },
-  "devDependencies": {
-    "@cypress/webpack-preprocessor": "^4.1.0",
-    "@microsoft/api-extractor": "7.3.4",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-    "@rollup/plugin-node-resolve": "^8.0.0",
-    "@rollup/plugin-replace": "^2.3.2",
-    "@testing-library/dom": "^6.10.1",
-    "@testing-library/react": "^9.3.2",
-    "@testing-library/react-hooks": "^5.1.0",
-    "@types/jest": "^23.3.9",
-    "@types/node": "12.7.4",
-    "@types/react": "17.0.9",
-    "@types/react-dom": "17.0.6",
-    "@types/styled-components": "^4.1.0",
-    "@typescript-eslint/eslint-plugin": "^1.5.0",
-    "@typescript-eslint/parser": "^1.5.0",
-    "bundlesize": "^0.18.0",
-    "cache-loader": "^1.2.5",
-    "concurrently": "^5.2.0",
-    "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
-    "cypress": "^3.4.0",
-    "eslint": "^5.16.0",
-    "eslint-config-prettier": "^4.1.0",
-    "eslint-plugin-import": "^2.16.0",
-    "eslint-plugin-react": "^7.12.4",
-    "eslint-plugin-react-hooks": "^1.6.0",
-    "fork-ts-checker-webpack-plugin": "^6.2.0",
-    "husky": "1.1.4",
-    "jest": "^24.8.0",
-    "jest-dom": "^3.5.0",
-    "jest-junit": "^6.4.0",
-    "jest-watch-typeahead": "^0.4.2",
-    "lint-staged": "^8.0.4",
-    "lodash": "^4.17.13",
-    "path-browserify": "^1.0.1",
-    "prettier": "^2.1.0",
-    "react": "^17.0.0-rc.0",
-    "react-dev-utils": "^11.0.4",
-    "react-dom": "^17.0.0-rc.0",
-    "react-refresh": "^0.9.0",
-    "rollup": "^2.10.5",
-    "rollup-plugin-terser": "^5.3.0",
-    "rollup-plugin-visualizer": "^2.4.3",
-    "start-server-and-test": "^1.9.1",
-    "styled-components": "^4.1.1",
-    "ts-jest": "^24.0.2",
-    "ts-loader": "^5.3.0",
-    "type-fest": "^1.0.1",
-    "typescript": "^4.2.3",
-    "webpack": "^5.27.2",
-    "webpack-cli": "^4.5.0",
-    "webpack-dev-server": "^3.11.2",
-    "yarn-deduplicate": "^1.1.1"
-  },
-  "dependencies": {
-    "framesync": "5.3.0",
-    "hey-listen": "^1.0.8",
-    "popmotion": "9.4.2",
-    "style-value-types": "4.1.5",
-    "tslib": "^2.1.0"
-  },
-  "optionalDependencies": {
-    "@emotion/is-prop-valid": "^0.8.2"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged && yarn build && yarn test-projection"
-    }
-  },
-  "lint-staged": {
-    "linters": {
-      "*.{ts,tsx}": [
-        "prettier --write",
-        "git add"
-      ]
+    "name": "framer-motion",
+    "version": "5.0.0-beta.35",
+    "description": "A simple and powerful React animation library",
+    "main": "dist/framer-motion.cjs.js",
+    "module": "dist/es/index.js",
+    "exports": {
+        "package.json": "./package.json",
+        "require": "./dist/framer-motion.cjs.js",
+        "import": "./dist/es/index.js",
+        "default": "./dist/es/index.js"
     },
-    "ignore": [
-      "**/api/*.api.ts"
+    "types": "types/index.d.ts",
+    "author": "Framer",
+    "license": "MIT",
+    "repository": "https://github.com/framer/motion/",
+    "sideEffects": false,
+    "keywords": [
+        "react animation",
+        "react",
+        "pose",
+        "react pose",
+        "animation",
+        "gestures",
+        "drag",
+        "spring",
+        "popmotion",
+        "framer"
+    ],
+    "scripts": {
+        "lint": "yarn eslint src/**/*.ts",
+        "test": "yarn build && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e",
+        "build": "yarn clean && tsc -p . && rollup -c && make api",
+        "clean": "rm -rf types dist lib",
+        "test-ci": "yarn test-client && yarn test-server",
+        "test-client": "jest --coverage --config jest.config.json",
+        "test-server": "jest --config jest.config.ssr.json",
+        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://localhost:8000 'yarn run cypress run -s cypress/integration/projection.ts --config baseUrl=http://0.0.0.0:8000/'",
+        "test-e2e": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --config ignoreTestFiles=projection.ts'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --spec \"cypress/integration/layout-viewport-jump.ts\"'",
+        "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
+        "projection-dev": "python -m SimpleHTTPServer",
+        "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
+        "prettier": "prettier ./src/* --write",
+        "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
+        "prepublishOnly": "yarn test",
+        "postpublish": "git push --tags",
+        "measure": "webpack --config webpack.size.config.js && bundlesize",
+        "start-dev-server": "webpack serve --config dev/webpack/config.js --hot"
+    },
+    "peerDependencies": {
+        "react": ">=16.8 || ^17.0.0",
+        "react-dom": ">=16.8 || ^17.0.0"
+    },
+    "devDependencies": {
+        "@cypress/webpack-preprocessor": "^4.1.0",
+        "@microsoft/api-extractor": "7.3.4",
+        "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
+        "@rollup/plugin-node-resolve": "^8.0.0",
+        "@rollup/plugin-replace": "^2.3.2",
+        "@testing-library/dom": "^6.10.1",
+        "@testing-library/react": "^9.3.2",
+        "@testing-library/react-hooks": "^5.1.0",
+        "@types/jest": "^23.3.9",
+        "@types/node": "12.7.4",
+        "@types/react": "17.0.9",
+        "@types/react-dom": "17.0.6",
+        "@types/styled-components": "^4.1.0",
+        "@typescript-eslint/eslint-plugin": "^1.5.0",
+        "@typescript-eslint/parser": "^1.5.0",
+        "bundlesize": "^0.18.0",
+        "cache-loader": "^1.2.5",
+        "concurrently": "^5.2.0",
+        "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
+        "cypress": "^3.4.0",
+        "eslint": "^5.16.0",
+        "eslint-config-prettier": "^4.1.0",
+        "eslint-plugin-import": "^2.16.0",
+        "eslint-plugin-react": "^7.12.4",
+        "eslint-plugin-react-hooks": "^1.6.0",
+        "fork-ts-checker-webpack-plugin": "^6.2.0",
+        "husky": "1.1.4",
+        "jest": "^24.8.0",
+        "jest-dom": "^3.5.0",
+        "jest-junit": "^6.4.0",
+        "jest-watch-typeahead": "^0.4.2",
+        "lint-staged": "^8.0.4",
+        "lodash": "^4.17.13",
+        "path-browserify": "^1.0.1",
+        "prettier": "^2.1.0",
+        "react": "^17.0.0-rc.0",
+        "react-dev-utils": "^11.0.4",
+        "react-dom": "^17.0.0-rc.0",
+        "react-refresh": "^0.9.0",
+        "rollup": "^2.10.5",
+        "rollup-plugin-terser": "^5.3.0",
+        "rollup-plugin-visualizer": "^2.4.3",
+        "start-server-and-test": "^1.9.1",
+        "styled-components": "^4.1.1",
+        "ts-jest": "^24.0.2",
+        "ts-loader": "^5.3.0",
+        "type-fest": "^1.0.1",
+        "typescript": "^4.2.3",
+        "webpack": "^5.27.2",
+        "webpack-cli": "^4.5.0",
+        "webpack-dev-server": "^3.11.2",
+        "yarn-deduplicate": "^1.1.1"
+    },
+    "dependencies": {
+        "framesync": "5.3.0",
+        "hey-listen": "^1.0.8",
+        "popmotion": "9.4.2",
+        "style-value-types": "4.1.5",
+        "tslib": "^2.1.0"
+    },
+    "optionalDependencies": {
+        "@emotion/is-prop-valid": "^0.8.2"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged && yarn build && yarn test-projection"
+        }
+    },
+    "lint-staged": {
+        "linters": {
+            "*.{ts,tsx}": [
+                "prettier --write",
+                "git add"
+            ]
+        },
+        "ignore": [
+            "**/api/*.api.ts"
+        ]
+    },
+    "bundlesize": [
+        {
+            "path": "./dist/framer-motion.js",
+            "maxSize": "31.7 kB"
+        },
+        {
+            "path": "./dist/size-rollup-m.js",
+            "maxSize": "5.3 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-animation.js",
+            "maxSize": "16.9 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-max.js",
+            "maxSize": "22.5 kB"
+        },
+        {
+            "path": "./dist/size-webpack-m.js",
+            "maxSize": "5.3 kB"
+        },
+        {
+            "path": "./dist/size-webpack-dom-animation.js",
+            "maxSize": "21.5 kB"
+        },
+        {
+            "path": "./dist/size-webpack-dom-max.js",
+            "maxSize": "27.5 kB"
+        }
     ]
-  },
-  "bundlesize": [
-    {
-      "path": "./dist/framer-motion.js",
-      "maxSize": "31.7 kB"
-    },
-    {
-      "path": "./dist/size-rollup-m.js",
-      "maxSize": "5.3 kB"
-    },
-    {
-      "path": "./dist/size-rollup-dom-animation.js",
-      "maxSize": "16.9 kB"
-    },
-    {
-      "path": "./dist/size-rollup-dom-max.js",
-      "maxSize": "22.5 kB"
-    },
-    {
-      "path": "./dist/size-webpack-m.js",
-      "maxSize": "5.3 kB"
-    },
-    {
-      "path": "./dist/size-webpack-dom-animation.js",
-      "maxSize": "21.5 kB"
-    },
-    {
-      "path": "./dist/size-webpack-dom-max.js",
-      "maxSize": "27.5 kB"
-    }
-  ]
 }
