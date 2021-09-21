@@ -582,6 +582,7 @@ export function createProjectionNode<I>({
 
             const visible = this.removeTransform(measured)!
             const layout = this.removeElementScroll(visible)
+            roundBox(layout)
 
             this.snapshot = {
                 measured,
@@ -617,6 +618,7 @@ export function createProjectionNode<I>({
             }
 
             const measured = this.measure()
+            roundBox(measured)
             const prevLayout = this.layout
             this.layout = {
                 measured,
@@ -794,7 +796,7 @@ export function createProjectionNode<I>({
              * a relativeParent. This will allow a component to perform scale correction
              * even if no animation has started.
              */
-            if (!this.targetDelta) {
+            if (!this.targetDelta && !this.relativeTarget) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 this.relativeParent = this.getClosestProjectingParent()
 
@@ -837,7 +839,6 @@ export function createProjectionNode<I>({
                     this.relativeTarget,
                     this.relativeParent.target
                 )
-
                 /**
                  * If we've only got a targetDelta, resolve it into a target
                  */
@@ -1533,4 +1534,14 @@ function mountNodeEarly(node: IProjectionNode, id: number) {
         `[data-projection-id="${id}"]`
     )
     if (element) node.mount(element, true)
+}
+
+function roundAxis(axis: Axis): void {
+    axis.min = Math.round(axis.min)
+    axis.max = Math.round(axis.max)
+}
+
+function roundBox(box: Box): void {
+    roundAxis(box.x)
+    roundAxis(box.y)
 }
