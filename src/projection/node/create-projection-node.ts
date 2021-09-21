@@ -338,7 +338,10 @@ export function createProjectionNode<I>({
          * Lifecycles
          */
         mount(instance: I, isLayoutDirty = false) {
-            if (this.instance) return
+            const isSVG =
+                instance instanceof SVGElement && instance.tagName !== "svg"
+            if (this.instance || isSVG) return
+
             this.instance = instance
 
             const { layoutId, layout, visualElement } = this.options
@@ -577,7 +580,7 @@ export function createProjectionNode<I>({
          * Update measurements
          */
         updateSnapshot() {
-            if (this.snapshot) return
+            if (this.snapshot || !this.instance) return
             const measured = this.measure()!
 
             const visible = this.removeTransform(measured)!
@@ -593,6 +596,8 @@ export function createProjectionNode<I>({
         }
 
         updateLayout() {
+            if (!this.instance) return
+
             // TODO: Incorporate into a forwarded scroll offset
             this.updateScroll()
 
