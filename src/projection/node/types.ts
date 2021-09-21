@@ -15,6 +15,11 @@ export interface Snapshot {
     isShared?: boolean
 }
 
+export interface Layout {
+    measured: Box
+    actual: Box // with scroll removed
+}
+
 export type LayoutEvents =
     | "willUpdate"
     | "didUpdate"
@@ -34,7 +39,7 @@ export interface IProjectionNode<I = unknown> {
     unmount: () => void
     options: ProjectionNodeOptions
     setOptions(options: ProjectionNodeOptions): void
-    layout?: Box
+    layout?: Layout
     snapshot?: Snapshot
     target?: Box
     targetWithTransforms?: Box
