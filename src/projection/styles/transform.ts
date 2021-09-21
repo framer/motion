@@ -1,7 +1,7 @@
 import { ResolvedValues } from "../../render/types"
 import { Delta, Point } from "../geometry/types"
 
-export const identityProjection = "translate(0px, 0px) scale(1, 1)"
+export const identityProjection = "translate3d(0px, 0px, 0) scale(1, 1)"
 
 export function buildProjectionTransform(
     delta: Delta,
@@ -16,7 +16,7 @@ export function buildProjectionTransform(
      */
     const xTranslate = delta.x.translate / treeScale.x
     const yTranslate = delta.y.translate / treeScale.y
-    let transform = `translate(${xTranslate}px, ${yTranslate}px) `
+    let transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `
 
     if (latestTransform) {
         const { rotate, rotateX, rotateY } = latestTransform
