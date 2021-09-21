@@ -231,6 +231,11 @@ export function createProjectionNode<I>({
         isUpdating = false
 
         /**
+         * If this is an SVG element we currently disable projection transforms
+         */
+        isSVG = false
+
+        /**
          * Flag to true (during promotion) if a node doing an instant layout transition needs to reset
          * its projection styles.
          */
@@ -338,9 +343,10 @@ export function createProjectionNode<I>({
          * Lifecycles
          */
         mount(instance: I, isLayoutDirty = false) {
-            const isSVG =
+            if (this.instance) return
+
+            this.isSVG =
                 instance instanceof SVGElement && instance.tagName !== "svg"
-            if (this.instance || isSVG) return
 
             this.instance = instance
 
@@ -1283,7 +1289,7 @@ export function createProjectionNode<I>({
         getProjectionStyles() {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
-            if (!this.instance) return styles
+            if (!this.instance || this.isSVG) return styles
 
             const lead = this.getLead()
 
