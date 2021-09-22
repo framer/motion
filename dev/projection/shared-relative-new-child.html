@@ -21,7 +21,7 @@
                 left: 100px;
                 width: 300px;
                 height: 400px;
-                background-color: #00cc88;
+                background-color: #8855ff;
             }
 
             #child {
@@ -89,18 +89,18 @@
             newBoxProjection.root.didUpdate()
 
             sync.postRender(() => {
-                // matchViewportBox(newBox, {
-                //     bottom: 400,
-                //     left: 100,
-                //     right: 400,
-                //     top: 150,
-                // })
-                // matchViewportBox(child, {
-                //     bottom: 210,
-                //     left: 340,
-                //     right: 390,
-                //     top: 160,
-                // })
+                matchViewportBox(newBox, {
+                    bottom: 400,
+                    left: 100,
+                    right: 400,
+                    top: 150,
+                })
+                matchViewportBox(child, {
+                    bottom: 210,
+                    left: 340,
+                    right: 390,
+                    top: 160,
+                })
             })
         </script>
     </body>

@@ -1479,10 +1479,14 @@ function notifyLayoutUpdate(node: IProjectionNode) {
          * element is visually in the same place in the document but its position
          * relative to its parent has indeed changed. So here we check for that.
          */
-        if (!hasLayoutChanged) {
+        if (!hasLayoutChanged && !node.resumeFrom) {
             node.relativeParent = node.getClosestProjectingParent()
 
-            if (node.relativeParent) {
+            /**
+             * If the relativeParent is itself resuming from a different element then
+             * the relative snapshot is not relavent
+             */
+            if (node.relativeParent && !node.relativeParent.resumeFrom) {
                 const { snapshot: parentSnapshot, layout: parentLayout } =
                     node.relativeParent
 
@@ -1500,6 +1504,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                         layout,
                         parentLayout.actual
                     )
+
                     if (!boxEquals(relativeSnapshot, relativeLayout)) {
                         hasRelativeTargetChanged = true
                     }
