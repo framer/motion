@@ -439,6 +439,8 @@ export interface IProjectionNode<I = unknown> {
     // (undocumented)
     registerSharedNode(id: string, node: IProjectionNode): void;
     // (undocumented)
+    relativeParent?: IProjectionNode;
+    // (undocumented)
     relegate(): boolean;
     // (undocumented)
     resetRotation(): void;
@@ -486,6 +488,8 @@ export interface IProjectionNode<I = unknown> {
     startUpdate(): void;
     // (undocumented)
     target?: Box;
+    // (undocumented)
+    targetDelta?: Delta;
     // (undocumented)
     targetWithTransforms?: Box;
     // (undocumented)
