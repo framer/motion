@@ -44,11 +44,8 @@
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const {
-                matchViewportBox,
-                matchVisibility,
-                matchOpacity,
-            } = window.Assert
+            const { matchViewportBox, matchVisibility, matchOpacity } =
+                window.Assert
 
             const box = document.getElementById("box-a")
             const boxProjection = createNode(box, undefined, {
@@ -78,6 +75,7 @@
                 top: 100,
                 width: 200,
             }
+
             setTimeout(() => {
                 matchViewportBox(box, boxOrigin)
                 matchViewportBox(newBox, newBoxOrigin)
@@ -96,7 +94,7 @@
                 matchVisibility(box, "visible")
                 matchVisibility(newBox, "hidden")
                 matchOpacity(box, 1)
-            }, 20)
+            }, 50)
         </script>
     </body>
 </html>
