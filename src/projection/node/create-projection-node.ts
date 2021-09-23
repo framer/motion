@@ -295,8 +295,6 @@ export function createProjectionNode<I>({
 
         preserveOpacity?: boolean
 
-        safeToResolveRelativeTarget = true
-
         constructor(
             id: number | undefined,
             latestValues: ResolvedValues = {},
@@ -814,11 +812,7 @@ export function createProjectionNode<I>({
              * a relativeParent. This will allow a component to perform scale correction
              * even if no animation has started.
              */
-            if (
-                // this.safeToResolveRelativeTarget &&
-                !this.targetDelta &&
-                !this.relativeTarget
-            ) {
+            if (!this.targetDelta && !this.relativeTarget) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 this.relativeParent = this.getClosestProjectingParent()
 
@@ -833,8 +827,6 @@ export function createProjectionNode<I>({
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
                 }
             }
-
-            this.safeToResolveRelativeTarget = false
 
             /**
              * If we have no relative target or no target delta we can't perform projection
