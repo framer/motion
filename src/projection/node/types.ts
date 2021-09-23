@@ -43,6 +43,7 @@ export interface IProjectionNode<I = unknown> {
     layout?: Layout
     snapshot?: Snapshot
     target?: Box
+    relativeTarget?: Box
     targetDelta?: Delta
     targetWithTransforms?: Box
     scroll?: Point

@@ -30,7 +30,7 @@
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
         "test": "yarn build && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e",
-        "build": "yarn clean && tsc -p . && rollup -c && make api",
+        "build": "yarn clean && tsc -p . && rollup -c",
         "clean": "rm -rf types dist lib",
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json",
@@ -54,7 +54,6 @@
     },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
-        "@microsoft/api-extractor": "7.3.4",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
@@ -127,10 +126,7 @@
                 "prettier --write",
                 "git add"
             ]
-        },
-        "ignore": [
-            "**/api/*.api.ts"
-        ]
+        }
     },
     "bundlesize": [
         {

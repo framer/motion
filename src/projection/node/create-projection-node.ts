@@ -815,7 +815,7 @@ export function createProjectionNode<I>({
              * even if no animation has started.
              */
             if (
-                this.safeToResolveRelativeTarget &&
+                // this.safeToResolveRelativeTarget &&
                 !this.targetDelta &&
                 !this.relativeTarget
             ) {
@@ -908,7 +908,7 @@ export function createProjectionNode<I>({
                 return undefined
 
             if (
-                (this.parent.target || this.parent.targetDelta) &&
+                (this.parent.relativeTarget || this.parent.targetDelta) &&
                 this.parent.layout
             ) {
                 return this.parent
