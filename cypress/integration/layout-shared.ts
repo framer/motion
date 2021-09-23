@@ -843,6 +843,23 @@ describe("Shared layout: component unmounts in a LayoutGroup", () => {
                 })
             })
     })
+
+    it("If a sibling's position relative to the parent has changed, it should remain at its position", () => {
+        let bbox: any
+        cy.visit("?test=layout-group-unmount-list")
+            .wait(50)
+            .get("#b")
+            .then(([$box]: any) => {
+                bbox = $box.getBoundingClientRect()
+            })
+            .get("#a")
+            .trigger("click")
+            .wait(50)
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, bbox)
+            })
+    })
 })
 
 describe("Shared layout: A -> undefined -> B transition", () => {
