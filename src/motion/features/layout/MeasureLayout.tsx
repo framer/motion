@@ -27,12 +27,8 @@ class MeasureLayoutWithContext extends React.Component<
      * in order to incorporate transforms
      */
     componentDidMount() {
-        const {
-            visualElement,
-            layoutGroup,
-            switchLayoutGroup,
-            layoutId,
-        } = this.props
+        const { visualElement, layoutGroup, switchLayoutGroup, layoutId } =
+            this.props
         const { projection } = visualElement
 
         addScaleCorrector(defaultScaleCorrectors)
@@ -110,7 +106,7 @@ class MeasureLayoutWithContext extends React.Component<
         const { projection } = visualElement
 
         if (projection) {
-            projection.root!.scheduleUpdateFailedCheck()
+            projection.scheduleCheckAfterUnmount()
             if (layoutGroup?.group) layoutGroup.group.remove(projection)
             if (promoteContext?.deregister)
                 promoteContext.deregister(projection)
@@ -129,16 +125,7 @@ class MeasureLayoutWithContext extends React.Component<
 export function MeasureLayout(props: FeatureProps) {
     const [isPresent, safeToRemove] = usePresence()
     const layoutGroup = useContext(LayoutGroupContext)
-    // Trigger a didUpdate onUnmount for siblings in the same layout group
-    React.useEffect(() => {
-        return () => {
-            const { visualElement } = props
-            const { projection } = visualElement
-            if (layoutGroup.group && projection?.isLayoutDirty) {
-                projection.root?.didUpdate()
-            }
-        }
-    }, [])
+
     return (
         <MeasureLayoutWithContext
             {...props}
