@@ -294,6 +294,7 @@ export function createProjectionNode<I>({
         prevTransformTemplateValue: string | undefined
 
         preserveOpacity?: boolean
+
         constructor(
             id: number | undefined,
             latestValues: ResolvedValues = {},
@@ -397,11 +398,11 @@ export function createProjectionNode<I>({
                     ({
                         delta,
                         hasLayoutChanged,
+                        hasRelativeTargetChanged,
                         layout: newLayout,
                     }: LayoutUpdateData) => {
-                        const dragControls = elementDragControls.get(
-                            visualElement
-                        )
+                        const dragControls =
+                            elementDragControls.get(visualElement)
                         if (dragControls?.isDragging) return
 
                         // TODO: Check here if an animation exists
@@ -410,16 +411,17 @@ export function createProjectionNode<I>({
                             visualElement.getDefaultTransition() ??
                             defaultLayoutTransition
 
-                        const {
-                            onLayoutAnimationComplete,
-                        } = visualElement.getProps()
+                        const { onLayoutAnimationComplete } =
+                            visualElement.getProps()
 
                         const targetChanged =
                             !this.targetLayout ||
-                            !boxEquals(this.targetLayout, newLayout)
+                            !boxEquals(this.targetLayout, newLayout) ||
+                            hasRelativeTargetChanged
 
                         if (
                             this.resumeFrom?.instance ||
+                            hasRelativeTargetChanged ||
                             (hasLayoutChanged &&
                                 (targetChanged || !this.currentAnimation))
                         ) {
@@ -428,7 +430,10 @@ export function createProjectionNode<I>({
                                 this.resumingFrom.resumingFrom = undefined
                             }
 
-                            this.setAnimationOrigin(delta)
+                            this.setAnimationOrigin(
+                                delta,
+                                hasRelativeTargetChanged
+                            )
                             this.startAnimation({
                                 ...getValueTransition(
                                     layoutTransition,
@@ -493,8 +498,8 @@ export function createProjectionNode<I>({
             const { layoutId, layout } = this.options
             if (!layoutId && !layout) return
 
-            const transformTemplate = this.options.visualElement?.getProps()
-                .transformTemplate
+            const transformTemplate =
+                this.options.visualElement?.getProps().transformTemplate
             this.prevTransformTemplateValue = transformTemplate?.(
                 this.latestValues,
                 ""
@@ -659,8 +664,8 @@ export function createProjectionNode<I>({
             const hasProjection =
                 this.projectionDelta && !isDeltaZero(this.projectionDelta)
 
-            const transformTemplate = this.options.visualElement?.getProps()
-                .transformTemplate
+            const transformTemplate =
+                this.options.visualElement?.getProps().transformTemplate
             const transformTemplateValue = transformTemplate?.(
                 this.latestValues,
                 ""
@@ -871,6 +876,7 @@ export function createProjectionNode<I>({
             /**
              * If we've been told to attempt to resolve a relative target, do so.
              */
+
             if (this.attemptToResolveRelativeTarget) {
                 this.attemptToResolveRelativeTarget = false
 
@@ -893,7 +899,10 @@ export function createProjectionNode<I>({
             if (!this.parent || hasTransform(this.parent.latestValues))
                 return undefined
 
-            if (this.parent.target && this.parent.layout) {
+            if (
+                (this.parent.relativeTarget || this.parent.targetDelta) &&
+                this.parent.layout
+            ) {
                 return this.parent
             } else {
                 return this.parent.getClosestProjectingParent()
@@ -1021,14 +1030,18 @@ export function createProjectionNode<I>({
         currentAnimation?: AnimationPlaybackControls
         mixTargetDelta: (progress: number) => void
 
-        setAnimationOrigin(delta: Delta) {
+        setAnimationOrigin(
+            delta: Delta,
+            hasOnlyRelativeTargetChanged: boolean = false
+        ) {
             const snapshot = this.snapshot
             const snapshotLatestValues = snapshot?.latestValues || {}
             const mixedValues = { ...this.latestValues }
 
             const targetDelta = createDelta()
             this.relativeTarget = this.relativeTargetOrigin = undefined
-            this.attemptToResolveRelativeTarget = true
+            this.attemptToResolveRelativeTarget = !hasOnlyRelativeTargetChanged
+
             const relativeLayout = createBox()
 
             const isSharedLayoutAnimation = snapshot?.isShared
@@ -1128,7 +1141,10 @@ export function createProjectionNode<I>({
                 this.resumingFrom.preserveOpacity = undefined
             }
 
-            this.resumingFrom = this.currentAnimation = this.animationValues = undefined
+            this.resumingFrom =
+                this.currentAnimation =
+                this.animationValues =
+                    undefined
             this.getStack()?.exitAnimationComplete()
         }
 
@@ -1141,11 +1157,8 @@ export function createProjectionNode<I>({
         }
 
         applyTransformsToTarget() {
-            const {
-                targetWithTransforms,
-                target,
-                latestValues,
-            } = this.getLead()
+            const { targetWithTransforms, target, latestValues } =
+                this.getLead()
             if (!targetWithTransforms || !target) return
 
             copyBoxInto(targetWithTransforms, target)
@@ -1186,9 +1199,10 @@ export function createProjectionNode<I>({
 
             node.promote({
                 transition: node.options.initialPromotionConfig?.transition,
-                preserveFollowOpacity: node.options.initialPromotionConfig?.shouldPreserveFollowOpacity?.(
-                    node
-                ),
+                preserveFollowOpacity:
+                    node.options.initialPromotionConfig?.shouldPreserveFollowOpacity?.(
+                        node
+                    ),
             })
         }
 
@@ -1299,8 +1313,8 @@ export function createProjectionNode<I>({
                 styles.visibility = ""
             }
 
-            const transformTemplate = this.options.visualElement?.getProps()
-                .transformTemplate
+            const transformTemplate =
+                this.options.visualElement?.getProps().transformTemplate
 
             if (this.needsReset) {
                 this.needsReset = false
@@ -1449,12 +1463,54 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             calcBoxDelta(visualDelta, measuredLayout, snapshot.visible)
         }
 
+        const hasLayoutChanged = !isDeltaZero(layoutDelta)
+        let hasRelativeTargetChanged = false
+
+        /**
+         * If the layout hasn't seemed to have changed, it might be that the
+         * element is visually in the same place in the document but its position
+         * relative to its parent has indeed changed. So here we check for that.
+         */
+        if (!hasLayoutChanged && !node.resumeFrom) {
+            node.relativeParent = node.getClosestProjectingParent()
+
+            /**
+             * If the relativeParent is itself resuming from a different element then
+             * the relative snapshot is not relavent
+             */
+            if (node.relativeParent && !node.relativeParent.resumeFrom) {
+                const { snapshot: parentSnapshot, layout: parentLayout } =
+                    node.relativeParent
+
+                if (parentSnapshot && parentLayout) {
+                    const relativeSnapshot = createBox()
+                    calcRelativePosition(
+                        relativeSnapshot,
+                        snapshot.layout,
+                        parentSnapshot.layout
+                    )
+
+                    const relativeLayout = createBox()
+                    calcRelativePosition(
+                        relativeLayout,
+                        layout,
+                        parentLayout.actual
+                    )
+
+                    if (!boxEquals(relativeSnapshot, relativeLayout)) {
+                        hasRelativeTargetChanged = true
+                    }
+                }
+            }
+        }
+
         node.notifyListeners("didUpdate", {
             layout,
             snapshot,
             delta: visualDelta,
             layoutDelta,
-            hasLayoutChanged: !isDeltaZero(layoutDelta),
+            hasLayoutChanged,
+            hasRelativeTargetChanged,
         })
     }
 

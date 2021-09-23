@@ -29,6 +29,7 @@ export type LayoutEvents =
 export interface IProjectionNode<I = unknown> {
     id: number | undefined
     parent?: IProjectionNode
+    relativeParent?: IProjectionNode
     root?: IProjectionNode
     children: Set<IProjectionNode>
     path: IProjectionNode[]
@@ -42,6 +43,8 @@ export interface IProjectionNode<I = unknown> {
     layout?: Layout
     snapshot?: Snapshot
     target?: Box
+    relativeTarget?: Box
+    targetDelta?: Delta
     targetWithTransforms?: Box
     scroll?: Point
     treeScale?: Point
@@ -120,6 +123,7 @@ export interface LayoutUpdateData {
     delta: Delta
     layoutDelta: Delta
     hasLayoutChanged: boolean
+    hasRelativeTargetChanged: boolean
 }
 
 export type LayoutUpdateHandler = (data: LayoutUpdateData) => void

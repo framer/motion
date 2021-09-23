@@ -33,7 +33,7 @@ Animate.createNode = (
     element,
     parent,
     options = {},
-    transition = { duration: 200, ease: () => 0.5 }
+    transition = { duration: 10, ease: () => 0.5 }
 ) => {
     const latestValues = {}
     const visualElement = htmlVisualElement({
