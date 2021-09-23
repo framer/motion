@@ -571,8 +571,19 @@ export function createProjectionNode<I>({
             sync.preRender(this.updateProjection, false, true)
         }
 
-        scheduleUpdateFailedCheck() {
-            sync.postRender(this.checkUpdateFailed)
+        scheduleCheckAfterUnmount() {
+            /**
+             * If the unmounting node is in a layoutGroup and did trigger a willUpdate,
+             * we manually call didUpdate to give a chance to the siblings to animate.
+             * Otherwise, cleanup all snapshots to prevents future nodes from reusing them.
+             */
+            sync.postRender(() => {
+                if (this.isLayoutDirty) {
+                    this.root.didUpdate()
+                } else {
+                    this.root.checkUpdateFailed()
+                }
+            })
         }
 
         checkUpdateFailed = () => {
