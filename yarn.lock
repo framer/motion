@@ -5669,7 +5669,7 @@ __metadata:
     eslint-plugin-react: ^7.12.4
     eslint-plugin-react-hooks: ^1.6.0
     fork-ts-checker-webpack-plugin: ^6.2.0
-    framesync: 5.3.0
+    framesync: 6.0.0
     hey-listen: ^1.0.8
     husky: 1.1.4
     jest: ^24.8.0
@@ -5679,7 +5679,7 @@ __metadata:
     lint-staged: ^8.0.4
     lodash: ^4.17.13
     path-browserify: ^1.0.1
-    popmotion: 9.4.2
+    popmotion: 10.0.1
     prettier: ^2.1.0
     react: ^17.0.0-rc.0
     react-dev-utils: ^11.0.4
@@ -5689,7 +5689,7 @@ __metadata:
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
     start-server-and-test: ^1.9.1
-    style-value-types: 4.1.5
+    style-value-types: 5.0.0
     styled-components: ^4.1.1
     ts-jest: ^24.0.2
     ts-loader: ^5.3.0
@@ -5709,12 +5709,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framesync@npm:5.3.0":
-  version: 5.3.0
-  resolution: "framesync@npm:5.3.0"
+"framesync@npm:6.0.0":
+  version: 6.0.0
+  resolution: "framesync@npm:6.0.0"
   dependencies:
     tslib: ^2.1.0
-  checksum: 9ebbb2863e6a1cfd2e9dd1b73af427d23caa03c92dd49ea767ebdd208c3a573bba4a1026f67068d856a21704f79adcdf2f750cc852ff73bc1f0e80edaaecded8
+  checksum: 10443b26e9e09378f7c32d6938590b40c441e73d1bb29a80b45ddfed4d3b988238c09ccf08991fb95772dade7751770d81b89f3b9ea5bdd0b528ec6eb32cc9fb
   languageName: node
   linkType: hard
 
@@ -9800,15 +9800,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"popmotion@npm:9.4.2":
-  version: 9.4.2
-  resolution: "popmotion@npm:9.4.2"
+"popmotion@npm:10.0.1":
+  version: 10.0.1
+  resolution: "popmotion@npm:10.0.1"
   dependencies:
-    framesync: 5.3.0
+    framesync: 6.0.0
     hey-listen: ^1.0.8
-    style-value-types: 4.1.5
+    style-value-types: 5.0.0
     tslib: ^2.1.0
-  checksum: 366e16bc8b186b3b3ef49d579499e1eb7d3e42c7f6f06d90f31de43b690bc39044b731cde6b4cc761d4ca5cf4db1493b90e3c6c4f24b46383122b223e4b32707
+  checksum: 13a5a449496d4ae69f5fed01b4829983879a7eac6f9b0eee6ca2fa42ff78eaf281bfa1720ee7b6944218a7f2bd56c7e137354ce3852042b529e1acb8bcd3efaa
   languageName: node
   linkType: hard
 
@@ -11851,13 +11851,13 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"style-value-types@npm:4.1.5":
-  version: 4.1.5
-  resolution: "style-value-types@npm:4.1.5"
+"style-value-types@npm:5.0.0":
+  version: 5.0.0
+  resolution: "style-value-types@npm:5.0.0"
   dependencies:
     hey-listen: ^1.0.8
     tslib: ^2.1.0
-  checksum: d0e81533f45a4650bf4f06fc9c3a7d548e6dffaee46f46175a9e269d6d3a5751a983b7e14d9fb965e4747a5bc55bb1e43d55850ace55b1da1572329c1b2c9893
+  checksum: 16d198302cd102edf9dba94e7752a2364c93b1eaa5cc7c32b42b28eef4af4ccb5149a3f16bc2a256adc02616a2404f4612bd15f3081c1e8ca06132cae78be6c0
   languageName: node
   linkType: hard
 
