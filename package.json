@@ -3,12 +3,14 @@
     "version": "5.0.0-beta.36",
     "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
-    "module": "dist/es/index.js",
+    "module": "dist/es/index.mjs",
     "exports": {
-        "package.json": "./package.json",
-        "require": "./dist/framer-motion.cjs.js",
-        "import": "./dist/es/index.js",
-        "default": "./dist/es/index.js"
+        ".": {
+            "require": "./dist/framer-motion.cjs.js",
+            "import": "./dist/es/index.mjs",
+            "default": "./dist/framer-motion.cjs.js"
+        },
+        "./package.json": "./package.json"
     },
     "types": "types/index.d.ts",
     "author": "Framer",

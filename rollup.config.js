@@ -80,6 +80,7 @@ const cjs = Object.assign({}, config, {
 
 const es = Object.assign({}, config, {
     output: {
+        entryFileNames: '[name].mjs',
         format: "es",
         exports: "named",
         preserveModules: true,
