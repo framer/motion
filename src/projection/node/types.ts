@@ -10,7 +10,6 @@ import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
 export interface Snapshot {
     measured: Box
     layout: Box
-    visible: Box
     latestValues: ResolvedValues
     isShared?: boolean
 }
