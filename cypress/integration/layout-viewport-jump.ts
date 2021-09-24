@@ -51,7 +51,7 @@ describe("Viewport jump", () => {
     /**
      * This passes locally but can't get it to pass in Cypress
      */
-    it.skip("If div scroll jumps, don't trigger layout animation if provided shouldMeasureScroll prop", () => {
+    it("If div scroll jumps, don't trigger layout animation if provided shouldMeasureScroll prop", () => {
         cy.visit("?test=layout-viewport-jump&nested=true")
             .wait(50)
             .get("#box")

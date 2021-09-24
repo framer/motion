@@ -65,9 +65,8 @@
             const scroll = document.getElementById("scroll")
             const box = document.getElementById("box")
 
-            scroll.scrollLeft = 50
-
             const boxOrigin = box.getBoundingClientRect()
+            scroll.scrollLeft = 50
 
             const scrollProjection = createNode(scroll, undefined, {
                 shouldMeasureScroll: true,
@@ -82,6 +81,9 @@
 
             boxProjection.root.didUpdate()
 
+            /**
+             * Don't animate the box from its previous position if the scroll has changed.
+             */
             matchViewportBox(box, boxOrigin)
             matchOpacity(box, 1)
             matchBorderRadius(box, "20%")

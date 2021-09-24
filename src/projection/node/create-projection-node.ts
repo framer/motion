@@ -604,14 +604,13 @@ export function createProjectionNode<I>({
         updateSnapshot() {
             if (this.snapshot || !this.instance) return
             const measured = this.measure()!
-
-            const visible = this.removeTransform(measured)!
-            const layout = this.removeElementScroll(visible)
+            const layout = this.removeElementScroll(
+                this.removeTransform(measured)
+            )
             roundBox(layout)
 
             this.snapshot = {
                 measured,
-                visible,
                 layout,
                 latestValues: {},
             }
@@ -722,6 +721,7 @@ export function createProjectionNode<I>({
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
                 const { scroll, options } = node
+
                 if (
                     node !== this.root &&
                     scroll &&
@@ -1445,7 +1445,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             eachAxis((axis) => {
                 const axisSnapshot = snapshot.isShared
                     ? snapshot.measured[axis]
-                    : snapshot.visible[axis]
+                    : snapshot.layout[axis]
                 const length = calcLength(axisSnapshot)
                 axisSnapshot.min = layout[axis].min
                 axisSnapshot.max = axisSnapshot.min + length
@@ -1454,7 +1454,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             eachAxis((axis) => {
                 const axisSnapshot = snapshot.isShared
                     ? snapshot.measured[axis]
-                    : snapshot.visible[axis]
+                    : snapshot.layout[axis]
                 const length = calcLength(layout[axis])
                 axisSnapshot.max = axisSnapshot.min + length
             })
@@ -1463,7 +1463,6 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const layoutDelta = createDelta()
         calcBoxDelta(layoutDelta, layout, snapshot.layout)
         const visualDelta = createDelta()
-
         if (snapshot.isShared) {
             calcBoxDelta(
                 visualDelta,
@@ -1471,7 +1470,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                 snapshot.measured
             )
         } else {
-            calcBoxDelta(visualDelta, measuredLayout, snapshot.visible)
+            calcBoxDelta(visualDelta, layout, snapshot.layout)
         }
 
         const hasLayoutChanged = !isDeltaZero(layoutDelta)
