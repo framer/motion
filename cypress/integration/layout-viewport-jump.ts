@@ -7,10 +7,10 @@ interface BoundingBox {
 
 function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     const bbox = element.getBoundingClientRect()
-    expect(Math.round(bbox.left)).to.equal(expectedBbox.left)
-    expect(Math.round(bbox.top)).to.equal(expectedBbox.top)
-    expect(Math.round(bbox.width)).to.equal(expectedBbox.width)
-    expect(Math.round(bbox.height)).to.equal(expectedBbox.height)
+    expect(Math.floor(bbox.left)).to.equal(expectedBbox.left)
+    expect(Math.floor(bbox.top)).to.equal(expectedBbox.top)
+    expect(Math.floor(bbox.width)).to.equal(expectedBbox.width)
+    expect(Math.floor(bbox.height)).to.equal(expectedBbox.height)
 }
 
 describe("Viewport jump", () => {
