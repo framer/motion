@@ -614,7 +614,6 @@ export function createProjectionNode<I>({
                 layout,
                 latestValues: {},
             }
-            console.log("snapshot")
         }
 
         updateLayout() {

@@ -216,7 +216,7 @@ export class VisualElementDragControls {
 
     private updateAxis(axis: DragDirection, _point: Point, offset?: Point) {
         const { drag } = this.getProps()
-        if (axis === "y") console.log("updating mouse event")
+
         // If we're not dragging this axis, do an early return.
         if (!offset || !shouldDrag(axis, drag, this.currentDirection)) return
 
@@ -443,19 +443,13 @@ export class VisualElementDragControls {
 
         projection!.addEventListener("didUpdate", (({
             delta,
-            layoutDelta,
             hasLayoutChanged,
         }: LayoutUpdateData) => {
             if (this.isDragging && hasLayoutChanged) {
                 eachAxis((axis) => {
                     const motionValue = this.getAxisMotionValue(axis)
                     if (!motionValue) return
-                    if (axis === "y")
-                        console.log(
-                            "did update with delta",
-                            delta[axis].translate,
-                            layoutDelta[axis].translate
-                        )
+
                     this.originPoint[axis] += delta[axis].translate
                     motionValue.set(motionValue.get() + delta[axis].translate)
                 })
