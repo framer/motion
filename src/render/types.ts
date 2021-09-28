@@ -73,9 +73,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     getProps(): MotionProps
     getVariant(name: string): Variant | undefined
     getDefaultTransition(): Transition | undefined
-    getVariantContext(
-        startAtParent?: boolean
-    ):
+    getVariantContext(startAtParent?: boolean):
         | undefined
         | {
               initial?: string | string[]
@@ -141,9 +139,9 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
 }
 
-export type ScrapeMotionValuesFromProps = (
-    props: MotionProps
-) => { [key: string]: MotionValue | string | number }
+export type ScrapeMotionValuesFromProps = (props: MotionProps) => {
+    [key: string]: MotionValue | string | number
+}
 
 export type UseRenderState<RenderState = any> = () => RenderState
 
