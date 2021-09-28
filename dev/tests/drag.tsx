@@ -25,7 +25,7 @@ export const App = () => {
             dragConstraints={{ top, left, right, bottom }}
             dragDirectionLock={!!lock}
             layout={layout}
-            style={{
+            initial={{
                 width: 50,
                 height: 50,
                 background: "red",

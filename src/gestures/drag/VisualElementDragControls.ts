@@ -271,10 +271,8 @@ export class VisualElementDragControls {
     }
 
     private resolveRefConstraints() {
-        const {
-            dragConstraints: constraints,
-            onMeasureDragConstraints,
-        } = this.getProps()
+        const { dragConstraints: constraints, onMeasureDragConstraints } =
+            this.getProps()
         if (!constraints || !isRefObject(constraints)) return false
 
         const constraintsElement = constraints.current as HTMLElement
@@ -389,9 +387,13 @@ export class VisualElementDragControls {
     private getAxisMotionValue(axis: DragDirection) {
         const dragKey = "_drag" + axis.toUpperCase()
         const externalMotionValue = this.visualElement.getProps()[dragKey]
+
         return externalMotionValue
             ? externalMotionValue
-            : this.visualElement.getValue(axis, 0)
+            : this.visualElement.getValue(
+                  axis,
+                  this.visualElement.getProps().initial?.[axis] ?? 0
+              )
     }
 
     private snapToCursor(_point: Point) {}
