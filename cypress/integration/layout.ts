@@ -168,4 +168,28 @@ describe("Layout animation", () => {
                 })
             })
     })
+
+    it("Has a correct bounding box when a transform is applied", () => {
+        cy.visit("?test=layout-scaled-child-in-transformed-parent")
+            .wait(50)
+            .get("#box")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    height: 100,
+                    left: 200,
+                    top: 150,
+                    width: 100,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    height: 100,
+                    left: 225,
+                    top: 150,
+                    width: 75,
+                })
+            })
+    })
 })
