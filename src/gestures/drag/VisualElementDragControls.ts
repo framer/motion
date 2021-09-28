@@ -162,6 +162,14 @@ export class VisualElementDragControls {
             this.updateAxis("y", info.point, offset)
 
             onDrag?.(event, info)
+
+            /**
+             * Ideally we would leave the renderer to fire naturally at the end of
+             * this frame but if the element is about to change layout as the result
+             * of a re-render we want to ensure the browser can read the latest
+             * bounding box to ensure the pointer and element don't fall out of sync.
+             */
+            this.visualElement.syncRender()
         }
 
         const onSessionEnd = (event: AnyPointerEvent, info: PanInfo) =>
@@ -208,7 +216,7 @@ export class VisualElementDragControls {
 
     private updateAxis(axis: DragDirection, _point: Point, offset?: Point) {
         const { drag } = this.getProps()
-
+        if (axis === "y") console.log("updating mouse event")
         // If we're not dragging this axis, do an early return.
         if (!offset || !shouldDrag(axis, drag, this.currentDirection)) return
 
@@ -433,9 +441,8 @@ export class VisualElementDragControls {
 
         // TODO: Scale point on resize
 
-        // TODO: If we're resuming from a previous drag gesture, project into the previous box
-
         projection!.addEventListener("didUpdate", (({
+            delta,
             layoutDelta,
             hasLayoutChanged,
         }: LayoutUpdateData) => {
@@ -443,11 +450,14 @@ export class VisualElementDragControls {
                 eachAxis((axis) => {
                     const motionValue = this.getAxisMotionValue(axis)
                     if (!motionValue) return
-
-                    this.originPoint[axis] += layoutDelta[axis].translate
-                    motionValue.set(
-                        motionValue.get() + layoutDelta[axis].translate
-                    )
+                    if (axis === "y")
+                        console.log(
+                            "did update with delta",
+                            delta[axis].translate,
+                            layoutDelta[axis].translate
+                        )
+                    this.originPoint[axis] += delta[axis].translate
+                    motionValue.set(motionValue.get() + delta[axis].translate)
                 })
 
                 this.visualElement.syncRender()
