@@ -414,14 +414,26 @@ export function createProjectionNode<I>({
                         const { onLayoutAnimationComplete } =
                             visualElement.getProps()
 
+                        /**
+                         * The target layout of the element might stay the same,
+                         * but its position relative to its parent has changed.
+                         */
                         const targetChanged =
                             !this.targetLayout ||
                             !boxEquals(this.targetLayout, newLayout) ||
                             hasRelativeTargetChanged
 
+                        /**
+                         * If the layout hasn't seemed to have changed, it might be that the
+                         * element is visually in the same place in the document but its position
+                         * relative to its parent has indeed changed. So here we check for that.
+                         */
+                        const hasOnlyRelativeTargetChanged =
+                            !hasLayoutChanged && hasRelativeTargetChanged
+
                         if (
                             this.resumeFrom?.instance ||
-                            hasRelativeTargetChanged ||
+                            hasOnlyRelativeTargetChanged ||
                             (hasLayoutChanged &&
                                 (targetChanged || !this.currentAnimation))
                         ) {
@@ -432,7 +444,7 @@ export function createProjectionNode<I>({
 
                             this.setAnimationOrigin(
                                 delta,
-                                hasRelativeTargetChanged
+                                hasOnlyRelativeTargetChanged
                             )
                             this.startAnimation({
                                 ...getValueTransition(
@@ -1476,12 +1488,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         const hasLayoutChanged = !isDeltaZero(layoutDelta)
         let hasRelativeTargetChanged = false
 
-        /**
-         * If the layout hasn't seemed to have changed, it might be that the
-         * element is visually in the same place in the document but its position
-         * relative to its parent has indeed changed. So here we check for that.
-         */
-        if (!hasLayoutChanged && !node.resumeFrom) {
+        if (!node.resumeFrom) {
             node.relativeParent = node.getClosestProjectingParent()
 
             /**
