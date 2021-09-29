@@ -604,11 +604,24 @@ export function createProjectionNode<I>({
         updateSnapshot() {
             if (this.snapshot || !this.instance) return
             const measured = this.measure()!
-            const layout = this.removeElementScroll(
-                this.removeTransform(measured)
+            const layout = this.removeTransform(
+                this.removeElementScroll(measured)
             )
             roundBox(layout)
-
+            // if (this.instance.id === "box")
+            //     console.log(
+            //         "box measured as",
+            //         measured.y,
+            //         this.removeTransform(measured).y,
+            //         layout.y
+            //     )
+            // if (this.instance.id === "button")
+            //     console.log(
+            //         "button measured as",
+            //         measured.y,
+            //         this.removeTransform(measured).y,
+            //         layout.y
+            //     )
             this.snapshot = {
                 measured,
                 layout,
@@ -645,6 +658,7 @@ export function createProjectionNode<I>({
 
             const measured = this.measure()
             roundBox(measured)
+
             const prevLayout = this.layout
             this.layout = {
                 measured,
