@@ -37,6 +37,7 @@ const Item = ({ item, axis }) => {
             // dragListener={false}
             // dragControls={dragControls}
             style={{ boxShadow, y }}
+            dragTransition={{ bounceStiffness: 2000, bounceDamping: 10000 }}
             transition={{ duration: 0.1 }}
         >
             <span>{item}</span>

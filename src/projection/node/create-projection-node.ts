@@ -823,10 +823,10 @@ export function createProjectionNode<I>({
              * a relativeParent. This will allow a component to perform scale correction
              * even if no animation has started.
              */
+            // TODO If this is unsuccessful this currently happens every frame
             if (!this.targetDelta && !this.relativeTarget) {
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 this.relativeParent = this.getClosestProjectingParent()
-
                 if (this.relativeParent && this.relativeParent.layout) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
@@ -836,6 +836,8 @@ export function createProjectionNode<I>({
                         this.relativeParent.layout.actual
                     )
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
+                } else if (this.target) {
+                    this.target = undefined
                 }
             }
 
@@ -1168,9 +1170,9 @@ export function createProjectionNode<I>({
         }
 
         applyTransformsToTarget() {
-            const { targetWithTransforms, target, latestValues } =
+            const { targetWithTransforms, target, layout, latestValues } =
                 this.getLead()
-            if (!targetWithTransforms || !target) return
+            if (!targetWithTransforms || !target || !layout) return
 
             copyBoxInto(targetWithTransforms, target)
 

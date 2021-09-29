@@ -39,7 +39,7 @@ const scrollable = {
     left: 0,
     right: 0,
     height: 500,
-    overflow: "auto",
+    overflow: "scroll",
 } as any
 
 const container = {

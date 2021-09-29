@@ -61,6 +61,43 @@ describe("Drag to reorder", () => {
                     width: 340,
                 })
             })
+            .get("#Tomato")
+            .trigger("pointerup", 360, 220, { force: true })
+            .wait(100)
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 252,
+                    width: 340,
+                })
+            })
+            .get("#Cucumber")
+            .trigger("pointerdown", 360, 175, { force: true })
+            .wait(50)
+            .trigger("pointermove", 360, 180, { force: true })
+            .wait(50)
+            .trigger("pointermove", 360, 200, { force: true })
+            .wait(50)
+            .trigger("pointermove", 360, 220, { force: true })
+            .wait(100)
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 204,
+                    width: 340,
+                })
+            })
+            .get("#Tomato")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 174,
+                    width: 340,
+                })
+            })
     })
 
     it("X axis", () => {

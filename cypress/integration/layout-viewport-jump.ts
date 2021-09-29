@@ -7,7 +7,6 @@ interface BoundingBox {
 
 function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     const bbox = element.getBoundingClientRect()
-    expect(Math.floor(bbox.left)).to.equal(expectedBbox.left)
     expect(Math.floor(bbox.top)).to.equal(expectedBbox.top)
     expect(Math.floor(bbox.width)).to.equal(expectedBbox.width)
     expect(Math.floor(bbox.height)).to.equal(expectedBbox.height)
@@ -21,7 +20,6 @@ describe("Viewport jump", () => {
             .get("#box")
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    left: 442,
                     height: 100,
                     top: 100,
                     width: 100,
@@ -31,7 +29,6 @@ describe("Viewport jump", () => {
             .get("#box")
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    left: 442,
                     height: 100,
                     top: 0,
                     width: 100,
@@ -41,7 +38,6 @@ describe("Viewport jump", () => {
             .wait(50)
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    left: 443,
                     height: 100,
                     top: 100,
                     width: 100,
@@ -59,7 +55,6 @@ describe("Viewport jump", () => {
             .get("#box")
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    left: 442,
                     height: 100,
                     top: 100,
                     width: 100,
@@ -70,7 +65,6 @@ describe("Viewport jump", () => {
             .get("#box")
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    left: 442,
                     height: 100,
                     top: 0,
                     width: 100,
@@ -80,7 +74,6 @@ describe("Viewport jump", () => {
             .wait(50)
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    left: 443,
                     height: 100,
                     top: 100,
                     width: 100,
