@@ -116,6 +116,10 @@ export class VisualElementDragControls {
 
             if (snapToCursor) this.snapToCursor(initialPoint)
 
+            if (this.visualElement.projection) {
+                this.visualElement.projection.target = undefined
+            }
+
             /**
              * Record gesture origin
              */

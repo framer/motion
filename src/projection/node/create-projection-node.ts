@@ -849,8 +849,6 @@ export function createProjectionNode<I>({
                         this.relativeParent.layout.actual
                     )
                     copyBoxInto(this.relativeTarget, this.relativeTargetOrigin)
-                } else if (this.target) {
-                    this.target = undefined
                 }
             }
 
@@ -1175,10 +1173,11 @@ export function createProjectionNode<I>({
         }
 
         finishAnimation() {
-            if (!this.currentAnimation) return
+            if (this.currentAnimation) {
+                this.mixTargetDelta?.(animationTarget)
+                this.currentAnimation.stop()
+            }
 
-            this.mixTargetDelta?.(animationTarget)
-            this.currentAnimation.stop()
             this.completeAnimation()
         }
 
@@ -1352,7 +1351,7 @@ export function createProjectionNode<I>({
                 return styles
             }
 
-            if (!this.projectionDelta || !this.layout) {
+            if (!this.projectionDelta || !this.layout || !lead.target) {
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
                     emptyStyles.opacity = this.latestValues.opacity ?? 1
@@ -1556,6 +1555,7 @@ function resetTransformStyle(node: IProjectionNode) {
 
 function finishAnimation(node: IProjectionNode) {
     node.finishAnimation()
+    node.targetDelta = node.relativeTarget = node.target = undefined
 }
 
 function resolveTargetDelta(node: IProjectionNode) {
