@@ -971,22 +971,6 @@ export function createProjectionNode<I>({
                 Boolean(this.resumingFrom) || this !== lead
             )
 
-            // If the child's layout hasn't changed but the parent has changed,
-            // we should calculate a scale to keep the child at the same size.
-            if (!lead.target) {
-                const isScaleOnly = !boxEquals(
-                    this.layoutCorrected,
-                    this.layout.actual
-                )
-
-                if (isScaleOnly) {
-                    lead.target = createBox()
-                    lead.targetWithTransforms = createBox()
-
-                    copyBoxInto(lead.target, this.layout.actual)
-                }
-            }
-
             const { target } = lead
             if (!target) return
 

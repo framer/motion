@@ -16,6 +16,7 @@ export function pixelsToPercent(pixels: number, axis: Axis): number {
  */
 export const correctBorderRadius: ScaleCorrectorDefinition = {
     correct: (latest, node) => {
+        if (!node.target) return latest
         /**
          * If latest is a string, if it's a percentage we can return immediately as it's
          * going to be stretched appropriately. Otherwise, if it's a pixel, convert it to a number.
@@ -32,8 +33,8 @@ export const correctBorderRadius: ScaleCorrectorDefinition = {
          * If latest is a number, it's a pixel value. We use the current viewportBox to calculate that
          * pixel value as a percentage of each axis
          */
-        const x = pixelsToPercent(latest, node.target!.x)
-        const y = pixelsToPercent(latest, node.target!.y)
+        const x = pixelsToPercent(latest, node.target.x)
+        const y = pixelsToPercent(latest, node.target.y)
 
         return `${x}% ${y}%`
     },

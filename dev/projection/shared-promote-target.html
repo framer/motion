@@ -1,0 +1,148 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box-a {
+                position: absolute;
+                left: 100px;
+                top: 100px;
+                width: 200px;
+                height: 200px;
+                background-color: #00cc88;
+            }
+
+            #box-b {
+                position: absolute;
+                left: 600px;
+                top: 100px;
+                width: 200px;
+                height: 200px;
+                background-color: #09f;
+            }
+
+            #button {
+                width: 100px;
+                height: 100px;
+                top: 0;
+                left: 0;
+                background-color: rgb(132, 0, 255);
+            }
+
+            #button.b {
+                width: 300px;
+            }
+
+            #child-a,
+            #child-b {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 50px;
+                height: 50px;
+                background-color: yellow;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box-a"><div id="child-a"></div></div>
+        <div id="button"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const {
+                matchViewportBox,
+                matchVisibility,
+                matchOpacity,
+            } = window.Assert
+
+            const a = document.getElementById("box-a")
+            const childA = document.getElementById("child-a")
+            const c = document.getElementById("button")
+
+            const aProjection = createNode(
+                a,
+                undefined,
+                { layoutId: "box" },
+                { duration: 0.1 }
+            )
+
+            const childAProjection = createNode(
+                childA,
+                aProjection,
+                {
+                    layoutId: "child",
+                },
+                { duration: 0.1 }
+            )
+            const cProjection = createNode(
+                c,
+                undefined,
+                { layoutId: "foo" },
+                { duration: 0.1 }
+            )
+
+            aProjection.willUpdate()
+            childAProjection.willUpdate()
+
+            const b = document.createElement("div")
+            const childB = document.createElement("div")
+            b.id = "box-b"
+            childB.id = "child-b"
+            b.appendChild(childB)
+            document.body.appendChild(b)
+            const bProjection = createNode(
+                b,
+                undefined,
+                {
+                    layoutId: "box",
+                },
+                { duration: 0.1 }
+            )
+            const childBProjection = createNode(
+                childB,
+                bProjection,
+                {
+                    layoutId: "child",
+                },
+                { duration: 0.1 }
+            )
+
+            aProjection.root.didUpdate()
+
+            // After the shared animation finished
+            setTimeout(() => {
+                cProjection.willUpdate()
+                c.classList.add("b")
+                cProjection.root.didUpdate()
+
+                matchViewportBox(childB, {
+                    left: 600,
+                    top: 100,
+                    height: 50,
+                    width: 50,
+                })
+            }, 200)
+        </script>
+    </body>
+</html>
