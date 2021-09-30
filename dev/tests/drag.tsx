@@ -15,23 +15,30 @@ export const App = () => {
     const y = parseFloat(params.get("y")) || 0
     const layout = params.get("layout") || undefined
 
+    // We do this to test when scroll position isn't 0/0
+    React.useLayoutEffect(() => {
+        window.scrollTo(0, 100)
+    }, [])
+
     return (
-        <motion.div
-            id="box"
-            data-testid="draggable"
-            drag={axis ? axis : true}
-            dragElastic={0}
-            dragMomentum={false}
-            dragConstraints={{ top, left, right, bottom }}
-            dragDirectionLock={!!lock}
-            layout={layout}
-            initial={{
-                width: 50,
-                height: 50,
-                background: "red",
-                x,
-                y,
-            }}
-        />
+        <div style={{ height: 2000, paddingTop: 100 }}>
+            <motion.div
+                id="box"
+                data-testid="draggable"
+                drag={axis ? axis : true}
+                dragElastic={0}
+                dragMomentum={false}
+                dragConstraints={{ top, left, right, bottom }}
+                dragDirectionLock={!!lock}
+                layout={layout}
+                initial={{
+                    width: 50,
+                    height: 50,
+                    background: "red",
+                    x,
+                    y,
+                }}
+            />
+        </div>
     )
 }

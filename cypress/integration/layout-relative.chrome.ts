@@ -63,10 +63,10 @@ describe("Relative projection targets", () => {
             .get("#box")
             .should(([$box]: any) => {
                 expectBbox($box, {
-                    left: 200,
-                    top: 100,
-                    height: 80,
-                    width: 80,
+                    left: 180,
+                    top: 80,
+                    height: 120,
+                    width: 120,
                 })
             })
             .get("#inner-box")

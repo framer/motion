@@ -102,10 +102,7 @@ export function calcViewportAxisConstraints(
         ;[min, max] = [max, min]
     }
 
-    return {
-        min: layoutAxis.min + min,
-        max: layoutAxis.min + max,
-    }
+    return { min, max }
 }
 
 /**

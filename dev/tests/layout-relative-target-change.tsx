@@ -23,7 +23,7 @@ const Box = () => {
                     e.stopPropagation()
                     setHover((h) => (h ? false : true))
                 }}
-                transition={{ duration: 1 }}
+                transition={{ duration: 0.1 }}
             >
                 <motion.div
                     id="inner-box"
@@ -36,7 +36,7 @@ const Box = () => {
                         top: "calc(50% - 20px)",
                         backgroundColor: "blue",
                     }}
-                    transition={{ duration: 1 }}
+                    transition={{ duration: 0.1 }}
                 />
             </motion.div>
         </motion.div>

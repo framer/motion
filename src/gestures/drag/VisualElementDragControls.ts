@@ -161,8 +161,6 @@ export class VisualElementDragControls {
             this.updateAxis("x", info.point, offset)
             this.updateAxis("y", info.point, offset)
 
-            onDrag?.(event, info)
-
             /**
              * Ideally we would leave the renderer to fire naturally at the end of
              * this frame but if the element is about to change layout as the result
@@ -170,6 +168,12 @@ export class VisualElementDragControls {
              * bounding box to ensure the pointer and element don't fall out of sync.
              */
             this.visualElement.syncRender()
+
+            /**
+             * This must fire after the syncRender call as it might trigger a state
+             * change which itself might trigger a layout update.
+             */
+            onDrag?.(event, info)
         }
 
         const onSessionEnd = (event: AnyPointerEvent, info: PanInfo) =>
