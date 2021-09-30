@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box {
+                width: 300px;
+                height: 100px;
+                position: absolute;
+                top: 200px;
+                left: 50%;
+            }
+
+            #button {
+                position: absolute;
+                inset: 0;
+                background-color: #00cc88;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box"><div id="button"></div></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox, addPageScroll } = window.Assert
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box)
+
+            const button = document.getElementById("button")
+            const buttonProjection = createNode(button, boxProjection)
+
+            const scrollDistance = 100
+
+            window.scrollTo(scrollDistance, scrollDistance)
+            boxProjection.setValue("scale", 2)
+            boxProjection.options.visualElement.syncRender()
+
+            const boxOrigin = box.getBoundingClientRect()
+            const buttonOrigin = button.getBoundingClientRect()
+
+            requestAnimationFrame(() => {
+                buttonProjection.willUpdate()
+                boxProjection.willUpdate()
+
+                boxProjection.root.didUpdate()
+
+                matchViewportBox(box, boxOrigin)
+                matchViewportBox(button, buttonOrigin)
+            })
+        </script>
+    </body>
+</html>

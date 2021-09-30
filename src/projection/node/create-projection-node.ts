@@ -616,8 +616,8 @@ export function createProjectionNode<I>({
         updateSnapshot() {
             if (this.snapshot || !this.instance) return
             const measured = this.measure()!
-            const layout = this.removeElementScroll(
-                this.removeTransform(measured)
+            const layout = this.removeTransform(
+                this.removeElementScroll(measured)
             )
             roundBox(layout)
 
@@ -657,6 +657,7 @@ export function createProjectionNode<I>({
 
             const measured = this.measure()
             roundBox(measured)
+
             const prevLayout = this.layout
             this.layout = {
                 measured,
