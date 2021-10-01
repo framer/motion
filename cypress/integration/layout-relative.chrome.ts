@@ -16,7 +16,7 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
 /**
  * TODO: This isn't failing as expected
  *
- * if (!node.resumeFrom) { -> if (!node.resumeFrom || !hasLayoutChanged) {
+ * if (!node.resumeFrom) { -> if (!node.resumeFrom && !hasLayoutChanged) {
  *
  * To see breaking behaviour. Perhaps if we could hold the second animation somehow.
  */
