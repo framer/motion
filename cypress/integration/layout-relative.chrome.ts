@@ -13,6 +13,13 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     expect(Math.round(bbox.height)).to.equal(expectedBbox.height)
 }
 
+/**
+ * TODO: This isn't failing as expected
+ *
+ * if (!node.resumeFrom) { -> if (!node.resumeFrom && !hasLayoutChanged) {
+ *
+ * To see breaking behaviour. Perhaps if we could hold the second animation somehow.
+ */
 describe("Relative projection targets", () => {
     it("If the target didn't change but the relative target changes, starts a new animation", () => {
         cy.visit(`?test=layout-relative-target-change`)
@@ -59,16 +66,7 @@ describe("Relative projection targets", () => {
             // scale the box
             .get("#box")
             .trigger("click")
-            .wait(50)
-            .get("#box")
-            .should(([$box]: any) => {
-                expectBbox($box, {
-                    left: 200,
-                    top: 100,
-                    height: 80,
-                    width: 80,
-                })
-            })
+            .wait(10)
             .get("#inner-box")
             .should(([$box]: any) => {
                 expectBbox($box, {

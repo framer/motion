@@ -20,18 +20,18 @@ describe("Drag to reorder", () => {
             .get("#Tomato")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 176,
+                    top: 174,
                     width: 340,
                 })
             })
             .get("#Cucumber")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 253,
+                    top: 252,
                     width: 340,
                 })
             })
@@ -46,18 +46,18 @@ describe("Drag to reorder", () => {
             .wait(100)
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 206,
+                    top: 249,
                     width: 340,
                 })
             })
             .get("#Cucumber")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 176,
+                    top: 174,
                     width: 340,
                 })
             })
@@ -66,9 +66,9 @@ describe("Drag to reorder", () => {
             .wait(100)
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 253,
+                    top: 252,
                     width: 340,
                 })
             })
@@ -83,18 +83,18 @@ describe("Drag to reorder", () => {
             .wait(100)
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 206,
+                    top: 249,
                     width: 340,
                 })
             })
             .get("#Tomato")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 176,
+                    top: 174,
                     width: 340,
                 })
             })
@@ -106,18 +106,18 @@ describe("Drag to reorder", () => {
             .get("#Tomato")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 291.5,
+                    top: 291,
                     width: 340,
                 })
             })
             .get("#Cucumber")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 690,
-                    top: 291.5,
+                    top: 291,
                     width: 340,
                 })
             })
@@ -132,18 +132,18 @@ describe("Drag to reorder", () => {
             .wait(100)
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
-                    left: 420,
-                    top: 291.5,
+                    height: 68,
+                    left: 535,
+                    top: 291,
                     width: 340,
                 })
             })
             .get("#Cucumber")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    height: 67,
+                    height: 68,
                     left: 350,
-                    top: 291.5,
+                    top: 291,
                     width: 340,
                 })
             })
