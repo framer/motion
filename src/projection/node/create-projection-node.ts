@@ -933,6 +933,8 @@ export function createProjectionNode<I>({
             }
         }
 
+        hasProjected: boolean = false
+
         calcProjection() {
             const { layout, layoutId } = this.options
 
@@ -1007,6 +1009,7 @@ export function createProjectionNode<I>({
                 this.treeScale.x !== prevTreeScaleX ||
                 this.treeScale.y !== prevTreeScaleY
             ) {
+                this.hasProjected = true
                 this.scheduleRender()
             }
         }
@@ -1339,6 +1342,10 @@ export function createProjectionNode<I>({
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
                     emptyStyles.opacity = this.latestValues.opacity ?? 1
+                }
+                if (this.hasProjected && !hasTransform(this.latestValues)) {
+                    emptyStyles.transform = "none"
+                    this.hasProjected = false
                 }
                 return emptyStyles
             }
