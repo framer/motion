@@ -1,5 +1,11 @@
 import * as React from "react"
-import { FunctionComponent, ReactHTML, useEffect, useRef } from "react"
+import {
+    forwardRef,
+    FunctionComponent,
+    ReactHTML,
+    useEffect,
+    useRef,
+} from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"
@@ -7,21 +13,24 @@ import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
 
-interface Props<V> {
+export interface Props<V> {
     as?: keyof ReactHTML
     axis?: "x" | "y"
     onReorder: (newOrder: V[]) => void
 }
 
-export function Group<V>({
-    children,
-    as = "ul",
-    axis = "y",
-    onReorder,
-    ...props
-}: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>) {
+export function ReorderGroup<V>(
+    {
+        children,
+        as = "ul",
+        axis = "y",
+        onReorder,
+        ...props
+    }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
+    externalRef?: React.Ref<any>
+) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
-        HTMLMotionProps<any>
+        HTMLMotionProps<any> & { ref?: React.Ref<any> }
     >
 
     const order: ItemData<V>[] = []
@@ -49,13 +58,15 @@ export function Group<V>({
     })
 
     return (
-        <Component {...props}>
+        <Component {...props} ref={externalRef}>
             <ReorderContext.Provider value={context}>
                 {children}
             </ReorderContext.Provider>
         </Component>
     )
 }
+
+export const Group = forwardRef(ReorderGroup)
 
 function getValue<V>(item: ItemData<V>) {
     return item.value

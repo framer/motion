@@ -6,6 +6,7 @@ import {
     useContext,
     useEffect,
     useRef,
+    forwardRef,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { Box } from "../../projection/geometry/types"
@@ -16,7 +17,7 @@ import { useMotionValue } from "../../value/use-motion-value"
 import { useTransform } from "../../value/use-transform"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
-interface Props<V> {
+export interface Props<V> {
     as?: keyof ReactHTML
     value: V
 }
@@ -25,18 +26,18 @@ function useDefaultMotionValue(value: any, defaultValue: number = 0) {
     return isMotionValue(value) ? value : useMotionValue(defaultValue)
 }
 
-/**
- * TODO: Fix slippage when dragging
- */
-export function Item<V>({
-    children,
-    style,
-    value,
-    as = "li",
-    ...props
-}: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>) {
+export function ReorderItem<V>(
+    {
+        children,
+        style,
+        value,
+        as = "li",
+        ...props
+    }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
+    externalRef?: React.Ref<any>
+) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
-        HTMLMotionProps<any>
+        HTMLMotionProps<any> & { ref?: React.Ref<any> }
     >
 
     const context = useContext(ReorderContext)
@@ -72,10 +73,13 @@ export function Item<V>({
                     updateOrder(value, point[axis].get(), velocity[axis])
             }}
             onLayoutMeasure={(measured) => (layout.current = measured)}
+            ref={externalRef}
         >
             {children}
         </Component>
     )
 }
+
+export const Item = forwardRef(ReorderItem)
 
 const originConstraints = { top: 0, left: 0, right: 0, bottom: 0 }
