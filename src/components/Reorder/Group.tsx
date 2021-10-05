@@ -39,7 +39,15 @@ export function ReorderGroup<V>(
     const context: ReorderContextProps<any> = {
         axis,
         registerItem: (value, layout) => {
-            order.push({ value, layout: layout[axis] })
+            /**
+             * Ensure entries can't add themselves more than once
+             */
+            if (
+                layout &&
+                order.findIndex((entry) => value === entry.value) === -1
+            ) {
+                order.push({ value, layout: layout[axis] })
+            }
         },
         updateOrder: (id, offset, velocity) => {
             if (isReordering.current) return

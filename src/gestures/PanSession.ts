@@ -14,18 +14,6 @@ export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
  * information about the current state of the tap gesture such as its
  * `point`, `delta`, `offset` and `velocity`.
  *
- * @library
- *
- * ```jsx
- * function onPan(event, info) {
- *   console.log(info.point.x, info.point.y)
- * }
- *
- * <Frame onPan={onPan} />
- * ```
- *
- * @motion
- *
  * ```jsx
  * <motion.div onPan={(event, info) => {
  *   console.log(info.point.x, info.point.y)
@@ -38,18 +26,6 @@ export interface PanInfo {
     /**
      * Contains `x` and `y` values for the current pan position relative
      * to the device or page.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * function onPan(event, info) {
@@ -66,18 +42,6 @@ export interface PanInfo {
      * Contains `x` and `y` values for the distance moved since
      * the last event.
      *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.delta.x, info.delta.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * function onPan(event, info) {
      *   console.log(info.delta.x, info.delta.y)
@@ -93,18 +57,6 @@ export interface PanInfo {
      * Contains `x` and `y` values for the distance moved from
      * the first pan event.
      *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.offset.x, info.offset.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * function onPan(event, info) {
      *   console.log(info.offset.x, info.offset.y)
@@ -118,18 +70,6 @@ export interface PanInfo {
     offset: Point
     /**
      * Contains `x` and `y` values for the current velocity of the pointer, in px/ms.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.velocity.x, info.velocity.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * function onPan(event, info) {

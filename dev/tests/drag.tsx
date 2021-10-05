@@ -11,6 +11,7 @@ export const App = () => {
     const left = parseFloat(params.get("left")) || undefined
     const right = parseFloat(params.get("right")) || undefined
     const bottom = parseFloat(params.get("bottom")) || undefined
+    const snapToOrigin = Boolean(params.get("return"))
     const x = parseFloat(params.get("x")) || 0
     const y = parseFloat(params.get("y")) || 0
     const layout = params.get("layout") || undefined
@@ -29,6 +30,7 @@ export const App = () => {
                 dragElastic={0}
                 dragMomentum={false}
                 dragConstraints={{ top, left, right, bottom }}
+                dragSnapToOrigin={snapToOrigin}
                 dragDirectionLock={!!lock}
                 layout={layout}
                 initial={{

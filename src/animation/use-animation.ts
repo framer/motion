@@ -12,26 +12,6 @@ import { useConstant } from "../utils/use-constant"
  *
  * These components can then be animated with the `start` method.
  *
- * @library
- *
- * ```jsx
- * import * as React from 'react'
- * import { Frame, useAnimation } from 'framer'
- *
- * export function MyComponent(props) {
- *    const controls = useAnimation()
- *
- *    controls.start({
- *        x: 100,
- *        transition: { duration: 0.5 },
- *    })
- *
- *    return <Frame animate={controls} />
- * }
- * ```
- *
- * @motion
- *
  * ```jsx
  * import * as React from 'react'
  * import { motion, useAnimation } from 'framer-motion'

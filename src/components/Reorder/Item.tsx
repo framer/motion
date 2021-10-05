@@ -58,16 +58,15 @@ export function ReorderItem<V>(
 
     useEffect(() => {
         registerItem(value, layout.current!)
-    })
+    }, [context])
 
     return (
         <Component
             drag={axis}
             {...props}
+            dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
             layout
-            dragConstraints={originConstraints}
-            dragElastic={1}
             onDrag={(_event, { velocity }) => {
                 velocity[axis] &&
                     updateOrder(value, point[axis].get(), velocity[axis])
@@ -81,5 +80,3 @@ export function ReorderItem<V>(
 }
 
 export const Item = forwardRef(ReorderItem)
-
-const originConstraints = { top: 0, left: 0, right: 0, bottom: 0 }

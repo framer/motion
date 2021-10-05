@@ -59,35 +59,6 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * When adding/removing more than a single child, every child **must** be given a unique `key` prop.
  *
- * @library
- *
- * Any `Frame` components that have an `exit` property defined will animate out when removed from
- * the tree.
- *
- * ```jsx
- * import { Frame, AnimatePresence } from 'framer'
- *
- * // As items are added and removed from `items`
- * export function Items({ items }) {
- *   return (
- *     <AnimatePresence>
- *       {items.map(item => (
- *         <Frame
- *           key={item.id}
- *           initial={{ opacity: 0 }}
- *           animate={{ opacity: 1 }}
- *           exit={{ opacity: 0 }}
- *         />
- *       ))}
- *     </AnimatePresence>
- *   )
- * }
- * ```
- *
- * You can sequence exit animations throughout a tree using variants.
- *
- * @motion
- *
  * Any `motion` components that have an `exit` property defined will animate out when removed from
  * the tree.
  *
@@ -140,8 +111,9 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
     const presentChildren = useRef(filteredChildren)
 
     // A lookup table to quickly reference components by key
-    const allChildren = useRef(new Map<ComponentKey, ReactElement<any>>())
-        .current
+    const allChildren = useRef(
+        new Map<ComponentKey, ReactElement<any>>()
+    ).current
 
     // A living record of all currently exiting components.
     const exiting = useRef(new Set<ComponentKey>()).current

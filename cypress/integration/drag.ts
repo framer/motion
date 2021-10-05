@@ -177,6 +177,34 @@ describe("Drag", () => {
             })
     })
 
+    it("Element returns to center with dragSnapToOrigin", () => {
+        cy.visit("?test=drag&return=true&left=-10&top=-10")
+            .wait(200)
+            .get("[data-testid='draggable']")
+            .wait(100)
+            .trigger("pointerdown", 40, 40)
+            .trigger("pointermove", 30, 30) // Gesture will start from first move past threshold
+            .wait(50)
+            .trigger("pointermove", 10, 10, { force: true })
+            .wait(50)
+            .should(($draggable: any) => {
+                const draggable = $draggable[0] as HTMLDivElement
+                const { left, top } = draggable.getBoundingClientRect()
+
+                expect(left).to.equal(-10)
+                expect(top).to.equal(-10)
+            })
+            .trigger("pointerup", { force: true })
+            .wait(50)
+            .should(($draggable: any) => {
+                const draggable = $draggable[0] as HTMLDivElement
+                const { left, top } = draggable.getBoundingClientRect()
+
+                expect(left).to.equal(0)
+                expect(top).to.equal(0)
+            })
+    })
+
     it("doesn't reset drag constraints (ref-based), while dragging, on unrelated parent component updates", () => {
         cy.visit("?test=drag-ref-constraints")
             .wait(200)

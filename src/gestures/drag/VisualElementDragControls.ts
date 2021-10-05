@@ -339,6 +339,7 @@ export class VisualElementDragControls {
             dragMomentum,
             dragElastic,
             dragTransition,
+            dragSnapToOrigin,
             onDragTransitionEnd,
         } = this.getProps()
 
@@ -349,7 +350,9 @@ export class VisualElementDragControls {
                 return
             }
 
-            const transition = constraints?.[axis] ?? {}
+            let transition = constraints?.[axis] ?? {}
+
+            if (dragSnapToOrigin) transition = { min: 0, max: 0 }
 
             /**
              * Overdamp the boundary spring if `dragElastic` is disabled. There's still a frame
