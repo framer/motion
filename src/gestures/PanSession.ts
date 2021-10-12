@@ -155,6 +155,7 @@ interface PanSessionHandlers {
 
 interface PanSessionOptions {
     transformPagePoint?: TransformPoint2D
+    windowContext: typeof window
 }
 
 interface TimestampedPoint extends Point2D {
@@ -203,7 +204,9 @@ export class PanSession {
     constructor(
         event: AnyPointerEvent,
         handlers: Partial<PanSessionHandlers>,
-        { transformPagePoint }: PanSessionOptions = {}
+        { transformPagePoint, windowContext }: PanSessionOptions = {
+            windowContext: window,
+        }
     ) {
         // If we have more than one touch, don't start detecting this gesture
         if (isTouchEvent(event) && event.touches.length > 1) return
@@ -224,9 +227,17 @@ export class PanSession {
             onSessionStart(event, getPanInfo(initialInfo, this.history))
 
         this.removeListeners = pipe(
-            addPointerEvent(window, "pointermove", this.handlePointerMove),
-            addPointerEvent(window, "pointerup", this.handlePointerUp),
-            addPointerEvent(window, "pointercancel", this.handlePointerUp)
+            addPointerEvent(
+                windowContext,
+                "pointermove",
+                this.handlePointerMove
+            ),
+            addPointerEvent(windowContext, "pointerup", this.handlePointerUp),
+            addPointerEvent(
+                windowContext,
+                "pointercancel",
+                this.handlePointerUp
+            )
         )
     }
 

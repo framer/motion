@@ -1,10 +1,11 @@
-import { useRef } from "react"
+import { useContext, useRef } from "react"
 import { EventInfo } from "../events/types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
 import { AnimationType } from "../render/utils/types"
+import { MotionConfigContext } from "../context/MotionConfigContext"
 import { isDragActive } from "./drag/utils/lock"
 import { FeatureProps } from "../motion/features/types"
 
@@ -19,6 +20,7 @@ export function useTapGesture({
     whileTap,
     visualElement,
 }: FeatureProps) {
+    const { windowContext } = useContext(MotionConfigContext)
     const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
     const isPressing = useRef(false)
     const cancelPointerEndListeners = useRef<Function | null>(null)
@@ -60,8 +62,8 @@ export function useTapGesture({
         isPressing.current = true
 
         cancelPointerEndListeners.current = pipe(
-            addPointerEvent(window, "pointerup", onPointerUp),
-            addPointerEvent(window, "pointercancel", onPointerCancel)
+            addPointerEvent(windowContext, "pointerup", onPointerUp),
+            addPointerEvent(windowContext, "pointercancel", onPointerCancel)
         )
 
         onTapStart?.(event, info)

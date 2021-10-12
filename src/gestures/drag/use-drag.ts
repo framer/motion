@@ -11,11 +11,14 @@ import { FeatureProps } from "../../motion/features/types"
  */
 export function useDrag(props: FeatureProps) {
     const { dragControls: groupDragControls, visualElement } = props
-    const { transformPagePoint } = useContext(MotionConfigContext)
+    const { transformPagePoint, windowContext } = useContext(
+        MotionConfigContext
+    )
 
     const dragControls = useConstant(() => {
         return new VisualElementDragControls({
             visualElement,
+            windowContext,
         })
     })
 

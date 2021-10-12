@@ -1,3 +1,4 @@
+import { useContext } from "react"
 import {
     createScrollMotionValues,
     createScrollUpdater,
@@ -5,31 +6,35 @@ import {
 } from "./utils"
 import { addDomEvent } from "../../events/use-dom-event"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 
 let viewportScrollValues: ScrollMotionValues
-
-function getViewportScrollOffsets() {
-    return {
-        xOffset: window.pageXOffset,
-        yOffset: window.pageYOffset,
-        xMaxOffset: document.body.clientWidth - window.innerWidth,
-        yMaxOffset: document.body.clientHeight - window.innerHeight,
-    }
-}
-
 let hasListeners = false
 
-function addEventListeners() {
+function addEventListeners({
+    windowContext,
+    documentContext,
+}: {
+    windowContext: typeof window
+    documentContext: typeof document
+}) {
     hasListeners = true
-    if (typeof window === "undefined") return
+    if (typeof windowContext === "undefined") return
 
     const updateScrollValues = createScrollUpdater(
         viewportScrollValues,
-        getViewportScrollOffsets
+        () => ({
+            xOffset: windowContext.pageXOffset,
+            yOffset: windowContext.pageYOffset,
+            xMaxOffset:
+                documentContext.body.clientWidth - windowContext.innerWidth,
+            yMaxOffset:
+                documentContext.body.clientHeight - windowContext.innerHeight,
+        })
     )
 
-    addDomEvent(window, "scroll", updateScrollValues, { passive: true })
-    addDomEvent(window, "resize", updateScrollValues)
+    addDomEvent(windowContext, "scroll", updateScrollValues, { passive: true })
+    addDomEvent(windowContext, "resize", updateScrollValues)
 }
 
 /**
@@ -71,6 +76,7 @@ function addEventListeners() {
  * @public
  */
 export function useViewportScroll(): ScrollMotionValues {
+    const { documentContext, windowContext } = useContext(MotionConfigContext)
     /**
      * Lazy-initialise the viewport scroll values
      */
@@ -79,7 +85,7 @@ export function useViewportScroll(): ScrollMotionValues {
     }
 
     useIsomorphicLayoutEffect(() => {
-        !hasListeners && addEventListeners()
+        !hasListeners && addEventListeners({ documentContext, windowContext })
     }, [])
 
     return viewportScrollValues

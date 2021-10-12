@@ -26,7 +26,9 @@ export function usePanGesture({
 }: FeatureProps) {
     const hasPanEvents = onPan || onPanStart || onPanEnd || onPanSessionStart
     const panSession = useRef<PanSession | null>(null)
-    const { transformPagePoint } = useContext(MotionConfigContext)
+    const { transformPagePoint, windowContext } = useContext(
+        MotionConfigContext
+    )
 
     const handlers = {
         onSessionStart: onPanSessionStart,
@@ -50,6 +52,7 @@ export function usePanGesture({
     function onPointerDown(event: AnyPointerEvent) {
         panSession.current = new PanSession(event, handlers, {
             transformPagePoint,
+            windowContext,
         })
     }
 

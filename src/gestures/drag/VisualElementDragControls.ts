@@ -49,6 +49,7 @@ export const elementDragControls = new WeakMap<
 
 interface DragControlConfig {
     visualElement: VisualElement
+    windowContext: typeof window
 }
 
 export interface DragControlOptions {
@@ -111,6 +112,11 @@ export class VisualElementDragControls {
     /**
      * @internal
      */
+    private windowContext: typeof window
+
+    /**
+     * @internal
+     */
     private hasMutatedConstraints: boolean = false
 
     /**
@@ -152,8 +158,9 @@ export class VisualElementDragControls {
      */
     private constraintsBox?: AxisBox2D
 
-    constructor({ visualElement }: DragControlConfig) {
+    constructor({ visualElement, windowContext }: DragControlConfig) {
         this.visualElement = visualElement
+        this.windowContext = windowContext
         this.visualElement.enableLayoutProjection()
         elementDragControls.set(visualElement, this)
     }
@@ -335,7 +342,7 @@ export class VisualElementDragControls {
                 onMove,
                 onSessionEnd,
             },
-            { transformPagePoint }
+            { transformPagePoint, windowContext: this.windowContext }
         )
     }
 
@@ -758,9 +765,13 @@ export class VisualElementDragControls {
          * Attach a window resize listener to scale the draggable target within its defined
          * constraints as the window resizes.
          */
-        const stopResizeListener = addDomEvent(window, "resize", () => {
-            this.scalePoint()
-        })
+        const stopResizeListener = addDomEvent(
+            this.windowContext,
+            "resize",
+            () => {
+                this.scalePoint()
+            }
+        )
 
         /**
          * Ensure drag constraints are resolved correctly relative to the dragging element
