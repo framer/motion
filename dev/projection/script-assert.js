@@ -15,6 +15,7 @@ window.Assert = {
             Math.abs(expected.bottom - bbox.bottom) > threshold ||
             Math.abs(expected.left - bbox.left) > threshold
         ) {
+            console.log("Measured:", bbox, "Expected:", expected)
             showError(element, "Viewport box doesn't match")
         }
     },
