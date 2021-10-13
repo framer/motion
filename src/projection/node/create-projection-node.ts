@@ -930,9 +930,7 @@ export function createProjectionNode<I>({
                 if (this.relativeParent && this.relativeParent.target) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
-                    // if (Boolean(this.resumingFrom)) {
-                    //     this.target = this.applyTransform(this.target, true)
-                    // }
+
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.target,
