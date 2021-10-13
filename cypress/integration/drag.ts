@@ -223,6 +223,76 @@ describe("Drag", () => {
                 expect(top).to.equal(150)
             })
     })
+
+    it("rescales draggable element in relation to resized constraints", () => {
+        cy.visit("?test=drag-ref-constraints-resize")
+            .wait(200)
+            .get("#constraints")
+            .should(([$constraints]: any) => {
+                const { left, top, right, bottom } =
+                    $constraints.getBoundingClientRect()
+                expect(left).to.equal(250)
+                expect(top).to.equal(0)
+                expect(right).to.equal(750)
+                expect(bottom).to.equal(300)
+            })
+            .get("#box")
+            .should(([$box]: any) => {
+                const { left, top, right, bottom } =
+                    $box.getBoundingClientRect()
+                expect(left).to.equal(400)
+                expect(top).to.equal(50)
+                expect(right).to.equal(600)
+                expect(bottom).to.equal(250)
+            })
+            .trigger("pointerdown", 5, 5)
+            .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
+            .wait(50)
+            .trigger("pointermove", 100, 100, { force: true })
+            .wait(50)
+            .trigger("pointerup", { force: true })
+            .get("#box")
+            .should(([$box]: any) => {
+                const { left, top, right, bottom } =
+                    $box.getBoundingClientRect()
+                expect(left).to.equal(550)
+                expect(top).to.equal(100)
+                expect(right).to.equal(750)
+                expect(bottom).to.equal(300)
+            })
+        cy.viewport(800, 660)
+            .wait(50)
+            .get("#constraints")
+            .should(([$constraints]: any) => {
+                const { left, right } = $constraints.getBoundingClientRect()
+                expect(left).to.equal(200)
+                expect(right).to.equal(600)
+            })
+            .get("#box")
+            .should(([$box]: any) => {
+                const { left, right } = $box.getBoundingClientRect()
+                expect(left).to.equal(400)
+                expect(right).to.equal(600)
+            })
+
+        cy.viewport(1000, 660)
+            .wait(50)
+            .get("#constraints")
+            .should(([$constraints]: any) => {
+                const { left, top, right, bottom } =
+                    $constraints.getBoundingClientRect()
+                expect(left).to.equal(250)
+                expect(top).to.equal(0)
+                expect(right).to.equal(750)
+                expect(bottom).to.equal(300)
+            })
+            .get("#box")
+            .should(([$box]: any) => {
+                const { left, right } = $box.getBoundingClientRect()
+                expect(left).to.equal(550)
+                expect(right).to.equal(750)
+            })
+    })
 })
 
 describe("Drag & Layout", () => {
