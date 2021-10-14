@@ -453,7 +453,10 @@ export class VisualElementDragControls {
         /**
          * Update the layout of this element and resolve the latest drag constraints
          */
-        this.visualElement.getInstance().style.transform = ""
+        const { transformTemplate } = this.visualElement.getProps()
+        this.visualElement.getInstance().style.transform = transformTemplate
+            ? transformTemplate({}, "")
+            : "none"
         projection.updateLayout()
         this.resolveConstraints()
 
