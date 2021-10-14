@@ -91,6 +91,15 @@ export function applyTreeDeltas(
         delta = node.projectionDelta
         if ((node.instance as any)?.style?.display === "contents") continue
 
+        if (
+            isSharedTransition &&
+            node.options.shouldMeasureScroll &&
+            node.scroll &&
+            node !== node.root
+        ) {
+            transformBox(box, { x: -node.scroll.x, y: -node.scroll.y })
+        }
+
         if (delta) {
             // Incoporate each ancestor's scale into a culmulative treeScale for this component
             treeScale.x *= delta.x.scale

@@ -748,11 +748,24 @@ export function createProjectionNode<I>({
             return boxWithoutScroll
         }
 
-        applyTransform(box: Box): Box {
+        applyTransform(box: Box, transformOnly = false): Box {
             const withTransforms = createBox()
             copyBoxInto(withTransforms, box)
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
+
+                if (
+                    !transformOnly &&
+                    node.options.shouldMeasureScroll &&
+                    node.scroll &&
+                    node !== node.root
+                ) {
+                    transformBox(withTransforms, {
+                        x: -node.scroll.x,
+                        y: -node.scroll.y,
+                    })
+                }
+
                 if (!hasTransform(node.latestValues)) continue
                 transformBox(withTransforms, node.latestValues)
             }
@@ -879,6 +892,7 @@ export function createProjectionNode<I>({
                     this.relativeTarget,
                     this.relativeParent.target
                 )
+
                 /**
                  * If we've only got a targetDelta, resolve it into a target
                  */
@@ -889,6 +903,7 @@ export function createProjectionNode<I>({
                 } else {
                     copyBoxInto(this.target, this.layout.actual)
                 }
+
                 applyBoxDelta(this.target, this.targetDelta)
             } else {
                 /**
@@ -903,12 +918,18 @@ export function createProjectionNode<I>({
 
             if (this.attemptToResolveRelativeTarget) {
                 this.attemptToResolveRelativeTarget = false
-
                 this.relativeParent = this.getClosestProjectingParent()
 
-                if (this.relativeParent && this.relativeParent.target) {
+                if (
+                    this.relativeParent &&
+                    Boolean(this.relativeParent.resumingFrom) ===
+                        Boolean(this.resumingFrom) &&
+                    !this.relativeParent.options.shouldMeasureScroll &&
+                    this.relativeParent.target
+                ) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
+
                     calcRelativePosition(
                         this.relativeTargetOrigin,
                         this.target,
@@ -1473,7 +1494,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         if (snapshot.isShared) {
             calcBoxDelta(
                 visualDelta,
-                node.applyTransform(measuredLayout),
+                node.applyTransform(measuredLayout, true),
                 snapshot.measured
             )
         } else {
