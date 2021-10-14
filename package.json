@@ -119,11 +119,6 @@
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged && yarn build && yarn test-projection"
-        }
-    },
     "lint-staged": {
         "linters": {
             "*.{ts,tsx}": [

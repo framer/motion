@@ -896,10 +896,6 @@ export function createProjectionNode<I>({
                     this.relativeParent.target
                 )
 
-                if (Boolean(this.resumingFrom)) {
-                    this.target = this.applyTransform(this.target, true)
-                }
-
                 /**
                  * If we've only got a targetDelta, resolve it into a target
                  */
@@ -927,7 +923,13 @@ export function createProjectionNode<I>({
                 this.attemptToResolveRelativeTarget = false
                 this.relativeParent = this.getClosestProjectingParent()
 
-                if (this.relativeParent && this.relativeParent.target) {
+                if (
+                    this.relativeParent &&
+                    Boolean(this.relativeParent.resumingFrom) ===
+                        Boolean(this.resumingFrom) &&
+                    !this.relativeParent.options.shouldMeasureScroll &&
+                    this.relativeParent.target
+                ) {
                     this.relativeTarget = createBox()
                     this.relativeTargetOrigin = createBox()
 
@@ -1491,11 +1493,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         calcBoxDelta(layoutDelta, layout, snapshot.layout)
         const visualDelta = createDelta()
         if (snapshot.isShared) {
-            calcBoxDelta(
-                visualDelta,
-                node.applyTransform(measuredLayout),
-                snapshot.measured
-            )
+            calcBoxDelta(visualDelta, measuredLayout, snapshot.measured)
         } else {
             calcBoxDelta(visualDelta, layout, snapshot.layout)
         }
