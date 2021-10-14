@@ -1345,7 +1345,7 @@ export function createProjectionNode<I>({
                 }
                 if (this.hasProjected && !hasTransform(this.latestValues)) {
                     emptyStyles.transform = transformTemplate
-                        ? transformTemplate(this.latestValues, "")
+                        ? transformTemplate({}, "")
                         : "none"
                     this.hasProjected = false
                 }
