@@ -1344,7 +1344,9 @@ export function createProjectionNode<I>({
                     emptyStyles.opacity = this.latestValues.opacity ?? 1
                 }
                 if (this.hasProjected && !hasTransform(this.latestValues)) {
-                    emptyStyles.transform = "none"
+                    emptyStyles.transform = transformTemplate
+                        ? transformTemplate(this.latestValues, "")
+                        : "none"
                     this.hasProjected = false
                 }
                 return emptyStyles
