@@ -11,6 +11,7 @@ import {
     rebaseAxisConstraints,
     resolveDragElastic,
     defaultElastic,
+    calcOrigin,
 } from "./utils/constraints"
 import { AnimationType } from "../../render/utils/types"
 import { VisualElement } from "../../render/types"
@@ -27,6 +28,8 @@ import {
     convertBoxToBoundingBox,
 } from "../../projection/geometry/conversion"
 import { LayoutUpdateData } from "../../projection/node/types"
+import { addDomEvent } from "../../events/use-dom-event"
+import { mix } from "popmotion"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -106,8 +109,6 @@ export class VisualElementDragControls {
                 // If we don 't have the lock, don't start dragging
                 if (!this.openGlobalLock) return
             }
-
-            // TODO: Block layout animations
 
             this.isDragging = true
             this.currentDirection = null
@@ -208,7 +209,6 @@ export class VisualElementDragControls {
     }
 
     private cancel() {
-        // TODO: Unblock layout animations
         this.isDragging = false
         this.panSession?.end()
         this.panSession = undefined
@@ -417,6 +417,65 @@ export class VisualElementDragControls {
 
     private snapToCursor(_point: Point) {}
 
+    /**
+     * When the viewport resizes we want to check if the measured constraints
+     * have changed and, if so, reposition the element within those new constraints
+     * relative to where it was before the resize.
+     */
+    scalePositionWithinConstraints() {
+        const { drag, dragConstraints } = this.getProps()
+        const { projection } = this.visualElement
+        if (!isRefObject(dragConstraints) || !projection || !this.constraints)
+            return
+
+        /**
+         * Stop current animations as there can be visual glitching if we try to do
+         * this mid-animation
+         */
+        this.stopAnimation()
+
+        /**
+         * Record the relative position of the dragged element relative to the
+         * constraints box and save as a progress value.
+         */
+        const boxProgress = { x: 0, y: 0 }
+        eachAxis((axis) => {
+            const axisValue = this.getAxisMotionValue(axis)
+            if (axisValue) {
+                const latest = axisValue.get()
+                boxProgress[axis] = calcOrigin(
+                    { min: latest, max: latest },
+                    this.constraints[axis]
+                )
+            }
+        })
+
+        /**
+         * Update the layout of this element and resolve the latest drag constraints
+         */
+        const { transformTemplate } = this.visualElement.getProps()
+        this.visualElement.getInstance().style.transform = transformTemplate
+            ? transformTemplate({}, "")
+            : "none"
+        projection.updateLayout()
+        this.resolveConstraints()
+
+        /**
+         * For each axis, calculate the current progress of the layout axis
+         * within the new constraints.
+         */
+        eachAxis((axis) => {
+            if (!shouldDrag(axis, drag, null)) return
+
+            /**
+             * Calculate a new transform based on the previous box progress
+             */
+            const axisValue = this.getAxisMotionValue(axis)
+            const { min, max } = this.constraints[axis]
+            axisValue.set(mix(min, max, boxProgress[axis]))
+        })
+    }
+
     addListeners() {
         elementDragControls.set(this.visualElement, this)
         const element = this.visualElement.getInstance()
@@ -450,8 +509,18 @@ export class VisualElementDragControls {
         if (!projection!.layout) projection!.updateLayout()
         measureDragConstraints()
 
-        // TODO: Scale point on resize
+        /**
+         * Attach a window resize listener to scale the draggable target within its defined
+         * constraints as the window resizes.
+         */
+        const stopResizeListener = addDomEvent(window, "resize", () => {
+            this.scalePositionWithinConstraints()
+        })
 
+        /**
+         * If the element's layout changes, calculate the delta and apply that to
+         * the drag gesture's origin point.
+         */
         projection!.addEventListener("didUpdate", (({
             delta,
             hasLayoutChanged,
@@ -470,6 +539,7 @@ export class VisualElementDragControls {
         }) as any)
 
         return () => {
+            stopResizeListener()
             stopPointerListener()
             stopMeasureLayoutListener()
         }
