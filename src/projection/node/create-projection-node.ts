@@ -751,7 +751,7 @@ export function createProjectionNode<I>({
         applyTransform(box: Box, transformOnly = false): Box {
             const withTransforms = createBox()
             copyBoxInto(withTransforms, box)
-            for (let i = 1; i < this.path.length; i++) {
+            for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
 
                 if (
