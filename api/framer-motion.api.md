@@ -478,6 +478,7 @@ export interface MotionConfigContext {
     // @internal (undocumented)
     transformPagePoint: TransformPoint2D;
     transition?: Transition;
+    windowContext: typeof window | null;
 }
 
 // @public (undocumented)
@@ -961,11 +962,11 @@ export interface VisualElement<Instance = any, RenderState = any> extends Lifecy
     // (undocumented)
     getStaticValue(key: string): number | string | undefined;
     // (undocumented)
-    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
+    getValue(key: string): undefined | MotionValue;
     // (undocumented)
     getValue(key: string, defaultValue: string | number): MotionValue;
     // (undocumented)
-    getValue(key: string): undefined | MotionValue;
+    getValue(key: string, defaultValue?: string | number): undefined | MotionValue;
     // (undocumented)
     getVariant(name: string): Variant | undefined;
     // (undocumented)

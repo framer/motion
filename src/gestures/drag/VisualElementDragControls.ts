@@ -49,7 +49,7 @@ export const elementDragControls = new WeakMap<
 
 interface DragControlConfig {
     visualElement: VisualElement
-    windowContext: typeof window
+    windowContext: typeof window | null
 }
 
 export interface DragControlOptions {
@@ -112,7 +112,7 @@ export class VisualElementDragControls {
     /**
      * @internal
      */
-    private windowContext: typeof window
+    private windowContext: typeof window | null
 
     /**
      * @internal
@@ -765,13 +765,11 @@ export class VisualElementDragControls {
          * Attach a window resize listener to scale the draggable target within its defined
          * constraints as the window resizes.
          */
-        const stopResizeListener = addDomEvent(
-            this.windowContext,
-            "resize",
-            () => {
-                this.scalePoint()
-            }
-        )
+        const stopResizeListener = this.windowContext
+            ? addDomEvent(this.windowContext, "resize", () => {
+                  this.scalePoint()
+              })
+            : null
 
         /**
          * Ensure drag constraints are resolved correctly relative to the dragging element

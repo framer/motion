@@ -27,18 +27,11 @@ export interface MotionConfigContext {
     transition?: Transition
 
     /**
-     * Defines the document context to use for the entire tree.
-     *
-     * @public
-     */
-    documentContext: typeof document
-
-    /**
      * Defines the window context to use for the entire tree.
      *
      * @public
      */
-    windowContext: typeof window
+    windowContext: typeof window | null
 }
 
 /**
@@ -47,6 +40,5 @@ export interface MotionConfigContext {
 export const MotionConfigContext = createContext<MotionConfigContext>({
     transformPagePoint: (p) => p,
     isStatic: false,
-    documentContext: document,
-    windowContext: window,
+    windowContext: typeof window === "undefined" ? null : window,
 })

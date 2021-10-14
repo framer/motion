@@ -13,11 +13,9 @@ function Frame({ children }) {
     const iframeRef = React.useRef(null)
     const [frame, setFrame] = React.useState<{
         container: HTMLElement
-        document: Document
         window: Window
     }>({
         container: null,
-        document: null,
         window: null,
     })
 
@@ -27,7 +25,6 @@ function Frame({ children }) {
         if (container) {
             setFrame({
                 container,
-                document,
                 window: iframeRef.current.contentWindow,
             })
         }
@@ -50,10 +47,7 @@ function Frame({ children }) {
             {frame.container &&
                 children &&
                 ReactDOM.createPortal(
-                    <MotionConfig
-                        documentContext={frame.document}
-                        windowContext={frame.window}
-                    >
+                    <MotionConfig windowContext={frame.window}>
                         {children}
                     </MotionConfig>,
                     frame.container

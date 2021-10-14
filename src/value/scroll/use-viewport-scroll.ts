@@ -13,10 +13,8 @@ let hasListeners = false
 
 function addEventListeners({
     windowContext,
-    documentContext,
 }: {
     windowContext: typeof window
-    documentContext: typeof document
 }) {
     hasListeners = true
     if (typeof windowContext === "undefined") return
@@ -27,9 +25,11 @@ function addEventListeners({
             xOffset: windowContext.pageXOffset,
             yOffset: windowContext.pageYOffset,
             xMaxOffset:
-                documentContext.body.clientWidth - windowContext.innerWidth,
+                windowContext.document.body.clientWidth -
+                windowContext.innerWidth,
             yMaxOffset:
-                documentContext.body.clientHeight - windowContext.innerHeight,
+                windowContext.document.body.clientHeight -
+                windowContext.innerHeight,
         })
     )
 
@@ -76,7 +76,7 @@ function addEventListeners({
  * @public
  */
 export function useViewportScroll(): ScrollMotionValues {
-    const { documentContext, windowContext } = useContext(MotionConfigContext)
+    const { windowContext } = useContext(MotionConfigContext)
     /**
      * Lazy-initialise the viewport scroll values
      */
@@ -85,7 +85,7 @@ export function useViewportScroll(): ScrollMotionValues {
     }
 
     useIsomorphicLayoutEffect(() => {
-        !hasListeners && addEventListeners({ documentContext, windowContext })
+        !hasListeners && windowContext && addEventListeners({ windowContext })
     }, [])
 
     return viewportScrollValues

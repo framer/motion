@@ -61,10 +61,12 @@ export function useTapGesture({
         if (isPressing.current) return
         isPressing.current = true
 
-        cancelPointerEndListeners.current = pipe(
-            addPointerEvent(windowContext, "pointerup", onPointerUp),
-            addPointerEvent(windowContext, "pointercancel", onPointerCancel)
-        )
+        if (windowContext) {
+            cancelPointerEndListeners.current = pipe(
+                addPointerEvent(windowContext, "pointerup", onPointerUp),
+                addPointerEvent(windowContext, "pointercancel", onPointerCancel)
+            )
+        }
 
         onTapStart?.(event, info)
 

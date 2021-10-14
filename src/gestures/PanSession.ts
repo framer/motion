@@ -155,7 +155,7 @@ interface PanSessionHandlers {
 
 interface PanSessionOptions {
     transformPagePoint?: TransformPoint2D
-    windowContext: typeof window
+    windowContext: typeof window | null
 }
 
 interface TimestampedPoint extends Point2D {
@@ -226,19 +226,25 @@ export class PanSession {
         onSessionStart &&
             onSessionStart(event, getPanInfo(initialInfo, this.history))
 
-        this.removeListeners = pipe(
-            addPointerEvent(
-                windowContext,
-                "pointermove",
-                this.handlePointerMove
-            ),
-            addPointerEvent(windowContext, "pointerup", this.handlePointerUp),
-            addPointerEvent(
-                windowContext,
-                "pointercancel",
-                this.handlePointerUp
+        if (windowContext) {
+            this.removeListeners = pipe(
+                addPointerEvent(
+                    windowContext,
+                    "pointermove",
+                    this.handlePointerMove
+                ),
+                addPointerEvent(
+                    windowContext,
+                    "pointerup",
+                    this.handlePointerUp
+                ),
+                addPointerEvent(
+                    windowContext,
+                    "pointercancel",
+                    this.handlePointerUp
+                )
             )
-        )
+        }
     }
 
     private updatePoint = () => {
