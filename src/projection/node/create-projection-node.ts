@@ -748,17 +748,14 @@ export function createProjectionNode<I>({
             return boxWithoutScroll
         }
 
-        applyTransform(box: Box, scrollOnly: boolean = false): Box {
+        applyTransform(box: Box, transformOnly = false): Box {
             const withTransforms = createBox()
             copyBoxInto(withTransforms, box)
-            for (
-                let i = scrollOnly ? this.path.length - 1 : 1;
-                i < this.path.length;
-                i++
-            ) {
+            for (let i = 1; i < this.path.length; i++) {
                 const node = this.path[i]
 
                 if (
+                    !transformOnly &&
                     node.options.shouldMeasureScroll &&
                     node.scroll &&
                     node !== node.root
@@ -773,7 +770,7 @@ export function createProjectionNode<I>({
                 transformBox(withTransforms, node.latestValues)
             }
 
-            if (!scrollOnly && hasTransform(this.latestValues)) {
+            if (hasTransform(this.latestValues)) {
                 transformBox(withTransforms, this.latestValues)
             }
 
@@ -1493,7 +1490,11 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         calcBoxDelta(layoutDelta, layout, snapshot.layout)
         const visualDelta = createDelta()
         if (snapshot.isShared) {
-            calcBoxDelta(visualDelta, measuredLayout, snapshot.measured)
+            calcBoxDelta(
+                visualDelta,
+                node.applyTransform(measuredLayout, true),
+                snapshot.measured
+            )
         } else {
             calcBoxDelta(visualDelta, layout, snapshot.layout)
         }
