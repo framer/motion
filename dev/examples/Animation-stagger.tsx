@@ -30,7 +30,7 @@ export const App = () => {
             x: 0,
             transition: {
                 when: "beforeChildren",
-                staggerChildren: 0.05,
+                staggerChildren: 0.2,
                 staggerDirection: -1,
             },
         },
@@ -38,7 +38,7 @@ export const App = () => {
             x: -180,
             transition: {
                 when: "afterChildren",
-                staggerChildren: 0.05,
+                staggerChildren: 0.2,
             },
         },
     }

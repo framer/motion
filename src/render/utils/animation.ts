@@ -172,7 +172,7 @@ function animateTarget(
          */
         warning(
             !(visualElement.projection?.isTreeAnimating && layoutKeys.has(key)),
-            `Attempting to animate layout-affecting style "${key}" to ${value} on a component that is performing a layout animation (e.g. <motion.div layout />). This is likely to break layout animations. Attempt to replace with <motion.div layout style={{ ${key}: ${value} }} />.`
+            `Attempting to animate layout-affecting style "${key}" to ${valueTarget} on a component that is performing a layout animation (e.g. <motion.div layout />). This is likely to break layout animations. Attempt to replace with <motion.div layout style={{ ${key}: ${valueTarget} }} />.`
         )
 
         const animation = startAnimation(key, value, valueTarget, {

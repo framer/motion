@@ -36,6 +36,7 @@ export const App = () => {
                     ...style,
                     height: open ? 300 : 100,
                 }}
+                animate={{ width: open ? 300 : 100 }}
             />
         </div>
     )
