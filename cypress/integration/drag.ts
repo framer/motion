@@ -293,6 +293,33 @@ describe("Drag", () => {
                 expect(right).to.equal(750)
             })
     })
+
+    it("Snaps to cursor", () => {
+        cy.visit("?test=drag-snap-to-cursor")
+            .wait(200)
+            .scrollTo(0, 800)
+            .get("#scrollable")
+            .should(([$scrollable]: any) => {
+                const { top, left, right, bottom } =
+                    $scrollable.getBoundingClientRect()
+                expect(top).to.equal(200)
+                expect(right).to.equal(740)
+                expect(bottom).to.equal(500)
+                expect(left).to.equal(240)
+            })
+            .get("#scroll-trigger")
+            .trigger("pointerdown", 5, 5)
+            .wait(50)
+            .get("#scrollable")
+            .should(([$scrollable]: any) => {
+                const { top, left, right, bottom } =
+                    $scrollable.getBoundingClientRect()
+                expect(top).to.equal(-125)
+                expect(right).to.equal(275)
+                expect(bottom).to.equal(175)
+                expect(left).to.equal(-225)
+            })
+    })
 })
 
 describe("Drag & Layout", () => {

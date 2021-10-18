@@ -88,8 +88,9 @@ export class VisualElementDragControls {
             // the component.
             this.stopAnimation()
 
-            if (snapToCursor)
+            if (snapToCursor) {
                 this.snapToCursor(extractEventInfo(event, "page").point)
+            }
         }
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
@@ -419,6 +420,7 @@ export class VisualElementDragControls {
 
             if (projection && projection.layout) {
                 const { min, max } = projection.layout.actual[axis]
+
                 axisValue.set(point[axis] - mix(min, max, 0.5))
             }
         })
@@ -464,6 +466,7 @@ export class VisualElementDragControls {
         this.visualElement.getInstance().style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
+        projection.root?.updateScroll()
         projection.updateLayout()
         this.resolveConstraints()
 
@@ -513,7 +516,11 @@ export class VisualElementDragControls {
             measureDragConstraints
         )
 
-        if (!projection!.layout) projection!.updateLayout()
+        if (projection && !projection!.layout) {
+            projection.root?.updateScroll()
+            projection.updateLayout()
+        }
+
         measureDragConstraints()
 
         /**
