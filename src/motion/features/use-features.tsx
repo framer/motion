@@ -15,7 +15,6 @@ const numFeatures = featureNames.length
  */
 export function useFeatures(
     props: MotionProps,
-    projectionId: number | undefined,
     visualElement?: VisualElement,
     preloadedFeatures?: FeatureBundle
 ): null | JSX.Element[] {
@@ -56,7 +55,6 @@ export function useFeatures(
                     key={name}
                     {...props}
                     visualElement={visualElement}
-                    projectionId={projectionId}
                 />
             )
         }

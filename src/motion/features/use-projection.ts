@@ -1,8 +1,9 @@
-import { HTMLProjectionNode } from "../../projection/node/HTMLProjectionNode"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
 import { isRefObject } from "../../utils/is-ref-object"
-import { InitialPromotionConfig } from "context/SwitchLayoutGroupContext"
+import { IProjectionNode } from "../../projection/node/types"
+import { useContext } from "react"
+import { SwitchLayoutGroupContext } from "../../context/SwitchLayoutGroupContext"
 
 export function useProjection(
     projectionId: number | undefined,
@@ -14,15 +15,23 @@ export function useProjection(
         shouldMeasureScroll,
     }: MotionProps,
     visualElement?: VisualElement,
-    initialPromotionConfig?: InitialPromotionConfig
+    ProjectionNodeConstructor?: any
 ) {
-    if (!visualElement || visualElement?.projection) return
+    const initialPromotionConfig = useContext(SwitchLayoutGroupContext)
 
-    visualElement.projection = new HTMLProjectionNode(
+    if (
+        !ProjectionNodeConstructor ||
+        !visualElement ||
+        visualElement?.projection
+    ) {
+        return
+    }
+
+    visualElement.projection = new ProjectionNodeConstructor(
         projectionId,
         visualElement.getLatestValues(),
         visualElement.parent?.projection
-    )
+    ) as IProjectionNode
 
     visualElement.projection.setOptions({
         layoutId,

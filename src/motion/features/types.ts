@@ -7,7 +7,6 @@ import { CreateVisualElement, VisualElement } from "../../render/types"
  * @public
  */
 export interface FeatureProps extends MotionProps {
-    projectionId?: number
     visualElement: VisualElement
 }
 
@@ -45,12 +44,17 @@ export interface FeatureComponents {
 
 export interface FeatureBundle extends FeatureComponents {
     renderer: CreateVisualElement<any>
+    projectionNodeConstructor?: any
 }
 
 export type LazyFeatureBundle = () => Promise<FeatureBundle>
 
 export type FeatureDefinitions = {
     [K in keyof FeatureNames]: FeatureDefinition
+}
+
+export type LoadedFeatures = FeatureDefinitions & {
+    projectionNodeConstructor?: any
 }
 
 export type RenderComponent<Instance, RenderState> = (

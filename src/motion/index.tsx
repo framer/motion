@@ -10,17 +10,17 @@ import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
 import { useCreateMotionContext } from "../context/MotionContext/create"
-import { loadFeatures } from "./features/definitions"
+import { featureDefinitions, loadFeatures } from "./features/definitions"
 import { isBrowser } from "../utils/is-browser"
 import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { useProjection } from "./features/use-projection"
-import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 import { VisualElementHandler } from "./utils/VisualElementHandler"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
     createVisualElement?: CreateVisualElement<Instance>
+    projectionNodeConstructor?: any
     useRender: RenderComponent<Instance, RenderState>
     useVisualState: UseVisualState<Instance, RenderState>
     Component: string | React.ComponentType
@@ -40,6 +40,7 @@ export interface MotionComponentConfig<Instance, RenderState> {
 export function createMotionComponent<Props extends {}, Instance, RenderState>({
     preloadedFeatures,
     createVisualElement,
+    projectionNodeConstructor,
     useRender,
     useVisualState,
     Component,
@@ -99,31 +100,24 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                 { ...config, ...props },
                 createVisualElement
             )
-        }
 
-        if (!config.isStatic && isBrowser) {
+            useProjection(
+                projectionId,
+                props,
+                context.visualElement,
+                projectionNodeConstructor ||
+                    featureDefinitions.projectionNodeConstructor
+            )
+
             /**
              * Load Motion gesture and animation features. These are rendered as renderless
              * components so each feature can optionally make use of React lifecycle methods.
-             *
-             * TODO: The intention is to move these away from a React-centric to a
-             * VisualElement-centric lifecycle scheme.
              */
             features = useFeatures(
                 props,
-                projectionId, // TODO Probably not needed here
                 context.visualElement,
                 preloadedFeatures
             )
-
-            // TODO Allow lazy load of projection node
-            const { transition, shouldPreserveFollowOpacity } = useContext(
-                SwitchLayoutGroupContext
-            )
-            useProjection(projectionId, props, context.visualElement, {
-                transition,
-                shouldPreserveFollowOpacity,
-            })
         }
 
         /**
