@@ -1,7 +1,7 @@
 const tsconfig = require("./tsconfig.json")
 const path = require("path")
-const convertPathsToAliases = require("convert-tsconfig-paths-to-webpack-aliases")
-    .default
+const convertPathsToAliases =
+    require("convert-tsconfig-paths-to-webpack-aliases").default
 const TerserPlugin = require("terser-webpack-plugin")
 
 const tsLoader = {

@@ -143,11 +143,11 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "14.1 kB"
+            "maxSize": "17 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "18.1 kB"
+            "maxSize": "28 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
@@ -155,11 +155,11 @@
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "18.5 kB"
+            "maxSize": "19 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "23 kB"
+            "maxSize": "30 kB"
         }
     ]
 }
