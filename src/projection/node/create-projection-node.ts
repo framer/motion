@@ -1437,6 +1437,11 @@ export function createProjectionNode<I>({
                 }
             }
 
+            /**
+             * Disable pointer events on follow components. This is to ensure
+             * that if a follow component covers a lead component it doesn't block
+             * pointer events on the lead.
+             */
             if (this.options.layoutId) {
                 styles.pointerEvents =
                     lead === this ? styleProp.pointerEvents || "" : "none"
