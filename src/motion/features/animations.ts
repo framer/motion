@@ -27,7 +27,7 @@ export const animations: FeatureComponents = {
     ),
     exit: makeRenderlessComponent((props: FeatureProps) => {
         const { custom, visualElement } = props
-        const [isPresent, onExitComplete] = usePresence()
+        const [isPresent, safeToRemove] = usePresence()
         const presenceContext = useContext(PresenceContext)
 
         useEffect(() => {
@@ -37,7 +37,7 @@ export const animations: FeatureComponents = {
                 { custom: presenceContext?.custom ?? custom }
             )
 
-            !isPresent && animation?.then(onExitComplete)
+            !isPresent && animation?.then(safeToRemove)
         }, [isPresent])
     }),
 }

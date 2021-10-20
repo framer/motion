@@ -54,7 +54,13 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {
-        const { layoutDependency, visualElement, drag, isPresent } = this.props
+        const {
+            layoutDependency,
+            visualElement,
+            drag,
+            isPresent,
+            safeToRemove,
+        } = this.props
         const projection = visualElement.projection
 
         if (!projection) return null
@@ -74,13 +80,15 @@ class MeasureLayoutWithContext extends React.Component<
             layoutDependency === undefined
         ) {
             projection.willUpdate()
+        } else {
+            safeToRemove?.()
         }
 
         if (prevProps.isPresent !== isPresent) {
             if (isPresent) {
                 projection.promote()
-            } else {
-                projection.relegate()
+            } else if (!projection.relegate()) {
+                safeToRemove?.()
             }
         }
 
