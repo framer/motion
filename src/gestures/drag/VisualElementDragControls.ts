@@ -20,7 +20,7 @@ import { Point } from "../../projection/geometry/types"
 import { createBox } from "../../projection/geometry/models"
 import { eachAxis } from "../../projection/utils/each-axis"
 import { measurePageBox } from "../../projection/utils/measure"
-import { getViewportPointFromEvent } from "../../events/event-info"
+import { extractEventInfo } from "../../events/event-info"
 import { Transition } from "../../types"
 import { startAnimation } from "../../animation/utils/transitions"
 import {
@@ -83,19 +83,14 @@ export class VisualElementDragControls {
         originEvent: AnyPointerEvent,
         { snapToCursor = false }: DragControlOptions = {}
     ) {
-        let initialPoint: Point
-
         const onSessionStart = (event: AnyPointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
             this.stopAnimation()
 
-            /**
-             * Save the initial point. We'll use this to calculate the pointer's position rather
-             * than the one we receive when the gesture actually starts. By then, the pointer will
-             * have already moved, and the perception will be of the pointer "slipping" across the element
-             */
-            initialPoint = getViewportPointFromEvent(event).point
+            if (snapToCursor) {
+                this.snapToCursor(extractEventInfo(event, "page").point)
+            }
         }
 
         const onStart = (event: AnyPointerEvent, info: PanInfo) => {
@@ -114,8 +109,6 @@ export class VisualElementDragControls {
             this.currentDirection = null
 
             this.resolveConstraints()
-
-            if (snapToCursor) this.snapToCursor(initialPoint)
 
             if (this.visualElement.projection) {
                 this.visualElement.projection.target = undefined
@@ -415,7 +408,23 @@ export class VisualElementDragControls {
               )
     }
 
-    private snapToCursor(_point: Point) {}
+    private snapToCursor(point: Point) {
+        eachAxis((axis) => {
+            const { drag } = this.getProps()
+
+            // If we're not dragging this axis, do an early return.
+            if (!shouldDrag(axis, drag, this.currentDirection)) return
+
+            const { projection } = this.visualElement
+            const axisValue = this.getAxisMotionValue(axis)
+
+            if (projection && projection.layout) {
+                const { min, max } = projection.layout.actual[axis]
+
+                axisValue.set(point[axis] - mix(min, max, 0.5))
+            }
+        })
+    }
 
     /**
      * When the viewport resizes we want to check if the measured constraints
@@ -457,6 +466,7 @@ export class VisualElementDragControls {
         this.visualElement.getInstance().style.transform = transformTemplate
             ? transformTemplate({}, "")
             : "none"
+        projection.root?.updateScroll()
         projection.updateLayout()
         this.resolveConstraints()
 
@@ -506,7 +516,11 @@ export class VisualElementDragControls {
             measureDragConstraints
         )
 
-        if (!projection!.layout) projection!.updateLayout()
+        if (projection && !projection!.layout) {
+            projection.root?.updateScroll()
+            projection.updateLayout()
+        }
+
         measureDragConstraints()
 
         /**
