@@ -919,3 +919,49 @@ describe("Shared layout: A -> undefined -> B transition", () => {
             })
     })
 })
+
+describe("Shared pointer events", () => {
+    it("Applies pointer-events: none to follow elements", () => {
+        cy.visit("?test=layout-follow-pointer-events")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .click()
+            .wait(200)
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 200,
+                    left: 0,
+                    width: 300,
+                    height: 300,
+                })
+            })
+            .get("#b")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 200,
+                    left: 0,
+                    width: 300,
+                    height: 300,
+                })
+            })
+            .click()
+            .wait(200)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+    })
+})

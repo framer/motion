@@ -1329,12 +1329,10 @@ export function createProjectionNode<I>({
             visualElement.scheduleRender()
         }
 
-        getProjectionStyles() {
+        getProjectionStyles(styleProp: ResolvedValues = {}) {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
             if (!this.instance || this.isSVG) return styles
-
-            const lead = this.getLead()
 
             if (!this.isVisible) {
                 return { visibility: "hidden" }
@@ -1349,16 +1347,19 @@ export function createProjectionNode<I>({
                 this.needsReset = false
 
                 styles.opacity = ""
+                styles.pointerEvents = styleProp.pointerEvents || ""
                 styles.transform = transformTemplate
                     ? transformTemplate(this.latestValues, "")
                     : "none"
                 return styles
             }
 
+            const lead = this.getLead()
             if (!this.projectionDelta || !this.layout || !lead.target) {
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
                     emptyStyles.opacity = this.latestValues.opacity ?? 1
+                    emptyStyles.pointerEvents = styleProp.pointerEvents || ""
                 }
                 if (this.hasProjected && !hasTransform(this.latestValues)) {
                     emptyStyles.transform = transformTemplate
@@ -1431,6 +1432,17 @@ export function createProjectionNode<I>({
                     styles[key] = corrected
                 }
             }
+
+            /**
+             * Disable pointer events on follow components. This is to ensure
+             * that if a follow component covers a lead component it doesn't block
+             * pointer events on the lead.
+             */
+            if (this.options.layoutId) {
+                styles.pointerEvents =
+                    lead === this ? styleProp.pointerEvents || "" : "none"
+            }
+
             return styles
         }
 

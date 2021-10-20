@@ -2,14 +2,15 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [5.0.0] Unreleased
+## [5.0.0] 2021-10-25
 
 ### Added
 
--   `LayoutGroup`, to group elements that may affect each-other's layout if any one of them re-renders.
--   `layoutDependency` prop to optionally trigger layout animations.
+-   `Reorder` components to create drag-to-reorder interfaces.
+-   `LayoutGroup` allows namespacing `layoutId` and group elements that may affect each-other's layout on re-render.
+-   `layoutDependency` prop to restrict when components are measured.
 -   Layout animations are auto-completed when the viewport resizes.
--   `layout="size"` for size-only animations [Credit to the original PR by @bhollis](https://github.com/framer/motion/pull/1154).
+-   `layout="size"` for size-only animations [PR by @bhollis](https://github.com/framer/motion/pull/1154).
 
 ### Fixed
 
@@ -17,7 +18,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Changed
 
--   `AnimateSharedLayout` is no longer necessary to support elements with `rotate` or when adding new `layout` components.
+-   `AnimateSharedLayout` is deprecated.
 
 ## [4.1.17] 2021-05-17
 

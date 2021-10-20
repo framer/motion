@@ -87,7 +87,7 @@ export interface IProjectionNode<I = unknown> {
     applyTransform(box: Box, transformOnly?: boolean): Box
     resolveTargetDelta(): void
     calcProjection(): void
-    getProjectionStyles(): ResolvedValues | undefined
+    getProjectionStyles(styles: ResolvedValues): ResolvedValues | undefined
     clearMeasurements(): void
     resetTree(): void
 
