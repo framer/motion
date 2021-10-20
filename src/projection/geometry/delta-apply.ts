@@ -93,7 +93,7 @@ export function applyTreeDeltas(
 
         if (
             isSharedTransition &&
-            node.options.shouldMeasureScroll &&
+            node.options.layoutScroll &&
             node.scroll &&
             node !== node.root
         ) {

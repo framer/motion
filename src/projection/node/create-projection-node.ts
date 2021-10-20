@@ -674,7 +674,7 @@ export function createProjectionNode<I>({
         }
 
         updateScroll() {
-            if (this.options.shouldMeasureScroll && this.instance) {
+            if (this.options.layoutScroll && this.instance) {
                 this.scroll = measureScroll(this.instance)
             }
         }
@@ -735,11 +735,7 @@ export function createProjectionNode<I>({
                 const node = this.path[i]
                 const { scroll, options } = node
 
-                if (
-                    node !== this.root &&
-                    scroll &&
-                    options.shouldMeasureScroll
-                ) {
+                if (node !== this.root && scroll && options.layoutScroll) {
                     translateAxis(boxWithoutScroll.x, scroll.x)
                     translateAxis(boxWithoutScroll.y, scroll.y)
                 }
@@ -756,7 +752,7 @@ export function createProjectionNode<I>({
 
                 if (
                     !transformOnly &&
-                    node.options.shouldMeasureScroll &&
+                    node.options.layoutScroll &&
                     node.scroll &&
                     node !== node.root
                 ) {
@@ -924,7 +920,7 @@ export function createProjectionNode<I>({
                     this.relativeParent &&
                     Boolean(this.relativeParent.resumingFrom) ===
                         Boolean(this.resumingFrom) &&
-                    !this.relativeParent.options.shouldMeasureScroll &&
+                    !this.relativeParent.options.layoutScroll &&
                     this.relativeParent.target
                 ) {
                     this.relativeTarget = createBox()
