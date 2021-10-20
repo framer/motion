@@ -7,13 +7,7 @@ import { SwitchLayoutGroupContext } from "../../context/SwitchLayoutGroupContext
 
 export function useProjection(
     projectionId: number | undefined,
-    {
-        layoutId,
-        layout,
-        drag,
-        dragConstraints,
-        shouldMeasureScroll,
-    }: MotionProps,
+    { layoutId, layout, drag, dragConstraints, layoutScroll }: MotionProps,
     visualElement?: VisualElement,
     ProjectionNodeConstructor?: any
 ) {
@@ -49,6 +43,6 @@ export function useProjection(
          */
         animationType: typeof layout === "string" ? layout : "both",
         initialPromotionConfig,
-        shouldMeasureScroll,
+        layoutScroll,
     })
 }

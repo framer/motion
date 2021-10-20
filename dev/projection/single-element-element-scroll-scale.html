@@ -56,7 +56,7 @@
 
             const scroll = document.getElementById("scroll")
             const scrollProjection = createNode(scroll, undefined, {
-                shouldMeasureScroll: true,
+                layoutScroll: true,
             })
             const box = document.getElementById("box")
             const boxProjection = createNode(box, scrollProjection)

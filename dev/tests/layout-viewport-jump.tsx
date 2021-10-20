@@ -24,7 +24,7 @@ export const App = () => {
 
     if (nested) {
         content = (
-            <motion.div shouldMeasureScroll id="scrollable" style={scrollable}>
+            <motion.div layoutScroll id="scrollable" style={scrollable}>
                 {content}
             </motion.div>
         )

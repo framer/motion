@@ -69,5 +69,5 @@ export interface LayoutProps {
      *
      * @public
      */
-    shouldMeasureScroll?: boolean
+    layoutScroll?: boolean
 }

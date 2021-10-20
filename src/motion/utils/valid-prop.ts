@@ -55,7 +55,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "whileFocus",
     "whileTap",
     "whileHover",
-    "shouldMeasureScroll",
+    "layoutScroll",
 ])
 
 /**

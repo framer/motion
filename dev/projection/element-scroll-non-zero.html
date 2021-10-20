@@ -59,7 +59,7 @@
             const boxOrigin = box.getBoundingClientRect()
 
             const scrollProjection = createNode(scroll, undefined, {
-                shouldMeasureScroll: true,
+                layoutScroll: true,
             })
 
             const boxProjection = createNode(box, scrollProjection)
