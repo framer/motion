@@ -9,7 +9,7 @@ export function renderHTML(
     Object.assign(
         element.style,
         style,
-        projection && projection.getProjectionStyles()
+        projection && projection.getProjectionStyles(style)
     )
 
     // Loop over any CSS variables and assign those.
