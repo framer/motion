@@ -9,6 +9,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   `Reorder` components to create drag-to-reorder interfaces.
 -   `LayoutGroup` allows namespacing `layoutId` and group elements that may affect each-other's layout on re-render.
 -   `layoutDependency` prop to restrict when components are measured.
+-   `layoutScroll` prop to hint to layout animations when a element is scrollable.
 -   Layout animations are auto-completed when the viewport resizes.
 -   `layout="size"` for size-only animations [PR by @bhollis](https://github.com/framer/motion/pull/1154).
 
