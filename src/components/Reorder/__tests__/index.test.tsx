@@ -1,7 +1,7 @@
 import { render } from "../../../../jest.setup"
 import * as React from "react"
 import { renderToString, renderToStaticMarkup } from "react-dom/server"
-import { useRef, useLayoutEffect } from "react"
+import { useRef, useLayoutEffect, useState } from "react"
 import { Reorder } from ".."
 
 describe("Reorder", () => {
@@ -11,6 +11,25 @@ describe("Reorder", () => {
                 <Reorder.Item as="main" value={0} />
             </Reorder.Group>
         )
+
+        const staticMarkup = renderToStaticMarkup(<Component />)
+        const string = renderToString(<Component />)
+
+        const expectedMarkup = `<article><main style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></main></article>`
+
+        expect(staticMarkup).toBe(expectedMarkup)
+        expect(string).toBe(expectedMarkup)
+    })
+
+    it("onReorder is typed correctly", () => {
+        const Component = () => {
+            const [_items, setItems] = useState(["a"])
+            return (
+                <Reorder.Group as="article" onReorder={setItems}>
+                    <Reorder.Item as="main" value={0} />
+                </Reorder.Group>
+            )
+        }
 
         const staticMarkup = renderToStaticMarkup(<Component />)
         const string = renderToString(<Component />)

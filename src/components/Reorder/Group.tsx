@@ -13,20 +13,20 @@ import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
 
-export interface Props<V> {
+export interface Props {
     as?: keyof ReactHTML
     axis?: "x" | "y"
-    onReorder: (newOrder: V[]) => void
+    onReorder: (newOrder: any[]) => void
 }
 
-export function ReorderGroup<V>(
+export function ReorderGroup<V extends any>(
     {
         children,
         as = "ul",
         axis = "y",
         onReorder,
         ...props
-    }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
+    }: Props & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
