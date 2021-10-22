@@ -403,7 +403,10 @@ export function createProjectionNode<I>({
                     }: LayoutUpdateData) => {
                         const dragControls =
                             elementDragControls.get(visualElement)
-                        if (dragControls?.isDragging) return
+                        if (dragControls?.isDragging) {
+                            this.options.onExitComplete?.()
+                            return
+                        }
 
                         // TODO: Check here if an animation exists
                         const layoutTransition =
@@ -453,6 +456,8 @@ export function createProjectionNode<I>({
                                 ),
                                 onComplete: onLayoutAnimationComplete,
                             })
+                        } else {
+                            this.options.onExitComplete?.()
                         }
 
                         this.targetLayout = newLayout
@@ -492,7 +497,10 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
-            if (this.root.isUpdateBlocked()) return
+            if (this.root.isUpdateBlocked()) {
+                this.options.onExitComplete?.()
+                return
+            }
             !this.root.isUpdating && this.root.startUpdate()
             if (this.isLayoutDirty) return
 
@@ -534,7 +542,6 @@ export function createProjectionNode<I>({
                 this.nodes!.forEach(clearMeasurements)
                 return
             }
-
             if (!this.isUpdating) return
 
             this.isUpdating = false
@@ -1553,6 +1560,8 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             hasLayoutChanged,
             hasRelativeTargetChanged,
         })
+    } else {
+        node.options.onExitComplete?.()
     }
 
     /**
