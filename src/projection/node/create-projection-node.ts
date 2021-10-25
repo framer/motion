@@ -407,6 +407,7 @@ export function createProjectionNode<I>({
                         if (this.isTreeAnimationBlocked()) {
                             this.options.onExitComplete?.()
                             this.target = undefined
+                            this.relativeTarget = undefined
                             return
                         }
 
@@ -459,7 +460,7 @@ export function createProjectionNode<I>({
                                 onComplete: onLayoutAnimationComplete,
                             })
                         } else {
-                            this.options.onExitComplete?.()
+                            this.isLead() && this.options.onExitComplete?.()
                         }
 
                         this.targetLayout = newLayout
@@ -683,7 +684,6 @@ export function createProjectionNode<I>({
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
-            this.relativeTarget = undefined
             this.notifyListeners("measure")
 
             this.options.visualElement?.notifyLayoutMeasure(
@@ -1188,11 +1188,11 @@ export function createProjectionNode<I>({
                 this.resumingFrom.preserveOpacity = undefined
             }
 
+            this.getStack()?.exitAnimationComplete()
             this.resumingFrom =
                 this.currentAnimation =
                 this.animationValues =
                     undefined
-            this.getStack()?.exitAnimationComplete()
         }
 
         finishAnimation() {
@@ -1575,7 +1575,7 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             hasLayoutChanged,
             hasRelativeTargetChanged,
         })
-    } else {
+    } else if (node.isLead()) {
         node.options.onExitComplete?.()
     }
 

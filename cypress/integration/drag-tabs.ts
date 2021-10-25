@@ -93,8 +93,9 @@ describe("Tabs demo", () => {
             .trigger("pointerdown", 40, 10)
             .wait(30)
             .trigger("pointermove", 50, 10, { force: true }) // Gesture will start from first move past threshold
+            .wait(40)
             .trigger("pointermove", 200, 10, { force: true })
-            .wait(50)
+            .wait(100)
             .trigger("pointerup", { force: true })
             .wait(200)
             .should(([$tab]: any) => {

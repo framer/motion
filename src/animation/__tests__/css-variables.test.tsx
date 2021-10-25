@@ -94,7 +94,7 @@ describe("css variables", () => {
         })
 
         const results = await promise
-        expect(results).toEqual(["20px"])
+        expect(results).toEqual(["20px", "20px"])
     })
 
     // Skipping because this test always succeeds, no matter what style values you check for ¯\\_(ツ)_/¯

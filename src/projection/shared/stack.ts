@@ -99,7 +99,11 @@ export class NodeStack {
     }
 
     exitAnimationComplete() {
-        this.members.forEach((node) => node.options.onExitComplete?.())
+        this.members.forEach((node) => {
+            node.options.onExitComplete?.()
+            console.log(node.resumingFrom)
+            node.resumingFrom?.options.onExitComplete?.()
+        })
     }
 
     scheduleRender() {
