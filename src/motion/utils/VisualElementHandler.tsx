@@ -9,10 +9,9 @@ interface Props {
 }
 
 export class VisualElementHandler extends React.Component<Props> {
-    componentDidMount() {
-        this.updateProps()
-    }
-
+    /**
+     * Update visual element props as soon as we know this update is going to be commited.
+     */
     getSnapshotBeforeUpdate() {
         this.updateProps()
         return null

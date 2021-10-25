@@ -7,7 +7,7 @@ import { Reorder } from ".."
 describe("Reorder", () => {
     it("Correctly renders HTML", () => {
         const Component = () => (
-            <Reorder.Group as="article" onReorder={() => {}}>
+            <Reorder.Group as="article" onReorder={() => {}} values={[]}>
                 <Reorder.Item as="main" value={0} />
             </Reorder.Group>
         )
@@ -25,7 +25,7 @@ describe("Reorder", () => {
         const Component = () => {
             const [_items, setItems] = useState(["a"])
             return (
-                <Reorder.Group as="article" onReorder={setItems}>
+                <Reorder.Group as="article" onReorder={setItems} values={[]}>
                     <Reorder.Item as="main" value={0} />
                 </Reorder.Group>
             )
@@ -59,7 +59,12 @@ describe("Reorder", () => {
             })
 
             return (
-                <Reorder.Group as="article" ref={groupRef} onReorder={() => {}}>
+                <Reorder.Group
+                    as="article"
+                    ref={groupRef}
+                    onReorder={() => {}}
+                    values={[]}
+                >
                     <Reorder.Item as="main" ref={itemRef} value={0} />
                 </Reorder.Group>
             )

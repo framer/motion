@@ -123,7 +123,9 @@ describe("dragging", () => {
                             count += increment
                             setIncrement(2)
                         }}
-                        onDrag={() => (count += increment)}
+                        onDrag={() => {
+                            count += increment
+                        }}
                         onDragEnd={() => {
                             count += increment + 1
                             onDragEnd.resolve()
@@ -137,13 +139,15 @@ describe("dragging", () => {
         rerender(<Component />)
 
         const pointer = await drag(container.firstChild).to(100, 100) // + 1 + 2 = 3
-        await frame.postRender() // + 2 = 5
-        await pointer.to(50, 50) // + 2 = 7
-        await frame.postRender() // + 2 = 9
-        pointer.end() // + 3 = 12
+        // Move fires twice + 2 = 5, if this changes in the future it's probably just
+        // a change in frame scheduling.
+        await frame.postRender() // + 2 = 7
+        await pointer.to(50, 50) // + 2 = 9
+        await frame.postRender() // + 2 = 11
+        pointer.end() // + 3 = 14
         await onDragEnd.promise
 
-        expect(count).toBe(12)
+        expect(count).toBe(14)
     })
 
     test("dragEnd returns transformed pointer", async () => {

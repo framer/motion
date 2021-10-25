@@ -39,7 +39,6 @@ import {
 import { transformAxes } from "../../render/html/utils/transform"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
-import { elementDragControls } from "../../gestures/drag/VisualElementDragControls"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 
@@ -182,6 +181,8 @@ export function createProjectionNode<I>({
          * until all their parents stop performing layout animations.
          */
         isTreeAnimating = false
+
+        isAnimationBlocked = false
 
         /**
          * If true, attempt to resolve relativeTarget.
@@ -403,10 +404,9 @@ export function createProjectionNode<I>({
                         hasRelativeTargetChanged,
                         layout: newLayout,
                     }: LayoutUpdateData) => {
-                        const dragControls =
-                            elementDragControls.get(visualElement)
-                        if (dragControls?.isDragging) {
+                        if (this.isTreeAnimationBlocked()) {
                             this.options.onExitComplete?.()
+                            this.target = undefined
                             return
                         }
 
@@ -489,6 +489,14 @@ export function createProjectionNode<I>({
 
         isUpdateBlocked() {
             return this.updateManuallyBlocked || this.updateBlockedByResize
+        }
+
+        isTreeAnimationBlocked() {
+            return (
+                this.isAnimationBlocked ||
+                this.parent?.isTreeAnimationBlocked() ||
+                false
+            )
         }
 
         // Note: currently only running on root node
@@ -675,7 +683,9 @@ export function createProjectionNode<I>({
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
+            this.relativeTarget = undefined
             this.notifyListeners("measure")
+
             this.options.visualElement?.notifyLayoutMeasure(
                 this.layout.actual,
                 prevLayout?.actual
@@ -871,8 +881,8 @@ export function createProjectionNode<I>({
             }
 
             /**
-             * If we have no relative target or no target delta we can't perform projection
-             * so early return.
+             * If we have no relative target or no target delta our target isn't valid
+             * for this frame.
              */
             if (!this.relativeTarget && !this.targetDelta) return
 
@@ -1397,7 +1407,6 @@ export function createProjectionNode<I>({
                 )
             }
 
-            // TODO Move into stand-alone, testable function
             const { x, y } = this.projectionDelta
             styles.transformOrigin = `${x.origin * 100}% ${y.origin * 100}% 0`
 

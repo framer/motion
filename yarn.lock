@@ -5669,7 +5669,7 @@ __metadata:
     eslint-plugin-react: ^7.12.4
     eslint-plugin-react-hooks: ^1.6.0
     fork-ts-checker-webpack-plugin: ^6.2.0
-    framesync: 6.0.0
+    framesync: 6.0.1
     hey-listen: ^1.0.8
     husky: 1.1.4
     jest: ^24.8.0
@@ -5679,7 +5679,7 @@ __metadata:
     lint-staged: ^8.0.4
     lodash: ^4.17.13
     path-browserify: ^1.0.1
-    popmotion: 10.0.1
+    popmotion: 10.0.2
     prettier: ^2.1.0
     react: ^17.0.0-rc.0
     react-dev-utils: ^11.0.4
@@ -5709,12 +5709,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framesync@npm:6.0.0":
-  version: 6.0.0
-  resolution: "framesync@npm:6.0.0"
+"framesync@npm:6.0.1, framesync@npm:^6.0.1":
+  version: 6.0.1
+  resolution: "framesync@npm:6.0.1"
   dependencies:
     tslib: ^2.1.0
-  checksum: 10443b26e9e09378f7c32d6938590b40c441e73d1bb29a80b45ddfed4d3b988238c09ccf08991fb95772dade7751770d81b89f3b9ea5bdd0b528ec6eb32cc9fb
+  checksum: a23ebe8f7e20a32c0b99c2f8175b6f07af3ec6316aad52a2316316a6d011d717af8d2175dcc2827031c59fabb30232ed3e19a720a373caba7f070e1eae436325
   languageName: node
   linkType: hard
 
@@ -9800,15 +9800,15 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"popmotion@npm:10.0.1":
-  version: 10.0.1
-  resolution: "popmotion@npm:10.0.1"
+"popmotion@npm:10.0.2":
+  version: 10.0.2
+  resolution: "popmotion@npm:10.0.2"
   dependencies:
-    framesync: 6.0.0
+    framesync: ^6.0.1
     hey-listen: ^1.0.8
     style-value-types: 5.0.0
     tslib: ^2.1.0
-  checksum: 13a5a449496d4ae69f5fed01b4829983879a7eac6f9b0eee6ca2fa42ff78eaf281bfa1720ee7b6944218a7f2bd56c7e137354ce3852042b529e1acb8bcd3efaa
+  checksum: 6c793f637a5dd9861edca257eac523c2d6c1d895399e9320562c26c2f2a2d1288af1892925af5bc88e091e0444b4478f352772b7d1a5ba1b972cd889d1560d4a
   languageName: node
   linkType: hard
 

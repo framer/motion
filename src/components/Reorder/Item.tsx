@@ -71,7 +71,9 @@ export function ReorderItem<V>(
                 velocity[axis] &&
                     updateOrder(value, point[axis].get(), velocity[axis])
             }}
-            onLayoutMeasure={(measured) => (layout.current = measured)}
+            onLayoutMeasure={(measured) => {
+                layout.current = measured
+            }}
             ref={externalRef}
         >
             {children}

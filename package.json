@@ -41,7 +41,7 @@
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
         "test-e2e": "yarn test-e2e-chrome && yarn test-e2e-electron",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/layout-shared.ts\"'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/drag-tabs.ts\"'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "projection-dev": "python -m SimpleHTTPServer",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
@@ -110,9 +110,9 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
-        "framesync": "6.0.0",
+        "framesync": "6.0.1",
         "hey-listen": "^1.0.8",
-        "popmotion": "10.0.1",
+        "popmotion": "10.0.2",
         "style-value-types": "5.0.0",
         "tslib": "^2.1.0"
     },

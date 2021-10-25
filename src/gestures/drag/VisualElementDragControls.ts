@@ -83,6 +83,11 @@ export class VisualElementDragControls {
         originEvent: AnyPointerEvent,
         { snapToCursor = false }: DragControlOptions = {}
     ) {
+        /**
+         * Don't start dragging if this component is exiting
+         */
+        if (this.visualElement.isPresent === false) return
+
         const onSessionStart = (event: AnyPointerEvent) => {
             // Stop any animations on both axis values immediately. This allows the user to throw and catch
             // the component.
@@ -106,11 +111,13 @@ export class VisualElementDragControls {
             }
 
             this.isDragging = true
+
             this.currentDirection = null
 
             this.resolveConstraints()
 
             if (this.visualElement.projection) {
+                this.visualElement.projection.isAnimationBlocked = true
                 this.visualElement.projection.target = undefined
             }
 
@@ -203,6 +210,9 @@ export class VisualElementDragControls {
 
     private cancel() {
         this.isDragging = false
+        if (this.visualElement.projection) {
+            this.visualElement.projection.isAnimationBlocked = false
+        }
         this.panSession?.end()
         this.panSession = undefined
 

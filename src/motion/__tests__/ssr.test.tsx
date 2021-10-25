@@ -108,11 +108,15 @@ function runTests(render: (components: any) => string) {
     })
 
     test("Reorder: Renders correct element", () => {
-        const div = render(
-            <Reorder.Group onReorder={() => {}}>
-                <Reorder.Item value="a" />
-            </Reorder.Group>
-        )
+        function Component() {
+            const [state, setState] = React.useState([0])
+            return (
+                <Reorder.Group onReorder={setState} values={state}>
+                    <Reorder.Item value="a" />
+                </Reorder.Group>
+            )
+        }
+        const div = render(<Component />)
 
         expect(div).toBe(
             `<ul><li style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
@@ -120,11 +124,15 @@ function runTests(render: (components: any) => string) {
     })
 
     test("Reorder: Renders provided element", () => {
-        const div = render(
-            <Reorder.Group as="div" onReorder={() => {}}>
-                <Reorder.Item as="div" value="a" />
-            </Reorder.Group>
-        )
+        function Component() {
+            const [state, setState] = React.useState([0])
+            return (
+                <Reorder.Group as="div" onReorder={setState} values={state}>
+                    <Reorder.Item as="div" value="a" />
+                </Reorder.Group>
+            )
+        }
+        const div = render(<Component />)
 
         expect(div).toBe(
             `<div><div style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
