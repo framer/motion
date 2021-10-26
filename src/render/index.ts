@@ -100,7 +100,12 @@ export const visualElement =
             if (!instance || !isMounted) return
 
             triggerBuild()
-            renderInstance(instance, renderState, element.projection)
+            renderInstance(
+                instance,
+                renderState,
+                props.style,
+                element.projection
+            )
         }
 
         function triggerBuild() {

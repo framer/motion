@@ -40,6 +40,8 @@ import { transformAxes } from "../../render/html/utils/transform"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
 import { elementDragControls } from "../../gestures/drag/VisualElementDragControls"
+import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
+import { MotionStyle } from "../../motion/types"
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
@@ -1336,7 +1338,7 @@ export function createProjectionNode<I>({
             visualElement.scheduleRender()
         }
 
-        getProjectionStyles(styleProp: ResolvedValues = {}) {
+        getProjectionStyles(styleProp: MotionStyle = {}) {
             // TODO: Return lifecycle-persistent object
             const styles: ResolvedValues = {}
             if (!this.instance || this.isSVG) return styles
@@ -1354,7 +1356,8 @@ export function createProjectionNode<I>({
                 this.needsReset = false
 
                 styles.opacity = ""
-                styles.pointerEvents = styleProp.pointerEvents || ""
+                styles.pointerEvents =
+                    resolveMotionValue(styleProp.pointerEvents) || ""
                 styles.transform = transformTemplate
                     ? transformTemplate(this.latestValues, "")
                     : "none"
@@ -1366,7 +1369,8 @@ export function createProjectionNode<I>({
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
                     emptyStyles.opacity = this.latestValues.opacity ?? 1
-                    emptyStyles.pointerEvents = styleProp.pointerEvents || ""
+                    emptyStyles.pointerEvents =
+                        resolveMotionValue(styleProp.pointerEvents) || ""
                 }
                 if (this.hasProjected && !hasTransform(this.latestValues)) {
                     emptyStyles.transform = transformTemplate
@@ -1447,7 +1451,9 @@ export function createProjectionNode<I>({
              */
             if (this.options.layoutId) {
                 styles.pointerEvents =
-                    lead === this ? styleProp.pointerEvents || "" : "none"
+                    lead === this
+                        ? resolveMotionValue(styleProp.pointerEvents) || ""
+                        : "none"
             }
 
             return styles

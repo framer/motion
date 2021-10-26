@@ -1,6 +1,6 @@
 import * as React from "react"
 import { startAnimation } from "../animation/utils/transitions"
-import { MotionProps } from "../motion/types"
+import { MotionProps, MotionStyle } from "../motion/types"
 import { VisualState } from "../motion/utils/use-visual-state"
 import { TargetAndTransition, Transition, Variant } from "../types"
 import { MotionValue } from "../value"
@@ -133,6 +133,7 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
     render(
         instance: Instance,
         renderState: RenderState,
+        styleProp?: MotionStyle,
         projection?: IProjectionNode
     ): void
     removeValueFromRenderState(key: string, renderState: RenderState): void
