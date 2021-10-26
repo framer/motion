@@ -1,5 +1,4 @@
 import * as React from "react"
-import { flushLayout } from "../../render/dom/utils/batch-layout"
 import { useConstant } from "../../utils/use-constant"
 import {
     VisualElementDragControls,
@@ -8,25 +7,6 @@ import {
 
 /**
  * Can manually trigger a drag gesture on one or more `drag`-enabled `motion` components.
- *
- * @library
- *
- * ```jsx
- * const dragControls = useDragControls()
- *
- * function startDrag(event) {
- *   dragControls.start(event, { snapToCursor: true })
- * }
- *
- * return (
- *   <>
- *     <Frame onTapStart={startDrag} />
- *     <Frame drag="x" dragControls={dragControls} />
- *   </>
- * )
- * ```
- *
- * @motion
  *
  * ```jsx
  * const dragControls = useDragControls()
@@ -55,6 +35,7 @@ export class DragControls {
      */
     subscribe(controls: VisualElementDragControls): () => void {
         this.componentControls.add(controls)
+
         return () => this.componentControls.delete(controls)
     }
 
@@ -90,14 +71,6 @@ export class DragControls {
             )
         })
     }
-
-    updateConstraints(flush = true) {
-        this.componentControls.forEach((controls) => {
-            controls.updateConstraints()
-        })
-
-        flush && flushLayout()
-    }
 }
 
 const createDragControls = () => new DragControls()
@@ -110,25 +83,6 @@ const createDragControls = () => new DragControls()
  * By creating a `dragControls` using the `useDragControls` hook, we can pass this into
  * the draggable component's `dragControls` prop. It exposes a `start` method
  * that can start dragging from pointer events on other components.
- *
- * @library
- *
- * ```jsx
- * const dragControls = useDragControls()
- *
- * function startDrag(event) {
- *   dragControls.start(event, { snapToCursor: true })
- * }
- *
- * return (
- *   <>
- *     <Frame onTapStart={startDrag} />
- *     <Frame drag="x" dragControls={dragControls} />
- *   </>
- * )
- * ```
- *
- * @motion
  *
  * ```jsx
  * const dragControls = useDragControls()

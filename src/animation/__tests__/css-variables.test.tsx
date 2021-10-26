@@ -50,18 +50,16 @@ describe("css variables", () => {
 
     test("should animate css color variables", async () => {
         const promise = new Promise((resolve) => {
-            let isFirstFrame = true
+            let frameCount = 0
             const Component = () => (
                 <motion.div
                     style={style}
                     initial={{ background: fromVariable }}
                     animate={{ background: toVariable }}
                     onUpdate={({ background }) => {
-                        if (isFirstFrame) {
-                            isFirstFrame = false
-                        } else {
-                            resolve(background)
-                        }
+                        frameCount += 1
+
+                        if (frameCount > 2) resolve(background)
                     }}
                 />
             )

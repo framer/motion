@@ -28,7 +28,6 @@ export const App = () => {
                 drag
                 //dragElastic
                 dragConstraints={ref}
-                onMeasureDragConstraints={(v) => console.log(v)}
                 whileTap={{ scale: 0.95 }}
                 whileHover={{ scale: 1.1 }}
                 style={child}

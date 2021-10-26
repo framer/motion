@@ -12,6 +12,7 @@ yarn-error.log
 /types
 /cypress/screenshots
 /cypress/videos
+/cypress/fixtures/projection-tests.json
 
 .yarn/*
 !.yarn/cache

@@ -3,6 +3,7 @@ import { renderToString, renderToStaticMarkup } from "react-dom/server"
 import { motion } from "../../"
 import { motionValue } from "../../value"
 import { AnimatePresence } from "../../components/AnimatePresence"
+import { Reorder } from "../../components/Reorder"
 
 function runTests(render: (components: any) => string) {
     test("doesn't throw", () => {
@@ -11,6 +12,8 @@ function runTests(render: (components: any) => string) {
                 initial={{ x: 100 }}
                 whileTap={{ opacity: 0 }}
                 drag
+                layout
+                layoutId="a"
                 style={{ opacity: 1 }}
             />
         )
@@ -101,6 +104,38 @@ function runTests(render: (components: any) => string) {
 
         expect(div).toBe(
             `<div style="transform:translateX(100px) translateZ(0)"></div>`
+        )
+    })
+
+    test("Reorder: Renders correct element", () => {
+        function Component() {
+            const [state, setState] = React.useState([0])
+            return (
+                <Reorder.Group onReorder={setState} values={state}>
+                    <Reorder.Item value="a" />
+                </Reorder.Group>
+            )
+        }
+        const div = render(<Component />)
+
+        expect(div).toBe(
+            `<ul><li style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+        )
+    })
+
+    test("Reorder: Renders provided element", () => {
+        function Component() {
+            const [state, setState] = React.useState([0])
+            return (
+                <Reorder.Group as="div" onReorder={setState} values={state}>
+                    <Reorder.Item as="div" value="a" />
+                </Reorder.Group>
+            )
+        }
+        const div = render(<Component />)
+
+        expect(div).toBe(
+            `<div><div style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
         )
     })
 }

@@ -1,19 +1,14 @@
 import * as React from "react"
 import { startAnimation } from "../animation/utils/transitions"
-import {
-    Presence,
-    SharedLayoutAnimationConfig,
-} from "../components/AnimateSharedLayout/types"
-import { Crossfader } from "../components/AnimateSharedLayout/utils/crossfader"
-import { MotionProps } from "../motion/types"
+import { MotionProps, MotionStyle } from "../motion/types"
 import { VisualState } from "../motion/utils/use-visual-state"
 import { TargetAndTransition, Transition, Variant } from "../types"
-import { AxisBox2D, Point2D } from "../types/geometry"
 import { MotionValue } from "../value"
 import { AnimationState } from "./utils/animation-state"
 import { LifecycleManager } from "./utils/lifecycles"
-import { LayoutState, TargetProjection } from "./utils/state"
-import { FlatTree } from "./utils/flat-tree"
+import { Box, Point, TransformPoint } from "../projection/geometry/types"
+import { IProjectionNode } from "../projection/node/types"
+import { MotionConfigProps } from "../components/MotionConfig"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -28,27 +23,22 @@ export interface VisualElement<Instance = any, RenderState = any>
     children: Set<VisualElement>
     variantChildren?: Set<VisualElement>
     current: Instance | null
-    layoutTree: FlatTree
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
     presenceId: number | undefined
-    projection: TargetProjection
-    isProjectionReady: () => boolean
     isMounted(): boolean
     mount(instance: Instance): void
     unmount(): void
     isStatic?: boolean
     getInstance(): Instance | null
-    path: VisualElement[]
     sortNodePosition(element: VisualElement): number
-
+    measureViewportBox(withTransform?: boolean): Box
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
 
-    setCrossfader(crossfader: Crossfader): void
-    layoutSafeToRemove?: () => void
-
     animateMotionValue?: typeof startAnimation
+
+    projection?: IProjectionNode
 
     /**
      * Visibility
@@ -74,13 +64,16 @@ export interface VisualElement<Instance = any, RenderState = any>
     getLatestValues(): ResolvedValues
     scheduleRender(): void
 
+    makeTargetAnimatable(
+        target: TargetAndTransition,
+        isLive?: boolean
+    ): TargetAndTransition
+
     setProps(props: MotionProps): void
     getProps(): MotionProps
     getVariant(name: string): Variant | undefined
     getDefaultTransition(): Transition | undefined
-    getVariantContext(
-        startAtParent?: boolean
-    ):
+    getVariantContext(startAtParent?: boolean):
         | undefined
         | {
               initial?: string | string[]
@@ -91,53 +84,13 @@ export interface VisualElement<Instance = any, RenderState = any>
               whileFocus?: string | string[]
               whileTap?: string | string[]
           }
-
+    getTransformPagePoint: () => TransformPoint | undefined
     build(): RenderState
     syncRender(): void
 
-    /**
-     * Layout projection - perhaps a candidate for lazy-loading
-     * or an external interface. Move into Projection?
-     */
-    enableLayoutProjection(): void
-    lockProjectionTarget(): void
-    unlockProjectionTarget(): void
-    rebaseProjectionTarget(force?: boolean, sourceBox?: AxisBox2D): void
-    measureViewportBox(withTransform?: boolean): AxisBox2D
-    getLayoutState: () => LayoutState
-    getProjectionParent: () => VisualElement | false
-    getProjectionAnimationProgress(): MotionPoint
-    setProjectionTargetAxis(
-        axis: "x" | "y",
-        min: number,
-        max: number,
-        isRelative?: boolean
-    ): void
-    startLayoutAnimation(
-        axis: "x" | "y",
-        transition: Transition,
-        isRelative: boolean
-    ): Promise<any>
-    stopLayoutAnimation(): void
-    updateLayoutProjection(): void
-    updateTreeLayoutProjection(): void
-    resolveRelativeTargetBox(): void
-    makeTargetAnimatable(
-        target: TargetAndTransition,
-        isLive?: boolean
-    ): TargetAndTransition
-    scheduleUpdateLayoutProjection(): void
-    notifyLayoutReady(config?: SharedLayoutAnimationConfig): void
-    pointTo(element: VisualElement): void
-    resetTransform(): void
-    restoreTransform(): void
-    shouldResetTransform(): boolean
-
-    isPresent: boolean
-    presence: Presence
     isPresenceRoot?: boolean
-    prevDragCursor?: Point2D
-    prevViewportBox?: AxisBox2D
+    isPresent?: boolean
+    prevDragCursor?: Point
     getLayoutId(): string | undefined
     animationState?: AnimationState
 }
@@ -152,8 +105,6 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         visualElement: VisualElement<Instance>,
         renderState: RenderState,
         latestValues: ResolvedValues,
-        projection: TargetProjection,
-        layoutState: LayoutState,
         options: Options,
         props: MotionProps
     ): void
@@ -164,7 +115,11 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         props: MotionProps,
         isLive: boolean
     ): TargetAndTransition
-    measureViewportBox(instance: Instance, options: Options): AxisBox2D
+    // TODO Review which of these we still need
+    measureViewportBox(
+        instance: Instance,
+        props: MotionProps & MotionConfigProps
+    ): Box
     readValueFromInstance(
         instance: Instance,
         key: string,
@@ -176,14 +131,19 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         props: MotionProps
     ): void
     restoreTransform(instance: Instance, renderState: RenderState): void
-    render(instance: Instance, renderState: RenderState): void
+    render(
+        instance: Instance,
+        renderState: RenderState,
+        styleProp?: MotionStyle,
+        projection?: IProjectionNode
+    ): void
     removeValueFromRenderState(key: string, renderState: RenderState): void
     scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps
 }
 
-export type ScrapeMotionValuesFromProps = (
-    props: MotionProps
-) => { [key: string]: MotionValue | string | number }
+export type ScrapeMotionValuesFromProps = (props: MotionProps) => {
+    [key: string]: MotionValue | string | number
+}
 
 export type UseRenderState<RenderState = any> = () => RenderState
 
@@ -191,7 +151,6 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     visualState: VisualState<Instance, RenderState>
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
-    snapshot?: ResolvedValues
     presenceId?: number | undefined
     props: MotionProps
     blockInitialAnimation?: boolean

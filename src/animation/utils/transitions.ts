@@ -215,6 +215,7 @@ function getAnimation(
     function set(): StopAnimation {
         value.set(target)
         onComplete()
+        valueTransition?.onUpdate?.(target)
         valueTransition?.onComplete?.()
         return { stop: () => {} }
     }

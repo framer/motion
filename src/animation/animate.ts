@@ -8,6 +8,7 @@ import { startAnimation } from "./utils/transitions"
  */
 export interface AnimationPlaybackControls {
     stop: () => void
+    isAnimating: () => boolean
 }
 
 /**
@@ -67,5 +68,6 @@ export function animate<V>(
 
     return {
         stop: () => value.stop(),
+        isAnimating: () => value.isAnimating(),
     }
 }

@@ -1,7 +1,7 @@
 const path = require("path")
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
-const convertPathsToAliases = require("convert-tsconfig-paths-to-webpack-aliases")
-    .default
+const convertPathsToAliases =
+    require("convert-tsconfig-paths-to-webpack-aliases").default
 const chalk = require("chalk")
 const tsconfig = require("../../tsconfig.json")
 const webpack = require("webpack")

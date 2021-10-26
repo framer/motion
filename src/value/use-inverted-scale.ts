@@ -28,21 +28,10 @@ let hasWarned = false
  * By passing other `MotionValue`s in as `useInvertedScale({ scaleX, scaleY })`, it will invert the output
  * of those instead.
  *
- * @motion
- *
  * ```jsx
  * const MyComponent = () => {
  *   const { scaleX, scaleY } = useInvertedScale()
  *   return <motion.div style={{ scaleX, scaleY }} />
- * }
- * ```
- *
- * @library
- *
- * ```jsx
- * function MyComponent() {
- *   const { scaleX, scaleY } = useInvertedScale()
- *   return <Frame scaleX={scaleX} scaleY={scaleY} />
  * }
  * ```
  *

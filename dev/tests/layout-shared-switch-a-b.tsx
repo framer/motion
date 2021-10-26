@@ -1,4 +1,4 @@
-import { motion, useMotionValue, AnimateSharedLayout } from "@framer"
+import { motion, useMotionValue } from "@framer"
 import * as React from "react"
 
 export const App = () => {
@@ -8,23 +8,22 @@ export const App = () => {
     const backgroundColor = useMotionValue("#f00")
 
     return (
-        <AnimateSharedLayout>
-            <motion.div
-                key={state ? "a" : "b"}
-                id={state ? "a" : "b"}
-                data-testid="box"
-                layoutId="box"
-                layout={type}
-                style={{
-                    ...(state ? a : b),
-                    backgroundColor,
-                    borderRadius: state ? 0 : 20,
-                }}
-                onClick={() => setState(!state)}
-                transition={{ duration: 0.2, ease: () => 0.5 }}
-                onLayoutAnimationComplete={() => backgroundColor.set("#00f")}
-            />
-        </AnimateSharedLayout>
+        <motion.div
+            key={state ? "a" : "b"}
+            id={state ? "a" : "b"}
+            data-testid="box"
+            layoutId="box"
+            layout={type}
+            style={{
+                ...(state ? a : b),
+                backgroundColor,
+                borderRadius: state ? 0 : 20,
+                opacity: state ? 0.4 : 1,
+            }}
+            onClick={() => setState(!state)}
+            transition={{ duration: 0.2, ease: () => 0.5 }}
+            onLayoutAnimationComplete={() => backgroundColor.set("#00f")}
+        />
     )
 }
 

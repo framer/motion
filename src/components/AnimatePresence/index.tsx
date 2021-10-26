@@ -1,20 +1,17 @@
 import {
-    useContext,
     useRef,
     isValidElement,
     cloneElement,
     Children,
     ReactElement,
     ReactNode,
+    useContext,
 } from "react"
 import * as React from "react"
 import { AnimatePresenceProps } from "./types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
-import {
-    SharedLayoutContext,
-    isSharedLayout,
-} from "../../context/SharedLayoutContext"
+import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 
 type ComponentKey = string | number
 
@@ -62,35 +59,6 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * When adding/removing more than a single child, every child **must** be given a unique `key` prop.
  *
- * @library
- *
- * Any `Frame` components that have an `exit` property defined will animate out when removed from
- * the tree.
- *
- * ```jsx
- * import { Frame, AnimatePresence } from 'framer'
- *
- * // As items are added and removed from `items`
- * export function Items({ items }) {
- *   return (
- *     <AnimatePresence>
- *       {items.map(item => (
- *         <Frame
- *           key={item.id}
- *           initial={{ opacity: 0 }}
- *           animate={{ opacity: 1 }}
- *           exit={{ opacity: 0 }}
- *         />
- *       ))}
- *     </AnimatePresence>
- *   )
- * }
- * ```
- *
- * You can sequence exit animations throughout a tree using variants.
- *
- * @motion
- *
  * Any `motion` components that have an `exit` property defined will animate out when removed from
  * the tree.
  *
@@ -129,12 +97,9 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
-    let forceRender = useForceUpdate()
-    const layoutContext = useContext(SharedLayoutContext)
-
-    if (isSharedLayout(layoutContext)) {
-        forceRender = layoutContext.forceUpdate
-    }
+    let [forceRender] = useForceUpdate()
+    const forceRenderLayoutGroup = useContext(LayoutGroupContext).forceRender
+    if (forceRenderLayoutGroup) forceRender = forceRenderLayoutGroup
 
     const isInitialRender = useRef(true)
 
@@ -146,8 +111,9 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
     const presentChildren = useRef(filteredChildren)
 
     // A lookup table to quickly reference components by key
-    const allChildren = useRef(new Map<ComponentKey, ReactElement<any>>())
-        .current
+    const allChildren = useRef(
+        new Map<ComponentKey, ReactElement<any>>()
+    ).current
 
     // A living record of all currently exiting components.
     const exiting = useRef(new Set<ComponentKey>()).current

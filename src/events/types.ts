@@ -1,9 +1,9 @@
 import { RefObject } from "react"
-import { Point2D } from "../types/geometry"
+import { Point } from "../projection/geometry/types"
 
 /** @public */
 export interface EventInfo {
-    point: Point2D
+    point: Point
 }
 
 export type EventHandler = (

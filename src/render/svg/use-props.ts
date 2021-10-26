@@ -12,8 +12,6 @@ export function useSVGProps(props: MotionProps, visualState: ResolvedValues) {
         buildSVGAttrs(
             state,
             visualState,
-            undefined,
-            undefined,
             { enableHardwareAcceleration: false },
             props.transformTemplate
         )

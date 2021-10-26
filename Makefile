@@ -44,8 +44,6 @@ SOURCE_FILES := $(shell find ./src -type f)
 
 # The location to gather test reports
 TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)/test_reports)
-API_TARGET=dist/framer-motion.api.json
-API_REVIEW_FILE=api/framer-motion.api.ts
 DECLARATION_TARGET=types/index.d.ts
 
 build: bootstrap
@@ -70,14 +68,12 @@ publish: clean bootstrap
 	npm publish
 	git push
 
-test: bootstrap $(API_TARGET)
+test: bootstrap
 	yarn test
-	yarn tsc dist/framer-motion.d.ts --skipLibCheck
 
-test-ci: bootstrap $(API_TARGET)
+test-ci: bootstrap
 	mkdir -p $(TEST_REPORT_PATH)
 	JEST_JUNIT_OUTPUT=$(TEST_REPORT_PATH)/framer-motion.xml yarn test-ci --ci --reporters=jest-junit
-	yarn tsc dist/framer-motion.d.ts --skipLibCheck
 
 lint: bootstrap
 	yarn lint
@@ -87,10 +83,5 @@ pretty: bootstrap
 
 $(DECLARATION_TARGET): $(SOURCE_FILES)
 	yarn tsc -p . --emitDeclarationOnly --removeComments false
-
-$(API_TARGET) $(API_REVIEW_FILE): api-extractor.json $(DECLARATION_TARGET)
-	yarn api-extractor run -l
-
-api: bootstrap $(API_TARGET)
 
 .PHONY: dev lint
