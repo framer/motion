@@ -6,7 +6,11 @@ export function addDomEvent(
     handler: EventListener,
     options?: AddEventListenerOptions
 ) {
-    target.addEventListener(eventName, handler, options)
+    /**
+     * Most of the event listeners should be passive, so it is more lightweight to apply it here by default
+     *   - addEventListener @see https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener
+     */
+    target.addEventListener(eventName, handler, options || { passive: true })
 
     return () => target.removeEventListener(eventName, handler, options)
 }
