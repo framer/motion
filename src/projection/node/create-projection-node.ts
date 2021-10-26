@@ -405,7 +405,6 @@ export function createProjectionNode<I>({
                         layout: newLayout,
                     }: LayoutUpdateData) => {
                         if (this.isTreeAnimationBlocked()) {
-                            this.options.onExitComplete?.()
                             this.target = undefined
                             this.relativeTarget = undefined
                             return
@@ -508,10 +507,6 @@ export function createProjectionNode<I>({
         }
 
         willUpdate(shouldNotifyListeners = true) {
-            if (this.root.isUpdateBlocked()) {
-                this.options.onExitComplete?.()
-                return
-            }
             !this.root.isUpdating && this.root.startUpdate()
             if (this.isLayoutDirty) return
 
@@ -1575,8 +1570,6 @@ function notifyLayoutUpdate(node: IProjectionNode) {
             hasLayoutChanged,
             hasRelativeTargetChanged,
         })
-    } else if (node.isLead()) {
-        node.options.onExitComplete?.()
     }
 
     /**
