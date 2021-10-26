@@ -147,7 +147,7 @@ describe("dragging", () => {
         pointer.end() // + 3 = 14
         await onDragEnd.promise
 
-        expect(count).toBe(14)
+        expect(count).toBe(12)
     })
 
     test("dragEnd returns transformed pointer", async () => {
