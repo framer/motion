@@ -15,12 +15,48 @@ import { ItemData, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
 
 export interface Props<V> {
+    /**
+     * A HTML element to render this component as. Defaults to `"ul"`.
+     *
+     * @public
+     */
     as?: keyof ReactHTML
+
+    /**
+     * The axis to reorder along. By default, items will be draggable on this axis.
+     * To make draggable on both axes, set `<Reorder.Item drag />`
+     *
+     * @public
+     */
     axis?: "x" | "y"
 
     // TODO: This would be better typed as V, but that doesn't seem
     // to correctly infer type from values
+    /**
+     * A callback to fire with the new value order. For instance, if the values
+     * are provided as a state from `useState`, this could be the set state function.
+     *
+     * @public
+     */
     onReorder: (newOrder: any[]) => void
+
+    /**
+     * The latest values state.
+     *
+     * ```jsx
+     * function Component() {
+     *   const [items, setItems] = useState([0, 1, 2])
+     *
+     *   return (
+     *     <Reorder.Group values={items} onReorder={setItems}>
+     *         {items.map((item) => <Reorder.Item key={item} value={item} />)}
+     *     </Reorder.Group>
+     *   )
+     * }
+     * ```
+     *
+     * @public
+     */
     values: V[]
 }
 
