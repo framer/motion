@@ -83,6 +83,11 @@ class MeasureLayoutWithContext extends React.Component<
             if (isPresent) {
                 projection.promote()
             } else if (!projection.relegate()) {
+                /**
+                 * If there's another stack member taking over from this one,
+                 * it's in charge of the exit animation and therefore should
+                 * be in charge of the safe to remove. Otherwise we call it here.
+                 */
                 sync.postRender(() => {
                     if (!projection.getStack()?.members.length) {
                         this.safeToRemove()
