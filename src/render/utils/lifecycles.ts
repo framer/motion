@@ -142,7 +142,7 @@ export function createLifecycles() {
                 const propListener = props[on]
 
                 // Unsubscribe existing subscription
-                // propSubscriptions[name]?.()
+                propSubscriptions[name]?.()
 
                 // Add new subscription
                 if (propListener) {
