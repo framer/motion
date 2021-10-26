@@ -58,6 +58,7 @@ export const App = () => {
             axis={axis}
             onReorder={setItems}
             style={axis === "y" ? verticalList : horizontalList}
+            values={items}
         >
             {items.map((item) => (
                 <Item axis={axis} key={item} item={item} />

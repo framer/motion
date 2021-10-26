@@ -136,20 +136,27 @@ export function createLifecycles() {
     const propSubscriptions: { [key: string]: () => {} } = {}
     const lifecycles: Partial<LifecycleManager> = {
         clearAllListeners: () => managers.forEach((manager) => manager.clear()),
-        updatePropListeners: (props) =>
+        updatePropListeners: (props) => {
             names.forEach((name) => {
                 const on = "on" + name
                 const propListener = props[on]
+
+                // Unsubscribe existing subscription
+                propSubscriptions[name]?.()
+
+                // Add new subscription
                 if (propListener) {
                     propSubscriptions[name] = lifecycles[on](propListener)
                 }
-            }),
+            })
+        },
     }
 
     managers.forEach((manager, i) => {
         lifecycles["on" + names[i]] = (handler: any) => manager.add(handler)
-        lifecycles["notify" + names[i]] = (...args: any) =>
+        lifecycles["notify" + names[i]] = (...args: any) => {
             manager.notify(...args)
+        }
     })
 
     return lifecycles as LifecycleManager

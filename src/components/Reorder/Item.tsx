@@ -18,7 +18,18 @@ import { useTransform } from "../../value/use-transform"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
 export interface Props<V> {
+    /**
+     * A HTML element to render this component as. Defaults to `"li"`.
+     *
+     * @public
+     */
     as?: keyof ReactHTML
+
+    /**
+     * The value in the list that this component represents.
+     *
+     * @public
+     */
     value: V
 }
 
@@ -71,7 +82,9 @@ export function ReorderItem<V>(
                 velocity[axis] &&
                     updateOrder(value, point[axis].get(), velocity[axis])
             }}
-            onLayoutMeasure={(measured) => (layout.current = measured)}
+            onLayoutMeasure={(measured) => {
+                layout.current = measured
+            }}
             ref={externalRef}
         >
             {children}

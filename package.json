@@ -110,9 +110,9 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
-        "framesync": "6.0.0",
+        "framesync": "6.0.1",
         "hey-listen": "^1.0.8",
-        "popmotion": "10.0.1",
+        "popmotion": "10.0.2",
         "style-value-types": "5.0.0",
         "tslib": "^2.1.0"
     },
@@ -159,7 +159,7 @@
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "30 kB"
+            "maxSize": "30.2 kB"
         }
     ]
 }

@@ -235,6 +235,7 @@ export const visualElement =
                 }
 
                 parent?.children.add(element)
+                element.setProps(props)
             },
 
             /**

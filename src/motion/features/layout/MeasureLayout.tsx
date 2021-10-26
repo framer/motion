@@ -1,3 +1,4 @@
+import sync from "framesync"
 import React, { useContext } from "react"
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import {
@@ -54,13 +55,7 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     getSnapshotBeforeUpdate(prevProps: FeatureProps & MeasureContextProps) {
-        const {
-            layoutDependency,
-            visualElement,
-            drag,
-            isPresent,
-            safeToRemove,
-        } = this.props
+        const { layoutDependency, visualElement, drag, isPresent } = this.props
         const projection = visualElement.projection
 
         if (!projection) return null
@@ -81,14 +76,23 @@ class MeasureLayoutWithContext extends React.Component<
         ) {
             projection.willUpdate()
         } else {
-            safeToRemove?.()
+            this.safeToRemove()
         }
 
         if (prevProps.isPresent !== isPresent) {
             if (isPresent) {
                 projection.promote()
             } else if (!projection.relegate()) {
-                safeToRemove?.()
+                /**
+                 * If there's another stack member taking over from this one,
+                 * it's in charge of the exit animation and therefore should
+                 * be in charge of the safe to remove. Otherwise we call it here.
+                 */
+                sync.postRender(() => {
+                    if (!projection.getStack()?.members.length) {
+                        this.safeToRemove()
+                    }
+                })
             }
         }
 
@@ -122,7 +126,8 @@ class MeasureLayoutWithContext extends React.Component<
     }
 
     safeToRemove() {
-        this.props.safeToRemove?.()
+        const { safeToRemove } = this.props
+        safeToRemove?.()
     }
 
     render() {
