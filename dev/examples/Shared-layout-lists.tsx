@@ -15,9 +15,7 @@ interface ListProps {
 
 const transition = {
     type: "spring",
-    duration: 5,
-    //     stiffness: 200,
-    //     damping: 20,
+    duration: 2,
 }
 
 const List = ({ list, onItemClick, backgroundColor }: ListProps) => {
@@ -81,7 +79,8 @@ export const App = () => {
 
 const styles = {
     container: {
-        width: "100%",
+        width: "70%",
+        margin: "0 auto",
         display: "flex",
         justifyContent: "space-around",
         alignItems: "flex-end",
