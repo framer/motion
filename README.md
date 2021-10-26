@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://misc.framerstatic.com/motion/motion-readme-4.gif" width="400" height="250" alt="Framer Motion" />
+  <img src="https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png" width="108" height="108" alt="Framer Motion" />
 </p>
-
+<h1 align="center">Framer Motion</h1>
 <h3 align="center">
   An open source and production-ready motion<br>library for React on the web.
 </h3>
@@ -65,7 +65,7 @@ export const MyComponent = ({ isVisible }) => (
 
 ### Docs
 
-Check out [our documentation](https://framer.com/api/motion) for guides and a full API reference.
+Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
 
 Or checkout [our examples](https://framer.com/motion) for inspiration.
 
