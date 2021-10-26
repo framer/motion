@@ -5,6 +5,7 @@ import { NodeStack } from "../shared/stack"
 import { AnimationPlaybackControls } from "../../animation/animate"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { InitialPromotionConfig } from "../../context/SwitchLayoutGroupContext"
+import { MotionStyle } from "../../motion/types"
 
 // TODO: Find more appropriate names for each snapshot
 export interface Snapshot {
@@ -87,7 +88,7 @@ export interface IProjectionNode<I = unknown> {
     applyTransform(box: Box, transformOnly?: boolean): Box
     resolveTargetDelta(): void
     calcProjection(): void
-    getProjectionStyles(styles: ResolvedValues): ResolvedValues | undefined
+    getProjectionStyles(styles?: MotionStyle): MotionStyle | undefined
     clearMeasurements(): void
     resetTree(): void
 
