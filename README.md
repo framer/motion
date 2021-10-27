@@ -49,7 +49,7 @@ It does all this:
 
 ## Get started
 
-### Quick start
+### 🐇 Quick start
 
 ```
 npm install framer-motion
@@ -63,17 +63,17 @@ export const MyComponent = ({ isVisible }) => (
 )
 ```
 
-### Docs
+### 📚 Docs
 
 Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
 
 Or checkout [our examples](https://framer.com/motion) for inspiration.
 
-### Contribute
+### 🛠 Contribute
 
 Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
-### License
+### 👩🏻‍⚖️ License
 
 Framer Motion is MIT licensed.
 
