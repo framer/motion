@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import React from "react"
 import { CreateVisualElement } from "../render/types"
 
 export interface LazyContextProps {
@@ -6,4 +6,6 @@ export interface LazyContextProps {
     strict: boolean
 }
 
-export const LazyContext = createContext<LazyContextProps>({ strict: false })
+export const LazyContext = React.createContext<LazyContextProps>({
+    strict: false,
+})

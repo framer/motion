@@ -1,5 +1,5 @@
-import * as React from "react"
-import { useMemo } from "react"
+import React from "react"
+const { useMemo } = React
 import { PresenceContext } from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"

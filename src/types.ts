@@ -1,4 +1,4 @@
-import { CSSProperties, SVGAttributes } from "react"
+import type { CSSProperties, SVGAttributes } from "react"
 import {
     TransformProperties,
     CustomStyles,

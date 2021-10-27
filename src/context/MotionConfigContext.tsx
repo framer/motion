@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import React from "react"
 import { TransformPoint } from "../projection/geometry/types"
 import { Transition } from "../types"
 
@@ -30,7 +30,7 @@ export interface MotionConfigContext {
 /**
  * @public
  */
-export const MotionConfigContext = createContext<MotionConfigContext>({
+export const MotionConfigContext = React.createContext<MotionConfigContext>({
     transformPagePoint: (p) => p,
     isStatic: false,
 })

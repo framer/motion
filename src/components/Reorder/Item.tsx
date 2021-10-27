@@ -1,13 +1,9 @@
 import { invariant } from "hey-listen"
-import * as React from "react"
-import {
-    ReactHTML,
-    FunctionComponent,
-    useContext,
-    useEffect,
-    useRef,
-    forwardRef,
-} from "react"
+
+import React from "react"
+import type { ReactHTML, FunctionComponent } from "react"
+const { useContext, useEffect, useRef, forwardRef } = React
+
 import { ReorderContext } from "../../context/ReorderContext"
 import { Box } from "../../projection/geometry/types"
 import { motion } from "../../render/dom/motion"

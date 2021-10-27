@@ -1,4 +1,6 @@
-import { useContext, useEffect } from "react"
+import React from "react"
+const { useContext, useEffect } = React
+
 import {
     PresenceContext,
     PresenceContextProps,

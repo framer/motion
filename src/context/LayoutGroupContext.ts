@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import React from "react"
 import { NodeGroup } from "../projection/node/group"
 
 export interface LayoutGroupContextProps {
@@ -10,4 +10,6 @@ export interface LayoutGroupContextProps {
 /**
  * @internal
  */
-export const LayoutGroupContext = createContext<LayoutGroupContextProps>({})
+export const LayoutGroupContext = React.createContext<LayoutGroupContextProps>(
+    {}
+)

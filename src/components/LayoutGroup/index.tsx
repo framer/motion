@@ -1,5 +1,7 @@
-import * as React from "react"
-import { MutableRefObject, useContext, useMemo, useRef } from "react"
+import React from "react"
+import type { MutableRefObject } from "react"
+const { useContext, useMemo, useRef } = React
+
 import {
     LayoutGroupContext,
     LayoutGroupContextProps,

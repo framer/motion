@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react"
+import React from "react"
+const { useEffect, useState } = React
+
 import { useConstant } from "../utils/use-constant"
 import { checkTargetForNewValues, getOrigin } from "../render/utils/setters"
 import { TargetAndTransition } from "../types"

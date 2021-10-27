@@ -1,5 +1,6 @@
-import * as React from "react"
-import { useEffect, useRef, useState } from "react"
+import React from "react"
+const { useEffect, useRef, useState } = React
+
 import { LazyContext } from "../../context/LazyContext"
 import { loadFeatures } from "../../motion/features/definitions"
 import { FeatureBundle, LazyFeatureBundle } from "../../motion/features/types"

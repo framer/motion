@@ -1,6 +1,8 @@
+import React from "react"
+const { useEffect } = React
+
 import { animationControls } from "./animation-controls"
 import { AnimationControls } from "./types"
-import { useEffect } from "react"
 import { useConstant } from "../utils/use-constant"
 
 /**

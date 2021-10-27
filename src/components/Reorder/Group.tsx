@@ -1,12 +1,8 @@
 import { invariant } from "hey-listen"
-import * as React from "react"
-import {
-    forwardRef,
-    FunctionComponent,
-    ReactHTML,
-    useEffect,
-    useRef,
-} from "react"
+import React from "react"
+import type { FunctionComponent, ReactHTML } from "react"
+const { forwardRef, useEffect, useRef } = React
+
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
 import { HTMLMotionProps } from "../../render/html/types"

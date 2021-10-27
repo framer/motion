@@ -1,7 +1,9 @@
-import { createContext } from "react"
+import React from "react"
 
 /**
  * @internal
  * @deprecated
  */
-export const DeprecatedLayoutGroupContext = createContext<string | null>(null)
+export const DeprecatedLayoutGroupContext = React.createContext<string | null>(
+    null
+)

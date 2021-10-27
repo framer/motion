@@ -1,5 +1,5 @@
-import * as React from "react"
-import { useContext, useMemo } from "react"
+import React from "react"
+const { useContext, useMemo } = React
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { useConstant } from "../../utils/use-constant"
 
@@ -45,10 +45,10 @@ export function MotionConfig({ children, ...config }: MotionConfigProps) {
             ? config.transition.toString()
             : ""
 
-    const context = useMemo(() => config, [
-        transitionDependency,
-        config.transformPagePoint,
-    ])
+    const context = useMemo(
+        () => config,
+        [transitionDependency, config.transformPagePoint]
+    )
 
     return (
         <MotionConfigContext.Provider value={context as MotionConfigContext}>

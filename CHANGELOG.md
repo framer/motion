@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [5.0.0] 2021-10-25
+## [5.0.1] 2021-10-27
+
+### Fixed
+
+-   `.mjs` imports within `create-react-app`-created environments.
+
+## [5.0.0] 2021-10-27
 
 ### Added
 

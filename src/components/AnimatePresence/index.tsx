@@ -1,13 +1,6 @@
-import {
-    useRef,
-    isValidElement,
-    cloneElement,
-    Children,
-    ReactElement,
-    ReactNode,
-    useContext,
-} from "react"
-import * as React from "react"
+import React from "react"
+const { Children, useRef, isValidElement, cloneElement, useContext } = React
+import type { ReactElement, ReactNode } from "react"
 import { AnimatePresenceProps } from "./types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { PresenceChild } from "./PresenceChild"
