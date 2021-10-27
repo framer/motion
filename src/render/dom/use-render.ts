@@ -1,4 +1,5 @@
-import { createElement } from "react"
+import React from "react"
+const { createElement } = React
 import { useHTMLProps } from "../html/use-props"
 import { filterProps } from "./utils/filter-props"
 import { isSVGComponent } from "./utils/is-svg-component"

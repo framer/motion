@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import React from "react"
 
 type Init<T> = () => T
 
@@ -10,7 +10,7 @@ type Init<T> = () => T
  * you can ensure that initialisers don't execute twice or more.
  */
 export function useConstant<T>(init: Init<T>) {
-    const ref = useRef<T | null>(null)
+    const ref = React.useRef<T | null>(null)
 
     if (ref.current === null) {
         ref.current = init()

@@ -1,4 +1,5 @@
-import { useRef } from "react"
+import React from "react"
+const { useRef } = React
 import { EventInfo } from "../events/types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"

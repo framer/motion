@@ -1,5 +1,5 @@
-import { useEffect } from "react"
+import React from "react"
 
 export function useUnmountEffect(callback: () => void) {
-    return useEffect(() => () => callback(), [])
+    return React.useEffect(() => () => callback(), [])
 }

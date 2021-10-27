@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 import sync from "framesync"
 import { MotionConfig } from "../../../components/MotionConfig"
 import { act } from "react-dom/test-utils"

@@ -2,7 +2,8 @@ import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
 import { isRefObject } from "../../utils/is-ref-object"
 import { IProjectionNode } from "../../projection/node/types"
-import { useContext } from "react"
+import React from "react"
+const { useContext } = React
 import { SwitchLayoutGroupContext } from "../../context/SwitchLayoutGroupContext"
 
 export function useProjection(

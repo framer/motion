@@ -1,4 +1,5 @@
-import { useRef, useContext, useEffect } from "react"
+import React from "react"
+const { useRef, useContext, useEffect } = React
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { usePointerEvent } from "../events/use-pointer-event"

@@ -1,4 +1,4 @@
-import { RefObject } from "react"
+import type { RefObject } from "react"
 import { Point } from "../projection/geometry/types"
 
 /** @public */

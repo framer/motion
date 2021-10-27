@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 import { MotionProps } from "../types"
 import { VisualState } from "../utils/use-visual-state"
 import { CreateVisualElement, VisualElement } from "../../render/types"

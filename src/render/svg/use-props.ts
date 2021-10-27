@@ -1,4 +1,5 @@
-import { useMemo } from "react"
+import React from "react"
+const { useMemo } = React
 import { MotionProps } from "../../motion/types"
 import { copyRawValuesOnly } from "../html/use-props"
 import { ResolvedValues } from "../types"

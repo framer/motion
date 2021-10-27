@@ -1,4 +1,5 @@
-import { useContext, useEffect } from "react"
+import React from "react"
+const { useContext, useEffect } = React
 import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../context/PresenceContext"

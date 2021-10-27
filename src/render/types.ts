@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 import { startAnimation } from "../animation/utils/transitions"
 import { MotionProps, MotionStyle } from "../motion/types"
 import { VisualState } from "../motion/utils/use-visual-state"

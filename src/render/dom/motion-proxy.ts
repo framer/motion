@@ -1,4 +1,4 @@
-import * as React from "react"
+import React from "react"
 import { DOMMotionComponents } from "./types"
 import { HTMLRenderState } from "../html/types"
 import { SVGRenderState } from "../svg/types"

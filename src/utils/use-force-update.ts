@@ -1,4 +1,5 @@
-import { useState, useCallback, useRef } from "react"
+import React from "react"
+const { useState, useCallback, useRef } = React
 import { useUnmountEffect } from "./use-unmount-effect"
 
 export function useForceUpdate(): [VoidFunction, number] {

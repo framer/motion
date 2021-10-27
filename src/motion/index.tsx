@@ -1,5 +1,5 @@
-import * as React from "react"
-import { forwardRef, useContext } from "react"
+import React from "react"
+const { forwardRef, useContext } = React
 import { MotionProps } from "./types"
 import { RenderComponent, FeatureBundle } from "./features/types"
 import { useFeatures } from "./features/use-features"

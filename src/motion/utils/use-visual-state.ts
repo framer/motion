@@ -1,4 +1,5 @@
-import { useContext } from "react"
+import React from "react"
+const { useContext } = React
 import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import {
     PresenceContext,
@@ -63,19 +64,18 @@ function makeState<I, RS>(
     return state
 }
 
-export const makeUseVisualState = <I, RS>(
-    config: UseVisualStateConfig<I, RS>
-): UseVisualState<I, RS> => (
-    props: MotionProps,
-    isStatic: boolean
-): VisualState<I, RS> => {
-    const context = useContext(MotionContext)
-    const presenceContext = useContext(PresenceContext)
+export const makeUseVisualState =
+    <I, RS>(config: UseVisualStateConfig<I, RS>): UseVisualState<I, RS> =>
+    (props: MotionProps, isStatic: boolean): VisualState<I, RS> => {
+        const context = useContext(MotionContext)
+        const presenceContext = useContext(PresenceContext)
 
-    return isStatic
-        ? makeState(config, props, context, presenceContext)
-        : useConstant(() => makeState(config, props, context, presenceContext))
-}
+        return isStatic
+            ? makeState(config, props, context, presenceContext)
+            : useConstant(() =>
+                  makeState(config, props, context, presenceContext)
+              )
+    }
 
 function makeLatestValues(
     props: MotionProps,

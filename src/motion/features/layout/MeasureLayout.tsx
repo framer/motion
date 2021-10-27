@@ -1,5 +1,6 @@
 import sync from "framesync"
-import React, { useContext } from "react"
+import React from "react"
+const { useContext } = React
 import { usePresence } from "../../../components/AnimatePresence/use-presence"
 import {
     LayoutGroupContext,

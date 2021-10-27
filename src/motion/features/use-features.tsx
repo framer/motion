@@ -1,10 +1,10 @@
-import * as React from "react"
+import React from "react"
+const { useContext } = React
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
 import { FeatureBundle, FeatureDefinition } from "./types"
 import { featureDefinitions } from "./definitions"
 import { invariant } from "hey-listen"
-import { useContext } from "react"
 import { LazyContext } from "../../context/LazyContext"
 
 const featureNames = Object.keys(featureDefinitions)

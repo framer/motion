@@ -1,4 +1,5 @@
-import { useContext, useEffect, useState } from "react"
+import React from "react"
+const { useContext, useEffect, useState } = React
 import { motionValue, MotionValue } from "."
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { useConstant } from "../utils/use-constant"

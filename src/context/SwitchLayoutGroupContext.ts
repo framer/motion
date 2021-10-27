@@ -1,5 +1,5 @@
 import { IProjectionNode } from "../projection/node/types"
-import { createContext } from "react"
+import React from "react"
 import { Transition } from "../types"
 
 export interface SwitchLayoutGroup {
@@ -25,6 +25,5 @@ export type InitialPromotionConfig = {
 /**
  * @internal
  */
-export const SwitchLayoutGroupContext = createContext<SwitchLayoutGroupContext>(
-    {}
-)
+export const SwitchLayoutGroupContext =
+    React.createContext<SwitchLayoutGroupContext>({})

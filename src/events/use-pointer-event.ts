@@ -1,4 +1,4 @@
-import { RefObject } from "react"
+import type { RefObject } from "react"
 import { useDomEvent, addDomEvent } from "./use-dom-event"
 import { wrapHandler, EventListenerWithPointInfo } from "./event-info"
 import {

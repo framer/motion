@@ -1,4 +1,5 @@
-import { useRef, useMemo, useContext } from "react"
+import React from "react"
+const { useRef, useMemo, useContext } = React
 import { animate, PlaybackControls, SpringOptions } from "popmotion"
 import { MotionValue } from "../value"
 import { isMotionValue } from "./utils/is-motion-value"

@@ -1,4 +1,4 @@
-import * as React from "react"
+import type { ComponentType } from "react"
 import { FeatureComponents } from "../../../motion/features/types"
 import { isSVGComponent } from "./is-svg-component"
 import { MotionComponentConfig } from "../../../motion"
@@ -11,7 +11,7 @@ import { CreateVisualElement } from "../../types"
 import { CustomMotionComponentConfig } from "../motion-proxy"
 
 export function createDomMotionConfig<Props>(
-    Component: string | React.ComponentType<Props>,
+    Component: string | ComponentType<Props>,
     { forwardMotionProps = false }: CustomMotionComponentConfig,
     preloadedFeatures?: FeatureComponents,
     createVisualElement?: CreateVisualElement<any>,

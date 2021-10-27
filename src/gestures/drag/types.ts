@@ -1,4 +1,4 @@
-import { RefObject } from "react"
+import type { RefObject } from "react"
 import { PanInfo } from "../PanSession"
 import { Inertia, TargetAndTransition } from "../../types"
 import { DragControls } from "./use-drag-controls"

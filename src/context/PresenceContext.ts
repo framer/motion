@@ -1,4 +1,4 @@
-import { createContext } from "react"
+import React from "react"
 import { VariantLabels } from "../motion/types"
 
 /**
@@ -16,4 +16,6 @@ export interface PresenceContextProps {
 /**
  * @public
  */
-export const PresenceContext = createContext<PresenceContextProps | null>(null)
+export const PresenceContext = React.createContext<PresenceContextProps | null>(
+    null
+)

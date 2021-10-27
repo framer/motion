@@ -1,4 +1,5 @@
-import { useContext, useMemo } from "react"
+import React from "react"
+const { useContext, useMemo } = React
 import { MotionContext, MotionContextProps } from "."
 import { MotionProps } from "../../motion/types"
 import { getCurrentTreeVariants } from "./utils"

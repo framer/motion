@@ -1,5 +1,5 @@
-import * as React from "react"
-import { useCallback } from "react"
+import React from "react"
+const { useCallback } = React
 import { VisualElement } from "../../render/types"
 import { isRefObject } from "../../utils/is-ref-object"
 import { VisualState } from "./use-visual-state"

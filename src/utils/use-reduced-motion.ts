@@ -1,4 +1,5 @@
-import { useState } from "react"
+import React from "react"
+const { useState } = React
 import { motionValue, MotionValue } from "../value"
 import { useOnChange } from "../value/use-on-change"
 

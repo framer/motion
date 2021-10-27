@@ -1,4 +1,5 @@
-import { useEffect, RefObject } from "react"
+import React from "react"
+import type { RefObject } from "react"
 
 export function addDomEvent(
     target: EventTarget,
@@ -38,7 +39,7 @@ export function useDomEvent(
     handler?: EventListener | undefined,
     options?: AddEventListenerOptions
 ) {
-    useEffect(() => {
+    React.useEffect(() => {
         const element = ref.current
 
         if (handler && element) {

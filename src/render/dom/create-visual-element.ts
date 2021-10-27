@@ -1,4 +1,4 @@
-import { ComponentType } from "react"
+import type { ComponentType } from "react"
 import { htmlVisualElement } from "../html/visual-element"
 import { svgVisualElement } from "../svg/visual-element"
 import { CreateVisualElement, VisualElementOptions } from "../types"

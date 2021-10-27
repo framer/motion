@@ -1,4 +1,5 @@
-import { useEffect } from "react"
+import React from "react"
+const { useEffect } = React
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"
 import { FeatureProps } from "../../motion/features/types"

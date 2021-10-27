@@ -1,4 +1,5 @@
-import { useState, useRef } from "react"
+import React from "react"
+const { useState, useRef } = React
 import { wrap } from "popmotion"
 
 type Cycle = (i?: number) => void

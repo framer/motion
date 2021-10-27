@@ -1,4 +1,5 @@
-import { useEffect } from "react"
+import React from "react"
+const { useEffect } = React
 import { MotionValue, Subscriber } from "./"
 import { isMotionValue } from "./utils/is-motion-value"
 

@@ -1,4 +1,5 @@
-import { useMemo } from "react"
+import React from "react"
+const { useMemo } = React
 import { MotionProps } from "../../motion/types"
 import { isForcedMotionValue } from "../../motion/utils/is-forced-motion-value"
 import { MotionValue } from "../../value"
@@ -75,8 +76,10 @@ export function useHTMLProps(
         htmlProps.draggable = false
 
         // Disable text selection
-        style.userSelect = style.WebkitUserSelect = style.WebkitTouchCallout =
-            "none"
+        style.userSelect =
+            style.WebkitUserSelect =
+            style.WebkitTouchCallout =
+                "none"
 
         // Disable scrolling on the draggable direction
         style.touchAction =
