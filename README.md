@@ -35,14 +35,15 @@ It looks like this:
 
 It does all this:
 
--   Spring animations
--   Simple keyframes syntax
+-   Springs
+-   Keyfranes
+-   Layout animations
+-   Shared layout animations
 -   Gestures (drag/tap/hover)
--   Layout and shared layout animations
 -   SVG paths
 -   Exit animations
 -   Server-side rendering
--   Variants for orchestrating animations across components
+-   Orchestrate animations across components
 -   CSS variables
 
 ...and a whole lot more.
