@@ -36,7 +36,7 @@ It looks like this:
 It does all this:
 
 -   Springs
--   Keyfranes
+-   Keyframes
 -   Layout animations
 -   Shared layout animations
 -   Gestures (drag/tap/hover)
