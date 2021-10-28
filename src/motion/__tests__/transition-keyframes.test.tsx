@@ -38,4 +38,29 @@ describe("keyframes transition", () => {
         )
         expect(variantsHaveChanged(["1", "2", "3"], ["1", "2", "4"])).toBe(true)
     })
+
+    test("keyframes with non-pixel values", async () => {
+        const promise = new Promise((resolve) => {
+            const resolveContainer = () => {
+                requestAnimationFrame(() => {
+                    resolve(container)
+                })
+            }
+
+            const Component = () => (
+                <motion.div
+                    initial={{ width: "0%" }}
+                    animate={{ width: ["0%", "100%"] }}
+                    transition={{ duration: 0.1 }}
+                    onAnimationComplete={resolveContainer}
+                />
+            )
+
+            const { container, rerender } = render(<Component />)
+
+            rerender(<Component />)
+        })
+
+        expect(promise).resolves.toHaveStyle("width: 100%;")
+    })
 })
