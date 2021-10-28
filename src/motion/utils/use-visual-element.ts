@@ -19,9 +19,8 @@ export function useVisualElement<Instance, RenderState>(
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
 
-    const visualElementRef: MutableRefObject<
-        VisualElement | undefined
-    > = useRef(undefined)
+    const visualElementRef: MutableRefObject<VisualElement | undefined> =
+        useRef(undefined)
 
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
@@ -45,10 +44,6 @@ export function useVisualElement<Instance, RenderState>(
     })
 
     useEffect(() => {
-        /**
-         * In a future refactor we can replace the features-as-components and
-         * have this loop through them all firing "effect" listeners
-         */
         visualElement?.animationState?.animateChanges()
     })
 

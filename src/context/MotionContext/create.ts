@@ -3,10 +3,7 @@ import { MotionContext, MotionContextProps } from "."
 import { MotionProps } from "../../motion/types"
 import { getCurrentTreeVariants } from "./utils"
 
-export function useCreateMotionContext(
-    props: MotionProps,
-    isStatic: boolean
-): MotionContextProps {
+export function useCreateMotionContext(props: MotionProps): MotionContextProps {
     const { initial, animate } = getCurrentTreeVariants(
         props,
         useContext(MotionContext)
@@ -14,15 +11,7 @@ export function useCreateMotionContext(
 
     return useMemo(
         () => ({ initial, animate }),
-        /**
-         * Only break memoisation in static mode
-         */
-        isStatic
-            ? [
-                  variantLabelsAsDependency(initial),
-                  variantLabelsAsDependency(animate),
-              ]
-            : []
+        [variantLabelsAsDependency(initial), variantLabelsAsDependency(animate)]
     )
 }
 

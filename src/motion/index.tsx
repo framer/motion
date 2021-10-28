@@ -63,11 +63,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
 
         let features: JSX.Element[] | null = null
 
-        /**
-         * Create the tree context. This is memoized and will only trigger renders
-         * when the current tree variant changes in static mode.
-         */
-        const context = useCreateMotionContext(props, config.isStatic)
+        const context = useCreateMotionContext(props)
 
         /**
          * Create a unique projection ID for this component. If a new component is added
