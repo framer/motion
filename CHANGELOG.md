@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [5.0.0] 2021-10-25
+## [5.0.1] 2021-10-29
+
+### Fixed
+
+-   Removing context memoisation to ensure removed values are correctly animated to.
+
+## [5.0.0] 2021-10-27
 
 ### Added
 
