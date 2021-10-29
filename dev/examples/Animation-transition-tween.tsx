@@ -13,7 +13,7 @@ const style = {
 }
 
 export const App = () => {
-    const [x, setX] = useState(0)
+    const [count, setCount] = useState(0)
     const transition = {
         type: "spring",
         duration: 0.4,
@@ -22,10 +22,12 @@ export const App = () => {
 
     return (
         <motion.div
-            animate={{ x }}
+            initial={false}
+            animate={count === 0 || count % 3 ? { x: count * 100 } : undefined}
+            whileHover={{ x: 100, opacity: 0.5 }}
             transition={transition}
             style={style}
-            onTap={() => setX(x + 200)}
+            onTap={() => setCount(count + 1)}
         />
     )
 }

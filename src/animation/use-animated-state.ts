@@ -1,52 +1,47 @@
 import { useEffect, useState } from "react"
-import { VisualElement } from "../render/VisualElement"
 import { useConstant } from "../utils/use-constant"
-import { ResolvedValues } from "../render/VisualElement/types"
-import {
-    AnimationDefinition,
-    startVisualElementAnimation,
-} from "../render/VisualElement/utils/animation"
-import {
-    checkTargetForNewValues,
-    getOrigin,
-} from "../render/VisualElement/utils/setters"
+import { checkTargetForNewValues, getOrigin } from "../render/utils/setters"
 import { TargetAndTransition } from "../types"
+import { visualElement } from "../render"
+import { ResolvedValues } from "../render/types"
+import { animateVisualElement } from "../render/utils/animation"
+import { makeUseVisualState } from "../motion/utils/use-visual-state"
+import { createBox } from "../projection/geometry/models"
 
-/**
- * This is just a very basic VisualElement, more of a hack to keep supporting useAnimatedState with
- * the latest APIs.
- */
-class StateVisualElement extends VisualElement {
-    initialState: ResolvedValues = {}
-
-    updateLayoutDelta() {}
-
-    build() {}
-
-    clean() {}
-
-    makeTargetAnimatable({
-        transition,
-        transitionEnd,
-        ...target
-    }: TargetAndTransition) {
-        const origin = getOrigin(target as any, transition || {}, this)
-        checkTargetForNewValues(this, target, origin as any)
-        return { transition, transitionEnd, ...target }
-    }
-
-    getBoundingBox() {
-        return { x: { min: 0, max: 0 }, y: { min: 0, max: 0 } }
-    }
-
-    readNativeValue(key: string) {
-        return this.initialState[key] || 0
-    }
-
-    render() {
-        this.build()
-    }
+interface AnimatedStateOptions {
+    initialState: ResolvedValues
 }
+
+const createObject = () => ({})
+
+const stateVisualElement = visualElement<
+    ResolvedValues,
+    {},
+    AnimatedStateOptions
+>({
+    build() {},
+    measureViewportBox: createBox,
+    resetTransform() {},
+    restoreTransform() {},
+    removeValueFromRenderState() {},
+    render() {},
+    scrapeMotionValuesFromProps: createObject,
+
+    readValueFromInstance(_state, key, options) {
+        return options.initialState[key] || 0
+    },
+
+    makeTargetAnimatable(element, { transition, transitionEnd, ...target }) {
+        const origin = getOrigin(target as any, transition || {}, element)
+        checkTargetForNewValues(element, target, origin as any)
+        return { transition, transitionEnd, ...target }
+    },
+})
+
+const useVisualState = makeUseVisualState({
+    scrapeMotionValuesFromProps: createObject,
+    createRenderState: createObject,
+})
 
 /**
  * This is not an officially supported API and may be removed
@@ -55,25 +50,27 @@ class StateVisualElement extends VisualElement {
  */
 export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)
-    const visualElement = useConstant(() => new StateVisualElement())
 
-    visualElement.updateConfig({
-        onUpdate: (v) => setAnimationState({ ...v }),
-    })
+    const visualState = useVisualState({}, false)
 
-    visualElement.initialState = initialState
+    const element = useConstant(() =>
+        stateVisualElement({ props: {}, visualState }, { initialState })
+    )
 
     useEffect(() => {
-        ;(visualElement as any).mount({})
-        return () => (visualElement as any).unmount()
+        element.mount({})
+        return element.unmount()
     }, [])
 
+    useEffect(() => {
+        element.setProps({
+            onUpdate: (v) => setAnimationState({ ...v }),
+        })
+    })
+
     const startAnimation = useConstant(
-        () => (animationDefinition: AnimationDefinition) => {
-            return startVisualElementAnimation(
-                visualElement,
-                animationDefinition
-            )
+        () => (animationDefinition: TargetAndTransition) => {
+            return animateVisualElement(element, animationDefinition)
         }
     )
 

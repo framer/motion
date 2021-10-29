@@ -1,3 +1,3 @@
-import { AnimationFeature } from "@framer"
+import { domAnimation } from "@framer"
 
-export default [AnimationFeature]
+export default domAnimation

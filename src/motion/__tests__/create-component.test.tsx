@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
-import { createDomMotionComponent } from "../../render/dom"
 import * as React from "react"
 import { motionValue } from "../../value"
+import { createDomMotionComponent } from "../../render/dom/motion"
 
 const motion = { div: createDomMotionComponent("div") }
 

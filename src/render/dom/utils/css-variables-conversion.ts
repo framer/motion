@@ -1,6 +1,6 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "hey-listen"
-import { HTMLVisualElement } from "../HTMLVisualElement"
+import { VisualElement } from "../../types"
 
 function isCSSVariable(value: any): value is string {
     return typeof value === "string" && value.startsWith("var(--")
@@ -59,7 +59,7 @@ function getVariableValue(
  * @internal
  */
 export function resolveCSSVariables(
-    visualElement: HTMLVisualElement,
+    visualElement: VisualElement,
     { ...target }: TargetWithKeyframes,
     transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {

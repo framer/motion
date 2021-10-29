@@ -6,7 +6,7 @@ import {
     ResolvedValueTarget,
     ResolvedKeyframesTarget,
 } from "../../types"
-import { ResolvedValues } from "../../render/VisualElement/types"
+import { ResolvedValues } from "../../render/types"
 
 export const resolveSingleValue = (
     v: string | number | CustomValueType

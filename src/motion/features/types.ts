@@ -1,36 +1,67 @@
 import * as React from "react"
 import { MotionProps } from "../types"
-import { MotionConfigContext } from "../context/MotionConfigContext"
-import { VisualElement } from "../../render/VisualElement"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { VisualState } from "../utils/use-visual-state"
+import { CreateVisualElement, VisualElement } from "../../render/types"
 
 /**
  * @public
  */
 export interface FeatureProps extends MotionProps {
-    visualElement: HTMLVisualElement
+    visualElement: VisualElement
 }
+
+export type FeatureNames = {
+    animation: true
+    exit: true
+    drag: true
+    tap: true
+    focus: true
+    hover: true
+    pan: true
+    measureLayout: true
+}
+
+export type FeatureComponent = React.ComponentType<FeatureProps>
 
 /**
  * @public
  */
-export interface MotionFeature {
-    key: string
-    shouldRender: (props: MotionProps) => boolean
-    getComponent: (
-        props: MotionProps
-    ) => React.ComponentType<FeatureProps> | undefined
+export interface FeatureDefinition {
+    isEnabled: (props: MotionProps) => boolean
+    Component?: FeatureComponent
 }
 
-export type LoadMotionFeatures<P = {}> = (
-    visualElenent: VisualElement,
-    props: P & MotionProps,
-    inherit: boolean,
-    plugins: MotionConfigContext
-) => React.ReactElement<FeatureProps>[]
+export interface FeatureComponents {
+    animation?: FeatureComponent
+    exit?: FeatureComponent
+    drag?: FeatureComponent
+    tap?: FeatureComponent
+    focus?: FeatureComponent
+    hover?: FeatureComponent
+    pan?: FeatureComponent
+    measureLayout?: FeatureComponent
+}
 
-export type RenderComponent<P = {}> = (
-    Component: string | React.ComponentType<P>,
+export interface FeatureBundle extends FeatureComponents {
+    renderer: CreateVisualElement<any>
+    projectionNodeConstructor?: any
+}
+
+export type LazyFeatureBundle = () => Promise<FeatureBundle>
+
+export type FeatureDefinitions = {
+    [K in keyof FeatureNames]: FeatureDefinition
+}
+
+export type LoadedFeatures = FeatureDefinitions & {
+    projectionNodeConstructor?: any
+}
+
+export type RenderComponent<Instance, RenderState> = (
+    Component: string | React.ComponentType,
     props: MotionProps,
-    visualElement: VisualElement
+    projectionId: number | undefined,
+    ref: React.Ref<Instance>,
+    visualState: VisualState<Instance, RenderState>,
+    isStatic: boolean
 ) => any

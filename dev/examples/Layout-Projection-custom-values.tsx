@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimateSharedLayout, addScaleCorrection } from "@framer"
+import { motion, addScaleCorrector } from "@framer"
 import { mix } from "popmotion"
 import styled from "styled-components"
 
@@ -28,8 +28,8 @@ const Container = styled(motion.div)<{ isOn: boolean }>`
 `
 
 const borderWidth = (axis: "x" | "y") => ({
-    process: (latest: any, viewportBox: any, delta: any, treeScale: any) => {
-        return latest / delta[axis].scale / treeScale[axis] + "px"
+    correct: (latest: any, { targetDelta, treeScale }: any) => {
+        return latest / targetDelta[axis].scale / treeScale[axis] + "px"
     },
 })
 
@@ -47,40 +47,38 @@ export const App = () => {
     const [isOn, setOn] = useState(false)
 
     React.useEffect(() => {
-        addScaleCorrection(border)
+        addScaleCorrector(border)
     }, [])
 
     return (
-        <AnimateSharedLayout>
-            <Container
+        <Container
+            layout
+            transition={{ duration: 3, ease: "circIn" }}
+            onClick={() => setOn(!isOn)}
+            isOn={isOn}
+        >
+            <motion.div
                 layout
+                initial={false}
+                animate={
+                    isOn
+                        ? {
+                              borderColor: "#000",
+                              borderTopWidth: 5,
+                              borderRightWidth: 5,
+                              borderLeftWidth: 5,
+                              borderBottomWidth: 30,
+                          }
+                        : {
+                              borderColor: "#90f",
+                              borderTopWidth: 50,
+                              borderRightWidth: 50,
+                              borderLeftWidth: 50,
+                              borderBottomWidth: 50,
+                          }
+                }
                 transition={{ duration: 3, ease: "circIn" }}
-                onClick={() => setOn(!isOn)}
-                isOn={isOn}
-            >
-                <motion.div
-                    layout
-                    initial={false}
-                    animate={
-                        isOn
-                            ? {
-                                  borderColor: "#000",
-                                  borderTopWidth: 5,
-                                  borderRightWidth: 5,
-                                  borderLeftWidth: 5,
-                                  borderBottomWidth: 30,
-                              }
-                            : {
-                                  borderColor: "#90f",
-                                  borderTopWidth: 50,
-                                  borderRightWidth: 50,
-                                  borderLeftWidth: 50,
-                                  borderBottomWidth: 50,
-                              }
-                    }
-                    transition={{ duration: 3, ease: "circIn" }}
-                />
-            </Container>
-        </AnimateSharedLayout>
+            />
+        </Container>
     )
 }

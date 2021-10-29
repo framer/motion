@@ -1,0 +1,88 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box-a {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #box-b {
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                width: 200px;
+                height: 300px;
+                background-color: #09f;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box-a"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const {
+                matchViewportBox,
+                matchVisibility,
+                matchOpacity,
+                matchBorderRadius,
+            } = window.Assert
+
+            const box = document.getElementById("box-a")
+            const boxProjection = createNode(box, undefined, { layoutId: "a" })
+
+            boxProjection.setValue("opacity", 0.8)
+
+            boxProjection.willUpdate()
+
+            const newBox = document.createElement("div")
+            newBox.id = "box-b"
+            document.body.appendChild(newBox)
+            const newBoxProjection = createNode(newBox, undefined, {
+                layoutId: "a",
+            })
+            newBoxProjection.setValue("borderRadius", 20)
+
+            boxProjection.unmount()
+            document.body.removeChild(box)
+
+            newBoxProjection.root.didUpdate()
+
+            sync.postRender(() => {
+                const midBox = { bottom: 250, left: 50, right: 200, top: 50 }
+                matchViewportBox(newBox, midBox)
+                matchVisibility(newBox, "visible")
+
+                /**
+                 * Should animate from the old opacity to the new one
+                 * IMPORTANT: Don't make the previous opacity something non-default
+                 */
+                matchOpacity(newBox, 0.9)
+                matchBorderRadius(newBox, "6.66667% / 5%")
+            })
+        </script>
+    </body>
+</html>

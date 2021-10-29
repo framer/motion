@@ -1,15 +1,31 @@
-import { svgElements } from "./supported-elements"
+import { ComponentType } from "react"
+import { lowercaseSVGElements } from "../../svg/lowercase-elements"
 
-const svgTagNames = new Set(svgElements)
+export function isSVGComponent(Component: string | ComponentType) {
+    if (
+        /**
+         * If it's not a string, it's a custom React component. Currently we only support
+         * HTML custom React components.
+         */
+        typeof Component !== "string" ||
+        /**
+         * If it contains a dash, the element is a custom HTML webcomponent.
+         */
+        Component.includes("-")
+    ) {
+        return false
+    } else if (
+        /**
+         * If it's in our list of lowercase SVG tags, it's an SVG component
+         */
+        lowercaseSVGElements.indexOf(Component) > -1 ||
+        /**
+         * If it contains a capital letter, it's an SVG component
+         */
+        /[A-Z]/.test(Component)
+    ) {
+        return true
+    }
 
-/**
- * Determine whether this is a HTML or SVG component based on if the provided
- * Component is a string and a recognised SVG tag. A potentially better way to
- * do this would be to offer a `motion.customSVG` function and determine this
- * when we generate the `motion.circle` etc components.
- */
-export function isSVGComponent<Props>(
-    Component: string | React.ComponentType<Props>
-) {
-    return typeof Component === "string" && svgTagNames.has(Component as any)
+    return false
 }

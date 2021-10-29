@@ -20,7 +20,8 @@ const validMotionProps = new Set<keyof MotionProps>([
     "layout",
     "layoutId",
     "onLayoutAnimationComplete",
-    "onViewportBoxUpdate",
+    "onLayoutMeasure",
+    "onBeforeLayoutMeasure",
     "onAnimationStart",
     "onAnimationComplete",
     "onUpdate",
@@ -41,6 +42,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "dragMomentum",
     "dragPropagation",
     "dragTransition",
+    "whileDrag",
     "onPan",
     "onPanStart",
     "onPanEnd",
@@ -48,10 +50,12 @@ const validMotionProps = new Set<keyof MotionProps>([
     "onTap",
     "onTapStart",
     "onTapCancel",
-    "whileHover",
-    "whileTap",
-    "onHoverEnd",
     "onHoverStart",
+    "onHoverEnd",
+    "whileFocus",
+    "whileTap",
+    "whileHover",
+    "layoutScroll",
 ])
 
 /**

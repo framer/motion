@@ -1,8 +1,8 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../.."
+import { motion, useMotionValue } from "../.."
 import * as React from "react"
 import { motionValue } from "../../value"
-import { MotionConfig } from "../context/MotionConfigContext"
+import { MotionConfig } from "../../components/MotionConfig"
 
 describe("isStatic prop", () => {
     test("it prevents rendering of animated values", async () => {
@@ -97,6 +97,33 @@ describe("isStatic prop", () => {
         )
     })
 
+    test("it doesn't override defined styles if values are removed", () => {
+        function Component({
+            initial,
+        }: {
+            initial?: { [key: string]: number }
+        }) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div
+                        data-testid="child"
+                        initial={initial}
+                        style={{ opacity: 0.5 }}
+                    />
+                </MotionConfig>
+            )
+        }
+        const { getByTestId, rerender } = render(
+            <Component initial={{ opacity: 0.8 }} />
+        )
+
+        expect(getByTestId("child") as Element).toHaveStyle("opacity: 0.8")
+
+        rerender(<Component />)
+
+        expect(getByTestId("child") as Element).toHaveStyle("opacity: 0.5")
+    })
+
     test("it propagates changes in `initial` if isStatic", () => {
         const variants = {
             visible: { opacity: 1 },
@@ -170,5 +197,29 @@ describe("isStatic prop", () => {
         rerender(<Test />)
 
         expect(getByTestId("child")).toBeTruthy()
+    })
+
+    test("it reflects changes in attached motion values", async () => {
+        function Component() {
+            const x = useMotionValue(10)
+
+            React.useEffect(() => x.set(20), [x])
+
+            return <motion.div data-testid="child" style={{ x }} />
+        }
+        const { getByTestId } = render(
+            <MotionConfig isStatic>
+                <Component />
+            </MotionConfig>
+        )
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                expect(getByTestId("child") as Element).toHaveStyle(
+                    "transform: translateX(20px)"
+                )
+                resolve(undefined)
+            }, 40)
+        })
     })
 })

@@ -1,5 +1,5 @@
 export function shallowCompare(next: any[], prev: any[] | null) {
-    if (prev === null) return false
+    if (!Array.isArray(prev)) return false
 
     const prevLength = prev.length
 

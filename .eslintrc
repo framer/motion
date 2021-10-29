@@ -14,7 +14,7 @@
         "@typescript-eslint/class-name-casing": "error",
         "@typescript-eslint/type-annotation-spacing": "error",
         "react/jsx-pascal-case": "error",
-        "react-hooks/rules-of-hooks": "error",
+        // "react-hooks/rules-of-hooks": "error",
         "react-hooks/exhaustive-deps": "warn",
         "import/no-default-export": "error",
         "prefer-arrow-callback": "warn",

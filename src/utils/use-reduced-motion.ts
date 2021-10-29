@@ -1,11 +1,15 @@
 import { useState } from "react"
-import { motionValue } from "../value"
+import { motionValue, MotionValue } from "../value"
 import { useOnChange } from "../value/use-on-change"
 
 // Does this device prefer reduced motion? Returns `null` server-side.
-export const prefersReducedMotion = motionValue<boolean | null>(null)
+let prefersReducedMotion: MotionValue<boolean | null>
 
-if (typeof window !== "undefined") {
+function initPrefersReducedMotion() {
+    prefersReducedMotion = motionValue(null)
+
+    if (typeof window === "undefined") return
+
     if (window.matchMedia) {
         const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)")
 
@@ -47,6 +51,11 @@ if (typeof window !== "undefined") {
  * @public
  */
 export function useReducedMotion() {
+    /**
+     * Lazy initialisation of prefersReducedMotion
+     */
+    !prefersReducedMotion && initPrefersReducedMotion()
+
     const [shouldReduceMotion, setShouldReduceMotion] = useState(
         prefersReducedMotion.get()
     )

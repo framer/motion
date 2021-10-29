@@ -33,21 +33,6 @@ type Transformer<I, O> =
  *
  * Every value in the output range must be of the same type and in the same format.
  *
- * @library
- *
- * ```jsx
- * export function MyComponent() {
- *   const x = useMotionValue(0)
- *   const xRange = [-200, -100, 100, 200]
- *   const opacityRange = [0, 1, 1, 0]
- *   const opacity = useTransform(x, xRange, opacityRange)
- *
- *   return <Frame x={x} animate={{ x: 200 }} opacity={opacity} />
- * }
- * ```
- *
- * @motion
- *
  * ```jsx
  * export const MyComponent = () => {
  *   const x = useMotionValue(0)
@@ -87,22 +72,6 @@ export function useTransform<I, O>(
  * Create a `MotionValue` that transforms the output of another `MotionValue` through a function.
  * In this example, `y` will always be double `x`.
  *
- * @library
- *
- * ```jsx
- * import * as React from "react"
- * import { Frame, useMotionValue, useTransform } from "framer"
- *
- * export function MyComponent() {
- *   const x = useMotionValue(10)
- *   const y = useTransform(x, value => value * 2)
- *
- *   return <Frame x={x} y={y} />
- * }
- * ```
- *
- * @motion
- *
  * ```jsx
  * export const MyComponent = () => {
  *   const x = useMotionValue(10)
@@ -125,23 +94,6 @@ export function useTransform<I, O>(
 
 /**
  * Pass an array of `MotionValue`s and a function to combine them. In this example, `z` will be the `x` multiplied by `y`.
- *
- * @library
- *
- * ```jsx
- * import * as React from "react"
- * import { Frame, useMotionValue, useTransform } from "framer"
- *
- * export function MyComponent() {
- *   const x = useMotionValue(0)
- *   const y = useMotionValue(0)
- *   const z = useTransform([x, y], [latestX, latestY] => latestX * latestY)
- *
- *   return <Frame x={x} y={y} z={z} />
- * }
- * ```
- *
- * @motion
  *
  * ```jsx
  * export const MyComponent = () => {

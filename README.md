@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="https://static.framer.com/motion/motion-readme-4.gif" width="400" height="250" alt="Framer Motion" />
+  <img src="https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png" width="108" height="108" alt="Framer Motion" />
 </p>
-
+<h1 align="center">Framer Motion</h1>
 <h3 align="center">
   An open source and production-ready motion<br>library for React on the web.
 </h3>
@@ -25,7 +25,7 @@
 
 <br>
 
-Motion is an open source, production-ready library that's designed for all creative developers.
+Framer Motion is an open source, production-ready library that's designed for all creative developers.
 
 It looks like this:
 
@@ -35,21 +35,22 @@ It looks like this:
 
 It does all this:
 
--   Spring animations
--   Simple keyframes syntax
+-   Springs
+-   Keyframes
+-   Layout animations
+-   Shared layout animations
 -   Gestures (drag/tap/hover)
--   Layout and shared layout animations
 -   SVG paths
 -   Exit animations
 -   Server-side rendering
--   Variants for orchestrating animations across components
+-   Orchestrate animations across components
 -   CSS variables
 
 ...and a whole lot more.
 
 ## Get started
 
-### Quick start
+### 🐇 Quick start
 
 ```
 npm install framer-motion
@@ -63,16 +64,20 @@ export const MyComponent = ({ isVisible }) => (
 )
 ```
 
-### Docs
+### 📚 Docs
 
-Check out [our documentation](https://framer.com/api/motion) for guides and a full API reference.
+Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
 
 Or checkout [our examples](https://framer.com/motion) for inspiration.
 
-## Contribute
+### 🛠 Contribute
 
-Want to contribute to Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
-## License
+### 👩🏻‍⚖️ License
 
-Motion is MIT licensed.
+Framer Motion is MIT licensed.
+
+## Framer
+
+Get on the same page as your designers before production. Get started with [design and prototyping in Framer](https://www.framer.com/).

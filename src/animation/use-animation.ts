@@ -1,4 +1,5 @@
-import { AnimationControls } from "./AnimationControls"
+import { animationControls } from "./animation-controls"
+import { AnimationControls } from "./types"
 import { useEffect } from "react"
 import { useConstant } from "../utils/use-constant"
 
@@ -10,26 +11,6 @@ import { useConstant } from "../utils/use-constant"
  * of the components you want to animate.
  *
  * These components can then be animated with the `start` method.
- *
- * @library
- *
- * ```jsx
- * import * as React from 'react'
- * import { Frame, useAnimation } from 'framer'
- *
- * export function MyComponent(props) {
- *    const controls = useAnimation()
- *
- *    controls.start({
- *        x: 100,
- *        transition: { duration: 0.5 },
- *    })
- *
- *    return <Frame animate={controls} />
- * }
- * ```
- *
- * @motion
  *
  * ```jsx
  * import * as React from 'react'
@@ -51,13 +32,10 @@ import { useConstant } from "../utils/use-constant"
  *
  * @public
  */
-export function useAnimation() {
-    const animationControls = useConstant(() => new AnimationControls())
+export function useAnimation(): AnimationControls {
+    const controls = useConstant(animationControls)
 
-    useEffect(() => {
-        animationControls.mount()
-        return () => animationControls.unmount()
-    }, [])
+    useEffect(controls.mount, [])
 
-    return animationControls
+    return controls
 }

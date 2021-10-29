@@ -1,35 +1,27 @@
-import { useEffect, useContext } from "react"
-import { MotionConfigContext } from "../../motion/context/MotionConfigContext"
-import { DraggableProps } from "./types"
+import { useEffect } from "react"
 import { VisualElementDragControls } from "./VisualElementDragControls"
 import { useConstant } from "../../utils/use-constant"
-import { VisualElement } from "../../render/VisualElement"
-import { HTMLVisualElement } from "../../render/dom/HTMLVisualElement"
+import { FeatureProps } from "../../motion/features/types"
 
 /**
  * A hook that allows an element to be dragged.
  *
  * @internal
  */
-export function useDrag(props: DraggableProps, visualElement: VisualElement) {
-    const { dragControls: groupDragControls } = props
-    const { transformPagePoint } = useContext(MotionConfigContext)
+export function useDrag(props: FeatureProps) {
+    const { dragControls: groupDragControls, visualElement } = props
 
-    const dragControls = useConstant(() => {
-        return new VisualElementDragControls({
-            visualElement: visualElement as HTMLVisualElement,
-        })
-    })
-
-    dragControls.updateProps({ ...props, transformPagePoint })
+    const dragControls = useConstant(
+        () => new VisualElementDragControls(visualElement)
+    )
 
     // If we've been provided a DragControls for manual control over the drag gesture,
     // subscribe this component to it on mount.
     useEffect(
         () => groupDragControls && groupDragControls.subscribe(dragControls),
-        [dragControls]
+        [dragControls, groupDragControls]
     )
 
-    // Mount the drag controls with the visualElement
-    useEffect(() => dragControls.mount(visualElement as HTMLVisualElement), [])
+    // Apply the event listeners to the element
+    useEffect(() => dragControls.addListeners(), [dragControls])
 }

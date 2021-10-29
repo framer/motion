@@ -26,9 +26,11 @@ const itemVariants = {
 
 const listVariants = {
     open: {
-        transition: { staggerChildren: 0.07, when: "beforeChildren" },
+        opacity: 1,
+        transition: { staggerChildren: 1, when: "beforeChildren" },
     },
     closed: {
+        opacity: 0,
         transition: {
             when: "afterChildren",
             staggerChildren: 0.3,
@@ -49,27 +51,25 @@ export const App = () => {
     return (
         <AnimatePresence initial={false} onRest={() => console.log("rest")}>
             {isVisible && (
-                <motion.div
+                <motion.ul
                     key="a"
                     initial={"closed"}
                     exit={"closed"}
                     animate="open"
-                    variants={itemVariants}
+                    variants={listVariants}
                     transition={{ duration: 1 }}
                     style={style}
                 >
-                    <motion.ul variants={listVariants}>
-                        <motion.li variants={itemVariants} style={item}>
-                            Test
-                        </motion.li>
-                        <motion.li variants={itemVariants} style={item}>
-                            Test
-                        </motion.li>
-                        <motion.li variants={itemVariants} style={item}>
-                            Test
-                        </motion.li>
-                    </motion.ul>
-                </motion.div>
+                    <motion.li variants={itemVariants} style={item}>
+                        Test
+                    </motion.li>
+                    <motion.li variants={itemVariants} style={item}>
+                        Test
+                    </motion.li>
+                    <motion.li variants={itemVariants} style={item}>
+                        Test
+                    </motion.li>
+                </motion.ul>
             )}
         </AnimatePresence>
     )

@@ -21,12 +21,14 @@ const originalGetComputedStyle = window.getComputedStyle
 
 function getComputedStyleStub() {
     return {
-        getPropertyValue(variableName: "--from" | "--to") {
+        getPropertyValue(variableName: "--from" | "--to" | "--a") {
             switch (variableName) {
                 case fromName:
                     return fromValue
                 case toName:
                     return toValue
+                case "--a":
+                    return undefined
                 default:
                     throw Error("Should never happen")
             }
@@ -47,19 +49,17 @@ describe("css variables", () => {
     afterAll(resetComputedStyles)
 
     test("should animate css color variables", async () => {
-        const promise = new Promise(resolve => {
-            let isFirstFrame = true
+        const promise = new Promise((resolve) => {
+            let frameCount = 0
             const Component = () => (
                 <motion.div
                     style={style}
                     initial={{ background: fromVariable }}
                     animate={{ background: toVariable }}
                     onUpdate={({ background }) => {
-                        if (isFirstFrame) {
-                            isFirstFrame = false
-                        } else {
-                            resolve(background)
-                        }
+                        frameCount += 1
+
+                        if (frameCount > 2) resolve(background)
                     }}
                 />
             )
@@ -78,9 +78,28 @@ describe("css variables", () => {
         expect(resolvedAs).not.toBe(toVariable)
     })
 
+    test("should correctly animate previously unencountered variables", async () => {
+        const promise = new Promise<string[]>((resolve) => {
+            const output: string[] = []
+            const Component = () => (
+                <motion.div
+                    animate={{ "--a": "20px" } as any}
+                    transition={{ duration: 0.01 }}
+                    onUpdate={(latest: any) => output.push(latest["--a"])}
+                    onAnimationComplete={() => resolve(output)}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        const results = await promise
+        expect(results).toEqual(["20px"])
+    })
+
     // Skipping because this test always succeeds, no matter what style values you check for ¯\\_(ツ)_/¯
     test.skip("should have the original target css variable on animation end", async () => {
-        const promise = new Promise<ChildNode | null>(resolve => {
+        const promise = new Promise<ChildNode | null>((resolve) => {
             const resolvePromise = () => {
                 requestAnimationFrame(() => resolve(container.firstChild))
             }

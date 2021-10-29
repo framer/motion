@@ -2,6 +2,481 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.0.1] 2021-10-29
+
+### Fixed
+
+-   Removing context memoisation to ensure removed values are correctly animated to.
+-   Adding unmount check to `AnimatePresence` before updating state. [PR by @ctrlplusb](https://github.com/framer/motion/pull/796)
+
+## [5.0.0] 2021-10-27
+
+### Added
+
+-   `Reorder` components to create drag-to-reorder interfaces.
+-   `LayoutGroup` allows namespacing `layoutId` and group elements that may affect each-other's layout on re-render.
+-   `layoutDependency` prop to restrict when components are measured.
+-   `layoutScroll` prop to hint to layout animations when a element is scrollable.
+-   Layout animations are auto-completed when the viewport resizes.
+-   `layout="size"` for size-only animations [PR by @bhollis](https://github.com/framer/motion/pull/1154).
+
+### Fixed
+
+-   Various layout projection improvements.
+
+### Changed
+
+-   `AnimateSharedLayout` is deprecated.
+
+## [4.1.17] 2021-05-17
+
+### Fixed
+
+-   Fixing SVG `gradientTransform`.
+-   Removing hover event suspension during layout measurements.
+
+## [4.1.16] 2021-05-12
+
+### Fixed
+
+-   Use with changing external refs.
+
+## [4.1.15] 2021-05-11
+
+### Fixed
+
+-   Correctly firing `onAnimationComplete` when a spring animation defined by `bounce` and no `duration` is completed.
+
+## [4.1.14] 2021-05-11
+
+### Fixed
+
+-   Narrowing the edge cases within which drag could lock the projection viewport box.
+-   Comparing prev scale to correct axis.
+
+## [4.1.13] 2021-05-07
+
+### Fixed
+
+-   Call function ref if it changes between renders.
+
+## [4.1.12] 2021-05-07
+
+### Fixed
+
+-   Layout measurements for drag gesture don't happen until the gesture is confirmed to start.
+-   Prevent occasional flash when projection hasn't yet been hydrated.
+-   Unifying layout batcher between drag and layout animations.
+-   Suspending hover events globally during layout measurements.
+
+## [4.1.11] 2021-04-28
+
+### Fixed
+
+-   Layout projection fix.
+
+## [4.1.10] 2021-04-26
+
+### Fixed
+
+-   Allow a component to have `transform` reset before measuring child layout.
+
+## [4.1.9] 2021-04-23
+
+### Fixed
+
+-   Further nested drag improvements for external motion values.
+
+## [4.1.8] 2021-04-22
+
+### Fixed
+
+-   Nested drag improvements for external motion values.
+
+## [4.1.7] 2021-04-21
+
+### Fixed
+
+-   Nested drag improvements.
+
+## [4.1.6] 2021-04-20
+
+### Fixed
+
+-   Nested drag improvements.
+
+## [4.1.5] 2021-04-19
+
+### Fixed
+
+-   Layout projection improvements.
+
+## [4.1.4] 2021-04-19
+
+### Fixed
+
+-   Disabling hover events when a drag is active.
+
+## [4.1.3] 2021-04-07
+
+### Fixed
+
+-   Animating to/between `0rem` and other non-specifically handled unit types.
+
+## [4.1.2] 2021-04-01
+
+### Fixed
+
+-   Clamping `borderRadius` to `0` and above during crossfade.
+
+## [4.1.1] 2021-04-01
+
+### Fixed
+
+-   Animating from `undefined` to number (including units) now animates from `0`.
+
+## [4.1.0] 2021-03-31
+
+### Added
+
+-   Relative layout animations
+-   Adding `transition.crossfade` and `transition.layout` for crossfade and layout-specific transitions.
+
+### Fixed
+
+-   Various layout projection improvements.
+
+## [4.0.3] 2021-03-24
+
+### Fixed
+
+-   Replaced layout animation tree traversal with flat array traversal of **just** projecting elements.
+
+## [4.0.2] 2021-03-19
+
+### Fixed
+
+-   Various layout animation bugfixes.
+
+### Upgraded
+
+-   Upgraded `popmotion`, `framesync`, `style-value-types` and `tslib` to `latest`.
+
+## [4.0.1] 2021-03-23
+
+### Fixed
+
+-   Adding `package.json` to `exports` so it can be imported by Node.
+
+## [4.0.0] 2021-03-18
+
+### Added
+
+-   Added the new `LazyMotion` component to defer the loading of animations and gestures.
+
+### Removed
+
+-   The deprecated `motion.custom()`. Use `motion()` instead.
+
+## [3.10.6] 2021-03-18
+
+### Fixed
+
+-   Various variant bugs.
+
+## [3.10.5] 2021-03-15
+
+### Fixed
+
+-   Added specific `default` and `require` fields to the `exports` field for CJS compatibility.
+
+## [3.10.4] 2021-03-15
+
+### Added
+
+-   `exports` field to `package.json`.
+
+### Fixed
+
+-   `useMotionValue` now forces re-render on the Framer canvas when the underlying `MotionValue` updates.
+
+## [3.10.3] 2021-03-10
+
+### Fixed
+
+-   Reduced memory consumption in static mode by not loading `VisualElement`.
+
+## [3.10.2] 2021-03-09
+
+### Fixed
+
+-   Improved memory consumption of `SubscriptionManager`.
+
+## [3.10.1] 2021-03-09
+
+### Fixed
+
+-   New layout animations now only trigger when the target viewport box has changed.
+
+## [3.10.0] 2021-03-03
+
+### Added
+
+-   `useVelocity`.
+
+## [3.9.3] 2021-03-03
+
+### Fixed
+
+-   Exporting `AnimationPlaybackControls` and `AnimationOptions` for `animate()`.
+-   Fixed passing dynamic function to `controls.start()`.
+
+## [3.9.2] 2021-03-02
+
+### Fixed
+
+-   Crossfader now only returns values for the lead and follow components.
+
+## [3.9.1] 2021-03-02
+
+### Fixed
+
+-   Drag now passing velocity to `useSpring` correctly.
+
+## [3.9.0] 2021-03-02
+
+### Added
+
+-   `dragElastic` now accepts per-axis elastic settings.
+
+## [3.8.2] 2021-03-01
+
+### Fixed
+
+-   `perspective` now correctly set as its own `style`. `transformPerspective` still builds into `transform`.
+
+## [3.8.1] 2021-03-01
+
+### Changed
+
+-   Refactoring `AnimationType` is improve bundle-splitting.
+
+## [3.8.0] 2021-03-01
+
+### Fixed
+
+-   Code-splitting for Webpack.
+
+## [3.7.0] 2021-02-23
+
+### Added
+
+-   `motion()` creates custom `motion` components.
+-   `forwardMotionProps` boolean to optionally forward `MotionProps` to custom components.
+
+### Changed
+
+-   Custom `motion` components no longer forward `MotionProps` by default.
+
+### Deprecated
+
+-   `motion.custom`
+
+### Fixed
+
+-   Listing React 17 as a `peerDependency`.
+
+## [3.6.7] 2021-02-22
+
+### Fixed
+
+-   More permissive check for previously-unencountered values.
+
+## [3.6.6] 2021-02-22
+
+### Fixed
+
+-   Safer `hasOwnProperty` check for `null` values.
+
+## [3.6.5] 2021-02-22
+
+### Fixed
+
+-   Only fire `onPanEnd` if `onPanStart` has triggered.
+
+## [3.6.4] 2021-02-22
+
+### Fixed
+
+-   Adding polyfill `performance.now` in `framesync`.
+
+## [3.6.3] 2021-02-22
+
+### Fixed
+
+-   Only crossfading defined `borderRadius` borders during shared element transitions.
+
+## [3.6.2] 2021-02-20
+
+### Fixed
+
+-   `AnimatePresence` now correctly unmounts children if it contains no `motion` components.
+
+## [3.6.1] 2021-02-19
+
+### Fixed
+
+-   `onAnimationComplete` on child variant components now fire as expected.
+
+## [3.6.0] 2021-02-19
+
+### Added
+
+-   `onAnimationComplete` now provides the definition of the triggering animation.
+
+## [3.5.3] 2021-02-19
+
+### Fixed
+
+-   Fixing bug with `afterChildren` and `exit` animations.
+
+## [3.5.2] 2021-02-18
+
+### Added
+
+-   Setting `sideEffects: false` in `package.json` to help code splitting in Webpack.
+
+## [3.5.1] 2021-02-18
+
+### Fixed
+
+-   `onTapCancel` is now being correctly cleaned up.
+
+## [3.5.0] 2021-02-18
+
+### Added
+
+-   Adding `transition` prop to `MotionConfig` to set a default `transition` for an entire tree.
+
+## [3.4.2] 2021-02-18
+
+### Added
+
+-   `onBeforeLayoutMeasure` prop, currently a Framer internal.
+
+## [3.4.1] 2021-02-18
+
+### Fixed
+
+-   De-duplicating features in nested `MotionConfig`s to avoid key error.
+
+## [3.4.0] 2021-02-18
+
+### Changed
+
+-   Main `motion` component concurrent-safe.
+
+### Fixed
+
+-   Crossfading elements can now never fall out of positional/style sync due to mismatched animations or framelag.
+-   Fixing SVG double translation transform (props + transform style).
+-   `animate` `onComplete` now firing correctly.
+-   Only firing keyframe animation when all values have changed.
+-   Removing forced re-renders for variant trees.
+-   Variant stagger order now determined by DOM APIs.
+-   Fixed default spring for `scale`, `opacity` etc from being overdamped to being critically damped when animating to `0`.
+
+## [3.3.0] 2020-02-03
+
+-   Fixing errant publish.
+
+## [3.2.1] 2020-01-11
+
+### Added
+
+-   Exporting `useVariantContext` for internal Framer use.
+
+## [3.2.0] 2020-01-08
+
+### Added
+
+-   Support for hex `alpha`, ie `#FFF0` and `#FFFFFF00`.
+-   Support for default `filter` values. For example, when animating from `brightness(50%)`, the animation will start from `brightness(100%)`rather than`brightness(0%)`.
+
+## [3.1.5] 2020-01-08
+
+### Fixed
+
+-   Hover events are now blocked while layout is being measured.
+
+## [3.1.4] 2020-01-05
+
+### Fixed
+
+-   Blocking layout animations to/from zero bounding boxes.
+-   `onTapCancel` now fires correctly on touch screens.
+-   `createDomMotionComponent` types.
+
+## [3.1.3] 2020-01-04
+
+### Fixed
+
+-   Fixed types for `pathSpacing` and `pathOffset`.
+
+## [3.1.2] 2020-01-04
+
+### Fixed
+
+-   `snapToCursor` respects drag axis.
+
+## [3.1.1] 2020-12-18
+
+### Updated
+
+-   Updated dependencies.
+
+## [3.1.0] 2020-12-18
+
+### Added
+
+-   `whileFocus`
+
+## [3.0.1] 2020-12-18
+
+### Fixed
+
+-   Error when mixing `initial={false}` and `animate={controls}`.
+
+## [3.0.0] 2020-12-16
+
+### Added
+
+-   `whileDrag`
+-   Adding Safari-prefixed `userSelect` css to draggable elements.
+-   `whileHover`, `whileTap` and `exit` all now accept variant lists.
+
+### Changed
+
+-   New behaviour for when values are removed from animation props (`animate`, `whileHover`, `exit` etc). The value will be searched for in active props of a lower priority running (`style` <- `animate` <- `whileHover` <- `whileTap` <- `whileDrag` <- `exit`). This may introduce subtle behavioural changes, hence the major.
+
+### Removed
+
+-   The deprecated `useInvertedScale` hook. Use the `layout` prop instead.
+-   The deprecated `yoyo`, `flip` and `loop` options. Use `repeat` and `repeatType` options instead.
+
+### Fixed
+
+-   Correctly applying `transform` on SVG elements.
+-   Lazy-initialising viewport scroll, VisualElement.axisProgress, and reduced motion `MotionValue`s, for increased startup performance.
+-   Improved measurement scheduling for `drag` components and nested `AnimateSharedLayout` trees.
+-   Robust calculation of `treeScale`.
+
+## [2.9.5] 2020-11-16
+
+### Added
+
+-   Updating `package.json` to be compatible with React 17.
+
 ## [2.9.4] 2020-10-21
 
 ### Added

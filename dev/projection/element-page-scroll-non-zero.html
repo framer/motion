@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #scroll {
+                overflow: scroll;
+                position: relative;
+                height: 200px;
+                width: 500px;
+                top: 100px;
+            }
+
+            #box {
+                width: 200px;
+                height: 200px;
+                background: #00cc88;
+            }
+
+            .trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="scroll">
+            <div id="box"></div>
+            <div class="trigger-overflow"></div>
+        </div>
+        <div class="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const {
+                matchViewportBox,
+                matchOpacity,
+                matchBorderRadius,
+                addPageScroll,
+            } = window.Assert
+
+            const scroll = document.getElementById("scroll")
+            const box = document.getElementById("box")
+
+            scroll.scrollLeft = 100
+            window.scrollTo(100, 100)
+            const boxOrigin = box.getBoundingClientRect()
+
+            const scrollProjection = createNode(scroll, undefined, {
+                layoutScroll: true,
+            })
+
+            const boxProjection = createNode(box, scrollProjection)
+            boxProjection.setValue("borderRadius", 20)
+
+            boxProjection.willUpdate()
+
+            scroll.scrollLeft = 50
+            window.scrollTo(50, 50)
+
+            boxProjection.root.didUpdate()
+
+            matchViewportBox(box, addPageScroll(boxOrigin, -100, -50))
+            matchOpacity(box, 1)
+            matchBorderRadius(box, "20px")
+        </script>
+    </body>
+</html>

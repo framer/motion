@@ -8,7 +8,8 @@ import { motion } from "@framer"
  */
 const borderTransition = {
     duration: 1,
-    yoyo: Infinity,
+    repeat: Infinity,
+    repeatType: "reverse",
 }
 const transition = {
     default: { duration: 6 },
