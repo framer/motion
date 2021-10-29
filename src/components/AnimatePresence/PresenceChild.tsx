@@ -1,6 +1,9 @@
 import * as React from "react"
 import { useMemo } from "react"
-import { PresenceContext } from "../../context/PresenceContext"
+import {
+    PresenceContext,
+    PresenceContextProps,
+} from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
 
@@ -32,7 +35,7 @@ export const PresenceChild = ({
     const id = useConstant(getPresenceId)
 
     const context = useMemo(
-        () => ({
+        (): PresenceContextProps => ({
             id,
             initial,
             isPresent,
