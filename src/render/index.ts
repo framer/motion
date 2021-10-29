@@ -503,10 +503,6 @@ export const visualElement =
 
                 return context
             },
-
-            // TODO: Clean this up
-            // isPresent: true,
-            // presence: Presence.Entering,
         }
 
         return element
