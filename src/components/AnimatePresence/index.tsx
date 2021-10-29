@@ -1,4 +1,5 @@
 import {
+    useEffect,
     useRef,
     isValidElement,
     cloneElement,
@@ -103,6 +104,11 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 
     const isInitialRender = useRef(true)
 
+    const isMounted = useRef(true)
+    useEffect(() => () => {
+        isMounted.current = false
+    }, [])
+
     // Filter out any children that aren't ReactElements. We can only track ReactElements with a props.key
     const filteredChildren = onlyElements(children)
 
@@ -191,6 +197,9 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
             // Defer re-rendering until all exiting children have indeed left
             if (!exiting.size) {
                 presentChildren.current = filteredChildren
+                if (isMounted.current === false) {
+                    return
+                }
                 forceRender()
                 onExitComplete && onExitComplete()
             }
