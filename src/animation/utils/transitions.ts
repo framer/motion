@@ -9,8 +9,8 @@ import { isEasingArray, easingDefinitionToFunction } from "./easing"
 import { MotionValue } from "../../value"
 import { isAnimatable } from "./is-animatable"
 import { getDefaultTransition } from "./default-transitions"
-import { complex } from "style-value-types"
 import { warning } from "hey-listen"
+import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
 
 type StopAnimation = { stop: () => void }
 
@@ -34,22 +34,21 @@ export function isTransitionDefined({
     return !!Object.keys(transition).length
 }
 
+let legacyRepeatWarning = false
 /**
  * Convert Framer Motion's Transition type into Popmotion-compatible options.
  */
 export function convertTransitionToAnimationOptions<T>({
-    yoyo,
-    loop,
-    flip,
     ease,
     times,
+    yoyo,
+    flip,
+    loop,
     ...transition
 }: PermissiveTransitionDefinition): AnimationOptions<T> {
     const options: AnimationOptions<T> = { ...transition }
 
-    if (times) {
-        ;(options as any).offset = times
-    }
+    if (times) options["offset"] = times
 
     /**
      * Convert any existing durations from seconds to milliseconds
@@ -72,14 +71,25 @@ export function convertTransitionToAnimationOptions<T>({
      * Support legacy transition API
      */
     if (transition.type === "tween") options.type = "keyframes"
-    if (yoyo) {
-        options.repeatType = "reverse"
-    } else if (loop) {
-        options.repeatType = "loop"
-    } else if (flip) {
-        options.repeatType = "mirror"
+
+    /**
+     * TODO: These options are officially removed from the API.
+     */
+    if (yoyo || loop || flip) {
+        warning(
+            !legacyRepeatWarning,
+            "yoyo, loop and flip have been removed from the API. Replace with repeat and repeatType options."
+        )
+        legacyRepeatWarning = true
+        if (yoyo) {
+            options.repeatType = "reverse"
+        } else if (loop) {
+            options.repeatType = "loop"
+        } else if (flip) {
+            options.repeatType = "mirror"
+        }
+        options.repeat = loop || yoyo || flip || transition.repeat
     }
-    options.repeat = loop || yoyo || flip || transition.repeat
 
     /**
      * TODO: Popmotion 9 has the ability to automatically detect whether to use
@@ -95,12 +105,8 @@ export function convertTransitionToAnimationOptions<T>({
  * Get the delay for a value by checking Transition with decreasing specificity.
  */
 export function getDelayFromTransition(transition: Transition, key: string) {
-    return (
-        transition[key]?.delay ??
-        transition["default"]?.delay ??
-        transition.delay ??
-        0
-    )
+    const valueTransition = getValueTransition(transition, key) || {}
+    return valueTransition.delay ?? 0
 }
 
 export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
@@ -149,18 +155,25 @@ function getAnimation(
     transition: PermissiveTransitionDefinition,
     onComplete: () => void
 ) {
-    const valueTransition =
-        transition[key] || transition["default"] || transition
+    const valueTransition = getValueTransition(transition, key)
     let origin = valueTransition.from ?? value.get()
 
     const isTargetAnimatable = isAnimatable(key, target)
 
-    /**
-     * If we're trying to animate from "none", try and get an animatable version
-     * of the target. This could be improved to work both ways.
-     */
     if (origin === "none" && isTargetAnimatable && typeof target === "string") {
-        origin = complex.getAnimatableNone(target as string)
+        /**
+         * If we're trying to animate from "none", try and get an animatable version
+         * of the target. This could be improved to work both ways.
+         */
+        origin = getAnimatableNone(key, target)
+    } else if (isZero(origin) && typeof target === "string") {
+        origin = getZeroUnit(target)
+    } else if (
+        !Array.isArray(target) &&
+        isZero(target) &&
+        typeof origin === "string"
+    ) {
+        target = getZeroUnit(origin)
     }
 
     const isOriginAnimatable = isAnimatable(key, origin)
@@ -182,14 +195,28 @@ function getAnimation(
         return valueTransition.type === "inertia" ||
             valueTransition.type === "decay"
             ? inertia({ ...options, ...valueTransition })
-            : animate(
-                  getPopmotionAnimationOptions(valueTransition, options, key)
-              )
+            : animate({
+                  ...getPopmotionAnimationOptions(
+                      valueTransition,
+                      options,
+                      key
+                  ),
+                  onUpdate: (v: any) => {
+                      options.onUpdate(v)
+                      valueTransition.onUpdate?.(v)
+                  },
+                  onComplete: () => {
+                      options.onComplete()
+                      valueTransition.onComplete?.()
+                  },
+              })
     }
 
     function set(): StopAnimation {
         value.set(target)
         onComplete()
+        valueTransition?.onUpdate?.(target)
+        valueTransition?.onComplete?.()
         return { stop: () => {} }
     }
 
@@ -198,6 +225,27 @@ function getAnimation(
         valueTransition.type === false
         ? set
         : start
+}
+
+export function isZero(value: string | number) {
+    return (
+        value === 0 ||
+        (typeof value === "string" &&
+            parseFloat(value) === 0 &&
+            value.indexOf(" ") === -1)
+    )
+}
+
+export function getZeroUnit(
+    potentialUnitType: string | number
+): string | number {
+    return typeof potentialUnitType === "number"
+        ? 0
+        : getAnimatableNone("", potentialUnitType)
+}
+
+export function getValueTransition(transition: Transition, key: string) {
+    return transition[key] || transition["default"] || transition
 }
 
 /**

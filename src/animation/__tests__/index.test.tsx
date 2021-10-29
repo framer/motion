@@ -8,7 +8,7 @@ import { motionValue } from "../../value"
 
 describe("useAnimation", () => {
     test("animates on mount", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
 
@@ -32,7 +32,7 @@ describe("useAnimation", () => {
     })
 
     test("doesn't fire a pre-mount animation callback until the animation has finished", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
 
@@ -51,13 +51,15 @@ describe("useAnimation", () => {
     })
 
     test("fire's a component's onAnimationComplete", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
 
                 const x = useMotionValue(0)
 
-                animation.start({ x: 100 })
+                React.useEffect(() => {
+                    animation.start({ x: 100 })
+                }, [])
 
                 return (
                     <motion.div
@@ -75,8 +77,69 @@ describe("useAnimation", () => {
         await expect(promise).resolves.toBe(100)
     })
 
+    test("fires a component's onAnimationComplete with the animation definition", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const animation = useAnimation()
+
+                const x = useMotionValue(0)
+
+                React.useEffect(() => {
+                    animation.start({ x: 100 })
+                }, [])
+
+                return (
+                    <motion.div
+                        animate={animation}
+                        style={{ x }}
+                        onAnimationComplete={(definition) =>
+                            resolve(definition)
+                        }
+                    />
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toEqual({ x: 100 })
+    })
+
+    test("variants fire a child's onAnimationComplete", async () => {
+        const promise = new Promise((resolve) => {
+            const variants = {
+                hidden: { opacity: 0 },
+                visible: { opacity: 1 },
+            }
+            const Component = () => {
+                return (
+                    <motion.div
+                        initial="hidden"
+                        animate="visible"
+                        variants={variants}
+                        transition={{ transition: false }}
+                    >
+                        <motion.div
+                            onAnimationComplete={(definition) =>
+                                resolve(definition)
+                            }
+                            transition={{ transition: false }}
+                            variants={variants}
+                        />
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await expect(promise).resolves.toBe("visible")
+    })
+
     test("animates to named variants", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
                 const variants = {
@@ -105,7 +168,7 @@ describe("useAnimation", () => {
     })
 
     test("animates to named variants via variants prop", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
                 const x = useMotionValue(0)
@@ -134,7 +197,7 @@ describe("useAnimation", () => {
     })
 
     test("propagates variants to children", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const controls = useAnimation()
                 const variants = {
@@ -195,7 +258,7 @@ describe("useAnimation", () => {
     })
 
     test("propagates variants to children even if not variants set on controlling component", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const controls = useAnimation()
 
@@ -251,7 +314,7 @@ describe("useAnimation", () => {
     })
 
     test("accepts array of variants", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const animation = useAnimation()
                 animation.start(["a", "b"])
@@ -268,7 +331,7 @@ describe("useAnimation", () => {
     })
 
     test(".set sets values of bound components", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const xa = useMotionValue(0)
                 const xb = useMotionValue(0)
@@ -295,14 +358,14 @@ describe("useAnimation", () => {
     })
 
     test(".set accepts state depending on custom attribute", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const xa = useMotionValue(0)
                 const xb = useMotionValue(0)
                 const controls = useAnimation()
 
                 useEffect(() => {
-                    controls.set(custom => {
+                    controls.set((custom) => {
                         return { x: 1 * custom }
                     })
                     resolve([xa.get(), xb.get()])
@@ -331,8 +394,61 @@ describe("useAnimation", () => {
         return await expect(promise).resolves.toEqual([1, 2])
     })
 
+    test(".start accepts state depending on custom attribute", async () => {
+        const promise = new Promise((resolve) => {
+            const Component = () => {
+                const xa = useMotionValue(0)
+                const xb = useMotionValue(0)
+                const controls = useAnimation()
+
+                useEffect(() => {
+                    controls
+                        .start((custom) => {
+                            return { x: 1 * custom }
+                        })
+                        .then(() => {
+                            resolve([xa.get(), xb.get()])
+                        })
+                })
+
+                return (
+                    <>
+                        <motion.div
+                            animate={controls}
+                            custom={1}
+                            style={{ x: xa }}
+                        />
+                        <motion.div
+                            animate={controls}
+                            custom={2}
+                            style={{ x: xb }}
+                        />
+                    </>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return await expect(promise).resolves.toEqual([1, 2])
+    })
+
+    test("pathOffset types are inferred correctly", async () => {
+        const Component = () => {
+            const controls = useAnimation()
+
+            useEffect(() => {
+                controls.start({ pathOffset: 1 })
+            })
+
+            return <motion.div animate={controls} />
+        }
+        render(<Component />)
+    })
+
     test(".set updates variants throughout a tree", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const xa = useMotionValue(0)
                 const xb = useMotionValue(0)

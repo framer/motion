@@ -14,7 +14,11 @@ export const App = () => {
             layout
             initial={{ borderRadius: 20, boxShadow: "10px 10px 20px #000" }}
             transition={{
-                boxShadow: { duration: 0.5, yoyo: Infinity },
+                boxShadow: {
+                    duration: 0.5,
+                    repeat: Infinity,
+                    repeatType: "reverse",
+                },
                 default: { duration: 2 },
             }}
             style={!isOn ? big : small}

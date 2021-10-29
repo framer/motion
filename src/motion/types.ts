@@ -1,19 +1,24 @@
 import { CSSProperties } from "react"
 import { MotionValue } from "../value"
-import { AnimationControls } from "../animation/AnimationControls"
+import { AnimationControls } from "../animation/types"
 import {
     Variants,
     Target,
     Transition,
     TargetAndTransition,
-    TargetResolver,
     Omit,
     MakeCustomValueType,
 } from "../types"
-import { GestureHandlers } from "../gestures"
 import { DraggableProps } from "../gestures/drag/types"
 import { LayoutProps } from "./features/layout/types"
 import { ResolvedValues } from "../render/types"
+import { VisualElementLifecycles } from "../render/utils/lifecycles"
+import {
+    PanHandlers,
+    TapHandlers,
+    HoverHandlers,
+    FocusHandlers,
+} from "../gestures/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -68,15 +73,13 @@ export interface CustomStyles {
     image?: string
 }
 
-export type MakeMotion<T> = MakeCustomValueType<
-    {
-        [K in keyof T]:
-            | T[K]
-            | MotionValue<number>
-            | MotionValue<string>
-            | MotionValue<any> // A permissive type for Custom value types
-    }
->
+export type MakeMotion<T> = MakeCustomValueType<{
+    [K in keyof T]:
+        | T[K]
+        | MotionValue<number>
+        | MotionValue<string>
+        | MotionValue<any> // A permissive type for Custom value types
+}>
 
 export type MotionCSS = MakeMotion<
     Omit<CSSProperties, "rotate" | "scale" | "perspective">
@@ -123,24 +126,6 @@ export interface AnimationProps {
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.
      *
-     * @library
-     *
-     * ```jsx
-     * // As values
-     * <Frame animate={{ opacity: 1 }} />
-     *
-     * // As variant
-     * <Frame animate="visible" variants={variants} />
-     *
-     * // Multiple variants
-     * <Frame animate={["visible", "active"]} variants={variants} />
-     *
-     * // AnimationControls
-     * <Frame animate={animation} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * // As values
      * <motion.div animate={{ opacity: 1 }} />
@@ -165,28 +150,6 @@ export interface AnimationProps {
      * This limitation exists because React doesn't allow components to defer unmounting until after
      * an animation is complete. Once this limitation is fixed, the `AnimatePresence` component will be unnecessary.
      *
-     * @library
-     *
-     * ```jsx
-     * import { Frame, AnimatePresence } from 'framer'
-     *
-     * export function MyComponent(props) {
-     *   return (
-     *     <AnimatePresence>
-     *        {props.isVisible && (
-     *          <Frame
-     *            initial={{ opacity: 0 }}
-     *            animate={{ opacity: 1 }}
-     *            exit={{ opacity: 0 }}
-     *          />
-     *        )}
-     *     </AnimatePresence>
-     *   )
-     * }
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * import { AnimatePresence, motion } from 'framer-motion'
      *
@@ -205,7 +168,7 @@ export interface AnimationProps {
      * }
      * ```
      */
-    exit?: TargetAndTransition | VariantLabels | TargetResolver
+    exit?: TargetAndTransition | VariantLabels
 
     /**
      * Variants allow you to define animation states and organise them by name. They allow
@@ -213,30 +176,10 @@ export interface AnimationProps {
      *
      * Using `transition` options like `delayChildren` and `staggerChildren`, you can orchestrate
      * when children animations play relative to their parent.
-     *
-     * @library
-     *
-     * After passing variants to one or more `Frame`'s `variants` prop, these variants
-     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
-     *
-     * ```jsx
-     * const variants = {
-     *   active: {
-     *     backgroundColor: "#f00"
-     *   },
-     *   inactive: {
-     *     backgroundColor: "#fff",
-     *     transition: { duration: 2 }
-     *   }
-     * }
-     *
-     * <Frame variants={variants} animate="active" />
-     * ```
-     *
-     * @motion
+
      *
      * After passing variants to one or more `motion` component's `variants` prop, these variants
-     * can be used in place of values on the `animate`, `initial`, `whileTap` and `whileHover` props.
+     * can be used in place of values on the `animate`, `initial`, `whileFocus`, `whileTap` and `whileHover` props.
      *
      * ```jsx
      * const variants = {
@@ -256,21 +199,6 @@ export interface AnimationProps {
 
     /**
      * Default transition. If no `transition` is defined in `animate`, it will use the transition defined here.
-     *
-     * @library
-     *
-     * ```jsx
-     * const spring = {
-     *   type: "spring",
-     *   damping: 10,
-     *   stiffness: 100
-     * }
-     *
-     * <Frame transition={spring} animate={{ scale: 1.2 }} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * const spring = {
      *   type: "spring",
@@ -287,106 +215,9 @@ export interface AnimationProps {
 /**
  * @public
  */
-export interface MotionCallbacks {
-    /**
-     * Callback with latest motion values, fired max once per frame.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onUpdate(latest) {
-     *   console.log(latest.x, latest.opacity)
-     * }
-     *
-     * <Frame animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onUpdate(latest) {
-     *   console.log(latest.x, latest.opacity)
-     * }
-     *
-     * <motion.div animate={{ x: 100, opacity: 0 }} onUpdate={onUpdate} />
-     * ```
-     */
-    onUpdate?(latest: { [key: string]: string | number }): void
-
-    /**
-     * Callback when animation defined in `animate` begins.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onStart() {
-     *   console.log("Animation completed")
-     * }
-     *
-     * <Frame animate={{ x: 100 }} onAnimationStart={onStart} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onStart() {
-     *   console.log("Animation completed")
-     * }
-     *
-     * <motion.div animate={{ x: 100 }} onAnimationStart={onStart} />
-     * ```
-     */
-    onAnimationStart?(): void
-
-    /**
-     * Callback when animation defined in `animate` is complete.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onComplete() {
-     *   console.log("Animation completed")
-     * }
-     *
-     * <Frame animate={{ x: 100 }} onAnimationComplete={onComplete} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onComplete() {
-     *   console.log("Animation completed")
-     * }
-     *
-     * <motion.div animate={{ x: 100 }} onAnimationComplete={onComplete} />
-     * ```
-     */
-    onAnimationComplete?(): void
-}
-
-/**
- * @public
- */
 export interface MotionAdvancedProps {
     /**
      * Custom data to use to resolve dynamic variants differently for each animating component.
-     *
-     * @library
-     *
-     * ```jsx
-     * const variants = {
-     *   visible: (custom) => ({
-     *     opacity: 1,
-     *     transition: { delay: custom * 0.2 }
-     *   })
-     * }
-     *
-     * <Frame custom={0} animate="visible" variants={variants} />
-     * <Frame custom={1} animate="visible" variants={variants} />
-     * <Frame custom={2} animate="visible" variants={variants} />
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * const variants = {
@@ -410,13 +241,6 @@ export interface MotionAdvancedProps {
      * Set to `false` to prevent inheriting variant changes from its parent.
      */
     inherit?: boolean
-
-    /**
-     * @internal
-     * Set to `true` to block rendering motion values (`animate`, gestures, etcetera)
-     * on the component. This can be used to temporarily disable animations for performance reasons.
-     */
-    static?: boolean
 }
 
 /**
@@ -426,8 +250,11 @@ export interface MotionAdvancedProps {
  */
 export interface MotionProps
     extends AnimationProps,
-        MotionCallbacks,
-        GestureHandlers,
+        VisualElementLifecycles,
+        PanHandlers,
+        TapHandlers,
+        HoverHandlers,
+        FocusHandlers,
         DraggableProps,
         LayoutProps,
         MotionAdvancedProps {
@@ -435,24 +262,6 @@ export interface MotionProps
      * Properties, variant label or array of variant labels to start in.
      *
      * Set to `false` to initialise with the values in `animate` (disabling the mount animation)
-     *
-     * @library
-     *
-     * ```jsx
-     * // As values
-     * <Frame initial={{ opacity: 1 }} />
-     *
-     * // As variant
-     * <Frame initial="visible" variants={variants} />
-     *
-     * // Multiple variants
-     * <Frame initial={["visible", "active"]} variants={variants} />
-     *
-     * // As false (disable mount animation)
-     * <Frame initial={false} animate={{ opacity: 0 }} />
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * // As values
@@ -471,15 +280,6 @@ export interface MotionProps
     initial?: boolean | Target | VariantLabels
 
     /**
-     * @library
-     *
-     * The React DOM `style` prop, useful for setting CSS properties that aren't explicitly exposed by `Frame` props.
-     *
-     * ```jsx
-     * <Frame style={{ mixBlendMode: "difference" }}  />
-     * ```
-     *
-     * @motion
      *
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
      *
@@ -496,18 +296,6 @@ export interface MotionProps
     /**
      * By default, Framer Motion generates a `transform` property with a sensible transform order. `transformTemplate`
      * can be used to create a different order, or to append/preprend the automatically generated `transform` property.
-     *
-     * @library
-     *
-     * ```jsx
-     * function transformTemplate({ x, rotate }) {
-     *   return `rotate(${rotate}deg) translateX(${x}px)`
-     * }
-     *
-     * <Frame x={0} rotate={180} transformTemplate={transformTemplate} />
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * <motion.div
@@ -549,9 +337,3 @@ export type TransformTemplate = (
     transform: TransformProperties,
     generatedTransform: string
 ) => string
-
-export enum AnimatePropType {
-    Target = "Target", // eslint-disable-line no-shadow
-    VariantLabel = "VariantLabel",
-    AnimationSubscription = "AnimationSubscription",
-}

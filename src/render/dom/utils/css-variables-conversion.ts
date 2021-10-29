@@ -1,6 +1,6 @@
 import { Target, TargetWithKeyframes } from "../../../types"
 import { invariant } from "hey-listen"
-import { HTMLVisualElement } from "../HTMLVisualElement"
+import { VisualElement } from "../../types"
 
 function isCSSVariable(value: any): value is string {
     return typeof value === "string" && value.startsWith("var(--")
@@ -44,7 +44,7 @@ function getVariableValue(
     const resolved = window.getComputedStyle(element).getPropertyValue(token)
 
     if (resolved) {
-        return resolved
+        return resolved.trim()
     } else if (isCSSVariable(fallback)) {
         // The fallback might itself be a CSS variable, in which case we attempt to resolve it too.
         return getVariableValue(fallback, element, depth + 1)
@@ -59,7 +59,7 @@ function getVariableValue(
  * @internal
  */
 export function resolveCSSVariables(
-    visualElement: HTMLVisualElement,
+    visualElement: VisualElement,
     { ...target }: TargetWithKeyframes,
     transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {

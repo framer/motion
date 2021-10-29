@@ -23,7 +23,7 @@ describe("hover", () => {
     })
 
     test("whileHover applied", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const opacity = motionValue(1)
             const Component = () => (
                 <motion.div
@@ -46,7 +46,7 @@ describe("hover", () => {
 
     test("whileHover applied as variant", async () => {
         const target = 0.5
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const variant = {
                 hidden: { opacity: target },
             }
@@ -73,7 +73,7 @@ describe("hover", () => {
 
     test("whileHover propagates to children", async () => {
         const target = 0.2
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const parent = {
                 hidden: { opacity: 0.8 },
             }
@@ -107,7 +107,7 @@ describe("hover", () => {
     })
 
     test("whileHover is unapplied when hover ends", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const variant = {
                 hidden: { opacity: 0.5, transitionEnd: { opacity: 0.75 } },
             }
@@ -141,7 +141,7 @@ describe("hover", () => {
     })
 
     test("whileHover only animates values that arent being controlled by a higher-priority gesture ", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const variant = {
                 hovering: { opacity: 0.5, scale: 0.5 },
                 tapping: { scale: 2 },
@@ -171,7 +171,7 @@ describe("hover", () => {
     })
 
     test("special transform values are unapplied when hover ends", () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const variant = {
                 hidden: { size: 50 },
             }

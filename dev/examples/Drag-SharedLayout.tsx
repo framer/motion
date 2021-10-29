@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useRef } from "react"
-import { motion, AnimateSharedLayout } from "../../src"
+import { motion } from "../../src"
 import styled from "styled-components"
 
 /**
@@ -48,14 +48,14 @@ const Dot = styled(motion.div)`
     border-radius: 10px;
 `
 
-function Target({ onViewportBoxUpdate }) {
+function Target({ onProjectionUpdate }) {
     return (
         <Shadow>
             <Draggable
                 drag
                 dragConstraints={{ top: 0, left: 0, right: 0, bottom: 0 }}
                 dragElastic={1}
-                onViewportBoxUpdate={onViewportBoxUpdate}
+                onProjectionUpdate={onProjectionUpdate}
                 layoutId="a"
             >
                 <Dot layoutId="dot" />
@@ -77,7 +77,7 @@ function DragDrop() {
             <Zone>
                 {is && (
                     <Target
-                        onViewportBoxUpdate={box => {
+                        onProjectionUpdate={(box) => {
                             if (box.x.min > viewportWidth.current / 2 + 100) {
                                 setIs(false)
                             }
@@ -88,7 +88,7 @@ function DragDrop() {
             <Zone>
                 {!is && (
                     <Target
-                        onViewportBoxUpdate={box => {
+                        onProjectionUpdate={(box) => {
                             if (box.x.min < viewportWidth.current / 2 - 100) {
                                 setIs(true)
                             }
@@ -103,9 +103,7 @@ function DragDrop() {
 export const App = () => {
     return (
         <Container>
-            <AnimateSharedLayout>
-                <DragDrop />
-            </AnimateSharedLayout>
+            <DragDrop />
         </Container>
     )
 }

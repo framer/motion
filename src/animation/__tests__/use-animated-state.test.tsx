@@ -5,7 +5,7 @@ import { useAnimatedState } from "../use-animated-state"
 
 describe("useAnimatedState", () => {
     test("animates values", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             let latest = { foo: 0 }
             let hasAnimated = false
 

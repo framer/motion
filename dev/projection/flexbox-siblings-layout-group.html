@@ -1,0 +1,86 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+            }
+
+            #container {
+                display: flex;
+                position: relative;
+                top: 100px;
+                left: 100px;
+                width: 300px;
+                height: 200px;
+            }
+
+            #a {
+                background: #00cc88;
+            }
+
+            #b {
+                background: blue;
+            }
+
+            #container > div {
+                height: 200px;
+                flex: 1;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="a" data-layout-correct="true"></div>
+            <div id="b" data-layout-correct="true"></div>
+        </div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { nodeGroup } = Projection
+            const { createNode } = window.Undo
+            const {
+                matchOpacity,
+                matchBorderRadius,
+                matchViewportBox,
+            } = window.Assert
+
+            const container = document.getElementById("container")
+            const a = document.getElementById("a")
+            const b = document.getElementById("b")
+            const aOrigin = a.getBoundingClientRect()
+            const bOrigin = b.getBoundingClientRect()
+
+            const aProjection = createNode(a)
+            const bProjection = createNode(b)
+            aProjection.setValue("borderRadius", 20)
+
+            const group = nodeGroup()
+            group.add(aProjection)
+            group.add(bProjection)
+
+            aProjection.willUpdate()
+
+            container.style.flexDirection = "column-reverse"
+
+            aProjection.root.didUpdate()
+
+            window.scrollTo(0, 0)
+
+            matchViewportBox(a, aOrigin)
+            matchViewportBox(b, bOrigin)
+            matchOpacity(a, 1)
+            matchOpacity(b, 1)
+            matchBorderRadius(a, "13.3333% / 10%")
+            matchBorderRadius(b, "")
+        </script>
+    </body>
+</html>

@@ -27,7 +27,7 @@ export const App = () => {
         <>
             <div
                 style={container}
-                onPointerDown={e =>
+                onPointerDown={(e) =>
                     dragControls.start(e, { snapToCursor: true })
                 }
             />

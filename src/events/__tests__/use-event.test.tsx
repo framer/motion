@@ -33,7 +33,7 @@ describe("useDomEvent", () => {
 
     it("should fire an event on another element in the ref", async () => {
         const handler = jest.fn()
-        const promise = new Promise(resolve => {
+        const promise = new Promise<void>((resolve) => {
             const Component = () => {
                 const ref = useRef(document.body)
                 useDomEvent(ref, "mousedown", handler)
@@ -49,7 +49,7 @@ describe("useDomEvent", () => {
     })
     it("should not fire an event if the component has been unmounted", async () => {
         const handler = jest.fn()
-        const promise = new Promise(resolve => {
+        const promise = new Promise<void>((resolve) => {
             const Component = () => {
                 const ref = useRef(document.body)
                 useDomEvent(ref, "mousedown", handler)

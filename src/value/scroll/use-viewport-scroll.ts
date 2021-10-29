@@ -6,7 +6,7 @@ import {
 import { addDomEvent } from "../../events/use-dom-event"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 
-const viewportScrollValues = createScrollMotionValues()
+let viewportScrollValues: ScrollMotionValues
 
 function getViewportScrollOffsets() {
     return {
@@ -40,23 +40,8 @@ function addEventListeners() {
  * - `scrollXProgress` — Horizontal scroll progress between `0` and `1`.
  * - `scrollYProgress` — Vertical scroll progress between `0` and `1`.
  *
- * @library
- *
- * ```jsx
- * import * as React from "react"
- * import {
- *   Frame,
- *   useViewportScroll,
- *   useTransform
- * } from "framer"
- *
- * export function MyComponent() {
- *   const { scrollYProgress } = useViewportScroll()
- *   return <Frame scaleX={scrollYProgress} />
- * }
- * ```
- *
- * @motion
+ * **Warning:** Setting `body` or `html` to `height: 100%` or similar will break the `Progress`
+ * values as this breaks the browser's capability to accurately measure the page length.
  *
  * ```jsx
  * export const MyComponent = () => {
@@ -68,6 +53,13 @@ function addEventListeners() {
  * @public
  */
 export function useViewportScroll(): ScrollMotionValues {
+    /**
+     * Lazy-initialise the viewport scroll values
+     */
+    if (!viewportScrollValues) {
+        viewportScrollValues = createScrollMotionValues()
+    }
+
     useIsomorphicLayoutEffect(() => {
         !hasListeners && addEventListeners()
     }, [])

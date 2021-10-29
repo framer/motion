@@ -34,7 +34,12 @@ const Square = ({ active, setActive, colIndex, rowIndex, itemIndex, x, y }) => {
             dragTransition={{ bounceStiffness: 500, bounceDamping: 20 }}
             dragElastic={1}
             onDragStart={() => setActive({ row: rowIndex, col: colIndex })}
-            transition={{ duration: 0.5, ease: "easeInOut", flip: Infinity }}
+            transition={{
+                duration: 0.5,
+                ease: "easeInOut",
+                repeat: Infinity,
+                repeatType: "reverse",
+            }}
             style={{
                 background: `hsla(calc(var(--base-hue) + ${diagonalIndex}), 80%, 60%, 1)`,
                 width: size,

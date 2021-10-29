@@ -17,10 +17,8 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-
         return expect(promise).resolves.toBe(20)
     })
-
     test("accepts custom transition prop", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
@@ -36,10 +34,8 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-
         return expect(promise).resolves.toBe(50)
     })
-
     test("fires onAnimationStart when animation begins", async () => {
         const promise = new Promise((resolve) => {
             const onStart = jest.fn()
@@ -55,10 +51,8 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-
         return expect(promise).resolves.toBeCalledTimes(1)
     })
-
     test("uses transition on subsequent renders", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
@@ -74,17 +68,13 @@ describe("animate prop as object", () => {
             rerender(
                 <Component animate={{ x: 30, transition: { type: false } }} />
             )
-
             requestAnimationFrame(() => resolve(x.get()))
         })
-
         return expect(promise).resolves.toBe(30)
     })
-
     test("transition accepts manual from value", async () => {
         const promise = new Promise((resolve) => {
             const output: number[] = []
-
             const Component = () => (
                 <motion.div
                     initial={{ x: 100 }}
@@ -96,14 +86,11 @@ describe("animate prop as object", () => {
                     }}
                 />
             )
-
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-
         return expect(promise).resolves.toBe(true)
     })
-
     test("uses transitionEnd on subsequent renders", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
@@ -139,10 +126,8 @@ describe("animate prop as object", () => {
             )
             requestAnimationFrame(() => resolve(x.get()))
         })
-
         return expect(promise).resolves.toBe(300)
     })
-
     test("animates to set prop and preserves existing initial transform props", async () => {
         const promise = new Promise((resolve) => {
             const onComplete = () => {
@@ -163,12 +148,10 @@ describe("animate prop as object", () => {
                 />
             )
         })
-
         return expect(promise).resolves.toHaveStyle(
             "transform: translateX(20px) scale(0) translateZ(0)"
         )
     })
-
     test("style doesnt overwrite in subsequent renders", async () => {
         const promise = new Promise((resolve) => {
             const history: number[] = []
@@ -176,16 +159,13 @@ describe("animate prop as object", () => {
                 setTimeout(() => {
                     let styleHasOverridden = false
                     let prev = 0
-
                     for (let i = 0; i < history.length; i++) {
                         if (history[i] < prev) {
                             styleHasOverridden = true
                             break
                         }
-
                         prev = history[i]
                     }
-
                     resolve(styleHasOverridden)
                 }, 20)
             }
@@ -200,9 +180,7 @@ describe("animate prop as object", () => {
                     onAnimationComplete={onComplete}
                 />
             )
-
             const { rerender } = render(<Component rotate={1000} />)
-
             rerender(<Component rotate={1000} />)
             setTimeout(() => {
                 rerender(
@@ -210,10 +188,8 @@ describe("animate prop as object", () => {
                 )
             }, 120)
         })
-
         return expect(promise).resolves.toBe(false)
     })
-
     test("applies custom transform", async () => {
         const promise = new Promise((resolve) => {
             const resolveContainer = () => {
@@ -221,7 +197,6 @@ describe("animate prop as object", () => {
                     resolve(container)
                 })
             }
-
             const Component = () => (
                 <motion.div
                     initial={{ x: 10 }}
@@ -233,17 +208,13 @@ describe("animate prop as object", () => {
                     onAnimationComplete={resolveContainer}
                 />
             )
-
             const { container, rerender } = render(<Component />)
-
             rerender(<Component />)
         })
-
         expect(promise).resolves.toHaveStyle(
             "transform: translateX(30px) translateX(30px) translateZ(0)"
         )
     })
-
     test("keyframes - accepts ease as an array", async () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
@@ -264,10 +235,8 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-
         return expect(promise).resolves.toHaveBeenCalled()
     })
-
     test("will switch from non-animatable value to animatable value", async () => {
         const promise = new Promise((resolve) => {
             const onComplete = () => resolve(container.firstChild as Element)
@@ -281,10 +250,8 @@ describe("animate prop as object", () => {
             const { container, rerender } = render(<Component />)
             rerender(<Component />)
         })
-
         return expect(promise).resolves.toHaveStyle("font-weight: 100")
     })
-
     test("doesn't animate zIndex", async () => {
         const promise = new Promise((resolve) => {
             const Component = () => <motion.div animate={{ zIndex: 100 }} />
@@ -294,10 +261,8 @@ describe("animate prop as object", () => {
                 resolve(container.firstChild as Element)
             )
         })
-
         return expect(promise).resolves.toHaveStyle("z-index: 100")
     })
-
     test("respects repeatDelay prop", async () => {
         const promise = new Promise<number>((resolve) => {
             const x = motionValue(0)
@@ -313,7 +278,8 @@ describe("animate prop as object", () => {
                             to: 50,
                             duration: 0,
                             repeatDelay: 0.1,
-                            yoyo: 1,
+                            repeat: 1,
+                            repeatType: "reverse",
                         },
                     }}
                     style={{ x }}
@@ -322,10 +288,8 @@ describe("animate prop as object", () => {
             const { rerender } = render(<Component />)
             rerender(<Component />)
         })
-
         return expect(promise).resolves.toBe(50)
     })
-
     test("animates previously unseen properties", () => {
         const Component = ({ animate }: any) => (
             <motion.div animate={animate} transition={{ type: false }} />
@@ -336,16 +300,50 @@ describe("animate prop as object", () => {
         rerender(<Component animate={{ x: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
         rerender(<Component animate={{ y: 100 }} />)
-
         return expect(container.firstChild as Element).toHaveStyle(
-            "transform: translateX(100px) translateY(100px) translateZ(0)"
+            "transform: translateX(0px) translateY(100px) translateZ(0)"
         )
     })
 
-    test("forces an animation if has been set to `null` in the interim", async () => {
+    test("converts unseen zero unit types to number", async () => {
+        const promise = new Promise<ChildNode>((resolve) => {
+            const Component = () => (
+                <motion.div
+                    animate={{ borderRadius: 20 }}
+                    transition={{ duration: 0.01 }}
+                    onAnimationComplete={() => {
+                        resolve(container.firstChild as ChildNode)
+                    }}
+                    style={{ borderRadius: "0px" }}
+                />
+            )
+            const { container, rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toHaveStyle("border-radius: 20px")
+    })
+
+    test("animates previously unseen CSS variables", async () => {
+        const promise = new Promise<string>((resolve) => {
+            const Component = () => (
+                <motion.div
+                    style={{ "--foo": "#fff" } as any}
+                    animate={{ "--foo": "#000" } as any}
+                    onUpdate={(latest) => resolve(latest["--foo"] as string)}
+                    transition={{ type: false }}
+                />
+            )
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        return expect(promise).resolves.toBe("#000")
+    })
+
+    test("forces an animation to fallback if has been set to `null`", async () => {
         const promise = new Promise((resolve) => {
             const complete = () => resolve(true)
-
             const Component = ({ animate, onAnimationComplete }: any) => (
                 <motion.div
                     animate={animate}
@@ -358,11 +356,9 @@ describe("animate prop as object", () => {
             )
             rerender(<Component animate={{ x: null }} />)
             rerender(<Component animate={{ x: null }} />)
-
             expect(container.firstChild as Element).toHaveStyle(
-                "transform: translateX(100px) translateZ(0)"
+                "transform: none"
             )
-
             rerender(
                 <Component
                     animate={{ x: 100 }}
@@ -376,17 +372,14 @@ describe("animate prop as object", () => {
                 />
             )
         })
-
         return expect(promise).resolves.toBe(true)
     })
-
     test("mount animation doesn't run if `initial={false}`", async () => {
         const onComplete = jest.fn()
         const x = motionValue(0)
         const y = motionValue(0)
         const z = motionValue(0)
-
-        const promise = new Promise((resolve) => {
+        const promise = new Promise<void>((resolve) => {
             const Component = () => (
                 <motion.div
                     initial={false}
@@ -404,13 +397,10 @@ describe("animate prop as object", () => {
             rerender(<Component />)
             setTimeout(() => resolve(), 10)
         })
-
         await promise
-
         expect(onComplete).not.toBeCalled()
         expect([x.get(), y.get(), z.get()]).toEqual([10, 20, 20])
     })
-
     test("unmount cancels active animations", async () => {
         const promise = new Promise((resolve) => {
             const onComplete = jest.fn()
@@ -424,17 +414,21 @@ describe("animate prop as object", () => {
                 )
             const { rerender } = render(<Component isVisible />)
             rerender(<Component isVisible />)
-
             setTimeout(() => {
                 rerender(<Component isVisible={false} />)
                 rerender(<Component isVisible={false} />)
             }, 100)
-
             setTimeout(() => {
                 resolve(onComplete)
             }, 300)
         })
-
         return expect(promise).resolves.not.toBeCalled()
+    })
+
+    test("animate prop accepts pathOffset", () => {
+        const Component = () => (
+            <motion.div animate={{ pathOffset: 1, pathSpacing: 1 }} />
+        )
+        render(<Component />)
     })
 })

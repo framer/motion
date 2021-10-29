@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useMemo } from "react"
-import { PresenceContext } from "./PresenceContext"
+import { PresenceContext } from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
 
@@ -32,27 +32,25 @@ export const PresenceChild = ({
     const id = useConstant(getPresenceId)
 
     const context = useMemo(
-        () => {
-            return {
-                id,
-                initial,
-                isPresent,
-                custom,
-                onExitComplete: (childId: number) => {
-                    presenceChildren.set(childId, true)
-                    let allComplete = true
-                    presenceChildren.forEach((isComplete) => {
-                        if (!isComplete) allComplete = false
-                    })
+        () => ({
+            id,
+            initial,
+            isPresent,
+            custom,
+            onExitComplete: (childId: number) => {
+                presenceChildren.set(childId, true)
 
-                    allComplete && onExitComplete?.()
-                },
-                register: (childId: number) => {
-                    presenceChildren.set(childId, false)
-                    return () => presenceChildren.delete(childId)
-                },
-            }
-        },
+                for (const isComplete of presenceChildren.values()) {
+                    if (!isComplete) return // can stop searching when any is incomplete
+                }
+
+                onExitComplete?.()
+            },
+            register: (childId: number) => {
+                presenceChildren.set(childId, false)
+                return () => presenceChildren.delete(childId)
+            },
+        }),
         /**
          * If the presence of a child affects the layout of the components around it,
          * we want to make a new context value to ensure they get re-rendered
@@ -63,6 +61,14 @@ export const PresenceChild = ({
 
     useMemo(() => {
         presenceChildren.forEach((_, key) => presenceChildren.set(key, false))
+    }, [isPresent])
+
+    /**
+     * If there's no `motion` components to fire exit animations, we want to remove this
+     * component immediately.
+     */
+    React.useEffect(() => {
+        !isPresent && !presenceChildren.size && onExitComplete?.()
     }, [isPresent])
 
     return (

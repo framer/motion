@@ -1,16 +1,12 @@
+import { clamp, mix, progress as calcProgress } from "popmotion"
+import { calcLength } from "../../../projection/geometry/delta-calc"
 import {
     Axis,
-    AxisBox2D,
-    BoundingBox2D,
-    Point2D,
-} from "../../../types/geometry"
-import { mix } from "popmotion"
-import { calcOrigin } from "../../../utils/geometry/delta-calc"
-
-export interface ResolvedConstraints {
-    x: Partial<Axis>
-    y: Partial<Axis>
-}
+    BoundingBox,
+    Box,
+    Point,
+} from "../../../projection/geometry/types"
+import { DragElastic, ResolvedConstraints } from "../types"
 
 /**
  * Apply constraints to a point. These constraints are both physical along an
@@ -20,14 +16,14 @@ export interface ResolvedConstraints {
 export function applyConstraints(
     point: number,
     { min, max }: Partial<Axis>,
-    elastic?: number
+    elastic?: Axis
 ): number {
     if (min !== undefined && point < min) {
         // If we have a min point defined, and this is outside of that, constrain
-        point = elastic ? mix(min, point, elastic) : Math.max(point, min)
+        point = elastic ? mix(min, point, elastic.min) : Math.max(point, min)
     } else if (max !== undefined && point > max) {
         // If we have a max point defined, and this is outside of that, constrain
-        point = elastic ? mix(max, point, elastic) : Math.min(point, max)
+        point = elastic ? mix(max, point, elastic.max) : Math.min(point, max)
     }
 
     return point
@@ -46,7 +42,7 @@ export function calcConstrainedMinPoint(
     length: number,
     progress: number,
     constraints?: Partial<Axis>,
-    elastic?: number
+    elastic?: Axis
 ): number {
     // Calculate a min point for this axis and apply it to the current pointer
     const min = point - length * progress
@@ -78,8 +74,8 @@ export function calcRelativeAxisConstraints(
  * defined relatively to the measured bounding box.
  */
 export function calcRelativeConstraints(
-    layoutBox: AxisBox2D,
-    { top, left, bottom, right }: Partial<BoundingBox2D>
+    layoutBox: Box,
+    { top, left, bottom, right }: Partial<BoundingBox>
 ): ResolvedConstraints {
     return {
         x: calcRelativeAxisConstraints(layoutBox.x, left, right),
@@ -106,23 +102,35 @@ export function calcViewportAxisConstraints(
         ;[min, max] = [max, min]
     }
 
-    return {
-        min: layoutAxis.min + min,
-        max: layoutAxis.min + max,
-    }
+    return { min, max }
 }
 
 /**
  * Calculate viewport constraints when defined as another viewport-relative box
  */
-export function calcViewportConstraints(
-    layoutBox: AxisBox2D,
-    constraintsBox: AxisBox2D
-) {
+export function calcViewportConstraints(layoutBox: Box, constraintsBox: Box) {
     return {
         x: calcViewportAxisConstraints(layoutBox.x, constraintsBox.x),
         y: calcViewportAxisConstraints(layoutBox.y, constraintsBox.y),
     }
+}
+
+/**
+ * Calculate a transform origin relative to the source axis, between 0-1, that results
+ * in an asthetically pleasing scale/transform needed to project from source to target.
+ */
+export function calcOrigin(source: Axis, target: Axis): number {
+    let origin = 0.5
+    const sourceLength = calcLength(source)
+    const targetLength = calcLength(target)
+
+    if (targetLength > sourceLength) {
+        origin = calcProgress(target.min, target.max - sourceLength, source.min)
+    } else if (sourceLength > targetLength) {
+        origin = calcProgress(source.min, source.max - targetLength, target.min)
+    }
+
+    return clamp(0, 1, origin)
 }
 
 /**
@@ -134,9 +142,9 @@ export function calcViewportConstraints(
  * a smaller viewport like a scrollable view.
  */
 export function calcProgressWithinConstraints(
-    layoutBox: AxisBox2D,
-    constraintsBox: AxisBox2D
-): Point2D {
+    layoutBox: Box,
+    constraintsBox: Box
+): Point {
     return {
         x: calcOrigin(layoutBox.x, constraintsBox.x),
         y: calcOrigin(layoutBox.y, constraintsBox.y),
@@ -174,4 +182,43 @@ export function rebaseAxisConstraints(
     }
 
     return relativeConstraints
+}
+
+export const defaultElastic = 0.35
+/**
+ * Accepts a dragElastic prop and returns resolved elastic values for each axis.
+ */
+export function resolveDragElastic(
+    dragElastic: DragElastic = defaultElastic
+): Box {
+    if (dragElastic === false) {
+        dragElastic = 0
+    } else if (dragElastic === true) {
+        dragElastic = defaultElastic
+    }
+
+    return {
+        x: resolveAxisElastic(dragElastic, "left", "right"),
+        y: resolveAxisElastic(dragElastic, "top", "bottom"),
+    }
+}
+
+export function resolveAxisElastic(
+    dragElastic: DragElastic,
+    minLabel: string,
+    maxLabel: string
+): Axis {
+    return {
+        min: resolvePointElastic(dragElastic, minLabel),
+        max: resolvePointElastic(dragElastic, maxLabel),
+    }
+}
+
+export function resolvePointElastic(
+    dragElastic: DragElastic,
+    label: string
+): number {
+    return typeof dragElastic === "number"
+        ? dragElastic
+        : dragElastic[label] ?? 0
 }

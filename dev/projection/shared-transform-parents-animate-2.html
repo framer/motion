@@ -1,0 +1,100 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #a {
+                width: 300px;
+                height: 300px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                background-color: #00cc88;
+            }
+
+            #b {
+                width: 200px;
+                height: 200px;
+                background-color: #ffcc00;
+            }
+
+            #scroller {
+                position: absolute;
+                top: 200px;
+                left: 10px;
+                width: 500px;
+                height: 200px;
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
+                background-color: #09f;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="scroller"></div>
+        <div id="a"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const { matchViewportBox, matchVisibility, matchOpacity } =
+                window.Assert
+
+            const a = document.getElementById("a")
+            const scroller = document.getElementById("scroller")
+
+            const aProjection = createNode(a, undefined, { layoutId: "a" })
+            const scrollerProjection = createNode(scroller)
+
+            scrollerProjection.setValue("x", -200)
+
+            sync.postRender(() => {
+                aProjection.willUpdate()
+
+                const b = document.createElement("div")
+                b.id = "b"
+                scroller.appendChild(b)
+
+                const bProjection = createNode(b, scrollerProjection, {
+                    layoutId: "a",
+                })
+
+                aProjection.root.didUpdate()
+
+                sync.postRender(() => {
+                    matchViewportBox(a, b.getBoundingClientRect())
+                    matchViewportBox(a, {
+                        bottom: 350,
+                        height: 250,
+                        left: 55,
+                        right: 305,
+                        top: 100,
+                        width: 250,
+                        x: 55,
+                        y: 100,
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

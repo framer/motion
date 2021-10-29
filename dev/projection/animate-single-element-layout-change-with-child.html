@@ -1,0 +1,110 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            #box.b {
+                width: 200px;
+                position: absolute;
+                top: 100px;
+                left: 200px;
+                padding: 20px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="box" data-layout-correct="true">
+            <div id="child" data-layout-correct="true"></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode, relativeEase } = window.Animate
+            const {
+                matchViewportBox,
+                matchOpacity,
+                matchBorderRadius,
+            } = window.Assert
+            const box = document.getElementById("box")
+            const boxProjection = createNode(
+                box,
+                undefined,
+                {},
+                { ease: relativeEase() }
+            )
+
+            const child = document.getElementById("child")
+            const childProjection = createNode(
+                child,
+                boxProjection,
+                {},
+                { ease: relativeEase() }
+            )
+
+            const boxOrigin = box.getBoundingClientRect()
+            const childOrigin = child.getBoundingClientRect()
+
+            childProjection.setValue("borderRadius", 20)
+
+            boxProjection.willUpdate()
+            childProjection.willUpdate()
+
+            box.classList.add("b")
+
+            boxProjection.root.didUpdate()
+
+            sync.postRender(() => {
+                sync.postRender(() => {
+                    matchViewportBox(box, {
+                        top: 50,
+                        right: 270,
+                        bottom: 170,
+                        left: 100,
+                    })
+                    matchViewportBox(child, {
+                        top: 60,
+                        right: 160,
+                        bottom: 110,
+                        left: 110,
+                    })
+                    matchOpacity(box, 1)
+                    matchOpacity(child, 1)
+                    matchBorderRadius(box, 0)
+                    matchBorderRadius(child, "40%")
+                })
+            })
+        </script>
+    </body>
+</html>

@@ -1,22 +1,29 @@
 import * as React from "react"
-import { useContext, forwardRef, Ref } from "react"
-import { MotionContext, useMotionContext } from "./context/MotionContext"
+import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
-import { checkShouldInheritVariant } from "./utils/should-inherit-variant"
-import { useMotionValues } from "./utils/use-motion-values"
-import { UseVisualElement } from "../render/types"
-import { RenderComponent, MotionFeature } from "./features/types"
-import { AnimationControlsConfig } from "../animation/VisualElementAnimationControls"
-import { useVisualElementAnimation } from "../animation/use-visual-element-animation"
+import { RenderComponent, FeatureBundle } from "./features/types"
 import { useFeatures } from "./features/use-features"
-import { useSnapshotOnUnmount } from "./features/layout/use-snapshot-on-unmount"
-export { MotionProps }
+import { MotionConfigContext } from "../context/MotionConfigContext"
+import { MotionContext } from "../context/MotionContext"
+import { CreateVisualElement } from "../render/types"
+import { useVisualElement } from "./utils/use-visual-element"
+import { UseVisualState } from "./utils/use-visual-state"
+import { useMotionRef } from "./utils/use-motion-ref"
+import { useCreateMotionContext } from "../context/MotionContext/create"
+import { featureDefinitions, loadFeatures } from "./features/definitions"
+import { isBrowser } from "../utils/is-browser"
+import { useProjectionId } from "../projection/node/id"
+import { LayoutGroupContext } from "../context/LayoutGroupContext"
+import { useProjection } from "./features/use-projection"
+import { VisualElementHandler } from "./utils/VisualElementHandler"
 
-export interface MotionComponentConfig<E> {
-    defaultFeatures: MotionFeature[]
-    useVisualElement: UseVisualElement<E>
-    render: RenderComponent
-    animationControlsConfig: AnimationControlsConfig
+export interface MotionComponentConfig<Instance, RenderState> {
+    preloadedFeatures?: FeatureBundle
+    createVisualElement?: CreateVisualElement<Instance>
+    projectionNodeConstructor?: any
+    useRender: RenderComponent<Instance, RenderState>
+    useVisualState: UseVisualState<Instance, RenderState>
+    Component: string | React.ComponentType
 }
 
 /**
@@ -30,103 +37,119 @@ export interface MotionComponentConfig<E> {
  *
  * @internal
  */
-export function createMotionComponent<P extends {}, E>(
-    Component: string | React.ComponentType<P>,
-    {
-        defaultFeatures,
-        useVisualElement,
-        render,
-        animationControlsConfig,
-    }: MotionComponentConfig<E>
-) {
-    function MotionComponent(props: P & MotionProps, externalRef?: Ref<E>) {
-        const parentContext = useContext(MotionContext)
-        const shouldInheritVariant = checkShouldInheritVariant(props)
+export function createMotionComponent<Props extends {}, Instance, RenderState>({
+    preloadedFeatures,
+    createVisualElement,
+    projectionNodeConstructor,
+    useRender,
+    useVisualState,
+    Component,
+}: MotionComponentConfig<Instance, RenderState>) {
+    preloadedFeatures && loadFeatures(preloadedFeatures)
+
+    function MotionComponent(
+        props: Props & MotionProps,
+        externalRef?: React.Ref<Instance>
+    ) {
+        const layoutId = useLayoutId(props)
+        props = { ...props, layoutId }
+        /**
+         * If we're rendering in a static environment, we only visually update the component
+         * as a result of a React-rerender rather than interactions or animations. This
+         * means we don't need to load additional memory structures like VisualElement,
+         * or any gesture/animation features.
+         */
+        const config = useContext(MotionConfigContext)
+
+        let features: JSX.Element[] | null = null
+
+        const context = useCreateMotionContext(props)
 
         /**
-         * If a component isStatic, we only visually update it as a
-         * result of a React re-render, rather than any interactions or animations.
-         * If this component or any ancestor isStatic, we disable hardware acceleration
-         * and don't load any additional functionality.
+         * Create a unique projection ID for this component. If a new component is added
+         * during a layout animation we'll use this to query the DOM and hydrate its ref early, allowing
+         * us to measure it as soon as any layout effect flushes pending layout animations.
+         *
+         * Performance note: It'd be better not to have to search the DOM for these elements.
+         * For newly-entering components it could be enough to only correct treeScale, in which
+         * case we could mount in a scale-correction mode. This wouldn't be enough for
+         * shared element transitions however. Perhaps for those we could revert to a root node
+         * that gets forceRendered and layout animations are triggered on its layout effect.
          */
-        const isStatic = parentContext.static || props.static || false
+        const projectionId = useProjectionId()
 
         /**
-         * Create a VisualElement for this component. A VisualElement provides a common
-         * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
-         * providing a way of rendering to these APIs outside of the React render loop
-         * for more performant animations and interactions
+         *
          */
-        const visualElement = useVisualElement(
-            Component,
-            props,
-            parentContext.visualElement as any,
-            isStatic,
-            externalRef
-        )
+        const visualState = useVisualState(props, config.isStatic)
+
+        if (!config.isStatic && isBrowser) {
+            /**
+             * Create a VisualElement for this component. A VisualElement provides a common
+             * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
+             * providing a way of rendering to these APIs outside of the React render loop
+             * for more performant animations and interactions
+             */
+            context.visualElement = useVisualElement(
+                Component,
+                visualState,
+                { ...config, ...props },
+                createVisualElement
+            )
+
+            useProjection(
+                projectionId,
+                props,
+                context.visualElement,
+                projectionNodeConstructor ||
+                    featureDefinitions.projectionNodeConstructor
+            )
+
+            /**
+             * Load Motion gesture and animation features. These are rendered as renderless
+             * components so each feature can optionally make use of React lifecycle methods.
+             */
+            features = useFeatures(
+                props,
+                context.visualElement,
+                preloadedFeatures
+            )
+        }
 
         /**
-         * Scrape MotionValues from props and add/remove them to/from
-         * the VisualElement as necessary.
+         * The mount order and hierarchy is specific to ensure our element ref
+         * is hydrated by the time features fire their effects.
          */
-        useMotionValues(visualElement, props)
-
-        /**
-         * Create animation controls for the VisualElement. It might be
-         * interesting to try and combine this with VisualElement itself in a further refactor.
-         */
-        const controls = useVisualElementAnimation(
-            visualElement,
-            props,
-            animationControlsConfig,
-            shouldInheritVariant
-        )
-
-        /**
-         * Build the MotionContext to pass on to the next `motion` component.
-         */
-        const context = useMotionContext(
-            parentContext,
-            controls,
-            visualElement,
-            isStatic,
-            props
-        )
-
-        /**
-         * Load features as renderless components unless the component isStatic
-         */
-        const features = useFeatures(
-            defaultFeatures,
-            isStatic,
-            visualElement,
-            controls,
-            props,
-            context,
-            parentContext,
-            shouldInheritVariant
-        )
-
-        const component = render(Component, props, visualElement)
-
-        /**
-         * If this component is a child of AnimateSharedLayout, we need to snapshot the component
-         * before it's unmounted. This lives here rather than in features/layout/Measure because
-         * as a child component its unmount effect runs after this component has been unmounted.
-         */
-        useSnapshotOnUnmount(visualElement)
-
-        // The mount order and hierarchy is specific to ensure our element ref is hydrated by the time
-        // all plugins and features has to execute.
         return (
-            <>
-                <MotionContext.Provider value={context}>
-                    {component}
-                </MotionContext.Provider>
+            <VisualElementHandler
+                visualElement={context.visualElement}
+                props={{ ...config, ...props }}
+            >
                 {features}
-            </>
+                <MotionContext.Provider value={context}>
+                    {useRender(
+                        Component,
+                        props,
+                        projectionId,
+                        useMotionRef(
+                            visualState,
+                            context.visualElement,
+                            externalRef
+                        ),
+                        visualState,
+                        config.isStatic
+                    )}
+                </MotionContext.Provider>
+            </VisualElementHandler>
         )
     }
 
     return forwardRef(MotionComponent)
+}
+
+function useLayoutId({ layoutId }: MotionProps) {
+    const layoutGroupId = useContext(LayoutGroupContext)?.id
+    return layoutGroupId && layoutId !== undefined
+        ? layoutGroupId + "-" + layoutId
+        : layoutId
 }

@@ -85,7 +85,7 @@ describe("custom properties", () => {
     })
 
     test("animates", async () => {
-        const promise = new Promise<ChildNode | null>(resolve => {
+        const promise = new Promise<ChildNode | null>((resolve) => {
             const resolvePromise = () => {
                 setTimeout(() => resolve(container.firstChild), 20)
             }
@@ -110,7 +110,7 @@ describe("custom properties", () => {
     })
 
     test("animates and sets custom values transitionEnd", async () => {
-        const promise = new Promise<ChildNode | null>(resolve => {
+        const promise = new Promise<ChildNode | null>((resolve) => {
             const resolvePromise = () => {
                 requestAnimationFrame(() => resolve(container.firstChild))
             }
@@ -139,7 +139,7 @@ describe("custom properties", () => {
     })
 
     test("doesn't animate numerical image", async (): Promise<any> => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const resolvePromise = () => {
                 resolve(container.firstChild!)
             }
@@ -198,7 +198,7 @@ describe("custom values type", () => {
     })
 
     test("animates custom value type", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const resolvePromise = () => {
                 requestAnimationFrame(() => resolve(container.firstChild!))
             }

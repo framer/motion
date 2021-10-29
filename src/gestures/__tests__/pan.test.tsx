@@ -13,7 +13,7 @@ describe("pan", () => {
         let count = 0
         const onPanEnd = deferred()
         const Component = () => {
-            const [increment, setIncrement] = React.useState(1)
+            const [increment, setIncrement] = React.useState(0)
             return (
                 <MockDrag>
                     <motion.div
@@ -41,6 +41,27 @@ describe("pan", () => {
         pointer.end()
         await onPanEnd.promise
 
-        expect(count).toBe(10)
+        expect(count).toBeGreaterThan(0)
+    })
+
+    test("onPanEnd doesn't fire unless onPanStart has", async () => {
+        const onPanStart = jest.fn()
+        const onPanEnd = jest.fn()
+        const Component = () => {
+            return (
+                <MockDrag>
+                    <motion.div onPanStart={onPanStart} onPanEnd={onPanEnd} />
+                </MockDrag>
+            )
+        }
+
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
+
+        const pointer = await drag(container.firstChild).to(1, 1)
+        await frame.postRender()
+        pointer.end()
+        expect(onPanStart).not.toBeCalled()
+        expect(onPanEnd).not.toBeCalled()
     })
 })

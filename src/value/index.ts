@@ -59,7 +59,16 @@ export class MotionValue<V = any> {
      *
      * @internal
      */
-    updateSubscribers = new SubscriptionManager<Subscriber<V>>()
+    private updateSubscribers = new SubscriptionManager<Subscriber<V>>()
+
+    /**
+     * Functions to notify when the velocity updates.
+     *
+     * @internal
+     */
+    public velocityUpdateSubscribers = new SubscriptionManager<
+        Subscriber<number>
+    >()
 
     /**
      * Functions to notify when the `MotionValue` updates and `render` is set to `true`.
@@ -104,7 +113,7 @@ export class MotionValue<V = any> {
      * @internal
      */
     constructor(init: V) {
-        this.set(init, false)
+        this.prev = this.current = init
         this.canTrackVelocity = isFloat(this.current)
     }
 
@@ -116,36 +125,6 @@ export class MotionValue<V = any> {
      * When calling `onChange` inside a React component, it should be wrapped with the
      * `useEffect` hook. As it returns an unsubscribe function, this should be returned
      * from the `useEffect` function to ensure you don't add duplicate subscribers..
-     *
-     * @library
-     *
-     * ```jsx
-     * function MyComponent() {
-     *   const x = useMotionValue(0)
-     *   const y = useMotionValue(0)
-     *   const opacity = useMotionValue(1)
-     *
-     *   useEffect(() => {
-     *     function updateOpacity() {
-     *       const maxXY = Math.max(x.get(), y.get())
-     *       const newOpacity = transform(maxXY, [0, 100], [1, 0])
-     *       opacity.set(newOpacity)
-     *     }
-     *
-     *     const unsubscribeX = x.onChange(updateOpacity)
-     *     const unsubscribeY = y.onChange(updateOpacity)
-     *
-     *     return () => {
-     *       unsubscribeX()
-     *       unsubscribeY()
-     *     }
-     *   }, [])
-     *
-     *   return <Frame x={x} />
-     * }
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * export const MyComponent = () => {
@@ -205,7 +184,6 @@ export class MotionValue<V = any> {
     onRenderRequest(subscription: Subscriber<V>) {
         // Render immediately
         subscription(this.get())
-
         return this.renderSubscribers.add(subscription)
     }
 
@@ -245,21 +223,27 @@ export class MotionValue<V = any> {
         this.prev = this.current
         this.current = v
 
-        if (this.prev !== this.current) {
-            this.updateSubscribers.notify(this.current)
-        }
-
-        if (render) {
-            this.renderSubscribers.notify(this.current)
-        }
-
         // Update timestamp
         const { delta, timestamp } = getFrameData()
-
         if (this.lastUpdated !== timestamp) {
             this.timeDelta = delta
             this.lastUpdated = timestamp
             sync.postRender(this.scheduleVelocityCheck)
+        }
+
+        // Update update subscribers
+        if (this.prev !== this.current) {
+            this.updateSubscribers.notify(this.current)
+        }
+
+        // Update velocity subscribers
+        if (this.velocityUpdateSubscribers.getSize()) {
+            this.velocityUpdateSubscribers.notify(this.getVelocity())
+        }
+
+        // Update render subscribers
+        if (render) {
+            this.renderSubscribers.notify(this.current)
         }
     }
 
@@ -322,8 +306,11 @@ export class MotionValue<V = any> {
     private velocityCheck = ({ timestamp }: FrameData) => {
         if (timestamp !== this.lastUpdated) {
             this.prev = this.current
+            this.velocityUpdateSubscribers.notify(this.getVelocity())
         }
     }
+
+    hasAnimated = false
 
     /**
      * Registers a new animation to control this `MotionValue`. Only one
@@ -340,7 +327,8 @@ export class MotionValue<V = any> {
     start(animation: StartAnimation) {
         this.stop()
 
-        return new Promise(resolve => {
+        return new Promise<void>((resolve) => {
+            this.hasAnimated = true
             this.stopAnimation = animation(resolve)
         }).then(() => this.clearAnimation())
     }

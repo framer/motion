@@ -1,53 +1,62 @@
 import * as React from "react"
+import { VisualElement } from "../../render/types"
+import { MotionProps } from "../types"
+import { FeatureBundle, FeatureDefinition } from "./types"
+import { featureDefinitions } from "./definitions"
+import { invariant } from "hey-listen"
 import { useContext } from "react"
-import { MotionConfigContext } from "../context/MotionConfigContext"
-import { VisualElement } from "../../render/VisualElement"
-import { MotionProps } from ".."
-import { MotionContextProps } from "../context/MotionContext"
-import { VisualElementAnimationControls } from "../../animation/VisualElementAnimationControls"
-import { MotionFeature } from "./types"
+import { LazyContext } from "../../context/LazyContext"
+
+const featureNames = Object.keys(featureDefinitions)
+const numFeatures = featureNames.length
 
 /**
- * Load features via renderless components based on the provided MotionProps
+ * Load features via renderless components based on the provided MotionProps.
  */
 export function useFeatures(
-    defaultFeatures: MotionFeature[],
-    isStatic: boolean,
-    visualElement: VisualElement,
-    controls: VisualElementAnimationControls,
     props: MotionProps,
-    context: MotionContextProps,
-    parentContext: MotionContextProps,
-    shouldInheritVariant: boolean
+    visualElement?: VisualElement,
+    preloadedFeatures?: FeatureBundle
 ): null | JSX.Element[] {
-    const plugins = useContext(MotionConfigContext)
-
-    // If this is a static component, or we're rendering on the server, we don't load
-    // any feature components
-    if (isStatic || typeof window === "undefined") return null
-
-    const allFeatures = [...defaultFeatures, ...plugins.features]
-    const numFeatures = allFeatures.length
     const features: JSX.Element[] = []
+    const lazyContext = useContext(LazyContext)
 
-    // Decide which features we should render and add them to the returned array
+    if (!visualElement) return null
+
+    /**
+     * If we're in development mode, check to make sure we're not rendering a motion component
+     * as a child of LazyMotion, as this will break the file-size benefits of using it.
+     */
+    if (
+        process.env.NODE_ENV !== "production" &&
+        preloadedFeatures &&
+        lazyContext.strict
+    ) {
+        invariant(
+            false,
+            "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
+        )
+    }
+
     for (let i = 0; i < numFeatures; i++) {
-        const { shouldRender, key, getComponent } = allFeatures[i]
+        const name = featureNames[i]
+        const { isEnabled, Component } = featureDefinitions[
+            name
+        ] as FeatureDefinition
 
-        if (shouldRender(props, parentContext)) {
-            const Component = getComponent(props)
-            Component &&
-                features.push(
-                    <Component
-                        key={key}
-                        {...props}
-                        localContext={context}
-                        parentContext={parentContext}
-                        visualElement={visualElement as any}
-                        controls={controls}
-                        inherit={shouldInheritVariant}
-                    />
-                )
+        /**
+         * It might be possible in the future to use this moment to
+         * dynamically request functionality. In initial tests this
+         * was producing a lot of duplication amongst bundles.
+         */
+        if (isEnabled(props) && Component) {
+            features.push(
+                <Component
+                    key={name}
+                    {...props}
+                    visualElement={visualElement}
+                />
+            )
         }
     }
 

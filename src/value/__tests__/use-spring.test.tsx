@@ -7,12 +7,12 @@ import { motion } from "../../"
 
 describe("useSpring", () => {
     test("can create a motion value from a number", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const x = useSpring(0)
 
                 React.useEffect(() => {
-                    x.onChange(v => resolve(v))
+                    x.onChange((v) => resolve(v))
                     x.set(100)
                 })
 
@@ -30,13 +30,13 @@ describe("useSpring", () => {
     })
 
     test("can create a MotionValue that responds to changes from another MotionValue", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const Component = () => {
                 const x = useMotionValue(0)
                 const y = useSpring(x)
 
                 React.useEffect(() => {
-                    y.onChange(v => resolve(v))
+                    y.onChange((v) => resolve(v))
                     x.set(100)
                 })
 
@@ -69,6 +69,6 @@ describe("useSpring", () => {
         rerender(<Component target={a} />)
         rerender(<Component target={a} />)
 
-        expect((a!.updateSubscribers! as any).subscriptions.size).toBe(1)
+        expect(((a! as any).updateSubscribers! as any).getSize()).toBe(1)
     })
 })

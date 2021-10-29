@@ -45,24 +45,6 @@ const getMixer = (v: any) => (isCustomValueType(v) ? v.mix : undefined)
  * can be any supported value type, such as numbers, colors, shadows, arrays, objects and more.
  * Every value in the output range must be of the same type and in the same format.
  *
- * @library
- *
- * ```jsx
- * import * as React from "react"
- * import { Frame, transform } from "framer"
- *
- * export function MyComponent() {
- *    const inputRange = [0, 200]
- *    const outputRange = [0, 1]
- *    const output = transform(100, inputRange, outputRange)
- *
- *    // Returns 0.5
- *    return <Frame>{output}</Frame>
- * }
- * ```
- *
- * @motion
- *
  * ```jsx
  * import * as React from "react"
  * import { transform } from "framer-motion"
@@ -91,28 +73,6 @@ export function transform<T>(
     options?: TransformOptions<T>
 ): T
 /**
- * @library
- *
- * For improved performance, `transform` can pre-calculate the function that will transform a value between two ranges.
- * Returns a function.
- *
- * ```jsx
- * import * as React from "react"
- * import { Frame, transform } from "framer"
- *
- * export function MyComponent() {
- *     const inputRange = [-200, -100, 100, 200]
- *     const outputRange = [0, 1, 1, 0]
- *     const convertRange = transform(inputRange, outputRange)
- *     const output = convertRange(-150)
- *
- *     // Returns 0.5
- *     return <Frame>{output}</Frame>
- * }
- *
- * ```
- *
- * @motion
  *
  * Transforms numbers into other values by mapping them from an input range to an output range.
  *

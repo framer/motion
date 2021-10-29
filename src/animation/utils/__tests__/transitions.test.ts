@@ -4,10 +4,12 @@ import {
     getDelayFromTransition,
     hydrateKeyframes,
     getPopmotionAnimationOptions,
+    getZeroUnit,
+    isZero,
 } from "../transitions"
 import {
     underDampedSpring,
-    overDampedSpring,
+    criticallyDampedSpring,
     linearTween,
 } from "../default-transitions"
 import { linear, easeInOut, circIn } from "popmotion"
@@ -49,41 +51,10 @@ describe("convertTransitionToAnimationOptions", () => {
 
         expect(
             convertTransitionToAnimationOptions({
-                loop: Infinity,
-            })
-        ).toEqual({
-            repeat: Infinity,
-            repeatType: "loop",
-            type: "keyframes",
-        })
-
-        expect(
-            convertTransitionToAnimationOptions({
                 repeat: Infinity,
             })
         ).toEqual({
             repeat: Infinity,
-            type: "keyframes",
-        })
-
-        expect(
-            convertTransitionToAnimationOptions({
-                yoyo: Infinity,
-                type: "spring",
-            })
-        ).toEqual({
-            repeat: Infinity,
-            repeatType: "reverse",
-            type: "spring",
-        })
-
-        expect(
-            convertTransitionToAnimationOptions({
-                flip: Infinity,
-            })
-        ).toEqual({
-            repeat: Infinity,
-            repeatType: "mirror",
             type: "keyframes",
         })
 
@@ -166,7 +137,7 @@ describe("getPopmotionAnimationOptions", () => {
         ).toEqual({
             from: 0,
             to: 1,
-            ...overDampedSpring(1),
+            ...criticallyDampedSpring(1),
         })
         expect(
             getPopmotionAnimationOptions({}, { from: 0, to: 1 }, "opacity")
@@ -251,5 +222,29 @@ describe("getPopmotionAnimationOptions", () => {
             from: 50,
             to: [50, 100],
         })
+    })
+})
+
+describe("isZero", () => {
+    test("correctly detects zero values", () => {
+        expect(isZero(0)).toBe(true)
+        expect(isZero("0px")).toBe(true)
+        expect(isZero("0rem")).toBe(true)
+        expect(isZero("4rem")).toBe(false)
+        expect(isZero(5)).toBe(false)
+        expect(isZero("#000")).toBe(false)
+        expect(isZero("5%")).toBe(false)
+        expect(isZero("0px 0px")).toBe(false)
+    })
+})
+
+describe("getZeroUnit", () => {
+    test("correctly converts zeroes to the unit type of provided value", () => {
+        expect(getZeroUnit("5px")).toBe("0px")
+        expect(getZeroUnit("5rem")).toBe("0rem")
+        expect(getZeroUnit("5%")).toBe("0%")
+        expect(getZeroUnit(5)).toBe(0)
+        expect(getZeroUnit("solid")).toBe("solid")
+        expect(getZeroUnit("#fff")).toBe("rgba(255, 255, 255, 1)")
     })
 })

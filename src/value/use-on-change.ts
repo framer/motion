@@ -6,9 +6,9 @@ export function useOnChange<T>(
     value: MotionValue<T> | number | string,
     callback: Subscriber<T>
 ) {
-    useEffect(() =>
-        isMotionValue(value) ? value.onChange(callback) : undefined
-    )
+    useEffect(() => {
+        if (isMotionValue(value)) return value.onChange(callback)
+    }, [callback])
 }
 
 export function useMultiOnChange(values: MotionValue[], handler: () => void) {

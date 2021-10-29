@@ -1,275 +1,79 @@
-import { RefObject, useRef } from "react"
-import { EventInfo, EventHandler } from "../events/types"
-import { TargetAndTransition } from "../types"
+import { useRef } from "react"
+import { EventInfo } from "../events/types"
 import { isNodeOrChild } from "./utils/is-node-or-child"
-import { getGesturePriority } from "./utils/gesture-priority"
-import { ControlsProp, RemoveEvent } from "./types"
-import { getGlobalLock } from "../gestures/drag/utils/lock"
 import { addPointerEvent, usePointerEvent } from "../events/use-pointer-event"
 import { useUnmountEffect } from "../utils/use-unmount-effect"
 import { pipe } from "popmotion"
-import { Point2D } from "../types/geometry"
-
-const tapGesturePriority = getGesturePriority("whileTap")
-
-/**
- * Passed in to tap event handlers like `onTap` the `TapInfo` object contains
- * information about the tap gesture such as it‘s location.
- *
- * @library
- *
- * ```jsx
- * function onTap(event, info) {
- *   console.log(info.point.x, info.point.y)
- * }
- *
- * <Frame onTap={onTap} />
- * ```
- *
- * @motion
- *
- * ```jsx
- * function onTap(event, info) {
- *   console.log(info.point.x, info.point.y)
- * }
- *
- * <motion.div onTap={onTap} />
- * ```
- *
- * @public
- */
-export interface TapInfo {
-    /**
-     * Contains `x` and `y` values for the tap gesture relative to the
-     * device or page.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onTapStart(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <Frame onTapStart={onTapStart} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onTapStart(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <motion.div onTapStart={onTapStart} />
-     * ```
-     *
-     * @public
-     */
-    point: Point2D
-}
-
-/**
- * @public
- */
-export interface TapHandlers {
-    /**
-     * Callback when the tap gesture successfully ends on this element.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onTap(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <Frame onTap={onTap} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onTap(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <motion.div onTap={onTap} />
-     * ```
-     *
-     * @param event - The originating pointer event.
-     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
-     */
-    onTap?(event: MouseEvent | TouchEvent | PointerEvent, info: TapInfo): void
-
-    /**
-     * Callback when the tap gesture starts on this element.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onTapStart(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <Frame onTapStart={onTapStart} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onTapStart(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <motion.div onTapStart={onTapStart} />
-     * ```
-     *
-     * @param event - The originating pointer event.
-     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
-     */
-    onTapStart?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: TapInfo
-    ): void
-
-    /**
-     * Callback when the tap gesture ends outside this element.
-     *
-     * @library
-     *
-     * ```jsx
-     * function onTapCancel(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <Frame onTapCancel={onTapCancel} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * function onTapCancel(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <motion.div onTapCancel={onTapCancel} />
-     * ```
-     *
-     * @param event - The originating pointer event.
-     * @param info - An {@link TapInfo} object containing `x` and `y` values for the `point` relative to the device or page.
-     */
-    onTapCancel?(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: TapInfo
-    ): void
-
-    /**
-     * Properties or variant label to animate to while the component is pressed.
-     *
-     * @library
-     *
-     * ```jsx
-     * <Frame whileTap={{ scale: 0.8 }} />
-     * ```
-     *
-     * @motion
-     *
-     * ```jsx
-     * <motion.div whileTap={{ scale: 0.8 }} />
-     * ```
-     */
-    whileTap?: string | TargetAndTransition
-}
+import { AnimationType } from "../render/utils/types"
+import { isDragActive } from "./drag/utils/lock"
+import { FeatureProps } from "../motion/features/types"
 
 /**
  * @param handlers -
  * @internal
  */
-export function useTapGesture(
-    {
-        onTap,
-        onTapStart,
-        onTapCancel,
-        whileTap,
-        controls,
-    }: TapHandlers & ControlsProp,
-    ref: RefObject<Element>
-) {
-    const hasTapListeners = onTap || onTapStart || onTapCancel || whileTap
-    const isTapping = useRef(false)
+export function useTapGesture({
+    onTap,
+    onTapStart,
+    onTapCancel,
+    whileTap,
+    visualElement,
+}: FeatureProps) {
+    const hasPressListeners = onTap || onTapStart || onTapCancel || whileTap
+    const isPressing = useRef(false)
+    const cancelPointerEndListeners = useRef<Function | null>(null)
 
-    const cancelPointerEventListener = useRef<RemoveEvent | undefined | null>(
-        null
-    )
-
-    function removePointerUp() {
-        cancelPointerEventListener.current?.()
-        cancelPointerEventListener.current = null
+    function removePointerEndListener() {
+        cancelPointerEndListeners.current?.()
+        cancelPointerEndListeners.current = null
     }
 
-    if (whileTap && controls) {
-        controls.setOverride(whileTap, tapGesturePriority)
+    function checkPointerEnd() {
+        removePointerEndListener()
+        isPressing.current = false
+        visualElement.animationState?.setActive(AnimationType.Tap, false)
+        return !isDragActive()
     }
 
-    // We load this event handler into a ref so we can later refer to
-    // onPointerUp.current which will always have reference to the latest props
-    const onPointerUp = useRef<EventHandler | null>(null)
-    onPointerUp.current = (event, info) => {
-        const element = ref.current
+    function onPointerUp(event: PointerEvent, info: EventInfo) {
+        if (!checkPointerEnd()) return
 
-        removePointerUp()
-        if (!isTapping.current || !element) return
-
-        isTapping.current = false
-
-        if (controls && whileTap) {
-            controls.clearOverride(tapGesturePriority)
-        }
-
-        // Check the gesture lock - if we get it, it means no drag gesture is active
-        // and we can safely fire the tap gesture.
-        const openGestureLock = getGlobalLock(true)
-        if (!openGestureLock) return
-        openGestureLock()
-
-        if (!isNodeOrChild(element, event.target as Element)) {
-            onTapCancel && onTapCancel(event, info)
-        } else {
-            onTap && onTap(event, info)
-        }
+        /**
+         * We only count this as a tap gesture if the event.target is the same
+         * as, or a child of, this component's element
+         */
+        !isNodeOrChild(visualElement.getInstance(), event.target as Element)
+            ? onTapCancel?.(event, info)
+            : onTap?.(event, info)
     }
 
-    function onPointerDown(
-        event: MouseEvent | TouchEvent | PointerEvent,
-        info: EventInfo
-    ) {
-        removePointerUp()
+    function onPointerCancel(event: PointerEvent, info: EventInfo) {
+        if (!checkPointerEnd()) return
 
-        cancelPointerEventListener.current = pipe(
-            addPointerEvent(window, "pointerup", (event, info) =>
-                onPointerUp.current?.(event, info)
-            ),
-            addPointerEvent(window, "pointercancel", (event, info) =>
-                onPointerUp.current?.(event, info)
-            )
-        ) as RemoveEvent
+        onTapCancel?.(event, info)
+    }
 
-        const element = ref.current
-        if (!element || isTapping.current) return
+    function onPointerDown(event: PointerEvent, info: EventInfo) {
+        removePointerEndListener()
 
-        isTapping.current = true
+        if (isPressing.current) return
+        isPressing.current = true
 
-        onTapStart && onTapStart(event, info)
+        cancelPointerEndListeners.current = pipe(
+            addPointerEvent(window, "pointerup", onPointerUp),
+            addPointerEvent(window, "pointercancel", onPointerCancel)
+        )
 
-        if (controls && whileTap) {
-            controls.startOverride(tapGesturePriority)
-        }
+        onTapStart?.(event, info)
+
+        visualElement.animationState?.setActive(AnimationType.Tap, true)
     }
 
     usePointerEvent(
-        ref,
+        visualElement,
         "pointerdown",
-        hasTapListeners ? onPointerDown : undefined
+        hasPressListeners ? onPointerDown : undefined
     )
 
-    useUnmountEffect(removePointerUp)
+    useUnmountEffect(removePointerEndListener)
 }

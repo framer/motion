@@ -15,10 +15,10 @@ export const underDampedSpring = () => ({
     restSpeed: 10,
 })
 
-export const overDampedSpring = (to: SingleTarget) => ({
+export const criticallyDampedSpring = (to: SingleTarget) => ({
     type: "spring",
     stiffness: 550,
-    damping: to === 0 ? 100 : 30,
+    damping: to === 0 ? 2 * Math.sqrt(550) : 30,
     restDelta: 0.01,
     restSpeed: 10,
 })
@@ -45,13 +45,13 @@ const defaultTransitions = {
     rotateX: underDampedSpring,
     rotateY: underDampedSpring,
     rotateZ: underDampedSpring,
-    scaleX: overDampedSpring,
-    scaleY: overDampedSpring,
-    scale: overDampedSpring,
+    scaleX: criticallyDampedSpring,
+    scaleY: criticallyDampedSpring,
+    scale: criticallyDampedSpring,
     opacity: linearTween,
     backgroundColor: linearTween,
     color: linearTween,
-    default: overDampedSpring,
+    default: criticallyDampedSpring,
 }
 
 export const getDefaultTransition = (

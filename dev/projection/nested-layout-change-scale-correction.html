@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                width: 200px;
+                height: 200px;
+                background-color: #00cc88;
+            }
+
+            #child {
+              width: 100px;
+              height: 100px;
+              background-color: #09f;
+            }
+
+            #parent.b {
+                width: 400px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="parent"><div id="child"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox } = window.Assert
+            const parent = document.getElementById("parent")
+            const child = document.getElementById("child")
+
+            const parentProjection = createNode(parent)
+            const childProjection = createNode(child, parentProjection)
+            
+            const parentOrigin = parent.getBoundingClientRect()
+            const childOrigin = child.getBoundingClientRect()
+
+            parentProjection.willUpdate()
+            childProjection.willUpdate()
+            
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            matchViewportBox(parent, parentOrigin)
+            matchViewportBox(child, childOrigin)
+        </script>
+    </body>
+</html>

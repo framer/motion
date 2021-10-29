@@ -1,0 +1,91 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            .screen {
+                width: 100%;
+                height: 100%;
+                position: fixed;
+                inset: 0;
+                overflow: hidden;
+            }
+
+            .scroll {
+                overflow-y: scroll;
+            }
+
+            #box {
+                margin-top: 1000px;
+                width: 100px;
+                height: 100px;
+                background-color: #0088ff;
+            }
+
+            #box-b {
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                width: 200px;
+                height: 200px;
+                background-color: #0088ff;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="screen scroll">
+            <div id="box"></div>
+        </div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox, matchVisibility, matchOpacity } =
+                window.Assert
+
+            const scrollScreen = document.querySelector(".screen")
+            const scrollScreenProjection = createNode(scrollScreen, undefined, {
+                layoutScroll: true,
+            })
+            scrollScreen.scrollTop = 1000
+
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box, scrollScreenProjection, {
+                layoutId: "box",
+            })
+            const boxOrigin = box.getBoundingClientRect()
+
+            boxProjection.willUpdate()
+
+            const screen = document.createElement("div")
+            screen.classList.add("screen")
+            document.body.appendChild(screen)
+            const screenProjection = createNode(screen, undefined)
+
+            const newBox = document.createElement("div")
+            newBox.id = "box-b"
+            screen.appendChild(newBox)
+            const newBoxProjection = createNode(newBox, screenProjection, {
+                layoutId: "box",
+            })
+
+            boxProjection.root.didUpdate()
+
+            setTimeout(() => {
+                matchViewportBox(box, boxOrigin)
+                matchViewportBox(newBox, boxOrigin)
+                matchViewportBox(box, newBox)
+            }, 50)
+        </script>
+    </body>
+</html>

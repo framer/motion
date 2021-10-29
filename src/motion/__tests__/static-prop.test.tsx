@@ -1,19 +1,21 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../.."
+import { motion, useMotionValue } from "../.."
 import * as React from "react"
 import { motionValue } from "../../value"
+import { MotionConfig } from "../../components/MotionConfig"
 
-describe("static prop", () => {
+describe("isStatic prop", () => {
     test("it prevents rendering of animated values", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const scale = motionValue(0)
             const Component = () => (
-                <motion.div
-                    animate={{ scale: 2 }}
-                    transition={{ type: false }}
-                    style={{ scale }}
-                    static
-                />
+                <MotionConfig isStatic>
+                    <motion.div
+                        animate={{ scale: 2 }}
+                        transition={{ type: false }}
+                        style={{ scale }}
+                    />
+                </MotionConfig>
             )
 
             const { rerender } = render(<Component />)
@@ -26,90 +28,145 @@ describe("static prop", () => {
     })
 
     test("it permits updating transform values via style", () => {
-        const { container, rerender } = render(
-            <motion.div static style={{ x: 100 }} />
-        )
-        rerender(<motion.div static style={{ x: 200 }} />)
+        function Component({ x }: { x: number }) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div data-testid="child" style={{ x }} />
+                </MotionConfig>
+            )
+        }
+        const { getByTestId, rerender } = render(<Component x={100} />)
+        rerender(<Component x={200} />)
 
-        expect(container.firstChild as Element).toHaveStyle(
+        expect(getByTestId("child") as Element).toHaveStyle(
             "transform: translateX(200px)"
         )
     })
 
     test("it removes unused styles", () => {
-        const { container, rerender } = render(
-            <motion.div static style={{ z: 100 }} />
-        )
+        function Component({ z }: { z?: number }) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div data-testid="child" style={{ z }} />
+                </MotionConfig>
+            )
+        }
 
-        expect(container.firstChild as Element).toHaveStyle(
+        const { getByTestId, rerender } = render(<Component z={100} />)
+
+        expect(getByTestId("child") as Element).toHaveStyle(
             "transform: translateZ(100px)"
         )
 
-        rerender(<motion.div static style={{}} />)
+        rerender(<Component />)
 
-        expect(container.firstChild as Element).not.toHaveStyle(
+        expect(getByTestId("child") as Element).not.toHaveStyle(
             "transform: translateZ(100px)"
         )
     })
 
     test("it doesn't respond to updates in `initial`", () => {
-        const { container, rerender } = render(
-            <motion.div initial={{ x: 100 }} />
-        )
-        rerender(<motion.div initial={{ x: 200 }} />)
+        function Component({ x }: { x?: number }) {
+            return (
+                <MotionConfig isStatic={false}>
+                    <motion.div data-testid="child" initial={{ x }} />
+                </MotionConfig>
+            )
+        }
+        const { getByTestId, rerender } = render(<Component x={100} />)
+        rerender(<Component x={200} />)
 
-        expect(container.firstChild as Element).toHaveStyle(
+        expect(getByTestId("child") as Element).toHaveStyle(
             "transform: translateX(100px) translateZ(0)"
         )
     })
 
-    test("it responds to updates in `initial` if static", () => {
-        const { container, rerender } = render(
-            <motion.div static initial={{ x: 100 }} />
-        )
-        rerender(<motion.div static initial={{ x: 200 }} />)
+    test("it responds to updates in `initial` if isStatic", () => {
+        function Component({ x }: { x?: number }) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div data-testid="child" initial={{ x }} />
+                </MotionConfig>
+            )
+        }
+        const { getByTestId, rerender } = render(<Component x={100} />)
+        rerender(<Component x={200} />)
 
-        expect(container.firstChild as Element).toHaveStyle(
+        expect(getByTestId("child") as Element).toHaveStyle(
             "transform: translateX(200px)"
         )
     })
 
-    test("it propagates changes in `initial` if static", () => {
+    test("it doesn't override defined styles if values are removed", () => {
+        function Component({
+            initial,
+        }: {
+            initial?: { [key: string]: number }
+        }) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div
+                        data-testid="child"
+                        initial={initial}
+                        style={{ opacity: 0.5 }}
+                    />
+                </MotionConfig>
+            )
+        }
+        const { getByTestId, rerender } = render(
+            <Component initial={{ opacity: 0.8 }} />
+        )
+
+        expect(getByTestId("child") as Element).toHaveStyle("opacity: 0.8")
+
+        rerender(<Component />)
+
+        expect(getByTestId("child") as Element).toHaveStyle("opacity: 0.5")
+    })
+
+    test("it propagates changes in `initial` if isStatic", () => {
         const variants = {
             visible: { opacity: 1 },
             hidden: { opacity: 0 },
         }
 
         const Component = ({ initial }: { initial: string }) => (
-            <motion.div initial={initial} variants={variants} static>
-                <motion.div data-testid="child" variants={variants} />
-            </motion.div>
+            <MotionConfig isStatic>
+                <motion.div
+                    data-testid="parent"
+                    initial={initial}
+                    variants={variants}
+                >
+                    <motion.div data-testid="child" variants={variants} />
+                </motion.div>
+            </MotionConfig>
         )
 
-        const { container, getByTestId, rerender } = render(
+        const { getByTestId, rerender } = render(
             <Component initial="visible" />
         )
         rerender(<Component initial="hidden" />)
 
-        expect(container.firstChild as Element).toHaveStyle("opacity: 0")
+        expect(getByTestId("parent")).toHaveStyle("opacity: 0")
         expect(getByTestId("child")).toHaveStyle("opacity: 0")
     })
 
     test("it prevents rendering of children via context", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const scale = motionValue(0)
             const Component = () => (
-                <motion.div
-                    animate={{ opacity: 0 }}
-                    transition={{ type: false }}
-                    static
-                >
-                    <motion.button
-                        animate={{ scale: 2 }}
+                <MotionConfig isStatic>
+                    <motion.div
+                        animate={{ opacity: 0 }}
                         transition={{ type: false }}
-                        style={{ scale }}
-                    />
-                </motion.div>
+                    >
+                        <motion.button
+                            animate={{ scale: 2 }}
+                            transition={{ type: false }}
+                            style={{ scale }}
+                        />
+                    </motion.div>
+                </MotionConfig>
             )
 
             const { rerender } = render(<Component />)
@@ -128,13 +185,41 @@ describe("static prop", () => {
             staggerDirection: 1,
         }
         function Test() {
-            return <motion.div transition={transition} />
+            return (
+                <MotionConfig isStatic>
+                    <motion.div data-testid="child" transition={transition} />
+                </MotionConfig>
+            )
         }
 
-        const { container, rerender } = render(<Test />)
+        const { getByTestId, rerender } = render(<Test />)
 
         rerender(<Test />)
 
-        expect(container.firstChild).toBeTruthy()
+        expect(getByTestId("child")).toBeTruthy()
+    })
+
+    test("it reflects changes in attached motion values", async () => {
+        function Component() {
+            const x = useMotionValue(10)
+
+            React.useEffect(() => x.set(20), [x])
+
+            return <motion.div data-testid="child" style={{ x }} />
+        }
+        const { getByTestId } = render(
+            <MotionConfig isStatic>
+                <Component />
+            </MotionConfig>
+        )
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                expect(getByTestId("child") as Element).toHaveStyle(
+                    "transform: translateX(20px)"
+                )
+                resolve(undefined)
+            }, 40)
+        })
     })
 })

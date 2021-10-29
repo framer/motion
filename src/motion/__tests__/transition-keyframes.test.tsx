@@ -1,11 +1,11 @@
 import { render } from "../../../jest.setup"
 import { motion } from "../.."
-import { hasUpdated } from "../../animation/use-animate-prop"
 import * as React from "react"
+import { variantsHaveChanged } from "../../render/utils/animation-state"
 
 describe("keyframes transition", () => {
     test("keyframes as target", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const resolveContainer = () => {
                 requestAnimationFrame(() => {
                     resolve(container)
@@ -32,8 +32,10 @@ describe("keyframes transition", () => {
     })
 
     test("hasUpdated detects only changed keyframe arrays", async () => {
-        expect(hasUpdated(1, 2)).toBe(true)
-        expect(hasUpdated([1, 2, 3], [1, 2, 3])).toBe(false)
-        expect(hasUpdated([1, 2, 3], [1, 2, 4])).toBe(true)
+        expect(variantsHaveChanged("1", "2")).toBe(true)
+        expect(variantsHaveChanged(["1", "2", "3"], ["1", "2", "3"])).toBe(
+            false
+        )
+        expect(variantsHaveChanged(["1", "2", "3"], ["1", "2", "4"])).toBe(true)
     })
 })
