@@ -1,0 +1,133 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            #parent.b {
+                width: 200px;
+                position: absolute;
+                top: 100px;
+                left: 200px;
+                padding: 20px;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .b #child {
+                width: 100px;
+                height: 100px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent"><div id="child" /></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode, relativeEase } = window.Animate
+            const { matchViewportBox } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const child = document.getElementById("child")
+            const parentOrigin = parent.getBoundingClientRect()
+            const childOrigin = child.getBoundingClientRect()
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { duration: 1000, ease: relativeEase() }
+            )
+            const childProjection = createNode(
+                child,
+                parentProjection,
+                {},
+                { duration: 200, ease: relativeEase() }
+            )
+
+            parentProjection.willUpdate()
+            childProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            matchViewportBox(parent, parentOrigin)
+            matchViewportBox(child, childOrigin)
+
+            sync.postRender(() => {
+                sync.postRender(() => {
+                    matchViewportBox(parent, {
+                        top: 50,
+                        bottom: 170,
+                        left: 100,
+                        right: 270,
+                    })
+                    matchViewportBox(child, {
+                        top: 60,
+                        bottom: 135,
+                        left: 160,
+                        right: 235,
+                    })
+
+                    parentProjection.willUpdate()
+                    childProjection.willUpdate()
+
+                    parent.classList.remove("b")
+
+                    parentProjection.root.didUpdate()
+
+                    sync.postRender(() => {
+                        sync.postRender(() => {
+                            matchViewportBox(parent, {
+                                top: 25,
+                                bottom: 135,
+                                height: 110,
+                                left: 50,
+                                right: 185,
+                            })
+                            matchViewportBox(child, {
+                                top: 30,
+                                bottom: 92.5,
+                                height: 62.5,
+                                left: 80,
+                                right: 142.5,
+                            })
+                        })
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

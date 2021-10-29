@@ -1,12 +1,18 @@
+import { MotionStyle } from "../../.."
+import { IProjectionNode } from "../../../projection/node/types"
 import { HTMLRenderState } from "../types"
 
 export function renderHTML(
     element: HTMLElement,
-    { style, vars }: HTMLRenderState
+    { style, vars }: HTMLRenderState,
+    styleProp?: MotionStyle,
+    projection?: IProjectionNode
 ) {
-    // Directly assign style into the Element's style prop. In tests Object.assign is the
-    // fastest way to assign styles.
-    Object.assign(element.style, style)
+    Object.assign(
+        element.style,
+        style,
+        projection && projection.getProjectionStyles(styleProp)
+    )
 
     // Loop over any CSS variables and assign those.
     for (const key in vars) {

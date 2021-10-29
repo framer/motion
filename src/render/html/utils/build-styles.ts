@@ -1,28 +1,18 @@
 import { MotionProps } from "../../../motion/types"
 import { HTMLRenderState } from "../types"
 import { ResolvedValues } from "../../types"
-import { LayoutState, TargetProjection } from "../../utils/state"
-import { valueScaleCorrection } from "../../dom/projection/scale-correction"
 import { DOMVisualElementOptions } from "../../dom/types"
 import { buildTransform, buildTransformOrigin } from "./build-transform"
 import { isCSSVariable } from "../../dom/utils/is-css-variable"
 import { isTransformOriginProp, isTransformProp } from "./transform"
 import { getValueAsType } from "../../dom/value-types/get-as-type"
 import { numberValueTypes } from "../../dom/value-types/number"
-import {
-    BuildProjectionTransform,
-    BuildProjectionTransformOrigin,
-} from "./build-projection-transform"
 
 export function buildHTMLStyles(
     state: HTMLRenderState,
     latestValues: ResolvedValues,
-    projection: TargetProjection | undefined,
-    layoutState: LayoutState | undefined,
     options: DOMVisualElementOptions,
-    transformTemplate?: MotionProps["transformTemplate"],
-    buildProjectionTransform?: BuildProjectionTransform,
-    buildProjectionTransformOrigin?: BuildProjectionTransformOrigin
+    transformTemplate?: MotionProps["transformTemplate"]
 ) {
     const { style, vars, transform, transformKeys, transformOrigin } = state
 
@@ -76,67 +66,22 @@ export function buildHTMLStyles(
             // If this is a transform origin, flag and enable further transform-origin processing
             hasTransformOrigin = true
         } else {
-            /**
-             * If layout projection is on, and we need to perform scale correction for this
-             * value type, perform it.
-             */
-            if (
-                projection?.isHydrated &&
-                layoutState?.isHydrated &&
-                valueScaleCorrection[key]
-            ) {
-                const correctedValue = valueScaleCorrection[key].process(
-                    value,
-                    layoutState,
-                    projection
-                )
-
-                /**
-                 * Scale-correctable values can define a number of other values to break
-                 * down into. For instance borderRadius needs applying to borderBottomLeftRadius etc
-                 */
-                const { applyTo } = valueScaleCorrection[key]
-                if (applyTo) {
-                    const num = applyTo.length
-                    for (let i = 0; i < num; i++) {
-                        style[applyTo[i]] = correctedValue
-                    }
-                } else {
-                    style[key] = correctedValue
-                }
-            } else {
-                style[key] = valueAsType
-            }
+            style[key] = valueAsType
         }
     }
 
-    if (
-        layoutState &&
-        projection &&
-        buildProjectionTransform &&
-        buildProjectionTransformOrigin
-    ) {
-        style.transform = buildProjectionTransform(
-            layoutState.deltaFinal,
-            layoutState.treeScale,
-            hasTransform ? transform : undefined
+    if (hasTransform) {
+        style.transform = buildTransform(
+            state,
+            options,
+            transformIsNone,
+            transformTemplate
         )
-        if (transformTemplate) {
-            style.transform = transformTemplate(transform, style.transform)
-        }
-        style.transformOrigin = buildProjectionTransformOrigin(layoutState)
-    } else {
-        if (hasTransform) {
-            style.transform = buildTransform(
-                state,
-                options,
-                transformIsNone,
-                transformTemplate
-            )
-        }
+    } else if (transformTemplate) {
+        style.transform = transformTemplate({}, "")
+    }
 
-        if (hasTransformOrigin) {
-            style.transformOrigin = buildTransformOrigin(transformOrigin)
-        }
+    if (hasTransformOrigin) {
+        style.transformOrigin = buildTransformOrigin(transformOrigin)
     }
 }

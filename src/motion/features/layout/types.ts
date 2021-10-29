@@ -23,44 +23,34 @@ export interface LayoutProps {
      * only its position will animate. If `layout` is set to `"size"`, the position of the
      * component will change instantly but its size will animate.
      *
+     * If `layout` is set to `"size"`, the position of the component will change instantly and
+     * only its size will animate.
+     *
      * @public
      */
     layout?: boolean | "position" | "size"
 
     /**
-     * Enable shared layout transitions between components for children of `AnimateSharedLayout`.
+     * Enable shared layout transitions between different components with the same `layoutId`.
      *
      * When a component with a layoutId is removed from the React tree, and then
      * added elsewhere, it will visually animate from the previous component's bounding box
      * and its latest animated values.
      *
      * ```jsx
-     * <AnimateSharedLayout>
      *   {items.map(item => (
      *      <motion.li layout>
      *         {item.name}
      *         {item.isSelected && <motion.div layoutId="underline" />}
      *      </motion.li>
      *   ))}
-     * </AnimateSharedLayout>
      * ```
      *
-     * If the previous component remains in the tree it will either get hidden immediately or,
-     * if `type="crossfade"` is set on `AnimateSharedLayout`, it will crossfade to the new component.
+     * If the previous component remains in the tree it will crossfade with the new component.
      *
      * @public
      */
     layoutId?: string
-
-    /**
-     * This enables a component's transform to be reset during layout
-     * measurements. This is intended to be used independently of the
-     * layout prop, for instance if a parent component's transform is
-     * interfering with the measurement of a child.
-     *
-     * @internal
-     */
-    _layoutResetTransform?: boolean
 
     /**
      * A callback that will fire when a layout animation on this component completes.
@@ -68,4 +58,16 @@ export interface LayoutProps {
      * @public
      */
     onLayoutAnimationComplete?(): void
+
+    /**
+     * @public
+     */
+    layoutDependency?: any
+
+    /**
+     * Wether a projection node should measure its scroll when it or its descendants update their layout.
+     *
+     * @public
+     */
+    layoutScroll?: boolean
 }

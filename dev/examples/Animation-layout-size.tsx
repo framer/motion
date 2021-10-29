@@ -35,7 +35,6 @@ export const App = () => {
                 style={{
                     ...style,
                     height: open ? 300 : 100,
-                    display: open ? "none" : "block",
                 }}
             />
         </div>

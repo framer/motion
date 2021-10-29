@@ -1,0 +1,79 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box-a {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #box-b {
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                width: 200px;
+                height: 300px;
+                background-color: #09f;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box-a"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const {
+                matchViewportBox,
+                matchVisibility,
+                matchOpacity,
+            } = window.Assert
+
+            const box = document.getElementById("box-a")
+            const boxProjection = createNode(box, undefined, { layoutId: "a" })
+            const boxOrigin = box.getBoundingClientRect()
+
+            boxProjection.willUpdate()
+
+            const newBox = document.createElement("div")
+            newBox.id = "box-b"
+            document.body.appendChild(newBox)
+            const newBoxProjection = createNode(newBox, undefined, {
+                layoutId: "a",
+                crossfade: false,
+            })
+            newBoxProjection.setValue("rotate", 45)
+
+            newBoxProjection.root.didUpdate()
+
+            setTimeout(() => {
+                matchViewportBox(box, boxOrigin)
+                matchViewportBox(newBox, boxOrigin)
+                matchVisibility(box, "hidden")
+                matchVisibility(newBox, "visible")
+                matchOpacity(newBox, 1)
+            }, 50)
+        </script>
+    </body>
+</html>

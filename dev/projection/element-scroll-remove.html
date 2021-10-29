@@ -1,0 +1,124 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #scroll {
+                overflow: scroll;
+                position: relative;
+                height: 500px;
+                width: 500px;
+            }
+
+            #container {
+                position: relative;
+            }
+
+            #box-1,
+            #box-2 {
+                position: absolute;
+                top: 100px;
+                width: 100px;
+                height: 100px;
+                background: #00cc88;
+            }
+
+            .trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="scroll">
+            <div id="container">
+                <div id="box-1"></div>
+            </div>
+            <div class="trigger-overflow"></div>
+        </div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const {
+                matchViewportBox,
+                matchOpacity,
+                matchBorderRadius,
+                addPageScroll,
+            } = window.Assert
+
+            const scroll = document.getElementById("scroll")
+            const container = document.getElementById("container")
+            const box = document.getElementById("box-1")
+            const scrollProjection = createNode(scroll, undefined, {
+                layoutId: "scroll",
+                layoutScroll: true,
+            })
+            const containerProjection = createNode(
+                container,
+                scrollProjection,
+                { layoutId: "container" }
+            )
+            const boxProjection = createNode(box, containerProjection, {
+                layoutId: "a",
+            })
+
+            scroll.scrollTop = 100
+
+            // unmount box-1, mount box-2
+            boxProjection.willUpdate()
+            boxProjection.unmount()
+            container.removeChild(box)
+
+            const box2 = document.createElement("div")
+            box2.id = "box-2"
+
+            container.appendChild(box2)
+            const box2Projection = createNode(box2, containerProjection, {
+                layoutId: "b",
+            })
+
+            box2Projection.root.didUpdate()
+
+            matchViewportBox(box2, { top: 0, bottom: 100, left: 0, right: 100 })
+
+            // update the scroll while box-1 is unmounted
+            scroll.scrollTop = 50
+
+            // unmount box-2, mount box-1
+            box2Projection.willUpdate()
+            box2Projection.unmount()
+            container.removeChild(box2)
+
+            const box1 = document.createElement("div")
+            box1.id = "box-1"
+
+            container.appendChild(box1)
+            const box1Projection = createNode(box1, containerProjection, {
+                layoutId: "a",
+            })
+
+            box1Projection.root.didUpdate()
+
+            matchViewportBox(box1, {
+                top: 50,
+                bottom: 150,
+                left: 0,
+                right: 100,
+            })
+        </script>
+    </body>
+</html>

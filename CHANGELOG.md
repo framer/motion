@@ -2,9 +2,32 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.0.1] 2021-10-29
+
+### Fixed
+
+-   Removing context memoisation to ensure removed values are correctly animated to.
+-   Adding unmount check to `AnimatePresence` before updating state. [PR by @ctrlplusb](https://github.com/framer/motion/pull/796)
+-   Fixing types for multi-input `useTransform`. [PR by @kena0ki](https://github.com/framer/motion/pull/843)
+
+## [5.0.0] 2021-10-27
+
 ### Added
 
--   `layout="size"` for size-only layout animations.
+-   `Reorder` components to create drag-to-reorder interfaces.
+-   `LayoutGroup` allows namespacing `layoutId` and group elements that may affect each-other's layout on re-render.
+-   `layoutDependency` prop to restrict when components are measured.
+-   `layoutScroll` prop to hint to layout animations when a element is scrollable.
+-   Layout animations are auto-completed when the viewport resizes.
+-   `layout="size"` for size-only animations [PR by @bhollis](https://github.com/framer/motion/pull/1154).
+
+### Fixed
+
+-   Various layout projection improvements.
+
+### Changed
+
+-   `AnimateSharedLayout` is deprecated.
 
 ## [4.1.17] 2021-05-17
 

@@ -1,0 +1,98 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            #box.b {
+                width: 200px;
+                position: absolute;
+                top: 100px;
+                left: 200px;
+                padding: 20px;
+            }
+
+            #child.b {
+                width: 100px;
+                position: absolute;
+                top: 10px;
+                left: 10px;
+                padding: 10px;
+            }
+
+            #child.c {
+                left: 50px;
+                width: 25px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="box" data-layout-correct="true">
+            <div id="child" data-layout-correct="true"></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox } = window.Assert
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box)
+
+            const child = document.getElementById("child")
+            const childProjection = createNode(child, boxProjection)
+
+            const boxOrigin = box.getBoundingClientRect()
+            const childOrigin = child.getBoundingClientRect()
+
+            boxProjection.willUpdate()
+            childProjection.willUpdate()
+
+            box.classList.add("b")
+            child.classList.add("b")
+
+            boxProjection.root.didUpdate()
+
+            matchViewportBox(box, boxOrigin)
+            matchViewportBox(child, childOrigin)
+
+            // Second render
+            childProjection.willUpdate()
+            child.classList.add("b")
+            boxProjection.root.didUpdate()
+
+            matchViewportBox(box, boxOrigin)
+            matchViewportBox(child, childOrigin)
+        </script>
+    </body>
+</html>

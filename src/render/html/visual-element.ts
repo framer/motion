@@ -2,7 +2,6 @@ import { visualElement } from ".."
 import { HTMLRenderState } from "./types"
 import { VisualElementConfig } from "../types"
 import { checkTargetForNewValues, getOrigin } from "../utils/setters"
-import { getBoundingBox } from "../dom/projection/measure"
 import { DOMVisualElementOptions } from "../dom/types"
 import { buildHTMLStyles } from "./utils/build-styles"
 import { isCSSVariable } from "../dom/utils/is-css-variable"
@@ -11,10 +10,7 @@ import { isTransformProp } from "./utils/transform"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { renderHTML } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
-import {
-    buildLayoutProjectionTransform,
-    buildLayoutProjectionTransformOrigin,
-} from "./utils/build-projection-transform"
+import { measureViewportBox } from "../../projection/utils/measure"
 
 export function getComputedStyle(element: HTMLElement) {
     return window.getComputedStyle(element)
@@ -55,7 +51,7 @@ export const htmlConfig: VisualElementConfig<
     },
 
     measureViewportBox(element, { transformPagePoint }) {
-        return getBoundingBox(element, transformPagePoint)
+        return measureViewportBox(element, transformPagePoint)
     },
 
     /**
@@ -127,34 +123,18 @@ export const htmlConfig: VisualElementConfig<
 
     scrapeMotionValuesFromProps,
 
-    build(
-        element,
-        renderState,
-        latestValues,
-        projection,
-        layoutState,
-        options,
-        props
-    ) {
+    build(element, renderState, latestValues, options, props) {
         if (element.isVisible !== undefined) {
             renderState.style.visibility = element.isVisible
                 ? "visible"
                 : "hidden"
         }
 
-        const isProjectionTranform =
-            projection.isEnabled && layoutState.isHydrated
         buildHTMLStyles(
             renderState,
             latestValues,
-            projection,
-            layoutState,
             options,
-            props.transformTemplate,
-            isProjectionTranform ? buildLayoutProjectionTransform : undefined,
-            isProjectionTranform
-                ? buildLayoutProjectionTransformOrigin
-                : undefined
+            props.transformTemplate
         )
     },
 

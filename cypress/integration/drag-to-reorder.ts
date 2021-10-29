@@ -14,48 +14,137 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
 }
 
 describe("Drag to reorder", () => {
-    it("Works correctly with other layout animations", () => {
+    it("Y axis", () => {
         cy.visit("?test=drag-to-reorder")
             .wait(50)
-            .get("#h60")
+            .get("#Tomato")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    top: 0,
-                    left: 0,
-                    width: 300,
-                    height: 60,
+                    height: 68,
+                    left: 350,
+                    top: 174,
+                    width: 340,
                 })
             })
-            .get("#h40")
+            .get("#Cucumber")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    top: 160,
-                    left: 0,
-                    width: 300,
-                    height: 40,
+                    height: 68,
+                    left: 350,
+                    top: 252,
+                    width: 340,
                 })
             })
-            .trigger("pointerdown", 300, 300, { force: true })
+            .get("#Tomato")
+            .trigger("pointerdown", 360, 175, { force: true })
             .wait(50)
-            .trigger("pointermove", 295, 295, { force: true })
+            .trigger("pointermove", 360, 180, { force: true })
             .wait(50)
-            .trigger("pointermove", 200, 200, { force: true })
+            .trigger("pointermove", 360, 200, { force: true })
             .wait(50)
+            .trigger("pointermove", 360, 220, { force: true })
+            .wait(100)
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    top: 55,
-                    left: 0,
-                    width: 300,
-                    height: 40,
+                    height: 68,
+                    left: 350,
+                    top: 249,
+                    width: 340,
                 })
             })
-            .get("#h60")
+            .get("#Cucumber")
             .should(([$item]: any) => {
                 expectBbox($item, {
-                    top: 0,
-                    left: 0,
-                    width: 300,
-                    height: 60,
+                    height: 68,
+                    left: 350,
+                    top: 174,
+                    width: 340,
+                })
+            })
+            .get("#Tomato")
+            .trigger("pointerup", 360, 220, { force: true })
+            .wait(100)
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 252,
+                    width: 340,
+                })
+            })
+            .get("#Cucumber")
+            .trigger("pointerdown", 360, 175, { force: true })
+            .wait(50)
+            .trigger("pointermove", 360, 180, { force: true })
+            .wait(50)
+            .trigger("pointermove", 360, 200, { force: true })
+            .wait(50)
+            .trigger("pointermove", 360, 220, { force: true })
+            .wait(100)
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 249,
+                    width: 340,
+                })
+            })
+            .get("#Tomato")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 174,
+                    width: 340,
+                })
+            })
+    })
+
+    it("X axis", () => {
+        cy.visit("?test=drag-to-reorder&axis=x")
+            .wait(50)
+            .get("#Tomato")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 291,
+                    width: 340,
+                })
+            })
+            .get("#Cucumber")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 690,
+                    top: 291,
+                    width: 340,
+                })
+            })
+            .get("#Tomato")
+            .trigger("pointerdown", 360, 175, { force: true })
+            .wait(50)
+            .trigger("pointermove", 365, 175, { force: true })
+            .wait(50)
+            .trigger("pointermove", 425, 175, { force: true })
+            .wait(50)
+            .trigger("pointermove", 475, 175, { force: true })
+            .wait(100)
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 535,
+                    top: 291,
+                    width: 340,
+                })
+            })
+            .get("#Cucumber")
+            .should(([$item]: any) => {
+                expectBbox($item, {
+                    height: 68,
+                    left: 350,
+                    top: 291,
+                    width: 340,
                 })
             })
     })

@@ -167,7 +167,7 @@ describe("calcViewportAxisConstraints", () => {
                 { min: 200, max: 250 },
                 { min: 100, max: 300 }
             )
-        ).toEqual({ min: 100, max: 250 })
+        ).toEqual({ min: -100, max: 50 })
     })
     test("Correctly calculates constraints relative to the viewport when axis is smaller than and overlaps constraints", () => {
         expect(
@@ -175,7 +175,7 @@ describe("calcViewportAxisConstraints", () => {
                 { min: 350, max: 450 },
                 { min: 100, max: 300 }
             )
-        ).toEqual({ min: 100, max: 200 })
+        ).toEqual({ min: -250, max: -150 })
     })
     test("Correctly calculates constraints relative to the viewport when axis is larger than constraints", () => {
         expect(
@@ -183,7 +183,7 @@ describe("calcViewportAxisConstraints", () => {
                 { min: 100, max: 600 },
                 { min: 100, max: 300 }
             )
-        ).toEqual({ min: -200, max: 100 })
+        ).toEqual({ min: -300, max: 0 })
     })
 })
 

@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #box.b {
+                width: 200px;
+                position: absolute;
+                top: 100px;
+                left: 200px;
+                padding: 20px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="box" data-layout-correct="true"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const { matchViewportBox } = window.Assert
+            const box = document.getElementById("box")
+            const boxProjection = createNode(box)
+            const boxOrigin = box.getBoundingClientRect()
+
+            boxProjection.setValue("scale", 2)
+
+            sync.postRender(() => {
+                const transformedBox = {
+                    top: -50,
+                    left: -50,
+                    right: 150,
+                    bottom: 150,
+                }
+                matchViewportBox(box, transformedBox)
+
+                boxProjection.willUpdate()
+
+                box.classList.add("b")
+
+                boxProjection.root.didUpdate()
+
+                matchViewportBox(box, transformedBox)
+            })
+        </script>
+    </body>
+</html>

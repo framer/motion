@@ -7,6 +7,8 @@ export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export { MotionConfig } from "./components/MotionConfig"
 export { LazyMotion } from "./components/LazyMotion"
+export { LayoutGroup } from "./components/LayoutGroup"
+export { Reorder } from "./components/Reorder"
 
 /**
  * Features
@@ -61,12 +63,11 @@ export {
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
 export { createMotionComponent } from "./motion"
-export { addScaleCorrection } from "./render/dom/projection/scale-correction"
-export { snapshotViewportBox } from "./render/dom/projection/utils"
-export { createCrossfader } from "./components/AnimateSharedLayout/utils/crossfader"
 export { visualElement } from "./render"
 export { VisualElement } from "./render/types"
-export { batchLayout, flushLayout } from "./render/dom/utils/batch-layout"
+export { addScaleCorrector } from "./projection/styles/scale-correction"
+export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
+export { useResetProjection } from "./projection/use-reset-projection"
 
 /**
  * Contexts
@@ -74,6 +75,8 @@ export { batchLayout, flushLayout } from "./render/dom/utils/batch-layout"
 export { MotionConfigContext } from "./context/MotionConfigContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
+export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupContext"
+export { SwitchLayoutGroupContext } from "./context/SwitchLayoutGroupContext"
 
 /**
  * Types
@@ -128,23 +131,11 @@ export {
 } from "./gestures/drag/types"
 export { LayoutProps } from "./motion/features/layout/types"
 export { AnimatePresenceProps } from "./components/AnimatePresence/types"
-export { SharedLayoutProps } from "./components/AnimateSharedLayout/types"
-export {
-    SharedLayoutAnimationConfig,
-    VisibilityAction,
-    SharedLayoutSyncMethods,
-    SyncLayoutLifecycles,
-} from "./components/AnimateSharedLayout/types"
-export {
-    SharedLayoutContext,
-    FramerTreeLayoutContext,
-} from "./context/SharedLayoutContext"
-export { createBatcher } from "./components/AnimateSharedLayout/utils/batcher"
-export * from "./types/geometry"
 export { MotionConfigProps } from "./components/MotionConfig"
 export { LazyProps } from "./components/LazyMotion/types"
 export { FlatTree } from "./render/utils/flat-tree"
-
+export * from "./projection/geometry/types"
+export { IProjectionNode } from "./projection/node/types"
 /**
  * Deprecated
  */

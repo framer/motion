@@ -1,44 +1,46 @@
-import { motion, AnimateSharedLayout, AnimatePresence } from "@framer"
+import { motion, AnimatePresence } from "@framer"
 import * as React from "react"
 
+const transition = { duration: 0.2, ease: () => 0.5 }
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
     const [state, setState] = React.useState(true)
 
     return (
-        <AnimateSharedLayout type="crossfade">
-            <AnimatePresence>
+        <AnimatePresence>
+            <motion.div
+                key={state ? "a" : "b"}
+                style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: 500,
+                    height: 400,
+                }}
+            >
                 <motion.div
-                    key={state ? "a" : "b"}
+                    id={state ? "a" : "b"}
+                    data-testid="box"
+                    layoutId="box"
+                    layout={type}
                     style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: 500,
-                        height: 400,
+                        ...(state ? a : b),
+                        backgroundColor: state ? "#f00" : "#0f0",
+                        borderRadius: state ? 0 : 20,
                     }}
+                    transition={transition}
+                    onClick={() => setState(!state)}
                 >
                     <motion.div
-                        id={state ? "a" : "b"}
-                        data-testid="box"
-                        layoutId="box"
-                        layout={type}
-                        style={{
-                            ...(state ? a : b),
-                            backgroundColor: state ? "#f00" : "#0f0",
-                            borderRadius: state ? 0 : 20,
-                        }}
-                        onClick={() => setState(!state)}
-                    >
-                        <motion.div
-                            layoutId="child"
-                            style={state ? childA : childB}
-                        />
-                    </motion.div>
+                        id="child"
+                        layoutId="child"
+                        transition={transition}
+                        style={state ? childA : childB}
+                    />
                 </motion.div>
-            </AnimatePresence>
-        </AnimateSharedLayout>
+            </motion.div>
+        </AnimatePresence>
     )
 }
 
