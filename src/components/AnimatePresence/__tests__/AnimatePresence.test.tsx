@@ -336,6 +336,37 @@ describe("AnimatePresence", () => {
         return await expect(promise).resolves.toBe(1)
     })
 
+    test("Immediately remove child if no exit animations defined", async () => {
+        const promise = new Promise<HTMLElement>((resolve) => {
+            const Component = ({ i }: { i: number }) => {
+                return (
+                    <AnimatePresence exitBeforeEnter>
+                        <motion.div
+                            key={i}
+                            data-testid={i}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.5 }}
+                        />
+                    </AnimatePresence>
+                )
+            }
+
+            const { rerender, getByTestId } = render(<Component i={0} />)
+            rerender(<Component i={0} />)
+            setTimeout(() => {
+                rerender(<Component i={1} />)
+                rerender(<Component i={1} />)
+            }, 50)
+            setTimeout(() => {
+                rerender(<Component i={2} />)
+                rerender(<Component i={2} />)
+                resolve(getByTestId("2"))
+            }, 150)
+        })
+
+        return await expect(promise).resolves.toBeTruthy()
+    })
+
     test("Exit variants are triggered with `AnimatePresence.custom`, not that of the element.", async () => {
         const variants = {
             enter: { x: 0, transition: { type: false } },
