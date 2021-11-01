@@ -30,6 +30,8 @@ import {
 import { LayoutUpdateData } from "../../projection/node/types"
 import { addDomEvent } from "../../events/use-dom-event"
 import { mix } from "popmotion"
+import { percent } from "style-value-types"
+import { calcLength } from "../../projection/geometry/delta-calc"
 
 export const elementDragControls = new WeakMap<
     VisualElement,
@@ -125,7 +127,22 @@ export class VisualElementDragControls {
              * Record gesture origin
              */
             eachAxis((axis) => {
-                this.originPoint[axis] = this.getAxisMotionValue(axis).get()
+                let current = this.getAxisMotionValue(axis).get() || 0
+
+                /**
+                 * If the MotionValue is a percentage value convert to px
+                 */
+                if (percent.test(current)) {
+                    const measuredAxis =
+                        this.visualElement.projection?.layout?.actual[axis]
+
+                    if (measuredAxis) {
+                        const length = calcLength(measuredAxis)
+                        current = length * (parseFloat(current) / 100)
+                    }
+                }
+
+                this.originPoint[axis] = current
             })
 
             // Fire onDragStart event

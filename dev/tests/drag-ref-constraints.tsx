@@ -1,4 +1,4 @@
-import { motion } from "@framer"
+import { motion, useMotionValue } from "@framer"
 import * as React from "react"
 
 // It's important for this test to only trigger a single rerender while dragging (in response to onDragStart) of draggable component.
@@ -13,7 +13,7 @@ export const App = () => {
     React.useLayoutEffect(() => {
         window.scrollTo(0, 100)
     }, [])
-
+    const x = useMotionValue("100%")
     return (
         <div style={{ height: 2000, paddingTop: 100 }}>
             <motion.div
@@ -31,6 +31,7 @@ export const App = () => {
                         width: 50,
                         height: 50,
                         background: dragging ? "yellow" : "red",
+                        x,
                     }}
                     dragConstraints={containerRef}
                     layout={layout}

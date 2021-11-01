@@ -1,8 +1,17 @@
 import { motion } from "@framer"
 import * as React from "react"
 
-// It's important for this test to only trigger a single rerender while dragging (in response to onDragStart) of draggable component.
+function getValueParam(params: any, name: string) {
+    const param = params.get(name) as string | undefined
+    if (!param) return 0
+    if (param.endsWith("%")) {
+        return param
+    } else {
+        return parseFloat(param)
+    }
+}
 
+// It's important for this test to only trigger a single rerender while dragging (in response to onDragStart) of draggable component.
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const axis = params.get("axis")
@@ -12,8 +21,8 @@ export const App = () => {
     const right = parseFloat(params.get("right")) || undefined
     const bottom = parseFloat(params.get("bottom")) || undefined
     const snapToOrigin = Boolean(params.get("return"))
-    const x = parseFloat(params.get("x")) || 0
-    const y = parseFloat(params.get("y")) || 0
+    const x = getValueParam(params, "x")
+    const y = getValueParam(params, "y")
     const layout = params.get("layout") || undefined
 
     // We do this to test when scroll position isn't 0/0

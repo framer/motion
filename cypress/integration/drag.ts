@@ -50,6 +50,29 @@ describe("Drag", () => {
             })
     })
 
+    it("Drags the element by the defined distance with percentage initial offset", () => {
+        cy.visit("?test=drag&x=200%&y=200%")
+            .get("[data-testid='draggable']")
+            .wait(200)
+            .trigger("pointerdown", 5, 5)
+            .trigger("pointermove", 10, 10) // Gesture will start from first move past threshold
+            .wait(50)
+            .trigger("pointermove", 200, 300, { force: true })
+            .wait(50)
+            .trigger("pointerup", { force: true })
+            .should(($draggable: any) => {
+                const draggable = $draggable[0] as HTMLDivElement
+                const { left, top } = draggable.getBoundingClientRect()
+
+                expect(left).to.equal(300)
+
+                // TODO: This should actually be 400, but for some reason the test scroll
+                // scrolls an additional 100px when dragging starts. But this has been manually verified
+                // as working
+                expect(top).to.equal(300)
+            })
+    })
+
     it("Locks drag to x", () => {
         cy.visit("?test=drag&axis=x")
             .get("[data-testid='draggable']")
