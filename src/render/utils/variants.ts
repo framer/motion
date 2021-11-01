@@ -58,6 +58,9 @@ export function resolveVariantFromProps(
     currentValues: ResolvedValues = {},
     currentVelocity: ResolvedValues = {}
 ) {
+    /**
+     * If the variant definition is a function, resolve.
+     */
     if (typeof definition === "function") {
         definition = definition(
             custom ?? props.custom,
@@ -66,10 +69,19 @@ export function resolveVariantFromProps(
         )
     }
 
+    /**
+     * If the variant definition is a variant label, or
+     * the function returned a variant label, resolve.
+     */
     if (typeof definition === "string") {
         definition = props.variants?.[definition]
     }
 
+    /**
+     * At this point we've resolved both functions and variant labels,
+     * but the resolved variant label might itself have been a function.
+     * If so, resolve. This can only have returned a valid target object.
+     */
     if (typeof definition === "function") {
         definition = definition(
             custom ?? props.custom,
