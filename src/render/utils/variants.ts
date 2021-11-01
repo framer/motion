@@ -58,13 +58,27 @@ export function resolveVariantFromProps(
     currentValues: ResolvedValues = {},
     currentVelocity: ResolvedValues = {}
 ) {
+    if (typeof definition === "function") {
+        definition = definition(
+            custom ?? props.custom,
+            currentValues,
+            currentVelocity
+        )
+    }
+
     if (typeof definition === "string") {
         definition = props.variants?.[definition]
     }
 
-    return typeof definition === "function"
-        ? definition(custom ?? props.custom, currentValues, currentVelocity)
-        : definition
+    if (typeof definition === "function") {
+        definition = definition(
+            custom ?? props.custom,
+            currentValues,
+            currentVelocity
+        )
+    }
+
+    return definition
 }
 
 /**

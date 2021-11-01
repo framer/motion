@@ -1083,7 +1083,7 @@ export type TargetResolver = (
     custom: any,
     current: Target,
     velocity: Target
-) => TargetAndTransition
+) => TargetAndTransition | string
 
 /**
  * @public
