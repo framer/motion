@@ -4,8 +4,11 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [5.0.2] 2021-11-02
 
+### Fixed
+
 -   Convert x/y from percent to pixels before drag. [Issue](https://github.com/framer/motion/issues/424)
 -   Dynamic functions passed to `controls.start()` can now return variant names. [Issue](https://github.com/framer/motion/issues/503)
+-   Factors in padding when measuring elements for `width`/`height` unit conversion. [Issue](https://github.com/framer/motion/issues/368)
 
 ## [5.0.1] 2021-11-01
 
