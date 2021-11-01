@@ -26,7 +26,7 @@ export type LayoutUpdateListener = (
     // config?: SharedLayoutAnimationConfig
 ) => void
 export type UpdateListener = (latest: ResolvedValues) => void
-export type AnimationStartListener = () => void
+export type AnimationStartListener = (definition: AnimationDefinition) => void
 export type AnimationCompleteListener = (
     definition: AnimationDefinition
 ) => void
@@ -59,6 +59,12 @@ export interface VisualElementLifecycles {
     /**
      * Callback when animation defined in `animate` begins.
      *
+     * The provided callback will be called with the triggering animation definition.
+     * If this is a variant, it'll be the variant name, and if a target object
+     * then it'll be the target object.
+     *
+     * This way, it's possible to figure out which animation has started.
+     *
      * ```jsx
      * function onStart() {
      *   console.log("Animation started")
@@ -67,12 +73,12 @@ export interface VisualElementLifecycles {
      * <motion.div animate={{ x: 100 }} onAnimationStart={onStart} />
      * ```
      */
-    onAnimationStart?(): void
+    onAnimationStart?(definition: AnimationDefinition): void
 
     /**
      * Callback when animation defined in `animate` is complete.
      *
-     * The provided callback will be called the triggering animation definition.
+     * The provided callback will be called with the triggering animation definition.
      * If this is a variant, it'll be the variant name, and if a target object
      * then it'll be the target object.
      *
