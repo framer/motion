@@ -93,22 +93,24 @@ function removeNonTranslationalTransform(visualElement: VisualElement) {
     return removedTransforms
 }
 
-const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
-    // Dimensions
-    width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) =>
-        x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
-    height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) =>
-        y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
+export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
+    {
+        // Dimensions
+        width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) =>
+            x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
+        height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) =>
+            y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
 
-    top: (_bbox, { top }) => parseFloat(top as string),
-    left: (_bbox, { left }) => parseFloat(left as string),
-    bottom: ({ y }, { top }) => parseFloat(top as string) + (y.max - y.min),
-    right: ({ x }, { left }) => parseFloat(left as string) + (x.max - x.min),
+        top: (_bbox, { top }) => parseFloat(top as string),
+        left: (_bbox, { left }) => parseFloat(left as string),
+        bottom: ({ y }, { top }) => parseFloat(top as string) + (y.max - y.min),
+        right: ({ x }, { left }) =>
+            parseFloat(left as string) + (x.max - x.min),
 
-    // Transform
-    x: getTranslateFromMatrix(4, 13),
-    y: getTranslateFromMatrix(5, 14),
-}
+        // Transform
+        x: getTranslateFromMatrix(4, 13),
+        y: getTranslateFromMatrix(5, 14),
+    }
 
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
