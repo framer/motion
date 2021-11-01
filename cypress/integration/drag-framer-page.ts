@@ -28,7 +28,7 @@ describe("Nested Scroll/Page", () => {
             .trigger("pointermove", 50, 50, { force: true }) // Gesture will start from first move past threshold
             .wait(50)
             .trigger("pointermove", 10, 10, { force: true })
-            .wait(100)
+            .wait(200)
             .trigger("pointerup")
             .wait(70)
             .should(([$a]: any) => {
