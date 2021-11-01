@@ -95,8 +95,10 @@ function removeNonTranslationalTransform(visualElement: VisualElement) {
 
 const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
     // Dimensions
-    width: ({ x }) => x.max - x.min,
-    height: ({ y }) => y.max - y.min,
+    width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) =>
+        x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
+    height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) =>
+        y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
 
     top: (_bbox, { top }) => parseFloat(top as string),
     left: (_bbox, { left }) => parseFloat(left as string),
@@ -116,9 +118,7 @@ const convertChangedValueTypes = (
     const originBbox = visualElement.measureViewportBox()
     const element = visualElement.getInstance()
     const elementComputedStyle = getComputedStyle(element)
-    const { display, top, left, bottom, right, transform } =
-        elementComputedStyle
-    const originComputedStyle = { top, left, bottom, right, transform }
+    const { display } = elementComputedStyle
 
     // If the element is currently set to display: "none", make it visible before
     // measuring the target bounding box
@@ -140,7 +140,7 @@ const convertChangedValueTypes = (
         const value = visualElement.getValue(key) as MotionValue
         setAndResetVelocity(
             value,
-            positionalValues[key](originBbox, originComputedStyle)
+            positionalValues[key](originBbox, elementComputedStyle)
         )
         target[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
