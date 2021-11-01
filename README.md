@@ -68,7 +68,7 @@ export const MyComponent = ({ isVisible }) => (
 
 Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
 
-Or checkout [our examples](https://framer.com/motion) for inspiration.
+Or checkout [our examples](https://www.framer.com/docs/examples/) for inspiration.
 
 ### 🛠 Contribute
 
