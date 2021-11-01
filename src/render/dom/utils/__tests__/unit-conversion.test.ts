@@ -7,19 +7,19 @@ describe("Unit conversion", () => {
             y: { min: 0, max: 300 },
         }
         expect(
-            positionalValues.width(testDimensions, { paddingTop: "50px" })
+            positionalValues.width(testDimensions, { paddingLeft: "50px" })
         ).toBe(50)
 
         expect(
-            positionalValues.width(testDimensions, { paddingBottom: "25px" })
+            positionalValues.width(testDimensions, { paddingRight: "25px" })
         ).toBe(75)
 
         expect(
-            positionalValues.height(testDimensions, { paddingLeft: "50px" })
+            positionalValues.height(testDimensions, { paddingTop: "50px" })
         ).toBe(250)
 
         expect(
-            positionalValues.height(testDimensions, { paddingRight: "25px" })
+            positionalValues.height(testDimensions, { paddingBottom: "25px" })
         ).toBe(275)
     })
 })
