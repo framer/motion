@@ -1,6 +1,7 @@
 import { drag } from "../../motion/features/drag"
-import { layoutAnimations } from "../../motion/features/layout"
+import { layoutFeatures } from "../../motion/features/layout"
 import { FeatureBundle } from "../../motion/features/types"
+import { HTMLProjectionNode } from "../../projection"
 import { domAnimation } from "./features-animation"
 
 /**
@@ -9,5 +10,6 @@ import { domAnimation } from "./features-animation"
 export const domMax: FeatureBundle = {
     ...domAnimation,
     ...drag,
-    ...layoutAnimations,
+    ...layoutFeatures,
+    projectionNodeConstructor: HTMLProjectionNode,
 }

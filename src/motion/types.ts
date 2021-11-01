@@ -73,15 +73,13 @@ export interface CustomStyles {
     image?: string
 }
 
-export type MakeMotion<T> = MakeCustomValueType<
-    {
-        [K in keyof T]:
-            | T[K]
-            | MotionValue<number>
-            | MotionValue<string>
-            | MotionValue<any> // A permissive type for Custom value types
-    }
->
+export type MakeMotion<T> = MakeCustomValueType<{
+    [K in keyof T]:
+        | T[K]
+        | MotionValue<number>
+        | MotionValue<string>
+        | MotionValue<any> // A permissive type for Custom value types
+}>
 
 export type MotionCSS = MakeMotion<
     Omit<CSSProperties, "rotate" | "scale" | "perspective">
@@ -128,24 +126,6 @@ export interface AnimationProps {
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.
      *
-     * @library
-     *
-     * ```jsx
-     * // As values
-     * <Frame animate={{ opacity: 1 }} />
-     *
-     * // As variant
-     * <Frame animate="visible" variants={variants} />
-     *
-     * // Multiple variants
-     * <Frame animate={["visible", "active"]} variants={variants} />
-     *
-     * // AnimationControls
-     * <Frame animate={animation} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * // As values
      * <motion.div animate={{ opacity: 1 }} />
@@ -169,28 +149,6 @@ export interface AnimationProps {
      *
      * This limitation exists because React doesn't allow components to defer unmounting until after
      * an animation is complete. Once this limitation is fixed, the `AnimatePresence` component will be unnecessary.
-     *
-     * @library
-     *
-     * ```jsx
-     * import { Frame, AnimatePresence } from 'framer'
-     *
-     * export function MyComponent(props) {
-     *   return (
-     *     <AnimatePresence>
-     *        {props.isVisible && (
-     *          <Frame
-     *            initial={{ opacity: 0 }}
-     *            animate={{ opacity: 1 }}
-     *            exit={{ opacity: 0 }}
-     *          />
-     *        )}
-     *     </AnimatePresence>
-     *   )
-     * }
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * import { AnimatePresence, motion } from 'framer-motion'
@@ -218,27 +176,7 @@ export interface AnimationProps {
      *
      * Using `transition` options like `delayChildren` and `staggerChildren`, you can orchestrate
      * when children animations play relative to their parent.
-     *
-     * @library
-     *
-     * After passing variants to one or more `Frame`'s `variants` prop, these variants
-     * can be used in place of values on the `animate`, `initial`, `whileFocus`, `whileTap` and `whileHover` props.
-     *
-     * ```jsx
-     * const variants = {
-     *   active: {
-     *     backgroundColor: "#f00"
-     *   },
-     *   inactive: {
-     *     backgroundColor: "#fff",
-     *     transition: { duration: 2 }
-     *   }
-     * }
-     *
-     * <Frame variants={variants} animate="active" />
-     * ```
-     *
-     * @motion
+
      *
      * After passing variants to one or more `motion` component's `variants` prop, these variants
      * can be used in place of values on the `animate`, `initial`, `whileFocus`, `whileTap` and `whileHover` props.
@@ -261,21 +199,6 @@ export interface AnimationProps {
 
     /**
      * Default transition. If no `transition` is defined in `animate`, it will use the transition defined here.
-     *
-     * @library
-     *
-     * ```jsx
-     * const spring = {
-     *   type: "spring",
-     *   damping: 10,
-     *   stiffness: 100
-     * }
-     *
-     * <Frame transition={spring} animate={{ scale: 1.2 }} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * const spring = {
      *   type: "spring",
@@ -295,23 +218,6 @@ export interface AnimationProps {
 export interface MotionAdvancedProps {
     /**
      * Custom data to use to resolve dynamic variants differently for each animating component.
-     *
-     * @library
-     *
-     * ```jsx
-     * const variants = {
-     *   visible: (custom) => ({
-     *     opacity: 1,
-     *     transition: { delay: custom * 0.2 }
-     *   })
-     * }
-     *
-     * <Frame custom={0} animate="visible" variants={variants} />
-     * <Frame custom={1} animate="visible" variants={variants} />
-     * <Frame custom={2} animate="visible" variants={variants} />
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * const variants = {
@@ -357,24 +263,6 @@ export interface MotionProps
      *
      * Set to `false` to initialise with the values in `animate` (disabling the mount animation)
      *
-     * @library
-     *
-     * ```jsx
-     * // As values
-     * <Frame initial={{ opacity: 1 }} />
-     *
-     * // As variant
-     * <Frame initial="visible" variants={variants} />
-     *
-     * // Multiple variants
-     * <Frame initial={["visible", "active"]} variants={variants} />
-     *
-     * // As false (disable mount animation)
-     * <Frame initial={false} animate={{ opacity: 0 }} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * // As values
      * <motion.div initial={{ opacity: 1 }} />
@@ -392,15 +280,6 @@ export interface MotionProps
     initial?: boolean | Target | VariantLabels
 
     /**
-     * @library
-     *
-     * The React DOM `style` prop, useful for setting CSS properties that aren't explicitly exposed by `Frame` props.
-     *
-     * ```jsx
-     * <Frame style={{ mixBlendMode: "difference" }}  />
-     * ```
-     *
-     * @motion
      *
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
      *
@@ -417,18 +296,6 @@ export interface MotionProps
     /**
      * By default, Framer Motion generates a `transform` property with a sensible transform order. `transformTemplate`
      * can be used to create a different order, or to append/preprend the automatically generated `transform` property.
-     *
-     * @library
-     *
-     * ```jsx
-     * function transformTemplate({ x, rotate }) {
-     *   return `rotate(${rotate}deg) translateX(${x}px)`
-     * }
-     *
-     * <Frame x={0} rotate={180} transformTemplate={transformTemplate} />
-     * ```
-     *
-     * @motion
      *
      * ```jsx
      * <motion.div

@@ -1,8 +1,6 @@
 import { FeatureComponents } from "../types"
-import { AnimateLayoutContextProvider } from "./Animate"
-import { MeasureContextProvider } from "./Measure"
+import { MeasureLayout } from "./MeasureLayout"
 
-export const layoutAnimations: FeatureComponents = {
-    measureLayout: MeasureContextProvider,
-    layoutAnimation: AnimateLayoutContextProvider,
+export const layoutFeatures: FeatureComponents = {
+    measureLayout: MeasureLayout,
 }

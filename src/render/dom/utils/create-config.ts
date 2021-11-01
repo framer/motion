@@ -14,7 +14,8 @@ export function createDomMotionConfig<Props>(
     Component: string | React.ComponentType<Props>,
     { forwardMotionProps = false }: CustomMotionComponentConfig,
     preloadedFeatures?: FeatureComponents,
-    createVisualElement?: CreateVisualElement<any>
+    createVisualElement?: CreateVisualElement<any>,
+    projectionNodeConstructor?: any
 ) {
     const baseConfig = isSVGComponent(Component)
         ? svgMotionConfig
@@ -25,6 +26,7 @@ export function createDomMotionConfig<Props>(
         preloadedFeatures,
         useRender: createUseRender(forwardMotionProps),
         createVisualElement,
+        projectionNodeConstructor,
         Component,
     } as
         | MotionComponentConfig<SVGElement, SVGRenderState>

@@ -6,23 +6,6 @@ export interface AnimatePresenceProps {
      * By passing `initial={false}`, `AnimatePresence` will disable any initial animations on children
      * that are present when the component is first rendered.
      *
-     * @library
-     *
-     * ```jsx
-     * <AnimatePresence initial={false}>
-     *   {isVisible && (
-     *     <Frame
-     *       key="modal"
-     *       initial={{ opacity: 0 }}
-     *       animate={{ opacity: 1 }}
-     *       exit={{ opacity: 0 }}
-     *     />
-     *   )}
-     * </AnimatePresence>
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * <AnimatePresence initial={false}>
      *   {isVisible && (
@@ -58,21 +41,7 @@ export interface AnimatePresenceProps {
 
     /**
      * If set to `true`, `AnimatePresence` will only render one component at a time. The exiting component
-     * will finished its exit animation before the entering component is rendered.
-     *
-     * @library
-     *
-     * ```jsx
-     * function MyComponent({ currentItem }) {
-     *   return (
-     *     <AnimatePresence exitBeforeEnter>
-     *       <Frame key={currentItem} exit={{ opacity: 0 }} />
-     *     </AnimatePresence>
-     *   )
-     * }
-     * ```
-     *
-     * @motion
+     * will finish its exit animation before the entering component is rendered.
      *
      * ```jsx
      * const MyComponent = ({ currentItem }) => (

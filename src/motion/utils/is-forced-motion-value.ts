@@ -1,5 +1,5 @@
+import { scaleCorrectors } from "../../projection/styles/scale-correction"
 import { MotionProps } from "../.."
-import { valueScaleCorrection } from "../../render/dom/projection/scale-correction"
 import {
     isTransformOriginProp,
     isTransformProp,
@@ -13,6 +13,6 @@ export function isForcedMotionValue(
         isTransformProp(key) ||
         isTransformOriginProp(key) ||
         ((layout || layoutId !== undefined) &&
-            (!!valueScaleCorrection[key] || key === "opacity"))
+            (!!scaleCorrectors[key] || key === "opacity"))
     )
 }

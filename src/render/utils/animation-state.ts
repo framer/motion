@@ -241,7 +241,6 @@ export function createAnimationState(
                 ...prevResolvedValues,
                 ...resolvedValues,
             }
-
             const markToAnimate = (key: string) => {
                 shouldAnimateType = true
                 removedKeys.delete(key)
@@ -358,7 +357,6 @@ export function createAnimationState(
         }
 
         isInitialRender = false
-
         return shouldAnimate ? animate(animations) : Promise.resolve()
     }
 

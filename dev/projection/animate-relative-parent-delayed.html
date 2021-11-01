@@ -1,0 +1,96 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #parent {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            #parent.b {
+                width: 200px;
+                position: absolute;
+                top: 100px;
+                left: 200px;
+                padding: 20px;
+                display: flex;
+                justify-content: flex-end;
+            }
+
+            .b #child {
+                width: 100px;
+                height: 100px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent"><div id="child" /></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const { matchViewportBox } = window.Assert
+
+            const parent = document.getElementById("parent")
+            const child = document.getElementById("child")
+            const parentOrigin = parent.getBoundingClientRect()
+
+            const parentProjection = createNode(
+                parent,
+                undefined,
+                {},
+                { delay: 1000 }
+            )
+            const childProjection = createNode(child, parentProjection)
+
+            parentProjection.willUpdate()
+            childProjection.willUpdate()
+
+            parent.classList.add("b")
+
+            parentProjection.root.didUpdate()
+
+            sync.postRender(() => {
+                sync.postRender(() => {
+                    matchViewportBox(parent, parentOrigin)
+                    matchViewportBox(child, {
+                        bottom: 85,
+                        height: 75,
+                        left: 60,
+                        right: 135,
+                        top: 10,
+                        width: 75,
+                        x: 60,
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

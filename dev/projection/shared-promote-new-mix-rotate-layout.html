@@ -1,0 +1,130 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                width: 100vw;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            .parent {
+                background: #363636;
+                display: flex;
+                justify-content: flex-end;
+                align-items: flex-end;
+            }
+
+            .child {
+                background: #ff0055;
+            }
+
+            #parent-a {
+                width: 100px;
+                height: 100px;
+            }
+
+            #child-a {
+                width: 50px;
+                height: 50px;
+            }
+
+            #parent-b {
+                width: 400px;
+                height: 200px;
+            }
+
+            #child-b {
+                width: 100px;
+                height: 100px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #09f !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="parent-a" class="parent">
+            <div id="child-a" class="child"></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const {
+                matchViewportBox,
+                matchVisibility,
+                matchOpacity,
+                matchBorderRadius,
+                matchRotate,
+            } = window.Assert
+
+            const parentA = document.getElementById("parent-a")
+            const parentAProjection = createNode(parentA, undefined, {
+                layoutId: "parent",
+            })
+            const childA = document.getElementById("child-a")
+            const childAProjection = createNode(childA, parentAProjection, {
+                layoutId: "child",
+            })
+
+            childAProjection.setValue("rotate", 45)
+            childAProjection.render()
+
+            childAProjection.willUpdate()
+            parentAProjection.willUpdate()
+
+            const parentB = document.createElement("div")
+            parentB.id = "parent-b"
+            parentB.classList.add("parent")
+            document.body.appendChild(parentB)
+            const parentBProjection = createNode(parentB, undefined, {
+                layoutId: "parent",
+            })
+            parentBProjection.setValue("rotate", 45)
+
+            // This emulates setting rotate to style, immediately rendering
+            // the parent.
+            parentBProjection.render()
+
+            const childB = document.createElement("div")
+            childB.id = "child-b"
+            childB.classList.add("child")
+            parentB.appendChild(childB)
+            const childBProjection = createNode(childB, parentBProjection, {
+                layoutId: "child",
+            })
+            childAProjection.root.didUpdate()
+
+            sync.postRender(() => {
+                const parentBbox = parentB.getBoundingClientRect()
+                matchViewportBox(parentA, parentBbox)
+
+                const childBbox = childB.getBoundingClientRect()
+                // TODO: Nested transforms not expected to match currently
+                // matchViewportBox(childA, childBbox)
+
+                matchRotate(parentA, 22.5)
+                matchRotate(childA, 22.5)
+                matchRotate(parentB, 22.5)
+                matchRotate(childB, 22.5)
+            })
+        </script>
+    </body>
+</html>

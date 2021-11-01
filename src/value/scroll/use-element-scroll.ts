@@ -28,30 +28,6 @@ const getElementScrollOffsets = (element: HTMLElement) => () => {
  *
  * This element must be set to `overflow: scroll` on either or both axes to report scroll offset.
  *
- * @library
- *
- * ```jsx
- * import * as React from "react"
- * import {
- *   Frame,
- *   useElementScroll,
- *   useTransform
- * } from "framer"
- *
- * export function MyComponent() {
- *   const ref = React.useRef()
- *   const { scrollYProgress } = useElementScroll(ref)
- *
- *   return (
- *     <Frame ref={ref}>
- *       <Frame scaleX={scrollYProgress} />
- *     </Frame>
- *   )
- * }
- * ```
- *
- * @motion
- *
  * ```jsx
  * export const MyComponent = () => {
  *   const ref = useRef()

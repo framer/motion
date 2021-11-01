@@ -1,6 +1,9 @@
 import * as React from "react"
 import { useMemo } from "react"
-import { PresenceContext } from "../../context/PresenceContext"
+import {
+    PresenceContext,
+    PresenceContextProps,
+} from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
 
@@ -32,19 +35,19 @@ export const PresenceChild = ({
     const id = useConstant(getPresenceId)
 
     const context = useMemo(
-        () => ({
+        (): PresenceContextProps => ({
             id,
             initial,
             isPresent,
             custom,
             onExitComplete: (childId: number) => {
                 presenceChildren.set(childId, true)
-                let allComplete = true
-                presenceChildren.forEach((isComplete) => {
-                    if (!isComplete) allComplete = false
-                })
 
-                allComplete && onExitComplete?.()
+                for (const isComplete of presenceChildren.values()) {
+                    if (!isComplete) return // can stop searching when any is incomplete
+                }
+
+                onExitComplete?.()
             },
             register: (childId: number) => {
                 presenceChildren.set(childId, false)

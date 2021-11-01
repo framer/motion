@@ -5,7 +5,7 @@ import sync, { getFrameData, cancelSync } from "framesync"
 import { secondsToMilliseconds } from "../utils/time-conversion"
 import { addPointerEvent } from "../events/use-pointer-event"
 import { distance, pipe } from "popmotion"
-import { Point2D, TransformPoint2D } from "../types/geometry"
+import { Point, TransformPoint } from "../projection/geometry/types"
 
 export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
 
@@ -13,18 +13,6 @@ export type AnyPointerEvent = MouseEvent | TouchEvent | PointerEvent
  * Passed in to pan event handlers like `onPan` the `PanInfo` object contains
  * information about the current state of the tap gesture such as its
  * `point`, `delta`, `offset` and `velocity`.
- *
- * @library
- *
- * ```jsx
- * function onPan(event, info) {
- *   console.log(info.point.x, info.point.y)
- * }
- *
- * <Frame onPan={onPan} />
- * ```
- *
- * @motion
  *
  * ```jsx
  * <motion.div onPan={(event, info) => {
@@ -39,18 +27,6 @@ export interface PanInfo {
      * Contains `x` and `y` values for the current pan position relative
      * to the device or page.
      *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.point.x, info.point.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * function onPan(event, info) {
      *   console.log(info.point.x, info.point.y)
@@ -61,23 +37,11 @@ export interface PanInfo {
      *
      * @public
      */
-    point: Point2D
+    point: Point
     /**
      * Contains `x` and `y` values for the distance moved since
      * the last event.
      *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.delta.x, info.delta.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * function onPan(event, info) {
      *   console.log(info.delta.x, info.delta.y)
@@ -88,23 +52,11 @@ export interface PanInfo {
      *
      * @public
      */
-    delta: Point2D
+    delta: Point
     /**
      * Contains `x` and `y` values for the distance moved from
      * the first pan event.
      *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.offset.x, info.offset.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * function onPan(event, info) {
      *   console.log(info.offset.x, info.offset.y)
@@ -115,22 +67,10 @@ export interface PanInfo {
      *
      * @public
      */
-    offset: Point2D
+    offset: Point
     /**
      * Contains `x` and `y` values for the current velocity of the pointer, in px/ms.
      *
-     * @library
-     *
-     * ```jsx
-     * function onPan(event, info) {
-     *   console.log(info.velocity.x, info.velocity.y)
-     * }
-     *
-     * <Frame onPan={onPan} />
-     * ```
-     *
-     * @motion
-     *
      * ```jsx
      * function onPan(event, info) {
      *   console.log(info.velocity.x, info.velocity.y)
@@ -141,7 +81,7 @@ export interface PanInfo {
      *
      * @public
      */
-    velocity: Point2D
+    velocity: Point
 }
 
 export type PanHandler = (event: Event, info: PanInfo) => void
@@ -154,10 +94,10 @@ interface PanSessionHandlers {
 }
 
 interface PanSessionOptions {
-    transformPagePoint?: TransformPoint2D
+    transformPagePoint?: TransformPoint
 }
 
-interface TimestampedPoint extends Point2D {
+interface TimestampedPoint extends Point {
     timestamp: number
 }
 
@@ -188,7 +128,7 @@ export class PanSession {
     /**
      * @internal
      */
-    private transformPagePoint?: TransformPoint2D
+    private transformPagePoint?: TransformPoint
 
     /**
      * @internal
@@ -301,12 +241,12 @@ export class PanSession {
 
 function transformPoint(
     info: EventInfo,
-    transformPagePoint?: (point: Point2D) => Point2D
+    transformPagePoint?: (point: Point) => Point
 ) {
     return transformPagePoint ? { point: transformPagePoint(info.point) } : info
 }
 
-function subtractPoint(a: Point2D, b: Point2D): Point2D {
+function subtractPoint(a: Point, b: Point): Point {
     return { x: a.x - b.x, y: a.y - b.y }
 }
 
@@ -327,7 +267,7 @@ function lastDevicePoint(history: TimestampedPoint[]): TimestampedPoint {
     return history[history.length - 1]
 }
 
-function getVelocity(history: TimestampedPoint[], timeDelta: number): Point2D {
+function getVelocity(history: TimestampedPoint[], timeDelta: number): Point {
     if (history.length < 2) {
         return { x: 0, y: 0 }
     }

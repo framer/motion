@@ -1,0 +1,97 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #container {
+                display: flex;
+                position: relative;
+                top: 100px;
+                left: 100px;
+                width: 300px;
+                height: 200px;
+            }
+
+            #container.as-grid {
+                display: grid;
+                grid-template-columns: 50px auto;
+            }
+
+            #a {
+                background: #00cc88;
+                grid-column: 2/3;
+            }
+
+            #b {
+                background: #0077ff;
+                grid-column: 1/2;
+            }
+
+            #container > div {
+                height: 200px;
+                flex: 1;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <div id="a" data-layout-correct="true"></div>
+            <div id="b" data-layout-correct="true"></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-undo.js"></script>
+        <script>
+            const { createNode } = window.Undo
+            const {
+                matchOpacity,
+                matchBorderRadius,
+                matchViewportBox,
+                addPageScroll,
+            } = window.Assert
+
+            const container = document.getElementById("container")
+            const a = document.getElementById("a")
+            const b = document.getElementById("b")
+            const aOrigin = a.getBoundingClientRect()
+            const bOrigin = b.getBoundingClientRect()
+
+            const aProjection = createNode(a)
+            const bProjection = createNode(b)
+            aProjection.setValue("borderRadius", 20)
+
+            aProjection.willUpdate()
+            bProjection.willUpdate()
+
+            container.classList.add("as-grid")
+            window.scrollTo(50, 100)
+
+            aProjection.root.didUpdate()
+
+            matchViewportBox(a, addPageScroll(aOrigin, 50, 100))
+            matchViewportBox(b, addPageScroll(bOrigin, 50, 100))
+            matchOpacity(a, 1)
+            matchOpacity(b, 1)
+            matchBorderRadius(a, "13.3333% / 10%")
+            matchBorderRadius(b, "")
+        </script>
+    </body>
+</html>

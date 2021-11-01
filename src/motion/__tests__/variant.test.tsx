@@ -5,18 +5,12 @@ import { Variants } from "../../types"
 import { motionValue } from "../../value"
 
 describe("animate prop as variant", () => {
-    // @ts-ignore
-    const variants: Variants = {
-        hidden: { opacity: 0, x: -100, transition: { type: false } },
-        visible: { opacity: 1, x: 100, transition: { type: false } },
-    }
-    // @ts-ignore
-    const childVariants: Variants = {
-        hidden: { opacity: 0, x: -100, transition: { type: false } },
-        visible: { opacity: 1, x: 50, transition: { type: false } },
-    }
-
     test("animates to set variant", async () => {
+        const variants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 100, transition: { type: false } },
+        }
+
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
@@ -80,6 +74,16 @@ describe("animate prop as variant", () => {
     })
 
     test("child animates to set variant", async () => {
+        const variants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 100, transition: { type: false } },
+        }
+
+        const childVariants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 50, transition: { type: false } },
+        }
+
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
@@ -101,6 +105,11 @@ describe("animate prop as variant", () => {
     })
 
     test("child animates to set variant even if variants are not found on parent", async () => {
+        const childVariants: Variants = {
+            hidden: { opacity: 0, x: -100, transition: { type: false } },
+            visible: { opacity: 1, x: 50, transition: { type: false } },
+        }
+
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const onComplete = () => resolve(x.get())
@@ -681,6 +690,11 @@ describe("animate prop as variant", () => {
     test("new child items animate from initial to animate", () => {
         const x = motionValue(0)
         const Component = ({ length }: { length: number }) => {
+            const variants: Variants = {
+                hidden: { opacity: 0, x: -100, transition: { type: false } },
+                visible: { opacity: 1, x: 100, transition: { type: false } },
+            }
+
             const items = []
             for (let i = 0; i < length; i++) {
                 items.push(
@@ -755,5 +769,35 @@ describe("animate prop as variant", () => {
         rerender(<Component animate="b" />)
         rerender(<Component animate="b" />)
         expect(element).toHaveStyle("opacity: 0")
+    })
+
+    test("Children correctly animate to removed values even when not rendering along with parents", async () => {
+        const Child = React.memo(() => (
+            <motion.div
+                variants={{
+                    visible: { x: 100, opacity: 1 },
+                    hidden: { opacity: 0 },
+                }}
+                transition={{ type: false }}
+            />
+        ))
+
+        const Parent = ({ isVisible }: { isVisible: boolean }) => (
+            <motion.div
+                initial={{ x: 0 }}
+                animate={isVisible ? "hidden" : "visible"}
+            >
+                <Child />
+            </motion.div>
+        )
+
+        const { container, rerender } = render(<Parent isVisible={false} />)
+        const element = container.firstChild?.firstChild as Element
+        rerender(<Parent isVisible={true} />)
+        expect(element).toHaveStyle(
+            "transform: translateX(100px) translateZ(0)"
+        )
+        rerender(<Parent isVisible={false} />)
+        expect(element).toHaveStyle("transform: none")
     })
 })

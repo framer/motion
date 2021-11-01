@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimateSharedLayout } from "@framer"
+import { motio } from "@framer"
 import styled from "styled-components"
 
 const transition = {
@@ -20,25 +20,23 @@ export const App = () => {
 
     return (
         <>
-            <AnimateSharedLayout>
-                <Container
+            <Container
+                layout
+                transition={transition}
+                initial={{ borderRadius: 10 }}
+                isOpen={isOpen}
+            >
+                <Child
                     layout
+                    drag
                     transition={transition}
-                    initial={{ borderRadius: 10 }}
                     isOpen={isOpen}
-                >
-                    <Child
-                        layout
-                        drag
-                        transition={transition}
-                        isOpen={isOpen}
-                        onClick={() => setIsOpen(!isOpen)}
-                        initial={{ borderRadius: "50%" }}
-                        whileHover={{ scale: 1.13 }}
-                        id="child"
-                    />
-                </Container>
-            </AnimateSharedLayout>
+                    onClick={() => setIsOpen(!isOpen)}
+                    initial={{ borderRadius: "50%" }}
+                    whileHover={{ scale: 1.13 }}
+                    id="child"
+                />
+            </Container>
             <Settings>{"layout={true} drag={true}"}</Settings>
         </>
     )

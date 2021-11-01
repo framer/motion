@@ -1,0 +1,101 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box-a {
+                width: 200px;
+                height: 200px;
+                position: absolute;
+                left: 100px;
+                top: 100px;
+                background-color: #00cc88;
+            }
+
+            #box-b {
+                position: absolute;
+                top: 100px;
+                left: 600px;
+                width: 200px;
+                height: 200px;
+                background-color: #09f;
+            }
+
+            .child {
+                position: relative;
+                top: 20px;
+                left: 20px;
+                width: 100px;
+                height: 100px;
+                background-color: #ffcc00;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="box-a"><div class="child"></div></div>
+        <div id="box-b"></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const {
+                matchViewportBox,
+                matchVisibility,
+                matchOpacity,
+            } = window.Assert
+
+            const a = document.getElementById("box-a")
+            const b = document.getElementById("box-b")
+            const child = document.querySelector(".child")
+
+            const aProjection = createNode(a)
+            const bProjection = createNode(b)
+            const childProjection = createNode(child, aProjection, {
+                layoutId: "child",
+            })
+
+            aProjection.setValue("x", 100)
+            bProjection.setValue("x", -100)
+
+            sync.postRender(() => {
+                aProjection.willUpdate()
+                bProjection.willUpdate()
+                childProjection.willUpdate()
+
+                const newChild = document.createElement("div")
+                newChild.classList.add("child")
+                b.appendChild(newChild)
+                const newChildProjection = createNode(newChild, bProjection, {
+                    layoutId: "child",
+                })
+
+                newChildProjection.root.didUpdate()
+
+                sync.postRender(() => {
+                    matchViewportBox(child, newChild.getBoundingClientRect())
+                    matchOpacity(child, 1)
+                    matchOpacity(newChild, 1)
+                })
+            })
+        </script>
+    </body>
+</html>

@@ -18,7 +18,6 @@ export type FeatureNames = {
     focus: true
     hover: true
     pan: true
-    layoutAnimation: true
     measureLayout: true
 }
 
@@ -40,12 +39,12 @@ export interface FeatureComponents {
     focus?: FeatureComponent
     hover?: FeatureComponent
     pan?: FeatureComponent
-    layoutAnimation?: FeatureComponent
     measureLayout?: FeatureComponent
 }
 
 export interface FeatureBundle extends FeatureComponents {
     renderer: CreateVisualElement<any>
+    projectionNodeConstructor?: any
 }
 
 export type LazyFeatureBundle = () => Promise<FeatureBundle>
@@ -54,9 +53,14 @@ export type FeatureDefinitions = {
     [K in keyof FeatureNames]: FeatureDefinition
 }
 
+export type LoadedFeatures = FeatureDefinitions & {
+    projectionNodeConstructor?: any
+}
+
 export type RenderComponent<Instance, RenderState> = (
     Component: string | React.ComponentType,
     props: MotionProps,
+    projectionId: number | undefined,
     ref: React.Ref<Instance>,
     visualState: VisualState<Instance, RenderState>,
     isStatic: boolean

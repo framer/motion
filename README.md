@@ -35,21 +35,22 @@ It looks like this:
 
 It does all this:
 
--   Spring animations
--   Simple keyframes syntax
+-   Springs
+-   Keyframes
+-   Layout animations
+-   Shared layout animations
 -   Gestures (drag/tap/hover)
--   Layout and shared layout animations
 -   SVG paths
 -   Exit animations
 -   Server-side rendering
--   Variants for orchestrating animations across components
+-   Orchestrate animations across components
 -   CSS variables
 
 ...and a whole lot more.
 
 ## Get started
 
-### Quick start
+### 🐇 Quick start
 
 ```
 npm install framer-motion
@@ -63,17 +64,17 @@ export const MyComponent = ({ isVisible }) => (
 )
 ```
 
-### Docs
+### 📚 Docs
 
 Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
 
 Or checkout [our examples](https://framer.com/motion) for inspiration.
 
-### Contribute
+### 🛠 Contribute
 
 Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
-### License
+### 👩🏻‍⚖️ License
 
 Framer Motion is MIT licensed.
 
