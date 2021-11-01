@@ -9,6 +9,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Removing context memoisation to ensure removed values are correctly animated to.
 -   Adding unmount check to `AnimatePresence` before updating state. [PR by @ctrlplusb](https://github.com/framer/motion/pull/796)
 -   Fixing types for multi-input `useTransform`. [PR by @kena0ki](https://github.com/framer/motion/pull/843)
+-   Fixing `staggerChildren` for value-specific transitions. [Issue](https://github.com/framer/motion/issues/1081)
 
 ## [5.0.0] 2021-10-27
 

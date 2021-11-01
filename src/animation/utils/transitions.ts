@@ -106,7 +106,7 @@ export function convertTransitionToAnimationOptions<T>({
  */
 export function getDelayFromTransition(transition: Transition, key: string) {
     const valueTransition = getValueTransition(transition, key) || {}
-    return valueTransition.delay ?? 0
+    return valueTransition.delay ?? transition.delay ?? 0
 }
 
 export function hydrateKeyframes(options: PermissiveTransitionDefinition) {
