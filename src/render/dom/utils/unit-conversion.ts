@@ -183,10 +183,11 @@ const checkAndConvertChangedValueTypes = (
         // as it'd be doing multiple resize-remeasure operations.
         if (isKeyframesTarget(to)) {
             const numKeyframes = to.length
-            from = to[0] ?? to[1]
+            const fromIndex = to[0] === null ? 1 : 0
+            from = to[fromIndex]
             fromType = findDimensionValueType(from)
 
-            for (let i = to[0] === null ? 1 : 0; i < numKeyframes; i++) {
+            for (let i = fromIndex; i < numKeyframes; i++) {
                 if (!toType) {
                     toType = findDimensionValueType(to[i])
 
