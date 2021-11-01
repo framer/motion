@@ -1,7 +1,6 @@
 import { motion } from "@framer"
 import * as React from "react"
 
-// It's important for this test to only trigger a single rerender while dragging (in response to onDragStart) of draggable component.
 function getValueParam(params: any, name: string) {
     const param = params.get(name) as string | undefined
     if (!param) return 0
@@ -12,6 +11,7 @@ function getValueParam(params: any, name: string) {
     }
 }
 
+// It's important for this test to only trigger a single rerender while dragging (in response to onDragStart) of draggable component.
 export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const axis = params.get("axis")

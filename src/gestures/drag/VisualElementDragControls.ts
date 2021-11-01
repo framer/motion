@@ -127,7 +127,7 @@ export class VisualElementDragControls {
              * Record gesture origin
              */
             eachAxis((axis) => {
-                let current = this.getAxisMotionValue(axis).get()
+                let current = this.getAxisMotionValue(axis).get() || 0
 
                 /**
                  * If the MotionValue is a percentage value convert to px
@@ -142,7 +142,7 @@ export class VisualElementDragControls {
                     }
                 }
 
-                this.originPoint[axis] = current as number
+                this.originPoint[axis] = current
             })
 
             // Fire onDragStart event
