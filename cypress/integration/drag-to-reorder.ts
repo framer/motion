@@ -7,10 +7,19 @@ interface BoundingBox {
 
 function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
     const bbox = element.getBoundingClientRect()
-    expect(bbox.left).to.equal(expectedBbox.left)
-    expect(bbox.top).to.equal(expectedBbox.top)
-    expect(bbox.width).to.equal(expectedBbox.width)
-    expect(bbox.height).to.equal(expectedBbox.height)
+    /**
+     * Using within as this test is measuring differently on different Mac screens
+     */
+    expect(bbox.left).to.be.within(expectedBbox.left - 2, expectedBbox.left + 2)
+    expect(bbox.top).to.be.within(expectedBbox.top - 2, expectedBbox.top + 2)
+    expect(bbox.width).to.be.within(
+        expectedBbox.width - 2,
+        expectedBbox.width + 2
+    )
+    expect(bbox.height).to.be.within(
+        expectedBbox.height - 2,
+        expectedBbox.height + 2
+    )
 }
 
 describe("Drag to reorder", () => {
