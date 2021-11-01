@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../../"
+import { motion, useMotionValue } from "../../"
 import * as React from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
@@ -495,6 +495,109 @@ describe("animate prop as variant", () => {
         })
 
         return expect(promise).resolves.toEqual([0.3, 0.5])
+    })
+
+    test("Child variants correctly calculate delay based on staggerChildren", async () => {
+        const isCorrectlyStaggered = await new Promise((resolve) => {
+            const childVariants = {
+                hidden: { opacity: 0 },
+                visible: { opacity: 1, transition: { duration: 0.1 } },
+            }
+
+            function Component() {
+                const a = useMotionValue(0)
+                const b = useMotionValue(0)
+
+                React.useEffect(
+                    () =>
+                        a.onChange((latest) => {
+                            if (latest >= 1 && b.get() === 0) resolve(true)
+                        }),
+                    [a, b]
+                )
+
+                return (
+                    <motion.div
+                        variants={{
+                            hidden: {},
+                            visible: {
+                                x: 100,
+                                transition: { staggerChildren: 0.15 },
+                            },
+                        }}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <motion.div
+                            variants={childVariants}
+                            style={{ opacity: a }}
+                        />
+                        <motion.div
+                            variants={childVariants}
+                            style={{ opacity: b }}
+                        />
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        expect(isCorrectlyStaggered).toBe(true)
+    })
+
+    test("Child variants with value-specific transitions correctly calculate delay based on staggerChildren", async () => {
+        const isCorrectlyStaggered = await new Promise((resolve) => {
+            const childVariants = {
+                hidden: { opacity: 0 },
+                visible: {
+                    opacity: 1,
+                    transition: { opacity: { duration: 0.1 } },
+                },
+            }
+
+            function Component() {
+                const a = useMotionValue(0)
+                const b = useMotionValue(0)
+
+                React.useEffect(
+                    () =>
+                        a.onChange((latest) => {
+                            if (latest >= 1 && b.get() === 0) resolve(true)
+                        }),
+                    [a, b]
+                )
+
+                return (
+                    <motion.div
+                        variants={{
+                            hidden: {},
+                            visible: {
+                                x: 100,
+                                transition: { staggerChildren: 0.15 },
+                            },
+                        }}
+                        initial="hidden"
+                        animate="visible"
+                    >
+                        <motion.div
+                            variants={childVariants}
+                            style={{ opacity: a }}
+                        />
+                        <motion.div
+                            variants={childVariants}
+                            style={{ opacity: b }}
+                        />
+                    </motion.div>
+                )
+            }
+
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        expect(isCorrectlyStaggered).toBe(true)
     })
 
     test("components without variants are transparent to stagger order", async () => {
