@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [5.0.1] 2021-10-29
 
+### Added
+
+-   `onAnimationStart` is now called with the definition of the triggering animation.
+
 ### Fixed
 
 -   Removing context memoisation to ensure removed values are correctly animated to.
