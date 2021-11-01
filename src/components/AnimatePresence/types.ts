@@ -41,7 +41,7 @@ export interface AnimatePresenceProps {
 
     /**
      * If set to `true`, `AnimatePresence` will only render one component at a time. The exiting component
-     * will finished its exit animation before the entering component is rendered.
+     * will finish its exit animation before the entering component is rendered.
      *
      * ```jsx
      * const MyComponent = ({ currentItem }) => (
