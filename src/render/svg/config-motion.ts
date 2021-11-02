@@ -29,10 +29,6 @@ export const svgMotionConfig: Partial<
                 }
             }
 
-            if (isPath(instance)) {
-                renderState.totalPathLength = instance.getTotalLength()
-            }
-
             buildSVGAttrs(
                 renderState,
                 latestValues,
@@ -44,10 +40,4 @@ export const svgMotionConfig: Partial<
             renderSVG(instance, renderState)
         },
     }),
-}
-
-function isPath(
-    element: SVGElement | SVGPathElement
-): element is SVGPathElement {
-    return element.tagName === "path"
 }

@@ -5,9 +5,9 @@ describe("buildSVGPath", () => {
     it("correctly generates SVG path props", () => {
         const attrs = {}
 
-        buildSVGPath(attrs, 200, 0.5, 0.25, 0.25)
+        buildSVGPath(attrs, 0.5, 0.25, 0.25)
 
-        expect(attrs["stroke-dashoffset"]).toBe("-50px")
-        expect(attrs["stroke-dasharray"]).toBe("100px 50px")
+        expect(attrs["stroke-dashoffset"]).toBe("-0.25px")
+        expect(attrs["stroke-dasharray"]).toBe("0.5px 0.25px")
     })
 })

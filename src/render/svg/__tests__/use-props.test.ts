@@ -33,6 +33,21 @@ describe("SVG useProps", () => {
         })
     })
 
+    test("should return correct styles for element with pathLength", () => {
+        const { result } = renderHook(() =>
+            useSVGProps({ style: {} } as any, {
+                pathLength: 0.5,
+            })
+        )
+
+        expect(result.current).toStrictEqual({
+            pathLength: 1,
+            strokeDasharray: "0.5px 1px",
+            strokeDashoffset: "0px",
+            style: {},
+        })
+    })
+
     test("should correctly remove props as motionvalues", () => {
         const { result } = renderHook(() =>
             useSVGProps({ y: motionValue(2) } as any, { attrY: 3 })
