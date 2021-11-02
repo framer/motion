@@ -93,20 +93,24 @@ function removeNonTranslationalTransform(visualElement: VisualElement) {
     return removedTransforms
 }
 
-const positionalValues: { [key: string]: GetActualMeasurementInPixels } = {
-    // Dimensions
-    width: ({ x }) => x.max - x.min,
-    height: ({ y }) => y.max - y.min,
+export const positionalValues: { [key: string]: GetActualMeasurementInPixels } =
+    {
+        // Dimensions
+        width: ({ x }, { paddingLeft = "0", paddingRight = "0" }) =>
+            x.max - x.min - parseFloat(paddingLeft) - parseFloat(paddingRight),
+        height: ({ y }, { paddingTop = "0", paddingBottom = "0" }) =>
+            y.max - y.min - parseFloat(paddingTop) - parseFloat(paddingBottom),
 
-    top: (_bbox, { top }) => parseFloat(top as string),
-    left: (_bbox, { left }) => parseFloat(left as string),
-    bottom: ({ y }, { top }) => parseFloat(top as string) + (y.max - y.min),
-    right: ({ x }, { left }) => parseFloat(left as string) + (x.max - x.min),
+        top: (_bbox, { top }) => parseFloat(top as string),
+        left: (_bbox, { left }) => parseFloat(left as string),
+        bottom: ({ y }, { top }) => parseFloat(top as string) + (y.max - y.min),
+        right: ({ x }, { left }) =>
+            parseFloat(left as string) + (x.max - x.min),
 
-    // Transform
-    x: getTranslateFromMatrix(4, 13),
-    y: getTranslateFromMatrix(5, 14),
-}
+        // Transform
+        x: getTranslateFromMatrix(4, 13),
+        y: getTranslateFromMatrix(5, 14),
+    }
 
 const convertChangedValueTypes = (
     target: TargetWithKeyframes,
@@ -116,9 +120,7 @@ const convertChangedValueTypes = (
     const originBbox = visualElement.measureViewportBox()
     const element = visualElement.getInstance()
     const elementComputedStyle = getComputedStyle(element)
-    const { display, top, left, bottom, right, transform } =
-        elementComputedStyle
-    const originComputedStyle = { top, left, bottom, right, transform }
+    const { display } = elementComputedStyle
 
     // If the element is currently set to display: "none", make it visible before
     // measuring the target bounding box
@@ -140,7 +142,7 @@ const convertChangedValueTypes = (
         const value = visualElement.getValue(key) as MotionValue
         setAndResetVelocity(
             value,
-            positionalValues[key](originBbox, originComputedStyle)
+            positionalValues[key](originBbox, elementComputedStyle)
         )
         target[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
