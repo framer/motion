@@ -2,6 +2,10 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+### Fixed
+
+-   Stripping `dragSnapToOrigin` from DOM output. [PR by @Evalon](https://github.com/framer/motion/pull/1326)
+
 ## [5.0.2] 2021-11-02
 
 ### Fixed
