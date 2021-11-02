@@ -35,7 +35,7 @@
         "build": "yarn clean && tsc -p . && rollup -c",
         "clean": "rm -rf types dist lib",
         "test-ci": "yarn test-client && yarn test-server",
-        "test-client": "jest --coverage --config jest.config.json",
+        "test-client": "jest --coverage --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://localhost:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://0.0.0.0:8000/'",
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
