@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Adding path drawing support for `circle`, `ellipse`, `line`, `path`, `polygon`, `polyline` and `rect` components.
+-   Add SSR support for `pathLength`.
 
 ### Fixed
 
