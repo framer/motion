@@ -36,10 +36,10 @@ export type AnimationList = string[] | TargetAndTransition[]
 
 export const variantPriorityOrder = [
     AnimationType.Animate,
+    AnimationType.Focus,
     AnimationType.Hover,
     AnimationType.Tap,
     AnimationType.Drag,
-    AnimationType.Focus,
     AnimationType.Exit,
 ]
 
