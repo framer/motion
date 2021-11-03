@@ -2,6 +2,16 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.2.0] Unreleased
+
+### Added
+
+-   Enable animation between hsla and rgba/hex.
+
+### Fixed
+
+-   Fixing HSLA color interpolation. [Issue](https://github.com/framer/motion/issues/1324)
+
 ## [5.1.0] 2021-11-02
 
 ### Added
