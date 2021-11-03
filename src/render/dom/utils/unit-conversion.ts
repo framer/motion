@@ -7,17 +7,9 @@ import { transformProps } from "../../html/utils/transform"
 import { ResolvedValues, VisualElement } from "../../types"
 import { findDimensionValueType } from "../value-types/dimensions"
 import { Box } from "../../../projection/geometry/types"
+import { layoutKeys } from "./layout-keys"
 
-const positionalKeys = new Set([
-    "width",
-    "height",
-    "top",
-    "left",
-    "right",
-    "bottom",
-    "x",
-    "y",
-])
+const positionalKeys = new Set([...layoutKeys, "x", "y"])
 const isPositionalKey = (key: string) => positionalKeys.has(key)
 const hasPositionalKey = (target: TargetWithKeyframes) => {
     return Object.keys(target).some(isPositionalKey)

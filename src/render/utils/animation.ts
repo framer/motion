@@ -12,6 +12,8 @@ import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
+import { layoutKeys } from "../dom/utils/layout-keys"
+import { warning } from "hey-listen"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -161,6 +163,17 @@ function animateTarget(
         ) {
             continue
         }
+
+        /**
+         * Layout animations rely on synchronous rendering of layout, which
+         * is incompatible with animating layout-affecting properties.
+         * Here we check if this component or any above it are animating layout
+         * and warn if an animation is started on some popular layout-effecting properties.
+         */
+        warning(
+            !(visualElement.projection?.isTreeAnimating && layoutKeys.has(key)),
+            `Attempting to animate layout-affecting style "${key}" to ${valueTarget} on a component that is performing a layout animation (e.g. <motion.div layout />). This is likely to break layout animations. Attempt to replace with <motion.div layout style={{ ${key}: ${valueTarget} }} />.`
+        )
 
         const animation = startAnimation(key, value, valueTarget, {
             delay,
