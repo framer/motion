@@ -47,6 +47,7 @@
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
+        "prepack": "yarn build",
         "prepublishOnly": "yarn test",
         "postpublish": "git push --tags",
         "measure": "webpack --config webpack.size.config.js && bundlesize",
