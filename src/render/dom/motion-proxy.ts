@@ -52,6 +52,10 @@ export function createMotionProxy(createConfig: CreateConfig) {
         >(createConfig(Component, customMotionComponentConfig))
     }
 
+    if (typeof Proxy === "undefined") {
+        return custom as typeof custom & DOMMotionComponents
+    }
+
     /**
      * A cache of generated `motion` components, e.g `motion.div`, `motion.input` etc.
      * Rather than generating them anew every render.
