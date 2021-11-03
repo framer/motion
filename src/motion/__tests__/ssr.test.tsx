@@ -60,7 +60,7 @@ function runTests(render: (components: any) => string) {
 
     test("correctly renders SVG", () => {
         const cx = motionValue(100)
-        const pathLength = motionValue(100)
+        const pathLength = motionValue(0.5)
         const circle = render(
             <motion.circle
                 cx={cx}
@@ -74,7 +74,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(circle).toBe(
-            '<circle cx="100" style="background:#fff" stroke-width="10"></circle>'
+            '<circle cx="100" style="background:#fff" stroke-width="10" pathLength="1" stroke-dashoffset="0px" stroke-dasharray="0.5px 1px"></circle>'
         )
         const rect = render(
             <AnimatePresence>

@@ -1,10 +1,6 @@
 import { px } from "style-value-types"
 import { ResolvedValues } from "../../types"
 
-// Convert a progress 0-1 to a pixels value based on the provided length
-const progressToPixels = (progress: number, length: number) =>
-    (px as any).transform(progress * length)
-
 const dashKeys = {
     offset: "stroke-dashoffset",
     array: "stroke-dasharray",
@@ -24,21 +20,23 @@ const camelKeys = {
  */
 export function buildSVGPath(
     attrs: ResolvedValues,
-    totalLength: number,
     length: number,
     spacing = 1,
     offset = 0,
     useDashCase: boolean = true
 ): void {
+    // Normalise path length by setting SVG attribute pathLength to 1
+    attrs.pathLength = 1
+
     // We use dash case when setting attributes directly to the DOM node and camel case
     // when defining props on a React component.
     const keys = useDashCase ? dashKeys : camelKeys
 
     // Build the dash offset
-    attrs[keys.offset] = progressToPixels(-offset, totalLength)
+    attrs[keys.offset] = px.transform!(-offset)
 
     // Build the dash array
-    const pathLength = progressToPixels(length, totalLength)
-    const pathSpacing = progressToPixels(spacing, totalLength)
+    const pathLength = px.transform!(length)
+    const pathSpacing = px.transform!(spacing)
     attrs[keys.array] = `${pathLength} ${pathSpacing}`
 }

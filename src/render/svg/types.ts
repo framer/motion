@@ -15,11 +15,6 @@ export interface SVGRenderState extends HTMLRenderState {
      * every frame. We use a mutable data structure to reduce GC during animations.
      */
     attrs: ResolvedValues
-
-    /**
-     * Measured path length if this is a SVGPathElement
-     */
-    totalPathLength?: number
 }
 
 export type SVGDimensions = {
