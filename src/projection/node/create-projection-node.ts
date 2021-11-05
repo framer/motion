@@ -1699,9 +1699,9 @@ function roundBox(box: Box): void {
  * layout-affecting animation.
  */
 function isTreeAnimatingLayoutAffectingStyle(
-    visualElement: VisualElement
+    visualElement: VisualElement | undefined
 ): boolean {
-    while (visualElement.parent) {
+    while (visualElement) {
         if (Boolean(visualElement.layoutAffectingAnimations)) return true
         visualElement = visualElement.parent
     }
