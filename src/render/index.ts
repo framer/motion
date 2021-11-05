@@ -223,7 +223,10 @@ export const visualElement =
             isMounted: () => Boolean(instance),
 
             /**
-             *
+             * In development mode, when a layout-affecting value is animating its unqiue
+             * bit gets added to this value. If a layout animation is started on this,
+             * or any child, it can check back up the tree with a simple falsey check on this
+             * value to see if its conflicting with a layout-affecting value.
              */
             layoutAffectingAnimations: 0,
 

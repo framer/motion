@@ -12,8 +12,8 @@ import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
-import { layoutFlags, layoutKeys } from "../dom/utils/layout-keys"
-import { warning } from "hey-listen"
+import { layoutFlags } from "../dom/utils/layout-keys"
+import { warnOnce } from "../../utils/warn-once"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -170,23 +170,17 @@ function animateTarget(
         })
 
         /**
-         *
+         * Layout animations rely on synchronous rendering of layout, which
+         * is incompatible with animating layout-affecting properties.
+         * Here we check if this component or any above it are animating layout
+         * and warn if an animation is started on some popular layout-effecting properties.
          */
         if (process.env.NODE_ENV !== "production" && layoutFlags[key]) {
-            /**
-             * Layout animations rely on synchronous rendering of layout, which
-             * is incompatible with animating layout-affecting properties.
-             * Here we check if this component or any above it are animating layout
-             * and warn if an animation is started on some popular layout-effecting properties.
-             */
-            warning(
+            warnOnce(
                 !visualElement.projection?.isTreeAnimating,
                 `Attempting to animate layout-affecting style "${key}" to ${valueTarget} on a component that is performing a layout animation (e.g. <motion.div layout />). This is likely to break layout animations. Attempt to replace with <motion.div layout style={{ ${key}: ${valueTarget} }} />.`
             )
 
-            /**
-             *
-             */
             visualElement.layoutAffectingAnimations += layoutFlags[key]
             animation.then(() => {
                 visualElement.layoutAffectingAnimations -= layoutFlags[key]
