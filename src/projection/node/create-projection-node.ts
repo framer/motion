@@ -1169,12 +1169,14 @@ export function createProjectionNode<I>({
                     process.env.NODE_ENV !== "production" &&
                     this.options.visualElement
                 ) {
-                    warnOnce(
-                        !isTreeAnimatingLayoutAffectingStyle(
-                            this.options.visualElement
-                        ),
-                        `Attempting to animate layout within a component performing an animation on a layout-affecting properties (e.g. "width", "height", "top"). This is likely to break layout animations. Attempt to replace with the layout and style prop, e.g. <motion.div layout style={{ width: 100px }} />.`
-                    )
+                    sync.update(() => {
+                        warnOnce(
+                            !isTreeAnimatingLayoutAffectingStyle(
+                                this.options.visualElement
+                            ),
+                            `Attempting to animate layout within a component performing an animation on a layout-affecting properties (e.g. "width", "height", "top"). This is likely to break layout animations. Attempt to replace with the layout and style prop, e.g. <motion.div layout style={{ width: 100px }} />.`
+                        )
+                    })
                 }
 
                 this.currentAnimation = animate(0, animationTarget, {
