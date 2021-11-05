@@ -526,7 +526,7 @@ export function createProjectionNode<I>({
             }
 
             const { layoutId, layout } = this.options
-            if (!layoutId && !layout) return
+            if (layoutId === undefined && !layout) return
 
             const transformTemplate =
                 this.options.visualElement?.getProps().transformTemplate

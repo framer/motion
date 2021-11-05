@@ -74,7 +74,7 @@ describe("Tabs demo", () => {
             .wait(50)
             .get("#Lettuce-remove")
             .click()
-            .wait(10)
+            .wait(20)
             .click()
             .get("nav")
             .wait(400)
