@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.2.1] 2021-11-05
+
+### Fixed
+
+-   Fixing unit conversion for `x` and `y` styles. [Issue](https://github.com/framer/motion/issues/1336)
+
 ## [5.2.0] 2021-11-04
 
 ### Added
