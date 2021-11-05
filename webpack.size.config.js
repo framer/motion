@@ -1,4 +1,5 @@
 const tsconfig = require("./tsconfig.json")
+const webpack = require("webpack")
 const path = require("path")
 const convertPathsToAliases =
     require("convert-tsconfig-paths-to-webpack-aliases").default
@@ -75,4 +76,9 @@ module.exports = {
             },
         ],
     },
+    plugins: [
+        new webpack.DefinePlugin({
+            "process.env.NODE_ENV": JSON.stringify("production"),
+        }),
+    ],
 }

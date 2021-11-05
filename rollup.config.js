@@ -90,6 +90,14 @@ const es = Object.assign({}, config, {
     external,
 })
 
+const sizePlugins = [
+    resolve(),
+    replace({
+        "process.env.NODE_ENV": JSON.stringify("production"),
+    }),
+    terser({ output: { comments: false } }),
+]
+
 const m = Object.assign({}, es, {
     input: "lib/render/dom/motion-minimal.js",
     output: Object.assign({}, es.output, {
@@ -97,7 +105,7 @@ const m = Object.assign({}, es, {
         preserveModules: false,
         dir: undefined,
     }),
-    plugins: [resolve(), terser({ output: { comments: false } })],
+    plugins: sizePlugins,
     external: ["react", "react-dom"],
 })
 
@@ -113,7 +121,7 @@ const domAnimation = Object.assign({}, es, {
         chunkFileNames: "size-rollup-dom-animation-assets.js",
         dir: `dist`,
     },
-    plugins: [resolve(), terser({ output: { comments: false } })],
+    plugins: sizePlugins,
     external: ["react", "react-dom"],
 })
 
@@ -125,7 +133,7 @@ const domMax = Object.assign({}, es, {
         ...domAnimation.output,
         chunkFileNames: "size-rollup-dom-max-assets.js",
     },
-    plugins: [resolve(), terser({ output: { comments: false } })],
+    plugins: sizePlugins,
     external: ["react", "react-dom"],
 })
 
