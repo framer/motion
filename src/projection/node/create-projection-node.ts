@@ -5,7 +5,7 @@ import {
     AnimationOptions,
     AnimationPlaybackControls,
 } from "../../animation/animate"
-import { ResolvedValues } from "../../render/types"
+import { ResolvedValues, VisualElement } from "../../render/types"
 import { SubscriptionManager } from "../../utils/subscription-manager"
 import { mixValues } from "../animation/mix-values"
 import { copyBoxInto } from "../geometry/copy"
@@ -41,6 +41,7 @@ import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
+import { warning } from "hey-listen"
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
@@ -1161,6 +1162,18 @@ export function createProjectionNode<I>({
             this.pendingAnimation = sync.update(() => {
                 globalProjectionState.hasAnimatedSinceResize = true
 
+                /**
+                 *
+                 */
+                if (process.env.NODE_ENV !== "production") {
+                    warning(
+                        !isAnimatingLayoutAffectingProperty(
+                            this.options.visualElement
+                        ),
+                        ``
+                    )
+                }
+
                 this.currentAnimation = animate(0, animationTarget, {
                     ...(options as any),
                     onUpdate: (latest: number) => {
@@ -1676,4 +1689,18 @@ function roundAxis(axis: Axis): void {
 function roundBox(box: Box): void {
     roundAxis(box.x)
     roundAxis(box.y)
+}
+
+/**
+ *
+ */
+function isAnimatingLayoutAffectingProperty(
+    visualElement: VisualElement
+): boolean {
+    while (visualElement.parent) {
+        if (Boolean(visualElement.layoutAffectingAnimations)) return true
+        visualElement = visualElement.parent
+    }
+
+    return false
 }

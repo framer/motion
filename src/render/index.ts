@@ -222,6 +222,11 @@ export const visualElement =
              */
             isMounted: () => Boolean(instance),
 
+            /**
+             *
+             */
+            layoutAffectingAnimations: 0,
+
             mount(newInstance: Instance) {
                 isMounted = true
                 instance = element.current = newInstance

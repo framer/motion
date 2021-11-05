@@ -93,6 +93,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     prevDragCursor?: Point
     getLayoutId(): string | undefined
     animationState?: AnimationState
+    layoutAffectingAnimations: number
 }
 
 export interface VisualElementConfig<Instance, RenderState, Options> {
