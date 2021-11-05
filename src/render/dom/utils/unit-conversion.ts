@@ -4,7 +4,7 @@ import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { MotionValue } from "../../../value"
 import { transformProps } from "../../html/utils/transform"
-import { VisualElement } from "../../types"
+import { ResolvedValues, VisualElement } from "../../types"
 import { findDimensionValueType } from "../value-types/dimensions"
 import { Box } from "../../../projection/geometry/types"
 
@@ -121,6 +121,7 @@ const convertChangedValueTypes = (
     const element = visualElement.getInstance()
     const elementComputedStyle = getComputedStyle(element)
     const { display } = elementComputedStyle
+    const origin: ResolvedValues = {}
 
     // If the element is currently set to display: "none", make it visible before
     // measuring the target bounding box
@@ -131,6 +132,13 @@ const convertChangedValueTypes = (
         )
     }
 
+    /**
+     * Record origins before we render and update styles
+     */
+    changedKeys.forEach((key) => {
+        origin[key] = positionalValues[key](originBbox, elementComputedStyle)
+    })
+
     // Apply the latest values (as set in checkAndConvertChangedValueTypes)
     visualElement.syncRender()
 
@@ -140,10 +148,8 @@ const convertChangedValueTypes = (
         // Restore styles to their **calculated computed style**, not their actual
         // originally set style. This allows us to animate between equivalent pixel units.
         const value = visualElement.getValue(key) as MotionValue
-        setAndResetVelocity(
-            value,
-            positionalValues[key](originBbox, elementComputedStyle)
-        )
+
+        setAndResetVelocity(value, origin[key])
         target[key] = positionalValues[key](targetBbox, elementComputedStyle)
     })
 
