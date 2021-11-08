@@ -4,6 +4,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ## [5.3.1] Unreleased
 
+### Added
+
+-   `useInstantTransition` hook for internal use.
+
 ### Fixed
 
 -   Removing `layoutDependency` from forwarded props. [Issue](https://github.com/framer/motion/issues/1350)
