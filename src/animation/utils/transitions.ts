@@ -11,7 +11,7 @@ import { isAnimatable } from "./is-animatable"
 import { getDefaultTransition } from "./default-transitions"
 import { warning } from "hey-listen"
 import { getAnimatableNone } from "../../render/dom/value-types/animatable-none"
-import { instantAnimationState } from "../../utils/use-instant-transition"
+import { instantAnimationState } from "../../utils/use-instant-transition-state"
 
 type StopAnimation = { stop: () => void }
 
