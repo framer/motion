@@ -41,7 +41,7 @@
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
         "test-e2e": "yarn test-e2e-chrome && yarn test-e2e-electron",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/drag-framer-page.ts\"'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "projection-dev": "python -m SimpleHTTPServer",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
