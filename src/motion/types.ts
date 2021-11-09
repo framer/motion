@@ -19,6 +19,7 @@ import {
     HoverHandlers,
     FocusHandlers,
 } from "../gestures/types"
+import { ViewportProps } from "./features/viewport/types"
 
 export type MotionStyleProp = string | number | MotionValue
 
@@ -255,6 +256,7 @@ export interface MotionProps
         TapHandlers,
         HoverHandlers,
         FocusHandlers,
+        ViewportProps,
         DraggableProps,
         LayoutProps,
         MotionAdvancedProps {
