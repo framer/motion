@@ -24,7 +24,11 @@ export function useViewport({
         const { animationState } = visualElement
 
         if (typeof IntersectionObserver === "undefined") {
-            animationState?.setActive(AnimationType.InView, true)
+            requestAnimationFrame(() => {
+                onViewportEnter?.()
+                animationState?.setActive(AnimationType.InView, true)
+            })
+
             return
         }
 
@@ -42,7 +46,7 @@ export function useViewport({
                 const callback = isIntersecting
                     ? onViewportEnter
                     : onViewportLeave
-                callback?.(entry)
+                callback?.()
             },
             {
                 root: root?.current,

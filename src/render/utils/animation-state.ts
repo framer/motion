@@ -36,6 +36,7 @@ export type AnimationList = string[] | TargetAndTransition[]
 
 export const variantPriorityOrder = [
     AnimationType.Animate,
+    AnimationType.InView,
     AnimationType.Focus,
     AnimationType.Hover,
     AnimationType.Tap,
@@ -419,6 +420,7 @@ function createTypeState(isActive = false): AnimationTypeState {
 function createState() {
     return {
         [AnimationType.Animate]: createTypeState(true),
+        [AnimationType.InView]: createTypeState(),
         [AnimationType.Hover]: createTypeState(),
         [AnimationType.Tap]: createTypeState(),
         [AnimationType.Drag]: createTypeState(),
