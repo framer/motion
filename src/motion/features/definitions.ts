@@ -27,6 +27,11 @@ export const featureDefinitions: LoadedFeatures = {
         "onPanSessionStart",
         "onPanEnd",
     ]),
+    inView: createDefinition([
+        "whileInView",
+        "onViewportEnter",
+        "onViewportLeave",
+    ]),
 }
 
 export function loadFeatures(features: FeatureComponents) {
