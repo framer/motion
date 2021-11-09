@@ -1,6 +1,9 @@
-import { useEffect, useRef } from "react"
+import { MutableRefObject, useEffect, useRef } from "react"
+import { VisualElement } from "../../../render/types"
 import { AnimationType } from "../../../render/utils/types"
 import { FeatureProps } from "../types"
+import { createIntersectionObserver } from "./observers"
+import { ViewportOptions } from "./types"
 
 export function useViewport({
     visualElement,
@@ -9,54 +12,79 @@ export function useViewport({
     onViewportLeave,
     viewport = {},
 }: FeatureProps) {
-    const { root, margin: rootMargin, once, amount = "some" } = viewport
     const hasEnteredView = useRef(false)
 
     let shouldObserve = Boolean(
         whileInView || onViewportEnter || onViewportLeave
     )
 
-    if (once && hasEnteredView.current) shouldObserve = false
+    if (viewport.once && hasEnteredView.current) shouldObserve = false
 
+    const useObserver =
+        typeof IntersectionObserver === "undefined"
+            ? useMissingIntersectionObserver
+            : useIntersectionObserver
+
+    useObserver(shouldObserve, hasEnteredView, visualElement, viewport)
+}
+
+function useIntersectionObserver(
+    shouldObserve: boolean,
+    hasEnteredView: MutableRefObject<boolean>,
+    visualElement: VisualElement,
+    { root, margin: rootMargin, amount = "some", once }: ViewportOptions
+) {
     useEffect(() => {
         if (!shouldObserve) return
 
-        const { animationState } = visualElement
-
-        if (typeof IntersectionObserver === "undefined") {
-            requestAnimationFrame(() => {
-                onViewportEnter?.()
-                animationState?.setActive(AnimationType.InView, true)
-            })
-
-            return
-        }
-
-        const observer = new IntersectionObserver(
-            ([entry]) => {
+        return createIntersectionObserver(
+            visualElement.getInstance(),
+            {
+                root: root?.current,
+                rootMargin,
+                threshold: amount === "some" ? 0 : 1,
+            },
+            (entry) => {
                 const { isIntersecting } = entry
+
                 if (once && !isIntersecting && hasEnteredView.current) {
                     return
                 } else if (isIntersecting) {
                     hasEnteredView.current = true
                 }
 
-                animationState?.setActive(AnimationType.InView, isIntersecting)
+                visualElement.animationState?.setActive(
+                    AnimationType.InView,
+                    isIntersecting
+                )
 
+                /**
+                 * Use the latest committed props rather than the ones in scope
+                 * when this observer is created
+                 */
+                const props = visualElement.getProps()
                 const callback = isIntersecting
-                    ? onViewportEnter
-                    : onViewportLeave
+                    ? props.onViewportEnter
+                    : props.onViewportLeave
                 callback?.()
-            },
-            {
-                root: root?.current,
-                rootMargin,
-                threshold: amount === "some" ? 0 : 1,
             }
         )
+    }, [shouldObserve, root, rootMargin, amount])
+}
 
-        observer.observe(visualElement.getInstance())
+function useMissingIntersectionObserver(
+    shouldObserve: boolean,
+    hasEnteredView: MutableRefObject<boolean>,
+    visualElement: VisualElement
+) {
+    useEffect(() => {
+        if (!shouldObserve) return
 
-        return () => observer.disconnect()
-    }, [shouldObserve, root])
+        requestAnimationFrame(() => {
+            hasEnteredView.current = true
+            const { onViewportEnter } = visualElement.getProps()
+            onViewportEnter?.()
+            visualElement.animationState?.setActive(AnimationType.InView, true)
+        })
+    }, [shouldObserve])
 }
