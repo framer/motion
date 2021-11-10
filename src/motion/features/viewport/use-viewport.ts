@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react"
 import { VisualElement } from "../../../render/types"
 import { AnimationType } from "../../../render/utils/types"
 import { FeatureProps } from "../types"
-import { createIntersectionObserver } from "./observers"
+import { observeIntersection } from "./observers"
 import { ViewportOptions, ViewportState } from "./types"
 
 export function useViewport({
@@ -88,7 +88,7 @@ function useIntersectionObserver(
             callback?.()
         }
 
-        return createIntersectionObserver(
+        return observeIntersection(
             visualElement.getInstance(),
             options,
             intersectionCallback

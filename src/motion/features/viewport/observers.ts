@@ -59,7 +59,7 @@ function initIntersectionObserver({
     return rootObservers[key]
 }
 
-export function createIntersectionObserver(
+export function observeIntersection(
     element: Element,
     options: IntersectionObserverInit,
     callback: IntersectionHandler
@@ -69,5 +69,8 @@ export function createIntersectionObserver(
     observerCallbacks.set(element, callback)
     rootInteresectionObserver.observe(element)
 
-    return () => rootInteresectionObserver.unobserve(element)
+    return () => {
+        observerCallbacks.delete(element)
+        rootInteresectionObserver.unobserve(element)
+    }
 }
