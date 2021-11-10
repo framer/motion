@@ -31,6 +31,11 @@ export function useViewport({
     useObserver(shouldObserve, state.current, visualElement, viewport)
 }
 
+const thresholdNames = {
+    some: 0,
+    all: 1,
+}
+
 function useIntersectionObserver(
     shouldObserve: boolean,
     state: ViewportState,
@@ -45,7 +50,10 @@ function useIntersectionObserver(
             {
                 root: root?.current,
                 rootMargin,
-                threshold: amount === "some" ? 0 : 1,
+                threshold:
+                    typeof amount === "number"
+                        ? amount
+                        : thresholdNames[amount],
             },
             (entry) => {
                 const { isIntersecting } = entry

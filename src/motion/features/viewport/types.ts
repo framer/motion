@@ -8,7 +8,7 @@ export interface ViewportOptions {
     root?: RefObject<Element>
     once?: boolean
     margin?: string
-    amount?: "some" | "all"
+    amount?: "some" | "all" | number
 }
 
 export interface ViewportProps {
