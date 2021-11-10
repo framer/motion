@@ -33,13 +33,15 @@ function initIntersectionObserver({
     root,
     ...options
 }: IntersectionObserverInit): IntersectionObserver {
+    const lookupRoot = root || document
+
     /**
      * If we don't have an observer lookup map for this root, create one.
      */
-    if (!observers.has(root || document)) {
-        observers.set(root || document, {})
+    if (!observers.has(lookupRoot)) {
+        observers.set(lookupRoot, {})
     }
-    const rootObservers = observers.get(root || document)!
+    const rootObservers = observers.get(lookupRoot)!
 
     const key = JSON.stringify(options)
 
