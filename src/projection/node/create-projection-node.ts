@@ -41,7 +41,7 @@ import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
-import { warnOnce } from "../../utils/warn-once"
+import { hasWarned, warnOnce } from "../../utils/warn-once"
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
@@ -1165,22 +1165,29 @@ export function createProjectionNode<I>({
                 /**
                  * Check if this component or any of its ancestors are animating
                  */
+                const { visualElement } = this.options
                 if (
                     process.env.NODE_ENV !== "production" &&
-                    this.options.visualElement
+                    visualElement &&
+                    !hasWarned(layoutWarningMessage)
                 ) {
                     /**
                      * We need to fire this in a setTimeout because layout animations will start
                      * before any layout-affecting animations.
                      */
                     setTimeout(() => {
-                        warnOnce(
-                            () =>
-                                !isTreeAnimatingLayoutAffectingStyle(
-                                    this.options.visualElement
-                                ),
-                            `Attempting to animate layout within a component performing an animation on a layout-affecting properties (e.g. "width", "height", "top"). This is likely to break layout animations. Attempt to replace with the layout and style prop, e.g. <motion.div layout style={{ width: 100px }} />.`
-                        )
+                        const animatingParent =
+                            getClosestElementAnimatingLayoutAffectingStyle(
+                                visualElement
+                            )
+
+                        if (animatingParent) {
+                            warnOnce(
+                                false,
+                                layoutWarningMessage,
+                                animatingParent.getInstance()
+                            )
+                        }
                     }, 50)
                 }
 
@@ -1705,13 +1712,16 @@ function roundBox(box: Box): void {
  * Look up the tree and check whether any element is performing a
  * layout-affecting animation.
  */
-function isTreeAnimatingLayoutAffectingStyle(
+function getClosestElementAnimatingLayoutAffectingStyle(
     visualElement: VisualElement | undefined
-): boolean {
+): VisualElement | undefined {
     while (visualElement) {
-        if (Boolean(visualElement.layoutAffectingAnimations)) return true
+        if (Boolean(visualElement.layoutAffectingAnimations))
+            return visualElement
         visualElement = visualElement.parent
     }
 
-    return false
+    return undefined
 }
+
+const layoutWarningMessage = `Attempting to animate layout within a component performing an animation on a layout-affecting properties (e.g. "width", "height", "top"). This is likely to break layout animations. Attempt to replace with the layout and style prop, e.g. <motion.div layout style={{ width: 100px }} />. Element is:`

@@ -13,7 +13,7 @@ import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
 import { layoutFlags } from "../dom/utils/layout-keys"
-import { warnOnce } from "../../utils/warn-once"
+import { hasWarned, warnOnce } from "../../utils/warn-once"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -175,18 +175,27 @@ function animateTarget(
          * Here we check if this component or any above it are animating layout
          * and warn if an animation is started on some popular layout-effecting properties.
          */
-        if (process.env.NODE_ENV !== "production") {
-            if (layoutFlags[key]) {
-                warnOnce(
-                    () => !visualElement.projection?.isTreeAnimating,
-                    `Attempting to animate layout-affecting style "${key}" to ${valueTarget} on a component that is performing a layout animation (e.g. <motion.div layout />). This is likely to break layout animations. Attempt to replace with <motion.div layout style={{ ${key}: ${valueTarget} }} />.`
-                )
+        if (process.env.NODE_ENV !== "production" && layoutFlags[key]) {
+            const warning = `Attempting to animate layout-affecting style "${key}" to ${valueTarget} on a component that is performing a layout animation (e.g. <motion.div layout />), or is the child of a component performing layout animations. This is likely to break layout animations. Attempt to replace with <motion.div layout style={{ ${key}: ${valueTarget} }} />.`
+            if (!hasWarned(warning)) {
+                const isTreeAnimating =
+                    visualElement.projection?.isTreeAnimating
 
-                visualElement.layoutAffectingAnimations += layoutFlags[key]
-                animation.then(() => {
-                    visualElement.layoutAffectingAnimations -= layoutFlags[key]
-                })
+                if (isTreeAnimating) {
+                    const layoutAnimatingElement =
+                        getLayoutAnimatingElement(visualElement)
+                    warnOnce(
+                        false,
+                        warning,
+                        layoutAnimatingElement?.getInstance()
+                    )
+                }
             }
+
+            visualElement.layoutAffectingAnimations += layoutFlags[key]
+            animation.then(() => {
+                visualElement.layoutAffectingAnimations -= layoutFlags[key]
+            })
         }
 
         animations.push(animation)
@@ -252,4 +261,14 @@ function shouldBlockAnimation(
 
     needsAnimating[key] = false
     return shouldBlock
+}
+
+function getLayoutAnimatingElement(visualElement?: VisualElement) {
+    while (visualElement) {
+        if (Boolean(visualElement.projection?.currentAnimation))
+            return visualElement
+        visualElement = visualElement.parent
+    }
+
+    return undefined
 }

@@ -1,10 +1,17 @@
-import { warning } from "hey-listen"
-
 const warned = new Set<string>()
-export function warnOnce(condition: () => boolean, message: string) {
-    if (warned.has(message)) return
 
-    const resolvedCondition = condition()
-    warning(resolvedCondition, message)
-    if (!resolvedCondition) warned.add(message)
+export function hasWarned(message: string) {
+    return warned.has(message)
+}
+
+export function warnOnce(
+    condition: boolean,
+    message: string,
+    element?: Element
+) {
+    if (condition || warned.has(message)) return
+
+    console.warn(message)
+    if (element) console.warn(element)
+    warned.add(message)
 }
