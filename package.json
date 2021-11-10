@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "5.3.0-rc.1",
+    "version": "5.2.1",
     "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.mjs",
@@ -37,7 +37,7 @@
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
-        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://localhost:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
+        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
         "test-e2e": "yarn test-e2e-chrome && yarn test-e2e-electron",
