@@ -1,9 +1,9 @@
-import { MutableRefObject, useEffect, useRef } from "react"
+import { useEffect, useRef } from "react"
 import { VisualElement } from "../../../render/types"
 import { AnimationType } from "../../../render/utils/types"
 import { FeatureProps } from "../types"
 import { createIntersectionObserver } from "./observers"
-import { ViewportOptions } from "./types"
+import { ViewportOptions, ViewportState } from "./types"
 
 export function useViewport({
     visualElement,
@@ -12,25 +12,28 @@ export function useViewport({
     onViewportLeave,
     viewport = {},
 }: FeatureProps) {
-    const hasEnteredView = useRef(false)
+    const state = useRef<ViewportState>({
+        hasEnteredView: false,
+        isInView: false,
+    })
 
     let shouldObserve = Boolean(
         whileInView || onViewportEnter || onViewportLeave
     )
 
-    if (viewport.once && hasEnteredView.current) shouldObserve = false
+    if (viewport.once && state.current.hasEnteredView) shouldObserve = false
 
     const useObserver =
         typeof IntersectionObserver === "undefined"
             ? useMissingIntersectionObserver
             : useIntersectionObserver
 
-    useObserver(shouldObserve, hasEnteredView, visualElement, viewport)
+    useObserver(shouldObserve, state.current, visualElement, viewport)
 }
 
 function useIntersectionObserver(
     shouldObserve: boolean,
-    hasEnteredView: MutableRefObject<boolean>,
+    state: ViewportState,
     visualElement: VisualElement,
     { root, margin: rootMargin, amount = "some", once }: ViewportOptions
 ) {
@@ -47,10 +50,21 @@ function useIntersectionObserver(
             (entry) => {
                 const { isIntersecting } = entry
 
-                if (once && !isIntersecting && hasEnteredView.current) {
+                /**
+                 * If there's been no change in the viewport state, early return.
+                 */
+                if (state.isInView === isIntersecting) return
+
+                state.isInView = isIntersecting
+
+                /**
+                 * Handle hasEnteredView. If this is only meant to run once, and
+                 * element isn't visible, early return. Otherwise set hasEnteredView to true.
+                 */
+                if (once && !isIntersecting && state.hasEnteredView) {
                     return
                 } else if (isIntersecting) {
-                    hasEnteredView.current = true
+                    state.hasEnteredView = true
                 }
 
                 visualElement.animationState?.setActive(
@@ -74,14 +88,14 @@ function useIntersectionObserver(
 
 function useMissingIntersectionObserver(
     shouldObserve: boolean,
-    hasEnteredView: MutableRefObject<boolean>,
+    state: ViewportState,
     visualElement: VisualElement
 ) {
     useEffect(() => {
         if (!shouldObserve) return
 
         requestAnimationFrame(() => {
-            hasEnteredView.current = true
+            state.hasEnteredView = true
             const { onViewportEnter } = visualElement.getProps()
             onViewportEnter?.()
             visualElement.animationState?.setActive(AnimationType.InView, true)

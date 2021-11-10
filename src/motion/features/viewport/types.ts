@@ -17,3 +17,8 @@ export interface ViewportProps {
     onViewportLeave?: ViewportEventHandler
     viewport?: ViewportOptions
 }
+
+export type ViewportState = {
+    hasEnteredView: boolean
+    isInView: boolean
+}
