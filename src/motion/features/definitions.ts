@@ -15,6 +15,7 @@ export const featureDefinitions: LoadedFeatures = {
         "whileTap",
         "whileFocus",
         "whileDrag",
+        "whileInView",
     ]),
     exit: createDefinition(["exit"]),
     drag: createDefinition(["drag", "dragControls"]),
