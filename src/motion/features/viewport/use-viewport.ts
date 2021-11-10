@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react"
 import { VisualElement } from "../../../render/types"
 import { AnimationType } from "../../../render/utils/types"
+import { warnOnce } from "../../../utils/warn-once"
 import { FeatureProps } from "../types"
 import { observeIntersection } from "./observers"
 import { ViewportOptions, ViewportState } from "./types"
@@ -108,6 +109,13 @@ function useMissingIntersectionObserver(
 ) {
     useEffect(() => {
         if (!shouldObserve) return
+
+        if (process.env.NODE_ENV !== "production") {
+            warnOnce(
+                false,
+                "IntersectionObserver not available on this device. whileInView animations will trigger on mount."
+            )
+        }
 
         /**
          * Fire this in an rAF because, at this point, the animation state
