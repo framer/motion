@@ -1175,9 +1175,10 @@ export function createProjectionNode<I>({
                      */
                     setTimeout(() => {
                         warnOnce(
-                            !isTreeAnimatingLayoutAffectingStyle(
-                                this.options.visualElement
-                            ),
+                            () =>
+                                !isTreeAnimatingLayoutAffectingStyle(
+                                    this.options.visualElement
+                                ),
                             `Attempting to animate layout within a component performing an animation on a layout-affecting properties (e.g. "width", "height", "top"). This is likely to break layout animations. Attempt to replace with the layout and style prop, e.g. <motion.div layout style={{ width: 100px }} />.`
                         )
                     }, 50)

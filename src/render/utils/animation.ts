@@ -178,7 +178,7 @@ function animateTarget(
         if (process.env.NODE_ENV !== "production") {
             if (layoutFlags[key]) {
                 warnOnce(
-                    !visualElement.projection?.isTreeAnimating,
+                    () => !visualElement.projection?.isTreeAnimating,
                     `Attempting to animate layout-affecting style "${key}" to ${valueTarget} on a component that is performing a layout animation (e.g. <motion.div layout />). This is likely to break layout animations. Attempt to replace with <motion.div layout style={{ ${key}: ${valueTarget} }} />.`
                 )
 
