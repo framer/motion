@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "5.2.1",
+    "version": "5.3.0-rc.1",
     "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.mjs",
@@ -37,11 +37,11 @@
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
-        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://localhost:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://0.0.0.0:8000/'",
+        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
         "test-e2e": "yarn test-e2e-chrome && yarn test-e2e-electron",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/drag-framer-page.ts\"'",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "projection-dev": "python -m SimpleHTTPServer",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
@@ -136,31 +136,31 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "34.1 kB"
+            "maxSize": "34.7 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "6.5 kB"
+            "maxSize": "6.1 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "17.2 kB"
+            "maxSize": "17.7 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "28.2 kB"
+            "maxSize": "28.7 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "6.5 kB"
+            "maxSize": "6.3 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "19 kB"
+            "maxSize": "19.3 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "30.5 kB"
+            "maxSize": "31 kB"
         }
     ]
 }

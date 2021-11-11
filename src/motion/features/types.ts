@@ -18,6 +18,7 @@ export type FeatureNames = {
     focus: true
     hover: true
     pan: true
+    inView: true
     measureLayout: true
 }
 
@@ -39,6 +40,7 @@ export interface FeatureComponents {
     focus?: FeatureComponent
     hover?: FeatureComponent
     pan?: FeatureComponent
+    inView?: FeatureComponent
     measureLayout?: FeatureComponent
 }
 

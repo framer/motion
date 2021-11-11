@@ -15,7 +15,7 @@ const tsLoader = {
 const DEV_SERVER_PORT = 9990
 
 console.log(
-    chalk.bold.green(`\nRunning at: http://0.0.0.0:${DEV_SERVER_PORT}/\n`)
+    chalk.bold.green(`\nRunning at: http://localhost:${DEV_SERVER_PORT}/\n`)
 )
 
 module.exports = {

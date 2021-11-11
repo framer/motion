@@ -56,6 +56,10 @@ const validMotionProps = new Set<keyof MotionProps>([
     "whileFocus",
     "whileTap",
     "whileHover",
+    "whileInView",
+    "onViewportEnter",
+    "onViewportLeave",
+    "viewport",
     "layoutScroll",
 ])
 

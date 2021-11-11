@@ -4,5 +4,6 @@ export enum AnimationType {
     Tap = "whileTap",
     Drag = "whileDrag",
     Focus = "whileFocus",
+    InView = "whileInView",
     Exit = "exit",
 }

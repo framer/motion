@@ -15,6 +15,7 @@ export const featureDefinitions: LoadedFeatures = {
         "whileTap",
         "whileFocus",
         "whileDrag",
+        "whileInView",
     ]),
     exit: createDefinition(["exit"]),
     drag: createDefinition(["drag", "dragControls"]),
@@ -26,6 +27,11 @@ export const featureDefinitions: LoadedFeatures = {
         "onPanStart",
         "onPanSessionStart",
         "onPanEnd",
+    ]),
+    inView: createDefinition([
+        "whileInView",
+        "onViewportEnter",
+        "onViewportLeave",
     ]),
 }
 

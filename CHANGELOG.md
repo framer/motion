@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.3.0] Unreleased
+
+### Added
+
+-   `whileInView`, `onViewportEnter` and `onViewportLeave` props.
+
 ## [5.2.1] 2021-11-05
 
 ### Fixed
