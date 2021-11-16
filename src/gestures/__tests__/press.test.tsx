@@ -275,6 +275,51 @@ describe("press", () => {
         return expect(promise).resolves.toEqual([0.5, 1, 0.5])
     })
 
+    test("press gesture works with animation state", async () => {
+        const [a, b] = await new Promise((resolve) => {
+            const childProps = {
+                variants: {
+                    rest: { opacity: 0.5 },
+                    pressed: { opacity: 0.8 },
+                },
+                transition: { duration: 0.01 },
+            }
+
+            const Component = () => {
+                const [isPressed, setPressedState] = React.useState(false)
+                return (
+                    <motion.div
+                        data-testid="parent"
+                        animate={isPressed ? ["pressed"] : ["rest"]}
+                    >
+                        <motion.div
+                            data-testid="a"
+                            {...childProps}
+                            onTapStart={() => setPressedState(true)}
+                        />
+                        <motion.div data-testid="b" {...childProps} />
+                    </motion.div>
+                )
+            }
+
+            const { getByTestId } = render(<Component />)
+
+            // Trigger mouse down
+            mouseDown(getByTestId("a") as Element)
+            setTimeout(
+                () =>
+                    resolve([
+                        getByTestId("a") as Element,
+                        getByTestId("b") as Element,
+                    ]),
+                100
+            )
+        })
+
+        expect(a).toHaveStyle("opacity: 0.8")
+        expect(b).toHaveStyle("opacity: 0.8")
+    })
+
     /**
      * TODO: We want the behaviour that we can override individual componnets with their
      * own whileX props to apply gesture behaviour just on that component.
@@ -377,15 +422,7 @@ describe("press", () => {
         })
 
         return expect(promise).resolves.toEqual([
-            0.5,
-            0.75,
-            1,
-            0.75,
-            0.5,
-            0.75,
-            1,
-            1,
-            0.5,
+            0.5, 0.75, 1, 0.75, 0.5, 0.75, 1, 1, 0.5,
         ])
     })
 
@@ -452,15 +489,7 @@ describe("press", () => {
         })
 
         return expect(promise).resolves.toEqual([
-            0.5,
-            0.75,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
-            1,
+            0.5, 0.75, 1, 1, 1, 1, 1, 1, 1,
         ])
     })
 })

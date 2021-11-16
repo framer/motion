@@ -14,8 +14,11 @@ function createHoverEvent(
     return (event: MouseEvent, info: EventInfo) => {
         if (!isMouseEvent(event) || isDragActive()) return
 
-        callback?.(event, info)
+        /**
+         * Ensure we trigger animations before firing event callback
+         */
         visualElement.animationState?.setActive(AnimationType.Hover, isActive)
+        callback?.(event, info)
     }
 }
 
