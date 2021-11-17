@@ -6,6 +6,6 @@ export const isCustomValue = (v: any): v is CustomValueType => {
 }
 
 export const resolveFinalValueInKeyframes = (v: ValueTarget): SingleTarget => {
-    // TODO maybe throw if v.length - 1 is placeholder token?)
+    // TODO maybe throw if v.length - 1 is placeholder token?
     return isKeyframesTarget(v) ? v[v.length - 1] || 0 : v
 }
