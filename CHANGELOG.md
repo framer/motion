@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [5.3.0] Unreleased
+## [5.3.1] Unreleased
+
+### Fixed
+
+-   Removing `layoutDependency` from forwarded props. [Issue](https://github.com/framer/motion/issues/1350)
+
+## [5.3.0] 2021-11-1
 
 ### Added
 
