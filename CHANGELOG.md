@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Removing `layoutDependency` from forwarded props. [Issue](https://github.com/framer/motion/issues/1350)
+-   `Reorder.Item` correctly fires `onDrag`. [Issue](https://github.com/framer/motion/issues/1348)
 
 ## [5.3.0] 2021-11-1
 
