@@ -107,6 +107,20 @@ function runTests(render: (components: any) => string) {
         )
     })
 
+    test("initial correctly overrides style with keyframes and initial={false}", () => {
+        const div = render(
+            <motion.div
+                initial={false}
+                animate={{ x: [0, 100] }}
+                style={{ x: 200 }}
+            />
+        )
+
+        expect(div).toBe(
+            `<div style="transform:translateX(100px) translateZ(0)"></div>`
+        )
+    })
+
     test("Reorder: Renders correct element", () => {
         function Component() {
             const [state, setState] = React.useState([0])

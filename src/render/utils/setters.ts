@@ -37,9 +37,11 @@ export function setTarget(
     definition: string | TargetAndTransition | TargetResolver
 ) {
     const resolved = resolveVariant(visualElement, definition)
-    let { transitionEnd = {}, transition = {}, ...target } = resolved
-        ? visualElement.makeTargetAnimatable(resolved, false)
-        : {}
+    let {
+        transitionEnd = {},
+        transition = {},
+        ...target
+    } = resolved ? visualElement.makeTargetAnimatable(resolved, false) : {}
 
     target = { ...target, ...transitionEnd }
 

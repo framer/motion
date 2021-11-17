@@ -63,19 +63,18 @@ function makeState<I, RS>(
     return state
 }
 
-export const makeUseVisualState = <I, RS>(
-    config: UseVisualStateConfig<I, RS>
-): UseVisualState<I, RS> => (
-    props: MotionProps,
-    isStatic: boolean
-): VisualState<I, RS> => {
-    const context = useContext(MotionContext)
-    const presenceContext = useContext(PresenceContext)
+export const makeUseVisualState =
+    <I, RS>(config: UseVisualStateConfig<I, RS>): UseVisualState<I, RS> =>
+    (props: MotionProps, isStatic: boolean): VisualState<I, RS> => {
+        const context = useContext(MotionContext)
+        const presenceContext = useContext(PresenceContext)
 
-    return isStatic
-        ? makeState(config, props, context, presenceContext)
-        : useConstant(() => makeState(config, props, context, presenceContext))
-}
+        return isStatic
+            ? makeState(config, props, context, presenceContext)
+            : useConstant(() =>
+                  makeState(config, props, context, presenceContext)
+              )
+    }
 
 function makeLatestValues(
     props: MotionProps,
@@ -105,8 +104,8 @@ function makeLatestValues(
         animate ??= context.animate
     }
 
-    const variantToSet =
-        blockInitialAnimation || initial === false ? animate : initial
+    const initialAnimationIsBlocked = blockInitialAnimation || initial === false
+    const variantToSet = initialAnimationIsBlocked ? animate : initial
 
     if (
         variantToSet &&
@@ -120,7 +119,20 @@ function makeLatestValues(
 
             const { transitionEnd, transition, ...target } = resolved
 
-            for (const key in target) values[key] = target[key]
+            for (const key in target) {
+                let valueTarget = target[key]
+
+                if (Array.isArray(valueTarget)) {
+                    const index = initialAnimationIsBlocked
+                        ? valueTarget.length - 1
+                        : 0
+                    valueTarget = valueTarget[index]
+                }
+
+                if (valueTarget !== null) {
+                    values[key] = valueTarget
+                }
+            }
             for (const key in transitionEnd) values[key] = transitionEnd[key]
         })
     }

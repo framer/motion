@@ -201,8 +201,12 @@ export function createAnimationState(
              * a changed value or a value that was removed in a higher priority, we set
              * this to true and add this prop to the animation list.
              */
+            const isVariantChanged = variantsHaveChanged(
+                typeState.prevProp,
+                prop
+            )
             let shouldAnimateType =
-                variantsHaveChanged(typeState.prevProp, prop) ||
+                isVariantChanged ||
                 // If we're making this variant active, we want to always make it active
                 (type === changedActiveType &&
                     typeState.isActive &&
@@ -264,7 +268,7 @@ export function createAnimationState(
                      * detect whether any value has changed. If it has, we animate it.
                      */
                     if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
-                        if (!shallowCompare(next, prev)) {
+                        if (!shallowCompare(next, prev) || isVariantChanged) {
                             markToAnimate(key)
                         } else {
                             /**

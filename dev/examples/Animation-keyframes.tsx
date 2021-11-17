@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "@framer"
+import { motion, useCycle } from "@framer"
 
 /**
  * An example of the Motion keyframes syntax.
@@ -14,11 +14,16 @@ const style = {
 }
 
 export const App = () => {
+    const [animate, cycle] = useCycle("a", "b")
     return (
         <motion.div
-            animate={{
-                width: [null, 50, 200, 100],
+            initial={false}
+            animate={animate}
+            variants={{
+                a: { x: [0, 200] },
+                b: { x: [0, 200] },
             }}
+            onClick={() => cycle()}
             transition={{
                 duration: 2,
                 easings: ["circOut", "circOut", "circOut"],
