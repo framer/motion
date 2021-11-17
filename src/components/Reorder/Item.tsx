@@ -43,6 +43,7 @@ export function ReorderItem<V>(
         style,
         value,
         as = "li",
+        onDrag,
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
@@ -78,9 +79,12 @@ export function ReorderItem<V>(
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
             layout
-            onDrag={(_event, { velocity }) => {
+            onDrag={(event, gesturePoint) => {
+                const { velocity } = gesturePoint
                 velocity[axis] &&
                     updateOrder(value, point[axis].get(), velocity[axis])
+
+                onDrag?.(event, gesturePoint)
             }}
             onLayoutMeasure={(measured) => {
                 layout.current = measured
