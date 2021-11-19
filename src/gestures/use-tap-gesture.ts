@@ -64,9 +64,12 @@ export function useTapGesture({
             addPointerEvent(window, "pointercancel", onPointerCancel)
         )
 
-        onTapStart?.(event, info)
-
+        /**
+         * Ensure we trigger animations before firing event callback
+         */
         visualElement.animationState?.setActive(AnimationType.Tap, true)
+
+        onTapStart?.(event, info)
     }
 
     usePointerEvent(
