@@ -53,6 +53,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
     ) {
         const layoutId = useLayoutId(props)
         props = { ...props, layoutId }
+
         /**
          * If we're rendering in a static environment, we only visually update the component
          * as a result of a React-rerender rather than interactions or animations. This

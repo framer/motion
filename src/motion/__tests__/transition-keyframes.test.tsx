@@ -1,7 +1,7 @@
 import { render } from "../../../jest.setup"
-import { motion } from "../.."
+import { motion, motionValue } from "../.."
 import * as React from "react"
-import { variantsHaveChanged } from "../../render/utils/animation-state"
+import { checkVariantsDidChange } from "../../render/utils/animation-state"
 
 describe("keyframes transition", () => {
     test("keyframes as target", async () => {
@@ -32,11 +32,13 @@ describe("keyframes transition", () => {
     })
 
     test("hasUpdated detects only changed keyframe arrays", async () => {
-        expect(variantsHaveChanged("1", "2")).toBe(true)
-        expect(variantsHaveChanged(["1", "2", "3"], ["1", "2", "3"])).toBe(
+        expect(checkVariantsDidChange("1", "2")).toBe(true)
+        expect(checkVariantsDidChange(["1", "2", "3"], ["1", "2", "3"])).toBe(
             false
         )
-        expect(variantsHaveChanged(["1", "2", "3"], ["1", "2", "4"])).toBe(true)
+        expect(checkVariantsDidChange(["1", "2", "3"], ["1", "2", "4"])).toBe(
+            true
+        )
     })
 
     test("keyframes with non-pixel values", async () => {
@@ -62,5 +64,54 @@ describe("keyframes transition", () => {
         })
 
         expect(promise).resolves.toHaveStyle("width: 100%;")
+    })
+
+    test("if initial={false}, take state of final keyframe", async () => {
+        const xResult = await new Promise((resolve) => {
+            const x = motionValue(0)
+            const Component = ({ animate }: any) => {
+                return (
+                    <motion.div
+                        initial={false}
+                        animate={animate}
+                        variants={{ a: { x: [0, 100] }, b: { x: [0, 100] } }}
+                        transition={{ ease: () => 0.5, duration: 10 }}
+                        style={{ x }}
+                    />
+                )
+            }
+
+            render(<Component animate="a" />)
+            setTimeout(() => resolve(x.get()), 50)
+        })
+
+        expect(xResult).toBe(100)
+    })
+
+    test("keyframes animation reruns when variants change and keyframes are the same", async () => {
+        const xResult = await new Promise((resolve) => {
+            const x = motionValue(0)
+            const Component = ({ animate }: any) => {
+                return (
+                    <motion.div
+                        initial={false}
+                        animate={animate}
+                        variants={{
+                            a: { x: [0, 100] },
+                            b: { x: [0, 100], transition: { type: false } },
+                        }}
+                        transition={{ ease: () => 0.5, duration: 10 }}
+                        style={{ x }}
+                    />
+                )
+            }
+
+            const { rerender } = render(<Component animate="a" />)
+            rerender(<Component animate="b" />)
+            rerender(<Component animate="a" />)
+            setTimeout(() => resolve(x.get()), 50)
+        })
+
+        expect(xResult).toBe(50)
     })
 })
