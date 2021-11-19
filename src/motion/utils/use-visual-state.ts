@@ -123,6 +123,10 @@ function makeLatestValues(
                 let valueTarget = target[key]
 
                 if (Array.isArray(valueTarget)) {
+                    /**
+                     * Take final keyframe if the initial animation is blocked because
+                     * we want to initialise at the end of that blocked animation.
+                     */
                     const index = initialAnimationIsBlocked
                         ? valueTarget.length - 1
                         : 0
