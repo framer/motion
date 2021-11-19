@@ -14,7 +14,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   `Reorder.Item` correctly fires `onDrag`. [Issue](https://github.com/framer/motion/issues/1348)
 -   Fires `onPressStart` and `onHoverStart` **after** triggering animations.
 -   Replay keyframes when variant changes. [Issue](https://github.com/framer/motion/issues/1346)
--   Correctly SSR first keyframe when `initial` is `true` and final keyframe when `initial` is `false`.
+-   Correctly SSR final keyframe when `initial` is `false`.
 
 ## [5.3.0] 2021-11-11
 

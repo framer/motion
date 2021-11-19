@@ -121,14 +121,6 @@ function runTests(render: (components: any) => string) {
         )
     })
 
-    test("initial correctly sets initial keyframe to style", () => {
-        const div = render(<motion.div animate={{ x: [50, 100] }} />)
-
-        expect(div).toBe(
-            `<div style="transform:translateX(50px) translateZ(0)"></div>`
-        )
-    })
-
     test("Reorder: Renders correct element", () => {
         function Component() {
             const [state, setState] = React.useState([0])
