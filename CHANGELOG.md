@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.3.2] Unreleased
+
+### Fixed
+
+-   Ensuring forced renders are batched so sibling `AnimatePresence` renders are triggered together. [Issue](https://github.com/framer/motion/issues/1358)
+
 ## [5.3.1] Unreleased
 
 ### Added
