@@ -15,7 +15,8 @@ function isCSSVariable(value: any): value is string {
  *
  * @param current
  */
-export const cssVariableRegex = /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
+export const cssVariableRegex =
+    /var\((--[a-zA-Z0-9-_]+),? ?([a-zA-Z0-9 ()%#.,-]+)?\)/
 export function parseCSSVariable(current: string) {
     const match = cssVariableRegex.exec(current)
     if (!match) return [,]
@@ -27,7 +28,7 @@ export function parseCSSVariable(current: string) {
 const maxDepth = 4
 function getVariableValue(
     current: string,
-    element: HTMLElement,
+    element: Element,
     depth = 1
 ): string | undefined {
     invariant(
@@ -64,7 +65,7 @@ export function resolveCSSVariables(
     transitionEnd: Target | undefined
 ): { target: TargetWithKeyframes; transitionEnd?: Target } {
     const element = visualElement.getInstance()
-    if (!(element instanceof HTMLElement)) return { target, transitionEnd }
+    if (!(element instanceof Element)) return { target, transitionEnd }
 
     // If `transitionEnd` isn't `undefined`, clone it. We could clone `target` and `transitionEnd`
     // only if they change but I think this reads clearer and this isn't a performance-critical path.
