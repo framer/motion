@@ -59,7 +59,7 @@ export function ReorderItem<V>(
     }
 
     const zIndex = useTransform([point.x, point.y], ([latestX, latestY]) =>
-        latestX || latestY ? 1 : 0
+        latestX || latestY ? 1 : "unset"
     )
 
     const layout = useRef<Box | null>(null)

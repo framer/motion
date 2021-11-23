@@ -133,7 +133,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul><li style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+            `<ul><li style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
         )
     })
 
@@ -148,7 +148,9 @@ function runTests(render: (components: any) => string) {
         }
         const div = render(<Component />)
 
-        expect(div).toBe(`<ul><li style="z-index:0;transform:none"></li></ul>`)
+        expect(div).toBe(
+            `<ul><li style="z-index:unset;transform:none"></li></ul>`
+        )
     })
 
     test("Reorder: Renders provided element", () => {
@@ -163,7 +165,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<div><div style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
+            `<div><div style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
         )
     })
 }
