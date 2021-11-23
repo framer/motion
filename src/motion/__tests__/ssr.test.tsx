@@ -148,7 +148,9 @@ function runTests(render: (components: any) => string) {
         }
         const div = render(<Component />)
 
-        expect(div).toBe(`<ul><li style="z-index:0;transform:none"></li></ul>`)
+        expect(div).toBe(
+            `<ul><li style="z-index:unset;transform:none"></li></ul>`
+        )
     })
 
     test("Reorder: Renders provided element", () => {
