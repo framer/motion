@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Fixing animating to CSS variables with `SVGElement`. [Issue](https://github.com/framer/motion/issues/1334)
+-   Unsetting `z-index` for resting `Reorder.Item` components. [Issue](https://github.com/framer/motion/issues/1313)
 
 ## [5.3.2] 2021-11-23
 
