@@ -42,7 +42,8 @@ export function filterProps(
         if (
             shouldForward(key) ||
             (forwardMotionProps === true && isValidMotionProp(key)) ||
-            (!isDom && !isValidMotionProp(key))
+            (!isDom && !isValidMotionProp(key)) ||
+            (props["draggable"] && key.startsWith("onDrag"))
         ) {
             filteredProps[key] = props[key]
         }
