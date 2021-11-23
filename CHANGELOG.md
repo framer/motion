@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.3.3] 2021-11-Unreleased
+
+### Fixed
+
+-   Fixing animating to CSS variables with `SVGElement`. [Issue](https://github.com/framer/motion/issues/1334)
+
 ## [5.3.2] 2021-11-23
 
 ### Fixed
