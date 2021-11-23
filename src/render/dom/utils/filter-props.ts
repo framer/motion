@@ -43,6 +43,7 @@ export function filterProps(
             shouldForward(key) ||
             (forwardMotionProps === true && isValidMotionProp(key)) ||
             (!isDom && !isValidMotionProp(key)) ||
+            // If trying to use native HTML drag events, forward drag listeners
             (props["draggable"] && key.startsWith("onDrag"))
         ) {
             filteredProps[key] = props[key]
