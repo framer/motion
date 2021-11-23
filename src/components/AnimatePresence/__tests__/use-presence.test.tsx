@@ -4,6 +4,7 @@ import { useEffect } from "react"
 import { act } from "react-dom/test-utils"
 import { AnimatePresence } from ".."
 import { usePresence } from "../use-presence"
+import sync from "framesync"
 
 type CB = () => void
 
@@ -33,9 +34,11 @@ describe("usePresence", () => {
 
             act(() => remove())
 
-            expect(container.firstChild).toBeFalsy()
+            sync.postRender(() => {
+                expect(container.firstChild).toBeFalsy()
 
-            resolve()
+                resolve()
+            })
         })
 
         await promise
@@ -84,13 +87,17 @@ describe("usePresence", () => {
 
             act(() => removeA())
 
-            expect(container.firstChild).toBeTruthy()
+            sync.postRender(() => {
+                expect(container.firstChild).toBeTruthy()
 
-            act(() => removeB())
+                act(() => removeB())
 
-            expect(container.firstChild).toBeFalsy()
+                sync.postRender(() => {
+                    expect(container.firstChild).toBeFalsy()
 
-            resolve()
+                    resolve()
+                })
+            })
         })
 
         await promise
@@ -139,17 +146,21 @@ describe("usePresence", () => {
 
             act(() => removeA())
 
-            rerender(<Parent isVisible={false} />)
+            sync.postRender(() => {
+                rerender(<Parent isVisible={false} />)
 
-            expect(container.firstChild).toBeTruthy()
+                sync.postRender(() => {
+                    expect(container.firstChild).toBeTruthy()
+                    rerender(<Parent isVisible={false} />)
+                    act(() => removeB())
 
-            rerender(<Parent isVisible={false} />)
+                    sync.postRender(() => {
+                        expect(container.firstChild).toBeFalsy()
 
-            act(() => removeB())
-
-            expect(container.firstChild).toBeFalsy()
-
-            resolve()
+                        resolve()
+                    })
+                })
+            })
         })
 
         await promise
