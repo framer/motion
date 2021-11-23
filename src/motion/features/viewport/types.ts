@@ -2,7 +2,9 @@ import { RefObject } from "react"
 import { TargetAndTransition } from "../../../types"
 import { VariantLabels } from "../../types"
 
-export type ViewportEventHandler = () => void
+export type ViewportEventHandler = (
+    entry: IntersectionObserverEntry | null
+) => void
 
 export interface ViewportOptions {
     root?: RefObject<Element>

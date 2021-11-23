@@ -86,7 +86,7 @@ function useIntersectionObserver(
             const callback = isIntersecting
                 ? props.onViewportEnter
                 : props.onViewportLeave
-            callback?.()
+            callback?.(entry)
         }
 
         return observeIntersection(
@@ -128,7 +128,7 @@ function useMissingIntersectionObserver(
         requestAnimationFrame(() => {
             state.hasEnteredView = true
             const { onViewportEnter } = visualElement.getProps()
-            onViewportEnter?.()
+            onViewportEnter?.(null)
             visualElement.animationState?.setActive(AnimationType.InView, true)
         })
     }, [shouldObserve])
