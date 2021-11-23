@@ -137,6 +137,20 @@ function runTests(render: (components: any) => string) {
         )
     })
 
+    test("Reorder: Doesn't render touch-scroll disabling styles if dragListener === false", () => {
+        function Component() {
+            const [state, setState] = React.useState([0])
+            return (
+                <Reorder.Group onReorder={setState} values={state}>
+                    <Reorder.Item value="a" dragListener={false} />
+                </Reorder.Group>
+            )
+        }
+        const div = render(<Component />)
+
+        expect(div).toBe(`<ul><li style="z-index:0;transform:none"></li></ul>`)
+    })
+
     test("Reorder: Renders provided element", () => {
         function Component() {
             const [state, setState] = React.useState([0])
