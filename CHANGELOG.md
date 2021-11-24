@@ -9,6 +9,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 -   Fixing animating to CSS variables with `SVGElement`. [Issue](https://github.com/framer/motion/issues/1334)
 -   Unsetting `z-index` for resting `Reorder.Item` components. [Issue](https://github.com/framer/motion/issues/1313)
 -   Forward native drag listeners to `draggable` elements. [Issue](https://github.com/framer/motion/issues/1248)
+-   Authors can now support browsers without `Proxy` by using `motion("div")` syntax. [Issue](https://github.com/framer/motion/issues/1178)
 
 ## [5.3.2] 2021-11-23
 
