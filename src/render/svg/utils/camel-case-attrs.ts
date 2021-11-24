@@ -21,4 +21,5 @@ export const camelCaseAttributes = new Set([
     "tableValues",
     "viewBox",
     "gradientTransform",
+    "pathLength",
 ])

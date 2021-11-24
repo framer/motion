@@ -36,10 +36,11 @@ export type AnimationList = string[] | TargetAndTransition[]
 
 export const variantPriorityOrder = [
     AnimationType.Animate,
+    AnimationType.InView,
+    AnimationType.Focus,
     AnimationType.Hover,
     AnimationType.Tap,
     AnimationType.Drag,
-    AnimationType.Focus,
     AnimationType.Exit,
 ]
 
@@ -200,8 +201,12 @@ export function createAnimationState(
              * a changed value or a value that was removed in a higher priority, we set
              * this to true and add this prop to the animation list.
              */
+            const variantDidChange = checkVariantsDidChange(
+                typeState.prevProp,
+                prop
+            )
             let shouldAnimateType =
-                variantsHaveChanged(typeState.prevProp, prop) ||
+                variantDidChange ||
                 // If we're making this variant active, we want to always make it active
                 (type === changedActiveType &&
                     typeState.isActive &&
@@ -263,7 +268,7 @@ export function createAnimationState(
                      * detect whether any value has changed. If it has, we animate it.
                      */
                     if (isKeyframesTarget(next) && isKeyframesTarget(prev)) {
-                        if (!shallowCompare(next, prev)) {
+                        if (!shallowCompare(next, prev) || variantDidChange) {
                             markToAnimate(key)
                         } else {
                             /**
@@ -389,7 +394,7 @@ export function createAnimationState(
     }
 }
 
-export function variantsHaveChanged(prev: any, next: any) {
+export function checkVariantsDidChange(prev: any, next: any) {
     if (typeof next === "string") {
         return next !== prev
     } else if (isVariantLabels(next)) {
@@ -419,6 +424,7 @@ function createTypeState(isActive = false): AnimationTypeState {
 function createState() {
     return {
         [AnimationType.Animate]: createTypeState(true),
+        [AnimationType.InView]: createTypeState(),
         [AnimationType.Hover]: createTypeState(),
         [AnimationType.Tap]: createTypeState(),
         [AnimationType.Drag]: createTypeState(),

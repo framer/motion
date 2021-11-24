@@ -39,6 +39,10 @@ If applicable, let us know which OS, browser, browser version etc you're using.
 
 ## FAQs
 
+### Preact isn't working
+
+Framer Motion isn't compatible with Preact. 
+
 ### `AnimatePresence` isn't working
 
 Have all of its immediate children got a unique `key` prop that **remains the same for that component every render**?

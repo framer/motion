@@ -2,8 +2,70 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.3.3] 2021-11-Unreleased
+
 ### Fixed
 
+-   Fixing animating to CSS variables with `SVGElement`. [Issue](https://github.com/framer/motion/issues/1334)
+-   Unsetting `z-index` for resting `Reorder.Item` components. [Issue](https://github.com/framer/motion/issues/1313)
+-   Forward native drag listeners to `draggable` elements. [Issue](https://github.com/framer/motion/issues/1248)
+
+## [5.3.2] 2021-11-23
+
+### Fixed
+
+-   Ensuring forced renders are batched so sibling `AnimatePresence` renders are triggered together. [Issue](https://github.com/framer/motion/issues/1358)
+-   Viewport enter/leave event handlers are passed `IntersectionObserverEntry` or `null` if `IntersectionObserver` is not supported on the device. [Issue](https://github.com/framer/motion/issues/1364)
+-   No longer applying touch scroll-disabling styles if `dragListener` is set to `false`. [Issue](https://github.com/framer/motion/issues/1341)
+
+## [5.3.1] 2021-11-19
+
+### Added
+
+-   `useInstantTransition` hook for internal use.
+
+### Fixed
+
+-   Removing `layoutDependency` from forwarded props. [Issue](https://github.com/framer/motion/issues/1350)
+-   `Reorder.Item` correctly fires `onDrag`. [Issue](https://github.com/framer/motion/issues/1348)
+-   Fires `onPressStart` and `onHoverStart` **after** triggering animations.
+-   Replay keyframes when variant changes. [Issue](https://github.com/framer/motion/issues/1346)
+-   Correctly SSR final keyframe when `initial` is `false`.
+
+## [5.3.0] 2021-11-11
+
+### Added
+
+-   `whileInView`, `onViewportEnter` and `onViewportLeave` props.
+
+## [5.2.1] 2021-11-05
+
+### Fixed
+
+-   Fixing unit conversion for `x` and `y` styles. [Issue](https://github.com/framer/motion/issues/1336)
+
+## [5.2.0] 2021-11-04
+
+### Added
+
+-   Enable animation between hsla and rgba/hex.
+
+### Fixed
+
+-   Fixing HSLA color interpolation. [Issue](https://github.com/framer/motion/issues/1324)
+
+## [5.1.0] 2021-11-02
+
+### Added
+
+-   Adding path drawing support for `circle`, `ellipse`, `line`, `path`, `polygon`, `polyline` and `rect` components.
+-   Add SSR support for `pathLength`.
+
+### Fixed
+
+-   Fixed SSR for `pathLength`.
+-   Downgrading `whileFocus` to lowest gesture priority. [Issue](https://github.com/framer/motion/issues/1221)
+-   Fixed path length for elements with `vectorEffect="non-scaling-stroke"` [Issue](https://github.com/framer/motion/issues/521)
 -   Stripping `dragSnapToOrigin` from DOM output. [PR by @Evalon](https://github.com/framer/motion/pull/1326)
 
 ## [5.0.2] 2021-11-02

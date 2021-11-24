@@ -105,9 +105,12 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
     const isInitialRender = useRef(true)
 
     const isMounted = useRef(true)
-    useEffect(() => () => {
-        isMounted.current = false
-    }, [])
+    useEffect(
+        () => () => {
+            isMounted.current = false
+        },
+        []
+    )
 
     // Filter out any children that aren't ReactElements. We can only track ReactElements with a props.key
     const filteredChildren = onlyElements(children)

@@ -29,7 +29,7 @@ export function buildSVGAttrs(
 
     state.attrs = state.style
     state.style = {}
-    const { attrs, style, dimensions, totalPathLength } = state
+    const { attrs, style, dimensions } = state
     /**
      * However, we apply transforms as CSS transforms. So if we detect a transform we take it from attrs
      * and copy it into style.
@@ -55,11 +55,10 @@ export function buildSVGAttrs(
     if (attrX !== undefined) attrs.x = attrX
     if (attrY !== undefined) attrs.y = attrY
 
-    // Build SVG path if one has been measured
-    if (totalPathLength !== undefined && pathLength !== undefined) {
+    // Build SVG path if one has been defined
+    if (pathLength !== undefined) {
         buildSVGPath(
             attrs,
-            totalPathLength,
             pathLength as number,
             pathSpacing as number,
             pathOffset as number,

@@ -19,6 +19,7 @@ const validMotionProps = new Set<keyof MotionProps>([
     "inherit",
     "layout",
     "layoutId",
+    "layoutDependency",
     "onLayoutAnimationComplete",
     "onLayoutMeasure",
     "onBeforeLayoutMeasure",
@@ -56,6 +57,10 @@ const validMotionProps = new Set<keyof MotionProps>([
     "whileFocus",
     "whileTap",
     "whileHover",
+    "whileInView",
+    "onViewportEnter",
+    "onViewportLeave",
+    "viewport",
     "layoutScroll",
 ])
 

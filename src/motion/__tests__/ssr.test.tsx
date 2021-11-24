@@ -60,7 +60,7 @@ function runTests(render: (components: any) => string) {
 
     test("correctly renders SVG", () => {
         const cx = motionValue(100)
-        const pathLength = motionValue(100)
+        const pathLength = motionValue(0.5)
         const circle = render(
             <motion.circle
                 cx={cx}
@@ -74,7 +74,7 @@ function runTests(render: (components: any) => string) {
         )
 
         expect(circle).toBe(
-            '<circle cx="100" style="background:#fff" stroke-width="10"></circle>'
+            '<circle cx="100" style="background:#fff" stroke-width="10" pathLength="1" stroke-dashoffset="0px" stroke-dasharray="0.5px 1px"></circle>'
         )
         const rect = render(
             <AnimatePresence>
@@ -107,6 +107,20 @@ function runTests(render: (components: any) => string) {
         )
     })
 
+    test("initial correctly overrides style with keyframes and initial={false}", () => {
+        const div = render(
+            <motion.div
+                initial={false}
+                animate={{ x: [0, 100] }}
+                style={{ x: 200 }}
+            />
+        )
+
+        expect(div).toBe(
+            `<div style="transform:translateX(100px) translateZ(0)"></div>`
+        )
+    })
+
     test("Reorder: Renders correct element", () => {
         function Component() {
             const [state, setState] = React.useState([0])
@@ -119,7 +133,23 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<ul><li style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+            `<ul><li style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></li></ul>`
+        )
+    })
+
+    test("Reorder: Doesn't render touch-scroll disabling styles if dragListener === false", () => {
+        function Component() {
+            const [state, setState] = React.useState([0])
+            return (
+                <Reorder.Group onReorder={setState} values={state}>
+                    <Reorder.Item value="a" dragListener={false} />
+                </Reorder.Group>
+            )
+        }
+        const div = render(<Component />)
+
+        expect(div).toBe(
+            `<ul><li style="z-index:unset;transform:none"></li></ul>`
         )
     })
 
@@ -135,7 +165,7 @@ function runTests(render: (components: any) => string) {
         const div = render(<Component />)
 
         expect(div).toBe(
-            `<div><div style="z-index:0;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
+            `<div><div style="z-index:unset;transform:none;-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:pan-x" draggable="false"></div></div>`
         )
     })
 }
