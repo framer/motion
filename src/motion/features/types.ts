@@ -65,5 +65,6 @@ export type RenderComponent<Instance, RenderState> = (
     projectionId: number | undefined,
     ref: React.Ref<Instance>,
     visualState: VisualState<Instance, RenderState>,
-    isStatic: boolean
+    isStatic: boolean,
+    visualElement: VisualElement
 ) => any
