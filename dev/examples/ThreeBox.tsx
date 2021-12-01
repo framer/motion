@@ -19,8 +19,8 @@ function Box(props) {
             {...props}
             initial="hidden"
             animate="visible"
+            scale={[5, 5, 5]}
             variants={{
-                hidden: { scale: 0 },
                 visible: {
                     scale: 1, // clicked ? 2 : 1,
                     // rotateZ: clicked ? 90 : 0,
@@ -37,8 +37,8 @@ function Box(props) {
         >
             <boxGeometry args={[1, 1, 1]} />
             <motion.meshStandardMaterial
+                color="#000"
                 variants={{
-                    hidden: { color: "#ffcc00" },
                     visible: { color: "#ff3366" },
                     hover: { color: "#09f" },
                 }}

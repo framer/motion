@@ -1,7 +1,6 @@
 import { Object3DNode } from "@react-three/fiber"
-import { degreesToRadians } from "popmotion"
 import { Euler, Vector3, Color } from "three"
-import { ThreeRenderState } from "./types"
+import { ThreeRenderState } from "../types"
 
 const setVector =
     (name: string, defaultValue: number) =>
@@ -18,7 +17,7 @@ const setEuler =
     (instance: Object3DNode<any, any>, value: number) => {
         instance[name] ??= new Euler(defaultValue)
         const euler = instance[name] as Euler
-        euler[axis] = degreesToRadians(value)
+        euler[axis] = value
     }
 
 const setColor =
