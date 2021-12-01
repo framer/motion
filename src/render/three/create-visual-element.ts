@@ -22,12 +22,11 @@ export const threeVisualElement = visualElement<
     readValueFromInstance: readThreeValue,
 
     getBaseTarget(props, key) {
-        console.log("getting base target", props, key)
         return 0
     },
 
     sortNodePosition(a, b) {
-        return 1
+        return 0
     },
 
     makeTargetAnimatable(element, target) {

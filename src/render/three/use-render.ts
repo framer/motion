@@ -13,7 +13,6 @@ export const useRender: RenderComponent<any, ThreeRenderState> = (
     isStatic,
     visualElement
 ) => {
-    const { animationState } = visualElement
     const forwardedProps = filterProps(props, false, false)
 
     const elementProps = { ref, ...forwardedProps } as any
@@ -21,22 +20,31 @@ export const useRender: RenderComponent<any, ThreeRenderState> = (
     if (!isStatic) {
         if (props.whileTap) {
             elementProps.onPointerDown = (event) => {
-                animationState?.setActive(AnimationType.Tap, true)
+                visualElement.animationState?.setActive(AnimationType.Tap, true)
                 props.onPointerDown?.(event)
             }
             elementProps.onPointerUp = (event) => {
-                animationState?.setActive(AnimationType.Tap, false)
+                visualElement.animationState?.setActive(
+                    AnimationType.Tap,
+                    false
+                )
                 props.onPointerUp?.(event)
             }
         }
 
         if (props.whileHover) {
             elementProps.onPointerOver = (event) => {
-                animationState?.setActive(AnimationType.Hover, true)
+                visualElement.animationState?.setActive(
+                    AnimationType.Hover,
+                    true
+                )
                 props.onPointerOver?.(event)
             }
             elementProps.onPointerOut = (event) => {
-                animationState?.setActive(AnimationType.Hover, false)
+                visualElement.animationState?.setActive(
+                    AnimationType.Hover,
+                    false
+                )
                 props.onPointerOut?.(event)
             }
         }
