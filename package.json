@@ -12,7 +12,7 @@
         },
         "./three": {
             "require": "./dist/framer-motion-three.cjs.js",
-            "import": "./dist/es/render/three/index.mjs",
+            "import": "./dist/es/three-entry.mjs",
             "default": "./dist/framer-motion-three.cjs.js"
         },
         "./package.json": "./package.json"
