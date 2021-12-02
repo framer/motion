@@ -5845,6 +5845,11 @@ __metadata:
   dependenciesMeta:
     "@emotion/is-prop-valid":
       optional: true
+  peerDependenciesMeta:
+    "@react-three/fiber":
+      optional: true
+    three:
+      optional: true
   languageName: unknown
   linkType: soft
 
