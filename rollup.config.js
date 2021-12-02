@@ -101,6 +101,19 @@ const es = Object.assign({}, config, {
     external,
 })
 
+const threeEs = Object.assign({}, config, {
+    input: "lib/three-entry.js",
+    output: {
+        entryFileNames: "[name].mjs",
+        format: "es",
+        exports: "named",
+        preserveModules: true,
+        dir: "dist/es",
+    },
+    plugins: [resolve()],
+    external,
+})
+
 const sizePlugins = [
     resolve(),
     replace({
@@ -155,6 +168,7 @@ export default [
     cjs,
     threeCjs,
     es,
+    threeEs,
     m,
     domAnimation,
     domMax,

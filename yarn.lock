@@ -1633,6 +1633,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-three/test-renderer@npm:^7.0.20":
+  version: 7.0.20
+  resolution: "@react-three/test-renderer@npm:7.0.20"
+  peerDependencies:
+    "@react-three/fiber": ">=7.0.21"
+    react: ">=17.0"
+    three: ">=0.126"
+  checksum: c87ba1ec051b035fb2a4c28164a328ed4c9518385b4e5e9f438dbdb9af71e1092e9bf83fa1cd2e9972c7959af767476c345fd8972c41d1ae299906373c992272
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-node-resolve@npm:^8.0.0":
   version: 8.4.0
   resolution: "@rollup/plugin-node-resolve@npm:8.4.0"
@@ -5769,6 +5780,7 @@ __metadata:
     "@emotion/is-prop-valid": ^0.8.2
     "@pmmmwh/react-refresh-webpack-plugin": ^0.4.3
     "@react-three/fiber": ^7.0.21
+    "@react-three/test-renderer": ^7.0.20
     "@rollup/plugin-node-resolve": ^8.0.0
     "@rollup/plugin-replace": ^2.3.2
     "@testing-library/dom": ^6.10.1

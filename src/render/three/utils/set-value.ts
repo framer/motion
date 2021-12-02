@@ -8,7 +8,7 @@ const setVector =
     (instance: Object3DNode<any, any>, value: number) => {
         instance[name] ??= new Vector3(defaultValue)
         const vector = instance[name] as Vector3
-        vector.setComponent(value, i)
+        vector.setComponent(i, value)
     }
 
 const setEuler =

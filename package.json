@@ -25,6 +25,8 @@
     "keywords": [
         "react animation",
         "react",
+        "three",
+        "3d",
         "pose",
         "react pose",
         "animation",
@@ -68,6 +70,7 @@
         "@cypress/webpack-preprocessor": "^4.1.0",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
         "@react-three/fiber": "^7.0.21",
+        "@react-three/test-renderer": "^7.0.20",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
         "@testing-library/dom": "^6.10.1",

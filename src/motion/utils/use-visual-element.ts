@@ -38,7 +38,6 @@ export function useVisualElement<Instance, RenderState>(
     }
 
     const visualElement = visualElementRef.current
-
     useIsomorphicLayoutEffect(() => {
         visualElement?.syncRender()
     })
