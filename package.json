@@ -66,6 +66,14 @@
         "react-dom": ">=16.8 || ^17.0.0",
         "three": "^0.135.0"
     },
+    "peerDependenciesMeta": {
+        "@react-three/fiber": {
+            "optional": true
+        },
+        "three": {
+            "optional": true
+        }
+    },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
