@@ -21,11 +21,11 @@ export const threeVisualElement = visualElement<
 
     readValueFromInstance: readThreeValue,
 
-    getBaseTarget(props, key) {
+    getBaseTarget(_props, _key) {
         return 0
     },
 
-    sortNodePosition(a, b) {
+    sortNodePosition(_a, _b) {
         return 0
     },
 
@@ -38,13 +38,13 @@ export const threeVisualElement = visualElement<
 
     resetTransform() {},
 
-    removeValueFromRenderState(key, renderState) {},
+    removeValueFromRenderState(_key, _renderState) {},
 
     measureViewportBox: createBox,
 
     scrapeMotionValuesFromProps,
 
-    build(element, state, latestValues, options, props) {
+    build(_element, state, latestValues) {
         for (const key in latestValues) {
             state[key] = latestValues[key]
         }

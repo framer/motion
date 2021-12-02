@@ -32,9 +32,7 @@ function custom<Props>(Component: string) {
 const componentCache = new Map<string, any>()
 export const motion = new Proxy(custom, {
     get: (_, key: string) => {
-        if (!componentCache.has(key)) {
-            componentCache.set(key, custom(key))
-        }
+        !componentCache.has(key) && componentCache.set(key, custom(key))
 
         return componentCache.get(key)!
     },

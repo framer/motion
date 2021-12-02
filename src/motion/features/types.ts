@@ -66,5 +66,5 @@ export type RenderComponent<Instance, RenderState> = (
     ref: React.Ref<Instance>,
     visualState: VisualState<Instance, RenderState>,
     isStatic: boolean,
-    visualElement: VisualElement
+    visualElement?: VisualElement
 ) => any

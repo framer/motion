@@ -34,14 +34,17 @@ function Box(props) {
             whileHover="hover"
             transition={{ type: "spring", stiffness: 1000, damping: 20 }}
             onClick={(event) => click(!clicked)}
+            onAnimationComplete={(target) => console.log(target)}
         >
             <boxGeometry args={[1, 1, 1]} />
             <motion.meshStandardMaterial
                 color="#000"
                 variants={{
-                    visible: { color: "#ff3366" },
+                    visible: { color: "#ffbb00" },
                     hover: { color: "#09f" },
+                    pressed: { color: "#8855ff" },
                 }}
+                transition={{ duration: 0.2 }}
             />
         </motion.mesh>
     )
@@ -49,12 +52,14 @@ function Box(props) {
 
 export const App = () => {
     return (
-        <div style={{ position: "fixed", inset: 0, background: "white" }}>
+        <motion.div
+            style={{ position: "fixed", inset: 0, background: "white" }}
+        >
             <Canvas>
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
                 <Box position={[1.2, 0, 0]} />
             </Canvas>
-        </div>
+        </motion.div>
     )
 }

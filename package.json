@@ -10,6 +10,11 @@
             "import": "./dist/es/index.mjs",
             "default": "./dist/framer-motion.cjs.js"
         },
+        "./three": {
+            "require": "./dist/framer-motion-three.cjs.js",
+            "import": "./dist/es/render/three/index.mjs",
+            "default": "./dist/framer-motion-three.cjs.js"
+        },
         "./package.json": "./package.json"
     },
     "types": "types/index.d.ts",

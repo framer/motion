@@ -35,14 +35,18 @@ export type SetAxisTargetListener = () => void
 export type RenderListener = () => void
 export type OnViewportBoxUpdate = (box: Axis, delta: Delta) => void
 
-/**
- * TODO: Make more of these lifecycle events available as props
- */
-export interface VisualElementLifecycles {
+export interface LayoutLifecycles {
     onBeforeLayoutMeasure?(box: Box): void
 
     onLayoutMeasure?(box: Box, prevBox: Box): void
 
+    /**
+     * @internal
+     */
+    onLayoutAnimationComplete?(): void
+}
+
+export interface AnimationLifecycles {
     /**
      * Callback with latest motion values, fired max once per frame.
      *
@@ -102,13 +106,10 @@ export interface VisualElementLifecycles {
     /**
      * @internal
      */
-    onLayoutAnimationComplete?(): void
-
-    /**
-     * @internal
-     */
     onUnmount?(): void
 }
+
+export type VisualElementLifecycles = LayoutLifecycles & AnimationLifecycles
 
 export interface LifecycleManager {
     onLayoutMeasure: (callback: LayoutMeasureListener) => () => void

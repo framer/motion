@@ -1,11 +1,21 @@
+import { MeshProps } from "@react-three/fiber"
 import type {
     ForwardRefExoticComponent,
     PropsWithoutRef,
     RefAttributes,
 } from "react"
-import { MotionProps } from "../.."
+import { HoverHandlers, TapHandlers } from "../.."
+import { AnimationProps } from "../../motion/types"
 import { ResolvedValues } from "../types"
-import { ThreeElements } from "./supported-elements"
+import { AnimationLifecycles } from "../utils/lifecycles"
+
+export interface ThreeMotionProps
+    extends AnimationLifecycles,
+        AnimationProps,
+        TapHandlers,
+        HoverHandlers {
+    onInstanceUpdate?: MeshProps["onUpdate"]
+}
 
 export interface ThreeRenderState {
     latestValues: ResolvedValues
@@ -24,8 +34,8 @@ export type ForwardRefComponent<T, P> = ForwardRefExoticComponent<
  * @public
  */
 export type ThreeMotionComponents = {
-    [K in ThreeElements]: ForwardRefComponent<
+    [K in keyof JSX.IntrinsicElements]: ForwardRefComponent<
         JSX.IntrinsicElements[K],
-        MotionProps
+        ThreeMotionProps & Omit<JSX.IntrinsicElements[K], "onUpdate">
     >
 }

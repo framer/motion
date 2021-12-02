@@ -1,54 +1,28 @@
 import { createElement } from "react"
 import { RenderComponent } from "../.."
-import { ThreeRenderState } from "./types"
+import { ThreeMotionProps, ThreeRenderState } from "./types"
 import { filterProps } from "../dom/utils/filter-props"
-import { AnimationType } from "../utils/types"
+import { MeshProps, Object3DNode } from "@react-three/fiber"
+import { useHover } from "./gestures/use-hover"
+import { useTap } from "./gestures/use-tap"
 
-export const useRender: RenderComponent<any, ThreeRenderState> = (
+export const useRender: RenderComponent<
+    Object3DNode<any, any>,
+    ThreeRenderState
+> = (
     Component,
-    props,
+    props: ThreeMotionProps & MeshProps,
     _projectionId,
     ref,
-    state,
+    _state,
     isStatic,
     visualElement
 ) => {
-    const forwardedProps = filterProps(props, false, false)
-
-    const elementProps = { ref, ...forwardedProps } as any
-
-    if (!isStatic) {
-        if (props.whileTap) {
-            elementProps.onPointerDown = (event) => {
-                visualElement.animationState?.setActive(AnimationType.Tap, true)
-                props.onPointerDown?.(event)
-            }
-            elementProps.onPointerUp = (event) => {
-                visualElement.animationState?.setActive(
-                    AnimationType.Tap,
-                    false
-                )
-                props.onPointerUp?.(event)
-            }
-        }
-
-        if (props.whileHover) {
-            elementProps.onPointerOver = (event) => {
-                visualElement.animationState?.setActive(
-                    AnimationType.Hover,
-                    true
-                )
-                props.onPointerOver?.(event)
-            }
-            elementProps.onPointerOut = (event) => {
-                visualElement.animationState?.setActive(
-                    AnimationType.Hover,
-                    false
-                )
-                props.onPointerOut?.(event)
-            }
-        }
-    }
-
-    return createElement<any>(Component, elementProps)
+    return createElement<any>(Component, {
+        ref,
+        ...filterProps(props, false, false),
+        onUpdate: props.onInstanceUpdate,
+        ...useHover(isStatic, props, visualElement),
+        ...useTap(isStatic, props, visualElement),
+    } as any)
 }
