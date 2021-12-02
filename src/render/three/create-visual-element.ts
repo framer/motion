@@ -21,8 +21,8 @@ export const threeVisualElement = visualElement<
 
     readValueFromInstance: readThreeValue,
 
-    getBaseTarget(_props, _key) {
-        return 0
+    getBaseTarget() {
+        return undefined
     },
 
     sortNodePosition(_a, _b) {
