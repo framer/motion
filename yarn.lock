@@ -5815,7 +5815,7 @@ __metadata:
     lint-staged: ^8.0.4
     lodash: ^4.17.13
     path-browserify: ^1.0.1
-    popmotion: 11.0.0
+    popmotion: 11.0.2
     prettier: ^2.1.0
     react: ^17.0.0-rc.0
     react-dev-utils: ^11.0.4
@@ -5859,15 +5859,6 @@ __metadata:
   dependencies:
     tslib: ^2.1.0
   checksum: a23ebe8f7e20a32c0b99c2f8175b6f07af3ec6316aad52a2316316a6d011d717af8d2175dcc2827031c59fabb30232ed3e19a720a373caba7f070e1eae436325
-  languageName: node
-  linkType: hard
-
-"framesync@npm:^6.0.1":
-  version: 6.1.0
-  resolution: "framesync@npm:6.1.0"
-  dependencies:
-    tslib: ^2.3.1
-  checksum: f3a933987a9235fd476b377b912c276aef474e07a93f682e6b6cec58a8301ae9ad860fbc712416a6812d39326ed18761aa58b4e9617024d2a08d86257b246f3c
   languageName: node
   linkType: hard
 
@@ -9996,15 +9987,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"popmotion@npm:11.0.0":
-  version: 11.0.0
-  resolution: "popmotion@npm:11.0.0"
+"popmotion@npm:11.0.2":
+  version: 11.0.2
+  resolution: "popmotion@npm:11.0.2"
   dependencies:
-    framesync: ^6.0.1
+    framesync: 6.0.1
     hey-listen: ^1.0.8
     style-value-types: 5.0.0
     tslib: ^2.1.0
-  checksum: 0e214895269bb3c9d2c5cbed2229d399cdea118f40cfd95f96b176439edf09d16becdef3dc3b820a6f53ab02a14e6047f04c89ee6991ddbd8b8194d7cfa59f0b
+  checksum: 2c64f6e502b607230797b3de5c6ad6935680872b108f78d9e3b3d628aeb8da912b60c13db126567b8edb28be1d1bd60c784cf729fd3dcdddb28433c74ca330bd
   languageName: node
   linkType: hard
 
@@ -12585,7 +12576,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.1.0, tslib@npm:^2.3.1":
+"tslib@npm:^2.1.0":
   version: 2.3.1
   resolution: "tslib@npm:2.3.1"
   checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
