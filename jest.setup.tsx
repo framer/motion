@@ -6,8 +6,8 @@ import { render as testRender, act } from "@testing-library/react"
 import * as React from "react"
 
 // Stub ResizeObserver
-if (!window.ResizeObserver) {
-    window.ResizeObserver = class ResizeObserver {
+if (!(global as any).ResizeObserver) {
+    ;(global as any).ResizeObserver = class ResizeObserver {
         observe() {}
         unobserve() {}
         disconnect() {}
