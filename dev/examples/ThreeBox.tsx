@@ -17,27 +17,20 @@ function Box(props) {
     return (
         <motion.mesh
             {...props}
-            initial="hidden"
-            animate="visible"
             scale={[0, 0, 0]}
             variants={{
-                visible: {
-                    scale: 1, // clicked ? 2 : 1,
-                    // rotateZ: clicked ? 90 : 0,
-                },
-                pressed: {
-                    scale: 0.8,
-                },
+                visible: { scale: 1 },
+                pressed: { scale: 0.8, rotateY: 1 },
                 hover: { scale: 1.2 },
             }}
-            whileTap="pressed"
-            whileHover="hover"
+            // whileTap="pressed"
+            // whileHover="hover"
             transition={{ type: "spring", stiffness: 1000, damping: 20 }}
             onClick={(event) => click(!clicked)}
         >
             <boxGeometry args={[1, 1, 1]} />
             <motion.meshStandardMaterial
-                color="#000"
+                color="#09f"
                 variants={{
                     visible: { color: "#ffbb00" },
                     hover: { color: "#09f" },
@@ -57,7 +50,23 @@ export const App = () => {
             <Canvas>
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
-                <Box position={[1.2, 0, 0]} />
+                <motion.group
+                    initial="hidden"
+                    animate="visible"
+                    variants={{
+                        visible: { transition: { staggerChildren: 0.1 } },
+                    }}
+                >
+                    <Box position={[-1.5, 1.5, 0]} />
+                    <Box position={[0, 1.5, 0]} />
+                    <Box position={[1.5, 1.5, 0]} />
+                    <Box position={[-1.5, 0, 0]} />
+                    <Box position={[0, 0, 0]} />
+                    <Box position={[1.5, 0, 0]} />
+                    <Box position={[-1.5, -1.5, 0]} />
+                    <Box position={[0, -1.5, 0]} />
+                    <Box position={[1.5, -1.5, 0]} />
+                </motion.group>
             </Canvas>
         </motion.div>
     )

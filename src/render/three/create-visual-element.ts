@@ -23,8 +23,8 @@ export const threeVisualElement = visualElement<
         return undefined
     },
 
-    sortNodePosition(_a, _b) {
-        return 0
+    sortNodePosition(a, b) {
+        return a.id - b.id
     },
 
     makeTargetAnimatable(element, target) {
