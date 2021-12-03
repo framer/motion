@@ -28,6 +28,7 @@ export { useSpring } from "./value/use-spring"
 export { useVelocity } from "./value/use-velocity"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
+export { useTime } from "./value/use-time"
 
 /**
  * Accessibility
@@ -69,6 +70,7 @@ export { addScaleCorrector } from "./projection/styles/scale-correction"
 export { useInstantTransition } from "./utils/use-instant-transition"
 export { useInstantLayoutTransition } from "./projection/use-instant-layout-transition"
 export { useResetProjection } from "./projection/use-reset-projection"
+export { useFrame } from "./utils/use-frame"
 
 /**
  * Contexts
