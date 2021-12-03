@@ -11,7 +11,6 @@ export const underDampedSpring = () => ({
     type: "spring",
     stiffness: 500,
     damping: 25,
-    restDelta: 0.5,
     restSpeed: 10,
 })
 
@@ -19,7 +18,6 @@ export const criticallyDampedSpring = (to: SingleTarget) => ({
     type: "spring",
     stiffness: 550,
     damping: to === 0 ? 2 * Math.sqrt(550) : 30,
-    restDelta: 0.01,
     restSpeed: 10,
 })
 

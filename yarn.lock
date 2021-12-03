@@ -5815,7 +5815,7 @@ __metadata:
     lint-staged: ^8.0.4
     lodash: ^4.17.13
     path-browserify: ^1.0.1
-    popmotion: 11.0.2
+    popmotion: 11.0.3
     prettier: ^2.1.0
     react: ^17.0.0-rc.0
     react-dev-utils: ^11.0.4
@@ -9987,15 +9987,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"popmotion@npm:11.0.2":
-  version: 11.0.2
-  resolution: "popmotion@npm:11.0.2"
+"popmotion@npm:11.0.3":
+  version: 11.0.3
+  resolution: "popmotion@npm:11.0.3"
   dependencies:
     framesync: 6.0.1
     hey-listen: ^1.0.8
     style-value-types: 5.0.0
     tslib: ^2.1.0
-  checksum: 2c64f6e502b607230797b3de5c6ad6935680872b108f78d9e3b3d628aeb8da912b60c13db126567b8edb28be1d1bd60c784cf729fd3dcdddb28433c74ca330bd
+  checksum: 9fe7d03b4ec0e85bfb9dadc23b745147bfe42e16f466ba06e6327197d0e38b72015afc2f918a8051dedc3680310417f346ffdc463be6518e2e92e98f48e30268
   languageName: node
   linkType: hard
 
