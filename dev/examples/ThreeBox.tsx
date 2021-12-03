@@ -23,9 +23,6 @@ function Box(props) {
                 pressed: { scale: 0.8, rotateY: 1 },
                 hover: { scale: 1.2 },
             }}
-            // whileTap="pressed"
-            // whileHover="hover"
-            transition={{ type: "spring", stiffness: 1000, damping: 20 }}
             onClick={(event) => click(!clicked)}
         >
             <boxGeometry args={[1, 1, 1]} />
