@@ -17,27 +17,23 @@ function Box(props) {
     return (
         <motion.mesh
             {...props}
-            initial={{ scale: 1 }}
-            whileHover={{ scale: 2 }}
-            whileTap={{ scale: 0.5 }}
-            // initial="hidden"
-            // animate="visible"
-            // scale={[5, 5, 5]}
-            // variants={{
-            //     visible: {
-            //         scale: 1, // clicked ? 2 : 1,
-            //         // rotateZ: clicked ? 90 : 0,
-            //     },
-            //     pressed: {
-            //         scale: 0.8,
-            //     },
-            //     hover: { scale: 1.2 },
-            // }}
-            // whileTap="pressed"
-            // whileHover="hover"
+            initial="hidden"
+            animate="visible"
+            scale={[0, 0, 0]}
+            variants={{
+                visible: {
+                    scale: 1, // clicked ? 2 : 1,
+                    // rotateZ: clicked ? 90 : 0,
+                },
+                pressed: {
+                    scale: 0.8,
+                },
+                hover: { scale: 1.2 },
+            }}
+            whileTap="pressed"
+            whileHover="hover"
             transition={{ type: "spring", stiffness: 1000, damping: 20 }}
             onClick={(event) => click(!clicked)}
-            onAnimationComplete={(target) => console.log(target)}
         >
             <boxGeometry args={[1, 1, 1]} />
             <motion.meshStandardMaterial
