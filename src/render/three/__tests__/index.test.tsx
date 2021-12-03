@@ -172,7 +172,7 @@ describe("motion for three", () => {
         })
 
         expect((result.position as Vector3).x).toEqual(1)
-        expect(result.scale).toEqual(2)
+        expect((result.scale as Vector3).x).toEqual(2)
         expect((result.rotation as Euler).x).toEqual(3)
     })
 

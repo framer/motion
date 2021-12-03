@@ -1,14 +1,12 @@
 import { visualElement } from "../"
 import { createBox } from "../../projection/geometry/models"
-import { CreateVisualElement, ScrapeMotionValuesFromProps } from "../types"
+import { CreateVisualElement } from "../types"
 import { checkTargetForNewValues } from "../utils/setters"
 import { setThreeValue } from "./utils/set-value"
 import { readThreeValue } from "./utils/read-value"
 import { ThreeRenderState } from "./types"
 import { Object3DNode } from "@react-three/fiber"
-
-export const scrapeMotionValuesFromProps: ScrapeMotionValuesFromProps =
-    () => ({})
+import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-value"
 
 export const createRenderState = () => ({})
 
