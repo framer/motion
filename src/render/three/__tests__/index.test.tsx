@@ -44,6 +44,7 @@ describe("motion for three", () => {
                         onAnimationComplete={() => resolve(output)}
                         transition={{
                             duration: 0.1,
+                            // Ensures final frame outputs the exact values they were read at
                             ease: (t) => (t < 0.5 ? t : 0),
                         }}
                     />

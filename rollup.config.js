@@ -90,19 +90,7 @@ const threeCjs = Object.assign({}, config, {
 })
 
 const es = Object.assign({}, config, {
-    output: {
-        entryFileNames: "[name].mjs",
-        format: "es",
-        exports: "named",
-        preserveModules: true,
-        dir: "dist/es",
-    },
-    plugins: [resolve()],
-    external,
-})
-
-const threeEs = Object.assign({}, config, {
-    input: "lib/three-entry.js",
+    input: ["lib/index.js", "lib/three-entry.js"],
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -168,7 +156,6 @@ export default [
     cjs,
     threeCjs,
     es,
-    threeEs,
     m,
     domAnimation,
     domMax,

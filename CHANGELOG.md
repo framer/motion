@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.4.1] 2021-12-06
+
+### Fixed
+
+-   3D entry point overwriting ES modules with dropped exports.
+
 ## [5.4.0] 2021-12-06
 
 ### Added
