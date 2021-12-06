@@ -14,8 +14,9 @@ describe("motion for three", () => {
     test("Types work", async () => {
         render(
             <Canvas>
-                <motion.mesh animate={{ scale: 2 }} scale={[1, 1, 1]} />
-                <motion.meshStandardMaterial color="#000" variants={{}} />
+                <motion.mesh animate={{ scale: 2 }} scale={[1, 1, 1]}>
+                    <motion.meshStandardMaterial color="#000" variants={{}} />
+                </motion.mesh>
             </Canvas>
         )
     })
