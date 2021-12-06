@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "5.4.0",
+    "version": "5.4.1",
     "description": "A simple and powerful React animation library",
     "main": "dist/framer-motion.cjs.js",
     "module": "dist/es/index.mjs",
