@@ -28,6 +28,7 @@ export { useSpring } from "./value/use-spring"
 export { useVelocity } from "./value/use-velocity"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
+export { useTime } from "./value/use-time"
 
 /**
  * Accessibility
@@ -40,6 +41,7 @@ export { useReducedMotion } from "./utils/use-reduced-motion"
 export { animationControls } from "./animation/animation-controls"
 export { AnimationControls } from "./animation/types"
 export { useAnimation } from "./animation/use-animation"
+export { useAnimationFrame } from "./utils/use-animation-frame"
 export { animate } from "./animation/animate"
 export { animateVisualElement } from "./render/utils/animation"
 export {

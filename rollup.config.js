@@ -78,7 +78,31 @@ const cjs = Object.assign({}, config, {
     external,
 })
 
+const threeCjs = Object.assign({}, config, {
+    input: "lib/three-entry.js",
+    output: {
+        file: `dist/${pkg.name}-three.cjs.js`,
+        format: "cjs",
+        exports: "named",
+    },
+    plugins: [resolve()],
+    external,
+})
+
 const es = Object.assign({}, config, {
+    output: {
+        entryFileNames: "[name].mjs",
+        format: "es",
+        exports: "named",
+        preserveModules: true,
+        dir: "dist/es",
+    },
+    plugins: [resolve()],
+    external,
+})
+
+const threeEs = Object.assign({}, config, {
+    input: "lib/three-entry.js",
     output: {
         entryFileNames: "[name].mjs",
         format: "es",
@@ -137,4 +161,15 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
-export default [projection, umd, umdProd, cjs, es, m, domAnimation, domMax]
+export default [
+    projection,
+    umd,
+    umdProd,
+    cjs,
+    threeCjs,
+    es,
+    threeEs,
+    m,
+    domAnimation,
+    domMax,
+]

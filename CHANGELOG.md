@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.4.0] 2021-12-06
+
+### Added
+
+-   `useAnimationFrame`
+
 ## [5.3.3] 2021-11-24
 
 ### Fixed

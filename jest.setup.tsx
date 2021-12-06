@@ -5,6 +5,15 @@ import { fireEvent, getByTestId } from "@testing-library/dom"
 import { render as testRender, act } from "@testing-library/react"
 import * as React from "react"
 
+// Stub ResizeObserver
+if (!(global as any).ResizeObserver) {
+    ;(global as any).ResizeObserver = class ResizeObserver {
+        observe() {}
+        unobserve() {}
+        disconnect() {}
+    } as any
+}
+
 export const click = (element: Element) =>
     act(() => {
         fireEvent.click(element)
