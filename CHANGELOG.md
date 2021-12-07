@@ -6,6 +6,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
+-   Fixing export paths. [PR by @edoardolincetto](https://github.com/framer/motion/pull/1385).
+
+## [5.4.2] 2021-12-07
+
+### Fixed
+
 -   Sharing `MotionContext` across Framer Motion and Framer Motion 3D environments in CommonJS environments.
 
 ## [5.4.1] 2021-12-06
