@@ -6,9 +6,9 @@
     "module": "dist/es/index.mjs",
     "exports": {
         ".": {
-            "require": "dist/cjs/index.js",
+            "require": "./dist/cjs/index.js",
             "import": "./dist/es/index.mjs",
-            "default": "dist/cjs/index.js"
+            "default": "./dist/cjs/index.js"
         },
         "./three": {
             "require": "./dist/cjs/three-entry.js",
