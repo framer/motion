@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useRef, useState } from "react"
-import { Canvas } from "@react-three/fiber"
-import { motion } from "@framer/render/three/motion"
+import { motion, MotionCanvas } from "@framer/three-entry"
 
 /**
  * An example of firing an animation onMount using the useAnimation hook
@@ -43,13 +42,12 @@ export const App = () => {
     return (
         <motion.div
             style={{ position: "fixed", inset: 0, background: "white" }}
+            whileHover="hover"
         >
-            <Canvas>
+            <MotionCanvas>
                 <ambientLight />
                 <pointLight position={[10, 10, 10]} />
                 <motion.group
-                    initial="hidden"
-                    animate="visible"
                     variants={{
                         visible: { transition: { staggerChildren: 0.1 } },
                     }}
@@ -64,7 +62,7 @@ export const App = () => {
                     <Box position={[0, -1.5, 0]} />
                     <Box position={[1.5, -1.5, 0]} />
                 </motion.group>
-            </Canvas>
+            </MotionCanvas>
         </motion.div>
     )
 }

@@ -1,3 +1,4 @@
+import { Suspense } from "react"
 import * as React from "react"
 import { fileName } from "../inc/file-name"
 import { Container, Code } from "../styled"
@@ -44,8 +45,10 @@ export const Example = ({ id }: { id: string }) => {
     document.title = name
 
     return (
-        <Container>
-            <targetModule.App />
-        </Container>
+        <Suspense fallback={null}>
+            <Container>
+                <targetModule.App />
+            </Container>
+        </Suspense>
     )
 }

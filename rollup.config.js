@@ -69,19 +69,10 @@ const umdProd = Object.assign({}, umd, {
 })
 
 const cjs = Object.assign({}, config, {
+    input: ["lib/index.js", "lib/three-entry.js"],
     output: {
-        file: `dist/${pkg.name}.cjs.js`,
-        format: "cjs",
-        exports: "named",
-    },
-    plugins: [resolve()],
-    external,
-})
-
-const threeCjs = Object.assign({}, config, {
-    input: "lib/three-entry.js",
-    output: {
-        file: `dist/${pkg.name}-three.cjs.js`,
+        entryFileNames: `[name].js`,
+        dir: "dist/cjs",
         format: "cjs",
         exports: "named",
     },
@@ -149,14 +140,4 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
-export default [
-    projection,
-    umd,
-    umdProd,
-    cjs,
-    threeCjs,
-    es,
-    m,
-    domAnimation,
-    domMax,
-]
+export default [projection, umd, umdProd, cjs, es, m, domAnimation, domMax]

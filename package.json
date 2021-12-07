@@ -2,18 +2,18 @@
     "name": "framer-motion",
     "version": "5.4.1",
     "description": "A simple and powerful React animation library",
-    "main": "dist/framer-motion.cjs.js",
+    "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
     "exports": {
         ".": {
-            "require": "./dist/framer-motion.cjs.js",
+            "require": "dist/cjs/index.js",
             "import": "./dist/es/index.mjs",
-            "default": "./dist/framer-motion.cjs.js"
+            "default": "dist/cjs/index.js"
         },
         "./three": {
-            "require": "./dist/framer-motion-three.cjs.js",
+            "require": "./dist/cjs/three-entry.js",
             "import": "./dist/es/three-entry.mjs",
-            "default": "./dist/framer-motion-three.cjs.js"
+            "default": "./dist/cjs/three-entry.js"
         },
         "./package.json": "./package.json"
     },
