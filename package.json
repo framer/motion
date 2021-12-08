@@ -135,6 +135,8 @@
         "framesync": "6.0.1",
         "hey-listen": "^1.0.8",
         "popmotion": "11.0.3",
+        "react-merge-refs": "^1.1.0",
+        "react-use-measure": "^2.1.1",
         "style-value-types": "5.0.0",
         "tslib": "^2.1.0"
     },
