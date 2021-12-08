@@ -142,7 +142,7 @@ describe("AnimatePresence", () => {
     })
 
     test("when: afterChildren fires correctly", async () => {
-        const promise = new Promise<number>((resolve) => {
+        const child = await new Promise<number>((resolve) => {
             const parentOpacityOutput: ResolvedValues[] = []
 
             const variants = {
@@ -184,7 +184,6 @@ describe("AnimatePresence", () => {
             rerender(<Component isVisible={false} />)
         })
 
-        const child = await promise
         expect(child).toBeGreaterThan(1)
     })
 
