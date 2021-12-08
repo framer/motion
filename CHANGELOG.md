@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [5.4.2] 2021-12-07
+## [5.4.4] 2021-12-08
+
+### Fixed
+
+-   Fixing variant animations across DOM and 3D boundaries via `MotionCanvas`.
+
+## [5.4.3] 2021-12-07
 
 ### Fixed
 
