@@ -205,6 +205,7 @@ export function createAnimationState(
                 typeState.prevProp,
                 prop
             )
+
             let shouldAnimateType =
                 variantDidChange ||
                 // If we're making this variant active, we want to always make it active
@@ -382,6 +383,7 @@ export function createAnimationState(
         )
 
         state[type].isActive = isActive
+
         return animateChanges(options, type)
     }
 
