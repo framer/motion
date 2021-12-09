@@ -10,6 +10,7 @@ import {
     Props,
 } from "@react-three/fiber"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 
 export interface MotionCanvasProps extends Props {}
 
@@ -62,6 +63,8 @@ function SyncCanvasComponent(
     forwardedRef: MutableRefObject<HTMLCanvasElement>
 ) {
     const motionContext = useContext(MotionContext)
+    const configContext = useContext(MotionConfigContext)
+
     const [containerRef, { width, height }] = useMeasure({
         scroll: true,
         debounce: { scroll: 50, resize: 0 },
@@ -80,9 +83,11 @@ function SyncCanvasComponent(
         render(
             <ErrorBoundary set={setError}>
                 <React.Suspense fallback={<Block set={setBlock} />}>
-                    <MotionContext.Provider value={motionContext}>
-                        {children}
-                    </MotionContext.Provider>
+                    <MotionConfigContext.Provider value={configContext}>
+                        <MotionContext.Provider value={motionContext}>
+                            {children}
+                        </MotionContext.Provider>
+                    </MotionConfigContext.Provider>
                 </React.Suspense>
             </ErrorBoundary>,
             canvasRef.current,

@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.4.5] 2021-12-09
+
+### Fixed
+
+-   Passing `MotionConfigContext` through from DOM into 3D.
+
 ## [5.4.4] 2021-12-08
 
 ### Fixed
