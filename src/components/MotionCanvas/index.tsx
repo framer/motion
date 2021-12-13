@@ -129,3 +129,108 @@ function SyncCanvasComponent(
 }
 
 export const MotionCanvas = forwardRef(SyncCanvasComponent)
+
+// function useLayoutResize() {
+//     const forceResize = useRef<VoidFunction>(null)
+
+//     useEffect(() => {
+//         forceResize.current?.()
+//     }, [])
+
+//     const Resize = useMemo(() => {
+//         // TODO Replace with proxied resize observer if possible
+//         return class FakeResizeObserver {
+//             constructor(callback: VoidFunction) {
+//                 forceResize.current = callback
+//             }
+//             observe() {}
+//             disconnect() {}
+//         }
+//     }, [])
+
+//     return [forceResize, Resize]
+// }
+
+// function LayoutAwareCamera({
+//     state,
+//     forceResize,
+//     measuredLayout,
+//     makeDefault,
+//     ...props
+// }) {
+//     const three = useThree()
+//     const layout = useRef<Box>({})
+//     const parentVisualElement = useVisualElementContext()
+//     const set = useThree(({ set }) => set)
+//     const camera = useThree(({ camera }) => camera)
+//     const size = useThree(({ size }) => size)
+//     const cameraRef = React.useRef<THREE.PerspectiveCamera>()
+
+//     const updateCamera = () => {
+//         const { x, y } = layout.current
+
+//         if (camera) {
+//             camera.aspect =
+//                 x && y
+//                     ? (x.max - x.min) / (y.max - y.min)
+//                     : size.width / size.height
+//             camera.updateProjectionMatrix()
+//             camera.updateMatrixWorld()
+//         }
+//     }
+
+//     useLayoutEffect(updateCamera)
+//     useFrame(updateCamera)
+
+//     useLayoutEffect(() => {
+//         if (!parentVisualElement || !parentVisualElement.projection) return
+
+//         const removeUpdateListener =
+//             parentVisualElement.projection.addEventListener(
+//                 "projectionUpdate",
+//                 ((latest: Box) => {
+//                     layout.current = latest
+//                 }) as any
+//             )
+
+//         const removeMeasureListener =
+//             parentVisualElement.projection.addEventListener("measure", (({
+//                 x,
+//                 y,
+//             }: Box) => {
+//                 // TODO At high layout deltas we could render at a higher DPI to reduce pixelation
+//                 measuredLayout.current.width = x.max - x.min
+//                 measuredLayout.current.height = y.max - y.min
+//                 three.gl.setSize((x.max - x.min) * 2, (y.max - y.min) * 2)
+//                 forceResize.current()
+//             }) as any)
+
+//         return () => {
+//             removeUpdateListener()
+//             removeMeasureListener()
+//         }
+//     }, [])
+
+//     React.useLayoutEffect(() => {
+//         if (makeDefault && cameraRef.current) {
+//             const oldCam = camera
+//             set(() => ({ camera: cameraRef.current! }))
+//             return () => set(() => ({ camera: oldCam }))
+//         }
+//     }, [camera, cameraRef, makeDefault, set])
+
+//     return (
+//         <motion.perspectiveCamera
+//             ref={mergeRefs([cameraRef])}
+//             {...props}
+//             fov={45}
+//             position-z={5}
+//             initial={false}
+//             animate={
+//                 state
+//                     ? { x: 0, y: 0, z: 6, rotateX: 0, rotateY: 0, rotateZ: 0 }
+//                     : { x: 5, y: 0, z: 0, rotateY: 1.5708 }
+//             }
+//         />
+//     )
+// }

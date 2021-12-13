@@ -1,4 +1,4 @@
-import { MeshProps, ThreeEvent } from "@react-three/fiber"
+import { MeshProps } from "@react-three/fiber"
 import { pipe } from "popmotion"
 import { useRef } from "react"
 import { wrapHandler } from "../../../events/event-info"
@@ -55,7 +55,7 @@ export function useTap(
     }
 
     return {
-        onPointerDown: wrapHandler((event: ThreeEvent<any>, info) => {
+        onPointerDown: wrapHandler((event: any, info) => {
             removePointerEndListener()
             if (isPressing.current) return
             isPressing.current = true
