@@ -1,5 +1,6 @@
 import * as React from "react"
-import { useRef, useState } from "react"
+import { useState } from "react"
+import { MotionConfig, motion as motionDom } from "@framer"
 import { motion, MotionCanvas } from "@framer/three-entry"
 
 /**
@@ -32,7 +33,6 @@ function Box(props) {
                     hover: { color: "#09f" },
                     pressed: { color: "#8855ff" },
                 }}
-                transition={{ duration: 0.2 }}
             />
         </motion.mesh>
     )
@@ -40,29 +40,31 @@ function Box(props) {
 
 export const App = () => {
     return (
-        <motion.div
-            style={{ position: "fixed", inset: 0, background: "white" }}
-            whileHover="hover"
-        >
-            <MotionCanvas>
-                <ambientLight />
-                <pointLight position={[10, 10, 10]} />
-                <motion.group
-                    variants={{
-                        visible: { transition: { staggerChildren: 0.1 } },
-                    }}
-                >
-                    <Box position={[-1.5, 1.5, 0]} />
-                    <Box position={[0, 1.5, 0]} />
-                    <Box position={[1.5, 1.5, 0]} />
-                    <Box position={[-1.5, 0, 0]} />
-                    <Box position={[0, 0, 0]} />
-                    <Box position={[1.5, 0, 0]} />
-                    <Box position={[-1.5, -1.5, 0]} />
-                    <Box position={[0, -1.5, 0]} />
-                    <Box position={[1.5, -1.5, 0]} />
-                </motion.group>
-            </MotionCanvas>
-        </motion.div>
+        <MotionConfig transition={{ duration: 1 }}>
+            <motionDom.div
+                style={{ position: "fixed", inset: 0, background: "white" }}
+                whileHover="hover"
+            >
+                <MotionCanvas>
+                    <ambientLight />
+                    <pointLight position={[10, 10, 10]} />
+                    <motion.group
+                        variants={{
+                            visible: { transition: { staggerChildren: 0.1 } },
+                        }}
+                    >
+                        <Box position={[-1.5, 1.5, 0]} />
+                        <Box position={[0, 1.5, 0]} />
+                        <Box position={[1.5, 1.5, 0]} />
+                        <Box position={[-1.5, 0, 0]} />
+                        <Box position={[0, 0, 0]} />
+                        <Box position={[1.5, 0, 0]} />
+                        <Box position={[-1.5, -1.5, 0]} />
+                        <Box position={[0, -1.5, 0]} />
+                        <Box position={[1.5, -1.5, 0]} />
+                    </motion.group>
+                </MotionCanvas>
+            </motionDom.div>
+        </MotionConfig>
     )
 }

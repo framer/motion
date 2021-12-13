@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "5.4.4",
+    "version": "5.4.5",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -61,7 +61,7 @@
         "start-dev-server": "webpack serve --config dev/webpack/config.js --hot"
     },
     "peerDependencies": {
-        "@react-three/fiber": "^7.0.21",
+        "@react-three/fiber": "*",
         "react": ">=16.8 || ^17.0.0",
         "react-dom": ">=16.8 || ^17.0.0",
         "three": "^0.135.0"
@@ -77,7 +77,8 @@
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
         "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-        "@react-three/fiber": "^7.0.21",
+        "@react-three/drei": "^7.27.3",
+        "@react-three/fiber": "^7.0.23",
         "@react-three/test-renderer": "^7.0.20",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",

@@ -24,6 +24,7 @@ export type LayoutEvents =
     | "willUpdate"
     | "didUpdate"
     | "measure"
+    | "projectionUpdate"
     | "animationComplete"
 
 export interface IProjectionNode<I = unknown> {

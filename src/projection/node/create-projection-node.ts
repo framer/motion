@@ -683,7 +683,7 @@ export function createProjectionNode<I>({
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined
-            this.notifyListeners("measure")
+            this.notifyListeners("measure", this.layout.actual)
 
             this.options.visualElement?.notifyLayoutMeasure(
                 this.layout.actual,
@@ -1046,6 +1046,8 @@ export function createProjectionNode<I>({
             ) {
                 this.hasProjected = true
                 this.scheduleRender()
+
+                this.notifyListeners("projectionUpdate", target)
             }
         }
 
