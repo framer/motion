@@ -53,6 +53,8 @@ export function useLayoutCamera<CameraType>(
             "projectionUpdate",
             (newProjection: Box) => {
                 // TODO: Removed to prevent iOS from crashing.
+                // Perhaps a better apporach is to set with setSize
+                // and then set to window native on animationComplete.
                 // if (latestLayout.current) {
                 //     const { x, y } = latestLayout.current
                 //     const xRatio = calcLength(newProjection.x) / calcLength(x)
