@@ -3,7 +3,7 @@ import { useRef, useState } from "react"
 import "@react-three/fiber"
 import styled from "styled-components"
 import { motion as motionDom, useMotionValue, MotionConfig } from "@framer"
-import { motion, MotionCanvas } from "@framer/three-entry"
+import { motion, MotionCanvas, LayoutCamera } from "@framer/three-entry"
 import { softShadows, Shadow } from "@react-three/drei"
 
 /**
@@ -57,7 +57,8 @@ function Lighting({ isFullscreen }) {
 
 export function Three({ isFullscreen }) {
     return (
-        <MotionCanvas layout dpr={[1, 2]} shadowMap state={isFullscreen}>
+        <MotionCanvas dpr={[1, 2]} shadowMap>
+            <LayoutCamera position={[0, 0, 5]} />
             <ambientLight intensity={0.2} />
             <pointLight
                 position={[-10, -10, 10]}
@@ -162,6 +163,13 @@ export const App = () => {
                     </motionDom.p>
                 </Content>
             </MotionConfig>
+            <style>
+                {`
+                body, html {
+                    overflow: hidden;
+                }
+                `}
+            </style>
         </Container>
     )
 }

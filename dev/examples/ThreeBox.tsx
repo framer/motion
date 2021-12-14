@@ -28,10 +28,11 @@ function Box(props) {
             <boxGeometry args={[1, 1, 1]} />
             <motion.meshStandardMaterial
                 color="#09f"
+                opacity={0}
                 variants={{
-                    visible: { color: "#ffbb00" },
-                    hover: { color: "#09f" },
-                    pressed: { color: "#8855ff" },
+                    visible: { color: "#f00", opacity: 0.5 },
+                    hover: { color: "#f00", opacity: 1 },
+                    pressed: { color: "#f00", opacity: 1 },
                 }}
             />
         </motion.mesh>
@@ -39,16 +40,19 @@ function Box(props) {
 }
 
 export const App = () => {
+    const [isHovered, setHover] = useState(false)
     return (
-        <MotionConfig transition={{ duration: 1 }}>
+        <MotionConfig transition={{ type: "spring", bounce: 0, duration: 0.7 }}>
             <motionDom.div
                 style={{ position: "fixed", inset: 0, background: "white" }}
-                whileHover="hover"
+                onHoverStart={() => setHover(true)}
+                onHoverEnd={() => setHover(false)}
             >
                 <MotionCanvas>
                     <ambientLight />
                     <pointLight position={[10, 10, 10]} />
                     <motion.group
+                        animate={isHovered ? "hover" : "visible"}
                         variants={{
                             visible: { transition: { staggerChildren: 0.1 } },
                         }}

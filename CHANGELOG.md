@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.5.0] 2021-12-14
+
+### Added
+
+-   `LayoutCamera` and `LayoutOrthographicCamera`.
+
 ## [5.4.5] 2021-12-09
 
 ### Fixed

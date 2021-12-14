@@ -27,7 +27,7 @@ export const threeVisualElement = visualElement<
         return a.id - b.id
     },
 
-    makeTargetAnimatable(element, target) {
+    makeTargetAnimatable(element, { transition, ...target }) {
         checkTargetForNewValues(element, target, {})
         return target
     },
