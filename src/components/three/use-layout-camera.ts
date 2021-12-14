@@ -1,4 +1,10 @@
-import { RefObject, useContext, useLayoutEffect } from "react"
+import {
+    MutableRefObject,
+    RefObject,
+    useContext,
+    useLayoutEffect,
+    useRef,
+} from "react"
 import { Size, useThree } from "@react-three/fiber"
 import { LayoutCameraProps } from "./types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -25,6 +31,7 @@ export function useLayoutCamera<CameraType>(
 
     const { setSize, layoutCamera } = context!
 
+    const latestLayout = useRef<Box>(null) as MutableRefObject<Box>
     const advance = useThree((three) => three.advance)
     const set = useThree((three) => three.set)
     const camera = useThree((three) => three.camera)
@@ -45,6 +52,14 @@ export function useLayoutCamera<CameraType>(
         const removeProjectionUpdateListener = projection.addEventListener(
             "projectionUpdate",
             (newProjection: Box) => {
+                if (latestLayout.current) {
+                    const { x, y } = latestLayout.current
+                    const xRatio = calcLength(newProjection.x) / calcLength(x)
+                    const yRatio = calcLength(newProjection.y) / calcLength(y)
+                    gl.setPixelRatio(
+                        Math.max(xRatio, yRatio) * window.devicePixelRatio
+                    )
+                }
                 updateCamera(calcBoxSize(newProjection))
                 advance(getFrameData().timestamp)
             }
@@ -57,6 +72,7 @@ export function useLayoutCamera<CameraType>(
         const removeLayoutMeasureListener = projection.addEventListener(
             "measure",
             (newLayout: Box) => {
+                latestLayout.current = newLayout
                 const newSize = calcBoxSize(newLayout)
                 gl.setSize(newSize.width, newSize.height)
                 setSize!(newSize)

@@ -1,39 +1,45 @@
 import * as React from "react"
-import { useRef, useState } from "react"
+import { useState, Suspense } from "react"
 import "@react-three/fiber"
 import styled from "styled-components"
 import { motion as motionDom, useMotionValue, MotionConfig } from "@framer"
 import { motion, MotionCanvas, LayoutCamera } from "@framer/three-entry"
 import { softShadows, Shadow } from "@react-three/drei"
+import { useThree, useFrame } from "@react-three/fiber"
+import { degToRad } from "three/src/math/MathUtils"
 
-/**
- * Blending layout animations with 3D camera
- */
+softShadows()
 
-function Lighting({ isFullscreen }) {
-    const progress = useMotionValue(isFullscreen ? 1 : 0)
-    const light = useRef()
-
+export function Scene({ isFullscreen }) {
     return (
-        <directionalLight
-            ref={light}
-            castShadow
-            intensity={1.5}
-            shadow-mapSize-width={1024}
-            shadow-mapSize-height={1024}
-            shadow-camera-far={20}
-            shadow-camera-left={-10}
-            shadow-camera-right={10}
-            shadow-camera-top={10}
-            shadow-camera-bottom={-10}
-        />
+        <MotionCanvas dpr={[1, 2]} shadows>
+            <LayoutCamera
+                initial={false}
+                animate={
+                    isFullscreen
+                        ? {
+                              x: 10,
+                              y: 5,
+                              z: 10,
+                              rotateY: degToRad(90),
+                              fov: 30,
+                          }
+                        : { x: 15, y: 0.25, z: 0, fov: 10 }
+                }
+            />
+            <Lights isFullscreen={isFullscreen} />
+            <Geometry />
+        </MotionCanvas>
     )
 }
 
-export function Three({ isFullscreen }) {
+function Lights({ isFullscreen }) {
+    const three = useThree()
+    useFrame(() => {
+        three.camera.lookAt(0, 0, 0)
+    })
     return (
-        <MotionCanvas dpr={[1, 2]} shadowMap>
-            <LayoutCamera position={[0, 0, 5]} />
+        <>
             <ambientLight intensity={0.2} />
             <pointLight
                 position={[-10, -10, 10]}
@@ -46,6 +52,28 @@ export function Three({ isFullscreen }) {
                 intensity={2}
                 color="#e4be00"
             />
+            <motion.directionalLight
+                castShadow
+                intensity={1.5}
+                shadow-mapSize-width={1024}
+                shadow-mapSize-height={1024}
+                shadow-camera-far={20}
+                shadow-camera-left={-10}
+                shadow-camera-right={10}
+                shadow-camera-top={10}
+                shadow-camera-bottom={-10}
+                initial={false}
+                animate={
+                    isFullscreen ? { x: 0, y: 8, z: 5 } : { x: 4, y: 3, z: 3 }
+                }
+            />
+        </>
+    )
+}
+
+function Geometry() {
+    return (
+        <>
             <group position={[0, -0.9, -3]}>
                 <mesh
                     receiveShadow
@@ -102,120 +130,67 @@ export function Three({ isFullscreen }) {
                     scale={[0.8, 0.8, 1]}
                 />
             </mesh>
-            <Lighting isFullscreen={isFullscreen} />
-        </MotionCanvas>
+        </>
     )
 }
 
-export const App = () => {
-    const [isFullscreen, setIsFullscreen] = useState(false)
+const transition = {
+    duration: 4,
+    ease: [0.54, 0.01, 0.61, 1],
+}
+
+export function App() {
+    const [isFullscreen, setFullscreen] = useState(false)
 
     return (
-        <Container
-            data-is-fullscreen={isFullscreen}
-            onClick={() => setIsFullscreen(!isFullscreen)}
-        >
-            <MotionConfig transition={{ duration: 4 }}>
-                <Content>
-                    <motionDom.div className="canvas-container" layout>
-                        <Three isFullscreen={isFullscreen} />
+        <Container>
+            <MotionConfig transition={transition}>
+                <div
+                    data-is-fullscreen={isFullscreen}
+                    onClick={() => setFullscreen(!isFullscreen)}
+                >
+                    <motionDom.h1 layout children="<LayoutCamera />" />
+                    <motionDom.div className="container" layout>
+                        <Suspense fallback={null}>
+                            <Scene isFullscreen={isFullscreen} />
+                        </Suspense>
                     </motionDom.div>
-                    <motionDom.h1
-                        layout
-                        animate={{ color: isFullscreen ? "#fff" : "#000" }}
-                    >
-                        {`Framer Motion`}
-                        <br />
-                        {`React Three Fiber`}
-                    </motionDom.h1>
-                    <motionDom.p
-                        layout
-                        animate={{ opacity: isFullscreen ? 0 : 1 }}
-                    >
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                        Suspendisse vel diam dapibus, laoreet augue at, tempus
-                        ex.
-                    </motionDom.p>
-                </Content>
+                </div>
             </MotionConfig>
-            <style>
-                {`
-                body, html {
-                    overflow: hidden;
-                }
-                `}
-            </style>
         </Container>
     )
 }
 
 const Container = styled.div`
-    flex-direction: row-reverse;
-    justify-content: center;
-    align-items: stretch;
-    padding: 100px 0 200px 100px;
-    width: 1100px;
-    height: 500px;
-    position: relative;
-
-    &[data-is-fullscreen="true"] {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: auto;
-        height: auto;
-    }
-
-    &[data-is-fullscreen="true"] h1 {
-        position: absolute;
-        top: 200px;
-        left: 144px;
-    }
-
-    &[data-is-fullscreen="true"] p {
-        position: absolute;
-        left: -550px;
-        top: 480px;
-    }
-
-    &[data-is-fullscreen="true"] .canvas-container {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        width: auto;
-        height: auto;
-    }
-
-    .canvas-container {
+    .container {
+        width: 200px;
+        height: 200px;
+        z-index: 0;
         background: #a2b9e7;
-        width: 600px;
-        height: 500px;
     }
-`
 
-const Content = styled.div`
-    margin-right: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: flex-end;
+    canvas {
+        cursor: pointer;
+    }
+
+    [data-is-fullscreen="true"] .container {
+        position: fixed;
+        inset: 0;
+        width: auto;
+        height: auto;
+    }
 
     h1 {
-        font-size: 54px;
-        line-height: 54px;
-        white-space: nowrap;
-        text-align: right;
-        text-transform: uppercase;
+        z-index: 1;
+        display: block;
+        position: relative;
+        font-size: 36px;
+        line-height: 1;
     }
 
-    p {
-        width: 500px;
+    [data-is-fullscreen="true"] h1 {
+        position: fixed;
+        top: 80px;
         font-size: 24px;
-        text-align: right;
-        font-weight: 400;
     }
 `
