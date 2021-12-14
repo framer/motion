@@ -19,31 +19,6 @@ function Lighting({ isFullscreen }) {
     const progress = useMotionValue(isFullscreen ? 1 : 0)
     const light = useRef()
 
-    // useEffect(() => {
-    //   // I use Popmotion to do the 3D animation but any library is fine
-    //   // inc react-spring. Hopefully this bit will be possible with Framer Motion
-    //   // in the nearish future.
-    //   const animation = tween({
-    //     from: progress.get(),
-    //     to: isOpen ? 1 : 0,
-    //     ease: cubicBezier(...settings.curve),
-    //     duration: settings.duration * 1000
-    //   }).start((v) => progress.set(v));
-
-    //   return () => animation.stop();
-    // }, [isOpen]);
-
-    // useFrame((state) => {
-    //   const p = progress.get();
-    //   state.camera.fov = mix(10, 36, p);
-    //   state.camera.position.set(mix(25, 10, p), mix(0.25, 5, p), mix(0, 10, p));
-
-    //   state.camera.lookAt(0, 0, 0);
-    //   state.camera.updateProjectionMatrix();
-
-    //   light.current.position.set(mix(4, 0, p), mix(3, 8, p), mix(3, 5, p));
-    // });
-
     return (
         <directionalLight
             ref={light}
