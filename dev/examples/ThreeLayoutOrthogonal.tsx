@@ -3,8 +3,13 @@ import { useRef, useState } from "react"
 import "@react-three/fiber"
 import styled from "styled-components"
 import { motion as motionDom, useMotionValue, MotionConfig } from "@framer"
-import { motion, MotionCanvas, LayoutCamera } from "@framer/three-entry"
+import {
+    motion,
+    MotionCanvas,
+    LayoutOrthographicCamera,
+} from "@framer/three-entry"
 import { softShadows, Shadow } from "@react-three/drei"
+import { degToRad, radToDeg } from "three/src/math/MathUtils"
 
 /**
  * Blending layout animations with 3D camera
@@ -33,7 +38,31 @@ function Lighting({ isFullscreen }) {
 export function Three({ isFullscreen }) {
     return (
         <MotionCanvas dpr={[1, 2]} shadowMap>
-            <LayoutCamera position={[0, 0, 5]} />
+            <LayoutOrthographicCamera
+                zoom={50}
+                near={0.0001}
+                far={10000}
+                initial={false}
+                animate={
+                    isFullscreen
+                        ? {
+                              // x: 100,
+                              // y: 100,
+                              z: 0,
+                              rotateX: degToRad(-45),
+                              rotateY: degToRad(45),
+                              rotateZ: degToRad(45),
+                          }
+                        : {
+                              x: 0,
+                              y: 0,
+                              z: 100,
+                              rotateX: 0,
+                              rotateY: 0,
+                              rotateZ: 0,
+                          }
+                }
+            />
             <ambientLight intensity={0.2} />
             <pointLight
                 position={[-10, -10, 10]}

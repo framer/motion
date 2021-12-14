@@ -1194,6 +1194,8 @@ export function createProjectionNode<I>({
                 this.currentAnimation =
                 this.animationValues =
                     undefined
+
+            this.notifyListeners("animationComplete")
         }
 
         finishAnimation() {

@@ -27,9 +27,9 @@ const readers = {
 }
 
 function readAnimatableValue(value?: Color) {
-    if (!value) return
-
-    if (value instanceof Color) {
+    if (value === undefined) {
+        return
+    } else if (value instanceof Color) {
         return value.getStyle()
     } else {
         return value

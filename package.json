@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "5.4.5",
+    "version": "5.5.0-beta.0",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -38,7 +38,7 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn build && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e && yarn measure",
+        "test": "yarn build && yarn measure && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e",
         "build": "yarn clean && tsc -p . && rollup -c",
         "clean": "rm -rf types dist lib",
         "test-ci": "yarn test-client && yarn test-server",
@@ -184,7 +184,7 @@
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "31 kB"
+            "maxSize": "31.5 kB"
         }
     ]
 }
