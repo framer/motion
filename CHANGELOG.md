@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.5.1] 2021-12-14
+
+### Fixed
+
+-   Removed dynamic resolution scaling from `LayoutCamera` to fix crash in iOS.
+
 ## [5.5.0] 2021-12-14
 
 ### Added

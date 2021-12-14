@@ -52,14 +52,15 @@ export function useLayoutCamera<CameraType>(
         const removeProjectionUpdateListener = projection.addEventListener(
             "projectionUpdate",
             (newProjection: Box) => {
-                if (latestLayout.current) {
-                    const { x, y } = latestLayout.current
-                    const xRatio = calcLength(newProjection.x) / calcLength(x)
-                    const yRatio = calcLength(newProjection.y) / calcLength(y)
-                    gl.setPixelRatio(
-                        Math.max(xRatio, yRatio) * window.devicePixelRatio
-                    )
-                }
+                // TODO: Removed to prevent iOS from crashing.
+                // if (latestLayout.current) {
+                //     const { x, y } = latestLayout.current
+                //     const xRatio = calcLength(newProjection.x) / calcLength(x)
+                //     const yRatio = calcLength(newProjection.y) / calcLength(y)
+                //     gl.setPixelRatio(
+                //         Math.max(xRatio, yRatio) * window.devicePixelRatio
+                //     )
+                // }
                 updateCamera(calcBoxSize(newProjection))
                 advance(getFrameData().timestamp)
             }
