@@ -1,10 +1,4 @@
-import {
-    MutableRefObject,
-    RefObject,
-    useContext,
-    useLayoutEffect,
-    useRef,
-} from "react"
+import { RefObject, useContext, useLayoutEffect } from "react"
 import { Size, useThree } from "@react-three/fiber"
 import { LayoutCameraProps } from "./types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -29,9 +23,8 @@ export function useLayoutCamera<CameraType>(
         "No MotionCanvas detected. Replace Canvas from @react-three/fiber with MotionCanvas from framer-motion."
     )
 
-    const { setSize, layoutCamera } = context!
+    const { setDimensions, layoutCamera } = context!
 
-    const latestLayout = useRef<Box>(null) as MutableRefObject<Box>
     const advance = useThree((three) => three.advance)
     const set = useThree((three) => three.set)
     const camera = useThree((three) => three.camera)
@@ -52,17 +45,6 @@ export function useLayoutCamera<CameraType>(
         const removeProjectionUpdateListener = projection.addEventListener(
             "projectionUpdate",
             (newProjection: Box) => {
-                // TODO: Removed to prevent iOS from crashing.
-                // Perhaps a better apporach is to set with setSize
-                // and then set to window native on animationComplete.
-                // if (latestLayout.current) {
-                //     const { x, y } = latestLayout.current
-                //     const xRatio = calcLength(newProjection.x) / calcLength(x)
-                //     const yRatio = calcLength(newProjection.y) / calcLength(y)
-                //     gl.setPixelRatio(
-                //         Math.max(xRatio, yRatio) * window.devicePixelRatio
-                //     )
-                // }
                 updateCamera(calcBoxSize(newProjection))
                 advance(getFrameData().timestamp)
             }
@@ -75,10 +57,21 @@ export function useLayoutCamera<CameraType>(
         const removeLayoutMeasureListener = projection.addEventListener(
             "measure",
             (newLayout: Box) => {
-                latestLayout.current = newLayout
                 const newSize = calcBoxSize(newLayout)
                 gl.setSize(newSize.width, newSize.height)
-                setSize!(newSize)
+
+                let dpr: number | undefined
+                if (
+                    newSize.width < size.width ||
+                    newSize.height < size.height
+                ) {
+                    const xScale = size.width / newSize.width
+                    const yScale = size.height / newSize.height
+                    const maxScale = Math.max(xScale, yScale)
+                    dpr = Math.min(maxScale, 8)
+                }
+
+                setDimensions!({ size: newSize, dpr })
             }
         )
 
@@ -90,7 +83,12 @@ export function useLayoutCamera<CameraType>(
             "animationComplete",
             () => {
                 const { actual } = projection.layout || {}
-                actual && updateCamera(calcBoxSize(actual))
+
+                if (actual) {
+                    const newSize = calcBoxSize(actual)
+                    updateCamera(newSize)
+                    setDimensions!({ size: newSize })
+                }
             }
         )
 
@@ -99,7 +97,7 @@ export function useLayoutCamera<CameraType>(
             removeLayoutMeasureListener()
             removeAnimationCompleteListener()
         }
-    }, [])
+    }, [size])
 
     useLayoutEffect(() => {
         const { current: cam } = layoutCamera

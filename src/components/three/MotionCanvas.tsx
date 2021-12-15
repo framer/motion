@@ -18,7 +18,7 @@ import {
 } from "@react-three/fiber"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
-import { MotionCanvasContext } from "./MotionCanvasContext"
+import { DimensionsState, MotionCanvasContext } from "./MotionCanvasContext"
 
 export interface MotionCanvasProps extends Omit<Props, "resize"> {}
 
@@ -81,15 +81,20 @@ function CanvasComponent(
     const configContext = useContext(MotionConfigContext)
 
     const layoutCamera = useRef<Camera>(null)
-    const [size, setSize] = useState({ width: 0, height: 0 })
+    const [dimensions, setDimensions] = useState<DimensionsState>({
+        size: { width: 0, height: 0 },
+    })
+    const { size, dpr } = dimensions
 
     const containerRef = useRef<HTMLDivElement>(null)
 
     const handleResize = (): void => {
         const container = containerRef.current!
-        setSize({
-            width: container.offsetWidth,
-            height: container.offsetHeight,
+        setDimensions({
+            size: {
+                width: container.offsetWidth,
+                height: container.offsetHeight,
+            },
         })
     }
 
@@ -111,7 +116,7 @@ function CanvasComponent(
             <ErrorBoundary set={setError}>
                 <React.Suspense fallback={<Block set={setBlock} />}>
                     <MotionCanvasContext.Provider
-                        value={{ setSize, layoutCamera }}
+                        value={{ setDimensions, layoutCamera }}
                     >
                         <MotionConfigContext.Provider value={configContext}>
                             <MotionContext.Provider value={motionContext}>
@@ -124,6 +129,7 @@ function CanvasComponent(
             canvasRef.current,
             {
                 ...props,
+                dpr: dpr || props.dpr,
                 size,
                 events: events || createPointerEvents,
             }

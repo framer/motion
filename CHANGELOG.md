@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.5.2] 2021-12-14
+
+### Fixed
+
+-   Reimplemented dynamic resolution scaling for `LayoutCamera`.
+
 ## [5.5.1] 2021-12-14
 
 ### Fixed
