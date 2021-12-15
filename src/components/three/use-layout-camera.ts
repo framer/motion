@@ -1,4 +1,4 @@
-import { RefObject, useContext, useLayoutEffect } from "react"
+import { RefObject, useContext, useLayoutEffect, useRef } from "react"
 import { Size, useThree } from "@react-three/fiber"
 import { LayoutCameraProps } from "./types"
 import { useVisualElementContext } from "../../context/MotionContext"
@@ -6,7 +6,6 @@ import { Box } from "../../projection/geometry/types"
 import { MotionCanvasContext } from "./MotionCanvasContext"
 import { invariant } from "hey-listen"
 import { calcLength } from "../../projection/geometry/delta-calc"
-import { getFrameData } from "framesync"
 
 const calcBoxSize = ({ x, y }: Box) => ({
     width: calcLength(x),
@@ -23,7 +22,7 @@ export function useLayoutCamera<CameraType>(
         "No MotionCanvas detected. Replace Canvas from @react-three/fiber with MotionCanvas from framer-motion."
     )
 
-    const { setDimensions, layoutCamera } = context!
+    const { dimensions, layoutCamera } = context!
 
     const advance = useThree((three) => three.advance)
     const set = useThree((three) => three.set)
@@ -31,9 +30,12 @@ export function useLayoutCamera<CameraType>(
     const size = useThree((three) => three.size)
     const gl = useThree((three) => three.gl)
     const parentVisualElement = useVisualElementContext()
+    const measuredLayoutSize = useRef<Size>()
 
     useLayoutEffect(() => {
+        measuredLayoutSize.current = size
         updateCamera(size)
+        advance(performance.now())
 
         const projection = parentVisualElement?.projection
         if (!projection) return
@@ -44,10 +46,7 @@ export function useLayoutCamera<CameraType>(
          */
         const removeProjectionUpdateListener = projection.addEventListener(
             "projectionUpdate",
-            (newProjection: Box) => {
-                updateCamera(calcBoxSize(newProjection))
-                advance(getFrameData().timestamp)
-            }
+            (newProjection: Box) => updateCamera(calcBoxSize(newProjection))
         )
 
         /**
@@ -58,20 +57,24 @@ export function useLayoutCamera<CameraType>(
             "measure",
             (newLayout: Box) => {
                 const newSize = calcBoxSize(newLayout)
-                gl.setSize(newSize.width, newSize.height)
 
-                let dpr: number | undefined
-                if (
-                    newSize.width < size.width ||
-                    newSize.height < size.height
-                ) {
-                    const xScale = size.width / newSize.width
-                    const yScale = size.height / newSize.height
+                let dpr = window.devicePixelRatio
+                const { width, height } = dimensions.current!.size!
+
+                if (newSize.width < width || newSize.height < height) {
+                    const xScale = width / newSize.width
+                    const yScale = height / newSize.height
                     const maxScale = Math.max(xScale, yScale)
                     dpr = Math.min(maxScale, 8)
                 }
 
-                setDimensions!({ size: newSize, dpr })
+                dimensions.current = {
+                    size: { width: newSize.width, height: newSize.height },
+                    dpr,
+                }
+
+                gl.setSize(newSize.width, newSize.height)
+                gl.setPixelRatio(dpr)
             }
         )
 
@@ -85,9 +88,15 @@ export function useLayoutCamera<CameraType>(
                 const { actual } = projection.layout || {}
 
                 if (actual) {
-                    const newSize = calcBoxSize(actual)
-                    updateCamera(newSize)
-                    setDimensions!({ size: newSize })
+                    setTimeout(() => {
+                        const newSize = calcBoxSize(actual)
+                        updateCamera(newSize)
+
+                        dimensions.current = { size: newSize }
+
+                        gl.setSize(newSize.width, newSize.height)
+                        gl.setPixelRatio(window.devicePixelRatio)
+                    }, 50)
                 }
             }
         )
@@ -97,7 +106,7 @@ export function useLayoutCamera<CameraType>(
             removeLayoutMeasureListener()
             removeAnimationCompleteListener()
         }
-    }, [size])
+    }, [])
 
     useLayoutEffect(() => {
         const { current: cam } = layoutCamera

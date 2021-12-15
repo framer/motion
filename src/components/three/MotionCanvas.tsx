@@ -3,7 +3,6 @@ import {
     useContext,
     useLayoutEffect,
     useRef,
-    useState,
     forwardRef,
     MutableRefObject,
 } from "react"
@@ -19,6 +18,7 @@ import {
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { DimensionsState, MotionCanvasContext } from "./MotionCanvasContext"
+import { useForceUpdate } from "../../utils/use-force-update"
 
 export interface MotionCanvasProps extends Omit<Props, "resize"> {}
 
@@ -79,23 +79,25 @@ function CanvasComponent(
      */
     const motionContext = useContext(MotionContext)
     const configContext = useContext(MotionConfigContext)
+    const [forceRender] = useForceUpdate()
 
     const layoutCamera = useRef<Camera>(null)
-    const [dimensions, setDimensions] = useState<DimensionsState>({
+    const dimensions = useRef<DimensionsState>({
         size: { width: 0, height: 0 },
     })
-    const { size, dpr } = dimensions
+    const { size, dpr } = dimensions.current
 
     const containerRef = useRef<HTMLDivElement>(null)
 
     const handleResize = (): void => {
         const container = containerRef.current!
-        setDimensions({
+        dimensions.current = {
             size: {
                 width: container.offsetWidth,
                 height: container.offsetHeight,
             },
-        })
+        }
+        forceRender()
     }
 
     // Set canvas size on mount
@@ -116,7 +118,7 @@ function CanvasComponent(
             <ErrorBoundary set={setError}>
                 <React.Suspense fallback={<Block set={setBlock} />}>
                     <MotionCanvasContext.Provider
-                        value={{ setDimensions, layoutCamera }}
+                        value={{ dimensions, layoutCamera }}
                     >
                         <MotionConfigContext.Provider value={configContext}>
                             <MotionContext.Provider value={motionContext}>

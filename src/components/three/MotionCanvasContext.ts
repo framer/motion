@@ -1,5 +1,5 @@
 import { Size } from "@react-three/fiber"
-import { createContext, RefObject, Ref } from "react"
+import { createContext, MutableRefObject, RefObject, Ref } from "react"
 
 export type DimensionsState = {
     size: Size
@@ -11,7 +11,7 @@ export type SetDimensions = (state: DimensionsState) => void
 
 export interface MotionCanvasContextProps {
     layoutCamera: RefObject<any>
-    setDimensions: SetDimensions
+    dimensions: MutableRefObject<DimensionsState>
 }
 
 export const MotionCanvasContext = createContext<
