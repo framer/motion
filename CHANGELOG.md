@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Improving performance of `LayoutCamera`.
+-   Removing `data-projection-id` in static mode.
 
 ## [5.5.3] 2021-12-15
 
