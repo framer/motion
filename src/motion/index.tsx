@@ -77,7 +77,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * shared element transitions however. Perhaps for those we could revert to a root node
          * that gets forceRendered and layout animations are triggered on its layout effect.
          */
-        const projectionId = useProjectionId()
+        const projectionId = config.isStatic ? undefined : useProjectionId()
 
         /**
          *

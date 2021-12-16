@@ -3,6 +3,7 @@ import { motion, useMotionValue } from "../.."
 import * as React from "react"
 import { motionValue } from "../../value"
 import { MotionConfig } from "../../components/MotionConfig"
+import { globalProjectionState } from "../../projection/node/create-projection-node"
 
 describe("isStatic prop", () => {
     test("it prevents rendering of animated values", async () => {
@@ -221,5 +222,21 @@ describe("isStatic prop", () => {
                 resolve(undefined)
             }, 40)
         })
+    })
+
+    test("it does not assign projection id to the node", () => {
+        function Component({ x }: { x: number }) {
+            return (
+                <MotionConfig isStatic>
+                    <motion.div data-testid="a" style={{ x }} />
+                </MotionConfig>
+            )
+        }
+        globalProjectionState.hasEverUpdated = true
+        const { getByTestId } = render(<Component x={100} />)
+
+        expect(getByTestId("a") as Element).not.toHaveAttribute(
+            "data-projection-id"
+        )
     })
 })
