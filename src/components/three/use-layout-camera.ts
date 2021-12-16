@@ -6,6 +6,7 @@ import { Box } from "../../projection/geometry/types"
 import { MotionCanvasContext } from "./MotionCanvasContext"
 import { invariant } from "hey-listen"
 import { calcLength } from "../../projection/geometry/delta-calc"
+import { clamp } from "popmotion"
 
 const calcBoxSize = ({ x, y }: Box) => ({
     width: calcLength(x),
@@ -61,12 +62,10 @@ export function useLayoutCamera<CameraType>(
                 let dpr = window.devicePixelRatio
                 const { width, height } = dimensions.current!.size!
 
-                if (newSize.width < width || newSize.height < height) {
-                    const xScale = width / newSize.width
-                    const yScale = height / newSize.height
-                    const maxScale = Math.max(xScale, yScale)
-                    dpr = Math.min(maxScale, 8)
-                }
+                const xScale = width / newSize.width
+                const yScale = height / newSize.height
+                const maxScale = Math.max(xScale, yScale)
+                dpr = clamp(0.75, 4, maxScale)
 
                 dimensions.current = {
                     size: { width: newSize.width, height: newSize.height },
