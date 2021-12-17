@@ -41,7 +41,7 @@ function ProjectViewBox({ viewBox }: ViewBoxProps) {
     const svgVisualElement = useVisualElementContext()
 
     useEffect(() => {
-        svgVisualElement?.projection?.addEventListener(
+        return svgVisualElement?.projection?.addEventListener(
             "projectionUpdate",
             ({ x, y }: Box) => {
                 // TODO: A reveal option could be added where 0 0 is
@@ -49,7 +49,7 @@ function ProjectViewBox({ viewBox }: ViewBoxProps) {
                 viewBox.set(`0 0 ${calcLength(x)} ${calcLength(y)}`)
             }
         )
-    }, [])
+    }, [svgVisualElement])
 
     return null
 }
