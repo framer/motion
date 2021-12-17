@@ -39,14 +39,19 @@ export function LayoutSVGComponent(
 
 function ProjectViewBox({ viewBox }: ViewBoxProps) {
     const svgVisualElement = useVisualElementContext()
-
+    const ref = React.useRef({ width: 0, height: 0 })
     useEffect(() => {
+        svgVisualElement?.projection?.addEventListener("measure", (box) => {
+            ref.current.width = calcLength(box.x)
+            ref.current.height = calcLength(box.y)
+        })
         return svgVisualElement?.projection?.addEventListener(
             "projectionUpdate",
             ({ x, y }: Box) => {
                 // TODO: A reveal option could be added where 0 0 is
                 // x.min, y.min
-                viewBox.set(`0 0 ${calcLength(x)} ${calcLength(y)}`)
+                // viewBox.set(`0 0 ${calcLength(x)} ${calcLength(y)}`)
+                viewBox.set(`0 0  ${ref.current.width} ${ref.current.height}`)
             }
         )
     }, [svgVisualElement])

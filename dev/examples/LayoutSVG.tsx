@@ -4,38 +4,45 @@ import { motion, LayoutSVG } from "@framer"
 import styled from "styled-components"
 
 export const App = () => {
-    const [isFullscreen, setFullscreen] = useState(false)
+    const [items, setItems] = useState([0, 1, 2, 3])
 
     return (
         <Container
-            isFullscreen={isFullscreen}
-            onClick={() => setFullscreen(!isFullscreen)}
+            test={200 + items[0] * 100}
+            onClick={() => setItems(shuffle([...items]))}
         >
-            <LayoutSVG transition={{ duration: 2 }}>
-                <Illustration />
-            </LayoutSVG>
+            {items.map((item) => (
+                <LayoutSVG
+                    key={item}
+                    transition={{ duration: 1 }}
+                    style={{
+                        filter: `hue-rotate(${item * (360 / items.length)}deg)`,
+                    }}
+                >
+                    <Illustration />
+                </LayoutSVG>
+            ))}
         </Container>
     )
 }
 
 const Container = styled("div")`
-    ${({ isFullscreen }) =>
-        isFullscreen
-            ? `
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-`
-            : `
-  width: 100px;
-  height: 100px;
-`}
+    background: black;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
     svg {
-        width: 100%;
-        height: 100%;
+        width: ${({ test }) => test + "px"};
+        height: 100px;
+        margin-bottom: 20px;
     }
 `
 
@@ -101,4 +108,24 @@ function Illustration() {
             </g>
         </>
     )
+}
+
+function shuffle(array: any[]) {
+    let currentIndex = array.length,
+        temporaryValue,
+        randomIndex
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex)
+        currentIndex -= 1
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex]
+        array[currentIndex] = array[randomIndex]
+        array[randomIndex] = temporaryValue
+    }
+
+    return array
 }
