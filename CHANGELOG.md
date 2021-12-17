@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.5.5] 2021-12-17
+
+### Fixed
+
+-   Using `dpr` prop in layout animation calculations.
+
 ## [5.5.4] 2021-12-16
 
 ### Fixed
