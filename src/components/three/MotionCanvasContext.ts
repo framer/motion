@@ -12,6 +12,7 @@ export type SetDimensions = (state: DimensionsState) => void
 export interface MotionCanvasContextProps {
     layoutCamera: RefObject<any>
     dimensions: MutableRefObject<DimensionsState>
+    requestedDpr: number
 }
 
 export const MotionCanvasContext = createContext<

@@ -14,11 +14,13 @@ import {
     events as createPointerEvents,
     Props,
     Camera,
+    Dpr,
 } from "@react-three/fiber"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
 import { DimensionsState, MotionCanvasContext } from "./MotionCanvasContext"
 import { useForceUpdate } from "../../utils/use-force-update"
+import { clamp } from "popmotion"
 
 export interface MotionCanvasProps extends Omit<Props, "resize"> {}
 
@@ -27,6 +29,14 @@ type UnblockProps = {
     set: React.Dispatch<React.SetStateAction<SetBlock>>
     children: React.ReactNode
 }
+
+const devicePixelRatio =
+    typeof window !== "undefined" ? window.devicePixelRatio : 1
+
+const calculateDpr = (dpr?: Dpr) =>
+    Array.isArray(dpr)
+        ? clamp(dpr[0], dpr[1], devicePixelRatio)
+        : dpr || devicePixelRatio
 
 /**
  * This file contains a version of R3F's Canvas component that uses our projection
@@ -118,7 +128,11 @@ function CanvasComponent(
             <ErrorBoundary set={setError}>
                 <React.Suspense fallback={<Block set={setBlock} />}>
                     <MotionCanvasContext.Provider
-                        value={{ dimensions, layoutCamera }}
+                        value={{
+                            dimensions,
+                            layoutCamera,
+                            requestedDpr: calculateDpr(props.dpr),
+                        }}
                     >
                         <MotionConfigContext.Provider value={configContext}>
                             <MotionContext.Provider value={motionContext}>

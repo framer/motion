@@ -23,7 +23,7 @@ export function useLayoutCamera<CameraType>(
         "No MotionCanvas detected. Replace Canvas from @react-three/fiber with MotionCanvas from framer-motion."
     )
 
-    const { dimensions, layoutCamera } = context!
+    const { dimensions, layoutCamera, requestedDpr } = context!
 
     const advance = useThree((three) => three.advance)
     const set = useThree((three) => three.set)
@@ -59,7 +59,7 @@ export function useLayoutCamera<CameraType>(
             (newLayout: Box) => {
                 const newSize = calcBoxSize(newLayout)
 
-                let dpr = window.devicePixelRatio
+                let dpr = requestedDpr
                 const { width, height } = dimensions.current!.size!
 
                 const xScale = width / newSize.width
@@ -94,7 +94,7 @@ export function useLayoutCamera<CameraType>(
                         dimensions.current = { size: newSize }
 
                         gl.setSize(newSize.width, newSize.height)
-                        gl.setPixelRatio(window.devicePixelRatio)
+                        gl.setPixelRatio(requestedDpr)
                     }, 50)
                 }
             }
