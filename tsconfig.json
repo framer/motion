@@ -20,7 +20,8 @@
         "baseUrl": "src",
         "paths": {
             "@framer": ["../src/index"],
-            "@framer/*": ["../src/*"]
+            "@framer/*": ["../src/*"],
+            "three": ["node_modules/three"]
         },
         "strictNullChecks": true,
         "noImplicitAny": true,

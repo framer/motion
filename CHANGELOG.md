@@ -2,11 +2,11 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [5.6.0] 2021-12-17
+## [5.5.6] 2022-01-04
 
-### Added
+### Fixed
 
--   `LayoutSVG` component.
+-   Fixing types for `framer-motion/three` imports. [Issue](https://github.com/framer/motion/issues/1396)
 
 ## [5.5.5] 2021-12-17
 
