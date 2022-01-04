@@ -12,3 +12,7 @@ export const MotionContext = createContext<MotionContextProps>({})
 export function useVisualElementContext() {
     return useContext(MotionContext).visualElement
 }
+
+export function usePropagatedAnimateValue() {
+    return useContext(MotionContext).animate
+}
