@@ -160,7 +160,7 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "35 kB"
+            "maxSize": "35.1 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
