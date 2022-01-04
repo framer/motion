@@ -77,6 +77,7 @@ export { useResetProjection } from "./projection/use-reset-projection"
  */
 export { MotionContext } from "./context/MotionContext"
 export { MotionConfigContext } from "./context/MotionConfigContext"
+export { MotionContext } from "./context/MotionContext"
 export { PresenceContext } from "./context/PresenceContext"
 export { LayoutGroupContext } from "./context/LayoutGroupContext"
 export { DeprecatedLayoutGroupContext } from "./context/DeprecatedLayoutGroupContext"
