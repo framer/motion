@@ -680,6 +680,15 @@ export function createProjectionNode<I>({
                 measured,
                 actual: this.removeElementScroll(measured),
             }
+
+            if ((this.instance as any).title)
+                console.log(
+                    (this.instance as any).title,
+                    "layout",
+                    this.layout.actual,
+                    this.layout.measured
+                )
+
             this.layoutCorrected = createBox()
             this.isLayoutDirty = false
             this.projectionDelta = undefined

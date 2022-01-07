@@ -1,10 +1,15 @@
 import * as React from "react"
 import { useContext, useMemo } from "react"
 import { MotionConfigContext } from "../../context/MotionConfigContext"
+import {
+    loadExternalIsValidProp,
+    IsValidProp,
+} from "../../render/dom/utils/filter-props"
 import { useConstant } from "../../utils/use-constant"
 
 export interface MotionConfigProps extends Partial<MotionConfigContext> {
     children?: React.ReactNode
+    isValidProp?: IsValidProp
 }
 
 /**
@@ -24,7 +29,13 @@ export interface MotionConfigProps extends Partial<MotionConfigContext> {
  *
  * @public
  */
-export function MotionConfig({ children, ...config }: MotionConfigProps) {
+export function MotionConfig({
+    children,
+    isValidProp,
+    ...config
+}: MotionConfigProps) {
+    isValidProp && loadExternalIsValidProp(isValidProp)
+
     /**
      * Inherit props from any parent MotionConfig components
      */

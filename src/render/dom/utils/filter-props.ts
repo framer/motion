@@ -3,6 +3,16 @@ import { isValidMotionProp } from "../../../motion/utils/valid-prop"
 
 let shouldForward = (key: string) => !isValidMotionProp(key)
 
+export type IsValidProp = (key: string) => boolean
+
+export function loadExternalIsValidProp(emotionIsPropValid?: IsValidProp) {
+    if (!emotionIsPropValid) return
+
+    // Handle events explicitly as Emotion validates them all as true
+    shouldForward = (key: string) =>
+        key.startsWith("on") ? !isValidMotionProp(key) : emotionIsPropValid(key)
+}
+
 /**
  * Emotion and Styled Components both allow users to pass through arbitrary props to their components
  * to dynamically generate CSS. They both use the `@emotion/is-prop-valid` package to determine which
@@ -17,16 +27,12 @@ let shouldForward = (key: string) => !isValidMotionProp(key)
  * actually required.
  */
 try {
-    const emotionIsPropValid = require("@emotion/is-prop-valid").default
-
-    shouldForward = (key: string) => {
-        // Handle events explicitly as Emotion validates them all as true
-        if (key.startsWith("on")) {
-            return !isValidMotionProp(key)
-        } else {
-            return emotionIsPropValid(key)
-        }
-    }
+    /**
+     * We attempt to import this package but require won't be defined in esm environments, in that case
+     * isPropValid will have to be provided via `MotionContext`. In a 6.0.0 this should probably be removed
+     * in favour of explicit injection.
+     */
+    loadExternalIsValidProp(require("@emotion/is-prop-valid").default)
 } catch {
     // We don't need to actually do anything here - the fallback is the existing `isPropValid`.
 }
