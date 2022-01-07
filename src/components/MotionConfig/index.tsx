@@ -40,15 +40,10 @@ export function MotionConfig({ children, ...config }: MotionConfigProps) {
      * Creating a new config context object will re-render every `motion` component
      * every time it renders. So we only want to create a new one sparingly.
      */
-    const transitionDependency =
-        typeof config.transition === "object"
-            ? config.transition.toString()
-            : ""
-
-    const context = useMemo(() => config, [
-        transitionDependency,
-        config.transformPagePoint,
-    ])
+    const context = useMemo(
+        () => config,
+        [JSON.stringify(config.transition), config.transformPagePoint]
+    )
 
     return (
         <MotionConfigContext.Provider value={context as MotionConfigContext}>

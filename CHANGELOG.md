@@ -2,6 +2,10 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+### Fixed
+
+-   `MotionConfig` propagates changes to transition. 
+
 ## [5.5.5] 2021-12-17
 
 ### Fixed
