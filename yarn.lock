@@ -6019,7 +6019,7 @@ __metadata:
     react-merge-refs: ^1.1.0
     react-refresh: ^0.9.0
     react-use-measure: ^2.1.1
-    rollup: 2.10.5
+    rollup: 2.62
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
     start-server-and-test: ^1.9.1
@@ -6138,16 +6138,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fsevents@npm:~2.1.2":
-  version: 2.1.3
-  resolution: "fsevents@npm:2.1.3"
-  dependencies:
-    node-gyp: latest
-  checksum: b5ec0516b44d75b60af5c01ff80a80cd995d175e4640d2a92fbabd02991dd664d76b241b65feef0775c23d531c3c74742c0fbacd6205af812a9c3cef59f04292
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
 "fsevents@npm:~2.3.2":
   version: 2.3.2
   resolution: "fsevents@npm:2.3.2"
@@ -6164,15 +6154,6 @@ __metadata:
   dependencies:
     bindings: ^1.5.0
     nan: ^2.12.1
-  conditions: os=darwin
-  languageName: node
-  linkType: hard
-
-"fsevents@patch:fsevents@~2.1.2#~builtin<compat/fsevents>":
-  version: 2.1.3
-  resolution: "fsevents@patch:fsevents@npm%3A2.1.3#~builtin<compat/fsevents>::version=2.1.3&hash=18f3a7"
-  dependencies:
-    node-gyp: latest
   conditions: os=darwin
   languageName: node
   linkType: hard
@@ -11288,17 +11269,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:2.10.5":
-  version: 2.10.5
-  resolution: "rollup@npm:2.10.5"
+"rollup@npm:2.62":
+  version: 2.62.0
+  resolution: "rollup@npm:2.62.0"
   dependencies:
-    fsevents: ~2.1.2
+    fsevents: ~2.3.2
   dependenciesMeta:
     fsevents:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 47ff826d61c636f27e24f295d913cd6e14a5381fbf387cd13bbb1e1ed99d50eb96022f9cbab5ee8c7165571b7535716a25ad9541ff98d85412cea65ef4efec2d
+  checksum: 9dfa089a232346bc548bf5110e79e0cf5a2dac6fb9bf3f737a645e72795b4b4a1165d1bf86938f90805c4391e8dd571557afb901aaf81dcb82690c57737ab128
   languageName: node
   linkType: hard
 
