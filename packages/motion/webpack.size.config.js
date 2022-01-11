@@ -64,7 +64,7 @@ module.exports = {
     resolve: {
         modules: ["node_modules"],
         extensions: [".ts", ".tsx", ".js", ".json"],
-        alias: convertPathsToAliases(tsconfig),
+        // alias: convertPathsToAliases(tsconfig),
     },
     module: {
         rules: [

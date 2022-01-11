@@ -12,10 +12,19 @@
         "typescript": "^4.2.3",
         "jest": "^24.8.0",
         "react": "^17.0.0-rc.0",
-        "react-dom": "^17.0.0-rc.0"
+        "react-dom": "^17.0.0-rc.0",
+        "webpack": "^5.27.2"
     },
     "scripts": {
-        "start-dev-server": "cd dev && yarn start"
+        "start-dev-server": "cd dev && yarn start",
+        "test": "cd packages/motion && yarn build && yarn measure && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e",
+        "projection-dev": "python -m SimpleHTTPServer",
+        "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
+        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
+        "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
+        "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
+        "test-e2e": "yarn test-e2e-electron",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'"
     },
     "turbo": {
         "npmClient": "yarn",
@@ -68,6 +77,7 @@
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.9.1",
         "@typescript-eslint/parser": "^5.9.1",
+        "cypress": "^3.4.0",
         "eslint": "^8.6.0",
         "eslint-config-prettier": "^8.3.0",
         "eslint-plugin-import": "^2.25.4",
@@ -76,6 +86,7 @@
         "jest": "^27.4.7",
         "lerna": "^4.0.0",
         "prettier": "^2.5.1",
+        "start-server-and-test": "^1.9.1",
         "turbo": "^1.0.25"
     }
 }
