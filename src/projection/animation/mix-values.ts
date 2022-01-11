@@ -1,5 +1,5 @@
 import { circOut, linear, mix, progress as calcProgress } from "popmotion"
-import { percent } from "style-value-types"
+import { percent, px } from "style-value-types"
 import { ResolvedValues } from "../../render/types"
 import { EasingFunction } from "../../types"
 
@@ -8,6 +8,9 @@ const numBorders = borders.length
 
 const asNumber = (value: string | number) =>
     typeof value === "string" ? parseFloat(value) : value
+
+const isPx = (value: string | number) =>
+    typeof value === "number" || px.test(value)
 
 export function mixValues(
     target: ResolvedValues,
@@ -51,13 +54,22 @@ export function mixValues(
         followRadius ||= 0
         leadRadius ||= 0
 
-        target[borderLabel] = Math.max(
-            mix(asNumber(followRadius), asNumber(leadRadius), progress),
-            0
-        )
+        const canMix =
+            followRadius === 0 ||
+            leadRadius === 0 ||
+            isPx(followRadius) === isPx(leadRadius)
 
-        if (percent.test(leadRadius) || percent.test(followRadius)) {
-            target[borderLabel] += "%"
+        if (canMix) {
+            target[borderLabel] = Math.max(
+                mix(asNumber(followRadius), asNumber(leadRadius), progress),
+                0
+            )
+
+            if (percent.test(leadRadius) || percent.test(followRadius)) {
+                target[borderLabel] += "%"
+            }
+        } else {
+            target[borderLabel] = leadRadius
         }
     }
 
