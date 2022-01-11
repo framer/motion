@@ -66,7 +66,7 @@ describe("transformTemplate", () => {
         expect(container.firstChild).toHaveStyle("transform: translateY(20px)")
     })
 
-    it("removes transformTemplate if prop is removed and translate is defined", async () => {
+    it("removes transformTemplate if prop is removed and transform is changed", async () => {
         const { container, rerender } = render(
             <motion.div
                 transformTemplate={() => `translateY(20px)`}
@@ -80,6 +80,23 @@ describe("transformTemplate", () => {
 
         expect(container.firstChild).toHaveStyle(
             "transform: translateX(20px) translateZ(0)"
+        )
+    })
+
+    it("removes transformTemplate if prop is removed and transform is not changed", async () => {
+        const { container, rerender } = render(
+            <motion.div
+                transformTemplate={() => `translateY(20px)`}
+                style={{ x: 10 }}
+            />
+        )
+        expect(container.firstChild).toHaveStyle("transform: translateY(20px)")
+        rerender(<motion.div style={{ x: 10 }} />)
+
+        await new Promise((resolve) => sync.postRender(resolve))
+
+        expect(container.firstChild).toHaveStyle(
+            "transform: translateX(10px) translateZ(0)"
         )
     })
 
