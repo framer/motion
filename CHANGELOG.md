@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.5.8] 2022-01-12
+
+### Fixed
+
+-   Removing `transformTemplate` prop correctly rerenders element.
+
 ## [5.5.7] 2022-01-11
 
 ### Fixed

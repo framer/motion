@@ -257,66 +257,11 @@ describe("motion component rendering and styles", () => {
         expect(container.firstChild).toHaveStyle("background-color: #f00")
     })
 
-    it("applies transformTemplate on initial render", () => {
-        const { container } = render(
-            <motion.div
-                initial={{ x: 10 }}
-                transformTemplate={({ x }, generated) =>
-                    `translateY(${x}) ${generated}`
-                }
-            />
-        )
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateY(10px) translateX(10px) translateZ(0)"
-        )
-    })
-
     it("renders transform", () => {
         const { container } = render(
             <motion.div style={{ transform: "translateX(10px)" }} />
         )
         expect(container.firstChild).toHaveStyle("transform: translateX(10px)")
-    })
-
-    it("applies updated transformTemplate", () => {
-        const { container, rerender } = render(
-            <motion.div
-                initial={{ x: 10 }}
-                transformTemplate={({ x }, generated) =>
-                    `translateY(${x}) ${generated}`
-                }
-            />
-        )
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateY(10px) translateX(10px) translateZ(0)"
-        )
-
-        rerender(
-            <motion.div
-                initial={{ x: 10 }}
-                transformTemplate={({ x }, generated) => {
-                    const newX = typeof x === "string" ? parseFloat(x) : x
-                    return `translateY(${(newX as number) * 2}px) ${generated}`
-                }}
-            />
-        )
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateY(20px) translateX(10px) translateZ(0)"
-        )
-    })
-
-    it("renders transform with transformTemplate", () => {
-        const { container } = render(
-            <motion.div
-                transformTemplate={(_, generated) =>
-                    `translateY(20px) ${generated}`
-                }
-                style={{ x: 10 }}
-            />
-        )
-        expect(container.firstChild).toHaveStyle(
-            "transform: translateY(20px) translateX(10px) translateZ(0)"
-        )
     })
 
     it("filters MotionProps from the DOM", () => {
