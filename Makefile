@@ -20,7 +20,7 @@ default: build
 # Cleaning removes build dir and node_modules. Use double colon so it can be extended.
 clean::
 	rm -rf build
-	rm -rf node_modules
+	find . -name 'node_modules' -type d -prune -exec rm -rf '{}' +
 	git clean -fdX .
 
 # Use a mutex file so multiple Source dirs can be built in parallel.
@@ -28,7 +28,7 @@ WORKTREE_NODE_MODULES := $(BASE_DIR)/node_modules/.yarn-state.yml
 WORKSPACE_NODE_MODULES := node_modules
 
 # Update node modules if package.json is newer than node_modules or yarn lockfile
-$(WORKTREE_NODE_MODULES) $(WORKSPACE_NODE_MODULES): $(BASE_DIR)/yarn.lock package.json
+$(WORKTREE_NODE_MODULES) $(WORKSPACE_NODE_MODULES): $(BASE_DIR)/yarn.lock package.json packages/motion/package.json packages/three/package.json
 	yarn install
 	touch $@
 
@@ -38,7 +38,7 @@ $(WORKTREE_NODE_MODULES) $(WORKSPACE_NODE_MODULES): $(BASE_DIR)/yarn.lock packag
 # Makefile
 bootstrap:: $(WORKTREE_NODE_MODULES)
 
-SOURCE_FILES := $(shell find ./src -type f)
+SOURCE_FILES := $(shell find packages/motion/src packages/three/src -type f)
 
 ######
 
@@ -47,7 +47,8 @@ TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)
 DECLARATION_TARGET=types/index.d.ts
 
 build: bootstrap
-	yarn build
+	cd packages/motion && yarn build
+	cd packages/three && yarn build
 
 watch: bootstrap
 	yarn watch
