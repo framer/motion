@@ -73,6 +73,7 @@
         "@rollup/plugin-commonjs": "^21.0.1",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
+        "@types/three": "^0.136.1",
         "prettier": "^2.1.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",

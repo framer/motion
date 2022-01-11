@@ -17,7 +17,8 @@
     },
     "scripts": {
         "start-dev-server": "cd dev && yarn start",
-        "test": "cd packages/motion && yarn build && yarn measure && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e",
+        "build": "turbo run build",
+        "test": "turbo run test",
         "projection-dev": "python -m SimpleHTTPServer",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
@@ -75,6 +76,7 @@
         }
     },
     "devDependencies": {
+        "@types/node": "^17.0.8",
         "@typescript-eslint/eslint-plugin": "^5.9.1",
         "@typescript-eslint/parser": "^5.9.1",
         "cypress": "^3.4.0",

@@ -35,6 +35,7 @@
         "lint": "yarn eslint src/**/*.ts",
         "build": "yarn clean && tsc -p . && rollup -c",
         "clean": "rm -rf types dist lib",
+        "test": "yarn build && yarn measure && yarn test-server && yarn test-client && yarn test-e2e",
         "test-ci": "yarn test-client && yarn test-server",
         "test-client": "jest --coverage --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
