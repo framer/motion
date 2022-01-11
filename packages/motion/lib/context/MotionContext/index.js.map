@@ -1,1 +1,0 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../../../src/context/MotionContext/index.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,aAAa,EAAE,UAAU,EAAE,MAAM,OAAO,CAAA;AASjD,MAAM,CAAC,IAAM,aAAa,GAAG,aAAa,CAAqB,EAAE,CAAC,CAAA;AAElE,MAAM,UAAU,uBAAuB;IACnC,OAAO,UAAU,CAAC,aAAa,CAAC,CAAC,aAAa,CAAA;AAClD,CAAC"}

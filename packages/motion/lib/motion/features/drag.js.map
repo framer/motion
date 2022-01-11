@@ -1,1 +1,0 @@
-{"version":3,"file":"drag.js","sourceRoot":"","sources":["../../../src/motion/features/drag.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,OAAO,EAAE,MAAM,8BAA8B,CAAA;AACtD,OAAO,EAAE,aAAa,EAAE,MAAM,gCAAgC,CAAA;AAC9D,OAAO,EAAE,uBAAuB,EAAE,MAAM,oCAAoC,CAAA;AAG5E,MAAM,CAAC,IAAM,IAAI,GAAsB;IACnC,GAAG,EAAE,uBAAuB,CAAC,aAAa,CAAC;IAC3C,IAAI,EAAE,uBAAuB,CAAC,OAAO,CAAC;CACzC,CAAA"}

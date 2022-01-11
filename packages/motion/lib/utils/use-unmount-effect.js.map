@@ -1,1 +1,0 @@
-{"version":3,"file":"use-unmount-effect.js","sourceRoot":"","sources":["../../src/utils/use-unmount-effect.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,OAAO,CAAA;AAEjC,MAAM,UAAU,gBAAgB,CAAC,QAAoB;IACjD,OAAO,SAAS,CAAC,cAAM,OAAA,cAAM,OAAA,QAAQ,EAAE,EAAV,CAAU,EAAhB,CAAgB,EAAE,EAAE,CAAC,CAAA;AAChD,CAAC"}

@@ -1,1 +1,0 @@
-{"version":3,"file":"is-ref-object.js","sourceRoot":"","sources":["../../src/utils/is-ref-object.ts"],"names":[],"mappings":"AAEA,MAAM,UAAU,WAAW,CAAU,GAAQ;IACzC,OAAO,CACH,OAAO,GAAG,KAAK,QAAQ;QACvB,MAAM,CAAC,SAAS,CAAC,cAAc,CAAC,IAAI,CAAC,GAAG,EAAE,SAAS,CAAC,CACvD,CAAA;AACL,CAAC"}
