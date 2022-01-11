@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.5.7] 2022-01-11
+
+### Fixed
+
+-   Fixing crossfade for % or px unit border radius. [Issue](https://github.com/framer/motion/issues/1413)
+
 ## [5.5.6] 2022-01-07
 
 ### Fixed
