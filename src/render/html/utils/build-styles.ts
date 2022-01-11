@@ -79,7 +79,7 @@ export function buildHTMLStyles(
         )
     } else if (transformTemplate) {
         style.transform = transformTemplate({}, "")
-    } else if (style.transform) {
+    } else if (!latestValues.transform && style.transform) {
         style.transform = "none"
     }
 
