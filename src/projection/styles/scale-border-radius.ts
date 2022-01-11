@@ -17,6 +17,7 @@ export function pixelsToPercent(pixels: number, axis: Axis): number {
 export const correctBorderRadius: ScaleCorrectorDefinition = {
     correct: (latest, node) => {
         if (!node.target) return latest
+
         /**
          * If latest is a string, if it's a percentage we can return immediately as it's
          * going to be stretched appropriately. Otherwise, if it's a pixel, convert it to a number.

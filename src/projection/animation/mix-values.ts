@@ -1,9 +1,16 @@
 import { circOut, linear, mix, progress as calcProgress } from "popmotion"
+import { percent, px } from "style-value-types"
 import { ResolvedValues } from "../../render/types"
 import { EasingFunction } from "../../types"
 
 const borders = ["TopLeft", "TopRight", "BottomLeft", "BottomRight"]
 const numBorders = borders.length
+
+const asNumber = (value: string | number) =>
+    typeof value === "string" ? parseFloat(value) : value
+
+const isPx = (value: string | number) =>
+    typeof value === "number" || px.test(value)
 
 export function mixValues(
     target: ResolvedValues,
@@ -47,17 +54,22 @@ export function mixValues(
         followRadius ||= 0
         leadRadius ||= 0
 
-        /**
-         * Currently we're only crossfading between numerical border radius.
-         * It would be possible to crossfade between percentages for a little
-         * extra bundle size.
-         */
-        if (
-            typeof followRadius === "number" &&
-            typeof leadRadius === "number"
-        ) {
-            const radius = Math.max(mix(followRadius, leadRadius, progress), 0)
-            target[borderLabel] = radius
+        const canMix =
+            followRadius === 0 ||
+            leadRadius === 0 ||
+            isPx(followRadius) === isPx(leadRadius)
+
+        if (canMix) {
+            target[borderLabel] = Math.max(
+                mix(asNumber(followRadius), asNumber(leadRadius), progress),
+                0
+            )
+
+            if (percent.test(leadRadius) || percent.test(followRadius)) {
+                target[borderLabel] += "%"
+            }
+        } else {
+            target[borderLabel] = leadRadius
         }
     }
 
