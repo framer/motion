@@ -34,6 +34,7 @@ const umd = Object.assign({}, config, {
         commonjs(),
         resolve(),
         replace({
+            preventAssignment: true,
             "process.env.NODE_ENV": JSON.stringify("development"),
         }),
     ],
@@ -47,6 +48,7 @@ const umdProd = Object.assign({}, umd, {
         commonjs(),
         resolve(),
         replace({
+            preventAssignment: true,
             "process.env.NODE_ENV": JSON.stringify("production"),
         }),
         pureClass,

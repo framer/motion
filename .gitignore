@@ -4,7 +4,6 @@ node_modules
 /tsc
 /tmp
 yarn-error.log
-/coverage
 /test_reports
 /temp
 /dev/.cache-loader
@@ -14,6 +13,7 @@ yarn-error.log
 /packages/*/dist
 /packages/*/tsc
 /packages/*/tmp
+/packages/*/coverage
 /cypress/screenshots
 /cypress/videos
 /cypress/fixtures/projection-tests.json

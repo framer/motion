@@ -47,21 +47,11 @@
         "measure": "webpack --config webpack.size.config.js && bundlesize"
     },
     "peerDependencies": {
-        "@react-three/fiber": "*",
         "react": ">=16.8 || ^17.0.0",
         "react-dom": ">=16.8 || ^17.0.0",
         "three": "^0.135.0"
     },
-    "peerDependenciesMeta": {
-        "@react-three/fiber": {
-            "optional": true
-        },
-        "three": {
-            "optional": true
-        }
-    },
     "devDependencies": {
-        "@react-three/fiber": "^7.0.23",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
         "@testing-library/dom": "^6.10.1",
@@ -72,27 +62,21 @@
         "@types/react": "17.0.9",
         "@types/react-dom": "17.0.6",
         "@types/styled-components": "^4.1.0",
-        "@types/three": "^0.134.0",
-        "@typescript-eslint/eslint-plugin": "^1.5.0",
-        "@typescript-eslint/parser": "^1.5.0",
         "bundlesize": "^0.18.0",
         "concurrently": "^5.2.0",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
-        "husky": "1.1.4",
         "jest": "^24.8.0",
         "jest-dom": "^3.5.0",
         "jest-junit": "^6.4.0",
         "jest-watch-typeahead": "^0.4.2",
         "lint-staged": "^8.0.4",
         "prettier": "^2.1.0",
-        "react": "^17.0.0-rc.0",
+        "react": "^17.0.2",
         "react-dev-utils": "^11.0.4",
-        "react-dom": "^17.0.0-rc.0",
+        "react-dom": "^17.0.2",
         "rollup": "^2.63.0",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",
-        "styled-components": "^4.1.1",
-        "three": "^0.135.0",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
         "type-fest": "^1.0.1",
