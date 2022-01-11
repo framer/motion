@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
 import { motion, useMotionValue, animate } from "@framer"
-import { motionValue } from "../../src/value"
+import { motionValue } from "../../packages/motion/src/value"
 
 /**
  * An example of the tween transition type

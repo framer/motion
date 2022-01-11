@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useRef, useState } from "react"
-import { motion } from "../../src"
+import { motion } from "../../packages/motion/src"
 
 const container = {
     width: "50%",

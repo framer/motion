@@ -1,0 +1,17 @@
+{
+    "name": "framer-motion--dev",
+    "version": "0.0.0",
+    "private": true,
+    "scripts": {
+        "start": "webpack serve --config ./webpack/config.js --hot"
+    },
+    "dependencies": {
+        "framer-motion": "workspace:^",
+        "framer-motion-3d": "workspace:^"
+    },
+    "devDependencies": {
+        "webpack": "^5.27.2",
+        "webpack-cli": "^4.5.0",
+        "webpack-dev-server": "^3.11.2"
+    }
+}

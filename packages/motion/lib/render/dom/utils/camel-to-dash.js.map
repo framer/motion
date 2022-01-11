@@ -1,0 +1,1 @@
+{"version":3,"file":"camel-to-dash.js","sourceRoot":"","sources":["../../../../src/render/dom/utils/camel-to-dash.ts"],"names":[],"mappings":"AAAA,IAAM,kBAAkB,GAAG,iBAAiB,CAAA;AAC5C,IAAM,gBAAgB,GAAG,OAAO,CAAA;AAEhC;;GAEG;AACH,MAAM,CAAC,IAAM,WAAW,GAAG,UAAC,GAAW;IACnC,OAAA,GAAG,CAAC,OAAO,CAAC,kBAAkB,EAAE,gBAAgB,CAAC,CAAC,WAAW,EAAE;AAA/D,CAA+D,CAAA"}

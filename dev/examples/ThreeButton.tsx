@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useRef, useState } from "react"
 import { degreesToRadians } from "popmotion"
-import { motion as motionThree, MotionCanvas } from "@framer/three-entry"
+import { motion as motionThree, MotionCanvas } from "@framer-3d"
 import { motion, Variants } from "@framer"
 import styled from "styled-components"
 

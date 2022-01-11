@@ -15,12 +15,12 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "rootDir": "src",
+        "rootDir": "packages",
         "sourceMap": true,
         "baseUrl": "src",
         "paths": {
-            "@framer": ["../src/index"],
-            "@framer/*": ["../src/*"]
+            "@framer": ["../packages/motion"],
+            "@framer-3d": ["../packages/three"]
         },
         "strictNullChecks": true,
         "noImplicitAny": true,

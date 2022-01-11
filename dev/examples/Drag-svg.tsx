@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "../../src"
+import { motion } from "../../packages/motion/src"
 
 export const App = () => {
     return (

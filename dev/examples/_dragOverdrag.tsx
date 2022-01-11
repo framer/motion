@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "../../src"
+import { motion } from "../../packages/motion/src"
 
 const styleA = {
     width: 100,
@@ -19,7 +19,7 @@ export const App = () => {
 
     const [squish, setSquish] = useState("default")
 
-    const onLock = axis => {
+    const onLock = (axis) => {
         if (axis === "x") {
             setSquish("squishY")
         } else {

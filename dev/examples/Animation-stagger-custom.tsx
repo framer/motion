@@ -2,7 +2,7 @@ import * as React from "react"
 import { render } from "react-dom"
 import { Frame, useCycle, useAnimation } from "@framer"
 import { wrap, distance } from "popmotion"
-import { motion } from "../../src"
+import { motion } from "../../packages/motion/src"
 
 const count = 100
 const len = Math.floor(Math.sqrt(count))

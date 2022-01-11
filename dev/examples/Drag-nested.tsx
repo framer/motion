@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "../../src"
+import { motion } from "../../packages/motion/src"
 
 const scroll = {
     width: 200,

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useRef } from "react"
-import { motion } from "../../src"
+import { motion } from "../../packages/motion/src"
 import styled from "styled-components"
 
 /**

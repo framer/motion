@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, useMotionValue } from "../../src"
+import { motion, useMotionValue } from "../../packages/motion/src"
 
 const style = {
     width: 300,

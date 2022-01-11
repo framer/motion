@@ -18,6 +18,8 @@ console.log(
     chalk.bold.green(`\nRunning at: http://localhost:${DEV_SERVER_PORT}/\n`)
 )
 
+console.log(convertPathsToAliases(tsconfig, ".."))
+
 module.exports = {
     mode: "development",
     target: "web",
@@ -57,7 +59,7 @@ module.exports = {
     resolve: {
         modules: ["node_modules"],
         extensions: [".ts", ".tsx", ".js", ".json"],
-        alias: convertPathsToAliases(tsconfig),
+        alias: convertPathsToAliases(tsconfig, ".."),
         fallback: {
             path: require.resolve("path-browserify"),
         },
@@ -85,7 +87,9 @@ module.exports = {
     },
     plugins: [
         new ReactRefreshWebpackPlugin(),
-        new ForkTsCheckerWebpackPlugin(),
+        new ForkTsCheckerWebpackPlugin({
+            typescript: { configFile: "../tsconfig.json" },
+        }),
         new webpack.HotModuleReplacementPlugin(),
     ],
 }

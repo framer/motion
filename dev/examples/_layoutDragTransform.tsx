@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motio } from "@framer"
+import { motion } from "@framer"
 import styled from "styled-components"
 
 const transition = {
