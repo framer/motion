@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useState, useMemo, useEffect, useRef } from "react"
 import { render } from "react-dom"
-import { motion, useMotionValue, useSpring } from "@framer"
+import { motion, useMotionValue, useSpring } from "framer-motion"
 import { distance } from "popmotion"
 import { spring } from "popmotion"
 

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useRef } from "react"
-import { motion } from "../../packages/motion/src"
+import { motion } from "framer-motion"
 
 const dragContainer = {
     width: "400px",

@@ -8,7 +8,7 @@
         "useJSXTextNode": true
     },
     "plugins": ["@typescript-eslint", "react", "react-hooks", "import"],
-    "extends": ["prettier"],
+    "extends": ["prettier", "react/recommended"],
     "rules": {
         "@typescript-eslint/no-unused-vars": "warn",
         "@typescript-eslint/type-annotation-spacing": "error",

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { Reorder, useMotionValue, animate } from "@framer"
+import { Reorder, useMotionValue, animate } from "framer-motion"
 
 const inactiveShadow = "0px 0px 0px rgba(0,0,0,0.8)"
 

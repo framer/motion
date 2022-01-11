@@ -1,5 +1,5 @@
 import React from "react"
-import { motion, useMotionValue } from "@framer"
+import { motion, useMotionValue } from "framer-motion"
 
 export function App() {
     const backgroundColor = useMotionValue("#f00")

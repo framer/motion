@@ -4,7 +4,7 @@
  * https://bugs.chromium.org/p/chromium/issues/detail?id=1247858&q=getBoundingClientRect&can=1
  * The issue is fixed in Version 94.0.4606.61 (Official Build) (x86_64).
  */
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 import * as React from "react"
 
 export const App = () => {

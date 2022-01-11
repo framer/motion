@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useAnimation, useMotionValue } from "@framer"
+import { motion, useAnimation, useMotionValue } from "framer-motion"
 
 /**
  * An example of firing an animation onMount using the useAnimation hook

@@ -1,5 +1,5 @@
 import React, { useRef, useState, useLayoutEffect, useEffect } from "react"
-import { motion, useTransform, useViewportScroll } from "@framer"
+import { motion, useTransform, useViewportScroll } from "framer-motion"
 import styled from "styled-components"
 
 const PrevElements = styled.div`

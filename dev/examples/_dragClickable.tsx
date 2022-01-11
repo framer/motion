@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 
 const style = {
     display: "inline-block",

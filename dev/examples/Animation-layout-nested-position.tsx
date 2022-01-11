@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle } from "@framer"
+import { motion, useCycle } from "framer-motion"
 
 /**
  * This example demonstrates that nested components automatically factor in parent size deltas

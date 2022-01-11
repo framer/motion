@@ -1,4 +1,4 @@
-import { motion, useCycle } from "@framer"
+import { motion, useCycle } from "framer-motion"
 import * as React from "react"
 
 export const App = () => {

@@ -1,4 +1,4 @@
-import { m, LazyMotion, domMax } from "@framer"
+import { m, LazyMotion, domMax } from "framer-motion"
 import * as React from "react"
 
 export const App = () => {

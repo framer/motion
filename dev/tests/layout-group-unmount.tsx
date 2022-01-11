@@ -1,4 +1,4 @@
-import { motion, LayoutGroup } from "@framer"
+import { motion, LayoutGroup } from "framer-motion"
 import * as React from "react"
 import { useState } from "react"
 

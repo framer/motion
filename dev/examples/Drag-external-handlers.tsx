@@ -5,7 +5,7 @@ import {
     useMotionValue,
     useMotionTemplate,
     useTransform,
-} from "@framer"
+} from "framer-motion"
 
 const parent = {
     background: "rgba(255,255,255,0.2)",

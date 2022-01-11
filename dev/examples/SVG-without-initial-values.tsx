@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useCallback } from "react"
-import { motion, useAnimation } from "@framer"
+import { motion, useAnimation } from "framer-motion"
 
 /**
  * This is an example of SVGs working without explicitly setting initial

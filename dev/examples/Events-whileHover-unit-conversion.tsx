@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 
 /**
  * An example of using whileHover to convert between different value types

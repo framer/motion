@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, AnimatePresence } from "@framer"
+import { motion, useCycle, AnimatePresence } from "framer-motion"
 
 export const App = () => {
     const [isOn, toggleOn] = useCycle(false, true)

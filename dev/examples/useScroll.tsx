@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect, useState, useRef } from "react"
-import { motion, useElementScroll, useSpring, useTransform } from "@framer"
+import { motion, useElementScroll, useSpring, useTransform } from "framer-motion"
 import { mix } from "popmotion"
 
 const randomInt = (min, max) => Math.round(mix(min, max, Math.random()))

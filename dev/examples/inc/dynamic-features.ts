@@ -1,3 +1,3 @@
-import { domAnimation } from "@framer"
+import { domAnimation } from "framer-motion"
 
 export default domAnimation

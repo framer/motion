@@ -1,5 +1,5 @@
 import * as React from "react"
-import { m, LazyMotion, domAnimation } from "@framer"
+import { m, LazyMotion, domAnimation } from "framer-motion"
 import { useEffect, useState } from "react"
 
 /**

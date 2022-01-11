@@ -1,4 +1,4 @@
-import { usePresence, AnimatePresence } from "@framer"
+import { usePresence, AnimatePresence } from "framer-motion"
 import * as React from "react"
 import { useState } from "react"
 

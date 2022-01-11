@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle } from "../../packages/motion/src"
+import { motion, useCycle } from "framer-motion"
 
 const transition = {
     type: "spring",

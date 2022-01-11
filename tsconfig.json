@@ -18,10 +18,6 @@
         "rootDir": "packages",
         "sourceMap": true,
         "baseUrl": "src",
-        "paths": {
-            "@framer": ["../packages/motion"],
-            "@framer-3d": ["../packages/three"]
-        },
         "strictNullChecks": true,
         "noImplicitAny": true,
         "noImplicitThis": true,

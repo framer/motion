@@ -1,9 +1,6 @@
 const path = require("path")
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
-const convertPathsToAliases =
-    require("convert-tsconfig-paths-to-webpack-aliases").default
 const chalk = require("chalk")
-const tsconfig = require("../../tsconfig.json")
 const webpack = require("webpack")
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin")
 
@@ -18,14 +15,11 @@ console.log(
     chalk.bold.green(`\nRunning at: http://localhost:${DEV_SERVER_PORT}/\n`)
 )
 
-console.log(convertPathsToAliases(tsconfig, ".."))
-
 module.exports = {
     mode: "development",
     target: "web",
     entry: {
         framer: [
-            path.join(__dirname, "..", "..", "src", "index"),
             path.join(__dirname, "index"),
         ],
     },
@@ -59,7 +53,6 @@ module.exports = {
     resolve: {
         modules: ["node_modules"],
         extensions: [".ts", ".tsx", ".js", ".json"],
-        alias: convertPathsToAliases(tsconfig, ".."),
         fallback: {
             path: require.resolve("path-browserify"),
         },

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState, useRef, useEffect } from "react"
-import { motion } from "../../packages/motion/src"
+import { motion } from "framer-motion"
 
 const styleA = {
     width: 200,

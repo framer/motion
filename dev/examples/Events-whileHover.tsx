@@ -1,5 +1,5 @@
 import React from "react"
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 
 export function App() {
     const [scale, setScale] = React.useState(2)

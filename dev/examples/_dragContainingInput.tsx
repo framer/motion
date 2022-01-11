@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "../../packages/motion/src"
+import { motion } from "framer-motion"
 
 const styleA = {
     width: 300,

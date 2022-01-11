@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useMotionValue, useTransform } from "@framer"
+import { motion, useMotionValue, useTransform } from "framer-motion"
 
 /**
  * An example of providing a MotionValue to an SVG component via its props
