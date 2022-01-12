@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [5.6.0] 2022-01-12
+
+### Added
+
+-   `isValidProp` prop to `MotionConfig` that allows the injection of custom detection of valid React props.
+
 ## [5.5.8] 2022-01-12
 
 ### Fixed
