@@ -16,16 +16,15 @@
         "webpack": "^5.27.2"
     },
     "scripts": {
-        "start-dev-server": "cd dev && yarn start",
         "build": "turbo run build",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
         "test": "turbo run test",
-        "projection-dev": "python -m SimpleHTTPServer",
-        "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
-        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
-        "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
-        "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
-        "test-e2e": "yarn test-e2e-electron",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'"
+        "measure": "turbo run measure",
+        "prepare": "turbo run build test measure lint",
+        "new": "npm run prepare && lerna publish from-package",
+        "new-alpha": "npm run prepare && lerna publish from-package --canary --preid alpha",
+        "new-beta": "npm run prepare && lerna publish from-package --canary --preid beta"
     },
     "turbo": {
         "npmClient": "yarn",
