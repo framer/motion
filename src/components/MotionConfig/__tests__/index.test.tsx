@@ -8,7 +8,7 @@ describe("custom properties", () => {
         const Component = () => {
             return (
                 <MotionConfig isValidProp={(key) => key !== "data-foo"}>
-                    <motion.div data-foo="bar" />
+                    <motion.div data-foo="bar" data-bar="foo" />
                 </MotionConfig>
             )
         }
@@ -16,5 +16,6 @@ describe("custom properties", () => {
         const { container } = render(<Component />)
 
         expect(container.firstChild).not.toHaveAttribute("data-foo")
+        expect(container.firstChild).toHaveAttribute("data-bar")
     })
 })

@@ -5,12 +5,12 @@ let shouldForward = (key: string) => !isValidMotionProp(key)
 
 export type IsValidProp = (key: string) => boolean
 
-export function loadExternalIsValidProp(emotionIsPropValid?: IsValidProp) {
-    if (!emotionIsPropValid) return
+export function loadExternalIsValidProp(isValidProp?: IsValidProp) {
+    if (!isValidProp) return
 
-    // Handle events explicitly as Emotion validates them all as true
+    // Explicitly filter our events
     shouldForward = (key: string) =>
-        key.startsWith("on") ? !isValidMotionProp(key) : emotionIsPropValid(key)
+        key.startsWith("on") ? !isValidMotionProp(key) : isValidProp(key)
 }
 
 /**
