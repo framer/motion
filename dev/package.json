@@ -1,6 +1,6 @@
 {
     "name": "framer-motion--dev",
-    "version": "0.0.0",
+    "version": "6.0.0-alpha.0",
     "private": true,
     "scripts": {
         "start": "webpack serve --config ./webpack/config.js --hot"
