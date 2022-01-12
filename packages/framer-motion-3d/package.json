@@ -33,23 +33,14 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn build && yarn measure && yarn test-server && yarn test-client && yarn test-e2e",
+        "test": "yarn build && jest --coverage --config jest.config.json --max-workers=2",
         "build": "yarn clean && tsc -p . && rollup -c",
         "clean": "rm -rf types dist lib",
-        "test-ci": "yarn test-client && yarn test-server",
-        "test-client": "jest --coverage --config jest.config.json --max-workers=2",
-        "test-server": "jest --config jest.config.ssr.json",
-        "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
-        "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
-        "test-e2e": "yarn test-e2e-electron",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
-        "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "prepublishOnly": "yarn test",
-        "postpublish": "git push --tags",
-        "measure": "webpack --config webpack.size.config.js && bundlesize"
+        "postpublish": "git push --tags"
     },
     "peerDependencies": {
         "@react-three/fiber": "*",
