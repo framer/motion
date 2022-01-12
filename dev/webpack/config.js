@@ -19,9 +19,7 @@ module.exports = {
     mode: "development",
     target: "web",
     entry: {
-        framer: [
-            path.join(__dirname, "index"),
-        ],
+        framer: [path.join(__dirname, "index")],
     },
     output: {
         path: path.join(__dirname, "build"),
@@ -81,7 +79,7 @@ module.exports = {
     plugins: [
         new ReactRefreshWebpackPlugin(),
         new ForkTsCheckerWebpackPlugin({
-            typescript: { configFile: "../tsconfig.json" },
+            typescript: { configFile: "./tsconfig.json" },
         }),
         new webpack.HotModuleReplacementPlugin(),
     ],

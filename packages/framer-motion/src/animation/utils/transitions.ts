@@ -282,7 +282,7 @@ export function startAnimation(
         const start = () => (controls = animation())
 
         if (delay) {
-            delayTimer = setTimeout(start, secondsToMilliseconds(delay))
+            delayTimer = window.setTimeout(start, secondsToMilliseconds(delay))
         } else {
             start()
         }

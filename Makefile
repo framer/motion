@@ -28,7 +28,7 @@ WORKTREE_NODE_MODULES := $(BASE_DIR)/node_modules/.yarn-state.yml
 WORKSPACE_NODE_MODULES := node_modules
 
 # Update node modules if package.json is newer than node_modules or yarn lockfile
-$(WORKTREE_NODE_MODULES) $(WORKSPACE_NODE_MODULES): $(BASE_DIR)/yarn.lock package.json packages/motion/package.json packages/three/package.json
+$(WORKTREE_NODE_MODULES) $(WORKSPACE_NODE_MODULES): $(BASE_DIR)/yarn.lock package.json packages/framer-motion/package.json packages/framer-motion-3d/package.json
 	yarn install
 	touch $@
 
@@ -38,7 +38,7 @@ $(WORKTREE_NODE_MODULES) $(WORKSPACE_NODE_MODULES): $(BASE_DIR)/yarn.lock packag
 # Makefile
 bootstrap:: $(WORKTREE_NODE_MODULES)
 
-SOURCE_FILES := $(shell find packages/motion/src packages/three/src -type f)
+SOURCE_FILES := $(shell find packages/framer-motion/src packages/framer-motion-3d/src -type f)
 
 ######
 

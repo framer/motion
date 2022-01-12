@@ -2793,6 +2793,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-three/test-renderer@npm:^7.0.23":
+  version: 7.0.23
+  resolution: "@react-three/test-renderer@npm:7.0.23"
+  peerDependencies:
+    "@react-three/fiber": ">=7.0.24"
+    react: ">=17.0"
+    three: ">=0.126"
+  checksum: bb24e04e762985b8dc86830addbaf5ca32eb3f79b61965f4a16ed63e9b0a0c4ea8748e620f520c7e89235b3406871a06e35b98ff9bff337056e1901c2744e132
+  languageName: node
+  linkType: hard
+
 "@rollup/plugin-commonjs@npm:^21.0.1":
   version: 21.0.1
   resolution: "@rollup/plugin-commonjs@npm:21.0.1"
@@ -7518,8 +7529,8 @@ __metadata:
     cache-loader: ^1.2.5
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
     fork-ts-checker-webpack-plugin: ^6.2.0
-    framer-motion: 6.0.0-alpha.0
-    framer-motion-3d: 6.0.0-alpha.0
+    framer-motion: "workspace:*"
+    framer-motion-3d: "workspace:*"
     path-browserify: ^1.0.1
     popmotion: 11.0.3
     react: ^17.0.2
@@ -7547,7 +7558,6 @@ __metadata:
     eslint-plugin-import: ^2.25.4
     eslint-plugin-react: ^7.28.0
     eslint-plugin-react-hooks: ^4.3.0
-    husky: ^7.0.4
     jest: ^27.4.7
     lerna: ^4.0.0
     lint-staged: ^8.0.4
@@ -7557,23 +7567,46 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion-3d@6.0.0-alpha.0, framer-motion-3d@workspace:packages/framer-motion-3d":
+"framer-motion-3d@workspace:*, framer-motion-3d@workspace:packages/framer-motion-3d":
   version: 0.0.0-use.local
   resolution: "framer-motion-3d@workspace:packages/framer-motion-3d"
   dependencies:
     "@react-three/fiber": ^7.0.23
+    "@react-three/test-renderer": ^7.0.23
     "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^8.0.0
     "@rollup/plugin-replace": ^2.3.2
+    "@testing-library/dom": ^6.10.1
+    "@testing-library/react": ^9.3.2
+    "@testing-library/react-hooks": ^5.1.0
+    "@types/jest": ^23.3.9
+    "@types/node": 12.7.4
+    "@types/react": 17.0.9
+    "@types/react-dom": 17.0.6
+    "@types/styled-components": ^4.1.0
     "@types/three": ^0.136.1
+    bundlesize: ^0.18.0
+    concurrently: ^5.2.0
+    convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
+    jest: ^24.8.0
+    jest-dom: ^3.5.0
+    jest-junit: ^6.4.0
+    jest-watch-typeahead: ^0.4.2
     prettier: ^2.1.0
     react: ^17.0.2
+    react-dev-utils: ^11.0.4
     react-dom: ^17.0.2
+    react-merge-refs: ^1.1.0
     rollup: ^2.10.5
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
     three: ^0.136.0
-    typescript: ^4.5.4
+    ts-jest: ^24.0.2
+    ts-loader: ^5.3.0
+    type-fest: ^1.0.1
+    typescript: ^4.2.3
+    webpack: ^5.27.2
+    yarn-deduplicate: ^1.1.1
   peerDependencies:
     "@react-three/fiber": "*"
     framer-motion: "workspace:^"
@@ -7588,7 +7621,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@6.0.0-alpha.0, framer-motion@workspace:packages/framer-motion":
+"framer-motion@workspace:*, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -8527,15 +8560,6 @@ __metadata:
   dependencies:
     ms: ^2.0.0
   checksum: 9c7a74a2827f9294c009266c82031030eae811ca87b0da3dceb8d6071b9bde22c9f3daef0469c3c533cc67a97d8a167cd9fc0389350e5f415f61a79b171ded16
-  languageName: node
-  linkType: hard
-
-"husky@npm:^7.0.4":
-  version: 7.0.4
-  resolution: "husky@npm:7.0.4"
-  bin:
-    husky: lib/bin.js
-  checksum: c6ec4af63da2c9522da8674a20ad9b48362cc92704896cc8a58c6a2a39d797feb2b806f93fbd83a6d653fbdceb2c3b6e0b602c6b2e8565206ffc2882ef7db9e9
   languageName: node
   linkType: hard
 

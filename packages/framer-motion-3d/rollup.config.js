@@ -3,6 +3,7 @@ import { terser } from "rollup-plugin-terser"
 import replace from "@rollup/plugin-replace"
 import commonjs from "@rollup/plugin-commonjs"
 import pkg from "./package.json"
+import motionPkg from "../framer-motion/package.json"
 
 const config = {
     input: "lib/index.js",
@@ -11,6 +12,8 @@ const config = {
 const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
+    ...Object.keys(motionPkg.dependencies || {}),
+    ...Object.keys(motionPkg.peerDependencies || {}),
 ]
 
 const pureClass = {
