@@ -33,6 +33,7 @@ const umd = Object.assign({}, config, {
         resolve(),
         replace({
             "process.env.NODE_ENV": JSON.stringify("development"),
+            preventAssignment: true,
         }),
     ],
 })
@@ -49,6 +50,7 @@ const projection = Object.assign({}, config, {
         resolve(),
         replace({
             "process.env.NODE_ENV": JSON.stringify("development"),
+            preventAssignment: true,
         }),
     ],
     external: ["react", "react-dom"],
@@ -62,6 +64,7 @@ const umdProd = Object.assign({}, umd, {
         resolve(),
         replace({
             "process.env.NODE_ENV": JSON.stringify("production"),
+            preventAssignment: true,
         }),
         pureClass,
         terser({ output: { comments: false } }),
@@ -97,6 +100,7 @@ const sizePlugins = [
     resolve(),
     replace({
         "process.env.NODE_ENV": JSON.stringify("production"),
+        preventAssignment: true,
     }),
     terser({ output: { comments: false } }),
 ]
