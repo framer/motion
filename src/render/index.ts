@@ -449,6 +449,10 @@ export const visualElement =
              * added to our map, old ones removed, and listeners updated.
              */
             setProps(newProps) {
+                if (newProps.transformTemplate || props.transformTemplate) {
+                    element.scheduleRender()
+                }
+
                 props = newProps
                 lifecycles.updatePropListeners(newProps)
 
