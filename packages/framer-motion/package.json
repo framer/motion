@@ -94,6 +94,19 @@
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
     },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "linters": {
+            "*.{ts,tsx}": [
+                "prettier --write",
+                "git add"
+            ]
+        }
+    },
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",

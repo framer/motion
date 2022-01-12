@@ -74,19 +74,6 @@
             }
         }
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "linters": {
-            "*.{ts,tsx}": [
-                "prettier --write",
-                "git add"
-            ]
-        }
-    },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
         "@types/node": "^17.0.8",
