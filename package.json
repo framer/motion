@@ -75,7 +75,21 @@
             }
         }
     },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "linters": {
+            "*.{ts,tsx}": [
+                "prettier --write",
+                "git add"
+            ]
+        }
+    },
     "devDependencies": {
+        "@cypress/webpack-preprocessor": "^4.1.0",
         "@types/node": "^17.0.8",
         "@typescript-eslint/eslint-plugin": "^5.9.1",
         "@typescript-eslint/parser": "^5.9.1",
@@ -85,8 +99,10 @@
         "eslint-plugin-import": "^2.25.4",
         "eslint-plugin-react": "^7.28.0",
         "eslint-plugin-react-hooks": "^4.3.0",
+        "husky": "1.1.4",
         "jest": "^27.4.7",
         "lerna": "^4.0.0",
+        "lint-staged": "^8.0.4",
         "prettier": "^2.5.1",
         "start-server-and-test": "^1.9.1",
         "turbo": "^1.0.25"

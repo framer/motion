@@ -51,11 +51,9 @@
         "postpublish": "git push --tags",
         "measure": "webpack --config webpack.size.config.js && bundlesize"
     },
-    "dependencies": {
-        "framer-motion": "workspace:^"
-    },
     "peerDependencies": {
         "@react-three/fiber": "*",
+        "framer-motion": "workspace:^",
         "react": ">=16.8 || ^17.0.0",
         "react-dom": ">=16.8 || ^17.0.0",
         "three": "^0.135.0"

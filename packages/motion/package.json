@@ -70,7 +70,6 @@
         "jest-dom": "^3.5.0",
         "jest-junit": "^6.4.0",
         "jest-watch-typeahead": "^0.4.2",
-        "lint-staged": "^8.0.4",
         "prettier": "^2.1.0",
         "react": "^17.0.2",
         "react-dev-utils": "^11.0.4",
@@ -94,19 +93,6 @@
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "linters": {
-            "*.{ts,tsx}": [
-                "prettier --write",
-                "git add"
-            ]
-        }
     },
     "bundlesize": [
         {
