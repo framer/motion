@@ -66,19 +66,6 @@
             "optional": true
         }
     },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "linters": {
-            "*.{ts,tsx}": [
-                "prettier --write",
-                "git add"
-            ]
-        }
-    },
     "devDependencies": {
         "@react-three/fiber": "^7.0.23",
         "@rollup/plugin-commonjs": "^21.0.1",
