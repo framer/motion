@@ -50,7 +50,7 @@
         "@react-three/fiber": "*",
         "react": ">=16.8 || ^17.0.0",
         "react-dom": ">=16.8 || ^17.0.0",
-        "three": "^0.135.0"
+        "three": ">=0.133"
     },
     "peerDependenciesMeta": {
         "@react-three/fiber": {
