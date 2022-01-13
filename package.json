@@ -17,7 +17,6 @@
     },
     "scripts": {
         "build": "turbo run build",
-        "dev": "turbo run dev",
         "dev-projection": "python -m SimpleHTTPServer",
         "lint": "turbo run lint",
         "test": "yarn test-packages && yarn test-e2e",
