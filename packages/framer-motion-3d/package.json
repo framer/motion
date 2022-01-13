@@ -1,6 +1,6 @@
 {
     "name": "framer-motion-3d",
-    "version": "6.0.0-alpha.0",
+    "version": "6.0.0-alpha.1",
     "description": "A simple and powerful React animation library for @react-three/fiber",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -94,7 +94,7 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
-        "framer-motion": "^6.0.0-alpha.0",
+        "framer-motion": "^6.0.0-alpha.1",
         "react-merge-refs": "^1.1.0"
     },
     "gitHead": "f4396102d391b56ff31d58ec56a93ee39afd3689"
