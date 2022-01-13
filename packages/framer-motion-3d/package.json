@@ -45,7 +45,6 @@
     },
     "peerDependencies": {
         "@react-three/fiber": "*",
-        "framer-motion": "workspace:^",
         "react": ">=16.8 || ^17.0.0",
         "react-dom": ">=16.8 || ^17.0.0",
         "three": "^0.135.0"
@@ -96,6 +95,7 @@
         "yarn-deduplicate": "^1.1.1"
     },
     "dependencies": {
+        "framer-motion": "6.0.0-alpha.0",
         "react-merge-refs": "^1.1.0"
     }
 }
