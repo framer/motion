@@ -40,7 +40,6 @@
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
-        "prepublishOnly": "yarn test",
         "postpublish": "git push --tags"
     },
     "peerDependencies": {
