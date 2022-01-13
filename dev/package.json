@@ -3,7 +3,7 @@
     "version": "6.0.0-alpha.3",
     "private": true,
     "scripts": {
-        "start": "webpack serve --config ./webpack/config.js --hot"
+        "dev": "webpack serve --config ./webpack/config.js --hot"
     },
     "dependencies": {
         "@react-three/drei": "^7.27.3",

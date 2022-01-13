@@ -18,6 +18,7 @@
     "scripts": {
         "build": "turbo run build",
         "dev-projection": "python -m SimpleHTTPServer",
+        "dev": "turbo run dev",
         "lint": "turbo run lint",
         "test": "yarn test-packages && yarn test-e2e",
         "test-packages": "turbo run test",
@@ -78,7 +79,10 @@
                 "dependsOn": [
                     "build"
                 ],
-                "cache": false
+                "cache": false,
+                "outputs": [
+                    "dist/**"
+                ]
             }
         }
     },
@@ -87,6 +91,7 @@
         "@types/node": "^17.0.8",
         "@typescript-eslint/eslint-plugin": "^5.9.1",
         "@typescript-eslint/parser": "^5.9.1",
+        "concurrently": "^7.0.0",
         "cypress": "^3.4.0",
         "eslint": "^8.6.0",
         "eslint-config-prettier": "^8.3.0",
@@ -97,7 +102,6 @@
         "lerna": "^4.0.0",
         "lint-staged": "^8.0.4",
         "prettier": "^2.5.1",
-        "start-server-and-test": "^1.9.1",
         "turbo": "^1.0.25"
     },
     "packageManager": "yarn@3.1.0"

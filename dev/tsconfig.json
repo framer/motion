@@ -15,7 +15,7 @@
         "noLib": false,
         "preserveConstEnums": true,
         "suppressImplicitAnyIndexErrors": true,
-        "rootDir": "packages",
+        "rootDir": "./",
         "sourceMap": true,
         "baseUrl": "src",
         "strictNullChecks": true,

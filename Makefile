@@ -53,9 +53,6 @@ build: bootstrap
 watch: bootstrap
 	yarn watch
 
-dev: bootstrap
-	yarn start-dev-server
-
 test-watch: bootstrap
 	if test -f coverage/lcov-report/index.html; then \
 	 open coverage/lcov-report/index.html; \
