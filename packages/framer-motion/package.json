@@ -33,7 +33,7 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "build": "yarn clean && tsc -p . && rollup -c",
+        "build": "yarn clean && tsc -p . && rollup -c && webpack --config webpack.size.config.js",
         "clean": "rm -rf types dist lib",
         "test": "yarn build && yarn measure && yarn test-server && yarn test-client",
         "test-ci": "yarn test-client && yarn test-server",
@@ -45,7 +45,7 @@
         "prepack": "yarn build",
         "prepublishOnly": "yarn test",
         "postpublish": "git push --tags",
-        "measure": "webpack --config webpack.size.config.js && bundlesize"
+        "measure": "bundlesize"
     },
     "peerDependencies": {
         "react": ">=16.8 || ^17.0.0",
