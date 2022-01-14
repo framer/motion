@@ -89,7 +89,7 @@ function CanvasComponent(
     const motionContext = useContext(MotionContext)
     const configContext = useContext(MotionConfigContext)
     const [forceRender] = useForceUpdate()
-    console.log("MotionCanvas", motionContext)
+
     const layoutCamera = useRef<Camera>(null)
     const dimensions = useRef<DimensionsState>({
         size: { width: 0, height: 0 },
