@@ -89,7 +89,7 @@ function CanvasComponent(
     const motionContext = useContext(MotionContext)
     const configContext = useContext(MotionConfigContext)
     const [forceRender] = useForceUpdate()
-
+    console.log("MotionCanvas", motionContext)
     const layoutCamera = useRef<Camera>(null)
     const dimensions = useRef<DimensionsState>({
         size: { width: 0, height: 0 },
@@ -121,7 +121,6 @@ function CanvasComponent(
     // Throw exception outwards if anything within canvas throws
     if (error) throw error
 
-    // Only render the R3F tree once we have recorded dimensions for the canvas.
     if (size.width > 0 && size.height > 0) {
         render(
             <ErrorBoundary set={setError}>

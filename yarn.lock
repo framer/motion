@@ -2752,7 +2752,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/fiber@npm:^7.0.23":
+"@react-three/fiber@npm:latest":
   version: 7.0.24
   resolution: "@react-three/fiber@npm:7.0.24"
   dependencies:
@@ -15221,14 +15221,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"three@npm:^0.135.0":
-  version: 0.135.0
-  resolution: "three@npm:0.135.0"
-  checksum: bd7e195932587a5be0c887947adf2b3898c6fa71722800432562aed10beddb2f448d0f237d937824805eebf90e625fc22ed57054618121f47811a8e82b528507
-  languageName: node
-  linkType: hard
-
-"three@npm:^0.136.0":
+"three@npm:>=0.133":
   version: 0.136.0
   resolution: "three@npm:0.136.0"
   checksum: 9183f83a75901edb85034fe8f6d52bf6daaece554e40d42f8eef5dead13a09e5f67548ee7cccd6c34bde42a91c5e8fa2ccb4a1b80783d7986bda4ec9f58bfe7f

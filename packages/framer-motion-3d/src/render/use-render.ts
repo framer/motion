@@ -28,7 +28,7 @@ export const useRender: RenderComponent<
      * If isStatic, render motion values as props
      * If !isStatic, render motion values as props on initial render
      */
-
+    console.log(filterProps(props, false, false), visualProps)
     return createElement<any>(Component, {
         ref,
         ...filterProps(props, false, false),
@@ -48,7 +48,7 @@ function useVisualProps(props: ThreeMotionProps & MeshProps) {
 
             if (isMotionValue(prop)) {
                 visualProps[key] = prop.get()
-            } else if (Array.isArray(prop)) {
+            } else if (Array.isArray(prop) && prop.includes(isMotionValue)) {
                 visualProps[key] = prop.map(resolveMotionValue)
             }
         }

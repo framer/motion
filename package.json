@@ -9,11 +9,13 @@
         "dev"
     ],
     "resolutions": {
+        "@react-three/fiber": "latest",
         "typescript": "^4.2.3",
         "jest": "^24.8.0",
         "react": "^17.0.2",
         "react-dom": "^17.0.2",
-        "webpack": "^5.27.2"
+        "webpack": "^5.27.2",
+        "three": ">=0.133"
     },
     "scripts": {
         "build": "turbo run build",
