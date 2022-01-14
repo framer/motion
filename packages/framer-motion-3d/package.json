@@ -44,7 +44,7 @@
         "postpublish": "git push --tags"
     },
     "dependencies": {
-        "framer-motion": "^6.0.0-beta.7",
+        "framer-motion": "^6",
         "react-merge-refs": "^1.1.0"
     },
     "peerDependencies": {
@@ -52,14 +52,6 @@
         "react": ">=16.8 || ^17.0.0",
         "react-dom": ">=16.8 || ^17.0.0",
         "three": ">=0.133"
-    },
-    "peerDependenciesMeta": {
-        "@react-three/fiber": {
-            "optional": true
-        },
-        "three": {
-            "optional": true
-        }
     },
     "devDependencies": {
         "@react-three/fiber": "^7.0.23",
