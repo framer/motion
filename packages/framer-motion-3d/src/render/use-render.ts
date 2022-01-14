@@ -28,7 +28,7 @@ export const useRender: RenderComponent<
      * If isStatic, render motion values as props
      * If !isStatic, render motion values as props on initial render
      */
-    console.log(filterProps(props, false, false), visualProps)
+
     return createElement<any>(Component, {
         ref,
         ...filterProps(props, false, false),
