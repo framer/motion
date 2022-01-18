@@ -49,8 +49,7 @@
     },
     "peerDependencies": {
         "react": ">=16.8 || ^17.0.0",
-        "react-dom": ">=16.8 || ^17.0.0",
-        "three": "^0.135.0"
+        "react-dom": ">=16.8 || ^17.0.0"
     },
     "devDependencies": {
         "@rollup/plugin-node-resolve": "^8.0.0",
