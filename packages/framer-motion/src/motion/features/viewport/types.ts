@@ -11,6 +11,7 @@ export interface ViewportOptions {
     once?: boolean
     margin?: string
     amount?: "some" | "all" | number
+    fallback?: boolean
 }
 
 export interface ViewportProps {
