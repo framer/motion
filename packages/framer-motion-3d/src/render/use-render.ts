@@ -1,5 +1,5 @@
 import { createElement, useMemo } from "react"
-import { ThreeMotionProps, ThreeRenderState } from "./types"
+import { ThreeMotionProps, ThreeRenderState } from "../types"
 import {
     filterProps,
     isMotionValue,

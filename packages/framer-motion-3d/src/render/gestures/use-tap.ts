@@ -8,7 +8,7 @@ import {
     AnimationType,
 } from "framer-motion"
 import type { VisualElement, EventInfo } from "framer-motion"
-import { ThreeMotionProps } from "../types"
+import { ThreeMotionProps } from "../../types"
 
 export function useTap(
     isStatic: boolean,

@@ -1,6 +1,6 @@
 import { Object3DNode } from "@react-three/fiber"
 import { Euler, Vector3, Color } from "three"
-import { ThreeRenderState } from "../types"
+import { ThreeRenderState } from "../../types"
 
 const setVector =
     (name: string, defaultValue: number) =>

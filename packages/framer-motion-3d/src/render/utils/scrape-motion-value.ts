@@ -1,6 +1,6 @@
 import { isMotionValue } from "framer-motion"
 import type { ScrapeMotionValuesFromProps } from "framer-motion"
-import { ThreeMotionProps } from "../types"
+import { ThreeMotionProps } from "../../types"
 
 const axes = ["x", "y", "z"]
 

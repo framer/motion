@@ -1,5 +1,5 @@
 import type { VisualElement } from "framer-motion"
-import type { ThreeMotionProps } from "../types"
+import type { ThreeMotionProps } from "../../types"
 import { MeshProps, ThreeEvent } from "@react-three/fiber"
 import { AnimationType } from "framer-motion"
 

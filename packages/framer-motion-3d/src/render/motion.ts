@@ -5,7 +5,7 @@ import {
     makeUseVisualState,
 } from "framer-motion"
 import { useRender } from "./use-render"
-import type { ThreeRenderState, ThreeMotionComponents } from "./types"
+import type { ThreeRenderState, ThreeMotionComponents } from "../types"
 import { createVisualElement, createRenderState } from "./create-visual-element"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-value"
 

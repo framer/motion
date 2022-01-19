@@ -9,7 +9,7 @@ import { Object3DNode } from "@react-three/fiber"
 
 import { setThreeValue } from "./utils/set-value"
 import { readThreeValue } from "./utils/read-value"
-import { ThreeRenderState } from "./types"
+import { ThreeRenderState } from "../types"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-value"
 
 export const createRenderState = () => ({})
