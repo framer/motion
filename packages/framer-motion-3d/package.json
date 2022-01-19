@@ -33,7 +33,8 @@
     ],
     "scripts": {
         "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn build && yarn test-unit",
+        "test": "yarn test-unit",
+        "test-ci": "yarn test",
         "test-unit": "jest --coverage --config jest.config.json --max-workers=2",
         "build": "yarn clean && tsc -p . && rollup -c",
         "dev": "yarn watch",
