@@ -22,7 +22,7 @@
         "dev-projection": "python -m SimpleHTTPServer",
         "dev": "turbo run dev",
         "lint": "turbo run lint",
-        "test": "yarn test-packages && yarn test-e2e",
+        "test": "yarn test-packages && yarn test-projection && yarn test-e2e",
         "test-ci": "turbo run test-ci",
         "test-packages": "turbo run test",
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
