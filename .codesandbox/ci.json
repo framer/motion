@@ -1,5 +1,0 @@
-{
-    "sandboxes": ["fz7cz", "ecgc2", "bviz6", "3myb9", "3fix0"],
-    "packages": ["packages/framer-motion", "packages/framer-motion-3d"],
-    "node": "14"
-}
