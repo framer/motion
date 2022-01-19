@@ -1,6 +1,3 @@
-/**
- * Internal
- */
 export type {
     ResolvedValues,
     ScrapeMotionValuesFromProps,
@@ -22,3 +19,5 @@ export { wrapHandler } from "./events/event-info"
 export { isMotionValue } from "./value/utils/is-motion-value"
 export { isBrowser } from "./utils/is-browser"
 export { useUnmountEffect } from "./utils/use-unmount-effect"
+export { useIsomorphicLayoutEffect } from "./utils/use-isomorphic-effect"
+export { useForceUpdate } from "./utils/use-force-update"

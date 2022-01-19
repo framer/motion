@@ -6,7 +6,12 @@ import {
     forwardRef,
     MutableRefObject,
 } from "react"
-import { MotionContext, MotionConfigContext } from "framer-motion"
+import {
+    MotionContext,
+    MotionConfigContext,
+    useForceUpdate,
+    useIsomorphicLayoutEffect,
+} from "framer-motion"
 import mergeRefs from "react-merge-refs"
 import {
     render,
@@ -16,9 +21,7 @@ import {
     Camera,
     Dpr,
 } from "@react-three/fiber"
-import { useIsomorphicLayoutEffect } from "../utils/use-isomorphic-effect"
 import { DimensionsState, MotionCanvasContext } from "./MotionCanvasContext"
-import { useForceUpdate } from "../utils/use-force-update"
 import { clamp } from "popmotion"
 
 export interface MotionCanvasProps extends Omit<Props, "resize"> {}
