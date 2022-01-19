@@ -32,7 +32,7 @@ const umd = Object.assign({}, config, {
         exports: "named",
         globals: { react: "React" },
     },
-    external: ["react", "react-dom"],
+    external: ["react", "react-dom", "framer-motion"],
     plugins: [
         commonjs(),
         resolve(),
