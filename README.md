@@ -8,61 +8,7 @@
 
 <br>
 
-<p align="center">
-  <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
-    <img src="https://img.shields.io/npm/v/framer-motion.svg?style=flat-square" />
-  </a>
-  <a href="https://www.npmjs.com/package/framer-motion" target="_blank">
-  <img src="https://img.shields.io/npm/dm/framer-motion.svg?style=flat-square" />
-  </a>
-  <a href="https://twitter.com/framer" target="_blank">
-  <img src="https://img.shields.io/twitter/follow/framer.svg?style=social&label=Follow"  />
-  </a>
-  <a href="https://discord.gg/DfkSpYe" target="_blank">
-  <img src="https://img.shields.io/discord/308323056592486420.svg?logo=discord&logoColor=white" alt="Chat on Discord">
-  </a>
-</p>
-
-<br>
-
-Framer Motion is an open source, production-ready library that's designed for all creative developers.
-
-It looks like this:
-
-```jsx
-<motion.div animate={{ x: 0 }} />
-```
-
-It does all this:
-
--   Springs
--   Keyframes
--   Layout animations
--   Shared layout animations
--   Gestures (drag/tap/hover)
--   SVG paths
--   Exit animations
--   Server-side rendering
--   Orchestrate animations across components
--   CSS variables
-
-...and a whole lot more.
-
-## Get started
-
-### 🐇 Quick start
-
-```
-npm install framer-motion
-```
-
-```jsx
-import { motion } from "framer-motion"
-
-export const MyComponent = ({ isVisible }) => (
-    <motion.div animate={{ opacity: isVisible ? 1 : 0 }} />
-)
-```
+This repo contains the source code for [Framer Motion](https://github.com/framer/motion/tree/main/packages/framer-motion) and [Framer Motion 3D](https://github.com/framer/motion/tree/main/packages/framer-motion-3d).
 
 ### 📚 Docs
 

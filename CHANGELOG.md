@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.0.0] 2022-01-19
+
+### Changed
+
+-   `framer-motion/three` is now `framer-motion-3d`.
+
 ## [5.6.0] 2022-01-12
 
 ### Added
