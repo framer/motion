@@ -1,8 +1,8 @@
 import * as React from "react"
 import { useRef, useState } from "react"
 import { degreesToRadians } from "popmotion"
-import { motion as motionThree, MotionCanvas } from "@framer/three-entry"
-import { motion, Variants } from "@framer"
+import { motion as motionThree, MotionCanvas } from "framer-motion-3d"
+import { motion, Variants } from "framer-motion"
 import styled from "styled-components"
 
 export function StarIcon() {

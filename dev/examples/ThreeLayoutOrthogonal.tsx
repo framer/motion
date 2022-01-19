@@ -2,12 +2,8 @@ import * as React from "react"
 import { useRef, useState } from "react"
 import "@react-three/fiber"
 import styled from "styled-components"
-import { motion as motionDom, useMotionValue, MotionConfig } from "@framer"
-import {
-    motion,
-    MotionCanvas,
-    LayoutOrthographicCamera,
-} from "@framer/three-entry"
+import { motion as motionDom, useMotionValue, MotionConfig } from "framer-motion"
+import { motion, MotionCanvas, LayoutOrthographicCamera } from "framer-motion-3d"
 import { softShadows, Shadow } from "@react-three/drei"
 import { degToRad, radToDeg } from "three/src/math/MathUtils"
 

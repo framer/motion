@@ -2,10 +2,14 @@ import * as React from "react"
 import { useState, Suspense } from "react"
 import "@react-three/fiber"
 import styled from "styled-components"
-import { motion as motionDom, useMotionValue, MotionConfig } from "@framer"
-import { motion, MotionCanvas, LayoutCamera } from "@framer/three-entry"
+import {
+    motion as motionDom,
+    useMotionValue,
+    MotionConfig,
+} from "framer-motion"
+import { motion, MotionCanvas, LayoutCamera } from "framer-motion-3d"
 import { softShadows, Shadow } from "@react-three/drei"
-import { useThree, useFrame } from "@react-three/fiber"
+import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import { degToRad } from "three/src/math/MathUtils"
 
 softShadows()

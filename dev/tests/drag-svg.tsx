@@ -1,4 +1,4 @@
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 import * as React from "react"
 
 // It's important for this test to only trigger a single rerender while dragging (in response to onDragStart) of draggable component.

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 
 /**
  * This demonstrates the rotation support used by Framer

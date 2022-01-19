@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 import styled from "styled-components"
 
 const transition = { default: { duration: 5 }, scale: { duration: 0.2 } }

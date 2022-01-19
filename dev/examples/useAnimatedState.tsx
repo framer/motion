@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useDeprecatedAnimatedState } from "@framer"
+import { useDeprecatedAnimatedState } from "framer-motion"
 
 /**
  * An example of useAnimatedState. This isn't a supported API and this example is only for development purposes.

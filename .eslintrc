@@ -8,10 +8,9 @@
         "useJSXTextNode": true
     },
     "plugins": ["@typescript-eslint", "react", "react-hooks", "import"],
-    "extends": ["prettier", "prettier/@typescript-eslint"],
+    "extends": ["prettier"],
     "rules": {
         "@typescript-eslint/no-unused-vars": "warn",
-        "@typescript-eslint/class-name-casing": "error",
         "@typescript-eslint/type-annotation-spacing": "error",
         "react/jsx-pascal-case": "error",
         // "react-hooks/rules-of-hooks": "error",

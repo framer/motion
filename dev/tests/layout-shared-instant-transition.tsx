@@ -1,4 +1,4 @@
-import { motion, useInstantLayoutTransition } from "@framer"
+import { motion, useInstantLayoutTransition } from "framer-motion"
 import * as React from "react"
 
 export const App = () => {

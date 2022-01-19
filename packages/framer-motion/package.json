@@ -1,0 +1,94 @@
+{
+    "name": "framer-motion",
+    "version": "6.0.0-beta.10",
+    "description": "A simple and powerful React animation library",
+    "main": "dist/cjs/index.js",
+    "module": "dist/es/index.mjs",
+    "exports": {
+        ".": {
+            "require": "./dist/cjs/index.js",
+            "import": "./dist/es/index.mjs",
+            "default": "./dist/cjs/index.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "types": "types/index.d.ts",
+    "author": "Framer",
+    "license": "MIT",
+    "repository": "https://github.com/framer/motion/",
+    "sideEffects": false,
+    "keywords": [
+        "react animation",
+        "react",
+        "three",
+        "3d",
+        "pose",
+        "react pose",
+        "animation",
+        "gestures",
+        "drag",
+        "spring",
+        "popmotion",
+        "framer"
+    ],
+    "scripts": {
+        "lint": "yarn eslint src/**/*.ts",
+        "build": "yarn clean && tsc -p . && rollup -c && webpack --config webpack.size.config.js",
+        "dev": "yarn watch",
+        "clean": "rm -rf types dist lib",
+        "test": "yarn build && yarn measure && yarn test-server && yarn test-client",
+        "test-ci": "yarn test-client --ci --reporters=jest-junit && yarn test-server --ci --reporters=jest-junit",
+        "test-client": "jest --coverage --config jest.config.json --max-workers=2",
+        "test-server": "jest --config jest.config.ssr.json",
+        "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
+        "prettier": "prettier ./src/* --write",
+        "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
+        "prepack": "yarn build",
+        "postpublish": "git push --tags",
+        "measure": "bundlesize"
+    },
+    "peerDependencies": {
+        "react": ">=16.8 || ^17.0.0",
+        "react-dom": ">=16.8 || ^17.0.0"
+    },
+    "dependencies": {
+        "framesync": "6.0.1",
+        "hey-listen": "^1.0.8",
+        "popmotion": "11.0.3",
+        "style-value-types": "5.0.0",
+        "tslib": "^2.1.0"
+    },
+    "optionalDependencies": {
+        "@emotion/is-prop-valid": "^0.8.2"
+    },
+    "bundlesize": [
+        {
+            "path": "./dist/framer-motion.js",
+            "maxSize": "35.3 kB"
+        },
+        {
+            "path": "./dist/size-rollup-m.js",
+            "maxSize": "6.1 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-animation.js",
+            "maxSize": "16.9 kB"
+        },
+        {
+            "path": "./dist/size-rollup-dom-max.js",
+            "maxSize": "28 kB"
+        },
+        {
+            "path": "./dist/size-webpack-m.js",
+            "maxSize": "6.4 kB"
+        },
+        {
+            "path": "./dist/size-webpack-dom-animation.js",
+            "maxSize": "19.4 kB"
+        },
+        {
+            "path": "./dist/size-webpack-dom-max.js",
+            "maxSize": "31.5 kB"
+        }
+    ]
+}

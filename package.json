@@ -1,190 +1,144 @@
 {
-    "name": "framer-motion",
-    "version": "5.6.0",
-    "description": "A simple and powerful React animation library",
-    "main": "dist/cjs/index.js",
-    "module": "dist/es/index.mjs",
-    "exports": {
-        ".": {
-            "require": "./dist/cjs/index.js",
-            "import": "./dist/es/index.mjs",
-            "default": "./dist/cjs/index.js"
-        },
-        "./three": {
-            "require": "./dist/cjs/three-entry.js",
-            "import": "./dist/es/three-entry.mjs",
-            "default": "./dist/cjs/three-entry.js"
-        },
-        "./package.json": "./package.json"
-    },
-    "types": "types/index.d.ts",
+    "name": "framer-motion--monorepo",
+    "version": "0.0.0",
+    "private": true,
     "author": "Framer",
     "license": "MIT",
-    "repository": "https://github.com/framer/motion/",
-    "sideEffects": false,
-    "keywords": [
-        "react animation",
-        "react",
-        "three",
-        "3d",
-        "pose",
-        "react pose",
-        "animation",
-        "gestures",
-        "drag",
-        "spring",
-        "popmotion",
-        "framer"
+    "workspaces": [
+        "packages/*",
+        "dev"
     ],
+    "resolutions": {
+        "@react-three/fiber": "latest",
+        "typescript": "^4.2.3",
+        "jest": "^24.8.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "webpack": "^5.27.2",
+        "three": ">=0.133"
+    },
     "scripts": {
-        "lint": "yarn eslint src/**/*.ts",
-        "test": "yarn build && yarn measure && yarn test-server && yarn test-client && yarn test-projection && yarn test-e2e",
-        "build": "yarn clean && tsc -p . && rollup -c",
-        "clean": "rm -rf types dist lib",
-        "test-ci": "yarn test-client && yarn test-server",
-        "test-client": "jest --coverage --config jest.config.json --max-workers=2",
-        "test-server": "jest --config jest.config.ssr.json",
+        "build": "turbo run build",
+        "dev-projection": "python -m SimpleHTTPServer",
+        "dev": "turbo run dev",
+        "lint": "turbo run lint",
+        "test": "yarn test-packages && yarn test-e2e",
+        "test-ci": "turbo run test-ci",
+        "test-packages": "turbo run test",
         "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
         "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
         "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
         "test-e2e": "yarn test-e2e-electron",
         "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
-        "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
-        "projection-dev": "python -m SimpleHTTPServer",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
-        "prettier": "prettier ./src/* --write",
-        "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
-        "prepack": "yarn build",
-        "prepublishOnly": "yarn test",
-        "postpublish": "git push --tags",
-        "measure": "webpack --config webpack.size.config.js && bundlesize",
-        "start-dev-server": "webpack serve --config dev/webpack/config.js --hot"
+        "start-dev-server": "webpack serve --config dev/webpack/config.js --hot",
+        "measure": "turbo run measure",
+        "prepare": "turbo run build measure test",
+        "new": "npm run prepare && lerna publish from-package",
+        "new-alpha": "npm run prepare && lerna publish from-package --canary --preid alpha",
+        "new-beta": "npm run prepare && lerna publish from-package --canary --preid beta"
     },
-    "peerDependencies": {
-        "@react-three/fiber": "*",
-        "react": ">=16.8 || ^17.0.0",
-        "react-dom": ">=16.8 || ^17.0.0",
-        "three": "^0.135.0"
-    },
-    "peerDependenciesMeta": {
-        "@react-three/fiber": {
-            "optional": true
-        },
-        "three": {
-            "optional": true
+    "turbo": {
+        "npmClient": "yarn",
+        "baseBranch": "origin/main",
+        "pipeline": {
+            "build": {
+                "dependsOn": [
+                    "^build"
+                ],
+                "outputs": [
+                    "dist/**"
+                ]
+            },
+            "lint": {
+                "outputs": []
+            },
+            "test": {
+                "dependsOn": [
+                    "build"
+                ],
+                "outputs": []
+            },
+            "test-ci": {
+                "dependsOn": [
+                    "build"
+                ],
+                "outputs": []
+            },
+            "deploy": {
+                "dependsOn": [
+                    "build",
+                    "test",
+                    "lint"
+                ]
+            },
+            "measure": {
+                "dependsOn": [
+                    "build"
+                ]
+            },
+            "publish": {
+                "dependsOn": [
+                    "build",
+                    "test",
+                    "lint"
+                ]
+            },
+            "dev": {
+                "dependsOn": [
+                    "build"
+                ],
+                "cache": false,
+                "outputs": [
+                    "dist/**"
+                ]
+            }
         }
     },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
-        "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
-        "@react-three/drei": "^7.27.3",
-        "@react-three/fiber": "^7.0.23",
-        "@react-three/test-renderer": "^7.0.20",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
         "@testing-library/dom": "^6.10.1",
         "@testing-library/react": "^9.3.2",
         "@testing-library/react-hooks": "^5.1.0",
         "@types/jest": "^23.3.9",
-        "@types/node": "12.7.4",
+        "@types/node": "^17.0.8",
         "@types/react": "17.0.9",
         "@types/react-dom": "17.0.6",
         "@types/styled-components": "^4.1.0",
-        "@types/three": "^0.134.0",
-        "@typescript-eslint/eslint-plugin": "^1.5.0",
-        "@typescript-eslint/parser": "^1.5.0",
+        "@types/three": "^0.136.1",
+        "@typescript-eslint/eslint-plugin": "^5.9.1",
+        "@typescript-eslint/parser": "^5.9.1",
         "bundlesize": "^0.18.0",
-        "cache-loader": "^1.2.5",
-        "concurrently": "^5.2.0",
+        "concurrently": "^7.0.0",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
         "cypress": "^3.4.0",
-        "eslint": "^5.16.0",
-        "eslint-config-prettier": "^4.1.0",
-        "eslint-plugin-import": "^2.16.0",
-        "eslint-plugin-react": "^7.12.4",
-        "eslint-plugin-react-hooks": "^1.6.0",
-        "fork-ts-checker-webpack-plugin": "^6.2.0",
-        "husky": "1.1.4",
-        "jest": "^24.8.0",
+        "eslint": "^8.6.0",
+        "eslint-config-prettier": "^8.3.0",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-react": "^7.28.0",
+        "eslint-plugin-react-hooks": "^4.3.0",
+        "jest": "^27.4.7",
         "jest-dom": "^3.5.0",
         "jest-junit": "^6.4.0",
         "jest-watch-typeahead": "^0.4.2",
+        "lerna": "^4.0.0",
         "lint-staged": "^8.0.4",
-        "lodash": "^4.17.13",
-        "path-browserify": "^1.0.1",
-        "prettier": "^2.1.0",
-        "react": "^17.0.0-rc.0",
+        "prettier": "^2.5.1",
+        "react": "^17.0.2",
         "react-dev-utils": "^11.0.4",
-        "react-dom": "^17.0.0-rc.0",
-        "react-refresh": "^0.9.0",
-        "rollup": "2.62",
+        "react-dom": "^17.0.2",
+        "rollup": "^2.63.0",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",
-        "start-server-and-test": "^1.9.1",
-        "styled-components": "^4.1.1",
-        "three": "^0.135.0",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
+        "turbo": "^1.0.25",
         "type-fest": "^1.0.1",
         "typescript": "^4.2.3",
         "webpack": "^5.27.2",
-        "webpack-cli": "^4.5.0",
-        "webpack-dev-server": "^3.11.2",
         "yarn-deduplicate": "^1.1.1"
     },
-    "dependencies": {
-        "framesync": "6.0.1",
-        "hey-listen": "^1.0.8",
-        "popmotion": "11.0.3",
-        "react-merge-refs": "^1.1.0",
-        "react-use-measure": "^2.1.1",
-        "style-value-types": "5.0.0",
-        "tslib": "^2.1.0"
-    },
-    "optionalDependencies": {
-        "@emotion/is-prop-valid": "^0.8.2"
-    },
-    "husky": {
-        "hooks": {
-            "pre-commit": "lint-staged"
-        }
-    },
-    "lint-staged": {
-        "linters": {
-            "*.{ts,tsx}": [
-                "prettier --write",
-                "git add"
-            ]
-        }
-    },
-    "bundlesize": [
-        {
-            "path": "./dist/framer-motion.js",
-            "maxSize": "35.1 kB"
-        },
-        {
-            "path": "./dist/size-rollup-m.js",
-            "maxSize": "6.1 kB"
-        },
-        {
-            "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "16.9 kB"
-        },
-        {
-            "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "28 kB"
-        },
-        {
-            "path": "./dist/size-webpack-m.js",
-            "maxSize": "6.4 kB"
-        },
-        {
-            "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "19.4 kB"
-        },
-        {
-            "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "31.5 kB"
-        }
-    ]
+    "packageManager": "yarn@3.1.0"
 }

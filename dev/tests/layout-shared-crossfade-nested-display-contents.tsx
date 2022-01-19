@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "@framer"
+import { motion, AnimatePresence } from "framer-motion"
 import * as React from "react"
 
 const transition = { duration: 0.2, ease: () => 0.5 }

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle } from "@framer"
+import { motion, useCycle } from "framer-motion"
 
 export const App = () => {
     const [isOpen, toggleIsOpen] = useCycle(false, true)

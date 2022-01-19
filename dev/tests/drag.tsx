@@ -1,4 +1,4 @@
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 import * as React from "react"
 
 function getValueParam(params: any, name: string) {

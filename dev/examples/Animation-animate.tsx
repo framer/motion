@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useEffect, useState } from "react"
-import { motion, useMotionValue, animate } from "@framer"
-import { motionValue } from "../../src/value"
+import { motion, motionValue, useMotionValue, animate } from "framer-motion"
 
 /**
  * An example of the tween transition type
@@ -18,7 +17,7 @@ export const App = () => {
     const x = useMotionValue(0)
     const [target, setTarget] = useState(0)
     const transition = {
-        type: "spring",
+        type: "spring" as const,
         duration: 0.4,
         dampingRatio: 0.4,
     }

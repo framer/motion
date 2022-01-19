@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useDragControls } from "../../src"
+import { motion, useDragControls } from "framer-motion"
 
 export const App = () => {
     const dragControls = useDragControls()
@@ -7,7 +7,7 @@ export const App = () => {
     return (
         <div
             style={container}
-            onMouseDown={e => {
+            onMouseDown={(e) => {
                 dragControls.start(e, { snapToCursor: true })
             }}
         >

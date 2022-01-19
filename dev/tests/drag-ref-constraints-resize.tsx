@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useRef, useState } from "react"
-import { motion } from "../../src"
+import { motion } from "framer-motion"
 
 const container = {
     width: "50%",

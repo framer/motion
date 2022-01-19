@@ -1,0 +1,87 @@
+{
+    "name": "framer-motion-3d",
+    "version": "6.0.0-beta.10",
+    "description": "A simple and powerful React animation library for @react-three/fiber",
+    "main": "dist/cjs/index.js",
+    "module": "dist/es/index.mjs",
+    "exports": {
+        ".": {
+            "require": "./dist/cjs/index.js",
+            "import": "./dist/es/index.mjs",
+            "default": "./dist/cjs/index.js"
+        },
+        "./package.json": "./package.json"
+    },
+    "types": "types/index.d.ts",
+    "author": "Framer",
+    "license": "MIT",
+    "repository": "https://github.com/framer/motion/",
+    "sideEffects": false,
+    "keywords": [
+        "react animation",
+        "react",
+        "three",
+        "3d",
+        "pose",
+        "react pose",
+        "animation",
+        "gestures",
+        "drag",
+        "spring",
+        "popmotion",
+        "framer"
+    ],
+    "scripts": {
+        "lint": "yarn eslint src/**/*.ts",
+        "test": "yarn test-unit",
+        "test-ci": "yarn test-unit --ci --reporters=jest-junit",
+        "test-unit": "jest --coverage --config jest.config.json --max-workers=2",
+        "build": "yarn clean && tsc -p . && rollup -c",
+        "dev": "yarn watch",
+        "clean": "rm -rf types dist lib",
+        "prettier": "prettier ./src/* --write",
+        "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
+        "prepack": "yarn build",
+        "postpublish": "git push --tags"
+    },
+    "dependencies": {
+        "framer-motion": "^6.0.0-beta.10",
+        "react-merge-refs": "^1.1.0"
+    },
+    "peerDependencies": {
+        "@react-three/fiber": "^7.0.23",
+        "react": ">=16.8 || ^17.0.0",
+        "react-dom": ">=16.8 || ^17.0.0",
+        "three": ">=0.133"
+    },
+    "devDependencies": {
+        "@react-three/fiber": "^7.0.23",
+        "@react-three/test-renderer": "^7.0.23",
+        "@rollup/plugin-commonjs": "^21.0.1",
+        "@rollup/plugin-node-resolve": "^8.0.0",
+        "@rollup/plugin-replace": "^2.3.2",
+        "@testing-library/dom": "^6.10.1",
+        "@testing-library/react": "^9.3.2",
+        "@testing-library/react-hooks": "^5.1.0",
+        "bundlesize": "^0.18.0",
+        "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
+        "jest": "^24.8.0",
+        "jest-dom": "^3.5.0",
+        "jest-junit": "^6.4.0",
+        "jest-watch-typeahead": "^0.4.2",
+        "prettier": "^2.1.0",
+        "react": "^17.0.2",
+        "react-dev-utils": "^11.0.4",
+        "react-dom": "^17.0.2",
+        "rollup": "^2.10.5",
+        "rollup-plugin-terser": "^5.3.0",
+        "rollup-plugin-visualizer": "^2.4.3",
+        "three": "^0.136.0",
+        "ts-jest": "^24.0.2",
+        "ts-loader": "^5.3.0",
+        "type-fest": "^1.0.1",
+        "typescript": "^4.2.3",
+        "webpack": "^5.27.2",
+        "yarn-deduplicate": "^1.1.1"
+    }
+}

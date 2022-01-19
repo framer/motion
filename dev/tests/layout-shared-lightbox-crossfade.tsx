@@ -1,6 +1,6 @@
 import * as React from "react"
 import { CSSProperties, useState } from "react"
-import { motion, AnimatePresence, useIsPresent, Transition } from "@framer"
+import { motion, AnimatePresence, useIsPresent, Transition } from "framer-motion"
 
 /**
  * This demonstrates children with layoutId animating

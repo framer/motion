@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useRef } from "react"
-import { motion, MotionConfig } from "../../src"
+import { motion, MotionConfig } from "framer-motion"
 
 const dragContainer = {
     width: "50%",

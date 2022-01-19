@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 
 /**
  * An example of the Motion keyframes syntax.

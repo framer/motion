@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, useMotionValue, useTransform } from "@framer"
+import { motion, useMotionValue, useTransform } from "framer-motion"
 
 /**
  * An example of animating SVG motion.path using Motion's special pathLength property

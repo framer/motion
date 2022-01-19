@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence } from "@framer"
+import { motion, AnimatePresence } from "framer-motion"
 
 export const App = () => {
     const [isExpanded, setExpanded] = useState(false)

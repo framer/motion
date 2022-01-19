@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useState } from "react"
-import { motion, AnimatePresence } from "@framer"
+import { motion, AnimatePresence } from "framer-motion"
 
 /**
  * This demonstrates the rotation support as setup by Framer's Navigation component

@@ -1,8 +1,8 @@
 import * as React from "react"
 import { render } from "react-dom"
-import { Frame, useCycle, useAnimation } from "@framer"
+import { Frame, useCycle, useAnimation } from "framer-motion"
 import { wrap, distance } from "popmotion"
-import { motion } from "../../src"
+import { motion } from "framer-motion"
 
 const count = 100
 const len = Math.floor(Math.sqrt(count))

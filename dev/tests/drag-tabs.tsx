@@ -4,7 +4,7 @@ import {
     AnimatePresence,
     MotionConfig,
     LayoutGroup,
-} from "@framer"
+} from "framer-motion"
 import * as React from "react"
 import { useState } from "react"
 

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, usePanGesture } from "../../src"
+import { motion, usePanGesture } from "framer-motion"
 import { useState } from "react"
 
 const styleA = {

@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useRef, useState } from "react"
-import { motion, useAnimation } from "@framer"
-import { useMotionValue } from "../../src"
+import { motion, useAnimation } from "framer-motion"
+import { useMotionValue } from "framer-motion"
 
 /**
  * An example of whileTap propagating through components.

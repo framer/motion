@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useDragControls } from "../../src"
+import { motion, useDragControls } from "framer-motion"
 
 /**
  * This is an example of triggering drag from an external element using useDragControls

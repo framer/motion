@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useReducedMotion } from "@framer"
+import { motion, useReducedMotion } from "framer-motion"
 
 const style = {
     width: 100,

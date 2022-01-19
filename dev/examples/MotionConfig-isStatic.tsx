@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, MotionConfig } from "@framer"
+import { motion, MotionConfig } from "framer-motion"
 
 /**
  * An example of a motion tree set to static mode, like on the Framer canvas

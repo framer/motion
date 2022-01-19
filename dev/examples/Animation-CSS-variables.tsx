@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useEffect } from "react"
-import { motion } from "@framer"
+import { motion } from "framer-motion"
 
 /**
  * An example of Motion's CSS variable support, including fallback support

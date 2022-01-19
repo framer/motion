@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, MotionConfig } from "../../src"
+import { motion, MotionConfig } from "framer-motion"
 
 const styleA = {
     width: 100,
@@ -15,7 +15,7 @@ const device = {
 }
 
 const invert = (scale: number, point: number) => (point * 1) / scale
-const invertScale = (scale: number) => point => {
+const invertScale = (scale: number) => (point) => {
     return { x: invert(scale, point.x), y: invert(scale, point.y) }
 }
 

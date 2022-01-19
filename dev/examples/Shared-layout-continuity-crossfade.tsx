@@ -1,5 +1,5 @@
 import * as React from "react"
-import { motion, useCycle, AnimatePresence } from "@framer"
+import { motion, useCycle, AnimatePresence } from "framer-motion"
 
 /**
  * An example of a component resuming animation and layout state using Shared layout and layoutId
