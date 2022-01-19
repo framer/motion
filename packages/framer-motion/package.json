@@ -63,7 +63,6 @@
         "@types/react-dom": "17.0.6",
         "@types/styled-components": "^4.1.0",
         "bundlesize": "^0.18.0",
-        "concurrently": "^5.2.0",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
         "jest": "^24.8.0",
         "jest-dom": "^3.5.0",
