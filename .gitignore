@@ -13,9 +13,9 @@ yarn-error.log
 /packages/*/tsc
 /packages/*/tmp
 /packages/*/coverage
-cypress/screenshots
-cypress/videos
-cypress/fixtures/projection-tests.json
+/packages/*/cypress/screenshots
+/packages/*/cypress/videos
+/packages/*/cypress/fixtures/projection-tests.json
 
 .yarn/*
 !.yarn/cache
