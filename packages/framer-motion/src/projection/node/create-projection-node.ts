@@ -461,6 +461,7 @@ export function createProjectionNode<I>({
                             }
 
                             if (visualElement.shouldReduceMotion) {
+                                animationOptions.delay = 0
                                 animationOptions.type = false
                             }
 
