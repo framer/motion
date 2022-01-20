@@ -15,7 +15,7 @@ yarn-error.log
 /packages/*/coverage
 /cypress/screenshots
 /cypress/videos
-/cypress/fixtures/projection-tests.json
+cypress/fixtures/projection-tests.json
 
 .yarn/*
 !.yarn/cache
