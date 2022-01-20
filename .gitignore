@@ -1,12 +1,11 @@
 node_modules
-/.cache-loader
+.cache-loader
 .DS_Store
 /tsc
 /tmp
 yarn-error.log
 /test_reports
 /temp
-/dev/.cache-loader
 /types
 /packages/*/types
 /packages/*/lib
