@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useContext, useState } from "react"
+import { MotionConfigContext } from ".."
 import { motionValue, MotionValue } from "../value"
 import { useOnChange } from "../value/use-on-change"
 
@@ -63,4 +64,11 @@ export function useReducedMotion() {
     useOnChange(prefersReducedMotion, setShouldReduceMotion)
 
     return shouldReduceMotion
+}
+
+export function useReducedMotionConfig() {
+    const shouldReduceMotion = useReducedMotion()
+    const { respectReducedMotion } = useContext(MotionConfigContext)
+
+    return respectReducedMotion && shouldReduceMotion
 }

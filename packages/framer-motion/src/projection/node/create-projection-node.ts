@@ -451,13 +451,20 @@ export function createProjectionNode<I>({
                                 delta,
                                 hasOnlyRelativeTargetChanged
                             )
-                            this.startAnimation({
+
+                            const animationOptions = {
                                 ...getValueTransition(
                                     layoutTransition,
                                     "layout"
                                 ),
                                 onComplete: onLayoutAnimationComplete,
-                            })
+                            }
+
+                            if (visualElement.shouldReduceMotion) {
+                                animationOptions.type = false
+                            }
+
+                            this.startAnimation(animationOptions)
                         } else {
                             this.isLead() && this.options.onExitComplete?.()
                         }
