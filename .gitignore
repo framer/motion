@@ -13,8 +13,8 @@ yarn-error.log
 /packages/*/tsc
 /packages/*/tmp
 /packages/*/coverage
-/cypress/screenshots
-/cypress/videos
+cypress/screenshots
+cypress/videos
 cypress/fixtures/projection-tests.json
 
 .yarn/*
