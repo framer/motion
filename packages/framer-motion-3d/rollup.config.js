@@ -1,6 +1,4 @@
 import resolve from "@rollup/plugin-node-resolve"
-import { terser } from "rollup-plugin-terser"
-import replace from "@rollup/plugin-replace"
 import commonjs from "@rollup/plugin-commonjs"
 import pkg from "./package.json"
 import motionPkg from "../framer-motion/package.json"
@@ -15,49 +13,6 @@ const external = [
     ...Object.keys(motionPkg.dependencies || {}),
     ...Object.keys(motionPkg.peerDependencies || {}),
 ]
-
-const pureClass = {
-    transform(code) {
-        // Replace TS emitted @class function annotations with PURE so terser
-        // can remove them
-        return code.replace(/\/\*\* @class \*\//g, "/*@__PURE__*/")
-    },
-}
-
-const umd = Object.assign({}, config, {
-    output: {
-        file: `dist/${pkg.name}.dev.js`,
-        format: "umd",
-        name: "Motion",
-        exports: "named",
-        globals: { react: "React" },
-    },
-    external: ["react", "react-dom", "framer-motion"],
-    plugins: [
-        commonjs(),
-        resolve(),
-        replace({
-            preventAssignment: true,
-            "process.env.NODE_ENV": JSON.stringify("development"),
-        }),
-    ],
-})
-
-const umdProd = Object.assign({}, umd, {
-    output: Object.assign({}, umd.output, {
-        file: `dist/${pkg.name}.js`,
-    }),
-    plugins: [
-        commonjs(),
-        resolve(),
-        replace({
-            preventAssignment: true,
-            "process.env.NODE_ENV": JSON.stringify("production"),
-        }),
-        pureClass,
-        terser({ output: { comments: false } }),
-    ],
-})
 
 const cjs = Object.assign({}, config, {
     input: ["lib/index.js"],
@@ -85,4 +40,4 @@ const es = Object.assign({}, config, {
 })
 
 // eslint-disable-next-line import/no-default-export
-export default [umd, umdProd, cjs, es]
+export default [cjs, es]
