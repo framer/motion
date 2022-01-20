@@ -11,6 +11,7 @@ yarn-error.log
 /packages/*/lib
 /packages/*/dist
 /packages/*/tsc
+/packages/*/junit.xml
 /packages/*/tmp
 /packages/*/coverage
 /packages/*/cypress/screenshots
