@@ -28,7 +28,7 @@
         "start-dev-server": "webpack serve --config dev/webpack/config.js --hot",
         "measure": "turbo run measure",
         "prepare": "turbo run build measure test test-e2e",
-        "new": "npm run prepare && lerna publish from-package",
+        "new": "lerna publish from-package",
         "new-alpha": "npm run prepare && lerna publish from-package --canary --preid alpha",
         "new-beta": "npm run prepare && lerna publish from-package --canary --preid beta"
     },
