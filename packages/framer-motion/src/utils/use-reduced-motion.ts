@@ -8,7 +8,9 @@ interface ReducedMotionState {
 // Does this device prefer reduced motion? Returns `null` server-side.
 const prefersReducedMotion: ReducedMotionState = { current: null }
 
+let hasDetected = false
 function initPrefersReducedMotion() {
+    hasDetected = true
     if (typeof window === "undefined") return
 
     if (window.matchMedia) {
@@ -55,7 +57,7 @@ export function useReducedMotion() {
     /**
      * Lazy initialisation of prefersReducedMotion
      */
-    !prefersReducedMotion && initPrefersReducedMotion()
+    !hasDetected && initPrefersReducedMotion()
 
     const [shouldReduceMotion] = useState(prefersReducedMotion.current)
 

@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.1] 2022-01-21
+
+### Added
+
+-   Ensure `useReducedMotion` detects reduced motion on load.
+
 ## [6.2.0] 2022-01-21
 
 ### Added
