@@ -1,5 +1,5 @@
 import { useContext, useState } from "react"
-import { MotionConfigContext } from ".."
+import { MotionConfigContext } from "../context/MotionConfigContext"
 import { motionValue, MotionValue } from "../value"
 import { useOnChange } from "../value/use-on-change"
 
