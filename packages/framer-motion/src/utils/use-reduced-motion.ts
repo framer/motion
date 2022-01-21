@@ -1,27 +1,27 @@
 import { useContext, useState } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
-import { motionValue, MotionValue } from "../value"
-import { useOnChange } from "../value/use-on-change"
+
+interface ReducedMotionState {
+    current: boolean | null
+}
 
 // Does this device prefer reduced motion? Returns `null` server-side.
-let prefersReducedMotion: MotionValue<boolean | null>
+const prefersReducedMotion: ReducedMotionState = { current: null }
 
 function initPrefersReducedMotion() {
-    prefersReducedMotion = motionValue(null)
-
     if (typeof window === "undefined") return
 
     if (window.matchMedia) {
         const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)")
 
         const setReducedMotionPreferences = () =>
-            prefersReducedMotion.set(motionMediaQuery.matches)
+            (prefersReducedMotion.current = motionMediaQuery.matches)
 
         motionMediaQuery.addListener(setReducedMotionPreferences)
 
         setReducedMotionPreferences()
     } else {
-        prefersReducedMotion.set(false)
+        prefersReducedMotion.current = false
     }
 }
 
@@ -57,11 +57,11 @@ export function useReducedMotion() {
      */
     !prefersReducedMotion && initPrefersReducedMotion()
 
-    const [shouldReduceMotion, setShouldReduceMotion] = useState(
-        prefersReducedMotion.get()
-    )
+    const [shouldReduceMotion] = useState(prefersReducedMotion.current)
 
-    useOnChange(prefersReducedMotion, setShouldReduceMotion)
+    /**
+     * TODO See if people miss automatically updating shouldReduceMotion setting
+     */
 
     return shouldReduceMotion
 }
