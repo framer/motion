@@ -35,6 +35,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     measureViewportBox(withTransform?: boolean): Box
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
+    shouldReduceMotion?: boolean | null
 
     animateMotionValue?: typeof startAnimation
 
@@ -154,6 +155,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     presenceId?: number | undefined
     props: MotionProps
     blockInitialAnimation?: boolean
+    shouldReduceMotion?: boolean | null
 }
 
 export type CreateVisualElement<Instance> = (

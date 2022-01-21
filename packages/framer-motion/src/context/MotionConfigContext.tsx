@@ -25,6 +25,14 @@ export interface MotionConfigContext {
      * @public
      */
     transition?: Transition
+
+    /**
+     * If true, will respect the device prefersReducedMotion setting by switching
+     * transform animations off.
+     *
+     * @public
+     */
+    reducedMotion?: "always" | "never" | "user"
 }
 
 /**
@@ -33,4 +41,5 @@ export interface MotionConfigContext {
 export const MotionConfigContext = createContext<MotionConfigContext>({
     transformPagePoint: (p) => p,
     isStatic: false,
+    reducedMotion: "never",
 })

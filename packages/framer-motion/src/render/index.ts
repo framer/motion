@@ -36,6 +36,7 @@ export const visualElement =
             presenceId,
             blockInitialAnimation,
             visualState,
+            shouldReduceMotion,
         }: VisualElementOptions<Instance>,
         options: Options = {} as Options
     ) => {
@@ -183,6 +184,8 @@ export const visualElement =
              *
              */
             presenceId,
+
+            shouldReduceMotion,
 
             /**
              * If this component is part of the variant tree, it should track

@@ -12,6 +12,7 @@ import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
+import { isTransformProp } from "../html/utils/transform"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -162,10 +163,25 @@ function animateTarget(
             continue
         }
 
-        const animation = startAnimation(key, value, valueTarget, {
-            delay,
-            ...transition,
-        })
+        let valueTransition = { delay, ...transition }
+
+        /**
+         * Make animation instant if this is a transform prop and we should reduce motion.
+         */
+        if (visualElement.shouldReduceMotion && isTransformProp(key)) {
+            valueTransition = {
+                ...valueTransition,
+                type: false,
+                delay: 0,
+            } as any
+        }
+
+        const animation = startAnimation(
+            key,
+            value,
+            valueTarget,
+            valueTransition
+        )
 
         animations.push(animation)
     }
