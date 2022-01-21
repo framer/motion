@@ -83,6 +83,5 @@
         "typescript": "^4.2.3",
         "webpack": "^5.27.2",
         "yarn-deduplicate": "^1.1.1"
-    },
-    "gitHead": "ff4449d40c3a510f3ee6ff00ebb4aa7b7c049494"
+    }
 }
