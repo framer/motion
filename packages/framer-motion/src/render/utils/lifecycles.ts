@@ -19,12 +19,8 @@ const names = [
 ]
 
 export type LayoutMeasureListener = (layout: Box, prevLayout?: Box) => void
-export type BeforeLayoutMeasureListener = (layout: Axis) => void
-export type LayoutUpdateListener = (
-    layout: Axis,
-    prevLayout: Axis
-    // config?: SharedLayoutAnimationConfig
-) => void
+export type BeforeLayoutMeasureListener = () => void
+export type LayoutUpdateListener = (layout: Axis, prevLayout: Axis) => void
 export type UpdateListener = (latest: ResolvedValues) => void
 export type AnimationStartListener = (definition: AnimationDefinition) => void
 export type AnimationCompleteListener = (
@@ -161,9 +157,8 @@ export function createLifecycles() {
 
     managers.forEach((manager, i) => {
         lifecycles["on" + names[i]] = (handler: any) => manager.add(handler)
-        lifecycles["notify" + names[i]] = (...args: any) => {
+        lifecycles["notify" + names[i]] = (...args: any) =>
             manager.notify(...args)
-        }
     })
 
     return lifecycles as LifecycleManager

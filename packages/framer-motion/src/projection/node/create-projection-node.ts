@@ -1608,6 +1608,11 @@ function clearMeasurements(node: IProjectionNode) {
 }
 
 function resetTransformStyle(node: IProjectionNode) {
+    const { visualElement } = node.options
+    if (visualElement?.getProps().onBeforeLayoutMeasure) {
+        visualElement.notifyBeforeLayoutMeasure()
+    }
+
     node.resetTransform()
 }
 
