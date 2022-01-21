@@ -7521,8 +7521,8 @@ __metadata:
     cache-loader: ^1.2.5
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
     fork-ts-checker-webpack-plugin: ^6.2.0
-    framer-motion: ^6.2.1
-    framer-motion-3d: ^6.2.1
+    framer-motion: ^6.2.2-beta.0
+    framer-motion-3d: ^6.2.2-beta.0
     path-browserify: ^1.0.1
     popmotion: 11.0.3
     react: ^17.0.2
@@ -7587,7 +7587,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion-3d@^6.2.1, framer-motion-3d@workspace:packages/framer-motion-3d":
+"framer-motion-3d@^6.2.2-beta.0, framer-motion-3d@workspace:packages/framer-motion-3d":
   version: 0.0.0-use.local
   resolution: "framer-motion-3d@workspace:packages/framer-motion-3d"
   dependencies:
@@ -7601,7 +7601,7 @@ __metadata:
     "@testing-library/react-hooks": ^5.1.0
     bundlesize: ^0.18.0
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
-    framer-motion: ^6.2.1
+    framer-motion: ^6.2.2-beta.0
     jest: ^24.8.0
     jest-dom: ^3.5.0
     jest-junit: ^6.4.0
@@ -7629,7 +7629,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^6.2.1, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^6.2.2-beta.0, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
