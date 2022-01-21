@@ -24,16 +24,10 @@
         "lint": "turbo run lint",
         "test": "yarn test-packages && yarn test-projection && yarn test-e2e",
         "test-ci": "turbo run test-ci",
-        "test-packages": "turbo run test",
-        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
-        "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
-        "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
-        "test-e2e": "yarn test-e2e-electron",
-        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
         "start-dev-server": "webpack serve --config dev/webpack/config.js --hot",
         "measure": "turbo run measure",
-        "prepare": "turbo run build measure test",
+        "prepare": "turbo run build measure test test-ci",
         "new": "npm run prepare && lerna publish from-package",
         "new-alpha": "npm run prepare && lerna publish from-package --canary --preid alpha",
         "new-beta": "npm run prepare && lerna publish from-package --canary --preid beta"
@@ -54,6 +48,12 @@
                 "outputs": []
             },
             "test": {
+                "dependsOn": [
+                    "build"
+                ],
+                "outputs": []
+            },
+            "test-e2e": {
                 "dependsOn": [
                     "build"
                 ],
@@ -140,5 +140,8 @@
         "webpack": "^5.27.2",
         "yarn-deduplicate": "^1.1.1"
     },
-    "packageManager": "yarn@3.1.0"
+    "packageManager": "yarn@3.1.0",
+    "dependencies": {
+        "start-server-and-test": "^1.14.0"
+    }
 }

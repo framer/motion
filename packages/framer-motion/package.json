@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "6.0.0",
+    "version": "6.1.0-rc.0",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -36,16 +36,23 @@
         "build": "yarn clean && tsc -p . && rollup -c && webpack --config webpack.size.config.js",
         "dev": "yarn watch",
         "clean": "rm -rf types dist lib",
-        "test": "yarn build && yarn measure && yarn test-server && yarn test-client",
-        "test-ci": "yarn test-client --ci --reporters=jest-junit && yarn test-server --ci --reporters=jest-junit",
+        "test": "yarn test-server && yarn test-client",
+        "test-ci": "yarn test",
         "test-client": "jest --coverage --config jest.config.json --max-workers=2",
         "test-server": "jest --config jest.config.ssr.json",
         "test-watch": "jest --watch --coverage --coverageReporters=lcov  --config jest.config.json",
+        "test-projection": "yarn run collect-projection-tests && start-server-and-test 'python -m SimpleHTTPServer' http://0.0.0.0:8000 'yarn run cypress run -s cypress/integration/projection.chrome.ts --config baseUrl=http://localhost:8000/'",
+        "test-e2e-chrome": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --browser chrome  --spec \"cypress/integration/layout-relative.chrome.ts\"'",
+        "test-e2e-electron": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --config ignoreTestFiles=*.chrome.ts'",
+        "test-e2e": "yarn test-e2e-electron",
+        "test-e2e-file": "start-server-and-test start-dev-server http://localhost:9990 'cypress run --headless --spec \"cypress/integration/while-in-view.ts\"'",
+        "collect-projection-tests": "node ../../dev/projection/collect-projection-tests.js",
         "prettier": "prettier ./src/* --write",
         "watch": "concurrently -c blue,red -n tsc,rollup --kill-others \"tsc --watch -p . --preserveWatchOutput\" \"rollup --config --watch --no-watch.clearScreen\"",
         "prepack": "yarn build",
         "postpublish": "git push --tags",
-        "measure": "bundlesize"
+        "measure": "bundlesize",
+        "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
     "peerDependencies": {
         "react": ">=16.8 || ^17.0.0",
@@ -72,7 +79,7 @@
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "16.9 kB"
+            "maxSize": "16.95 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
@@ -91,5 +98,5 @@
             "maxSize": "31.5 kB"
         }
     ],
-    "gitHead": "c36db286ccd68010f7e030e39c06a701d4415778"
+    "gitHead": "ff4449d40c3a510f3ee6ff00ebb4aa7b7c049494"
 }

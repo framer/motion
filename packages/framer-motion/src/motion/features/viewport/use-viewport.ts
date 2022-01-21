@@ -105,10 +105,11 @@ function useIntersectionObserver(
 function useMissingIntersectionObserver(
     shouldObserve: boolean,
     state: ViewportState,
-    visualElement: VisualElement
+    visualElement: VisualElement,
+    { fallback = true }: ViewportOptions
 ) {
     useEffect(() => {
-        if (!shouldObserve) return
+        if (!shouldObserve || !fallback) return
 
         if (process.env.NODE_ENV !== "production") {
             warnOnce(

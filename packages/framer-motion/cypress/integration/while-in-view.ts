@@ -151,4 +151,16 @@ describe("whileInView", () => {
                 expect($element.innerHTML).to.equal("In")
             })
     })
+
+    it("If IntersectionObserver doesn't exist, and fallback is false, don't animate to whileInView", () => {
+        cy.visit("?test=while-in-view&delete=true&disableFallback=true")
+            .wait(100)
+            .get("#box")
+            .should(([$element]: any) => {
+                expect($element.style.backgroundColor).not.to.equal(
+                    "rgb(0, 255, 0)"
+                )
+                expect($element.innerHTML).not.to.equal("In")
+            })
+    })
 })

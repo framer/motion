@@ -1,6 +1,6 @@
 const webpackPreprocessor = require("@cypress/webpack-preprocessor")
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin")
-const webpackConfig = require("../../dev/webpack/config")
+const webpackConfig = require("../../../../dev/webpack/config")
 
 // don't need extra TS checker as part of Cypress
 webpackConfig.plugins = webpackConfig.plugins.filter(

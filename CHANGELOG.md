@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.1.0] 2022-01-20
+
+### Added
+
+-   Added `viewport.fallback` option to disable `IntersectionObserver` polyfill.
+
 ## [6.0.0] 2022-01-19
 
 ### Changed

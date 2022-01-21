@@ -1,22 +1,22 @@
 node_modules
-/.cache-loader
+.cache-loader
 .DS_Store
 /tsc
 /tmp
 yarn-error.log
 /test_reports
 /temp
-/dev/.cache-loader
 /types
 /packages/*/types
 /packages/*/lib
 /packages/*/dist
 /packages/*/tsc
+/packages/*/junit.xml
 /packages/*/tmp
 /packages/*/coverage
-/cypress/screenshots
-/cypress/videos
-/cypress/fixtures/projection-tests.json
+/packages/*/cypress/screenshots
+/packages/*/cypress/videos
+/packages/*/cypress/fixtures/projection-tests.json
 
 .yarn/*
 !.yarn/cache
