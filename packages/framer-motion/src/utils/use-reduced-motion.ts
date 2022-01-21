@@ -67,8 +67,14 @@ export function useReducedMotion() {
 }
 
 export function useReducedMotionConfig() {
-    const shouldReduceMotion = useReducedMotion()
-    const { respectReducedMotion } = useContext(MotionConfigContext)
+    const reducedMotionPreference = useReducedMotion()
+    const { reducedMotion } = useContext(MotionConfigContext)
 
-    return respectReducedMotion && shouldReduceMotion
+    if (reducedMotion === "never") {
+        return false
+    } else if (reducedMotion === "always") {
+        return true
+    } else {
+        return reducedMotionPreference
+    }
 }

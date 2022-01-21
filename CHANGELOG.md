@@ -6,7 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Added
 
--   `respectReducedMotion` option to `MotionConfig`.
+-   `reducedMotion` option to `MotionConfig`.
 
 ## [6.1.0] 2022-01-20
 

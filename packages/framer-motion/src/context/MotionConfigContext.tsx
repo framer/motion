@@ -32,7 +32,7 @@ export interface MotionConfigContext {
      *
      * @public
      */
-    respectReducedMotion?: boolean
+    reducedMotion?: "always" | "never" | "user"
 }
 
 /**
@@ -41,5 +41,5 @@ export interface MotionConfigContext {
 export const MotionConfigContext = createContext<MotionConfigContext>({
     transformPagePoint: (p) => p,
     isStatic: false,
-    respectReducedMotion: false,
+    reducedMotion: "never",
 })
