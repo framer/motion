@@ -47,8 +47,8 @@ TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)
 DECLARATION_TARGET=types/index.d.ts
 
 build: bootstrap
-	cd packages/motion && yarn build
-	cd packages/three && yarn build
+	cd packages/framer-motion && yarn build
+	cd packages/framer-motion-3d && yarn build
 
 watch: bootstrap
 	yarn watch
