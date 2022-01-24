@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.2] 2022-01-21
+
+### Fixed
+
+-   Fixing `onBeforeLayoutMeasure`.
+
 ## [6.2.1] 2022-01-21
 
 ### Added

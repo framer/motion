@@ -23,6 +23,7 @@ export interface Layout {
 export type LayoutEvents =
     | "willUpdate"
     | "didUpdate"
+    | "beforeMeasure"
     | "measure"
     | "projectionUpdate"
     | "animationComplete"
