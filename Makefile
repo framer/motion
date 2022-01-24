@@ -51,7 +51,7 @@ build: bootstrap
 	cd packages/framer-motion-3d && yarn build
 
 watch: bootstrap
-	yarn watch
+	cd packages/framer-motion && yarn watch
 
 test-watch: bootstrap
 	if test -f coverage/lcov-report/index.html; then \
