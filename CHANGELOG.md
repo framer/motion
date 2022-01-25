@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.3] 2022-01-25
+
+### Added
+
+-   Adding `useReducedMotionConfig` for internal Framer use.
+
 ## [6.2.2] 2022-01-21
 
 ### Fixed

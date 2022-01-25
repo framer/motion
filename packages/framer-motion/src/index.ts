@@ -38,7 +38,10 @@ export { useTime } from "./value/use-time"
 /**
  * Accessibility
  */
-export { useReducedMotion } from "./utils/use-reduced-motion"
+export {
+    useReducedMotion,
+    useReducedMotionConfig,
+} from "./utils/use-reduced-motion"
 
 /**
  * Utils
