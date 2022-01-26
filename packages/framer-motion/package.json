@@ -55,8 +55,8 @@
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
     "peerDependencies": {
-        "react": ">=16.8 || ^17.0.0",
-        "react-dom": ">=16.8 || ^17.0.0"
+        "react": ">=16.8 || ^17.0.0 || ^18.0.0",
+        "react-dom": ">=16.8 || ^17.0.0 || ^18.0.0"
     },
     "dependencies": {
         "framesync": "6.0.1",
