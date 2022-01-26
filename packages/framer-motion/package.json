@@ -65,6 +65,10 @@
         "style-value-types": "5.0.0",
         "tslib": "^2.1.0"
     },
+    "devDependencies": {
+        "jest": "^27.4.7",
+        "jest-dom": "^3.5.0"
+    },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
     },

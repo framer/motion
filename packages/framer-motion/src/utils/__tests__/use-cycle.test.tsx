@@ -5,16 +5,13 @@ import { useCycle } from "../use-cycle"
 
 describe("useCycle", () => {
     test("cycles through given states", () => {
-        let results: number[] = []
+        const results: number[] = []
 
         const Component = () => {
             const [latest, cycle] = useCycle(1, 2, 3, 4)
-            React.useEffect(
-                () => {
-                    results.push(latest)
-                },
-                [latest]
-            )
+            React.useEffect(() => {
+                results.push(latest)
+            }, [latest])
 
             return <div onClick={() => cycle()} />
         }
@@ -26,7 +23,11 @@ describe("useCycle", () => {
         click(container.firstChild as Element)
         click(container.firstChild as Element)
 
-        expect(results).toEqual([1, 2, 3, 4, 1])
+        /**
+         * 1 is doubled at the start of the array because in StrictMode
+         * useEffect is double-fired on mount.
+         */
+        expect(results).toEqual([1, 1, 2, 3, 4, 1])
     })
 
     test("jumps to a given index", () => {
