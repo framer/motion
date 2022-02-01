@@ -10,7 +10,6 @@ import {
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
-import sync from "framesync"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -858,11 +857,11 @@ describe("AnimatePresence with custom components", () => {
 
         await act(async () => {
             await new Promise<void>((resolve) => {
-                sync.postRender(() => {
+                setTimeout(() => {
                     expect(queryByTestId("a")).toBe(null)
                     expect(queryByTestId("b")).toBe(null)
                     resolve()
-                })
+                }, 50)
             })
         })
     })
