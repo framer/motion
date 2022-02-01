@@ -1,4 +1,5 @@
 import { useContext, useEffect } from "react"
+import * as React from "react"
 import {
     PresenceContext,
     PresenceContextProps,
@@ -46,11 +47,13 @@ export function usePresence(): AlwaysPresent | Present | NotPresent {
     // It's safe to call the following hooks conditionally (after an early return) because the context will always
     // either be null or non-null for the lifespan of the component.
 
-    // Replace with useOpaqueId when released in React
+    // Replace with useId when released in React
     const id = useUniqueId()
     useEffect(() => register(id), [])
 
-    const safeToRemove = () => onExitComplete?.(id)
+    const safeToRemove = () => {
+        onExitComplete?.(id)
+    }
 
     return !isPresent && onExitComplete ? [false, safeToRemove] : [true]
 }
@@ -85,4 +88,6 @@ export function isPresent(context: PresenceContextProps | null) {
 
 let counter = 0
 const incrementId = () => counter++
-const useUniqueId = () => useConstant(incrementId)
+const useUniqueId = (React as any).useId
+    ? (React as any).useId
+    : () => useConstant(incrementId)

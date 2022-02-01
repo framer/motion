@@ -1,14 +1,13 @@
 import sync from "framesync"
-import { useState, useCallback, useRef } from "react"
-import { useUnmountEffect } from "./use-unmount-effect"
+import { useState, useCallback } from "react"
+import { useIsMounted } from "./use-is-mounted"
 
 export function useForceUpdate(): [VoidFunction, number] {
-    const isUnmountingRef = useRef(false)
+    const isMounted = useIsMounted()
     const [forcedRenderCount, setForcedRenderCount] = useState(0)
-    useUnmountEffect(() => (isUnmountingRef.current = true))
 
     const forceRender = useCallback(() => {
-        !isUnmountingRef.current && setForcedRenderCount(forcedRenderCount + 1)
+        isMounted.current && setForcedRenderCount(forcedRenderCount + 1)
     }, [forcedRenderCount])
 
     /**
