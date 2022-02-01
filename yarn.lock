@@ -7713,7 +7713,6 @@ __metadata:
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
-    concurrently: ^7.0.0
     framesync: 6.0.1
     hey-listen: ^1.0.8
     jest: ^27.4.7
