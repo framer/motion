@@ -1,10 +1,9 @@
 import { useContext, useEffect } from "react"
-import * as React from "react"
 import {
     PresenceContext,
     PresenceContextProps,
 } from "../../context/PresenceContext"
-import { useConstant } from "../../utils/use-constant"
+import { useId } from "../../utils/use-id"
 
 export type SafeToRemove = () => void
 
@@ -48,7 +47,7 @@ export function usePresence(): AlwaysPresent | Present | NotPresent {
     // either be null or non-null for the lifespan of the component.
 
     // Replace with useId when released in React
-    const id = useUniqueId()
+    const id = useId()
     useEffect(() => register(id), [])
 
     const safeToRemove = () => {
@@ -85,9 +84,3 @@ export function useIsPresent() {
 export function isPresent(context: PresenceContextProps | null) {
     return context === null ? true : context.isPresent
 }
-
-let counter = 0
-const incrementId = () => counter++
-const useUniqueId = (React as any).useId
-    ? (React as any).useId
-    : () => useConstant(incrementId)
