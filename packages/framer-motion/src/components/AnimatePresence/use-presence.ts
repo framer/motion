@@ -50,9 +50,7 @@ export function usePresence(): AlwaysPresent | Present | NotPresent {
     const id = useId()
     useEffect(() => register(id), [])
 
-    const safeToRemove = () => {
-        onExitComplete?.(id)
-    }
+    const safeToRemove = () => onExitComplete?.(id)
 
     return !isPresent && onExitComplete ? [false, safeToRemove] : [true]
 }
