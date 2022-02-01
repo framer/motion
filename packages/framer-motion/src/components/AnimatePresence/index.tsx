@@ -203,7 +203,6 @@ export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
 
                 if (isMounted.current === false) return
 
-                console.log("forcing a rerender to remove children")
                 forceRender()
                 onExitComplete && onExitComplete()
             }
