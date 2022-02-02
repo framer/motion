@@ -13148,16 +13148,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@npm:18.0.0-rc.0":
-  version: 18.0.0-rc.0
-  resolution: "react-dom@npm:18.0.0-rc.0"
+"react-dom@npm:17.0.2":
+  version: 17.0.2
+  resolution: "react-dom@npm:17.0.2"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
-    scheduler: ^0.21.0-rc.0
+    scheduler: ^0.20.2
   peerDependencies:
-    react: ^18.0.0-rc.0
-  checksum: 713db349fad704527d328275d43c57ca670c801a6592e5f308c5572a7559540d0dcfc0b065a878cea4764f742d27fb2ed1065092ca40589759d5b51ecce6773b
+    react: 17.0.2
+  checksum: 1c1eaa3bca7c7228d24b70932e3d7c99e70d1d04e13bb0843bbf321582bc25d7961d6b8a6978a58a598af2af496d1cedcfb1bf65f6b0960a0a8161cb8dab743c
   languageName: node
   linkType: hard
 
@@ -13239,13 +13239,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react@npm:18.0.0-rc.0":
-  version: 18.0.0-rc.0
-  resolution: "react@npm:18.0.0-rc.0"
+"react@npm:17.0.2":
+  version: 17.0.2
+  resolution: "react@npm:17.0.2"
   dependencies:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
-  checksum: bb886ab411d7732ca8aace98bf0015a31f30b010bd674accdbbf4a474429b656b4463a58e677f33972bab9b820e949765e27fc6c468b13833b515e50b2d0b999
+  checksum: b254cc17ce3011788330f7bbf383ab653c6848902d7936a87b09d835d091e3f295f7e9dd1597c6daac5dc80f90e778c8230218ba8ad599f74adcc11e33b9d61b
   languageName: node
   linkType: hard
 
@@ -14077,16 +14077,6 @@ __metadata:
     loose-envify: ^1.1.0
     object-assign: ^4.1.1
   checksum: c4b35cf967c8f0d3e65753252d0f260271f81a81e427241295c5a7b783abf4ea9e905f22f815ab66676f5313be0a25f47be582254db8f9241b259213e999b8fc
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.21.0-rc.0":
-  version: 0.21.0-rc.0-next-fe905f152-20220107
-  resolution: "scheduler@npm:0.21.0-rc.0-next-fe905f152-20220107"
-  dependencies:
-    loose-envify: ^1.1.0
-    object-assign: ^4.1.1
-  checksum: 72d1e7451c0af41ba6dcf53aaafeb72620e9d4d4cf30b3709f7a93c4e31fc872ce574a0a7bef168175ee4d148a2b9ca2e318d02387600c8b7f95da0d4ff185bb
   languageName: node
   linkType: hard
 
