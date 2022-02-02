@@ -26,8 +26,10 @@ describe("useCycle", () => {
         /**
          * 1 is doubled at the start of the array because in StrictMode
          * useEffect is double-fired on mount.
+         *
+         * When resolution is changed to 18, add another 1 to start of array
          */
-        expect(results).toEqual([1, 1, 2, 3, 4, 1])
+        expect(results).toEqual([1, 2, 3, 4, 1])
     })
 
     test("jumps to a given index", () => {
