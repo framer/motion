@@ -849,20 +849,24 @@ describe("AnimatePresence with custom components", () => {
 
         const { rerender, queryByTestId } = render(<Component isVisible />)
 
-        rerender(<Component isVisible />)
+        await act(async () => {
+            rerender(<Component isVisible />)
+        })
 
         await act(async () => {
             rerender(<Component isVisible={false} />)
         })
 
         await act(async () => {
-            await new Promise<void>((resolve) => {
-                setTimeout(() => {
-                    expect(queryByTestId("a")).toBe(null)
-                    expect(queryByTestId("b")).toBe(null)
-                    resolve()
-                }, 200)
-            })
+            rerender(<Component isVisible={false} />)
+        })
+
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                expect(queryByTestId("a")).toBe(null)
+                expect(queryByTestId("b")).toBe(null)
+                resolve()
+            }, 59)
         })
     })
 })
