@@ -866,7 +866,7 @@ describe("AnimatePresence with custom components", () => {
                 expect(queryByTestId("a")).toBe(null)
                 expect(queryByTestId("b")).toBe(null)
                 resolve()
-            }, 59)
+            }, 50)
         })
     })
 })
