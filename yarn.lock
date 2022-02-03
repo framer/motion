@@ -7529,7 +7529,7 @@ __metadata:
     react-dom: ^17.0.2
     react-refresh: ^0.9.0
     styled-components: ^4.1.1
-    three: ^0.135.0
+    three: ^0.137.0
     webpack: ^5.27.2
     webpack-cli: ^4.9.1
     webpack-dev-server: ^3.11.2
@@ -7614,7 +7614,7 @@ __metadata:
     rollup: ^2.10.5
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
-    three: ^0.136.0
+    three: ^0.137.0
     ts-jest: ^24.0.2
     ts-loader: ^5.3.0
     type-fest: ^1.0.1
