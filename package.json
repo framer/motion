@@ -24,7 +24,7 @@
         "lint": "turbo run lint",
         "test": "turbo run test",
         "test-e2e": "turbo run test-e2e",
-        "test-ci": "turbo run test-ci",
+        "test-ci": "turbo run test-ci --no-cache",
         "collect-projection-tests": "node ./dev/projection/collect-projection-tests.js",
         "start-dev-server": "webpack serve --config dev/webpack/config.js --hot",
         "measure": "turbo run measure",
