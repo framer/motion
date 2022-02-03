@@ -76,7 +76,7 @@
         "rollup": "^2.10.5",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",
-        "three": "^0.136.0",
+        "three": "^0.137.0",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
         "type-fest": "^1.0.1",
