@@ -467,6 +467,18 @@ export function createProjectionNode<I>({
 
                             this.startAnimation(animationOptions)
                         } else {
+                            /**
+                             * If the layout hasn't changed and we have an animation that hasn't started yet,
+                             * finish it immediately. Otherwise it will be animating from a location
+                             * that was probably never commited to screen and look like a jumpy box.
+                             */
+                            if (
+                                !hasLayoutChanged &&
+                                this.animationProgress === 0
+                            ) {
+                                this.finishAnimation()
+                            }
+
                             this.isLead() && this.options.onExitComplete?.()
                         }
 
@@ -1081,11 +1093,11 @@ export function createProjectionNode<I>({
         /**
          * Animation
          */
-        animationProgress = 0
         animationValues?: ResolvedValues
         pendingAnimation?: Process
         currentAnimation?: AnimationPlaybackControls
         mixTargetDelta: (progress: number) => void
+        animationProgress = 0
 
         setAnimationOrigin(
             delta: Delta,
@@ -1110,8 +1122,10 @@ export function createProjectionNode<I>({
                     !this.path.some(hasOpacityCrossfade)
             )
 
+            this.animationProgress = 0
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
+
                 mixAxisDelta(targetDelta.x, delta.x, progress)
                 mixAxisDelta(targetDelta.y, delta.y, progress)
                 this.setTargetDelta(targetDelta)
@@ -1150,6 +1164,8 @@ export function createProjectionNode<I>({
 
                 this.root.scheduleUpdateProjection()
                 this.scheduleRender()
+
+                this.animationProgress = progress
             }
 
             this.mixTargetDelta(0)
