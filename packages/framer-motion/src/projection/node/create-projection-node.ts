@@ -472,7 +472,10 @@ export function createProjectionNode<I>({
                              * finish it immediately. Otherwise it will be animating from a location
                              * that was probably never commited to screen and look like a jumpy box.
                              */
-                            if (!hasLayoutChanged && this.progress === 0) {
+                            if (
+                                !hasLayoutChanged &&
+                                this.animationProgress === 0
+                            ) {
                                 this.finishAnimation()
                             }
 
@@ -1094,7 +1097,7 @@ export function createProjectionNode<I>({
         pendingAnimation?: Process
         currentAnimation?: AnimationPlaybackControls
         mixTargetDelta: (progress: number) => void
-        progress = 0
+        animationProgress = 0
 
         setAnimationOrigin(
             delta: Delta,
@@ -1119,7 +1122,7 @@ export function createProjectionNode<I>({
                     !this.path.some(hasOpacityCrossfade)
             )
 
-            this.progress = 0
+            this.animationProgress = 0
             this.mixTargetDelta = (latest: number) => {
                 const progress = latest / 1000
 
@@ -1162,7 +1165,7 @@ export function createProjectionNode<I>({
                 this.root.scheduleUpdateProjection()
                 this.scheduleRender()
 
-                this.progress = progress
+                this.animationProgress = progress
             }
 
             this.mixTargetDelta(0)
