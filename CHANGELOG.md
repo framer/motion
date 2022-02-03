@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.4] 2022-02-03
+
+### Fixed
+
+-   Fixed layout animations with Framer's `Stack` gap Safari polyfill.
+
 ## [6.2.3] 2022-01-25
 
 ### Added
