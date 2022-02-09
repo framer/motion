@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.5] 2022-02-15
+
+### Fixed
+
+-   Improving compatibility with React 18.
+
 ## [6.2.4] 2022-02-03
 
 ### Fixed
