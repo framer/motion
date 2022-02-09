@@ -20,9 +20,8 @@ const App = () => {
     return <ExampleList />
 }
 
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById("root")).render(
     <React.StrictMode>
         <App />
-    </React.StrictMode>,
-    document.getElementById("root")
+    </React.StrictMode>
 )

@@ -50,7 +50,6 @@ const useVisualState = makeUseVisualState({
  */
 export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)
-
     const visualState = useVisualState({}, false)
 
     const element = useConstant(() =>
@@ -59,14 +58,16 @@ export function useAnimatedState(initialState: any) {
 
     useEffect(() => {
         element.mount({})
-        return element.unmount()
-    }, [])
+        return element.unmount
+    }, [element])
 
     useEffect(() => {
         element.setProps({
-            onUpdate: (v) => setAnimationState({ ...v }),
+            onUpdate: (v) => {
+                setAnimationState({ ...v })
+            },
         })
-    })
+    }, [setAnimationState, element])
 
     const startAnimation = useConstant(
         () => (animationDefinition: TargetAndTransition) => {

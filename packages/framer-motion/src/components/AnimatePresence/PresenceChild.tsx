@@ -6,6 +6,7 @@ import {
 } from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
+import { useId } from "../../utils/use-id"
 
 interface PresenceChildProps {
     children: React.ReactElement<any>
@@ -14,13 +15,6 @@ interface PresenceChildProps {
     initial?: false | VariantLabels
     custom?: any
     presenceAffectsLayout: boolean
-}
-
-let presenceId = 0
-function getPresenceId() {
-    const id = presenceId
-    presenceId++
-    return id
 }
 
 export const PresenceChild = ({
@@ -32,7 +26,7 @@ export const PresenceChild = ({
     presenceAffectsLayout,
 }: PresenceChildProps) => {
     const presenceChildren = useConstant(newChildrenMap)
-    const id = useConstant(getPresenceId)
+    const id = useId()
 
     const context = useMemo(
         (): PresenceContextProps => ({

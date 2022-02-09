@@ -87,6 +87,7 @@ export function checkTargetForNewValues(
     )
 
     const numNewValues = newValueKeys.length
+
     if (!numNewValues) return
 
     for (let i = 0; i < numNewValues; i++) {

@@ -55,8 +55,8 @@
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
     "peerDependencies": {
-        "react": ">=16.8 || ^17.0.0",
-        "react-dom": ">=16.8 || ^17.0.0"
+        "react": ">=16.8 || ^17.0.0 || ^18.0.0",
+        "react-dom": ">=16.8 || ^17.0.0 || ^18.0.0"
     },
     "dependencies": {
         "framesync": "6.0.1",
@@ -64,6 +64,10 @@
         "popmotion": "11.0.3",
         "style-value-types": "5.0.0",
         "tslib": "^2.1.0"
+    },
+    "devDependencies": {
+        "jest": "^27.4.7",
+        "jest-dom": "^3.5.0"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"

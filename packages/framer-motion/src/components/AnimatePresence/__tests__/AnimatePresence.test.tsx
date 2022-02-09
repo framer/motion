@@ -10,7 +10,6 @@ import {
 } from "../../.."
 import { motionValue } from "../../../value"
 import { ResolvedValues } from "../../../render/types"
-import sync from "framesync"
 
 describe("AnimatePresence", () => {
     test("Allows initial animation if no `initial` prop defined", async () => {
@@ -850,20 +849,24 @@ describe("AnimatePresence with custom components", () => {
 
         const { rerender, queryByTestId } = render(<Component isVisible />)
 
-        rerender(<Component isVisible />)
+        await act(async () => {
+            rerender(<Component isVisible />)
+        })
 
         await act(async () => {
             rerender(<Component isVisible={false} />)
         })
 
         await act(async () => {
-            await new Promise<void>((resolve) => {
-                sync.postRender(() => {
-                    expect(queryByTestId("a")).toBe(null)
-                    expect(queryByTestId("b")).toBe(null)
-                    resolve()
-                })
-            })
+            rerender(<Component isVisible={false} />)
+        })
+
+        await new Promise<void>((resolve) => {
+            setTimeout(() => {
+                expect(queryByTestId("a")).toBe(null)
+                expect(queryByTestId("b")).toBe(null)
+                resolve()
+            }, 50)
         })
     })
 })

@@ -4,6 +4,7 @@ import { useVelocity } from "../use-velocity"
 import { useMotionValue } from "../use-motion-value"
 import { animate } from "../../animation/animate"
 import sync, { getFrameData } from "framesync"
+import { pipe } from "popmotion"
 
 const setFrameData = (interval: number, time: number) => {
     const data = getFrameData()
@@ -11,23 +12,25 @@ const setFrameData = (interval: number, time: number) => {
     data.delta = interval
 }
 
-const syncDriver = (interval = 10) => (update: (v: number) => void) => {
-    let isRunning = true
-    return {
-        start: () => {
-            let time = 0
-            setTimeout(() => {
-                update(0)
-                while (isRunning) {
-                    time += interval
-                    setFrameData(interval, time)
-                    update(interval)
-                }
-            }, 0)
-        },
-        stop: () => (isRunning = false),
+const syncDriver =
+    (interval = 10) =>
+    (update: (v: number) => void) => {
+        let isRunning = true
+        return {
+            start: () => {
+                let time = 0
+                setTimeout(() => {
+                    update(0)
+                    while (isRunning) {
+                        time += interval
+                        setFrameData(interval, time)
+                        update(interval)
+                    }
+                }, 0)
+            },
+            stop: () => (isRunning = false),
+        }
     }
-}
 
 describe("useVelocity", () => {
     test("creates a motion value that updates with the velocity of the provided motion value", async () => {
@@ -42,17 +45,19 @@ describe("useVelocity", () => {
                 const xAcceleration = useVelocity(xVelocity)
 
                 React.useEffect(() => {
-                    x.onChange((v) => {
-                        output.push(Math.round(v))
-                    })
-                    xVelocity.onChange((v) => {
-                        outputVelocity.push(Math.round(v))
-                    })
-                    xAcceleration.onChange((v) => {
-                        outputAcceleration.push(Math.round(v))
-                    })
+                    const unsubscribe = pipe(
+                        x.onChange((v) => {
+                            output.push(Math.round(v))
+                        }),
+                        xVelocity.onChange((v) => {
+                            outputVelocity.push(Math.round(v))
+                        }),
+                        xAcceleration.onChange((v) => {
+                            outputAcceleration.push(Math.round(v))
+                        })
+                    )
 
-                    animate(x, 1000, {
+                    const animation = animate(x, 1000, {
                         duration: 0.1,
                         ease: "easeInOut",
                         driver: syncDriver(),
@@ -79,6 +84,11 @@ describe("useVelocity", () => {
                             })
                         },
                     } as any)
+
+                    return () => {
+                        unsubscribe()
+                        animation.stop()
+                    }
                 }, [])
 
                 return null
@@ -90,42 +100,14 @@ describe("useVelocity", () => {
 
         await promise
         expect(output).toEqual([
-            20,
-            80,
-            180,
-            320,
-            500,
-            680,
-            820,
-            920,
-            980,
-            1000,
+            20, 80, 180, 320, 500, 680, 820, 920, 980, 1000,
         ])
         expect(outputVelocity).toEqual([
-            2000,
-            6000,
-            10000,
-            14000,
-            18000,
-            18000,
-            14000,
-            10000,
-            6000,
-            2000,
-            0,
+            2000, 6000, 10000, 14000, 18000, 18000, 14000, 10000, 6000, 2000, 0,
         ])
         expect(outputAcceleration).toEqual([
-            200000,
-            400000,
-            400000,
-            400000,
-            400000,
-            -0,
-            -400000,
-            -400000,
-            -400000,
-            -50000,
-            0,
+            200000, 400000, 400000, 400000, 400000, -0, -400000, -400000,
+            -400000, -50000, 0,
         ])
     })
 })

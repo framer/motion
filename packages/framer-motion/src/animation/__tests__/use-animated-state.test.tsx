@@ -6,33 +6,26 @@ import { useAnimatedState } from "../use-animated-state"
 describe("useAnimatedState", () => {
     test("animates values", async () => {
         const promise = new Promise((resolve) => {
-            let latest = { foo: 0 }
-            let hasAnimated = false
-
             const Component = () => {
                 const [state, setState] = useAnimatedState({ foo: 0 })
-                latest = state
-                hasAnimated =
-                    hasAnimated || (state.foo !== 0 && state.foo !== 100)
 
                 useEffect(() => {
                     setState({
                         foo: 100,
                         transition: { duration: 0.05 },
-                    }).then(() =>
-                        requestAnimationFrame(() =>
-                            resolve([hasAnimated, latest.foo])
-                        )
-                    )
+                    })
                 }, [])
+
+                useEffect(() => {
+                    if (state.foo === 100) resolve(state.foo)
+                }, [state.foo])
 
                 return <div />
             }
 
-            const { rerender } = render(<Component />)
-            rerender(<Component />)
+            render(<Component />)
         })
 
-        await expect(promise).resolves.toEqual([true, 100])
+        await expect(promise).resolves.toEqual(100)
     })
 })

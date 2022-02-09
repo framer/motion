@@ -227,6 +227,7 @@ export const visualElement =
 
             mount(newInstance: Instance) {
                 isMounted = true
+
                 instance = element.current = newInstance
 
                 if (element.projection) {
@@ -236,6 +237,8 @@ export const visualElement =
                 if (isVariantNode && parent && !isControllingVariants) {
                     removeFromVariantTree = parent?.addVariantChild(element)
                 }
+
+                values.forEach((value, key) => bindToMotionValue(key, value))
 
                 parent?.children.add(element)
                 element.setProps(props)
