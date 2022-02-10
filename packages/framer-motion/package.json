@@ -101,6 +101,5 @@
             "path": "./dist/size-webpack-dom-max.js",
             "maxSize": "31.5 kB"
         }
-    ],
-    "gitHead": "8fa982a8328935b56e2e0e33a4f043d8a40a2755"
+    ]
 }
