@@ -2,7 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-## [6.2.5] 2022-02-15
+## [6.2.6] 2022-02-10
+
+### Fixed
+
+-   Remove `useId` from React 18.
+
+## [6.2.5] 2022-02-08
 
 ### Fixed
 
