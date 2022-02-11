@@ -384,7 +384,16 @@ export function createAnimationState(
 
         state[type].isActive = isActive
 
-        return animateChanges(options, type)
+        // If called with extra options, we assume our caller is in a use effect and we animate the
+        // changes directly.
+        if (options) {
+            return animateChanges(options, type)
+        }
+
+        // The normal case, we just changed some animation state, we must make sure react will
+        // schedule our visual element and we animate from useEffect.
+        visualElement?.forceRender()
+        return Promise.resolve()
     }
 
     return {

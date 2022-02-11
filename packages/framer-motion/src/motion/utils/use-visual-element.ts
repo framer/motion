@@ -20,6 +20,7 @@ export function useVisualElement<Instance, RenderState>(
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
     const shouldReduceMotion = useReducedMotionConfig()
+    const [_, forceRender] = React.useState(1)
 
     const visualElementRef: MutableRefObject<VisualElement | undefined> =
         useRef(undefined)
@@ -38,6 +39,9 @@ export function useVisualElement<Instance, RenderState>(
             blockInitialAnimation: presenceContext?.initial === false,
             shouldReduceMotion,
         })
+        visualElementRef.current.forceRender = () => {
+            forceRender((s) => s + 1)
+        }
     }
 
     const visualElement = visualElementRef.current

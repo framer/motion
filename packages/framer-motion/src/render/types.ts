@@ -63,6 +63,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     getStaticValue(key: string): number | string | undefined
     setStaticValue(key: string, value: number | string): void
     getLatestValues(): ResolvedValues
+    forceRender(): void
     scheduleRender(): void
 
     makeTargetAnimatable(

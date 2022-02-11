@@ -436,6 +436,11 @@ export const visualElement =
             },
 
             /**
+             * Force react to render.
+             */
+            forceRender(): void {},
+
+            /**
              * Schedule a render on the next animation frame.
              */
             scheduleRender() {
