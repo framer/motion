@@ -75,7 +75,7 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "35.5 kB"
+            "maxSize": "35.6 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -101,5 +101,6 @@
             "path": "./dist/size-webpack-dom-max.js",
             "maxSize": "31.5 kB"
         }
-    ]
+    ],
+    "gitHead": "a1ef21e0d66cbf353431269ee12ebbdd69f24257"
 }
