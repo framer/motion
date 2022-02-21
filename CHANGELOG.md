@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.7] 2022-02-21
+
+### Changed
+
+-   Replaced undocumented `LayoutGroup` prop `inheritId` with `inherit`.
+
 ## [6.2.6] 2022-02-10
 
 ### Fixed

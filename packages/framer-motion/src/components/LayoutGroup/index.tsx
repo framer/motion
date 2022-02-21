@@ -8,16 +8,32 @@ import { DeprecatedLayoutGroupContext } from "../../context/DeprecatedLayoutGrou
 import { nodeGroup } from "../../projection"
 import { useForceUpdate } from "../../utils/use-force-update"
 
+type InheritOption = boolean | "id" | "group"
+
 export interface Props {
     id?: string
+    inherit?: InheritOption
+
+    /**
+     * @deprecated
+     */
     inheritId?: boolean
 }
+
+const shouldInheritId = (inherit: InheritOption) =>
+    inherit === true || inherit === "id"
+const shouldInheritGroup = (inherit: InheritOption) =>
+    inherit === true || inherit === "group"
 
 export const LayoutGroup: React.FunctionComponent<Props> = ({
     children,
     id,
-    inheritId = true,
+    inheritId,
+    inherit = true,
 }) => {
+    // Maintain backwards-compatibility with inheritId until 7.0
+    if (inheritId !== undefined) inherit = inheritId
+
     const layoutGroupContext = useContext(LayoutGroupContext)
     const deprecatedLayoutGroupContext = useContext(
         DeprecatedLayoutGroupContext
@@ -29,13 +45,13 @@ export const LayoutGroup: React.FunctionComponent<Props> = ({
 
     const upstreamId = layoutGroupContext.id ?? deprecatedLayoutGroupContext
     if (context.current === null) {
-        if (inheritId && upstreamId) {
+        if (shouldInheritId(inherit) && upstreamId) {
             id = id ? upstreamId + "-" + id : upstreamId
         }
 
         context.current = {
             id,
-            group: inheritId
+            group: shouldInheritGroup(inherit)
                 ? layoutGroupContext?.group ?? nodeGroup()
                 : nodeGroup(),
         }
