@@ -8,7 +8,7 @@ import { DeprecatedLayoutGroupContext } from "../../context/DeprecatedLayoutGrou
 import { nodeGroup } from "../../projection"
 import { useForceUpdate } from "../../utils/use-force-update"
 
-type InheritOption = boolean | "id" | "group"
+type InheritOption = boolean | "id"
 
 export interface Props {
     id?: string
@@ -20,10 +20,9 @@ export interface Props {
     inheritId?: boolean
 }
 
+const shouldInheritGroup = (inherit: InheritOption) => inherit === true
 const shouldInheritId = (inherit: InheritOption) =>
-    inherit === true || inherit === "id"
-const shouldInheritGroup = (inherit: InheritOption) =>
-    inherit === true || inherit === "group"
+    shouldInheritGroup(inherit === true) || inherit === "id"
 
 export const LayoutGroup: React.FunctionComponent<Props> = ({
     children,
