@@ -384,7 +384,14 @@ export function createAnimationState(
 
         state[type].isActive = isActive
 
-        return animateChanges(options, type)
+        const animations = animateChanges(options, type)
+
+        // Remove this and create failing test
+        for (const key in state) {
+            state[key].protectedKeys = {}
+        }
+
+        return animations
     }
 
     return {

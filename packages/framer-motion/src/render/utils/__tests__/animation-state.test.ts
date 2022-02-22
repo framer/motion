@@ -656,77 +656,41 @@ describe("Animation state - Set active", () => {
         let animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
-        expect(
-            state.getState()[AnimationType.Animate].protectedKeys
-        ).toHaveProperty("opacity")
-        expect(state.getState()[AnimationType.Hover].protectedKeys).toEqual({})
 
         // Set hover to false
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, false)
         expect(animate).toBeCalledWith([{ opacity: 1 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
-        expect(state.getState()[AnimationType.Hover].protectedKeys).toEqual({})
 
         // Set hover to true
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
-        expect(
-            state.getState()[AnimationType.Animate].protectedKeys
-        ).toHaveProperty("opacity")
-        expect(state.getState()[AnimationType.Hover].protectedKeys).toEqual({})
 
         // Set hover to false
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, false)
         expect(animate).toBeCalledWith([{ opacity: 1 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
-        expect(state.getState()[AnimationType.Hover].protectedKeys).toEqual({})
 
         // Set hover to true
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, true)
         expect(animate).toBeCalledWith([{ opacity: 0.5 }])
-        expect(
-            state.getState()[AnimationType.Animate].protectedKeys
-        ).toHaveProperty("opacity")
-        expect(state.getState()[AnimationType.Hover].protectedKeys).toEqual({})
 
         // Set press to true
         animate = mockAnimate(state)
         state.setActive(AnimationType.Tap, true)
         expect(animate).toBeCalledWith([{ opacity: 0.8 }])
-        expect(
-            state.getState()[AnimationType.Animate].protectedKeys
-        ).toHaveProperty("opacity")
-        expect(
-            state.getState()[AnimationType.Hover].protectedKeys
-        ).toHaveProperty("opacity")
-        expect(state.getState()[AnimationType.Tap].protectedKeys).toEqual({})
 
         // Set hover to false
         animate = mockAnimate(state)
         state.setActive(AnimationType.Hover, false)
-        expect(
-            state.getState()[AnimationType.Animate].protectedKeys
-        ).toHaveProperty("opacity")
-        expect(
-            state.getState()[AnimationType.Tap].protectedKeys
-        ).toHaveProperty("opacity")
         expect(animate).not.toBeCalled()
 
         // Set press to false
         animate = mockAnimate(state)
         state.setActive(AnimationType.Tap, false)
         expect(animate).toBeCalledWith([{ opacity: 1 }])
-        expect(state.getState()[AnimationType.Animate].protectedKeys).toEqual(
-            {}
-        )
     })
 
     test("Change active variant where no variants are defined", () => {
