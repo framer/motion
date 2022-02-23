@@ -384,7 +384,13 @@ export function createAnimationState(
 
         state[type].isActive = isActive
 
-        return animateChanges(options, type)
+        const animations = animateChanges(options, type)
+
+        for (const key in state) {
+            state[key].protectedKeys = {}
+        }
+
+        return animations
     }
 
     return {

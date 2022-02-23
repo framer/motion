@@ -1,8 +1,9 @@
-import { render } from "../../../jest.setup"
-import { motion, useMotionValue } from "../../"
+import { mouseDown, mouseEnter, mouseUp, render } from "../../../jest.setup"
+import { motion, MotionConfig, useMotionValue } from "../../"
 import * as React from "react"
 import { Variants } from "../../types"
 import { motionValue } from "../../value"
+import { useState } from "react"
 
 describe("animate prop as variant", () => {
     test("animates to set variant", async () => {
@@ -903,4 +904,85 @@ describe("animate prop as variant", () => {
         rerender(<Parent isVisible={false} />)
         expect(element).toHaveStyle("transform: none")
     })
+
+    test("Protected keys don't persist after setActive fires", async () => {
+        const Component = () => {
+            const [isHover, setIsHover] = useState(false)
+            const [_, setIsPressed] = useState(false)
+            const [variant, setVariant] = useState("a")
+
+            const variants = [variant]
+            if (isHover) variants.push(variant + "-hover")
+
+            return (
+                <MotionConfig transition={{ duration: 0.01 }}>
+                    <motion.div
+                        data-testid="parent"
+                        animate={variants}
+                        onHoverStart={() => setIsHover(true)}
+                        onHoverEnd={() => setIsHover(false)}
+                        onTapStart={() => setIsPressed(true)}
+                        onTap={() => setIsPressed(false)}
+                        onTapCancel={() => setIsPressed(false)}
+                    >
+                        <motion.div
+                            data-testid="variant-trigger"
+                            onTap={() => setVariant("b")}
+                            style={{
+                                width: 300,
+                                height: 300,
+                                backgroundColor: "rgb(255,255,0)",
+                            }}
+                            variants={{
+                                b: {
+                                    backgroundColor: "rgb(0,255,255)",
+                                },
+                            }}
+                        >
+                            <motion.div
+                                data-testid="inner"
+                                style={{
+                                    width: 100,
+                                    height: 100,
+                                    backgroundColor: "rgb(255,255,0)",
+                                }}
+                                variants={{
+                                    // This state lingers too long.
+                                    "a-hover": {
+                                        backgroundColor: "rgb(150,150,0)",
+                                    },
+                                    b: {
+                                        backgroundColor: "rgb(0,255,255)",
+                                    },
+                                    "b-hover": {
+                                        backgroundColor: "rgb(0, 150,150)",
+                                    },
+                                }}
+                            />
+                        </motion.div>
+                    </motion.div>
+                </MotionConfig>
+            )
+        }
+
+        const { getByTestId } = render(<Component />)
+        const inner = getByTestId("inner")
+        expect(inner).toHaveStyle("background-color: rgb(255,255,0)")
+
+        mouseEnter(getByTestId("parent"))
+
+        await wait(20)
+
+        expect(inner).toHaveStyle("background-color: rgb(150,150,0)")
+
+        mouseDown(getByTestId("variant-trigger"))
+        mouseUp(getByTestId("variant-trigger"))
+
+        await wait(20)
+
+        expect(inner).toHaveStyle("background-color: rgb(0, 150,150)")
+    })
 })
+
+const wait = (duration: number) =>
+    new Promise((resolve) => setTimeout(resolve, duration))
