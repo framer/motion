@@ -85,7 +85,7 @@ describe("as input/output range", () => {
         expect(container.firstChild).toHaveStyle("opacity: 0.1")
     })
 
-    test("updates when values change", async (resolve) => {
+    test("updates when values change", (resolve) => {
         const x = motionValue(20)
         let o = motionValue(0)
         const Component = ({ a = 0, b = 100, c = 0, d = 1 }: any) => {
