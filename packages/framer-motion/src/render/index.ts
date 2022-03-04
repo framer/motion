@@ -515,6 +515,13 @@ export const visualElement =
             },
         }
 
+        element.onUnmount(() => {
+            element.forEachValue((value) => {
+                //console.log(value)
+                value.stop();
+            });
+        });
+
         return element
     }
 
