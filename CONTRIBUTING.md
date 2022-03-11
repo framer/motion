@@ -31,9 +31,10 @@ If a PR introduces or changes API, it should link to a sister PR on the [API doc
 Follow these steps to get your code PR-ready:
 
 1. Fork the Motion repo.
-2. Clone your fork locally.
-3. Run `make bootstrap` in the repo root.
-4. Add your code and supporting tests.
-5. If this is a feature that requires doc changes, make as necessary.
-6. Update CHANGELOG.md. Follow the existing format.
-7. You're ready!
+2. Clone your fork to your local computer.
+3. Install [Yarn](https://yarnpkg.com/).
+4. Run `make bootstrap` in the repo root.
+5. Add your code and supporting tests.
+6. If this is a feature that requires doc changes, make as necessary.
+7. Update CHANGELOG.md. Follow the existing format.
+8. You're ready!
