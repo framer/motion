@@ -8,7 +8,7 @@ import {
     useContext,
 } from "react"
 import * as React from "react"
-import process from "process"
+import process from "../../utils/process"
 import { AnimatePresenceProps } from "./types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { useIsMounted } from "../../utils/use-is-mounted"
