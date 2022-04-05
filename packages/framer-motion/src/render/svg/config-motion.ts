@@ -36,7 +36,6 @@ export const svgMotionConfig: Partial<
                 props.transformTemplate
             )
 
-            // TODO: Replace with direct assignment
             renderSVG(instance, renderState)
         },
     }),
