@@ -53,6 +53,13 @@ export interface LayoutProps {
     layoutId?: string
 
     /**
+     * A callback that will fire when a layout animation on this component starts.
+     *
+     * @public
+     */
+    onLayoutAnimationStart?(): void
+
+    /**
      * A callback that will fire when a layout animation on this component completes.
      *
      * @public

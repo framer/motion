@@ -15,6 +15,7 @@ export const App = () => {
             style={{ ...(state ? a : b), backgroundColor }}
             onClick={() => setState(!state)}
             transition={{ duration: 0.15, ease: () => 0.5 }}
+            onLayoutAnimationStart={() => backgroundColor.set("green")}
             onLayoutAnimationComplete={() => backgroundColor.set("blue")}
         />
     )

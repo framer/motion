@@ -14,7 +14,7 @@ function expectBbox(element: HTMLElement, expectedBbox: BoundingBox) {
 }
 
 describe("Layout animation", () => {
-    it("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
+    it("Correctly fires layout={true} animations and fires onLayoutAnimationStart and onLayoutAnimationComplete", () => {
         cy.visit("?test=layout")
             .wait(50)
             .get("#box")
@@ -27,6 +27,12 @@ describe("Layout animation", () => {
                 })
             })
             .trigger("click")
+            /**
+             * Test that onLayoutAnimationStart fires
+             */
+            .should(([$box]: any) => {
+                expect($box.style.backgroundColor).to.equal("green")
+            })
             .wait(50)
             .should(([$box]: any) => {
                 expectBbox($box, {

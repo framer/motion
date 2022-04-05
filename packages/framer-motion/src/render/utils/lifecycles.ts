@@ -14,6 +14,7 @@ const names = [
     "AnimationComplete",
     "LayoutAnimationComplete",
     "AnimationStart",
+    "LayoutAnimationStart",
     "SetAxisTarget",
     "Unmount",
 ]
@@ -26,6 +27,7 @@ export type AnimationStartListener = (definition: AnimationDefinition) => void
 export type AnimationCompleteListener = (
     definition: AnimationDefinition
 ) => void
+export type LayoutAnimationStartListener = () => void
 export type LayoutAnimationCompleteListener = () => void
 export type SetAxisTargetListener = () => void
 export type RenderListener = () => void
@@ -35,6 +37,11 @@ export interface LayoutLifecycles {
     onBeforeLayoutMeasure?(box: Box): void
 
     onLayoutMeasure?(box: Box, prevBox: Box): void
+
+    /**
+     * @internal
+     */
+    onLayoutAnimationStart?(): void
 
     /**
      * @internal
@@ -120,6 +127,10 @@ export interface LifecycleManager {
     notifyAnimationStart: AnimationStartListener
     onAnimationComplete: (callback: AnimationCompleteListener) => () => void
     notifyAnimationComplete: AnimationCompleteListener
+    onLayoutAnimationStart: (
+        callback: LayoutAnimationStartListener
+    ) => () => void
+    notifyLayoutAnimationStart: LayoutAnimationStartListener
     onLayoutAnimationComplete: (
         callback: LayoutAnimationCompleteListener
     ) => () => void
