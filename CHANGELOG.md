@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.9] 2022-04-06
+
+### Fixed
+
+-   Fixing `process` in ESM environments.
+
 ## [6.2.8] 2022-02-23
 
 ### Changed
