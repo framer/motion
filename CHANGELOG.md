@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.2.10] 2022-04-12
+
+### Fixed
+
+-   Fixed `useSpring` dependencies if properties change between renders.
+-   Fixed `children` types of `AnimatePresence` and `LayoutGroup`.
+
 ## [6.2.9] 2022-04-06
 
 ### Fixed
