@@ -55,7 +55,7 @@ export function useSpring(
 
             return value.get()
         })
-    }, Object.values(config))
+    }, [JSON.stringify(config)])
 
     useOnChange(source, (v) => value.set(parseFloat(v)))
 

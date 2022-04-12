@@ -24,7 +24,7 @@ const shouldInheritGroup = (inherit: InheritOption) => inherit === true
 const shouldInheritId = (inherit: InheritOption) =>
     shouldInheritGroup(inherit === true) || inherit === "id"
 
-export const LayoutGroup: React.FunctionComponent<Props> = ({
+export const LayoutGroup: React.FunctionComponent<React.PropsWithChildren<Props>> = ({
     children,
     id,
     inheritId,
