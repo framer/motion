@@ -52,7 +52,7 @@ export function ReorderItem<V>(
         value,
         as = "li",
         onDrag,
-        layout: layoutProp = true,
+        layout = true,
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
@@ -71,14 +71,14 @@ export function ReorderItem<V>(
         latestX || latestY ? 1 : "unset"
     )
 
-    const layout = useRef<Box | null>(null)
+    const measuredLayout = useRef<Box | null>(null)
 
     invariant(Boolean(context), "Reorder.Item must be a child of Reorder.Group")
 
     const { axis, registerItem, updateOrder } = context!
 
     useEffect(() => {
-        registerItem(value, layout.current!)
+        registerItem(value, measuredLayout.current!)
     }, [context])
 
     return (
@@ -87,7 +87,7 @@ export function ReorderItem<V>(
             {...props}
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
-            layout={layoutProp}
+            layout={layout}
             onDrag={(event, gesturePoint) => {
                 const { velocity } = gesturePoint
                 velocity[axis] &&
@@ -96,7 +96,7 @@ export function ReorderItem<V>(
                 onDrag?.(event, gesturePoint)
             }}
             onLayoutMeasure={(measured) => {
-                layout.current = measured
+                measuredLayout.current = measured
             }}
             ref={externalRef}
         >
