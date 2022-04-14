@@ -31,6 +31,14 @@ export interface Props<V> {
      * @public
      */
     value: V
+
+    /**
+     * A subset of layout options primarily used to disable layout="size"
+     *
+     * @public
+     * @default true
+     */
+    layout?: true | "position"
 }
 
 function useDefaultMotionValue(value: any, defaultValue: number = 0) {
@@ -44,6 +52,7 @@ export function ReorderItem<V>(
         value,
         as = "li",
         onDrag,
+        layout: layoutProp = true,
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
@@ -78,7 +87,7 @@ export function ReorderItem<V>(
             {...props}
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
-            layout
+            layout={layoutProp}
             onDrag={(event, gesturePoint) => {
                 const { velocity } = gesturePoint
                 velocity[axis] &&
