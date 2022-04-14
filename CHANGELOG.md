@@ -8,6 +8,10 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Adding `layout` prop to `Reorder.Item`.
 
+### Fixed
+
+-   Ensure `cycle` is properly memoised.
+
 ## [6.2.10] 2022-04-12
 
 ### Fixed
