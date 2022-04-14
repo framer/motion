@@ -7,6 +7,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 
 -   Adding `layout` prop to `Reorder.Item`.
+-   `onLayoutAnimationStart`.
 
 ### Fixed
 
