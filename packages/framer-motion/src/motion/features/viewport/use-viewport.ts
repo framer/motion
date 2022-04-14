@@ -1,3 +1,4 @@
+import process from "../../../utils/process"
 import { useEffect, useRef } from "react"
 import { VisualElement } from "../../../render/types"
 import { AnimationType } from "../../../render/utils/types"

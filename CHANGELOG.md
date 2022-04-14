@@ -2,6 +2,29 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.0] 2022-04-14
+
+### Added
+
+-   Adding `layout` prop to `Reorder.Item`.
+
+### Fixed
+
+-   Ensure `cycle` is properly memoised.
+
+## [6.2.10] 2022-04-12
+
+### Fixed
+
+-   Fixed `useSpring` dependencies if properties change between renders.
+-   Fixed `children` types of `AnimatePresence` and `LayoutGroup`.
+
+## [6.2.9] 2022-04-06
+
+### Fixed
+
+-   Fixing `process` in ESM environments.
+
 ## [6.2.8] 2022-02-23
 
 ### Changed

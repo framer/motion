@@ -8,6 +8,7 @@ import {
     useContext,
 } from "react"
 import * as React from "react"
+import process from "../../utils/process"
 import { AnimatePresenceProps } from "./types"
 import { useForceUpdate } from "../../utils/use-force-update"
 import { useIsMounted } from "../../utils/use-is-mounted"
@@ -87,7 +88,7 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * @public
  */
-export const AnimatePresence: React.FunctionComponent<AnimatePresenceProps> = ({
+export const AnimatePresence: React.FunctionComponent<React.PropsWithChildren<AnimatePresenceProps>> = ({
     children,
     custom,
     initial = true,

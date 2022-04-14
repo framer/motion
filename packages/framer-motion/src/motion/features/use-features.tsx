@@ -1,4 +1,5 @@
 import * as React from "react"
+import process from "../../utils/process"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
 import { FeatureBundle, FeatureDefinition } from "./types"
