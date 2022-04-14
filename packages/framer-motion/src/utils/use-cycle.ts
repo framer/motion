@@ -1,5 +1,5 @@
-import { useState, useRef } from "react"
 import { wrap } from "popmotion"
+import { useCallback, useRef, useState } from "react"
 
 type Cycle = (i?: number) => void
 
@@ -35,8 +35,7 @@ export function useCycle<T>(...items: T[]): CycleState<T> {
     const index = useRef(0)
     const [item, setItem] = useState(items[index.current])
 
-    return [
-        item,
+    const runCycle = useCallback(
         (next?: number) => {
             index.current =
                 typeof next !== "number"
@@ -45,5 +44,10 @@ export function useCycle<T>(...items: T[]): CycleState<T> {
 
             setItem(items[index.current])
         },
-    ]
+        // The array will change on each call, but by putting items.length at
+        // the front of this array, we guarantee the dependency comparison will match up
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+        [items.length, ...items]
+    )
+    return [item, runCycle]
 }
