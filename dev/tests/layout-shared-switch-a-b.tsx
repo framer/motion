@@ -22,6 +22,7 @@ export const App = () => {
             }}
             onClick={() => setState(!state)}
             transition={{ duration: 0.2, ease: () => 0.5 }}
+            onLayoutAnimationStart={() => backgroundColor.set("#0f0")}
             onLayoutAnimationComplete={() => backgroundColor.set("#00f")}
         />
     )

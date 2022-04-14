@@ -15,6 +15,7 @@ export const App = () => {
             transition={transition}
             style={isOpen ? openParent : closedParent}
             onClick={() => toggleIsOpen()}
+            onLayoutAnimationStart={() => console.log("start")}
             onLayoutAnimationComplete={() => console.log("complete")}
             id="parent"
         >

@@ -36,7 +36,7 @@ describe("Shared layout: A -> B transition", () => {
 })
 
 describe("Shared layout: A -> B transition", () => {
-    it("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
+    it("Correctly fires layout={true} animations and fires onLayoutAnimationStart and onLayoutAnimationComplete", () => {
         cy.visit("?test=layout-shared-switch-a-b")
             .wait(50)
             .get("#a")
@@ -50,8 +50,14 @@ describe("Shared layout: A -> B transition", () => {
                 expect(getComputedStyle($box).opacity).to.equal("0.4")
             })
             .trigger("click")
-            .wait(50)
             .get("#b")
+            /**
+             * Test that onLayoutAnimationStart fires
+             */
+            .should(([$box]: any) => {
+                expect($box.style.backgroundColor).to.equal("rgb(0, 255, 0)")
+            })
+            .wait(50)
             .should(([$box]: any) => {
                 expect(window.getComputedStyle($box).borderRadius).to.equal(
                     "5% / 4%"
@@ -324,7 +330,7 @@ describe("Shared layout: 0 -> A -> AB -> A -> 0 transition", () => {
 })
 
 describe("Shared layout: A -> B crossfade transition", () => {
-    it("Correctly fires layout={true} animations and fires onLayoutAnimationComplete", () => {
+    it("Correctly fires layout={true} animations and fires onLayoutAnimationStart and onLayoutAnimationComplete", () => {
         cy.visit("?test=layout-shared-switch-a-b")
             .wait(50)
             .get("#a")
@@ -337,8 +343,14 @@ describe("Shared layout: A -> B crossfade transition", () => {
                 })
             })
             .trigger("click")
-            .wait(50)
             .get("#b")
+            /**
+             * Test that onLayoutAnimationStart fires
+             */
+            .should(([$box]: any) => {
+                expect($box.style.backgroundColor).to.equal("rgb(0, 255, 0)")
+            })
+            .wait(50)
             .should(([$box]: any) => {
                 expect(window.getComputedStyle($box).borderRadius).to.equal(
                     "5% / 4%"

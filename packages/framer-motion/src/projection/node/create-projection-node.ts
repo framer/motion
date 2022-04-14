@@ -416,8 +416,10 @@ export function createProjectionNode<I>({
                             visualElement.getDefaultTransition() ??
                             defaultLayoutTransition
 
-                        const { onLayoutAnimationComplete } =
-                            visualElement.getProps()
+                        const {
+                            onLayoutAnimationStart,
+                            onLayoutAnimationComplete,
+                        } = visualElement.getProps()
 
                         /**
                          * The target layout of the element might stay the same,
@@ -457,6 +459,7 @@ export function createProjectionNode<I>({
                                     layoutTransition,
                                     "layout"
                                 ),
+                                onPlay: onLayoutAnimationStart,
                                 onComplete: onLayoutAnimationComplete,
                             }
 
@@ -1172,6 +1175,8 @@ export function createProjectionNode<I>({
         }
 
         startAnimation(options: AnimationOptions<number>) {
+            this.notifyListeners("animationStart")
+
             this.currentAnimation?.stop()
             if (this.resumingFrom) {
                 this.resumingFrom.currentAnimation?.stop()
