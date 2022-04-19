@@ -58,13 +58,13 @@
             },
             "test-e2e": {
                 "dependsOn": [
-                    "build"
+                    "^build"
                 ],
                 "outputs": []
             },
             "test-ci": {
                 "dependsOn": [
-                    "build"
+                    "^build"
                 ],
                 "cache": false,
                 "outputs": []
