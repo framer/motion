@@ -52,7 +52,7 @@
             },
             "test": {
                 "dependsOn": [
-                    "build"
+                    "^build"
                 ],
                 "outputs": []
             },
