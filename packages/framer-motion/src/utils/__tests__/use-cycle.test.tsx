@@ -24,12 +24,9 @@ describe("useCycle", () => {
         click(container.firstChild as Element)
 
         /**
-         * 1 is doubled at the start of the array because in StrictMode
-         * useEffect is double-fired on mount.
-         *
-         * When resolution is changed to 18, add another 1 to start of array
+         * React double renders on mount so we push the number twice
          */
-        expect(results).toEqual([1, 2, 3, 4, 1])
+        expect(results).toEqual([1, 1, 2, 3, 4, 1])
     })
 
     test("jumps to a given index", () => {

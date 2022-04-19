@@ -49,14 +49,14 @@
         "react-merge-refs": "^1.1.0"
     },
     "peerDependencies": {
-        "@react-three/fiber": "^7.0.23",
-        "react": ">=16.8 || ^17.0.0 || ^18.0.0",
-        "react-dom": ">=16.8 || ^17.0.0 || ^18.0.0",
+        "@react-three/fiber": "^8.0.12",
+        "react": ">=16.8 || ^17.0.0 || >=18.0",
+        "react-dom": ">=16.8 || ^17.0.0 || >=18.0",
         "three": ">=0.133"
     },
     "devDependencies": {
-        "@react-three/fiber": "^7.0.23",
-        "@react-three/test-renderer": "^7.0.23",
+        "@react-three/fiber": "8.0.12",
+        "@react-three/test-renderer": "8.0.9",
         "@rollup/plugin-commonjs": "^21.0.1",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
@@ -70,9 +70,7 @@
         "jest-junit": "^6.4.0",
         "jest-watch-typeahead": "^0.4.2",
         "prettier": "^2.1.0",
-        "react": "^17.0.2",
         "react-dev-utils": "^11.0.4",
-        "react-dom": "^17.0.2",
         "rollup": "^2.10.5",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",
@@ -83,6 +81,5 @@
         "typescript": "^4.2.3",
         "webpack": "^5.27.2",
         "yarn-deduplicate": "^1.1.1"
-    },
-    "gitHead": "9ae05b89d48635a23d76fa4232f8ebaea4ffab82"
+    }
 }

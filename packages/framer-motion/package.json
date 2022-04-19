@@ -66,6 +66,7 @@
         "tslib": "^2.1.0"
     },
     "devDependencies": {
+        "@testing-library/react": "13.1.1",
         "jest": "^27.4.7",
         "jest-dom": "^3.5.0"
     },

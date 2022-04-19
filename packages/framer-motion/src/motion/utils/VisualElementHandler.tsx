@@ -8,7 +8,9 @@ interface Props {
     props: MotionProps & MotionConfigProps
 }
 
-export class VisualElementHandler extends React.Component<Props> {
+export class VisualElementHandler extends React.Component<
+    React.PropsWithChildren<Props>
+> {
     /**
      * Update visual element props as soon as we know this update is going to be commited.
      */
