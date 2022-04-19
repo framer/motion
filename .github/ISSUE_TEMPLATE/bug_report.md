@@ -39,6 +39,10 @@ If applicable, let us know which OS, browser, browser version etc you're using.
 
 ## FAQs
 
+### Type error with `AnimateSharedLayout`
+
+`AnimateSharedLayout` was deprecated in 5.0. Refer to the [upgrade guide](https://www.framer.com/docs/guide-upgrade/##shared-layout-animations) for instructions on how to remove.
+
 ### Preact isn't working
 
 Framer Motion isn't compatible with Preact. 
