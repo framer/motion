@@ -54,6 +54,17 @@
         "measure": "bundlesize",
         "start-dev-server": "webpack serve --config ../../dev/webpack/config.js --hot"
     },
+    "resolutions": {
+        "@react-three/fiber": "^8.0.12",
+        "@types/react": "^18.0.5",
+        "@types/react-dom": "^18.0.1",
+        "typescript": "^4.2.3",
+        "jest": "^24.8.0",
+        "react": "18.0.0",
+        "react-dom": "18.0.0",
+        "webpack": "^5.27.2",
+        "three": ">=0.133"
+    },
     "peerDependencies": {
         "react": ">=16.8 || ^17.0.0 || ^18.0.0",
         "react-dom": ">=16.8 || ^17.0.0 || ^18.0.0"
@@ -67,8 +78,11 @@
     },
     "devDependencies": {
         "@testing-library/react": "13.1.1",
+        "@types/react": "^17.0.39 || ^18.0.5",
+        "@types/react-dom": "^17.0.11 || ^18.0.1",
         "jest": "^27.4.7",
-        "jest-dom": "^3.5.0"
+        "jest-dom": "^3.5.0",
+        "styled-components": "^5.3.5"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
