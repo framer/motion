@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.1] 2022-04-22
+
+### Fixed
+
+-   SSR in Deno.
+
 ## [6.3.0] 2022-04-14
 
 ### Added
