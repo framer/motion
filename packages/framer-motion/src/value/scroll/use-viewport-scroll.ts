@@ -21,7 +21,6 @@ let hasListeners = false
 
 function addEventListeners() {
     hasListeners = true
-    if (typeof window === "undefined") return
 
     const updateScrollValues = createScrollUpdater(
         viewportScrollValues,

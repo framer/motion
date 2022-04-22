@@ -1,5 +1,6 @@
 import { useContext, useState } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
+import { isBrowser } from "./is-browser"
 
 interface ReducedMotionState {
     current: boolean | null
@@ -11,7 +12,7 @@ const prefersReducedMotion: ReducedMotionState = { current: null }
 let hasDetected = false
 function initPrefersReducedMotion() {
     hasDetected = true
-    if (typeof window === "undefined") return
+    if (!isBrowser) return
 
     if (window.matchMedia) {
         const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)")
