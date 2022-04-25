@@ -55,7 +55,7 @@
         "three": ">=0.133"
     },
     "devDependencies": {
-        "@react-three/fiber": "7.0.27",
+        "@react-three/fiber": "7.0.24",
         "@react-three/test-renderer": "7.0.25",
         "@rollup/plugin-commonjs": "^21.0.1",
         "@rollup/plugin-node-resolve": "^8.0.0",
