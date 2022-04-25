@@ -57,7 +57,7 @@ function Block({ set }: Omit<UnblockProps, "children">) {
 }
 
 class ErrorBoundary extends React.Component<
-    { set: React.Dispatch<any> },
+    { set: React.Dispatch<any>; children: React.ReactNode },
     { error: boolean }
 > {
     state = { error: false }

@@ -67,7 +67,8 @@
     },
     "devDependencies": {
         "jest": "^27.4.7",
-        "jest-dom": "^3.5.0"
+        "jest-dom": "^3.5.0",
+        "styled-components": "^4.1.1"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"

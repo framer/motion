@@ -49,20 +49,22 @@
         "react-merge-refs": "^1.1.0"
     },
     "peerDependencies": {
-        "@react-three/fiber": "^7.0.23",
-        "react": ">=16.8 || ^17.0.0 || ^18.0.0",
-        "react-dom": ">=16.8 || ^17.0.0 || ^18.0.0",
+        "@react-three/fiber": "^7.0.27",
+        "react": ">=16.8 || ^17.0.0",
+        "react-dom": ">=16.8 || ^17.0.0",
         "three": ">=0.133"
     },
     "devDependencies": {
-        "@react-three/fiber": "^7.0.23",
-        "@react-three/test-renderer": "^7.0.23",
+        "@react-three/fiber": "7.0.27",
+        "@react-three/test-renderer": "7.0.25",
         "@rollup/plugin-commonjs": "^21.0.1",
         "@rollup/plugin-node-resolve": "^8.0.0",
         "@rollup/plugin-replace": "^2.3.2",
         "@testing-library/dom": "^6.10.1",
         "@testing-library/react": "^9.3.2",
         "@testing-library/react-hooks": "^5.1.0",
+        "@types/react": "^17.0.39",
+        "@types/react-dom": "^17.0.11",
         "bundlesize": "^0.18.0",
         "convert-tsconfig-paths-to-webpack-aliases": "^0.9.2",
         "jest": "^24.8.0",
@@ -70,12 +72,11 @@
         "jest-junit": "^6.4.0",
         "jest-watch-typeahead": "^0.4.2",
         "prettier": "^2.1.0",
-        "react": "^17.0.2",
         "react-dev-utils": "^11.0.4",
-        "react-dom": "^17.0.2",
         "rollup": "^2.10.5",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",
+        "styled-components": "^4.1.1",
         "three": "^0.137.0",
         "ts-jest": "^24.0.2",
         "ts-loader": "^5.3.0",
@@ -83,6 +84,5 @@
         "typescript": "^4.2.3",
         "webpack": "^5.27.2",
         "yarn-deduplicate": "^1.1.1"
-    },
-    "gitHead": "9ae05b89d48635a23d76fa4232f8ebaea4ffab82"
+    }
 }

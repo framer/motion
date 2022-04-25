@@ -1202,12 +1202,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.13.10, @babel/runtime@npm:^7.14.6, @babel/runtime@npm:^7.8.4":
+"@babel/runtime@npm:^7.0.0, @babel/runtime@npm:^7.10.2, @babel/runtime@npm:^7.11.2, @babel/runtime@npm:^7.12.5, @babel/runtime@npm:^7.14.6, @babel/runtime@npm:^7.8.4":
   version: 7.16.7
   resolution: "@babel/runtime@npm:7.16.7"
   dependencies:
     regenerator-runtime: ^0.13.4
   checksum: 47912f0aaacd1cab2e2552aaf3e6eaffbcaf2d5ac9b07a89a12ac0d42029cb92c070b0d16f825e4277c4a34677c54d8ffe85e1f7c6feb57de58f700eec67ce2f
+  languageName: node
+  linkType: hard
+
+"@babel/runtime@npm:^7.13.10":
+  version: 7.17.9
+  resolution: "@babel/runtime@npm:7.17.9"
+  dependencies:
+    regenerator-runtime: ^0.13.4
+  checksum: 4d56bdb82890f386d5a57c40ef985a0ed7f0a78f789377a2d0c3e8826819e0f7f16ba0fe906d9b2241c5f7ca56630ef0653f5bb99f03771f7b87ff8af4bf5fe3
   languageName: node
   linkType: hard
 
@@ -2768,11 +2777,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@react-three/fiber@npm:latest":
-  version: 7.0.24
-  resolution: "@react-three/fiber@npm:7.0.24"
+"@react-three/fiber@npm:7.0.27":
+  version: 7.0.27
+  resolution: "@react-three/fiber@npm:7.0.27"
   dependencies:
     "@babel/runtime": ^7.13.10
+    "@types/react-reconciler": ^0.26.2
     react-merge-refs: ^1.1.0
     react-reconciler: ^0.26.2
     react-three-fiber: 0.0.0-deprecated
@@ -2785,22 +2795,22 @@ __metadata:
   peerDependencies:
     react: ">=17.0"
     react-dom: ">=17.0"
-    three: ">=0.126"
+    three: ">=0.133"
   peerDependenciesMeta:
     react-dom:
       optional: true
-  checksum: 28dcda62a507c492777208908c26e6bb03c731a08a5af642b46ff019da4cb827d179a01896c5df6e31f43c0c08e5eaaf22d53bfd59bbb8551be75884451abfb2
+  checksum: 99aba05a9b6a76cc79be1f93025f2d36865c51ac1acef53e7a3896b47527830763d9210ceee093afd9f52929e2ac6c03bbc83d51346511528e7b4e3eaca21f1d
   languageName: node
   linkType: hard
 
-"@react-three/test-renderer@npm:^7.0.23":
-  version: 7.0.23
-  resolution: "@react-three/test-renderer@npm:7.0.23"
+"@react-three/test-renderer@npm:7.0.25":
+  version: 7.0.25
+  resolution: "@react-three/test-renderer@npm:7.0.25"
   peerDependencies:
-    "@react-three/fiber": ">=7.0.24"
+    "@react-three/fiber": ">=7.0.26"
     react: ">=17.0"
     three: ">=0.126"
-  checksum: bb24e04e762985b8dc86830addbaf5ca32eb3f79b61965f4a16ed63e9b0a0c4ea8748e620f520c7e89235b3406871a06e35b98ff9bff337056e1901c2744e132
+  checksum: acd2c6b4b68ff1e2e7484ddb88d5ac5b92c404e58fc717203b433d191c10c5712873ef921e1470706c719bc361161d3aabbb1d8cae67eef60ac86a6488d57f9c
   languageName: node
   linkType: hard
 
@@ -3208,21 +3218,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:*, @types/react-dom@npm:>=16.9.0":
-  version: 17.0.11
-  resolution: "@types/react-dom@npm:17.0.11"
+"@types/react-dom@npm:^17.0.11":
+  version: 17.0.15
+  resolution: "@types/react-dom@npm:17.0.15"
   dependencies:
-    "@types/react": "*"
-  checksum: 4d5730dffbef86c887cecad7e3cecda424ce6a64d0b5441c63b5b015d48219868660a2bb1aa15e897e565ad8867fa6b885d4358b04e1c4e589ba4c07c3fda55c
-  languageName: node
-  linkType: hard
-
-"@types/react-dom@npm:17.0.6":
-  version: 17.0.6
-  resolution: "@types/react-dom@npm:17.0.6"
-  dependencies:
-    "@types/react": "*"
-  checksum: cc167c24a77cef2be8dcabd1bbe8b95c0d713b943b2f1c8a1468c8009c50daad51a46859a217a8383b89bb4ea499937d405699ce8db164f70c871f9d22d703f0
+    "@types/react": ^17
+  checksum: 7b90372bd7207d3860e1043ebfe10fd21fbd9ec3417a29593ca14359774830c888ba4ebb25cf0510628607496f8d35b09d23d329ea709b9311f5866185c5fd67
   languageName: node
   linkType: hard
 
@@ -3235,6 +3236,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-reconciler@npm:^0.26.2":
+  version: 0.26.6
+  resolution: "@types/react-reconciler@npm:0.26.6"
+  dependencies:
+    "@types/react": "*"
+  checksum: 5c96f40338f2ccc544018610b42f467945450a8448b042ce5a052a3a45820ccd028b1fb65157c99f5889a10cd1e17093252c54c56a002bc64acadd6d5a9e4b08
+  languageName: node
+  linkType: hard
+
 "@types/react-test-renderer@npm:>=16.9.0":
   version: 17.0.1
   resolution: "@types/react-test-renderer@npm:17.0.1"
@@ -3244,25 +3254,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:>=16.9.0":
-  version: 17.0.38
-  resolution: "@types/react@npm:17.0.38"
+"@types/react@npm:^17.0.39":
+  version: 17.0.44
+  resolution: "@types/react@npm:17.0.44"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 4079f4f959cd4a4bfaeda8b89fe8a1b1f8bdc9d87acfdc5f74a0b39cec9ec6a470724357c62778c0f063180b360c250e920c5a142f1dbcda67d9cc25a6d43a85
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:17.0.9":
-  version: 17.0.9
-  resolution: "@types/react@npm:17.0.9"
-  dependencies:
-    "@types/prop-types": "*"
-    "@types/scheduler": "*"
-    csstype: ^3.0.2
-  checksum: c626e3ca42b6173b0617102af6c1c8c6068f69fafeba51f5d614962cabaf98a5706295081941ece93da04117268cb0aad471be87e76dde7e0d5f79a46280c586
+  checksum: ebee02778ca08f954c316dc907802264e0121c87b8fa2e7e0156ab0ef2a1b0a09d968c016a3600ec4c9a17dc09b4274f292d9b15a1a5369bb7e4072def82808f
   languageName: node
   linkType: hard
 
@@ -7627,8 +7626,8 @@ __metadata:
     "@testing-library/react-hooks": 8.0.0-alpha.1
     "@types/jest": ^23.3.9
     "@types/node": ^17.0.8
-    "@types/react": 17.0.9
-    "@types/react-dom": 17.0.6
+    "@types/react": ^17.0.39
+    "@types/react-dom": ^17.0.11
     "@types/styled-components": ^4.1.0
     "@types/three": ^0.136.1
     "@typescript-eslint/eslint-plugin": ^5.9.1
@@ -7670,14 +7669,16 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "framer-motion-3d@workspace:packages/framer-motion-3d"
   dependencies:
-    "@react-three/fiber": ^7.0.23
-    "@react-three/test-renderer": ^7.0.23
+    "@react-three/fiber": 7.0.27
+    "@react-three/test-renderer": 7.0.25
     "@rollup/plugin-commonjs": ^21.0.1
     "@rollup/plugin-node-resolve": ^8.0.0
     "@rollup/plugin-replace": ^2.3.2
     "@testing-library/dom": ^6.10.1
     "@testing-library/react": ^9.3.2
     "@testing-library/react-hooks": ^5.1.0
+    "@types/react": ^17.0.39
+    "@types/react-dom": ^17.0.11
     bundlesize: ^0.18.0
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
     framer-motion: ^6.3.1
@@ -7686,13 +7687,12 @@ __metadata:
     jest-junit: ^6.4.0
     jest-watch-typeahead: ^0.4.2
     prettier: ^2.1.0
-    react: ^17.0.2
     react-dev-utils: ^11.0.4
-    react-dom: ^17.0.2
     react-merge-refs: ^1.1.0
     rollup: ^2.10.5
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
+    styled-components: ^4.1.1
     three: ^0.137.0
     ts-jest: ^24.0.2
     ts-loader: ^5.3.0
@@ -7701,9 +7701,9 @@ __metadata:
     webpack: ^5.27.2
     yarn-deduplicate: ^1.1.1
   peerDependencies:
-    "@react-three/fiber": ^7.0.23
-    react: ">=16.8 || ^17.0.0 || ^18.0.0"
-    react-dom: ">=16.8 || ^17.0.0 || ^18.0.0"
+    "@react-three/fiber": ^7.0.27
+    react: ">=16.8 || ^17.0.0"
+    react-dom: ">=16.8 || ^17.0.0"
     three: ">=0.133"
   languageName: unknown
   linkType: soft
@@ -7719,6 +7719,7 @@ __metadata:
     jest-dom: ^3.5.0
     popmotion: 11.0.3
     style-value-types: 5.0.0
+    styled-components: ^4.1.1
     tslib: ^2.1.0
   peerDependencies:
     react: ">=16.8 || ^17.0.0 || ^18.0.0"
@@ -15444,9 +15445,9 @@ __metadata:
   linkType: hard
 
 "three@npm:>=0.133":
-  version: 0.136.0
-  resolution: "three@npm:0.136.0"
-  checksum: 9183f83a75901edb85034fe8f6d52bf6daaece554e40d42f8eef5dead13a09e5f67548ee7cccd6c34bde42a91c5e8fa2ccb4a1b80783d7986bda4ec9f58bfe7f
+  version: 0.139.2
+  resolution: "three@npm:0.139.2"
+  checksum: 9e016065b31a2a69bba730a32bd5b61354365bf0f5072121b8695aac38c9585e4e46361275967fbb58d21e001e5189128107c3ecbf24338ca951d11b524df992
   languageName: node
   linkType: hard
 
@@ -17054,7 +17055,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"zustand@npm:^3.5.1, zustand@npm:^3.5.13":
+"zustand@npm:^3.5.1":
+  version: 3.7.2
+  resolution: "zustand@npm:3.7.2"
+  peerDependencies:
+    react: ">=16.8"
+  peerDependenciesMeta:
+    react:
+      optional: true
+  checksum: 18f025b1b666a311121d3855303ff58e6a21fd107920ca474307e86984c13338d6c4cfa5cdf13382a9e0f76821f2554a12d4d200a98a66b58637e729f149797b
+  languageName: node
+  linkType: hard
+
+"zustand@npm:^3.5.13":
   version: 3.6.9
   resolution: "zustand@npm:3.6.9"
   peerDependencies:

@@ -2,6 +2,13 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.2] 2022-04-26
+
+### Fixed
+
+-   Fixing internal type errors in React 18.
+-   Adding deprecation notice to `AnimateSharedLayout`.
+
 ## [6.3.1] 2022-04-22
 
 ### Fixed
