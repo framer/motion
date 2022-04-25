@@ -9,9 +9,15 @@
         "dev"
     ],
     "resolutions": {
+        "@react-three/fiber": "7.0.27",
+        "@types/react": "^17.0.39",
+        "@types/react-dom": "^17.0.11",
         "typescript": "^4.2.3",
         "jest": "^24.8.0",
-        "webpack": "^5.27.2"
+        "react": "17.0.2",
+        "react-dom": "17.0.2",
+        "webpack": "^5.27.2",
+        "three": ">=0.133"
     },
     "scripts": {
         "build": "turbo run build",
@@ -29,72 +35,6 @@
         "new-alpha": "npm run prepare && lerna publish from-package --canary --preid alpha",
         "new-beta": "npm run prepare && lerna publish from-package --canary --preid beta"
     },
-    "turbo": {
-        "npmClient": "yarn",
-        "baseBranch": "origin/main",
-        "pipeline": {
-            "build": {
-                "dependsOn": [
-                    "^build"
-                ],
-                "outputs": [
-                    "dist/**",
-                    "types/**"
-                ]
-            },
-            "lint": {
-                "outputs": []
-            },
-            "test": {
-                "dependsOn": [
-                    "^build"
-                ],
-                "outputs": []
-            },
-            "test-e2e": {
-                "dependsOn": [
-                    "^build"
-                ],
-                "outputs": []
-            },
-            "test-ci": {
-                "dependsOn": [
-                    "^build"
-                ],
-                "cache": false,
-                "outputs": []
-            },
-            "deploy": {
-                "dependsOn": [
-                    "build",
-                    "test",
-                    "lint"
-                ]
-            },
-            "measure": {
-                "dependsOn": [
-                    "build"
-                ]
-            },
-            "publish": {
-                "dependsOn": [
-                    "build",
-                    "test",
-                    "test-e2e",
-                    "lint"
-                ]
-            },
-            "dev": {
-                "dependsOn": [
-                    "build"
-                ],
-                "cache": false,
-                "outputs": [
-                    "dist/**"
-                ]
-            }
-        }
-    },
     "devDependencies": {
         "@cypress/webpack-preprocessor": "^4.1.0",
         "@rollup/plugin-node-resolve": "^8.0.0",
@@ -104,8 +44,8 @@
         "@testing-library/react-hooks": "8.0.0-alpha.1",
         "@types/jest": "^23.3.9",
         "@types/node": "^17.0.8",
-        "@types/react": "^18.0.5",
-        "@types/react-dom": "^18.0.1",
+        "@types/react": "^17.0.39",
+        "@types/react-dom": "^17.0.11",
         "@types/styled-components": "^4.1.0",
         "@types/three": "^0.136.1",
         "@typescript-eslint/eslint-plugin": "^5.9.1",
@@ -126,9 +66,9 @@
         "lerna": "^4.0.0",
         "lint-staged": "^8.0.4",
         "prettier": "^2.5.1",
-        "react": "^18.0.0",
+        "react": "^17.0.2",
         "react-dev-utils": "^11.0.4",
-        "react-dom": "^18.0.0",
+        "react-dom": "^17.0.2",
         "rollup": "^2.63.0",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",

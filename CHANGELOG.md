@@ -6,8 +6,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 ### Fixed
 
--   Upgrading repo to React 18 and fixing internal type errors.
--   Upgrading `framer-motion-3d` to the latest `@react-three/fiber`.
+-   Fixing internal type errors in React 18.
 -   Adding deprecation notice to `AnimateSharedLayout`.
 
 ## [6.3.1] 2022-04-22

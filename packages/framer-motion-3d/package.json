@@ -44,17 +44,6 @@
         "prepack": "yarn build",
         "postpublish": "git push --tags"
     },
-    "resolutions": {
-        "@react-three/fiber": "^8.0.12",
-        "@types/react": "^17.0.39",
-        "@types/react-dom": "^17.0.11",
-        "typescript": "^4.2.3",
-        "jest": "^24.8.0",
-        "react": "17.0.2",
-        "react-dom": "17.0.2",
-        "webpack": "^5.27.2",
-        "three": ">=0.133"
-    },
     "dependencies": {
         "framer-motion": "^6.3.1",
         "react-merge-refs": "^1.1.0"
