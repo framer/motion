@@ -7693,7 +7693,7 @@ __metadata:
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
     styled-components: ^4.1.1
-    three: ^0.137.0
+    three: ^0.133.0
     ts-jest: ^24.0.2
     ts-loader: ^5.3.0
     type-fest: ^1.0.1
