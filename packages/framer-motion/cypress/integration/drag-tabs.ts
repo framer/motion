@@ -44,20 +44,20 @@ describe("Tabs demo", () => {
             .trigger("pointermove", -100, 300, { force: true })
             .wait(50)
             .trigger("pointerup", { force: true })
-            .wait(100)
+            .wait(200)
             .get("#Lettuce-content")
             .should(([$content]: any) => {
                 expect(window.getComputedStyle($content).opacity).to.equal("1")
             })
             .get("#Tomato-tab")
-            .wait(50)
+            .wait(200)
             .trigger("pointerdown", 40, 10)
             .trigger("pointermove", -40, 10, { force: true }) // Gesture will start from first move past threshold
             .wait(20)
             .trigger("pointermove", -100, 300, { force: true })
             .wait(50)
             .trigger("pointerup", { force: true })
-            .wait(150)
+            .wait(250)
             .should(([$tab]: any) => {
                 const { left } = $tab.getBoundingClientRect()
                 expect(left).to.equal(265)
