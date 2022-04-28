@@ -2,7 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
-<<<<<<< HEAD
+## [6.3.3] 2022-04-28
+
+### Fixed
+
+-   Re-enabling layout animations on `svg` elements.
+
 ## [6.3.2] 2022-04-26
 
 ### Fixed
@@ -39,15 +44,6 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 -   Fixing `process` in ESM environments.
-
-## [6.2.8] 2022-02-23
-=======
-## [6.2.9] 2022-03-11
->>>>>>> 30957386 (Latest)
-
-### Fixed
-
--   Re-enabling layout animations on `svg` elements.
 
 ## [6.2.7] 2022-02-21
 
