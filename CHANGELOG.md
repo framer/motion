@@ -45,6 +45,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 -   Fixing `process` in ESM environments.
 
+## [6.2.8] 2022-02-23
+
+### Changed
+
+-   Fixing race conditions for variants changed by state vs by gesture.
+
 ## [6.2.7] 2022-02-21
 
 ### Changed
