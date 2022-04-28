@@ -52,16 +52,13 @@
         <div id="box-b"></div>
         <div id="trigger-overflow"></div>
 
-        <script src="../../packages/motion/dist/projection.dev.js"></script>
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const {
-                matchViewportBox,
-                matchVisibility,
-                matchOpacity,
-            } = window.Assert
+            const { matchViewportBox, matchVisibility, matchOpacity } =
+                window.Assert
 
             const a = document.getElementById("box-a")
             const b = document.getElementById("box-b")

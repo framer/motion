@@ -39,16 +39,13 @@
         <div id="box-a"></div>
         <div id="trigger-overflow"></div>
 
-        <script src="../../packages/motion/dist/projection.dev.js"></script>
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
         <script src="./script-undo.js"></script>
         <script>
             const { createNode } = window.Undo
-            const {
-                matchViewportBox,
-                matchVisibility,
-                matchOpacity,
-            } = window.Assert
+            const { matchViewportBox, matchVisibility, matchOpacity } =
+                window.Assert
 
             const box = document.getElementById("box-a")
             const boxProjection = createNode(box, undefined, { layoutId: "a" })

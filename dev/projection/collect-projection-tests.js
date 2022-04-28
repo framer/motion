@@ -1,10 +1,12 @@
 const fs = require("fs")
 const path = require("path")
 
-const files = fs.readdirSync("./dev/projection").filter(f => path.extname(f) === ".html")
+const files = fs
+    .readdirSync(__dirname)
+    .filter((f) => path.extname(f) === ".html")
 
 fs.writeFile(
-    "./cypress/fixtures/projection-tests.json",
+    "../../packages/framer-motion/cypress/fixtures/projection-tests.json",
     JSON.stringify(files),
     "utf8",
     (err) => {

@@ -65,16 +65,13 @@
         <div id="button"></div>
         <div id="trigger-overflow"></div>
 
-        <script src="../../packages/motion/dist/projection.dev.js"></script>
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
         <script src="./script-assert.js"></script>
         <script src="./script-animate.js"></script>
         <script>
             const { createNode } = window.Animate
-            const {
-                matchViewportBox,
-                matchVisibility,
-                matchOpacity,
-            } = window.Assert
+            const { matchViewportBox, matchVisibility, matchOpacity } =
+                window.Assert
 
             const a = document.getElementById("box-a")
             const childA = document.getElementById("child-a")
