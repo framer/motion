@@ -26,4 +26,4 @@ Framer Motion is MIT licensed.
 
 ## Framer
 
-Straight from design to production. You’ve never made a website this fast before. Really. [Try Framer for free](https://www.framer.com/).
+Design and publish. You’ve never made a website this fast before. Really. [Try Framer for free](https://www.framer.com/).
