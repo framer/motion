@@ -53,7 +53,7 @@ export function MotionConfig({
      */
     const context = useMemo(
         () => config,
-        [JSON.stringify(config.transition), config.transformPagePoint]
+        [JSON.stringify(config.transition), config.transformPagePoint, config.reducedMotion]
     )
 
     return (
