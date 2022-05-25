@@ -21,25 +21,12 @@ type ComponentKey = string | number
 
 const getChildKey = (child: ReactElement<any>): ComponentKey => child.key || ""
 
-const isDev = process.env.NODE_ENV !== "production"
-
 function updateChildLookup(
     children: ReactElement<any>[],
     allChildren: Map<ComponentKey, ReactElement<any>>
 ) {
-    const seenChildren = isDev ? new Set<ComponentKey>() : null
-
     children.forEach((child) => {
         const key = getChildKey(child)
-
-        if (isDev && seenChildren && seenChildren.has(key)) {
-            console.warn(
-                `Children of AnimatePresence require unique keys. "${key}" is a duplicate.`
-            )
-
-            seenChildren.add(key)
-        }
-
         allChildren.set(key, child)
     })
 }
