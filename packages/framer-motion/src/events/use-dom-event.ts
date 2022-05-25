@@ -4,7 +4,7 @@ export function addDomEvent(
     target: EventTarget,
     eventName: string,
     handler: EventListener,
-    options?: AddEventListenerOptions
+    options: AddEventListenerOptions = { passive: true }
 ) {
     target.addEventListener(eventName, handler, options)
 

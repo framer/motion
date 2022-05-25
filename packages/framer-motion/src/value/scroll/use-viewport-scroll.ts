@@ -27,7 +27,7 @@ function addEventListeners() {
         getViewportScrollOffsets
     )
 
-    addDomEvent(window, "scroll", updateScrollValues, { passive: true })
+    addDomEvent(window, "scroll", updateScrollValues)
     addDomEvent(window, "resize", updateScrollValues)
 }
 
