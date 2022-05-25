@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.4] 2022-05-25
+
+### Fixed
+
+-   Updating `reducedMotion` prop in `MotionConfig` now correctly updates throughout the tree.
+
 ## [6.3.3] 2022-04-28
 
 ### Fixed
