@@ -61,6 +61,9 @@ export function useTap(
             if (isPressing.current) return
             isPressing.current = true
 
+            /**
+             * TODO: Make passive if tp handlers dont exist
+             */
             cancelPointerEndListeners.current = pipe(
                 addPointerEvent(window, "pointerup", onPointerUp),
                 addPointerEvent(window, "pointercancel", onPointerCancel)

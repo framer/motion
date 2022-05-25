@@ -163,6 +163,9 @@ export class PanSession {
         onSessionStart &&
             onSessionStart(event, getPanInfo(initialInfo, this.history))
 
+        /**
+         * TODO: Make passive if pan handlers don't exist?
+         */
         this.removeListeners = pipe(
             addPointerEvent(window, "pointermove", this.handlePointerMove),
             addPointerEvent(window, "pointerup", this.handlePointerUp),

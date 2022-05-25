@@ -59,6 +59,9 @@ export function useTapGesture({
         if (isPressing.current) return
         isPressing.current = true
 
+        /**
+         * TODO: Make passive if tap handlers dont exist?
+         */
         cancelPointerEndListeners.current = pipe(
             addPointerEvent(window, "pointerup", onPointerUp),
             addPointerEvent(window, "pointercancel", onPointerCancel)
@@ -72,6 +75,7 @@ export function useTapGesture({
         onTapStart?.(event, info)
     }
 
+    // TODO Make true if handler doesnt exist
     usePointerEvent(
         visualElement,
         "pointerdown",

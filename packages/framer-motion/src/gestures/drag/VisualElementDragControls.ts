@@ -520,6 +520,9 @@ export class VisualElementDragControls {
         /**
          * Attach a pointerdown event listener on this DOM element to initiate drag tracking.
          */
+        /**
+         * TODO: Make passive if onDrag handlers dont exist?
+         */
         const stopPointerListener = addPointerEvent(
             element,
             "pointerdown",

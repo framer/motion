@@ -53,6 +53,7 @@ export function usePanGesture({
         })
     }
 
+    // TODO: Make passive: true if onPan doesnt exist
     usePointerEvent(visualElement, "pointerdown", hasPanEvents && onPointerDown)
 
     useUnmountEffect(() => panSession.current && panSession.current.end())
