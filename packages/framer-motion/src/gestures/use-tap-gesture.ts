@@ -23,6 +23,13 @@ export function useTapGesture({
     const isPressing = useRef(false)
     const cancelPointerEndListeners = useRef<Function | null>(null)
 
+    /**
+     * Only set listener to passive if there are no external listeners.
+     */
+    const eventOptions = {
+        passive: !(onTapStart || onTap || onTapCancel || onPointerDown),
+    }
+
     function removePointerEndListener() {
         cancelPointerEndListeners.current?.()
         cancelPointerEndListeners.current = null
@@ -59,12 +66,14 @@ export function useTapGesture({
         if (isPressing.current) return
         isPressing.current = true
 
-        /**
-         * TODO: Make passive if tap handlers dont exist?
-         */
         cancelPointerEndListeners.current = pipe(
-            addPointerEvent(window, "pointerup", onPointerUp),
-            addPointerEvent(window, "pointercancel", onPointerCancel)
+            addPointerEvent(window, "pointerup", onPointerUp, eventOptions),
+            addPointerEvent(
+                window,
+                "pointercancel",
+                onPointerCancel,
+                eventOptions
+            )
         )
 
         /**
@@ -74,17 +83,12 @@ export function useTapGesture({
 
         onTapStart?.(event, info)
     }
-    /**
-     * Only set listener to passive if there are no external listeners.
-     */
-    const options = {
-        passive: !(onTapStart || onTap || onTapCancel || onPointerDown),
-    }
+
     usePointerEvent(
         visualElement,
         "pointerdown",
         hasPressListeners ? onPointerDown : undefined,
-        options
+        eventOptions
     )
 
     useUnmountEffect(removePointerEndListener)

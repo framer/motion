@@ -28,9 +28,6 @@ export function useHoverGesture({
     whileHover,
     visualElement,
 }: FeatureProps) {
-    /**
-     * TODO: Make passive: false if onHoverStart doesnt exist
-     */
     usePointerEvent(
         visualElement,
         "pointerenter",
@@ -40,9 +37,6 @@ export function useHoverGesture({
         { passive: !onHoverStart }
     )
 
-    /**
-     * TODO: Make passive: false if onHoverStart doesnt exist
-     */
     usePointerEvent(
         visualElement,
         "pointerleave",
