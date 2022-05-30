@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.5] 2022-05-30
+
+### Fixed
+
+-   Added `initial` prop to Framer Motion 3D types.
+
 ## [6.3.4] 2022-05-25
 
 ### Fixed
