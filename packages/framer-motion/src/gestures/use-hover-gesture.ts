@@ -36,7 +36,8 @@ export function useHoverGesture({
         "pointerenter",
         onHoverStart || whileHover
             ? createHoverEvent(visualElement, true, onHoverStart)
-            : undefined
+            : undefined,
+        { passive: !onHoverStart }
     )
 
     /**
@@ -47,6 +48,7 @@ export function useHoverGesture({
         "pointerleave",
         onHoverEnd || whileHover
             ? createHoverEvent(visualElement, false, onHoverEnd)
-            : undefined
+            : undefined,
+        { passive: !onHoverEnd }
     )
 }

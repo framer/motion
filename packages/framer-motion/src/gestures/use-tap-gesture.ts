@@ -74,12 +74,17 @@ export function useTapGesture({
 
         onTapStart?.(event, info)
     }
-
-    // TODO Make true if handler doesnt exist
+    /**
+     * Only set listener to passive if there are no external listeners.
+     */
+    const options = {
+        passive: !(onTapStart || onTap || onTapCancel || onPointerDown),
+    }
     usePointerEvent(
         visualElement,
         "pointerdown",
-        hasPressListeners ? onPointerDown : undefined
+        hasPressListeners ? onPointerDown : undefined,
+        options
     )
 
     useUnmountEffect(removePointerEndListener)
