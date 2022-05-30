@@ -125,6 +125,27 @@ export type ResolveLayoutTransition = (
  */
 export interface AnimationProps {
     /**
+     * Properties, variant label or array of variant labels to start in.
+     *
+     * Set to `false` to initialise with the values in `animate` (disabling the mount animation)
+     *
+     * ```jsx
+     * // As values
+     * <motion.div initial={{ opacity: 1 }} />
+     *
+     * // As variant
+     * <motion.div initial="visible" variants={variants} />
+     *
+     * // Multiple variants
+     * <motion.div initial={["visible", "active"]} variants={variants} />
+     *
+     * // As false (disable mount animation)
+     * <motion.div initial={false} animate={{ opacity: 0 }} />
+     * ```
+     */
+    initial?: boolean | Target | VariantLabels
+
+    /**
      * Values to animate to, variant label(s), or `AnimationControls`.
      *
      * ```jsx
@@ -260,27 +281,6 @@ export interface MotionProps
         DraggableProps,
         LayoutProps,
         MotionAdvancedProps {
-    /**
-     * Properties, variant label or array of variant labels to start in.
-     *
-     * Set to `false` to initialise with the values in `animate` (disabling the mount animation)
-     *
-     * ```jsx
-     * // As values
-     * <motion.div initial={{ opacity: 1 }} />
-     *
-     * // As variant
-     * <motion.div initial="visible" variants={variants} />
-     *
-     * // Multiple variants
-     * <motion.div initial={["visible", "active"]} variants={variants} />
-     *
-     * // As false (disable mount animation)
-     * <motion.div initial={false} animate={{ opacity: 0 }} />
-     * ```
-     */
-    initial?: boolean | Target | VariantLabels
-
     /**
      *
      * The React DOM `style` prop, enhanced with support for `MotionValue`s and separate `transform` values.
