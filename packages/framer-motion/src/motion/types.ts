@@ -144,6 +144,7 @@ export interface AnimationProps {
      * ```
      */
     initial?: boolean | Target | VariantLabels
+
     /**
      * Values to animate to, variant label(s), or `AnimationControls`.
      *
