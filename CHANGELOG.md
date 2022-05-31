@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.6] 2022-05-31
+
+### Fixed
+
+-   All events are now passive unless a user provides an explicit event listener.
+
 ## [6.3.5] 2022-05-30
 
 ### Fixed
