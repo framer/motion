@@ -61,9 +61,21 @@ export function useTap(
             if (isPressing.current) return
             isPressing.current = true
 
+            /**
+             * Only set listener to passive if there are no external listeners.
+             */
+            const options = {
+                passive: !(onTapStart || onTap || onTapCancel || onPointerDown),
+            }
+
             cancelPointerEndListeners.current = pipe(
-                addPointerEvent(window, "pointerup", onPointerUp),
-                addPointerEvent(window, "pointercancel", onPointerCancel)
+                addPointerEvent(window, "pointerup", onPointerUp, options),
+                addPointerEvent(
+                    window,
+                    "pointercancel",
+                    onPointerCancel,
+                    options
+                )
             )
 
             visualElement.animationState?.setActive(AnimationType.Tap, true)

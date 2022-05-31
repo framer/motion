@@ -554,9 +554,9 @@ export class VisualElementDragControls {
          * Attach a window resize listener to scale the draggable target within its defined
          * constraints as the window resizes.
          */
-        const stopResizeListener = addDomEvent(window, "resize", () => {
+        const stopResizeListener = addDomEvent(window, "resize", () =>
             this.scalePositionWithinConstraints()
-        })
+        )
 
         /**
          * If the element's layout changes, calculate the delta and apply that to
