@@ -261,6 +261,11 @@ const checkAndConvertChangedValueTypes = (
     })
 
     if (changedValueTypeKeys.length) {
+        const scrollY =
+            changedValueTypeKeys.indexOf("height") >= 0
+                ? window.pageYOffset
+                : null
+
         const convertedTarget = convertChangedValueTypes(
             target,
             visualElement,
@@ -276,6 +281,9 @@ const checkAndConvertChangedValueTypes = (
 
         // Reapply original values
         visualElement.syncRender()
+
+        // Restore scroll position
+        if (scrollY !== null) window.scrollTo({ top: scrollY })
 
         return { target: convertedTarget, transitionEnd }
     } else {
