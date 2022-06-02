@@ -27,6 +27,12 @@ const isFloat = (value: any): value is string => {
  */
 export class MotionValue<V = any> {
     /**
+     * This will be replaced by the build step with the latest version number.
+     * When MotionValues are provided to motion components, warn if versions are mixed.
+     */
+    version = "__VERSION__"
+
+    /**
      * The current state of the `MotionValue`.
      *
      * @internal

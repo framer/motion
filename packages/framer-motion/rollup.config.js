@@ -7,6 +7,21 @@ const config = {
     input: "lib/index.js",
 }
 
+const replaceSettings = (env) => {
+    const replaceConfig = env
+        ? {
+              "process.env.NODE_ENV": JSON.stringify(env),
+              preventAssignment: false,
+          }
+        : {
+              preventAssignment: false,
+          }
+
+    replaceConfig.__VERSION__ = `${pkg.version}`
+
+    return replace(replaceConfig)
+}
+
 const external = [
     ...Object.keys(pkg.dependencies || {}),
     ...Object.keys(pkg.peerDependencies || {}),
@@ -29,13 +44,7 @@ const umd = Object.assign({}, config, {
         globals: { react: "React" },
     },
     external: ["react", "react-dom"],
-    plugins: [
-        resolve(),
-        replace({
-            "process.env.NODE_ENV": JSON.stringify("development"),
-            preventAssignment: true,
-        }),
-    ],
+    plugins: [resolve(), replaceSettings("development")],
 })
 
 const projection = Object.assign({}, config, {
@@ -46,13 +55,7 @@ const projection = Object.assign({}, config, {
         name: "Projection",
         exports: "named",
     },
-    plugins: [
-        resolve(),
-        replace({
-            "process.env.NODE_ENV": JSON.stringify("development"),
-            preventAssignment: true,
-        }),
-    ],
+    plugins: [resolve(), replaceSettings("development")],
     external: ["react", "react-dom"],
 })
 
@@ -62,10 +65,7 @@ const umdProd = Object.assign({}, umd, {
     }),
     plugins: [
         resolve(),
-        replace({
-            "process.env.NODE_ENV": JSON.stringify("production"),
-            preventAssignment: true,
-        }),
+        replaceSettings("production"),
         pureClass,
         terser({ output: { comments: false } }),
     ],
@@ -79,7 +79,7 @@ const cjs = Object.assign({}, config, {
         format: "cjs",
         exports: "named",
     },
-    plugins: [resolve()],
+    plugins: [resolve(), replaceSettings()],
     external,
 })
 
@@ -92,16 +92,13 @@ const es = Object.assign({}, config, {
         preserveModules: true,
         dir: "dist/es",
     },
-    plugins: [resolve()],
+    plugins: [resolve(), replaceSettings()],
     external,
 })
 
 const sizePlugins = [
     resolve(),
-    replace({
-        "process.env.NODE_ENV": JSON.stringify("production"),
-        preventAssignment: true,
-    }),
+    replaceSettings("production"),
     terser({ output: { comments: false } }),
 ]
 
