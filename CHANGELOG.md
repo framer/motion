@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.8] 2022-06-03
+
+### Fixed
+
+-   Restore scroll position after measuring `height` when doing unit conversion animation.
+
 ## [6.3.7] 2022-06-03
 
 ### Fixed
