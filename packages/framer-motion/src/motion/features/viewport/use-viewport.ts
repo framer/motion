@@ -1,4 +1,4 @@
-import process from "../../../utils/process"
+import { env } from "../../../utils/process"
 import { useEffect, useRef } from "react"
 import { VisualElement } from "../../../render/types"
 import { AnimationType } from "../../../render/utils/types"
@@ -112,7 +112,7 @@ function useMissingIntersectionObserver(
     useEffect(() => {
         if (!shouldObserve || !fallback) return
 
-        if (process.env.NODE_ENV !== "production") {
+        if (env !== "production") {
             warnOnce(
                 false,
                 "IntersectionObserver not available on this device. whileInView animations will trigger on mount."

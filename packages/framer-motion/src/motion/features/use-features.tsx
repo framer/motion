@@ -1,5 +1,5 @@
 import * as React from "react"
-import process from "../../utils/process"
+import { env } from "../../utils/process"
 import { VisualElement } from "../../render/types"
 import { MotionProps } from "../types"
 import { FeatureBundle, FeatureDefinition } from "./types"
@@ -28,11 +28,7 @@ export function useFeatures(
      * If we're in development mode, check to make sure we're not rendering a motion component
      * as a child of LazyMotion, as this will break the file-size benefits of using it.
      */
-    if (
-        process.env.NODE_ENV !== "production" &&
-        preloadedFeatures &&
-        lazyContext.strict
-    ) {
+    if (env !== "production" && preloadedFeatures && lazyContext.strict) {
         invariant(
             false,
             "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
