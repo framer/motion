@@ -7,7 +7,10 @@
     "exports": {
         ".": {
             "require": "./dist/cjs/index.js",
-            "import": "./dist/es/index.mjs",
+            "import": {
+                "types": "./types/index.d.ts",
+                "default": "./dist/es/index.mjs"
+            },
             "default": "./dist/cjs/index.js"
         },
         "./package.json": "./package.json"
