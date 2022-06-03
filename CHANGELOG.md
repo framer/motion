@@ -2,6 +2,8 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.7] 2022-06-03
+
 ### Fixed
 
 -   Will display a warning if different versions of Framer Motion are mixed.
