@@ -661,6 +661,13 @@ export function createProjectionNode<I>({
             )
             roundBox(layout)
 
+            console.log(
+                "snapshot",
+                calcLength(measured.y),
+                calcLength(layout.y),
+                this.options.visualElement?.getInstance().style.transform
+            )
+
             this.snapshot = {
                 measured,
                 layout,
@@ -696,6 +703,13 @@ export function createProjectionNode<I>({
             }
 
             const measured = this.measure()
+
+            console.log(
+                "layout",
+                calcLength(measured.y),
+                this.options.visualElement?.getInstance().style.transform
+            )
+
             roundBox(measured)
 
             const prevLayout = this.layout
