@@ -31,5 +31,7 @@ export function buildProjectionTransform(
         if (rotateY) transform += `rotateY(${rotateY}deg) `
     }
 
-    return transform === identityProjection ? "none" : transform.trim()
+    transform = transform.trim()
+
+    return transform === identityProjection ? "none" : transform
 }
