@@ -99,7 +99,7 @@ export function useTransform<I, O>(
  * export const MyComponent = () => {
  *   const x = useMotionValue(0)
  *   const y = useMotionValue(0)
- *   const z = useTransform([x, y], [latestX, latestY] => latestX * latestY)
+ *   const z = useTransform([x, y], ([latestX, latestY]) => latestX * latestY)
  *
  *   return <motion.div style={{ x, y, z }} />
  * }
