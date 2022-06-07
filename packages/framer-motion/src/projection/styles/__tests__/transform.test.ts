@@ -31,6 +31,6 @@ describe("buildProjectionTransform", () => {
 
         expect(
             buildProjectionTransform(delta, { x: 2, y: 0.5 }, { rotate: 45 })
-        ).toEqual("translate3d(50px, 600px, 0) scale(2, 4) rotate(45deg)")
+        ).toEqual("translate3d(50px, 600px, 0) rotate(45deg) scale(2, 4)")
     })
 })

@@ -18,12 +18,6 @@ export function buildProjectionTransform(
     const yTranslate = delta.y.translate / treeScale.y
     let transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `
 
-    /**
-     * Scale must come before rotate otherwise the scale correction will be rotated,
-     * compounding the distortion.
-     */
-    transform += `scale(${delta.x.scale}, ${delta.y.scale}) `
-
     if (latestTransform) {
         const { rotate, rotateX, rotateY } = latestTransform
         if (rotate) transform += `rotate(${rotate}deg) `
@@ -31,7 +25,7 @@ export function buildProjectionTransform(
         if (rotateY) transform += `rotateY(${rotateY}deg) `
     }
 
-    transform = transform.trim()
+    transform += `scale(${delta.x.scale}, ${delta.y.scale})`
 
     return transform === identityProjection ? "none" : transform
 }
