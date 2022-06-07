@@ -1,7 +1,8 @@
 import { ResolvedValues } from "../../render/types"
 import { Delta, Point } from "../geometry/types"
 
-export const identityProjection = "translate3d(0px, 0px, 0) scale(1, 1)"
+export const identityProjection =
+    "translate3d(0px, 0px, 0) scale(1, 1) scale(1, 1)"
 
 export function buildProjectionTransform(
     delta: Delta,
@@ -19,9 +20,10 @@ export function buildProjectionTransform(
     let transform = `translate3d(${xTranslate}px, ${yTranslate}px, 0) `
 
     /**
-     * Apply scale correction for the tree. This will apply scale to the screen-orientated axes.
+     * Apply scale correction for the tree transform.
+     * This will apply scale to the screen-orientated axes.
      */
-    transform += `scale(${1 / treeScale.x}, ${1 / treeScale.y})`
+    transform += `scale(${1 / treeScale.x}, ${1 / treeScale.y}) `
 
     if (latestTransform) {
         const { rotate, rotateX, rotateY } = latestTransform
