@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.11] 2022-06-07
+
+### Fixed
+
+-   Fixed scale correction during rotation & layout animations.
+
 ## [6.3.10] 2022-06-03
 
 ### Fixed
