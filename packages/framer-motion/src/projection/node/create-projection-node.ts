@@ -696,6 +696,7 @@ export function createProjectionNode<I>({
             }
 
             const measured = this.measure()
+
             roundBox(measured)
 
             const prevLayout = this.layout
