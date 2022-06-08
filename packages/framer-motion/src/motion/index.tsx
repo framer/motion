@@ -23,7 +23,7 @@ export interface MotionComponentConfig<Instance, RenderState> {
     projectionNodeConstructor?: any
     useRender: RenderComponent<Instance, RenderState>
     useVisualState: UseVisualState<Instance, RenderState>
-    Component: string | React.ComponentType
+    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>
 }
 
 /**

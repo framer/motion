@@ -22,7 +22,7 @@ export interface CustomMotionComponentConfig {
 }
 
 export type CreateConfig = <Instance, RenderState, Props>(
-    Component: string | React.ComponentType<Props>,
+    Component: string | React.ComponentType<React.PropsWithChildren<Props>>,
     config: CustomMotionComponentConfig
 ) => MotionComponentConfig<Instance, RenderState>
 
@@ -42,7 +42,7 @@ export type CreateConfig = <Instance, RenderState, Props>(
  */
 export function createMotionProxy(createConfig: CreateConfig) {
     function custom<Props>(
-        Component: string | React.ComponentType<Props>,
+        Component: string | React.ComponentType<React.PropsWithChildren<Props>>,
         customMotionComponentConfig: CustomMotionComponentConfig = {}
     ): CustomDomComponent<Props> {
         return createMotionComponent<
