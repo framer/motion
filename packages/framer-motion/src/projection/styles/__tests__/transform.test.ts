@@ -22,15 +22,17 @@ describe("buildProjectionTransform", () => {
             },
         }
         expect(buildProjectionTransform(delta, { x: 1, y: 1 })).toEqual(
-            "translate3d(100px, 300px, 0) scale(2, 4)"
+            "translate3d(100px, 300px, 0) scale(1, 1) scale(2, 4)"
         )
 
         expect(buildProjectionTransform(delta, { x: 2, y: 0.5 })).toEqual(
-            "translate3d(50px, 600px, 0) scale(2, 4)"
+            "translate3d(50px, 600px, 0) scale(0.5, 2) scale(4, 2)"
         )
 
         expect(
             buildProjectionTransform(delta, { x: 2, y: 0.5 }, { rotate: 45 })
-        ).toEqual("translate3d(50px, 600px, 0) rotate(45deg) scale(2, 4)")
+        ).toEqual(
+            "translate3d(50px, 600px, 0) scale(0.5, 2) rotate(45deg) scale(4, 2)"
+        )
     })
 })

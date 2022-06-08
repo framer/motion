@@ -1,0 +1,117 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #container-a {
+                position: relative;
+                width: 300px;
+                height: 300px;
+            }
+
+            #box-a {
+                width: 100px;
+                height: 100px;
+                background-color: #00cc88;
+            }
+
+            #container-b {
+                position: relative;
+                width: 300px;
+                height: 600px;
+            }
+
+            #box-b {
+                position: absolute;
+                top: 100px;
+                left: 100px;
+                width: 200px;
+                height: 300px;
+                background-color: #09f;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container-a"><div id="box-a"></div></div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const {
+                matchViewportBox,
+                matchVisibility,
+                matchOpacity,
+                matchBorderRadius,
+                matchRotate,
+            } = window.Assert
+
+            const container = document.getElementById("container-a")
+            const containerProjection = createNode(container, undefined, {
+                layoutId: "container",
+            })
+
+            const box = document.getElementById("box-a")
+            const boxProjection = createNode(box, containerProjection, {
+                layoutId: "box",
+            })
+
+            containerProjection.willUpdate()
+            boxProjection.willUpdate()
+
+            const newContainer = document.createElement("div")
+            newContainer.id = "container-b"
+            document.body.appendChild(newContainer)
+            const newContainerProjection = createNode(newContainer, undefined, {
+                layoutId: "container",
+            })
+
+            const newBox = document.createElement("div")
+            newBox.id = "box-b"
+            newContainer.appendChild(newBox)
+            const newBoxProjection = createNode(
+                newBox,
+                newContainerProjection,
+                { layoutId: "box" }
+            )
+
+            boxProjection.setValue("opacity", 0.8)
+            newBoxProjection.setValue("borderRadius", 20)
+            newBoxProjection.setValue("rotate", 40)
+
+            newBoxProjection.root.didUpdate()
+
+            sync.postRender(() => {
+                const bbox = newBox.getBoundingClientRect()
+                matchViewportBox(box, bbox)
+                matchVisibility(box, "visible")
+                matchVisibility(newBox, "visible")
+                matchOpacity(box, 0.8)
+                matchOpacity(newBox, 1)
+                matchRotate(box, 20)
+                matchRotate(newBox, 20)
+
+                matchBorderRadius(box, "6.66667% / 5%")
+                matchBorderRadius(newBox, "6.66667% / 5%")
+            })
+        </script>
+    </body>
+</html>
