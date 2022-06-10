@@ -131,6 +131,7 @@ export const AnimatePresence: React.FunctionComponent<
     const filteredChildren = onlyElements(children)
     let childrenToRender = filteredChildren
 
+    const exiting = useRef(new Set<ComponentKey>()).current
     const exitingChildren = useRef(
         new Map<ComponentKey, ReactElement<any>>()
     ).current
@@ -158,6 +159,7 @@ export const AnimatePresence: React.FunctionComponent<
     useUnmountEffect(() => {
         isInitialRender.current = true
         allChildren.clear()
+        exiting.clear()
         exitingChildren.clear()
     })
 
@@ -192,7 +194,11 @@ export const AnimatePresence: React.FunctionComponent<
     for (let i = 0; i < numPresent; i++) {
         const key = presentKeys[i]
 
-        if (targetKeys.indexOf(key) !== -1) {
+        if (targetKeys.indexOf(key) === -1) {
+            exiting.add(key)
+        } else {
+            exiting.delete(key)
+            exitingChildren.delete(key)
             preservingKeys.push(key)
         }
     }
@@ -211,6 +217,7 @@ export const AnimatePresence: React.FunctionComponent<
 
             const onExit = () => {
                 allChildren.delete(key)
+                exiting.delete(key)
                 exitingChildren.delete(key)
 
                 // Remove this child from the present children
@@ -220,7 +227,7 @@ export const AnimatePresence: React.FunctionComponent<
                 presentChildren.current.splice(removeIndex, 1)
 
                 // Defer re-rendering until all exiting children have indeed left
-                if (!exitingChildren.size) {
+                if (!exiting.size) {
                     presentChildren.current = filteredChildren
 
                     if (isMounted.current === false) return
