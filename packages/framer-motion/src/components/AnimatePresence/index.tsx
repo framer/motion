@@ -269,25 +269,26 @@ export const AnimatePresence: React.FunctionComponent<
     // insert the chunk where the change occurred in the previous location.
     //
     // presentChildren  ->  children
-    //     [1]                 [A]
-    //     [A]                 [D]
-    //     [2]                 [E]
-    //     [B]                 [F]
-    //     [3]                 [B]
+    //     [A]                 [1]
+    //     [D]                 [A]
+    //     [E]                 [2]
+    //     [F]                 [B]
+    //     [B]                 [3]
     //     [C]                 [C]
     //
-    // init -> animate -> Exit Complete
+    //  init ->  animate -> Exit Complete
     //
-    // [1]        [1]                <--- presentChunk - 1
-    // [A]        [A]         [A]    <--- preservingKey
-    // [2]        [2]                <--- presentChunk - 2
-    //            [D]         [D]
-    //            [E]         [E]    <--- targetChunk - 1
-    //            [F]         [F]
-    // [B]        [B]         [B]    <--- preservingKey
-    // [3]        [3]                <--- presentChunk - 3
-    //                        [B]    <--- targetChunk - 2
-    // [C]        [C]         [C]    <--- preservingKey
+    //             [1]        [1]     <--- presentChunk - 1
+    //   [A]       [A]        [A]     <--- preservingKey
+    //             [2]        [2]     <--- presentChunk - 2
+    //   [D]       [D]
+    //   [E]       [E]                <--- targetChunk - 1
+    //   [F]       [F]
+    //   [B]       [B]        [B]     <--- preservingKey
+    //             [3]        [3]     <--- presentChunk - 3
+    //   [B]                          <--- targetChunk - 2
+    //   [C]       [C]        [C]     <--- preservingKey
+
     childrenToRender = []
     Array.from({ length: preservingKeys.length + 1 }).forEach((_, i) => {
         const key = preservingKeys[i]
