@@ -131,7 +131,6 @@ export const AnimatePresence: React.FunctionComponent<
     const filteredChildren = onlyElements(children)
     let childrenToRender = filteredChildren
 
-    // Keep a living record of the children we're actually rendering so we
     const exitingChildren = useRef(
         new Map<ComponentKey, ReactElement<any>>()
     ).current
