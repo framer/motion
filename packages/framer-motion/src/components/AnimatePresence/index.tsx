@@ -43,6 +43,32 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
     return filtered
 }
 
+function splitChildrenByKeys(
+    keys: ComponentKey[],
+    children: ReactElement<any>[],
+    mapFunction?: (child: ReactElement<any>) => ReactElement<any>
+): ReactElement<any>[][] {
+    const chunks: ReactElement<any>[][] = []
+    let insertionStartIndex = 0
+
+    keys.forEach((key) => {
+        const insertionEndIndex = children.findIndex(
+            (child) => getChildKey(child) === key
+        )
+
+        let chunk = children.slice(insertionStartIndex, insertionEndIndex)
+        if (mapFunction) chunk = chunk.map(mapFunction)
+        chunks.push(chunk)
+        insertionStartIndex = insertionEndIndex + 1
+    })
+
+    let chunk = children.slice(insertionStartIndex, children.length)
+    if (mapFunction) chunk = chunk.map(mapFunction)
+    chunks.push(chunk)
+
+    return chunks
+}
+
 /**
  * `AnimatePresence` enables the animation of components that have been removed from the tree.
  *
@@ -105,7 +131,10 @@ export const AnimatePresence: React.FunctionComponent<
     const filteredChildren = onlyElements(children)
     let childrenToRender = filteredChildren
 
-    const exiting = useRef(new Set<ComponentKey>()).current
+    // Keep a living record of the children we're actually rendering so we
+    const exitingChildren = useRef(
+        new Map<ComponentKey, ReactElement<any>>()
+    ).current
 
     // Keep a living record of the children we're actually rendering so we
     // can diff to figure out which are entering and exiting
@@ -130,7 +159,7 @@ export const AnimatePresence: React.FunctionComponent<
     useUnmountEffect(() => {
         isInitialRender.current = true
         allChildren.clear()
-        exiting.clear()
+        exitingChildren.clear()
     })
 
     if (isInitialRender.current) {
@@ -152,84 +181,78 @@ export const AnimatePresence: React.FunctionComponent<
     }
 
     // If this is a subsequent render, deal with entering and exiting children
-    childrenToRender = [...childrenToRender]
 
     // Diff the keys of the currently-present and target children to update our
-    // exiting list.
+    // preserving list.
     const presentKeys = presentChildren.current.map(getChildKey)
     const targetKeys = filteredChildren.map(getChildKey)
+    const preservingKeys: ComponentKey[] = []
 
-    // Diff the present children with our target children and mark those that are exiting
+    // Diff the present children with our target children and mark those that are preserving
     const numPresent = presentKeys.length
     for (let i = 0; i < numPresent; i++) {
         const key = presentKeys[i]
 
-        if (targetKeys.indexOf(key) === -1) {
-            exiting.add(key)
+        if (targetKeys.indexOf(key) !== -1) {
+            preservingKeys.push(key)
         }
     }
 
-    // If we currently have exiting children, and we're deferring rendering incoming children
-    // until after all current children have exiting, empty the childrenToRender array
-    if (mode === "wait" && exiting.size) {
-        childrenToRender = []
-    }
+    // split the presentChildren based on the key of the component you are preserving
+    const presentChunks = splitChildrenByKeys(
+        preservingKeys,
+        presentChildren.current,
+        (_child) => {
+            const key = getChildKey(_child)
+            const child = allChildren.get(key)!
 
-    // Loop through all currently exiting components and clone them to overwrite `animate`
-    // with any `exit` prop they might have defined.
-    exiting.forEach((key) => {
-        // If this component is actually entering again, early return
-        if (targetKeys.indexOf(key) !== -1) return
+            // If the component was exiting, reuse the previous component to preserve state
+            let extingChild = exitingChildren.get(key)
+            if (extingChild) return extingChild
 
-        const child = allChildren.get(key)
-        if (!child) return
+            const onExit = () => {
+                allChildren.delete(key)
+                exitingChildren.delete(key)
 
-        const insertionIndex = presentKeys.indexOf(key)
+                // Remove this child from the present children
+                const removeIndex = presentChildren.current.findIndex(
+                    (presentChild) => presentChild.key === key
+                )
+                presentChildren.current.splice(removeIndex, 1)
 
-        const onExit = () => {
-            allChildren.delete(key)
-            exiting.delete(key)
+                // Defer re-rendering until all exiting children have indeed left
+                if (!exitingChildren.size) {
+                    presentChildren.current = filteredChildren
 
-            // Remove this child from the present children
-            const removeIndex = presentChildren.current.findIndex(
-                (presentChild) => presentChild.key === key
-            )
-            presentChildren.current.splice(removeIndex, 1)
+                    if (isMounted.current === false) return
 
-            // Defer re-rendering until all exiting children have indeed left
-            if (!exiting.size) {
-                presentChildren.current = filteredChildren
-
-                if (isMounted.current === false) return
-
-                forceRender()
-                onExitComplete && onExitComplete()
+                    forceRender()
+                    onExitComplete && onExitComplete()
+                }
             }
+            extingChild = (
+                <PresenceChild
+                    key={key}
+                    isPresent={false}
+                    onExitComplete={onExit}
+                    custom={custom}
+                    presenceAffectsLayout={presenceAffectsLayout}
+                    mode={mode}
+                >
+                    {child}
+                </PresenceChild>
+            )
+            exitingChildren.set(key, extingChild)
+            return extingChild
         }
+    )
 
-        childrenToRender.splice(
-            insertionIndex,
-            0,
-            <PresenceChild
-                key={getChildKey(child)}
-                isPresent={false}
-                onExitComplete={onExit}
-                custom={custom}
-                presenceAffectsLayout={presenceAffectsLayout}
-                mode={mode}
-            >
-                {child}
-            </PresenceChild>
-        )
-    })
-
-    // Add `MotionContext` even to children that don't need it to ensure we're rendering
-    // the same tree between renders
-    childrenToRender = childrenToRender.map((child) => {
-        const key = child.key as string | number
-        return exiting.has(key) ? (
-            child
-        ) : (
+    const targetChunks = splitChildrenByKeys(
+        preservingKeys,
+        filteredChildren,
+        (child) => (
+            // Add `MotionContext` even to children that don't need it to ensure we're rendering
+            // the same tree between renders
             <PresenceChild
                 key={getChildKey(child)}
                 isPresent
@@ -239,6 +262,58 @@ export const AnimatePresence: React.FunctionComponent<
                 {child}
             </PresenceChild>
         )
+    )
+
+    // Combine the chunk separated by the preservingKeys.
+    //
+    // If a change occurs in the rendering array,
+    // insert the chunk where the change occurred in the previous location.
+    //
+    // presentChildren  ->  children
+    //     [1]                 [A]
+    //     [A]                 [D]
+    //     [2]                 [E]
+    //     [B]                 [F]
+    //     [3]                 [B]
+    //     [C]                 [C]
+    //
+    // init -> animate -> Exit Complete
+    //
+    // [1]        [1]                <--- presentChunk - 1
+    // [A]        [A]         [A]    <--- preservingKey
+    // [2]        [2]                <--- presentChunk - 2
+    //            [D]         [D]
+    //            [E]         [E]    <--- targetChunk - 1
+    //            [F]         [F]
+    // [B]        [B]         [B]    <--- preservingKey
+    // [3]        [3]                <--- presentChunk - 3
+    //                        [B]    <--- targetChunk - 2
+    // [C]        [C]         [C]    <--- preservingKey
+    childrenToRender = []
+    Array.from({ length: preservingKeys.length + 1 }).forEach((_, i) => {
+        const key = preservingKeys[i]
+        const child = allChildren.get(key)
+
+        childrenToRender = childrenToRender.concat(presentChunks[i])
+
+        // If we currently have exiting children, and we're deferring rendering incoming children
+        // until after all current children have exiting, empty the childrenToRender array
+        if (!(mode === "wait" && exitingChildren.size)) {
+            childrenToRender = childrenToRender.concat(targetChunks[i])
+        }
+
+        if (child) {
+            childrenToRender.push(
+                <PresenceChild
+                    key={key}
+                    isPresent
+                    presenceAffectsLayout={presenceAffectsLayout}
+                    mode={mode}
+                >
+                    {child}
+                </PresenceChild>
+            )
+        }
     })
 
     if (
@@ -253,7 +328,7 @@ export const AnimatePresence: React.FunctionComponent<
 
     return (
         <>
-            {exiting.size
+            {exitingChildren.size
                 ? childrenToRender
                 : childrenToRender.map((child) => cloneElement(child))}
         </>
