@@ -285,14 +285,14 @@ export const AnimatePresence: React.FunctionComponent<
     //
     //  init ->  animate -> Exit Complete
     //
-    //             [1]        [1]     <--- presentChunk - 1
+    //             [1]        [1]     <--- targetChunk - 1
     //   [A]       [A]        [A]     <--- preservingKey
-    //             [2]        [2]     <--- presentChunk - 2
     //   [D]       [D]
-    //   [E]       [E]                <--- targetChunk - 1
+    //   [E]       [E]                <--- presentChunk - 1
     //   [F]       [F]
+    //             [2]        [2]     <--- targetChunk - 2
     //   [B]       [B]        [B]     <--- preservingKey
-    //             [3]        [3]     <--- presentChunk - 3
+    //             [3]        [3]     <--- targetChunk - 3
     //   [C]       [C]        [C]     <--- preservingKey
 
     childrenToRender = []
