@@ -831,12 +831,6 @@ export interface Inertia {
  * Keyframes tweens between multiple `values`.
  *
  * These tweens can be arranged using the `duration`, `easings`, and `times` properties.
- *
- * @internalremarks
- * We could possibly make the `type` property redundant, if not for all animations
- * then for this one quite easily.
- *
- * @internal
  */
 export interface Keyframes {
     /**
@@ -846,6 +840,8 @@ export interface Keyframes {
      * @public
      */
     type: "keyframes"
+    // We could possibly make the `type` property redundant, if not for all animations
+    // then for this one quite easily.
 
     /**
      * An array of values to animate between.

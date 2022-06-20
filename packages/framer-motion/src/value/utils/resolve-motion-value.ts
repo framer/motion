@@ -7,8 +7,6 @@ import { isMotionValue } from "./is-motion-value"
  * If the provided value is a MotionValue, this returns the actual value, otherwise just the value itself
  *
  * TODO: Remove and move to library
- *
- * @internal
  */
 export function resolveMotionValue(
     value?: string | number | CustomValueType | MotionValue

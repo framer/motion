@@ -9,8 +9,6 @@ import { createMotionComponent, MotionComponentConfig } from "../../motion"
  * I'd rather the return type of `custom` to be implicit but this throws
  * incorrect relative paths in the exported types and API Extractor throws
  * a wobbly.
- *
- * @internal
  */
 export type CustomDomComponent<Props> = React.ForwardRefExoticComponent<
     React.PropsWithoutRef<Props & MotionProps> &

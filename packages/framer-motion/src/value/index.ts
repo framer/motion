@@ -378,9 +378,6 @@ export class MotionValue<V = any> {
     }
 }
 
-/**
- * @internal
- */
 export function motionValue<V>(init: V) {
     return new MotionValue<V>(init)
 }

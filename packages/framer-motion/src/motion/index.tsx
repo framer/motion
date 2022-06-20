@@ -34,8 +34,6 @@ export interface MotionComponentConfig<Instance, RenderState> {
  *
  * Alongside this is a config option which provides a way of rendering the provided
  * component "offline", or outside the React render cycle.
- *
- * @internal
  */
 export function createMotionComponent<Props extends {}, Instance, RenderState>({
     preloadedFeatures,
