@@ -1,6 +1,7 @@
 import resolve from "@rollup/plugin-node-resolve"
 import { terser } from "rollup-plugin-terser"
 import replace from "@rollup/plugin-replace"
+import dts from "rollup-plugin-dts"
 import pkg from "./package.json"
 
 const config = {
@@ -141,5 +142,34 @@ const domMax = Object.assign({}, es, {
     external: ["react", "react-dom"],
 })
 
+const types = {
+    input: "types/index.d.ts",
+    output: {
+        format: "es",
+        file: "dist/index.d.ts",
+    },
+    plugins: [dts()],
+}
+
+const threeTypes = {
+    input: "types/three-entry.d.ts",
+    output: {
+        format: "es",
+        file: "dist/three-entry.d.ts",
+    },
+    plugins: [dts()],
+}
+
 // eslint-disable-next-line import/no-default-export
-export default [projection, umd, umdProd, cjs, es, m, domAnimation, domMax]
+export default [
+    projection,
+    umd,
+    umdProd,
+    cjs,
+    es,
+    m,
+    domAnimation,
+    domMax,
+    types,
+    threeTypes,
+]
