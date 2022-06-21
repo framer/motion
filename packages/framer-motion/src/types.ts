@@ -937,13 +937,32 @@ export interface Keyframes {
 }
 
 /**
- * @internal
+ * @public
  */
 export interface Just {
+    /**
+     * @public
+     */
     type: "just"
+
+    /**
+     * @internal
+     */
     to?: number | string | ValueTarget
+
+    /**
+     * @internal
+     */
     from?: number | string
+
+    /**
+     * @internal
+     */
     delay?: number
+
+    /**
+     * @internal
+     */
     velocity?: number
 }
 
