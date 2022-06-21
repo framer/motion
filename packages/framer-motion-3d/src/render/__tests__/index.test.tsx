@@ -1,4 +1,4 @@
-import type { ResolvedValues } from "framer-motion"
+import { ResolvedValues, useMotionValue } from "framer-motion"
 import * as React from "react"
 import { useEffect, useRef } from "react"
 import { Euler, Vector3 } from "three"
@@ -30,6 +30,8 @@ describe("motion for three", () => {
             const output: ResolvedValues[] = []
 
             function Component() {
+                const scaleX = useMotionValue(5)
+
                 return (
                     <motion.mesh
                         animate={{
@@ -41,7 +43,7 @@ describe("motion for three", () => {
                             rotateY: 200,
                             rotateZ: 300,
                         }}
-                        scale={[5, 5, 5]}
+                        scale={[scaleX, 5, 5]}
                         position={[1, 2, 3]}
                         rotation={[4, 5, 6]}
                         onUpdate={(latest) => output.push({ ...latest })}
@@ -84,6 +86,9 @@ describe("motion for three", () => {
                         transition={{
                             duration: 0.1,
                             ease: (t) => (t < 0.5 ? t : 0),
+                            x: {
+                                duration: "face",
+                            },
                         }}
                     />
                 )
