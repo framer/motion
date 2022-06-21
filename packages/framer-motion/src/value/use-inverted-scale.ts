@@ -36,7 +36,6 @@ let hasWarned = false
  * ```
  *
  * @deprecated
- * @internal
  */
 export function useInvertedScale(
     scale?: Partial<ScaleMotionValues>

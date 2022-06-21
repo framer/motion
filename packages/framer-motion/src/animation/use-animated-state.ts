@@ -46,7 +46,6 @@ const useVisualState = makeUseVisualState({
 /**
  * This is not an officially supported API and may be removed
  * on any version.
- * @internal
  */
 export function useAnimatedState(initialState: any) {
     const [animationState, setAnimationState] = useState(initialState)

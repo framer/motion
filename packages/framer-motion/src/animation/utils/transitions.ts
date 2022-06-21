@@ -254,8 +254,6 @@ export function getValueTransition(transition: Transition, key: string) {
 /**
  * Start animation on a MotionValue. This function is an interface between
  * Framer Motion and Popmotion
- *
- * @internal
  */
 export function startAnimation(
     key: string,
