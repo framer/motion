@@ -1,5 +1,5 @@
 import { render } from "../../../jest.setup"
-import { motion } from "framer-motion"
+import { motion } from "../.."
 import * as React from "react"
 import { motionValue } from "../../value"
 
@@ -48,7 +48,7 @@ describe("delay attr", () => {
             const Component = () => (
                 <motion.div
                     animate={{ x: 10 }}
-                    transition={{ x: { delay: 1, ease: (v) => v } }}
+                    transition={{ x: { delay: 1 } }}
                     style={{ x }}
                 />
             )
@@ -155,10 +155,7 @@ describe("delay attr", () => {
 
             const Component = () => (
                 <motion.div variants={parent} animate="visible">
-                    <motion.div
-                        variants={child}
-                        transition={{ ease: (v) => v }}
-                    />
+                    <motion.div variants={child} />
                     <motion.div variants={child} style={{ x }} />
                 </motion.div>
             )
