@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.13] 2022-06-22
+
+### Fixed
+
+-   Fix some missing types by replacing `@internalRemarks` comment with `@privateRemarks`.
+
 ## [6.3.12] 2022-06-21
 
 ### Changed
