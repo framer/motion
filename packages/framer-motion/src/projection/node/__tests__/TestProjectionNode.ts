@@ -6,6 +6,7 @@ let rootNode: IProjectionNode
 
 export const TestRootNode = createProjectionNode<{}>({
     measureScroll: (_instance) => ({ x: 0, y: 0 }),
+    checkIsScrollRoot: () => true,
 })
 
 interface TestInstance {
