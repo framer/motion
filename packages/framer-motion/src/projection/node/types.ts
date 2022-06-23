@@ -50,6 +50,7 @@ export interface IProjectionNode<I = unknown> {
     targetDelta?: Delta
     targetWithTransforms?: Box
     scroll?: Point
+    isScrollRoot?: boolean
     treeScale?: Point
     projectionDelta?: Delta
     latestValues: ResolvedValues
@@ -141,6 +142,7 @@ export interface ProjectionNodeConfig<I> {
         notifyResize: VoidFunction
     ) => VoidFunction
     measureScroll: (instance: I) => Point
+    checkIsScrollRoot: (instance: I) => boolean
     resetTransform?: (instance: I, value?: string) => void
 }
 

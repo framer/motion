@@ -71,6 +71,7 @@ export function createProjectionNode<I>({
     attachResizeListener,
     defaultParent,
     measureScroll,
+    checkIsScrollRoot,
     resetTransform,
 }: ProjectionNodeConfig<I>) {
     return class ProjectionNode implements IProjectionNode<I> {
@@ -211,6 +212,11 @@ export function createProjectionNode<I>({
          * If we're tracking the scroll of this element, we store it here.
          */
         scroll?: Point
+
+        /**
+         * If this element is a scroll root, we ignore scrolls up the tree.
+         */
+        isScrollRoot?: boolean
 
         /**
          * Flag to true if we think this layout has been changed. We can't always know this,
@@ -718,6 +724,7 @@ export function createProjectionNode<I>({
 
         updateScroll() {
             if (this.options.layoutScroll && this.instance) {
+                this.isScrollRoot = checkIsScrollRoot(this.instance)
                 this.scroll = measureScroll(this.instance)
             }
         }
@@ -776,9 +783,26 @@ export function createProjectionNode<I>({
              */
             for (let i = 0; i < this.path.length; i++) {
                 const node = this.path[i]
-                const { scroll, options } = node
+                const { scroll, options, isScrollRoot } = node
 
                 if (node !== this.root && scroll && options.layoutScroll) {
+                    /**
+                     * If this is a new scroll root, we want to remove all previous scrolls
+                     * from the viewport box.
+                     */
+                    if (isScrollRoot) {
+                        copyBoxInto(boxWithoutScroll, box)
+                        const { scroll: rootScroll } = this.root
+                        /**
+                         * Undo the application of page scroll that was originally added
+                         * to the measured bounding box.
+                         */
+                        if (rootScroll) {
+                            translateAxis(boxWithoutScroll.x, -rootScroll.x)
+                            translateAxis(boxWithoutScroll.y, -rootScroll.y)
+                        }
+                    }
+
                     translateAxis(boxWithoutScroll.x, scroll.x)
                     translateAxis(boxWithoutScroll.y, scroll.y)
                 }

@@ -23,6 +23,7 @@ export const TestProjectionNode = createProjectionNode<TestInstance>({
         return rootNode
     },
     resetTransform: (instance) => instance.resetTransform?.(),
+    checkIsScrollRoot: () => false,
 })
 
 let id = 0
