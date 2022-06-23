@@ -4,7 +4,7 @@ import { useContext } from "react"
 
 export function useTime() {
     const time = useMotionValue(0)
-    const isStatic = useContext(MotionConfigContext)["isStatic"] // Internal API
+    const { isStatic } = useContext(MotionConfigContext)
 
     !isStatic && useFrame((state) => time.set(state.clock.getElapsedTime()))
 
