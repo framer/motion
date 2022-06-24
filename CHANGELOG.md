@@ -2,6 +2,12 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+## [6.3.14] 2022-06-24
+
+### Fixed
+
+-   Exposing more internal types.
+
 ## [6.3.13] 2022-06-22
 
 ### Fixed
