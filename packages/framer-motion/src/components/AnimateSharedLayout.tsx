@@ -4,7 +4,7 @@ import { useConstant } from "../utils/use-constant"
 import { LayoutGroup } from "./LayoutGroup"
 
 let id = 0
-export const AnimateSharedLayout: React.FunctionComponent = ({
+export const AnimateSharedLayout: React.FunctionComponent<React.PropsWithChildren<unknown>> = ({
     children,
 }: React.PropsWithChildren<{}>) => {
     React.useEffect(() => {

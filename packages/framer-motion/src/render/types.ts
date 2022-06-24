@@ -159,7 +159,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
 }
 
 export type CreateVisualElement<Instance> = (
-    Component: string | React.ComponentType,
+    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     options: VisualElementOptions<Instance>
 ) => VisualElement<Instance>
 

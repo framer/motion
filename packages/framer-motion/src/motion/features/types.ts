@@ -22,7 +22,7 @@ export type FeatureNames = {
     measureLayout: true
 }
 
-export type FeatureComponent = React.ComponentType<FeatureProps>
+export type FeatureComponent = React.ComponentType<React.PropsWithChildren<FeatureProps>>
 
 /**
  * @public
@@ -60,7 +60,7 @@ export type LoadedFeatures = FeatureDefinitions & {
 }
 
 export type RenderComponent<Instance, RenderState> = (
-    Component: string | React.ComponentType,
+    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     props: MotionProps,
     projectionId: number | undefined,
     ref: React.Ref<Instance>,

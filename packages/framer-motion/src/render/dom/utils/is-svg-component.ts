@@ -1,7 +1,7 @@
 import { ComponentType } from "react"
 import { lowercaseSVGElements } from "../../svg/lowercase-elements"
 
-export function isSVGComponent(Component: string | ComponentType) {
+export function isSVGComponent(Component: string | ComponentType<React.PropsWithChildren<unknown>>) {
     if (
         /**
          * If it's not a string, it's a custom React component. Currently we only support

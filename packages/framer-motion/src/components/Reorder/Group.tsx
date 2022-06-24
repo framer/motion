@@ -71,9 +71,7 @@ export function ReorderGroup<V>(
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
-    const Component = useConstant(() => motion(as)) as FunctionComponent<
-        HTMLMotionProps<any> & { ref?: React.Ref<any> }
-    >
+    const Component = useConstant(() => motion(as)) as FunctionComponent<React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>>
 
     const order: ItemData<V>[] = []
     const isReordering = useRef(false)
