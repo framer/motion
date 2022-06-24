@@ -3,7 +3,7 @@ import { MotionProps } from "../types"
 /**
  * A list of all valid MotionProps.
  *
- * @internalremarks
+ * @privateRemarks
  * This doesn't throw if a `MotionProp` name is missing - it should.
  */
 const validMotionProps = new Set<keyof MotionProps>([

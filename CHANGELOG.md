@@ -2,6 +2,26 @@
 
 Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
+Undocumented APIs should be considered internal and may change without warning.
+
+## [6.3.14] 2022-06-24
+
+### Fixed
+
+-   Exposing more internal types.
+
+## [6.3.13] 2022-06-22
+
+### Fixed
+
+-   Fix some missing types by replacing `@internalRemarks` comment with `@privateRemarks`.
+
+## [6.3.12] 2022-06-21
+
+### Changed
+
+-   Rolling up published type definitions.
+
 ## [6.3.11] 2022-06-08
 
 ### Fixed

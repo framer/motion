@@ -1,8 +1,5 @@
 type UnionStringArray<T extends Readonly<string[]>> = T[number]
 
-/**
- * @internal
- */
 export const htmlElements = [
     "a",
     "abbr",

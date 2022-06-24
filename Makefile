@@ -44,7 +44,6 @@ SOURCE_FILES := $(shell find packages/framer-motion/src packages/framer-motion-3
 
 # The location to gather test reports
 TEST_REPORT_PATH := $(if $(CIRCLE_TEST_REPORTS),$(CIRCLE_TEST_REPORTS),$(CURDIR)/test_reports)
-DECLARATION_TARGET=types/index.d.ts
 
 build: bootstrap
 	cd packages/framer-motion && yarn build
@@ -78,8 +77,5 @@ lint: bootstrap
 
 pretty: bootstrap
 	prettier --write */**/*.tsx */**/*.ts
-
-$(DECLARATION_TARGET): $(SOURCE_FILES)
-	yarn tsc -p . --emitDeclarationOnly --removeComments false
 
 .PHONY: dev lint

@@ -158,7 +158,7 @@ export class MotionValue<V = any> {
      * }
      * ```
      *
-     * @internalremarks
+     * @privateRemarks
      *
      * We could look into a `useOnChange` hook if the above lifecycle management proves confusing.
      *
@@ -378,9 +378,6 @@ export class MotionValue<V = any> {
     }
 }
 
-/**
- * @internal
- */
 export function motionValue<V>(init: V) {
     return new MotionValue<V>(init)
 }

@@ -58,6 +58,9 @@ export type ThreeMotionComponents = {
     [K in keyof JSX.IntrinsicElements]: ForwardRefComponent<
         JSX.IntrinsicElements[K],
         ThreeMotionProps &
-            Omit<AcceptMotionValues<JSX.IntrinsicElements[K]>, "onUpdate">
+            Omit<
+                AcceptMotionValues<JSX.IntrinsicElements[K]>,
+                "onUpdate" | "transition"
+            >
     >
 }

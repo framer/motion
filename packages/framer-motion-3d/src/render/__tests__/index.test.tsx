@@ -1,4 +1,4 @@
-import type { ResolvedValues } from "framer-motion"
+import { ResolvedValues } from "framer-motion"
 import * as React from "react"
 import { useEffect, useRef } from "react"
 import { Euler, Vector3 } from "three"
@@ -84,6 +84,9 @@ describe("motion for three", () => {
                         transition={{
                             duration: 0.1,
                             ease: (t) => (t < 0.5 ? t : 0),
+                            x: {
+                                duration: "face",
+                            },
                         }}
                     />
                 )

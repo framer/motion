@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "6.3.11",
+    "version": "6.3.14",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -8,14 +8,14 @@
         ".": {
             "require": "./dist/cjs/index.js",
             "import": {
-                "types": "./types/index.d.ts",
+                "types": "./dist/index.d.ts",
                 "default": "./dist/es/index.mjs"
             },
             "default": "./dist/cjs/index.js"
         },
         "./package.json": "./package.json"
     },
-    "types": "types/index.d.ts",
+    "types": "dist/index.d.ts",
     "author": "Framer",
     "license": "MIT",
     "repository": "https://github.com/framer/motion/",

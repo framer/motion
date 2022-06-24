@@ -7599,8 +7599,8 @@ __metadata:
     cache-loader: ^1.2.5
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
     fork-ts-checker-webpack-plugin: ^6.2.0
-    framer-motion: ^6.3.11
-    framer-motion-3d: ^6.3.11
+    framer-motion: ^6.3.14
+    framer-motion-3d: ^6.3.14
     path-browserify: ^1.0.1
     popmotion: 11.0.3
     react: ^17.0.2
@@ -7652,6 +7652,7 @@ __metadata:
     react-dev-utils: ^11.0.4
     react-dom: ^17.0.2
     rollup: ^2.63.0
+    rollup-plugin-dts: ^4.2.2
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
     start-server-and-test: ^1.14.0
@@ -7665,7 +7666,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion-3d@^6.3.11, framer-motion-3d@workspace:packages/framer-motion-3d":
+"framer-motion-3d@^6.3.14, framer-motion-3d@workspace:packages/framer-motion-3d":
   version: 0.0.0-use.local
   resolution: "framer-motion-3d@workspace:packages/framer-motion-3d"
   dependencies:
@@ -7681,7 +7682,7 @@ __metadata:
     "@types/react-dom": ^17.0.11
     bundlesize: ^0.18.0
     convert-tsconfig-paths-to-webpack-aliases: ^0.9.2
-    framer-motion: ^6.3.11
+    framer-motion: ^6.3.14
     jest: ^24.8.0
     jest-dom: ^3.5.0
     jest-junit: ^6.4.0
@@ -7708,7 +7709,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"framer-motion@^6.3.11, framer-motion@workspace:packages/framer-motion":
+"framer-motion@^6.3.14, framer-motion@workspace:packages/framer-motion":
   version: 0.0.0-use.local
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
@@ -10818,6 +10819,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"magic-string@npm:^0.26.1":
+  version: 0.26.2
+  resolution: "magic-string@npm:0.26.2"
+  dependencies:
+    sourcemap-codec: ^1.4.8
+  checksum: b4db4e2b370ac8d9ffc6443a2b591b75364bf1fc9121b5a4068d5b89804abff6709d1fa4a0e0c2d54f2e61e0e44db83efdfe219a5ab0ba6d25ee1f2b51fbed55
+  languageName: node
+  linkType: hard
+
 "make-dir@npm:^2.1.0":
   version: 2.1.0
   resolution: "make-dir@npm:2.1.0"
@@ -13913,6 +13923,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"rollup-plugin-dts@npm:^4.2.2":
+  version: 4.2.2
+  resolution: "rollup-plugin-dts@npm:4.2.2"
+  dependencies:
+    "@babel/code-frame": ^7.16.7
+    magic-string: ^0.26.1
+  peerDependencies:
+    rollup: ^2.55
+    typescript: ^4.1
+  dependenciesMeta:
+    "@babel/code-frame":
+      optional: true
+  checksum: cf4b45f6cca442a5f44af0f0fb567c8fc540ecb792c763571d1bcda9bf495803bcc8d4eaef451a2dd32f7f391eb822e2b96cc6b86b096db54a4d3935236fd8da
+  languageName: node
+  linkType: hard
+
 "rollup-plugin-terser@npm:^5.3.0":
   version: 5.3.1
   resolution: "rollup-plugin-terser@npm:5.3.1"
@@ -14599,7 +14625,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sourcemap-codec@npm:^1.4.4":
+"sourcemap-codec@npm:^1.4.4, sourcemap-codec@npm:^1.4.8":
   version: 1.4.8
   resolution: "sourcemap-codec@npm:1.4.8"
   checksum: b57981c05611afef31605732b598ccf65124a9fcb03b833532659ac4d29ac0f7bfacbc0d6c5a28a03e84c7510e7e556d758d0bb57786e214660016fb94279316

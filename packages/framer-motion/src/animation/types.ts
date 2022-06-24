@@ -67,7 +67,7 @@ export interface AnimationControls {
      * controls.set("hidden")
      * ```
      *
-     * @internalremarks
+     * @privateRemarks
      * We could perform a similar trick to `.start` where this can be called before mount
      * and we maintain a list of of pending actions that get applied on mount. But the
      * expectation of `set` is that it happens synchronously and this would be difficult

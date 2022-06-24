@@ -5,7 +5,7 @@ import { motionValue } from "../../value"
 
 describe("delay attr", () => {
     test("in transition prop", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => (
                 <motion.div
@@ -24,7 +24,7 @@ describe("delay attr", () => {
         return expect(promise).resolves.toBe(0)
     })
     test("value-specific delay on instant transition", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => (
                 <motion.div
@@ -43,7 +43,7 @@ describe("delay attr", () => {
         return expect(promise).resolves.toBe(0)
     })
     test("value-specific delay on animation", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => (
                 <motion.div
@@ -62,7 +62,7 @@ describe("delay attr", () => {
         return expect(promise).resolves.toBe(0)
     })
     test("in animate.transition", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => (
                 <motion.div
@@ -80,7 +80,7 @@ describe("delay attr", () => {
         return expect(promise).resolves.toBe(0)
     })
     test("in variant", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => (
                 <motion.div
@@ -104,7 +104,7 @@ describe("delay attr", () => {
         return expect(promise).resolves.toBe(0)
     })
     test("in variant children via delayChildren", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
 
             const parent = {
@@ -136,7 +136,7 @@ describe("delay attr", () => {
         return expect(promise).resolves.toBe(0)
     })
     test("in variant children via staggerChildren", async () => {
-        const promise = new Promise(resolve => {
+        const promise = new Promise((resolve) => {
             const x = motionValue(0)
 
             const parent = {

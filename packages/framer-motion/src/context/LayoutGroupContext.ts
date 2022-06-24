@@ -7,7 +7,4 @@ export interface LayoutGroupContextProps {
     forceRender?: VoidFunction
 }
 
-/**
- * @internal
- */
 export const LayoutGroupContext = createContext<LayoutGroupContextProps>({})

@@ -1,5 +1,6 @@
 import resolve from "@rollup/plugin-node-resolve"
 import commonjs from "@rollup/plugin-commonjs"
+import dts from "rollup-plugin-dts"
 import pkg from "./package.json"
 import motionPkg from "../framer-motion/package.json"
 
@@ -39,5 +40,14 @@ const es = Object.assign({}, config, {
     external,
 })
 
+const types = {
+    input: "types/index.d.ts",
+    output: {
+        format: "es",
+        file: "dist/index.d.ts",
+    },
+    plugins: [dts()],
+}
+
 // eslint-disable-next-line import/no-default-export
-export default [cjs, es]
+export default [cjs, es, types]
