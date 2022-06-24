@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.3.15] 2022-06-24
+
+### Fixed
+
+-   Explicitly declaring `children` prop for components.
+
 ## [6.3.14] 2022-06-24
 
 ### Fixed
