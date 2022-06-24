@@ -23,7 +23,7 @@ export type InitialPromotionConfig = {
 }
 
 /**
- * @internal
+ * Internal, exported only for usage in Framer
  */
 export const SwitchLayoutGroupContext = createContext<SwitchLayoutGroupContext>(
     {}
