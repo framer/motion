@@ -11,7 +11,7 @@ import { MotionConfigProps } from "../../components/MotionConfig"
 import { useReducedMotionConfig } from "../../utils/use-reduced-motion"
 
 export function useVisualElement<Instance, RenderState>(
-    Component: string | React.ComponentType,
+    Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
     visualState: VisualState<Instance, RenderState>,
     props: MotionProps & MotionConfigProps,
     createVisualElement?: CreateVisualElement<Instance>

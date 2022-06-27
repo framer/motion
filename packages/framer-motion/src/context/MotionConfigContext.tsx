@@ -7,15 +7,13 @@ import { Transition } from "../types"
  */
 export interface MotionConfigContext {
     /**
-     * @internal
+     * Internal, exported only for usage in Framer
      */
     transformPagePoint: TransformPoint
 
     /**
-     * Determines whether this is a static context ie the Framer canvas. If so,
+     * Internal. Determines whether this is a static context ie the Framer canvas. If so,
      * it'll disable all dynamic functionality.
-     *
-     * @internal
      */
     isStatic: boolean
 

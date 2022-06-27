@@ -11,7 +11,7 @@ import { CreateVisualElement } from "../../types"
 import { CustomMotionComponentConfig } from "../motion-proxy"
 
 export function createDomMotionConfig<Props>(
-    Component: string | React.ComponentType<Props>,
+    Component: string | React.ComponentType<React.PropsWithChildren<Props>>,
     { forwardMotionProps = false }: CustomMotionComponentConfig,
     preloadedFeatures?: FeatureComponents,
     createVisualElement?: CreateVisualElement<any>,

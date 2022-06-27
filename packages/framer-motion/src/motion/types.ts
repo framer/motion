@@ -319,6 +319,8 @@ export interface MotionProps
     ): string
 
     /**
+     * Internal.
+     *
      * This allows values to be transformed before being animated or set as styles.
      *
      * For instance, this allows custom values in Framer Library like `size` to be converted into `width` and `height`.
@@ -329,8 +331,6 @@ export interface MotionProps
      * - Extract `CustomValueType` as a separate user-defined type (delete `CustomValueType` and animate a `Color` - does this throw a type error?).
      *
      * @param values -
-     *
-     * @internal
      */
     transformValues?<V extends ResolvedValues>(values: V): V
 }
