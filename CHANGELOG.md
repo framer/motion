@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.3.16] 2022-06-27
+
+### Fixed
+
+-   Fixing layout animations within `position: fixed` elements. Provide `position: fixed` elements the `layoutScroll` prop to fix.
+
 ## [6.3.15] 2022-06-24
 
 ### Fixed
