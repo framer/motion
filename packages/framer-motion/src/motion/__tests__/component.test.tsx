@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
-import { createDomMotionComponent, motion, Transition } from "framer-motion"
+import { createDomMotionComponent, motion } from "framer-motion"
 import * as React from "react"
 import styled from "styled-components"
 
