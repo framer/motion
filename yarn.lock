@@ -7684,7 +7684,6 @@ __metadata:
   resolution: "framer-motion--monorepo@workspace:."
   dependencies:
     "@cypress/webpack-preprocessor": ^4.1.0
-    "@motionone/dom": ^10.11.0
     "@rollup/plugin-node-resolve": ^8.0.0
     "@rollup/plugin-replace": ^2.3.2
     "@testing-library/dom": ^6.10.1
@@ -7780,6 +7779,7 @@ __metadata:
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
+    "@motionone/dom": ^10.11.0
     framesync: 6.0.1
     hey-listen: ^1.0.8
     jest: ^27.4.7
