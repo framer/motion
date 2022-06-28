@@ -83,7 +83,7 @@ describe("useInView", () => {
         expect(results).toEqual([false, true, false, true, false])
     })
 
-    test("Returns false when element leaves the viewport", async () => {
+    test("Only triggers true once, if once is set", async () => {
         const results: boolean[] = []
 
         const Component = () => {

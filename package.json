@@ -83,6 +83,7 @@
     },
     "packageManager": "yarn@3.1.0",
     "dependencies": {
+        "@motionone/dom": "^10.11.0",
         "start-server-and-test": "^1.14.0"
     }
 }
