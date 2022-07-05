@@ -2393,6 +2393,71 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@motionone/animation@npm:^10.10.1":
+  version: 10.10.1
+  resolution: "@motionone/animation@npm:10.10.1"
+  dependencies:
+    "@motionone/easing": ^10.9.0
+    "@motionone/types": ^10.9.0
+    "@motionone/utils": ^10.9.0
+    tslib: ^2.3.1
+  checksum: 11c5361043403f586cbe7e731dd801b3ea7e1bab4c0e1281e86b0a535841eca114fdc9606462d4a72324d6a2aac940debe5bc0910c334f3bfff250ce1a519f12
+  languageName: node
+  linkType: hard
+
+"@motionone/dom@npm:^10.11.0":
+  version: 10.11.0
+  resolution: "@motionone/dom@npm:10.11.0"
+  dependencies:
+    "@motionone/animation": ^10.10.1
+    "@motionone/generators": ^10.9.0
+    "@motionone/types": ^10.9.0
+    "@motionone/utils": ^10.9.0
+    hey-listen: ^1.0.8
+    tslib: ^2.3.1
+  checksum: 055cbe25c1a2b9cdf8fc6c60daf5dcc40ec8977ab25fb43a6677ea6e59ee337c2a1b5f64f7e193d39863776bda00c5695e4b512fd3e96d574e91cbf458c1c5a7
+  languageName: node
+  linkType: hard
+
+"@motionone/easing@npm:^10.9.0":
+  version: 10.9.0
+  resolution: "@motionone/easing@npm:10.9.0"
+  dependencies:
+    "@motionone/utils": ^10.9.0
+    tslib: ^2.3.1
+  checksum: b0c63b161ec595b08eab3dea37da175c5ed09e3383b8553e0346c24c000e4e5b411fc02ee0b697a0821745082343207b6a4432f6aa741d22b3371da807bffcee
+  languageName: node
+  linkType: hard
+
+"@motionone/generators@npm:^10.9.0":
+  version: 10.9.0
+  resolution: "@motionone/generators@npm:10.9.0"
+  dependencies:
+    "@motionone/types": ^10.9.0
+    "@motionone/utils": ^10.9.0
+    tslib: ^2.3.1
+  checksum: f1d8aa5064ae6e138c0873a077368b46ff6c2fc6fa3d6855aaf54b456a65ce32a708e33e4a6010c9e38dd1454aaa83251acba10fb2b1d2b5c2c47148a89e4879
+  languageName: node
+  linkType: hard
+
+"@motionone/types@npm:^10.9.0":
+  version: 10.9.0
+  resolution: "@motionone/types@npm:10.9.0"
+  checksum: aab2966c8a6d85d5d5b008457aa0cfb671436c441c2fd11a97bca4b01c61ba0f46f030ecc6e8b917f032eb9eef47e48f5b3898566e02af48d9a96ec2fd899bf9
+  languageName: node
+  linkType: hard
+
+"@motionone/utils@npm:^10.9.0":
+  version: 10.9.0
+  resolution: "@motionone/utils@npm:10.9.0"
+  dependencies:
+    "@motionone/types": ^10.9.0
+    hey-listen: ^1.0.8
+    tslib: ^2.3.1
+  checksum: b13d9eb6d6f4de4b315fd77ccf7537d3bd30e66d7930c52fe6f17f134f84d97ba7c9807d6ec9245328f36cfeec217751f1a716a9cf0fd5c4b4cdc44c24907f5d
+  languageName: node
+  linkType: hard
+
 "@nodelib/fs.scandir@npm:2.1.5":
   version: 2.1.5
   resolution: "@nodelib/fs.scandir@npm:2.1.5"
@@ -7714,6 +7779,7 @@ __metadata:
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
+    "@motionone/dom": ^10.11.0
     framesync: 6.0.1
     hey-listen: ^1.0.8
     jest: ^27.4.7
@@ -15767,6 +15833,13 @@ __metadata:
   version: 2.3.1
   resolution: "tslib@npm:2.3.1"
   checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
+  languageName: node
+  linkType: hard
+
+"tslib@npm:^2.3.1":
+  version: 2.4.0
+  resolution: "tslib@npm:2.4.0"
+  checksum: 8c4aa6a3c5a754bf76aefc38026134180c053b7bd2f81338cb5e5ebf96fefa0f417bff221592bf801077f5bf990562f6264fecbc42cd3309b33872cb6fc3b113
   languageName: node
   linkType: hard
 

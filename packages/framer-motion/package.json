@@ -62,6 +62,7 @@
         "react-dom": ">=16.8 || ^17.0.0 || ^18.0.0"
     },
     "dependencies": {
+        "@motionone/dom": "^10.11.0",
         "framesync": "6.0.1",
         "hey-listen": "^1.0.8",
         "popmotion": "11.0.3",

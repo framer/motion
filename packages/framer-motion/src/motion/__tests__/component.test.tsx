@@ -1,6 +1,6 @@
 import { render } from "../../../jest.setup"
 import { fireEvent } from "@testing-library/react"
-import { createDomMotionComponent, motion } from "../../"
+import { createDomMotionComponent, motion } from "framer-motion"
 import * as React from "react"
 import styled from "styled-components"
 
@@ -33,6 +33,7 @@ describe("motion component rendering and styles", () => {
                     <motion.button ref={ref} />
                     <motion.button
                         animate={{ rotate: 90 }}
+                        transition={{ velocity: 0 }}
                         style={{ overflow: "hidden" }}
                     />
                     <motion.img
