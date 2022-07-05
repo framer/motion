@@ -1,6 +1,6 @@
 {
     "name": "framer-motion--dev",
-    "version": "6.4.0",
+    "version": "6.4.1",
     "private": true,
     "scripts": {
         "dev": "webpack serve --config ./webpack/config.js --hot"
@@ -8,8 +8,8 @@
     "dependencies": {
         "@react-three/drei": "^7.27.3",
         "@react-three/fiber": "^7.0.24",
-        "framer-motion": "^6.4.0",
-        "framer-motion-3d": "^6.4.0",
+        "framer-motion": "^6.4.1",
+        "framer-motion-3d": "^6.4.1",
         "path-browserify": "^1.0.1",
         "popmotion": "11.0.3",
         "react": "^17.0.2",
