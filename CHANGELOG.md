@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.4.0] 2022-07-05
+
+### Added
+
+-   `useInView`.
+
 ## [6.3.16] 2022-06-27
 
 ### Fixed
