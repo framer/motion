@@ -48,7 +48,7 @@ export {
  */
 export { animationControls } from "./animation/animation-controls"
 export { AnimationControls } from "./animation/types"
-export { useAnimation } from "./animation/use-animation"
+export { useAnimation, useAnimationControls } from "./animation/use-animation"
 export { useAnimationFrame } from "./utils/use-animation-frame"
 export { animate } from "./animation/animate"
 export { animateVisualElement } from "./render/utils/animation"

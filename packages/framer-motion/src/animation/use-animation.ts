@@ -32,10 +32,12 @@ import { useConstant } from "../utils/use-constant"
  *
  * @public
  */
-export function useAnimation(): AnimationControls {
+export function useAnimationControls(): AnimationControls {
     const controls = useConstant(animationControls)
 
     useEffect(controls.mount, [])
 
     return controls
 }
+
+export const useAnimation = useAnimationControls
