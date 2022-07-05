@@ -67,6 +67,7 @@ export {
     usePresence,
     useIsPresent,
 } from "./components/AnimatePresence/use-presence"
+export { useInView } from "./utils/use-in-view"
 export {
     useDragControls,
     DragControls,
