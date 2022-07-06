@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.4.2] 2022-07-06
+
+### Added
+
+-   `useInView` now automatically respects `rootMargin` within an iframe.
+
 ## [6.4.1] 2022-07-05
 
 ### Added
