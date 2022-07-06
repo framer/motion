@@ -80,7 +80,7 @@
     "bundlesize": [
         {
             "path": "./dist/framer-motion.js",
-            "maxSize": "36.5 kB"
+            "maxSize": "36.6 kB"
         },
         {
             "path": "./dist/size-rollup-m.js",
@@ -107,5 +107,5 @@
             "maxSize": "31.7 kB"
         }
     ],
-    "gitHead": "b8c67a011057c1e64cdf3678bced43ca8d83a814"
+    "gitHead": "ea1499f4ce3355876c069fa331c5b7fcd48396de"
 }

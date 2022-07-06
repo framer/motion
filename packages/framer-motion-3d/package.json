@@ -88,5 +88,5 @@
         "webpack": "^5.27.2",
         "yarn-deduplicate": "^1.1.1"
     },
-    "gitHead": "b8c67a011057c1e64cdf3678bced43ca8d83a814"
+    "gitHead": "ea1499f4ce3355876c069fa331c5b7fcd48396de"
 }
