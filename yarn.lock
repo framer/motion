@@ -2405,9 +2405,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@motionone/dom@npm:^10.11.0":
-  version: 10.11.0
-  resolution: "@motionone/dom@npm:10.11.0"
+"@motionone/dom@npm:^10.11.1":
+  version: 10.11.1
+  resolution: "@motionone/dom@npm:10.11.1"
   dependencies:
     "@motionone/animation": ^10.10.1
     "@motionone/generators": ^10.9.0
@@ -2415,7 +2415,7 @@ __metadata:
     "@motionone/utils": ^10.9.0
     hey-listen: ^1.0.8
     tslib: ^2.3.1
-  checksum: 055cbe25c1a2b9cdf8fc6c60daf5dcc40ec8977ab25fb43a6677ea6e59ee337c2a1b5f64f7e193d39863776bda00c5695e4b512fd3e96d574e91cbf458c1c5a7
+  checksum: df57870e059c4d702da62148ae6e872e4dc75d85d948ca51eccd33bbf345b8e4ec42d83f9471115eb1e38aaff6074686ee4ed3cb5906ba5d2fa7ed230f4f8b2a
   languageName: node
   linkType: hard
 
@@ -7779,7 +7779,7 @@ __metadata:
   resolution: "framer-motion@workspace:packages/framer-motion"
   dependencies:
     "@emotion/is-prop-valid": ^0.8.2
-    "@motionone/dom": ^10.11.0
+    "@motionone/dom": ^10.11.1
     framesync: 6.0.1
     hey-listen: ^1.0.8
     jest: ^27.4.7
