@@ -6,7 +6,7 @@ import {
     LayoutGroupContextProps,
 } from "../../../context/LayoutGroupContext"
 import { SwitchLayoutGroupContext } from "../../../context/SwitchLayoutGroupContext"
-import { globalProjectionState } from "../../../projection/node/create-projection-node"
+import { globalProjectionState } from "../../../projection/node/state"
 import { correctBorderRadius } from "../../../projection/styles/scale-border-radius"
 import { correctBoxShadow } from "../../../projection/styles/scale-box-shadow"
 import { addScaleCorrector } from "../../../projection/styles/scale-correction"
