@@ -41,31 +41,13 @@ import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
+import { globalProjectionState } from "./state"
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
  * which has a noticeable difference in spring animations
  */
 const animationTarget = 1000
-
-/**
- * This should only ever be modified on the client otherwise it'll
- * persist through server requests. If we need instanced states we
- * could lazy-init via root.
- */
-export const globalProjectionState = {
-    /**
-     * Global flag as to whether the tree has animated since the last time
-     * we resized the window
-     */
-    hasAnimatedSinceResize: true,
-
-    /**
-     * We set this to true once, on the first update. Any nodes added to the tree beyond that
-     * update will be given a `data-projection-id` attribute.
-     */
-    hasEverUpdated: false,
-}
 
 export function createProjectionNode<I>({
     attachResizeListener,

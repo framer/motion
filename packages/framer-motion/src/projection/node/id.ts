@@ -1,5 +1,5 @@
 import { useConstant } from "../../utils/use-constant"
-import { globalProjectionState } from "./create-projection-node"
+import { globalProjectionState } from "./state"
 
 let id = 1
 export function useProjectionId(): number | undefined {
