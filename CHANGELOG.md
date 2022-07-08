@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.4.3] 2022-07-08
+
+### Fixed
+
+-   Split module to improve ability to code-split and tree-shake `<m>` and `domMax`.
+
 ## [6.4.2] 2022-07-06
 
 ### Added
