@@ -4,6 +4,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.5.0] 2022-07-13
+
+### Added
+
+-   `useScroll` for creating scroll-linked animations.
+
+### Deprecated
+
+-   `useViewportScroll` and `useElementScroll`.
+
 ## [6.4.3] 2022-07-08
 
 ### Fixed
