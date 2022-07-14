@@ -26,6 +26,7 @@ export function useScroll({
     useIsomorphicLayoutEffect(() => {
         return scroll(
             ({ x, y }) => {
+                console.log("this should fire on mount", x, y)
                 values.scrollX.set(x.current)
                 values.scrollXProgress.set(x.progress)
                 values.scrollY.set(y.current)
