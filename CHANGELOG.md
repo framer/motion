@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.5.1] 2022-07-14
+
+### Fixed
+
+-   Adding `onChange` handlers in `useTransform` on `useLayoutEffect`.
+
 ## [6.5.0] 2022-07-13
 
 ### Added

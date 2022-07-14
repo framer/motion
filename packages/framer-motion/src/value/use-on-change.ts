@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useIsomorphicLayoutEffect } from "../three-entry"
 import { MotionValue, Subscriber } from "./"
 import { isMotionValue } from "./utils/is-motion-value"
 
@@ -6,13 +6,13 @@ export function useOnChange<T>(
     value: MotionValue<T> | number | string,
     callback: Subscriber<T>
 ) {
-    useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         if (isMotionValue(value)) return value.onChange(callback)
     }, [callback])
 }
 
 export function useMultiOnChange(values: MotionValue[], handler: () => void) {
-    useEffect(() => {
+    useIsomorphicLayoutEffect(() => {
         const subscriptions = values.map((value) => value.onChange(handler))
         return () => subscriptions.forEach((unsubscribe) => unsubscribe())
     })
