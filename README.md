@@ -1,7 +1,8 @@
-<img src="https://framerusercontent.com/images/48ha9ZR9oZQGQ6gZ8YUfElP3T0A.png" width="50" height="50" alt="Framer Motion Icon" />
-
-<h1>Framer Motion</h1>
-<h3>
+<p align="center">
+  <img src="https://framerusercontent.com/images/48ha9ZR9oZQGQ6gZ8YUfElP3T0A.png" width="50" height="50" alt="Framer Motion Icon" />
+</p>
+<h1 align="center">Framer Motion</h1>
+<h3 align="center">
   An open source and production-ready motion<br>library for React on the web, <a href="https://www.framer.com">made by Framer</a>.
 </h3>
 
