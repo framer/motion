@@ -1,9 +1,9 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/22095598/123793419-f5528800-d8e1-11eb-8c5f-e2dad45a9c81.png" width="108" height="108" alt="Framer Motion" />
+  <img src="https://framerusercontent.com/images/48ha9ZR9oZQGQ6gZ8YUfElP3T0A.png" width="50" height="50" alt="Framer Motion Icon" />
 </p>
 <h1 align="center">Framer Motion</h1>
 <h3 align="center">
-  An open source and production-ready motion<br>library for React on the web.
+  An open source and production-ready motion<br>library for React on the web, <a href="https://www.framer.com">made by Framer</a>.
 </h3>
 
 <br>
@@ -25,7 +25,7 @@
 
 <br>
 
-Framer Motion is an open source, production-ready library that's designed for all creative developers.
+Framer Motion is an open source, production-ready library that’s designed for all creative developers.
 
 It looks like this:
 
@@ -66,18 +66,17 @@ export const MyComponent = ({ isVisible }) => (
 
 ### 📚 Docs
 
-Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
+- Check out [our documentation](https://www.framer.com/docs/) for guides and a full API reference.
+- Or see [our examples](https://www.framer.com/docs/examples/) for inspiration.
 
-Or checkout [our examples](https://www.framer.com/docs/examples/) for inspiration.
+### 💎 Contribute
 
-### 🛠 Contribute
-
-Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
+- Want to contribute to Framer Motion? Our [contributing guide](https://github.com/framer/motion/blob/master/CONTRIBUTING.md) has you covered.
 
 ### 👩🏻‍⚖️ License
 
-Framer Motion is MIT licensed.
+- Framer Motion is MIT licensed.
 
-## Framer
+### ✨ Framer
 
-Get on the same page as your designers before production. Get started with [design and prototyping in Framer](https://www.framer.com/).
+- Design and publish sites that inspire. [Try Framer for free](https://www.framer.com/).
