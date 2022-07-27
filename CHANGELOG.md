@@ -4,6 +4,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [6.5.2] 2022-07-27
+
+### Fixed
+
+-   Fix types for `mixer` option in `useTransform`.
+
+### Update
+
+-   `style-value-types@5.1.0`
+
 ## [6.5.1] 2022-07-14
 
 ### Fixed
