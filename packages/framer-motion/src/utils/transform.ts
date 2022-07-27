@@ -22,7 +22,9 @@ export interface TransformOptions<T> {
     ease?: Easing | Easing[]
 
     /**
-     * @internal
+     * Provide a function that can interpolate between any two values in the provided range.
+     *
+     * @public
      */
     mixer?: (from: T, to: T) => (v: number) => any
 }
