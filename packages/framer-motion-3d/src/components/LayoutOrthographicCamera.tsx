@@ -1,6 +1,6 @@
 import * as React from "react"
 import { OrthographicCamera as OrthographicCameraImpl } from "three"
-import mergeRefs from "react-merge-refs"
+import { mergeRefs } from "react-merge-refs"
 import { motion } from "../render/motion"
 import { LayoutCameraProps } from "./types"
 import { useLayoutCamera } from "./use-layout-camera"
