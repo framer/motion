@@ -12,7 +12,7 @@ import {
     useForceUpdate,
     useIsomorphicLayoutEffect,
 } from "framer-motion"
-import mergeRefs from "react-merge-refs"
+import { mergeRefs } from "react-merge-refs"
 import {
     render,
     unmountComponentAtNode,
