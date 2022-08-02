@@ -61,7 +61,7 @@ function Box(props) {
 
 export const App = () => {
     const [isHovered, setHover] = useState(false)
-    console.log({ isHovered })
+
     return (
         <MotionConfig transition={{ type: "spring", bounce: 0, duration: 0.7 }}>
             <motionDom.div
