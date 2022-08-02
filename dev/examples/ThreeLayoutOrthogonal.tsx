@@ -2,10 +2,52 @@ import * as React from "react"
 import { useRef, useState } from "react"
 import "@react-three/fiber"
 import styled from "styled-components"
-import { motion as motionDom, useMotionValue, MotionConfig } from "framer-motion"
-import { motion, MotionCanvas, LayoutOrthographicCamera } from "framer-motion-3d"
+import {
+    motion as motionDom,
+    useMotionValue,
+    MotionConfig,
+} from "framer-motion"
+import {
+    motion,
+    MotionCanvas,
+    LayoutOrthographicCamera,
+} from "framer-motion-3d"
 import { softShadows, Shadow } from "@react-three/drei"
 import { degToRad, radToDeg } from "three/src/math/MathUtils"
+import { extend } from "@react-three/fiber"
+import {
+    AmbientLight,
+    PointLight,
+    DirectionalLight,
+    Group,
+    Mesh,
+    SphereGeometry,
+    MeshPhysicalMaterial,
+    CanvasTexture,
+    MeshBasicMaterial,
+    PlaneBufferGeometry,
+    SphereBufferGeometry,
+    MeshStandardMaterial,
+    BoxBufferGeometry,
+    OrthographicCamera,
+} from "three"
+
+extend({
+    AmbientLight,
+    PointLight,
+    DirectionalLight,
+    Group,
+    Mesh,
+    SphereGeometry,
+    MeshPhysicalMaterial,
+    CanvasTexture,
+    MeshBasicMaterial,
+    PlaneBufferGeometry,
+    SphereBufferGeometry,
+    MeshStandardMaterial,
+    BoxBufferGeometry,
+    OrthographicCamera,
+})
 
 /**
  * Blending layout animations with 3D camera

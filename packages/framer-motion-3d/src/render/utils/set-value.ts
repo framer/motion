@@ -57,6 +57,10 @@ export function setThreeValue(
     if (setters[key]) {
         setters[key](instance, values[key])
     } else {
+        if (key === "opacity" && !instance.transparent) {
+            instance.transparent = true
+        }
+
         instance[key] = values[key]
     }
 }

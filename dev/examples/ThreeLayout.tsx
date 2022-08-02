@@ -11,6 +11,40 @@ import { motion, MotionCanvas, LayoutCamera } from "framer-motion-3d"
 import { softShadows, Shadow } from "@react-three/drei"
 import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import { degToRad } from "three/src/math/MathUtils"
+import { extend } from "@react-three/fiber"
+import {
+    AmbientLight,
+    PointLight,
+    DirectionalLight,
+    Group,
+    Mesh,
+    SphereGeometry,
+    MeshPhysicalMaterial,
+    CanvasTexture,
+    MeshBasicMaterial,
+    PlaneBufferGeometry,
+    SphereBufferGeometry,
+    MeshStandardMaterial,
+    BoxBufferGeometry,
+    PerspectiveCamera,
+} from "three"
+
+extend({
+    AmbientLight,
+    PointLight,
+    DirectionalLight,
+    Group,
+    Mesh,
+    SphereGeometry,
+    MeshPhysicalMaterial,
+    CanvasTexture,
+    MeshBasicMaterial,
+    PlaneBufferGeometry,
+    SphereBufferGeometry,
+    MeshStandardMaterial,
+    BoxBufferGeometry,
+    PerspectiveCamera,
+})
 
 softShadows()
 

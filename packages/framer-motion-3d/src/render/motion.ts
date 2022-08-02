@@ -32,7 +32,6 @@ const componentCache = new Map<string, any>()
 export const motion = new Proxy(custom, {
     get: (_, key: string) => {
         !componentCache.has(key) && componentCache.set(key, custom(key))
-
         return componentCache.get(key)!
     },
 }) as typeof custom & ThreeMotionComponents

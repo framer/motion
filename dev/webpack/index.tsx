@@ -1,5 +1,5 @@
 import * as React from "react"
-import * as ReactDOM from "react-dom"
+import { createRoot } from "react-dom/client"
 import { Example, ExampleList } from "./examples"
 import { Test } from "./tests"
 
@@ -20,9 +20,8 @@ const App = () => {
     return <ExampleList />
 }
 
-ReactDOM.render(
+createRoot(document.getElementById("root")!).render(
     <React.StrictMode>
         <App />
-    </React.StrictMode>,
-    document.getElementById("root")
+    </React.StrictMode>
 )
