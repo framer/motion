@@ -9,8 +9,7 @@
         "dev"
     ],
     "resolutions": {
-        "webpack": "^5.27.2",
-        "scheduler": "^0.23.0"
+        "webpack": "^5.27.2"
     },
     "scripts": {
         "build": "turbo run build",
