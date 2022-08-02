@@ -1,8 +1,7 @@
-import { Size } from "@react-three/fiber"
 import { createContext, MutableRefObject, RefObject, Ref } from "react"
 
 export type DimensionsState = {
-    size: Size
+    size: { width: number; height: number }
     dpr?: number
 }
 

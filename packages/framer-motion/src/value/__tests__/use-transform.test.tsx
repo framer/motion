@@ -85,7 +85,7 @@ describe("as input/output range", () => {
         expect(container.firstChild).toHaveStyle("opacity: 0.1")
     })
 
-    test("updates when values change", async (resolve) => {
+    test("updates when values change", async () => {
         const x = motionValue(20)
         let o = motionValue(0)
         const Component = ({ a = 0, b = 100, c = 0, d = 1 }: any) => {
@@ -105,10 +105,12 @@ describe("as input/output range", () => {
         expect(container.firstChild).toHaveStyle("opacity: 0.2")
         x.set(40)
 
-        setTimeout(() => {
-            expect(o.get()).toBe(0.4)
-            resolve()
-        }, 20)
+        return new Promise<void>((resolve) => {
+            setTimeout(() => {
+                expect(o.get()).toBe(0.4)
+                resolve()
+            }, 20)
+        })
     })
 
     test("detects custom mixer on value type", async () => {

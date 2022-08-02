@@ -10,7 +10,7 @@ describe("useCycle", () => {
         const Component = () => {
             const [latest, cycle] = useCycle(1, 2, 3, 4)
             React.useEffect(() => {
-                results.push(latest)
+                if (results[results.length - 1] !== latest) results.push(latest)
             }, [latest])
 
             return <div onClick={() => cycle()} />
@@ -23,12 +23,6 @@ describe("useCycle", () => {
         click(container.firstChild as Element)
         click(container.firstChild as Element)
 
-        /**
-         * 1 is doubled at the start of the array because in StrictMode
-         * useEffect is double-fired on mount.
-         *
-         * When resolution is changed to 18, add another 1 to start of array
-         */
         expect(results).toEqual([1, 2, 3, 4, 1])
     })
 
