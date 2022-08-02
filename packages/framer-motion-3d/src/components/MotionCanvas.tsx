@@ -147,7 +147,7 @@ function CanvasComponent(
             {
                 ...props,
                 dpr: dpr || props.dpr,
-                size,
+                size: { ...size, top: 0, left: 0 },
                 events: events || createPointerEvents,
             }
         )

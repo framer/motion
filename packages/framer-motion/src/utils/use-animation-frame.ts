@@ -1,24 +1,20 @@
 import sync, { cancelSync, FrameData } from "framesync"
-import { useContext, useEffect } from "react"
-import { useConstant } from "./use-constant"
+import { useContext, useEffect, useRef } from "react"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 
 export type FrameCallback = (timestamp: number) => void
 
-const getCurrentTime =
-    typeof performance !== "undefined"
-        ? () => performance.now()
-        : () => Date.now()
-
 export function useAnimationFrame(callback: FrameCallback) {
-    const initialTimestamp = useConstant(getCurrentTime)
+    const initialTimestamp = useRef(0)
     const { isStatic } = useContext(MotionConfigContext)
 
     useEffect(() => {
         if (isStatic) return
 
         const provideTimeSinceStart = ({ timestamp }: FrameData) => {
-            callback(timestamp - initialTimestamp)
+            if (!initialTimestamp.current) initialTimestamp.current = timestamp
+
+            callback(timestamp - initialTimestamp.current)
         }
 
         sync.update(provideTimeSinceStart, true)

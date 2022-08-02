@@ -19,7 +19,8 @@ describe("useInView", () => {
             const isInView = useInView(ref)
 
             React.useEffect(() => {
-                results.push(isInView)
+                if (results[results.length - 1] !== isInView)
+                    results.push(isInView)
             }, [isInView])
 
             return <div ref={ref} />
@@ -42,7 +43,8 @@ describe("useInView", () => {
             const isInView = useInView(ref)
 
             React.useEffect(() => {
-                results.push(isInView)
+                if (results[results.length - 1] !== isInView)
+                    results.push(isInView)
             }, [isInView])
 
             return <div ref={ref} />
@@ -66,7 +68,8 @@ describe("useInView", () => {
             const isInView = useInView(ref)
 
             React.useEffect(() => {
-                results.push(isInView)
+                if (results[results.length - 1] !== isInView)
+                    results.push(isInView)
             }, [isInView])
 
             return <div ref={ref} />
@@ -91,7 +94,8 @@ describe("useInView", () => {
             const isInView = useInView(ref, { once: true })
 
             React.useEffect(() => {
-                results.push(isInView)
+                if (results[results.length - 1] !== isInView)
+                    results.push(isInView)
             }, [isInView])
 
             return <div ref={ref} />
