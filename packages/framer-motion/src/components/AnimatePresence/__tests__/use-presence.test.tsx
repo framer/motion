@@ -17,7 +17,7 @@ describe("usePresence", () => {
 
                 useEffect(() => {
                     if (safeToRemove) remove = safeToRemove
-                }, [isPresent])
+                }, [isPresent, safeToRemove])
 
                 return <div />
             }
