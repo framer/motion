@@ -53,7 +53,13 @@ It does all this:
 ### 🐇 Quick start
 
 ```
-npm install framer-motion
+npm i framer-motion
+
+// or with yarn
+yarn add framer-motion
+
+// or with pnpm
+pnpm i framer-motion
 ```
 
 ```jsx
