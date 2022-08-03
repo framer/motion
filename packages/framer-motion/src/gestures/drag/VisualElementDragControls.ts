@@ -562,27 +562,30 @@ export class VisualElementDragControls {
          * If the element's layout changes, calculate the delta and apply that to
          * the drag gesture's origin point.
          */
-        projection!.addEventListener("didUpdate", (({
-            delta,
-            hasLayoutChanged,
-        }: LayoutUpdateData) => {
-            if (this.isDragging && hasLayoutChanged) {
-                eachAxis((axis) => {
-                    const motionValue = this.getAxisMotionValue(axis)
-                    if (!motionValue) return
+        const stopLayoutUpdateListener = projection!.addEventListener(
+            "didUpdate",
+            (({ delta, hasLayoutChanged }: LayoutUpdateData) => {
+                if (this.isDragging && hasLayoutChanged) {
+                    eachAxis((axis) => {
+                        const motionValue = this.getAxisMotionValue(axis)
+                        if (!motionValue) return
 
-                    this.originPoint[axis] += delta[axis].translate
-                    motionValue.set(motionValue.get() + delta[axis].translate)
-                })
+                        this.originPoint[axis] += delta[axis].translate
+                        motionValue.set(
+                            motionValue.get() + delta[axis].translate
+                        )
+                    })
 
-                this.visualElement.syncRender()
-            }
-        }) as any)
+                    this.visualElement.syncRender()
+                }
+            }) as any
+        )
 
         return () => {
             stopResizeListener()
             stopPointerListener()
             stopMeasureLayoutListener()
+            stopLayoutUpdateListener?.()
         }
     }
 
