@@ -37,6 +37,7 @@ function Box(props) {
     return (
         <motion.mesh
             {...props}
+            // Uncomment to drive with the useTime-powered motion value, will conflict with animations
             // scale={scale}
             variants={{
                 visible: { scale: 1 },
