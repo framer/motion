@@ -52,9 +52,13 @@ It does all this:
 
 ### 🐇 Quick start
 
+Install `framer-motion` with via your package manager:
+
 ```
 npm install framer-motion
 ```
+
+Then import the `motion` component:
 
 ```jsx
 import { motion } from "framer-motion"
