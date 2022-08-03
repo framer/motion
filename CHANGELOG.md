@@ -4,6 +4,13 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.0.0] 2022-08-xx
+
+### Updated
+
+-   `react@18`
+-   `react-three-fiber@8`
+
 ## [6.5.2] 2022-07-27
 
 ### Fixed

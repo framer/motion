@@ -16,7 +16,7 @@ describe("AnimatePresence", () => {
         const promise = new Promise((resolve) => {
             const x = motionValue(0)
             const Component = () => {
-                setTimeout(() => resolve(x.get()), 75)
+                setTimeout(() => resolve(x.get()), 100)
                 return (
                     <AnimatePresence>
                         <motion.div

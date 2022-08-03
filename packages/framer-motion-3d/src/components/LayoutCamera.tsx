@@ -1,6 +1,6 @@
 import * as React from "react"
 import { PerspectiveCamera as PerspectiveCameraImpl } from "three"
-import mergeRefs from "react-merge-refs"
+import { mergeRefs } from "react-merge-refs"
 import { LayoutCameraProps } from "./types"
 import { motion } from "../render/motion"
 import { useLayoutCamera } from "./use-layout-camera"

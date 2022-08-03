@@ -17,7 +17,7 @@ describe("usePresence", () => {
 
                 useEffect(() => {
                     if (safeToRemove) remove = safeToRemove
-                }, [isPresent])
+                }, [isPresent, safeToRemove])
 
                 return <div />
             }
@@ -38,7 +38,7 @@ describe("usePresence", () => {
                 expect(container.firstChild).toBeFalsy()
 
                 resolve()
-            }, 50)
+            }, 100)
         })
 
         await promise

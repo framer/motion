@@ -4,6 +4,16 @@ import { degreesToRadians } from "popmotion"
 import { motion as motionThree, MotionCanvas } from "framer-motion-3d"
 import { motion, Variants } from "framer-motion"
 import styled from "styled-components"
+import { PointLight, Mesh, BoxGeometry, MeshPhongMaterial, Group } from "three"
+import { extend } from "@react-three/fiber"
+
+extend({
+    PointLight,
+    Mesh,
+    BoxGeometry,
+    MeshPhongMaterial,
+    Group,
+})
 
 export function StarIcon() {
     return (

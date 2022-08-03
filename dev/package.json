@@ -1,19 +1,19 @@
 {
     "name": "framer-motion--dev",
-    "version": "6.5.1",
+    "version": "7.0.0",
     "private": true,
     "scripts": {
         "dev": "webpack serve --config ./webpack/config.js --hot"
     },
     "dependencies": {
         "@react-three/drei": "^7.27.3",
-        "@react-three/fiber": "^7.0.24",
-        "framer-motion": "^6.5.1",
-        "framer-motion-3d": "^6.5.1",
+        "@react-three/fiber": "^8.2.2",
+        "framer-motion": "^7.0.0",
+        "framer-motion-3d": "^7.0.0",
         "path-browserify": "^1.0.1",
         "popmotion": "11.0.3",
-        "react": "^17.0.2",
-        "react-dom": "^17.0.2",
+        "react": "^18.2.0",
+        "react-dom": "^18.2.0",
         "react-refresh": "^0.9.0",
         "styled-components": "^4.1.1",
         "three": "^0.137.0"

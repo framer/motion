@@ -11,6 +11,8 @@ import { clamp } from "popmotion"
 const calcBoxSize = ({ x, y }: Box) => ({
     width: calcLength(x),
     height: calcLength(y),
+    top: 0,
+    left: 0,
 })
 
 export function useLayoutCamera<CameraType>(

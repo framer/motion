@@ -1,7 +1,25 @@
 import * as React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { MotionConfig, motion as motionDom, useTransform } from "framer-motion"
 import { motion, MotionCanvas, useTime } from "framer-motion-3d"
+import { extend } from "@react-three/fiber"
+import {
+    AmbientLight,
+    PointLight,
+    Group,
+    BoxGeometry,
+    MeshStandardMaterial,
+    Mesh,
+} from "three"
+
+extend({
+    AmbientLight,
+    PointLight,
+    Group,
+    BoxGeometry,
+    MeshStandardMaterial,
+    Mesh,
+})
 
 /**
  * An example of firing an animation onMount using the useAnimation hook
@@ -11,7 +29,7 @@ function Box(props) {
     // Hold state for hovered and clicked events
     const [clicked, click] = useState(false)
     const time = useTime()
-    const scale = useTransform(time, (t) => Math.sin(t) * 0.5 + 1)
+    // const scale = useTransform(time, (t) => Math.sin(t) * 0.5 + 1)
 
     // Subscribe this component to the render-loop, rotate the mesh every frame
     // useFrame((state, delta) => (ref.current.rotation.x += 0.01))
@@ -19,7 +37,8 @@ function Box(props) {
     return (
         <motion.mesh
             {...props}
-            scale={scale}
+            // Uncomment to drive with the useTime-powered motion value, will conflict with animations
+            // scale={scale}
             variants={{
                 visible: { scale: 1 },
                 pressed: { scale: 0.8, rotateY: 1 },
@@ -43,11 +62,9 @@ function Box(props) {
 
 export const App = () => {
     const [isHovered, setHover] = useState(false)
+
     return (
-        <MotionConfig
-            isStatic
-            transition={{ type: "spring", bounce: 0, duration: 0.7 }}
-        >
+        <MotionConfig transition={{ type: "spring", bounce: 0, duration: 0.7 }}>
             <motionDom.div
                 style={{ position: "fixed", inset: 0, background: "white" }}
                 onHoverStart={() => setHover(true)}

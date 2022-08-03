@@ -12,14 +12,15 @@ import {
     useForceUpdate,
     useIsomorphicLayoutEffect,
 } from "framer-motion"
-import mergeRefs from "react-merge-refs"
+import { mergeRefs } from "react-merge-refs"
 import {
-    render,
+    createRoot,
     unmountComponentAtNode,
     events as createPointerEvents,
     Props,
     Camera,
     Dpr,
+    ReconcilerRoot,
 } from "@react-three/fiber"
 import { DimensionsState, MotionCanvasContext } from "./MotionCanvasContext"
 import { clamp } from "popmotion"
@@ -124,8 +125,17 @@ function CanvasComponent(
     // Throw exception outwards if anything within canvas throws
     if (error) throw error
 
+    const root = useRef<ReconcilerRoot<HTMLCanvasElement>>()
     if (size.width > 0 && size.height > 0) {
-        render(
+        if (!root.current) {
+            root.current = createRoot(canvasRef.current)
+        }
+        root.current!.configure({
+            ...props,
+            dpr: dpr || props.dpr,
+            size: { ...size, top: 0, left: 0 },
+            events: events || createPointerEvents,
+        }).render(
             <ErrorBoundary set={setError}>
                 <React.Suspense fallback={<Block set={setBlock} />}>
                     <MotionCanvasContext.Provider
@@ -142,14 +152,7 @@ function CanvasComponent(
                         </MotionConfigContext.Provider>
                     </MotionCanvasContext.Provider>
                 </React.Suspense>
-            </ErrorBoundary>,
-            canvasRef.current,
-            {
-                ...props,
-                dpr: dpr || props.dpr,
-                size,
-                events: events || createPointerEvents,
-            }
+            </ErrorBoundary>
         )
     }
 
