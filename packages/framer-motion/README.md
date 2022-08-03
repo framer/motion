@@ -3,7 +3,7 @@
 </p>
 <h1 align="center">Framer Motion</h1>
 <h3 align="center">
-  An open source and production-ready motion<br>library for React on the web, <a href="https://www.framer.com">made by Framer</a>.
+  An open source motion library for React, <a href="https://www.framer.com">made by Framer</a>.
 </h3>
 
 <br>
