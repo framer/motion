@@ -61,5 +61,6 @@
         "@react-three/fiber": "^8.2.2",
         "@react-three/test-renderer": "^9.0.0",
         "@rollup/plugin-commonjs": "^22.0.1"
-    }
+    },
+    "gitHead": "f736e4251a4d59f5c93c401cfbf59628734c5b36"
 }

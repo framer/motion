@@ -32,9 +32,11 @@ describe("useInstantTransition", () => {
                 useEffect(() => {
                     startInstantTransition(() => act(() => setState(true)))
 
-                    setTimeout(() => {
+                    const timeout = setTimeout(() => {
                         resolve([xParent.get(), xComponent.get(), xChild.get()])
                     }, 100)
+
+                    return () => clearTimeout(timeout)
                 }, [])
 
                 return (
@@ -93,14 +95,15 @@ describe("useInstantTransition", () => {
                 const xTargets = [0, 100, 200]
 
                 useEffect(() => {
+                    let timeout: NodeJS.Timeout
                     if (state === 0) {
                         startInstantTransition(() => act(() => setState(1)))
                     } else if (state === 1) {
-                        setTimeout(() => {
+                        timeout = setTimeout(() => {
                             act(() => setState(2))
                         }, 100)
                     } else if (state === 2) {
-                        setTimeout(() => {
+                        timeout = setTimeout(() => {
                             resolve([
                                 xParent.get(),
                                 xComponent.get(),
@@ -108,6 +111,8 @@ describe("useInstantTransition", () => {
                             ])
                         }, 100)
                     }
+
+                    return () => clearTimeout(timeout)
                 }, [state])
 
                 return (
