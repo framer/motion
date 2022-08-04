@@ -11,6 +11,10 @@ Undocumented APIs should be considered internal and may change without warning.
 -   `react@18`
 -   `react-three-fiber@8`
 
+### Fixed
+
+-   Drag to reorder items no longer jumping in React 18.
+
 ## [6.5.2] 2022-07-27
 
 ### Fixed
