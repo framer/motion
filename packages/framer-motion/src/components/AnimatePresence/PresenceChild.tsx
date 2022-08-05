@@ -1,12 +1,11 @@
 import * as React from "react"
-import { useMemo } from "react"
+import { useId, useMemo } from "react"
 import {
     PresenceContext,
     PresenceContextProps,
 } from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
-import { useId } from "../../utils/use-id"
 
 interface PresenceChildProps {
     children: React.ReactElement<any>
@@ -34,7 +33,7 @@ export const PresenceChild = ({
             initial,
             isPresent,
             custom,
-            onExitComplete: (childId: number) => {
+            onExitComplete: (childId: string) => {
                 presenceChildren.set(childId, true)
 
                 for (const isComplete of presenceChildren.values()) {
@@ -43,7 +42,7 @@ export const PresenceChild = ({
 
                 onExitComplete?.()
             },
-            register: (childId: number) => {
+            register: (childId: string) => {
                 presenceChildren.set(childId, false)
                 return () => presenceChildren.delete(childId)
             },
@@ -75,6 +74,6 @@ export const PresenceChild = ({
     )
 }
 
-function newChildrenMap(): Map<number, boolean> {
+function newChildrenMap(): Map<string, boolean> {
     return new Map()
 }
