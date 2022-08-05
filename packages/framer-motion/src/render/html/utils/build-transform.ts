@@ -18,10 +18,7 @@ const translateAlias: { [key: string]: string } = {
  */
 export function buildTransform(
     { transform, transformKeys }: HTMLRenderState,
-    {
-        enableHardwareAcceleration = true,
-        allowTransformNone = true,
-    }: DOMVisualElementOptions,
+    { allowTransformNone = true }: DOMVisualElementOptions,
     transformIsDefault: boolean,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
@@ -31,24 +28,14 @@ export function buildTransform(
     // Transform keys into their default order - this will determine the output order.
     transformKeys.sort(sortTransformProps)
 
-    // Track whether the defined transform has a defined z so we don't add a
-    // second to enable hardware acceleration
-    let transformHasZ = false
-
     // Loop over each transform and build them into transformString
     const numTransformKeys = transformKeys.length
     for (let i = 0; i < numTransformKeys; i++) {
         const key = transformKeys[i]
         transformString += `${translateAlias[key] || key}(${transform[key]}) `
-
-        if (key === "z") transformHasZ = true
     }
 
-    if (!transformHasZ && enableHardwareAcceleration) {
-        transformString += "translateZ(0)"
-    } else {
-        transformString = transformString.trim()
-    }
+    transformString = transformString.trim()
 
     // If we have a custom `transform` template, pass our transform values and
     // generated transformString to that before returning
