@@ -1,9 +1,8 @@
-import { useContext, useEffect } from "react"
+import { useContext, useEffect, useId } from "react"
 import {
     PresenceContext,
     PresenceContextProps,
 } from "../../context/PresenceContext"
-import { useId } from "../../utils/use-id"
 
 export type SafeToRemove = () => void
 

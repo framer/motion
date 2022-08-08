@@ -25,7 +25,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     current: Instance | null
     manuallyAnimateOnMount: boolean
     blockInitialAnimation?: boolean
-    presenceId: number | undefined
+    presenceId: string | undefined
     isMounted(): boolean
     mount(instance: Instance): void
     unmount(): void
@@ -152,7 +152,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     visualState: VisualState<Instance, RenderState>
     parent?: VisualElement<unknown>
     variantParent?: VisualElement<unknown>
-    presenceId?: number | undefined
+    presenceId?: string | undefined
     props: MotionProps
     blockInitialAnimation?: boolean
     shouldReduceMotion?: boolean | null
