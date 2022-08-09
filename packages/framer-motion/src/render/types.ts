@@ -121,6 +121,11 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         instance: Instance,
         props: MotionProps & MotionConfigProps
     ): Box
+    onAddExternalMotionValue?: (key: string, renderState: RenderState) => void
+    onRemoveExternalMotionValue?: (
+        key: string,
+        renderState: RenderState
+    ) => void
     readValueFromInstance(
         instance: Instance,
         key: string,

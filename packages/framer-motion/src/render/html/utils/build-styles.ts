@@ -8,20 +8,12 @@ import { isTransformOriginProp, isTransformProp } from "./transform"
 import { getValueAsType } from "../../dom/value-types/get-as-type"
 import { numberValueTypes } from "../../dom/value-types/number"
 
-const willChange: string[] = []
-const acceleratedStyles = new Set(["background-color", "opacity", "transform"])
-
 export function buildHTMLStyles(
     state: HTMLRenderState,
     latestValues: ResolvedValues,
     options: DOMVisualElementOptions,
     transformTemplate?: MotionProps["transformTemplate"]
 ) {
-    /**
-     * Empty the willChange array rather than making a new one every frame.
-     */
-    willChange.length = 0
-
     const { style, vars, transform, transformKeys, transformOrigin } = state
 
     // Empty the transformKeys array. As we're throwing out refs to its items
@@ -74,7 +66,6 @@ export function buildHTMLStyles(
             // If this is a transform origin, flag and enable further transform-origin processing
             hasTransformOrigin = true
         } else {
-            if (acceleratedStyles.has(key)) willChange.push(key)
             style[key] = valueAsType
         }
     }
@@ -90,14 +81,6 @@ export function buildHTMLStyles(
         style.transform = transformTemplate({}, "")
     } else if (!latestValues.transform && style.transform) {
         style.transform = "none"
-    }
-
-    if (style.transform && style.transform !== "none") {
-        willChange.push("transform")
-    }
-
-    if (options.enableHardwareAcceleration) {
-        style.willChange = willChange.join(", ")
     }
 
     // If opacity, set willChange to opacity

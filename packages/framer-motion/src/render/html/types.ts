@@ -9,6 +9,7 @@ import {
 } from "react"
 import { MotionProps } from "../../motion/types"
 import { HTMLElements } from "./supported-elements"
+import { WillChangeManager } from "./utils/will-change"
 
 export interface TransformOrigin {
     originX?: number | string
@@ -46,6 +47,11 @@ export interface HTMLRenderState {
      * every frame. We use a mutable data structure to reduce GC during animations.
      */
     vars: ResolvedValues
+
+    /**
+     *
+     */
+    willChange: WillChangeManager
 }
 
 /**
@@ -73,13 +79,12 @@ type HTMLAttributesWithoutMotionProps<
 /**
  * @public
  */
-export type HTMLMotionProps<
-    TagName extends keyof ReactHTML
-> = HTMLAttributesWithoutMotionProps<
-    UnwrapFactoryAttributes<ReactHTML[TagName]>,
-    UnwrapFactoryElement<ReactHTML[TagName]>
-> &
-    MotionProps
+export type HTMLMotionProps<TagName extends keyof ReactHTML> =
+    HTMLAttributesWithoutMotionProps<
+        UnwrapFactoryAttributes<ReactHTML[TagName]>,
+        UnwrapFactoryElement<ReactHTML[TagName]>
+    > &
+        MotionProps
 
 /**
  * Motion-optimised versions of React's HTML components.

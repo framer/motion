@@ -23,7 +23,6 @@ export interface AnimationState {
         options?: AnimationOptions
     ) => Promise<any>
     setAnimateFunction: (fn: any) => void
-    isAnimated(key: string): boolean
     getState: () => { [key: string]: AnimationTypeState }
 }
 
@@ -61,7 +60,6 @@ export function createAnimationState(
 ): AnimationState {
     let animate = animateList(visualElement)
     const state = createState()
-    let allAnimatedKeys = {}
     let isInitialRender = true
 
     /**
@@ -80,10 +78,6 @@ export function createAnimationState(
         }
 
         return acc
-    }
-
-    function isAnimated(key: string) {
-        return allAnimatedKeys[key] !== undefined
     }
 
     /**
@@ -333,8 +327,6 @@ export function createAnimationState(
             }
         }
 
-        allAnimatedKeys = { ...encounteredKeys }
-
         /**
          * If there are some removed value that haven't been dealt with,
          * we need to create a new animation that falls back either to the value
@@ -394,7 +386,6 @@ export function createAnimationState(
     }
 
     return {
-        isAnimated,
         animateChanges,
         setActive,
         setAnimateFunction,

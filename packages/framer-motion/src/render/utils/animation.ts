@@ -173,12 +173,16 @@ function animateTarget(
             } as any
         }
 
+        const willChangeKey = isTransformProp(key) ? "transform" : key
+
         const animation = startAnimation(
             key,
             value,
             valueTarget,
             valueTransition
-        )
+        ).then(() => visualElement.willChange.delete(willChangeKey))
+
+        visualElement.willChange.add(willChangeKey)
 
         animations.push(animation)
     }
