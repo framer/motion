@@ -36,6 +36,7 @@ export interface VisualElement<Instance = any, RenderState = any>
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
     shouldReduceMotion?: boolean | null
+    renderState: RenderState
 
     animateMotionValue?: typeof startAnimation
 

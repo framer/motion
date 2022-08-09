@@ -180,9 +180,13 @@ function animateTarget(
             value,
             valueTarget,
             valueTransition
-        ).then(() => visualElement.willChange.delete(willChangeKey))
+        ).then(() => {
+            ;(visualElement as any).renderState.willChange?.delete(
+                willChangeKey
+            )
+        })
 
-        visualElement.willChange.add(willChangeKey)
+        ;(visualElement as any).renderState.willChange?.add(willChangeKey)
 
         animations.push(animation)
     }
