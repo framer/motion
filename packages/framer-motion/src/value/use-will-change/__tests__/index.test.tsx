@@ -84,4 +84,30 @@ describe("useWillChange", () => {
             const { container } = render(<Component />)
         })
     })
+
+    test("Reverts to `auto` when all values finish animating", async () => {
+        return new Promise<void>((resolve) => {
+            const Component = () => {
+                const willChange = useWillChange()
+                return (
+                    <motion.div
+                        initial={{ x: 0, backgroundColor: "#fff" }}
+                        animate={{ x: 100, backgroundColor: "#000" }}
+                        style={{ willChange }}
+                        transition={{ duration: 0.05 }}
+                        onAnimationComplete={() => {
+                            requestAnimationFrame(() => {
+                                expect(container.firstChild).toHaveStyle(
+                                    "will-change: auto;"
+                                )
+                                resolve()
+                            })
+                        }}
+                    />
+                )
+            }
+
+            const { container } = render(<Component />)
+        })
+    })
 })
