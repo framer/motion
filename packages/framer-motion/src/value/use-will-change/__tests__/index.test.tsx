@@ -70,10 +70,12 @@ describe("useWillChange", () => {
                         style={{ willChange }}
                         transition={{ duration: 0.05 }}
                         onAnimationComplete={() => {
-                            expect(container.firstChild).toHaveStyle(
-                                "will-change: auto;"
-                            )
-                            resolve()
+                            requestAnimationFrame(() => {
+                                expect(container.firstChild).toHaveStyle(
+                                    "will-change: auto;"
+                                )
+                                resolve()
+                            })
                         }}
                     />
                 )
