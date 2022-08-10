@@ -13,6 +13,7 @@ import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
 import { isTransformProp } from "../html/utils/transform"
+import { isWillChangeMotionValue } from "../../hooks/use-will-change/is"
 
 export type AnimationDefinition =
     | VariantLabels
@@ -140,6 +141,8 @@ function animateTarget(
         ...target
     } = visualElement.makeTargetAnimatable(definition)
 
+    const willChange = visualElement.getValue("willChange")
+
     if (transitionOverride) transition = transitionOverride
 
     const animations: Promise<any>[] = []
@@ -173,20 +176,13 @@ function animateTarget(
             } as any
         }
 
-        const willChangeKey = isTransformProp(key) ? "transform" : key
+        let animation = startAnimation(key, value, valueTarget, valueTransition)
 
-        const animation = startAnimation(
-            key,
-            value,
-            valueTarget,
-            valueTransition
-        ).then(() => {
-            ;(visualElement as any).renderState.willChange?.delete(
-                willChangeKey
-            )
-        })
+        if (isWillChangeMotionValue(willChange)) {
+            willChange.add(key)
 
-        ;(visualElement as any).renderState.willChange?.add(willChangeKey)
+            animation = animation.then(() => willChange.remove(key))
+        }
 
         animations.push(animation)
     }

@@ -36,7 +36,6 @@ export interface VisualElement<Instance = any, RenderState = any>
     addVariantChild(child: VisualElement): undefined | (() => void)
     getClosestVariantNode(): VisualElement | undefined
     shouldReduceMotion?: boolean | null
-    renderState: RenderState
 
     animateMotionValue?: typeof startAnimation
 
@@ -122,11 +121,6 @@ export interface VisualElementConfig<Instance, RenderState, Options> {
         instance: Instance,
         props: MotionProps & MotionConfigProps
     ): Box
-    onAddExternalMotionValue?: (key: string, renderState: RenderState) => void
-    onRemoveExternalMotionValue?: (
-        key: string,
-        renderState: RenderState
-    ) => void
     readValueFromInstance(
         instance: Instance,
         key: string,

@@ -83,9 +83,6 @@ export function buildHTMLStyles(
         style.transform = "none"
     }
 
-    // If opacity, set willChange to opacity
-    // maybe more this near setAttribute so we can also delete
-
     if (hasTransformOrigin) {
         style.transformOrigin = buildTransformOrigin(transformOrigin)
     }

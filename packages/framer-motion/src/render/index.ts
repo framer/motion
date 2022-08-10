@@ -28,7 +28,6 @@ export const visualElement =
         removeValueFromRenderState,
         sortNodePosition,
         scrapeMotionValuesFromProps,
-        onAddExternalMotionValue,
     }: VisualElementConfig<Instance, MutableState, Options>) =>
     (
         {
@@ -152,7 +151,6 @@ export const visualElement =
         const initialMotionValues = scrapeMotionValuesFromProps(props)
         for (const key in initialMotionValues) {
             const value = initialMotionValues[key]
-            onAddExternalMotionValue?.(key, renderState)
 
             if (latestValues[key] !== undefined && isMotionValue(value)) {
                 value.set(latestValues[key], false)
@@ -187,8 +185,6 @@ export const visualElement =
              *
              */
             presenceId,
-
-            renderState,
 
             shouldReduceMotion,
 

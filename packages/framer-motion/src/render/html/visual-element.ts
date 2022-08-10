@@ -76,10 +76,9 @@ export const htmlConfig: VisualElementConfig<
         instance.style.transform = mutableState.style.transform as string
     },
 
-    removeValueFromRenderState(key, { vars, style, willChange }) {
+    removeValueFromRenderState(key, { vars, style }) {
         delete vars[key]
         delete style[key]
-        willChange.remove(key)
     },
 
     /**

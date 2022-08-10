@@ -1,14 +1,19 @@
-import { addUniqueItem, removeItem } from "../../../utils/array"
-import { isCSSVariable } from "../../dom/utils/is-css-variable"
-import { isTransformOriginProp, isTransformProp } from "./transform"
+import { isCSSVariable } from "../../render/dom/utils/is-css-variable"
+import {
+    isTransformOriginProp,
+    isTransformProp,
+} from "../../render/html/utils/transform"
+import { addUniqueItem, removeItem } from "../../utils/array"
+import { useConstant } from "../../utils/use-constant"
+import { MotionValue } from "../../value"
+import { WillChange } from "./types"
 
-export class WillChangeManager {
+class WillChangeMotionValue extends MotionValue implements WillChange {
     private members: string[] = []
     private transforms = new Set<string>()
     private needsUpdate: boolean | undefined
-    private current = "auto"
 
-    add(name: string) {
+    add(name: string): void {
         let memberName: string | undefined
 
         if (isTransformProp(name)) {
@@ -23,7 +28,7 @@ export class WillChangeManager {
         }
     }
 
-    remove(name: string) {
+    remove(name: string): void {
         if (isTransformProp(name)) {
             this.transforms.delete(name)
             if (!this.transforms.size) {
@@ -36,12 +41,15 @@ export class WillChangeManager {
 
     get() {
         if (this.needsUpdate) this.update()
-
-        return this.current
+        return super.get()
     }
 
     private update() {
-        this.current = this.members.length ? this.members.join(", ") : "auto"
+        this.set(this.members.length ? this.members.join(", ") : "auto")
         this.needsUpdate = false
     }
+}
+
+export function useWillChange(): WillChange {
+    return useConstant(() => new WillChangeMotionValue("auto"))
 }
