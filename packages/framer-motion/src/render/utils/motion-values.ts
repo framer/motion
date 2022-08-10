@@ -7,9 +7,11 @@ import { VisualElement } from "../types"
 
 export function updateMotionValuesFromProps(
     element: VisualElement,
-    { willChange, ...next }: MotionStyle,
+    next: MotionStyle,
     prev: MotionStyle
 ) {
+    const { willChange } = next
+
     for (const key in next) {
         const nextValue = next[key]
         const prevValue = prev[key]

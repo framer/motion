@@ -1,7 +1,7 @@
 import * as React from "react"
 import { render } from "../../../../jest.setup"
 import { useWillChange } from ".."
-import { motion } from "../../.."
+import { motion, useMotionValue } from "../../.."
 
 describe("useWillChange", () => {
     test("Applies 'will-change: auto' by default", async () => {
@@ -12,6 +12,27 @@ describe("useWillChange", () => {
 
         const { container } = render(<Component />)
         expect(container.firstChild).toHaveStyle("will-change: auto;")
+    })
+
+    test("Adds externally-provided motion values", async () => {
+        const Component = () => {
+            const willChange = useWillChange()
+            const height = useMotionValue("height")
+            return <motion.div style={{ willChange, height }} />
+        }
+
+        const { container } = render(<Component />)
+
+        return new Promise<void>((resolve) => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    expect(container.firstChild).toHaveStyle(
+                        "will-change: height;"
+                    )
+                    resolve()
+                })
+            })
+        })
     })
 
     test("Adds 'transform' when transform is animating", async () => {
@@ -49,9 +70,10 @@ describe("useWillChange", () => {
                         style={{ willChange }}
                         transition={{ duration: 0.05 }}
                         onAnimationComplete={() => {
-                            expect(container.firstChild).not.toHaveStyle(
-                                "will-change: transform;"
+                            expect(container.firstChild).toHaveStyle(
+                                "will-change: auto;"
                             )
+                            resolve()
                         }}
                     />
                 )

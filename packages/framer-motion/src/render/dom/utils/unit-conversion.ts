@@ -7,6 +7,7 @@ import { transformProps } from "../../html/utils/transform"
 import { ResolvedValues, VisualElement } from "../../types"
 import { findDimensionValueType } from "../value-types/dimensions"
 import { Box } from "../../../projection/geometry/types"
+import { isBrowser } from "../../../utils/is-browser"
 
 const positionalKeys = new Set([
     "width",
@@ -283,7 +284,7 @@ const checkAndConvertChangedValueTypes = (
         visualElement.syncRender()
 
         // Restore scroll position
-        if (scrollY !== null) window.scrollTo({ top: scrollY })
+        if (isBrowser && scrollY !== null) window.scrollTo({ top: scrollY })
 
         return { target: convertedTarget, transitionEnd }
     } else {
