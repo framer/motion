@@ -1,4 +1,4 @@
-import { isMotionValue } from "../../value/utils/is-motion-value"
+import { isMotionValue } from "../utils/is-motion-value"
 import { WillChange } from "./types"
 
 export function isWillChangeMotionValue(value: any): value is WillChange {

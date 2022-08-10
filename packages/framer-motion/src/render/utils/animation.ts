@@ -13,7 +13,7 @@ import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
 import { isTransformProp } from "../html/utils/transform"
-import { isWillChangeMotionValue } from "../../hooks/use-will-change/is"
+import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 
 export type AnimationDefinition =
     | VariantLabels

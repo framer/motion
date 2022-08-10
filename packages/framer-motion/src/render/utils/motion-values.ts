@@ -1,4 +1,4 @@
-import { isWillChangeMotionValue } from "../../hooks/use-will-change/is"
+import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { MotionStyle } from "../../motion/types"
 import { warnOnce } from "../../utils/warn-once"
 import { motionValue } from "../../value"

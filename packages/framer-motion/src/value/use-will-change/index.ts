@@ -5,10 +5,10 @@ import {
 } from "../../render/html/utils/transform"
 import { addUniqueItem, removeItem } from "../../utils/array"
 import { useConstant } from "../../utils/use-constant"
-import { MotionValue } from "../../value"
+import { MotionValue } from ".."
 import { WillChange } from "./types"
 
-class WillChangeMotionValue extends MotionValue implements WillChange {
+export class WillChangeMotionValue extends MotionValue implements WillChange {
     private members: string[] = []
     private transforms = new Set<string>()
     private needsUpdate: boolean | undefined
