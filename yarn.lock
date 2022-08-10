@@ -7953,11 +7953,13 @@ __metadata:
     eslint-plugin-import: ^2.26.0
     eslint-plugin-react: ^7.30.1
     eslint-plugin-react-hooks: ^4.6.0
+    framesync: 6.1.1
     jest: ^28.0.0
     jest-environment-jsdom: ^28.1.3
     jest-watch-typeahead: ^2.0.0
     lerna: ^4.0.0
     lint-staged: ^8.0.4
+    popmotion: 11.0.4
     prettier: ^2.5.1
     react: ^18.2.0
     react-dev-utils: ^12.0.1
@@ -7967,6 +7969,7 @@ __metadata:
     rollup-plugin-terser: ^5.3.0
     rollup-plugin-visualizer: ^2.4.3
     start-server-and-test: ^1.14.0
+    style-value-types: 5.1.1
     ts-jest: ^28.0.7
     ts-loader: ^9.3.1
     turbo: latest
@@ -8020,6 +8023,15 @@ __metadata:
   dependencies:
     tslib: ^2.1.0
   checksum: a23ebe8f7e20a32c0b99c2f8175b6f07af3ec6316aad52a2316316a6d011d717af8d2175dcc2827031c59fabb30232ed3e19a720a373caba7f070e1eae436325
+  languageName: node
+  linkType: hard
+
+"framesync@npm:6.1.1":
+  version: 6.1.1
+  resolution: "framesync@npm:6.1.1"
+  dependencies:
+    tslib: ^2.3.1
+  checksum: f75f77bb3fcb1874fd05e5d254c075c97f431cb74e1d11982661a77248bba442f7d2f251e0c4a019ba9293336bc941b42c7f760b926bd1ff3d3c269c0c7f1a8a
   languageName: node
   linkType: hard
 
@@ -13066,6 +13078,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"popmotion@npm:11.0.4":
+  version: 11.0.4
+  resolution: "popmotion@npm:11.0.4"
+  dependencies:
+    framesync: 6.1.1
+    hey-listen: ^1.0.8
+    style-value-types: 5.1.1
+    tslib: ^2.1.0
+  checksum: ecfa6fbfcbb418386ddab7ee10b52b848c163586bcc8c31a322d09c3b897d1833415729567b0ee252f5c23007382a6d6cfe3458b9af1f2367a3389cccb7bc65f
+  languageName: node
+  linkType: hard
+
 "portfinder@npm:^1.0.26":
   version: 1.0.28
   resolution: "portfinder@npm:1.0.28"
@@ -15455,6 +15479,16 @@ __metadata:
     hey-listen: ^1.0.8
     tslib: ^2.3.1
   checksum: 25af60d2ea8e2c64a405f377e3208fe3cad672a115417748d72c3d515809655d8468b3ee2dbdef19bade4aa0dc4a07086c63faa2b10ef39673a2ab01a35b9cfa
+  languageName: node
+  linkType: hard
+
+"style-value-types@npm:5.1.1":
+  version: 5.1.1
+  resolution: "style-value-types@npm:5.1.1"
+  dependencies:
+    hey-listen: ^1.0.8
+    tslib: ^2.3.1
+  checksum: 108ff80c7b94e7345b708cdb4870efb9286c89ceb17398f157dd797b1ccb3252476517a10b43c4ad4136401946a190b1f50ea9b31c01ccce20a04542a14a2c3f
   languageName: node
   linkType: hard
 
