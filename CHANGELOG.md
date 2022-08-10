@@ -4,11 +4,15 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [7.0.1] 2022-08-05
+## [7.0.1] 2022-08-10
 
 ### Changed
 
 -   Replacing internal `useId` with React 18's `useId`.
+
+### Fixed
+
+-   Correctly parsing slash-delimited opacities within colors.
 
 ## [7.0.0] 2022-08-04
 
