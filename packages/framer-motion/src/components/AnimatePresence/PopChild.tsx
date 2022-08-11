@@ -16,6 +16,10 @@ interface MeasureProps extends Props {
     sizeRef: React.RefObject<Size>
 }
 
+/**
+ * Measurement functionality has to be within a separate component
+ * to leverage snapshot lifecycle.
+ */
 class PopChildMeasure extends React.Component<MeasureProps> {
     getSnapshotBeforeUpdate(prevProps: MeasureProps) {
         if (prevProps.isPresent && !this.props.isPresent) {
@@ -40,6 +44,15 @@ export function PopChild({ children, isPresent }: Props) {
     const ref = useRef<HTMLElement>(null)
     const size = useRef({ width: 0, height: 0 })
 
+    /**
+     * We create and inject a style block so we can apply this explicit
+     * sizing in a non-destructive manner by just deleting the style block.
+     *
+     * We can't apply the size via render as the measurement happens
+     * in getSnapshotBeforeUpdate (post-render), likewise if we apply the
+     * styles directly on the DOM node, we might be overwriting
+     * styles set via the style prop.
+     */
     useInsertionEffect(() => {
         const { width, height } = size.current
         if (isPresent || !ref.current || !width || !height) return
