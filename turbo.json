@@ -1,66 +1,40 @@
 {
-  "npmClient": "yarn",
-  "baseBranch": "origin/main",
-  "pipeline": {
-    "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": [
-        "dist/**",
-        "types/**"
-      ]
-    },
-    "lint": {
-      "outputs": []
-    },
-    "test": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": []
-    },
-    "test-e2e": {
-      "dependsOn": [
-        "^build"
-      ],
-      "outputs": []
-    },
-    "test-ci": {
-      "dependsOn": [
-        "^build"
-      ],
-      "cache": false,
-      "outputs": []
-    },
-    "deploy": {
-      "dependsOn": [
-        "build",
-        "test",
-        "lint"
-      ]
-    },
-    "measure": {
-      "dependsOn": [
-        "build"
-      ]
-    },
-    "publish": {
-      "dependsOn": [
-        "build",
-        "test",
-        "test-e2e",
-        "lint"
-      ]
-    },
-    "dev": {
-      "dependsOn": [
-        "build"
-      ],
-      "cache": false,
-      "outputs": [
-        "dist/**"
-      ]
+    "npmClient": "yarn",
+    "baseBranch": "origin/main",
+    "pipeline": {
+        "build": {
+            "dependsOn": ["^build"],
+            "outputs": ["dist/**", "types/**"]
+        },
+        "lint": {
+            "outputs": []
+        },
+        "test": {
+            "dependsOn": ["^build"],
+            "outputs": []
+        },
+        "test-e2e": {
+            "dependsOn": ["^build"],
+            "outputs": []
+        },
+        "test-ci": {
+            "dependsOn": ["^build"],
+            "cache": false,
+            "outputs": []
+        },
+        "deploy": {
+            "dependsOn": ["build", "test", "lint"]
+        },
+        "measure": {
+            "dependsOn": ["build"]
+        },
+        "publish": {
+            "dependsOn": []
+        },
+        "dev": {
+            "dependsOn": ["build"],
+            "cache": false,
+            "outputs": ["dist/**"]
+        }
     }
-  }
 }
