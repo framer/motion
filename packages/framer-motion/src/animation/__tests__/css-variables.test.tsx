@@ -21,7 +21,7 @@ const originalGetComputedStyle = window.getComputedStyle
 
 function getComputedStyleStub() {
     return {
-        getPropertyValue(variableName: "--from" | "--to" | "--a") {
+        getPropertyValue(variableName: "--from" | "--to" | "--a" | "--color") {
             switch (variableName) {
                 case fromName:
                     return fromValue
@@ -29,6 +29,8 @@ function getComputedStyleStub() {
                     return toValue
                 case "--a":
                     return undefined
+                case "--color":
+                    return "  #fff "
                 default:
                     throw Error("Should never happen")
             }
@@ -83,9 +85,10 @@ describe("css variables", () => {
             const output: string[] = []
             const Component = () => (
                 <motion.div
-                    animate={{ "--a": "20px" } as any}
+                    style={{ "--color": " #fff " } as any}
+                    animate={{ "--a": "20px", "--color": "#000" } as any}
                     transition={{ duration: 0.01 }}
-                    onUpdate={(latest: any) => output.push(latest["--a"])}
+                    onUpdate={(latest: any) => output.push(latest)}
                     onAnimationComplete={() => resolve(output)}
                 />
             )
@@ -94,7 +97,9 @@ describe("css variables", () => {
         })
 
         const results = await promise
-        expect(results).toEqual(["20px"])
+        expect(results).toEqual([
+            { "--a": "20px", "--color": "rgba(0, 0, 0, 1)" },
+        ])
     })
 
     // Skipping because this test always succeeds, no matter what style values you check for ¯\\_(ツ)_/¯

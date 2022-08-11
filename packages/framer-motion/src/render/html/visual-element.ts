@@ -29,11 +29,12 @@ export const htmlConfig: VisualElementConfig<
             return defaultType ? defaultType.default || 0 : 0
         } else {
             const computedStyle = getComputedStyle(domElement)
-            return (
+            const value =
                 (isCSSVariable(key)
                     ? computedStyle.getPropertyValue(key)
                     : computedStyle[key]) || 0
-            )
+            console.log(value)
+            return value //typeof value === "string" ? value.trim() : value
         }
     },
 
