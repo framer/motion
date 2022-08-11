@@ -61,10 +61,10 @@
     },
     "dependencies": {
         "@motionone/dom": "10.13.1",
-        "framesync": "6.0.1",
+        "framesync": "6.1.1",
         "hey-listen": "^1.0.8",
-        "popmotion": "11.0.3",
-        "style-value-types": "5.1.0",
+        "popmotion": "11.0.4",
+        "style-value-types": "5.1.1",
         "tslib": "^2.1.0"
     },
     "optionalDependencies": {

@@ -75,9 +75,6 @@
     },
     "packageManager": "yarn@3.1.0",
     "dependencies": {
-        "framesync": "6.1.1",
-        "popmotion": "11.0.4",
-        "start-server-and-test": "^1.14.0",
-        "style-value-types": "5.1.1"
+        "start-server-and-test": "^1.14.0"
     }
 }
