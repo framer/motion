@@ -6,14 +6,16 @@ import {
 } from "../../context/PresenceContext"
 import { VariantLabels } from "../../motion/types"
 import { useConstant } from "../../utils/use-constant"
+import { PopChild } from "./PopChild"
 
 interface PresenceChildProps {
-    children: React.ReactElement<any>
+    children: React.ReactElement
     isPresent: boolean
     onExitComplete?: () => void
     initial?: false | VariantLabels
     custom?: any
     presenceAffectsLayout: boolean
+    pop: boolean
 }
 
 export const PresenceChild = ({
@@ -23,6 +25,7 @@ export const PresenceChild = ({
     onExitComplete,
     custom,
     presenceAffectsLayout,
+    pop,
 }: PresenceChildProps) => {
     const presenceChildren = useConstant(newChildrenMap)
     const id = useId()
@@ -66,6 +69,10 @@ export const PresenceChild = ({
     React.useEffect(() => {
         !isPresent && !presenceChildren.size && onExitComplete?.()
     }, [isPresent])
+
+    if (pop) {
+        children = <PopChild isPresent={isPresent}>{children}</PopChild>
+    }
 
     return (
         <PresenceContext.Provider value={context}>

@@ -75,13 +75,16 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
  *
  * @public
  */
-export const AnimatePresence: React.FunctionComponent<React.PropsWithChildren<AnimatePresenceProps>> = ({
+export const AnimatePresence: React.FunctionComponent<
+    React.PropsWithChildren<AnimatePresenceProps>
+> = ({
     children,
     custom,
     initial = true,
     onExitComplete,
     exitBeforeEnter,
     presenceAffectsLayout = true,
+    pop = false,
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
@@ -132,6 +135,7 @@ export const AnimatePresence: React.FunctionComponent<React.PropsWithChildren<An
                         isPresent
                         initial={initial ? undefined : false}
                         presenceAffectsLayout={presenceAffectsLayout}
+                        pop={pop}
                     >
                         {child}
                     </PresenceChild>
@@ -205,6 +209,7 @@ export const AnimatePresence: React.FunctionComponent<React.PropsWithChildren<An
                 onExitComplete={onExit}
                 custom={custom}
                 presenceAffectsLayout={presenceAffectsLayout}
+                pop={pop}
             >
                 {child}
             </PresenceChild>
@@ -222,6 +227,7 @@ export const AnimatePresence: React.FunctionComponent<React.PropsWithChildren<An
                 key={getChildKey(child)}
                 isPresent
                 presenceAffectsLayout={presenceAffectsLayout}
+                pop={pop}
             >
                 {child}
             </PresenceChild>

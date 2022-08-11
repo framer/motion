@@ -51,9 +51,17 @@ export interface AnimatePresenceProps {
      * )
      * ```
      *
-     * @beta
+     * @public
      */
     exitBeforeEnter?: boolean
+
+    /**
+     * If set to `true`, top-level `exit` components will be "popped" out of the DOM layout,
+     * so surrounding elements can animate to their new layout immediately.
+     *
+     * @public
+     */
+    pop?: boolean
 
     /**
      * Internal. Used in Framer to flag that sibling children *shouldn't* re-render as a result of a
