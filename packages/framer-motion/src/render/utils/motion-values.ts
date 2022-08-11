@@ -1,3 +1,4 @@
+import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 import { MotionStyle } from "../../motion/types"
 import { warnOnce } from "../../utils/warn-once"
 import { motionValue } from "../../value"
@@ -9,6 +10,8 @@ export function updateMotionValuesFromProps(
     next: MotionStyle,
     prev: MotionStyle
 ) {
+    const { willChange } = next
+
     for (const key in next) {
         const nextValue = next[key]
         const prevValue = prev[key]
@@ -19,6 +22,10 @@ export function updateMotionValuesFromProps(
              * to our visual element's motion value map.
              */
             element.addValue(key, nextValue)
+
+            if (isWillChangeMotionValue(willChange)) {
+                willChange.add(key)
+            }
 
             /**
              * Check the version of the incoming motion value with this version
@@ -32,10 +39,14 @@ export function updateMotionValuesFromProps(
             }
         } else if (isMotionValue(prevValue)) {
             /**
-             * If we're swapping to a new motion value, create a new motion value
-             * from that
+             * If we're swapping from a motion value to a static value,
+             * create a new motion value from that
              */
             element.addValue(key, motionValue(nextValue))
+
+            if (isWillChangeMotionValue(willChange)) {
+                willChange.remove(key)
+            }
         } else if (prevValue !== nextValue) {
             /**
              * If this is a flat value that has changed, update the motion value

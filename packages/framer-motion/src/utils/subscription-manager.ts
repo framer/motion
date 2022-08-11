@@ -5,7 +5,7 @@ type GenericHandler = (...args: any) => void
 export class SubscriptionManager<Handler extends GenericHandler> {
     private subscriptions: Handler[] = []
 
-    add(handler: Handler) {
+    add(handler: Handler): VoidFunction {
         addUniqueItem(this.subscriptions, handler)
         return () => removeItem(this.subscriptions, handler)
     }

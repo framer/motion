@@ -73,13 +73,12 @@ type HTMLAttributesWithoutMotionProps<
 /**
  * @public
  */
-export type HTMLMotionProps<
-    TagName extends keyof ReactHTML
-> = HTMLAttributesWithoutMotionProps<
-    UnwrapFactoryAttributes<ReactHTML[TagName]>,
-    UnwrapFactoryElement<ReactHTML[TagName]>
-> &
-    MotionProps
+export type HTMLMotionProps<TagName extends keyof ReactHTML> =
+    HTMLAttributesWithoutMotionProps<
+        UnwrapFactoryAttributes<ReactHTML[TagName]>,
+        UnwrapFactoryElement<ReactHTML[TagName]>
+    > &
+        MotionProps
 
 /**
  * Motion-optimised versions of React's HTML components.

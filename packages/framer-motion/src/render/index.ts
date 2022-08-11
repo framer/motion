@@ -1,6 +1,7 @@
 import sync, { cancelSync } from "framesync"
 import { MotionStyle } from "../motion/types"
 import { motionValue, MotionValue } from "../value"
+import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
 import {
     VisualElement,
@@ -148,11 +149,18 @@ export const visualElement =
          * Doing so will break some tests but this isn't neccessarily a breaking change,
          * more a reflection of the test.
          */
-        const initialMotionValues = scrapeMotionValuesFromProps(props)
+        const { willChange, ...initialMotionValues } =
+            scrapeMotionValuesFromProps(props)
+
         for (const key in initialMotionValues) {
             const value = initialMotionValues[key]
+
             if (latestValues[key] !== undefined && isMotionValue(value)) {
                 value.set(latestValues[key], false)
+
+                if (isWillChangeMotionValue(willChange)) {
+                    willChange.add(key)
+                }
             }
         }
 

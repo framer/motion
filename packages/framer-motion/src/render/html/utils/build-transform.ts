@@ -46,9 +46,9 @@ export function buildTransform(
 
     if (!transformHasZ && enableHardwareAcceleration) {
         transformString += "translateZ(0)"
-    } else {
-        transformString = transformString.trim()
     }
+
+    transformString = transformString.trim()
 
     // If we have a custom `transform` template, pass our transform values and
     // generated transformString to that before returning

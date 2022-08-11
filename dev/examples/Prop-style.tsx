@@ -15,7 +15,7 @@ const style = {
 
 export const App = () => {
     return (
-        <motion.div static>
+        <motion.div>
             <motion.div
                 transformTemplate={(_, generated) => {
                     console.log("firing template")
