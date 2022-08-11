@@ -33,8 +33,8 @@ export const htmlConfig: VisualElementConfig<
                 (isCSSVariable(key)
                     ? computedStyle.getPropertyValue(key)
                     : computedStyle[key]) || 0
-            console.log(value)
-            return value //typeof value === "string" ? value.trim() : value
+
+            return typeof value === "string" ? value.trim() : value
         }
     },
 
