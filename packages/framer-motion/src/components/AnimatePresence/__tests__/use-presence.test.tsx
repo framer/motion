@@ -38,7 +38,7 @@ describe("usePresence", () => {
                 expect(container.firstChild).toBeFalsy()
 
                 resolve()
-            }, 100)
+            }, 150)
         })
 
         await promise
