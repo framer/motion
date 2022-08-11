@@ -9,6 +9,7 @@ Undocumented APIs should be considered internal and may change without warning.
 ### Fixed
 
 -   Correctly parsing slash-delimited opacities within colors.
+-   Exporting types correctly for Typescript 4.7.
 
 ## [7.0.1] 2022-08-10
 
