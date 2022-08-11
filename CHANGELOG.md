@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.1.0] 2022-08-11
+
+### Added
+
+-   `useWillChange` for automatically managing the `will-change` style.
+
 ## [7.0.3] 2022-08-11
 
 ### Fixed
