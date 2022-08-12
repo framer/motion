@@ -89,8 +89,7 @@ export function PopChild({ children, isPresent }: Props) {
 
         const style = document.createElement("style")
         document.head.appendChild(style)
-        style.appendChild(
-            document.createTextNode(`
+        style.sheet?.insertRule(`
           [data-motion-pop-id="${id}"] {
             position: absolute !important;
             width: ${width}px !important;
@@ -99,7 +98,6 @@ export function PopChild({ children, isPresent }: Props) {
             left: ${left} !important;
           }
         `)
-        )
 
         return () => {
             document.head.removeChild(style)
