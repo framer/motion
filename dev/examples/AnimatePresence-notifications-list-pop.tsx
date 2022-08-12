@@ -2,11 +2,6 @@ import * as React from "react"
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
-/**
- * An example of pairing AnimatePresence with layout animations to create a notifications list
- * that correctly animate into their new positions as others are added/removed.
- */
-
 const Notification = React.forwardRef(function (
     { id, notifications, setNotifications, style },
     ref
@@ -40,7 +35,7 @@ export const App = () => {
     return (
         <div className="container">
             <ul>
-                <AnimatePresence pop initial={false}>
+                <AnimatePresence popLayout initial={false}>
                     {notifications.map((id) => (
                         <Notification
                             id={id}
