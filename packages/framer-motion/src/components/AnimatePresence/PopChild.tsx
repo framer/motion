@@ -4,8 +4,8 @@ import { useRef, useInsertionEffect, useId } from "react"
 interface Size {
     width: number
     height: number
-    top: `${number}px` | "auto"
-    left: `${number}px` | "auto"
+    top: number
+    left: number
 }
 
 interface Props {
@@ -26,27 +26,11 @@ class PopChildMeasure extends React.Component<MeasureProps> {
     getSnapshotBeforeUpdate(prevProps: MeasureProps) {
         const element = this.props.childRef.current
         if (element && prevProps.isPresent && !this.props.isPresent) {
-            const { position } = getComputedStyle(element)
             const size = this.props.sizeRef.current!
             size.height = element.offsetHeight || 0
             size.width = element.offsetWidth || 0
-            size.top = size.left = "auto"
-
-            /**
-             * If this element is position: relative and the parent has
-             * padding, we need to explicitly set a top and/or left.
-             */
-            if (position === "relative" && element.offsetParent) {
-                const { paddingTop, paddingLeft } = getComputedStyle(
-                    element.offsetParent
-                )
-                if (parseFloat(paddingTop)) {
-                    size.top = `${element.offsetTop}px`
-                }
-                if (parseFloat(paddingLeft)) {
-                    size.left = `${element.offsetLeft}px`
-                }
-            }
+            size.top = element.offsetTop
+            size.left = element.offsetLeft
         }
 
         return null
@@ -68,8 +52,8 @@ export function PopChild({ children, isPresent }: Props) {
     const size = useRef<Size>({
         width: 0,
         height: 0,
-        top: "auto",
-        left: "auto",
+        top: 0,
+        left: 0,
     })
 
     /**
@@ -94,8 +78,8 @@ export function PopChild({ children, isPresent }: Props) {
             position: absolute !important;
             width: ${width}px !important;
             height: ${height}px !important;
-            top: ${top} !important;
-            left: ${left} !important;
+            top: ${top}px !important;
+            left: ${left}px !important;
           }
         `)
 
