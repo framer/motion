@@ -17,16 +17,36 @@ describe("AnimatePresence popLayout", () => {
     it("correctly pops exiting elements out of the DOM", () => {
         cy.visit("?test=animate-presence-pop")
             .wait(50)
-            .get("#a")
+            .get("#b")
             .should(([$a]: any) => {
                 expectBbox($a, {
-                    top: 100,
+                    top: 200,
                     left: 100,
                     width: 100,
                     height: 100,
                 })
             })
+            .get("#c")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 300,
+                    left: 100,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .trigger("click", 60, 60, { force: true })
+            .wait(100)
             .get("#b")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 200,
+                    left: 100,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#c")
             .should(([$a]: any) => {
                 expectBbox($a, {
                     top: 200,
@@ -37,40 +57,83 @@ describe("AnimatePresence popLayout", () => {
             })
             .trigger("click", 60, 60, { force: true })
             .wait(100)
-            .get("#a")
+            .get("#b")
             .should(([$a]: any) => {
                 expectBbox($a, {
-                    top: 100,
+                    top: 200,
                     left: 100,
                     width: 100,
                     height: 100,
                 })
             })
+            .get("#c")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 300,
+                    left: 100,
+                    width: 100,
+                    height: 100,
+                })
+            })
+    })
+
+    it("correctly pops exiting elements out of the DOM when they already have an explicit top/left", () => {
+        cy.visit("?test=animate-presence-pop&position=relative")
+            .wait(50)
             .get("#b")
             .should(([$a]: any) => {
                 expectBbox($a, {
-                    top: 100,
-                    left: 100,
+                    top: 300,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#c")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 400,
+                    left: 200,
                     width: 100,
                     height: 100,
                 })
             })
             .trigger("click", 60, 60, { force: true })
             .wait(100)
-            .get("#a")
+            .get("#b")
             .should(([$a]: any) => {
                 expectBbox($a, {
-                    top: 100,
-                    left: 100,
+                    top: 300,
+                    left: 200,
                     width: 100,
                     height: 100,
                 })
             })
+            .get("#c")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 300,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .trigger("click", 60, 60, { force: true })
+            .wait(100)
             .get("#b")
             .should(([$a]: any) => {
                 expectBbox($a, {
-                    top: 200,
-                    left: 100,
+                    top: 300,
+                    left: 200,
+                    width: 100,
+                    height: 100,
+                })
+            })
+            .get("#c")
+            .should(([$a]: any) => {
+                expectBbox($a, {
+                    top: 400,
+                    left: 200,
                     width: 100,
                     height: 100,
                 })
