@@ -61,7 +61,7 @@ export interface AnimatePresenceProps {
      *
      * @public
      */
-    pop?: boolean
+    popLayout?: boolean
 
     /**
      * Internal. Used in Framer to flag that sibling children *shouldn't* re-render as a result of a

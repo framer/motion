@@ -20,7 +20,7 @@ export const App = () => {
 
     return (
         <Container onClick={() => setState(!state)}>
-            <AnimatePresence pop>
+            <AnimatePresence popLayout>
                 {state ? (
                     <motion.div
                         key="a"
