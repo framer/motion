@@ -13,7 +13,7 @@ function expectBbox(element: HTMLElement, expectedBbox: Partial<BoundingBox>) {
     expectedBbox.height && expect(bbox.height).to.equal(expectedBbox.height)
 }
 
-describe("AnimatePresence pop", () => {
+describe("AnimatePresence popLayout", () => {
     it("correctly pops exiting elements out of the DOM", () => {
         cy.visit("?test=animate-presence-pop")
             .wait(50)
