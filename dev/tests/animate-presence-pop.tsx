@@ -5,6 +5,8 @@ import styled from "styled-components"
 
 const Container = styled.section`
     position: relative;
+    display: flex;
+    flex-direction: column;
     padding: 100px;
 
     div {
