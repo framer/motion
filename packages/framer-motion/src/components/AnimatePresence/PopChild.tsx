@@ -32,6 +32,9 @@ class PopChildMeasure extends React.Component<MeasureProps> {
         return null
     }
 
+    /**
+     * Required with getSnapshotBeforeUpdate to stop React complaining.
+     */
     componentDidUpdate() {}
 
     render() {
@@ -48,7 +51,7 @@ export function PopChild({ children, isPresent }: Props) {
      * We create and inject a style block so we can apply this explicit
      * sizing in a non-destructive manner by just deleting the style block.
      *
-     * We can't apply the size via render as the measurement happens
+     * We can't apply size via render as the measurement happens
      * in getSnapshotBeforeUpdate (post-render), likewise if we apply the
      * styles directly on the DOM node, we might be overwriting
      * styles set via the style prop.
