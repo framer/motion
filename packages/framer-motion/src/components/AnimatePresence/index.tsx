@@ -84,7 +84,7 @@ export const AnimatePresence: React.FunctionComponent<
     onExitComplete,
     exitBeforeEnter,
     presenceAffectsLayout = true,
-    pop = false,
+    popLayout = false,
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
@@ -135,7 +135,7 @@ export const AnimatePresence: React.FunctionComponent<
                         isPresent
                         initial={initial ? undefined : false}
                         presenceAffectsLayout={presenceAffectsLayout}
-                        pop={pop}
+                        popLayout={popLayout}
                     >
                         {child}
                     </PresenceChild>
@@ -209,7 +209,7 @@ export const AnimatePresence: React.FunctionComponent<
                 onExitComplete={onExit}
                 custom={custom}
                 presenceAffectsLayout={presenceAffectsLayout}
-                pop={pop}
+                popLayout={popLayout}
             >
                 {child}
             </PresenceChild>
@@ -227,7 +227,7 @@ export const AnimatePresence: React.FunctionComponent<
                 key={getChildKey(child)}
                 isPresent
                 presenceAffectsLayout={presenceAffectsLayout}
-                pop={pop}
+                popLayout={popLayout}
             >
                 {child}
             </PresenceChild>

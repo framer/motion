@@ -15,7 +15,7 @@ interface PresenceChildProps {
     initial?: false | VariantLabels
     custom?: any
     presenceAffectsLayout: boolean
-    pop: boolean
+    popLayout: boolean
 }
 
 export const PresenceChild = ({
@@ -25,7 +25,7 @@ export const PresenceChild = ({
     onExitComplete,
     custom,
     presenceAffectsLayout,
-    pop,
+    popLayout,
 }: PresenceChildProps) => {
     const presenceChildren = useConstant(newChildrenMap)
     const id = useId()
@@ -70,7 +70,7 @@ export const PresenceChild = ({
         !isPresent && !presenceChildren.size && onExitComplete?.()
     }, [isPresent])
 
-    if (pop) {
+    if (popLayout) {
         children = <PopChild isPresent={isPresent}>{children}</PopChild>
     }
 
