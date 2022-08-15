@@ -8,7 +8,7 @@ jobs:
             # https://circleci.com/developer/images/image/cimg/python#image-tags
             # It's a bit weird to use a python image when we care about node
             # first, but it's needed to get node-gyp to work to build iltorb
-            - image: cimg/python:3.9.6-node
+            - image: cimg/python:3.10.6-node
 
             # Specify service dependencies here if necessary
             # CircleCI maintains a library of pre-built images
