@@ -7993,6 +7993,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^22.0.1
     framer-motion: ^7.1.0
     react-merge-refs: ^2.0.1
+    tslib: 2.1.0
   peerDependencies:
     "@react-three/fiber": ^8.2.2
     react: ">=18.0"
@@ -8011,7 +8012,7 @@ __metadata:
     hey-listen: ^1.0.8
     popmotion: 11.0.4
     style-value-types: 5.1.1
-    tslib: ^2.4.0
+    tslib: 2.1.0
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
@@ -16131,6 +16132,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tslib@npm:2.1.0":
+  version: 2.1.0
+  resolution: "tslib@npm:2.1.0"
+  checksum: aa189c8179de0427b0906da30926fd53c59d96ec239dff87d6e6bc831f608df0cbd6f77c61dabc074408bd0aa0b9ae4ec35cb2c15f729e32f37274db5730cb78
+  languageName: node
+  linkType: hard
+
 "tslib@npm:^1.8.1, tslib@npm:^1.9.0":
   version: 1.14.1
   resolution: "tslib@npm:1.14.1"
@@ -16138,7 +16146,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.1.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0":
+"tslib@npm:^2.1.0, tslib@npm:^2.3.1":
   version: 2.4.0
   resolution: "tslib@npm:2.4.0"
   checksum: 8c4aa6a3c5a754bf76aefc38026134180c053b7bd2f81338cb5e5ebf96fefa0f417bff221592bf801077f5bf990562f6264fecbc42cd3309b33872cb6fc3b113

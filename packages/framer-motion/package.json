@@ -65,7 +65,7 @@
         "hey-listen": "^1.0.8",
         "popmotion": "11.0.4",
         "style-value-types": "5.1.1",
-        "tslib": "^2.4.0"
+        "tslib": "2.1.0"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
