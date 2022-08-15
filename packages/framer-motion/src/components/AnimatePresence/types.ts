@@ -53,7 +53,7 @@ export interface AnimatePresenceProps {
      *
      * @deprecated
      *
-     * Replace with `mode="popLayout"`
+     * Replace with `mode="wait"`
      */
     exitBeforeEnter?: boolean
 
