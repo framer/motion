@@ -62,6 +62,7 @@
         "react-dev-utils": "^12.0.1",
         "react-dom": "^18.2.0",
         "rollup": "^2.63.0",
+        "rollup-plugin-analyzer": "^4.0.0",
         "rollup-plugin-dts": "^4.2.2",
         "rollup-plugin-terser": "^5.3.0",
         "rollup-plugin-visualizer": "^2.4.3",
@@ -69,7 +70,7 @@
         "ts-loader": "^9.3.1",
         "turbo": "latest",
         "type-fest": "^1.0.1",
-        "typescript": "^4.2.3",
+        "typescript": "^4.7.4",
         "webpack": "^5.27.2",
         "yarn-deduplicate": "^1.1.1"
     },
