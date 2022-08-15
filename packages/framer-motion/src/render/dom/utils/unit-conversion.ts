@@ -284,7 +284,7 @@ const checkAndConvertChangedValueTypes = (
         visualElement.syncRender()
 
         // Restore scroll position
-        if (isBrowser && window.scrollTo && scrollY !== null) {
+        if (isBrowser && scrollY !== null) {
             window.scrollTo({ top: scrollY })
         }
 
