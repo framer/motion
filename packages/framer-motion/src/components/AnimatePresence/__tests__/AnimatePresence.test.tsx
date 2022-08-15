@@ -317,11 +317,11 @@ describe("AnimatePresence", () => {
         return await expect(promise).resolves.toBe(3)
     })
 
-    test("Only renders one child at a time if exitBeforeEnter={true}", async () => {
+    test("Only renders one child at a time if mode === 'wait'", async () => {
         const promise = new Promise<number>((resolve) => {
             const Component = ({ i }: { i: number }) => {
                 return (
-                    <AnimatePresence exitBeforeEnter>
+                    <AnimatePresence mode="wait">
                         <motion.div
                             key={i}
                             animate={{ opacity: 1 }}
@@ -352,7 +352,7 @@ describe("AnimatePresence", () => {
         const promise = new Promise<HTMLElement>((resolve) => {
             const Component = ({ i }: { i: number }) => {
                 return (
-                    <AnimatePresence exitBeforeEnter>
+                    <AnimatePresence mode="wait">
                         <motion.div
                             key={i}
                             data-testid={i}

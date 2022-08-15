@@ -12,7 +12,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Deprecated
 
--   `exitBeforeEnter` - replace with `mode="deferEnter"`.
+-   `exitBeforeEnter` - replace with `mode="wait"`.
 
 ## [7.1.2] 2022-08-16
 

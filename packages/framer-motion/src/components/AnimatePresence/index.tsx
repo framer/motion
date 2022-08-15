@@ -16,6 +16,7 @@ import { PresenceChild } from "./PresenceChild"
 import { LayoutGroupContext } from "../../context/LayoutGroupContext"
 import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { useUnmountEffect } from "../../utils/use-unmount-effect"
+import { warnOnce } from "../../utils/warn-once"
 
 type ComponentKey = string | number
 
@@ -86,6 +87,12 @@ export const AnimatePresence: React.FunctionComponent<
     presenceAffectsLayout = true,
     mode = "sync",
 }) => {
+    // Support deprecated exitBeforeEnter prop
+    if (exitBeforeEnter) {
+        mode = "wait"
+        warnOnce(false, "Replace exitBeforeEnter with mode='wait'")
+    }
+
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
     let [forceRender] = useForceUpdate()
@@ -236,11 +243,11 @@ export const AnimatePresence: React.FunctionComponent<
 
     if (
         env !== "production" &&
-        exitBeforeEnter &&
+        mode === "wait" &&
         childrenToRender.length > 1
     ) {
         console.warn(
-            `You're attempting to animate multiple children within AnimatePresence, but its exitBeforeEnter prop is set to true. This will lead to odd visual behaviour.`
+            `You're attempting to animate multiple children within AnimatePresence, but its mode is set to "wait". This will lead to odd visual behaviour.`
         )
     }
 
