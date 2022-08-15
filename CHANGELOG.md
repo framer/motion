@@ -8,7 +8,11 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Added
 
--   `popLayout` option for `AnimatePresence` that "pops" exiting elements from the document layout flow, allowing sibling `layout` elements to animate to their new layout as soon as exiting starts.
+-   `AnimatePresence`'s new `mode="popLayout"` prop will "pop" exiting elements from the document layout flow, allowing sibling `layout` elements to animate to their new layout as soon as exiting starts.
+
+### Deprecated
+
+-   `exitBeforeEnter` - replace with `mode="deferEnter"`.
 
 ## [7.1.2] 2022-08-16
 
