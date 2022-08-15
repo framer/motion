@@ -51,17 +51,24 @@ export interface AnimatePresenceProps {
      * )
      * ```
      *
-     * @public
+     * @deprecated
+     *
+     * Replace with `mode="popLayout"`
      */
     exitBeforeEnter?: boolean
 
     /**
-     * If set to `true`, top-level `exit` components will be "popped" out of the DOM layout,
-     * so surrounding elements can animate to their new layout immediately.
+     * Determines how to handle entering and exiting elements.
+     *
+     * - `"sync"`: Default. Elements animate in and out as soon as they're added/removed.
+     * - `"popLayout"`: Exiting elements are "popped" from the page layout, allowing sibling
+     *      elements to immediately occupy their new layouts.
+     * - `"wait"`: Only renders one component at a time. Wait for the exiting component to animate out
+     *      before animating the next component in.
      *
      * @public
      */
-    popLayout?: boolean
+    mode?: "sync" | "popLayout" | "wait"
 
     /**
      * Internal. Used in Framer to flag that sibling children *shouldn't* re-render as a result of a

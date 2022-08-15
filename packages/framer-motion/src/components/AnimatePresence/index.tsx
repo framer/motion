@@ -84,7 +84,7 @@ export const AnimatePresence: React.FunctionComponent<
     onExitComplete,
     exitBeforeEnter,
     presenceAffectsLayout = true,
-    popLayout = false,
+    mode = "sync",
 }) => {
     // We want to force a re-render once all exiting animations have finished. We
     // either use a local forceRender function, or one from a parent context if it exists.
@@ -135,7 +135,7 @@ export const AnimatePresence: React.FunctionComponent<
                         isPresent
                         initial={initial ? undefined : false}
                         presenceAffectsLayout={presenceAffectsLayout}
-                        popLayout={popLayout}
+                        mode={mode}
                     >
                         {child}
                     </PresenceChild>
@@ -164,7 +164,7 @@ export const AnimatePresence: React.FunctionComponent<
 
     // If we currently have exiting children, and we're deferring rendering incoming children
     // until after all current children have exiting, empty the childrenToRender array
-    if (exitBeforeEnter && exiting.size) {
+    if (mode === "wait" && exiting.size) {
         childrenToRender = []
     }
 
@@ -209,7 +209,7 @@ export const AnimatePresence: React.FunctionComponent<
                 onExitComplete={onExit}
                 custom={custom}
                 presenceAffectsLayout={presenceAffectsLayout}
-                popLayout={popLayout}
+                mode={mode}
             >
                 {child}
             </PresenceChild>
@@ -227,7 +227,7 @@ export const AnimatePresence: React.FunctionComponent<
                 key={getChildKey(child)}
                 isPresent
                 presenceAffectsLayout={presenceAffectsLayout}
-                popLayout={popLayout}
+                mode={mode}
             >
                 {child}
             </PresenceChild>

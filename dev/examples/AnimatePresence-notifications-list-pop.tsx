@@ -35,7 +35,7 @@ export const App = () => {
     return (
         <div className="container">
             <ul>
-                <AnimatePresence popLayout initial={false}>
+                <AnimatePresence mode="popLayout" initial={false}>
                     {notifications.map((id) => (
                         <Notification
                             id={id}
