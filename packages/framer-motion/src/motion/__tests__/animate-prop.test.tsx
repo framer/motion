@@ -306,16 +306,13 @@ describe("animate prop as object", () => {
     })
 
     test("converts unseen zero unit types to number", async () => {
-        const promise = new Promise<string>((resolve) => {
+        const promise = new Promise<ChildNode>((resolve) => {
             const Component = () => (
                 <motion.div
                     animate={{ borderRadius: 20 }}
                     transition={{ duration: 0.01 }}
                     onAnimationComplete={() => {
-                        resolve(
-                            (container.firstChild as HTMLElement).style
-                                .borderRadius
-                        )
+                        resolve(container.firstChild as ChildNode)
                     }}
                     style={{ borderRadius: "0px" }}
                 />
@@ -324,7 +321,7 @@ describe("animate prop as object", () => {
             rerender(<Component />)
         })
 
-        return expect(promise).resolves.toBe("20px")
+        return expect(promise).resolves.toHaveStyle("border-radius: 20px")
     })
 
     test("animates previously unseen CSS variables", async () => {
