@@ -47,8 +47,7 @@
     },
     "dependencies": {
         "framer-motion": "^7.1.2",
-        "react-merge-refs": "^2.0.1",
-        "tslib": "2.4.0"
+        "react-merge-refs": "^2.0.1"
     },
     "peerDependencies": {
         "@react-three/fiber": "^8.2.2",

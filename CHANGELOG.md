@@ -4,6 +4,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.2.0] 2022-08-14
+
+### Added
+
+-   `AnimatePresence`'s new `mode="popLayout"` prop will "pop" exiting elements from the document layout flow, allowing sibling `layout` elements to animate to their new layout as soon as exiting starts.
+
+### Deprecated
+
+-   `exitBeforeEnter` - replace with `mode="wait"`.
+
 ## [7.1.2] 2022-08-16
 
 ### Fixed

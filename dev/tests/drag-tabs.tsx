@@ -76,7 +76,7 @@ export function App() {
                     </LayoutGroup>
                 </nav>
                 <main>
-                    <AnimatePresence exitBeforeEnter initial={false}>
+                    <AnimatePresence mode="wait" initial={false}>
                         <motion.div
                             id={`${
                                 selectedTab ? selectedTab.label : "empty"
