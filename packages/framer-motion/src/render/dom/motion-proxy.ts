@@ -39,7 +39,7 @@ export type CreateConfig = <Instance, RenderState, Props>(
  * @public
  */
 export function createMotionProxy(createConfig: CreateConfig) {
-    function custom<Props>(
+    function custom<Props extends {}>(
         Component: string | React.ComponentType<React.PropsWithChildren<Props>>,
         customMotionComponentConfig: CustomMotionComponentConfig = {}
     ): CustomDomComponent<Props> {
