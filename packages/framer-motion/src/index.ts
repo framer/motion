@@ -35,6 +35,7 @@ export { useScroll } from "./value/use-scroll"
 export { useElementScroll } from "./value/scroll/use-element-scroll"
 export { useViewportScroll } from "./value/scroll/use-viewport-scroll"
 export { useTime } from "./value/use-time"
+export { useWillChange } from "./value/use-will-change"
 
 /**
  * Accessibility

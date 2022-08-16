@@ -1,6 +1,6 @@
 {
     "name": "framer-motion",
-    "version": "7.1.0",
+    "version": "7.1.2",
     "description": "A simple and powerful React animation library",
     "main": "dist/cjs/index.js",
     "module": "dist/es/index.mjs",
@@ -61,11 +61,11 @@
     },
     "dependencies": {
         "@motionone/dom": "10.13.1",
-        "framesync": "6.1.1",
+        "framesync": "6.1.2",
         "hey-listen": "^1.0.8",
-        "popmotion": "11.0.4",
-        "style-value-types": "5.1.1",
-        "tslib": "^2.1.0"
+        "popmotion": "11.0.5",
+        "style-value-types": "5.1.2",
+        "tslib": "2.4.0"
     },
     "optionalDependencies": {
         "@emotion/is-prop-valid": "^0.8.2"
@@ -73,28 +73,27 @@
     "bundlesize": [
         {
             "path": "./dist/size-rollup-m.js",
-            "maxSize": "6.0 kB"
+            "maxSize": "5.5 kB"
         },
         {
             "path": "./dist/size-rollup-dom-animation.js",
-            "maxSize": "17.7 kB"
+            "maxSize": "16.6 kB"
         },
         {
             "path": "./dist/size-rollup-dom-max.js",
-            "maxSize": "28.91 kB"
+            "maxSize": "27.1 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
-            "maxSize": "6.1 kB"
+            "maxSize": "5.7 kB"
         },
         {
             "path": "./dist/size-webpack-dom-animation.js",
-            "maxSize": "20.1 kB"
+            "maxSize": "19 kB"
         },
         {
             "path": "./dist/size-webpack-dom-max.js",
-            "maxSize": "32.4 kB"
+            "maxSize": "30.1kB"
         }
-    ],
-    "gitHead": "250c77b95dec2488b7e13a050024442d77cd3125"
+    ]
 }

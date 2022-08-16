@@ -4,6 +4,22 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.1.2] 2022-08-16
+
+### Fixed
+
+-   Fixing `useWillChange` export.
+
+## [7.1.1] 2022-08-15
+
+### Changed
+
+-   Upping TypeScript output `target` to `"ES6"`.
+
+### Updated
+
+-   `typescript@4.7`
+
 ## [7.1.0] 2022-08-11
 
 ### Added
