@@ -1,38 +1,39 @@
 import {
     useRef,
+    useCallback,
     isValidElement,
     cloneElement,
     Children,
     ReactElement,
     ReactNode,
     useContext,
-} from "react"
-import * as React from "react"
-import { env } from "../../utils/process"
-import { AnimatePresenceProps } from "./types"
-import { useForceUpdate } from "../../utils/use-force-update"
-import { useIsMounted } from "../../utils/use-is-mounted"
-import { PresenceChild } from "./PresenceChild"
-import { LayoutGroupContext } from "../../context/LayoutGroupContext"
-import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
-import { useUnmountEffect } from "../../utils/use-unmount-effect"
-import { warnOnce } from "../../utils/warn-once"
+  } from "react"
+  import * as React from "react"
+  import { env } from "../../utils/process"
+  import { AnimatePresenceProps } from "./types"
+  import { useForceUpdate } from "../../utils/use-force-update"
+  import { useIsMounted } from "../../utils/use-is-mounted"
+  import { PresenceChild } from "./PresenceChild"
+  import { LayoutGroupContext } from "../../context/LayoutGroupContext"
+  import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
+  import { useUnmountEffect } from "../../utils/use-unmount-effect"
+  import { warnOnce } from "../../utils/warn-once"
 
-type ComponentKey = string | number
+  export type ComponentKey = string | number
 
-const getChildKey = (child: ReactElement<any>): ComponentKey => child.key || ""
+  const getChildKey = (child: ReactElement<any>): ComponentKey => child.key || ""
 
-function updateChildLookup(
+  function updateChildLookup(
     children: ReactElement<any>[],
     allChildren: Map<ComponentKey, ReactElement<any>>
-) {
+  ) {
     children.forEach((child) => {
         const key = getChildKey(child)
         allChildren.set(key, child)
     })
-}
+  }
 
-function onlyElements(children: ReactNode): ReactElement<any>[] {
+  function onlyElements(children: ReactNode): ReactElement<any>[] {
     const filtered: ReactElement<any>[] = []
 
     // We use forEach here instead of map as map mutates the component key by preprending `.$`
@@ -41,13 +42,13 @@ function onlyElements(children: ReactNode): ReactElement<any>[] {
     })
 
     return filtered
-}
+  }
 
-function splitChildrenByKeys(
+  function splitChildrenByKeys(
     keys: ComponentKey[],
     children: ReactElement<any>[],
     mapFunction?: (child: ReactElement<any>) => ReactElement<any>
-): ReactElement<any>[][] {
+  ): ReactElement<any>[][] {
     const chunks: ReactElement<any>[][] = []
     let insertionStartIndex = 0
 
@@ -67,44 +68,44 @@ function splitChildrenByKeys(
     chunks.push(chunk)
 
     return chunks
-}
+  }
 
-/**
- * `AnimatePresence` enables the animation of components that have been removed from the tree.
- *
- * When adding/removing more than a single child, every child **must** be given a unique `key` prop.
- *
- * Any `motion` components that have an `exit` property defined will animate out when removed from
- * the tree.
- *
- * ```jsx
- * import { motion, AnimatePresence } from 'framer-motion'
- *
- * export const Items = ({ items }) => (
- *   <AnimatePresence>
- *     {items.map(item => (
- *       <motion.div
- *         key={item.id}
- *         initial={{ opacity: 0 }}
- *         animate={{ opacity: 1 }}
- *         exit={{ opacity: 0 }}
- *       />
- *     ))}
- *   </AnimatePresence>
- * )
- * ```
- *
- * You can sequence exit animations throughout a tree using variants.
- *
- * If a child contains multiple `motion` components with `exit` props, it will only unmount the child
- * once all `motion` components have finished animating out. Likewise, any components using
- * `usePresence` all need to call `safeToRemove`.
- *
- * @public
- */
-export const AnimatePresence: React.FunctionComponent<
+  /**
+  * `AnimatePresence` enables the animation of components that have been removed from the tree.
+  *
+  * When adding/removing more than a single child, every child **must** be given a unique `key` prop.
+  *
+  * Any `motion` components that have an `exit` property defined will animate out when removed from
+  * the tree.
+  *
+  * ```jsx
+  * import { motion, AnimatePresence } from 'framer-motion'
+  *
+  * export const Items = ({ items }) => (
+  *   <AnimatePresence>
+  *     {items.map(item => (
+  *       <motion.div
+  *         key={item.id}
+  *         initial={{ opacity: 0 }}
+  *         animate={{ opacity: 1 }}
+  *         exit={{ opacity: 0 }}
+  *       />
+  *     ))}
+  *   </AnimatePresence>
+  * )
+  * ```
+  *
+  * You can sequence exit animations throughout a tree using variants.
+  *
+  * If a child contains multiple `motion` components with `exit` props, it will only unmount the child
+  * once all `motion` components have finished animating out. Likewise, any components using
+  * `usePresence` all need to call `safeToRemove`.
+  *
+  * @public
+  */
+  export const AnimatePresence: React.FunctionComponent<
     React.PropsWithChildren<AnimatePresenceProps>
-> = ({
+  > = ({
     children,
     custom,
     initial = true,
@@ -112,7 +113,7 @@ export const AnimatePresence: React.FunctionComponent<
     exitBeforeEnter,
     presenceAffectsLayout = true,
     mode = "sync",
-}) => {
+  }) => {
     // Support deprecated exitBeforeEnter prop
     if (exitBeforeEnter) {
         mode = "wait"
@@ -131,9 +132,7 @@ export const AnimatePresence: React.FunctionComponent<
     const filteredChildren = onlyElements(children)
     let childrenToRender = filteredChildren
 
-    const exitingChildren = useRef(
-        new Map<ComponentKey, ReactElement<any> | undefined>()
-    ).current
+    const exiting = useRef(new Set<ComponentKey>()).current
 
     // Keep a living record of the children we're actually rendering so we
     // can diff to figure out which are entering and exiting
@@ -148,6 +147,37 @@ export const AnimatePresence: React.FunctionComponent<
     // we play onMount animations or not.
     const isInitialRender = useRef(true)
 
+        const onPresenceChildRemove = useCallback(
+        (key: ComponentKey) => {
+            allChildren.delete(key)
+            exiting.delete(key)
+
+            // Remove this child from the present children
+            const removeIndex = presentChildren.current.findIndex(
+                (presentChild) => presentChild.key === key
+            )
+            presentChildren.current.splice(removeIndex, 1)
+
+            // Defer re-rendering until all exiting children have indeed left
+            if (!exiting.size) {
+                presentChildren.current = filteredChildren
+
+                if (isMounted.current === false) return
+
+                forceRender()
+                onExitComplete && onExitComplete()
+            }
+        },
+        [
+            allChildren,
+            exiting,
+            filteredChildren,
+            forceRender,
+            isMounted,
+            onExitComplete,
+        ]
+    )
+
     useIsomorphicLayoutEffect(() => {
         isInitialRender.current = false
 
@@ -158,7 +188,7 @@ export const AnimatePresence: React.FunctionComponent<
     useUnmountEffect(() => {
         isInitialRender.current = true
         allChildren.clear()
-        exitingChildren.clear()
+        exiting.clear()
     })
 
     if (isInitialRender.current) {
@@ -167,6 +197,7 @@ export const AnimatePresence: React.FunctionComponent<
                 {childrenToRender.map((child) => (
                     <PresenceChild
                         key={getChildKey(child)}
+                        childKey={getChildKey(child)}
                         isPresent
                         initial={initial ? undefined : false}
                         presenceAffectsLayout={presenceAffectsLayout}
@@ -193,10 +224,10 @@ export const AnimatePresence: React.FunctionComponent<
         const key = presentKeys[i]
 
         if (targetKeys.indexOf(key) === -1) {
-            exitingChildren.set(key, undefined)
+            exiting.add(key)
         } else {
             preservingKeys.push(key)
-            exitingChildren.delete(key)
+            exiting.delete(key)
         }
     }
 
@@ -208,35 +239,12 @@ export const AnimatePresence: React.FunctionComponent<
             const key = getChildKey(_child)
             const child = allChildren.get(key)!
 
-            // If the component was exiting, reuse the previous component to preserve state
-            let extingChild = exitingChildren.get(key)
-            if (extingChild) return extingChild
-
-            const onExit = () => {
-                allChildren.delete(key)
-                exitingChildren.delete(key)
-
-                // Remove this child from the present children
-                const removeIndex = presentChildren.current.findIndex(
-                    (presentChild) => presentChild.key === key
-                )
-                presentChildren.current.splice(removeIndex, 1)
-
-                // Defer re-rendering until all exiting children have indeed left
-                if (!exitingChildren.size) {
-                    presentChildren.current = filteredChildren
-
-                    if (isMounted.current === false) return
-
-                    forceRender()
-                    onExitComplete && onExitComplete()
-                }
-            }
-            extingChild = (
+            const extingChild = (
                 <PresenceChild
                     key={key}
+                    childKey={key}
                     isPresent={false}
-                    onExitComplete={onExit}
+                    onExitComplete={onPresenceChildRemove}
                     custom={custom}
                     presenceAffectsLayout={presenceAffectsLayout}
                     mode={mode}
@@ -244,7 +252,6 @@ export const AnimatePresence: React.FunctionComponent<
                     {child}
                 </PresenceChild>
             )
-            exitingChildren.set(key, extingChild)
             return extingChild
         }
     )
@@ -257,6 +264,7 @@ export const AnimatePresence: React.FunctionComponent<
             // the same tree between renders
             <PresenceChild
                 key={getChildKey(child)}
+                childKey={getChildKey(child)}
                 isPresent
                 presenceAffectsLayout={presenceAffectsLayout}
                 mode={mode}
@@ -300,7 +308,7 @@ export const AnimatePresence: React.FunctionComponent<
 
         // If we currently have exiting children, and we're deferring rendering incoming children
         // until after all current children have exiting, empty the childrenToRender array
-        if (!(mode === "wait" && exitingChildren.size)) {
+        if (!(mode === "wait" && exiting.size)) {
             childrenToRender = childrenToRender.concat(targetChunks[i])
         }
 
@@ -308,6 +316,7 @@ export const AnimatePresence: React.FunctionComponent<
             childrenToRender.push(
                 <PresenceChild
                     key={key}
+                    childKey={key}
                     isPresent
                     presenceAffectsLayout={presenceAffectsLayout}
                     mode={mode}
@@ -330,9 +339,9 @@ export const AnimatePresence: React.FunctionComponent<
 
     return (
         <>
-            {exitingChildren.size
+            {exiting.size
                 ? childrenToRender
                 : childrenToRender.map((child) => cloneElement(child))}
         </>
     )
-}
+  }

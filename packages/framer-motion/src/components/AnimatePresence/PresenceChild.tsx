@@ -1,5 +1,6 @@
 import * as React from "react"
 import { useId, useMemo } from "react"
+import { ComponentKey } from "."
 import {
     PresenceContext,
     PresenceContextProps,
@@ -11,11 +12,12 @@ import { PopChild } from "./PopChild"
 interface PresenceChildProps {
     children: React.ReactElement
     isPresent: boolean
-    onExitComplete?: () => void
+    onExitComplete?: (key: ComponentKey) => void
     initial?: false | VariantLabels
     custom?: any
     presenceAffectsLayout: boolean
     mode: "sync" | "popLayout" | "wait"
+    childKey: ComponentKey
 }
 
 export const PresenceChild = ({
@@ -26,6 +28,7 @@ export const PresenceChild = ({
     custom,
     presenceAffectsLayout,
     mode,
+    childKey,
 }: PresenceChildProps) => {
     const presenceChildren = useConstant(newChildrenMap)
     const id = useId()
@@ -43,7 +46,7 @@ export const PresenceChild = ({
                     if (!isComplete) return // can stop searching when any is incomplete
                 }
 
-                onExitComplete?.()
+                onExitComplete?.(childKey)
             },
             register: (childId: string) => {
                 presenceChildren.set(childId, false)
@@ -67,7 +70,7 @@ export const PresenceChild = ({
      * component immediately.
      */
     React.useEffect(() => {
-        !isPresent && !presenceChildren.size && onExitComplete?.()
+        !isPresent && !presenceChildren.size && onExitComplete?.(childKey)
     }, [isPresent])
 
     if (mode === "popLayout") {
