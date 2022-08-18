@@ -36,12 +36,13 @@ import {
     ProjectionNodeOptions,
     Snapshot,
 } from "./types"
-import { transformAxes } from "../../render/html/utils/transform"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
+
+const transformAxes = ["", "X", "Y", "Z"]
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1

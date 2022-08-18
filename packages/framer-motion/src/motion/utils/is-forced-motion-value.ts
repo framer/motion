@@ -1,8 +1,8 @@
 import { scaleCorrectors } from "../../projection/styles/scale-correction"
 import { MotionProps } from "../.."
 import {
-    isTransformOriginProp,
-    isTransformProp,
+    transformProps,
+    transformOriginProps,
 } from "../../render/html/utils/transform"
 
 export function isForcedMotionValue(
@@ -10,8 +10,8 @@ export function isForcedMotionValue(
     { layout, layoutId }: MotionProps
 ) {
     return (
-        isTransformProp(key) ||
-        isTransformOriginProp(key) ||
+        transformProps.has(key) ||
+        transformOriginProps.has(key) ||
         ((layout || layoutId !== undefined) &&
             (!!scaleCorrectors[key] || key === "opacity"))
     )

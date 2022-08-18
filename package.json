@@ -65,7 +65,7 @@
         "rollup-plugin-analyzer": "^4.0.0",
         "rollup-plugin-dts": "^4.2.2",
         "rollup-plugin-terser": "^5.3.0",
-        "rollup-plugin-visualizer": "^2.4.3",
+        "rollup-plugin-visualizer": "^5.7.1",
         "ts-jest": "^28.0.7",
         "ts-loader": "^9.3.1",
         "turbo": "latest",

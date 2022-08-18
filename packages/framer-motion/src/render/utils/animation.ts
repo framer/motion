@@ -12,7 +12,7 @@ import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
 import { resolveVariant } from "./variants"
-import { isTransformProp } from "../html/utils/transform"
+import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 
 export type AnimationDefinition =
@@ -168,7 +168,7 @@ function animateTarget(
         /**
          * Make animation instant if this is a transform prop and we should reduce motion.
          */
-        if (visualElement.shouldReduceMotion && isTransformProp(key)) {
+        if (visualElement.shouldReduceMotion && transformProps.has(key)) {
             valueTransition = {
                 ...valueTransition,
                 type: false,

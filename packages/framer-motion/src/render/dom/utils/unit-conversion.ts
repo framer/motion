@@ -3,7 +3,7 @@ import { Target, TargetWithKeyframes } from "../../../types"
 import { isKeyframesTarget } from "../../../animation/utils/is-keyframes-target"
 import { invariant } from "hey-listen"
 import { MotionValue } from "../../../value"
-import { transformProps } from "../../html/utils/transform"
+import { transformPropOrder } from "../../html/utils/transform"
 import { ResolvedValues, VisualElement } from "../../types"
 import { findDimensionValueType } from "../value-types/dimensions"
 import { Box } from "../../../projection/geometry/types"
@@ -71,7 +71,7 @@ const getTranslateFromMatrix =
     }
 
 const transformKeys = new Set(["x", "y", "z"])
-const nonTranslationalTransformKeys = transformProps.filter(
+const nonTranslationalTransformKeys = transformPropOrder.filter(
     (key) => !transformKeys.has(key)
 )
 

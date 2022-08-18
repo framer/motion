@@ -1,4 +1,4 @@
-import { sortTransformProps } from "./transform"
+import { transformPropOrder } from "./transform"
 import { DOMVisualElementOptions } from "../../dom/types"
 import { MotionProps } from "../../../motion/types"
 import { HTMLRenderState, TransformOrigin } from "../types"
@@ -9,6 +9,12 @@ const translateAlias: { [key: string]: string } = {
     z: "translateZ",
     transformPerspective: "perspective",
 }
+
+/**
+ * A function to use with Array.sort to sort transform keys by their default order.
+ */
+const sortTransformProps = (a: string, b: string) =>
+    transformPropOrder.indexOf(a) - transformPropOrder.indexOf(b)
 
 /**
  * Build a CSS transform style from individual x/y/scale etc properties.

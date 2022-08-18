@@ -3,6 +3,7 @@ import { terser } from "rollup-plugin-terser"
 import replace from "@rollup/plugin-replace"
 import dts from "rollup-plugin-dts"
 import pkg from "./package.json"
+import { visualizer } from "rollup-plugin-visualizer"
 
 const config = {
     input: "lib/index.js",
@@ -110,7 +111,7 @@ const m = Object.assign({}, es, {
         preserveModules: false,
         dir: undefined,
     }),
-    plugins: sizePlugins,
+    plugins: [...sizePlugins, visualizer()],
     external: ["react", "react-dom"],
 })
 

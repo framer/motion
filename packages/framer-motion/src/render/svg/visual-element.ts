@@ -6,7 +6,7 @@ import { DOMVisualElementOptions } from "../dom/types"
 import { buildSVGAttrs } from "./utils/build-attrs"
 import { camelToDash } from "../dom/utils/camel-to-dash"
 import { camelCaseAttributes } from "./utils/camel-case-attrs"
-import { isTransformProp } from "../html/utils/transform"
+import { transformProps } from "../html/utils/transform"
 import { renderSVG } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
 
@@ -22,7 +22,7 @@ export const svgVisualElement = visualElement<
     },
 
     readValueFromInstance(domElement, key) {
-        if (isTransformProp(key)) {
+        if (transformProps.has(key)) {
             return getDefaultValueType(key)?.default || 0
         }
         key = !camelCaseAttributes.has(key) ? camelToDash(key) : key
