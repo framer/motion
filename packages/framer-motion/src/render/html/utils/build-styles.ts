@@ -82,6 +82,10 @@ export function buildHTMLStyles(
         style.transform = "none"
     }
 
+    /**
+     * Build a transformOrigin style. Uses the same defaults as the browser for
+     * undefined origins.
+     */
     if (hasTransformOrigin) {
         const {
             originX = "50%",
