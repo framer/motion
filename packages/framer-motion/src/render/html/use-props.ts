@@ -34,8 +34,7 @@ function useInitialMotionValues(
             transformTemplate
         )
 
-        const { vars, style } = state
-        return { ...vars, ...style }
+        return { ...state.vars, ...state.style }
     }, [visualState])
 }
 
