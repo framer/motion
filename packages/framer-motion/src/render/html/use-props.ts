@@ -34,7 +34,7 @@ function useInitialMotionValues(
             transformTemplate
         )
 
-        return { ...state.vars, ...state.style }
+        return Object.assign({}, state.vars, state.style)
     }, [visualState])
 }
 
