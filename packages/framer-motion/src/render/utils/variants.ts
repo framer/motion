@@ -63,7 +63,7 @@ export function resolveVariantFromProps(
      */
     if (typeof definition === "function") {
         definition = definition(
-            custom ?? props.custom,
+            custom !== undefined ? custom : props.custom,
             currentValues,
             currentVelocity
         )
@@ -73,8 +73,8 @@ export function resolveVariantFromProps(
      * If the variant definition is a variant label, or
      * the function returned a variant label, resolve.
      */
-    if (typeof definition === "string") {
-        definition = props.variants?.[definition]
+    if (typeof definition === "string" && props.variants) {
+        definition = props.variants[definition]
     }
 
     /**
@@ -84,7 +84,7 @@ export function resolveVariantFromProps(
      */
     if (typeof definition === "function") {
         definition = definition(
-            custom ?? props.custom,
+            custom !== undefined ? custom : props.custom,
             currentValues,
             currentVelocity
         )
@@ -115,7 +115,7 @@ export function resolveVariant(
     return resolveVariantFromProps(
         props,
         definition,
-        custom ?? props.custom,
+        custom !== undefined ? custom : props.custom,
         getCurrent(visualElement),
         getVelocity(visualElement)
     )

@@ -34,22 +34,29 @@ export function useVisualElement<Instance, RenderState>(
             visualState,
             parent,
             props,
-            presenceId: presenceContext?.id,
-            blockInitialAnimation: presenceContext?.initial === false,
+            presenceId: presenceContext ? presenceContext.id : undefined,
+            blockInitialAnimation: presenceContext
+                ? presenceContext.initial === false
+                : false,
             shouldReduceMotion,
         })
     }
 
     const visualElement = visualElementRef.current
     useIsomorphicLayoutEffect(() => {
-        visualElement?.syncRender()
+        visualElement && visualElement.syncRender()
     })
 
     useEffect(() => {
-        visualElement?.animationState?.animateChanges()
+        if (visualElement && visualElement.animationState) {
+            visualElement.animationState.animateChanges()
+        }
     })
 
-    useIsomorphicLayoutEffect(() => () => visualElement?.notifyUnmount(), [])
+    useIsomorphicLayoutEffect(
+        () => () => visualElement && visualElement.notifyUnmount(),
+        []
+    )
 
     return visualElement
 }

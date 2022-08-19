@@ -32,13 +32,21 @@ export const animations: FeatureComponents = {
 
         useEffect(() => {
             visualElement.isPresent = isPresent
-            const animation = visualElement.animationState?.setActive(
-                AnimationType.Exit,
-                !isPresent,
-                { custom: presenceContext?.custom ?? custom }
-            )
+            const animation =
+                visualElement.animationState &&
+                visualElement.animationState.setActive(
+                    AnimationType.Exit,
+                    !isPresent,
+                    {
+                        custom:
+                            (presenceContext && presenceContext.custom) ||
+                            custom,
+                    }
+                )
 
-            !isPresent && animation?.then(safeToRemove)
+            if (animation && !isPresent) {
+                animation.then(safeToRemove)
+            }
         }, [isPresent])
     }),
 }

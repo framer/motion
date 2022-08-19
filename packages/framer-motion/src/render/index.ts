@@ -218,7 +218,7 @@ export const visualElement =
              *
              * TODO: This might be better replaced with a method isParentMounted
              */
-            manuallyAnimateOnMount: Boolean(parent?.isMounted()),
+            manuallyAnimateOnMount: (parent || false) && parent.isMounted(),
 
             /**
              * This can be set by AnimatePresence to force components that mount
@@ -407,8 +407,9 @@ export const visualElement =
              * directly from the instance (which might have performance implications).
              */
             readValue: (key: string) =>
-                latestValues[key] ??
-                readValueFromInstance(instance!, key, options),
+                latestValues[key] !== undefined
+                    ? latestValues[key]
+                    : readValueFromInstance(instance!, key, options),
 
             /**
              * Set the base target to later animate back to. This is currently

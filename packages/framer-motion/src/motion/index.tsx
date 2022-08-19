@@ -148,7 +148,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
 }
 
 function useLayoutId({ layoutId }: MotionProps) {
-    const layoutGroupId = useContext(LayoutGroupContext)?.id
+    const layoutGroupId = useContext(LayoutGroupContext).id
     return layoutGroupId && layoutId !== undefined
         ? layoutGroupId + "-" + layoutId
         : layoutId

@@ -83,7 +83,9 @@ function makeLatestValues(
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
-    const blockInitialAnimation = presenceContext?.initial === false
+    const blockInitialAnimation = presenceContext
+        ? presenceContext.initial === false
+        : false
 
     const motionValues = scrapeMotionValues(props)
     for (const key in motionValues) {
@@ -100,8 +102,8 @@ function makeLatestValues(
         !isControllingVariants &&
         props.inherit !== false
     ) {
-        initial ??= context.initial
-        animate ??= context.animate
+        if (initial === undefined) initial = context.initial
+        if (animate === undefined) animate = context.animate
     }
 
     const initialAnimationIsBlocked = blockInitialAnimation || initial === false

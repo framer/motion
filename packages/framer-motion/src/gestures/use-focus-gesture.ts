@@ -9,12 +9,13 @@ import { FeatureProps } from "../motion/features/types"
  * @internal
  */
 export function useFocusGesture({ whileFocus, visualElement }: FeatureProps) {
+    const { animationState } = visualElement
     const onFocus = () => {
-        visualElement.animationState?.setActive(AnimationType.Focus, true)
+        animationState && animationState.setActive(AnimationType.Focus, true)
     }
 
     const onBlur = () => {
-        visualElement.animationState?.setActive(AnimationType.Focus, false)
+        animationState && animationState.setActive(AnimationType.Focus, false)
     }
 
     useDomEvent(visualElement, "focus", whileFocus ? onFocus : undefined)

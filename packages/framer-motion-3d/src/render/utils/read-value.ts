@@ -39,5 +39,5 @@ function readAnimatableValue(value?: Color) {
 export function readThreeValue(instance: Object3DNode<any, any>, name: string) {
     return readers[name]
         ? readers[name](instance)
-        : readAnimatableValue(instance[name]) ?? 0
+        : readAnimatableValue(instance[name]) || 0
 }

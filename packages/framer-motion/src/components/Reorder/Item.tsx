@@ -48,7 +48,7 @@ function useDefaultMotionValue(value: any, defaultValue: number = 0) {
 export function ReorderItem<V>(
     {
         children,
-        style,
+        style = {},
         value,
         as = "li",
         onDrag,
@@ -63,8 +63,8 @@ export function ReorderItem<V>(
 
     const context = useContext(ReorderContext)
     const point = {
-        x: useDefaultMotionValue(style?.x),
-        y: useDefaultMotionValue(style?.y),
+        x: useDefaultMotionValue(style.x),
+        y: useDefaultMotionValue(style.y),
     }
 
     const zIndex = useTransform([point.x, point.y], ([latestX, latestY]) =>
@@ -93,7 +93,7 @@ export function ReorderItem<V>(
                 velocity[axis] &&
                     updateOrder(value, point[axis].get(), velocity[axis])
 
-                onDrag?.(event, gesturePoint)
+                onDrag && onDrag(event, gesturePoint)
             }}
             onLayoutMeasure={(measured) => {
                 measuredLayout.current = measured

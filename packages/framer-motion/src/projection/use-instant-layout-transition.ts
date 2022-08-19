@@ -6,9 +6,9 @@ export function useInstantLayoutTransition(): (
     return startTransition
 }
 
-function startTransition(cb?: () => void) {
+function startTransition(callback?: () => void) {
     if (!rootProjectionNode.current) return
     rootProjectionNode.current.isUpdating = false
     rootProjectionNode.current.blockUpdate()
-    cb?.()
+    callback && callback()
 }

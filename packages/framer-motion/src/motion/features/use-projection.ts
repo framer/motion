@@ -16,7 +16,7 @@ export function useProjection(
     if (
         !ProjectionNodeConstructor ||
         !visualElement ||
-        visualElement?.projection
+        (visualElement && visualElement.projection)
     ) {
         return
     }
@@ -24,7 +24,7 @@ export function useProjection(
     visualElement.projection = new ProjectionNodeConstructor(
         projectionId,
         visualElement.getLatestValues(),
-        visualElement.parent?.projection
+        visualElement.parent && visualElement.parent.projection
     ) as IProjectionNode
 
     visualElement.projection.setOptions({

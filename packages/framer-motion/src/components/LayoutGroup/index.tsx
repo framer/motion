@@ -24,12 +24,9 @@ const shouldInheritGroup = (inherit: InheritOption) => inherit === true
 const shouldInheritId = (inherit: InheritOption) =>
     shouldInheritGroup(inherit === true) || inherit === "id"
 
-export const LayoutGroup: React.FunctionComponent<React.PropsWithChildren<Props>> = ({
-    children,
-    id,
-    inheritId,
-    inherit = true,
-}) => {
+export const LayoutGroup: React.FunctionComponent<
+    React.PropsWithChildren<Props>
+> = ({ children, id, inheritId, inherit = true }) => {
     // Maintain backwards-compatibility with inheritId until 7.0
     if (inheritId !== undefined) inherit = inheritId
 
@@ -42,7 +39,7 @@ export const LayoutGroup: React.FunctionComponent<React.PropsWithChildren<Props>
         null
     ) as MutableRefObject<LayoutGroupContextProps | null>
 
-    const upstreamId = layoutGroupContext.id ?? deprecatedLayoutGroupContext
+    const upstreamId = layoutGroupContext.id || deprecatedLayoutGroupContext
     if (context.current === null) {
         if (shouldInheritId(inherit) && upstreamId) {
             id = id ? upstreamId + "-" + id : upstreamId
@@ -51,7 +48,7 @@ export const LayoutGroup: React.FunctionComponent<React.PropsWithChildren<Props>
         context.current = {
             id,
             group: shouldInheritGroup(inherit)
-                ? layoutGroupContext?.group ?? nodeGroup()
+                ? layoutGroupContext.group || nodeGroup()
                 : nodeGroup(),
         }
     }
