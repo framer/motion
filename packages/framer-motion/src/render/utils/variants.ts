@@ -1,4 +1,4 @@
-import { AnimationControls } from "../../animation/types"
+import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import { MotionProps } from "../../motion/types"
 import { TargetAndTransition, TargetResolver } from "../../types"
 import { ResolvedValues, VisualElement } from "../types"
@@ -73,8 +73,8 @@ export function resolveVariantFromProps(
      * If the variant definition is a variant label, or
      * the function returned a variant label, resolve.
      */
-    if (typeof definition === "string" && props.variants) {
-        definition = props.variants[definition]
+    if (typeof definition === "string") {
+        definition = props.variants && props.variants[definition]
     }
 
     /**
@@ -123,7 +123,7 @@ export function resolveVariant(
 
 export function checkIfControllingVariants(props: MotionProps) {
     return (
-        typeof (props.animate as AnimationControls)?.start === "function" ||
+        isAnimationControls(props.animate) ||
         isVariantLabel(props.initial) ||
         isVariantLabel(props.animate) ||
         isVariantLabel(props.whileHover) ||

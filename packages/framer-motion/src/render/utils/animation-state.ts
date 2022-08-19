@@ -139,7 +139,7 @@ export function createAnimationState(
         for (let i = 0; i < numAnimationTypes; i++) {
             const type = reversePriorityOrder[i]
             const typeState = state[type]
-            const prop = props[type] || context[type]
+            const prop = props[type] ?? context[type]
             const propIsVariant = isVariantLabel(prop)
 
             /**
@@ -237,6 +237,7 @@ export function createAnimationState(
              *    needs adding to the type's protectedKeys list.
              */
             const { prevResolvedValues = {} } = typeState
+
             const allKeys = {
                 ...prevResolvedValues,
                 ...resolvedValues,

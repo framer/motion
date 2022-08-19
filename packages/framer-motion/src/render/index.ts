@@ -218,7 +218,7 @@ export const visualElement =
              *
              * TODO: This might be better replaced with a method isParentMounted
              */
-            manuallyAnimateOnMount: (parent || false) && parent.isMounted(),
+            manuallyAnimateOnMount: Boolean(parent?.isMounted()),
 
             /**
              * This can be set by AnimatePresence to force components that mount
