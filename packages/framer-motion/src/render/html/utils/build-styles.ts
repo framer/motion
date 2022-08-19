@@ -4,7 +4,7 @@ import { ResolvedValues } from "../../types"
 import { DOMVisualElementOptions } from "../../dom/types"
 import { buildTransform, buildTransformOrigin } from "./build-transform"
 import { isCSSVariable } from "../../dom/utils/is-css-variable"
-import { transformProps, transformOriginProps } from "./transform"
+import { transformProps } from "./transform"
 import { getValueAsType } from "../../dom/value-types/get-as-type"
 import { numberValueTypes } from "../../dom/value-types/number"
 
@@ -60,7 +60,7 @@ export function buildHTMLStyles(
 
             // Otherwise check to see if this is a default transform
             if (value !== (valueType.default ?? 0)) transformIsNone = false
-        } else if (transformOriginProps.has(key)) {
+        } else if (key.startsWith("origin")) {
             transformOrigin[key] = valueAsType
 
             // If this is a transform origin, flag and enable further transform-origin processing

@@ -24,8 +24,3 @@ export const transformPropOrder = [
  * A quick lookup for transform props.
  */
 export const transformProps = new Set(transformPropOrder)
-
-/**
- * A quick lookup for transform origin props
- */
-export const transformOriginProps = new Set(["originX", "originY", "originZ"])
