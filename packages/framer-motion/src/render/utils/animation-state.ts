@@ -10,7 +10,7 @@ import {
     AnimationOptions,
 } from "./animation"
 import { AnimationType } from "./types"
-import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
+import { isVariantLabel, resolveVariant } from "./variants"
 
 export interface AnimationState {
     animateChanges: (
@@ -397,7 +397,7 @@ export function createAnimationState(
 export function checkVariantsDidChange(prev: any, next: any) {
     if (typeof next === "string") {
         return next !== prev
-    } else if (isVariantLabels(next)) {
+    } else if (Array.isArray(next)) {
         return !shallowCompare(next, prev)
     }
 

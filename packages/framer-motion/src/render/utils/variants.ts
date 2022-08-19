@@ -4,17 +4,10 @@ import { TargetAndTransition, TargetResolver } from "../../types"
 import { ResolvedValues, VisualElement } from "../types"
 
 /**
- * Decides if the supplied variable is an array of variant labels
- */
-export function isVariantLabels(v: unknown): v is string[] {
-    return Array.isArray(v)
-}
-
-/**
  * Decides if the supplied variable is variant label
  */
 export function isVariantLabel(v: unknown): v is string | string[] {
-    return typeof v === "string" || isVariantLabels(v)
+    return typeof v === "string" || Array.isArray(v)
 }
 
 /**
@@ -121,16 +114,21 @@ export function resolveVariant(
     )
 }
 
+const variantProps = [
+    "initial",
+    "animate",
+    "exit",
+    "whileHover",
+    "whileDrag",
+    "whileTap",
+    "whileFocus",
+    "whileInView",
+]
+
 export function checkIfControllingVariants(props: MotionProps) {
     return (
         isAnimationControls(props.animate) ||
-        isVariantLabel(props.initial) ||
-        isVariantLabel(props.animate) ||
-        isVariantLabel(props.whileHover) ||
-        isVariantLabel(props.whileDrag) ||
-        isVariantLabel(props.whileTap) ||
-        isVariantLabel(props.whileFocus) ||
-        isVariantLabel(props.exit)
+        variantProps.some((name) => isVariantLabel(props[name]))
     )
 }
 
