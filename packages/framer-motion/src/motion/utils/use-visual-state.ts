@@ -100,9 +100,10 @@ function makeLatestValues(
         if (animate === undefined) animate = context.animate
     }
 
-    const isInitialAnimationBlocked = presenceContext
+    let isInitialAnimationBlocked = presenceContext
         ? presenceContext.initial === false
-        : !initial
+        : false
+    isInitialAnimationBlocked = isInitialAnimationBlocked || initial === false
 
     const variantToSet = isInitialAnimationBlocked ? animate : initial
 
@@ -136,7 +137,6 @@ function makeLatestValues(
                     values[key] = valueTarget
                 }
             }
-
             for (const key in transitionEnd) values[key] = transitionEnd[key]
         })
     }

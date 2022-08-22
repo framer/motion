@@ -19,6 +19,7 @@ export function useVisualElement<Instance, RenderState>(
     const parent = useVisualElementContext()
     const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
+    const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
     const visualElementRef: MutableRefObject<VisualElement | undefined> =
         useRef(undefined)
@@ -37,7 +38,7 @@ export function useVisualElement<Instance, RenderState>(
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false
                 : false,
-            reducedMotionConfig: useContext(MotionConfigContext).reducedMotion,
+            reducedMotionConfig,
         })
     }
 
