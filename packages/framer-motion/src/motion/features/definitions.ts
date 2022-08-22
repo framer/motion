@@ -1,5 +1,5 @@
 import { MotionProps } from "../types"
-import { FeatureComponents, LoadedFeatures } from "./types"
+import { LoadedFeatures } from "./types"
 
 const createDefinition = (propNames: string[]) => ({
     isEnabled: (props: MotionProps) => propNames.some((name) => !!props[name]),
@@ -33,16 +33,4 @@ export const featureDefinitions: LoadedFeatures = {
         "onViewportEnter",
         "onViewportLeave",
     ]),
-}
-
-export function loadFeatures(features: FeatureComponents) {
-    for (const key in features) {
-        if (features[key] === null) continue
-
-        if (key === "projectionNodeConstructor") {
-            featureDefinitions.projectionNodeConstructor = features[key]
-        } else {
-            featureDefinitions[key].Component = features[key]
-        }
-    }
 }

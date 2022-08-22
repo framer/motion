@@ -1,7 +1,7 @@
 import * as React from "react"
 import { useEffect, useRef, useState } from "react"
 import { LazyContext } from "../../context/LazyContext"
-import { loadFeatures } from "../../motion/features/definitions"
+import { loadFeatures } from "../../motion/features/load-features"
 import { FeatureBundle, LazyFeatureBundle } from "../../motion/features/types"
 import { CreateVisualElement } from "../../render/types"
 import { LazyProps } from "./types"

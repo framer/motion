@@ -9,13 +9,14 @@ import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
 import { useCreateMotionContext } from "../context/MotionContext/create"
-import { featureDefinitions, loadFeatures } from "./features/definitions"
+import { featureDefinitions } from "./features/definitions"
+import { loadFeatures } from "./features/load-features"
 import { isBrowser } from "../utils/is-browser"
 import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
-import { useProjection } from "./features/use-projection"
 import { VisualElementHandler } from "./utils/VisualElementHandler"
 import { LazyContext } from "../context/LazyContext"
+import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -96,24 +97,23 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                 createVisualElement
             )
 
-            useProjection(
-                projectionId,
-                props,
-                context.visualElement,
-                projectionNodeConstructor ||
-                    featureDefinitions.projectionNodeConstructor
-            )
-
             /**
              * Load Motion gesture and animation features. These are rendered as renderless
              * components so each feature can optionally make use of React lifecycle methods.
              */
             const lazyStrictMode = useContext(LazyContext).strict
+            const initialLayoutGroupConfig = useContext(
+                SwitchLayoutGroupContext
+            )
             if (context.visualElement) {
                 features = context.visualElement.loadFeatures(
                     props,
                     lazyStrictMode,
-                    preloadedFeatures
+                    preloadedFeatures,
+                    projectionId,
+                    projectionNodeConstructor ||
+                        featureDefinitions.projectionNodeConstructor,
+                    initialLayoutGroupConfig
                 )
             }
         }

@@ -26,6 +26,8 @@ import { invariant } from "hey-listen"
 import { featureDefinitions } from "../motion/features/definitions"
 import { FeatureDefinition } from "../motion/features/types"
 import { createElement } from "react"
+import { IProjectionNode } from "../projection/node/types"
+import { isRefObject } from "../utils/is-ref-object"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -291,7 +293,14 @@ export const visualElement =
                 isMounted = false
             },
 
-            loadFeatures(renderedProps, isStrict, preloadedFeatures) {
+            loadFeatures(
+                renderedProps,
+                isStrict,
+                preloadedFeatures,
+                projectionId,
+                ProjectionNodeConstructor,
+                initialLayoutGroupConfig
+            ) {
                 const features: JSX.Element[] = []
 
                 /**
@@ -325,6 +334,42 @@ export const visualElement =
                             })
                         )
                     }
+                }
+
+                if (!element.projection && ProjectionNodeConstructor) {
+                    element.projection = new ProjectionNodeConstructor(
+                        projectionId,
+                        element.getLatestValues(),
+                        parent && parent.projection
+                    ) as IProjectionNode
+
+                    const {
+                        layoutId,
+                        layout,
+                        drag,
+                        dragConstraints,
+                        layoutScroll,
+                    } = renderedProps
+                    element.projection.setOptions({
+                        layoutId,
+                        layout,
+                        alwaysMeasureLayout:
+                            Boolean(drag) ||
+                            (dragConstraints && isRefObject(dragConstraints)),
+                        visualElement: element,
+                        scheduleRender: () => element.scheduleRender(),
+                        /**
+                         * TODO: Update options in an effect. This could be tricky as it'll be too late
+                         * to update by the time layout animations run.
+                         * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
+                         * ensuring it gets called if there's no potential layout animations.
+                         *
+                         */
+                        animationType:
+                            typeof layout === "string" ? layout : "both",
+                        initialPromotionConfig: initialLayoutGroupConfig,
+                        layoutScroll,
+                    })
                 }
 
                 return features

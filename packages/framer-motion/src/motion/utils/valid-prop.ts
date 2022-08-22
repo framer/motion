@@ -1,5 +1,26 @@
 import { MotionProps } from "../types"
 
+const animationProps = [
+    "animate",
+    "exit",
+    "variants",
+    "whileHover",
+    "whileTap",
+    "whileFocus",
+    "whileDrag",
+    "whileInView",
+]
+const tapProps = ["whileTap", "onTap", "onTapStart", "onTapCancel"]
+
+const panProps = ["onPan", "onPanStart", "onPanSessionStart", "onPanEnd"]
+
+const inViewProps = [
+    "whileInView",
+    "onViewportEnter",
+    "onViewportLeave",
+    "viewport",
+]
+
 /**
  * A list of all valid MotionProps.
  *
@@ -8,8 +29,6 @@ import { MotionProps } from "../types"
  */
 const validMotionProps = new Set<keyof MotionProps>([
     "initial",
-    "animate",
-    "exit",
     "style",
     "variants",
     "transition",
@@ -45,24 +64,13 @@ const validMotionProps = new Set<keyof MotionProps>([
     "dragMomentum",
     "dragPropagation",
     "dragTransition",
-    "whileDrag",
-    "onPan",
-    "onPanStart",
-    "onPanEnd",
-    "onPanSessionStart",
-    "onTap",
-    "onTapStart",
-    "onTapCancel",
     "onHoverStart",
     "onHoverEnd",
-    "whileFocus",
-    "whileTap",
-    "whileHover",
-    "whileInView",
-    "onViewportEnter",
-    "onViewportLeave",
-    "viewport",
     "layoutScroll",
+    ...(inViewProps as any),
+    ...(tapProps as any),
+    ...(animationProps as any),
+    ...(panProps as any),
 ])
 
 /**

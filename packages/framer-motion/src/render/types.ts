@@ -11,6 +11,7 @@ import { IProjectionNode } from "../projection/node/types"
 import { MotionConfigProps } from "../components/MotionConfig"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
 import { FeatureBundle } from "../motion/features/types"
+import type { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -44,7 +45,10 @@ export interface VisualElement<Instance = any, RenderState = any>
     loadFeatures(
         props: MotionProps,
         isStrict?: boolean,
-        preloadedFeatures?: FeatureBundle
+        preloadedFeatures?: FeatureBundle,
+        projectionId?: number,
+        ProjectionNodeConstructor?: any,
+        initialPromotionConfig?: SwitchLayoutGroupContext
     ): JSX.Element[]
 
     projection?: IProjectionNode
