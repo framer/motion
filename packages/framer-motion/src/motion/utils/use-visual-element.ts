@@ -8,7 +8,7 @@ import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigProps } from "../../components/MotionConfig"
-import { useReducedMotionConfig } from "../../utils/use-reduced-motion"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -19,7 +19,8 @@ export function useVisualElement<Instance, RenderState>(
     const lazyContext = useContext(LazyContext)
     const parent = useVisualElementContext()
     const presenceContext = useContext(PresenceContext)
-    const shouldReduceMotion = useReducedMotionConfig()
+    const { reducedMotion: reducedMotionConfig } =
+        useContext(MotionConfigContext)
 
     const visualElementRef: MutableRefObject<VisualElement | undefined> =
         useRef(undefined)
@@ -38,7 +39,7 @@ export function useVisualElement<Instance, RenderState>(
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false
                 : false,
-            shouldReduceMotion,
+            reducedMotionConfig,
         })
     }
 

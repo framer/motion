@@ -2,6 +2,8 @@ import { createContext } from "react"
 import { TransformPoint } from "../projection/geometry/types"
 import { Transition } from "../types"
 
+export type ReducedMotionConfig = "always" | "never" | "user"
+
 /**
  * @public
  */
@@ -30,7 +32,7 @@ export interface MotionConfigContext {
      *
      * @public
      */
-    reducedMotion?: "always" | "never" | "user"
+    reducedMotion?: ReducedMotionConfig
 }
 
 /**

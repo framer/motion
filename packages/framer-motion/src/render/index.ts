@@ -1,5 +1,10 @@
 import sync, { cancelSync } from "framesync"
 import { MotionStyle } from "../motion/types"
+import { initPrefersReducedMotion } from "../utils/reduced-motion"
+import {
+    hasReducedMotionListener,
+    prefersReducedMotion,
+} from "../utils/reduced-motion/state"
 import { motionValue, MotionValue } from "../value"
 import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
@@ -37,7 +42,7 @@ export const visualElement =
             presenceId,
             blockInitialAnimation,
             visualState,
-            shouldReduceMotion,
+            reducedMotionConfig,
         }: VisualElementOptions<Instance>,
         options: Options = {} as Options
     ) => {
@@ -193,7 +198,7 @@ export const visualElement =
              */
             presenceId,
 
-            shouldReduceMotion,
+            shouldReduceMotion: null,
 
             /**
              * If this component is part of the variant tree, it should track
@@ -247,6 +252,17 @@ export const visualElement =
                 }
 
                 values.forEach((value, key) => bindToMotionValue(key, value))
+
+                if (!hasReducedMotionListener.current) {
+                    initPrefersReducedMotion()
+                }
+
+                element.shouldReduceMotion =
+                    reducedMotionConfig === "never"
+                        ? false
+                        : reducedMotionConfig === "always"
+                        ? true
+                        : prefersReducedMotion.current
 
                 parent?.children.add(element)
                 element.setProps(props)
