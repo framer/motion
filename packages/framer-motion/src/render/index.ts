@@ -14,13 +14,21 @@ import {
     VisualElementOptions,
 } from "./types"
 import { variantPriorityOrder } from "./utils/animation-state"
+import { isVariantLabel } from "./utils/is-variant-label"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import {
-    checkIfControllingVariants,
-    checkIfVariantNode,
-    isVariantLabel,
-} from "./utils/variants"
+    isControllingVariants as checkIsControllingVariants,
+    isVariantNode as checkIsVariantNode,
+} from "./utils/is-controlling-variants"
+import { env } from "../utils/process"
+import { invariant } from "hey-listen"
+import { featureDefinitions } from "../motion/features/definitions"
+import { FeatureDefinition } from "../motion/features/types"
+import { createElement } from "react"
+
+const featureNames = Object.keys(featureDefinitions)
+const numFeatures = featureNames.length
 
 export const visualElement =
     <Instance, MutableState, Options>({
@@ -172,8 +180,8 @@ export const visualElement =
         /**
          * Determine what role this visual element should take in the variant tree.
          */
-        const isControllingVariants = checkIfControllingVariants(props)
-        const isVariantNode = checkIfVariantNode(props)
+        const isControllingVariants = checkIsControllingVariants(props)
+        const isVariantNode = checkIsVariantNode(props)
 
         const element: VisualElement<Instance> = {
             treeType,
@@ -281,6 +289,45 @@ export const visualElement =
                 lifecycles.clearAllListeners()
                 instance = undefined
                 isMounted = false
+            },
+
+            loadFeatures(renderedProps, isStrict, preloadedFeatures) {
+                const features: JSX.Element[] = []
+
+                /**
+                 * If we're in development mode, check to make sure we're not rendering a motion component
+                 * as a child of LazyMotion, as this will break the file-size benefits of using it.
+                 */
+                if (env !== "production" && preloadedFeatures && isStrict) {
+                    invariant(
+                        false,
+                        "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
+                    )
+                }
+
+                for (let i = 0; i < numFeatures; i++) {
+                    const name = featureNames[i]
+                    const { isEnabled, Component } = featureDefinitions[
+                        name
+                    ] as FeatureDefinition
+
+                    /**
+                     * It might be possible in the future to use this moment to
+                     * dynamically request functionality. In initial tests this
+                     * was producing a lot of duplication amongst bundles.
+                     */
+                    if (isEnabled(props) && Component) {
+                        features.push(
+                            createElement(Component, {
+                                key: name,
+                                ...renderedProps,
+                                visualElement: element,
+                            })
+                        )
+                    }
+                }
+
+                return features
             },
 
             /**

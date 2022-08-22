@@ -14,7 +14,7 @@ import { getAnimatableNone } from "../dom/value-types/animatable-none"
 import { findValueType } from "../dom/value-types/find"
 import { ResolvedValues, VisualElement } from "../types"
 import { AnimationDefinition } from "./animation"
-import { resolveVariant } from "./variants"
+import { resolveVariant } from "./resolve-dynamic-variants"
 
 /**
  * Set VisualElement's MotionValue, creating a new MotionValue for it if

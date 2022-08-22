@@ -9,8 +9,9 @@ import {
     AnimationDefinition,
     AnimationOptions,
 } from "./animation"
+import { isVariantLabel } from "./is-variant-label"
 import { AnimationType } from "./types"
-import { isVariantLabel, resolveVariant } from "./variants"
+import { resolveVariant } from "./resolve-dynamic-variants"
 
 export interface AnimationState {
     animateChanges: (

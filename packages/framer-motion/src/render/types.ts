@@ -10,6 +10,7 @@ import { Box, Point, TransformPoint } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 import { MotionConfigProps } from "../components/MotionConfig"
 import { ReducedMotionConfig } from "../context/MotionConfigContext"
+import { FeatureBundle } from "../motion/features/types"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -39,6 +40,12 @@ export interface VisualElement<Instance = any, RenderState = any>
     shouldReduceMotion?: boolean | null
 
     animateMotionValue?: typeof startAnimation
+
+    loadFeatures(
+        props: MotionProps,
+        isStrict?: boolean,
+        preloadedFeatures?: FeatureBundle
+    ): JSX.Element[]
 
     projection?: IProjectionNode
 

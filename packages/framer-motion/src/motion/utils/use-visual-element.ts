@@ -16,11 +16,9 @@ export function useVisualElement<Instance, RenderState>(
     props: MotionProps & MotionConfigProps,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
-    const lazyContext = useContext(LazyContext)
     const parent = useVisualElementContext()
+    const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
-    const { reducedMotion: reducedMotionConfig } =
-        useContext(MotionConfigContext)
 
     const visualElementRef: MutableRefObject<VisualElement | undefined> =
         useRef(undefined)
@@ -28,7 +26,7 @@ export function useVisualElement<Instance, RenderState>(
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
      */
-    if (!createVisualElement) createVisualElement = lazyContext.renderer
+    createVisualElement = createVisualElement || lazyContext.renderer
 
     if (!visualElementRef.current && createVisualElement) {
         visualElementRef.current = createVisualElement(Component, {
@@ -39,11 +37,12 @@ export function useVisualElement<Instance, RenderState>(
             blockInitialAnimation: presenceContext
                 ? presenceContext.initial === false
                 : false,
-            reducedMotionConfig,
+            reducedMotionConfig: useContext(MotionConfigContext).reducedMotion,
         })
     }
 
     const visualElement = visualElementRef.current
+
     useIsomorphicLayoutEffect(() => {
         visualElement && visualElement.syncRender()
     })

@@ -11,7 +11,7 @@ import { VisualElement } from "../types"
 import { AnimationTypeState } from "./animation-state"
 import { AnimationType } from "./types"
 import { setTarget } from "./setters"
-import { resolveVariant } from "./variants"
+import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
 

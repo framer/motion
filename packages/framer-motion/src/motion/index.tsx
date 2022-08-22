@@ -2,7 +2,6 @@ import * as React from "react"
 import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
 import { RenderComponent, FeatureBundle } from "./features/types"
-import { useFeatures } from "./features/use-features"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { MotionContext } from "../context/MotionContext"
 import { CreateVisualElement } from "../render/types"
@@ -16,6 +15,7 @@ import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
 import { useProjection } from "./features/use-projection"
 import { VisualElementHandler } from "./utils/VisualElementHandler"
+import { LazyContext } from "../context/LazyContext"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -108,11 +108,14 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
              * Load Motion gesture and animation features. These are rendered as renderless
              * components so each feature can optionally make use of React lifecycle methods.
              */
-            features = useFeatures(
-                props,
-                context.visualElement,
-                preloadedFeatures
-            )
+            const lazyStrictMode = useContext(LazyContext).strict
+            if (context.visualElement) {
+                features = context.visualElement.loadFeatures(
+                    props,
+                    lazyStrictMode,
+                    preloadedFeatures
+                )
+            }
         }
 
         /**
