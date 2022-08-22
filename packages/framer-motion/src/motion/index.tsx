@@ -50,16 +50,12 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         props: Props & MotionProps,
         externalRef?: React.Ref<Instance>
     ) {
-        const layoutId = useLayoutId(props)
-        props = { ...props, layoutId }
-
-        /**
-         * If we're rendering in a static environment, we only visually update the component
-         * as a result of a React-rerender rather than interactions or animations. This
-         * means we don't need to load additional memory structures like VisualElement,
-         * or any gesture/animation features.
-         */
-        const config = useContext(MotionConfigContext)
+        const configAndProps = {
+            ...useContext(MotionConfigContext),
+            ...props,
+            layoutId: useLayoutId(props),
+        }
+        const { isStatic } = configAndProps
 
         let features: JSX.Element[] | null = null
 
@@ -76,14 +72,14 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * shared element transitions however. Perhaps for those we could revert to a root node
          * that gets forceRendered and layout animations are triggered on its layout effect.
          */
-        const projectionId = config.isStatic ? undefined : useProjectionId()
+        const projectionId = isStatic ? undefined : useProjectionId()
 
         /**
          *
          */
-        const visualState = useVisualState(props, config.isStatic)
+        const visualState = useVisualState(props, isStatic)
 
-        if (!config.isStatic && isBrowser) {
+        if (!isStatic && isBrowser) {
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
              * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
@@ -93,7 +89,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             context.visualElement = useVisualElement(
                 Component,
                 visualState,
-                { ...config, ...props },
+                configAndProps,
                 createVisualElement
             )
 
@@ -125,7 +121,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         return (
             <VisualElementHandler
                 visualElement={context.visualElement}
-                props={{ ...config, ...props }}
+                props={configAndProps}
             >
                 {features}
                 <MotionContext.Provider value={context}>
@@ -139,7 +135,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                             externalRef
                         ),
                         visualState,
-                        config.isStatic,
+                        isStatic,
                         context.visualElement
                     )}
                 </MotionContext.Provider>
