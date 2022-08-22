@@ -104,6 +104,17 @@ const sizePlugins = [
     terser({ output: { comments: false } }),
 ]
 
+const motion = Object.assign({}, es, {
+    input: "lib/render/dom/motion.js",
+    output: Object.assign({}, es.output, {
+        file: `dist/size-rollup-motion.js`,
+        preserveModules: false,
+        dir: undefined,
+    }),
+    plugins: [...sizePlugins, visualizer()],
+    external: ["react", "react-dom"],
+})
+
 const m = Object.assign({}, es, {
     input: "lib/render/dom/motion-minimal.js",
     output: Object.assign({}, es.output, {
@@ -168,6 +179,7 @@ export default [
     umdProd,
     cjs,
     es,
+    motion,
     m,
     domAnimation,
     domMax,
