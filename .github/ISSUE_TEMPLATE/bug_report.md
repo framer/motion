@@ -39,6 +39,10 @@ If applicable, let us know which OS, browser, browser version etc you're using.
 
 ## FAQs
 
+### Framer Motion won't install
+
+Framer Motion 7+ uses React 18 as a minimum. If you can't upgrade React, install the latest version of Framer Motion 6. 
+
 ### `height: "auto"` is jumping
 
 Animating to/from `auto` requires measuring the DOM. There's no perfect way to do this and if you have also applied padding to the same element, these measurements might be wrong.
