@@ -9,6 +9,8 @@ import { svgMotionConfig } from "../../svg/config-motion"
 import { htmlMotionConfig } from "../../html/config-motion"
 import { CreateVisualElement } from "../../types"
 import { CustomMotionComponentConfig } from "../motion-proxy"
+import { useSVGProps } from "../../svg/use-props"
+import { useHTMLProps } from "../../html/use-props"
 
 export function createDomMotionConfig<Props>(
     Component: string | React.ComponentType<React.PropsWithChildren<Props>>,
@@ -21,10 +23,14 @@ export function createDomMotionConfig<Props>(
         ? svgMotionConfig
         : htmlMotionConfig
 
+    const useVisualProps = isSVGComponent(Component)
+        ? useSVGProps
+        : useHTMLProps
+
     return {
         ...baseConfig,
         preloadedFeatures,
-        useRender: createUseRender(forwardMotionProps),
+        useRender: createUseRender(forwardMotionProps, useVisualProps),
         createVisualElement,
         projectionNodeConstructor,
         Component,

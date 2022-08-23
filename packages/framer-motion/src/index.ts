@@ -2,7 +2,8 @@
  * Components
  */
 export { motion, createDomMotionComponent } from "./render/dom/motion"
-export { m } from "./render/dom/motion-minimal"
+export { m } from "./components/m/html"
+export { mSVG } from "./components/m/svg"
 export { AnimatePresence } from "./components/AnimatePresence"
 export { AnimateSharedLayout } from "./components/AnimateSharedLayout"
 export { MotionConfig } from "./components/MotionConfig"

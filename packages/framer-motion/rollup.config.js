@@ -120,19 +120,19 @@ const motion = Object.assign({}, es, {
 })
 
 const m = Object.assign({}, es, {
-    input: "lib/render/dom/motion-minimal.js",
+    input: "lib/components/m/html/index.js",
     output: Object.assign({}, es.output, {
         file: `dist/size-rollup-m.js`,
         preserveModules: false,
         dir: undefined,
     }),
-    plugins: [...sizePlugins],
+    plugins: [...sizePlugins, visualizer()],
     external: ["react", "react-dom"],
 })
 
 const domAnimation = Object.assign({}, es, {
     input: {
-        "size-rollup-dom-animation-m": "lib/render/dom/motion-minimal.js",
+        "size-rollup-dom-animation-m": "lib/components/m/html/index.js",
         "size-rollup-dom-animation": "lib/render/dom/features-animation.js",
     },
     output: {
@@ -143,13 +143,13 @@ const domAnimation = Object.assign({}, es, {
         chunkFileNames: "size-rollup-dom-animation-assets.js",
         dir: `dist`,
     },
-    plugins: [...sizePlugins, visualizer()],
+    plugins: [...sizePlugins],
     external: ["react", "react-dom"],
 })
 
 const domMax = Object.assign({}, es, {
     input: {
-        "size-rollup-dom-animation-m": "lib/render/dom/motion-minimal.js",
+        "size-rollup-dom-animation-m": "lib/components/m/html/index.js",
         "size-rollup-dom-max": "lib/render/dom/features-max.js",
     },
     output: {

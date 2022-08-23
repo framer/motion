@@ -1,7 +1,4 @@
-const tsconfig = require("./tsconfig.json")
 const path = require("path")
-const convertPathsToAliases =
-    require("convert-tsconfig-paths-to-webpack-aliases").default
 const TerserPlugin = require("terser-webpack-plugin")
 
 const tsLoader = {
@@ -14,7 +11,7 @@ module.exports = {
     entry: {
         "size-webpack-m": path.join(
             __dirname,
-            "./src/render/dom/motion-minimal.ts"
+            "./src/components/m/html/index.ts"
         ),
         "size-webpack-dom-animation": path.join(
             __dirname,
