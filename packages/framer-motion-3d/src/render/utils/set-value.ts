@@ -6,7 +6,9 @@ const setVector =
     (name: string, defaultValue: number) =>
     (i: number) =>
     (instance: Object3DNode<any, any>, value: number) => {
-        instance[name] ??= new Vector3(defaultValue)
+        if (instance[name] === undefined) {
+            instance[name] = new Vector3(defaultValue)
+        }
         const vector = instance[name] as Vector3
         vector.setComponent(i, value)
     }
@@ -15,14 +17,18 @@ const setEuler =
     (name: string, defaultValue: number) =>
     (axis: string) =>
     (instance: Object3DNode<any, any>, value: number) => {
-        instance[name] ??= new Euler(defaultValue)
+        if (instance[name] === undefined) {
+            instance[name] = new Euler(defaultValue)
+        }
         const euler = instance[name] as Euler
         euler[axis] = value
     }
 
 const setColor =
     (name: string) => (instance: Object3DNode<any, any>, value: string) => {
-        instance[name] ??= new Color(value)
+        if (instance[name] === undefined) {
+            instance[name] = new Color(value)
+        }
         instance[name].set(value)
     }
 
@@ -35,7 +41,9 @@ const setters = {
     y: setPosition(1),
     z: setPosition(2),
     scale: (instance: Object3DNode<any, any>, value: number) => {
-        instance.scale ??= new Vector3(1)
+        if (instance.scale === undefined) {
+            instance.scale = new Vector3(1)
+        }
         const scale = instance.scale as Vector3
         scale.set(value, value, value)
     },

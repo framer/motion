@@ -125,8 +125,8 @@ export function getPopmotionAnimationOptions(
     options: any,
     key: string
 ) {
-    if (Array.isArray(options.to)) {
-        transition.duration ??= 0.8
+    if (Array.isArray(options.to) && transition.duration === undefined) {
+        transition.duration = 0.8
     }
 
     hydrateKeyframes(options)
@@ -157,8 +157,9 @@ function getAnimation(
     transition: PermissiveTransitionDefinition,
     onComplete: () => void
 ) {
-    const valueTransition = getValueTransition(transition, key)
-    let origin = valueTransition.from ?? value.get()
+    const valueTransition = getValueTransition(transition, key) || {}
+    let origin =
+        valueTransition.from !== undefined ? valueTransition.from : value.get()
 
     const isTargetAnimatable = isAnimatable(key, target)
 
@@ -205,11 +206,11 @@ function getAnimation(
                   ),
                   onUpdate: (v: any) => {
                       options.onUpdate(v)
-                      valueTransition.onUpdate?.(v)
+                      valueTransition.onUpdate && valueTransition.onUpdate(v)
                   },
                   onComplete: () => {
                       options.onComplete()
-                      valueTransition.onComplete?.()
+                      valueTransition.onComplete && valueTransition.onComplete()
                   },
               })
     }
@@ -218,8 +219,9 @@ function getAnimation(
         const finalTarget = resolveFinalValueInKeyframes(target)
         value.set(finalTarget)
         onComplete()
-        valueTransition?.onUpdate?.(finalTarget)
-        valueTransition?.onComplete?.()
+
+        valueTransition.onUpdate && valueTransition.onUpdate(finalTarget)
+        valueTransition.onComplete && valueTransition.onComplete()
         return { stop: () => {} }
     }
 
@@ -287,7 +289,7 @@ export function startAnimation(
 
         return () => {
             clearTimeout(delayTimer)
-            controls?.stop()
+            controls && controls.stop()
         }
     })
 }

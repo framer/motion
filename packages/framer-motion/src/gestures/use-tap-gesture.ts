@@ -31,14 +31,15 @@ export function useTapGesture({
     }
 
     function removePointerEndListener() {
-        cancelPointerEndListeners.current?.()
+        cancelPointerEndListeners.current && cancelPointerEndListeners.current()
         cancelPointerEndListeners.current = null
     }
 
     function checkPointerEnd() {
         removePointerEndListener()
         isPressing.current = false
-        visualElement.animationState?.setActive(AnimationType.Tap, false)
+        visualElement.animationState &&
+            visualElement.animationState.setActive(AnimationType.Tap, false)
         return !isDragActive()
     }
 
@@ -50,14 +51,14 @@ export function useTapGesture({
          * as, or a child of, this component's element
          */
         !isNodeOrChild(visualElement.getInstance(), event.target as Element)
-            ? onTapCancel?.(event, info)
-            : onTap?.(event, info)
+            ? onTapCancel && onTapCancel(event, info)
+            : onTap && onTap(event, info)
     }
 
     function onPointerCancel(event: PointerEvent, info: EventInfo) {
         if (!checkPointerEnd()) return
 
-        onTapCancel?.(event, info)
+        onTapCancel && onTapCancel(event, info)
     }
 
     function onPointerDown(event: PointerEvent, info: EventInfo) {
@@ -79,9 +80,10 @@ export function useTapGesture({
         /**
          * Ensure we trigger animations before firing event callback
          */
-        visualElement.animationState?.setActive(AnimationType.Tap, true)
+        visualElement.animationState &&
+            visualElement.animationState.setActive(AnimationType.Tap, true)
 
-        onTapStart?.(event, info)
+        onTapStart && onTapStart(event, info)
     }
 
     usePointerEvent(

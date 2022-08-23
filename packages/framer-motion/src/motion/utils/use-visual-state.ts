@@ -5,15 +5,15 @@ import {
     PresenceContextProps,
 } from "../../context/PresenceContext"
 import { ResolvedValues, ScrapeMotionValuesFromProps } from "../../render/types"
-import {
-    checkIfControllingVariants,
-    checkIfVariantNode,
-    resolveVariantFromProps,
-} from "../../render/utils/variants"
+import { resolveVariantFromProps } from "../../render/utils/resolve-variants"
 import { useConstant } from "../../utils/use-constant"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionContext, MotionContextProps } from "../../context/MotionContext"
 import { MotionProps } from "../types"
+import {
+    isControllingVariants as checkIsControllingVariants,
+    isVariantNode as checkIsVariantNode,
+} from "../../render/utils/is-controlling-variants"
 
 export interface VisualState<Instance, RenderState> {
     renderState: RenderState
@@ -68,12 +68,9 @@ export const makeUseVisualState =
     (props: MotionProps, isStatic: boolean): VisualState<I, RS> => {
         const context = useContext(MotionContext)
         const presenceContext = useContext(PresenceContext)
+        const make = () => makeState(config, props, context, presenceContext)
 
-        return isStatic
-            ? makeState(config, props, context, presenceContext)
-            : useConstant(() =>
-                  makeState(config, props, context, presenceContext)
-              )
+        return isStatic ? make() : useConstant(make)
     }
 
 function makeLatestValues(
@@ -83,7 +80,6 @@ function makeLatestValues(
     scrapeMotionValues: ScrapeMotionValuesFromProps
 ) {
     const values: ResolvedValues = {}
-    const blockInitialAnimation = presenceContext?.initial === false
 
     const motionValues = scrapeMotionValues(props)
     for (const key in motionValues) {
@@ -91,8 +87,8 @@ function makeLatestValues(
     }
 
     let { initial, animate } = props
-    const isControllingVariants = checkIfControllingVariants(props)
-    const isVariantNode = checkIfVariantNode(props)
+    const isControllingVariants = checkIsControllingVariants(props)
+    const isVariantNode = checkIsVariantNode(props)
 
     if (
         context &&
@@ -100,12 +96,16 @@ function makeLatestValues(
         !isControllingVariants &&
         props.inherit !== false
     ) {
-        initial ??= context.initial
-        animate ??= context.animate
+        if (initial === undefined) initial = context.initial
+        if (animate === undefined) animate = context.animate
     }
 
-    const initialAnimationIsBlocked = blockInitialAnimation || initial === false
-    const variantToSet = initialAnimationIsBlocked ? animate : initial
+    let isInitialAnimationBlocked = presenceContext
+        ? presenceContext.initial === false
+        : false
+    isInitialAnimationBlocked = isInitialAnimationBlocked || initial === false
+
+    const variantToSet = isInitialAnimationBlocked ? animate : initial
 
     if (
         variantToSet &&
@@ -127,7 +127,7 @@ function makeLatestValues(
                      * Take final keyframe if the initial animation is blocked because
                      * we want to initialise at the end of that blocked animation.
                      */
-                    const index = initialAnimationIsBlocked
+                    const index = isInitialAnimationBlocked
                         ? valueTarget.length - 1
                         : 0
                     valueTarget = valueTarget[index]

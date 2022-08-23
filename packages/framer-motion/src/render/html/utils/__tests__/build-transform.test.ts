@@ -1,15 +1,15 @@
 import "../../../../../jest.setup"
 import { buildTransform } from "../build-transform"
-import { isTransformProp } from "../transform"
+import { transformProps } from "../transform"
 
-describe("isTransformProp", () => {
+describe("transformProps.has", () => {
     it("Correctly identifies only transformPerspective as a transform prop", () => {
-        expect(isTransformProp("perspective")).toBe(false)
-        expect(isTransformProp("transformPerspective")).toBe(true)
+        expect(transformProps.has("perspective")).toBe(false)
+        expect(transformProps.has("transformPerspective")).toBe(true)
     })
     it("Correctly identifies translate and alias to be true", () => {
-        expect(isTransformProp("x")).toBe(true)
-        expect(isTransformProp("translateX")).toBe(true)
+        expect(transformProps.has("x")).toBe(true)
+        expect(transformProps.has("translateX")).toBe(true)
     })
 })
 

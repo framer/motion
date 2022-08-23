@@ -1,5 +1,10 @@
 import sync, { cancelSync } from "framesync"
 import { MotionStyle } from "../motion/types"
+import { initPrefersReducedMotion } from "../utils/reduced-motion"
+import {
+    hasReducedMotionListener,
+    prefersReducedMotion,
+} from "../utils/reduced-motion/state"
 import { motionValue, MotionValue } from "../value"
 import { isWillChangeMotionValue } from "../value/use-will-change/is"
 import { isMotionValue } from "../value/utils/is-motion-value"
@@ -9,13 +14,23 @@ import {
     VisualElementOptions,
 } from "./types"
 import { variantPriorityOrder } from "./utils/animation-state"
+import { isVariantLabel } from "./utils/is-variant-label"
 import { createLifecycles } from "./utils/lifecycles"
 import { updateMotionValuesFromProps } from "./utils/motion-values"
 import {
-    checkIfControllingVariants,
-    checkIfVariantNode,
-    isVariantLabel,
-} from "./utils/variants"
+    isControllingVariants as checkIsControllingVariants,
+    isVariantNode as checkIsVariantNode,
+} from "./utils/is-controlling-variants"
+import { env } from "../utils/process"
+import { invariant } from "hey-listen"
+import { featureDefinitions } from "../motion/features/definitions"
+import { FeatureDefinition } from "../motion/features/types"
+import { createElement } from "react"
+import { IProjectionNode } from "../projection/node/types"
+import { isRefObject } from "../utils/is-ref-object"
+
+const featureNames = Object.keys(featureDefinitions)
+const numFeatures = featureNames.length
 
 export const visualElement =
     <Instance, MutableState, Options>({
@@ -37,7 +52,7 @@ export const visualElement =
             presenceId,
             blockInitialAnimation,
             visualState,
-            shouldReduceMotion,
+            reducedMotionConfig,
         }: VisualElementOptions<Instance>,
         options: Options = {} as Options
     ) => {
@@ -167,8 +182,8 @@ export const visualElement =
         /**
          * Determine what role this visual element should take in the variant tree.
          */
-        const isControllingVariants = checkIfControllingVariants(props)
-        const isVariantNode = checkIfVariantNode(props)
+        const isControllingVariants = checkIsControllingVariants(props)
+        const isVariantNode = checkIsVariantNode(props)
 
         const element: VisualElement<Instance> = {
             treeType,
@@ -193,7 +208,7 @@ export const visualElement =
              */
             presenceId,
 
-            shouldReduceMotion,
+            shouldReduceMotion: null,
 
             /**
              * If this component is part of the variant tree, it should track
@@ -248,6 +263,17 @@ export const visualElement =
 
                 values.forEach((value, key) => bindToMotionValue(key, value))
 
+                if (!hasReducedMotionListener.current) {
+                    initPrefersReducedMotion()
+                }
+
+                element.shouldReduceMotion =
+                    reducedMotionConfig === "never"
+                        ? false
+                        : reducedMotionConfig === "always"
+                        ? true
+                        : prefersReducedMotion.current
+
                 parent?.children.add(element)
                 element.setProps(props)
             },
@@ -265,6 +291,88 @@ export const visualElement =
                 lifecycles.clearAllListeners()
                 instance = undefined
                 isMounted = false
+            },
+
+            loadFeatures(
+                renderedProps,
+                isStrict,
+                preloadedFeatures,
+                projectionId,
+                ProjectionNodeConstructor,
+                initialLayoutGroupConfig
+            ) {
+                const features: JSX.Element[] = []
+
+                /**
+                 * If we're in development mode, check to make sure we're not rendering a motion component
+                 * as a child of LazyMotion, as this will break the file-size benefits of using it.
+                 */
+                if (env !== "production" && preloadedFeatures && isStrict) {
+                    invariant(
+                        false,
+                        "You have rendered a `motion` component within a `LazyMotion` component. This will break tree shaking. Import and render a `m` component instead."
+                    )
+                }
+
+                for (let i = 0; i < numFeatures; i++) {
+                    const name = featureNames[i]
+                    const { isEnabled, Component } = featureDefinitions[
+                        name
+                    ] as FeatureDefinition
+
+                    /**
+                     * It might be possible in the future to use this moment to
+                     * dynamically request functionality. In initial tests this
+                     * was producing a lot of duplication amongst bundles.
+                     */
+                    if (isEnabled(props) && Component) {
+                        features.push(
+                            createElement(Component, {
+                                key: name,
+                                ...renderedProps,
+                                visualElement: element,
+                            })
+                        )
+                    }
+                }
+
+                if (!element.projection && ProjectionNodeConstructor) {
+                    element.projection = new ProjectionNodeConstructor(
+                        projectionId,
+                        element.getLatestValues(),
+                        parent && parent.projection
+                    ) as IProjectionNode
+
+                    const {
+                        layoutId,
+                        layout,
+                        drag,
+                        dragConstraints,
+                        layoutScroll,
+                    } = renderedProps
+                    element.projection.setOptions({
+                        layoutId,
+                        layout,
+                        alwaysMeasureLayout:
+                            Boolean(drag) ||
+                            (dragConstraints && isRefObject(dragConstraints)),
+                        visualElement: element,
+                        scheduleRender: () => element.scheduleRender(),
+                        /**
+                         * TODO: Update options in an effect. This could be tricky as it'll be too late
+                         * to update by the time layout animations run.
+                         * We also need to fix this safeToRemove by linking it up to the one returned by usePresence,
+                         * ensuring it gets called if there's no potential layout animations.
+                         *
+                         */
+                        animationType:
+                            typeof layout === "string" ? layout : "both",
+                        initialPromotionConfig: initialLayoutGroupConfig,
+                        layoutScroll,
+                    })
+                }
+
+                return features
             },
 
             /**
@@ -407,8 +515,9 @@ export const visualElement =
              * directly from the instance (which might have performance implications).
              */
             readValue: (key: string) =>
-                latestValues[key] ??
-                readValueFromInstance(instance!, key, options),
+                latestValues[key] !== undefined
+                    ? latestValues[key]
+                    : readValueFromInstance(instance!, key, options),
 
             /**
              * Set the base target to later animate back to. This is currently

@@ -2,7 +2,6 @@ import * as React from "react"
 import { forwardRef, useContext } from "react"
 import { MotionProps } from "./types"
 import { RenderComponent, FeatureBundle } from "./features/types"
-import { useFeatures } from "./features/use-features"
 import { MotionConfigContext } from "../context/MotionConfigContext"
 import { MotionContext } from "../context/MotionContext"
 import { CreateVisualElement } from "../render/types"
@@ -10,12 +9,14 @@ import { useVisualElement } from "./utils/use-visual-element"
 import { UseVisualState } from "./utils/use-visual-state"
 import { useMotionRef } from "./utils/use-motion-ref"
 import { useCreateMotionContext } from "../context/MotionContext/create"
-import { featureDefinitions, loadFeatures } from "./features/definitions"
+import { featureDefinitions } from "./features/definitions"
+import { loadFeatures } from "./features/load-features"
 import { isBrowser } from "../utils/is-browser"
 import { useProjectionId } from "../projection/node/id"
 import { LayoutGroupContext } from "../context/LayoutGroupContext"
-import { useProjection } from "./features/use-projection"
 import { VisualElementHandler } from "./utils/VisualElementHandler"
+import { LazyContext } from "../context/LazyContext"
+import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
@@ -49,16 +50,12 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         props: Props & MotionProps,
         externalRef?: React.Ref<Instance>
     ) {
-        const layoutId = useLayoutId(props)
-        props = { ...props, layoutId }
-
-        /**
-         * If we're rendering in a static environment, we only visually update the component
-         * as a result of a React-rerender rather than interactions or animations. This
-         * means we don't need to load additional memory structures like VisualElement,
-         * or any gesture/animation features.
-         */
-        const config = useContext(MotionConfigContext)
+        const configAndProps = {
+            ...useContext(MotionConfigContext),
+            ...props,
+            layoutId: useLayoutId(props),
+        }
+        const { isStatic } = configAndProps
 
         let features: JSX.Element[] | null = null
 
@@ -75,14 +72,14 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
          * shared element transitions however. Perhaps for those we could revert to a root node
          * that gets forceRendered and layout animations are triggered on its layout effect.
          */
-        const projectionId = config.isStatic ? undefined : useProjectionId()
+        const projectionId = isStatic ? undefined : useProjectionId()
 
         /**
          *
          */
-        const visualState = useVisualState(props, config.isStatic)
+        const visualState = useVisualState(props, isStatic)
 
-        if (!config.isStatic && isBrowser) {
+        if (!isStatic && isBrowser) {
             /**
              * Create a VisualElement for this component. A VisualElement provides a common
              * interface to renderer-specific APIs (ie DOM/Three.js etc) as well as
@@ -92,27 +89,29 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             context.visualElement = useVisualElement(
                 Component,
                 visualState,
-                { ...config, ...props },
+                configAndProps,
                 createVisualElement
-            )
-
-            useProjection(
-                projectionId,
-                props,
-                context.visualElement,
-                projectionNodeConstructor ||
-                    featureDefinitions.projectionNodeConstructor
             )
 
             /**
              * Load Motion gesture and animation features. These are rendered as renderless
              * components so each feature can optionally make use of React lifecycle methods.
              */
-            features = useFeatures(
-                props,
-                context.visualElement,
-                preloadedFeatures
+            const lazyStrictMode = useContext(LazyContext).strict
+            const initialLayoutGroupConfig = useContext(
+                SwitchLayoutGroupContext
             )
+            if (context.visualElement) {
+                features = context.visualElement.loadFeatures(
+                    props,
+                    lazyStrictMode,
+                    preloadedFeatures,
+                    projectionId,
+                    projectionNodeConstructor ||
+                        featureDefinitions.projectionNodeConstructor,
+                    initialLayoutGroupConfig
+                )
+            }
         }
 
         /**
@@ -122,7 +121,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         return (
             <VisualElementHandler
                 visualElement={context.visualElement}
-                props={{ ...config, ...props }}
+                props={configAndProps}
             >
                 {features}
                 <MotionContext.Provider value={context}>
@@ -136,7 +135,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
                             externalRef
                         ),
                         visualState,
-                        config.isStatic,
+                        isStatic,
                         context.visualElement
                     )}
                 </MotionContext.Provider>
@@ -148,7 +147,7 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
 }
 
 function useLayoutId({ layoutId }: MotionProps) {
-    const layoutGroupId = useContext(LayoutGroupContext)?.id
+    const layoutGroupId = useContext(LayoutGroupContext).id
     return layoutGroupId && layoutId !== undefined
         ? layoutGroupId + "-" + layoutId
         : layoutId

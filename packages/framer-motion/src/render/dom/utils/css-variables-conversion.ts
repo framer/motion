@@ -97,7 +97,9 @@ export function resolveCSSVariables(
         // If the user hasn't already set this key on `transitionEnd`, set it to the unresolved
         // CSS variable. This will ensure that after the animation the component will reflect
         // changes in the value of the CSS variable.
-        if (transitionEnd) transitionEnd[key] ??= current
+        if (transitionEnd && transitionEnd[key] === undefined) {
+            transitionEnd[key] = current
+        }
     }
 
     return { target, transitionEnd }

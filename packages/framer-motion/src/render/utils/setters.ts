@@ -14,7 +14,7 @@ import { getAnimatableNone } from "../dom/value-types/animatable-none"
 import { findValueType } from "../dom/value-types/find"
 import { ResolvedValues, VisualElement } from "../types"
 import { AnimationDefinition } from "./animation"
-import { resolveVariant } from "./variants"
+import { resolveVariant } from "./resolve-dynamic-variants"
 
 /**
  * Set VisualElement's MotionValue, creating a new MotionValue for it if
@@ -129,7 +129,9 @@ export function checkTargetForNewValues(
         }
 
         visualElement.addValue(key, motionValue(value))
-        ;(origin as any)[key] ??= value
+        if (origin[key] === undefined) {
+            origin[key] = value as number | string
+        }
         visualElement.setBaseTarget(key, value)
     }
 }
@@ -149,9 +151,11 @@ export function getOrigin(
     const origin: Target = {}
 
     for (const key in target) {
+        const transitionOrigin = getOriginFromTransition(key, transition)
         origin[key] =
-            getOriginFromTransition(key, transition) ??
-            visualElement.getValue(key)?.get()
+            transitionOrigin !== undefined
+                ? transitionOrigin
+                : visualElement.getValue(key)?.get()
     }
 
     return origin

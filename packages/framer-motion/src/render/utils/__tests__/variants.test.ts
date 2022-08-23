@@ -1,4 +1,4 @@
-import { resolveVariantFromProps } from "../variants"
+import { resolveVariantFromProps } from "../resolve-variants"
 
 describe("resolveVariantFromProps", () => {
     test("Resolves string", () => {

@@ -8,7 +8,7 @@ import { useIsomorphicLayoutEffect } from "../../utils/use-isomorphic-effect"
 import { VisualState } from "./use-visual-state"
 import { LazyContext } from "../../context/LazyContext"
 import { MotionConfigProps } from "../../components/MotionConfig"
-import { useReducedMotionConfig } from "../../utils/use-reduced-motion"
+import { MotionConfigContext } from "../../context/MotionConfigContext"
 
 export function useVisualElement<Instance, RenderState>(
     Component: string | React.ComponentType<React.PropsWithChildren<unknown>>,
@@ -16,10 +16,10 @@ export function useVisualElement<Instance, RenderState>(
     props: MotionProps & MotionConfigProps,
     createVisualElement?: CreateVisualElement<Instance>
 ): VisualElement<Instance> | undefined {
-    const lazyContext = useContext(LazyContext)
     const parent = useVisualElementContext()
+    const lazyContext = useContext(LazyContext)
     const presenceContext = useContext(PresenceContext)
-    const shouldReduceMotion = useReducedMotionConfig()
+    const reducedMotionConfig = useContext(MotionConfigContext).reducedMotion
 
     const visualElementRef: MutableRefObject<VisualElement | undefined> =
         useRef(undefined)
@@ -27,29 +27,37 @@ export function useVisualElement<Instance, RenderState>(
     /**
      * If we haven't preloaded a renderer, check to see if we have one lazy-loaded
      */
-    if (!createVisualElement) createVisualElement = lazyContext.renderer
+    createVisualElement = createVisualElement || lazyContext.renderer
 
     if (!visualElementRef.current && createVisualElement) {
         visualElementRef.current = createVisualElement(Component, {
             visualState,
             parent,
             props,
-            presenceId: presenceContext?.id,
-            blockInitialAnimation: presenceContext?.initial === false,
-            shouldReduceMotion,
+            presenceId: presenceContext ? presenceContext.id : undefined,
+            blockInitialAnimation: presenceContext
+                ? presenceContext.initial === false
+                : false,
+            reducedMotionConfig,
         })
     }
 
     const visualElement = visualElementRef.current
+
     useIsomorphicLayoutEffect(() => {
-        visualElement?.syncRender()
+        visualElement && visualElement.syncRender()
     })
 
     useEffect(() => {
-        visualElement?.animationState?.animateChanges()
+        if (visualElement && visualElement.animationState) {
+            visualElement.animationState.animateChanges()
+        }
     })
 
-    useIsomorphicLayoutEffect(() => () => visualElement?.notifyUnmount(), [])
+    useIsomorphicLayoutEffect(
+        () => () => visualElement && visualElement.notifyUnmount(),
+        []
+    )
 
     return visualElement
 }

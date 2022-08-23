@@ -27,5 +27,6 @@ yarn-error.log
 !.yarn/sdks
 !.yarn/versions
 .turbo
+stats.html
 
 lerna-debug.log

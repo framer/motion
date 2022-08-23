@@ -6,7 +6,7 @@ import { DOMVisualElementOptions } from "../dom/types"
 import { buildHTMLStyles } from "./utils/build-styles"
 import { isCSSVariable } from "../dom/utils/is-css-variable"
 import { parseDomVariant } from "../dom/utils/parse-dom-variant"
-import { isTransformProp } from "./utils/transform"
+import { transformProps } from "./utils/transform"
 import { scrapeMotionValuesFromProps } from "./utils/scrape-motion-values"
 import { renderHTML } from "./utils/render"
 import { getDefaultValueType } from "../dom/value-types/defaults"
@@ -24,7 +24,7 @@ export const htmlConfig: VisualElementConfig<
     treeType: "dom",
 
     readValueFromInstance(domElement, key) {
-        if (isTransformProp(key)) {
+        if (transformProps.has(key)) {
             const defaultType = getDefaultValueType(key)
             return defaultType ? defaultType.default || 0 : 0
         } else {

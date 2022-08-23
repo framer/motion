@@ -40,10 +40,8 @@ export { useWillChange } from "./value/use-will-change"
 /**
  * Accessibility
  */
-export {
-    useReducedMotion,
-    useReducedMotionConfig,
-} from "./utils/use-reduced-motion"
+export { useReducedMotion } from "./utils/reduced-motion/use-reduced-motion"
+export { useReducedMotionConfig } from "./utils/reduced-motion/use-reduced-motion-config"
 
 /**
  * Utils

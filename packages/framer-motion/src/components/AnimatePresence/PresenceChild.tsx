@@ -43,7 +43,7 @@ export const PresenceChild = ({
                     if (!isComplete) return // can stop searching when any is incomplete
                 }
 
-                onExitComplete?.()
+                onExitComplete && onExitComplete()
             },
             register: (childId: string) => {
                 presenceChildren.set(childId, false)
@@ -67,7 +67,10 @@ export const PresenceChild = ({
      * component immediately.
      */
     React.useEffect(() => {
-        !isPresent && !presenceChildren.size && onExitComplete?.()
+        !isPresent &&
+            !presenceChildren.size &&
+            onExitComplete &&
+            onExitComplete()
     }, [isPresent])
 
     if (mode === "popLayout") {

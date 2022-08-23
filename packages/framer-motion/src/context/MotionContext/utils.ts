@@ -1,15 +1,13 @@
 import { MotionContextProps } from "."
 import { MotionProps } from "../../motion/types"
-import {
-    checkIfControllingVariants,
-    isVariantLabel,
-} from "../../render/utils/variants"
+import { isVariantLabel } from "../../render/utils/is-variant-label"
+import { isControllingVariants } from "../../render/utils/is-controlling-variants"
 
 export function getCurrentTreeVariants(
     props: MotionProps,
     context: MotionContextProps
 ): MotionContextProps {
-    if (checkIfControllingVariants(props)) {
+    if (isControllingVariants(props)) {
         const { initial, animate } = props
         return {
             initial:

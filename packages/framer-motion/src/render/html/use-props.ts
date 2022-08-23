@@ -34,18 +34,17 @@ function useInitialMotionValues(
             transformTemplate
         )
 
-        const { vars, style } = state
-        return { ...vars, ...style }
+        return Object.assign({}, state.vars, state.style)
     }, [visualState])
 }
 
-export function useStyle(
+function useStyle(
     props: MotionProps,
     visualState: ResolvedValues,
     isStatic: boolean
 ): ResolvedValues {
     const styleProp = props.style || {}
-    let style = {}
+    const style = {}
 
     /**
      * Copy non-Motion Values straight into style
@@ -54,11 +53,7 @@ export function useStyle(
 
     Object.assign(style, useInitialMotionValues(props, visualState, isStatic))
 
-    if (props.transformValues) {
-        style = props.transformValues(style)
-    }
-
-    return style
+    return props.transformValues ? props.transformValues(style) : style
 }
 
 export function useHTMLProps(
@@ -70,7 +65,7 @@ export function useHTMLProps(
     const htmlProps: any = {}
     const style = useStyle(props, visualState, isStatic)
 
-    if (Boolean(props.drag) && props.dragListener !== false) {
+    if (props.drag && props.dragListener !== false) {
         // Disable the ghost element when a user drags
         htmlProps.draggable = false
 

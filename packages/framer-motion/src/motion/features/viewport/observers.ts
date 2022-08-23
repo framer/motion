@@ -22,7 +22,8 @@ const observers = new WeakMap<
 >()
 
 const fireObserverCallback = (entry: IntersectionObserverEntry) => {
-    observerCallbacks.get(entry.target)?.(entry)
+    const callback = observerCallbacks.get(entry.target)
+    callback && callback(entry)
 }
 
 const fireAllObserverCallbacks: IntersectionObserverCallback = (entries) => {

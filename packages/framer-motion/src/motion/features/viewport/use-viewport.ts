@@ -74,10 +74,12 @@ function useIntersectionObserver(
                 state.hasEnteredView = true
             }
 
-            visualElement.animationState?.setActive(
-                AnimationType.InView,
-                isIntersecting
-            )
+            if (visualElement.animationState) {
+                visualElement.animationState.setActive(
+                    AnimationType.InView,
+                    isIntersecting
+                )
+            }
 
             /**
              * Use the latest committed props rather than the ones in scope
@@ -87,7 +89,7 @@ function useIntersectionObserver(
             const callback = isIntersecting
                 ? props.onViewportEnter
                 : props.onViewportLeave
-            callback?.(entry)
+            callback && callback(entry)
         }
 
         return observeIntersection(
@@ -130,8 +132,13 @@ function useMissingIntersectionObserver(
         requestAnimationFrame(() => {
             state.hasEnteredView = true
             const { onViewportEnter } = visualElement.getProps()
-            onViewportEnter?.(null)
-            visualElement.animationState?.setActive(AnimationType.InView, true)
+            onViewportEnter && onViewportEnter(null)
+            if (visualElement.animationState) {
+                visualElement.animationState.setActive(
+                    AnimationType.InView,
+                    true
+                )
+            }
         })
     }, [shouldObserve])
 }

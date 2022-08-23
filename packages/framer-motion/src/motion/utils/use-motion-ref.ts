@@ -15,7 +15,7 @@ export function useMotionRef<Instance, RenderState>(
 ): React.Ref<Instance> {
     return useCallback(
         (instance: Instance) => {
-            instance && visualState.mount?.(instance)
+            instance && visualState.mount && visualState.mount(instance)
 
             if (visualElement) {
                 instance

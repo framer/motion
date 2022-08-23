@@ -1,4 +1,4 @@
-import { MotionProps } from "../../../motion/types"
+import type { MotionProps } from "../../../motion/types"
 import { isValidMotionProp } from "../../../motion/utils/valid-prop"
 
 let shouldForward = (key: string) => !isValidMotionProp(key)

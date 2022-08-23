@@ -9,8 +9,9 @@ import {
     AnimationDefinition,
     AnimationOptions,
 } from "./animation"
+import { isVariantLabel } from "./is-variant-label"
 import { AnimationType } from "./types"
-import { isVariantLabel, isVariantLabels, resolveVariant } from "./variants"
+import { resolveVariant } from "./resolve-dynamic-variants"
 
 export interface AnimationState {
     animateChanges: (
@@ -237,6 +238,7 @@ export function createAnimationState(
              *    needs adding to the type's protectedKeys list.
              */
             const { prevResolvedValues = {} } = typeState
+
             const allKeys = {
                 ...prevResolvedValues,
                 ...resolvedValues,
@@ -396,7 +398,7 @@ export function createAnimationState(
 export function checkVariantsDidChange(prev: any, next: any) {
     if (typeof next === "string") {
         return next !== prev
-    } else if (isVariantLabels(next)) {
+    } else if (Array.isArray(next)) {
         return !shallowCompare(next, prev)
     }
 

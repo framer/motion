@@ -9,6 +9,9 @@ import { LifecycleManager } from "./utils/lifecycles"
 import { Box, Point, TransformPoint } from "../projection/geometry/types"
 import { IProjectionNode } from "../projection/node/types"
 import { MotionConfigProps } from "../components/MotionConfig"
+import { ReducedMotionConfig } from "../context/MotionConfigContext"
+import { FeatureBundle } from "../motion/features/types"
+import type { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 
 export interface MotionPoint {
     x: MotionValue<number>
@@ -38,6 +41,15 @@ export interface VisualElement<Instance = any, RenderState = any>
     shouldReduceMotion?: boolean | null
 
     animateMotionValue?: typeof startAnimation
+
+    loadFeatures(
+        props: MotionProps,
+        isStrict?: boolean,
+        preloadedFeatures?: FeatureBundle,
+        projectionId?: number,
+        ProjectionNodeConstructor?: any,
+        initialPromotionConfig?: SwitchLayoutGroupContext
+    ): JSX.Element[]
 
     projection?: IProjectionNode
 
@@ -155,7 +167,7 @@ export type VisualElementOptions<Instance, RenderState = any> = {
     presenceId?: string | undefined
     props: MotionProps
     blockInitialAnimation?: boolean
-    shouldReduceMotion?: boolean | null
+    reducedMotionConfig?: ReducedMotionConfig
 }
 
 export type CreateVisualElement<Instance> = (

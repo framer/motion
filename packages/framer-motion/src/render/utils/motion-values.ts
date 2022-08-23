@@ -58,9 +58,12 @@ export function updateMotionValuesFromProps(
                 // TODO: Only update values that aren't being animated or even looked at
                 !existingValue.hasAnimated && existingValue.set(nextValue)
             } else {
+                const latestValue = element.getStaticValue(key)
                 element.addValue(
                     key,
-                    motionValue(element.getStaticValue(key) ?? nextValue)
+                    motionValue(
+                        latestValue !== undefined ? latestValue : nextValue
+                    )
                 )
             }
         }

@@ -1,8 +1,5 @@
 import { isCSSVariable } from "../../render/dom/utils/is-css-variable"
-import {
-    isTransformOriginProp,
-    isTransformProp,
-} from "../../render/html/utils/transform"
+import { transformProps } from "../../render/html/utils/transform"
 import { addUniqueItem, removeItem } from "../../utils/array"
 import { useConstant } from "../../utils/use-constant"
 import { MotionValue } from ".."
@@ -16,11 +13,11 @@ export class WillChangeMotionValue extends MotionValue implements WillChange {
     add(name: string): void {
         let memberName: string | undefined
 
-        if (isTransformProp(name)) {
+        if (transformProps.has(name)) {
             this.transforms.add(name)
             memberName = "transform"
         } else if (
-            !isTransformOriginProp(name) &&
+            !name.startsWith("origin") &&
             !isCSSVariable(name) &&
             name !== "willChange"
         ) {
@@ -34,7 +31,7 @@ export class WillChangeMotionValue extends MotionValue implements WillChange {
     }
 
     remove(name: string): void {
-        if (isTransformProp(name)) {
+        if (transformProps.has(name)) {
             this.transforms.delete(name)
             if (!this.transforms.size) {
                 removeItem(this.members, "transform")

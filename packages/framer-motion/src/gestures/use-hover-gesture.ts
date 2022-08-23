@@ -17,8 +17,13 @@ function createHoverEvent(
         /**
          * Ensure we trigger animations before firing event callback
          */
-        visualElement.animationState?.setActive(AnimationType.Hover, isActive)
-        callback?.(event, info)
+        if (visualElement.animationState) {
+            visualElement.animationState.setActive(
+                AnimationType.Hover,
+                isActive
+            )
+        }
+        callback && callback(event, info)
     }
 }
 

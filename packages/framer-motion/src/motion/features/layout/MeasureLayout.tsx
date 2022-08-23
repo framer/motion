@@ -13,7 +13,7 @@ import { addScaleCorrector } from "../../../projection/styles/scale-correction"
 import { FeatureProps } from "../types"
 
 interface MeasureContextProps {
-    layoutGroup?: LayoutGroupContextProps
+    layoutGroup: LayoutGroupContextProps
     switchLayoutGroup?: SwitchLayoutGroupContext
     isPresent: boolean
     safeToRemove?: VoidFunction | null
@@ -35,9 +35,9 @@ class MeasureLayoutWithContext extends React.Component<
         addScaleCorrector(defaultScaleCorrectors)
 
         if (projection) {
-            if (layoutGroup?.group) layoutGroup.group.add(projection)
+            if (layoutGroup.group) layoutGroup.group.add(projection)
 
-            if (switchLayoutGroup?.register && layoutId) {
+            if (switchLayoutGroup && switchLayoutGroup.register && layoutId) {
                 switchLayoutGroup.register(projection)
             }
 

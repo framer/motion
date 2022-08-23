@@ -3,6 +3,7 @@ import { terser } from "rollup-plugin-terser"
 import replace from "@rollup/plugin-replace"
 import dts from "rollup-plugin-dts"
 import pkg from "./package.json"
+import { visualizer } from "rollup-plugin-visualizer"
 
 const config = {
     input: "lib/index.js",
@@ -103,6 +104,17 @@ const sizePlugins = [
     terser({ output: { comments: false } }),
 ]
 
+const motion = Object.assign({}, es, {
+    input: "lib/render/dom/motion.js",
+    output: Object.assign({}, es.output, {
+        file: `dist/size-rollup-motion.js`,
+        preserveModules: false,
+        dir: undefined,
+    }),
+    plugins: [...sizePlugins],
+    external: ["react", "react-dom"],
+})
+
 const m = Object.assign({}, es, {
     input: "lib/render/dom/motion-minimal.js",
     output: Object.assign({}, es.output, {
@@ -110,12 +122,13 @@ const m = Object.assign({}, es, {
         preserveModules: false,
         dir: undefined,
     }),
-    plugins: sizePlugins,
+    plugins: [...sizePlugins],
     external: ["react", "react-dom"],
 })
 
 const domAnimation = Object.assign({}, es, {
     input: {
+        "size-rollup-dom-animation-m": "lib/render/dom/motion-minimal.js",
         "size-rollup-dom-animation": "lib/render/dom/features-animation.js",
     },
     output: {
@@ -126,12 +139,13 @@ const domAnimation = Object.assign({}, es, {
         chunkFileNames: "size-rollup-dom-animation-assets.js",
         dir: `dist`,
     },
-    plugins: sizePlugins,
+    plugins: [...sizePlugins, visualizer()],
     external: ["react", "react-dom"],
 })
 
 const domMax = Object.assign({}, es, {
     input: {
+        "size-rollup-dom-animation-m": "lib/render/dom/motion-minimal.js",
         "size-rollup-dom-max": "lib/render/dom/features-max.js",
     },
     output: {
@@ -167,6 +181,7 @@ export default [
     umdProd,
     cjs,
     es,
+    motion,
     m,
     domAnimation,
     domMax,

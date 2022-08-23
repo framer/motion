@@ -36,12 +36,13 @@ import {
     ProjectionNodeOptions,
     Snapshot,
 } from "./types"
-import { transformAxes } from "../../render/html/utils/transform"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
 import { resolveMotionValue } from "../../value/utils/resolve-motion-value"
 import { MotionStyle } from "../../motion/types"
 import { globalProjectionState } from "./state"
+
+const transformAxes = ["", "X", "Y", "Z"]
 
 /**
  * We use 1000 as the animation target as 0-1000 maps better to pixels than 0-1
@@ -864,7 +865,8 @@ export function createProjectionNode<I>({
             this.options = {
                 ...this.options,
                 ...options,
-                crossfade: options.crossfade ?? true,
+                crossfade:
+                    options.crossfade !== undefined ? options.crossfade : true,
             }
         }
 
@@ -1418,7 +1420,10 @@ export function createProjectionNode<I>({
             if (!this.projectionDelta || !this.layout || !lead.target) {
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
-                    emptyStyles.opacity = this.latestValues.opacity ?? 1
+                    emptyStyles.opacity =
+                        this.latestValues.opacity !== undefined
+                            ? this.latestValues.opacity
+                            : 1
                     emptyStyles.pointerEvents =
                         resolveMotionValue(styleProp.pointerEvents) || ""
                 }
@@ -1470,8 +1475,12 @@ export function createProjectionNode<I>({
                  */
                 styles.opacity =
                     lead === this
-                        ? valuesToRender.opacity ?? ""
-                        : valuesToRender.opacityExit ?? 0
+                        ? valuesToRender.opacity !== undefined
+                            ? valuesToRender.opacity
+                            : ""
+                        : valuesToRender.opacityExit !== undefined
+                        ? valuesToRender.opacityExit
+                        : 0
             }
 
             /**
@@ -1528,7 +1537,7 @@ function updateLayout(node: IProjectionNode) {
 }
 
 function notifyLayoutUpdate(node: IProjectionNode) {
-    const snapshot = node.resumeFrom?.snapshot ?? node.snapshot
+    const snapshot = node.resumeFrom?.snapshot || node.snapshot
 
     if (
         node.isLead() &&

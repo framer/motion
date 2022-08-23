@@ -15,16 +15,12 @@ export class VisualElementHandler extends React.Component<
      * Update visual element props as soon as we know this update is going to be commited.
      */
     getSnapshotBeforeUpdate() {
-        this.updateProps()
+        const { visualElement, props } = this.props
+        if (visualElement) visualElement.setProps(props)
         return null
     }
 
     componentDidUpdate() {}
-
-    updateProps() {
-        const { visualElement, props } = this.props
-        if (visualElement) visualElement.setProps(props)
-    }
 
     render() {
         return this.props.children

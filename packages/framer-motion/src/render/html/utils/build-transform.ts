@@ -1,14 +1,20 @@
-import { sortTransformProps } from "./transform"
+import { transformPropOrder } from "./transform"
 import { DOMVisualElementOptions } from "../../dom/types"
 import { MotionProps } from "../../../motion/types"
-import { HTMLRenderState, TransformOrigin } from "../types"
+import { HTMLRenderState } from "../types"
 
-const translateAlias: { [key: string]: string } = {
+const translateAlias = {
     x: "translateX",
     y: "translateY",
     z: "translateZ",
     transformPerspective: "perspective",
 }
+
+/**
+ * A function to use with Array.sort to sort transform keys by their default order.
+ */
+const sortTransformProps = (a: string, b: string) =>
+    transformPropOrder.indexOf(a) - transformPropOrder.indexOf(b)
 
 /**
  * Build a CSS transform style from individual x/y/scale etc properties.
@@ -31,20 +37,12 @@ export function buildTransform(
     // Transform keys into their default order - this will determine the output order.
     transformKeys.sort(sortTransformProps)
 
-    // Track whether the defined transform has a defined z so we don't add a
-    // second to enable hardware acceleration
-    let transformHasZ = false
-
     // Loop over each transform and build them into transformString
-    const numTransformKeys = transformKeys.length
-    for (let i = 0; i < numTransformKeys; i++) {
-        const key = transformKeys[i]
+    for (const key of transformKeys) {
         transformString += `${translateAlias[key] || key}(${transform[key]}) `
-
-        if (key === "z") transformHasZ = true
     }
 
-    if (!transformHasZ && enableHardwareAcceleration) {
+    if (enableHardwareAcceleration && !transform.z) {
         transformString += "translateZ(0)"
     }
 
@@ -62,16 +60,4 @@ export function buildTransform(
     }
 
     return transformString
-}
-
-/**
- * Build a transformOrigin style. Uses the same defaults as the browser for
- * undefined origins.
- */
-export function buildTransformOrigin({
-    originX = "50%",
-    originY = "50%",
-    originZ = 0,
-}: TransformOrigin) {
-    return `${originX} ${originY} ${originZ}`
 }
