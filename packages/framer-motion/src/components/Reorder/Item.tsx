@@ -75,7 +75,7 @@ export function ReorderItem<V>(
 
     invariant(Boolean(context), "Reorder.Item must be a child of Reorder.Group")
 
-    const { axis, registerItem, updateOrder } = context!
+    const { axis, isWrappingItems, registerItem, updateOrder } = context!
 
     useEffect(() => {
         registerItem(value, measuredLayout.current!)
@@ -83,16 +83,18 @@ export function ReorderItem<V>(
 
     return (
         <Component
-            drag={axis}
+            drag={isWrappingItems ? true : axis}
             {...props}
             dragSnapToOrigin
             style={{ ...style, x: point.x, y: point.y, zIndex }}
             layout={layout}
             onDrag={(event, gesturePoint) => {
                 const { velocity } = gesturePoint
-                velocity[axis] &&
-                    updateOrder(value, point[axis].get(), velocity[axis])
-
+                updateOrder(
+                    value,
+                    { x: point.x.get(), y: point.y.get() },
+                    { x: velocity.x, y: velocity.y }
+                )
                 onDrag && onDrag(event, gesturePoint)
             }}
             onLayoutMeasure={(measured) => {

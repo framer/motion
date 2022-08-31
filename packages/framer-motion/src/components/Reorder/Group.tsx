@@ -3,6 +3,7 @@ import * as React from "react"
 import {
     forwardRef,
     FunctionComponent,
+    ReactElement,
     ReactHTML,
     useEffect,
     useRef,
@@ -58,6 +59,15 @@ export interface Props<V> {
      * @public
      */
     values: V[]
+    /**
+     * The number of items per axis in case they are wrapped because you are using a grid or flex-box
+     * If the axis is x, it is the number of columns
+     * If the axis is y, it is the number of rows
+     *
+     * @public
+     */
+    itemsPerAxis?: "all" | number
+    children: ReactElement<any>[]
 }
 
 export function ReorderGroup<V>(
@@ -67,6 +77,7 @@ export function ReorderGroup<V>(
         axis = "y",
         onReorder,
         values,
+        itemsPerAxis = "all",
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
@@ -74,14 +85,16 @@ export function ReorderGroup<V>(
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
-
     const order: ItemData<V>[] = []
     const isReordering = useRef(false)
+    const isWrappingItems =
+        itemsPerAxis !== "all" && itemsPerAxis !== children.length
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
     const context: ReorderContextProps<any> = {
         axis,
+        isWrappingItems,
         registerItem: (value, layout) => {
             /**
              * Ensure entries can't add themselves more than once
@@ -90,14 +103,22 @@ export function ReorderGroup<V>(
                 layout &&
                 order.findIndex((entry) => value === entry.value) === -1
             ) {
-                order.push({ value, layout: layout[axis] })
-                order.sort(compareMin)
+                order.push({ value, layout: { x: layout.x, y: layout.y } })
+                order.sort((a, b) => compareMin(a, b, axis, isWrappingItems))
             }
         },
         updateOrder: (id, offset, velocity) => {
             if (isReordering.current) return
 
-            const newOrder = checkReorder(order, id, offset, velocity)
+            const newOrder = checkReorder(
+                order,
+                id,
+                offset,
+                velocity,
+                axis,
+                isWrappingItems,
+                itemsPerAxis === "all" ? children.length : itemsPerAxis
+            )
 
             if (order !== newOrder) {
                 isReordering.current = true
@@ -129,6 +150,13 @@ function getValue<V>(item: ItemData<V>) {
     return item.value
 }
 
-function compareMin<V>(a: ItemData<V>, b: ItemData<V>) {
-    return a.layout.min - b.layout.min
+function compareMin<V>(
+    a: ItemData<V>,
+    b: ItemData<V>,
+    axis: "x" | "y",
+    isWrappingItems = false
+) {
+    let checkedAxis = axis
+    if (isWrappingItems) checkedAxis = axis === "x" ? "y" : "x"
+    return a.layout[checkedAxis].min - b.layout[checkedAxis].min
 }
