@@ -8,6 +8,7 @@ describe("Reorder", () => {
         const Component = () => (
             <Reorder.Group as="article" onReorder={() => {}} values={[]}>
                 <Reorder.Item as="main" value={0} />
+                <Reorder.Item as="main" value={1} />
             </Reorder.Group>
         )
 
@@ -26,6 +27,7 @@ describe("Reorder", () => {
             return (
                 <Reorder.Group as="article" onReorder={setItems} values={[]}>
                     <Reorder.Item as="main" value={0} />
+                    <Reorder.Item as="main" value={1} />
                 </Reorder.Group>
             )
         }
