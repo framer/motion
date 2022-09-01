@@ -68,6 +68,7 @@ export interface Props<V> {
      *
      * @public
      */
+    // TODO calculate automatically the number of items per Axis to make prop not necessary anymore
     itemsPerAxis?: "all" | number
     children: ReactElement<any>[]
 }
