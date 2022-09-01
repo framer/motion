@@ -234,7 +234,7 @@ describe("checkReorder", () => {
         expect(newOrder).not.toEqual(order)
         expect(newOrder.map((i) => i.value)).toEqual(["b", "c", "d", "a", "e"])
     })
-    test("Return same array if item isn moved up from first row", () => {
+    test("Return same array if item is moved up from first row", () => {
         const newOrder = checkReorder(
             order,
             "a",
@@ -246,7 +246,7 @@ describe("checkReorder", () => {
         )
         expect(newOrder).toEqual(order)
     })
-    test("Return same array if item has moved in moved down from last row", () => {
+    test("Return same array if item is moved down from last column", () => {
         const newOrder = checkReorder(
             order,
             "e",

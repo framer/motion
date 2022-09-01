@@ -60,7 +60,9 @@ export interface Props<V> {
      */
     values: V[]
     /**
-     * The number of items per axis in case they are wrapped because you are using a grid or flex-box
+     * The number of items per axis in case they are wrapped
+     * For example, when you are using a grid or flex-box
+     *
      * If the axis is x, it is the number of columns
      * If the axis is y, it is the number of rows
      *
@@ -156,7 +158,7 @@ function compareMin<V>(
     axis: "x" | "y",
     isWrappingItems = false
 ) {
-    let checkedAxis = axis
-    if (isWrappingItems) checkedAxis = axis === "x" ? "y" : "x"
-    return a.layout[checkedAxis].min - b.layout[checkedAxis].min
+    let comparedAxis = axis
+    if (isWrappingItems) comparedAxis = axis === "x" ? "y" : "x"
+    return a.layout[comparedAxis].min - b.layout[comparedAxis].min
 }

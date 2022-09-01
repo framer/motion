@@ -18,7 +18,6 @@ yarn-error.log
 /packages/*/cypress/videos
 /packages/*/cypress/fixtures/projection-tests.json
 .cache-loader
-.idea
 
 .yarn/*
 !.yarn/cache
