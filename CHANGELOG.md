@@ -4,6 +4,16 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.3.0] 2022-06-09
+
+### Added
+
+-   `layout="preserve-ratio"` performs a position-only transition if the aspect ratio has changed.
+
+### Fixed
+
+-   `layout="position"` now works with shared element transitions.
+
 ## [7.2.1] 2022-08-23
 
 ### Added

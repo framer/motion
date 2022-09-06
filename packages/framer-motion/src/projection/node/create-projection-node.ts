@@ -21,7 +21,12 @@ import { createBox, createDelta } from "../geometry/models"
 import { transformBox, translateAxis } from "../geometry/delta-apply"
 import { Axis, AxisDelta, Box, Delta, Point } from "../geometry/types"
 import { getValueTransition } from "../../animation/utils/transitions"
-import { boxEquals, isDeltaZero } from "../geometry/utils"
+import {
+    aspectRatio,
+    boxEquals,
+    isCloseTo,
+    isDeltaZero,
+} from "../geometry/utils"
 import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
@@ -1258,7 +1263,16 @@ export function createProjectionNode<I>({
              * then instead of projecting into the lead box we instead want to calculate
              * a new target that aligns the two boxes but maintains the layout shape.
              */
-            if (this.options.layout === "position" && this !== lead) {
+            if (
+                this !== lead &&
+                this.layout &&
+                layout &&
+                shouldAnimatePositionOnly(
+                    this.options.animationType,
+                    this.layout.actual,
+                    layout.actual
+                )
+            ) {
                 target = this.target || createBox()
 
                 const xLength = calcLength(this.layout!.actual.x)
@@ -1565,9 +1579,11 @@ function notifyLayoutUpdate(node: IProjectionNode) {
         node.hasListeners("didUpdate")
     ) {
         const { actual: layout, measured: measuredLayout } = node.layout
+        const { animationType } = node.options
+
         // TODO Maybe we want to also resize the layout snapshot so we don't trigger
         // animations for instance if layout="size" and an element has only changed position
-        if (node.options.animationType === "size") {
+        if (animationType === "size") {
             eachAxis((axis) => {
                 const axisSnapshot = snapshot.isShared
                     ? snapshot.measured[axis]
@@ -1576,7 +1592,9 @@ function notifyLayoutUpdate(node: IProjectionNode) {
                 axisSnapshot.min = layout[axis].min
                 axisSnapshot.max = axisSnapshot.min + length
             })
-        } else if (node.options.animationType === "position") {
+        } else if (
+            shouldAnimatePositionOnly(animationType, snapshot.layout, layout)
+        ) {
             eachAxis((axis) => {
                 const axisSnapshot = snapshot.isShared
                     ? snapshot.measured[axis]
@@ -1750,4 +1768,16 @@ function roundAxis(axis: Axis): void {
 function roundBox(box: Box): void {
     roundAxis(box.x)
     roundAxis(box.y)
+}
+
+function shouldAnimatePositionOnly(
+    animationType: string | undefined,
+    snapshot: Box,
+    layout: Box
+) {
+    return (
+        animationType === "position" ||
+        (animationType === "preserve-aspect" &&
+            !isCloseTo(aspectRatio(snapshot), aspectRatio(layout)))
+    )
 }
