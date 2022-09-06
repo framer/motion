@@ -1022,6 +1022,7 @@ export function createProjectionNode<I>({
             if (!this.layout || !(layout || layoutId)) return
 
             const lead = this.getLead()
+
             /**
              * Reset the corrected box with the latest values from box, as we're then going
              * to perform mutative operations on it.
@@ -1247,9 +1248,27 @@ export function createProjectionNode<I>({
         }
 
         applyTransformsToTarget() {
-            const { targetWithTransforms, target, layout, latestValues } =
-                this.getLead()
+            const lead = this.getLead()
+            let { targetWithTransforms, target, layout, latestValues } = lead
+
             if (!targetWithTransforms || !target || !layout) return
+
+            /**
+             * If we're only animating position, and this element isn't the lead element,
+             * then instead of projecting into the lead box we instead want to calculate
+             * a new target that aligns the two boxes but maintains the layout shape.
+             */
+            if (this.options.layout === "position" && this !== lead) {
+                target = this.target || createBox()
+
+                const xLength = calcLength(this.layout!.actual.x)
+                target!.x.min = lead.target!.x.min
+                target!.x.max = target.x.min + xLength
+
+                const yLength = calcLength(this.layout!.actual.y)
+                target!.y.min = lead.target!.y.min
+                target!.y.max = target.y.min + yLength
+            }
 
             copyBoxInto(targetWithTransforms, target)
 

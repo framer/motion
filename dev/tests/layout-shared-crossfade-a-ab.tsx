@@ -25,6 +25,7 @@ export const App = () => {
                 <motion.div
                     id="b"
                     layoutId="box"
+                    layout={type}
                     style={b}
                     transition={transition}
                     onClick={() => setState(!state)}
