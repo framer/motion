@@ -8,6 +8,7 @@ import {
     animateVisualElement,
     AnimationDefinition,
     AnimationOptions,
+    StartAnimation,
 } from "./animation"
 import { isVariantLabel } from "./is-variant-label"
 import { AnimationType } from "./types"
@@ -47,21 +48,25 @@ export const variantPriorityOrder = [
 const reversePriorityOrder = [...variantPriorityOrder].reverse()
 const numAnimationTypes = variantPriorityOrder.length
 
-function animateList(visualElement: VisualElement) {
-    return (animations: DefinitionAndOptions[]) =>
-        Promise.all(
-            animations.map(({ animation, options }) =>
-                animateVisualElement(visualElement, animation, options)
-            )
-        )
-}
-
 export function createAnimationState(
-    visualElement: VisualElement
+    visualElement: VisualElement,
+    startAnimation: StartAnimation
 ): AnimationState {
-    let animate = animateList(visualElement)
     const state = createState()
     let isInitialRender = true
+
+    let animate = (animations: DefinitionAndOptions[]) => {
+        return Promise.all(
+            animations.map(({ animation, options }) =>
+                animateVisualElement(
+                    visualElement,
+                    animation,
+                    options,
+                    startAnimation
+                )
+            )
+        )
+    }
 
     /**
      * This function will be used to reduce the animation definitions for
@@ -85,7 +90,7 @@ export function createAnimationState(
      * This just allows us to inject mocked animation functions
      * @internal
      */
-    function setAnimateFunction(makeAnimator: typeof animateList) {
+    function setAnimateFunction(makeAnimator: any) {
         animate = makeAnimator(visualElement)
     }
 

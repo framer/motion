@@ -1,5 +1,6 @@
 import { useContext, useEffect } from "react"
 import { isAnimationControls } from "../../animation/utils/is-animation-controls"
+import { startAnimation } from "../../animation/utils/transitions"
 import { usePresence } from "../../components/AnimatePresence/use-presence"
 import { PresenceContext } from "../../context/PresenceContext"
 import { createAnimationState } from "../../render/utils/animation-state"
@@ -15,7 +16,10 @@ export const animations: FeatureComponents = {
              * to the underlying animation library. We only want to load that if we load this,
              * so people can optionally code split it out using the `m` component.
              */
-            visualElement.animationState ||= createAnimationState(visualElement)
+            visualElement.animationState ||= createAnimationState(
+                visualElement,
+                startAnimation
+            )
 
             /**
              * Subscribe any provided AnimationControls to the component's VisualElement

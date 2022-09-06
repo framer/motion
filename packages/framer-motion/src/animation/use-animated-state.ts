@@ -7,6 +7,7 @@ import { ResolvedValues } from "../render/types"
 import { animateVisualElement } from "../render/utils/animation"
 import { makeUseVisualState } from "../motion/utils/use-visual-state"
 import { createBox } from "../projection/geometry/models"
+import { startAnimation } from "./utils/transitions"
 
 interface AnimatedStateOptions {
     initialState: ResolvedValues
@@ -68,11 +69,16 @@ export function useAnimatedState(initialState: any) {
         })
     }, [setAnimationState, element])
 
-    const startAnimation = useConstant(
+    const start = useConstant(
         () => (animationDefinition: TargetAndTransition) => {
-            return animateVisualElement(element, animationDefinition)
+            return animateVisualElement(
+                element,
+                animationDefinition,
+                {},
+                startAnimation
+            )
         }
     )
 
-    return [animationState, startAnimation]
+    return [animationState, start]
 }

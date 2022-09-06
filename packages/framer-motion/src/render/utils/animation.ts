@@ -1,6 +1,6 @@
-import { startAnimation } from "../../animation/utils/transitions"
 import { VariantLabels } from "../../motion/types"
 import {
+    ResolvedValueTarget,
     Target,
     TargetAndTransition,
     TargetResolver,
@@ -14,6 +14,14 @@ import { setTarget } from "./setters"
 import { resolveVariant } from "./resolve-dynamic-variants"
 import { transformProps } from "../html/utils/transform"
 import { isWillChangeMotionValue } from "../../value/use-will-change/is"
+import { MotionValue } from "../../value"
+
+export type StartAnimation = (
+    key: string,
+    value: MotionValue,
+    target: ResolvedValueTarget,
+    transition?: Transition
+) => Promise<void>
 
 export type AnimationDefinition =
     | VariantLabels
@@ -40,24 +48,35 @@ export type MakeTargetAnimatable = (
 export function animateVisualElement(
     visualElement: VisualElement,
     definition: AnimationDefinition,
-    options: AnimationOptions = {}
+    options: AnimationOptions = {},
+    startAnimation: StartAnimation
 ) {
     visualElement.notifyAnimationStart(definition)
     let animation: Promise<any>
 
     if (Array.isArray(definition)) {
         const animations = definition.map((variant) =>
-            animateVariant(visualElement, variant, options)
+            animateVariant(visualElement, variant, options, startAnimation)
         )
         animation = Promise.all(animations)
     } else if (typeof definition === "string") {
-        animation = animateVariant(visualElement, definition, options)
+        animation = animateVariant(
+            visualElement,
+            definition,
+            options,
+            startAnimation
+        )
     } else {
         const resolvedDefinition =
             typeof definition === "function"
                 ? resolveVariant(visualElement, definition, options.custom)
                 : definition
-        animation = animateTarget(visualElement, resolvedDefinition, options)
+        animation = animateTarget(
+            visualElement,
+            resolvedDefinition,
+            options,
+            startAnimation
+        )
     }
 
     return animation.then(() =>
@@ -68,7 +87,8 @@ export function animateVisualElement(
 function animateVariant(
     visualElement: VisualElement,
     variant: string,
-    options: AnimationOptions = {}
+    options: AnimationOptions = {},
+    startAnimation: StartAnimation
 ) {
     const resolved = resolveVariant(visualElement, variant, options.custom)
     let { transition = visualElement.getDefaultTransition() || {} } =
@@ -84,7 +104,7 @@ function animateVariant(
      */
 
     const getAnimation = resolved
-        ? () => animateTarget(visualElement, resolved, options)
+        ? () => animateTarget(visualElement, resolved, options, startAnimation)
         : () => Promise.resolve()
 
     /**
@@ -105,7 +125,8 @@ function animateVariant(
                   delayChildren + forwardDelay,
                   staggerChildren,
                   staggerDirection,
-                  options
+                  options,
+                  startAnimation
               )
           }
         : () => Promise.resolve()
@@ -133,7 +154,8 @@ function animateVariant(
 function animateTarget(
     visualElement: VisualElement,
     definition: TargetAndTransition,
-    { delay = 0, transitionOverride, type }: AnimationOptions = {}
+    { delay = 0, transitionOverride, type }: AnimationOptions = {},
+    startAnimation: StartAnimation
 ): Promise<any> {
     let {
         transition = visualElement.getDefaultTransition(),
@@ -198,7 +220,8 @@ function animateChildren(
     delayChildren = 0,
     staggerChildren = 0,
     staggerDirection = 1,
-    options: AnimationOptions
+    options: AnimationOptions,
+    startAnimation: StartAnimation
 ) {
     const animations: Promise<any>[] = []
 
@@ -214,10 +237,15 @@ function animateChildren(
         .sort(sortByTreeOrder)
         .forEach((child, i) => {
             animations.push(
-                animateVariant(child, variant, {
-                    ...options,
-                    delay: delayChildren + generateStaggerDuration(i),
-                }).then(() => child.notifyAnimationComplete(variant))
+                animateVariant(
+                    child,
+                    variant,
+                    {
+                        ...options,
+                        delay: delayChildren + generateStaggerDuration(i),
+                    },
+                    startAnimation
+                ).then(() => child.notifyAnimationComplete(variant))
             )
         })
 
