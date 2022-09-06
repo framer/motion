@@ -139,6 +139,23 @@ const domAnimation = Object.assign({}, es, {
         chunkFileNames: "size-rollup-dom-animation-assets.js",
         dir: `dist`,
     },
+    plugins: [...sizePlugins],
+    external: ["react", "react-dom"],
+})
+
+const motionOne = Object.assign({}, es, {
+    input: {
+        "size-rollup-motion-one-m": "lib/render/dom/motion-minimal.js",
+        "size-rollup-motion-one": "lib/render/dom/features-motion-one.js",
+    },
+    output: {
+        format: "es",
+        exports: "named",
+        preserveModules: false,
+        entryFileNames: "[name].js",
+        chunkFileNames: "size-rollup-motion-one-assets.js",
+        dir: `dist`,
+    },
     plugins: [...sizePlugins, visualizer()],
     external: ["react", "react-dom"],
 })
@@ -185,6 +202,7 @@ export default [
     m,
     domAnimation,
     domMax,
+    motionOne,
     types,
     threeTypes,
 ]

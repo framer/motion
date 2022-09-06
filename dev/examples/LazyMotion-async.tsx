@@ -1,6 +1,5 @@
 import * as React from "react"
-import { m, LazyMotion, domAnimation } from "framer-motion"
-import { useEffect, useState } from "react"
+import { m, LazyMotion } from "framer-motion"
 
 /**
  * An example of dynamically loading features from a different entry point.
@@ -18,7 +17,7 @@ const Component = React.memo(() => {
     return (
         <m.div
             animate={{
-                width: [null, 50, 200, 100],
+                scale: 2,
             }}
             transition={{
                 duration: 2,
@@ -34,13 +33,12 @@ export const App = () => {
     return (
         <LazyMotion
             features={() => {
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve) => {
                     setTimeout(() => {
                         import("./inc/dynamic-features").then((res) => {
-                            reject()
                             resolve(res.default)
                         })
-                    }, 5000)
+                    }, 100)
                 })
             }}
         >
