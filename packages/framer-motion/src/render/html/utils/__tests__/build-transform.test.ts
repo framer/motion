@@ -91,15 +91,21 @@ describe("buildTransform", () => {
         expect(
             buildTransform(
                 {
-                    transform: { scale: 2, rotate: "90deg", x: 0, y: "10px" },
-                    transformKeys: ["scale", "rotate", "y", "x"],
+                    transform: {
+                        scale: 2,
+                        rotate: "90deg",
+                        x: 0,
+                        y: "10px",
+                        rotateZ: "190deg",
+                    },
+                    transformKeys: ["rotateZ", "scale", "rotate", "y", "x"],
                 } as any,
 
                 { enableHardwareAcceleration: true, allowTransformNone: false },
                 true
             )
         ).toBe(
-            "translateX(0) translateY(10px) scale(2) rotate(90deg) translateZ(0)"
+            "translateX(0) translateY(10px) scale(2) rotate(90deg) rotateZ(190deg) translateZ(0)"
         )
     })
 })

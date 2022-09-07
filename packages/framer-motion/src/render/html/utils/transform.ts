@@ -15,6 +15,7 @@ export const transformPropOrder = [
     "rotate",
     "rotateX",
     "rotateY",
+    "rotateZ",
     "skew",
     "skewX",
     "skewY",
