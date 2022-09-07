@@ -4,6 +4,19 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.4.0] 2022-07-09
+
+### Added
+
+-   `isMotionComponent` returns true if the provided component is a `motion` component.
+-   `unwrapMotionComponent` returns the rendered component.
+
+## [7.3.1] 2022-07-09
+
+### Fixed
+
+-   Fixing application of `rotateZ`.
+
 ## [7.3.0] 2022-06-09
 
 ### Added
