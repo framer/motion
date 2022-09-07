@@ -19,7 +19,7 @@ import {
 import { updateMotionValuesFromProps } from "../utils/motion-values"
 
 export class MotionOneVisualElement {
-    private element: HTMLElement | undefined
+    element: HTMLElement | undefined
 
     private values = new Map<string, MotionValue>()
 

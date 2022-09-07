@@ -20,7 +20,8 @@ export type StartAnimation = (
     key: string,
     value: MotionValue,
     target: ResolvedValueTarget,
-    transition?: Transition
+    transition: Transition | undefined,
+    visualElement: VisualElement
 ) => Promise<void>
 
 export type AnimationDefinition =
@@ -198,7 +199,13 @@ function animateTarget(
             } as any
         }
 
-        let animation = startAnimation(key, value, valueTarget, valueTransition)
+        let animation = startAnimation(
+            key,
+            value,
+            valueTarget,
+            valueTransition,
+            visualElement
+        )
 
         if (isWillChangeMotionValue(willChange)) {
             willChange.add(key)
