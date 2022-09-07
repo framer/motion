@@ -18,6 +18,8 @@ import { VisualElementHandler } from "./utils/VisualElementHandler"
 import { LazyContext } from "../context/LazyContext"
 import { SwitchLayoutGroupContext } from "../context/SwitchLayoutGroupContext"
 
+const wrappedComponentSymbol = Symbol.for("wrappedMotionComponent")
+
 export interface MotionComponentConfig<Instance, RenderState> {
     preloadedFeatures?: FeatureBundle
     createVisualElement?: CreateVisualElement<Instance>
@@ -143,7 +145,36 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
         )
     }
 
-    return forwardRef(MotionComponent)
+    const ForwardRefComponent = forwardRef(MotionComponent)
+    ForwardRefComponent[wrappedComponentSymbol] = Component
+    return ForwardRefComponent
+}
+
+/**
+ * Checks if a component is a `motion` component.
+ */
+export function isMotionComponent(component: React.ComponentType | string) {
+    return (
+        component !== null &&
+        typeof component === "object" &&
+        wrappedComponentSymbol in component
+    )
+}
+
+/**
+ * Unwraps a `motion` component and returns either a string for `motion.div` or
+ * the React component for `motion(Component)`.
+ *
+ * If the component is not a `motion` component it returns undefined.
+ */
+export function unwrapMotionComponent(
+    component: React.ComponentType | string
+): React.ComponentType | string | undefined {
+    if (isMotionComponent(component)) {
+        return component[wrappedComponentSymbol]
+    }
+
+    return undefined
 }
 
 function useLayoutId({ layoutId }: MotionProps) {
