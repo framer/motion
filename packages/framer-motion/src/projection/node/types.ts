@@ -152,7 +152,7 @@ export interface ProjectionNodeOptions {
     alwaysMeasureLayout?: boolean
     scheduleRender?: VoidFunction
     onExitComplete?: VoidFunction
-    animationType?: "size" | "position" | "both"
+    animationType?: "size" | "position" | "both" | "preserve-aspect"
     layoutId?: string
     layout?: boolean | string
     visualElement?: VisualElement
