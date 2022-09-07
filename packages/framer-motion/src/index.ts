@@ -73,7 +73,11 @@ export {
     DragControls,
 } from "./gestures/drag/use-drag-controls"
 export { useDomEvent } from "./events/use-dom-event"
-export { createMotionComponent } from "./motion"
+export {
+    createMotionComponent,
+    isMotionComponent,
+    unwrapMotionComponent,
+} from "./motion"
 export { visualElement } from "./render"
 export { VisualElement } from "./render/types"
 export { addScaleCorrector } from "./projection/styles/scale-correction"
