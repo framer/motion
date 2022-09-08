@@ -5,7 +5,7 @@ import { ReducedMotionConfig } from "../../context/MotionConfigContext"
 import { featureDefinitions } from "../../motion/features/definitions"
 import { FeatureBundle, FeatureDefinition } from "../../motion/features/types"
 import { MotionProps, MotionStyle } from "../../motion/types"
-import { Target } from "../../types"
+import { TargetAndTransition } from "../../types"
 import { env } from "../../utils/process"
 import { initPrefersReducedMotion } from "../../utils/reduced-motion"
 import {
@@ -25,6 +25,7 @@ import {
 } from "../utils/is-controlling-variants"
 import { isVariantLabel } from "../utils/is-variant-label"
 import { updateMotionValuesFromProps } from "../utils/motion-values"
+import { getOrigin, checkTargetForNewValues } from "../utils/setters"
 
 export class MotionOneVisualElement {
     element: HTMLElement | undefined
@@ -132,6 +133,10 @@ export class MotionOneVisualElement {
         this.bindValue(key, value)
     }
 
+    hasValue(key: string) {
+        return this.values.has(key)
+    }
+
     removeValue(key: string) {
         this.values.delete(key)
         this.valueSubscriptions.get(key)?.()
@@ -176,8 +181,20 @@ export class MotionOneVisualElement {
 
     notifyAnimationComplete() {}
 
-    makeTargetAnimatable(target: Target) {
-        return target
+    makeTargetAnimatable({
+        transition,
+        transitionEnd,
+        ...target
+    }: TargetAndTransition) {
+        if (this.element) {
+            checkTargetForNewValues(
+                this as any,
+                target,
+                getOrigin(target as any, transition || {}, this as any) as any
+            )
+        }
+
+        return { transition, transitionEnd, ...target }
     }
 
     scheduleRender = () => {}
@@ -253,11 +270,11 @@ export class MotionOneVisualElement {
     }
 
     syncRender() {
-        console.trace()
+        // console.trace()
     }
 
     notifyUnmount() {
-        console.trace()
+        // console.trace()
     }
 
     getVariantContext(startAtParent = false):
