@@ -145,8 +145,7 @@ const domAnimation = Object.assign({}, es, {
 
 const motionOne = Object.assign({}, es, {
     input: {
-        "size-rollup-motion-one-m": "lib/render/dom/motion-minimal.js",
-        "size-rollup-motion-one": "lib/render/dom/features-motion-one.js",
+        "size-rollup-motion-one": "lib/components/animated/index.js",
     },
     output: {
         format: "es",

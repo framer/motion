@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { isAnimationControls } from "../../animation/utils/is-animation-controls"
 import { gestureAnimations } from "../../motion/features/gestures"
-import { FeatureBundle, FeatureProps } from "../../motion/features/types"
+import { FeatureProps } from "../../motion/features/types"
 import { makeRenderlessComponent } from "../../motion/utils/make-renderless-component"
 import { ResolvedValueTarget, Transition } from "../../types"
 import { MotionValue } from "../../value"
@@ -24,6 +24,7 @@ function startAnimation(
             { [key]: target[key] },
             valueTransition
         )
+        console.log(controls, key, value)
 
         controls.finished.then(onComplete)
 
@@ -36,8 +37,8 @@ function startAnimation(
 /**
  * @public
  */
-export const motionOne: FeatureBundle = {
-    renderer: (_Component, config) => new MotionOneVisualElement(config) as any,
+export const motionOne = {
+    // renderer: (_Component, config) => new MotionOneVisualElement(config) as any,
     animation: makeRenderlessComponent(
         ({ visualElement, animate: animateProp }: FeatureProps) => {
             /**

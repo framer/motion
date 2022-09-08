@@ -89,7 +89,7 @@
         },
         {
             "path": "./dist/size-rollup-motion-one.js",
-            "maxSize": "6 kB"
+            "maxSize": "10 kB"
         },
         {
             "path": "./dist/size-webpack-m.js",
