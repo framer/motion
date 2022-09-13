@@ -104,7 +104,8 @@ export function createMotionComponent<Props extends {}, Instance, RenderState>({
             )
             if (context.visualElement) {
                 features = context.visualElement.loadFeatures(
-                    props,
+                    // Note: Pass the full new combined props to correctly re-render dynamic feature components.
+                    configAndProps,
                     lazyStrictMode,
                     preloadedFeatures,
                     projectionId,

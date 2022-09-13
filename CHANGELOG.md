@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.3.3] 2022-13-09
+
+### Fixed
+
+-   Ensuring children dynamic components re-render when context changes.
+
 ## [7.3.2] 2022-07-09
 
 ### Added
