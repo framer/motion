@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.3.4] 2022-13-09
+
+### Fixed
+
+-   Run feature detection based on rendered props.
+
 ## [7.3.3] 2022-13-09
 
 ### Fixed
