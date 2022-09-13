@@ -325,7 +325,7 @@ export const visualElement =
                      * dynamically request functionality. In initial tests this
                      * was producing a lot of duplication amongst bundles.
                      */
-                    if (isEnabled(props) && Component) {
+                    if (isEnabled(renderedProps) && Component) {
                         features.push(
                             createElement(Component, {
                                 key: name,
