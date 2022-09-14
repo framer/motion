@@ -63,7 +63,8 @@ export function ReorderGroup<V>(
         values,
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
-    externalRef?: React.Ref<any>
+    // TODO allow external ref
+   // externalRef?: React.Ref<any>
 ) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
@@ -105,7 +106,12 @@ export function ReorderGroup<V>(
             }
         }
         calculateRowsNumber()
-        new ResizeObserver(calculateRowsNumber).observe(ref.current)
+        
+        const observer = new ResizeObserver(calculateRowsNumber)
+        observer.observe(ref.current);
+        return () => {
+            observer.disconnect()
+        }
     }, [])
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
