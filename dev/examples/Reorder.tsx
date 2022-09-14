@@ -7,26 +7,24 @@ export const App = () => {
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
         20, 21, 22, 23, 24, 25, 26,
     ])
-
     const [horizontalGridItems, setHorizontalGridItems] = useState([
         0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
     ])
-
     const [verticalItems, setVerticalItems] = useState([0, 1, 2, 3, 4])
-
     const [horizontalItems, setHorizontalItems] = useState([
         0, 1, 2, 3, 4, 5, 6,
     ])
 
-    return (
-        <div style={{ display: "flex" }}>
+    const [reorderType, setReorderType] = useState("row-grid")
+
+    const reorder = {
+        "row-grid": (
             <Reorder.Group
                 style={{
                     display: "flex",
                     flexDirection: "row",
                     maxWidth: "500px",
                     flexWrap: "wrap",
-                    marginRight: "50px",
                     flex: 1,
                 }}
                 as="div"
@@ -37,15 +35,15 @@ export const App = () => {
                     <ReorderItem item={item} key={item} />
                 ))}
             </Reorder.Group>
+        ),
+        "column-grid": (
             <Reorder.Group
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    width: "400px",
-                    maxHeight: "250px",
+                    height: "100vh",
                     flexWrap: "wrap",
-                    marginRight: "50px",
-                    flex: 1,
+                    flex: 0,
                 }}
                 as="div"
                 values={horizontalGridItems}
@@ -55,10 +53,11 @@ export const App = () => {
                     <ReorderItem item={item} key={item} />
                 ))}
             </Reorder.Group>
+        ),
+        row: (
             <Reorder.Group
                 style={{
                     display: "flex",
-                    marginRight: "50px",
                     flex: 1,
                 }}
                 values={horizontalItems}
@@ -68,11 +67,12 @@ export const App = () => {
                     <ReorderItem item={item} key={item} />
                 ))}
             </Reorder.Group>
+        ),
+        column: (
             <Reorder.Group
                 style={{
                     display: "flex",
                     flexDirection: "column",
-                    marginRight: "50px",
                     flex: 1,
                 }}
                 values={verticalItems}
@@ -82,7 +82,34 @@ export const App = () => {
                     <ReorderItem item={item} key={item} />
                 ))}
             </Reorder.Group>
-        </div>
+        ),
+    }
+
+    return (
+        <>
+            <div>
+                <div style={{ display: "flex", gap: "50px" }}>
+                    {reorder[reorderType]}
+                </div>
+            </div>
+            <div
+                style={{
+                    display: "flex",
+                    position: "absolute",
+                    bottom: 0,
+                    justifyContent: "center",
+                }}
+            >
+                <button onClick={() => setReorderType("row-grid")}>
+                    Row Grid
+                </button>
+                <button onClick={() => setReorderType("column-grid")}>
+                    Column Grid
+                </button>
+                <button onClick={() => setReorderType("row")}>Row</button>
+                <button onClick={() => setReorderType("column")}>Column</button>
+            </div>
+        </>
     )
 }
 

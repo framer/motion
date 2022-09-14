@@ -15,7 +15,6 @@ import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
-import { addDomEvent } from "../../events/use-dom-event"
 
 export interface Props<V> {
     /**
@@ -72,42 +71,42 @@ export function ReorderGroup<V>(
     const order: ItemData<V>[] = []
     const isReordering = useRef(false)
 
-    const ref = useRef<any | undefined>()
+    const ref = useRef<HTMLElement>()
     const [axis, setAxis] = useState<"x" | "y">("x")
     const itemsPerAxis = useRef<number>(0)
     const [isWrappingItems, setIsWrappingItems] = useState(false)
 
     useEffect(() => {
-        if(externalRef) ref.current = externalRef
-    }, [externalRef]);
-
-
-    useEffect(() => {
         if (!ref.current) return
 
         const calculateRowsNumber = () => {
-            const children = ref.current.children
+            const childrenElements = ref.current
+                ?.children as unknown as HTMLElement[]
             invariant(
-                children.length > 1,
+                childrenElements.length > 1,
                 "At least two children components are necessary."
             )
-            const newAxis = children[0].offsetTop === children[1].offsetTop ? "x" : "y"
+            const newAxis =
+                childrenElements[0].offsetTop === childrenElements[1].offsetTop
+                    ? "x"
+                    : "y"
             setAxis(newAxis)
-            itemsPerAxis.current = children.length
-            const offset = newAxis === 'x' ? 'offsetTop' : 'offsetLeft'
-            for (let i = 1; i < children.length; i++) {
-                if (children[i][offset] > children[i - 1][offset]) {
+            const offset = newAxis === "x" ? "offsetTop" : "offsetLeft"
+            itemsPerAxis.current = childrenElements.length
+            for (let i = 1; i < childrenElements.length; i++) {
+                if (
+                    childrenElements[i][offset] >
+                    childrenElements[i - 1][offset]
+                ) {
                     itemsPerAxis.current = i
-                    setIsWrappingItems(i !== children.length && i !== 1)
+                    setIsWrappingItems(i !== childrenElements.length && i !== 1)
                     break
                 }
             }
         }
         calculateRowsNumber()
-        addDomEvent(window, "resize", calculateRowsNumber)
+        new ResizeObserver(calculateRowsNumber).observe(ref.current)
     }, [])
-    // TODO test external ref
-    // TODO reduce number of rerenders
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
@@ -123,9 +122,7 @@ export function ReorderGroup<V>(
                 order.findIndex((entry) => value === entry.value) === -1
             ) {
                 order.push({ value, layout: { x: layout.x, y: layout.y } })
-                order.sort((a, b) =>
-                    compareMin(a, b, axis, isWrappingItems)
-                )
+                order.sort((a, b) => compareMin(a, b, axis, isWrappingItems))
             }
         },
         updateOrder: (id, offset, velocity) => {
