@@ -4,32 +4,38 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [7.3.4] 2022-13-09
+## [7.3.5] 2022-09-14
+
+### Fixed
+
+-   `isMotionValue` no longer crashing when provided `null`.
+
+## [7.3.4] 2022-09-13
 
 ### Fixed
 
 -   Run feature detection based on rendered props.
 
-## [7.3.3] 2022-13-09
+## [7.3.3] 2022-09-13
 
 ### Fixed
 
 -   Ensuring children dynamic components re-render when context changes.
 
-## [7.3.2] 2022-07-09
+## [7.3.2] 2022-09-07
 
 ### Added
 
 -   `isMotionComponent` returns true if the provided component is a `motion` component.
 -   `unwrapMotionComponent` returns the rendered component.
 
-## [7.3.1] 2022-07-09
+## [7.3.1] 2022-09-07
 
 ### Fixed
 
 -   Fixing application of `rotateZ`.
 
-## [7.3.0] 2022-06-09
+## [7.3.0] 2022-09-06
 
 ### Added
 
