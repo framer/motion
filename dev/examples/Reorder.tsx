@@ -42,6 +42,7 @@ export const App = () => {
                     display: "flex",
                     flexDirection: "column",
                     height: "100vh",
+                    maxHeight: "400px",
                     flexWrap: "wrap",
                     flex: 0,
                 }}
