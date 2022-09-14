@@ -106,7 +106,7 @@ export function ReorderGroup<V>(
             }
         }
         calculateRowsNumber()
-        
+
         const observer = new ResizeObserver(calculateRowsNumber)
         observer.observe(ref.current);
         return () => {
