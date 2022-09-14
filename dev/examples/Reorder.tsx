@@ -30,10 +30,8 @@ export const App = () => {
                     flex: 1,
                 }}
                 as="div"
-                axis="x"
                 values={verticalGridItems}
                 onReorder={setVerticalGridItems}
-                itemsPerAxis={4}
             >
                 {verticalGridItems.map((item) => (
                     <ReorderItem item={item} key={item} />
@@ -50,10 +48,8 @@ export const App = () => {
                     flex: 1,
                 }}
                 as="div"
-                axis="y"
                 values={horizontalGridItems}
                 onReorder={setHorizontalGridItems}
-                itemsPerAxis={3}
             >
                 {horizontalGridItems.map((item) => (
                     <ReorderItem item={item} key={item} />
@@ -65,7 +61,6 @@ export const App = () => {
                     marginRight: "50px",
                     flex: 1,
                 }}
-                axis="x"
                 values={horizontalItems}
                 onReorder={setHorizontalItems}
             >
@@ -80,7 +75,6 @@ export const App = () => {
                     marginRight: "50px",
                     flex: 1,
                 }}
-                axis="y"
                 values={verticalItems}
                 onReorder={setVerticalItems}
             >

@@ -7,6 +7,7 @@ import {
     ReactHTML,
     useEffect,
     useRef,
+    useState,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
@@ -14,6 +15,7 @@ import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
+import { addDomEvent } from "../../events/use-dom-event"
 
 export interface Props<V> {
     /**
@@ -22,14 +24,6 @@ export interface Props<V> {
      * @public
      */
     as?: keyof ReactHTML
-
-    /**
-     * The axis to reorder along. By default, items will be draggable on this axis.
-     * To make draggable on both axes, set `<Reorder.Item drag />`
-     *
-     * @public
-     */
-    axis?: "x" | "y"
 
     // TODO: This would be better typed as V, but that doesn't seem
     // to correctly infer type from values
@@ -59,17 +53,6 @@ export interface Props<V> {
      * @public
      */
     values: V[]
-    /**
-     * The number of items per axis in case they are wrapped
-     * For example, when you are using a grid or flex-box
-     *
-     * If the axis is x, it is the number of columns
-     * If the axis is y, it is the number of rows
-     *
-     * @public
-     */
-    // TODO calculate automatically the number of items per Axis to make prop not necessary anymore
-    itemsPerAxis?: "all" | number
     children: ReactElement<any>[]
 }
 
@@ -77,10 +60,8 @@ export function ReorderGroup<V>(
     {
         children,
         as = "ul",
-        axis = "y",
         onReorder,
         values,
-        itemsPerAxis = "all",
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
@@ -90,14 +71,49 @@ export function ReorderGroup<V>(
     >
     const order: ItemData<V>[] = []
     const isReordering = useRef(false)
-    const isWrappingItems =
-        itemsPerAxis !== "all" && itemsPerAxis !== children.length
+
+    const ref = useRef<any | undefined>()
+    const [axis, setAxis] = useState<"x" | "y">("x")
+    const itemsPerAxis = useRef<number>(0)
+    const [isWrappingItems, setIsWrappingItems] = useState(false)
+
+    useEffect(() => {
+        if(externalRef) ref.current = externalRef
+    }, [externalRef]);
+
+
+    useEffect(() => {
+        if (!ref.current) return
+
+        const calculateRowsNumber = () => {
+            const children = ref.current.children
+            invariant(
+                children.length > 1,
+                "At least two children components are necessary."
+            )
+            const newAxis = children[0].offsetTop === children[1].offsetTop ? "x" : "y"
+            setAxis(newAxis)
+            itemsPerAxis.current = children.length
+            const offset = newAxis === 'x' ? 'offsetTop' : 'offsetLeft'
+            for (let i = 1; i < children.length; i++) {
+                if (children[i][offset] > children[i - 1][offset]) {
+                    itemsPerAxis.current = i
+                    setIsWrappingItems(i !== children.length && i !== 1)
+                    break
+                }
+            }
+        }
+        calculateRowsNumber()
+        addDomEvent(window, "resize", calculateRowsNumber)
+    }, [])
+    // TODO test external ref
+    // TODO reduce number of rerenders
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
     const context: ReorderContextProps<any> = {
-        axis,
-        isWrappingItems,
+        axis: axis,
+        isWrappingItems: isWrappingItems,
         registerItem: (value, layout) => {
             /**
              * Ensure entries can't add themselves more than once
@@ -107,7 +123,9 @@ export function ReorderGroup<V>(
                 order.findIndex((entry) => value === entry.value) === -1
             ) {
                 order.push({ value, layout: { x: layout.x, y: layout.y } })
-                order.sort((a, b) => compareMin(a, b, axis, isWrappingItems))
+                order.sort((a, b) =>
+                    compareMin(a, b, axis, isWrappingItems)
+                )
             }
         },
         updateOrder: (id, offset, velocity) => {
@@ -120,7 +138,7 @@ export function ReorderGroup<V>(
                 velocity,
                 axis,
                 isWrappingItems,
-                itemsPerAxis === "all" ? children.length : itemsPerAxis
+                itemsPerAxis.current
             )
 
             if (order !== newOrder) {
@@ -137,9 +155,8 @@ export function ReorderGroup<V>(
     useEffect(() => {
         isReordering.current = false
     })
-
     return (
-        <Component {...props} ref={externalRef}>
+        <Component {...props} ref={ref}>
             <ReorderContext.Provider value={context}>
                 {children}
             </ReorderContext.Provider>

@@ -17,6 +17,7 @@ import { useMotionValue } from "../../value/use-motion-value"
 import { useTransform } from "../../value/use-transform"
 import { isMotionValue } from "../../value/utils/is-motion-value"
 
+
 export interface Props<V> {
     /**
      * A HTML element to render this component as. Defaults to `"li"`.
@@ -61,6 +62,8 @@ export function ReorderItem<V>(
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
 
+    //const ref = useRef();
+
     const context = useContext(ReorderContext)
     const point = {
         x: useDefaultMotionValue(style.x),
@@ -102,9 +105,21 @@ export function ReorderItem<V>(
             }}
             ref={externalRef}
         >
+
             {children}
         </Component>
     )
 }
-
+//   {children.map((child)=><Child child={child}/>)}
 export const Item = forwardRef(ReorderItem)
+
+// type ChildProps = {
+//     child: ReactElement<any>
+// }
+
+// const Child = ({child}: ChildProps)=>{
+//
+//     const ref = useRef();
+//     console.log('ref', ref);
+//     return React.cloneElement(child, { ref })
+// }
