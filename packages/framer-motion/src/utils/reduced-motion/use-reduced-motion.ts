@@ -1,6 +1,10 @@
-import { useState } from "react"
+import { useEffect, useId, useState } from "react"
 import { initPrefersReducedMotion } from "."
-import { hasReducedMotionListener, prefersReducedMotion } from "./state"
+import {
+    hasReducedMotionListener,
+    prefersReducedMotion,
+    reducedMotionListenerCallbacks,
+} from "./state"
 
 /**
  * A hook that returns `true` if we should be using reduced motion based on the current device's Reduced Motion setting.
@@ -34,11 +38,20 @@ export function useReducedMotion() {
      */
     !hasReducedMotionListener.current && initPrefersReducedMotion()
 
-    const [shouldReduceMotion] = useState(prefersReducedMotion.current)
+    const id = useId()
+    const [shouldReduceMotion, setShouldReduceMotion] = useState(
+        prefersReducedMotion.current
+    )
 
-    /**
-     * TODO See if people miss automatically updating shouldReduceMotion setting
-     */
+    useEffect(() => {
+        reducedMotionListenerCallbacks.set(id, () => {
+            setShouldReduceMotion(prefersReducedMotion.current)
+        })
+
+        return () => {
+            reducedMotionListenerCallbacks.delete(id)
+        }
+    }, [setShouldReduceMotion, id])
 
     return shouldReduceMotion
 }

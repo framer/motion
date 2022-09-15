@@ -6,3 +6,8 @@ interface ReducedMotionState {
 export const prefersReducedMotion: ReducedMotionState = { current: null }
 
 export const hasReducedMotionListener = { current: false }
+
+export const reducedMotionListenerCallbacks = new Map<
+    string,
+    (event: MediaQueryListEvent) => void
+>()

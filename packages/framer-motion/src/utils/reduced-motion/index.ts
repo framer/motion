@@ -1,19 +1,26 @@
 import { isBrowser } from "../is-browser"
-import { hasReducedMotionListener, prefersReducedMotion } from "./state"
+import {
+    hasReducedMotionListener,
+    prefersReducedMotion,
+    reducedMotionListenerCallbacks,
+} from "./state"
 
 export function initPrefersReducedMotion() {
-    hasReducedMotionListener.current = true
     if (!isBrowser) return
+    hasReducedMotionListener.current = true
 
     if (window.matchMedia) {
         const motionMediaQuery = window.matchMedia("(prefers-reduced-motion)")
+        const setReducedMotionPreferences = (event: MediaQueryListEvent) => {
+            prefersReducedMotion.current = event.matches
 
-        const setReducedMotionPreferences = () =>
-            (prefersReducedMotion.current = motionMediaQuery.matches)
+            reducedMotionListenerCallbacks.forEach((callback) =>
+                callback(event)
+            )
+        }
 
-        motionMediaQuery.addListener(setReducedMotionPreferences)
-
-        setReducedMotionPreferences()
+        motionMediaQuery.addEventListener("change", setReducedMotionPreferences)
+        prefersReducedMotion.current = motionMediaQuery.matches
     } else {
         prefersReducedMotion.current = false
     }
