@@ -77,6 +77,8 @@ function Item({ onClick, i }: ItemProps) {
     )
 }
 
+const items = [0, 1, 2]
+
 export const App = () => {
     return (
         <LayoutGroup>
@@ -94,4 +96,3 @@ export const App = () => {
     )
 }
 
-const items = [0, 1, 2]

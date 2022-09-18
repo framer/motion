@@ -36,6 +36,26 @@ class Item extends React.Component {
     }
 }
 
+export const screens = [
+    {
+        title: "One",
+        color: "#ff0055",
+    },
+    {
+        title: "Two",
+        color: "#0099ff",
+    },
+    {
+        title: "Threeeee",
+        color: "#22cc88",
+    },
+    {
+        title: "Four",
+        color: "#ffaa00",
+    },
+]
+
+
 const Component = () => {
     const [selected, setSelected] = useState(0)
 
@@ -116,22 +136,3 @@ const Container = styled.div`
         bottom: -4px;
     }
 `
-
-export const screens = [
-    {
-        title: "One",
-        color: "#ff0055",
-    },
-    {
-        title: "Two",
-        color: "#0099ff",
-    },
-    {
-        title: "Threeeee",
-        color: "#22cc88",
-    },
-    {
-        title: "Four",
-        color: "#ffaa00",
-    },
-]
