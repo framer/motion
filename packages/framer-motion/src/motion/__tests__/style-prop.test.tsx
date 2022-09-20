@@ -43,6 +43,30 @@ describe("style prop", () => {
         expect(container.firstChild as Element).toHaveStyle("transform: none")
     })
 
+    test("should remove transforms when passed undefined", () => {
+        const Component = ({ x = 0 }) => {
+            return <motion.div style={{ x, rotate: 80 }} />
+        }
+
+        const { container, rerender } = render(<Component />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(0px) rotate(80deg) translateZ(0)"
+        )
+
+        rerender(<Component x={1} />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(1px) rotate(80deg) translateZ(0)"
+        )
+
+        rerender(<Component x={undefined} />)
+
+        expect(container.firstChild as Element).toHaveStyle(
+            "transform: translateX(0px) rotate(80deg) translateZ(0)"
+        )
+    })
+
     test("doesn't update transforms that are handled by animation props", () => {
         const Component = ({ x = 0 }) => {
             return (
