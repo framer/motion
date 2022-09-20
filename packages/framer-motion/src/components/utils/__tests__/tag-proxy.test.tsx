@@ -3,7 +3,7 @@ import * as React from "react"
 import { tagProxy } from "../tag-proxy"
 
 describe("tagProxy", () => {
-    test("Creates a component that will forward tags via the as prop", () => {
+    test("Creates a component with the defined tags", () => {
         interface Props {}
 
         interface HTMLProps {
@@ -31,11 +31,7 @@ describe("tagProxy", () => {
             (as) => (props: Props) => React.createElement(as, props)
         )
 
-        const { rerender } = render(
-            <component.div animate={false} foo="yeah" />
-        )
-
-        rerender(<component.div animate={false} foo="yeah" />)
+        render(<component.div animate={false} foo="yeah" />)
     })
 
     test("Creates a component that correctly excludes overlapping props", () => {
@@ -51,9 +47,7 @@ describe("tagProxy", () => {
             (as) => (props: Props) => React.createElement(as, props)
         )
 
-        const { rerender } = render(<component.div animate={false} />)
-
-        rerender(<component.div animate={false} />)
+        render(<component.div animate={false} />)
     })
 
     test("Cache works correctly", () => {
@@ -93,12 +87,24 @@ describe("tagProxy", () => {
 
         const CustomComponent = component<CustomProps>(() => <li />)
 
-        const { rerender } = render(
+        const { container } = render(
             <CustomComponent animate={false} foo="yeah" />
         )
-
-        rerender(<CustomComponent animate={false} foo="yeah" />)
+        expect((container.firstChild as HTMLElement).tagName).toEqual("LI")
     })
 
-    test("Correctly renders the defined tag", () => {})
+    test("Correctly renders the defined tag", () => {
+        interface Props {}
+
+        interface HTMLProps {
+            div: {}
+        }
+
+        const component = tagProxy<Props, HTMLProps>(
+            (as) => (props: Props) => React.createElement(as, props)
+        )
+
+        const { container } = render(<component.div />)
+        expect((container.firstChild as HTMLElement).tagName).toEqual("DIV")
+    })
 })
