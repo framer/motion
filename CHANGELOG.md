@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.3.6] 2022-09-20
+
+### Fixed
+
+-   Increasing threshold for what's considered a similar aspect ratio in `"preserve-ratio"` layout animations.
+
 ## [7.3.5] 2022-09-14
 
 ### Fixed
