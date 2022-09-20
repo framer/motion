@@ -1778,6 +1778,6 @@ function shouldAnimatePositionOnly(
     return (
         animationType === "position" ||
         (animationType === "preserve-aspect" &&
-            !isCloseTo(aspectRatio(snapshot), aspectRatio(layout)))
+            !isCloseTo(aspectRatio(snapshot), aspectRatio(layout), 0.2))
     )
 }

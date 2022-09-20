@@ -23,6 +23,6 @@ export function aspectRatio(box: Box): number {
     return calcLength(box.x) / calcLength(box.y)
 }
 
-export function isCloseTo(a: number, b: number, max = 0.01) {
+export function isCloseTo(a: number, b: number, max = 0.1) {
     return distance(a, b) <= max
 }
