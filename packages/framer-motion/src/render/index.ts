@@ -180,6 +180,17 @@ export const visualElement =
         }
 
         /**
+         * Update external animationValues with initial values
+         */
+        if (props.animationValues) {
+            for (const key in props.animationValues) {
+                if (latestValues[key] !== undefined) {
+                    props.animationValues[key].set(latestValues[key])
+                }
+            }
+        }
+
+        /**
          * Determine what role this visual element should take in the variant tree.
          */
         const isControllingVariants = checkIsControllingVariants(props)
@@ -494,6 +505,10 @@ export const visualElement =
              * value, we'll create one if none exists.
              */
             getValue(key: string, defaultValue?: string | number) {
+                if (props.animationValues && props.animationValues[key]) {
+                    return props.animationValues[key]
+                }
+
                 let value = values.get(key)
 
                 if (value === undefined && defaultValue !== undefined) {
