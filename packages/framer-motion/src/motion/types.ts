@@ -266,7 +266,7 @@ export interface MotionAdvancedProps {
 }
 
 type ExternalMotionValues = {
-    [K in keyof MotionStyle]: MotionValue<number> | MotionValue<string>
+    [key: string]: MotionValue<number> | MotionValue<string>
 }
 
 /**
@@ -300,9 +300,9 @@ export interface MotionProps
     style?: MotionStyle
 
     /**
-     * @internal
+     * Provide a set of motion values to perform animations on.
      */
-    animationValues?: ExternalMotionValues
+    customValues?: ExternalMotionValues
 
     /**
      * By default, Framer Motion generates a `transform` property with a sensible transform order. `transformTemplate`

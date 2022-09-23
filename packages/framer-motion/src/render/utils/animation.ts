@@ -175,7 +175,6 @@ function animateTarget(
                 delay: 0,
             } as any
         }
-        console.log("starting animation", key, value?.get())
 
         let animation = startAnimation(key, value, valueTarget, valueTransition)
 
