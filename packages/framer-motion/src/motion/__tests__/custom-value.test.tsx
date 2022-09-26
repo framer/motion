@@ -3,15 +3,15 @@ import { motion, motionValue, useMotionValue, useTransform } from "../.."
 import { degreesToRadians } from "popmotion"
 import * as React from "react"
 
-describe("customValues prop", () => {
-    test("Performs animations only on motion values provided via customValues", async () => {
+describe("animatedValues prop", () => {
+    test("Performs animations only on motion values provided via animatedValues", async () => {
         const promise = new Promise<[number, HTMLElement]>((resolve) => {
             const x = motionValue(0)
             const ref = React.createRef<HTMLDivElement>()
             const Component = () => (
                 <motion.div
                     ref={ref}
-                    customValues={{ x }}
+                    animatedValues={{ x }}
                     animate={{ x: 20 }}
                     transition={{ duration: 0.01 }}
                     onAnimationComplete={() => resolve([x.get(), ref.current!])}
@@ -40,7 +40,7 @@ describe("customValues prop", () => {
                 return (
                     <motion.div
                         ref={ref}
-                        customValues={{ x }}
+                        animatedValues={{ x }}
                         animate={{ x: 20 }}
                         style={{ x: doubleX }}
                         transition={{ duration: 0.01 }}
@@ -87,7 +87,7 @@ describe("customValues prop", () => {
                     <motion.div
                         ref={ref}
                         animate={{ distance: 50 } as any}
-                        customValues={{ distance }}
+                        animatedValues={{ distance }}
                         style={{ x, y }}
                         transition={{ duration: 0.01 }}
                         onAnimationComplete={() =>
