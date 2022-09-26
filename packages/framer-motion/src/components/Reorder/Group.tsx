@@ -68,7 +68,9 @@ export function ReorderGroup<V>(
         onReorder,
         values,
         ...props
-    }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
+    }: Props<V> &
+        Omit<HTMLMotionProps<any>, "values"> &
+        React.PropsWithChildren<{}>,
     externalRef?: React.Ref<any>
 ) {
     const Component = useConstant(() => motion(as)) as FunctionComponent<

@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.4.0] 2022-09-22
+
+### Added
+
+-   Added `values` prop that allows the provision of motion values to use exclusively for performing animations on.
+
 ## [7.3.6] 2022-09-20
 
 ### Fixed

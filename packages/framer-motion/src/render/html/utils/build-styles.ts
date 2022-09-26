@@ -67,19 +67,21 @@ export function buildHTMLStyles(
         }
     }
 
-    if (hasTransform || transformTemplate) {
-        style.transform = buildTransform(
-            state,
-            options,
-            transformIsNone,
-            transformTemplate
-        )
-    } else if (!latestValues.transform && style.transform) {
-        /**
-         * If we have previously created a transform but currently don't have any,
-         * reset transform style to none.
-         */
-        style.transform = "none"
+    if (!latestValues.transform) {
+        if (hasTransform || transformTemplate) {
+            style.transform = buildTransform(
+                state,
+                options,
+                transformIsNone,
+                transformTemplate
+            )
+        } else if (style.transform) {
+            /**
+             * If we have previously created a transform but currently don't have any,
+             * reset transform style to none.
+             */
+            style.transform = "none"
+        }
     }
 
     /**
