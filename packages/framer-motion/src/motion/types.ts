@@ -301,6 +301,8 @@ export interface MotionProps
 
     /**
      * Provide a set of motion values to perform animations on.
+     *
+     * @internal
      */
     values?: ExternalMotionValues
 
