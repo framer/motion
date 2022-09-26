@@ -302,7 +302,7 @@ export interface MotionProps
     /**
      * Provide a set of motion values to perform animations on.
      */
-    animatedValues?: ExternalMotionValues
+    values?: ExternalMotionValues
 
     /**
      * By default, Framer Motion generates a `transform` property with a sensible transform order. `transformTemplate`

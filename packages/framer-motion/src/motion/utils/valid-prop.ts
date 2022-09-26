@@ -30,7 +30,7 @@ const inViewProps = [
 const validMotionProps = new Set<keyof MotionProps>([
     "initial",
     "style",
-    "animatedValues",
+    "values",
     "variants",
     "transition",
     "transformTemplate",

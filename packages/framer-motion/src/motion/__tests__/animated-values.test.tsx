@@ -1,17 +1,23 @@
 import { render } from "../../../jest.setup"
-import { motion, motionValue, useMotionValue, useTransform } from "../.."
+import {
+    motion,
+    motionValue,
+    useMotionTemplate,
+    useMotionValue,
+    useTransform,
+} from "../.."
 import { degreesToRadians } from "popmotion"
 import * as React from "react"
 
-describe("animatedValues prop", () => {
-    test("Performs animations only on motion values provided via animatedValues", async () => {
+describe("values prop", () => {
+    test("Performs animations only on motion values provided via values", async () => {
         const promise = new Promise<[number, HTMLElement]>((resolve) => {
             const x = motionValue(0)
             const ref = React.createRef<HTMLDivElement>()
             const Component = () => (
                 <motion.div
                     ref={ref}
-                    animatedValues={{ x }}
+                    values={{ x }}
                     animate={{ x: 20 }}
                     transition={{ duration: 0.01 }}
                     onAnimationComplete={() => resolve([x.get(), ref.current!])}
@@ -40,7 +46,7 @@ describe("animatedValues prop", () => {
                 return (
                     <motion.div
                         ref={ref}
-                        animatedValues={{ x }}
+                        values={{ x }}
                         animate={{ x: 20 }}
                         style={{ x: doubleX }}
                         transition={{ duration: 0.01 }}
@@ -87,7 +93,7 @@ describe("animatedValues prop", () => {
                     <motion.div
                         ref={ref}
                         animate={{ distance: 50 } as any}
-                        animatedValues={{ distance }}
+                        values={{ distance }}
                         style={{ x, y }}
                         transition={{ duration: 0.01 }}
                         onAnimationComplete={() =>
@@ -106,6 +112,37 @@ describe("animatedValues prop", () => {
                 "transform: translateX(35px) translateY(35px) translateZ(0)"
             )
             expect(element).not.toHaveStyle("distance: 50")
+        })
+    })
+
+    test("Prioritises transform over independent transforms", async () => {
+        const promise = new Promise<[number, HTMLElement]>((resolve) => {
+            const Component = () => {
+                const x = useMotionValue(100)
+                const scale = useMotionValue(2)
+                const transform = useMotionTemplate`scale(${scale}) translateX(${x}px)`
+                const ref = React.useRef<HTMLDivElement>(null)
+
+                return (
+                    <motion.div
+                        ref={ref}
+                        animate={{ x: 50 }}
+                        transition={{ duration: 0.01 }}
+                        values={{ x, scale }}
+                        style={{ transform, scale }}
+                        onAnimationComplete={() =>
+                            resolve([x.get(), ref.current!])
+                        }
+                    />
+                )
+            }
+            const { rerender } = render(<Component />)
+            rerender(<Component />)
+        })
+
+        await promise.then(([x, element]) => {
+            expect(x).toBe(50)
+            expect(element).toHaveStyle("transform: scale(2) translateX(50px)")
         })
     })
 })

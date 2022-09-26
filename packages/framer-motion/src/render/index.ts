@@ -180,12 +180,12 @@ export const visualElement =
         }
 
         /**
-         * Update external animatedValues with initial values
+         * Update external values with initial values
          */
-        if (props.animatedValues) {
-            for (const key in props.animatedValues) {
+        if (props.values) {
+            for (const key in props.values) {
                 if (latestValues[key] !== undefined) {
-                    ;(props.animatedValues[key] as MotionValue<unknown>).set(
+                    ;(props.values[key] as MotionValue<unknown>).set(
                         latestValues[key]
                     )
                 }
@@ -507,8 +507,8 @@ export const visualElement =
              * value, we'll create one if none exists.
              */
             getValue(key: string, defaultValue?: string | number) {
-                if (props.animatedValues && props.animatedValues[key]) {
-                    return props.animatedValues[key]
+                if (props.values && props.values[key]) {
+                    return props.values[key]
                 }
 
                 let value = values.get(key)
