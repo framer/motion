@@ -8,7 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Added
 
--   Added `values` prop that allows the provision of motion values to use exclusively for performing animations on.
+-   Added internal `values` prop that allows the provision of motion values to use exclusively for performing animations on.
 
 ## [7.3.6] 2022-09-20
 
