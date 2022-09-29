@@ -11,9 +11,17 @@ export function useOnChange<T>(
     }, [callback])
 }
 
-export function useMultiOnChange(values: MotionValue[], handler: () => void) {
+export function useMultiOnChange(
+    values: MotionValue[],
+    handler: () => void,
+    clean: () => void
+) {
     useIsomorphicLayoutEffect(() => {
         const subscriptions = values.map((value) => value.onChange(handler))
-        return () => subscriptions.forEach((unsubscribe) => unsubscribe())
+
+        return () => {
+            subscriptions.forEach((unsubscribe) => unsubscribe())
+            clean()
+        }
     })
 }

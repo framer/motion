@@ -129,6 +129,8 @@ export function useTransform<I, O>(
     outputRange?: O[],
     options?: TransformOptions<O>
 ): MotionValue<O> {
+    console.log("use transformer called")
+
     const transformer =
         typeof inputRangeOrTransformer === "function"
             ? inputRangeOrTransformer

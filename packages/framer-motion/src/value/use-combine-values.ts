@@ -1,7 +1,7 @@
 import { MotionValue } from "."
 import { useMotionValue } from "./use-motion-value"
 import { useMultiOnChange } from "./use-on-change"
-import sync from "framesync"
+import sync, { cancelSync } from "framesync"
 
 export function useCombineMotionValues<R>(
     values: MotionValue[],
@@ -30,7 +30,11 @@ export function useCombineMotionValues<R>(
      * Subscribe to all motion values found within the template. Whenever any of them change,
      * schedule an update.
      */
-    useMultiOnChange(values, () => sync.update(updateValue, false, true))
+    useMultiOnChange(
+        values,
+        () => sync.update(updateValue, false, true),
+        () => cancelSync.update(updateValue)
+    )
 
     return value
 }
