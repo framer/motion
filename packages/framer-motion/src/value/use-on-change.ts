@@ -14,14 +14,14 @@ export function useOnChange<T>(
 export function useMultiOnChange(
     values: MotionValue[],
     handler: () => void,
-    clean: () => void
+    cleanup: () => void
 ) {
     useIsomorphicLayoutEffect(() => {
         const subscriptions = values.map((value) => value.onChange(handler))
 
         return () => {
             subscriptions.forEach((unsubscribe) => unsubscribe())
-            clean()
+            cleanup()
         }
     })
 }
