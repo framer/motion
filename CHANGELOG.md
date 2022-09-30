@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.5.1] 2022-09-30
+
+### Fixed
+
+-   `useTransform` correctly cleans up any scheduled animation frames when it unmounts.
+
 ## [7.5.0] 2022-09-27
 
 ### Added
