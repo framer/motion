@@ -34,16 +34,17 @@ describe("useMotionTemplate", () => {
             return <motion.div style={{ transform }} />
         }
 
-        const { container } = render(<Component />)
+        const { container, rerender } = render(<Component />)
+        rerender(<Component />)
         const { firstChild } = container
 
         return new Promise<void>((resolve) => {
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 expect(firstChild).toHaveStyle(
                     `transform: translateX(10px) translateY(2px)`
                 )
                 resolve()
-            }, 50)
+            })
         })
     })
 
