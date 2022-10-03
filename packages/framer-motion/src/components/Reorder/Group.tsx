@@ -6,8 +6,8 @@ import {
     ReactElement,
     ReactHTML,
     useEffect,
+    useMemo,
     useRef,
-    useState,
 } from "react"
 import { ReorderContext } from "../../context/ReorderContext"
 import { motion } from "../../render/dom/motion"
@@ -15,6 +15,7 @@ import { HTMLMotionProps } from "../../render/html/types"
 import { useConstant } from "../../utils/use-constant"
 import { ItemData, ReorderContextProps } from "./types"
 import { checkReorder } from "./utils/check-reorder"
+import {useOrderingParameters} from "./utils/useOrderingParameters";
 
 export interface Props<V> {
     /**
@@ -63,62 +64,27 @@ export function ReorderGroup<V>(
         values,
         ...props
     }: Props<V> & HTMLMotionProps<any> & React.PropsWithChildren<{}>,
-    // TODO allow external ref
-   // externalRef?: React.Ref<any>
+    externalRef?: React.Ref<any>
 ) {
+    const internalRef = useRef<HTMLElement>()
+    const ref = useMemo(
+        () => externalRef || internalRef,
+        [externalRef, internalRef]
+    ) as React.MutableRefObject<any>
+
     const Component = useConstant(() => motion(as)) as FunctionComponent<
         React.PropsWithChildren<HTMLMotionProps<any> & { ref?: React.Ref<any> }>
     >
     const order: ItemData<V>[] = []
     const isReordering = useRef(false)
 
-    const ref = useRef<HTMLElement>()
-    const [axis, setAxis] = useState<"x" | "y">("x")
-    const itemsPerAxis = useRef<number>(0)
-    const [isWrappingItems, setIsWrappingItems] = useState(false)
-
-    useEffect(() => {
-        if (!ref.current) return
-
-        const calculateRowsNumber = () => {
-            const childrenElements = ref.current
-                ?.children as unknown as HTMLElement[]
-            invariant(
-                childrenElements.length > 1,
-                "At least two children components are necessary."
-            )
-            const newAxis =
-                childrenElements[0].offsetTop === childrenElements[1].offsetTop
-                    ? "x"
-                    : "y"
-            setAxis(newAxis)
-            const offset = newAxis === "x" ? "offsetTop" : "offsetLeft"
-            itemsPerAxis.current = childrenElements.length
-            for (let i = 1; i < childrenElements.length; i++) {
-                if (
-                    childrenElements[i][offset] >
-                    childrenElements[i - 1][offset]
-                ) {
-                    itemsPerAxis.current = i
-                    setIsWrappingItems(i !== childrenElements.length && i !== 1)
-                    break
-                }
-            }
-        }
-        calculateRowsNumber()
-
-        const observer = new ResizeObserver(calculateRowsNumber)
-        observer.observe(ref.current);
-        return () => {
-            observer.disconnect()
-        }
-    }, [])
+    const {axis, isWrappingItems, itemsPerAxis} = useOrderingParameters(ref)
 
     invariant(Boolean(values), "Reorder.Group must be provided a values prop")
 
     const context: ReorderContextProps<any> = {
-        axis: axis,
-        isWrappingItems: isWrappingItems,
+        axis,
+        isWrappingItems,
         registerItem: (value, layout) => {
             /**
              * Ensure entries can't add themselves more than once
