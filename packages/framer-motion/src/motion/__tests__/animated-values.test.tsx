@@ -145,4 +145,14 @@ describe("values prop", () => {
             expect(element).toHaveStyle("transform: scale(2) translateX(50px)")
         })
     })
+
+    test("Is defensive against undefined motion values", async () => {
+        render(
+            <motion.div
+                animate={{ x: 1 }}
+                initial={{ x: 0 }}
+                values={{ x: undefined } as any}
+            />
+        )
+    })
 })
