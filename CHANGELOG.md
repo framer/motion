@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.5.2] 2022-10-04
+
+### Fixed
+
+-   Gracefully handle `undefined` values in `values` prop.
+
 ## [7.5.1] 2022-09-30
 
 ### Fixed

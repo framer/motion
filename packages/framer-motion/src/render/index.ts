@@ -184,10 +184,9 @@ export const visualElement =
          */
         if (props.values) {
             for (const key in props.values) {
-                if (latestValues[key] !== undefined) {
-                    ;(props.values[key] as MotionValue<unknown>).set(
-                        latestValues[key]
-                    )
+                const value = props.values[key] as MotionValue<number | string>
+                if (latestValues[key] !== undefined && isMotionValue(value)) {
+                    value.set(latestValues[key])
                 }
             }
         }
