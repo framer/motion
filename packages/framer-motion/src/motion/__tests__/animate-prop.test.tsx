@@ -1,6 +1,7 @@
 import { render } from "../../../jest.setup"
 import { motion, motionValue } from "../../"
 import * as React from "react"
+import { createRef } from "react"
 
 describe("animate prop as object", () => {
     test("animates to set prop", async () => {
@@ -263,6 +264,123 @@ describe("animate prop as object", () => {
         })
         return expect(promise).resolves.toHaveStyle("z-index: 100")
     })
+
+    test("when value is removed from animate, animates back to value originally defined in initial prop", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(<motion.div {...props} animate={{}} />)
+            rerender(<motion.div {...props} animate={{}} />)
+
+            expect(ref.current).toHaveStyle("opacity: 0")
+
+            resolve()
+        })
+    })
+
+    test("when value is removed from animate, animates back to value currently defined in initial prop", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(
+                <motion.div
+                    {...props}
+                    initial={{ opacity: 0.5 }}
+                    animate={{}}
+                />
+            )
+            rerender(
+                <motion.div
+                    {...props}
+                    initial={{ opacity: 0.5 }}
+                    animate={{}}
+                />
+            )
+
+            expect(ref.current).toHaveStyle("opacity: 0.5")
+
+            resolve()
+        })
+    })
+
+    test("when value is removed from both animate and initial, perform no animation", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(<motion.div {...props} initial={{}} animate={{}} />)
+            rerender(<motion.div {...props} initial={{}} animate={{}} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            resolve()
+        })
+    })
+
+    test("when value is removed from animate, animate back to value read from DOM", async () => {
+        return new Promise<void>((resolve) => {
+            const ref = createRef()
+
+            const props: any = {
+                ref,
+                style: { opacity: 0.5 },
+                animate: { opacity: 1 },
+                transition: { type: false },
+            }
+
+            const { rerender } = render(<motion.div {...props} />)
+
+            rerender(<motion.div {...props} />)
+
+            expect(ref.current).toHaveStyle("opacity: 1")
+
+            rerender(<motion.div {...props} animate={{}} />)
+            rerender(<motion.div {...props} animate={{}} />)
+
+            expect(ref.current).toHaveStyle("opacity: 0.5")
+
+            resolve()
+        })
+    })
+
     test("respects repeatDelay prop", async () => {
         const promise = new Promise<number>((resolve) => {
             const x = motionValue(0)
