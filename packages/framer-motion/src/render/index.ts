@@ -103,7 +103,7 @@ export const visualElement =
         }
 
         /**
-         * Create an object of the values we initially from (if initial prop present).
+         * Create an object of the values we initially animated from (if initial prop present).
          */
         const initialValues = props.initial ? { ...latestValues } : {}
 
