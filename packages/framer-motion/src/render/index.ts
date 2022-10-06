@@ -28,6 +28,7 @@ import { FeatureDefinition } from "../motion/features/types"
 import { createElement } from "react"
 import { IProjectionNode } from "../projection/node/types"
 import { isRefObject } from "../utils/is-ref-object"
+import { resolveVariantFromProps } from "./utils/resolve-variants"
 
 const featureNames = Object.keys(featureDefinitions)
 const numFeatures = featureNames.length
@@ -100,6 +101,8 @@ export const visualElement =
         const baseTarget: { [key: string]: string | number | null } = {
             ...latestValues,
         }
+
+        const initialValues = props.initial ? { ...latestValues } : {}
 
         // Internal methods ========================
 
@@ -548,12 +551,40 @@ export const visualElement =
              * props.
              */
             getBaseTarget(key) {
+                const { initial } = props
+                const valueFromInitial =
+                    typeof initial === "string" || typeof initial === "object"
+                        ? resolveVariantFromProps(props, initial as any)?.[key]
+                        : undefined
+
+                /**
+                 * If this value still exists in the current initial variant, read that.
+                 */
+                if (initial && valueFromInitial !== undefined) {
+                    return valueFromInitial
+                }
+
+                /**
+                 * Alternatively, if this VisualElement config has defined a getBaseTarget
+                 * so we can read the value from an alternative source, try that.
+                 */
                 if (getBaseTarget) {
                     const target = getBaseTarget(props, key)
                     if (target !== undefined && !isMotionValue(target))
                         return target
                 }
-                return baseTarget[key]
+                console.log(
+                    initialValues[key] !== undefined &&
+                        valueFromInitial === undefined
+                )
+                /**
+                 * If the value was initially defined on initial, but it doesn't any more,
+                 * return undefined. Otherwise return the value as initially read from the DOM.
+                 */
+                return initialValues[key] !== undefined &&
+                    valueFromInitial === undefined
+                    ? undefined
+                    : baseTarget[key]
             },
 
             // Lifecyles ========================
