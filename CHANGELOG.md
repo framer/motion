@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.5.3] 2022-10-04
+
+### Fixed
+
+-   If the initial style was derived from the `initial` prop, and that style is removed from `animate`, while **also** being removed from `initial`, it won't animate back to the originally-defined value.
+
 ## [7.5.2] 2022-10-04
 
 ### Fixed
