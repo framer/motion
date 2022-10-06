@@ -102,6 +102,9 @@ export const visualElement =
             ...latestValues,
         }
 
+        /**
+         * Create an object of the values we initially from (if initial prop present).
+         */
         const initialValues = props.initial ? { ...latestValues } : {}
 
         // Internal methods ========================
@@ -573,10 +576,7 @@ export const visualElement =
                     if (target !== undefined && !isMotionValue(target))
                         return target
                 }
-                console.log(
-                    initialValues[key] !== undefined &&
-                        valueFromInitial === undefined
-                )
+
                 /**
                  * If the value was initially defined on initial, but it doesn't any more,
                  * return undefined. Otherwise return the value as initially read from the DOM.
