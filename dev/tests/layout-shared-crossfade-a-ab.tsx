@@ -10,7 +10,15 @@ export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
     const size = params.get("size") || false
+    const move = params.get("move") === "no" ? false : true
     const [state, setState] = React.useState(false)
+
+    const bStyle = size ? aLarge : b
+
+    if (move === false) {
+        bStyle.left = 0
+        bStyle.top = 0
+    }
 
     return (
         <>
@@ -27,7 +35,7 @@ export const App = () => {
                     id="b"
                     layoutId="box"
                     layout={type}
-                    style={size ? aLarge : b}
+                    style={bStyle}
                     transition={transition}
                     onClick={() => setState(!state)}
                 />

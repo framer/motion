@@ -473,7 +473,7 @@ export function createProjectionNode<I>({
                                 !hasLayoutChanged &&
                                 this.animationProgress === 0
                             ) {
-                                this.finishAnimation()
+                                finishAnimation(this)
                             }
 
                             this.isLead() && this.options.onExitComplete?.()
@@ -1472,11 +1472,14 @@ export function createProjectionNode<I>({
             const valuesToRender = lead.animationValues || lead.latestValues
 
             this.applyTransformsToTarget()
-            styles.transform = buildProjectionTransform(
-                this.projectionDeltaWithTransform!,
-                this.treeScale,
-                valuesToRender
-            )
+
+            styles.transform = this.projectionDeltaWithTransform
+                ? buildProjectionTransform(
+                      this.projectionDeltaWithTransform,
+                      this.treeScale,
+                      valuesToRender
+                  )
+                : ""
 
             if (transformTemplate) {
                 styles.transform = transformTemplate(
@@ -1692,6 +1695,8 @@ function resetTransformStyle(node: IProjectionNode) {
 
 function finishAnimation(node: IProjectionNode) {
     node.finishAnimation()
+    // node.projectionDelta =
+    //     node.projectionDeltaWithTransform =
     node.targetDelta = node.relativeTarget = node.target = undefined
 }
 
