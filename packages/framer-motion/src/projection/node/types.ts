@@ -163,3 +163,9 @@ export interface ProjectionNodeOptions {
 }
 
 export type ProjectionEventName = "layoutUpdate" | "projectionUpdate"
+
+export interface TreeDistortion {
+    x: number
+    y: number
+    rotate: number
+}

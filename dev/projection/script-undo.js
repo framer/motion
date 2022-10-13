@@ -73,8 +73,8 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
             node.resumingFrom.resumingFrom = undefined
         }
         // hasLayoutChanged && // or existing delta is not nothing - this needs to be reinstated to fix breaking tests
-        if((node.resumeFrom && node.resumeFrom.instance) || hasLayoutChanged) {
-             node.setAnimationOrigin(delta)
+        if ((node.resumeFrom && node.resumeFrom.instance) || hasLayoutChanged) {
+            node.setAnimationOrigin(delta)
         }
     })
 
@@ -82,6 +82,8 @@ Undo.createNode = (element, parent, options = {}, overrideId) => {
         latestValues[key] = value
         scheduleRender()
     }
+
+    node.render = () => visualElement.syncRender()
 
     return node
 }

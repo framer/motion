@@ -4,6 +4,12 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
+## [7.5.4] 2022-10-14
+
+### Fixed
+
+-   Fixed bug with `layout="preserve-aspect"` where layers that do change size but aren't moved are reprojected to the old size and stay there.
+
 ## [7.5.3] 2022-10-04
 
 ### Fixed

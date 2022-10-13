@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, Process } from "framesync"
+import sync, { cancelSync, flushSync, getFrameData, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -40,6 +40,7 @@ import {
     ProjectionNodeConfig,
     ProjectionNodeOptions,
     Snapshot,
+    TreeDistortion,
 } from "./types"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
@@ -251,7 +252,7 @@ export function createProjectionNode<I>({
          *
          * TODO: Lazy-init
          */
-        treeScale: Point = { x: 1, y: 1 }
+        treeScale: TreeDistortion = { x: 1, y: 1, rotate: 0 }
 
         /**
          * Is hydrated with a projection node if an element is animating from another.
@@ -660,6 +661,30 @@ export function createProjectionNode<I>({
                 layout,
                 latestValues: {},
             }
+
+            if (
+                this.options.visualElement
+                    ?.getInstance()
+                    .classList.contains("framer-8ix4z4-container")
+            ) {
+                console.log(
+                    "rotated",
+                    this.snapshot.measured.x,
+                    this.snapshot.layout.x
+                )
+            }
+
+            if (
+                this.options.visualElement
+                    ?.getInstance()
+                    .classList.contains("framer-13rv6tf")
+            ) {
+                console.log(
+                    "child",
+                    this.snapshot.measured.x,
+                    this.snapshot.layout.x
+                )
+            }
         }
 
         updateLayout() {
@@ -903,8 +928,6 @@ export function createProjectionNode<I>({
              */
             // TODO If this is unsuccessful this currently happens every frame
             if (!this.targetDelta && !this.relativeTarget) {
-                if (this.options.layout === "preserve-aspect")
-                    console.log("resolving relative")
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 this.relativeParent = this.getClosestProjectingParent()
                 if (this.relativeParent && this.relativeParent.layout) {
@@ -1074,14 +1097,31 @@ export function createProjectionNode<I>({
                 target,
                 this.latestValues
             )
-            if (this.options.layout === "preserve-aspect") {
-                console.log(this.layoutCorrected.x, target.x)
-            }
 
             this.projectionTransform = buildProjectionTransform(
                 this.projectionDelta!,
                 this.treeScale
             )
+
+            if (
+                this.options.visualElement
+                    ?.getInstance()
+                    .classList.contains("framer-13rv6tf")
+            ) {
+                console.log(
+                    "rendering delta of",
+                    this.projectionDelta.x,
+                    "layout:",
+                    this.layoutCorrected.x,
+                    this.layout.actual.x,
+                    "target",
+                    target.x,
+                    "at",
+                    getFrameData().timestamp,
+                    "as",
+                    this.projectionTransform
+                )
+            }
 
             if (
                 this.projectionTransform !== prevProjectionTransform ||
@@ -1455,13 +1495,6 @@ export function createProjectionNode<I>({
             }
 
             const lead = this.getLead()
-            if (this.options.layout === "preserve-aspect") {
-                console.log(
-                    Boolean(this.projectionDelta),
-                    Boolean(this.layout),
-                    Boolean(lead.target)
-                )
-            }
             if (!this.projectionDelta || !this.layout || !lead.target) {
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
