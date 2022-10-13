@@ -903,6 +903,8 @@ export function createProjectionNode<I>({
              */
             // TODO If this is unsuccessful this currently happens every frame
             if (!this.targetDelta && !this.relativeTarget) {
+                if (this.options.layout === "preserve-aspect")
+                    console.log("resolving relative")
                 // TODO: This is a semi-repetition of further down this function, make DRY
                 this.relativeParent = this.getClosestProjectingParent()
                 if (this.relativeParent && this.relativeParent.layout) {
@@ -1072,6 +1074,9 @@ export function createProjectionNode<I>({
                 target,
                 this.latestValues
             )
+            if (this.options.layout === "preserve-aspect") {
+                console.log(this.layoutCorrected.x, target.x)
+            }
 
             this.projectionTransform = buildProjectionTransform(
                 this.projectionDelta!,
@@ -1450,6 +1455,13 @@ export function createProjectionNode<I>({
             }
 
             const lead = this.getLead()
+            if (this.options.layout === "preserve-aspect") {
+                console.log(
+                    Boolean(this.projectionDelta),
+                    Boolean(this.layout),
+                    Boolean(lead.target)
+                )
+            }
             if (!this.projectionDelta || !this.layout || !lead.target) {
                 const emptyStyles: ResolvedValues = {}
                 if (this.options.layoutId) {
@@ -1473,13 +1485,11 @@ export function createProjectionNode<I>({
 
             this.applyTransformsToTarget()
 
-            styles.transform = this.projectionDeltaWithTransform
-                ? buildProjectionTransform(
-                      this.projectionDeltaWithTransform,
-                      this.treeScale,
-                      valuesToRender
-                  )
-                : ""
+            styles.transform = buildProjectionTransform(
+                this.projectionDeltaWithTransform!,
+                this.treeScale,
+                valuesToRender
+            )
 
             if (transformTemplate) {
                 styles.transform = transformTemplate(
@@ -1695,8 +1705,6 @@ function resetTransformStyle(node: IProjectionNode) {
 
 function finishAnimation(node: IProjectionNode) {
     node.finishAnimation()
-    // node.projectionDelta =
-    //     node.projectionDeltaWithTransform =
     node.targetDelta = node.relativeTarget = node.target = undefined
 }
 
