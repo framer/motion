@@ -1,13 +1,12 @@
 import { ResolvedValues } from "../../render/types"
-import { Delta } from "../geometry/types"
-import { TreeDistortion } from "../node/types"
+import { Delta, Point } from "../geometry/types"
 
 export const identityProjection =
     "translate3d(0px, 0px, 0) scale(1, 1) scale(1, 1)"
 
 export function buildProjectionTransform(
     delta: Delta,
-    treeScale: TreeDistortion,
+    treeScale: Point,
     latestTransform?: ResolvedValues
 ): string {
     /**
@@ -40,10 +39,6 @@ export function buildProjectionTransform(
     const elementScaleX = delta.x.scale * treeScale.x
     const elementScaleY = delta.y.scale * treeScale.y
     transform += `scale(${elementScaleX}, ${elementScaleY})`
-
-    // if (treeScale.rotate) {
-    //     transform = `rotate(-${treeScale.rotate}deg) ${transform} rotate(${treeScale.rotate}deg)`
-    // }
 
     return transform === identityProjection ? "none" : transform
 }

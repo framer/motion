@@ -2,7 +2,7 @@ import { mix } from "popmotion"
 import { ResolvedValues } from "../../render/types"
 import { IProjectionNode, TreeDistortion } from "../node/types"
 import { hasTransform } from "../utils/has-transform"
-import { Axis, Box, Delta } from "./types"
+import { Axis, Box, Delta, Point } from "./types"
 
 /**
  * Scales a point based on a factor and an originPoint
@@ -73,7 +73,7 @@ export function applyBoxDelta(box: Box, { x, y }: Delta): void {
  */
 export function applyTreeDeltas(
     box: Box,
-    treeScale: TreeDistortion,
+    treeScale: Point,
     treePath: IProjectionNode[],
     isSharedTransition: boolean = false
 ) {
@@ -82,7 +82,6 @@ export function applyTreeDeltas(
 
     // Reset the treeScale
     treeScale.x = treeScale.y = 1
-    treeScale.rotate = 0
 
     let node: IProjectionNode
     let delta: Delta | undefined
@@ -91,12 +90,6 @@ export function applyTreeDeltas(
         node = treePath[i]
         delta = node.projectionDelta
         if ((node.instance as any)?.style?.display === "contents") continue
-
-        const rotate = node.options.visualElement?.getStaticValue("rotate")
-        if (rotate) {
-            treeScale.rotate +=
-                typeof rotate === "number" ? rotate : parseFloat(rotate)
-        }
 
         if (
             isSharedTransition &&

@@ -1,4 +1,4 @@
-import sync, { cancelSync, flushSync, getFrameData, Process } from "framesync"
+import sync, { cancelSync, flushSync, Process } from "framesync"
 import { mix } from "popmotion"
 import {
     animate,
@@ -40,7 +40,6 @@ import {
     ProjectionNodeConfig,
     ProjectionNodeOptions,
     Snapshot,
-    TreeDistortion,
 } from "./types"
 import { FlatTree } from "../../render/utils/flat-tree"
 import { Transition } from "../../types"
@@ -252,7 +251,7 @@ export function createProjectionNode<I>({
          *
          * TODO: Lazy-init
          */
-        treeScale: TreeDistortion = { x: 1, y: 1, rotate: 0 }
+        treeScale: Point = { x: 1, y: 1 }
 
         /**
          * Is hydrated with a projection node if an element is animating from another.
@@ -660,30 +659,6 @@ export function createProjectionNode<I>({
                 measured,
                 layout,
                 latestValues: {},
-            }
-
-            if (
-                this.options.visualElement
-                    ?.getInstance()
-                    .classList.contains("framer-8ix4z4-container")
-            ) {
-                console.log(
-                    "rotated",
-                    this.snapshot.measured.x,
-                    this.snapshot.layout.x
-                )
-            }
-
-            if (
-                this.options.visualElement
-                    ?.getInstance()
-                    .classList.contains("framer-13rv6tf")
-            ) {
-                console.log(
-                    "child",
-                    this.snapshot.measured.x,
-                    this.snapshot.layout.x
-                )
             }
         }
 
