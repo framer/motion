@@ -6,6 +6,10 @@
             "dependsOn": ["^build"],
             "outputs": ["dist/**", "types/**"]
         },
+        "watch": {
+            "dependsOn": ["^watch"],
+            "outputs": ["dist/**", "types/**"]
+        },
         "lint": {
             "outputs": []
         },

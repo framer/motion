@@ -8,6 +8,7 @@ Undocumented APIs should be considered internal and may change without warning.
 
 ### Fixed
 
+-   Fixed bug relative layout animations within rotated layers.
 -   Fixed bug with `layout="preserve-aspect"` where layers that do change size but aren't moved are reprojected to the old size and stay there.
 
 ## [7.5.3] 2022-10-04

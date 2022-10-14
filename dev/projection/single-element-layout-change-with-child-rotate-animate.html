@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+
+            #box {
+                position: absolute;
+                top: 100px;
+                left: 300px;
+                width: 200px;
+                height: 200px;
+                background-color: #00cc88;
+            }
+
+            #child {
+                width: 50px;
+                height: 50px;
+                background-color: #0077ff;
+            }
+
+            #box.b {
+                top: 200px;
+            }
+
+            #box.b #child {
+                position: absolute;
+                top: 150px;
+            }
+
+            #trigger-overflow {
+                width: 1px;
+                height: 1px;
+                position: absolute;
+                top: 2000px;
+                left: 2000px;
+            }
+
+            [data-layout-correct="false"] {
+                background: #dd1144 !important;
+                opacity: 0.5;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div id="box" data-layout-correct="true">
+            <div id="child" data-layout-correct="true"></div>
+        </div>
+        <div id="trigger-overflow"></div>
+
+        <script src="../../packages/framer-motion/dist/projection.dev.js"></script>
+        <script src="./script-assert.js"></script>
+        <script src="./script-animate.js"></script>
+        <script>
+            const { createNode } = window.Animate
+            const { matchViewportBox } = window.Assert
+            const box = document.getElementById("box")
+            const boxProjection = createNode(
+                box,
+                undefined,
+                {},
+                { duration: 5, ease: () => 0.5 }
+            )
+
+            const child = document.getElementById("child")
+            const childProjection = createNode(
+                child,
+                boxProjection,
+                {},
+                { duration: 5, ease: () => 1 }
+            )
+
+            boxProjection.setValue("rotate", 45)
+
+            requestAnimationFrame(() => {
+                boxProjection.willUpdate()
+                childProjection.willUpdate()
+
+                box.classList.add("b")
+
+                requestAnimationFrame(() => {
+                    boxProjection.root.didUpdate()
+
+                    requestAnimationFrame(() => {
+                        matchViewportBox(box, {
+                            bottom: 391.4213562011719,
+                            height: 282.84271240234375,
+                            left: 258.5786437988281,
+                            right: 541.42138671875,
+                            top: 108.57864379882812,
+                            width: 282.8427429199219,
+                        })
+                        matchViewportBox(child, {
+                            bottom: 285.3553466796875,
+                            height: 70.710693359375,
+                            left: 258.5786437988281,
+                            right: 329.289306640625,
+                            top: 214.6446533203125,
+                            width: 70.71066284179688,
+                        })
+                    })
+                })
+            })
+        </script>
+    </body>
+</html>

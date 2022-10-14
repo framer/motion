@@ -31,7 +31,7 @@ import { NodeStack } from "../shared/stack"
 import { scaleCorrectors } from "../styles/scale-correction"
 import { buildProjectionTransform } from "../styles/transform"
 import { eachAxis } from "../utils/each-axis"
-import { hasScale, hasTransform } from "../utils/has-transform"
+import { has2DTranslate, hasScale, hasTransform } from "../utils/has-transform"
 import {
     IProjectionNode,
     Layout,
@@ -1018,7 +1018,11 @@ export function createProjectionNode<I>({
         }
 
         getClosestProjectingParent() {
-            if (!this.parent || hasTransform(this.parent.latestValues))
+            if (
+                !this.parent ||
+                hasScale(this.parent.latestValues) ||
+                has2DTranslate(this.parent.latestValues)
+            )
                 return undefined
 
             if (
@@ -1102,26 +1106,6 @@ export function createProjectionNode<I>({
                 this.projectionDelta!,
                 this.treeScale
             )
-
-            if (
-                this.options.visualElement
-                    ?.getInstance()
-                    .classList.contains("framer-13rv6tf")
-            ) {
-                console.log(
-                    "rendering delta of",
-                    this.projectionDelta.x,
-                    "layout:",
-                    this.layoutCorrected.x,
-                    this.layout.actual.x,
-                    "target",
-                    target.x,
-                    "at",
-                    getFrameData().timestamp,
-                    "as",
-                    this.projectionTransform
-                )
-            }
 
             if (
                 this.projectionTransform !== prevProjectionTransform ||

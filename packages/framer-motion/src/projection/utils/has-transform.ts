@@ -15,8 +15,7 @@ export function hasScale({ scale, scaleX, scaleY }: ResolvedValues) {
 export function hasTransform(values: ResolvedValues) {
     return (
         hasScale(values) ||
-        hasTranslate(values.x) ||
-        hasTranslate(values.y) ||
+        has2DTranslate(values) ||
         values.z ||
         values.rotate ||
         values.rotateX ||
@@ -24,6 +23,10 @@ export function hasTransform(values: ResolvedValues) {
     )
 }
 
-function hasTranslate(value: string | number | undefined) {
+export function has2DTranslate(values: ResolvedValues) {
+    return is2DTranslate(values.x) || is2DTranslate(values.y)
+}
+
+function is2DTranslate(value: string | number | undefined) {
     return value && value !== "0%"
 }
