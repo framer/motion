@@ -4,7 +4,7 @@ Framer Motion adheres to [Semantic Versioning](http://semver.org/).
 
 Undocumented APIs should be considered internal and may change without warning.
 
-## [7.5.4] 2022-10-14
+## [7.5.4] 2022-10-17
 
 ### Fixed
 
