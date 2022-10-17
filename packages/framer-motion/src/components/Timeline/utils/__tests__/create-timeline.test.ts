@@ -188,4 +188,122 @@ describe("createUnresolvedTimeline", () => {
             easing: defaultTransition.easing,
         })
     })
+
+    test("Overwrites keyframes", () => {
+        const { duration, tracks } = createUnresolvedTimeline([
+            ["box", { opacity: 1 }, { duration: 0.5, at: 0.2 }],
+            ["box", { opacity: 0 }, { duration: 1, at: 0 }],
+        ])
+
+        expect(duration).toEqual(1)
+
+        const { opacity } = tracks.box
+        expect(opacity.length).toBe(2)
+        expect(opacity[0]).toEqual({
+            value: null,
+            at: 0,
+            easing: defaultTransition.easing,
+        })
+        expect(opacity[1]).toEqual({
+            value: 0,
+            at: 1,
+            easing: defaultTransition.easing,
+        })
+    })
+
+    test("Put keyframme at label", () => {
+        const { duration, tracks } = createUnresolvedTimeline([
+            ["box", { opacity: 1 }, { duration: 0.5 }],
+            { name: "point-a" },
+            ["box", { x: 100 }, { duration: 0.5 }],
+            ["box", { y: 200 }, { duration: 0.5, at: "point-a" }],
+        ])
+
+        expect(duration).toEqual(1)
+
+        const { y } = tracks.box
+        expect(y.length).toBe(2)
+        expect(y[0]).toEqual({
+            value: null,
+            at: 0.5,
+            easing: defaultTransition.easing,
+        })
+        expect(y[1]).toEqual({
+            value: 200,
+            at: 1,
+            easing: defaultTransition.easing,
+        })
+    })
+
+    test("Put keyframme at label with relative time", () => {
+        const { duration, tracks } = createUnresolvedTimeline([
+            ["box", { opacity: 1 }, { duration: 0.5 }],
+            { name: "point-a", at: "+0.25" },
+            ["box", { x: 100 }, { duration: 0.5 }],
+            ["box", { y: 200 }, { duration: 0.5, at: "point-a" }],
+        ])
+
+        expect(duration).toEqual(1.25)
+
+        const { y } = tracks.box
+        expect(y.length).toBe(2)
+        expect(y[0]).toEqual({
+            value: null,
+            at: 0.75,
+            easing: defaultTransition.easing,
+        })
+        expect(y[1]).toEqual({
+            value: 200,
+            at: 1.25,
+            easing: defaultTransition.easing,
+        })
+    })
+
+    test("Put keyframme at label with relative negative time", () => {
+        const { duration, tracks } = createUnresolvedTimeline([
+            ["box", { opacity: 1 }, { duration: 0.5 }],
+            { name: "point-a", at: "-0.25" },
+            ["box", { x: 100 }, { duration: 0.5 }],
+            ["box", { y: 200 }, { duration: 0.5, at: "point-a" }],
+        ])
+
+        expect(duration).toEqual(1)
+
+        const { y } = tracks.box
+        expect(y.length).toBe(2)
+        expect(y[0]).toEqual({
+            value: null,
+            at: 0.25,
+            easing: defaultTransition.easing,
+        })
+        expect(y[1]).toEqual({
+            value: 200,
+            at: 0.75,
+            easing: defaultTransition.easing,
+        })
+    })
+
+    test("Put keyframme at label with absolute time", () => {
+        const { duration, tracks } = createUnresolvedTimeline([
+            ["box", { opacity: 1 }, { duration: 0.5 }],
+            { name: "point-a", at: 0.25 },
+            ["box", { x: 100 }, { duration: 0.5 }],
+            ["box", { y: 200 }, { duration: 0.5, at: "point-a" }],
+        ])
+
+        expect(duration).toEqual(1)
+
+        const { y } = tracks.box
+        expect(y.length).toBe(2)
+        expect(y[0]).toEqual({
+            value: null,
+            at: 0.25,
+            easing: defaultTransition.easing,
+        })
+        expect(y[1]).toEqual({
+            value: 200,
+            at: 0.75,
+            easing: defaultTransition.easing,
+        })
+    })
 })
