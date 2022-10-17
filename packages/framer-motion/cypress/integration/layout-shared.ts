@@ -623,7 +623,9 @@ describe("Shared layout: A -> AB -> A crossfade transition", () => {
     })
 
     it(`It correctly doesn't animate if layout="preserve-aspect" if size is different and position is the same`, () => {
-        cy.visit("?test=layout-shared-crossfade-a-ab&type=preserve-aspect")
+        cy.visit(
+            "?test=layout-shared-crossfade-a-ab&type=preserve-aspect&move=no"
+        )
             .wait(50)
             .get("#a")
             .should(([$box]: any) => {

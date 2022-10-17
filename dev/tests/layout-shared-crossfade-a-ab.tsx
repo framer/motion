@@ -10,10 +10,11 @@ export const App = () => {
     const params = new URLSearchParams(window.location.search)
     const type = params.get("type") || true
     const size = params.get("size") || false
+    const move = params.get("move") || "yes"
     const [state, setState] = React.useState(false)
 
     const bStyle = size ? aLarge : b
-    if (type === "preserve-aspect") {
+    if (move === "no") {
         bStyle.top = bStyle.left = 0
     }
 
