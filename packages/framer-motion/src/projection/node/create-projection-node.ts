@@ -372,7 +372,7 @@ export function createProjectionNode<I>({
                     this.root.updateBlockedByResize = true
 
                     cancelDelay && cancelDelay()
-                    delay(resizeUnblockUpdate, 250)
+                    cancelDelay = delay(resizeUnblockUpdate, 250)
 
                     if (globalProjectionState.hasAnimatedSinceResize) {
                         globalProjectionState.hasAnimatedSinceResize = false
