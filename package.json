@@ -13,6 +13,7 @@
     },
     "scripts": {
         "build": "turbo run build",
+        "watch": "turbo run watch",
         "dev-projection": "python -m SimpleHTTPServer",
         "dev": "turbo run dev",
         "lint": "turbo run lint",

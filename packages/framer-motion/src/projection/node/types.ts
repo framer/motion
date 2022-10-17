@@ -53,6 +53,7 @@ export interface IProjectionNode<I = unknown> {
     isScrollRoot?: boolean
     treeScale?: Point
     projectionDelta?: Delta
+    projectionDeltaWithTransform?: Delta
     latestValues: ResolvedValues
     isLayoutDirty: boolean
     shouldResetTransform: boolean

@@ -622,6 +622,74 @@ describe("Shared layout: A -> AB -> A crossfade transition", () => {
             })
     })
 
+    it(`It correctly doesn't animate if layout="preserve-aspect" if size is different and position is the same`, () => {
+        cy.visit("?test=layout-shared-crossfade-a-ab&type=preserve-aspect")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .trigger("click")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expect(parseFloat($box.style.opacity) || 1).to.equal(1)
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 100,
+                    height: 200,
+                })
+            })
+            .get("#b")
+            .should(([$box]: any) => {
+                expect(parseFloat($box.style.opacity) || 1).to.equal(1)
+                expectBbox($box, {
+                    top: 0,
+                    left: 0,
+                    width: 300,
+                    height: 300,
+                })
+            })
+    })
+
+    it(`It correctly doesn't animate if layout="preserve-aspect" on same element if size and position are the same`, () => {
+        cy.visit("?test=layout-preserve-ratio")
+            .wait(50)
+            .get("#a")
+            .should(([$box]: any) => {
+                expect(Math.round($box.getBoundingClientRect().width)).to.equal(
+                    200
+                )
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expect(Math.round($box.getBoundingClientRect().width)).to.equal(
+                    100
+                )
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expect(Math.round($box.getBoundingClientRect().width)).to.equal(
+                    200
+                )
+            })
+            .trigger("click")
+            .wait(50)
+            .should(([$box]: any) => {
+                expect(Math.round($box.getBoundingClientRect().width)).to.equal(
+                    100
+                )
+            })
+    })
+
     it(`It correctly animates layout="preserve-aspect" as normal layout animations if both aspect ratios are the same`, () => {
         cy.visit(
             "?test=layout-shared-crossfade-a-ab&type=preserve-aspect&size=same"
