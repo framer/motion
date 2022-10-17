@@ -1,17 +1,14 @@
 import { ReactNode } from "react"
-import {
-    Easing,
-    ResolvedKeyframesTarget,
-    Target,
-    Transition,
-} from "../../types"
+import { Easing, TargetWithKeyframes, Transition } from "../../types"
 import type { MotionValue } from "../../value"
+
+export type ValueTransition = {}
 
 export type SegmentOptions = Transition & { at?: TimeDefinition }
 
 export type TimelineSegment =
-    | [string, Target]
-    | [string, Target, SegmentOptions]
+    | [string, TargetWithKeyframes]
+    | [string, TargetWithKeyframes, SegmentOptions]
 
 export interface TimelineOptions {
     duration?: number
@@ -44,19 +41,25 @@ export interface TimelineProps {
 
 export interface TimelineContextProps {}
 
-export interface TracksManager {
-    addTrack(name: string): void
+export type UnresolvedKeyframeValue = string | number | null
+
+export type UnresolvedAbsoluteKeyframe = {
+    value: UnresolvedKeyframeValue
+    at: number
+    easing?: Easing
+}
+
+export type UnresolvedValueSequence = UnresolvedAbsoluteKeyframe[]
+
+export interface UnresolvedTrackSequence {
+    [key: string]: UnresolvedValueSequence
+}
+
+export interface UnresolvedTracks {
+    [key: string]: UnresolvedTrackSequence
 }
 
 export interface UnresolvedTimeline {
     duration: number
-    tracks: {
-        [trackName: string]: {
-            [valueName: string]: {
-                keyframes: ResolvedKeyframesTarget
-                offsets: number[]
-                easing: Easing[]
-            }
-        }
-    }
+    tracks: UnresolvedTracks
 }
