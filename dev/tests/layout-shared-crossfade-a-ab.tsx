@@ -12,6 +12,11 @@ export const App = () => {
     const size = params.get("size") || false
     const [state, setState] = React.useState(false)
 
+    const bStyle = size ? aLarge : b
+    if (type === "preserve-aspect") {
+        bStyle.top = bStyle.left = 0
+    }
+
     return (
         <>
             <motion.div
@@ -27,7 +32,7 @@ export const App = () => {
                     id="b"
                     layoutId="box"
                     layout={type}
-                    style={size ? aLarge : b}
+                    style={bStyle}
                     transition={transition}
                     onClick={() => setState(!state)}
                 />
