@@ -1,9 +1,9 @@
 import { wrap } from "popmotion"
 import { useCallback, useRef, useState } from "react"
 
-type Cycle = (i?: number) => void
+export type Cycle = (i?: number) => void
 
-type CycleState<T> = [T, Cycle]
+export type CycleState<T> = [T, Cycle]
 
 /**
  * Cycles through a series of visual properties. Can be used to toggle between or cycle through animations. It works similar to `useState` in React. It is provided an initial array of possible states, and returns an array of two arguments.

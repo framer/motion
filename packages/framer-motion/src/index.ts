@@ -60,7 +60,7 @@ export {
     TapInfo,
 } from "./gestures/types"
 export { PanInfo } from "./gestures/PanSession"
-export { useCycle } from "./utils/use-cycle"
+export { useCycle, CycleState, Cycle } from "./utils/use-cycle"
 export { transform } from "./utils/transform"
 export { isValidMotionProp } from "./motion/utils/valid-prop"
 export {
